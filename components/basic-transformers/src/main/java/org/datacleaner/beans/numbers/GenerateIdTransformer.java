@@ -41,10 +41,10 @@ public class GenerateIdTransformer implements Transformer {
 
     public enum IdType implements HasName {
         SEQUENCE("Sequence"), ROW_NUMBER("Row number");
-        
+
         private final String name;
-        
-        private IdType(String name) {
+
+        IdType(final String name) {
             this.name = name;
         }
 
@@ -53,23 +53,19 @@ public class GenerateIdTransformer implements Transformer {
             return name;
         }
     }
-
+    private final AtomicLong _counter;
     @Configured
     @Description("A type of ID which will be generated for each record in scope. Current options: sequential numbers or row number.")
     IdType idType = IdType.SEQUENCE;
-
     @Configured
     @Description("A column which represent the scope for which the ID will be generated. "
             + "If eg. a source column is selected, an ID will be generated for each source record. "
             + "If a transformed column is selected, an ID will be generated for each record generated that has this column.")
     InputColumn<?> columnInScope;
-
     @Configured
     @Description("The row number offset. This is often used to insert into a database with existing sequential IDs."
             + " Since the transformer increments before inserting, an offset of e.g. 100 would make the first newly inserted ID 101.")
     long offset = 0;
-
-    private final AtomicLong _counter;
 
     public GenerateIdTransformer() {
         _counter = new AtomicLong();
@@ -86,7 +82,7 @@ public class GenerateIdTransformer implements Transformer {
     }
 
     @Override
-    public Number[] transform(InputRow inputRow) {
+    public Number[] transform(final InputRow inputRow) {
         final long id;
         if (IdType.ROW_NUMBER == idType) {
             id = inputRow.getId();

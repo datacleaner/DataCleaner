@@ -42,11 +42,11 @@ public class SimpleStringPatternTest extends TestCase {
         assertTrue(ssp.matches(null));
         assertFalse(ssp.matches("<null>"));
         assertFalse(ssp.matches("<blank>"));
-        
+
         assertFalse(ssp.matches(""));
         assertFalse(ssp.matches(" "));
     }
-    
+
 
     public void testBlankPattern() throws Exception {
         SimpleStringPattern ssp = new SimpleStringPattern("email", "<blank>");
@@ -55,7 +55,7 @@ public class SimpleStringPatternTest extends TestCase {
         assertFalse(ssp.matches(null));
         assertFalse(ssp.matches("<null>"));
         assertFalse(ssp.matches("<blank>"));
-        
+
         assertTrue(ssp.matches(""));
         assertFalse(ssp.matches(" "));
     }

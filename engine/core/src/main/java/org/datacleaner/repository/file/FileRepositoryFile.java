@@ -31,15 +31,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.datacleaner.repository.AbstractRepositoryNode;
-import org.datacleaner.repository.RepositoryFile;
-import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.util.FileFilters;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.repository.AbstractRepositoryNode;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.FileFilters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
     private final FileRepositoryFolder _parent;
     private final File _file;
 
-    public FileRepositoryFile(FileRepositoryFolder parent, File file) {
+    public FileRepositoryFile(final FileRepositoryFolder parent, final File file) {
         _parent = parent;
         _file = file;
         _lock = new ReentrantReadWriteLock();
@@ -65,7 +65,7 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
     /**
      * Gets the physical {@link File} that is backing this
      * {@link RepositoryFile} instance.
-     * 
+     *
      * @return
      */
     public File getFile() {
@@ -97,14 +97,14 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
             final FileInputStream in = new FileInputStream(_file);
             final BufferedInputStream bin = new BufferedInputStream(in);
             return bin;
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public void readFile(Action<InputStream> readCallback) {
-        Lock readLock = _lock.readLock();
+    public void readFile(final Action<InputStream> readCallback) {
+        final Lock readLock = _lock.readLock();
         readLock.lock();
         try {
             final FileInputStream fileInputStream;
@@ -112,13 +112,13 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
             try {
                 fileInputStream = new FileInputStream(_file);
                 inputStream = new BufferedInputStream(fileInputStream);
-            } catch (FileNotFoundException e) {
+            } catch (final FileNotFoundException e) {
                 throw new IllegalStateException(e);
             }
 
             try {
                 readCallback.run(inputStream);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (e instanceof RuntimeException) {
                     throw (RuntimeException) e;
                 }
@@ -132,8 +132,8 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
     }
 
     @Override
-    public <E> E readFile(Func<InputStream, E> readCallback) {
-        Lock readLock = _lock.readLock();
+    public <E> E readFile(final Func<InputStream, E> readCallback) {
+        final Lock readLock = _lock.readLock();
         readLock.lock();
         try {
             final FileInputStream fileInputStream;
@@ -141,14 +141,14 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
             try {
                 fileInputStream = new FileInputStream(_file);
                 inputStream = new BufferedInputStream(fileInputStream);
-            } catch (FileNotFoundException e) {
+            } catch (final FileNotFoundException e) {
                 throw new IllegalStateException(e);
             }
 
             try {
                 final E result = readCallback.eval(inputStream);
                 return result;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (e instanceof RuntimeException) {
                     throw (RuntimeException) e;
                 }
@@ -160,25 +160,25 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
             readLock.unlock();
         }
     }
-    
+
 
     @Override
-    public OutputStream writeFile(boolean append) {
+    public OutputStream writeFile(final boolean append) {
         try {
             return new FileOutputStream(_file, append);
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public void writeFile(Action<OutputStream> writeCallback) {
+    public void writeFile(final Action<OutputStream> writeCallback) {
         writeFile(writeCallback, false);
     }
 
     @Override
-    public void writeFile(Action<OutputStream> writeCallback, boolean append) {
-        Lock writeLock = _lock.writeLock();
+    public void writeFile(final Action<OutputStream> writeCallback, final boolean append) {
+        final Lock writeLock = _lock.writeLock();
         writeLock.lock();
         try {
             final FileOutputStream fileOutputStream;
@@ -186,7 +186,7 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
             try {
                 fileOutputStream = new FileOutputStream(_file, append);
                 outputStream = new BufferedOutputStream(fileOutputStream);
-            } catch (FileNotFoundException e) {
+            } catch (final FileNotFoundException e) {
                 throw new IllegalStateException(e);
             }
 
@@ -194,7 +194,7 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
                 if (writeCallback != null) {
                     writeCallback.run(outputStream);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (e instanceof RuntimeException) {
                     throw (RuntimeException) e;
                 }
@@ -232,7 +232,7 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
 
     @Override
     public long getLastModified() {
-        long lastModified = _file.lastModified();
+        final long lastModified = _file.lastModified();
         if (lastModified == 0) {
             if (logger.isWarnEnabled()) {
                 logger.warn("File.lastModified() return 0. File.exists()={}, File.getPath()={}",

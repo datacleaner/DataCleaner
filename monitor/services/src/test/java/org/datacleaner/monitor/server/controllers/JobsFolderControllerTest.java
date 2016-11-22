@@ -39,15 +39,20 @@ public class JobsFolderControllerTest {
 
         final JobsFolderController controller = new JobsFolderController();
         controller._contextFactory = contextFactory;
-        final String resultsMetadata1 = controller.getFolderJobsByMetadataProperty("tenant6", "Category", "Enrichment").toString();
-        assertEquals("[{descriptors=[{name=null, metadataProperties={CoordinatesY=244, CoordinatesX=294}, descriptor=Concatenator, type=transformer}], filename=concat_job_no_analyzers.analysis.xml, repository_path=/tenant6/jobs/concat_job_no_analyzers.analysis.xml, name=concat_job_no_analyzers, metadataProperties={Group=Person Enrichment, Category=Enrichment, CoordinatesX.GoldenRecords.person=154, CoordinatesY.GoldenRecords.person=77}}, {descriptors=[{name=null, metadataProperties={CoordinatesY=244, CoordinatesX=294}, descriptor=Concatenator, type=transformer}], filename=concat_job_no_datastore.analysis.xml, repository_path=/tenant6/jobs/concat_job_no_datastore.analysis.xml, name=concat_job_no_datastore, metadataProperties={Group=Person Enrichment, Category=Enrichment, CoordinatesX.GoldenRecords.person=154, CoordinatesY.GoldenRecords.person=77}}]", resultsMetadata1);
+        final String resultsMetadata1 =
+                controller.getFolderJobsByMetadataProperty("tenant6", "Category", "Enrichment").toString();
+        assertEquals(
+                "[{descriptors=[{name=null, metadataProperties={CoordinatesY=244, CoordinatesX=294}, descriptor=Concatenator, type=transformer}], filename=concat_job_no_analyzers.analysis.xml, repository_path=/tenant6/jobs/concat_job_no_analyzers.analysis.xml, name=concat_job_no_analyzers, metadataProperties={Group=Person Enrichment, Category=Enrichment, CoordinatesX.GoldenRecords.person=154, CoordinatesY.GoldenRecords.person=77}}, {descriptors=[{name=null, metadataProperties={CoordinatesY=244, CoordinatesX=294}, descriptor=Concatenator, type=transformer}], filename=concat_job_no_datastore.analysis.xml, repository_path=/tenant6/jobs/concat_job_no_datastore.analysis.xml, name=concat_job_no_datastore, metadataProperties={Group=Person Enrichment, Category=Enrichment, CoordinatesX.GoldenRecords.person=154, CoordinatesY.GoldenRecords.person=77}}]",
+                resultsMetadata1);
 
-        final String resultsMetadata2 = controller.getFolderJobsByMetadataProperty("tenant6", "Group", "Person").toString();
+        final String resultsMetadata2 =
+                controller.getFolderJobsByMetadataProperty("tenant6", "Group", "Person").toString();
         assertEquals(
                 "[{descriptors=[{name=null, metadataProperties={CoordinatesY=289, CoordinatesX=487}, descriptor=String analyzer, type=analyzer}, {name=null, metadataProperties={CoordinatesY=244, CoordinatesX=294}, descriptor=Concatenator, type=transformer}], filename=concat_job_short_column_paths.analysis.xml, repository_path=/tenant6/jobs/concat_job_short_column_paths.analysis.xml, name=concat_job_short_column_paths, metadataProperties={Group=Person}}]",
                 resultsMetadata2);
 
-        final String resultsMetadata3 = controller.getFolderJobsByMetadataProperty("tenant6", "test", "Person").toString();
+        final String resultsMetadata3 =
+                controller.getFolderJobsByMetadataProperty("tenant6", "test", "Person").toString();
         assertEquals("[]", resultsMetadata3);
 
         final String resultsMetadata4 = controller.getFolderJobsByMetadataProperty("tenant6", "", "").toString();

@@ -53,22 +53,22 @@ public class SparkConfigurationReaderInterceptor extends DefaultConfigurationRea
             SwingRenderingFormat.class, ComponentBuilderPresenterRenderingFormat.class);
     private static final DescriptorProvider DESCRIPTOR_PROVIDER = new ClasspathScanDescriptorProvider(TASK_RUNNER,
             EXCLUDED_RENDERER_FORMATS).scanPackage("org.datacleaner", true).scanPackage("com.hi", true).scanPackage(
-                    "com.neopost", true);
+            "com.neopost", true);
     private static final StorageProvider STORAGE_PROVIDER = new InMemoryStorageProvider(500, 20);
-    
+
     private static final DataCleanerEnvironment BASE_ENVIRONMENT = new DataCleanerEnvironmentImpl()
             .withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER)
             .withStorageProvider(STORAGE_PROVIDER);
 
     private final HdfsHelper _hdfsHelper;
 
-    public SparkConfigurationReaderInterceptor(Map<String, String> customProperties) {
+    public SparkConfigurationReaderInterceptor(final Map<String, String> customProperties) {
         super(customProperties, BASE_ENVIRONMENT);
         _hdfsHelper = HdfsHelper.createHelper();
     }
 
     @Override
-    public Resource createResource(String resourceUrl, DataCleanerConfiguration tempConfiguration) {
+    public Resource createResource(String resourceUrl, final DataCleanerConfiguration tempConfiguration) {
         final Matcher matcher = HadoopResourceBuilder.RESOURCE_SCHEME_PATTERN.matcher(resourceUrl);
         if (matcher.find()) {
             resourceUrl = matcher.group(1) + "://" + matcher.group(3);

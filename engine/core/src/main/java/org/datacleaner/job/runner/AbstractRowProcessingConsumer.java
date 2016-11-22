@@ -65,21 +65,21 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     private final AtomicInteger _publishersInitializedCount;
     private final AtomicInteger _publishersClosedCount;
 
-    protected AbstractRowProcessingConsumer(RowProcessingPublisher publisher, HasComponentRequirement outcomeSinkJob,
-            InputColumnSinkJob inputColumnSinkJob) {
+    protected AbstractRowProcessingConsumer(final RowProcessingPublisher publisher, final HasComponentRequirement outcomeSinkJob,
+            final InputColumnSinkJob inputColumnSinkJob) {
         this(publisher.getAnalysisJob(), publisher.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob, publisher
                 .getSourceColumnFinder());
     }
 
-    protected AbstractRowProcessingConsumer(AnalysisJob analysisJob, AnalysisListener analysisListener,
-            HasComponentRequirement outcomeSinkJob, InputColumnSinkJob inputColumnSinkJob,
-            SourceColumnFinder sourceColumnFinder) {
+    protected AbstractRowProcessingConsumer(final AnalysisJob analysisJob, final AnalysisListener analysisListener,
+            final HasComponentRequirement outcomeSinkJob, final InputColumnSinkJob inputColumnSinkJob,
+            final SourceColumnFinder sourceColumnFinder) {
         this(analysisJob, analysisListener, outcomeSinkJob, buildSourceJobsOfInputColumns(inputColumnSinkJob,
                 sourceColumnFinder));
     }
 
-    protected AbstractRowProcessingConsumer(AnalysisJob analysisJob, AnalysisListener analysisListener,
-            HasComponentRequirement outcomeSinkJob, Set<HasComponentRequirement> sourceJobsOfInputColumns) {
+    protected AbstractRowProcessingConsumer(final AnalysisJob analysisJob, final AnalysisListener analysisListener,
+            final HasComponentRequirement outcomeSinkJob, final Set<HasComponentRequirement> sourceJobsOfInputColumns) {
         _analysisJob = analysisJob;
         _analysisListener = analysisListener;
         _hasComponentRequirement = outcomeSinkJob;
@@ -91,9 +91,28 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         _publishersClosedCount = new AtomicInteger(0);
     }
 
+    private static Set<HasComponentRequirement> buildSourceJobsOfInputColumns(final InputColumnSinkJob inputColumnSinkJob,
+            final SourceColumnFinder sourceColumnFinder) {
+        final Set<HasComponentRequirement> result = new HashSet<HasComponentRequirement>();
+
+        final Set<Object> sourceJobsOfInputColumns = sourceColumnFinder.findAllSourceJobs(inputColumnSinkJob);
+        for (final Iterator<Object> it = sourceJobsOfInputColumns.iterator(); it.hasNext(); ) {
+            final Object sourceJob = it.next();
+            if (sourceJob instanceof HasComponentRequirement && sourceJob instanceof InputColumnSourceJob) {
+                final HasComponentRequirement sourceOutcomeSinkJob = (HasComponentRequirement) sourceJob;
+                final ComponentRequirement componentRequirement = sourceOutcomeSinkJob.getComponentRequirement();
+                if (componentRequirement != null) {
+                    result.add(sourceOutcomeSinkJob);
+                }
+            }
+        }
+        return result;
+    }
+
     private boolean isAlwaysSatisfiedForConsume() {
         final ComponentRequirement componentRequirement = _hasComponentRequirement.getComponentRequirement();
-        if (_sourceJobsOfInputColumns.isEmpty() && (componentRequirement == null || componentRequirement instanceof AnyComponentRequirement)) {
+        if (_sourceJobsOfInputColumns.isEmpty() && (componentRequirement == null
+                || componentRequirement instanceof AnyComponentRequirement)) {
             return true;
         }
         return false;
@@ -112,30 +131,13 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         return false;
     }
 
-    private static Set<HasComponentRequirement> buildSourceJobsOfInputColumns(InputColumnSinkJob inputColumnSinkJob,
-            SourceColumnFinder sourceColumnFinder) {
-        final Set<HasComponentRequirement> result = new HashSet<HasComponentRequirement>();
-
-        final Set<Object> sourceJobsOfInputColumns = sourceColumnFinder.findAllSourceJobs(inputColumnSinkJob);
-        for (Iterator<Object> it = sourceJobsOfInputColumns.iterator(); it.hasNext();) {
-            final Object sourceJob = it.next();
-            if (sourceJob instanceof HasComponentRequirement && sourceJob instanceof InputColumnSourceJob) {
-                final HasComponentRequirement sourceOutcomeSinkJob = (HasComponentRequirement) sourceJob;
-                final ComponentRequirement componentRequirement = sourceOutcomeSinkJob.getComponentRequirement();
-                if (componentRequirement != null) {
-                    result.add(sourceOutcomeSinkJob);
-                }
-            }
-        }
-        return result;
-    }
-
     /**
      * Ensures that just a single outcome is satisfied
      */
     @Override
-    public final boolean satisfiedForConsume(FilterOutcomes outcomes, InputRow row) {
-        final boolean satisfiedOutcomesForConsume = satisfiedOutcomesForConsume(_hasComponentRequirement, row, outcomes);
+    public final boolean satisfiedForConsume(final FilterOutcomes outcomes, final InputRow row) {
+        final boolean satisfiedOutcomesForConsume =
+                satisfiedOutcomesForConsume(_hasComponentRequirement, row, outcomes);
         if (!satisfiedOutcomesForConsume) {
             return false;
         }
@@ -154,10 +156,10 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     }
 
     @Override
-    public final void consume(InputRow row, int distinctCount, FilterOutcomes outcomes, RowProcessingChain chain) {
+    public final void consume(final InputRow row, final int distinctCount, final FilterOutcomes outcomes, final RowProcessingChain chain) {
         try {
             consumeInternal(row, distinctCount, outcomes, chain);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             final ComponentJob componentJob = getComponentJob();
             if (_analysisListener == null) {
                 logger.error("Error occurred in component '" + componentJob + "' and no AnalysisListener is available",
@@ -171,7 +173,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
 
     /**
      * Overrideable method for subclasses
-     * 
+     *
      * @param row
      * @param distinctCount
      * @param outcomes
@@ -180,7 +182,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     protected abstract void consumeInternal(InputRow row, int distinctCount, FilterOutcomes outcomes,
             RowProcessingChain chain);
 
-    private boolean satisfiedInputsForConsume(InputRow row, FilterOutcomes outcomes) {
+    private boolean satisfiedInputsForConsume(final InputRow row, final FilterOutcomes outcomes) {
         if (_alwaysSatisfiedForConsume) {
             return _alwaysSatisfiedForConsume;
         }
@@ -190,7 +192,8 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
             for (final Object sourceJobsOfInputColumn : _sourceJobsOfInputColumns) {
                 // if any of the source jobs is satisfied, then continue
                 if (sourceJobsOfInputColumn instanceof HasComponentRequirement) {
-                    final HasComponentRequirement hasComponentRequirement = (HasComponentRequirement) sourceJobsOfInputColumn;
+                    final HasComponentRequirement hasComponentRequirement =
+                            (HasComponentRequirement) sourceJobsOfInputColumn;
                     final boolean satisfiedOutcomesForConsume = satisfiedOutcomesForConsume(hasComponentRequirement,
                             row, outcomes);
                     if (satisfiedOutcomesForConsume) {
@@ -204,7 +207,8 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         return true;
     }
 
-    private boolean satisfiedOutcomesForConsume(HasComponentRequirement component, InputRow row, FilterOutcomes outcomes) {
+    private boolean satisfiedOutcomesForConsume(final HasComponentRequirement component, final InputRow row,
+            final FilterOutcomes outcomes) {
         boolean isSatisfiedOutcomes = false;
 
         final ComponentRequirement componentRequirement = component.getComponentRequirement();
@@ -221,7 +225,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
      * Ensures that ALL outcomes are available
      */
     @Override
-    public final boolean satisfiedForFlowOrdering(FilterOutcomes outcomes) {
+    public final boolean satisfiedForFlowOrdering(final FilterOutcomes outcomes) {
         if (isAlwaysSatisfiedRequirement()) {
             return true;
         }
@@ -232,8 +236,8 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         }
 
         final Collection<FilterOutcome> dependencies = componentRequirement.getProcessingDependencies();
-        for (FilterOutcome filterOutcome : dependencies) {
-            boolean contains = outcomes.contains(filterOutcome);
+        for (final FilterOutcome filterOutcome : dependencies) {
+            final boolean contains = outcomes.contains(filterOutcome);
             if (!contains) {
                 return false;
             }
@@ -248,8 +252,8 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     }
 
     @Override
-    public void registerOutputDataStream(OutputDataStreamJob outputDataStreamJob,
-            RowProcessingPublisher publisherForOutputDataStream) {
+    public void registerOutputDataStream(final OutputDataStreamJob outputDataStreamJob,
+            final RowProcessingPublisher publisherForOutputDataStream) {
         final HasOutputDataStreams component = (HasOutputDataStreams) getComponent();
         _outputDataStreams
                 .add(new ActiveOutputDataStream(outputDataStreamJob, publisherForOutputDataStream, component));
@@ -261,12 +265,12 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     }
 
     @Override
-    public int onPublisherInitialized(RowProcessingPublisher publisher) {
+    public int onPublisherInitialized(final RowProcessingPublisher publisher) {
         return _publishersInitializedCount.incrementAndGet();
     }
 
     @Override
-    public int onPublisherClosed(RowProcessingPublisher publisher) {
+    public int onPublisherClosed(final RowProcessingPublisher publisher) {
         final int closedCount = _publishersClosedCount.incrementAndGet();
         return _publishersRegisteredCount.get() - closedCount;
     }
@@ -275,14 +279,14 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     public boolean isAllPublishersInitialized() {
         return _publishersRegisteredCount.get() == _publishersInitializedCount.get();
     }
-    
+
     @Override
     public boolean isAllPublishersClosed() {
         return _publishersRegisteredCount.get() == _publishersClosedCount.get();
     }
 
     @Override
-    public void registerPublisher(RowProcessingPublisher publisher) {
+    public void registerPublisher(final RowProcessingPublisher publisher) {
         _publishersRegisteredCount.incrementAndGet();
     }
 }

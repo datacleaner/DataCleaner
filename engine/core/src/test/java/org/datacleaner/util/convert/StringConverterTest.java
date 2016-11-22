@@ -51,11 +51,30 @@ import org.datacleaner.util.convert.MyConvertable.SecondaryConverter;
 
 public class StringConverterTest extends TestCase {
 
+    public static class MySerializable implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String myString;
+        private final int myInt;
+
+        public MySerializable(String myString, int myInt) {
+            this.myString = myString;
+            this.myInt = myInt;
+        }
+
+        public int getMyInt() {
+            return myInt;
+        }
+
+        public String getMyString() {
+            return myString;
+        }
+    }
     private final Dictionary dictionary = new SimpleDictionary("my dict");
     private final SynonymCatalog synonymCatalog = new SimpleSynonymCatalog("my synonyms");
     private final ReferenceDataCatalogImpl referenceDataCatalog = new ReferenceDataCatalogImpl(
             Arrays.asList(dictionary), Arrays.asList(synonymCatalog), new ArrayList<StringPattern>());
-
     private StringConverter stringConverter;
 
     @Override
@@ -115,27 +134,6 @@ public class StringConverterTest extends TestCase {
         runTests(new Date(1234 - localeOffset), "1970-01-01T00:00:01 234");
         runTests(Calendar.getInstance(), null);
         runTests(new java.sql.Date(1234 - localeOffset), "1970-01-01T00:00:01 234");
-    }
-
-    public static class MySerializable implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        private final String myString;
-        private final int myInt;
-
-        public MySerializable(String myString, int myInt) {
-            this.myString = myString;
-            this.myInt = myInt;
-        }
-
-        public int getMyInt() {
-            return myInt;
-        }
-
-        public String getMyString() {
-            return myString;
-        }
     }
 
     public void testConvertList() throws Exception {

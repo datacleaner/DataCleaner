@@ -61,7 +61,7 @@ public class DatastoreSchemaController {
     @RolesAllowed(SecurityRoles.TASK_QUERY)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.schemas", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Map<String, Object> getSchemas(HttpServletResponse response, @PathVariable("tenant") final String tenant,
+    public Map<String, Object> getSchemas(final HttpServletResponse response, @PathVariable("tenant") final String tenant,
             @PathVariable("datastore") String datastoreName) throws IOException {
 
         datastoreName = datastoreName.replaceAll("\\+", " ");
@@ -73,7 +73,7 @@ public class DatastoreSchemaController {
             return Collections.emptyMap();
         }
 
-        String username = getUsername();
+        final String username = getUsername();
         try (final DatastoreConnection connection = datastore.openConnection()) {
             final DataContext dataContext = connection.getDataContext();
 
@@ -85,45 +85,45 @@ public class DatastoreSchemaController {
         }
     }
 
-    private List<Map<String, Object>> createSchemaList(DataContext dataContext) {
-        List<Map<String, Object>> schemas = new ArrayList<>();
-        for (Schema schema : dataContext.getSchemas()) {
+    private List<Map<String, Object>> createSchemaList(final DataContext dataContext) {
+        final List<Map<String, Object>> schemas = new ArrayList<>();
+        for (final Schema schema : dataContext.getSchemas()) {
             schemas.add(createSchemaMap(schema));
         }
         return schemas;
     }
 
-    private Map<String, Object> createSchemaMap(Schema schema) {
+    private Map<String, Object> createSchemaMap(final Schema schema) {
         final Map<String, Object> map = new HashMap<>();
         map.put("name", schema.getName());
         map.put("tables", createTableList(schema));
         return map;
     }
 
-    private List<Map<String, Object>> createTableList(Schema schema) {
-        List<Map<String, Object>> tables = new ArrayList<>();
-        for (Table table : schema.getTables()) {
+    private List<Map<String, Object>> createTableList(final Schema schema) {
+        final List<Map<String, Object>> tables = new ArrayList<>();
+        for (final Table table : schema.getTables()) {
             tables.add(createTableMap(table));
         }
         return tables;
     }
 
-    private Map<String, Object> createTableMap(Table table) {
+    private Map<String, Object> createTableMap(final Table table) {
         final Map<String, Object> map = new HashMap<>();
         map.put("name", table.getName());
         map.put("columns", createColumnList(table));
         return map;
     }
 
-    private List<Map<String, Object>> createColumnList(Table table) {
-        List<Map<String, Object>> columns = new ArrayList<>();
-        for (Column column : table.getColumns()) {
+    private List<Map<String, Object>> createColumnList(final Table table) {
+        final List<Map<String, Object>> columns = new ArrayList<>();
+        for (final Column column : table.getColumns()) {
             columns.add(createColumnMap(column));
         }
         return columns;
     }
 
-    private Map<String, Object> createColumnMap(Column column) {
+    private Map<String, Object> createColumnMap(final Column column) {
         final Map<String, Object> map = new HashMap<>();
         map.put("name", column.getName());
         map.put("number", column.getColumnNumber());
@@ -138,8 +138,8 @@ public class DatastoreSchemaController {
         return map;
     }
 
-    private String getTypeName(Column column) {
-        ColumnType type = column.getType();
+    private String getTypeName(final Column column) {
+        final ColumnType type = column.getType();
         return type == null ? null : type.getName();
     }
 
@@ -147,7 +147,7 @@ public class DatastoreSchemaController {
         try {
             final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             return authentication.getName();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Error occurred retreiving username", e);
             return null;
         }

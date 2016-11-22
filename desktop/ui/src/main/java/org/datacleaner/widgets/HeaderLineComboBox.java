@@ -32,31 +32,31 @@ import org.datacleaner.util.NumberDocument;
  */
 public class HeaderLineComboBox extends DCComboBox<Integer> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public HeaderLineComboBox() {
-		super();
-		JTextComponent headerLineNumberText = (JTextComponent) getEditor().getEditorComponent();
-		headerLineNumberText.setDocument(new NumberDocument());
-		setEditable(true);
-		setModel(new DefaultComboBoxModel<Integer>(new Integer[] { 0, 1 }));
-		setSelectedItem(1);
-		setRenderer(new DCListCellRenderer() {
+    public HeaderLineComboBox() {
+        super();
+        final JTextComponent headerLineNumberText = (JTextComponent) getEditor().getEditorComponent();
+        headerLineNumberText.setDocument(new NumberDocument());
+        setEditable(true);
+        setModel(new DefaultComboBoxModel<Integer>(new Integer[] { 0, 1 }));
+        setSelectedItem(1);
+        setRenderer(new DCListCellRenderer() {
 
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				if (value instanceof Integer) {
-					Integer i = (Integer) value;
-					if (i <= 0) {
-						value = "No header";
-					}
-				}
-				return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			}
+            @Override
+            public Component getListCellRendererComponent(final JList<?> list, Object value, final int index, final boolean isSelected,
+                    final boolean cellHasFocus) {
+                if (value instanceof Integer) {
+                    final Integer i = (Integer) value;
+                    if (i <= 0) {
+                        value = "No header";
+                    }
+                }
+                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            }
 
-		});
-	}
+        });
+    }
 }

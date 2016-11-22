@@ -25,7 +25,7 @@ import org.datacleaner.storage.StorageProvider;
 
 /**
  * Represents the environment of one or more DataCleaner instances.
- * 
+ *
  * @see DataCleanerConfiguration
  */
 public interface DataCleanerEnvironment {
@@ -35,31 +35,31 @@ public interface DataCleanerEnvironment {
      *
      * @return the box for credentials defined for this environment.
      */
-    public RemoteServerConfiguration getRemoteServerConfiguration();
+    RemoteServerConfiguration getRemoteServerConfiguration();
 
     /**
      * Gets the {@link TaskRunner} defined in this environment
-     * 
+     *
      * @return the task runner defined in this environment
      */
-    public TaskRunner getTaskRunner();
+    TaskRunner getTaskRunner();
 
     /**
      * @see DescriptorProvider
      * @return the descriptor provider defined in this configuration
      */
-    public DescriptorProvider getDescriptorProvider();
+    DescriptorProvider getDescriptorProvider();
 
     /**
      * @see StorageProvider
      * @return the storage provider defined in this configuration
      */
-    public StorageProvider getStorageProvider();
+    StorageProvider getStorageProvider();
 
     /**
      * @see InjectionManagerFactory
      * @return the injection manager factory defined in this configuration
      */
-    public InjectionManagerFactory getInjectionManagerFactory();
+    InjectionManagerFactory getInjectionManagerFactory();
 
 }

@@ -45,24 +45,24 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HadoopResour
         this("hdfs");
     }
 
-    public HdfsResourceTypeHandler(String scheme) {
+    public HdfsResourceTypeHandler(final String scheme) {
         this(scheme, new DataCleanerConfigurationImpl());
     }
 
 
-        /**
-         * Creates a {@link HdfsResourceTypeHandler} for a particular scheme.
-         *
-         * @param scheme
-         *            a scheme such as "hdfs", "emrfs", "maprfs" etc.
-         */
-    public HdfsResourceTypeHandler(String scheme, DataCleanerConfiguration dataCleanerConfiguration) {
+    /**
+     * Creates a {@link HdfsResourceTypeHandler} for a particular scheme.
+     *
+     * @param scheme
+     *            a scheme such as "hdfs", "emrfs", "maprfs" etc.
+     */
+    public HdfsResourceTypeHandler(final String scheme, final DataCleanerConfiguration dataCleanerConfiguration) {
         _scheme = scheme;
         _dataCleanerConfiguration = dataCleanerConfiguration;
     }
 
     @Override
-    public boolean isParserFor(Class<? extends Resource> resourceType) {
+    public boolean isParserFor(final Class<? extends Resource> resourceType) {
         return ReflectionUtils.is(resourceType, HdfsResource.class);
     }
 
@@ -78,14 +78,14 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HadoopResour
             path = prefix + path;
         }
 
-        HadoopResourceBuilder
+        final HadoopResourceBuilder
                 builder = new HadoopResourceBuilder(_dataCleanerConfiguration.getServerInformationCatalog(), path);
 
         return builder.build();
     }
 
     @Override
-    public String createPath(Resource resource) {
+    public String createPath(final Resource resource) {
         final String prefix = getScheme() + "://";
         String path = resource.getQualifiedPath();
         if (path.startsWith(prefix)) {

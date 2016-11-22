@@ -25,18 +25,18 @@ import org.datacleaner.api.Filter;
 
 /**
  * Represents an outcome of a {@link Filter}.
- * 
+ *
  * @see FilterJob
  */
 public interface FilterOutcome extends Serializable {
-    
-    public HasFilterOutcomes getSource();
 
-    public FilterJob getFilterJob();
+    HasFilterOutcomes getSource();
 
-    public Enum<?> getCategory();
+    FilterJob getFilterJob();
 
-    public boolean isEquals(FilterOutcome filterOutcome);
-    
-    public String getSimpleName();
+    Enum<?> getCategory();
+
+    boolean isEquals(FilterOutcome filterOutcome);
+
+    String getSimpleName();
 }

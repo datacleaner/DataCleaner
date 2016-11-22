@@ -43,9 +43,9 @@ public class DateGapAnalyzerResult implements AnalyzerResult {
     private final Map<String, SortedSet<TimeInterval>> _overlaps;
     private final Map<String, TimeInterval> _completeDurations;
 
-    public DateGapAnalyzerResult(String fromColumnName, String toColumnName, String groupColumnName,
-            Map<String, TimeInterval> completeIntervals, Map<String, SortedSet<TimeInterval>> gaps,
-            Map<String, SortedSet<TimeInterval>> overlaps) {
+    public DateGapAnalyzerResult(final String fromColumnName, final String toColumnName, final String groupColumnName,
+            final Map<String, TimeInterval> completeIntervals, final Map<String, SortedSet<TimeInterval>> gaps,
+            final Map<String, SortedSet<TimeInterval>> overlaps) {
         _fromColumnName = fromColumnName;
         _toColumnName = toColumnName;
         _groupColumnName = groupColumnName;
@@ -67,8 +67,8 @@ public class DateGapAnalyzerResult implements AnalyzerResult {
     @Metric("Total date gap count")
     public int getTotalGapCount() {
         int count = 0;
-        Collection<SortedSet<TimeInterval>> gapSets = _gaps.values();
-        for (SortedSet<TimeInterval> gapSet : gapSets) {
+        final Collection<SortedSet<TimeInterval>> gapSets = _gaps.values();
+        for (final SortedSet<TimeInterval> gapSet : gapSets) {
             count += gapSet.size();
         }
         return count;
@@ -78,8 +78,8 @@ public class DateGapAnalyzerResult implements AnalyzerResult {
     public ParameterizableMetric getGapCount() {
         return new ParameterizableMetric() {
             @Override
-            public Number getValue(String parameter) {
-                SortedSet<TimeInterval> gapSet = _gaps.get(parameter);
+            public Number getValue(final String parameter) {
+                final SortedSet<TimeInterval> gapSet = _gaps.get(parameter);
                 if (gapSet == null) {
                     return 0;
                 }
@@ -96,12 +96,12 @@ public class DateGapAnalyzerResult implements AnalyzerResult {
     /**
      * Gets the complete duration/interval over which a group has been recorded.
      * This duration will always include both gaps and overlaps.
-     * 
+     *
      * @param groupName
      * @return the complete duration (ie. first and last recorded date) of a
      *         group as a single interval.
      */
-    public TimeInterval getCompleteDuration(String groupName) {
+    public TimeInterval getCompleteDuration(final String groupName) {
         return _completeDurations.get(groupName);
     }
 
@@ -109,7 +109,7 @@ public class DateGapAnalyzerResult implements AnalyzerResult {
      * @param groupName
      * @return the intervals that represents gaps in the complete duration
      */
-    public SortedSet<TimeInterval> getGaps(String groupName) {
+    public SortedSet<TimeInterval> getGaps(final String groupName) {
         return _gaps.get(groupName);
     }
 
@@ -118,7 +118,7 @@ public class DateGapAnalyzerResult implements AnalyzerResult {
      * @return the intervals where there are overlapping entries in the complete
      *         duration
      */
-    public SortedSet<TimeInterval> getOverlaps(String groupName) {
+    public SortedSet<TimeInterval> getOverlaps(final String groupName) {
         return _overlaps.get(groupName);
     }
 

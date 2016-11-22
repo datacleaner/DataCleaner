@@ -123,7 +123,7 @@ public class WelcomePanel extends DCSplashPanel {
                         .forName(welcomePanelClassName);
 
                 result = injector.getInstance(componentClass);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Failed to instantiate welcome panel class: {}", welcomePanelClassName, e);
             }
         }
@@ -162,8 +162,8 @@ public class WelcomePanel extends DCSplashPanel {
                 twitterButton.setToolTipText("Spread the message about #DataCleaner on Twitter");
                 twitterButton.addActionListener(new OpenBrowserAction("https://twitter.com/intent/tweet?text="
                         + UrlEscapers.urlFormParameterEscaper().escape(
-                                "I'm using @DataCleaner (v. " + Version.getVersion()
-                                        + ") for some really fancy #dataquality stuff!")));
+                        "I'm using @DataCleaner (v. " + Version.getVersion()
+                                + ") for some really fancy #dataquality stuff!")));
 
                 final JButton linkedInButton = WidgetFactory.createDefaultButton(null, "images/menu/linkedin.png");
                 linkedInButton.setToolTipText("Join our LinkedIn group of users and professionals");
@@ -174,7 +174,7 @@ public class WelcomePanel extends DCSplashPanel {
                 loveFeedbackAnimation.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 loveFeedbackAnimation.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mouseClicked(MouseEvent e) {
+                    public void mouseClicked(final MouseEvent e) {
                         forumActionListener.actionPerformed(null);
                     }
                 });
@@ -207,7 +207,7 @@ public class WelcomePanel extends DCSplashPanel {
         newJobButton.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 getWindow().changePanel(AnalysisWindowPanelType.SELECT_DS);
             }
         });
@@ -218,7 +218,7 @@ public class WelcomePanel extends DCSplashPanel {
         recentJobsButton.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 refreshRecentJobs(recentJobsButton);
             }
         });
@@ -229,7 +229,7 @@ public class WelcomePanel extends DCSplashPanel {
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         manageDatastoresButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 getWindow().changePanel(AnalysisWindowPanelType.MANAGE_DS);
             }
         });
@@ -267,7 +267,7 @@ public class WelcomePanel extends DCSplashPanel {
     private List<FileObject> getRecentJobFiles() {
         final List<FileObject> recentJobFiles = _userPreferences.getRecentJobFiles();
         final List<FileObject> result = new ArrayList<>();
-        for (FileObject fileObject : recentJobFiles) {
+        for (final FileObject fileObject : recentJobFiles) {
             try {
                 if (fileObject.exists()) {
                     result.add(fileObject);
@@ -275,7 +275,7 @@ public class WelcomePanel extends DCSplashPanel {
                         break;
                     }
                 }
-            } catch (FileSystemException ex) {
+            } catch (final FileSystemException ex) {
                 logger.debug("Skipping file {} because of unexpected error", ex);
             }
         }

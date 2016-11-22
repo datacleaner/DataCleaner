@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Minimalistic abstract implementation of the {@link PropertyWidget} interface.
- * 
+ *
  * @param <E>
  */
 public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
@@ -44,15 +44,15 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 
     private transient int _updating;
 
-    public MinimalPropertyWidget(ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+    public MinimalPropertyWidget(final ComponentBuilder componentBuilder, final ConfiguredPropertyDescriptor propertyDescriptor) {
         _componentBuilder = componentBuilder;
         _propertyDescriptor = propertyDescriptor;
         _updating = 0;
     }
 
     @Override
-    public void initialize(E value) {
-    };
+    public void initialize(final E value) {
+    }
 
     @Override
     public final ConfiguredPropertyDescriptor getPropertyDescriptor() {
@@ -76,7 +76,7 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
     protected ActionListener fireValueChangedActionListener() {
         return new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 fireValueChanged();
             }
         };
@@ -87,7 +87,7 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
     }
 
     @Override
-    public void onValueTouched(E value) {
+    public void onValueTouched(final E value) {
         if (isUpdating()) {
             // prevent update loops from a widget's own configuration change
             // notification
@@ -104,7 +104,7 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
      * Determines whether a property widget is currently updating/setting it's
      * property value. When true, this property will not treat incoming
      * notifications, since they will be triggered by itself.
-     * 
+     *
      * @return
      */
     protected boolean isUpdating() {
@@ -114,10 +114,10 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
     /**
      * Provides a method for setting the "updating" flag (see
      * {@link #isUpdating()}).
-     * 
+     *
      * @param updating
      */
-    protected void setUpdating(boolean updating) {
+    protected void setUpdating(final boolean updating) {
         if (updating) {
             _updating++;
         } else {
@@ -128,7 +128,7 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 
     /**
      * Gets the current value of the property in the job builder.
-     * 
+     *
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -138,30 +138,31 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 
     protected abstract void setValue(E value);
 
-    protected final void fireValueChanged(Object newValue) {
+    protected final void fireValueChanged(final Object newValue) {
         setUpdating(true);
         try {
             _componentBuilder.setConfiguredProperty(_propertyDescriptor, newValue);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // an exception will be thrown here if setting an invalid property
             // value (which may just be work in progress, so we don't make a
             // fuzz about it)
             if (logger.isWarnEnabled()) {
                 logger.warn(
-                        "Unexpected exception when setting property: " + _propertyDescriptor + ": " + e.getMessage(), e);
+                        "Unexpected exception when setting property: " + _propertyDescriptor + ": " + e.getMessage(),
+                        e);
             }
         } finally {
             setUpdating(false);
         }
     }
 
-    protected final void fireValuesChanged(Map<ConfiguredPropertyDescriptor, Object> properties) {
+    protected final void fireValuesChanged(final Map<ConfiguredPropertyDescriptor, Object> properties) {
         // TODO: For now we accept the code duplication with fireValueChanged above, since
         // escalateToMultipleJobs requires setConfiguredProperty as it overrides it.
         setUpdating(true);
         try {
             _componentBuilder.setConfiguredProperties(properties);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // an exception will be thrown here if setting an invalid property
             // value (which may just be work in progress, so we don't make a
             // fuzz about it)

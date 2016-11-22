@@ -33,15 +33,15 @@ public class CrosstabHtmlFragment implements HtmlFragment {
     private final RendererFactory _rendererFactory;
     private HtmlFragment _htmlFragment;
 
-    public CrosstabHtmlFragment(Crosstab<?> crosstab, RendererFactory rendererFactory) {
+    public CrosstabHtmlFragment(final Crosstab<?> crosstab, final RendererFactory rendererFactory) {
         _crosstab = crosstab;
         _rendererFactory = rendererFactory;
     }
 
     @Override
-    public void initialize(HtmlRenderingContext context) {
-        CrosstabRenderer crosstabRenderer = new CrosstabRenderer(_crosstab);
-        HtmlFragment htmlFragment = crosstabRenderer.render(new HtmlCrosstabRendererCallback(_rendererFactory,
+    public void initialize(final HtmlRenderingContext context) {
+        final CrosstabRenderer crosstabRenderer = new CrosstabRenderer(_crosstab);
+        final HtmlFragment htmlFragment = crosstabRenderer.render(new HtmlCrosstabRendererCallback(_rendererFactory,
                 context));
         _htmlFragment = htmlFragment;
     }

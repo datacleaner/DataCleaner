@@ -32,11 +32,11 @@ class PropertyWidgetMapping {
         _mapping = new IdentityHashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>(3);
     }
 
-    public void putMapping(ConfiguredPropertyDescriptor property, PropertyWidget<?> propertyWidget) {
+    public void putMapping(final ConfiguredPropertyDescriptor property, final PropertyWidget<?> propertyWidget) {
         _mapping.put(property, propertyWidget);
     }
 
-    public PropertyWidget<?> getMapping(ConfiguredPropertyDescriptor property) {
+    public PropertyWidget<?> getMapping(final ConfiguredPropertyDescriptor property) {
         return _mapping.get(property);
     }
 }

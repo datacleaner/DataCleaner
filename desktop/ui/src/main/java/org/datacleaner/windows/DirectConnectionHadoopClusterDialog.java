@@ -52,6 +52,8 @@ import org.jdesktop.swingx.JXTextField;
  */
 public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
 
+    private static final ImageManager imageManager = ImageManager.get();
+    private static final long serialVersionUID = 1L;
     private final DirectConnectionHadoopClusterInformation _directConnection;
     private final JXTextField _nameTextField;
     private final JXTextField _fileSystemURITextField;
@@ -61,11 +63,10 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
     private final JButton _cancelButton;
     private final MutableServerInformationCatalog _mutableServerInformationCatalog;
     private ServerInformation _savedServer = null;
-    private static final ImageManager imageManager = ImageManager.get();
 
-    public DirectConnectionHadoopClusterDialog(WindowContext windowContext,
-            DirectConnectionHadoopClusterInformation directConnection,
-            MutableServerInformationCatalog serverinformationCatalog) {
+    public DirectConnectionHadoopClusterDialog(final WindowContext windowContext,
+            final DirectConnectionHadoopClusterInformation directConnection,
+            final MutableServerInformationCatalog serverinformationCatalog) {
         super(windowContext, ImageManager.get().getImage(IconUtils.FILE_HDFS));
 
         _directConnection = directConnection;
@@ -88,10 +89,10 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
                 }
                 _mutableServerInformationCatalog.addServerInformation(newServer);
                 close();
-            } catch (URISyntaxException e1) {
+            } catch (final URISyntaxException e1) {
                 invalidateForm(e1);
                 return;
-            } catch (Exception exception) {
+            } catch (final Exception exception) {
                 invalidateForm(exception);
                 return;
             }
@@ -114,7 +115,7 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
 
         final DCDocumentListener documentListener = new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         };
@@ -123,8 +124,6 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
         _fileSystemURITextField.getDocument().addDocumentListener(documentListener);
         _descriptionTextField.getDocument().addDocumentListener(documentListener);
     }
-
-    private static final long serialVersionUID = 1L;
 
     @Override
     public String getWindowTitle() {
@@ -187,13 +186,13 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
         return _savedServer;
     }
 
-    private void invalidateForm(Exception exception) {
+    private void invalidateForm(final Exception exception) {
         setStatusError(exception);
         setSaveButtonEnabled(false);
     }
 
     private void validateAndUpdate() {
-        boolean valid = validateForm();
+        final boolean valid = validateForm();
         setSaveButtonEnabled(valid);
     }
 
@@ -220,14 +219,14 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
                 setStatusError("The port has to have minimum 4 digits");
                 return false;
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
         setStatusValid();
         return true;
     }
 
-    private void setSaveButtonEnabled(boolean enabled) {
+    private void setSaveButtonEnabled(final boolean enabled) {
         _saveButton.setEnabled(enabled);
     }
 
@@ -241,7 +240,7 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
         setStatusError(error.getMessage());
     }
 
-    protected void setStatusError(String text) {
+    protected void setStatusError(final String text) {
         _statusLabel.setText(text);
         _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
     }

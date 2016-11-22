@@ -28,18 +28,18 @@ import java.util.List;
  */
 public interface TokenPattern extends Serializable {
 
-	/**
-	 * Attempts to match a list of tokens against this pattern. If it succeeds,
-	 * true will be returned.
-	 * 
-	 * @param tokens
-	 * @return true if the match was succesful, false otherwise.
-	 */
-	public boolean match(List<Token> tokens);
+    /**
+     * Attempts to match a list of tokens against this pattern. If it succeeds,
+     * true will be returned.
+     *
+     * @param tokens
+     * @return true if the match was succesful, false otherwise.
+     */
+    boolean match(List<Token> tokens);
 
-	public List<TokenPatternSymbol> getSymbols();
+    List<TokenPatternSymbol> getSymbols();
 
-	public String toSymbolicString();
-	
-	public String getSampleString();
+    String toSymbolicString();
+
+    String getSampleString();
 }

@@ -24,7 +24,7 @@ import org.apache.metamodel.util.Action;
 public class NoopAction<E> implements Action<E> {
 
     @Override
-    public void run(E parameter) {
+    public void run(final E parameter) {
         // do nothing
     }
 }

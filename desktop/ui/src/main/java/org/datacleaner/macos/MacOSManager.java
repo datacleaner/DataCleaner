@@ -23,9 +23,9 @@ import javax.inject.Provider;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.datacleaner.util.VFSUtils;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.util.VFSUtils;
 import org.datacleaner.windows.AboutDialog;
 import org.datacleaner.windows.OptionsDialog;
 import org.simplericity.macify.eawt.Application;
@@ -38,28 +38,71 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 /**
- * 
+ *
  * @author Kasper Sørensen
  */
 public class MacOSManager {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    public class DCApplicationListener implements ApplicationListener {
 
+        @Override
+        public void handleAbout(final ApplicationEvent event) {
+            final AboutDialog dialog = new AboutDialog(_windowContext);
+            dialog.setVisible(true);
+            event.setHandled(true);
+        }
+
+        @Override
+        public void handleOpenFile(final ApplicationEvent event) {
+            final String filename = event.getFilename();
+            final OpenAnalysisJobActionListener actionListener = _openAnalysisJobActionListenerProvider.get();
+            try {
+                final FileObject file = VFSUtils.getFileSystemManager().resolveFile(filename);
+                actionListener.openFile(file);
+            } catch (final FileSystemException e) {
+                throw new IllegalArgumentException("Could not resolve filename: " + filename, e);
+            }
+        }
+
+        @Override
+        public void handlePreferences(final ApplicationEvent event) {
+            final OptionsDialog dialog = _optionsDialogProvider.get();
+            dialog.setVisible(true);
+        }
+
+        @Override
+        public void handleQuit(final ApplicationEvent event) {
+            _windowContext.exit();
+        }
+
+        @Override
+        public void handleOpenApplication(final ApplicationEvent event) {
+        }
+
+        @Override
+        public void handlePrintFile(final ApplicationEvent event) {
+        }
+
+        @Override
+        public void handleReOpenApplication(final ApplicationEvent event) {
+        }
+    }
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final WindowContext _windowContext;
     private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
     private final Provider<OptionsDialog> _optionsDialogProvider;
 
     @Inject
-    protected MacOSManager(WindowContext windowContext,
-            Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
-            Provider<OptionsDialog> optionsDialogProvider) {
+    protected MacOSManager(final WindowContext windowContext,
+            final Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
+            final Provider<OptionsDialog> optionsDialogProvider) {
         _windowContext = windowContext;
         _openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
         _optionsDialogProvider = optionsDialogProvider;
     }
 
     public void init() {
-        Application app = new DefaultApplication();
+        final Application app = new DefaultApplication();
 
         if (!app.isMac()) {
             logger.debug("Omitting Mac OS initialization, since operating system is not Mac OS");
@@ -73,50 +116,5 @@ public class MacOSManager {
         app.addPreferencesMenuItem();
         app.setEnabledPreferencesMenu(true);
         app.addApplicationListener(new DCApplicationListener());
-    }
-
-    public class DCApplicationListener implements ApplicationListener {
-
-        @Override
-        public void handleAbout(ApplicationEvent event) {
-            AboutDialog dialog = new AboutDialog(_windowContext);
-            dialog.setVisible(true);
-            event.setHandled(true);
-        }
-
-        @Override
-        public void handleOpenFile(ApplicationEvent event) {
-            final String filename = event.getFilename();
-            final OpenAnalysisJobActionListener actionListener = _openAnalysisJobActionListenerProvider.get();
-            try {
-                final FileObject file = VFSUtils.getFileSystemManager().resolveFile(filename);
-                actionListener.openFile(file);
-            } catch (FileSystemException e) {
-                throw new IllegalArgumentException("Could not resolve filename: " + filename, e);
-            }
-        }
-
-        @Override
-        public void handlePreferences(ApplicationEvent event) {
-            OptionsDialog dialog = _optionsDialogProvider.get();
-            dialog.setVisible(true);
-        }
-
-        @Override
-        public void handleQuit(ApplicationEvent event) {
-            _windowContext.exit();
-        }
-
-        @Override
-        public void handleOpenApplication(ApplicationEvent event) {
-        }
-
-        @Override
-        public void handlePrintFile(ApplicationEvent event) {
-        }
-
-        @Override
-        public void handleReOpenApplication(ApplicationEvent event) {
-        }
     }
 }

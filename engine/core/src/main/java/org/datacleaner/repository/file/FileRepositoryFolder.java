@@ -26,14 +26,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.datacleaner.repository.AbstractRepositoryNode;
-import org.datacleaner.repository.RepositoryFile;
-import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.RepositoryNode;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.ToStringComparator;
+import org.datacleaner.repository.AbstractRepositoryNode;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.repository.RepositoryNode;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -51,7 +51,7 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
 
     private transient LoadingCache<File, RepositoryNode> _childCache;
 
-    public FileRepositoryFolder(FileRepositoryFolder parent, File file) {
+    public FileRepositoryFolder(final FileRepositoryFolder parent, final File file) {
         if (file == null) {
             throw new IllegalArgumentException("File cannot be null");
         }
@@ -67,7 +67,7 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
             _childCache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS)
                     .build(new CacheLoader<File, RepositoryNode>() {
                         @Override
-                        public RepositoryNode load(File key) throws Exception {
+                        public RepositoryNode load(final File key) throws Exception {
                             if (key.isDirectory()) {
                                 return new FileRepositoryFolder(FileRepositoryFolder.this, key);
                             }
@@ -94,10 +94,10 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
 
     @Override
     public List<RepositoryFolder> getFolders() {
-        File[] directories = _file.listFiles(new FileFilter() {
-            
+        final File[] directories = _file.listFiles(new FileFilter() {
+
             @Override
-            public boolean accept(File file) {
+            public boolean accept(final File file) {
                 if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
                     return true;
                 }
@@ -109,14 +109,14 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
 
         return CollectionUtils.map(directories, new Func<File, RepositoryFolder>() {
             @Override
-            public RepositoryFolder eval(File directory) {
+            public RepositoryFolder eval(final File directory) {
                 return (RepositoryFolder) getChildCache().getUnchecked(directory);
             }
         });
     }
 
     @Override
-    public RepositoryFile getLatestFile(String prefix, String extension) {
+    public RepositoryFile getLatestFile(final String prefix, final String extension) {
         final FileFilter baseFilter = createFileFilter(prefix, extension);
 
         final LatestFileFilter latestFileFilter = new LatestFileFilter(baseFilter);
@@ -132,11 +132,11 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
 
     @Override
     public List<RepositoryFile> getFiles(final String prefix, final String extension) {
-        File[] files = _file.listFiles(createFileFilter(prefix, extension));
+        final File[] files = _file.listFiles(createFileFilter(prefix, extension));
         Arrays.sort(files, ToStringComparator.getComparator());
         return CollectionUtils.map(files, new Func<File, RepositoryFile>() {
             @Override
-            public RepositoryFile eval(File file) {
+            public RepositoryFile eval(final File file) {
                 return (RepositoryFile) getChildCache().getUnchecked(file);
             }
         });
@@ -145,7 +145,7 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
     private FileFilter createFileFilter(final String prefix, final String extension) {
         return new FileFilter() {
             @Override
-            public boolean accept(File file) {
+            public boolean accept(final File file) {
                 if (file.isFile() && !file.isHidden()) {
                     final String filename = file.getName();
                     if (prefix == null || filename.startsWith(prefix)) {
@@ -167,12 +167,12 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
     }
 
     @Override
-    public RepositoryFile getFile(String name) {
+    public RepositoryFile getFile(final String name) {
         if (name.indexOf('/') != -1 || name.indexOf('\\') != -1) {
             throw new IllegalArgumentException("File name cannot contain slashes");
         }
 
-        File file = new File(_file, name);
+        final File file = new File(_file, name);
 
         if (!file.exists()) {
             return null;
@@ -189,12 +189,12 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
     }
 
     @Override
-    public RepositoryFolder getFolder(String name) {
+    public RepositoryFolder getFolder(final String name) {
         if (name.indexOf('/') != -1 || name.indexOf('\\') != -1) {
             throw new IllegalArgumentException("Folder name cannot contain slashes");
         }
 
-        File file = new File(_file, name);
+        final File file = new File(_file, name);
         if (!file.exists() || file.isHidden() || !file.isDirectory()) {
             return null;
         }
@@ -203,7 +203,7 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
     }
 
     @Override
-    public RepositoryFile createFile(String name, Action<OutputStream> writeCallback) {
+    public RepositoryFile createFile(final String name, final Action<OutputStream> writeCallback) {
         if (name.indexOf('/') != -1 || name.indexOf('\\') != -1) {
             throw new IllegalArgumentException("File name cannot contain slashes");
         }
@@ -213,7 +213,7 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
             throw new IllegalArgumentException("A file with the name '" + name + "' already exists");
         }
 
-        RepositoryFile repositoryFile = (RepositoryFile) getChildCache().getUnchecked(file);
+        final RepositoryFile repositoryFile = (RepositoryFile) getChildCache().getUnchecked(file);
         repositoryFile.writeFile(writeCallback);
 
         return repositoryFile;
@@ -230,10 +230,10 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
 
     /**
      * Notification method invoked when a child file has been deleted.
-     * 
+     *
      * @param file
      */
-    protected void onDeleted(File file) {
+    protected void onDeleted(final File file) {
         getChildCache().invalidate(file);
     }
 
@@ -251,7 +251,7 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
     }
 
     @Override
-    public RepositoryFolder getOrCreateFolder(String name) {
+    public RepositoryFolder getOrCreateFolder(final String name) {
         final File file = new File(_file, name);
         if (!file.exists()) {
             file.mkdir();

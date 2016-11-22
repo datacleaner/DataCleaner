@@ -19,13 +19,29 @@
  */
 package org.datacleaner.monitor.server;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.metamodel.util.ImmutableRef;
-import org.datacleaner.api.*;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultFuture;
+import org.datacleaner.api.AnalyzerResultFutureImpl;
+import org.datacleaner.api.Metric;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MetaModelInputColumn;
-import org.datacleaner.descriptors.*;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.MetricDescriptor;
+import org.datacleaner.descriptors.MetricParameters;
+import org.datacleaner.descriptors.ResultDescriptor;
+import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -46,25 +62,8 @@ import org.easymock.Mock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-
 @RunWith(EasyMockRunner.class)
 public class MetricValueUtilsTest extends EasyMockSupport {
-
-    @Mock
-    MetricJobContext jobContext;
-
-    @Mock
-    MetricIdentifier metricIdentifier;
-
-    @Mock
-    ComponentJob componentJob;
 
     private static class MyResultClass implements AnalyzerResult {
 
@@ -80,13 +79,18 @@ public class MetricValueUtilsTest extends EasyMockSupport {
             return param.length();
         }
     }
-
     private final MyResultClass analyzerResult = new MyResultClass();
     private final DataCleanerJobEngine jobEngine = new DataCleanerJobEngine(null, new SimpleDescriptorProvider(true),
             null);
     private final AnalysisJob analysisJob = null;
     private final MetricValueUtils utils = new MetricValueUtils();
     private final ResultDescriptor resultDescriptor = Descriptors.ofResult(MyResultClass.class);
+    @Mock
+    MetricJobContext jobContext;
+    @Mock
+    MetricIdentifier metricIdentifier;
+    @Mock
+    ComponentJob componentJob;
 
     @Test
     public void testGetResultFromAnalyzerResultFuture() throws Exception {

@@ -38,10 +38,10 @@ import org.datacleaner.util.ReadObjectBuilder;
  * Represents a string pattern that is based on a sequence of token types. The
  * pattern format is similar to the one used by the Pattern finder analyzer,
  * which makes it ideal for reusing discovered patterns.
- * 
+ *
  * @see TokenPattern
- * 
- * 
+ *
+ *
  */
 public final class SimpleStringPattern extends AbstractReferenceData implements StringPattern {
 
@@ -52,22 +52,22 @@ public final class SimpleStringPattern extends AbstractReferenceData implements 
     private transient DefaultTokenizer _tokenizer;
     private transient TokenizerConfiguration _configuration;
 
-    public SimpleStringPattern(String name, String expression) {
+    public SimpleStringPattern(final String name, final String expression) {
         this(name, expression, new TokenizerConfiguration());
     }
 
-    public SimpleStringPattern(String name, String expression, TokenizerConfiguration configuration) {
+    public SimpleStringPattern(final String name, final String expression, final TokenizerConfiguration configuration) {
         super(name);
         _expression = expression;
         _configuration = configuration;
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, SimpleStringPattern.class).readObject(stream);
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final SimpleStringPattern other = (SimpleStringPattern) obj;
             return Objects.equals(_expression, other._expression);
@@ -75,17 +75,17 @@ public final class SimpleStringPattern extends AbstractReferenceData implements 
         return false;
     }
 
-    public boolean matches(String string) {
-        List<Token> tokens = getTokenizer().tokenize(string);
+    public boolean matches(final String string) {
+        final List<Token> tokens = getTokenizer().tokenize(string);
         return getTokenPattern().match(tokens);
     }
 
     @Override
-    public StringPatternConnection openConnection(DataCleanerConfiguration configuration) {
+    public StringPatternConnection openConnection(final DataCleanerConfiguration configuration) {
         return new StringPatternConnection() {
 
             @Override
-            public boolean matches(String string) {
+            public boolean matches(final String string) {
                 return SimpleStringPattern.this.matches(string);
             }
 
@@ -122,7 +122,7 @@ public final class SimpleStringPattern extends AbstractReferenceData implements 
                 expression = _expression;
             }
 
-            List<Token> tokens = getTokenizer().tokenize(expression);
+            final List<Token> tokens = getTokenizer().tokenize(expression);
             _tokenPattern = new TokenPatternImpl(expression, tokens, getConfiguration());
         }
         return _tokenPattern;

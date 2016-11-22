@@ -40,54 +40,54 @@ import org.datacleaner.components.categories.TextCategory;
 @Categorized(TextCategory.class)
 public class ConcatenatorTransformer implements Transformer {
 
-	@Configured
-	InputColumn<?>[] columns;
+    @Configured
+    InputColumn<?>[] columns;
 
-	@Configured(required = false)
-	@Description("A string to separate the concatenated values")
-	String separator;
+    @Configured(required = false)
+    @Description("A string to separate the concatenated values")
+    String separator;
 
-	public ConcatenatorTransformer(String separator, InputColumn<?>[] columns) {
-		this.separator = separator;
-		this.columns = columns;
-	}
+    public ConcatenatorTransformer(final String separator, final InputColumn<?>[] columns) {
+        this.separator = separator;
+        this.columns = columns;
+    }
 
-	public ConcatenatorTransformer() {
-	}
+    public ConcatenatorTransformer() {
+    }
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		StringBuilder sb = new StringBuilder("Concat of ");
-		for (int i = 0; i < columns.length; i++) {
-			if (i != 0) {
-				sb.append(",");
-			}
-			sb.append(columns[i].getName());
-			if (i == 4) {
-				sb.append("...");
-				// only include a preview of columns in the default name
-				break;
-			}
-		}
-		return new OutputColumns(String.class, sb.toString());
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        final StringBuilder sb = new StringBuilder("Concat of ");
+        for (int i = 0; i < columns.length; i++) {
+            if (i != 0) {
+                sb.append(",");
+            }
+            sb.append(columns[i].getName());
+            if (i == 4) {
+                sb.append("...");
+                // only include a preview of columns in the default name
+                break;
+            }
+        }
+        return new OutputColumns(String.class, sb.toString());
+    }
 
-	@Override
-	public String[] transform(InputRow inputRow) {
-		StringBuilder sb = new StringBuilder();
-		boolean first = true;
-		for (int i = 0; i < columns.length; i++) {
-			InputColumn<?> column = columns[i];
-			Object value = inputRow.getValue(column);
-			if (value != null && !"".equals(value)) {
-				if (!first && separator != null) {
-					sb.append(separator);
-				}
-				sb.append(value);
-				first = false;
-			}
-		}
-		return new String[] { sb.toString() };
-	}
+    @Override
+    public String[] transform(final InputRow inputRow) {
+        final StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (int i = 0; i < columns.length; i++) {
+            final InputColumn<?> column = columns[i];
+            final Object value = inputRow.getValue(column);
+            if (value != null && !"".equals(value)) {
+                if (!first && separator != null) {
+                    sb.append(separator);
+                }
+                sb.append(value);
+                first = false;
+            }
+        }
+        return new String[] { sb.toString() };
+    }
 
 }

@@ -27,19 +27,17 @@ import java.io.Serializable;
  */
 public class UsageMeteringMessage implements Serializable, ComponentMessage {
 
-    private static final long serialVersionUID = 1L;
-
     public static final char DETAILS_SEPARATOR_CHAR = ',';
     public static final char DETAILS_QUOTE_CHAR = '"';
     public static final char DETAILS_ESCAPE_CHAR = '\\';
-
+    private static final long serialVersionUID = 1L;
     private final String type;
     private final String details;
 
     /**
      * A simple metering message constructor - having only 'type' with no additional details.
      */
-    public UsageMeteringMessage(String type) {
+    public UsageMeteringMessage(final String type) {
         this.type = type;
         details = "";
     }
@@ -48,11 +46,13 @@ public class UsageMeteringMessage implements Serializable, ComponentMessage {
      * Constructor for a metering message with more details.
      * The details items will be concatenated according to a CSV format and available with @{link #getDetails} method
      */
-    public UsageMeteringMessage(String type, String... details) {
+    public UsageMeteringMessage(final String type, final String... details) {
         this.type = type;
-        StringBuilder detailsBldr = new StringBuilder();
-        for(int i = 0; i < details.length; i++) {
-            if(i > 0) { detailsBldr.append(DETAILS_SEPARATOR_CHAR); }
+        final StringBuilder detailsBldr = new StringBuilder();
+        for (int i = 0; i < details.length; i++) {
+            if (i > 0) {
+                detailsBldr.append(DETAILS_SEPARATOR_CHAR);
+            }
             escapeValueTo(details[i], detailsBldr);
         }
         this.details = detailsBldr.toString();
@@ -76,27 +76,27 @@ public class UsageMeteringMessage implements Serializable, ComponentMessage {
     }
 
     public String toString() {
-        return "UsageMeteringMessage[" + type + " " + details+ "]";
+        return "UsageMeteringMessage[" + type + " " + details + "]";
     }
 
     /** Escapes value for a CSV line and appends it to the 'target'. */
-    private void escapeValueTo(String field, StringBuilder target) {
-        if(field == null) {
+    private void escapeValueTo(final String field, final StringBuilder target) {
+        if (field == null) {
             target.append(DETAILS_QUOTE_CHAR);
             target.append(DETAILS_QUOTE_CHAR);
             return;
         }
         target.append(DETAILS_QUOTE_CHAR);
-        if(field.indexOf(DETAILS_ESCAPE_CHAR) == -1 && field.indexOf(DETAILS_QUOTE_CHAR) == -1) {
+        if (field.indexOf(DETAILS_ESCAPE_CHAR) == -1 && field.indexOf(DETAILS_QUOTE_CHAR) == -1) {
             target.append(field);
         } else {
-            int len = field.length();
+            final int len = field.length();
             for (int i = 0; i < len; i++) {
-                char c = field.charAt(i);
-                if (c == DETAILS_ESCAPE_CHAR || c == DETAILS_QUOTE_CHAR) {
+                final char charAt = field.charAt(i);
+                if (charAt == DETAILS_ESCAPE_CHAR || charAt == DETAILS_QUOTE_CHAR) {
                     target.append(DETAILS_ESCAPE_CHAR);
                 }
-                target.append(c);
+                target.append(charAt);
             }
         }
         target.append(DETAILS_QUOTE_CHAR);

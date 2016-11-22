@@ -54,7 +54,7 @@ public class JobTriggeringControllerIntegrationTest {
 
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
                 "context/application-context.xml");
-        final Repository repository = applicationContext.getBean(FileRepository.class);;
+        final Repository repository = applicationContext.getBean(FileRepository.class);
         final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
                 new DataCleanerEnvironmentImpl(), new DefaultJobEngineManager(applicationContext));
 

@@ -33,7 +33,7 @@ public interface ConfigurationInterceptor {
     /**
      * Intercepts a configuration {@link InputStream} and after conversion
      * creates a consumable {@link OutputStream}.
-     * 
+     *
      * @param tenantId
      * @param job
      *            optionally the job which is needs the resulting configuration
@@ -45,6 +45,7 @@ public interface ConfigurationInterceptor {
      * @param out
      * @throws Exception
      */
-    public void intercept(final String tenantId, DataCleanerJobContext job, final String datastoreName, final InputStream in,
+    void intercept(final String tenantId, DataCleanerJobContext job, final String datastoreName,
+            final InputStream in,
             final OutputStream out) throws Exception;
 }

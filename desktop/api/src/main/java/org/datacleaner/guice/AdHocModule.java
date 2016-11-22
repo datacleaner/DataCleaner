@@ -42,62 +42,62 @@ import com.google.inject.util.Providers;
  */
 final class AdHocModule implements Module {
 
-	private static final Logger logger = LoggerFactory.getLogger(AdHocModule.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdHocModule.class);
 
-	private final Map<TypeLiteral<?>, Object> _bindings;
+    private final Map<TypeLiteral<?>, Object> _bindings;
 
-	public AdHocModule() {
-		_bindings = new HashMap<TypeLiteral<?>, Object>();
-	}
+    public AdHocModule() {
+        _bindings = new HashMap<TypeLiteral<?>, Object>();
+    }
 
-	public <E> void bind(Class<?> bindingClass, Object providerOrInstance) {
-		bind(Key.get(bindingClass), providerOrInstance);
-	}
+    public <E> void bind(final Class<?> bindingClass, final Object providerOrInstance) {
+        bind(Key.get(bindingClass), providerOrInstance);
+    }
 
-	public <E> void bind(Key<?> bindingKey, Object providerOrInstance) {
-		bind(bindingKey.getTypeLiteral(), providerOrInstance);
-	}
+    public <E> void bind(final Key<?> bindingKey, final Object providerOrInstance) {
+        bind(bindingKey.getTypeLiteral(), providerOrInstance);
+    }
 
-	public <E> void bind(TypeLiteral<?> bindingTypeLiteral, Object providerOrInstance) {
-		if (providerOrInstance == null) {
-			providerOrInstance = Providers.of(null);
-		}
-		_bindings.put(bindingTypeLiteral, providerOrInstance);
-	}
+    public <E> void bind(final TypeLiteral<?> bindingTypeLiteral, Object providerOrInstance) {
+        if (providerOrInstance == null) {
+            providerOrInstance = Providers.of(null);
+        }
+        _bindings.put(bindingTypeLiteral, providerOrInstance);
+    }
 
-	public boolean hasBindingFor(TypeLiteral<?> bindingTypeLiteral) {
-		return _bindings.containsKey(bindingTypeLiteral);
-	}
+    public boolean hasBindingFor(final TypeLiteral<?> bindingTypeLiteral) {
+        return _bindings.containsKey(bindingTypeLiteral);
+    }
 
-	public boolean hasBindingFor(Key<?> bindingKey) {
-		return hasBindingFor(bindingKey.getTypeLiteral());
-	}
+    public boolean hasBindingFor(final Key<?> bindingKey) {
+        return hasBindingFor(bindingKey.getTypeLiteral());
+    }
 
-	public boolean hasBindingFor(Class<?> bindingClass) {
-		return hasBindingFor(Key.get(bindingClass));
-	}
+    public boolean hasBindingFor(final Class<?> bindingClass) {
+        return hasBindingFor(Key.get(bindingClass));
+    }
 
-	@Override
-	public void configure(Binder binder) {
-	    final Set<Entry<TypeLiteral<?>, Object>> entrySet = _bindings.entrySet();
-		for (final Entry<TypeLiteral<?>, Object> entry : entrySet) {
-			@SuppressWarnings("unchecked")
-			final TypeLiteral<Object> bindingLiteral = (TypeLiteral<Object>) entry.getKey();
+    @Override
+    public void configure(final Binder binder) {
+        final Set<Entry<TypeLiteral<?>, Object>> entrySet = _bindings.entrySet();
+        for (final Entry<TypeLiteral<?>, Object> entry : entrySet) {
+            @SuppressWarnings("unchecked")
+            final TypeLiteral<Object> bindingLiteral = (TypeLiteral<Object>) entry.getKey();
 
-			final Object providerOrInstance = entry.getValue();
+            final Object providerOrInstance = entry.getValue();
 
-			logger.debug("Binding ad-hoc dependency for {}: {}", bindingLiteral, providerOrInstance);
+            logger.debug("Binding ad-hoc dependency for {}: {}", bindingLiteral, providerOrInstance);
 
-			if (providerOrInstance instanceof Provider) {
-			    final Provider<?> provider = (Provider<?>) providerOrInstance;
-			    final com.google.inject.Provider<?> guiceProvider = Providers.guicify(provider);
-				binder.bind(bindingLiteral).toProvider(guiceProvider);
-			} else if (providerOrInstance instanceof com.google.inject.Provider) {
-			    final com.google.inject.Provider<?> guiceProvider = (com.google.inject.Provider<?>) providerOrInstance;
-				binder.bind(bindingLiteral).toProvider(guiceProvider);
-			} else {
-				binder.bind(bindingLiteral).toInstance(providerOrInstance);
-			}
-		}
-	}
+            if (providerOrInstance instanceof Provider) {
+                final Provider<?> provider = (Provider<?>) providerOrInstance;
+                final com.google.inject.Provider<?> guiceProvider = Providers.guicify(provider);
+                binder.bind(bindingLiteral).toProvider(guiceProvider);
+            } else if (providerOrInstance instanceof com.google.inject.Provider) {
+                final com.google.inject.Provider<?> guiceProvider = (com.google.inject.Provider<?>) providerOrInstance;
+                binder.bind(bindingLiteral).toProvider(guiceProvider);
+            } else {
+                binder.bind(bindingLiteral).toInstance(providerOrInstance);
+            }
+        }
+    }
 }

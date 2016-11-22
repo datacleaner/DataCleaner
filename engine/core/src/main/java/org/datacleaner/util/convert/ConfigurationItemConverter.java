@@ -19,13 +19,13 @@
  */
 package org.datacleaner.util.convert;
 
-import static org.datacleaner.util.ReflectionUtils.is;
-import static org.datacleaner.util.ReflectionUtils.isColumn;
-import static org.datacleaner.util.ReflectionUtils.isSchema;
-import static org.datacleaner.util.ReflectionUtils.isTable;
+import static org.datacleaner.util.ReflectionUtils.*;
 
 import javax.inject.Inject;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
@@ -36,16 +36,13 @@ import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.util.ReflectionUtils;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Converter} implementation for DataCleaner configuration items,
  * specifically:
- * 
+ *
  * <ul>
  * <li>org.datacleaner.reference.Dictionary</li>
  * <li>org.datacleaner.reference.SynonymCatalog</li>
@@ -71,15 +68,15 @@ public class ConfigurationItemConverter implements Converter<Object> {
 
     protected ConfigurationItemConverter() {
     }
-    
-    public ConfigurationItemConverter(DataCleanerConfiguration configuration, Datastore datastore) {
+
+    public ConfigurationItemConverter(final DataCleanerConfiguration configuration, final Datastore datastore) {
         this.datastoreCatalog = configuration.getDatastoreCatalog();
         this.referenceDataCatalog = configuration.getReferenceDataCatalog();
         this.datastore = datastore;
     }
 
     @Override
-    public Object fromString(Class<?> type, String str) {
+    public Object fromString(final Class<?> type, final String str) {
         if (ReflectionUtils.isColumn(type)) {
             try (DatastoreConnection connection = datastore.openConnection()) {
                 final Column column = connection.getSchemaNavigator().convertToColumn(str);
@@ -91,7 +88,7 @@ public class ConfigurationItemConverter implements Converter<Object> {
         }
         if (ReflectionUtils.isTable(type)) {
             try (DatastoreConnection connection = datastore.openConnection()) {
-                Table table = connection.getSchemaNavigator().convertToTable(str);
+                final Table table = connection.getSchemaNavigator().convertToTable(str);
                 if (table == null) {
                     throw new IllegalArgumentException("Table not found: " + str);
                 }
@@ -100,7 +97,7 @@ public class ConfigurationItemConverter implements Converter<Object> {
         }
         if (ReflectionUtils.isSchema(type)) {
             try (DatastoreConnection connection = datastore.openConnection()) {
-                Schema schema = connection.getSchemaNavigator().convertToSchema(str);
+                final Schema schema = connection.getSchemaNavigator().convertToSchema(str);
                 if (schema == null) {
                     throw new IllegalArgumentException("Schema not found: " + str);
                 }
@@ -108,21 +105,21 @@ public class ConfigurationItemConverter implements Converter<Object> {
             }
         }
         if (ReflectionUtils.is(type, Dictionary.class)) {
-            Dictionary dictionary = referenceDataCatalog.getDictionary(str);
+            final Dictionary dictionary = referenceDataCatalog.getDictionary(str);
             if (dictionary == null) {
                 throw new IllegalArgumentException("Dictionary not found: " + str);
             }
             return dictionary;
         }
         if (ReflectionUtils.is(type, SynonymCatalog.class)) {
-            SynonymCatalog synonymCatalog = referenceDataCatalog.getSynonymCatalog(str);
+            final SynonymCatalog synonymCatalog = referenceDataCatalog.getSynonymCatalog(str);
             if (synonymCatalog == null) {
                 throw new IllegalArgumentException("Synonym catalog not found: " + str);
             }
             return synonymCatalog;
         }
         if (ReflectionUtils.is(type, StringPattern.class)) {
-            StringPattern stringPattern = referenceDataCatalog.getStringPattern(str);
+            final StringPattern stringPattern = referenceDataCatalog.getStringPattern(str);
             if (stringPattern == null) {
                 throw new IllegalArgumentException("String pattern not found: " + str);
             }
@@ -130,7 +127,7 @@ public class ConfigurationItemConverter implements Converter<Object> {
         }
         if (ReflectionUtils.is(type, Datastore.class)) {
             if (null != datastoreCatalog) {
-                Datastore datastore = datastoreCatalog.getDatastore(str);
+                final Datastore datastore = datastoreCatalog.getDatastore(str);
                 if (datastore == null) {
                     throw new IllegalArgumentException("Datastore not found: " + str);
                 }
@@ -141,7 +138,7 @@ public class ConfigurationItemConverter implements Converter<Object> {
     }
 
     @Override
-    public String toString(Object o) {
+    public String toString(final Object o) {
         final String result;
         if (o instanceof Schema) {
             result = ((Schema) o).getName();
@@ -165,7 +162,7 @@ public class ConfigurationItemConverter implements Converter<Object> {
     }
 
     @Override
-    public boolean isConvertable(Class<?> type) {
+    public boolean isConvertable(final Class<?> type) {
         return isSchema(type) || isTable(type) || isColumn(type) || is(type, Dictionary.class)
                 || is(type, SynonymCatalog.class) || is(type, StringPattern.class) || is(type, Datastore.class);
     }

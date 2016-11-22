@@ -19,13 +19,13 @@
  */
 package org.datacleaner.configuration;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
-
-import junit.framework.TestCase;
 
 @SuppressWarnings("deprecation")
 public class AnalyzerBeansConfigurationImplTest extends TestCase {

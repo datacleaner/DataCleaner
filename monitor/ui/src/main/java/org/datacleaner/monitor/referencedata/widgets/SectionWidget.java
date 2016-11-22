@@ -27,7 +27,7 @@ import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SectionWidget extends VerticalPanel {
-    public SectionWidget(TenantIdentifier tenant, String title, Set<ReferenceDataItem> set) {
+    public SectionWidget(final TenantIdentifier tenant, final String title, final Set<ReferenceDataItem> set) {
         add(new TitleWidget(title));
         add(new ListWidget(tenant, set));
     }

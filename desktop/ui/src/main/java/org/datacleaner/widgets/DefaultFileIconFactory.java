@@ -69,7 +69,7 @@ public class DefaultFileIconFactory implements FileIconFactory {
     private static final String DESKTOP_PATH = USER_HOME_PATH + File.separatorChar + "Desktop";
 
     @Override
-    public Icon getIcon(File f) {
+    public Icon getIcon(final File f) {
         final String name = f.getName().toLowerCase();
         if (f.isDirectory()) {
             final String absolutePath = f.getAbsolutePath();

@@ -72,7 +72,7 @@ public class DatastoreRemovalController {
 
         try {
             datastoreDao.removeDatastore(tenantContext, datastoreName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Removing datastore '" + datastoreName + "' from tenant '" + tenant
                     + "'s configuration failed", e);
             response.put("status", "FAILURE");

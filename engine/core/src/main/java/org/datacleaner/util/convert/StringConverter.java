@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Helper class for converting objects to and from string representations as
  * used for example in serialized XML jobs.
- * 
+ *
  * The string converter currently supports instances and arrays of:
  * <ul>
  * <li>Boolean</li>
@@ -73,26 +73,11 @@ public final class StringConverter {
     private final DataCleanerConfiguration _configuration;
     private final DelegatingConverter _baseConverter;
 
-    /**
-     * Gets a simple instance of {@link StringConverter}. This instance will not
-     * be able to convert all types as well as an instance that is bound to a
-     * specific {@link DataCleanerConfiguration}, a {@link InjectionManager} or
-     * an {@link AnalysisJob}.
-     * 
-     * In other words: The instance will work for simple use-cases but is
-     * discouraged when it is possible to provide a bounded context object.
-     * 
-     * @return
-     */
-    public static StringConverter simpleInstance() {
-        return SIMPLE_INSTANCE;
-    }
-
-    public StringConverter(DataCleanerConfiguration configuration, AnalysisJob job) {
+    public StringConverter(final DataCleanerConfiguration configuration, final AnalysisJob job) {
         this(getInjectionManager(configuration, job));
     }
 
-    public StringConverter(DataCleanerConfiguration configuration) {
+    public StringConverter(final DataCleanerConfiguration configuration) {
         if (configuration == null) {
             throw new IllegalArgumentException("DataCleanerConfiguration cannot be null");
         }
@@ -102,7 +87,7 @@ public final class StringConverter {
         _baseConverter = createBaseConverter();
     }
 
-    public StringConverter(InjectionManager injectionManager) {
+    public StringConverter(final InjectionManager injectionManager) {
         if (injectionManager == null) {
             throw new IllegalArgumentException("InjectionManager cannot be null");
         }
@@ -113,16 +98,22 @@ public final class StringConverter {
         _baseConverter = createBaseConverter();
     }
 
-    private DelegatingConverter createBaseConverter() {
-        DelegatingConverter baseConverter = new DelegatingConverter();
-        baseConverter.addConverter(new ConfigurationItemConverter());
-        baseConverter.addConverter(getResourceConverter());
-        baseConverter.addConverter(new StandardTypeConverter(_configuration, baseConverter));
-        baseConverter.initializeAll(_injectionManager);
-        return baseConverter;
+    /**
+     * Gets a simple instance of {@link StringConverter}. This instance will not
+     * be able to convert all types as well as an instance that is bound to a
+     * specific {@link DataCleanerConfiguration}, a {@link InjectionManager} or
+     * an {@link AnalysisJob}.
+     *
+     * In other words: The instance will work for simple use-cases but is
+     * discouraged when it is possible to provide a bounded context object.
+     *
+     * @return
+     */
+    public static StringConverter simpleInstance() {
+        return SIMPLE_INSTANCE;
     }
 
-    private static InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
+    private static InjectionManager getInjectionManager(final DataCleanerConfiguration configuration, final AnalysisJob job) {
         final InjectionManagerFactory injectionManagerFactory = configuration.getEnvironment()
                 .getInjectionManagerFactory();
         if (job == null) {
@@ -132,9 +123,18 @@ public final class StringConverter {
         }
     }
 
+    private DelegatingConverter createBaseConverter() {
+        final DelegatingConverter baseConverter = new DelegatingConverter();
+        baseConverter.addConverter(new ConfigurationItemConverter());
+        baseConverter.addConverter(getResourceConverter());
+        baseConverter.addConverter(new StandardTypeConverter(_configuration, baseConverter));
+        baseConverter.initializeAll(_injectionManager);
+        return baseConverter;
+    }
+
     /**
      * Serializes a Java object to a String representation.
-     * 
+     *
      * @param o
      *            the object to serialize
      * @return a String representation of the Java object
@@ -147,7 +147,7 @@ public final class StringConverter {
      * @deprecated by {@link #serialize(Object, Converter)}
      */
     public final String serialize(final Object o, final Class<? extends Converter<?>> converterClass) {
-        Converter<?> converter = converterClass == null ? null : createConverter(converterClass);
+        final Converter<?> converter = converterClass == null ? null : createConverter(converterClass);
         return serialize(o, converter);
     }
 
@@ -161,7 +161,7 @@ public final class StringConverter {
 
     /**
      * Serializes a Java object to a String representation.
-     * 
+     *
      * @param o
      *            the object to serialize
      * @param converters
@@ -172,7 +172,7 @@ public final class StringConverter {
         final DelegatingConverter delegatingConverter = new DelegatingConverter();
 
         if (converters != null) {
-            for (Converter<?> converter : converters) {
+            for (final Converter<?> converter : converters) {
                 delegatingConverter.addConverter(converter);
             }
         }
@@ -190,7 +190,7 @@ public final class StringConverter {
         if (_injectionManager == null) {
             return new ResourceConverter(_configuration);
         } else {
-            ResourceConverter converter = _injectionManager.getInstance(SimpleInjectionPoint
+            final ResourceConverter converter = _injectionManager.getInstance(SimpleInjectionPoint
                     .of(ResourceConverter.class));
             if (converter == null) {
                 return new ResourceConverter(_configuration);
@@ -199,11 +199,11 @@ public final class StringConverter {
         }
     }
 
-    private Converter<?> createConverter(Class<? extends Converter<?>> converterClass) {
+    private Converter<?> createConverter(final Class<? extends Converter<?>> converterClass) {
         try {
-            Converter<?> converter = converterClass.newInstance();
+            final Converter<?> converter = converterClass.newInstance();
             return converter;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -220,22 +220,22 @@ public final class StringConverter {
      *            the requested type
      * @return a Java object matching the String representation
      */
-    public final <E> E deserialize(String str, Class<E> type) {
+    public final <E> E deserialize(final String str, final Class<E> type) {
         return deserialize(str, type, new ArrayList<Converter<?>>(0));
     }
 
     /**
      * @deprecated by {@link #deserialize(String, Class, Converter)}
      */
-    public final <E> E deserialize(String str, Class<E> type, Class<? extends Converter<?>> converterClass) {
-        if(converterClass == null) {
+    public final <E> E deserialize(final String str, final Class<E> type, final Class<? extends Converter<?>> converterClass) {
+        if (converterClass == null) {
             return deserialize(str, type);
         }
         return deserialize(str, type, createConverter(converterClass));
     }
 
-    public final <E> E deserialize(String str, Class<E> type, Converter<?> converter) {
-        Collection<Converter<?>> col = new ArrayList<Converter<?>>();
+    public final <E> E deserialize(final String str, final Class<E> type, final Converter<?> converter) {
+        final Collection<Converter<?>> col = new ArrayList<Converter<?>>();
         if (converter != null) {
             col.add(converter);
         }
@@ -244,7 +244,7 @@ public final class StringConverter {
 
     /**
      * Deserializes a String into a Java object of the particular type.
-     * 
+     *
      * @param str
      *            the serialized string representation
      * @param type
@@ -254,7 +254,7 @@ public final class StringConverter {
      *            deserializing
      * @return a Java object matching the String representation
      */
-    public final <E> E deserialize(String str, Class<E> type, Collection<Converter<?>> converters) {
+    public final <E> E deserialize(final String str, final Class<E> type, final Collection<Converter<?>> converters) {
         logger.debug("deserialize(\"{}\", {})", str, type);
 
         if (converters == null || converters.isEmpty()) {
@@ -267,14 +267,14 @@ public final class StringConverter {
         final DelegatingConverter delegatingConverter = new DelegatingConverter();
 
         if (converters != null) {
-            for (Converter<?> converter : converters) {
+            for (final Converter<?> converter : converters) {
                 delegatingConverter.addConverter(converter);
                 delegatingConverter.initialize(converter, _injectionManager);
             }
         }
 
         final List<Converter<?>> baseconverters = _baseConverter.getConverters();
-        for (Converter<?> converter : baseconverters) {
+        for (final Converter<?> converter : baseconverters) {
             delegatingConverter.addConverter(converter);
         }
 

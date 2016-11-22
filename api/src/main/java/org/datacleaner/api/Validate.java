@@ -29,10 +29,10 @@ import java.lang.annotation.Target;
 /**
  * Annotation that marks method as a validation method. Use this annotation if
  * you want to validate property values before initialization.
- * 
+ *
  * The @Initialize annotation can be used on methods in the following component
  * types:
- * 
+ *
  * <ul>
  * <li>AnalyzerBeans</li>
  * <li>TransformerBeans</li>
@@ -44,11 +44,11 @@ import java.lang.annotation.Target;
  * custom task runners (in which case the semantics are a bit different - they
  * will only be validated once, just after loading the configuration).</li>
  * </ul>
- * 
+ *
  * The method is invoked after any @Configured and @Provided methods/fields are
  * invoked/assigned but before initialization and any business methods (such as
  * run(...) on an analyzer) are invoked.
- * 
+ *
  * Validation methods should be repeatable and rather lightweight, since they
  * might be called multiple times on any single component.
  */

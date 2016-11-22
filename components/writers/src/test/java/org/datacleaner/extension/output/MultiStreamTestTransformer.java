@@ -34,12 +34,10 @@ import org.datacleaner.job.output.OutputDataStreams;
  * containing the uneven rows going in.
  */
 public class MultiStreamTestTransformer extends MultiStreamComponent {
-    @Configured
-    InputColumn<?>[] _valueColumns;
-
     static final String OUTPUT_STREAM_EVEN = "Even rows";
     static final String OUTPUT_STREAM_UNEVEN = "Uneven rows";
-
+    @Configured
+    InputColumn<?>[] _valueColumns;
     private OutputRowCollector _evenRowCollector;
     private OutputRowCollector _unevenRowCollector;
 
@@ -71,7 +69,7 @@ public class MultiStreamTestTransformer extends MultiStreamComponent {
     @Override
     protected void run(InputRow row) {
         if (_even && _evenRowCollector != null) {
-                _evenRowCollector.putValues(row.getValues(_valueColumns).toArray());
+            _evenRowCollector.putValues(row.getValues(_valueColumns).toArray());
         } else {
             if (!_even && _unevenRowCollector != null) {
                 _unevenRowCollector.putValues(row.getValues(_valueColumns).toArray());

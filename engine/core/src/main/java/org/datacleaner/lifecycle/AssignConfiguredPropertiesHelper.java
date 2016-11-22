@@ -33,8 +33,8 @@ final class AssignConfiguredPropertiesHelper {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public void assignProperties(Object component, ComponentDescriptor<?> descriptor,
-            ComponentConfiguration configuration) {
+    public void assignProperties(final Object component, final ComponentDescriptor<?> descriptor,
+            final ComponentConfiguration configuration) {
         final Set<ConfiguredPropertyDescriptor> configuredProperties = descriptor.getConfiguredProperties();
         for (final ConfiguredPropertyDescriptor property : configuredProperties) {
             Object configuredValue = getValue(property, configuration);
@@ -60,12 +60,12 @@ final class AssignConfiguredPropertiesHelper {
         }
     }
 
-    protected void setValue(ConfiguredPropertyDescriptor property, Object component, Object value) {
+    protected void setValue(final ConfiguredPropertyDescriptor property, final Object component, final Object value) {
         property.setValue(component, value);
     }
 
-    protected Object getValue(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentConfiguration componentConfiguration) {
+    protected Object getValue(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentConfiguration componentConfiguration) {
         final Object value = componentConfiguration.getProperty(propertyDescriptor);
         logger.debug("Property '{}' in configuration: {}", propertyDescriptor.getName(), value);
         return value;

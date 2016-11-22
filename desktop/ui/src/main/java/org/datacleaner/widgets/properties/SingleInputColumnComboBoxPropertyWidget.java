@@ -42,7 +42,7 @@ import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 /**
  * {@link PropertyWidget} for single {@link InputColumn}s. Displays the
  * selection as a ComboBox, used for optional input columns.
- * 
+ *
  * @author Kasper Sørensen
  */
 public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWidget<InputColumn<?>> implements
@@ -54,13 +54,13 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
 
     @Inject
     public SingleInputColumnComboBoxPropertyWidget(
-            ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+            final ComponentBuilder componentBuilder, final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
         _comboBox = new DCComboBox<InputColumn<?>>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
         _comboBox.addListener(new Listener<InputColumn<?>>() {
             @Override
-            public void onItemSelected(InputColumn<?> item) {
+            public void onItemSelected(final InputColumn<?> item) {
                 fireValueChanged();
             }
         });
@@ -74,11 +74,11 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     }
 
     private void updateComponents() {
-        InputColumn<?> currentValue = getCurrentValue();
+        final InputColumn<?> currentValue = getCurrentValue();
         updateComponents(currentValue);
     }
 
-    private void updateComponents(InputColumn<?> currentValue) {
+    private void updateComponents(final InputColumn<?> currentValue) {
         _inputColumns = getAnalysisJobBuilder().getAvailableInputColumns(getComponentBuilder(), _dataType);
 
         if (currentValue != null) {
@@ -92,10 +92,10 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
             _inputColumns.add(0, null);
         }
 
-        for (Iterator<InputColumn<?>> it = _inputColumns.iterator(); it.hasNext();) {
-            InputColumn<?> inputColumn = it.next();
+        for (final Iterator<InputColumn<?>> it = _inputColumns.iterator(); it.hasNext(); ) {
+            final InputColumn<?> inputColumn = it.next();
             if (inputColumn instanceof MutableInputColumn) {
-                MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) inputColumn;
+                final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) inputColumn;
                 mutableInputColumn.addListener(this);
                 if (mutableInputColumn.isHidden()) {
                     it.remove();
@@ -108,7 +108,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     }
 
     @Override
-    public void onAdd(InputColumn<?> sourceColumn) {
+    public void onAdd(final InputColumn<?> sourceColumn) {
         if (isColumnApplicable(sourceColumn)) {
             updateComponents();
             updateUI();
@@ -116,11 +116,11 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     }
 
     @Override
-    public void onRemove(InputColumn<?> sourceColumn) {
+    public void onRemove(final InputColumn<?> sourceColumn) {
         handleRemovedColumn(sourceColumn);
     }
 
-    private void handleRemovedColumn(InputColumn<?> column) {
+    private void handleRemovedColumn(final InputColumn<?> column) {
         if (isColumnApplicable(column)) {
             if (column instanceof MutableInputColumn) {
                 ((MutableInputColumn<?>) column).removeListener(this);
@@ -141,25 +141,25 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
         }
     }
 
-    private boolean isColumnApplicable(InputColumn<?> column) {
+    private boolean isColumnApplicable(final InputColumn<?> column) {
         return _dataType == Object.class || ReflectionUtils.is(column.getDataType(), _dataType);
     }
 
     @Override
-    public void onAdd(TransformerComponentBuilder<?> transformerJobBuilder) {
+    public void onAdd(final TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override
-    public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
-            List<MutableInputColumn<?>> outputColumns) {
+    public void onOutputChanged(final TransformerComponentBuilder<?> transformerJobBuilder,
+            final List<MutableInputColumn<?>> outputColumns) {
         updateComponents();
         updateUI();
     }
 
     @Override
-    public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
-        List<MutableInputColumn<?>> outputColumns = transformerJobBuilder.getOutputColumns();
-        for (MutableInputColumn<?> column : outputColumns) {
+    public void onRemove(final TransformerComponentBuilder<?> transformerJobBuilder) {
+        final List<MutableInputColumn<?>> outputColumns = transformerJobBuilder.getOutputColumns();
+        for (final MutableInputColumn<?> column : outputColumns) {
             handleRemovedColumn(column);
         }
     }
@@ -170,7 +170,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
         getAnalysisJobBuilder().removeSourceColumnChangeListener(this);
         getAnalysisJobBuilder().removeTransformerChangeListener(this);
 
-        for (InputColumn<?> column : _inputColumns) {
+        for (final InputColumn<?> column : _inputColumns) {
             if (column instanceof MutableInputColumn) {
                 ((MutableInputColumn<?>) column).removeListener(this);
             }
@@ -183,7 +183,13 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     }
 
     @Override
-    public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
+    protected void setValue(final InputColumn<?> value) {
+        updateComponents(value);
+        updateUI();
+    }
+
+    @Override
+    public void onConfigurationChanged(final TransformerComponentBuilder<?> transformerJobBuilder) {
         if (transformerJobBuilder == getComponentBuilder()) {
             return;
         }
@@ -192,21 +198,15 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     }
 
     @Override
-    public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
+    public void onRequirementChanged(final TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override
-    protected void setValue(InputColumn<?> value) {
-        updateComponents(value);
-        updateUI();
+    public void onNameChanged(final MutableInputColumn<?> inputColumn, final String oldName, final String newName) {
     }
 
     @Override
-    public void onNameChanged(MutableInputColumn<?> inputColumn, String oldName, String newName) {
-    }
-
-    @Override
-    public void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden) {
+    public void onVisibilityChanged(final MutableInputColumn<?> inputColumn, final boolean hidden) {
         if (!isColumnApplicable(inputColumn)) {
             return;
         }

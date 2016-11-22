@@ -30,44 +30,42 @@ import org.datacleaner.api.InputRow;
  */
 public class AnyComponentRequirement implements ComponentRequirement {
 
-    private static final long serialVersionUID = 1L;
-
     public static final String KEYWORD = "_any_";
-
+    private static final long serialVersionUID = 1L;
     private static final ComponentRequirement INSTANCE = new AnyComponentRequirement();
+
+    private AnyComponentRequirement() {
+    }
 
     public static ComponentRequirement get() {
         return INSTANCE;
-    }
-
-    private AnyComponentRequirement() {
     }
 
     @Override
     public String toString() {
         return "AnyComponentRequirement[]";
     }
-    
+
     @Override
     public String getSimpleName() {
         return KEYWORD;
     }
 
     @Override
-    public boolean isSatisfied(InputRow row, FilterOutcomes outcomes) {
+    public boolean isSatisfied(final InputRow row, final FilterOutcomes outcomes) {
         return true;
     }
-    
+
     @Override
     public Collection<FilterOutcome> getProcessingDependencies() {
         return Collections.emptyList();
     }
-    
+
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         return obj == this || obj instanceof AnyComponentRequirement;
     }
-    
+
     @Override
     public int hashCode() {
         return 42;

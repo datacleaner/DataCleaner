@@ -40,12 +40,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Result reducer for {@link NumberAnalyzerResult}s.
- * 
+ *
  * Note: Some of the result metrics of {@link NumberAnalyzerResult} are NOT
  * reduceable. Since the inclusion of these metrics are anyways optional (based
  * on a configuration property), we take the optimistic approach and reduce what
  * we can.
- * 
+ *
  * Warnings will be raised if non-reduceable metrics are encountered.
  */
 public class NumberAnalyzerResultReducer extends AbstractCrosstabResultReducer<NumberAnalyzerResult> {
@@ -56,8 +56,8 @@ public class NumberAnalyzerResultReducer extends AbstractCrosstabResultReducer<N
             NumberAnalyzer.MEASURE_ROW_COUNT, NumberAnalyzer.MEASURE_NULL_COUNT));
 
     @Override
-    protected Serializable reduceValues(List<Object> slaveValues, String column, String measure,
-            Collection<? extends NumberAnalyzerResult> results, Class<?> valueClass) {
+    protected Serializable reduceValues(final List<Object> slaveValues, final String column, final String measure,
+            final Collection<? extends NumberAnalyzerResult> results, final Class<?> valueClass) {
 
         if (SUM_MEASURES.contains(measure)) {
             return sum(slaveValues);
@@ -66,24 +66,24 @@ public class NumberAnalyzerResultReducer extends AbstractCrosstabResultReducer<N
         } else if (NumberAnalyzer.MEASURE_LOWEST_VALUE.equals(measure)) {
             return minimum(slaveValues);
         } else if (NumberAnalyzer.MEASURE_MEAN.equals(measure)) {
-            StatisticalSummary summary = getSummary(column, results);
+            final StatisticalSummary summary = getSummary(column, results);
             return summary.getMean();
         } else if (NumberAnalyzer.MEASURE_STANDARD_DEVIATION.equals(measure)) {
-            StatisticalSummary summary = getSummary(column, results);
+            final StatisticalSummary summary = getSummary(column, results);
             return summary.getStandardDeviation();
         } else if (NumberAnalyzer.MEASURE_VARIANCE.equals(measure)) {
-            StatisticalSummary summary = getSummary(column, results);
+            final StatisticalSummary summary = getSummary(column, results);
             return summary.getVariance();
         }
-        
+
         logger.warn("Encountered non-reduceable measure '{}'. Slave values are: {}", measure, slaveValues);
         return null;
     }
 
-    private StatisticalSummary getSummary(String column, Collection<? extends NumberAnalyzerResult> results) {
+    private StatisticalSummary getSummary(final String column, final Collection<? extends NumberAnalyzerResult> results) {
         final List<SummaryStatistics> statistics = new ArrayList<SummaryStatistics>(results.size());
-        for (NumberAnalyzerResult analyzerResult : results) {
-            SummaryStatistics stats = buildStatistics(column, analyzerResult);
+        for (final NumberAnalyzerResult analyzerResult : results) {
+            final SummaryStatistics stats = buildStatistics(column, analyzerResult);
             statistics.add(stats);
         }
         final StatisticalSummaryValues summary = AggregateSummaryStatistics.aggregate(statistics);
@@ -135,12 +135,12 @@ public class NumberAnalyzerResultReducer extends AbstractCrosstabResultReducer<N
             public double getGeometricMean() {
                 return analyzerResult.getGeometricMean(col).doubleValue();
             }
-            
+
             @Override
             public double getSecondMoment() {
                 return analyzerResult.getSecondMoment(col).doubleValue();
             }
-            
+
             @Override
             public double getSumsq() {
                 return analyzerResult.getSumOfSquares(col).doubleValue();
@@ -150,7 +150,8 @@ public class NumberAnalyzerResultReducer extends AbstractCrosstabResultReducer<N
     }
 
     @Override
-    protected NumberAnalyzerResult buildResult(Crosstab<?> crosstab, Collection<? extends NumberAnalyzerResult> results) {
+    protected NumberAnalyzerResult buildResult(final Crosstab<?> crosstab,
+            final Collection<? extends NumberAnalyzerResult> results) {
         final NumberAnalyzerResult firstResult = results.iterator().next();
 
         final InputColumn<? extends Number>[] columns = firstResult.getColumns();

@@ -34,7 +34,7 @@ public abstract class AbstractDatastoreWizardSession implements DatastoreWizardS
 
     private final DatastoreWizardContext _wizardContext;
 
-    public AbstractDatastoreWizardSession(DatastoreWizardContext wizardContext) {
+    public AbstractDatastoreWizardSession(final DatastoreWizardContext wizardContext) {
         _wizardContext = wizardContext;
     }
 
@@ -56,9 +56,9 @@ public abstract class AbstractDatastoreWizardSession implements DatastoreWizardS
         final Element datastoreNode = createDatastoreElement(documentBuilder);
 
         final DatastoreDao datastoreDao = getDatastoreDao();
-        String datastoreName = datastoreDao.addDatastore(tenantContext, datastoreNode);
-        
-        
+        final String datastoreName = datastoreDao.addDatastore(tenantContext, datastoreNode);
+
+
         return datastoreName;
     }
 
@@ -70,9 +70,9 @@ public abstract class AbstractDatastoreWizardSession implements DatastoreWizardS
      * Creates the final datastore node (to be inserted into conf.xml) as
      * prescribed by the wizard. This method will be invoked when no more pages
      * are available and the wizard has ended.
-     * 
+     *
      * @param documentBuilder
-     * 
+     *
      * @return
      */
     protected abstract Element createDatastoreElement(DocumentBuilder documentBuilder);

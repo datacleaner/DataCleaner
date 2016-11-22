@@ -39,26 +39,28 @@ public final class BaseHeadElement implements HeadElement {
 
     /**
      * Constructs a {@link BaseHeadElement}.
-     * 
+     *
      * @param resourcesDirectory
      */
-    public BaseHeadElement(String resourcesDirectory) {
+    public BaseHeadElement(final String resourcesDirectory) {
         _resourcesDirectory = resourcesDirectory;
     }
 
     @Override
-    public String toHtml(HtmlRenderingContext context) {
+    public String toHtml(final HtmlRenderingContext context) {
         String externalLibs = _resourcesDirectory + '/';
 
         // If it is from an external server, a CDN is preferred.
-        if(URI.create(_resourcesDirectory).isAbsolute()){
+        if (URI.create(_resourcesDirectory).isAbsolute()) {
             externalLibs = CDNJS_URL;
         }
 
         // Here it would be logical to use the HTTP base tag, but unfortunately JQuery UI tabs doesn't work with that
         return "<link rel=\"shortcut icon\" href=\"" + _resourcesDirectory + "/analysis-result-icon.png\" />\n"
-                + "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + externalLibs + "jqueryui/1.12.0/themes/base/jquery-ui.css\" />\n"
-                + "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _resourcesDirectory + "/analysis-result.css?load=script\" />\n"
+                + "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + externalLibs
+                + "jqueryui/1.12.0/themes/base/jquery-ui.css\" />\n"
+                + "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _resourcesDirectory
+                + "/analysis-result.css?load=script\" />\n"
                 + "<script type=\"text/javascript\">//<![CDATA[\nvar analysisResult = {};\n"
                 + "requirejs = {\n"
                 + "    baseUrl: '" + externalLibs + "',\n"

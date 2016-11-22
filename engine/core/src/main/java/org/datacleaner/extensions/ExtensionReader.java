@@ -56,9 +56,9 @@ public class ExtensionReader {
 
     public List<ExtensionPackage> getInternalExtensions() {
         final List<URL> extensionDescriptorUrls = resourceManager.getUrls("datacleaner-extension.xml");
-        List<ExtensionPackage> result = new ArrayList<ExtensionPackage>();
-        for (URL url : extensionDescriptorUrls) {
-            ExtensionPackage extension = getInternalExtension(url);
+        final List<ExtensionPackage> result = new ArrayList<ExtensionPackage>();
+        for (final URL url : extensionDescriptorUrls) {
+            final ExtensionPackage extension = getInternalExtension(url);
             if (extension != null) {
                 result.add(extension);
             }
@@ -66,7 +66,7 @@ public class ExtensionReader {
         return result;
     }
 
-    private ExtensionPackage getInternalExtension(URL url) {
+    private ExtensionPackage getInternalExtension(final URL url) {
         logger.info("Reading extension descriptor: {}", url);
         try {
             final InputStream inputStream = url.openStream();
@@ -75,13 +75,13 @@ public class ExtensionReader {
             } finally {
                 FileHelper.safeClose(inputStream);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Error reading internal extension of URL: " + url, e);
         }
         return null;
     }
 
-    public ExtensionPackage readExternalExtension(File fileOrDirectory) {
+    public ExtensionPackage readExternalExtension(final File fileOrDirectory) {
         if (fileOrDirectory == null) {
             return null;
         }
@@ -92,11 +92,11 @@ public class ExtensionReader {
         return readExternalExtension(fileOrDirectory.getName(), new File[] { fileOrDirectory });
     }
 
-    public ExtensionPackage readExternalExtension(File[] files) {
+    public ExtensionPackage readExternalExtension(final File[] files) {
         return readExternalExtension(null, files);
     }
 
-    public ExtensionPackage readExternalExtension(String name, final File[] files) {
+    public ExtensionPackage readExternalExtension(final String name, final File[] files) {
         final boolean autoDetectPackage;
         final File[] jarFiles;
         if (files.length == 1 && files[0].isDirectory()) {
@@ -112,11 +112,11 @@ public class ExtensionReader {
         }
 
         // check if any of the files has an extension descriptor file
-        for (File file : jarFiles) {
+        for (final File file : jarFiles) {
             if (file.getName().toLowerCase().endsWith(".jar")) {
                 try {
                     try (JarFile jarFile = new JarFile(file)) {
-                        JarEntry entry = jarFile.getJarEntry("datacleaner-extension.xml");
+                        final JarEntry entry = jarFile.getJarEntry("datacleaner-extension.xml");
                         if (entry == null) {
                             logger.info("No extension descriptor file (datacleaner-extension.xml) found in file: {}",
                                     file);
@@ -130,7 +130,7 @@ public class ExtensionReader {
                             }
                         }
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.error("Failed to read from JAR file", e);
                 }
             }
@@ -140,7 +140,7 @@ public class ExtensionReader {
         final String extensionName;
         if (StringUtils.isNullOrEmpty(name)) {
             final StringBuilder extensionNameBuilder = new StringBuilder();
-            for (File file : files) {
+            for (final File file : files) {
                 if (extensionNameBuilder.length() > 0) {
                     extensionNameBuilder.append(", ");
                 }
@@ -156,11 +156,11 @@ public class ExtensionReader {
         return extension;
     }
 
-    private ExtensionPackage readExtension(InputStream inputStream, File[] files) throws Exception {
+    private ExtensionPackage readExtension(final InputStream inputStream, final File[] files) throws Exception {
         return readExtension(null, inputStream, files);
     }
 
-    private ExtensionPackage readExtension(String name, InputStream inputStream, File[] files) throws Exception {
+    private ExtensionPackage readExtension(String name, final InputStream inputStream, final File[] files) throws Exception {
         final DocumentBuilder documentBuilder = XmlUtils.createDocumentBuilder();
         final Document document = documentBuilder.parse(inputStream);
         final Element documentElement = document.getDocumentElement();
@@ -202,22 +202,22 @@ public class ExtensionReader {
     /**
      * Auto-detects a package name based on a JAR file's contents (finding the
      * common denominating package path)
-     * 
+     *
      * @param file
      * @return
      */
-    public String autoDetectPackageName(File file) {
+    public String autoDetectPackageName(final File file) {
         try {
-            Set<String> packageNames = new HashSet<String>();
+            final Set<String> packageNames = new HashSet<String>();
             try (JarFile jarFile = new JarFile(file)) {
-                Enumeration<JarEntry> entries = jarFile.entries();
+                final Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
+                    final JarEntry entry = entries.nextElement();
                     String name = entry.getName();
                     if (name.endsWith(".class")) {
                         logger.debug("Considering package of entry '{}'", name);
 
-                        int lastIndexOfSlash = name.lastIndexOf('/');
+                        final int lastIndexOfSlash = name.lastIndexOf('/');
                         if (lastIndexOfSlash != -1) {
                             name = name.substring(0, lastIndexOfSlash);
                             packageNames.add(name);
@@ -242,7 +242,7 @@ public class ExtensionReader {
 
             packageName = packageName.replace('/', '.');
             return packageName;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Error occurred while auto detecting package name", e);
             return null;
         }

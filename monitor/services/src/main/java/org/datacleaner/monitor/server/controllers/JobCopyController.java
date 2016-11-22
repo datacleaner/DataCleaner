@@ -26,6 +26,8 @@ import java.util.TreeMap;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.events.JobCopyEvent;
@@ -33,8 +35,6 @@ import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ public class JobCopyController {
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
         final JobContext sourceJob = tenantContext.getJob(jobName);
         final RepositoryFile existingFile = sourceJob.getJobFile();
-        
+
         if (existingFile == null) {
             throw new UnsupportedOperationException("Job not compatible with operation: " + jobName);
         }

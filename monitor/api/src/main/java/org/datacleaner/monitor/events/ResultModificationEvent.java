@@ -19,8 +19,8 @@
  */
 package org.datacleaner.monitor.events;
 
-import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.repository.Repository;
+import org.datacleaner.result.AnalysisResult;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -36,8 +36,8 @@ public class ResultModificationEvent extends ApplicationEvent {
     private final long _newTimestamp;
     private final String _oldFilename;
 
-    public ResultModificationEvent(Object source, String tenant, String oldFilename, String newFilename,
-            String newJobName, long newTimestamp) {
+    public ResultModificationEvent(final Object source, final String tenant, final String oldFilename, final String newFilename,
+            final String newJobName, final long newTimestamp) {
         super(source);
         _tenant = tenant;
         _oldFilename = oldFilename;

@@ -36,11 +36,11 @@ public class JsonDatastore extends UsageAwareDatastore<JsonDataContext> implemen
     private final SerializableRef<Resource> _resourceRef;
     private final SerializableRef<SchemaBuilder> _schemaBuilderRef;
 
-    public JsonDatastore(String name, Resource resource) {
+    public JsonDatastore(final String name, final Resource resource) {
         this(name, resource, null);
     }
 
-    public JsonDatastore(String name, Resource resource, SchemaBuilder schemaBuilder) {
+    public JsonDatastore(final String name, final Resource resource, final SchemaBuilder schemaBuilder) {
         super(name);
         _resourceRef = new SerializableRef<Resource>(resource);
         _schemaBuilderRef = new SerializableRef<SchemaBuilder>(schemaBuilder);
@@ -63,7 +63,7 @@ public class JsonDatastore extends UsageAwareDatastore<JsonDataContext> implemen
         }
         return new DatastoreConnectionImpl<JsonDataContext>(dataContext, this);
     }
-    
+
     public SchemaBuilder getSchemaBuilder() {
         return _schemaBuilderRef.get();
     }
@@ -74,7 +74,7 @@ public class JsonDatastore extends UsageAwareDatastore<JsonDataContext> implemen
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         super.decorateIdentity(identifiers);
         identifiers.add(_resourceRef);
     }

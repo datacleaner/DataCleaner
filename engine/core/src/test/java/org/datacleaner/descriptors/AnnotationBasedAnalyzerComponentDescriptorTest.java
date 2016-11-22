@@ -37,6 +37,29 @@ import org.datacleaner.result.NumberResult;
 
 public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
 
+    @Named("One more mock")
+    @Distributed(false)
+    public static class OneMoreMockAnalyzer extends AnalyzerMock {
+
+    }
+
+    public static class MockResultReducer implements AnalyzerResultReducer<AnalyzerResult> {
+        @Override
+        public AnalyzerResult reduce(Collection<? extends AnalyzerResult> results) {
+            return results.iterator().next();
+        }
+    }
+
+    @Named("Third analyzer mock")
+    @Distributed(reducer = MockResultReducer.class)
+    public static class ThirdMockAnalyzer extends AnalyzerMock {
+
+    }
+
+    @Named("invalid analyzer")
+    public abstract class InvalidAnalyzer implements Analyzer<AnalyzerResult> {
+    }
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
@@ -48,34 +71,15 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
         assertEquals("One more mock", descriptor.getDisplayName());
     }
 
-    @Named("One more mock")
-    @Distributed(false)
-    public static class OneMoreMockAnalyzer extends AnalyzerMock {
-
-    }
-    
-    public static class MockResultReducer implements AnalyzerResultReducer<AnalyzerResult> {
-        @Override
-        public AnalyzerResult reduce(Collection<? extends AnalyzerResult> results) {
-            return results.iterator().next();
-        }
-    }
-    
-    @Named("Third analyzer mock")
-    @Distributed(reducer = MockResultReducer.class)
-    public static class ThirdMockAnalyzer extends AnalyzerMock {
-
-    }
-    
     public void testIsDistributed() throws Exception {
         AnalyzerDescriptor<?> desc;
-        
+
         desc = Descriptors.ofAnalyzer(AnalyzerMock.class);
         assertFalse(desc.isDistributable());
-        
+
         desc = Descriptors.ofAnalyzer(OneMoreMockAnalyzer.class);
         assertFalse(desc.isDistributable());
-        
+
         desc = Descriptors.ofAnalyzer(ThirdMockAnalyzer.class);
         assertTrue(desc.isDistributable());
     }
@@ -135,11 +139,11 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
         assertEquals("MetricDescriptorImpl[name=Number]", metric.toString());
         assertFalse(metric.isParameterizedByInputColumn());
         assertFalse(metric.isParameterizedByString());
-        
+
 
         metric = descriptor.getResultMetric("Foo bar");
         assertNull(metric);
-        
+
         MetricDescriptor metric2 = descriptor.getResultMetric("Some nUMBer");
         assertSame(metric, metric2);
     }
@@ -153,9 +157,5 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
                     "Component (class org.datacleaner.descriptors.AnnotationBasedAnalyzerComponentDescriptorTest$InvalidAnalyzer) is not a non-abstract class",
                     e.getMessage());
         }
-    }
-
-    @Named("invalid analyzer")
-    public abstract class InvalidAnalyzer implements Analyzer<AnalyzerResult> {
     }
 }

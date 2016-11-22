@@ -42,8 +42,8 @@ import org.datacleaner.reference.DictionaryConnection;
 @Categorized(FilterCategory.class)
 public class DictionaryFilter implements Filter<DictionaryFilter.Category> {
 
-    public static enum Category {
-        VALID, INVALID;
+    public enum Category {
+        VALID, INVALID
     }
 
     @Configured
@@ -60,18 +60,18 @@ public class DictionaryFilter implements Filter<DictionaryFilter.Category> {
     public DictionaryFilter() {
     }
 
-    public DictionaryFilter(InputColumn<String> column, Dictionary dictionary, DataCleanerConfiguration configuration) {
+    public DictionaryFilter(final InputColumn<String> column, final Dictionary dictionary, final DataCleanerConfiguration configuration) {
         this();
         this.column = column;
         this.dictionary = dictionary;
         this.configuration = configuration;
     }
-    
+
     @Initialize
     public void init() {
         dictionaryConnection = dictionary.openConnection(configuration);
     }
-    
+
     @Close
     public void close() {
         if (dictionaryConnection != null) {
@@ -81,8 +81,8 @@ public class DictionaryFilter implements Filter<DictionaryFilter.Category> {
     }
 
     @Override
-    public Category categorize(InputRow inputRow) {
-        String value = inputRow.getValue(column);
+    public Category categorize(final InputRow inputRow) {
+        final String value = inputRow.getValue(column);
         if (value != null) {
             if (dictionaryConnection.containsValue(value)) {
                 return Category.VALID;

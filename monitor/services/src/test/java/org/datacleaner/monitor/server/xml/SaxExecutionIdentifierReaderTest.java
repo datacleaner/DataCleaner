@@ -24,6 +24,8 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import junit.framework.TestCase;
+
 import org.apache.metamodel.util.DateUtils;
 import org.apache.metamodel.util.Month;
 import org.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
@@ -35,8 +37,6 @@ import org.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
 import org.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
-
-import junit.framework.TestCase;
 
 public class SaxExecutionIdentifierReaderTest extends TestCase {
 

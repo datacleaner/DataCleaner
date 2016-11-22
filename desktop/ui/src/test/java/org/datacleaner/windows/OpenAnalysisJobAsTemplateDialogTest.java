@@ -19,6 +19,9 @@
  */
 package org.datacleaner.windows;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,13 +57,10 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Provider;
 import com.google.inject.util.Providers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 public class OpenAnalysisJobAsTemplateDialogTest {
     private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobAsTemplateDialogTest.class);
     private OpenAnalysisJobAsTemplateDialog _dialog;
-    
+
     @Test
     public void testCreateLoadingIcon() throws Exception {
         if (!GraphicsEnvironment.isHeadless()) {
@@ -137,7 +137,7 @@ public class OpenAnalysisJobAsTemplateDialogTest {
                 logger.error("Problem occurred while creating dialog instance. \n" + e.getMessage());
             }
         }
-        
+
         return _dialog;
     }
 
@@ -150,11 +150,11 @@ public class OpenAnalysisJobAsTemplateDialogTest {
         final Date updatedDate = new Date();
         final String datastoreName = "orderdb";
         final List<String> sourceColumnPaths = new ArrayList<>();
-        final List< ColumnType > sourceColumnTypes = new ArrayList<>();
+        final List<ColumnType> sourceColumnTypes = new ArrayList<>();
         final Map<String, String> variables = new HashMap<>();
         final Map<String, String> properties = new HashMap<>();
 
-        return new ImmutableAnalysisJobMetadata(jobName, jobVersion, jobDescription, author, createdDate, updatedDate, 
+        return new ImmutableAnalysisJobMetadata(jobName, jobVersion, jobDescription, author, createdDate, updatedDate,
                 datastoreName, sourceColumnPaths, sourceColumnTypes, variables, properties);
     }
 }

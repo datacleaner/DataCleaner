@@ -32,14 +32,14 @@ public class SortedDefaultMutableTreeModel extends DefaultMutableTreeNode {
     private static final long serialVersionUID = 1L;
 
     private static final Comparator<DefaultMutableTreeNode> comp = new Comparator<DefaultMutableTreeNode>() {
-        public int compare(DefaultMutableTreeNode o1, DefaultMutableTreeNode o2) {
+        public int compare(final DefaultMutableTreeNode o1, final DefaultMutableTreeNode o2) {
             final ComponentDescriptor<?> descriptor1 = (ComponentDescriptor<?>) o1.getUserObject();
             final ComponentDescriptor<?> descriptor2 = (ComponentDescriptor<?>) o2.getUserObject();
             return descriptor1.getDisplayName().compareTo(descriptor2.getDisplayName());
         }
     };
 
-    public SortedDefaultMutableTreeModel(Object object) {
+    public SortedDefaultMutableTreeModel(final Object object) {
         super(object);
     }
 

@@ -79,12 +79,12 @@ public class LoadCoalesceMultipleFieldsJobTest extends TestCase {
                         + "MetaModelInputColumn[PUBLIC.CUSTOMERS.SALESREPEMPLOYEENUMBER], MetaModelInputColumn[PUBLIC.CUSTOMERS.PHONE]]",
                 Arrays.toString(transformerJob.getInput()));
         assertEquals("[TransformedInputColumn[id=trans-0001-0002,name=__state_or_country], "
-                + "TransformedInputColumn[id=trans-0001-0003,name=__salesrep_or_phone]]",
+                        + "TransformedInputColumn[id=trans-0001-0003,name=__salesrep_or_phone]]",
                 Arrays.toString(transformerJob.getOutput()));
 
         AnalyzerJob analyzerJob = analyzerJobs.iterator().next();
         assertEquals("[TransformedInputColumn[id=trans-0001-0002,name=__state_or_country], "
-                + "TransformedInputColumn[id=trans-0001-0003,name=__salesrep_or_phone]]",
+                        + "TransformedInputColumn[id=trans-0001-0003,name=__salesrep_or_phone]]",
                 Arrays.toString(analyzerJob.getInput()));
 
         AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);

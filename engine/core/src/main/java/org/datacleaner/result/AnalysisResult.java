@@ -34,41 +34,41 @@ public interface AnalysisResult {
 
     /**
      * Gets the the results of this analysis.
-     * 
+     *
      * @return the results from the Analyzers in the executed job
      */
-    public List<AnalyzerResult> getResults();
+    List<AnalyzerResult> getResults();
 
     /**
      * Gets the results of a single Analyzer.
-     * 
+     *
      * @param componentJob
      *            the component (typically AnalyzerJob) job to find the result
      *            for
      * @return the result for a given component job
      */
-    public AnalyzerResult getResult(ComponentJob componentJob);
+    AnalyzerResult getResult(ComponentJob componentJob);
 
     /**
      * Gets the results mapped to the Component jobs
-     * 
+     *
      * @return a map with ComponentJobs as keys to the corresponding
      *         AnalyzerResults.
      */
-    public Map<ComponentJob, AnalyzerResult> getResultMap();
+    Map<ComponentJob, AnalyzerResult> getResultMap();
 
     /**
      * Gets a list of all results with the given result class.
-     * 
+     *
      * @param resultClass
      * @return
      */
-    public <R extends AnalyzerResult> List<? extends R> getResults(Class<R> resultClass);
+    <R extends AnalyzerResult> List<? extends R> getResults(Class<R> resultClass);
 
     /**
      * Gets the time that the results were created
-     * 
+     *
      * @return the time that the results were created
      */
-    public Date getCreationDate();
+    Date getCreationDate();
 }

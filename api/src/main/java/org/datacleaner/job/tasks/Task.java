@@ -24,5 +24,5 @@ package org.datacleaner.job.tasks;
  */
 public interface Task {
 
-	public void execute() throws Exception;
+    void execute() throws Exception;
 }

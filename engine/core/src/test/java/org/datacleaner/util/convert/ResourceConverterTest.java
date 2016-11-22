@@ -19,6 +19,9 @@
  */
 package org.datacleaner.util.convert;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -37,9 +40,6 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class ResourceConverterTest {
 
@@ -113,6 +113,7 @@ public class ResourceConverterTest {
         assertTrue(resource2 instanceof VfsResource);
         assertEquals("target", resource2.getName());
     }
+
     @Test
     public void testConvertHdfsResource() throws Exception {
         MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);

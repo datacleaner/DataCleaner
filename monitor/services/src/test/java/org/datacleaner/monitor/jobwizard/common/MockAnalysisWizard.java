@@ -41,9 +41,9 @@ public class MockAnalysisWizard extends DataCleanerJobWizard {
         return 2;
     }
 
-	@Override
-	public boolean isApplicableTo(JobWizardContext datastore) {
-		return true;
-	}
+    @Override
+    public boolean isApplicableTo(JobWizardContext datastore) {
+        return true;
+    }
 
 }

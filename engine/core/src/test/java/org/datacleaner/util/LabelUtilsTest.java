@@ -23,9 +23,9 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.datacleaner.api.HasLabelAdvice;
-
 import junit.framework.TestCase;
+
+import org.datacleaner.api.HasLabelAdvice;
 
 public class LabelUtilsTest extends TestCase {
 

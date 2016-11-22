@@ -52,7 +52,7 @@ import org.datacleaner.widgets.properties.SingleTableNamePropertyWidget;
 /**
  * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link UpdateTableAnalyzer}.
- * 
+ *
  * @author Kasper Sørensen
  */
 class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
@@ -74,9 +74,9 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
     private final ConfiguredPropertyDescriptor _conditionColumnNamesProperty;
     private final MultipleMappedColumnsPropertyWidget[] _inputColumnPropertyWidgets;
 
-    public UpdateTableJobBuilderPresenter(AnalyzerComponentBuilder<UpdateTableAnalyzer> analyzerJobBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration, DCModule dcModule) {
+    public UpdateTableJobBuilderPresenter(final AnalyzerComponentBuilder<UpdateTableAnalyzer> analyzerJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration, final DCModule dcModule) {
         super(analyzerJobBuilder, propertyWidgetFactory);
         _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
@@ -120,8 +120,9 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
             // the InputColumn<?>[] property
             assert _valueInputColumnsProperty != null;
             assert _valueInputColumnsProperty.getType() == InputColumn[].class;
-            final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedPrefixedColumnsPropertyWidget(
-                    analyzerJobBuilder, _valueInputColumnsProperty, _valueColumnNamesProperty, " → ");
+            final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget =
+                    new MultipleMappedPrefixedColumnsPropertyWidget(
+                            analyzerJobBuilder, _valueInputColumnsProperty, _valueColumnNamesProperty, " → ");
             _overriddenPropertyWidgets.put(_valueInputColumnsProperty, inputColumnsPropertyWidget);
 
             // the String[] property
@@ -138,8 +139,9 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
             // the InputColumn<?>[] property
             assert _conditionInputColumnsProperty != null;
             assert _conditionInputColumnsProperty.getType() == InputColumn[].class;
-            final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedPrefixedColumnsPropertyWidget(
-                    analyzerJobBuilder, _conditionInputColumnsProperty, _conditionColumnNamesProperty, " = ");
+            final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget =
+                    new MultipleMappedPrefixedColumnsPropertyWidget(
+                            analyzerJobBuilder, _conditionInputColumnsProperty, _conditionColumnNamesProperty, " = ");
 
             _overriddenPropertyWidgets.put(_conditionInputColumnsProperty, inputColumnsPropertyWidget);
 
@@ -158,10 +160,10 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
         tableNamePropertyWidget.addComboListener(new Listener<Table>() {
             @Override
-            public void onItemSelected(Table item) {
+            public void onItemSelected(final Table item) {
                 // update the column combo boxes when the table is selected
                 for (int i = 0; i < _inputColumnPropertyWidgets.length; i++) {
-                    MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = _inputColumnPropertyWidgets[i];
+                    final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = _inputColumnPropertyWidgets[i];
                     inputColumnsPropertyWidget.setTable(item);
                 }
             }
@@ -172,7 +174,7 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
         tableNamePropertyWidget.setSchema(datastorePropertyWidget.getValue(), schemaNamePropertyWidget.getSchema());
 
         for (int i = 0; i < _inputColumnPropertyWidgets.length; i++) {
-            MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = _inputColumnPropertyWidgets[i];
+            final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = _inputColumnPropertyWidgets[i];
             inputColumnsPropertyWidget.setTable(tableNamePropertyWidget.getTable());
         }
     }
@@ -181,7 +183,7 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
         final ConfiguredPropertyTaskPane taskPane1 = new ConfiguredPropertyTaskPane("Table to update",
                 IconUtils.getImagePathForClass(UpdateTableAnalyzer.class), Arrays.asList(_datastoreProperty,
-                        _schemaNameProperty, _tableNameProperty, _bufferSizeProperty));
+                _schemaNameProperty, _tableNameProperty, _bufferSizeProperty));
 
         final ConfiguredPropertyTaskPane taskPane2 = new ConfiguredPropertyTaskPane("Update condition",
                 "images/model/column.png", Arrays.asList(_conditionInputColumnsProperty));
@@ -191,7 +193,7 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
         final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling",
                 IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,
-                        _additionalErrorLogValuesProperty), false);
+                _additionalErrorLogValuesProperty), false);
 
         final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
         propertyTaskPanes.add(taskPane1);
@@ -202,8 +204,8 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
             return _overriddenPropertyWidgets.get(propertyDescriptor);
         }

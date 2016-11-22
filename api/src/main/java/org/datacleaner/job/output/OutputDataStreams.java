@@ -38,11 +38,11 @@ public class OutputDataStreams {
      * records (meaning that the {@link HasOutputDataStreams} component will
      * push records to the output data stream without supporting {@link Query}
      * optimization).
-     * 
+     *
      * @param name
      * @return
      */
-    public static OutputDataStreamBuilder pushDataStream(String name) {
+    public static OutputDataStreamBuilder pushDataStream(final String name) {
         return new OutputDataStreamBuilderImpl(name);
     }
 }

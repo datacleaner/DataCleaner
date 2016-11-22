@@ -24,37 +24,32 @@ import org.apache.metamodel.schema.Column;
 /**
  * A mock-implementation of the input column. Use this only for testing purposes
  * or in cases where you want to circumvent the actual framework!
- * 
+ *
  * @param <E>
  */
 public class MockInputColumn<E> extends AbstractInputColumn<E> {
 
     private static final long serialVersionUID = 1L;
-
-    private String _name;
     private final Class<? extends E> _clazz;
     private final Column _physicalColumn;
+    private String _name;
 
-    public MockInputColumn(Column physicalColumn, Class<? extends E> clazz) {
+    public MockInputColumn(final Column physicalColumn, final Class<? extends E> clazz) {
         this(physicalColumn.getName(), clazz, physicalColumn);
     }
 
-    public MockInputColumn(String name) {
+    public MockInputColumn(final String name) {
         this(name, null);
     }
 
-    public MockInputColumn(String name, Class<? extends E> clazz) {
+    public MockInputColumn(final String name, final Class<? extends E> clazz) {
         this(name, clazz, null);
     }
 
-    public MockInputColumn(String name, Class<? extends E> clazz, Column physicalColumn) {
+    public MockInputColumn(final String name, final Class<? extends E> clazz, final Column physicalColumn) {
         _name = name;
         _clazz = clazz;
         _physicalColumn = physicalColumn;
-    }
-
-    public void setName(String name) {
-        _name = name;
     }
 
     @Override
@@ -65,6 +60,10 @@ public class MockInputColumn<E> extends AbstractInputColumn<E> {
     @Override
     public String getName() {
         return _name;
+    }
+
+    public void setName(final String name) {
+        _name = name;
     }
 
     @Override
@@ -78,7 +77,7 @@ public class MockInputColumn<E> extends AbstractInputColumn<E> {
     }
 
     @Override
-    protected boolean equalsInternal(AbstractInputColumn<?> that) {
+    protected boolean equalsInternal(final AbstractInputColumn<?> that) {
         return this == that;
     }
 

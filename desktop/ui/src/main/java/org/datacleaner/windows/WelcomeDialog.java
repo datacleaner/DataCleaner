@@ -46,7 +46,7 @@ public class WelcomeDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
 
-    public WelcomeDialog(AnalysisJobBuilderWindow window, Image welcomeImage) {
+    public WelcomeDialog(final AnalysisJobBuilderWindow window, final Image welcomeImage) {
         super((Window) window, "Welcome to DataCleaner");
 
         final JLabel banner = new JLabel(new ImageIcon(welcomeImage));
@@ -59,7 +59,7 @@ public class WelcomeDialog extends JDialog {
         final JButton continueButton = WidgetFactory.createDefaultButton("Continue", IconUtils.ACTION_FORWARD);
         continueButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 WelcomeDialog.this.setVisible(false);
             }
         });

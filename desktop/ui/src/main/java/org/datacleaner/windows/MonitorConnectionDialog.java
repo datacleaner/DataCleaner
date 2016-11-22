@@ -88,7 +88,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
     private final DCLabel _urlLabel;
 
     @Inject
-    public MonitorConnectionDialog(WindowContext windowContext, UserPreferences userPreferences) {
+    public MonitorConnectionDialog(final WindowContext windowContext, final UserPreferences userPreferences) {
         super(windowContext, imageManager.getImage("images/window/banner-dq-monitor.png"));
         _userPreferences = userPreferences;
 
@@ -107,7 +107,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         _httpsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _httpsCheckBox.addListener(new Listener<Void>() {
             @Override
-            public void onItemSelected(Void item, boolean selected) {
+            public void onItemSelected(final Void item, final boolean selected) {
                 updateUrlLabel();
             }
         });
@@ -120,7 +120,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         }
         _hostnameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 updateUrlLabel();
             }
         });
@@ -134,7 +134,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         }
         _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 updateUrlLabel();
             }
         });
@@ -147,7 +147,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         }
         _contextPathTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 updateUrlLabel();
             }
         });
@@ -160,7 +160,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         }
         _tenantTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 updateUrlLabel();
             }
         });
@@ -174,7 +174,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         _authenticationCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _authenticationCheckBox.addListener(new Listener<Void>() {
             @Override
-            public void onItemSelected(Void item, boolean selected) {
+            public void onItemSelected(final Void item, final boolean selected) {
                 _usernameTextField.setEnabled(selected);
                 _passwordTextField.setEnabled(selected);
             }
@@ -199,7 +199,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         int port = 8080;
         try {
             port = Integer.parseInt(_portTextField.getText());
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             // do nothing, fall back to 8080.
         }
 
@@ -285,7 +285,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         final JButton testButton = WidgetFactory.createDefaultButton("Test connection", IconUtils.ACTION_REFRESH);
         testButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
+            public void actionPerformed(final ActionEvent event) {
                 final MonitorConnection connection = createMonitorConnection();
                 final String pingUrl = connection.getRepositoryUrl() + "/ping";
                 final HttpGet request = new HttpGet(pingUrl);
@@ -310,7 +310,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
                         WidgetUtils.showErrorMessage("Server reported error", "Server replied with status "
                                 + statusLine.getStatusCode() + ":\n" + reasonPhrase);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // TODO: This dialog is shown behind the modal dialog
                     WidgetUtils
                             .showErrorMessage(
@@ -324,7 +324,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         final JButton saveButton = WidgetFactory.createPrimaryButton("Save connection", IconUtils.ACTION_SAVE_BRIGHT);
         saveButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final MonitorConnection monitorConnection = createMonitorConnection();
                 _userPreferences.setMonitorConnection(monitorConnection);
 
@@ -337,10 +337,11 @@ public class MonitorConnectionDialog extends AbstractDialog {
 
         final DescriptionLabel descriptionLabel = new DescriptionLabel();
         descriptionLabel
-                .setText("The DataCleaner monitor is a separate web application that is part of the DataCleaner eco-system. "
-                        + "In this dialog you can configure your connection to it. "
-                        + "With the monitor you can create, share, monitor and govern current and historic data quality metrics. "
-                        + "You can also set up alerts to react when certain metrics are out of their expected ranges.");
+                .setText(
+                        "The DataCleaner monitor is a separate web application that is part of the DataCleaner eco-system. "
+                                + "In this dialog you can configure your connection to it. "
+                                + "With the monitor you can create, share, monitor and govern current and historic data quality metrics. "
+                                + "You can also set up alerts to react when certain metrics are out of their expected ranges.");
 
         final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());
@@ -360,24 +361,15 @@ public class MonitorConnectionDialog extends AbstractDialog {
         if (!StringUtils.isNullOrEmpty(_usernameTextField.getText())) {
             _passwordTextField.setBorder(WidgetUtils.BORDER_EMPHASIZE_FIELD);
 
-            boolean focused = _passwordTextField.requestFocusInWindow();
+            final boolean focused = _passwordTextField.requestFocusInWindow();
             assert focused;
         }
-    }
-
-    public static void main(String[] args) {
-        LookAndFeelManager.get().init();
-        UserPreferences userPreferences = new UserPreferencesImpl(null);
-        WindowContext windowContext = new DCWindowContext(null, userPreferences, null);
-        MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext, userPreferences);
-
-        dialog.open();
     }
 
     /**
      * Shows a dialog in blocking mode. Only to be used for very
      * important/blocking behaviour.
-     * 
+     *
      * Note that this way of displaying a dialog is not preferred since
      * unexpected exceptions cannot be caught for modal dialogs.
      */
@@ -387,5 +379,14 @@ public class MonitorConnectionDialog extends AbstractDialog {
         setModal(true);
         setAlwaysOnTop(true);
         open();
+    }
+
+    public static void main(final String[] args) {
+        LookAndFeelManager.get().init();
+        final UserPreferences userPreferences = new UserPreferencesImpl(null);
+        final WindowContext windowContext = new DCWindowContext(null, userPreferences, null);
+        final MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext, userPreferences);
+
+        dialog.open();
     }
 }

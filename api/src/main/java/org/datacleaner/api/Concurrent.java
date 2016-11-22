@@ -30,9 +30,9 @@ import java.lang.annotation.Target;
  * component (transformer, filter or analyzer) with this annotation can define
  * whether or not the framework should be allowed to invoke the component
  * concurrently (ie. from several threads at the same time) or not.
- * 
+ *
  * The default behaviour of the components is:
- * 
+ *
  * <ul>
  * <li>Transformers and Filters are invoked concurrently. The rationale behind
  * this default value is that the invoked methods (transform(...) and
@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
  * default value is that analyzers are expected to build up it's result during
  * execution and thus will typically be stateful.</li>
  * </ul>
- * 
+ *
  * @see Component
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -50,12 +50,12 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Concurrent {
 
-	/**
-	 * Determines whether or not the component with this annotation is
-	 * thread-safe/concurrent.
-	 * 
-	 * @return a boolean indicating whether or not concurrent execution of the
-	 *         component is allowed.
-	 */
-	public boolean value();
+    /**
+     * Determines whether or not the component with this annotation is
+     * thread-safe/concurrent.
+     *
+     * @return a boolean indicating whether or not concurrent execution of the
+     *         component is allowed.
+     */
+    boolean value();
 }

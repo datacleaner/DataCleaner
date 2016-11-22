@@ -36,20 +36,20 @@ public class RestrictedFunctionalityCallToAction implements Serializable {
 
     /**
      * Constructs a {@link RestrictedFunctionalityCallToAction}.
-     * 
+     *
      * @param name
      *            the name of the action, e.g. "Upgrade to Enterprise edition"
      *            or "Buy credits"
      * @param href
      *            a HTTP link to open if the user wants to know more
      */
-    public RestrictedFunctionalityCallToAction(String name, String href) {
+    public RestrictedFunctionalityCallToAction(final String name, final String href) {
         this(name, href, null);
     }
 
     /**
      * Constructs a {@link RestrictedFunctionalityCallToAction}.
-     * 
+     *
      * @param name
      *            the name of the action, e.g. "Upgrade to Enterprise edition"
      *            or "Buy credits"
@@ -59,7 +59,7 @@ public class RestrictedFunctionalityCallToAction implements Serializable {
      *            a longer description of the action, typically presented with a
      *            tooltip, a smaller-font text or so
      */
-    public RestrictedFunctionalityCallToAction(String name, String href, String description) {
+    public RestrictedFunctionalityCallToAction(final String name, final String href, final String description) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Action name cannot be null");
         }
@@ -73,7 +73,7 @@ public class RestrictedFunctionalityCallToAction implements Serializable {
 
     /**
      * Gets the action's HTTP link to open if the user wants to know more
-     * 
+     *
      * @return the action HTTP link/URL
      */
     public String getHref() {
@@ -83,7 +83,7 @@ public class RestrictedFunctionalityCallToAction implements Serializable {
     /**
      * Gets the name of the action, e.g. "Upgrade to Enterprise edition" or
      * "Buy credits"
-     * 
+     *
      * @return the action name
      */
     public String getName() {
@@ -93,7 +93,7 @@ public class RestrictedFunctionalityCallToAction implements Serializable {
     /**
      * Gets a longer description of the action, typically presented with a
      * tooltip, a smaller-font text or so
-     * 
+     *
      * @return a long description or null if none is present
      */
     public String getDescription() {

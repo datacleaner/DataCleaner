@@ -40,18 +40,18 @@ public class JaxbMetricAdaptor extends AbstractJaxbAdaptor<MetricsType> {
     public JaxbMetricAdaptor() {
         super(MetricsType.class);
     }
-    
-    public MetricsType read(InputStream in) {
+
+    public MetricsType read(final InputStream in) {
         final MetricsType result = super.unmarshal(in);
         return result;
     }
-    
+
     @Override
-    public XMLGregorianCalendar createDate(Date date) {
+    public XMLGregorianCalendar createDate(final Date date) {
         return super.createDate(date);
     }
 
-    public MetricType serialize(MetricIdentifier metricIdentifier) {
+    public MetricType serialize(final MetricIdentifier metricIdentifier) {
         final MetricType metric = new MetricType();
         if (metricIdentifier.isDisplayNameSet()) {
             metric.setMetricDisplayName(metricIdentifier.getDisplayName());
@@ -77,7 +77,7 @@ public class JaxbMetricAdaptor extends AbstractJaxbAdaptor<MetricsType> {
         return metric;
     }
 
-    public MetricIdentifier deserialize(MetricType metricType) {
+    public MetricIdentifier deserialize(final MetricType metricType) {
         final String metricDisplayName = metricType.getMetricDisplayName();
         final String metricColor = metricType.getMetricColor();
         final String formula = metricType.getFormula();
@@ -98,8 +98,8 @@ public class JaxbMetricAdaptor extends AbstractJaxbAdaptor<MetricsType> {
         } else {
             final List<MetricType> childMetrics = childrenTypes.getMetric();
             final List<MetricIdentifier> children = new ArrayList<MetricIdentifier>(childMetrics.size());
-            for (MetricType childMetricType : childMetrics) {
-                MetricIdentifier childMetric = deserialize(childMetricType);
+            for (final MetricType childMetricType : childMetrics) {
+                final MetricIdentifier childMetric = deserialize(childMetricType);
                 children.add(childMetric);
             }
 

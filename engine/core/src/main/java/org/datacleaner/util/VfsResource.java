@@ -40,7 +40,7 @@ public class VfsResource extends AbstractResource {
 
     private final FileObject _fileObject;
 
-    public VfsResource(FileObject fileObject) {
+    public VfsResource(final FileObject fileObject) {
         _fileObject = fileObject;
     }
 
@@ -51,7 +51,7 @@ public class VfsResource extends AbstractResource {
 
     /**
      * Gets the wrapped {@link FileObject} of this resource.
-     * 
+     *
      * @return
      */
     public FileObject getFileObject() {
@@ -67,7 +67,7 @@ public class VfsResource extends AbstractResource {
     public boolean isReadOnly() {
         try {
             return !_fileObject.isWriteable();
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new ResourceException(this, e);
         }
     }
@@ -76,7 +76,7 @@ public class VfsResource extends AbstractResource {
     public boolean isExists() {
         try {
             return _fileObject.exists();
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new ResourceException(this, e);
         }
     }
@@ -90,7 +90,7 @@ public class VfsResource extends AbstractResource {
     public long getSize() {
         try {
             return _fileObject.getContent().getSize();
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new ResourceException(this, e);
         }
     }
@@ -103,7 +103,7 @@ public class VfsResource extends AbstractResource {
                 return -1;
             }
             return lastModified;
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             logger.warn("Failed to get lastModifiedTime of file object: " + _fileObject + ". Returning -1.", e);
             return -1;
         }
@@ -113,7 +113,7 @@ public class VfsResource extends AbstractResource {
     public InputStream read() throws ResourceException {
         try {
             return _fileObject.getContent().getInputStream();
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new ResourceException(this, e);
         }
     }
@@ -124,7 +124,7 @@ public class VfsResource extends AbstractResource {
             final FileContent content = _fileObject.getContent();
             final OutputStream out = content.getOutputStream(true);
             return out;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ResourceException(this, e);
         }
     }
@@ -135,7 +135,7 @@ public class VfsResource extends AbstractResource {
             final FileContent content = _fileObject.getContent();
             final OutputStream out = content.getOutputStream();
             return out;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ResourceException(this, e);
         }
     }

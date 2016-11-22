@@ -37,8 +37,8 @@ public class HttpBasicMonitorHttpClient implements MonitorHttpClient {
     private final CloseableHttpClient _httpClient;
     private final HttpClientContext _context;
 
-    public HttpBasicMonitorHttpClient(CloseableHttpClient httpClient, String hostname, int port, String username,
-            String password) {
+    public HttpBasicMonitorHttpClient(final CloseableHttpClient httpClient, final String hostname, final int port, final String username,
+            final String password) {
         _httpClient = httpClient;
 
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
@@ -50,7 +50,7 @@ public class HttpBasicMonitorHttpClient implements MonitorHttpClient {
     }
 
     @Override
-    public HttpResponse execute(HttpUriRequest request) throws Exception {
+    public HttpResponse execute(final HttpUriRequest request) throws Exception {
         addSecurityHeaders(request);
         return _httpClient.execute(request, _context);
     }
@@ -59,8 +59,8 @@ public class HttpBasicMonitorHttpClient implements MonitorHttpClient {
     public void close() {
         FileHelper.safeClose(_httpClient);
     }
-    
-    protected void addSecurityHeaders(HttpUriRequest request) throws Exception {
+
+    protected void addSecurityHeaders(final HttpUriRequest request) throws Exception {
         // DO NOTHING BY DEFAULT
     }
 

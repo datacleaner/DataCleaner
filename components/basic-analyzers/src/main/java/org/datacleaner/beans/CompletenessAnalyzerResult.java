@@ -32,14 +32,14 @@ import org.datacleaner.storage.RowAnnotationFactory;
  * {@link AnalyzerResult} class for {@link CompletenessAnalyzer}.
  */
 @Description("Incomplete records")
-@Distributed(reducer=CompletenessAnalyzerResultReducer.class)
+@Distributed(reducer = CompletenessAnalyzerResultReducer.class)
 public class CompletenessAnalyzerResult extends AnnotatedRowsResult implements AnalyzerResult {
 
     private static final long serialVersionUID = 1L;
     private final int _rowCount;
 
-    public CompletenessAnalyzerResult(int rowCount, RowAnnotation annotation, RowAnnotationFactory annotationFactory,
-            InputColumn<?>[] highlightedColumns) {
+    public CompletenessAnalyzerResult(final int rowCount, final RowAnnotation annotation, final RowAnnotationFactory annotationFactory,
+            final InputColumn<?>[] highlightedColumns) {
         super(annotation, annotationFactory, highlightedColumns);
         _rowCount = rowCount;
     }

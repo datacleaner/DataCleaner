@@ -41,12 +41,12 @@ public final class RowAnnotationImpl implements RowAnnotation {
     public RowAnnotationImpl() {
         this(0);
     }
-    
-    public RowAnnotationImpl(int initialRowCount) {
+
+    public RowAnnotationImpl(final int initialRowCount) {
         _counter = new AtomicInteger(initialRowCount);
     }
 
-    public void incrementRowCount(int increment) {
+    public void incrementRowCount(final int increment) {
         _counter.addAndGet(increment);
     }
 
@@ -59,22 +59,22 @@ public final class RowAnnotationImpl implements RowAnnotation {
         return _counter.get();
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         try {
             final Field counterField = getClass().getDeclaredField("_counter");
             counterField.setAccessible(true);
             counterField.set(this, new AtomicInteger());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Could not create counter while deserializing.", e);
         }
         final ReadObjectBuilder<RowAnnotationImpl> builder = ReadObjectBuilder.create(this, RowAnnotationImpl.class);
         final ReadObjectBuilder.Adaptor adaptor = new ReadObjectBuilder.Adaptor() {
             @Override
-            public void deserialize(GetField getField, Serializable serializable) throws IOException {
+            public void deserialize(final GetField getField, final Serializable serializable) throws IOException {
                 try {
-                    int count = getField.get("_rowCount", 0);
+                    final int count = getField.get("_rowCount", 0);
                     _counter.set(count);
-                } catch (IllegalArgumentException e) {
+                } catch (final IllegalArgumentException e) {
                     // happens for newer versions of the object type.
                 }
             }

@@ -28,21 +28,21 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 
 public class EditJobCommand implements Command {
- 
-	private TenantIdentifier _tenant;
-	private ScheduleDefinition _schedule;
-	private DCPopupPanel _morePopup;
-	
-	public EditJobCommand(TenantIdentifier tenantIdentifier, ScheduleDefinition schedule, DCPopupPanel morePopup){
-		_tenant = tenantIdentifier;
-		_schedule = schedule;
-		_morePopup = morePopup;
-	}
-	
-	@Override
-	public void execute() {
-		_morePopup.hide();
-		String url = Urls.createRepositoryUrl(_tenant, "jobs/" + _schedule.getJob().getName() + ".launch.jnlp");
+
+    private TenantIdentifier _tenant;
+    private ScheduleDefinition _schedule;
+    private DCPopupPanel _morePopup;
+
+    public EditJobCommand(final TenantIdentifier tenantIdentifier, final ScheduleDefinition schedule, final DCPopupPanel morePopup) {
+        _tenant = tenantIdentifier;
+        _schedule = schedule;
+        _morePopup = morePopup;
+    }
+
+    @Override
+    public void execute() {
+        _morePopup.hide();
+        final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + _schedule.getJob().getName() + ".launch.jnlp");
         Window.open(url, "_blank", null);
     }
 }

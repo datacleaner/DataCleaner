@@ -33,8 +33,8 @@ public class ComponentValidationException extends ComponentConfigurationExceptio
     private final ComponentDescriptor<?> _componentDescriptor;
     private final Object _componentInstance;
 
-    public ComponentValidationException(ComponentDescriptor<?> componentDescriptor, Object componentInstance,
-            Throwable cause) {
+    public ComponentValidationException(final ComponentDescriptor<?> componentDescriptor, final Object componentInstance,
+            final Throwable cause) {
         super(cause.getMessage(), cause);
         _componentDescriptor = componentDescriptor;
         _componentInstance = componentInstance;

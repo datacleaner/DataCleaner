@@ -44,13 +44,13 @@ public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, Strin
         private int horizontalDimensionWidth;
 
         @Override
-        public void beginTable(Crosstab<?> crosstab, List<CrosstabDimension> horizontalDimensions,
-                List<CrosstabDimension> verticalDimensions) {
+        public void beginTable(final Crosstab<?> crosstab, final List<CrosstabDimension> horizontalDimensions,
+                final List<CrosstabDimension> verticalDimensions) {
             sb = new StringBuilder();
             horizontalDimensionWidth = 0;
-            for (CrosstabDimension dimension : horizontalDimensions) {
-                List<String> categories = dimension.getCategories();
-                for (String category : categories) {
+            for (final CrosstabDimension dimension : horizontalDimensions) {
+                final List<String> categories = dimension.getCategories();
+                for (final String category : categories) {
                     horizontalDimensionWidth = Math.max(horizontalDimensionWidth, category.length());
                 }
             }
@@ -79,8 +79,8 @@ public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, Strin
         }
 
         @Override
-        public void horizontalHeaderCell(String category, CrosstabDimension dimension, int width) {
-            int trailingBlanks = horizontalDimensionWidth * width - category.length();
+        public void horizontalHeaderCell(final String category, final CrosstabDimension dimension, final int width) {
+            final int trailingBlanks = horizontalDimensionWidth * width - category.length();
 
             if (leftAligned) {
                 sb.append(category);
@@ -99,7 +99,7 @@ public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, Strin
         }
 
         @Override
-        public void verticalHeaderCell(String category, CrosstabDimension dimension, int height) {
+        public void verticalHeaderCell(final String category, final CrosstabDimension dimension, final int height) {
             sb.append(category);
 
             int dimensionWidth = getWidth(dimension);
@@ -113,7 +113,7 @@ public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, Strin
         }
 
         @Override
-        public void valueCell(Object value, ResultProducer drillToDetailResultProducer) {
+        public void valueCell(final Object value, final ResultProducer drillToDetailResultProducer) {
             boolean leftAligned = this.leftAligned;
 
             String stringValue = (value == null ? null : value.toString());
@@ -126,7 +126,7 @@ public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, Strin
                 }
             }
 
-            int trailingBlanks = horizontalDimensionWidth - stringValue.length();
+            final int trailingBlanks = horizontalDimensionWidth - stringValue.length();
             if (leftAligned) {
                 sb.append(stringValue);
                 for (int i = 0; i < trailingBlanks; i++) {
@@ -144,8 +144,8 @@ public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, Strin
         }
 
         @Override
-        public void emptyHeader(CrosstabDimension verticalDimension, CrosstabDimension horizontalDimension) {
-            int dimensionWidth = getWidth(verticalDimension);
+        public void emptyHeader(final CrosstabDimension verticalDimension, final CrosstabDimension horizontalDimension) {
+            final int dimensionWidth = getWidth(verticalDimension);
 
             for (int i = 0; i < dimensionWidth; i++) {
                 sb.append(' ');
@@ -155,10 +155,10 @@ public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, Strin
             sb.append(' ');
         }
 
-        private int getWidth(CrosstabDimension verticalDimension) {
-            List<String> categories = verticalDimension.getCategories();
+        private int getWidth(final CrosstabDimension verticalDimension) {
+            final List<String> categories = verticalDimension.getCategories();
             int longestCategory = 0;
-            for (String category : categories) {
+            for (final String category : categories) {
                 longestCategory = Math.max(longestCategory, category.length());
             }
             return longestCategory;
@@ -174,15 +174,6 @@ public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, Strin
 
     }
 
-    @Override
-    public String render(CrosstabResult result) {
-        return render(result.getCrosstab());
-    }
-
-    public String render(Crosstab<?> crosstab) {
-        return new CrosstabRenderer(crosstab).render(new TextCrosstabRendererCallback());
-    }
-
     public static NumberFormat getUiNumberFormat() {
         final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
@@ -190,5 +181,14 @@ public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, Strin
         format.setGroupingUsed(false);
         format.setMaximumFractionDigits(2);
         return format;
+    }
+
+    @Override
+    public String render(final CrosstabResult result) {
+        return render(result.getCrosstab());
+    }
+
+    public String render(final Crosstab<?> crosstab) {
+        return new CrosstabRenderer(crosstab).render(new TextCrosstabRendererCallback());
     }
 }

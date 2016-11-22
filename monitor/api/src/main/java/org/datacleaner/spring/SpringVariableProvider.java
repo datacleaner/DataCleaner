@@ -44,12 +44,12 @@ public class SpringVariableProvider implements VariableProvider {
     Environment environment;
 
     @Override
-    public Map<String, String> provideValues(JobContext job, ExecutionLog execution) {
+    public Map<String, String> provideValues(final JobContext job, final ExecutionLog execution) {
         final Map<String, String> result = new HashMap<String, String>();
 
         final Map<String, String> variables = job.getVariables();
         final Set<Entry<String, String>> entries = variables.entrySet();
-        for (Entry<String, String> entry : entries) {
+        for (final Entry<String, String> entry : entries) {
             final String key = entry.getKey();
             final String value = entry.getValue();
             if (isEnvironmentProperty(key)) {

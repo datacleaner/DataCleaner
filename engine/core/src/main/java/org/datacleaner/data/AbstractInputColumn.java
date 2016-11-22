@@ -19,64 +19,64 @@
  */
 package org.datacleaner.data;
 
+import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.util.InputColumnComparator;
-import org.apache.metamodel.schema.Column;
 
 public abstract class AbstractInputColumn<E> implements InputColumn<E> {
-	
-	private static final long serialVersionUID = 1L;
 
-	@Override
-	public boolean isPhysicalColumn() {
-		return getPhysicalColumnInternal() != null;
-	}
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public boolean isVirtualColumn() {
-		return getPhysicalColumnInternal() == null;
-	}
+    @Override
+    public boolean isPhysicalColumn() {
+        return getPhysicalColumnInternal() != null;
+    }
 
-	@Override
-	public Column getPhysicalColumn() throws IllegalStateException {
-		if (!isPhysicalColumn()) {
-			throw new IllegalStateException(this + " is not a physical InputColumn");
-		}
-		return getPhysicalColumnInternal();
-	}
+    @Override
+    public boolean isVirtualColumn() {
+        return getPhysicalColumnInternal() == null;
+    }
 
-	protected abstract Column getPhysicalColumnInternal();
+    @Override
+    public Column getPhysicalColumn() throws IllegalStateException {
+        if (!isPhysicalColumn()) {
+            throw new IllegalStateException(this + " is not a physical InputColumn");
+        }
+        return getPhysicalColumnInternal();
+    }
 
-	protected abstract int hashCodeInternal();
+    protected abstract Column getPhysicalColumnInternal();
 
-	protected abstract boolean equalsInternal(AbstractInputColumn<?> that);
+    protected abstract int hashCodeInternal();
 
-	@Override
-	public final int compareTo(InputColumn<E> o) {
-	    return InputColumnComparator.compareInputColumns(this, o);
-	}
+    protected abstract boolean equalsInternal(AbstractInputColumn<?> that);
 
-	@Override
-	public int hashCode() {
-		return getClass().hashCode() + hashCodeInternal();
-	}
+    @Override
+    public final int compareTo(final InputColumn<E> o) {
+        return InputColumnComparator.compareInputColumns(this, o);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (obj == this) {
-			return true;
-		}
-		if (obj.getClass() == this.getClass()) {
-			AbstractInputColumn<?> that = (AbstractInputColumn<?>) obj;
-			if (that.getDataType() == this.getDataType()) {
-				if (that.isPhysicalColumn() == this.isPhysicalColumn()) {
-					return equalsInternal(that);
-				}
-			}
-		}
-		return false;
-	}
+    @Override
+    public int hashCode() {
+        return getClass().hashCode() + hashCodeInternal();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() == this.getClass()) {
+            final AbstractInputColumn<?> that = (AbstractInputColumn<?>) obj;
+            if (that.getDataType() == this.getDataType()) {
+                if (that.isPhysicalColumn() == this.isPhysicalColumn()) {
+                    return equalsInternal(that);
+                }
+            }
+        }
+        return false;
+    }
 }

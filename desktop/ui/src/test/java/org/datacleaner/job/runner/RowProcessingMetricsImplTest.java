@@ -19,6 +19,8 @@
  */
 package org.datacleaner.job.runner;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.filter.EqualsFilter;
 import org.datacleaner.beans.filter.NullCheckFilter;
@@ -36,8 +38,6 @@ import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.test.TestHelper;
 import org.junit.Assert;
-
-import junit.framework.TestCase;
 
 public class RowProcessingMetricsImplTest extends TestCase {
 

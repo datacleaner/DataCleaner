@@ -21,14 +21,14 @@ package org.datacleaner.result.renderer;
 
 import java.util.Arrays;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.result.CrosstabResult;
 
-import junit.framework.TestCase;
-
 public class CrosstabTextRendererTest extends TestCase {
-    
+
     public void testEmptyCrosstab() throws Exception {
         CrosstabDimension genderDimension = new CrosstabDimension("Gender");
         genderDimension.addCategory("Male");
@@ -36,7 +36,7 @@ public class CrosstabTextRendererTest extends TestCase {
         CrosstabDimension regionDimension = new CrosstabDimension("Region");
 
         Crosstab<Integer> c = new Crosstab<Integer>(Integer.class, genderDimension, regionDimension);
-        
+
         String s = new CrosstabTextRenderer().render(new CrosstabResult(c));
         assertEquals("   Male Female \n", s);
     }

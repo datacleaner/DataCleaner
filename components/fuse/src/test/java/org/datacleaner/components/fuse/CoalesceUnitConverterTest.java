@@ -67,13 +67,13 @@ public class CoalesceUnitConverterTest extends TestCase {
         CoalesceUnit[] array = new CoalesceUnit[] { unit1, unit1 };
         str = stringConverter.serialize(array);
         assertEquals("[&#91;str1&#44;str2&#93;,&#91;str1&#44;str2&#93;]", str);
-        
+
         CoalesceUnit[] units = stringConverter.deserialize(str, CoalesceUnit[].class);
         assertEquals(2, units.length);
         assertEquals("CoalesceUnit[inputColumnNames=[str1, str2]]", units[0].toString());
         assertEquals("CoalesceUnit[inputColumnNames=[str1, str2]]", units[1].toString());
     }
-    
+
     public void testConvertCommaNames() throws Exception {
         StringConverter stringConverter = new StringConverter(new InjectionManagerImpl(
                 new DataCleanerConfigurationImpl()));
@@ -81,7 +81,7 @@ public class CoalesceUnitConverterTest extends TestCase {
         CoalesceUnit unitIn = new CoalesceUnit(stringCommaCol1, stringCommaCol2);
         String str = stringConverter.serialize(unitIn);
         assertEquals("&#91;str1&amp;#44;a&#44;str2&amp;#44;b&#93;", str);
-        
+
         CoalesceUnit unitOut = stringConverter.deserialize(str, CoalesceUnit.class);
         assertEquals("CoalesceUnit[inputColumnNames=[str1,a, str2,b]]", unitOut.toString());
     }

@@ -35,13 +35,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract implementation of the PropertyWidget interface. An implementing
  * class should preferably:
- * 
+ *
  * <ul>
  * <li>add(...) a single widget in the constructor.</li>
  * <li>call fireValueChanged() each time the contents/value of the widget has
  * changed.</li>
  * </ul>
- * 
+ *
  * @param <E>
  */
 public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E> {
@@ -54,8 +54,8 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
     // or not". Subclasses can fire batch
     private volatile int _batchUpdateCounter;
 
-    public AbstractPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    public AbstractPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
         _batchUpdateCounter = 0;
         _panel = new DCPanel() {
@@ -64,12 +64,13 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
             public void addNotify() {
                 super.addNotify();
                 onPanelAdd();
-            };
+            }
 
             public void removeNotify() {
                 super.removeNotify();
                 onPanelRemove();
-            };
+            }
+
         };
         setLayout(new GridLayout(1, 1));
     }
@@ -77,15 +78,15 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
     /**
      * Executes a "widget batch update". Listeners and other effects of updating
      * individual parts of a widget may be turned off during batch updates.
-     * 
+     *
      * @param action
      *            the action to execute
      */
-    public final void batchUpdateWidget(Runnable action) {
+    public final void batchUpdateWidget(final Runnable action) {
         _batchUpdateCounter++;
         try {
             action.run();
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             logger.error("Exception occurred in widget batch update, fireValueChanged() will not be invoked", e);
             throw e;
         } finally {
@@ -104,7 +105,7 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
         return _batchUpdateCounter > 0;
     }
 
-    protected void setLayout(LayoutManager layout) {
+    protected void setLayout(final LayoutManager layout) {
         _panel.setLayout(layout);
     }
 
@@ -114,7 +115,7 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
 
     /**
      * Notification method added for backwards compatibility
-     * 
+     *
      * @deprecated use {@link #onPanelRemove()} instead.
      */
     @Deprecated
@@ -123,7 +124,7 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
 
     /**
      * Notification method added for backwards compatibility
-     * 
+     *
      * @deprecated use {@link #onPanelAdd()} instead.
      */
     @Deprecated
@@ -145,7 +146,7 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
         removeNotify();
     }
 
-    protected void add(Component component, int index) {
+    protected void add(final Component component, final int index) {
         if (_panel.getComponentCount() <= index) {
             _panel.add(component);
         } else {
@@ -157,15 +158,15 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
         return _panel.getComponents();
     }
 
-    protected void add(Component component) {
+    protected void add(final Component component) {
         _panel.add(component);
     }
 
-    protected void add(Component component, Object constraints) {
+    protected void add(final Component component, final Object constraints) {
         _panel.add(component, constraints);
     }
 
-    protected void remove(Component component) {
+    protected void remove(final Component component) {
         _panel.remove(component);
     }
 
@@ -173,7 +174,7 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
         _panel.updateUI();
     }
 
-    protected void setBorder(Border border) {
+    protected void setBorder(final Border border) {
         _panel.setBorder(border);
     }
 
@@ -184,7 +185,7 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
 
     /**
      * Determines if the widget is currently visible.
-     * 
+     *
      * @return
      */
     protected boolean isVisible() {

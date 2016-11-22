@@ -32,40 +32,40 @@ import org.eobjects.metamodel.access.AccessDataContext;
  */
 public final class AccessDatastore extends UsageAwareDatastore<DataContext> implements FileDatastore {
 
-	private static final long serialVersionUID = 1L;
-	private final String _filename;
+    private static final long serialVersionUID = 1L;
+    private final String _filename;
 
-	public AccessDatastore(String name, String filename) {
-		super(name);
-		if(filename == null){
-			throw new NullPointerException("Filename cannot be null");
-		}
-		_filename = filename;
-	}
+    public AccessDatastore(final String name, final String filename) {
+        super(name);
+        if (filename == null) {
+            throw new NullPointerException("Filename cannot be null");
+        }
+        _filename = filename;
+    }
 
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		ReadObjectBuilder.create(this, AccessDatastore.class).readObject(stream);
-	}
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, AccessDatastore.class).readObject(stream);
+    }
 
-	@Override
-	public String getFilename() {
-		return _filename;
-	}
+    @Override
+    public String getFilename() {
+        return _filename;
+    }
 
-	@Override
-	protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
-		DataContext dc = new AccessDataContext(_filename);
-		return new DatastoreConnectionImpl<DataContext>(dc, this);
-	}
+    @Override
+    protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
+        final DataContext dc = new AccessDataContext(_filename);
+        return new DatastoreConnectionImpl<DataContext>(dc, this);
+    }
 
-	@Override
-	public PerformanceCharacteristics getPerformanceCharacteristics() {
-		return new PerformanceCharacteristicsImpl(false, true);
-	}
-	
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		super.decorateIdentity(identifiers);
-		identifiers.add(_filename);
-	}
+    @Override
+    public PerformanceCharacteristics getPerformanceCharacteristics() {
+        return new PerformanceCharacteristicsImpl(false, true);
+    }
+
+    @Override
+    protected void decorateIdentity(final List<Object> identifiers) {
+        super.decorateIdentity(identifiers);
+        identifiers.add(_filename);
+    }
 }

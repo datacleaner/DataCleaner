@@ -30,73 +30,74 @@ import org.datacleaner.configuration.InjectionPoint;
 
 public final class MemberInjectionPoint<T> extends AbstractInjectionPoint<T> implements InjectionPoint<T> {
 
-	private final Object _instance;
-	private final Member _member;
-	private final int _parameterIndex;
+    private final Object _instance;
+    private final Member _member;
+    private final int _parameterIndex;
 
-	public MemberInjectionPoint(Field field, Object instance) {
-		_instance = instance;
-		_member = field;
-		_parameterIndex = -1;
-	}
+    public MemberInjectionPoint(final Field field, final Object instance) {
+        _instance = instance;
+        _member = field;
+        _parameterIndex = -1;
+    }
 
-	public MemberInjectionPoint(Constructor<?> constructor, int parameterIndex) {
-		_instance = null;
-		_member = constructor;
-		_parameterIndex = parameterIndex;
-	}
+    public MemberInjectionPoint(final Constructor<?> constructor, final int parameterIndex) {
+        _instance = null;
+        _member = constructor;
+        _parameterIndex = parameterIndex;
+    }
 
-	public MemberInjectionPoint(Method method, int parameterIndex, Object instance) {
-		_instance = instance;
-		_member = method;
-		_parameterIndex = parameterIndex;
-	}
+    public MemberInjectionPoint(final Method method, final int parameterIndex, final Object instance) {
+        _instance = instance;
+        _member = method;
+        _parameterIndex = parameterIndex;
+    }
 
-	@Override
-	public String toString() {
-		return "MemberInjectionPoint [member=" + _member + ", parameterIndex=" + _parameterIndex + ", instance=" + _instance
-				+ "]";
-	}
+    @Override
+    public String toString() {
+        return "MemberInjectionPoint [member=" + _member + ", parameterIndex=" + _parameterIndex + ", instance="
+                + _instance
+                + "]";
+    }
 
-	@Override
-	public Object getInstance() {
-		return _instance;
-	}
+    @Override
+    public Object getInstance() {
+        return _instance;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Class<T> getBaseType() {
-		if (_member instanceof Field) {
-			return (Class<T>) ((Field) _member).getType();
-		} else if (_member instanceof Method) {
-			return (Class<T>) ((Method) _member).getParameterTypes()[_parameterIndex];
-		} else if (_member instanceof Constructor) {
-			return (Class<T>) ((Constructor<?>) _member).getParameterTypes()[_parameterIndex];
-		}
-		return null;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Class<T> getBaseType() {
+        if (_member instanceof Field) {
+            return (Class<T>) ((Field) _member).getType();
+        } else if (_member instanceof Method) {
+            return (Class<T>) ((Method) _member).getParameterTypes()[_parameterIndex];
+        } else if (_member instanceof Constructor) {
+            return (Class<T>) ((Constructor<?>) _member).getParameterTypes()[_parameterIndex];
+        }
+        return null;
+    }
 
-	@Override
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		if (_member instanceof Field) {
-			return ((Field) _member).getAnnotation(annotationClass);
-		} else if (_member instanceof Method) {
-			return ((Method) _member).getAnnotation(annotationClass);
-		} else if (_member instanceof Constructor) {
-			return ((Constructor<?>) _member).getAnnotation(annotationClass);
-		}
-		return null;
-	}
+    @Override
+    public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
+        if (_member instanceof Field) {
+            return ((Field) _member).getAnnotation(annotationClass);
+        } else if (_member instanceof Method) {
+            return ((Method) _member).getAnnotation(annotationClass);
+        } else if (_member instanceof Constructor) {
+            return ((Constructor<?>) _member).getAnnotation(annotationClass);
+        }
+        return null;
+    }
 
-	@Override
-	protected Type getGenericType() {
-		if (_member instanceof Field) {
-			return ((Field) _member).getGenericType();
-		} else if (_member instanceof Method) {
-			return ((Method) _member).getGenericParameterTypes()[_parameterIndex];
-		} else if (_member instanceof Constructor) {
-			return ((Constructor<?>) _member).getGenericParameterTypes()[_parameterIndex];
-		}
-		return null;
-	}
+    @Override
+    protected Type getGenericType() {
+        if (_member instanceof Field) {
+            return ((Field) _member).getGenericType();
+        } else if (_member instanceof Method) {
+            return ((Method) _member).getGenericParameterTypes()[_parameterIndex];
+        } else if (_member instanceof Constructor) {
+            return ((Constructor<?>) _member).getGenericParameterTypes()[_parameterIndex];
+        }
+        return null;
+    }
 }

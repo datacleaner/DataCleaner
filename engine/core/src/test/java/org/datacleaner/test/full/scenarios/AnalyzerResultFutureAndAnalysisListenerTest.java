@@ -201,7 +201,7 @@ public class AnalyzerResultFutureAndAnalysisListenerTest extends TestCase {
         assertTrue(originalMessagesString, indexAnalyzerResultReady > indexAnalyzerResultNotReady);
 
         final int indexJobSuccess = getIndexAndVerifyExists(messagesList, "jobSuccess");
-        
+
         final int indexRunReturned = getIndexAndVerifyExists(messagesList, "AnalysisRunner.run(job) returned");
         assertTrue(originalMessagesString, indexJobSuccess > indexRunReturned);
         assertTrue(originalMessagesString, indexJobSuccess > indexFutureAnalyzerSuccess);

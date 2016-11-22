@@ -30,7 +30,7 @@ public abstract class DatastorePageColumn extends AbstractFreemarkerWizardPage {
 
     protected final DatastoreWizardSession _session;
 
-    public DatastorePageColumn(DatastoreWizardSession session) {
+    public DatastorePageColumn(final DatastoreWizardSession session) {
         _session = session;
     }
 

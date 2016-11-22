@@ -32,105 +32,105 @@ import com.sleepycat.je.Environment;
 
 final class BerkeleyDbMap<K, V> implements Map<K, V> {
 
-	private static final Logger logger = LoggerFactory.getLogger(BerkeleyDbMap.class);
+    private static final Logger logger = LoggerFactory.getLogger(BerkeleyDbMap.class);
 
-	private final Map<K, V> _wrappedMap;
-	private final Database _database;
-	private final Environment _environment;
+    private final Map<K, V> _wrappedMap;
+    private final Database _database;
+    private final Environment _environment;
 
-	@SuppressWarnings("unchecked")
-	public BerkeleyDbMap(Environment environment, Database database, StoredMap map) {
-		_environment = environment;
-		_database = database;
-		_wrappedMap = map;
-	}
+    @SuppressWarnings("unchecked")
+    public BerkeleyDbMap(final Environment environment, final Database database, final StoredMap map) {
+        _environment = environment;
+        _database = database;
+        _wrappedMap = map;
+    }
 
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		String name = _database.getDatabaseName();
-		_database.close();
-		_environment.removeDatabase(null, name);
-	}
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        final String name = _database.getDatabaseName();
+        _database.close();
+        _environment.removeDatabase(null, name);
+    }
 
-	@Override
-	public int size() {
-		return _wrappedMap.size();
-	}
+    @Override
+    public int size() {
+        return _wrappedMap.size();
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return _wrappedMap.isEmpty();
-	}
+    @Override
+    public boolean isEmpty() {
+        return _wrappedMap.isEmpty();
+    }
 
-	@Override
-	public boolean containsKey(Object key) {
-		return _wrappedMap.containsKey(key);
-	}
+    @Override
+    public boolean containsKey(final Object key) {
+        return _wrappedMap.containsKey(key);
+    }
 
-	@Override
-	public boolean containsValue(Object value) {
-		return _wrappedMap.containsValue(value);
-	}
+    @Override
+    public boolean containsValue(final Object value) {
+        return _wrappedMap.containsValue(value);
+    }
 
-	@Override
-	public V get(Object key) {
-		try {
-			return _wrappedMap.get(key);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			logger.warn("get('{}') threw exception: {}", key, e.getMessage());
-			logger.warn("Swallowing exception, returning null", e);
-			// there's a bug in berkeley that sometime causes this exception
-			// when the value is null!
-			return null;
-		}
-	}
+    @Override
+    public V get(final Object key) {
+        try {
+            return _wrappedMap.get(key);
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            logger.warn("get('{}') threw exception: {}", key, e.getMessage());
+            logger.warn("Swallowing exception, returning null", e);
+            // there's a bug in berkeley that sometime causes this exception
+            // when the value is null!
+            return null;
+        }
+    }
 
-	@Override
-	public V put(K key, V value) {
-		return _wrappedMap.put(key, value);
-	}
+    @Override
+    public V put(final K key, final V value) {
+        return _wrappedMap.put(key, value);
+    }
 
-	@Override
-	public V remove(Object key) {
-		return _wrappedMap.remove(key);
-	}
+    @Override
+    public V remove(final Object key) {
+        return _wrappedMap.remove(key);
+    }
 
-	@Override
-	public void putAll(Map<? extends K, ? extends V> m) {
-		_wrappedMap.putAll(m);
-	}
+    @Override
+    public void putAll(final Map<? extends K, ? extends V> m) {
+        _wrappedMap.putAll(m);
+    }
 
-	@Override
-	public void clear() {
-		_wrappedMap.clear();
-	}
+    @Override
+    public void clear() {
+        _wrappedMap.clear();
+    }
 
-	@Override
-	public Set<K> keySet() {
-		return _wrappedMap.keySet();
-	}
+    @Override
+    public Set<K> keySet() {
+        return _wrappedMap.keySet();
+    }
 
-	@Override
-	public Collection<V> values() {
-		return _wrappedMap.values();
-	}
+    @Override
+    public Collection<V> values() {
+        return _wrappedMap.values();
+    }
 
-	@Override
-	public Set<java.util.Map.Entry<K, V>> entrySet() {
-		return _wrappedMap.entrySet();
-	}
+    @Override
+    public Set<java.util.Map.Entry<K, V>> entrySet() {
+        return _wrappedMap.entrySet();
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		}
-		return _wrappedMap.equals(o);
-	}
+    @Override
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        return _wrappedMap.equals(o);
+    }
 
-	@Override
-	public int hashCode() {
-		return _wrappedMap.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return _wrappedMap.hashCode();
+    }
 }

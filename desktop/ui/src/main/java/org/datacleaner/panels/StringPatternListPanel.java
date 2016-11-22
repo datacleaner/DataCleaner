@@ -54,122 +54,147 @@ import org.jdesktop.swingx.VerticalLayout;
 
 public class StringPatternListPanel extends DCPanel implements ReferenceDataChangeListener<StringPattern> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.get();
-	private final DataCleanerConfiguration _configuration;
-	private final MutableReferenceDataCatalog _catalog;
-	private final DCPanel _listPanel;
-	private final DCGlassPane _glassPane;
-	private final WindowContext _windowContext;
-	private final UserPreferences _userPreferences;
+    private static final ImageManager imageManager = ImageManager.get();
+    private final DataCleanerConfiguration _configuration;
+    private final MutableReferenceDataCatalog _catalog;
+    private final DCPanel _listPanel;
+    private final DCGlassPane _glassPane;
+    private final WindowContext _windowContext;
+    private final UserPreferences _userPreferences;
 
-	@Inject
-	protected StringPatternListPanel(DCGlassPane glassPane, DataCleanerConfiguration configuration,
-			WindowContext windowContext, UserPreferences userPreferences) {
-		super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-		_glassPane = glassPane;
-		_configuration = configuration;
-		_windowContext = windowContext;
-		_userPreferences = userPreferences;
-		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
-		_catalog.addStringPatternListener(this);
+    @Inject
+    protected StringPatternListPanel(final DCGlassPane glassPane, final DataCleanerConfiguration configuration,
+            final WindowContext windowContext, final UserPreferences userPreferences) {
+        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        _glassPane = glassPane;
+        _configuration = configuration;
+        _windowContext = windowContext;
+        _userPreferences = userPreferences;
+        _catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
+        _catalog.addStringPatternListener(this);
 
-		_listPanel = new DCPanel();
-		_listPanel.setLayout(new VerticalLayout(4));
+        _listPanel = new DCPanel();
+        _listPanel.setLayout(new VerticalLayout(4));
 
-		updateComponents();
+        updateComponents();
 
-		final DCLabel newStringPatternsLabel = DCLabel.dark("Create new string pattern:");
-		newStringPatternsLabel.setFont(WidgetUtils.FONT_HEADER1);
+        final DCLabel newStringPatternsLabel = DCLabel.dark("Create new string pattern:");
+        newStringPatternsLabel.setFont(WidgetUtils.FONT_HEADER1);
 
-		final DCLabel existingStringPatternsLabel = DCLabel.dark("Existing string patterns:");
-		existingStringPatternsLabel.setFont(WidgetUtils.FONT_HEADER1);
+        final DCLabel existingStringPatternsLabel = DCLabel.dark("Existing string patterns:");
+        existingStringPatternsLabel.setFont(WidgetUtils.FONT_HEADER1);
 
-		setLayout(new VerticalLayout(10));
-		add(newStringPatternsLabel);
-		add(createNewStringPatternsPanel());
-		add(Box.createVerticalStrut(10));
-		add(existingStringPatternsLabel);
-		setBorder(new EmptyBorder(10, 10, 10, 0));
-		add(_listPanel);
-	}
+        setLayout(new VerticalLayout(10));
+        add(newStringPatternsLabel);
+        add(createNewStringPatternsPanel());
+        add(Box.createVerticalStrut(10));
+        add(existingStringPatternsLabel);
+        setBorder(new EmptyBorder(10, 10, 10, 0));
+        add(_listPanel);
+    }
 
-	private DCPanel createNewStringPatternsPanel() {
+    private static String getDescription(final StringPattern stringPattern) {
+        if (stringPattern.getDescription() != null) {
+            return stringPattern.getDescription();
+        }
+        final String description;
+        if (stringPattern instanceof RegexSwapStringPattern) {
+            description = ((RegexSwapStringPattern) stringPattern).getRegex().getExpression();
+        } else if (stringPattern instanceof RegexStringPattern) {
+            description = ((RegexStringPattern) stringPattern).getExpression();
+        } else if (stringPattern instanceof SimpleStringPattern) {
+            description = ((SimpleStringPattern) stringPattern).getExpression();
+        } else {
+            description = "";
+        }
 
-		final JButton simpleStringPatternButton = createButton(IconUtils.STRING_PATTERN_SIMPLE_IMAGEPATH,
-				"<html><b>Simple string pattern</b><br/>A string pattern based on simple string tokens, eg. 'Aaaaa 999'.</html>");
-		simpleStringPatternButton.addActionListener(
-				e -> new SimpleStringPatternDialog(_catalog, _windowContext).setVisible(true));
+        if (description == null) {
+            return "";
+        }
+        if (description.length() > 30) {
+            return description.substring(0, 27) + "...";
+        }
+        return description;
+    }
 
-		final JButton regexStringPatternButton = createButton(IconUtils.STRING_PATTERN_REGEX_IMAGEPATH,
-				"<html><b>Regular expression string pattern</b><br/>A very flexible string pattern, based on regular expressions.</html>");
-		regexStringPatternButton.addActionListener(
-				e -> new RegexStringPatternDialog(_catalog, _windowContext).setVisible(true));
+    private DCPanel createNewStringPatternsPanel() {
 
-		final JButton regexSwapStringPatternButton = createButton(IconUtils.STRING_PATTERN_REGEXSWAP_IMAGEPATH,
-				"<html><b>Browse the RegexSwap</b><br/>Download patterns from DataCleaner's online RegexSwap.</html>");
-		regexSwapStringPatternButton.addActionListener(
-				e -> new RegexSwapDialog(_catalog, _windowContext, _userPreferences).setVisible(true));
+        final JButton simpleStringPatternButton = createButton(IconUtils.STRING_PATTERN_SIMPLE_IMAGEPATH,
+                "<html><b>Simple string pattern</b><br/>A string pattern based on simple string tokens, eg. 'Aaaaa 999'.</html>");
+        simpleStringPatternButton.addActionListener(
+                e -> new SimpleStringPatternDialog(_catalog, _windowContext).setVisible(true));
 
-		final HelpIcon helpIcon = new HelpIcon(
-				"<b>String patterns</b><br>"
-						+ "String pattern provides a way to match string values against patterns. This is often useful for validation or categorization of values in semi- or unstructured columns.");
+        final JButton regexStringPatternButton = createButton(IconUtils.STRING_PATTERN_REGEX_IMAGEPATH,
+                "<html><b>Regular expression string pattern</b><br/>A very flexible string pattern, based on regular expressions.</html>");
+        regexStringPatternButton.addActionListener(
+                e -> new RegexStringPatternDialog(_catalog, _windowContext).setVisible(true));
 
-		final DCPanel panel = DCPanel.flow(simpleStringPatternButton, regexStringPatternButton,
-				regexSwapStringPatternButton, Box.createHorizontalStrut(100), helpIcon);
-		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
-		return panel;
-	}
+        final JButton regexSwapStringPatternButton = createButton(IconUtils.STRING_PATTERN_REGEXSWAP_IMAGEPATH,
+                "<html><b>Browse the RegexSwap</b><br/>Download patterns from DataCleaner's online RegexSwap.</html>");
+        regexSwapStringPatternButton.addActionListener(
+                e -> new RegexSwapDialog(_catalog, _windowContext, _userPreferences).setVisible(true));
 
-	private JButton createButton(String imagePath, String description) {
-		final JButton button = WidgetFactory.createImageButton(imageManager.getImageIcon(imagePath));
+        final HelpIcon helpIcon = new HelpIcon(
+                "<b>String patterns</b><br>"
+                        + "String pattern provides a way to match string values against patterns. This is often useful for validation or categorization of values in semi- or unstructured columns.");
 
-		final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0, imagePath);
-		popupBubble.attachTo(button);
+        final DCPanel panel = DCPanel.flow(simpleStringPatternButton, regexStringPatternButton,
+                regexSwapStringPatternButton, Box.createHorizontalStrut(100), helpIcon);
+        panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
+        return panel;
+    }
 
-		return button;
-	}
+    private JButton createButton(final String imagePath, final String description) {
+        final JButton button = WidgetFactory.createImageButton(imageManager.getImageIcon(imagePath));
 
-	private void updateComponents() {
-		_listPanel.removeAll();
+        final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0, imagePath);
+        popupBubble.attachTo(button);
 
-		final String[] names = _catalog.getStringPatternNames();
-		Arrays.sort(names);
+        return button;
+    }
 
-		final Icon icon = imageManager.getImageIcon("images/model/stringpattern.png");
+    private void updateComponents() {
+        _listPanel.removeAll();
 
-		for (final String name : names) {
-			final StringPattern stringPattern = _catalog.getStringPattern(name);
+        final String[] names = _catalog.getStringPatternNames();
+        Arrays.sort(names);
 
-			final DCLabel stringPatternLabel = DCLabel.dark("<html><b>" + name + "</b><br/>" + getDescription(stringPattern)
-					+ "</html>");
-			stringPatternLabel.setIcon(icon);
-			stringPatternLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
+        final Icon icon = imageManager.getImageIcon("images/model/stringpattern.png");
 
-			final JButton editButton = WidgetFactory.createSmallButton(IconUtils.ACTION_EDIT);
-			editButton.setToolTipText("Edit string pattern");
+        for (final String name : names) {
+            final StringPattern stringPattern = _catalog.getStringPattern(name);
 
-			if (stringPattern instanceof RegexStringPattern) {
-				editButton.addActionListener(e -> {
-                    RegexStringPatternDialog dialog = new RegexStringPatternDialog((RegexStringPattern) stringPattern,
+            final DCLabel stringPatternLabel =
+                    DCLabel.dark("<html><b>" + name + "</b><br/>" + getDescription(stringPattern)
+                            + "</html>");
+            stringPatternLabel.setIcon(icon);
+            stringPatternLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
+
+            final JButton editButton = WidgetFactory.createSmallButton(IconUtils.ACTION_EDIT);
+            editButton.setToolTipText("Edit string pattern");
+
+            if (stringPattern instanceof RegexStringPattern) {
+                editButton.addActionListener(e -> {
+                    final RegexStringPatternDialog dialog = new RegexStringPatternDialog((RegexStringPattern) stringPattern,
                             _catalog, _windowContext);
                     dialog.setVisible(true);
                 });
-			} else if (stringPattern instanceof SimpleStringPattern) {
-				editButton.addActionListener(e -> {
-                    SimpleStringPatternDialog dialog = new SimpleStringPatternDialog(
+            } else if (stringPattern instanceof SimpleStringPattern) {
+                editButton.addActionListener(e -> {
+                    final SimpleStringPatternDialog dialog = new SimpleStringPatternDialog(
                             (SimpleStringPattern) stringPattern, _catalog, _windowContext);
                     dialog.setVisible(true);
                 });
-			} else {
-				editButton.setEnabled(false);
-			}
+            } else {
+                editButton.setEnabled(false);
+            }
 
-			final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-			removeButton.setToolTipText("Remove string pattern");
-			removeButton.addActionListener(e -> {
-                int result = JOptionPane.showConfirmDialog(StringPatternListPanel.this,
+            final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
+            removeButton.setToolTipText("Remove string pattern");
+            removeButton.addActionListener(e -> {
+                final int result = JOptionPane.showConfirmDialog(StringPatternListPanel.this,
                         "Are you sure you wish to remove the string pattern '" + name + "'?", "Confirm remove",
                         JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
@@ -177,63 +202,39 @@ public class StringPatternListPanel extends DCPanel implements ReferenceDataChan
                 }
             });
 
-			final DCPanel stringPatternPanel = new DCPanel();
-			stringPatternPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
-			WidgetUtils.addToGridBag(stringPatternLabel, stringPatternPanel, 0, 0, 1.0, 0.0);
-			WidgetUtils.addToGridBag(editButton, stringPatternPanel, 1, 0, GridBagConstraints.EAST);
-			WidgetUtils.addToGridBag(removeButton, stringPatternPanel, 2, 0, GridBagConstraints.EAST);
-			_listPanel.add(stringPatternPanel);
-		}
+            final DCPanel stringPatternPanel = new DCPanel();
+            stringPatternPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
+            WidgetUtils.addToGridBag(stringPatternLabel, stringPatternPanel, 0, 0, 1.0, 0.0);
+            WidgetUtils.addToGridBag(editButton, stringPatternPanel, 1, 0, GridBagConstraints.EAST);
+            WidgetUtils.addToGridBag(removeButton, stringPatternPanel, 2, 0, GridBagConstraints.EAST);
+            _listPanel.add(stringPatternPanel);
+        }
 
-		if (names.length == 0) {
-			_listPanel.add(DCLabel.dark("(none)"));
-		}
+        if (names.length == 0) {
+            _listPanel.add(DCLabel.dark("(none)"));
+        }
 
-		updateUI();
-	}
-
-	private static String getDescription(StringPattern stringPattern) {
-		if (stringPattern.getDescription() != null) {
-			return stringPattern.getDescription();
-		}
-		final String description;
-		if (stringPattern instanceof RegexSwapStringPattern) {
-			description = ((RegexSwapStringPattern) stringPattern).getRegex().getExpression();
-		} else if (stringPattern instanceof RegexStringPattern) {
-			description = ((RegexStringPattern) stringPattern).getExpression();
-		} else if (stringPattern instanceof SimpleStringPattern) {
-			description = ((SimpleStringPattern) stringPattern).getExpression();
-		} else {
-			description = "";
-		}
-
-		if (description == null) {
-			return "";
-		}
-		if (description.length() > 30) {
-			return description.substring(0, 27) + "...";
-		}
-		return description;
-	}
-
-	@Override
-	public void onAdd(StringPattern stringPattern) {
-		SwingUtilities.invokeLater(() -> updateComponents());
-	}
-
-	@Override
-	public void onRemove(StringPattern stringPattern) {
-		SwingUtilities.invokeLater(() -> updateComponents());
-	}
-
-	@Override
-	public void removeNotify() {
-		super.removeNotify();
-		_catalog.removeStringPatternListener(this);
-	}
+        updateUI();
+    }
 
     @Override
-    public void onChange(StringPattern oldPattern, StringPattern newPattern) {
+    public void onAdd(final StringPattern stringPattern) {
+        SwingUtilities.invokeLater(() -> updateComponents());
+    }
+
+    @Override
+    public void onRemove(final StringPattern stringPattern) {
+        SwingUtilities.invokeLater(() -> updateComponents());
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        _catalog.removeStringPatternListener(this);
+    }
+
+    @Override
+    public void onChange(final StringPattern oldPattern, final StringPattern newPattern) {
         SwingUtilities.invokeLater(() -> updateComponents());
     }
 }

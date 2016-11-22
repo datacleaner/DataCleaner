@@ -25,9 +25,9 @@ import org.datacleaner.util.LabelUtils;
  * Token which represents a null
  */
 public class BlankToken implements Token {
-    
+
     public static final Token INSTANCE = new BlankToken();
-    
+
     private BlankToken() {
     }
 
@@ -42,7 +42,7 @@ public class BlankToken implements Token {
     }
 
     @Override
-    public char charAt(int index) {
+    public char charAt(final int index) {
         throw new UnsupportedOperationException("Blank string does not have any chars");
     }
 

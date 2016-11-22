@@ -51,7 +51,7 @@ public class DeleteFromTableAnalyzerPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<DeleteFromTableAnalyzer> ajb) {
+    public RendererPrecedence getPrecedence(final AnalyzerComponentBuilder<DeleteFromTableAnalyzer> ajb) {
         if (ajb.getDescriptor().getComponentClass() == DeleteFromTableAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -59,7 +59,7 @@ public class DeleteFromTableAnalyzerPresenterRenderer implements
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<DeleteFromTableAnalyzer> ajb) {
+    public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<DeleteFromTableAnalyzer> ajb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
                 PropertyWidgetFactory.class);
 

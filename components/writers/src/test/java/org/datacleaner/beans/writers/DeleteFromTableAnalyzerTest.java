@@ -58,10 +58,8 @@ public class DeleteFromTableAnalyzerTest {
     private static final String INTEGER_COLUMN_NAME = "bar";
     private static final String VARCHAR_COLUMN_VALUE = "StringValue";
     private static final int INTEGER_COLUMN_VALUE = 1;
-
-    private UpdateableDatastore updateableDatastore;
-
     public ExpectedException expectedException = ExpectedException.none();
+    private UpdateableDatastore updateableDatastore;
 
     @Before
     public void setUp() throws Exception {

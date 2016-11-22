@@ -21,9 +21,9 @@ package org.datacleaner.storage;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.datacleaner.data.MockInputRow;
-
 import junit.framework.TestCase;
+
+import org.datacleaner.data.MockInputRow;
 
 public class InMemoryRowAnnotationFactory2Test extends TestCase {
 

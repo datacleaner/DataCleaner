@@ -57,7 +57,7 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
     TenantResolver _tenantResolver;
 
     @Override
-    public RendererPrecedence getPrecedence(WriteDataResult res) {
+    public RendererPrecedence getPrecedence(final WriteDataResult res) {
         final DatastoreCatalog datastoreCatalog = _configuration.getDatastoreCatalog();
         final Datastore datastore = res.getDatastore(datastoreCatalog);
         if (datastore == null) {
@@ -69,7 +69,7 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
     }
 
     @Override
-    public HtmlFragment render(WriteDataResult res) {
+    public HtmlFragment render(final WriteDataResult res) {
         // TODO: Dirty way of obtaining the user bean - ideally we would be able
         // to just inject it, but SpringInjectionManager does not support
         // session scoped beans.
@@ -81,7 +81,7 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
 
         final HtmlFragment fragment = delegateRenderer.render(res);
         if (fragment instanceof SimpleHtmlFragment) {
-            SimpleHtmlFragment frag = (SimpleHtmlFragment) fragment;
+            final SimpleHtmlFragment frag = (SimpleHtmlFragment) fragment;
             final DatastoreCatalog datastoreCatalog = _configuration.getDatastoreCatalog();
             final Datastore datastore = res.getDatastore(datastoreCatalog);
 
@@ -102,7 +102,7 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
                                 + encodedName
                                 + "','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');\" class=\"QueryButton\">Query</button>");
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.error("Failed to append interactive HTML fragments to result", e);
                 }
             }

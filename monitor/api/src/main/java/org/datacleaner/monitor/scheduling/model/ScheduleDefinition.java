@@ -42,7 +42,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     private VariableProviderDefinition _variableProvider;
     private boolean _distributedExecution;
     private String _dateForOneTimeSchedule;
-	private Map<String,String> _jobMetadataProperties;
+    private Map<String, String> _jobMetadataProperties;
     private boolean _runOnHadoop;
     private String _hotFolder;
     private Map<String, String> _overrideProperties;
@@ -51,34 +51,34 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     public ScheduleDefinition() {
     }
 
-    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, String groupName) {
+    public ScheduleDefinition(final TenantIdentifier tenant, final JobIdentifier job, final String groupName) {
         _tenant = tenant;
         _job = job;
         _groupName = groupName;
     }
 
     public String getDateForOneTimeSchedule() {
-		return _dateForOneTimeSchedule;
-	}
+        return _dateForOneTimeSchedule;
+    }
 
-	public void setDateForOneTimeSchedule(String _dateForOneTimeSchedule) {
-		this._dateForOneTimeSchedule = _dateForOneTimeSchedule;
-	}
-	
-	public void setRunOnHadoop(boolean runOnHadoop) {
+    public void setDateForOneTimeSchedule(final String _dateForOneTimeSchedule) {
+        this._dateForOneTimeSchedule = _dateForOneTimeSchedule;
+    }
+
+    public void setRunOnHadoop(final boolean runOnHadoop) {
         _runOnHadoop = runOnHadoop;
     }
-	
-	public Boolean isRunOnHadoop(){
-        return _runOnHadoop;
-	    
-	}
 
-	public TenantIdentifier getTenant() {
+    public Boolean isRunOnHadoop() {
+        return _runOnHadoop;
+
+    }
+
+    public TenantIdentifier getTenant() {
         return _tenant;
     }
 
-    public void setTenant(TenantIdentifier tenant) {
+    public void setTenant(final TenantIdentifier tenant) {
         _tenant = tenant;
     }
 
@@ -86,32 +86,32 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         return _job;
     }
 
-    public void setJob(JobIdentifier job) {
+    public void setJob(final JobIdentifier job) {
         _job = job;
-    }
-
-    public void setCronExpression(String cronExpression) {
-        _cronExpression = cronExpression;
     }
 
     public String getCronExpression() {
         return _cronExpression;
     }
 
-    public void setGroupName(String groupName) {
-        _groupName = groupName;
+    public void setCronExpression(final String cronExpression) {
+        _cronExpression = cronExpression;
     }
 
     public String getGroupName() {
         return _groupName;
     }
 
-    public void setDependentJob(JobIdentifier dependentJob) {
-        _dependentJob = dependentJob;
+    public void setGroupName(final String groupName) {
+        _groupName = groupName;
     }
 
     public JobIdentifier getDependentJob() {
         return _dependentJob;
+    }
+
+    public void setDependentJob(final JobIdentifier dependentJob) {
+        _dependentJob = dependentJob;
     }
 
     public List<AlertDefinition> getAlerts() {
@@ -121,7 +121,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         return _alerts;
     }
 
-    public void setAlerts(List<AlertDefinition> alerts) {
+    public void setAlerts(final List<AlertDefinition> alerts) {
         _alerts = alerts;
     }
 
@@ -129,7 +129,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         return _distributedExecution;
     }
 
-    public void setDistributedExecution(boolean distributedExecution) {
+    public void setDistributedExecution(final boolean distributedExecution) {
         _distributedExecution = distributedExecution;
     }
 
@@ -138,8 +138,8 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
             return TriggerType.DEPENDENT;
         } else if (_cronExpression != null) {
             return TriggerType.PERIODIC;
-        } else if(_dateForOneTimeSchedule!= null){
-        	return TriggerType.ONETIME;
+        } else if (_dateForOneTimeSchedule != null) {
+            return TriggerType.ONETIME;
         } else if (_hotFolder != null) {
             return TriggerType.HOTFOLDER;
         } else {
@@ -151,23 +151,23 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         return _variableProvider;
     }
 
-    public void setVariableProvider(VariableProviderDefinition variableProvider) {
+    public void setVariableProvider(final VariableProviderDefinition variableProvider) {
         _variableProvider = variableProvider;
     }
-    
-    public void setJobMetadataProperties(Map<String, String> jobMetadataProperties) {
-		 _jobMetadataProperties=jobMetadataProperties ; 
-	}
-	
-	public Map<String,String> getJobMetadataProperties(){
-		return _jobMetadataProperties;
-	}
+
+    public Map<String, String> getJobMetadataProperties() {
+        return _jobMetadataProperties;
+    }
+
+    public void setJobMetadataProperties(final Map<String, String> jobMetadataProperties) {
+        _jobMetadataProperties = jobMetadataProperties;
+    }
 
     public String getHotFolder() {
         return _hotFolder;
     }
 
-    public void setHotFolder(String hotFolder) {
+    public void setHotFolder(final String hotFolder) {
         _hotFolder = hotFolder;
     }
 
@@ -175,7 +175,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         return _overrideProperties;
     }
 
-    public void setOverrideProperties(Map<String, String> overrideProperties) {
+    public void setOverrideProperties(final Map<String, String> overrideProperties) {
         _overrideProperties = overrideProperties;
     }
 
@@ -196,64 +196,85 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        ScheduleDefinition other = (ScheduleDefinition) obj;
+        }
+        final ScheduleDefinition other = (ScheduleDefinition) obj;
         if (_alerts == null) {
-            if (other._alerts != null)
+            if (other._alerts != null) {
                 return false;
-        } else if (!_alerts.equals(other._alerts))
+            }
+        } else if (!_alerts.equals(other._alerts)) {
             return false;
+        }
         if (_cronExpression == null) {
-            if (other._cronExpression != null)
+            if (other._cronExpression != null) {
                 return false;
-        } else if (!_cronExpression.equals(other._cronExpression))
+            }
+        } else if (!_cronExpression.equals(other._cronExpression)) {
             return false;
+        }
         if (_dateForOneTimeSchedule == null) {
-            if (other._dateForOneTimeSchedule != null)
+            if (other._dateForOneTimeSchedule != null) {
                 return false;
-        } else if (!_dateForOneTimeSchedule.equals(other._dateForOneTimeSchedule))
+            }
+        } else if (!_dateForOneTimeSchedule.equals(other._dateForOneTimeSchedule)) {
             return false;
+        }
         if (_groupName == null) {
-            if (other._groupName != null)
+            if (other._groupName != null) {
                 return false;
-        } else if (!_groupName.equals(other._groupName))
+            }
+        } else if (!_groupName.equals(other._groupName)) {
             return false;
+        }
         if (_dependentJob == null) {
-            if (other._dependentJob != null)
+            if (other._dependentJob != null) {
                 return false;
-        } else if (!_dependentJob.equals(other._dependentJob))
+            }
+        } else if (!_dependentJob.equals(other._dependentJob)) {
             return false;
+        }
         if (_job == null) {
-            if (other._job != null)
+            if (other._job != null) {
                 return false;
-        } else if (!_job.equals(other._job))
+            }
+        } else if (!_job.equals(other._job)) {
             return false;
+        }
         if (_tenant == null) {
-            if (other._tenant != null)
+            if (other._tenant != null) {
                 return false;
-        } else if (!_tenant.equals(other._tenant))
+            }
+        } else if (!_tenant.equals(other._tenant)) {
             return false;
+        }
         if (_variableProvider == null) {
-            if (other._variableProvider != null)
+            if (other._variableProvider != null) {
                 return false;
-        } else if (!_variableProvider.equals(other._variableProvider))
+            }
+        } else if (!_variableProvider.equals(other._variableProvider)) {
             return false;
+        }
         if (_jobMetadataProperties == null) {
-            if (other._jobMetadataProperties != null)
+            if (other._jobMetadataProperties != null) {
                 return false;
-        } else if (!_jobMetadataProperties.equals(other._jobMetadataProperties))
+            }
+        } else if (!_jobMetadataProperties.equals(other._jobMetadataProperties)) {
             return false;
+        }
         return true;
     }
 
     @Override
-    public int compareTo(ScheduleDefinition o) {
+    public int compareTo(final ScheduleDefinition o) {
         int diff = _job.compareTo(o.getJob());
         if (diff == 0) {
             diff = hashCode() - o.hashCode();
@@ -261,9 +282,13 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         return diff;
     }
 
-	@Override
-	public String toString() {
-		return "ScheduleDefinition[_tenant=" + _tenant + ", _job=" + _job + ", _dependentJob=" + _dependentJob + ", _cronExpression=" + _cronExpression + ", _alerts=" + _alerts + ", _groupName="+ _groupName + ", _variableProvider=" + _variableProvider+ ", _distributedExecution=" + _distributedExecution+ ", _dateForOneTimeSchedule="+ _dateForOneTimeSchedule+ ", _jobMetadataProperties=" + _jobMetadataProperties + "]";
-	}
+    @Override
+    public String toString() {
+        return "ScheduleDefinition[_tenant=" + _tenant + ", _job=" + _job + ", _dependentJob=" + _dependentJob
+                + ", _cronExpression=" + _cronExpression + ", _alerts=" + _alerts + ", _groupName=" + _groupName
+                + ", _variableProvider=" + _variableProvider + ", _distributedExecution=" + _distributedExecution
+                + ", _dateForOneTimeSchedule=" + _dateForOneTimeSchedule + ", _jobMetadataProperties="
+                + _jobMetadataProperties + "]";
+    }
 
 }

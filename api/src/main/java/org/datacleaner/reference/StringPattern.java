@@ -24,7 +24,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 /**
  * A string pattern defines a pattern to which you can match strings to see if
  * they share a similar pattern. Examples of string patterns are:
- * 
+ *
  * <ul>
  * <li>The pattern "Aaaaaa Aaaaaaaaaa" which is a typical firstname and lastname
  * pattern.</li>
@@ -38,9 +38,9 @@ public interface StringPattern extends ReferenceData {
      * Opens a connection to the {@link StringPattern}. Keep the connection open
      * while using the synonym catalog in a session, job or so. Close it when
      * you don't expect more interaction.
-     * 
+     *
      * @param configuration
      * @return
      */
-    public StringPatternConnection openConnection(DataCleanerConfiguration configuration);
+    StringPatternConnection openConnection(DataCleanerConfiguration configuration);
 }

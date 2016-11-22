@@ -22,11 +22,17 @@ package org.datacleaner.widgets.options;
 import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_SERVER_NAME;
 import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_URL;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -65,12 +71,12 @@ public class DataCloudOptionsPanel extends DCPanel {
     private final int weighty = 0;
     private int row = 0;
 
-    public DataCloudOptionsPanel(DataCleanerConfiguration configuration) {
+    public DataCloudOptionsPanel(final DataCleanerConfiguration configuration) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _configuration = configuration;
         final DCDocumentListener documentListener = new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 applyButton.setEnabled(true);
             }
         };
@@ -80,7 +86,7 @@ public class DataCloudOptionsPanel extends DCPanel {
         applyButton.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final boolean isOk = updateDcConfiguration();
                 applyButton.setEnabled(!isOk);
             }
@@ -95,7 +101,7 @@ public class DataCloudOptionsPanel extends DCPanel {
         passwordTextField.getDocument().addDocumentListener(documentListener);
 
         invalidCredentialsLabel = new DCHtmlBox("&nbsp;");
-        invalidCredentialsLabel.setSize(500-30, Integer.MAX_VALUE);
+        invalidCredentialsLabel.setSize(500 - 30, Integer.MAX_VALUE);
         invalidCredentialsLabel.setOpaque(false);
 
         setTitledBorder("Credentials");
@@ -125,7 +131,7 @@ public class DataCloudOptionsPanel extends DCPanel {
                 0, weighty, GridBagConstraints.HORIZONTAL);
     }
 
-    private void addField(String labelText, JComponent... fields) {
+    private void addField(final String labelText, final JComponent... fields) {
         row++;
 
         WidgetUtils.addToGridBag(new JLabel(labelText), this, 0, row, 1, 1, GridBagConstraints.LINE_START, padding,
@@ -154,7 +160,7 @@ public class DataCloudOptionsPanel extends DCPanel {
         final String password = new String(passwordTextField.getPassword());
         try {
             RemoteServersUtils.checkServerWithCredentials(DATACLOUD_URL, username, password);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             invalidCredentialsLabel.setForeground(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
             invalidCredentialsLabel.setText("Sign in to DataCloud failed: " + ex.getMessage());
             logger.warn("Sign in to DataCloud failed for user '{}'", username, ex);
@@ -164,12 +170,16 @@ public class DataCloudOptionsPanel extends DCPanel {
         invalidCredentialsLabel.setForeground(WidgetUtils.BG_COLOR_GREEN_MEDIUM);
         invalidCredentialsLabel.setText("Sign in to DataCloud succeeded.");
         logger.debug("Sign in to DataCloud succeeded. User name: {}", username);
-        final RemoteServerConfiguration remoteServerConfig = _configuration.getEnvironment().getRemoteServerConfiguration();
+        final RemoteServerConfiguration remoteServerConfig =
+                _configuration.getEnvironment().getRemoteServerConfiguration();
         final RemoteServerData existingServerData = remoteServerConfig.getServerConfig(DATACLOUD_SERVER_NAME);
         if (existingServerData == null) {
-            RemoteServersUtils.addRemoteServer(_configuration.getEnvironment(), DATACLOUD_SERVER_NAME, null, username, password);
+            RemoteServersUtils
+                    .addRemoteServer(_configuration.getEnvironment(), DATACLOUD_SERVER_NAME, null, username, password);
         } else {
-            RemoteServersUtils.updateRemoteServerCredentials(_configuration.getEnvironment(), DATACLOUD_SERVER_NAME, username, password);
+            RemoteServersUtils
+                    .updateRemoteServerCredentials(_configuration.getEnvironment(), DATACLOUD_SERVER_NAME, username,
+                            password);
         }
         return true;
     }

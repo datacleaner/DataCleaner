@@ -45,8 +45,8 @@ import org.junit.Test;
 
 public class TransformationAndFilteringInOutputDataStreamsTest {
 
-    public static enum BespokeCategory {
-        VALID, INVALID;
+    public enum BespokeCategory {
+        VALID, INVALID
     }
 
     public static class BespokeNotNullFilter implements Filter<BespokeCategory> {

@@ -175,7 +175,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
                 final UpdateableDataContext dc = con.getUpdateableDataContext();
                 dc.executeUpdate(new UpdateScript() {
                     @Override
-                    public void run(UpdateCallback callback) {
+                    public void run(final UpdateCallback callback) {
                         final RowDeletionBuilder delete = callback.deleteFrom(table);
                         if (logger.isInfoEnabled()) {
                             logger.info("Executing truncating DELETE operation: {}", delete.toSql());
@@ -201,7 +201,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             _errorDataContext = createErrorDataContext();
         }
 
-        int bufferSize = bufferSizeOption.calculateBufferSize(values.length);
+        final int bufferSize = bufferSizeOption.calculateBufferSize(values.length);
         logger.info("Row buffer size set to {}", bufferSize);
 
         _writeBuffer = new WriteBuffer(bufferSize, this);
@@ -239,26 +239,26 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
         return datastore.getName() + " - " + tableName;
     }
 
-    private void validateCsvHeaders(CsvDataContext dc) {
-        Schema schema = dc.getDefaultSchema();
+    private void validateCsvHeaders(final CsvDataContext dc) {
+        final Schema schema = dc.getDefaultSchema();
         if (schema.getTableCount() == 0) {
             // nothing to worry about, we will create the table ourselves
             return;
         }
-        Table table = schema.getTables()[0];
+        final Table table = schema.getTables()[0];
 
         // verify that table names correspond to what we need!
 
-        for (String columnName : columnNames) {
-            Column column = table.getColumnByName(columnName);
+        for (final String columnName : columnNames) {
+            final Column column = table.getColumnByName(columnName);
             if (column == null) {
                 throw new IllegalStateException("Error log file does not have required column header: " + columnName);
             }
         }
         if (additionalErrorLogValues != null) {
-            for (InputColumn<?> inputColumn : additionalErrorLogValues) {
-                String columnName = translateAdditionalErrorLogColumnName(inputColumn.getName());
-                Column column = table.getColumnByName(columnName);
+            for (final InputColumn<?> inputColumn : additionalErrorLogValues) {
+                final String columnName = translateAdditionalErrorLogColumnName(inputColumn.getName());
+                final Column column = table.getColumnByName(columnName);
                 if (column == null) {
                     throw new IllegalStateException("Error log file does not have required column header: "
                             + columnName);
@@ -266,14 +266,14 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             }
         }
 
-        Column column = table.getColumnByName(ERROR_MESSAGE_COLUMN_NAME);
+        final Column column = table.getColumnByName(ERROR_MESSAGE_COLUMN_NAME);
         if (column == null) {
             throw new IllegalStateException("Error log file does not have required column: "
                     + ERROR_MESSAGE_COLUMN_NAME);
         }
     }
 
-    private String translateAdditionalErrorLogColumnName(String columnName) {
+    private String translateAdditionalErrorLogColumnName(final String columnName) {
         if (ArrayUtils.contains(columnNames, columnName)) {
             return translateAdditionalErrorLogColumnName(columnName + "_add");
         }
@@ -286,7 +286,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
         if (errorLogFile == null || TEMP_DIR.equals(errorLogFile)) {
             try {
                 file = File.createTempFile("insertion_error", ".csv");
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new IllegalStateException("Could not create new temp file", e);
             }
         } else if (errorLogFile.isDirectory()) {
@@ -305,15 +305,15 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             // create table if no table exists.
             dc.executeUpdate(new UpdateScript() {
                 @Override
-                public void run(UpdateCallback cb) {
+                public void run(final UpdateCallback cb) {
                     TableCreationBuilder tableBuilder = cb.createTable(schema, "error_table");
-                    for (String columnName : columnNames) {
+                    for (final String columnName : columnNames) {
                         tableBuilder = tableBuilder.withColumn(columnName);
                     }
 
                     if (additionalErrorLogValues != null) {
-                        for (InputColumn<?> inputColumn : additionalErrorLogValues) {
-                            String columnName = translateAdditionalErrorLogColumnName(inputColumn.getName());
+                        for (final InputColumn<?> inputColumn : additionalErrorLogValues) {
+                            final String columnName = translateAdditionalErrorLogColumnName(inputColumn.getName());
                             tableBuilder = tableBuilder.withColumn(columnName);
                         }
                     }
@@ -329,7 +329,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         if (logger.isDebugEnabled()) {
             logger.debug("At run() time, InputColumns are: {}", Arrays.toString(values));
         }
@@ -346,7 +346,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
 
         if (additionalErrorLogValues != null) {
             for (int i = 0; i < additionalErrorLogValues.length; i++) {
-                Object value = row.getValue(additionalErrorLogValues[i]);
+                final Object value = row.getValue(additionalErrorLogValues[i]);
                 rowData[values.length + i] = value;
             }
         }
@@ -362,7 +362,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
                     logger.debug("Value for {} set to: {}", columnNames[i], rowData[i]);
                 }
             }
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             for (int i = 0; i < distinctCount; i++) {
                 errorOccurred(rowData, e);
             }
@@ -386,7 +386,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
 
         final FileDatastore errorDatastore;
         if (_errorDataContext != null) {
-            Resource resource = _errorDataContext.getResource();
+            final Resource resource = _errorDataContext.getResource();
             errorDatastore = new CsvDatastore(resource.getName(), resource);
         } else {
             errorDatastore = null;
@@ -413,9 +413,9 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             final UpdateableDataContext dc = con.getUpdateableDataContext();
             dc.executeUpdate(new BatchUpdateScript() {
                 @Override
-                public void run(UpdateCallback callback) {
+                public void run(final UpdateCallback callback) {
                     int insertCount = 0;
-                    for (Object[] rowData : buffer) {
+                    for (final Object[] rowData : buffer) {
                         RowInsertionBuilder insertBuilder = callback.insertInto(columns[0].getTable());
                         for (int i = 0; i < columns.length; i++) {
                             insertBuilder = insertBuilder.value(columns[i], rowData[i]);
@@ -454,7 +454,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             logger.warn("Error occurred while inserting record. Writing to error stream", e);
             _errorDataContext.executeUpdate(new UpdateScript() {
                 @Override
-                public void run(UpdateCallback cb) {
+                public void run(final UpdateCallback cb) {
                     RowInsertionBuilder insertBuilder = cb
                             .insertInto(_errorDataContext.getDefaultSchema().getTables()[0]);
                     for (int i = 0; i < columnNames.length; i++) {
@@ -463,9 +463,9 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
 
                     if (additionalErrorLogValues != null) {
                         for (int i = 0; i < additionalErrorLogValues.length; i++) {
-                            String columnName = translateAdditionalErrorLogColumnName(additionalErrorLogValues[i]
+                            final String columnName = translateAdditionalErrorLogColumnName(additionalErrorLogValues[i]
                                     .getName());
-                            Object value = rowData[columnNames.length + i];
+                            final Object value = rowData[columnNames.length + i];
                             insertBuilder = insertBuilder.value(columnName, value);
                         }
                     }

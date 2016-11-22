@@ -21,8 +21,8 @@ package org.datacleaner.util;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.io.ObjectInputStream.GetField;
+import java.io.Serializable;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -40,61 +40,58 @@ import org.slf4j.LoggerFactory;
 /**
  * Builder object to make it convenient to implement a readObject(
  * {@link ObjectInputStream}) method in a Serializable class.
- * 
+ *
  * The main functionality of this helper is to aid in setting field values of
  * fields that have been moved around in the class hierarchy. This is eg. the
  * case with implementations of {@link UsageAwareDatastore} and
  * {@link AbstractReferenceData} (where the _name fields have been moved to
  * these super classes).
- * 
- * 
+ *
+ *
  */
 public final class ReadObjectBuilder<E extends Serializable> {
-
-    private static final Logger logger = LoggerFactory.getLogger(ReadObjectBuilder.class);
 
     /**
      * Annotation used to mark fields in classes that have been moved in the
      * class hierarchy, typically from a subclass to a superclass. Such fields
      * will be discovered and treated accordingly during deserialization.
-     * 
-     * 
+     *
+     *
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ ElementType.FIELD })
     @Documented
     @Inherited
-    public static @interface Moved {
+    public @interface Moved {
     }
 
     /**
      * A custom adaptor interface which can be provided externally to do custom
      * field deserialization logic.
      */
-    public static interface Adaptor {
-        public void deserialize(GetField getField, Serializable serializable) throws Exception;
+    public interface Adaptor {
+        void deserialize(GetField getField, Serializable serializable) throws Exception;
     }
-
-    public static <E extends Serializable> ReadObjectBuilder<E> create(E serializable, Class<? super E> clazz) {
-        logger.debug("Creating ReadObjectBuilder for new object of {}", clazz);
-        return new ReadObjectBuilder<E>(serializable, clazz);
-    }
-
+    private static final Logger logger = LoggerFactory.getLogger(ReadObjectBuilder.class);
     private final E _serializable;
     private final Class<? super E> _clazz;
-
-    private ReadObjectBuilder(E serializable, Class<? super E> clazz) {
+    private ReadObjectBuilder(final E serializable, final Class<? super E> clazz) {
         _serializable = serializable;
         _clazz = clazz;
     }
 
-    public void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    public static <E extends Serializable> ReadObjectBuilder<E> create(final E serializable, final Class<? super E> clazz) {
+        logger.debug("Creating ReadObjectBuilder for new object of {}", clazz);
+        return new ReadObjectBuilder<E>(serializable, clazz);
+    }
+
+    public void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         readObject(stream, null);
     }
 
-    public void readObject(ObjectInputStream stream, Adaptor adaptor) throws IOException, ClassNotFoundException {
+    public void readObject(final ObjectInputStream stream, final Adaptor adaptor) throws IOException, ClassNotFoundException {
         try {
-            GetField getField = stream.readFields();
+            final GetField getField = stream.readFields();
 
             Field[] fields;
             fields = _clazz.getDeclaredFields();
@@ -107,32 +104,32 @@ public final class ReadObjectBuilder<E extends Serializable> {
             if (adaptor != null) {
                 adaptor.deserialize(getField, _serializable);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Could not deserialize object!", e);
             if (e instanceof IOException) {
-                throw (IOException)e;
+                throw (IOException) e;
             }
             if (e instanceof ClassNotFoundException) {
-                throw (ClassNotFoundException)e;
+                throw (ClassNotFoundException) e;
             }
             throw new RuntimeException(e);
         }
     }
 
-    private void deserializeFields(Field[] fields, GetField getField) throws IOException {
-        for (Field field : fields) {
-            int modifiers = field.getModifiers();
+    private void deserializeFields(final Field[] fields, final GetField getField) throws IOException {
+        for (final Field field : fields) {
+            final int modifiers = field.getModifiers();
             if (!Modifier.isTransient(modifiers) && !Modifier.isStatic(modifiers)) {
                 deserializeField(field, getField);
             }
         }
     }
 
-    private void deserializeField(Field field, GetField getField) throws IOException {
+    private void deserializeField(final Field field, final GetField getField) throws IOException {
         final String fieldName = field.getName();
         try {
             field.setAccessible(true);
-            Class<?> fieldType = field.getType();
+            final Class<?> fieldType = field.getType();
             if (fieldType.isPrimitive()) {
                 if (fieldType == boolean.class) {
                     final boolean value = getField.get(fieldName, false);
@@ -168,9 +165,9 @@ public final class ReadObjectBuilder<E extends Serializable> {
                     field.set(_serializable, value);
                 }
             }
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             logger.warn("Not allowed to access field: {}", fieldName);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             logger.debug("No such field found in GetFields: {}", fieldName);
         }
     }

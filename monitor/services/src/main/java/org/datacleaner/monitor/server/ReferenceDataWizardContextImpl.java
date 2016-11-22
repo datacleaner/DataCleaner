@@ -36,8 +36,8 @@ public class ReferenceDataWizardContextImpl implements ReferenceDataWizardContex
     private final Func<String, Object> _sessionFunc;
     private final Locale _locale;
 
-    public ReferenceDataWizardContextImpl(ReferenceDataWizard wizard, TenantContext tenantContext,
-            Func<String, Object> sessionFunc, Locale locale) {
+    public ReferenceDataWizardContextImpl(final ReferenceDataWizard wizard, final TenantContext tenantContext,
+            final Func<String, Object> sessionFunc, final Locale locale) {
         _wizard = wizard;
         _tenantContext = tenantContext;
         _sessionFunc = sessionFunc;

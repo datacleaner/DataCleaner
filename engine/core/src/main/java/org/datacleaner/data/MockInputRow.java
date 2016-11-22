@@ -49,24 +49,24 @@ public class MockInputRow extends AbstractLegacyAwareInputRow {
         this(_idGenerator.getAndIncrement());
     }
 
-    public MockInputRow(long id, Map<InputColumn<?>, Object> values) {
+    public MockInputRow(final long id, final Map<InputColumn<?>, Object> values) {
         _values = values;
         _rowId = id;
     }
 
-    public MockInputRow(Map<InputColumn<?>, Object> values) {
+    public MockInputRow(final Map<InputColumn<?>, Object> values) {
         this(_idGenerator.getAndIncrement(), values);
     }
 
-    public MockInputRow(long id) {
+    public MockInputRow(final long id) {
         this(id, new LinkedHashMap<InputColumn<?>, Object>());
     }
 
-    public MockInputRow(InputColumn<?>[] columns, Object[] values) {
+    public MockInputRow(final InputColumn<?>[] columns, final Object[] values) {
         this(_idGenerator.getAndIncrement(), columns, values);
     }
 
-    public MockInputRow(int id, InputColumn<?>[] columns, Object[] values) {
+    public MockInputRow(final int id, final InputColumn<?>[] columns, final Object[] values) {
         this(id);
         for (int i = 0; i < values.length; i++) {
             put(columns[i], values[i]);
@@ -88,7 +88,7 @@ public class MockInputRow extends AbstractLegacyAwareInputRow {
         return Arrays.asList("_values");
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         doReadObject(stream);
     }
 
@@ -103,35 +103,35 @@ public class MockInputRow extends AbstractLegacyAwareInputRow {
     }
 
     @Override
-    public boolean containsInputColumn(InputColumn<?> inputColumn) {
+    public boolean containsInputColumn(final InputColumn<?> inputColumn) {
         return _values.containsKey(inputColumn);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E> E getValueInternal(InputColumn<E> column) {
+    public <E> E getValueInternal(final InputColumn<E> column) {
         return (E) _values.get(column);
     }
 
     /**
      * Puts/adds a new value to the row.
-     * 
+     *
      * @param column
      * @param value
      * @return
      */
-    public MockInputRow put(InputColumn<?> column, Object value) {
+    public MockInputRow put(final InputColumn<?> column, final Object value) {
         _values.put(column, value);
         return this;
     }
 
     /**
      * Puts/adds new values to the row.
-     * 
+     *
      * @param values
      * @return
      */
-    public MockInputRow putAll(Map<InputColumn<?>, Object> values) {
+    public MockInputRow putAll(final Map<InputColumn<?>, Object> values) {
         _values.putAll(values);
         return this;
     }
@@ -142,21 +142,27 @@ public class MockInputRow extends AbstractLegacyAwareInputRow {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        MockInputRow other = (MockInputRow) obj;
-        if (_rowId != other._rowId)
+        }
+        final MockInputRow other = (MockInputRow) obj;
+        if (_rowId != other._rowId) {
             return false;
+        }
         if (_values == null) {
-            if (other._values != null)
+            if (other._values != null) {
                 return false;
-        } else if (!_values.equals(other._values))
+            }
+        } else if (!_values.equals(other._values)) {
             return false;
+        }
         return true;
     }
 

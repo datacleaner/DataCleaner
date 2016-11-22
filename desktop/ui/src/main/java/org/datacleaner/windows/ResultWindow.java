@@ -106,9 +106,8 @@ import org.slf4j.LoggerFactory;
  * execution is shown.
  */
 public final class ResultWindow extends AbstractWindow implements WindowListener {
-    private static final Logger logger = LoggerFactory.getLogger(ResultWindow.class);
-
     public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<>(0);
+    private static final Logger logger = LoggerFactory.getLogger(ResultWindow.class);
     private static final long serialVersionUID = 1L;
     private static final ImageManager imageManager = ImageManager.get();
 
@@ -140,9 +139,9 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
      * @param rendererFactory
      */
     @Inject
-    protected ResultWindow(DataCleanerConfiguration configuration, @Nullable AnalysisJob job,
-            @Nullable AnalysisResult result, @Nullable @JobFile FileObject jobFilename, WindowContext windowContext,
-            UserPreferences userPreferences, RendererFactory rendererFactory) {
+    protected ResultWindow(final DataCleanerConfiguration configuration, @Nullable final AnalysisJob job,
+            @Nullable final AnalysisResult result, @Nullable @JobFile final FileObject jobFilename, final WindowContext windowContext,
+            final UserPreferences userPreferences, final RendererFactory rendererFactory) {
         super(windowContext);
         final boolean running = (result == null);
 
@@ -160,7 +159,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
         };
 
-        Border buttonBorder = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
+        final Border buttonBorder = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
         _cancelButton = WidgetFactory.createDefaultButton("Cancel job", IconUtils.ACTION_STOP);
         _cancelButton.setHorizontalAlignment(SwingConstants.LEFT);
         _cancelButton.setBorder(buttonBorder);
@@ -171,18 +170,18 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         _saveResultsPopupButton.setMenuPosition(MenuPosition.TOP);
         _saveResultsPopupButton.getMenu().setBorder(new MatteBorder(1, 0, 0, 1, WidgetUtils.BG_COLOR_MEDIUM));
 
-        JMenuItem saveAsFileItem = WidgetFactory.createMenuItem("Save as result file", IconUtils.ACTION_SAVE_DARK);
+        final JMenuItem saveAsFileItem = WidgetFactory.createMenuItem("Save as result file", IconUtils.ACTION_SAVE_DARK);
         saveAsFileItem.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
         saveAsFileItem.setBorder(buttonBorder);
         _saveResultsPopupButton.getMenu().add(saveAsFileItem);
 
-        JMenuItem exportToHtmlItem = WidgetFactory.createMenuItem("Export to HTML", IconUtils.WEBSITE);
+        final JMenuItem exportToHtmlItem = WidgetFactory.createMenuItem("Export to HTML", IconUtils.WEBSITE);
         exportToHtmlItem
                 .addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
         exportToHtmlItem.setBorder(buttonBorder);
         _saveResultsPopupButton.getMenu().add(exportToHtmlItem);
 
-        JMenuItem publishToServerItem = WidgetFactory.createMenuItem("Publish to server", IconUtils.MENU_DQ_MONITOR);
+        final JMenuItem publishToServerItem = WidgetFactory.createMenuItem("Publish to server", IconUtils.MENU_DQ_MONITOR);
         publishToServerItem.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(),
                 _userPreferences, resultRef, _jobFilename));
         publishToServerItem.setBorder(buttonBorder);
@@ -193,14 +192,14 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
             @Override
             protected JComponent wrapInCollapsiblePane(final JComponent originalPanel) {
-                DCPanel buttonPanel = new DCPanel();
+                final DCPanel buttonPanel = new DCPanel();
                 buttonPanel.setLayout(new VerticalLayout());
                 buttonPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
 
                 buttonPanel.add(_saveResultsPopupButton);
                 buttonPanel.add(_cancelButton);
 
-                DCPanel wrappedPanel = new DCPanel();
+                final DCPanel wrappedPanel = new DCPanel();
                 wrappedPanel.setLayout(new BorderLayout());
                 wrappedPanel.add(originalPanel, BorderLayout.CENTER);
                 wrappedPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -215,7 +214,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 imageManager.getImageIcon("images/model/progress_information.png", IconUtils.ICON_SIZE_TAB),
                 _progressInformationPanel);
 
-        for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
+        for (final Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
             final JComponent component = pluggableComponent.eval(this);
             if (component != null) {
                 if (component instanceof JMenuItem) {
@@ -225,7 +224,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 } else if (component instanceof AbstractButton) {
                     final AbstractButton button = (AbstractButton) component;
                     final JMenuItem menuItem = WidgetFactory.createMenuItem(button.getText(), button.getIcon());
-                    for (ActionListener listener : button.getActionListeners()) {
+                    for (final ActionListener listener : button.getActionListeners()) {
                         menuItem.addActionListener(listener);
                     }
                     menuItem.setBorder(buttonBorder);
@@ -241,7 +240,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
             _cancelButton.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(final ActionEvent e) {
                     _worker.cancelIfRunning();
                 }
             });
@@ -251,7 +250,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             _worker = null;
 
             final Map<ComponentJob, AnalyzerResult> map = result.getResultMap();
-            for (Entry<ComponentJob, AnalyzerResult> entry : map.entrySet()) {
+            for (final Entry<ComponentJob, AnalyzerResult> entry : map.entrySet()) {
                 final ComponentJob componentJob = entry.getKey();
                 final AnalyzerResult analyzerResult = entry.getValue();
 
@@ -299,7 +298,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         return new Dimension(width, height);
     }
 
-    public Tab<AnalyzerResultPanel> getOrCreateResultPanel(final ComponentJob componentJob, boolean finished) {
+    public Tab<AnalyzerResultPanel> getOrCreateResultPanel(final ComponentJob componentJob, final boolean finished) {
         synchronized (_resultPanels) {
             final Tab<AnalyzerResultPanel> existingTab = _resultPanels.get(componentJob);
             if (existingTab != null) {
@@ -342,7 +341,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
     public String getWindowTitle() {
         String title = "Analysis results";
 
-        String datastoreName = getDatastoreName();
+        final String datastoreName = getDatastoreName();
         if (!StringUtils.isNullOrEmpty(datastoreName)) {
             title = datastoreName + " | " + title;
         }
@@ -355,9 +354,9 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
     private String getDatastoreName() {
         if (_job != null) {
-            Datastore datastore = _job.getDatastore();
+            final Datastore datastore = _job.getDatastore();
             if (datastore != null) {
-                String datastoreName = datastore.getName();
+                final String datastoreName = datastore.getName();
                 if (!StringUtils.isNullOrEmpty(datastoreName)) {
                     return datastoreName;
                 }
@@ -373,7 +372,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
     @Override
     protected boolean onWindowClosing() {
-        boolean closing = super.onWindowClosing();
+        final boolean closing = super.onWindowClosing();
         if (closing) {
             if (_worker != null) {
                 _worker.cancelIfRunning();
@@ -398,7 +397,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 bannerTitle);
         _tabbedPane.addListener(new VerticalTabbedPane.Listener() {
             @Override
-            public void stateChanged(int newIndex, Tab<?> newTab) {
+            public void stateChanged(final int newIndex, final Tab<?> newTab) {
                 banner.setTitle2(newTab.getTitle());
                 banner.updateUI();
             }
@@ -415,7 +414,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         if (_result == null && _worker != null) {
             try {
                 _result = _worker.get();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 WidgetUtils.showErrorMessage("Unable to fetch result", e);
             }
         }
@@ -427,7 +426,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
      *
      * @param result
      */
-    public void setResult(AnalysisResult result) {
+    public void setResult(final AnalysisResult result) {
         _result = result;
     }
 
@@ -455,7 +454,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         return _userPreferences;
     }
 
-    public void onUnexpectedError(AnalysisJob job, Throwable throwable) {
+    public void onUnexpectedError(final AnalysisJob job, Throwable throwable) {
         throwable = ErrorUtils.unwrapForPresentation(throwable);
         if (throwable instanceof AnalysisJobCancellation) {
             _progressInformationPanel.onCancelled();
@@ -471,13 +470,13 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
     public AnalysisListener createAnalysisListener() {
         return new AnalysisListenerAdaptor() {
             @Override
-            public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
+            public void jobBegin(final AnalysisJob job, final AnalysisJobMetrics metrics) {
                 updateButtonVisibility(true);
                 _progressInformationPanel.onBegin();
             }
 
             @Override
-            public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
+            public void jobSuccess(final AnalysisJob job, final AnalysisJobMetrics metrics) {
                 WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {
@@ -500,7 +499,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
                     _progressInformationPanel.addUserLog(messageString + " (" + componentLabel + ")");
                 } else if (message instanceof RestrictedFunctionalityMessage) {
-                    final RestrictedFunctionalityMessage restrictedFunctionalityMessage = (RestrictedFunctionalityMessage) message;
+                    final RestrictedFunctionalityMessage restrictedFunctionalityMessage =
+                            (RestrictedFunctionalityMessage) message;
                     final String messageString = restrictedFunctionalityMessage.getMessage();
                     _progressInformationPanel.addRestrictedFunctionalityMessage(messageString,
                             restrictedFunctionalityMessage.getCallToActions());
@@ -521,7 +521,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                         Arrays.sort(componentJobs, new Comparator<ComponentJob>() {
 
                             @Override
-                            public int compare(ComponentJob o1, ComponentJob o2) {
+                            public int compare(final ComponentJob o1, final ComponentJob o2) {
                                 if ((o1 instanceof ImmutableAnalyzerJob) && !(o2 instanceof ImmutableAnalyzerJob)) {
                                     return -1;
                                 }
@@ -532,7 +532,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                             }
                         });
 
-                        for (ComponentJob componentJob : componentJobs) {
+                        for (final ComponentJob componentJob : componentJobs) {
                             // instantiate result panels
                             getOrCreateResultPanel(componentJob, false);
                         }
@@ -553,13 +553,13 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
+            public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
                     final int currentRow) {
                 _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
             }
 
             @Override
-            public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
+            public void rowProcessingSuccess(final AnalysisJob job, final RowProcessingMetrics metrics) {
                 logger.info("rowProcessingSuccess: {}", job.getDatastore().getName());
                 _progressInformationPanel.updateProgressFinished(metrics.getTable());
                 _progressInformationPanel.addUserLog(
@@ -567,12 +567,12 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void componentBegin(AnalysisJob job, final ComponentJob componentJob, ComponentMetrics metrics) {
+            public void componentBegin(final AnalysisJob job, final ComponentJob componentJob, final ComponentMetrics metrics) {
                 _progressInformationPanel.addUserLog("Starting component '" + LabelUtils.getLabel(componentJob) + "'");
             }
 
             @Override
-            public void componentSuccess(AnalysisJob job, final ComponentJob componentJob,
+            public void componentSuccess(final AnalysisJob job, final ComponentJob componentJob,
                     final AnalyzerResult result) {
                 final StringBuilder sb = new StringBuilder();
                 sb.append("Component ");
@@ -594,16 +594,17 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row,
-                    Throwable throwable) {
-                if(!(throwable instanceof PreviousErrorsExistException)){
+            public void errorInComponent(final AnalysisJob job, final ComponentJob componentJob, final InputRow row,
+                    final Throwable throwable) {
+                if (!(throwable instanceof PreviousErrorsExistException)) {
                     _progressInformationPanel.addUserLog(
-                            "An error occurred in the component: " + LabelUtils.getLabel(componentJob), throwable, true);
+                            "An error occurred in the component: " + LabelUtils.getLabel(componentJob), throwable,
+                            true);
                 }
             }
 
             @Override
-            public void errorUnknown(AnalysisJob job, Throwable throwable) {
+            public void errorUnknown(final AnalysisJob job, final Throwable throwable) {
                 onUnexpectedError(job, throwable);
             }
         };
@@ -620,7 +621,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         });
     }
 
-    public void windowClosed(WindowEvent e) {
+    public void windowClosed(final WindowEvent e) {
         if (this.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
             _windowSizePreference.setUserPreferredSize(null, true);
         } else {

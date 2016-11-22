@@ -31,17 +31,17 @@ import org.datacleaner.api.Transformer;
 @Named("Example mapped enums transformer")
 public class ExampleMappedEnumsComponent implements Transformer {
 
-    public static enum SomeEnum {
+    public enum SomeEnum {
         ONE, TWO, THREE, FOUR, FIVE, SIX
     }
-    
+
     @Configured
     InputColumn<?>[] columns;
-    
+
     @Configured
     @MappedProperty("Columns")
     SomeEnum[] enums;
-    
+
     @Override
     public OutputColumns getOutputColumns() {
         return new OutputColumns(columns.length, String.class);

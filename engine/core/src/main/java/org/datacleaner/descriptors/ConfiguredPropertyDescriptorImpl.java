@@ -32,20 +32,21 @@ import org.datacleaner.util.StringUtils;
 /**
  * Default implementation of {@link ConfiguredPropertyDescriptor}.
  */
-final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor implements ConfiguredPropertyDescriptor {
+final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor
+        implements ConfiguredPropertyDescriptor {
 
     private static final long serialVersionUID = 1L;
 
-    protected ConfiguredPropertyDescriptorImpl(Field field, ComponentDescriptor<?> componentDescriptor)
+    protected ConfiguredPropertyDescriptorImpl(final Field field, final ComponentDescriptor<?> componentDescriptor)
             throws DescriptorException {
         super(field, componentDescriptor);
     }
 
     @Override
     public String getName() {
-        Configured configured = getAnnotation(Configured.class);
+        final Configured configured = getAnnotation(Configured.class);
         if (configured != null) {
-            String value = configured.value();
+            final String value = configured.value();
             if (!StringUtils.isNullOrEmpty(value)) {
                 return value.trim();
             }
@@ -55,7 +56,7 @@ final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor 
 
     @Override
     public String getDescription() {
-        Description desc = getAnnotation(Description.class);
+        final Description desc = getAnnotation(Description.class);
         if (desc == null) {
             return null;
         }
@@ -69,14 +70,14 @@ final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor 
 
     @Override
     public boolean isInputColumn() {
-        Class<?> baseType = getBaseType();
-        boolean result = ReflectionUtils.isInputColumn(baseType);
+        final Class<?> baseType = getBaseType();
+        final boolean result = ReflectionUtils.isInputColumn(baseType);
         return result;
     }
 
     @Override
     public boolean isRequired() {
-        Configured configured = getAnnotation(Configured.class);
+        final Configured configured = getAnnotation(Configured.class);
         if (configured == null) {
             return true;
         }
@@ -84,17 +85,17 @@ final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor 
     }
 
     @Override
-    public int compareTo(PropertyDescriptor o) {
-        Configured conf1 = getAnnotation(Configured.class);
+    public int compareTo(final PropertyDescriptor o) {
+        final Configured conf1 = getAnnotation(Configured.class);
         final int order1 = conf1.order();
-        Configured conf2 = o.getAnnotation(Configured.class);
+        final Configured conf2 = o.getAnnotation(Configured.class);
         final int order2;
         if (conf2 == null) {
             order2 = Integer.MAX_VALUE;
         } else {
             order2 = conf2.order();
         }
-        int diff = order1 - order2;
+        final int diff = order1 - order2;
         if (diff == 0) {
             return super.compareTo(o);
         }
@@ -103,11 +104,11 @@ final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor 
 
     @Override
     public Converter<?> createCustomConverter() {
-        Class<? extends Converter<?>> converterClass = getCustomConverterClass();
-        if(converterClass != null) {
+        final Class<? extends Converter<?>> converterClass = getCustomConverterClass();
+        if (converterClass != null) {
             try {
                 return converterClass.newInstance();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
         } else {
@@ -116,7 +117,7 @@ final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor 
     }
 
     private Class<? extends Converter<?>> getCustomConverterClass() {
-        Convertable convertable = getAnnotation(Convertable.class);
+        final Convertable convertable = getAnnotation(Convertable.class);
         if (convertable != null) {
             return convertable.value();
         }
@@ -125,7 +126,7 @@ final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor 
 
     @Override
     public String[] getAliases() {
-        Alias alias = getAnnotation(Alias.class);
+        final Alias alias = getAnnotation(Alias.class);
         if (alias == null) {
             return new String[0];
         }

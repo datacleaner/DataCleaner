@@ -45,15 +45,15 @@ import com.google.gwt.user.client.ui.UIObject;
 public class CustomizeAlertClickHandler implements ClickHandler {
 
     private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
-    
+
     private final AlertPanel _alertPanel;
 
-    public CustomizeAlertClickHandler(AlertPanel alertPanel) {
+    public CustomizeAlertClickHandler(final AlertPanel alertPanel) {
         _alertPanel = alertPanel;
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(final ClickEvent event) {
         final MenuBar menuBar = new MenuBar(true);
 
         menuBar.addItem("Edit alert", new Command() {
@@ -64,21 +64,22 @@ public class CustomizeAlertClickHandler implements ClickHandler {
                 final TenantIdentifier tenant = _alertPanel.getSchedule().getTenant();
                 final JobIdentifier job = _alertPanel.getSchedule().getJob();
                 final AlertDefinition alert = _alertPanel.getAlert();
-                
+
                 descriptorService.getJobMetrics(tenant, job, new DCAsyncCallback<JobMetrics>() {
                     @Override
-                    public void onSuccess(JobMetrics jobMetrics) {
-                        final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(tenant, job, alert, jobMetrics);
+                    public void onSuccess(final JobMetrics jobMetrics) {
+                        final CustomizeAlertPanel customizeAlertPanel =
+                                new CustomizeAlertPanel(tenant, job, alert, jobMetrics);
                         final Button button = DCButtons.primaryButton("glyphicon-save", "Save alert");
                         button.addClickHandler(new ClickHandler() {
                             @Override
-                            public void onClick(ClickEvent event) {
+                            public void onClick(final ClickEvent event) {
                                 customizeAlertPanel.updateAlert();
                                 _alertPanel.updateAlert();
                                 popup.hide();
                             }
                         });
-                        
+
                         popup.setWidget(customizeAlertPanel);
                         popup.addButton(button);
                         popup.addButton(new CancelPopupButton(popup));
@@ -88,7 +89,7 @@ public class CustomizeAlertClickHandler implements ClickHandler {
                 });
             }
         });
-        
+
         menuBar.addItem("Remove alert", new Command() {
             @Override
             public void execute() {

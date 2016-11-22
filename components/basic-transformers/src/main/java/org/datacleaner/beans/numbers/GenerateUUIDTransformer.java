@@ -55,7 +55,7 @@ public class GenerateUUIDTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow inputRow) {
+    public String[] transform(final InputRow inputRow) {
         final String uuid = UUID.randomUUID().toString();
         final String result = (prefix == null ? "" : prefix) + uuid + (postfix == null ? "" : postfix);
         return new String[] { result };

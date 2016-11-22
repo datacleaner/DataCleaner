@@ -34,7 +34,7 @@ public class ReferenceDataIdentifier implements Serializable, Comparable<Referen
         this(null);
     }
 
-    public ReferenceDataIdentifier(String name) {
+    public ReferenceDataIdentifier(final String name) {
         _name = name;
     }
 
@@ -43,7 +43,7 @@ public class ReferenceDataIdentifier implements Serializable, Comparable<Referen
         return _name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         _name = name;
     }
 
@@ -61,34 +61,39 @@ public class ReferenceDataIdentifier implements Serializable, Comparable<Referen
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        ReferenceDataIdentifier other = (ReferenceDataIdentifier) obj;
+        }
+        final ReferenceDataIdentifier other = (ReferenceDataIdentifier) obj;
         if (_name == null) {
-            if (other._name != null)
+            if (other._name != null) {
                 return false;
-        } else if (!_name.equals(other._name))
+            }
+        } else if (!_name.equals(other._name)) {
             return false;
+        }
         return true;
     }
 
     @Override
-    public int compareTo(ReferenceDataIdentifier o) {
+    public int compareTo(final ReferenceDataIdentifier o) {
         if (o == null) {
             return 1;
         }
-        
-        String name = getName();
-        
+
+        final String name = getName();
+
         if (name == null) {
             return -1;
         }
-        
+
         return name.compareTo(o.getName());
     }
 }

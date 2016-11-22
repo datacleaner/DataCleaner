@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.metamodel.util.LazyRef;
+import org.apache.metamodel.util.NumberComparator;
+import org.apache.metamodel.util.Ref;
 import org.datacleaner.monitor.configuration.ResultContext;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -34,9 +37,6 @@ import org.datacleaner.monitor.server.MetricValueProducer;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.RepositoryFile;
-import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.NumberComparator;
-import org.apache.metamodel.util.Ref;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +56,8 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
     private List<AlertNotifier> alertNotifiers;
 
     @Autowired
-    public AlertNotificationServiceImpl(TenantContextFactory tenantContextFactory,
-            MetricValueProducer metricValueProducer) {
+    public AlertNotificationServiceImpl(final TenantContextFactory tenantContextFactory,
+            final MetricValueProducer metricValueProducer) {
         _tenantContextFactory = tenantContextFactory;
         _metricValueProducer = metricValueProducer;
     }
@@ -93,8 +93,8 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
                     // no alerts at all
                     return result;
                 }
-                for (AlertDefinition alertDefinition : allAlerts) {
-                    MetricIdentifier metricIdentifier = alertDefinition.getMetricIdentifier();
+                for (final AlertDefinition alertDefinition : allAlerts) {
+                    final MetricIdentifier metricIdentifier = alertDefinition.getMetricIdentifier();
                     metricIdentifiers.add(metricIdentifier);
                 }
 
@@ -106,7 +106,7 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
                 final List<Number> values = metricValues.getValues();
 
                 for (int i = 0; i < allAlerts.size(); i++) {
-                    AlertDefinition alertDef = allAlerts.get(i);
+                    final AlertDefinition alertDef = allAlerts.get(i);
                     final Number max = alertDef.getMaximumValue();
                     final Number min = alertDef.getMinimumValue();
                     final Number actual = values.get(i);
@@ -119,16 +119,16 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
             }
         };
 
-        for (AlertNotifier alertNotifier : alertNotifiers) {
+        for (final AlertNotifier alertNotifier : alertNotifiers) {
             try {
                 alertNotifier.onExecutionFinished(execution, activeAlerts, resultContext);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("AlertNotifier (" + alertNotifier + ") threw unexpected exception", e);
             }
         }
     }
 
-    protected boolean isBeyondThreshold(Number actual, Number min, Number max) {
+    protected boolean isBeyondThreshold(final Number actual, final Number min, final Number max) {
         if (min == null && max == null) {
             return false;
         }
@@ -145,11 +145,11 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
         return false;
     }
 
-    public void setAlertNotifiers(List<AlertNotifier> alertNotifiers) {
-        this.alertNotifiers = alertNotifiers;
-    }
-
     public List<AlertNotifier> getAlertNotifiers() {
         return alertNotifiers;
+    }
+
+    public void setAlertNotifiers(final List<AlertNotifier> alertNotifiers) {
+        this.alertNotifiers = alertNotifiers;
     }
 }

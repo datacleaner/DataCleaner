@@ -31,7 +31,7 @@ public class HdfsResourceTextField extends AbstractResourceTextField<HdfsResourc
 
     private String _hdfsUri;
 
-    public HdfsResourceTextField(String uri, final HdfsUrlChooser.OpenType openType) {
+    public HdfsResourceTextField(final String uri, final HdfsUrlChooser.OpenType openType) {
         _hdfsUri = uri;
 
         getBrowseButton().addActionListener(new ActionListener() {
@@ -42,7 +42,7 @@ public class HdfsResourceTextField extends AbstractResourceTextField<HdfsResourc
         });
     }
 
-    HdfsResourceTextField(HdfsUrlChooser.OpenType openType) {
+    HdfsResourceTextField(final HdfsUrlChooser.OpenType openType) {
         this("", openType);
     }
 
@@ -52,7 +52,7 @@ public class HdfsResourceTextField extends AbstractResourceTextField<HdfsResourc
     }
 
     @Override
-    public void setResource(HdfsResource resource) {
+    public void setResource(final HdfsResource resource) {
         if (resource == null) {
             return;
         }

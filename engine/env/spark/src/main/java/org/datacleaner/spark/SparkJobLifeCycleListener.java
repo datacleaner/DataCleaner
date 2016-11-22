@@ -31,7 +31,7 @@ import java.io.Serializable;
  * Also note that the serialization is one-way. You cannot retrieve anything that
  * happened on the nodes through this listener.
  */
-public interface SparkJobLifeCycleListener extends Serializable{
+public interface SparkJobLifeCycleListener extends Serializable {
     /**
      * Triggered when a node starts processing a task. This will be executed
      * on the nodes themselves.

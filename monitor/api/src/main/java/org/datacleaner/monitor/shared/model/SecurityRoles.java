@@ -24,33 +24,33 @@ package org.datacleaner.monitor.shared.model;
  */
 public interface SecurityRoles {
 
-    public static final String VIEWER = "ROLE_VIEWER";
-    public static final String JOB_EDITOR = "ROLE_JOB_EDITOR";
-    public static final String DASHBOARD_EDITOR = "ROLE_DASHBOARD_EDITOR";
-    public static final String SCHEDULE_EDITOR = "ROLE_SCHEDULE_EDITOR";
-    public static final String CONFIGURATION_EDITOR = "ROLE_CONFIGURATION_EDITOR";
-    public static final String RESULT_EDITOR = "ROLE_RESULT_EDITOR";
+    String VIEWER = "ROLE_VIEWER";
+    String JOB_EDITOR = "ROLE_JOB_EDITOR";
+    String DASHBOARD_EDITOR = "ROLE_DASHBOARD_EDITOR";
+    String SCHEDULE_EDITOR = "ROLE_SCHEDULE_EDITOR";
+    String CONFIGURATION_EDITOR = "ROLE_CONFIGURATION_EDITOR";
+    String RESULT_EDITOR = "ROLE_RESULT_EDITOR";
 
     // task-specific privileges
-    public static final String TASK_QUERY = "ROLE_TASK_QUERY";
-    public static final String TASK_SLAVE_EXECUTOR = "ROLE_SLAVE_EXECUTOR";
-    public static final String TASK_ATOMIC_EXECUTOR = "ROLE_ATOMIC_EXECUTOR";
+    String TASK_QUERY = "ROLE_TASK_QUERY";
+    String TASK_SLAVE_EXECUTOR = "ROLE_SLAVE_EXECUTOR";
+    String TASK_ATOMIC_EXECUTOR = "ROLE_ATOMIC_EXECUTOR";
 
     // super roles
     /**
      * ENGINEER role is for editors of both schedules and jobs
      */
-    public static final String ENGINEER = "ROLE_ENGINEER";
+    String ENGINEER = "ROLE_ENGINEER";
 
     /**
      * ADMIN role is for administrators of a tenant. He can do everything within
      * the boundary of a tenant.
      */
-    public static final String ADMIN = "ROLE_ADMIN";
+    String ADMIN = "ROLE_ADMIN";
 
     /**
      * GOD role is for multi-tenant administrators, selected people who can do
      * everything for everyone.
      */
-    public static final String GOD = "ROLE_GOD";
+    String GOD = "ROLE_GOD";
 }

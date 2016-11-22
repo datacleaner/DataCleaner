@@ -19,10 +19,10 @@
  */
 package org.datacleaner.beans;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-
-import junit.framework.TestCase;
 
 public class TransliterateTransformerTest extends TestCase {
 

@@ -59,8 +59,8 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
     private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
     @Inject
-    public CouchDbDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
-            @Nullable CouchDbDatastore originalDatastore, UserPreferences userPreferences) {
+    public CouchDbDatastoreDialog(final WindowContext windowContext, final MutableDatastoreCatalog catalog,
+            @Nullable final CouchDbDatastore originalDatastore, final UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
         _hostnameTextField = WidgetFactory.createTextField();
@@ -68,28 +68,28 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
         _portTextField.setDocument(new NumberDocument(false));
         _usernameTextField = WidgetFactory.createTextField();
         _passwordField = WidgetFactory.createPasswordField();
-        
+
         _hostnameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
         _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
         _usernameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
         _passwordField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
@@ -132,36 +132,36 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
             setStatusError("Please enter a datastore name");
             return false;
         }
-        
+
         final String hostname = _hostnameTextField.getText();
         if (StringUtils.isNullOrEmpty(hostname)) {
             setStatusError("Please enter hostname");
             return false;
         }
-        
+
         final String port = _portTextField.getText();
         if (StringUtils.isNullOrEmpty(port)) {
             setStatusError("Please enter port number");
             return false;
         } else {
             try {
-                int portInt = Integer.parseInt(port);
+                final int portInt = Integer.parseInt(port);
                 if (portInt <= 0) {
                     setStatusError("Please enter a valid (positive port number)");
                     return false;
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 setStatusError("Please enter a valid port number");
                 return false;
             }
         }
-        
+
         final String keyspace = _usernameTextField.getText();
         if (StringUtils.isNullOrEmpty(keyspace)) {
             setStatusError("Please enter username");
             return false;
         }
-        
+
         // No password field validating as sometimes passwords are empty strings
 
         setStatusValid();
@@ -183,7 +183,7 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
     public Schema createSchema() {
         final CouchDbDatastore datastore = createDatastore();
         try (final UpdateableDatastoreConnection con = datastore.openConnection()) {
-            Schema schema = con.getDataContext().getDefaultSchema();
+            final Schema schema = con.getDataContext().getDefaultSchema();
             return schema;
         }
     }
@@ -192,10 +192,10 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
     protected String getDatastoreIconPath() {
         return IconUtils.COUCHDB_IMAGEPATH;
     }
-    
+
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
-        List<Entry<String, JComponent>> result = super.getFormElements();
+        final List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
         result.add(new ImmutableEntry<String, JComponent>("Connect via SSL", _sslCheckBox));

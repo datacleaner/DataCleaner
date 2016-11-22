@@ -24,11 +24,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.test.TestEnvironment;
-
-import junit.framework.TestCase;
 
 public class ClasspathScanDescriptorProviderTest extends TestCase {
 
@@ -43,14 +43,15 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
         Collection<TransformerDescriptor<?>> transformerComponentDescriptors = provider.getTransformerDescriptors();
         assertEquals(0, transformerComponentDescriptors.size());
         File[] files = new File[] { pluginFile1 };
-        provider = provider.scanPackage("org.datacleaner", true, ClassLoaderUtils.createClassLoader(files), false, files);
+        provider =
+                provider.scanPackage("org.datacleaner", true, ClassLoaderUtils.createClassLoader(files), false, files);
         assertEquals(0, provider.getAnalyzerDescriptors().size());
-        
+
         transformerComponentDescriptors = provider.getTransformerDescriptors();
         assertEquals(23, transformerComponentDescriptors.size());
 
         transformerComponentDescriptors = new TreeSet<>(transformerComponentDescriptors);
-        
+
         assertEquals("org.datacleaner.beans.transform.ConcatenatorTransformer", transformerComponentDescriptors
                 .iterator().next().getComponentClass().getName());
     }

@@ -24,7 +24,8 @@ import junit.framework.TestCase;
 public class CouchDbDatastoreTest extends TestCase {
 
     public void testCreateAndCompare() throws Exception {
-        CouchDbDatastore ds1 = new CouchDbDatastore("couch", "localhost", CouchDbDatastore.DEFAULT_PORT, "user", "pw", true, null);
+        CouchDbDatastore ds1 =
+                new CouchDbDatastore("couch", "localhost", CouchDbDatastore.DEFAULT_PORT, "user", "pw", true, null);
         CouchDbDatastore ds2 = new CouchDbDatastore("couch", "localhost", null, "user", "pw", true, null);
 
         assertEquals(ds1, ds2);
@@ -36,7 +37,7 @@ public class CouchDbDatastoreTest extends TestCase {
         assertEquals("user", ds1.getUsername());
         assertEquals("pw", ds1.getPassword());
         assertEquals(null, ds1.getTableDefs());
-        
+
         assertTrue(ds1.getPerformanceCharacteristics().isQueryOptimizationPreferred());
     }
 }

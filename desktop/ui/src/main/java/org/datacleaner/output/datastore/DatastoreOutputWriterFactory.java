@@ -41,13 +41,13 @@ public final class DatastoreOutputWriterFactory {
 
     private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
 
-    public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate,
-            String datastoreName, String tableName, InputColumn<?>... columns) {
+    public static OutputWriter getWriter(final File directory, final DatastoreCreationDelegate creationDelegate,
+            final String datastoreName, final String tableName, final InputColumn<?>... columns) {
         return getWriter(directory, creationDelegate, datastoreName, tableName, true, columns);
     }
 
-    public static DatastoreOutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate,
-            String datastoreName, String tableName, boolean truncate, InputColumn<?>... columns) {
+    public static DatastoreOutputWriter getWriter(final File directory, final DatastoreCreationDelegate creationDelegate,
+            final String datastoreName, final String tableName, final boolean truncate, final InputColumn<?>... columns) {
         if (!directory.exists()) {
             if (!directory.mkdirs()) {
                 logger.error("Failed to create directory for datastores: {}", directory);
@@ -73,19 +73,19 @@ public final class DatastoreOutputWriterFactory {
      * Gets the actual table name written by an {@link OutputWriter}, which may
      * differ from the requested name if the name was not a valid RDBMS table
      * name or if the table name was already used and truncation was disabled.
-     * 
+     *
      * @param outputWriter
      * @return
      */
-    public static String getActualTableName(OutputWriter outputWriter) {
+    public static String getActualTableName(final OutputWriter outputWriter) {
         assert outputWriter instanceof DatastoreOutputWriter;
-        DatastoreOutputWriter dow = (DatastoreOutputWriter) outputWriter;
+        final DatastoreOutputWriter dow = (DatastoreOutputWriter) outputWriter;
         return dow.getTableName();
     }
 
-    protected static void release(DatastoreOutputWriter writer) {
+    protected static void release(final DatastoreOutputWriter writer) {
         synchronized (counters) {
-            int count = counters.get(writer.getJdbcUrl()).decrementAndGet();
+            final int count = counters.get(writer.getJdbcUrl()).decrementAndGet();
             if (count == 0) {
                 counters.remove(writer.getJdbcUrl());
 
@@ -95,13 +95,13 @@ public final class DatastoreOutputWriterFactory {
                     try {
                         st = connection.createStatement();
                         st.execute("SHUTDOWN");
-                    } catch (SQLException e) {
+                    } catch (final SQLException e) {
                         logger.error("Could not invoke SHUTDOWN", e);
                     } finally {
                         st.close();
                     }
 
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     logger.error("Could not close connection", e);
                     throw new IllegalStateException(e);
                 }

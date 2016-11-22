@@ -24,37 +24,37 @@ import org.datacleaner.api.InputRow;
 /**
  * Defines an InputColumn which has a fixed/constant value, regardless of the
  * row.
- * 
+ *
  * These columns can be used for various purposes, eg. to mark a filter outcome
  * in the data, to open jobs as templates, even though the new datastore is
  * missing some columns etc.
  */
 public final class ConstantInputColumn extends AbstractExpressionBasedInputColumn<String> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final String _value;
+    private final String _value;
 
-	public ConstantInputColumn(String value) {
-		super();
-		if (value == null) {
-			throw new IllegalArgumentException("value cannot be null");
-		}
-		_value = value;
-	}
+    public ConstantInputColumn(final String value) {
+        super();
+        if (value == null) {
+            throw new IllegalArgumentException("value cannot be null");
+        }
+        _value = value;
+    }
 
-	@Override
-	public String getExpression() {
-		return _value;
-	}
+    @Override
+    public String getExpression() {
+        return _value;
+    }
 
-	@Override
-	public String evaluate(InputRow row) {
-		return _value;
-	}
+    @Override
+    public String evaluate(final InputRow row) {
+        return _value;
+    }
 
-	@Override
-	public Class<? extends String> getDataType() {
-		return String.class;
-	}
+    @Override
+    public Class<? extends String> getDataType() {
+        return String.class;
+    }
 }

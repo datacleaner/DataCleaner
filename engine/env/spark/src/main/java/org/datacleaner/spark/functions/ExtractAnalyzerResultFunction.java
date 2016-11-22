@@ -28,7 +28,7 @@ public final class ExtractAnalyzerResultFunction implements
     private static final long serialVersionUID = 1L;
 
     @Override
-    public AnalyzerResult call(NamedAnalyzerResult namedAnalyzerResult) throws Exception {
+    public AnalyzerResult call(final NamedAnalyzerResult namedAnalyzerResult) throws Exception {
         return namedAnalyzerResult.getAnalyzerResult();
     }
 }

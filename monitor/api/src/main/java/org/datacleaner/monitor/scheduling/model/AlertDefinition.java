@@ -41,8 +41,8 @@ public class AlertDefinition implements Serializable, Comparable<AlertDefinition
         this(null, null, null, null, null);
     }
 
-    public AlertDefinition(String description, MetricIdentifier metricIdentifier, Number minimumValue,
-            Number maximumValue, AlertSeverity severity) {
+    public AlertDefinition(final String description, final MetricIdentifier metricIdentifier, final Number minimumValue,
+            final Number maximumValue, final AlertSeverity severity) {
         _description = description;
         _metricIdentifier = metricIdentifier;
         _minimumValue = minimumValue;
@@ -54,8 +54,16 @@ public class AlertDefinition implements Serializable, Comparable<AlertDefinition
         return _maximumValue;
     }
 
+    public void setMaximumValue(final Number maximumValue) {
+        _maximumValue = maximumValue;
+    }
+
     public Number getMinimumValue() {
         return _minimumValue;
+    }
+
+    public void setMinimumValue(final Number minimumValue) {
+        _minimumValue = minimumValue;
     }
 
     public MetricIdentifier getMetricIdentifier() {
@@ -65,16 +73,8 @@ public class AlertDefinition implements Serializable, Comparable<AlertDefinition
         return _metricIdentifier;
     }
 
-    public void setMetricIdentifier(MetricIdentifier metricIdentifier) {
+    public void setMetricIdentifier(final MetricIdentifier metricIdentifier) {
         _metricIdentifier = metricIdentifier;
-    }
-
-    public void setMaximumValue(Number maximumValue) {
-        _maximumValue = maximumValue;
-    }
-
-    public void setMinimumValue(Number minimumValue) {
-        _minimumValue = minimumValue;
     }
 
     public String getDescription() {
@@ -84,7 +84,7 @@ public class AlertDefinition implements Serializable, Comparable<AlertDefinition
             } else if (_minimumValue == null && _maximumValue == null) {
                 return _metricIdentifier.getDisplayName();
             } else {
-                StringBuilder sb = new StringBuilder();
+                final StringBuilder sb = new StringBuilder();
                 if (_severity == AlertSeverity.WARNING || _severity == AlertSeverity.FATAL) {
                     sb.append("Req. ");
                 } else {
@@ -104,7 +104,7 @@ public class AlertDefinition implements Serializable, Comparable<AlertDefinition
         return _description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         _description = description;
     }
 
@@ -112,7 +112,7 @@ public class AlertDefinition implements Serializable, Comparable<AlertDefinition
         return _severity;
     }
 
-    public void setSeverity(AlertSeverity severity) {
+    public void setSeverity(final AlertSeverity severity) {
         _severity = severity;
     }
 
@@ -122,7 +122,7 @@ public class AlertDefinition implements Serializable, Comparable<AlertDefinition
     }
 
     @Override
-    public int compareTo(AlertDefinition other) {
+    public int compareTo(final AlertDefinition other) {
         if (other == this) {
             return 0;
         }

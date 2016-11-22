@@ -47,8 +47,8 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
     private final ResourceSelector _resourceTextField;
 
     @Inject
-    public SingleResourcePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder, UserPreferences userPreferences) {
+    public SingleResourcePropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder, final UserPreferences userPreferences) {
         super(componentBuilder, propertyDescriptor);
 
         boolean openMode = true;
@@ -67,22 +67,22 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
                         openMode);
 
         if (extensions != null && extensions.length > 0) {
-            List<FileFilter> filters = new ArrayList<FileFilter>(extensions.length);
-            for (String extension : extensions) {
-                String extensionWithDot;
+            final List<FileFilter> filters = new ArrayList<FileFilter>(extensions.length);
+            for (final String extension : extensions) {
+                final String extensionWithDot;
                 if (extension.startsWith(".")) {
                     extensionWithDot = extension;
                 } else {
                     extensionWithDot = "." + extension;
                 }
-                FileFilter filter = new ExtensionFilter(extension.toUpperCase() + " file", extensionWithDot);
+                final FileFilter filter = new ExtensionFilter(extension.toUpperCase() + " file", extensionWithDot);
                 filters.add(filter);
                 _resourceTextField.addChoosableFileFilter(filter);
             }
             if (filters.size() == 1) {
                 _resourceTextField.setSelectedFileFilter(filters.get(0));
             } else {
-                FileFilter filter = FileFilters.combined("All suggested file formats",
+                final FileFilter filter = FileFilters.combined("All suggested file formats",
                         filters.toArray(new FileFilter[filters.size()]));
                 _resourceTextField.setSelectedFileFilter(filter);
             }
@@ -98,12 +98,12 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
         _resourceTextField.addListener(new ResourceTypePresenter.Listener() {
 
             @Override
-            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
+            public void onResourceSelected(final ResourceTypePresenter<?> presenter, final Resource resource) {
                 fireValueChanged();
             }
 
             @Override
-            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+            public void onPathEntered(final ResourceTypePresenter<?> presenter, final String path) {
                 fireValueChanged();
             }
         });
@@ -114,7 +114,7 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
     /**
      * Gets the resource converter to use - can be overridden by subclasses if
      * needed.
-     * 
+     *
      * @return
      */
     protected ResourceConverter getResourceConverter() {
@@ -128,7 +128,7 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
     }
 
     /**
-     * 
+     *
      * @return
      * @deprecated use {@link #getResourceTextField()} instead
      */
@@ -151,7 +151,7 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
     }
 
     @Override
-    protected void setValue(Resource value) {
+    protected void setValue(final Resource value) {
         _resourceTextField.setResource(value);
     }
 }

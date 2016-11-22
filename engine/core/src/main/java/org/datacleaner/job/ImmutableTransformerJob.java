@@ -37,35 +37,35 @@ public final class ImmutableTransformerJob extends ImmutableComponentJob impleme
 
     private final List<MutableInputColumn<?>> _output;
 
-    public ImmutableTransformerJob(String name, TransformerDescriptor<?> descriptor,
-            ComponentConfiguration componentConfiguration, Collection<MutableInputColumn<?>> output,
-            ComponentRequirement componentRequirement, Map<String, String> metadataProperties,
-            OutputDataStreamJob[] outputDataStreamJobs) {
+    public ImmutableTransformerJob(final String name, final TransformerDescriptor<?> descriptor,
+            final ComponentConfiguration componentConfiguration, final Collection<MutableInputColumn<?>> output,
+            final ComponentRequirement componentRequirement, final Map<String, String> metadataProperties,
+            final OutputDataStreamJob[] outputDataStreamJobs) {
         super(name, descriptor, componentConfiguration, componentRequirement, metadataProperties, outputDataStreamJobs);
         _output = Collections.unmodifiableList(new ArrayList<MutableInputColumn<?>>(output));
     }
 
     /**
-     * 
+     *
      * @param name
      * @param descriptor
      * @param componentConfiguration
      * @param output
      * @param requirement
      * @param metadataProperties
-     * 
+     *
      * @deprecated use
      *             {@link #ImmutableTransformerJob(String, TransformerDescriptor, ComponentConfiguration, Collection, ComponentRequirement, Map, OutputDataStreamJob[])}
      *             instead
      */
     @Deprecated
-    public ImmutableTransformerJob(String name, TransformerDescriptor<?> descriptor,
-            ComponentConfiguration componentConfiguration, Collection<MutableInputColumn<?>> output,
-            ComponentRequirement requirement, Map<String, String> metadataProperties) {
+    public ImmutableTransformerJob(final String name, final TransformerDescriptor<?> descriptor,
+            final ComponentConfiguration componentConfiguration, final Collection<MutableInputColumn<?>> output,
+            final ComponentRequirement requirement, final Map<String, String> metadataProperties) {
         this(name, descriptor, componentConfiguration, output, requirement, metadataProperties, null);
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, ImmutableTransformerJob.class).readObject(stream);
     }
 

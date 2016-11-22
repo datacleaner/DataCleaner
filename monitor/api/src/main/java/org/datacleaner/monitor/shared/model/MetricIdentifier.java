@@ -48,9 +48,9 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
     private List<MetricIdentifier> _children;
 
     // full constructor that specifies every field in one go.
-    public MetricIdentifier(String metricDisplayName, String analyzerDescriptorName, String analyzerName,
-            String analyzerInputName, String metricDescriptorName, String paramQueryString, String paramColumnName,
-            boolean parameterizedByQueryString, boolean parameterizedByColumnName) {
+    public MetricIdentifier(final String metricDisplayName, final String analyzerDescriptorName, final String analyzerName,
+            final String analyzerInputName, final String metricDescriptorName, final String paramQueryString, final String paramColumnName,
+            final boolean parameterizedByQueryString, final boolean parameterizedByColumnName) {
         _metricDisplayName = metricDisplayName;
         _analyzerDescriptorName = analyzerDescriptorName;
         _analyzerName = analyzerName;
@@ -62,7 +62,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         _parameterizedByColumnName = parameterizedByColumnName;
     }
 
-    public MetricIdentifier(String metricDisplayName, String formula, List<MetricIdentifier> children) {
+    public MetricIdentifier(final String metricDisplayName, final String formula, final List<MetricIdentifier> children) {
         _metricDisplayName = metricDisplayName;
         _formula = formula;
         _children = children;
@@ -80,9 +80,9 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
     @JsonIgnore
     public String getId() {
         if (isFormulaBased()) {
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             sb.append("[");
-            for (MetricIdentifier child : getChildren()) {
+            for (final MetricIdentifier child : getChildren()) {
                 if (sb.length() > 1) {
                     sb.append(",");
                 }
@@ -91,7 +91,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
             sb.append("]");
             return _formula + "_" + sb;
         }
-        String ID = _analyzerDescriptorName + _analyzerInputName + _analyzerName + _metricDescriptorName
+        final String ID = _analyzerDescriptorName + _analyzerInputName + _analyzerName + _metricDescriptorName
                 + _paramColumnName + _paramQueryString;
         return ID.replaceAll("'", "");
     }
@@ -100,7 +100,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         return _analyzerDescriptorName;
     }
 
-    public void setAnalyzerDescriptorName(String analyzerDescriptorName) {
+    public void setAnalyzerDescriptorName(final String analyzerDescriptorName) {
         _analyzerDescriptorName = analyzerDescriptorName;
     }
 
@@ -108,7 +108,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         return _analyzerName;
     }
 
-    public void setAnalyzerName(String analyzerName) {
+    public void setAnalyzerName(final String analyzerName) {
         _analyzerName = analyzerName;
     }
 
@@ -116,7 +116,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         return _metricDescriptorName;
     }
 
-    public void setMetricDescriptorName(String metricDescriptorName) {
+    public void setMetricDescriptorName(final String metricDescriptorName) {
         _metricDescriptorName = metricDescriptorName;
     }
 
@@ -124,31 +124,31 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         return _analyzerInputName;
     }
 
-    public void setAnalyzerInputName(String analyzerInputName) {
+    public void setAnalyzerInputName(final String analyzerInputName) {
         _analyzerInputName = analyzerInputName;
-    }
-
-    public void setParamColumnName(String paramColumnName) {
-        _paramColumnName = paramColumnName;
     }
 
     public String getParamColumnName() {
         return _paramColumnName;
     }
 
-    public void setParamQueryString(String paramQueryString) {
-        _paramQueryString = paramQueryString;
+    public void setParamColumnName(final String paramColumnName) {
+        _paramColumnName = paramColumnName;
     }
 
     public String getParamQueryString() {
         return _paramQueryString;
     }
 
+    public void setParamQueryString(final String paramQueryString) {
+        _paramQueryString = paramQueryString;
+    }
+
     public boolean isParameterizedByColumnName() {
         return _parameterizedByColumnName;
     }
 
-    public void setParameterizedByColumnName(boolean parameterizedByColumnName) {
+    public void setParameterizedByColumnName(final boolean parameterizedByColumnName) {
         _parameterizedByColumnName = parameterizedByColumnName;
     }
 
@@ -156,15 +156,15 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         return _parameterizedByQueryString;
     }
 
-    public void setParameterizedByQueryString(boolean parameterizedByQueryString) {
+    public void setParameterizedByQueryString(final boolean parameterizedByQueryString) {
         _parameterizedByQueryString = parameterizedByQueryString;
     }
-    
+
     public String getMetricDisplayName() {
         return _metricDisplayName;
     }
 
-    public void setMetricDisplayName(String metricDisplayName) {
+    public void setMetricDisplayName(final String metricDisplayName) {
         _metricDisplayName = metricDisplayName;
     }
 
@@ -191,7 +191,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
     /**
      * Determines if the displayname has been set by the user or if it is
      * automatically generated based on the metric's descriptor.
-     * 
+     *
      * @return
      */
     @JsonIgnore
@@ -199,24 +199,24 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         return _metricDisplayName != null;
     }
 
-    public void setMetricColor(String metricColor) {
-        _metricColor = metricColor;
-    }
-
     public String getMetricColor() {
         return _metricColor;
     }
 
+    public void setMetricColor(final String metricColor) {
+        _metricColor = metricColor;
+    }
+
     /**
      * Creates a copy of this {@link MetricIdentifier}.
-     * 
+     *
      * @return
      */
     public MetricIdentifier copy() {
         if (isFormulaBased()) {
             final List<MetricIdentifier> children = new ArrayList<MetricIdentifier>();
-            for (MetricIdentifier child : getChildren()) {
-                MetricIdentifier childCopy = child.copy();
+            for (final MetricIdentifier child : getChildren()) {
+                final MetricIdentifier childCopy = child.copy();
                 children.add(childCopy);
             }
             final MetricIdentifier metricIdentifier = new MetricIdentifier(_metricDisplayName, _formula, children);
@@ -229,20 +229,20 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         return metricIdentifier;
     }
 
-    public void setFormula(String formula) {
-        _formula = formula;
-    }
-
     public String getFormula() {
         return _formula;
     }
 
-    public void setChildren(List<MetricIdentifier> children) {
-        _children = children;
+    public void setFormula(final String formula) {
+        _formula = formula;
     }
 
     public List<MetricIdentifier> getChildren() {
         return _children;
+    }
+
+    public void setChildren(final List<MetricIdentifier> children) {
+        _children = children;
     }
 
     @Override
@@ -265,68 +265,93 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        MetricIdentifier other = (MetricIdentifier) obj;
+        }
+        final MetricIdentifier other = (MetricIdentifier) obj;
         if (_analyzerDescriptorName == null) {
-            if (other._analyzerDescriptorName != null)
+            if (other._analyzerDescriptorName != null) {
                 return false;
-        } else if (!_analyzerDescriptorName.equals(other._analyzerDescriptorName))
+            }
+        } else if (!_analyzerDescriptorName.equals(other._analyzerDescriptorName)) {
             return false;
+        }
         if (_analyzerInputName == null) {
-            if (other._analyzerInputName != null)
+            if (other._analyzerInputName != null) {
                 return false;
-        } else if (!_analyzerInputName.equals(other._analyzerInputName))
+            }
+        } else if (!_analyzerInputName.equals(other._analyzerInputName)) {
             return false;
+        }
         if (_analyzerName == null) {
-            if (other._analyzerName != null)
+            if (other._analyzerName != null) {
                 return false;
-        } else if (!_analyzerName.equals(other._analyzerName))
+            }
+        } else if (!_analyzerName.equals(other._analyzerName)) {
             return false;
+        }
         if (_children == null) {
-            if (other._children != null)
+            if (other._children != null) {
                 return false;
-        } else if (!_children.equals(other._children))
+            }
+        } else if (!_children.equals(other._children)) {
             return false;
+        }
         if (_formula == null) {
-            if (other._formula != null)
+            if (other._formula != null) {
                 return false;
-        } else if (!_formula.equals(other._formula))
+            }
+        } else if (!_formula.equals(other._formula)) {
             return false;
+        }
         if (_metricColor == null) {
-            if (other._metricColor != null)
+            if (other._metricColor != null) {
                 return false;
-        } else if (!_metricColor.equals(other._metricColor))
+            }
+        } else if (!_metricColor.equals(other._metricColor)) {
             return false;
+        }
         if (_metricDescriptorName == null) {
-            if (other._metricDescriptorName != null)
+            if (other._metricDescriptorName != null) {
                 return false;
-        } else if (!_metricDescriptorName.equals(other._metricDescriptorName))
+            }
+        } else if (!_metricDescriptorName.equals(other._metricDescriptorName)) {
             return false;
+        }
         if (_metricDisplayName == null) {
-            if (other._metricDisplayName != null)
+            if (other._metricDisplayName != null) {
                 return false;
-        } else if (!_metricDisplayName.equals(other._metricDisplayName))
+            }
+        } else if (!_metricDisplayName.equals(other._metricDisplayName)) {
             return false;
+        }
         if (_paramColumnName == null) {
-            if (other._paramColumnName != null)
+            if (other._paramColumnName != null) {
                 return false;
-        } else if (!_paramColumnName.equals(other._paramColumnName))
+            }
+        } else if (!_paramColumnName.equals(other._paramColumnName)) {
             return false;
+        }
         if (_paramQueryString == null) {
-            if (other._paramQueryString != null)
+            if (other._paramQueryString != null) {
                 return false;
-        } else if (!_paramQueryString.equals(other._paramQueryString))
+            }
+        } else if (!_paramQueryString.equals(other._paramQueryString)) {
             return false;
-        if (_parameterizedByColumnName != other._parameterizedByColumnName)
+        }
+        if (_parameterizedByColumnName != other._parameterizedByColumnName) {
             return false;
-        if (_parameterizedByQueryString != other._parameterizedByQueryString)
+        }
+        if (_parameterizedByQueryString != other._parameterizedByQueryString) {
             return false;
+        }
         return true;
     }
 
@@ -334,90 +359,110 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
      * Determines if two {@link MetricIdentifier}s match if ignoring parameter
      * values as well as the details that can be customized/parameterized by the
      * user:
-     * 
+     *
      * <ul>
      * <li>Display name</li>
      * <li>Color</li>
      * <li>Query parameter</li>
      * <li>Column parameter</li>
      * </ul>
-     * 
+     *
      * In other words - determines if the two {@link MetricIdentifier}s
      * reference the same metric in the same {@link AnalyzerResult}.
-     * 
+     *
      * @param other
      * @return
      */
-    public boolean equalsIgnoreParameterValues(MetricIdentifier other) {
-        if (this == other)
+    public boolean equalsIgnoreParameterValues(final MetricIdentifier other) {
+        if (this == other) {
             return true;
-        if (other == null)
+        }
+        if (other == null) {
             return false;
+        }
         if (_analyzerDescriptorName == null) {
-            if (other._analyzerDescriptorName != null)
+            if (other._analyzerDescriptorName != null) {
                 return false;
-        } else if (!_analyzerDescriptorName.equals(other._analyzerDescriptorName))
+            }
+        } else if (!_analyzerDescriptorName.equals(other._analyzerDescriptorName)) {
             return false;
+        }
         if (_analyzerInputName == null) {
-            if (other._analyzerInputName != null)
+            if (other._analyzerInputName != null) {
                 return false;
-        } else if (!_analyzerInputName.equals(other._analyzerInputName))
+            }
+        } else if (!_analyzerInputName.equals(other._analyzerInputName)) {
             return false;
+        }
         if (_analyzerName == null) {
-            if (other._analyzerName != null)
+            if (other._analyzerName != null) {
                 return false;
-        } else if (!_analyzerName.equals(other._analyzerName))
+            }
+        } else if (!_analyzerName.equals(other._analyzerName)) {
             return false;
+        }
         if (_children == null) {
-            if (other._children != null)
+            if (other._children != null) {
                 return false;
-        } else if (!_children.equals(other._children))
+            }
+        } else if (!_children.equals(other._children)) {
             return false;
+        }
         if (_formula == null) {
-            if (other._formula != null)
+            if (other._formula != null) {
                 return false;
-        } else if (!_formula.equals(other._formula))
+            }
+        } else if (!_formula.equals(other._formula)) {
             return false;
+        }
 
         if (_metricDescriptorName == null) {
-            if (other._metricDescriptorName != null)
+            if (other._metricDescriptorName != null) {
                 return false;
-        } else if (!_metricDescriptorName.equals(other._metricDescriptorName))
+            }
+        } else if (!_metricDescriptorName.equals(other._metricDescriptorName)) {
             return false;
-        if (_parameterizedByColumnName != other._parameterizedByColumnName)
+        }
+        if (_parameterizedByColumnName != other._parameterizedByColumnName) {
             return false;
-        if (_parameterizedByQueryString != other._parameterizedByQueryString)
+        }
+        if (_parameterizedByQueryString != other._parameterizedByQueryString) {
             return false;
+        }
         return true;
     }
 
     /**
      * Determines if two {@link MetricIdentifier}s match if ignoring the details
      * that can be customized/parameterized by the user:
-     * 
+     *
      * <ul>
      * <li>Display name</li>
      * <li>Color</li>
      * </ul>
-     * 
+     *
      * @param other
      * @return
      */
-    public boolean equalsIgnoreCustomizedDetails(MetricIdentifier other) {
+    public boolean equalsIgnoreCustomizedDetails(final MetricIdentifier other) {
         if (!equalsIgnoreParameterValues(other)) {
             return false;
         }
 
         if (_paramColumnName == null) {
-            if (other._paramColumnName != null)
+            if (other._paramColumnName != null) {
                 return false;
-        } else if (!_paramColumnName.equals(other._paramColumnName))
+            }
+        } else if (!_paramColumnName.equals(other._paramColumnName)) {
             return false;
+        }
         if (_paramQueryString == null) {
-            if (other._paramQueryString != null)
+            if (other._paramQueryString != null) {
                 return false;
-        } else if (!_paramQueryString.equals(other._paramQueryString))
+            }
+        } else if (!_paramQueryString.equals(other._paramQueryString)) {
             return false;
+        }
 
         return true;
     }
@@ -433,7 +478,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
     }
 
     @Override
-    public int compareTo(MetricIdentifier other) {
+    public int compareTo(final MetricIdentifier other) {
         if (this == other) {
             return 0;
         }

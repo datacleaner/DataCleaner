@@ -32,11 +32,12 @@ public class SimpleReferenceValues implements Serializable {
 
     private final Object[] _values;
 
-    public SimpleReferenceValues(Object... values) {
+    public SimpleReferenceValues(final Object... values) {
         _values = values;
     }
 
     public Object[] getValues() {
         return _values;
-    };
+    }
+
 }

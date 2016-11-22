@@ -36,8 +36,9 @@ public class JavaDensityAnalyzerResult implements IDensityAnalyzerResult {
     private final RowAnnotationFactory _rowAnnotationFactory;
     private final Map<Pair<Integer, Integer>, RowAnnotation> _annotations;
 
-    public JavaDensityAnalyzerResult(Map<Pair<Integer, Integer>, RowAnnotation> annotations, InputColumn<Number> variable1,
-            InputColumn<Number> variable2, RowAnnotationFactory rowAnnotationFactory) {
+    public JavaDensityAnalyzerResult(final Map<Pair<Integer, Integer>, RowAnnotation> annotations,
+            final InputColumn<Number> variable1,
+            final InputColumn<Number> variable2, final RowAnnotationFactory rowAnnotationFactory) {
         // Make sure that Scala wrapper is lost.
         _annotations = new HashMap<>();
         _annotations.putAll(annotations);
@@ -62,7 +63,7 @@ public class JavaDensityAnalyzerResult implements IDensityAnalyzerResult {
         return _rowAnnotationFactory;
     }
 
-    public RowAnnotation getRowAnnotation(int x, int y) {
+    public RowAnnotation getRowAnnotation(final int x, final int y) {
         final Pair<Integer, Integer> searchedPoint = new ImmutablePair<>(x, y);
         return _annotations.get(searchedPoint);
     }

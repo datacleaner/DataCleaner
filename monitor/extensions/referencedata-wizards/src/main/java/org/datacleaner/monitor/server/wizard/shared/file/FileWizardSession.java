@@ -33,15 +33,14 @@ import org.w3c.dom.Element;
 
 public abstract class FileWizardSession extends AbstractReferenceDataWizardSession {
 
+    protected final DomConfigurationWriter _writer;
     protected String _name;
     protected String _filePath;
     protected String _sessionKey;
     protected String _encoding;
     protected String _caseSensitive;
 
-    protected final DomConfigurationWriter _writer;
-
-    public FileWizardSession(ReferenceDataWizardContext context) {
+    public FileWizardSession(final ReferenceDataWizardContext context) {
         super(context);
 
         final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();

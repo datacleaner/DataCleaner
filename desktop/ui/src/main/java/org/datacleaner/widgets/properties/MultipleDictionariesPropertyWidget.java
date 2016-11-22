@@ -28,8 +28,8 @@ import javax.swing.JButton;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.reference.Dictionary;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.Dictionary;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
@@ -37,83 +37,83 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.windows.ReferenceDataDialog;
 
 public class MultipleDictionariesPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<Dictionary> implements
- ReferenceDataChangeListener<Dictionary> {
+        ReferenceDataChangeListener<Dictionary> {
 
-	private final MutableReferenceDataCatalog _referenceDataCatalog;
-	private Provider<ReferenceDataDialog> _referenceDataDialogProvider;
+    private final MutableReferenceDataCatalog _referenceDataCatalog;
+    private Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
-	@Inject
-	public MultipleDictionariesPropertyWidget(ComponentBuilder componentBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor, MutableReferenceDataCatalog referenceDataCatalog,
-			Provider<ReferenceDataDialog> referenceDataDialogProvider) {
-		super(componentBuilder, propertyDescriptor, Dictionary.class);
-		_referenceDataCatalog = referenceDataCatalog;
-		_referenceDataDialogProvider = referenceDataDialogProvider;
-	}
-
-	@Override
-	public void onPanelAdd() {
-		super.onPanelAdd();
-		_referenceDataCatalog.addDictionaryListener(this);
-	}
-
-	@Override
-	public void onPanelRemove() {
-		super.onPanelRemove();
-		_referenceDataCatalog.removeDictionaryListener(this);
-	}
-
-	@Override
-	protected DCPanel createButtonPanel() {
-		DCPanel buttonPanel = super.createButtonPanel();
-
-		final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
-		dialogButton.setToolTipText("Configure dictionaries");
-		dialogButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
-				dialog.selectDictionariesTab();
-				dialog.setVisible(true);
-			}
-		});
-
-		buttonPanel.add(dialogButton);
-		return buttonPanel;
-	}
-
-	@Override
-	protected Dictionary[] getAvailableValues() {
-		String[] names = _referenceDataCatalog.getDictionaryNames();
-		Dictionary[] result = new Dictionary[names.length];
-		for (int i = 0; i < names.length; i++) {
-			result[i] = _referenceDataCatalog.getDictionary(names[i]);
-		}
-		return result;
-	}
-
-	@Override
-	protected String getName(Dictionary item) {
-		return item.getName();
-	}
-
-	@Override
-	public void onAdd(Dictionary dictionary) {
-		addCheckBox(dictionary, false);
-	}
-
-	@Override
-	public void onRemove(Dictionary dictionary) {
-		removeCheckBox(dictionary);
-	}
-
-	@Override
-	protected String getNotAvailableText() {
-		return "- no dictionaries available -";
-	}
+    @Inject
+    public MultipleDictionariesPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor, final MutableReferenceDataCatalog referenceDataCatalog,
+            final Provider<ReferenceDataDialog> referenceDataDialogProvider) {
+        super(componentBuilder, propertyDescriptor, Dictionary.class);
+        _referenceDataCatalog = referenceDataCatalog;
+        _referenceDataDialogProvider = referenceDataDialogProvider;
+    }
 
     @Override
-    public void onChange(Dictionary oldDictionary, Dictionary newDictionary) {
+    public void onPanelAdd() {
+        super.onPanelAdd();
+        _referenceDataCatalog.addDictionaryListener(this);
+    }
+
+    @Override
+    public void onPanelRemove() {
+        super.onPanelRemove();
+        _referenceDataCatalog.removeDictionaryListener(this);
+    }
+
+    @Override
+    protected DCPanel createButtonPanel() {
+        final DCPanel buttonPanel = super.createButtonPanel();
+
+        final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
+        dialogButton.setToolTipText("Configure dictionaries");
+        dialogButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+                dialog.selectDictionariesTab();
+                dialog.setVisible(true);
+            }
+        });
+
+        buttonPanel.add(dialogButton);
+        return buttonPanel;
+    }
+
+    @Override
+    protected Dictionary[] getAvailableValues() {
+        final String[] names = _referenceDataCatalog.getDictionaryNames();
+        final Dictionary[] result = new Dictionary[names.length];
+        for (int i = 0; i < names.length; i++) {
+            result[i] = _referenceDataCatalog.getDictionary(names[i]);
+        }
+        return result;
+    }
+
+    @Override
+    protected String getName(final Dictionary item) {
+        return item.getName();
+    }
+
+    @Override
+    public void onAdd(final Dictionary dictionary) {
+        addCheckBox(dictionary, false);
+    }
+
+    @Override
+    public void onRemove(final Dictionary dictionary) {
+        removeCheckBox(dictionary);
+    }
+
+    @Override
+    protected String getNotAvailableText() {
+        return "- no dictionaries available -";
+    }
+
+    @Override
+    public void onChange(final Dictionary oldDictionary, final Dictionary newDictionary) {
         editCheckBox(oldDictionary, newDictionary);
     }
 

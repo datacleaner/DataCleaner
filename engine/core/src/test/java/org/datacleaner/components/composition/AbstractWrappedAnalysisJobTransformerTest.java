@@ -54,6 +54,38 @@ import org.datacleaner.test.MockTransformer;
 
 public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
 
+    @Named("MockWrappedAnalysisJobTransformer")
+    public static class MockWrappedAnalysisJobTransformer extends AbstractWrappedAnalysisJobTransformer {
+
+        @Configured
+        InputColumn<?>[] input;
+
+        @Override
+        protected AnalysisJob createWrappedAnalysisJob() {
+            try (AnalysisJobBuilder builder = new AnalysisJobBuilder(_configuration)) {
+                builder.setDatastore("orig_input");
+                builder.addSourceColumns("table.foo");
+                builder.addTransformer(MockTransformer.class).addInputColumns(builder.getSourceColumns());
+                builder.addAnalyzer(MockAnalyzer.class).addInputColumns(builder.getAvailableInputColumns(Object.class));
+                AnalysisJob job = builder.toAnalysisJob();
+                return job;
+            }
+        }
+
+        @Override
+        protected Map<InputColumn<?>, InputColumn<?>> getInputColumnConversion(AnalysisJob wrappedAnalysisJob) {
+            final Map<InputColumn<?>, InputColumn<?>> map = new HashMap<InputColumn<?>, InputColumn<?>>();
+            final Iterator<InputColumn<?>> sourceColumns = wrappedAnalysisJob.getSourceColumns().iterator();
+            int i = 0;
+            while (i < input.length && sourceColumns.hasNext()) {
+                InputColumn<?> next = sourceColumns.next();
+                map.put(input[i], next);
+                i++;
+            }
+            return map;
+        }
+
+    }
     private DataCleanerConfiguration _configuration;
 
     @Override
@@ -122,38 +154,5 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
         assertEquals("TransformedInputRow[values={"
                 + "TransformedInputColumn[id=trans-0001-0002,name=mock output]=mocked: Kasper},"
                 + "delegate=MetaModelInputRow[Row[values=[Kasper]]]]", values.get(1).toString());
-    }
-
-    @Named("MockWrappedAnalysisJobTransformer")
-    public static class MockWrappedAnalysisJobTransformer extends AbstractWrappedAnalysisJobTransformer {
-
-        @Configured
-        InputColumn<?>[] input;
-
-        @Override
-        protected AnalysisJob createWrappedAnalysisJob() {
-            try (AnalysisJobBuilder builder = new AnalysisJobBuilder(_configuration)) {
-                builder.setDatastore("orig_input");
-                builder.addSourceColumns("table.foo");
-                builder.addTransformer(MockTransformer.class).addInputColumns(builder.getSourceColumns());
-                builder.addAnalyzer(MockAnalyzer.class).addInputColumns(builder.getAvailableInputColumns(Object.class));
-                AnalysisJob job = builder.toAnalysisJob();
-                return job;
-            }
-        }
-
-        @Override
-        protected Map<InputColumn<?>, InputColumn<?>> getInputColumnConversion(AnalysisJob wrappedAnalysisJob) {
-            final Map<InputColumn<?>, InputColumn<?>> map = new HashMap<InputColumn<?>, InputColumn<?>>();
-            final Iterator<InputColumn<?>> sourceColumns = wrappedAnalysisJob.getSourceColumns().iterator();
-            int i = 0;
-            while (i < input.length && sourceColumns.hasNext()) {
-                InputColumn<?> next = sourceColumns.next();
-                map.put(input[i], next);
-                i++;
-            }
-            return map;
-        }
-
     }
 }

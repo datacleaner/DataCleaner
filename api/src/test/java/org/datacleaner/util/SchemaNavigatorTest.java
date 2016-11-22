@@ -90,8 +90,10 @@ public class SchemaNavigatorTest extends TestCase {
         }
 
         // tables
-        assertEquals("Table[name=employees.csv,type=TABLE,remarks=null]", sn.convertToTable("employees.csv").toString());
-        assertEquals("Table[name=employees.csv,type=TABLE,remarks=null]", sn.convertToTable(null, "employees.csv").toString());
+        assertEquals("Table[name=employees.csv,type=TABLE,remarks=null]",
+                sn.convertToTable("employees.csv").toString());
+        assertEquals("Table[name=employees.csv,type=TABLE,remarks=null]",
+                sn.convertToTable(null, "employees.csv").toString());
         assertEquals("Table[name=employees.csv,type=TABLE,remarks=null]", sn.convertToTable(null, null).toString());
 
         try {
@@ -103,11 +105,13 @@ public class SchemaNavigatorTest extends TestCase {
                     e.getMessage());
         }
 
-        assertEquals("Table[name=employees.csv,type=TABLE,remarks=null]", sn.convertToTable("resources", "employees.csv")
-                .toString());
+        assertEquals("Table[name=employees.csv,type=TABLE,remarks=null]",
+                sn.convertToTable("resources", "employees.csv")
+                        .toString());
         assertEquals(
                 "[Table[name=employees.csv,type=TABLE,remarks=null], Table[name=employees.csv,type=TABLE,remarks=null], null]",
-                Arrays.toString(sn.convertToTables(new String[] { "employees.csv", "resources.employees.csv", "foo" })));
+                Arrays.toString(
+                        sn.convertToTables(new String[] { "employees.csv", "resources.employees.csv", "foo" })));
 
         // schemas
         assertEquals("Schema[name=resources]", sn.convertToSchema("resources").toString());

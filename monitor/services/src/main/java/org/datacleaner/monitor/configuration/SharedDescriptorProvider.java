@@ -47,19 +47,15 @@ public class SharedDescriptorProvider implements DescriptorProvider {
 
     private DescriptorProvider _delegate;
 
-    public void setDelegate(DescriptorProvider delegate) {
-        _delegate = delegate;
-    }
-
     @Override
     public void refresh() {
         if (_delegate != null) {
             _delegate.refresh();
         }
     }
-    
+
     @Override
-    public ComponentDescriptor<?> getComponentDescriptorByDisplayName(String name) {
+    public ComponentDescriptor<?> getComponentDescriptorByDisplayName(final String name) {
         return getDelegate().getComponentDescriptorByDisplayName(name);
     }
 
@@ -69,7 +65,7 @@ public class SharedDescriptorProvider implements DescriptorProvider {
             if (applicationContext == null) {
                 // use a hard-coded descriptor provider (will only occur in test
                 // scenarios)
-                ClasspathScanDescriptorProvider scanner = new ClasspathScanDescriptorProvider();
+                final ClasspathScanDescriptorProvider scanner = new ClasspathScanDescriptorProvider();
                 scanner.scanPackage("org.datacleaner.beans", true);
                 scanner.scanPackage("org.datacleaner.components", true);
                 scanner.scanPackage("org.datacleaner.result.renderer", false);
@@ -84,13 +80,17 @@ public class SharedDescriptorProvider implements DescriptorProvider {
         return _delegate;
     }
 
+    public void setDelegate(final DescriptorProvider delegate) {
+        _delegate = delegate;
+    }
+
     @Override
-    public AnalyzerDescriptor<?> getAnalyzerDescriptorByDisplayName(String arg0) {
+    public AnalyzerDescriptor<?> getAnalyzerDescriptorByDisplayName(final String arg0) {
         return getDelegate().getAnalyzerDescriptorByDisplayName(arg0);
     }
 
     @Override
-    public <A extends Analyzer<?>> AnalyzerDescriptor<A> getAnalyzerDescriptorForClass(Class<A> arg0) {
+    public <A extends Analyzer<?>> AnalyzerDescriptor<A> getAnalyzerDescriptorForClass(final Class<A> arg0) {
         return getDelegate().getAnalyzerDescriptorForClass(arg0);
     }
 
@@ -100,12 +100,12 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public FilterDescriptor<?, ?> getFilterDescriptorByDisplayName(String arg0) {
+    public FilterDescriptor<?, ?> getFilterDescriptorByDisplayName(final String arg0) {
         return getDelegate().getFilterDescriptorByDisplayName(arg0);
     }
 
     @Override
-    public <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> getFilterDescriptorForClass(Class<F> arg0) {
+    public <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> getFilterDescriptorForClass(final Class<F> arg0) {
         return getDelegate().getFilterDescriptorForClass(arg0);
     }
 
@@ -115,7 +115,7 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public <R extends Renderer<?, ?>> RendererBeanDescriptor<R> getRendererBeanDescriptorForClass(Class<R> arg0) {
+    public <R extends Renderer<?, ?>> RendererBeanDescriptor<R> getRendererBeanDescriptorForClass(final Class<R> arg0) {
         return getDelegate().getRendererBeanDescriptorForClass(arg0);
     }
 
@@ -126,17 +126,17 @@ public class SharedDescriptorProvider implements DescriptorProvider {
 
     @Override
     public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptorsForRenderingFormat(
-            Class<? extends RenderingFormat<?>> arg0) {
+            final Class<? extends RenderingFormat<?>> arg0) {
         return getDelegate().getRendererBeanDescriptorsForRenderingFormat(arg0);
     }
 
     @Override
-    public TransformerDescriptor<?> getTransformerDescriptorByDisplayName(String arg0) {
+    public TransformerDescriptor<?> getTransformerDescriptorByDisplayName(final String arg0) {
         return getDelegate().getTransformerDescriptorByDisplayName(arg0);
     }
 
     @Override
-    public <T extends Transformer> TransformerDescriptor<T> getTransformerDescriptorForClass(Class<T> arg0) {
+    public <T extends Transformer> TransformerDescriptor<T> getTransformerDescriptorForClass(final Class<T> arg0) {
         return getDelegate().getTransformerDescriptorForClass(arg0);
     }
 
@@ -152,7 +152,7 @@ public class SharedDescriptorProvider implements DescriptorProvider {
 
     @Override
     public Collection<? extends ComponentDescriptor<?>> getComponentDescriptorsOfSuperCategory(
-            ComponentSuperCategory category) {
+            final ComponentSuperCategory category) {
         return getDelegate().getComponentDescriptorsOfSuperCategory(category);
     }
 
@@ -162,12 +162,12 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public void addListener(DescriptorProviderListener listener) {
+    public void addListener(final DescriptorProviderListener listener) {
         getDelegate().addListener(listener);
     }
 
     @Override
-    public void removeListener(DescriptorProviderListener listener) {
+    public void removeListener(final DescriptorProviderListener listener) {
         getDelegate().removeListener(listener);
     }
 }

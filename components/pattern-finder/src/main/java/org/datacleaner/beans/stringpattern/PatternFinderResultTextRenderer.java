@@ -31,39 +31,39 @@ import org.datacleaner.result.renderer.TextRenderingFormat;
 
 /**
  * Text renderer for {@link PatternFinderResult}s
- * 
- * 
+ *
+ *
  */
 @RendererBean(TextRenderingFormat.class)
 public class PatternFinderResultTextRenderer extends AbstractRenderer<PatternFinderResult, String> {
 
-	@Override
-	public String render(PatternFinderResult result) {
-		final CrosstabTextRenderer crosstabTextRenderer = new CrosstabTextRenderer();
-		if (result.isGroupingEnabled()) {
-			Map<String, Crosstab<?>> crosstabs = result.getGroupedCrosstabs();
-			if (crosstabs.isEmpty()) {
-				return "No patterns found";
-			}
-			Set<Entry<String, Crosstab<?>>> crosstabEntries = crosstabs.entrySet();
-			StringBuilder sb = new StringBuilder();
-			for (Entry<String, Crosstab<?>> entry : crosstabEntries) {
-				String group = entry.getKey();
-				Crosstab<?> crosstab = entry.getValue();
-				if (sb.length() != 0) {
-					sb.append("\n");
-				}
+    @Override
+    public String render(final PatternFinderResult result) {
+        final CrosstabTextRenderer crosstabTextRenderer = new CrosstabTextRenderer();
+        if (result.isGroupingEnabled()) {
+            final Map<String, Crosstab<?>> crosstabs = result.getGroupedCrosstabs();
+            if (crosstabs.isEmpty()) {
+                return "No patterns found";
+            }
+            final Set<Entry<String, Crosstab<?>>> crosstabEntries = crosstabs.entrySet();
+            final StringBuilder sb = new StringBuilder();
+            for (final Entry<String, Crosstab<?>> entry : crosstabEntries) {
+                final String group = entry.getKey();
+                final Crosstab<?> crosstab = entry.getValue();
+                if (sb.length() != 0) {
+                    sb.append("\n");
+                }
 
-				sb.append("Patterns for group: ");
-				sb.append(group);
-				sb.append('\n');
-				sb.append(crosstabTextRenderer.render(crosstab));
-			}
-			return sb.toString();
-		} else {
-			Crosstab<?> crosstab = result.getSingleCrosstab();
-			return crosstabTextRenderer.render(crosstab);
-		}
-	}
+                sb.append("Patterns for group: ");
+                sb.append(group);
+                sb.append('\n');
+                sb.append(crosstabTextRenderer.render(crosstab));
+            }
+            return sb.toString();
+        } else {
+            final Crosstab<?> crosstab = result.getSingleCrosstab();
+            return crosstabTextRenderer.render(crosstab);
+        }
+    }
 
 }

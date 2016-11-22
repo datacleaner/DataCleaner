@@ -36,17 +36,17 @@ public class CrosstabReducerHelper {
 
     /**
      * Add the croosstab dimensions to the list of dimensions
-     * 
+     *
      * @param crosstabDimensions
      *            - list of dimensions
      * @param partialCrosstab
      *            - crosstab
      */
-    public static void createDimensionsColumnCrosstab(List<CrosstabDimension> crosstabDimensions,
+    public static void createDimensionsColumnCrosstab(final List<CrosstabDimension> crosstabDimensions,
             final Crosstab<Number> partialCrosstab) {
         if (partialCrosstab != null) {
             final List<CrosstabDimension> dimensions = partialCrosstab.getDimensions();
-            for (CrosstabDimension dimension : dimensions) {
+            for (final CrosstabDimension dimension : dimensions) {
                 if (!dimensionExits(crosstabDimensions, dimension)) {
                     crosstabDimensions.add(dimension);
                 }
@@ -54,10 +54,10 @@ public class CrosstabReducerHelper {
         }
     }
 
-    public static boolean dimensionExits(Collection<CrosstabDimension> list, CrosstabDimension dimension) {
+    public static boolean dimensionExits(final Collection<CrosstabDimension> list, final CrosstabDimension dimension) {
         if (list.size() > 0) {
             boolean allreadyExits = false;
-            for (CrosstabDimension dim : list) {
+            for (final CrosstabDimension dim : list) {
                 if (dimension.equals(dim)) {
                     allreadyExits = true;
                     break;
@@ -70,27 +70,27 @@ public class CrosstabReducerHelper {
 
     /**
      * Add the values of partial crosstab to the main crosstab
-     * 
+     *
      * @param mainCrosstab
      *            - main crosstab
      * @param partialCrosstab
      *            - partial crosstab
      */
     public static void addData(final Crosstab<Number> mainCrosstab, final Crosstab<Number> partialCrosstab,
-            CrosstabDimension columnDimension, CrosstabDimension measureDimension) {
+            final CrosstabDimension columnDimension, final CrosstabDimension measureDimension) {
         if (partialCrosstab != null) {
 
             final CrosstabNavigator<Number> mainNavigator = new CrosstabNavigator<Number>(mainCrosstab);
             final CrosstabNavigator<Number> nav = new CrosstabNavigator<Number>(partialCrosstab);
 
-            for (String columnCategory : columnDimension.getCategories()) {
+            for (final String columnCategory : columnDimension.getCategories()) {
                 // just navigate through the dimensions because is the column
                 // dimension
                 nav.where(columnDimension, columnCategory);
                 mainNavigator.where(columnDimension, columnCategory);
                 // navigate and sum up data
                 final List<String> categories = measureDimension.getCategories();
-                for (String measureCategory : categories) {
+                for (final String measureCategory : categories) {
                     sumUpData(mainNavigator, nav, measureDimension, measureCategory);
                 }
             }
@@ -98,7 +98,7 @@ public class CrosstabReducerHelper {
     }
 
     private static void sumUpData(final CrosstabNavigator<Number> mainNavigator, final CrosstabNavigator<Number> nav,
-            CrosstabDimension dimension, String category) {
+            final CrosstabDimension dimension, final String category) {
         final CrosstabNavigator<Number> where = nav.where(dimension, category);
         final CrosstabNavigator<Number> whereToPut = mainNavigator.where(dimension, category);
         final Number categoryValue = where.safeGet(null);
@@ -113,33 +113,34 @@ public class CrosstabReducerHelper {
         }
     }
 
-    public static boolean findDimension(final Crosstab<Number> crosstab, String dimensionName) {
+    public static boolean findDimension(final Crosstab<Number> crosstab, final String dimensionName) {
         try {
             final CrosstabDimension dimension = crosstab.getDimension(dimensionName);
             if (dimension == null) {
                 return false;
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
         return true;
     }
 
-    public static Number sum(Number n1, Number n2) {
+    public static Number sum(final Number n1, final Number n2) {
         if (isIntegerType(n1) && isIntegerType(n2)) {
             return BigInteger.valueOf(n1.longValue()).add(BigInteger.valueOf(n2.longValue()));
         }
         return new BigDecimal(n1.doubleValue()).add(new BigDecimal(n2.doubleValue()));
     }
 
-    public static Number subtract(Number n1, Number n2) {
+    public static Number subtract(final Number n1, final Number n2) {
         if (isIntegerType(n1) && isIntegerType(n2)) {
             return BigInteger.valueOf(n1.longValue()).subtract(BigInteger.valueOf(n2.longValue()));
         }
         return new BigDecimal(n1.doubleValue()).subtract(new BigDecimal(n2.doubleValue()));
     }
 
-    private static boolean isIntegerType(Number n) {
-        return (n instanceof Byte || n instanceof Short || n instanceof Integer || n instanceof Long || n instanceof BigInteger);
+    private static boolean isIntegerType(final Number n) {
+        return (n instanceof Byte || n instanceof Short || n instanceof Integer || n instanceof Long
+                || n instanceof BigInteger);
     }
 }

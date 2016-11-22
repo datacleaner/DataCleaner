@@ -28,7 +28,7 @@ import org.datacleaner.connection.PerformanceCharacteristics;
 
 /**
  * Interface that describes the metadata of an output data stream.
- * 
+ *
  * See {@link HasOutputDataStreams} for details on how the metadata relates to
  * actual data.
  */
@@ -39,23 +39,23 @@ public interface OutputDataStream extends HasName, Serializable {
      * referenced to in analysis job files etc.
      */
     @Override
-    public String getName();
+    String getName();
 
     /**
      * Gets the logical (or physical) {@link Table} objects that represent the
      * format of the data that will be made available by the data stream.
-     * 
+     *
      * @return
      */
-    public Table getTable();
+    Table getTable();
 
     /**
      * Gets performance characteristics of the output data stream. This may
      * influence the {@link Query} posted to consume the data. See
      * {@link HasOutputDataStreams#initializeOutputDataStream(OutputDataStream, Query, OutputRowCollector)}
      * for details on usage.
-     * 
+     *
      * @return
      */
-    public PerformanceCharacteristics getPerformanceCharacteristics();
+    PerformanceCharacteristics getPerformanceCharacteristics();
 }

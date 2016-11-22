@@ -54,17 +54,17 @@ final class AnalysisJobBuilderImportHelper {
 
     private final AnalysisJobBuilder _builder;
 
-    public AnalysisJobBuilderImportHelper(AnalysisJobBuilder builder) {
+    public AnalysisJobBuilderImportHelper(final AnalysisJobBuilder builder) {
         _builder = builder;
     }
 
-    public void importJob(AnalysisJob job) {
+    public void importJob(final AnalysisJob job) {
         _builder.setDatastore(job.getDatastore());
 
         _builder.setAnalysisJobMetadata(job.getMetadata());
 
         final Collection<InputColumn<?>> sourceColumns = job.getSourceColumns();
-        for (InputColumn<?> inputColumn : sourceColumns) {
+        for (final InputColumn<?> inputColumn : sourceColumns) {
             _builder.addSourceColumn((MetaModelInputColumn) inputColumn);
         }
 
@@ -72,13 +72,14 @@ final class AnalysisJobBuilderImportHelper {
         sourceColumnFinder.addSources(job);
 
         // map that translates original component jobs to their builder objects
-        final Map<ComponentJob, ComponentBuilder> componentBuilders = new IdentityHashMap<ComponentJob, ComponentBuilder>();
+        final Map<ComponentJob, ComponentBuilder> componentBuilders =
+                new IdentityHashMap<ComponentJob, ComponentBuilder>();
         addComponentBuilders(job.getFilterJobs(), componentBuilders);
         addComponentBuilders(job.getTransformerJobs(), componentBuilders);
         addComponentBuilders(job.getAnalyzerJobs(), componentBuilders);
 
         // re-build filter requirements
-        for (Entry<ComponentJob, ComponentBuilder> entry : componentBuilders.entrySet()) {
+        for (final Entry<ComponentJob, ComponentBuilder> entry : componentBuilders.entrySet()) {
             final ComponentJob componentJob = entry.getKey();
             final ComponentBuilder builder = entry.getValue();
             final ComponentRequirement originalRequirement = componentJob.getComponentRequirement();
@@ -88,13 +89,13 @@ final class AnalysisJobBuilderImportHelper {
         }
 
         // re-build input column dependencies
-        for (Entry<ComponentJob, ComponentBuilder> entry : componentBuilders.entrySet()) {
+        for (final Entry<ComponentJob, ComponentBuilder> entry : componentBuilders.entrySet()) {
             final ComponentJob componentJob = entry.getKey();
             final ComponentBuilder builder = entry.getValue();
             final Set<ConfiguredPropertyDescriptor> inputColumnProperties = componentJob.getDescriptor()
                     .getConfiguredPropertiesForInput(true);
 
-            for (ConfiguredPropertyDescriptor inputColumnProperty : inputColumnProperties) {
+            for (final ConfiguredPropertyDescriptor inputColumnProperty : inputColumnProperties) {
                 final Object originalInputColumnValue = componentJob.getConfiguration()
                         .getProperty(inputColumnProperty);
                 final Object newInputColumnValue = findImportedInputColumns(originalInputColumnValue,
@@ -104,11 +105,11 @@ final class AnalysisJobBuilderImportHelper {
         }
 
         // re-build output data streams
-        for (Entry<ComponentJob, ComponentBuilder> entry : componentBuilders.entrySet()) {
+        for (final Entry<ComponentJob, ComponentBuilder> entry : componentBuilders.entrySet()) {
             final ComponentJob componentJob = entry.getKey();
             final ComponentBuilder builder = entry.getValue();
             final OutputDataStreamJob[] outputDataStreamJobs = componentJob.getOutputDataStreamJobs();
-            for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
+            for (final OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
                 final OutputDataStream outputDataStream = outputDataStreamJob.getOutputDataStream();
                 final AnalysisJobBuilder outputDataStreamJobBuilder = builder
                         .getOutputDataStreamJobBuilder(outputDataStream.getName());
@@ -121,8 +122,8 @@ final class AnalysisJobBuilderImportHelper {
         }
     }
 
-    private Object findImportedInputColumns(Object originalInputColumnValue,
-            Map<ComponentJob, ComponentBuilder> componentBuilders, SourceColumnFinder sourceColumnFinder) {
+    private Object findImportedInputColumns(final Object originalInputColumnValue,
+            final Map<ComponentJob, ComponentBuilder> componentBuilders, final SourceColumnFinder sourceColumnFinder) {
         if (originalInputColumnValue == null) {
             return null;
         }
@@ -133,10 +134,10 @@ final class AnalysisJobBuilderImportHelper {
         }
 
         if (originalInputColumnValue.getClass().isArray()) {
-            int length = Array.getLength(originalInputColumnValue);
-            InputColumn<?>[] value = new InputColumn[length];
+            final int length = Array.getLength(originalInputColumnValue);
+            final InputColumn<?>[] value = new InputColumn[length];
             for (int i = 0; i < value.length; i++) {
-                InputColumn<?> element = (InputColumn<?>) Array.get(originalInputColumnValue, i);
+                final InputColumn<?> element = (InputColumn<?>) Array.get(originalInputColumnValue, i);
                 value[i] = findImportedInputColumn(element, componentBuilders, sourceColumnFinder);
             }
             return value;
@@ -145,10 +146,10 @@ final class AnalysisJobBuilderImportHelper {
         throw new UnsupportedOperationException("Unknown input column value type: " + originalInputColumnValue);
     }
 
-    private InputColumn<?> findImportedInputColumn(InputColumn<?> originalInputColumn,
-            Map<ComponentJob, ComponentBuilder> componentBuilders, SourceColumnFinder sourceColumnFinder) {
+    private InputColumn<?> findImportedInputColumn(final InputColumn<?> originalInputColumn,
+            final Map<ComponentJob, ComponentBuilder> componentBuilders, final SourceColumnFinder sourceColumnFinder) {
         if (originalInputColumn.isPhysicalColumn()) {
-            Column physicalColumn = originalInputColumn.getPhysicalColumn();
+            final Column physicalColumn = originalInputColumn.getPhysicalColumn();
             return _builder.getSourceColumnByName(physicalColumn.getQualifiedLabel());
         }
 
@@ -172,7 +173,7 @@ final class AnalysisJobBuilderImportHelper {
 
         final String originalColumnName = originalInputColumn.getName();
         final InputColumn<?>[] candidates = newSourceJob.getOutput();
-        for (InputColumn<?> candidate : candidates) {
+        for (final InputColumn<?> candidate : candidates) {
             if (candidate.getName().equals(originalColumnName)) {
                 return candidate;
             }
@@ -182,8 +183,8 @@ final class AnalysisJobBuilderImportHelper {
                 + "' in output column candidate set: " + Arrays.toString(candidates));
     }
 
-    private ComponentRequirement findImportedRequirement(ComponentRequirement originalRequirement,
-            Map<ComponentJob, ComponentBuilder> componentBuilders) {
+    private ComponentRequirement findImportedRequirement(final ComponentRequirement originalRequirement,
+            final Map<ComponentJob, ComponentBuilder> componentBuilders) {
         if (originalRequirement == null) {
             return null;
         }
@@ -203,7 +204,7 @@ final class AnalysisJobBuilderImportHelper {
                     .getOutcomes();
             final Collection<FilterOutcome> newOutcomes = new HashSet<>();
             for (final FilterOutcome originalOutcome : originalOutcomes) {
-                FilterOutcome newOutcome = findFilterOutcome(originalOutcome, componentBuilders);
+                final FilterOutcome newOutcome = findFilterOutcome(originalOutcome, componentBuilders);
                 newOutcomes.add(newOutcome);
             }
 
@@ -213,8 +214,8 @@ final class AnalysisJobBuilderImportHelper {
         throw new UnsupportedOperationException("Unsupported requirement type: " + originalRequirement);
     }
 
-    private FilterOutcome findFilterOutcome(FilterOutcome originalFilterOutcome,
-            Map<ComponentJob, ComponentBuilder> componentBuilders) {
+    private FilterOutcome findFilterOutcome(final FilterOutcome originalFilterOutcome,
+            final Map<ComponentJob, ComponentBuilder> componentBuilders) {
         final HasFilterOutcomes source = originalFilterOutcome.getSource();
         final ComponentBuilder builder = componentBuilders.get(source);
         if (builder == null) {
@@ -228,10 +229,10 @@ final class AnalysisJobBuilderImportHelper {
         return newOutcome;
     }
 
-    private void addComponentBuilders(Collection<? extends ComponentJob> componentJobs,
-            Map<ComponentJob, ComponentBuilder> componentBuilders) {
-        for (ComponentJob componentJob : componentJobs) {
-            ComponentBuilder builder = _builder.addComponent(componentJob);
+    private void addComponentBuilders(final Collection<? extends ComponentJob> componentJobs,
+            final Map<ComponentJob, ComponentBuilder> componentBuilders) {
+        for (final ComponentJob componentJob : componentJobs) {
+            final ComponentBuilder builder = _builder.addComponent(componentJob);
             componentBuilders.put(componentJob, builder);
         }
     }

@@ -46,11 +46,11 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
 
     /**
      * Constructor. Initializes pending updates and deletes to be empty.
-     * 
+     *
      * @param dataContext
      *            The data context.
      */
-    public DataHubUpdateCallback(DataHubDataContext dataContext) {
+    public DataHubUpdateCallback(final DataHubDataContext dataContext) {
         super(dataContext);
         _dataContext = dataContext;
         _pendingUpdates = null;
@@ -59,13 +59,13 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     }
 
     @Override
-    public TableCreationBuilder createTable(Schema arg0, String arg1) throws IllegalArgumentException,
+    public TableCreationBuilder createTable(final Schema arg0, final String arg1) throws IllegalArgumentException,
             IllegalStateException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public TableDropBuilder dropTable(Table arg0) throws IllegalArgumentException, IllegalStateException,
+    public TableDropBuilder dropTable(final Table arg0) throws IllegalArgumentException, IllegalStateException,
             UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
@@ -76,15 +76,15 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     }
 
     @Override
-    public RowInsertionBuilder insertInto(Table arg0) throws IllegalArgumentException, IllegalStateException,
+    public RowInsertionBuilder insertInto(final Table arg0) throws IllegalArgumentException, IllegalStateException,
             UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public RowDeletionBuilder deleteFrom(Table table) throws IllegalArgumentException, IllegalStateException,
+    public RowDeletionBuilder deleteFrom(final Table table) throws IllegalArgumentException, IllegalStateException,
             UnsupportedOperationException {
-        return new DataHubDeleteBuilder(this,table);
+        return new DataHubDeleteBuilder(this, table);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     }
 
     @Override
-    public RowUpdationBuilder update(Table table) throws IllegalArgumentException, IllegalStateException,
+    public RowUpdationBuilder update(final Table table) throws IllegalArgumentException, IllegalStateException,
             UnsupportedOperationException {
         return new DataHubUpdateBuilder(this, table);
     }
@@ -108,12 +108,12 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
      * The incoming updates are buffered and send to DataHub in batches of size <code>INSERT_BATCH_SIZE</code>.
      * @param updateData Contains the records and fields to be updated.
      */
-    public void executeUpdate(UpdateData updateData) {
+    public void executeUpdate(final UpdateData updateData) {
         if (_pendingUpdates == null) {
             _pendingUpdates = new ArrayList<UpdateData>();
         }
         _pendingUpdates.add(updateData);
-        
+
         if (_pendingUpdates.size() >= INSERT_BATCH_SIZE) {
             flushUpdates();
         }
@@ -123,16 +123,16 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     /**
      * Deletes a golden record by its golden record id. The deletes are buffered
      * and executed in batches.
-     * 
+     *
      * @param grId
      *            The golden record id to delete.
      */
-    public void executeDeleteGoldenRecord(String grId) {
+    public void executeDeleteGoldenRecord(final String grId) {
         if (_pendingGoldenRecordDeletes == null) {
             _pendingGoldenRecordDeletes = new ArrayList<String>();
         }
         _pendingGoldenRecordDeletes.add(grId);
-        
+
         if (_pendingGoldenRecordDeletes.size() >= DELETE_BATCH_SIZE) {
             flushGoldenRecordDeletes();
         }
@@ -141,7 +141,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     /**
      * Delete a DataHub source record. The deletes are buffered and sent to
      * DataHub in batches.
-     * 
+     *
      * @param source
      *            The name of the source system
      * @param id
@@ -149,7 +149,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
      * @param recordType
      *            The record type.
      */
-    public void executeDeleteSourceRecord(String source, String id, String recordType) {
+    public void executeDeleteSourceRecord(final String source, final String id, final String recordType) {
         if (_pendingSourceDeletes == null) {
             _pendingSourceDeletes = new ArrayList<SourceRecordIdentifier>();
         }
@@ -159,7 +159,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
             flushSourceDeletes();
         }
     }
-    
+
     /**
      * Closes the callback. All remaining updates and deletes are flushed.
      */
@@ -185,7 +185,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
         _dataContext.executeSourceDelete(_pendingSourceDeletes);
         _pendingSourceDeletes = null;
     }
-    
+
     private void flushGoldenRecordDeletes() {
         if (_pendingGoldenRecordDeletes == null || _pendingGoldenRecordDeletes.isEmpty()) {
             return;

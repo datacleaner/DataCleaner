@@ -44,7 +44,7 @@ public class DashboardEntryPoint implements EntryPoint {
         render(service, clientConfig);
     }
 
-    protected void render(DashboardServiceAsync service, ClientConfig clientConfig) {
+    protected void render(final DashboardServiceAsync service, final ClientConfig clientConfig) {
         final FlowPanel timelinesSplitPanel = new FlowPanel();
         timelinesSplitPanel.setStyleName("TimelinesSplitPanel");
         {

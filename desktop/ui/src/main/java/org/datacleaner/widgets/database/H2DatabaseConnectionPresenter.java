@@ -21,25 +21,25 @@ package org.datacleaner.widgets.database;
 
 public class H2DatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
 
-	public H2DatabaseConnectionPresenter() {
-		super("jdbc:h2:PARAM1");
-	}
+    public H2DatabaseConnectionPresenter() {
+        super("jdbc:h2:PARAM1");
+    }
 
-	@Override
-	protected int getDefaultPort() {
-		// no port involved
-		return 0;
-	}
+    @Override
+    protected int getDefaultPort() {
+        // no port involved
+        return 0;
+    }
 
-	@Override
-	protected String getLabelForParam1() {
-		return "Path to database";
-	}
+    @Override
+    protected String getLabelForParam1() {
+        return "Path to database";
+    }
 
-	@Override
-	protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
-			String param3, String param4) {
-		return "jdbc:h2:" + param1;
-	}
+    @Override
+    protected String getJdbcUrl(final String hostname, final int port, final String database, final String param1, final String param2,
+            final String param3, final String param4) {
+        return "jdbc:h2:" + param1;
+    }
 
 }

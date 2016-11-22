@@ -24,13 +24,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import org.datacleaner.util.ReadObjectBuilder;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.excel.ExcelConfiguration;
 import org.apache.metamodel.excel.ExcelDataContext;
 import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SerializableRef;
+import org.datacleaner.util.ReadObjectBuilder;
 
 /**
  * Datastore implementation for Excel spreadsheets.
@@ -44,18 +44,18 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
     private final SerializableRef<Resource> _resourceRef;
     private List<String> _customColumnNames;
 
-    public ExcelDatastore(String name, Resource resource, String filename) {
+    public ExcelDatastore(final String name, final Resource resource, final String filename) {
         this(name, resource, filename, null);
     }
 
-    public ExcelDatastore(String name, Resource resource, String filename, List<String> customColumnNames) {
+    public ExcelDatastore(final String name, final Resource resource, final String filename, final List<String> customColumnNames) {
         super(name);
         _resourceRef = new SerializableRef<Resource>(resource);
         _filename = filename;
         _customColumnNames = customColumnNames;
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, ExcelDatastore.class).readObject(stream);
     }
 
@@ -87,7 +87,7 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
         } else {
             dc = new ExcelDataContext(resource, excelConfiguration);
         }
-        
+
         return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dc, this);
     }
 
@@ -113,7 +113,7 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         super.decorateIdentity(identifiers);
         identifiers.add(_filename);
     }

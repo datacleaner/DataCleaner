@@ -29,56 +29,55 @@ import javax.swing.table.TableCellEditor;
 
 public final class JComponentCellEditor implements TableCellEditor {
 
-	private static final JComponentCellEditor noComponentInstance = new JComponentCellEditor(null);
+    private static final JComponentCellEditor noComponentInstance = new JComponentCellEditor(null);
+    private final JComponent _component;
 
-	public static TableCellEditor forComponent(JComponent component) {
-		if (component == null) {
-			return noComponentInstance;
-		}
-		return new JComponentCellEditor(component);
-	}
+    public JComponentCellEditor(final JComponent value) {
+        _component = value;
+    }
 
-	private final JComponent _component;
+    public static TableCellEditor forComponent(final JComponent component) {
+        if (component == null) {
+            return noComponentInstance;
+        }
+        return new JComponentCellEditor(component);
+    }
 
-	public JComponentCellEditor(JComponent value) {
-		_component = value;
-	}
+    @Override
+    public Object getCellEditorValue() {
+        return null;
+    }
 
-	@Override
-	public Object getCellEditorValue() {
-		return null;
-	}
+    @Override
+    public boolean isCellEditable(final EventObject anEvent) {
+        return _component != null;
+    }
 
-	@Override
-	public boolean isCellEditable(EventObject anEvent) {
-		return _component != null;
-	}
+    @Override
+    public boolean shouldSelectCell(final EventObject anEvent) {
+        return true;
+    }
 
-	@Override
-	public boolean shouldSelectCell(EventObject anEvent) {
-		return true;
-	}
+    @Override
+    public boolean stopCellEditing() {
+        return true;
+    }
 
-	@Override
-	public boolean stopCellEditing() {
-		return true;
-	}
+    @Override
+    public void cancelCellEditing() {
+    }
 
-	@Override
-	public void cancelCellEditing() {
-	}
+    @Override
+    public void addCellEditorListener(final CellEditorListener l) {
+    }
 
-	@Override
-	public void addCellEditorListener(CellEditorListener l) {
-	}
+    @Override
+    public void removeCellEditorListener(final CellEditorListener l) {
+    }
 
-	@Override
-	public void removeCellEditorListener(CellEditorListener l) {
-	}
-
-	@Override
-	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		return _component;
-	}
+    @Override
+    public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
+        return _component;
+    }
 
 }

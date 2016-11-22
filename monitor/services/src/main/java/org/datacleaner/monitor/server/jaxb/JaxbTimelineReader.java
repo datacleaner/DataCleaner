@@ -51,19 +51,19 @@ public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements
         super(Timeline.class);
     }
 
-    public Timeline unmarshallTimeline(InputStream inputStream) {
-        Timeline timeline = unmarshal(inputStream);
+    public Timeline unmarshallTimeline(final InputStream inputStream) {
+        final Timeline timeline = unmarshal(inputStream);
         return timeline;
     }
 
     @Override
-    public TimelineDefinition read(InputStream inputStream) {
+    public TimelineDefinition read(final InputStream inputStream) {
         final Timeline timeline = unmarshallTimeline(inputStream);
 
         return createTimeline(timeline);
     }
 
-    private TimelineDefinition createTimeline(Timeline timeline) {
+    private TimelineDefinition createTimeline(final Timeline timeline) {
         final JobIdentifier jobIdentifier = new JobIdentifier(timeline.getJobName());
 
         final TimelineDefinition timelineDefinition = new TimelineDefinition();
@@ -78,7 +78,7 @@ public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements
         return timelineDefinition;
     }
 
-    private ChartOptions createChartOptions(Timeline timeline) {
+    private ChartOptions createChartOptions(final Timeline timeline) {
         final ChartOptionsType chartOptionsType = timeline.getChartOptions();
         if (chartOptionsType == null) {
             return null;
@@ -92,7 +92,7 @@ public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements
         return chartOptions;
     }
 
-    private VerticalAxisOption createVericalAxisOption(VerticalAxis axis) {
+    private VerticalAxisOption createVericalAxisOption(final VerticalAxis axis) {
         if (axis == null) {
             return new DefaultVAxisOption();
         }
@@ -105,7 +105,7 @@ public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements
         return new DefaultVAxisOption(height, minimumValue, maximumValue, logarithmicScale);
     }
 
-    private HorizontalAxisOption createHorizontalAxisOption(HorizontalAxis axis) {
+    private HorizontalAxisOption createHorizontalAxisOption(final HorizontalAxis axis) {
         if (axis == null) {
             return new DefaultHAxisOption();
         }
@@ -117,17 +117,17 @@ public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements
             final Date endDate = createDate(fixedAxis.getEndDate());
             return new DefaultHAxisOption(beginDate, endDate);
         } else if (rollingAxis != null) {
-            int latestNumberOfDays = rollingAxis.getLatestNumberOfDays();
+            final int latestNumberOfDays = rollingAxis.getLatestNumberOfDays();
             return new LatestNumberOfDaysHAxisOption(latestNumberOfDays);
         } else {
             return new DefaultHAxisOption();
         }
     }
 
-    public List<MetricIdentifier> createMetrics(Timeline timeline) {
+    public List<MetricIdentifier> createMetrics(final Timeline timeline) {
         final List<MetricType> metricTypes = timeline.getMetrics().getMetric();
         final List<MetricIdentifier> metrics = new ArrayList<MetricIdentifier>(metricTypes.size());
-        for (MetricType metricType : metricTypes) {
+        for (final MetricType metricType : metricTypes) {
             final MetricIdentifier metricIdentifier = new JaxbMetricAdaptor().deserialize(metricType);
 
             metrics.add(metricIdentifier);

@@ -25,41 +25,41 @@ import org.datacleaner.api.Close;
 
 final class CloseMethodDescriptorImpl extends AbstractMethodDescriptor implements CloseMethodDescriptor {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	protected CloseMethodDescriptorImpl(Method method, ComponentDescriptor<?> componentDescriptor) {
-		super(method, componentDescriptor);
-	}
-	
-	@Override
-	public boolean isDistributed() {
-	    Close annotation = getAnnotation(Close.class);
-	    if (annotation == null) {
-	        return true;
-	    }
+    protected CloseMethodDescriptorImpl(final Method method, final ComponentDescriptor<?> componentDescriptor) {
+        super(method, componentDescriptor);
+    }
+
+    @Override
+    public boolean isDistributed() {
+        final Close annotation = getAnnotation(Close.class);
+        if (annotation == null) {
+            return true;
+        }
         return annotation.distributed();
-	}
-	
-	@Override
-	public boolean isEnabledOnSuccess() {
-	    Close annotation = getAnnotation(Close.class);
-	    if (annotation == null) {
-	        return true;
-	    }
-	    return annotation.onSuccess();
-	}
-	
-	@Override
-	public boolean isEnabledOnFailure() {
-	    Close annotation = getAnnotation(Close.class);
-	    if (annotation == null) {
-	        return true;
-	    }
-	    return annotation.onFailure();
-	}
-	
-	@Override
-	public void close(Object component) throws IllegalStateException {
-		invoke(component);
-	}
+    }
+
+    @Override
+    public boolean isEnabledOnSuccess() {
+        final Close annotation = getAnnotation(Close.class);
+        if (annotation == null) {
+            return true;
+        }
+        return annotation.onSuccess();
+    }
+
+    @Override
+    public boolean isEnabledOnFailure() {
+        final Close annotation = getAnnotation(Close.class);
+        if (annotation == null) {
+            return true;
+        }
+        return annotation.onFailure();
+    }
+
+    @Override
+    public void close(final Object component) throws IllegalStateException {
+        invoke(component);
+    }
 }

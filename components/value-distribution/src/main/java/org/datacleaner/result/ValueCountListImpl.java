@@ -25,88 +25,88 @@ import java.util.ListIterator;
 
 public class ValueCountListImpl implements ValueCountList {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final boolean _retainHighest;
-	private final int _maxSize;
-	private final LinkedList<ValueFrequency> _values = new LinkedList<ValueFrequency>();
+    private final boolean _retainHighest;
+    private final int _maxSize;
+    private final LinkedList<ValueFrequency> _values = new LinkedList<ValueFrequency>();
 
-	public static ValueCountListImpl createFullList() {
-		return new ValueCountListImpl(-1, true);
-	}
+    private ValueCountListImpl(final int maxSize, final boolean retainHighest) {
+        _maxSize = maxSize;
+        _retainHighest = retainHighest;
+    }
 
-	public static ValueCountList emptyList() {
-		return new ValueCountListImpl(0, true);
-	}
+    public static ValueCountListImpl createFullList() {
+        return new ValueCountListImpl(-1, true);
+    }
 
-	public static ValueCountListImpl createTopList(int topFrequentValues) {
-		return new ValueCountListImpl(topFrequentValues, true);
-	}
+    public static ValueCountList emptyList() {
+        return new ValueCountListImpl(0, true);
+    }
 
-	public static ValueCountListImpl createBottomList(int bottomFrequentValues) {
-		return new ValueCountListImpl(bottomFrequentValues, false);
-	}
+    public static ValueCountListImpl createTopList(final int topFrequentValues) {
+        return new ValueCountListImpl(topFrequentValues, true);
+    }
 
-	private ValueCountListImpl(int maxSize, boolean retainHighest) {
-		_maxSize = maxSize;
-		_retainHighest = retainHighest;
-	}
+    public static ValueCountListImpl createBottomList(final int bottomFrequentValues) {
+        return new ValueCountListImpl(bottomFrequentValues, false);
+    }
 
-	public void register(ValueFrequency valueCount) {
-		boolean inserted = false;
-		if (_retainHighest) {
-			for (ListIterator<ValueFrequency> it = _values.listIterator(); it.hasNext();) {
-				ValueFrequency v = it.next();
-				if (valueCount.getCount() > v.getCount()) {
-					it.previous();
-					it.add(valueCount);
-					inserted = true;
-					it.next();
-					trimValues();
-					break;
-				}
-			}
-		} else {
-			for (ListIterator<ValueFrequency> it = _values.listIterator(); it.hasNext();) {
-				ValueFrequency v = it.next();
-				if (valueCount.getCount() < v.getCount()) {
-					it.previous();
-					it.add(valueCount);
-					inserted = true;
-					it.next();
-					trimValues();
-					break;
-				}
-			}
-		}
-		if (!inserted && (_maxSize == -1 || _maxSize > _values.size())) {
-			_values.add(valueCount);
-		}
-	}
+    public void register(final ValueFrequency valueCount) {
+        boolean inserted = false;
+        if (_retainHighest) {
+            for (final ListIterator<ValueFrequency> it = _values.listIterator(); it.hasNext(); ) {
+                final ValueFrequency v = it.next();
+                if (valueCount.getCount() > v.getCount()) {
+                    it.previous();
+                    it.add(valueCount);
+                    inserted = true;
+                    it.next();
+                    trimValues();
+                    break;
+                }
+            }
+        } else {
+            for (final ListIterator<ValueFrequency> it = _values.listIterator(); it.hasNext(); ) {
+                final ValueFrequency v = it.next();
+                if (valueCount.getCount() < v.getCount()) {
+                    it.previous();
+                    it.add(valueCount);
+                    inserted = true;
+                    it.next();
+                    trimValues();
+                    break;
+                }
+            }
+        }
+        if (!inserted && (_maxSize == -1 || _maxSize > _values.size())) {
+            _values.add(valueCount);
+        }
+    }
 
-	private void trimValues() {
-		if (_maxSize == -1) {
-			return;
-		}
-		while (_values.size() > _maxSize) {
-			_values.removeLast();
-		}
-	}
+    private void trimValues() {
+        if (_maxSize == -1) {
+            return;
+        }
+        while (_values.size() > _maxSize) {
+            _values.removeLast();
+        }
+    }
 
-	public List<ValueFrequency> getValueCounts() {
-		return _values;
-	}
+    public List<ValueFrequency> getValueCounts() {
+        return _values;
+    }
 
-	public int getMaxSize() {
-		return _maxSize;
-	}
+    public int getMaxSize() {
+        return _maxSize;
+    }
 
-	public int getActualSize() {
-		return _values.size();
-	}
+    public int getActualSize() {
+        return _values.size();
+    }
 
-	@Override
-	public String toString() {
-		return "ValueCountList[" + _values + "]";
-	}
+    @Override
+    public String toString() {
+        return "ValueCountList[" + _values + "]";
+    }
 }

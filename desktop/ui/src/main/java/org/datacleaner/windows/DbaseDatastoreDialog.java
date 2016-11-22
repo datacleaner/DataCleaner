@@ -32,38 +32,39 @@ import org.datacleaner.widgets.AbstractResourceTextField;
 
 public final class DbaseDatastoreDialog extends AbstractFileBasedDatastoreDialog<DbaseDatastore> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	protected DbaseDatastoreDialog(@Nullable DbaseDatastore originalDatastore,
-			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext, UserPreferences userPreferences) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
-	}
+    @Inject
+    protected DbaseDatastoreDialog(@Nullable final DbaseDatastore originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
+        super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
+    }
 
-	@Override
-	protected String getBannerTitle() {
-		return "dBase database";
-	}
+    @Override
+    protected String getBannerTitle() {
+        return "dBase database";
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return "dBase database | Datastore";
-	}
+    @Override
+    public String getWindowTitle() {
+        return "dBase database | Datastore";
+    }
 
-	@Override
-	protected DbaseDatastore createDatastore(String name, String filename) {
-		return new DbaseDatastore(name, filename);
-	}
+    @Override
+    protected DbaseDatastore createDatastore(final String name, final String filename) {
+        return new DbaseDatastore(name, filename);
+    }
 
-	@Override
-	protected String getDatastoreIconPath() {
-		return IconUtils.DBASE_IMAGEPATH;
-	}
+    @Override
+    protected String getDatastoreIconPath() {
+        return IconUtils.DBASE_IMAGEPATH;
+    }
 
-	@Override
-	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
-		filenameField.addChoosableFileFilter(FileFilters.DBF);
-		filenameField.addChoosableFileFilter(FileFilters.ALL);
-		filenameField.setSelectedFileFilter(FileFilters.DBF);
-	}
+    @Override
+    protected void setFileFilters(final AbstractResourceTextField<?> filenameField) {
+        filenameField.addChoosableFileFilter(FileFilters.DBF);
+        filenameField.addChoosableFileFilter(FileFilters.ALL);
+        filenameField.setSelectedFileFilter(FileFilters.DBF);
+    }
 }

@@ -78,16 +78,20 @@ public class SchedulingServiceImplTest extends TestCase {
         }
 
         callTime = DateUtils.get(2012, Month.MARCH, 21);
-        assertEquals("2012-03-25", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
+        assertEquals("2012-03-25",
+                new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
 
         callTime = DateUtils.get(2012, Month.MARCH, 24);
-        assertEquals("2012-03-25", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
+        assertEquals("2012-03-25",
+                new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
 
         callTime = DateUtils.get(2012, Month.MARCH, 25);
-        assertEquals("2012-04-01", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
+        assertEquals("2012-04-01",
+                new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
 
         callTime = DateUtils.get(2012, Month.MARCH, 26);
-        assertEquals("2012-04-01", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
+        assertEquals("2012-04-01",
+                new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
     }
 
     public void testToCronExpressionDaily() throws Exception {

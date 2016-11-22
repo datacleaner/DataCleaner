@@ -28,11 +28,11 @@ import java.util.concurrent.TimeUnit;
  */
 public interface StatusAwareTaskListener extends TaskListener {
 
-	public boolean isDone();
+    boolean isDone();
 
-	public void await() throws InterruptedException;
+    void await() throws InterruptedException;
 
-	public void await(long timeout, TimeUnit timeUnit) throws InterruptedException;
+    void await(long timeout, TimeUnit timeUnit) throws InterruptedException;
 
-	public Date getCompletionTime();
+    Date getCompletionTime();
 }

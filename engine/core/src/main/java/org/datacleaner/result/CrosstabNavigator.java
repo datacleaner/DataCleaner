@@ -28,28 +28,28 @@ public class CrosstabNavigator<E extends Serializable> implements Cloneable {
     private Crosstab<E> crosstab;
     private String[] categories;
 
-    public CrosstabNavigator(Crosstab<E> crosstab) {
+    public CrosstabNavigator(final Crosstab<E> crosstab) {
         this.crosstab = crosstab;
         categories = new String[crosstab.getDimensionCount()];
     }
 
-    public CrosstabNavigator<E> where(String dimension, String isCategory) {
-        int index = crosstab.getDimensionIndex(dimension);
+    public CrosstabNavigator<E> where(final String dimension, final String isCategory) {
+        final int index = crosstab.getDimensionIndex(dimension);
         categories[index] = isCategory;
         return this;
     }
 
-    public CrosstabNavigator<E> where(CrosstabDimension dimension, String isCategory) {
+    public CrosstabNavigator<E> where(final CrosstabDimension dimension, final String isCategory) {
         return where(dimension.getName(), isCategory);
     }
 
-    public void put(E value) throws IllegalArgumentException, NullPointerException {
+    public void put(final E value) throws IllegalArgumentException, NullPointerException {
         put(value, false);
     }
 
     /**
      * Puts the given value to the navigated position in the crosstab.
-     * 
+     *
      * @param value
      *            the value to put.
      * @param createCategories
@@ -63,11 +63,11 @@ public class CrosstabNavigator<E extends Serializable> implements Cloneable {
      * @throws NullPointerException
      *             if some of the specified categories are null
      */
-    public void put(E value, boolean createCategories) throws IllegalArgumentException, NullPointerException {
+    public void put(final E value, final boolean createCategories) throws IllegalArgumentException, NullPointerException {
         if (createCategories) {
             for (int i = 0; i < categories.length; i++) {
-                String category = categories[i];
-                CrosstabDimension dimension = crosstab.getDimension(i);
+                final String category = categories[i];
+                final CrosstabDimension dimension = crosstab.getDimension(i);
                 dimension.addCategory(category);
             }
         }
@@ -76,7 +76,7 @@ public class CrosstabNavigator<E extends Serializable> implements Cloneable {
 
     /**
      * Gets the value associated with the navigated position of the crosstab.
-     * 
+     *
      * @return
      * @throws IllegalArgumentException
      *             if the position is invalid, typically because one or more
@@ -92,14 +92,14 @@ public class CrosstabNavigator<E extends Serializable> implements Cloneable {
      * Gets the value associated with the navigated position in the crosstab in
      * a safe manner, where any issues in the navigation will not be thrown as
      * an exception, but the parameter value will be returned instead.
-     * 
+     *
      * @param valueIfError
      * @return
      */
-    public E safeGet(E valueIfError) {
+    public E safeGet(final E valueIfError) {
         try {
             return get();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return valueIfError;
         }
     }
@@ -107,10 +107,10 @@ public class CrosstabNavigator<E extends Serializable> implements Cloneable {
     /**
      * Attaches an AnalyzerResult as result-exploration data for the navigated
      * position of the crosstab.
-     * 
+     *
      * @param explorationResult
      */
-    public void attach(AnalyzerResult explorationResult) {
+    public void attach(final AnalyzerResult explorationResult) {
         final ResultProducer resultProducer;
         if (explorationResult == null) {
             resultProducer = null;
@@ -124,10 +124,10 @@ public class CrosstabNavigator<E extends Serializable> implements Cloneable {
      * Attaches a ResultProducer as result-exploration data-provider for the
      * navigated position of the crosstab. Note that if the ResultProducer is
      * Serializable, it will be saved with the crosstab on serialization.
-     * 
+     *
      * @param explorationResultProducer
      */
-    public void attach(ResultProducer explorationResultProducer) {
+    public void attach(final ResultProducer explorationResultProducer) {
         crosstab.attachResultProducer(explorationResultProducer, categories);
     }
 
@@ -138,17 +138,17 @@ public class CrosstabNavigator<E extends Serializable> implements Cloneable {
     @Override
     public CrosstabNavigator<E> clone() {
         try {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings("unchecked") final
             CrosstabNavigator<E> n = (CrosstabNavigator<E>) super.clone();
             n.categories = categories.clone();
             return n;
-        } catch (CloneNotSupportedException e) {
+        } catch (final CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String getCategory(CrosstabDimension dimension) {
-        int index = crosstab.getDimensionIndex(dimension);
+    public String getCategory(final CrosstabDimension dimension) {
+        final int index = crosstab.getDimensionIndex(dimension);
         return categories[index];
     }
 }

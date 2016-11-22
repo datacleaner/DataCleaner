@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
@@ -40,7 +41,6 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
-import org.apache.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -53,8 +53,8 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
     private final Map<JComponent, DCComboBox<Class<?>>> _comboBoxDecorations;
 
     @Inject
-    public MultipleClassesPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder) {
+    public MultipleClassesPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
 
         _comboBoxDecorations = new IdentityHashMap<JComponent, DCComboBox<Class<?>>>();
@@ -65,7 +65,7 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
         addButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 addComboBox(String.class, true);
                 fireValueChanged();
             }
@@ -74,8 +74,8 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
         removeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                int componentCount = _outerPanel.getComponentCount();
+            public void actionPerformed(final ActionEvent e) {
+                final int componentCount = _outerPanel.getComponentCount();
                 if (componentCount > 0) {
                     removeComboBox();
                     _outerPanel.updateUI();
@@ -100,7 +100,7 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
     }
 
     @Override
-    public void initialize(Class<?>[] value) {
+    public void initialize(final Class<?>[] value) {
         updateComponents(value);
     }
 
@@ -113,15 +113,15 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
             for (int i = 0; i < Math.min(previousValues.length, values.length); i++) {
                 // modify comboboxes
                 if (!EqualsBuilder.equals(previousValues[i], values[i])) {
-                    Component decoration = _outerPanel.getComponent(i);
-                    DCComboBox<Class<?>> component = _comboBoxDecorations.get(decoration);
+                    final Component decoration = _outerPanel.getComponent(i);
+                    final DCComboBox<Class<?>> component = _comboBoxDecorations.get(decoration);
                     component.setSelectedItem(values[i]);
                 }
             }
 
             while (_outerPanel.getComponentCount() < values.length) {
                 // add comboboxes if there are too few
-                Class<?> nextValue = values[_outerPanel.getComponentCount()];
+                final Class<?> nextValue = values[_outerPanel.getComponentCount()];
                 addComboBox(nextValue, false);
             }
 
@@ -133,24 +133,24 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
     }
 
     private void removeComboBox() {
-        int componentCount = _outerPanel.getComponentCount();
+        final int componentCount = _outerPanel.getComponentCount();
         if (componentCount == 0) {
             return;
         }
-        int index = componentCount - 1;
-        Component decoration = _outerPanel.getComponent(index);
+        final int index = componentCount - 1;
+        final Component decoration = _outerPanel.getComponent(index);
         _comboBoxDecorations.remove(decoration);
         _outerPanel.remove(index);
     }
 
-    private void addComboBox(Class<?> value, boolean updateUI) {
-        DCComboBox<Class<?>> comboBox = SingleClassPropertyWidget.createClassComboBox(true);
+    private void addComboBox(final Class<?> value, final boolean updateUI) {
+        final DCComboBox<Class<?>> comboBox = SingleClassPropertyWidget.createClassComboBox(true);
         if (value != null) {
             comboBox.setSelectedItem(value);
         }
         comboBox.addListener(new Listener<Class<?>>() {
             @Override
-            public void onItemSelected(Class<?> item) {
+            public void onItemSelected(final Class<?> item) {
                 fireValueChanged();
             }
         });
@@ -165,14 +165,14 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
         }
     }
 
-    protected JComponent decorateComboBox(DCComboBox<Class<?>> comboBox, int index) {
+    protected JComponent decorateComboBox(final DCComboBox<Class<?>> comboBox, final int index) {
         return comboBox;
     }
 
     @Override
     public Class<?>[] getValue() {
-        Component[] components = _outerPanel.getComponents();
-        List<Class<?>> result = new ArrayList<Class<?>>();
+        final Component[] components = _outerPanel.getComponents();
+        final List<Class<?>> result = new ArrayList<Class<?>>();
         for (int i = 0; i < components.length; i++) {
             final Component decoration = components[i];
             final DCComboBox<Class<?>> comboBox = _comboBoxDecorations.get(decoration);
@@ -183,8 +183,13 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
     }
 
     @Override
+    protected void setValue(final Class<?>[] value) {
+        updateComponents(value);
+    }
+
+    @Override
     public boolean isSet() {
-        Class<?>[] value = getValue();
+        final Class<?>[] value = getValue();
         if (value.length == 0) {
             return false;
         }
@@ -196,11 +201,6 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
         }
 
         return true;
-    }
-
-    @Override
-    protected void setValue(Class<?>[] value) {
-        updateComponents(value);
     }
 
 }

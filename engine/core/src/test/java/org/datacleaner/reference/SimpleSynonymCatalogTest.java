@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 public class SimpleSynonymCatalogTest extends TestCase {
 
     public void testGetMasterTerm() throws Exception {
-        final    SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] {
+        final SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] {
                 new SimpleSynonym("DNK", "Denmark"), new SimpleSynonym("NLD", "The netherlands") }));
 
         try (SynonymCatalogConnection connection = sc.openConnection(null)) {

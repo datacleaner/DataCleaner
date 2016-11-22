@@ -28,31 +28,30 @@ import org.jfree.chart.plot.DrawingSupplier;
 
 public class DCDrawingSupplier extends DefaultDrawingSupplier implements DrawingSupplier {
 
-	private static final long serialVersionUID = 1L;
+    public static final Color[] DEFAULT_FILL_COLORS = new Color[] { WidgetUtils.BG_COLOR_GREEN_MEDIUM,
+            WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_BLUE_BRIGHT,
+            WidgetUtils.BG_COLOR_ORANGE_BRIGHT,
+            WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_CYAN_BRIGHT };
+    private static final long serialVersionUID = 1L;
+    private final Color[] _fillColors;
+    private volatile int _colorIndex;
 
-	public static final Color[] DEFAULT_FILL_COLORS = new Color[] { WidgetUtils.BG_COLOR_GREEN_MEDIUM,
-			WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_BLUE_BRIGHT, WidgetUtils.BG_COLOR_ORANGE_BRIGHT,
-			WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_CYAN_BRIGHT };
+    public DCDrawingSupplier() {
+        this(DEFAULT_FILL_COLORS);
+    }
 
-	private volatile int _colorIndex;
-	private final Color[] _fillColors;
+    public DCDrawingSupplier(final Color... fillColors) {
+        _fillColors = fillColors;
+        _colorIndex = 0;
+    }
 
-	public DCDrawingSupplier() {
-		this(DEFAULT_FILL_COLORS);
-	}
-
-	public DCDrawingSupplier(Color... fillColors) {
-		_fillColors = fillColors;
-		_colorIndex = 0;
-	}
-
-	@Override
-	public Paint getNextPaint() {
-		if (_colorIndex >= _fillColors.length) {
-			_colorIndex = 0;
-		}
-		Color color = _fillColors[_colorIndex];
-		_colorIndex++;
-		return color;
-	}
+    @Override
+    public Paint getNextPaint() {
+        if (_colorIndex >= _fillColors.length) {
+            _colorIndex = 0;
+        }
+        final Color color = _fillColors[_colorIndex];
+        _colorIndex++;
+        return color;
+    }
 }

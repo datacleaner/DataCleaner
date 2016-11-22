@@ -37,7 +37,7 @@ public class TokenPatternSymbolImpl implements TokenPatternSymbol {
     private char _minusSign;
     private String _symbolicString;
 
-    public TokenPatternSymbolImpl(Token prototypeToken, TokenizerConfiguration configuration) {
+    public TokenPatternSymbolImpl(final Token prototypeToken, final TokenizerConfiguration configuration) {
         _tokenType = prototypeToken.getType();
         _length = prototypeToken.length();
         switch (_tokenType) {
@@ -49,7 +49,7 @@ public class TokenPatternSymbolImpl implements TokenPatternSymbol {
             break;
         case NUMBER:
             if (configuration.isDiscriminateDecimalNumbers()) {
-                Character decimalSeparator = configuration.getDecimalSeparator();
+                final Character decimalSeparator = configuration.getDecimalSeparator();
                 if (decimalSeparator != null) {
                     _decimalSeparator = decimalSeparator.charValue();
                     _decimal = prototypeToken.getString().indexOf(_decimalSeparator) != -1;
@@ -57,7 +57,7 @@ public class TokenPatternSymbolImpl implements TokenPatternSymbol {
             }
 
             if (configuration.isDiscriminateNegativeNumbers()) {
-                Character minusSign = configuration.getMinusSign();
+                final Character minusSign = configuration.getMinusSign();
                 if (minusSign != null) {
                     _minusSign = minusSign.charValue();
                     _negative = (_minusSign == prototypeToken.charAt(0));
@@ -75,7 +75,7 @@ public class TokenPatternSymbolImpl implements TokenPatternSymbol {
             break;
         case PREDEFINED:
             if (prototypeToken instanceof PredefinedToken) {
-                PredefinedToken pt = (PredefinedToken) prototypeToken;
+                final PredefinedToken pt = (PredefinedToken) prototypeToken;
                 _symbolicString = '[' + pt.getPredefinedTokenDefintion().getName() + ']';
             } else {
                 _symbolicString = prototypeToken.getString();
@@ -94,8 +94,8 @@ public class TokenPatternSymbolImpl implements TokenPatternSymbol {
             return _symbolicString;
         }
 
-        char c = getSymbolicChar();
-        char[] result = new char[_length];
+        final char c = getSymbolicChar();
+        final char[] result = new char[_length];
         Arrays.fill(result, c);
 
         if (isNegative()) {
@@ -152,7 +152,7 @@ public class TokenPatternSymbolImpl implements TokenPatternSymbol {
     }
 
     @Override
-    public boolean matches(Token token, TokenizerConfiguration configuration) {
+    public boolean matches(final Token token, final TokenizerConfiguration configuration) {
         if (EqualsBuilder.equals(_tokenType, token.getType())) {
             if (configuration.isDistriminateTokenLength(_tokenType)) {
                 if (toSymbolicString().length() != token.getString().length()) {
@@ -181,28 +181,28 @@ public class TokenPatternSymbolImpl implements TokenPatternSymbol {
         return false;
     }
 
-    private boolean matchesPredefined(Token token) {
+    private boolean matchesPredefined(final Token token) {
         if (token instanceof PredefinedToken) {
-            PredefinedToken pt = (PredefinedToken) token;
-            String name = pt.getPredefinedTokenDefintion().getName();
+            final PredefinedToken pt = (PredefinedToken) token;
+            final String name = pt.getPredefinedTokenDefintion().getName();
             return _symbolicString.equals('[' + name + ']');
         } else {
             return _symbolicString.equals(token.getString());
         }
     }
 
-    private boolean matchesText(Token token, TokenizerConfiguration configuration) {
-        boolean discriminateTextCase = configuration.isDiscriminateTextCase();
+    private boolean matchesText(final Token token, final TokenizerConfiguration configuration) {
+        final boolean discriminateTextCase = configuration.isDiscriminateTextCase();
         if (discriminateTextCase) {
 
             // if 'discriminateTextCase' is true then we can assume that all the
             // characters are either upper or lower case. Thus it is only
             // nescesary to check a single character from each string
-            String str2 = token.getString();
-            char char2 = str2.charAt(0);
-            boolean upperCase = Character.isUpperCase(char2);
+            final String str2 = token.getString();
+            final char char2 = str2.charAt(0);
+            final boolean upperCase = Character.isUpperCase(char2);
 
-            boolean caseMatches = isUpperCaseOnly() == upperCase;
+            final boolean caseMatches = isUpperCaseOnly() == upperCase;
             if (!caseMatches) {
                 return false;
             }
@@ -222,27 +222,27 @@ public class TokenPatternSymbolImpl implements TokenPatternSymbol {
         return true;
     }
 
-    private boolean matchesNumber(Token token, TokenizerConfiguration configuration) {
-        boolean discriminateNegativeNumbers = configuration.isDiscriminateNegativeNumbers();
-        boolean discriminateDecimalNumbers = configuration.isDiscriminateDecimalNumbers();
+    private boolean matchesNumber(final Token token, final TokenizerConfiguration configuration) {
+        final boolean discriminateNegativeNumbers = configuration.isDiscriminateNegativeNumbers();
+        final boolean discriminateDecimalNumbers = configuration.isDiscriminateDecimalNumbers();
         if (!discriminateDecimalNumbers && !discriminateNegativeNumbers) {
             return true;
         }
 
-        String str2 = token.getString();
+        final String str2 = token.getString();
 
-        Character minusSign = configuration.getMinusSign();
+        final Character minusSign = configuration.getMinusSign();
         if (discriminateNegativeNumbers && minusSign != null) {
-            boolean negative1 = isNegative();
-            boolean negative2 = EqualsBuilder.equals(minusSign, str2.charAt(0));
+            final boolean negative1 = isNegative();
+            final boolean negative2 = EqualsBuilder.equals(minusSign, str2.charAt(0));
             if (negative1 != negative2) {
                 return false;
             }
         }
-        Character decimalSeparator = configuration.getDecimalSeparator();
+        final Character decimalSeparator = configuration.getDecimalSeparator();
         if (discriminateDecimalNumbers && decimalSeparator != null) {
-            boolean decimal1 = isDecimal();
-            boolean decimal2 = str2.indexOf(decimalSeparator.charValue()) != -1;
+            final boolean decimal1 = isDecimal();
+            final boolean decimal2 = str2.indexOf(decimalSeparator.charValue()) != -1;
             if (decimal1 != decimal2) {
                 return false;
             }
@@ -251,18 +251,18 @@ public class TokenPatternSymbolImpl implements TokenPatternSymbol {
         return true;
     }
 
-    private boolean matchesDelim(Token token, TokenizerConfiguration configuration) {
+    private boolean matchesDelim(final Token token, final TokenizerConfiguration configuration) {
         return toSymbolicString().equals(token.getString());
     }
 
-    private boolean matchesWhitespace(Token token, TokenizerConfiguration configuration) {
+    private boolean matchesWhitespace(final Token token, final TokenizerConfiguration configuration) {
         if (configuration.isDiscriminateWhiteSpaces()) {
             return toSymbolicString().equals(token.getString());
         }
         return true;
     }
 
-    private boolean matchesMixed(Token token, TokenizerConfiguration configuration) {
+    private boolean matchesMixed(final Token token, final TokenizerConfiguration configuration) {
         return true;
     }
 
@@ -277,7 +277,7 @@ public class TokenPatternSymbolImpl implements TokenPatternSymbol {
     }
 
     @Override
-    public void expandLenght(int amount) {
+    public void expandLenght(final int amount) {
         _length += amount;
     }
 }

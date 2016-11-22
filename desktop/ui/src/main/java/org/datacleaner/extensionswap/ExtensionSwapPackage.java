@@ -23,36 +23,36 @@ import org.datacleaner.extensions.ExtensionPackage;
 
 /**
  * Represents an {@link ExtensionPackage} in the online extension swap.
- * 
+ *
  * @author Kasper Sørensen
  */
 public final class ExtensionSwapPackage {
 
-	private final String _id;
-	private final int _version;
-	private final String _name;
-	private final String _packageName;
+    private final String _id;
+    private final int _version;
+    private final String _name;
+    private final String _packageName;
 
-	public ExtensionSwapPackage(String id, int version, String name, String packageName) {
-		_id = id;
-		_version = version;
-		_name = name;
-		_packageName = packageName;
-	}
+    public ExtensionSwapPackage(final String id, final int version, final String name, final String packageName) {
+        _id = id;
+        _version = version;
+        _name = name;
+        _packageName = packageName;
+    }
 
-	public int getVersion() {
-		return _version;
-	}
+    public int getVersion() {
+        return _version;
+    }
 
-	public String getId() {
-		return _id;
-	}
+    public String getId() {
+        return _id;
+    }
 
-	public String getName() {
-		return _name;
-	}
-	
-	public String getPackageName() {
-		return _packageName;
-	}
+    public String getName() {
+        return _name;
+    }
+
+    public String getPackageName() {
+        return _packageName;
+    }
 }

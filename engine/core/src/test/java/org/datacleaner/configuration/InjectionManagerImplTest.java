@@ -47,8 +47,6 @@ import org.junit.Ignore;
 
 public class InjectionManagerImplTest extends TestCase {
 
-    private static final MutableRef<List<String>> listRef = new MutableRef<List<String>>();
-
     @Ignore
     @Named("Fancy transformer")
     public static class FancyTransformer implements Analyzer<AnnotatedRowsResult> {
@@ -81,6 +79,7 @@ public class InjectionManagerImplTest extends TestCase {
             return new AnnotatedRowsResult(rowAnnotation, rowAnnotationFactory, col);
         }
     }
+    private static final MutableRef<List<String>> listRef = new MutableRef<List<String>>();
 
     public void testInjectCustomClass() throws Exception {
         assertNull(listRef.get());

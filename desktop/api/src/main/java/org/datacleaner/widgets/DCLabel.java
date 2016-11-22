@@ -36,23 +36,7 @@ public class DCLabel extends JLabel {
 
     private final boolean _multiline;
 
-    public static DCLabel bright(String text) {
-        return new DCLabel(false, text, WidgetUtils.BG_COLOR_BRIGHTEST, null);
-    }
-
-    public static DCLabel dark(String text) {
-        return new DCLabel(false, text, WidgetUtils.BG_COLOR_DARKEST, null);
-    }
-
-    public static DCLabel brightMultiLine(String text) {
-        return new DCLabel(true, text, WidgetUtils.BG_COLOR_BRIGHTEST, null);
-    }
-
-    public static DCLabel darkMultiLine(String text) {
-        return new DCLabel(true, text, WidgetUtils.BG_COLOR_DARKEST, null);
-    }
-
-    public DCLabel(boolean multiline, String text, Color textColor, Icon icon) {
+    public DCLabel(final boolean multiline, final String text, final Color textColor, final Icon icon) {
         super();
         _multiline = multiline;
         if (text != null) {
@@ -65,6 +49,22 @@ public class DCLabel extends JLabel {
             setIcon(icon);
         }
         setVerticalAlignment(SwingConstants.TOP);
+    }
+
+    public static DCLabel bright(final String text) {
+        return new DCLabel(false, text, WidgetUtils.BG_COLOR_BRIGHTEST, null);
+    }
+
+    public static DCLabel dark(final String text) {
+        return new DCLabel(false, text, WidgetUtils.BG_COLOR_DARKEST, null);
+    }
+
+    public static DCLabel brightMultiLine(final String text) {
+        return new DCLabel(true, text, WidgetUtils.BG_COLOR_BRIGHTEST, null);
+    }
+
+    public static DCLabel darkMultiLine(final String text) {
+        return new DCLabel(true, text, WidgetUtils.BG_COLOR_DARKEST, null);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class DCLabel extends JLabel {
         super.setText(text);
     }
 
-    public void setMaximumWidth(int width) {
+    public void setMaximumWidth(final int width) {
         String text = getText();
         if (text.startsWith("<html>") && text.endsWith("</html>")) {
             // remove <html> tags since that will be added below also

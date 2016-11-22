@@ -58,8 +58,8 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
     private final WindowContext _windowContext;
 
     @Inject
-    protected TableMouseListener(WindowContext windowContext, SchemaTree schemaTree,
-            AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder) {
+    protected TableMouseListener(final WindowContext windowContext, final SchemaTree schemaTree,
+            final AnalysisJobBuilder analysisJobBuilder, final InjectorBuilder injectorBuilder) {
         _windowContext = windowContext;
         _schemaTree = schemaTree;
         _analysisJobBuilder = analysisJobBuilder;
@@ -67,7 +67,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
         final TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
         if (path == null) {
             return;
@@ -77,7 +77,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
         if (userObject instanceof Table) {
             final Table table = (Table) userObject;
 
-            int button = e.getButton();
+            final int button = e.getButton();
 
             if (button == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
                 // double click = add table
@@ -89,7 +89,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 boolean enableRemoveTable = false;
 
                 final Column[] columns = table.getColumns();
-                for (Column column : columns) {
+                for (final Column column : columns) {
                     if (_analysisJobBuilder.containsSourceColumn(column)) {
                         enableRemoveTable = true;
                     } else {
@@ -147,7 +147,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 "images/actions/toggle-source-table.png");
         removeTableItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 removeTable(table);
             }
         });
@@ -159,14 +159,14 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 "images/actions/toggle-source-table.png");
         addTableItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 addTable(table);
             }
         });
         popup.add(addTableItem);
     }
 
-    private void addSaveTableAsExcelMenuItem(final JPopupMenu popup, Injector injector) {
+    private void addSaveTableAsExcelMenuItem(final JPopupMenu popup, final Injector injector) {
         final JMenuItem saveAsExcelFileMenuItem = WidgetFactory.createMenuItem("Save table as Excel spreadsheet",
                 IconUtils.COMPONENT_TYPE_WRITE_DATA);
         final SaveTableAsExcelSpreadsheetActionListener saveTableAsExcelSpreadsheetActionListener = injector
@@ -175,7 +175,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
         popup.add(saveAsExcelFileMenuItem);
     }
 
-    private void addSaveTableAsCsvMenuItem(final JPopupMenu popup, Injector injector) {
+    private void addSaveTableAsCsvMenuItem(final JPopupMenu popup, final Injector injector) {
         final JMenuItem saveAsCsvFileMenuItem = WidgetFactory.createMenuItem("Save table as CSV file",
                 IconUtils.COMPONENT_TYPE_WRITE_DATA);
         final SaveTableAsCsvFileActionListener saveTableAsCsvFileActionListener = injector
@@ -200,7 +200,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
             final JMenuItem dropTableMenuItem = WidgetFactory.createMenuItem("Drop table", IconUtils.ACTION_DROP_TABLE);
             dropTableMenuItem.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(final ActionEvent e) {
                     final DropTableDialog dialog = new DropTableDialog(_windowContext, updateableDatastore, table,
                             _schemaTree);
                     dialog.open();
@@ -213,9 +213,9 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
     /**
      * toggles whether or not the column is in the source selection
      */
-    public void addTable(Table table) {
-        Column[] columns = table.getColumns();
-        for (Column column : columns) {
+    public void addTable(final Table table) {
+        final Column[] columns = table.getColumns();
+        for (final Column column : columns) {
             if (!_analysisJobBuilder.containsSourceColumn(column)) {
                 _analysisJobBuilder.addSourceColumn(column);
             }
@@ -225,9 +225,9 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
     /**
      * toggles whether or not the column is in the source selection
      */
-    public void removeTable(Table table) {
-        Column[] columns = table.getColumns();
-        for (Column column : columns) {
+    public void removeTable(final Table table) {
+        final Column[] columns = table.getColumns();
+        for (final Column column : columns) {
             _analysisJobBuilder.removeSourceColumn(column);
         }
     }

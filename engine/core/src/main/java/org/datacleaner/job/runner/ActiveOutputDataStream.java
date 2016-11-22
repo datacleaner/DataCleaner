@@ -39,8 +39,8 @@ public class ActiveOutputDataStream implements Closeable {
     private final CountDownLatch _countDownLatch;
     private OutputDataStreamRowCollector _outputRowCollector;
 
-    public ActiveOutputDataStream(OutputDataStreamJob outputDataStreamJob, RowProcessingPublisher publisher,
-            HasOutputDataStreams component) {
+    public ActiveOutputDataStream(final OutputDataStreamJob outputDataStreamJob, final RowProcessingPublisher publisher,
+            final HasOutputDataStreams component) {
         _outputDataStreamJob = outputDataStreamJob;
         _publisher = publisher;
         _component = component;
@@ -69,8 +69,9 @@ public class ActiveOutputDataStream implements Closeable {
         _outputRowCollector = new OutputDataStreamRowCollector(_publisher, selectItems, consumeRowHandler);
         final OutputDataStream outputDataStream = _outputDataStreamJob.getOutputDataStream();
         _component.initializeOutputDataStream(outputDataStream, query, _outputRowCollector);
-        
-        _publisher.getAnalysisListener().rowProcessingBegin(_publisher.getAnalysisJob(), _publisher.getRowProcessingMetrics());
+
+        _publisher.getAnalysisListener()
+                .rowProcessingBegin(_publisher.getAnalysisJob(), _publisher.getRowProcessingMetrics());
     }
 
     public void await() throws InterruptedException {

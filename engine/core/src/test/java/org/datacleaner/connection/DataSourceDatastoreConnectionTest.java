@@ -27,10 +27,10 @@ import javax.sql.DataSource;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.Table;
+import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-import org.datacleaner.test.TestHelper;
-import org.apache.metamodel.schema.Table;
 import org.springframework.mock.jndi.SimpleNamingContext;
 
 public class DataSourceDatastoreConnectionTest extends TestCase {

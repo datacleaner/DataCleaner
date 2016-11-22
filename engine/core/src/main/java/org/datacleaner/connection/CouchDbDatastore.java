@@ -21,17 +21,15 @@ package org.datacleaner.connection;
 
 import java.util.List;
 
-import org.ektorp.http.StdHttpClient;
 import org.apache.metamodel.couchdb.CouchDbDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
+import org.ektorp.http.StdHttpClient;
 
 public class CouchDbDatastore extends UsageAwareDatastore<CouchDbDataContext> implements UpdateableDatastore,
         UsernameDatastore {
 
-    private static final long serialVersionUID = 1L;
-
     public static final int DEFAULT_PORT = CouchDbDataContext.DEFAULT_PORT;
-
+    private static final long serialVersionUID = 1L;
     /**
      * 20 second connection timeout - due to batching nature of the connections,
      * CouchDB may take a bit of time to respond to new connections.
@@ -45,8 +43,8 @@ public class CouchDbDatastore extends UsageAwareDatastore<CouchDbDataContext> im
     private final boolean _sslEnabled;
     private final SimpleTableDef[] _tableDefs;
 
-    public CouchDbDatastore(String name, String hostname, Integer port, String username, String password,
-            boolean sslEnabled, SimpleTableDef[] tableDefs) {
+    public CouchDbDatastore(final String name, final String hostname, final Integer port, final String username, final String password,
+            final boolean sslEnabled, final SimpleTableDef[] tableDefs) {
         super(name);
         _hostname = hostname;
         _port = port;
@@ -125,7 +123,7 @@ public class CouchDbDatastore extends UsageAwareDatastore<CouchDbDataContext> im
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         super.decorateIdentity(identifiers);
         identifiers.add(_hostname);
         identifiers.add(getPort());

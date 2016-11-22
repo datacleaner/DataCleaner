@@ -23,8 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
-import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 
@@ -38,17 +38,17 @@ public class ComponentBuilderTabTextActionListener extends AbstractJobBuilderPop
 
     private volatile int _tabIndex;
 
-    public ComponentBuilderTabTextActionListener(AnalysisJobBuilder analysisJobBuilder,
-            ComponentBuilder jobBuilder, int tabIndex, CloseableTabbedPane tabbedPane) {
+    public ComponentBuilderTabTextActionListener(final AnalysisJobBuilder analysisJobBuilder,
+            final ComponentBuilder jobBuilder, final int tabIndex, final CloseableTabbedPane tabbedPane) {
         super(jobBuilder, analysisJobBuilder);
         _tabIndex = tabIndex;
         _tabbedPane = tabbedPane;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         _tabIndex = e.getID();
-        MouseEvent mouseEvent = (MouseEvent) e.getSource();
+        final MouseEvent mouseEvent = (MouseEvent) e.getSource();
         showPopup(_tabbedPane, mouseEvent.getX(), mouseEvent.getY());
     }
 

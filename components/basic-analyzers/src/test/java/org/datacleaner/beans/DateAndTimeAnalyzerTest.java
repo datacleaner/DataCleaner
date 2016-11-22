@@ -124,7 +124,8 @@ public class DateAndTimeAnalyzerTest extends TestCase {
         assertEquals(12934, DateAndTimeAnalyzerResult.convertToDaysSinceEpoch("2005-05-31"));
     }
 
-    private void assertAnnotatedRowResult(AnalyzerResult result, InputColumn<?> col, int rowCount, int distinctRowCount) {
+    private void assertAnnotatedRowResult(AnalyzerResult result, InputColumn<?> col, int rowCount,
+            int distinctRowCount) {
         assertTrue("Unexpected result type: " + result.getClass(), result instanceof AnnotatedRowsResult);
         AnnotatedRowsResult res = (AnnotatedRowsResult) result;
         InputColumn<?>[] highlightedColumns = res.getHighlightedColumns();

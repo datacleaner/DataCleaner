@@ -31,9 +31,9 @@ import com.google.common.base.Strings;
  * Determines and exposes the version of DataCleaner.
  */
 public class Version {
-    
-    public static final String UNKNOWN_VERSION = "UNKNOWN";
 
+    public static final String UNKNOWN_VERSION = "UNKNOWN";
+    public static final String EDITION_COMMUNITY = "Community edition";
     private static final String VERSION;
     private static final String DISTRIBUTION_VERSION;
     private static final String EDITION;
@@ -44,11 +44,9 @@ public class Version {
         DISTRIBUTION_VERSION = determineDistributionVersion();
     }
 
-    public static final String EDITION_COMMUNITY = "Community edition";
-
     /**
      * @return
-     * 
+     *
      * @deprecated use {@link #getVersion()} instead
      */
     @Deprecated
@@ -63,22 +61,22 @@ public class Version {
     public static String getEdition() {
         return EDITION;
     }
-    
+
     /**
      * Return the major version of current version, e.g. return 4 for 4.0.6
-     * 
+     *
      * @return major version or null if the current version is UNKNOWN
      */
     public static Integer getMajorVersion() {
         if (VERSION.equals("UNKNOWN")) {
             return null;
         }
-        
-        String[] versionParts = VERSION.split("\\.");
-        int majorVersion = Integer.parseInt(versionParts[0]);
+
+        final String[] versionParts = VERSION.split("\\.");
+        final int majorVersion = Integer.parseInt(versionParts[0]);
         return majorVersion;
     }
-    
+
     public static String getDistributionVersion() {
         return DISTRIBUTION_VERSION;
     }
@@ -112,13 +110,13 @@ public class Version {
         return determineVersionFromMavenProperties("org.eobjects.datacleaner", "DataCleaner-api", UNKNOWN_VERSION);
     }
 
-    private static String determineVersionFromMavenProperties(String groupId, String artifactId, String valueIfNull) {
+    private static String determineVersionFromMavenProperties(final String groupId, final String artifactId, final String valueIfNull) {
         final Properties properties = new Properties();
         final String resourcePath = "/META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties";
         final InputStream inputStream = Version.class.getResourceAsStream(resourcePath);
         try {
             properties.load(inputStream);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // do nothing
             System.err.println("Failed to load DataCleaner version from manifest: " + e.getMessage());
             return valueIfNull;

@@ -47,9 +47,9 @@ import org.datacleaner.util.http.MonitorHttpClient;
 public class DataHubDataSet extends AbstractDataSet {
 
     private static final int PAGE_SIZE = 10000;
-    
+
     private static final String JSON_CONTENT_TYPE = "application/json";
-    
+
     private static final String QUERY_PARAM = "q";
     private static final String FIRST_ROW_PARAM = "f";
     private static final String MAX_ROW_PARAM = "m";
@@ -68,13 +68,13 @@ public class DataHubDataSet extends AbstractDataSet {
 
     /**
      * Constructor
-     * 
+     *
      * @param query
      * @param connection
      */
-    public DataHubDataSet(String tenantName, Query query, DataHubRepoConnection connection) {
+    public DataHubDataSet(final String tenantName, final Query query, final DataHubRepoConnection connection) {
         super(getSelectItems(query));
-        Table table = query.getFromClause().getItem(0).getTable();
+        final Table table = query.getFromClause().getItem(0).getTable();
         _queryString = getQueryString(query, table);
         _query = query;
         _connection = connection;
@@ -84,6 +84,10 @@ public class DataHubDataSet extends AbstractDataSet {
         _nextPageMaxRows = PAGE_SIZE;
         _endReached = false;
         _resultSetIterator = getNextPage();
+    }
+
+    private static List<SelectItem> getSelectItems(final Query query) {
+        return query.getSelectClause().getItems();
     }
 
     /**
@@ -132,58 +136,54 @@ public class DataHubDataSet extends AbstractDataSet {
         return resultSet.iterator();
     }
 
-    private List<Object[]> getResultSet(HttpEntity entity) {
-        JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
+    private List<Object[]> getResultSet(final HttpEntity entity) {
+        final JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
         try {
-            List<Object[]> resultSet = parser.parseQueryResult(entity.getContent());
+            final List<Object[]> resultSet = parser.parseQueryResult(entity.getContent());
             return resultSet;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
     private String createParams(final Integer firstRow, final Integer maxRows) {
-        List<NameValuePair> params = new ArrayList<>();
+        final List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair(QUERY_PARAM, _queryString));
         params.add(new BasicNameValuePair(FIRST_ROW_PARAM, firstRow.toString()));
         params.add(new BasicNameValuePair(MAX_ROW_PARAM, maxRows.toString()));
         return URLEncodedUtils.format(params, "utf-8");
     }
 
-    private static List<SelectItem> getSelectItems(Query query) {
-        return query.getSelectClause().getItems();
-    }
+    private String createEncodedUri(final String tenantName, final Table table) {
+        final String datastoreName = ((DataHubSchema) table.getSchema()).getDatastoreName();
 
-    private String createEncodedUri(String tenantName, Table table) {
-        String datastoreName = ((DataHubSchema) table.getSchema()).getDatastoreName();
-        
         return _connection.getQueryUrl(tenantName, datastoreName);
     }
 
     /**
      * Changes all occurences of <table-name>.<column-name> with just <column-name>
-     * 
+     *
      * @param query The original query
      * @param table The table from the query.
      * @return The Query string with the qualified table names removed.
      */
-    private String getQueryString(Query query, Table table) {
-        String queryString = query.toSql();
+    private String getQueryString(final Query query, final Table table) {
+        final String queryString = query.toSql();
         return queryString.replace(table.getName() + ".", "");
     }
 
 
-    private HttpResponse executeRequest(HttpGet request) {
-        MonitorHttpClient httpClient = _connection.getHttpClient();
-        HttpResponse response;
+    private HttpResponse executeRequest(final HttpGet request) {
+        final MonitorHttpClient httpClient = _connection.getHttpClient();
+        final HttpResponse response;
         try {
             response = httpClient.execute(request);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
 
         validateReponseStatusCode(response);
-        
+
         return response;
     }
 

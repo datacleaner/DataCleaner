@@ -39,12 +39,12 @@ import au.com.bytecode.opencsv.CSVParser;
 
 /**
  * Synonym catalog based on a text file.
- * 
+ *
  * Each line in the file should contain a master term with trailing
  * comma-separated synonyms.
- * 
+ *
  * Example:
- * 
+ *
  * <pre>
  * DK,Denmark,Danmark,Dänemark
  * NL,Holland,The Netherlands
@@ -59,11 +59,11 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
     private final boolean _caseSensitive;
     private final String _encoding;
 
-    public TextFileSynonymCatalog(String name, File file, boolean caseSensitive, String encoding) {
+    public TextFileSynonymCatalog(final String name, final File file, final boolean caseSensitive, final String encoding) {
         this(name, file.getPath(), caseSensitive, encoding);
     }
 
-    public TextFileSynonymCatalog(String name, String filename, boolean caseSensitive, String encoding) {
+    public TextFileSynonymCatalog(final String name, final String filename, final boolean caseSensitive, final String encoding) {
         super(name);
         _filename = filename;
         _caseSensitive = caseSensitive;
@@ -71,13 +71,13 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
     }
 
     @Override
-    public SynonymCatalogConnection openConnection(DataCleanerConfiguration configuration) {
+    public SynonymCatalogConnection openConnection(final DataCleanerConfiguration configuration) {
         final ResourceConverter rc = new ResourceConverter(configuration);
         final Resource resource = rc.fromString(Resource.class, _filename);
 
         final Map<String, String> synonyms = resource.read(new Func<InputStream, Map<String, String>>() {
             @Override
-            public Map<String, String> eval(InputStream in) {
+            public Map<String, String> eval(final InputStream in) {
                 final Map<String, String> synonyms = new HashMap<>();
 
                 final CSVParser parser = new CSVParser(',', '"', '\\');
@@ -88,7 +88,7 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
                         final String[] values;
                         try {
                             values = parser.parseLine(line);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             throw new IllegalStateException("Failed to parse line: " + line, e);
                         }
                         if (values.length > 0) {
@@ -100,7 +100,7 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
                             }
                         }
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new IllegalStateException(e);
                 } finally {
                     FileHelper.safeClose(reader);
@@ -113,12 +113,12 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
         return new SimpleSynonymCatalog(getName(), synonyms, _caseSensitive).openConnection(configuration);
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, TextFileSynonymCatalog.class).readObject(stream);
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final TextFileSynonymCatalog other = (TextFileSynonymCatalog) obj;
             return Objects.equals(_filename, other._filename) && Objects.equals(_caseSensitive, other._caseSensitive)

@@ -97,7 +97,7 @@ public class ConfigurationFileController {
             result.put("repository_path", configurationFile.getQualifiedPath());
 
             return result;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("An error occurred while uploading new configuration file for tenant " + tenant, e);
             throw e;
         }
@@ -118,7 +118,7 @@ public class ConfigurationFileController {
 
         final byte[] documentBody = configurationFile.readFile(new Func<InputStream, byte[]>() {
             @Override
-            public byte[] eval(InputStream in) {
+            public byte[] eval(final InputStream in) {
                 return FileHelper.readAsBytes(in);
             }
         });

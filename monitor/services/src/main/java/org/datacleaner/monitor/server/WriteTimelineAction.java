@@ -21,20 +21,20 @@ package org.datacleaner.monitor.server;
 
 import java.io.OutputStream;
 
+import org.apache.metamodel.util.Action;
 import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.datacleaner.monitor.server.jaxb.JaxbTimelineWriter;
-import org.apache.metamodel.util.Action;
 
 public class WriteTimelineAction implements Action<OutputStream> {
 
     private final TimelineDefinition _timeline;
 
-    public WriteTimelineAction(TimelineDefinition timeline) {
+    public WriteTimelineAction(final TimelineDefinition timeline) {
         _timeline = timeline;
     }
 
     @Override
-    public void run(OutputStream out) throws Exception {
+    public void run(final OutputStream out) throws Exception {
         final TimelineWriter writer = new JaxbTimelineWriter();
         writer.write(_timeline, out);
     }

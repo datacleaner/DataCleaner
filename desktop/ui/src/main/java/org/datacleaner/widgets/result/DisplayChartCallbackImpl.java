@@ -28,26 +28,26 @@ import org.jdesktop.swingx.JXCollapsiblePane;
  */
 public class DisplayChartCallbackImpl implements DisplayChartCallback {
 
-	private final JXCollapsiblePane _chartContainer;
+    private final JXCollapsiblePane _chartContainer;
 
-	/**
-	 * @deprecated use {@link #DisplayChartCallbackImpl(JXCollapsiblePane)} instead
-	 */
-	@Deprecated
-	public DisplayChartCallbackImpl(JXCollapsiblePane chartContainer, boolean allowAnimations) {
-		this(chartContainer);
-	}
+    /**
+     * @deprecated use {@link #DisplayChartCallbackImpl(JXCollapsiblePane)} instead
+     */
+    @Deprecated
+    public DisplayChartCallbackImpl(final JXCollapsiblePane chartContainer, final boolean allowAnimations) {
+        this(chartContainer);
+    }
 
-	public DisplayChartCallbackImpl(JXCollapsiblePane chartContainer) {
-		_chartContainer = chartContainer;
-	}
+    public DisplayChartCallbackImpl(final JXCollapsiblePane chartContainer) {
+        _chartContainer = chartContainer;
+    }
 
-	@Override
-	public void displayChart(JComponent chart) {
-		_chartContainer.getContentPane().removeAll();
-		_chartContainer.getContentPane().add(chart);
-		_chartContainer.setCollapsed(false);
+    @Override
+    public void displayChart(final JComponent chart) {
+        _chartContainer.getContentPane().removeAll();
+        _chartContainer.getContentPane().add(chart);
+        _chartContainer.setCollapsed(false);
 
-		_chartContainer.updateUI();
-	}
+        _chartContainer.updateUI();
+    }
 }

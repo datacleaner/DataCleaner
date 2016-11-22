@@ -32,7 +32,7 @@ public class DefaultResultProducer implements Serializable, ResultProducer {
 
     private final AnalyzerResult result;
 
-    public DefaultResultProducer(AnalyzerResult result) {
+    public DefaultResultProducer(final AnalyzerResult result) {
         this.result = result;
     }
 

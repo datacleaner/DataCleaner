@@ -38,7 +38,7 @@ public class MonitorUIPreferences {
         return _showDemoAccounts;
     }
 
-    public void setShowDemoAccounts(boolean showDemoAccounts) {
+    public void setShowDemoAccounts(final boolean showDemoAccounts) {
         _showDemoAccounts = showDemoAccounts;
     }
 
@@ -46,7 +46,7 @@ public class MonitorUIPreferences {
         return _showWebstartLaunchOptions;
     }
 
-    public void setShowWebstartLaunchOptions(boolean showWebstartLaunchOptions) {
+    public void setShowWebstartLaunchOptions(final boolean showWebstartLaunchOptions) {
         _showWebstartLaunchOptions = showWebstartLaunchOptions;
     }
 
@@ -54,7 +54,7 @@ public class MonitorUIPreferences {
         return _showRepositoryUploadOptions;
     }
 
-    public void setShowRepositoryUploadOptions(boolean showRepositoryUploadOptions) {
+    public void setShowRepositoryUploadOptions(final boolean showRepositoryUploadOptions) {
         _showRepositoryUploadOptions = showRepositoryUploadOptions;
     }
 
@@ -62,7 +62,7 @@ public class MonitorUIPreferences {
         return _showConfXmlUploadOptions;
     }
 
-    public void setShowConfXmlUploadOptions(boolean showConfXmlUploadOptions) {
+    public void setShowConfXmlUploadOptions(final boolean showConfXmlUploadOptions) {
         _showConfXmlUploadOptions = showConfXmlUploadOptions;
     }
 

@@ -24,14 +24,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.metamodel.datahub.DataHubSchema;
 
 import com.fasterxml.jackson.core.JsonParseException;
-
-import junit.framework.TestCase;
 
 public class JsonParserHelperTest extends TestCase {
 
@@ -82,20 +82,21 @@ public class JsonParserHelperTest extends TestCase {
     }
 
     public void testShouldOnlyParseGoldenRecordDataStore() throws IOException {
-        String jsonString = "[{\"name\":\"CSV datastore for Person Golden Records\",\"description\":\"The CSV datastore containing offboarded golden records for person configuration\",\"type\":\"CsvDatastore\"},"
-                + "{\"name\":\"Enrichment Service Call Logs\",\"description\":\"The CSV data store containing enrichment service call logs\",\"type\":\"CsvDatastore\"},"
-                + "{\"name\":\"Golden records\",\"description\":\"Virtual datastore for Golden Records\",\"type\":\"GoldenRecordDatastore\"},"
-                + "{\"name\":\"GoldenRecord Organization Export\",\"description\":null,\"type\":\"CsvDatastore\"},"
-                + "{\"name\":\"GoldenRecord Person Export\",\"description\":null,\"type\":\"CsvDatastore\"},"
-                + "{\"name\":\"Golden_records20150810133835556.CSV\",\"description\":null,\"type\":\"CsvDatastore\"},"
-                + "{\"name\":\"Golden_records20150810133955872.CSV\",\"description\":null,\"type\":\"CsvDatastore\"},"
-                + "{\"name\":\"MDM datastore\",\"description\":\"Physical datastore of MDM\",\"type\":\"MDMDatastore\"}]";
+        String jsonString =
+                "[{\"name\":\"CSV datastore for Person Golden Records\",\"description\":\"The CSV datastore containing offboarded golden records for person configuration\",\"type\":\"CsvDatastore\"},"
+                        + "{\"name\":\"Enrichment Service Call Logs\",\"description\":\"The CSV data store containing enrichment service call logs\",\"type\":\"CsvDatastore\"},"
+                        + "{\"name\":\"Golden records\",\"description\":\"Virtual datastore for Golden Records\",\"type\":\"GoldenRecordDatastore\"},"
+                        + "{\"name\":\"GoldenRecord Organization Export\",\"description\":null,\"type\":\"CsvDatastore\"},"
+                        + "{\"name\":\"GoldenRecord Person Export\",\"description\":null,\"type\":\"CsvDatastore\"},"
+                        + "{\"name\":\"Golden_records20150810133835556.CSV\",\"description\":null,\"type\":\"CsvDatastore\"},"
+                        + "{\"name\":\"Golden_records20150810133955872.CSV\",\"description\":null,\"type\":\"CsvDatastore\"},"
+                        + "{\"name\":\"MDM datastore\",\"description\":\"Physical datastore of MDM\",\"type\":\"MDMDatastore\"}]";
         InputStream is = new ByteArrayInputStream(jsonString.getBytes());
         JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
-        
+
         List<String> names = parser.parseDataStoreArray(is);
 
         assertEquals(1, names.size());
     }
-    
+
 }

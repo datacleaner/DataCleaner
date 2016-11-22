@@ -38,12 +38,12 @@ public class UnparameterizedMetricPresenter implements MetricPresenter {
     private final List<MetricIdentifier> _activeMetrics;
     private final CheckBox _checkBox;
 
-    public UnparameterizedMetricPresenter(MetricIdentifier metricIdentifier, List<MetricIdentifier> activeMetrics) {
+    public UnparameterizedMetricPresenter(final MetricIdentifier metricIdentifier, final List<MetricIdentifier> activeMetrics) {
         _metricIdentifier = metricIdentifier;
         _activeMetrics = activeMetrics;
 
         _checkBox = new CheckBox(metricIdentifier.getDisplayName());
-        MetricIdentifier activeMetric = isActiveMetric();
+        final MetricIdentifier activeMetric = isActiveMetric();
         if (activeMetric == null) {
             _metricToReturn = _metricIdentifier;
             _checkBox.setValue(false);
@@ -55,7 +55,7 @@ public class UnparameterizedMetricPresenter implements MetricPresenter {
 
     @Override
     public Widget asWidget() {
-        FlowPanel panel = new FlowPanel();
+        final FlowPanel panel = new FlowPanel();
         panel.addStyleName("UnparameterizedMetricsPresenter");
         panel.add(_checkBox);
         return panel;
@@ -63,7 +63,7 @@ public class UnparameterizedMetricPresenter implements MetricPresenter {
 
     @Override
     public List<MetricIdentifier> getSelectedMetrics() {
-        List<MetricIdentifier> metrics = new ArrayList<MetricIdentifier>();
+        final List<MetricIdentifier> metrics = new ArrayList<MetricIdentifier>();
         if (_checkBox.getValue().booleanValue()) {
             metrics.add(_metricToReturn);
         }
@@ -71,7 +71,7 @@ public class UnparameterizedMetricPresenter implements MetricPresenter {
     }
 
     private MetricIdentifier isActiveMetric() {
-        for (MetricIdentifier activeMetric : _activeMetrics) {
+        for (final MetricIdentifier activeMetric : _activeMetrics) {
             if (activeMetric.equalsIgnoreCustomizedDetails(_metricIdentifier)) {
                 return activeMetric;
             }

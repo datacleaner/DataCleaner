@@ -28,5 +28,6 @@ import org.apache.metamodel.util.HasName;
  */
 public interface ServerInformation extends Serializable, HasName {
     String getName();
+
     String getDescription();
 }

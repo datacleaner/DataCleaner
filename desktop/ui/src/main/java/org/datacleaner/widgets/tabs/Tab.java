@@ -31,19 +31,19 @@ import javax.swing.Icon;
  */
 public interface Tab<C extends Component> {
 
-    public C getContents();
+    C getContents();
 
-    public Icon getIcon();
+    Icon getIcon();
 
-    public void setIcon(Icon icon);
+    void setIcon(Icon icon);
 
-    public String getTooltip();
+    String getTooltip();
 
-    public void setTooltip(String tooltip);
+    void setTooltip(String tooltip);
 
-    public String getTitle();
+    String getTitle();
 
-    public void setTitle(String title);
+    void setTitle(String title);
 
-    public boolean isCloseable();
+    boolean isCloseable();
 }

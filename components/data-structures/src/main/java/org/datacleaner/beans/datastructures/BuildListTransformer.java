@@ -60,19 +60,19 @@ public class BuildListTransformer implements Transformer {
     @Description("Add elements to this (optional) existing list")
     InputColumn<List<Object>> addToExistingList;
 
-    public void setIncludeNullValues(boolean includeNullValues) {
+    public void setIncludeNullValues(final boolean includeNullValues) {
         this.includeNullValues = includeNullValues;
     }
 
-    public void setValues(InputColumn<?>[] values) {
+    public void setValues(final InputColumn<?>[] values) {
         this.values = values;
     }
 
     @Override
     public OutputColumns getOutputColumns() {
-        StringBuilder sb = new StringBuilder("List: ");
+        final StringBuilder sb = new StringBuilder("List: ");
         for (int i = 0; i < values.length; i++) {
-            String key = values[i].getName();
+            final String key = values[i].getName();
             sb.append(key);
             if (sb.length() > 30) {
                 sb.append("...");
@@ -83,12 +83,12 @@ public class BuildListTransformer implements Transformer {
                 sb.append(",");
             }
         }
-        OutputColumns outputColumns = new OutputColumns(new String[] { sb.toString() }, new Class[] { List.class });
+        final OutputColumns outputColumns = new OutputColumns(new String[] { sb.toString() }, new Class[] { List.class });
         return outputColumns;
     }
 
     @Override
-    public List<?>[] transform(InputRow row) {
+    public List<?>[] transform(final InputRow row) {
         final List<Object> existingList;
         if (addToExistingList != null) {
             existingList = row.getValue(addToExistingList);
@@ -98,7 +98,7 @@ public class BuildListTransformer implements Transformer {
 
         final List<Object> list = new ArrayList<Object>(existingList);
 
-        for (InputColumn<?> column : values) {
+        for (final InputColumn<?> column : values) {
             final Object value = row.getValue(column);
             if (!includeNullValues && value == null) {
                 logger.debug("Ignoring null value for {} in row: {}", column.getName(), row);

@@ -47,13 +47,13 @@ public class RESTClientImpl implements RESTClient {
 
     private Client client = null;
 
-    public RESTClientImpl(String username, String password, String dataCleanerVersion) {
+    public RESTClientImpl(String username, final String password, final String dataCleanerVersion) {
         this.dataCleanerVersion = dataCleanerVersion;
         if (username == null) {
             username = "";
         }
 
-        String cacheKey = makeKey(username, password);
+        final String cacheKey = makeKey(username, password);
         client = clientCache.get(cacheKey);
 
         if (client == null) {
@@ -72,13 +72,13 @@ public class RESTClientImpl implements RESTClient {
         return client;
     }
 
-    private String makeKey(String username, String password) {
+    private String makeKey(final String username, final String password) {
         String key = "";
         MessageDigest md = null;
 
         try {
             md = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
+        } catch (final NoSuchAlgorithmException e) {
             logger.warn("Creation of cache index has failed. " + e.getMessage());
         }
 
@@ -96,41 +96,41 @@ public class RESTClientImpl implements RESTClient {
      * @return
      */
     @Override
-    public String getResponse(HttpMethod httpMethod, String url, String requestBody) throws RESTClientException {
-        WebResource webResource = client.resource(url);
-        WebResource.Builder builder = webResource
+    public String getResponse(final HttpMethod httpMethod, final String url, final String requestBody) throws RESTClientException {
+        final WebResource webResource = client.resource(url);
+        final WebResource.Builder builder = webResource
                 .accept(MediaType.APPLICATION_JSON)
                 .type(MediaType.APPLICATION_JSON)
                 .header(HEADER_DC_VERSION, dataCleanerVersion);
         ClientResponse response = null;
 
-        if (requestBody != null && ! requestBody.isEmpty()) {
+        if (requestBody != null && !requestBody.isEmpty()) {
             response = builder.method(httpMethod.name(), ClientResponse.class, requestBody);
-        }
-        else {
+        } else {
             response = builder.method(httpMethod.name(), ClientResponse.class);
         }
 
-        if (response.getStatus() != ClientResponse.Status.OK.getStatusCode() && response.getStatus() != ClientResponse.Status.CREATED.getStatusCode()) {
+        if (response.getStatus() != ClientResponse.Status.OK.getStatusCode()
+                && response.getStatus() != ClientResponse.Status.CREATED.getStatusCode()) {
             String msg = "";
 
             try {
-                String output = response.getEntity(String.class);
-                String contentType = response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE);
-                if(contentType != null && contentType.contains("json") && output != null && !output.isEmpty()) {
-                    JsonNode respJson = Serializator.getJacksonObjectMapper().readValue(output, JsonNode.class);
-                    JsonNode error = respJson.get("error");
-                    if(error != null) {
-                        JsonNode msgNode = error.get("message");
-                        if(msgNode != null) {
+                final String output = response.getEntity(String.class);
+                final String contentType = response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE);
+                if (contentType != null && contentType.contains("json") && output != null && !output.isEmpty()) {
+                    final JsonNode respJson = Serializator.getJacksonObjectMapper().readValue(output, JsonNode.class);
+                    final JsonNode error = respJson.get("error");
+                    if (error != null) {
+                        final JsonNode msgNode = error.get("message");
+                        if (msgNode != null) {
                             msg = msgNode.asText();
                         }
                     }
                 }
-            } catch(Exception e) {
+            } catch (final Exception e) {
                 // DO NOTHING
             }
-            if(msg.isEmpty()) {
+            if (msg.isEmpty()) {
                 msg = response.getStatusInfo().getReasonPhrase();
             }
 
@@ -138,7 +138,7 @@ public class RESTClientImpl implements RESTClient {
 
         }
 
-        String output = response.getEntity(String.class);
+        final String output = response.getEntity(String.class);
 
         return output;
     }

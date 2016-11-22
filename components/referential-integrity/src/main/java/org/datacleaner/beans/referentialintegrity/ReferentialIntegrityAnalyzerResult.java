@@ -32,8 +32,8 @@ public class ReferentialIntegrityAnalyzerResult extends AnnotatedRowsResult {
 
     private static final long serialVersionUID = 1L;
 
-    public ReferentialIntegrityAnalyzerResult(RowAnnotation annotation, RowAnnotationFactory annotationFactory,
-            InputColumn<?>[] highlightedColumns) {
+    public ReferentialIntegrityAnalyzerResult(final RowAnnotation annotation, final RowAnnotationFactory annotationFactory,
+            final InputColumn<?>[] highlightedColumns) {
         super(annotation, annotationFactory, highlightedColumns);
     }
 }

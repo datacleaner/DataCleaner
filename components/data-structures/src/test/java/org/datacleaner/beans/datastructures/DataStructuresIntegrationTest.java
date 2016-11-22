@@ -42,118 +42,120 @@ import org.datacleaner.test.TestHelper;
 
 public class DataStructuresIntegrationTest extends TestCase {
 
-	public void testBuildAndExtractFromStructures() throws Throwable {
-		Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-		DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
-		DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog);
+    public void testBuildAndExtractFromStructures() throws Throwable {
+        Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+        DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
+        DataCleanerConfigurationImpl configuration =
+                new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog);
 
-		AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
-		ajb.setDatastore("orderdb");
+        AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+        ajb.setDatastore("orderdb");
 
-		ajb.addSourceColumns("PUBLIC.EMPLOYEES.EMPLOYEENUMBER", "PUBLIC.EMPLOYEES.EMAIL");
+        ajb.addSourceColumns("PUBLIC.EMPLOYEES.EMPLOYEENUMBER", "PUBLIC.EMPLOYEES.EMAIL");
 
-		final MutableInputColumn<?> mapColumn;
-		{
-			TransformerComponentBuilder<BuildMapTransformer> buildMap = ajb.addTransformer(BuildMapTransformer.class);
-			buildMap.addInputColumns(ajb.getSourceColumns());
-			BuildMapTransformer bean = buildMap.getComponentInstance();
-			bean.setKeys(new String[] { "empno", "email_address" });
-			bean.setRetainKeyOrder(true);
-			bean.setIncludeNullValues(true);
-			List<MutableInputColumn<?>> outputColumns = buildMap.getOutputColumns();
-			assertEquals(1, outputColumns.size());
-			mapColumn = outputColumns.get(0);
-			assertEquals("Map: empno,email_address", mapColumn.getName());
-		}
+        final MutableInputColumn<?> mapColumn;
+        {
+            TransformerComponentBuilder<BuildMapTransformer> buildMap = ajb.addTransformer(BuildMapTransformer.class);
+            buildMap.addInputColumns(ajb.getSourceColumns());
+            BuildMapTransformer bean = buildMap.getComponentInstance();
+            bean.setKeys(new String[] { "empno", "email_address" });
+            bean.setRetainKeyOrder(true);
+            bean.setIncludeNullValues(true);
+            List<MutableInputColumn<?>> outputColumns = buildMap.getOutputColumns();
+            assertEquals(1, outputColumns.size());
+            mapColumn = outputColumns.get(0);
+            assertEquals("Map: empno,email_address", mapColumn.getName());
+        }
 
-		ajb.addSourceColumns("PUBLIC.EMPLOYEES.FIRSTNAME", "PUBLIC.EMPLOYEES.LASTNAME");
+        ajb.addSourceColumns("PUBLIC.EMPLOYEES.FIRSTNAME", "PUBLIC.EMPLOYEES.LASTNAME");
 
-		final MutableInputColumn<?> listColumn;
-		{
-			TransformerComponentBuilder<BuildListTransformer> buildList = ajb.addTransformer(BuildListTransformer.class);
-			buildList.addInputColumn(ajb.getSourceColumnByName("firstname"));
-			buildList.addInputColumn(ajb.getSourceColumnByName("lastname"));
-			BuildListTransformer bean = buildList.getComponentInstance();
-			bean.setIncludeNullValues(false);
-			List<MutableInputColumn<?>> outputColumns = buildList.getOutputColumns();
-			assertEquals(1, outputColumns.size());
-			listColumn = outputColumns.get(0);
-			assertEquals("List: FIRSTNAME,LASTNAME", listColumn.getName());
-		}
+        final MutableInputColumn<?> listColumn;
+        {
+            TransformerComponentBuilder<BuildListTransformer> buildList =
+                    ajb.addTransformer(BuildListTransformer.class);
+            buildList.addInputColumn(ajb.getSourceColumnByName("firstname"));
+            buildList.addInputColumn(ajb.getSourceColumnByName("lastname"));
+            BuildListTransformer bean = buildList.getComponentInstance();
+            bean.setIncludeNullValues(false);
+            List<MutableInputColumn<?>> outputColumns = buildList.getOutputColumns();
+            assertEquals(1, outputColumns.size());
+            listColumn = outputColumns.get(0);
+            assertEquals("List: FIRSTNAME,LASTNAME", listColumn.getName());
+        }
 
-		assertSame(1, ajb.getAvailableInputColumns(Map.class).size());
-		assertSame(mapColumn, ajb.getAvailableInputColumns(Map.class).get(0));
-		assertSame(1, ajb.getAvailableInputColumns(List.class).size());
-		assertSame(listColumn, ajb.getAvailableInputColumns(List.class).get(0));
+        assertSame(1, ajb.getAvailableInputColumns(Map.class).size());
+        assertSame(mapColumn, ajb.getAvailableInputColumns(Map.class).get(0));
+        assertSame(1, ajb.getAvailableInputColumns(List.class).size());
+        assertSame(listColumn, ajb.getAvailableInputColumns(List.class).get(0));
 
-		final MutableInputColumn<?> elementColumn;
-		{
-			TransformerComponentBuilder<ReadFromListTransformer> extractFromList = ajb
-					.addTransformer(ReadFromListTransformer.class);
-			extractFromList.addInputColumn(listColumn);
-			ReadFromListTransformer bean = extractFromList.getComponentInstance();
-			bean.setVerifyTypes(true);
-			bean.setElementType(String.class);
-			List<MutableInputColumn<?>> outputColumns = extractFromList.getOutputColumns();
-			assertEquals(1, outputColumns.size());
-			elementColumn = outputColumns.get(0);
-			assertEquals("List: FIRSTNAME,LASTNAME (element)", elementColumn.getName());
-		}
+        final MutableInputColumn<?> elementColumn;
+        {
+            TransformerComponentBuilder<ReadFromListTransformer> extractFromList = ajb
+                    .addTransformer(ReadFromListTransformer.class);
+            extractFromList.addInputColumn(listColumn);
+            ReadFromListTransformer bean = extractFromList.getComponentInstance();
+            bean.setVerifyTypes(true);
+            bean.setElementType(String.class);
+            List<MutableInputColumn<?>> outputColumns = extractFromList.getOutputColumns();
+            assertEquals(1, outputColumns.size());
+            elementColumn = outputColumns.get(0);
+            assertEquals("List: FIRSTNAME,LASTNAME (element)", elementColumn.getName());
+        }
 
-		final MutableInputColumn<?> valueColumn1;
-		final MutableInputColumn<?> valueColumn2;
-		{
-			TransformerComponentBuilder<SelectFromMapTransformer> extractFromMap = ajb
-					.addTransformer(SelectFromMapTransformer.class);
-			extractFromMap.addInputColumn(mapColumn);
-			SelectFromMapTransformer bean = extractFromMap.getComponentInstance();
-			bean.setKeys(new String[] { "empno", "email_address" });
-			bean.setTypes(new Class[] { Number.class, String.class });
-			bean.setVerifyTypes(true);
-			List<MutableInputColumn<?>> outputColumns = extractFromMap.getOutputColumns();
-			assertEquals(2, outputColumns.size());
-			valueColumn1 = outputColumns.get(0);
-			assertEquals("empno", valueColumn1.getName());
-			valueColumn2 = outputColumns.get(1);
-			assertEquals("email_address", valueColumn2.getName());
-		}
+        final MutableInputColumn<?> valueColumn1;
+        final MutableInputColumn<?> valueColumn2;
+        {
+            TransformerComponentBuilder<SelectFromMapTransformer> extractFromMap = ajb
+                    .addTransformer(SelectFromMapTransformer.class);
+            extractFromMap.addInputColumn(mapColumn);
+            SelectFromMapTransformer bean = extractFromMap.getComponentInstance();
+            bean.setKeys(new String[] { "empno", "email_address" });
+            bean.setTypes(new Class[] { Number.class, String.class });
+            bean.setVerifyTypes(true);
+            List<MutableInputColumn<?>> outputColumns = extractFromMap.getOutputColumns();
+            assertEquals(2, outputColumns.size());
+            valueColumn1 = outputColumns.get(0);
+            assertEquals("empno", valueColumn1.getName());
+            valueColumn2 = outputColumns.get(1);
+            assertEquals("email_address", valueColumn2.getName());
+        }
 
-		ajb.addAnalyzer(MockAnalyzer.class)
-				.addInputColumns(mapColumn, valueColumn1, valueColumn2, listColumn, elementColumn);
+        ajb.addAnalyzer(MockAnalyzer.class)
+                .addInputColumns(mapColumn, valueColumn1, valueColumn2, listColumn, elementColumn);
 
-		AnalysisJob job = ajb.toAnalysisJob();
-		ajb.close();
+        AnalysisJob job = ajb.toAnalysisJob();
+        ajb.close();
 
-		AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
+        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
 
-		if (resultFuture.isErrornous()) {
-			throw resultFuture.getErrors().get(0);
-		}
+        if (resultFuture.isErrornous()) {
+            throw resultFuture.getErrors().get(0);
+        }
 
-		List<AnalyzerResult> results = resultFuture.getResults();
-		assertEquals(1, results.size());
+        List<AnalyzerResult> results = resultFuture.getResults();
+        assertEquals(1, results.size());
 
-		@SuppressWarnings("unchecked")
-		ListResult<InputRow> result = (ListResult<InputRow>) results.get(0);
-		List<InputRow> rows = result.getValues();
+        @SuppressWarnings("unchecked")
+        ListResult<InputRow> result = (ListResult<InputRow>) results.get(0);
+        List<InputRow> rows = result.getValues();
 
-		// first row
-		InputRow row = rows.get(0);
-		assertEquals("{empno=1002, email_address=dmurphy@classicmodelcars.com}", row.getValue(mapColumn).toString());
-		assertEquals(1002, row.getValue(valueColumn1));
-		assertEquals("dmurphy@classicmodelcars.com", row.getValue(valueColumn2).toString());
-		assertEquals("[Diane, Murphy]", row.getValue(listColumn).toString());
-		assertEquals("Diane", row.getValue(elementColumn).toString());
+        // first row
+        InputRow row = rows.get(0);
+        assertEquals("{empno=1002, email_address=dmurphy@classicmodelcars.com}", row.getValue(mapColumn).toString());
+        assertEquals(1002, row.getValue(valueColumn1));
+        assertEquals("dmurphy@classicmodelcars.com", row.getValue(valueColumn2).toString());
+        assertEquals("[Diane, Murphy]", row.getValue(listColumn).toString());
+        assertEquals("Diane", row.getValue(elementColumn).toString());
 
-		// second row
-		row = rows.get(1);
-		assertEquals("{empno=1002, email_address=dmurphy@classicmodelcars.com}", row.getValue(mapColumn).toString());
-		assertEquals(1002, row.getValue(valueColumn1));
-		assertEquals("dmurphy@classicmodelcars.com", row.getValue(valueColumn2).toString());
-		assertEquals("[Diane, Murphy]", row.getValue(listColumn).toString());
-		assertEquals("Murphy", row.getValue(elementColumn).toString());
+        // second row
+        row = rows.get(1);
+        assertEquals("{empno=1002, email_address=dmurphy@classicmodelcars.com}", row.getValue(mapColumn).toString());
+        assertEquals(1002, row.getValue(valueColumn1));
+        assertEquals("dmurphy@classicmodelcars.com", row.getValue(valueColumn2).toString());
+        assertEquals("[Diane, Murphy]", row.getValue(listColumn).toString());
+        assertEquals("Murphy", row.getValue(elementColumn).toString());
 
-		// row count (2x 23 employees, one row for each name)
-		assertEquals(46, rows.size());
-	}
+        // row count (2x 23 employees, one row for each name)
+        assertEquals(46, rows.size());
+    }
 }

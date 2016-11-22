@@ -29,15 +29,15 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 
 final class DatastoreDictionaryReferenceDataPageColumn extends DatastorePageColumn {
 
-    public DatastoreDictionaryReferenceDataPageColumn(DatastoreWizardSession session) {
+    public DatastoreDictionaryReferenceDataPageColumn(final DatastoreWizardSession session) {
         super(session);
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         _session.setColumn(getString(formParameters, PROPERTY_COLUMN));
-        
+
         return null;
     }
 }

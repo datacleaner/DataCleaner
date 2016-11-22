@@ -32,8 +32,21 @@ public class SchemaComparator implements Comparator<Schema>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     *
+     * @param schema
+     * @return
+     *
+     * @deprecated use {@link MetaModelHelper#isInformationSchema(Schema)}
+     *             instead
+     */
+    @Deprecated
+    public static boolean isInformationSchema(final Schema schema) {
+        return MetaModelHelper.isInformationSchema(schema);
+    }
+
     @Override
-    public int compare(Schema o1, Schema o2) {
+    public int compare(final Schema o1, final Schema o2) {
         if (o1 == null) {
             return -1;
         }
@@ -47,19 +60,6 @@ public class SchemaComparator implements Comparator<Schema>, Serializable {
             return 1;
         }
         return o1.compareTo(o2);
-    }
-
-    /**
-     * 
-     * @param schema
-     * @return
-     * 
-     * @deprecated use {@link MetaModelHelper#isInformationSchema(Schema)}
-     *             instead
-     */
-    @Deprecated
-    public static boolean isInformationSchema(Schema schema) {
-        return MetaModelHelper.isInformationSchema(schema);
     }
 
 }

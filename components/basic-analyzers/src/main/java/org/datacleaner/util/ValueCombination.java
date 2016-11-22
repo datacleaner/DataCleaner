@@ -22,20 +22,19 @@ package org.datacleaner.util;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.metamodel.util.BaseObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.metamodel.util.BaseObject;
 
 /**
  * Represents a combination of values that are of interest to the user.
  * Typically such a combination is used to find dependencies between the values
  * of a couple of columns.
- * 
+ *
  * A ValueCombination has proper hashCode and equals methods. It also implements
  * Comparable, comparing value-by-value.
- * 
- * 
+ *
+ *
  */
 public class ValueCombination<E> extends BaseObject implements Comparable<ValueCombination<E>> {
 
@@ -43,12 +42,12 @@ public class ValueCombination<E> extends BaseObject implements Comparable<ValueC
     private final E[] _values;
 
     @SafeVarargs
-    public ValueCombination(E... values) {
+    public ValueCombination(final E... values) {
         _values = values;
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         identifiers.add(_values);
     }
 
@@ -56,7 +55,7 @@ public class ValueCombination<E> extends BaseObject implements Comparable<ValueC
         return _values.length;
     }
 
-    public E getValueAt(int index) {
+    public E getValueAt(final int index) {
         return _values[index];
     }
 
@@ -66,16 +65,16 @@ public class ValueCombination<E> extends BaseObject implements Comparable<ValueC
     }
 
     @Override
-    public int compareTo(ValueCombination<E> o) {
+    public int compareTo(final ValueCombination<E> o) {
         if (this.equals(o)) {
             return 0;
         }
-        int count1 = this.getValueCount();
-        int count2 = o.getValueCount();
-        int minCount = Math.min(count1, count2);
+        final int count1 = this.getValueCount();
+        final int count2 = o.getValueCount();
+        final int minCount = Math.min(count1, count2);
         for (int i = 0; i < minCount; i++) {
-            E value1 = this.getValueAt(i);
-            E value2 = o.getValueAt(i);
+            final E value1 = this.getValueAt(i);
+            final E value2 = o.getValueAt(i);
             if (value1 == null || value2 == null) {
                 if (value1 != null) {
                     return -1;
@@ -85,12 +84,12 @@ public class ValueCombination<E> extends BaseObject implements Comparable<ValueC
                 }
             } else if (value1 instanceof Comparable) {
                 try {
-                    @SuppressWarnings("unchecked")
+                    @SuppressWarnings("unchecked") final
                     int result = ((Comparable<E>) value1).compareTo(value2);
                     if (result != 0) {
                         return result;
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // do nothing - the typecase to Comparable<E> was
                     // invalid
                     logger.warn("Could not compare {} and {}, comparable threw exception: {}", new Object[] { value1,

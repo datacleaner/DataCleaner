@@ -32,7 +32,7 @@ import com.google.common.cache.Cache;
 
 /**
  * An abstract RowAnnotationFactory that supports a (optional) threshold
- * 
+ *
  * @deprecated this abstract implementation was found to be way too greedy and
  *             dirty, see issue #506
  */
@@ -41,12 +41,13 @@ public abstract class AbstractRowAnnotationFactory implements RowAnnotationFacto
 
     private static final long serialVersionUID = 1L;
 
-    private final Map<RowAnnotationImpl, AtomicInteger> _rowCounts = new ConcurrentHashMap<RowAnnotationImpl, AtomicInteger>();
+    private final Map<RowAnnotationImpl, AtomicInteger> _rowCounts =
+            new ConcurrentHashMap<RowAnnotationImpl, AtomicInteger>();
     private final Integer _storedRowsThreshold;
 
     private final transient Cache<Integer, Boolean> _cachedRows = CollectionUtils2.createCache(10000, 10 * 60);
 
-    public AbstractRowAnnotationFactory(Integer storedRowsThreshold) {
+    public AbstractRowAnnotationFactory(final Integer storedRowsThreshold) {
         if (storedRowsThreshold == null) {
             _storedRowsThreshold = Integer.MAX_VALUE;
         } else {
@@ -55,7 +56,7 @@ public abstract class AbstractRowAnnotationFactory implements RowAnnotationFacto
     }
 
     @Override
-    public final void annotate(InputRow row, RowAnnotation annotation) {
+    public final void annotate(final InputRow row, final RowAnnotation annotation) {
         final RowAnnotationImpl ann = (RowAnnotationImpl) annotation;
 
         final AtomicInteger count = getCounter(ann);
@@ -72,7 +73,7 @@ public abstract class AbstractRowAnnotationFactory implements RowAnnotationFacto
             // collision
             final int rowId = (int) row.getId();
             if (_cachedRows != null) {
-                Boolean previously = _cachedRows.asMap().putIfAbsent(rowId, true);
+                final Boolean previously = _cachedRows.asMap().putIfAbsent(rowId, true);
                 if (previously == null) {
                     // only store row values when they where not present
                     // previously
@@ -85,12 +86,13 @@ public abstract class AbstractRowAnnotationFactory implements RowAnnotationFacto
         ann.incrementRowCount(1);
     }
 
-    private AtomicInteger getCounter(RowAnnotationImpl ann) {
+    private AtomicInteger getCounter(final RowAnnotationImpl ann) {
         AtomicInteger count = _rowCounts.get(ann);
         if (count == null) {
             if (_rowCounts instanceof ConcurrentMap) {
-                AtomicInteger newCounter = new AtomicInteger();
-                ConcurrentMap<RowAnnotationImpl, AtomicInteger> concurrentMap = (ConcurrentMap<RowAnnotationImpl, AtomicInteger>) _rowCounts;
+                final AtomicInteger newCounter = new AtomicInteger();
+                final ConcurrentMap<RowAnnotationImpl, AtomicInteger> concurrentMap =
+                        (ConcurrentMap<RowAnnotationImpl, AtomicInteger>) _rowCounts;
                 count = concurrentMap.putIfAbsent(ann, newCounter);
                 if (count == null) {
                     count = newCounter;
@@ -111,8 +113,8 @@ public abstract class AbstractRowAnnotationFactory implements RowAnnotationFacto
     }
 
     @Override
-    public final void resetAnnotation(RowAnnotation annotation) {
-        RowAnnotationImpl ann = (RowAnnotationImpl) annotation;
+    public final void resetAnnotation(final RowAnnotation annotation) {
+        final RowAnnotationImpl ann = (RowAnnotationImpl) annotation;
         ann.resetRowCount();
         _rowCounts.remove(annotation);
         resetRows(annotation);
@@ -120,13 +122,13 @@ public abstract class AbstractRowAnnotationFactory implements RowAnnotationFacto
 
     @Override
     public final RowAnnotation createAnnotation() {
-        RowAnnotationImpl ann = new RowAnnotationImpl();
+        final RowAnnotationImpl ann = new RowAnnotationImpl();
         return ann;
     }
 
     /**
      * Removes the annotation from any rows that has been annotated with it.
-     * 
+     *
      * @param annotation
      */
     protected abstract void resetRows(RowAnnotation annotation);
@@ -134,7 +136,7 @@ public abstract class AbstractRowAnnotationFactory implements RowAnnotationFacto
     /**
      * Gets the distinct count from a row that has been stored and retried using
      * the getRows(...) method.
-     * 
+     *
      * @param row
      * @return
      */

@@ -49,28 +49,28 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
     private final Provider<TableMouseListener> _tableMouseListenerProvider;
 
     @Inject
-    protected SchemaMouseListener(WindowContext windowContext, SchemaTree schemaTree,
-            Provider<TableMouseListener> tableMouseListenerProvider) {
+    protected SchemaMouseListener(final WindowContext windowContext, final SchemaTree schemaTree,
+            final Provider<TableMouseListener> tableMouseListenerProvider) {
         _windowContext = windowContext;
         _schemaTree = schemaTree;
         _tableMouseListenerProvider = tableMouseListenerProvider;
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
+    public void mouseClicked(final MouseEvent e) {
+        final TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
         if (path == null) {
             return;
         }
 
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-        Object userObject = node.getUserObject();
+        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+        final Object userObject = node.getUserObject();
         if (userObject instanceof Schema) {
             final Schema schema = (Schema) userObject;
-            int button = e.getButton();
+            final int button = e.getButton();
 
             if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-                JPopupMenu popup = new JPopupMenu();
+                final JPopupMenu popup = new JPopupMenu();
                 popup.setLabel(schema.getName());
 
                 addAddTablesToSourceMenuItem(schema, popup);
@@ -81,12 +81,12 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
         }
     }
 
-    private void addAddTablesToSourceMenuItem(final Schema schema, JPopupMenu popup) {
+    private void addAddTablesToSourceMenuItem(final Schema schema, final JPopupMenu popup) {
         final JMenuItem addTableItem = WidgetFactory.createMenuItem("Add all schema tables to source",
                 "images/actions/toggle-source-table.png");
         addTableItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final TableMouseListener tableMouseListener = _tableMouseListenerProvider.get();
                 final Table[] tables = schema.getTables();
                 for (final Table table : tables) {
@@ -97,7 +97,7 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
         popup.add(addTableItem);
     }
 
-    private void addCreateTableMenuItem(final Schema schema, JPopupMenu popup) {
+    private void addCreateTableMenuItem(final Schema schema, final JPopupMenu popup) {
         final Datastore datastore = _schemaTree.getDatastore();
         if (CreateTableDialog.isCreateTableAppropriate(datastore, schema)) {
             popup.addSeparator();
@@ -107,11 +107,11 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
                     IconUtils.ACTION_CREATE_TABLE);
             createTableMenuItem.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(final ActionEvent e) {
                     final CreateTableDialog dialog = new CreateTableDialog(_windowContext, updateableDatastore, schema);
                     dialog.addListener(new CreateTableDialog.Listener() {
                         @Override
-                        public void onTableCreated(UpdateableDatastore datastore, Schema schema, String tableName) {
+                        public void onTableCreated(final UpdateableDatastore datastore, final Schema schema, final String tableName) {
                             _schemaTree.refreshDatastore();
                         }
                     });

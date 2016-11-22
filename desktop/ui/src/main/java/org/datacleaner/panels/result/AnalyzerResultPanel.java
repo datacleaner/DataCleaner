@@ -67,8 +67,8 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
     private final ComponentJob _componentJob;
     private final LoadingIcon _loadingIcon;
 
-    public AnalyzerResultPanel(RendererFactory rendererFactory, ProgressInformationPanel progressInformationPanel,
-            ComponentJob componentJob) {
+    public AnalyzerResultPanel(final RendererFactory rendererFactory, final ProgressInformationPanel progressInformationPanel,
+            final ComponentJob componentJob) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _rendererFactory = rendererFactory;
         _progressInformationPanel = progressInformationPanel;
@@ -137,7 +137,7 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
                     } else {
                         _progressInformationPanel.addUserLog("Result rendered for " + headerText);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.error("Error occurred while rendering result", e);
                     _progressInformationPanel.addUserLog("Error occurred while rendering result", e, false);
 
@@ -162,12 +162,12 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
                 add(component, BorderLayout.CENTER);
 
                 updateUI();
-            };
+            }
 
         }.execute();
     }
 
-    private JLabel createHeader(Icon icon, String header, Font font, Color color) {
+    private JLabel createHeader(final Icon icon, final String header, final Font font, final Color color) {
         final JLabel label = new JLabel(header, icon, JLabel.LEFT);
         label.setOpaque(false);
         label.setFont(font);
@@ -189,10 +189,10 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
         return subHeaderString;
     }
 
-    protected String getResultAsString(ComponentJob componentJob, AnalyzerResult result) {
+    protected String getResultAsString(final ComponentJob componentJob, final AnalyzerResult result) {
         try {
             return result.toString();
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             logger.error("Couldn't render result of {} as label using toString() method", componentJob, ex);
             return null;
         }
@@ -204,12 +204,12 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
     }
 
     @Override
-    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+    public int getScrollableUnitIncrement(final Rectangle visibleRect, final int orientation, final int direction) {
         return WidgetUtils.SCROLL_UNIT_INCREMENT;
     }
 
     @Override
-    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+    public int getScrollableBlockIncrement(final Rectangle visibleRect, final int orientation, final int direction) {
         // page down scrolls almost a full screen size
         return visibleRect.height - 10;
     }

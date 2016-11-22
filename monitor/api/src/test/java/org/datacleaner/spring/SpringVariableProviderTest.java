@@ -24,9 +24,9 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.easymock.EasyMock;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.easymock.EasyMock;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;

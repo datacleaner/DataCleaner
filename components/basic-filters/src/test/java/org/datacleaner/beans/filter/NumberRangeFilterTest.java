@@ -33,7 +33,7 @@ public class NumberRangeFilterTest extends TestCase {
     public void testDescriptorInheritance() throws Exception {
         FilterDescriptor<NumberRangeFilter, RangeFilterCategory> filter = Descriptors
                 .ofFilter(NumberRangeFilter.class);
-        
+
         assertTrue(filter.isDistributable());
 
         Set<ConfiguredPropertyDescriptor> inputs = filter.getConfiguredPropertiesForInput();

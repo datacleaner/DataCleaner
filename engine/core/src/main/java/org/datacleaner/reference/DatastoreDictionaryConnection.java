@@ -31,13 +31,13 @@ final class DatastoreDictionaryConnection implements DictionaryConnection {
     private final DatastoreConnection _datastoreConnection;
     private final DatastoreDictionary _dictionary;
 
-    public DatastoreDictionaryConnection(DatastoreDictionary dictionary, DatastoreConnection datastoreConnection) {
+    public DatastoreDictionaryConnection(final DatastoreDictionary dictionary, final DatastoreConnection datastoreConnection) {
         _dictionary = dictionary;
         _datastoreConnection = datastoreConnection;
     }
 
     @Override
-    public boolean containsValue(String value) {
+    public boolean containsValue(final String value) {
         final DataContext dataContext = _datastoreConnection.getDataContext();
         final Column column = _dictionary.getColumn(_datastoreConnection);
         final DataSet dataSet = dataContext.query().from(column.getTable()).select(column).where(column).eq(value)

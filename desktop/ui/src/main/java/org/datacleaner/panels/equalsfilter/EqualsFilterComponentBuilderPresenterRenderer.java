@@ -47,7 +47,7 @@ public class EqualsFilterComponentBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> fjb) {
+    public RendererPrecedence getPrecedence(final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> fjb) {
         if (fjb.getDescriptor().getComponentClass() == EqualsFilter.class) {
             return RendererPrecedence.HIGH;
         }
@@ -55,7 +55,7 @@ public class EqualsFilterComponentBuilderPresenterRenderer implements
     }
 
     @Override
-    public FilterComponentBuilderPresenter render(FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> fjb) {
+    public FilterComponentBuilderPresenter render(final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> fjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(fjb)
                 .getInstance(PropertyWidgetFactory.class);
 

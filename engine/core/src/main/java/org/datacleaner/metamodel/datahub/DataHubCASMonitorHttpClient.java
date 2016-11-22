@@ -30,20 +30,20 @@ import org.datacleaner.util.http.CASMonitorHttpClient;
  */
 public class DataHubCASMonitorHttpClient extends CASMonitorHttpClient {
 
-    public DataHubCASMonitorHttpClient(CloseableHttpClient client, String casServerUrl, String username, String password,
-            String monitorBaseUrl) {
-        super(client, casServerUrl, username, password, monitorBaseUrl);
-    }
-    
     private static final String CDI_TICKET_HEADER = "CDI-ticket";
     private static final String CDI_SERVICE_URL_HEADER = "CDI-serviceUrl";
     private static final String CDI_USERID = "CDI-userId";
+    public DataHubCASMonitorHttpClient(final CloseableHttpClient client, final String casServerUrl, final String username,
+            final String password,
+            final String monitorBaseUrl) {
+        super(client, casServerUrl, username, password, monitorBaseUrl);
+    }
 
     @Override
-    protected void addSecurityHeaders(HttpUriRequest request) throws Exception {
+    protected void addSecurityHeaders(final HttpUriRequest request) throws Exception {
         request.addHeader(CDI_TICKET_HEADER, retrieveTicketGrantingTicket());
         request.addHeader(CDI_SERVICE_URL_HEADER, getCasServerUrl());
-        request.addHeader(CDI_USERID, getUsername());        
+        request.addHeader(CDI_USERID, getUsername());
     }
 
 }

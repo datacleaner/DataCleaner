@@ -19,17 +19,17 @@
  */
 package org.datacleaner.beans.writers;
 
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.Func;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.FileDatastore;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.Func;
 
 /**
  * Default implementation of {@link WriteDataResult}.
- * 
- * 
+ *
+ *
  */
 public final class WriteDataResultImpl implements WriteDataResult {
 
@@ -60,7 +60,8 @@ public final class WriteDataResultImpl implements WriteDataResult {
     }
 
     public WriteDataResultImpl(final int writtenRowCount, final int updatesCount, final Datastore datastore,
-            final String schemaName, final String tableName, final int errorRowCount, final FileDatastore errorDatastore) {
+            final String schemaName, final String tableName, final int errorRowCount,
+            final FileDatastore errorDatastore) {
         _writtenRowCount = writtenRowCount;
         _updatesCount = updatesCount;
         _schemaName = schemaName;
@@ -68,7 +69,7 @@ public final class WriteDataResultImpl implements WriteDataResult {
         _datastoreName = (datastore == null ? null : datastore.getName());
         _datastoreFunc = new Func<DatastoreCatalog, Datastore>() {
             @Override
-            public Datastore eval(DatastoreCatalog catalog) {
+            public Datastore eval(final DatastoreCatalog catalog) {
                 return datastore;
             }
         };
@@ -90,14 +91,14 @@ public final class WriteDataResultImpl implements WriteDataResult {
         _datastoreName = datastoreName;
         _datastoreFunc = new Func<DatastoreCatalog, Datastore>() {
             @Override
-            public Datastore eval(DatastoreCatalog catalog) {
+            public Datastore eval(final DatastoreCatalog catalog) {
                 return catalog.getDatastore(datastoreName);
             }
         };
         _errorRowCount = 0;
         _errorDatastore = null;
     }
-    
+
     @Override
     public FileDatastore getErrorDatastore() {
         return _errorDatastore;
@@ -119,7 +120,7 @@ public final class WriteDataResultImpl implements WriteDataResult {
     }
 
     @Override
-    public Datastore getDatastore(DatastoreCatalog datastoreCatalog) {
+    public Datastore getDatastore(final DatastoreCatalog datastoreCatalog) {
         if (_datastoreFunc == null) {
             if (_datastoreName == null) {
                 return null;
@@ -130,8 +131,8 @@ public final class WriteDataResultImpl implements WriteDataResult {
     }
 
     @Override
-    public Table getPreviewTable(Datastore datastore) {
-        DatastoreConnection con = datastore.openConnection();
+    public Table getPreviewTable(final Datastore datastore) {
+        final DatastoreConnection con = datastore.openConnection();
         try {
             return con.getSchemaNavigator().convertToTable(_schemaName, _tableName);
         } finally {

@@ -28,7 +28,7 @@ import org.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
  */
 public class JdbcDatastoreWizardSession extends AbstractJdbcDatastoreWizardSession implements DatastoreWizardSession {
 
-    public JdbcDatastoreWizardSession(DatastoreWizardContext context, String driverClassName, String url) {
+    public JdbcDatastoreWizardSession(final DatastoreWizardContext context, final String driverClassName, final String url) {
         super(context);
         setDriverClassName(driverClassName);
         setUrl(url);

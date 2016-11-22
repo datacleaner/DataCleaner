@@ -32,6 +32,25 @@ import org.apache.http.impl.client.HttpClients;
 
 public class CASMonitorHttpClientTest {
 
+    private static void doRequest(CASMonitorHttpClient client, HttpUriRequest req) throws Exception {
+        System.out.println("REQUESTING: " + req.getURI());
+
+        final HttpResponse response = client.execute(req);
+
+        final StatusLine statusLine = response.getStatusLine();
+        System.out.println("\tStatus: " + statusLine.getStatusCode() + " - " + statusLine.getReasonPhrase());
+
+        final HttpEntity entity = response.getEntity();
+        final InputStream in = entity.getContent();
+
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        String line = reader.readLine();
+        while (line != null) {
+            System.out.println("\t" + line);
+            line = reader.readLine();
+        }
+    }
+
     // A main method that can be used to manually test a CAS based HTTP request
     public static void main(String[] args) throws Exception {
         try (CASMonitorHttpClient client = new CASMonitorHttpClient(HttpClients.createSystem(),
@@ -49,25 +68,6 @@ public class CASMonitorHttpClientTest {
                 "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor")) {
             doRequest(client, new HttpGet(
                     "https://localhost:8443/DataCleaner-monitor/repository/DC/jobs/Customer+completeness.analysis.xml"));
-        }
-    }
-
-    private static void doRequest(CASMonitorHttpClient client, HttpUriRequest req) throws Exception {
-        System.out.println("REQUESTING: " + req.getURI());
-
-        final HttpResponse response = client.execute(req);
-
-        final StatusLine statusLine = response.getStatusLine();
-        System.out.println("\tStatus: " + statusLine.getStatusCode() + " - " + statusLine.getReasonPhrase());
-
-        final HttpEntity entity = response.getEntity();
-        final InputStream in = entity.getContent();
-
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        String line = reader.readLine();
-        while (line != null) {
-            System.out.println("\t" + line);
-            line = reader.readLine();
         }
     }
 

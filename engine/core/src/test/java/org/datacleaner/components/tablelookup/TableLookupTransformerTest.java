@@ -209,9 +209,10 @@ public class TableLookupTransformerTest extends TestCase {
 
         trans.close();
     }
-    
+
     public void testIsDistributable() throws Exception {
-        final TransformerDescriptor<TableLookupTransformer> descriptor = Descriptors.ofTransformer(TableLookupTransformer.class);
+        final TransformerDescriptor<TableLookupTransformer> descriptor =
+                Descriptors.ofTransformer(TableLookupTransformer.class);
         assertTrue(descriptor.isDistributable());
     }
 }

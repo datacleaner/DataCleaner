@@ -29,20 +29,22 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 /**
  * Specialization of {@link AbstractComponentBuilderPanel} for {@link Analyzer}s.
  */
-public class AnalyzerComponentBuilderPanel extends AbstractComponentBuilderPanel implements AnalyzerComponentBuilderPresenter,
+public class AnalyzerComponentBuilderPanel extends AbstractComponentBuilderPanel
+        implements AnalyzerComponentBuilderPresenter,
         AnalyzerChangeListener {
 
     private static final long serialVersionUID = 1L;
 
     private final AnalyzerComponentBuilder<?> _analyzerComponentBuilder;
 
-    public AnalyzerComponentBuilderPanel(AnalyzerComponentBuilder<?> analyzerJobBuilder, PropertyWidgetFactory propertyWidgetFactory) {
+    public AnalyzerComponentBuilderPanel(final AnalyzerComponentBuilder<?> analyzerJobBuilder,
+            final PropertyWidgetFactory propertyWidgetFactory) {
         this(null, 95, 95, analyzerJobBuilder, propertyWidgetFactory);
     }
 
-    public AnalyzerComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-            int watermarkVerticalPosition, AnalyzerComponentBuilder<?> analyzerComponentBuilder,
-            PropertyWidgetFactory propertyWidgetFactory) {
+    public AnalyzerComponentBuilderPanel(final Image watermarkImage, final int watermarkHorizontalPosition,
+            final int watermarkVerticalPosition, final AnalyzerComponentBuilder<?> analyzerComponentBuilder,
+            final PropertyWidgetFactory propertyWidgetFactory) {
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, analyzerComponentBuilder,
                 propertyWidgetFactory);
         _analyzerComponentBuilder = analyzerComponentBuilder;
@@ -66,19 +68,19 @@ public class AnalyzerComponentBuilderPanel extends AbstractComponentBuilderPanel
     }
 
     @Override
-    public void onAdd(AnalyzerComponentBuilder<?> ajb) {
+    public void onAdd(final AnalyzerComponentBuilder<?> ajb) {
     }
 
     @Override
-    public void onConfigurationChanged(AnalyzerComponentBuilder<?> ajb) {
+    public void onConfigurationChanged(final AnalyzerComponentBuilder<?> ajb) {
         onConfigurationChanged();
     }
 
     @Override
-    public void onRemove(AnalyzerComponentBuilder<?> ajb) {
+    public void onRemove(final AnalyzerComponentBuilder<?> ajb) {
     }
 
     @Override
-    public void onRequirementChanged(AnalyzerComponentBuilder<?> ajb) {
+    public void onRequirementChanged(final AnalyzerComponentBuilder<?> ajb) {
     }
 }

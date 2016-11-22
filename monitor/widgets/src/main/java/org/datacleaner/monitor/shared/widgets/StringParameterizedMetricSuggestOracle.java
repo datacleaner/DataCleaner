@@ -39,7 +39,7 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
 
         private final String _string;
 
-        public Suggestion(String string) {
+        public Suggestion(final String string) {
             _string = string;
         }
 
@@ -61,21 +61,21 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
 
     private Collection<String> _suggestions;
 
-    public StringParameterizedMetricSuggestOracle(Collection<String> suggestions) {
+    public StringParameterizedMetricSuggestOracle(final Collection<String> suggestions) {
         _suggestions = suggestions;
     }
 
-    public StringParameterizedMetricSuggestOracle(TenantIdentifier tenant, JobIdentifier job, MetricIdentifier metric) {
+    public StringParameterizedMetricSuggestOracle(final TenantIdentifier tenant, final JobIdentifier job, final MetricIdentifier metric) {
         _suggestions = new ArrayList<String>();
         setMetric(tenant, job, metric);
     }
-    
 
-    public void setMetric(TenantIdentifier tenant, JobIdentifier job, MetricIdentifier metric) {
-        DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
+
+    public void setMetric(final TenantIdentifier tenant, final JobIdentifier job, final MetricIdentifier metric) {
+        final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
         descriptorService.getMetricParameterSuggestions(tenant, job, metric, new DCAsyncCallback<Collection<String>>() {
             @Override
-            public void onSuccess(Collection<String> result) {
+            public void onSuccess(final Collection<String> result) {
                 _suggestions.clear();
                 if (result == null) {
                     return;
@@ -83,20 +83,20 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
                 _suggestions.addAll(result);
             }
         });
-    };
+    }
 
     @Override
-    public void requestDefaultSuggestions(Request request, Callback callback) {
+    public void requestDefaultSuggestions(final Request request, final Callback callback) {
         requestSuggestions("", request, callback);
     }
 
     @Override
-    public void requestSuggestions(Request request, Callback callback) {
-        String query = request.getQuery();
+    public void requestSuggestions(final Request request, final Callback callback) {
+        final String query = request.getQuery();
         requestSuggestions(query, request, callback);
     }
 
-    private void requestSuggestions(String query, Request request, Callback callback) {
+    private void requestSuggestions(final String query, final Request request, final Callback callback) {
         final List<Suggestion> suggestions = new ArrayList<Suggestion>();
 
         // TODO: Activate when "supportsInClause" is working properly
@@ -106,7 +106,7 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
         // suggestions.add(new Suggestion("NOT IN " + _suggestions.toString()));
         // }
 
-        for (String suggestionWord : _suggestions) {
+        for (final String suggestionWord : _suggestions) {
             if (suggestionWord.toLowerCase().startsWith(query.toLowerCase())) {
                 suggestions.add(new Suggestion(suggestionWord));
             }

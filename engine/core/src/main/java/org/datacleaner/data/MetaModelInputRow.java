@@ -52,27 +52,27 @@ public final class MetaModelInputRow extends AbstractLegacyAwareInputRow {
     private final Row _row;
     private final long _id;
 
-    public MetaModelInputRow(long rowNumber, Row row) {
+    public MetaModelInputRow(final long rowNumber, final Row row) {
         _id = rowNumber;
         _row = row;
     }
-    
+
     @Override
     protected String getFieldNameForNewId() {
         return "_id";
     }
-    
+
     @Override
     protected String getFieldNameForOldId() {
         return "_rowNumber";
     }
-    
+
     @Override
     protected Collection<String> getFieldNamesInAdditionToId() {
         return Arrays.asList("_row");
     }
-    
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         doReadObject(stream);
     }
 
@@ -86,15 +86,15 @@ public final class MetaModelInputRow extends AbstractLegacyAwareInputRow {
     }
 
     @Override
-    public boolean containsInputColumn(InputColumn<?> inputColumn) {
+    public boolean containsInputColumn(final InputColumn<?> inputColumn) {
         if (!inputColumn.isPhysicalColumn()) {
             return false;
         }
-        Column physicalColumn = inputColumn.getPhysicalColumn();
-        SelectItem[] selectItems = _row.getSelectItems();
-        for (SelectItem selectItem : selectItems) {
+        final Column physicalColumn = inputColumn.getPhysicalColumn();
+        final SelectItem[] selectItems = _row.getSelectItems();
+        for (final SelectItem selectItem : selectItems) {
             if (selectItem.getColumn() != null && selectItem.getAggregateFunction() == null) {
-                Column column = selectItem.getColumn();
+                final Column column = selectItem.getColumn();
                 if (physicalColumn.equals(column)) {
                     return true;
                 }
@@ -105,11 +105,11 @@ public final class MetaModelInputRow extends AbstractLegacyAwareInputRow {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E> E getValueInternal(InputColumn<E> column) {
+    public <E> E getValueInternal(final InputColumn<E> column) {
         if (!column.isPhysicalColumn()) {
             return null;
         }
-        Column physicalColumn = column.getPhysicalColumn();
+        final Column physicalColumn = column.getPhysicalColumn();
         Object value = _row.getValue(physicalColumn);
 
         value = convertValue(value);
@@ -120,25 +120,25 @@ public final class MetaModelInputRow extends AbstractLegacyAwareInputRow {
     private Object convertValue(Object value) {
         if (value instanceof Clob) {
             try {
-                Reader reader = ((Clob) value).getCharacterStream();
+                final Reader reader = ((Clob) value).getCharacterStream();
                 try {
                     value = FileHelper.readAsString(reader);
                 } finally {
                     FileHelper.safeClose(reader);
                 }
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 logger.error("Failed to convert CLOB to String", e);
                 value = null;
             }
         } else if (value instanceof Blob) {
             try {
-                InputStream inputStream = ((Blob) value).getBinaryStream();
+                final InputStream inputStream = ((Blob) value).getBinaryStream();
                 try {
                     value = FileHelper.readAsBytes(inputStream);
                 } finally {
                     FileHelper.safeClose(inputStream);
                 }
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 logger.error("Failed to convert BLOB to byte[]", e);
                 value = null;
             }
@@ -153,9 +153,9 @@ public final class MetaModelInputRow extends AbstractLegacyAwareInputRow {
 
     @Override
     public List<InputColumn<?>> getInputColumns() {
-        List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
-        SelectItem[] selectItems = _row.getSelectItems();
-        for (SelectItem selectItem : selectItems) {
+        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        final SelectItem[] selectItems = _row.getSelectItems();
+        for (final SelectItem selectItem : selectItems) {
             if (selectItem.getColumn() != null && selectItem.getAggregateFunction() == null) {
                 result.add(new MetaModelInputColumn(selectItem.getColumn()));
             }

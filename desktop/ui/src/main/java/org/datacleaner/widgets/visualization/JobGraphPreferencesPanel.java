@@ -52,7 +52,7 @@ public class JobGraphPreferencesPanel extends DCPanel {
     private final UserPreferences _userPreferences;
     private final JobGraph _jobGraph;
 
-    public JobGraphPreferencesPanel(UserPreferences userPreferences, JobGraph jobGraph) {
+    public JobGraphPreferencesPanel(final UserPreferences userPreferences, final JobGraph jobGraph) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         setBorder(null);
         setLayout(new HorizontalLayout(4));
@@ -87,10 +87,10 @@ public class JobGraphPreferencesPanel extends DCPanel {
         final JToggleButton toggle = new JToggleButton("Show hints", icon, true);
         WidgetUtils.setDefaultButtonStyle(toggle);
         toggle.setMargin(WidgetUtils.INSETS_EMPTY);
-        
+
         toggle.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final String existingValue = _userPreferences.getAdditionalProperties().get(
                         JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
                 final String newValue;
@@ -109,7 +109,7 @@ public class JobGraphPreferencesPanel extends DCPanel {
         return toggle;
     }
 
-    protected void updateToggleText(JToggleButton toggle) {
+    protected void updateToggleText(final JToggleButton toggle) {
         final String showHints = _userPreferences.getAdditionalProperties().get(
                 JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
         if (showHints == null || "true".equals(showHints)) {
@@ -123,7 +123,7 @@ public class JobGraphPreferencesPanel extends DCPanel {
         final JButton button = WidgetFactory.createSmallButton(imagePath);
         button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final String factorString = _userPreferences.getAdditionalProperties().get(
                         JobGraphTransformers.USER_PREFERENCES_PROPERTY_FONT_SIZE_FACTOR);
                 final float existingFactor;
@@ -146,7 +146,7 @@ public class JobGraphPreferencesPanel extends DCPanel {
         final JButton button = WidgetFactory.createSmallButton(imagePath);
         button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 _userPreferences.getAdditionalProperties().put(
                         JobGraphTransformers.USER_PREFERENCES_PROPERTY_EDGE_STYLE, typeName);
                 _jobGraph.refresh();
@@ -155,8 +155,8 @@ public class JobGraphPreferencesPanel extends DCPanel {
         return button;
     }
 
-    private void addLabel(String text) {
-        DCLabel label = DCLabel.dark(text);
+    private void addLabel(final String text) {
+        final DCLabel label = DCLabel.dark(text);
         label.setVerticalAlignment(SwingConstants.BOTTOM);
         add(label);
     }

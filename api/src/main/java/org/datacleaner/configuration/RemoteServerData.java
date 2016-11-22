@@ -21,16 +21,16 @@ package org.datacleaner.configuration;
 
 /**
  * Box for data about remote server
- * 
+ *
  * @since 15. 10. 2015
  */
 public interface RemoteServerData {
 
-    public String getServerName();
+    String getServerName();
 
-    public String getUrl();
+    String getUrl();
 
-    public String getUsername();
+    String getUsername();
 
-    public String getPassword();
+    String getPassword();
 }

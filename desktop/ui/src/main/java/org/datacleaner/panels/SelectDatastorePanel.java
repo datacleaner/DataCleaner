@@ -52,7 +52,8 @@ public class SelectDatastorePanel extends DCPanel {
             add(newDatastoreLabel);
         }
 
-        add(new AddDatastorePanel(datastoreCatalog, serverInformationCatalog, databaseDriverCatalog, dcModule, datastoreSelectListener, userPreferences,
+        add(new AddDatastorePanel(datastoreCatalog, serverInformationCatalog, databaseDriverCatalog, dcModule,
+                datastoreSelectListener, userPreferences,
                 !showExistingDatastoresAsLongList));
 
         if (showExistingDatastoresAsLongList) {

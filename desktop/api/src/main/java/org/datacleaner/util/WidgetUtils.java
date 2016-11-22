@@ -87,7 +87,7 @@ public final class WidgetUtils {
     public static final Font FONT_UBUNTU_ITALIC;
     @Deprecated
     public static final Font FONT_UBUNTU_BOLD_ITALIC;
-    
+
     @Deprecated
     public static final Font FONT_OPENSANS_PLAIN;
     @Deprecated
@@ -96,7 +96,7 @@ public final class WidgetUtils {
     public static final Font FONT_OPENSANS_ITALIC;
     @Deprecated
     public static final Font FONT_OPENSANS_BOLD_ITALIC;
-    
+
     private static final Font FONT_MULI_PLAIN;
     private static final Font FONT_MULI_BOLD;
     private static final Font FONT_MULI_LIGHT;
@@ -109,13 +109,13 @@ public final class WidgetUtils {
     static {
         fonts = new HashMap<String, Font>();
 
-        Font[] fontArray = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-        for (Font font : fontArray) {
+        final Font[] fontArray = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+        for (final Font font : fontArray) {
             if (font.isPlain()) {
                 fonts.put(font.getName(), font);
             }
         }
-        
+
         FONT_MULI_PLAIN = createFont("fonts/Muli.ttf");
         FONT_MULI_BOLD = createFont("fonts/Muli-Bold.ttf");
         FONT_MULI_LIGHT = createFont("fonts/Muli-Light.ttf");
@@ -154,7 +154,7 @@ public final class WidgetUtils {
     public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(5, 185, 240);
     public static final Color BG_COLOR_BLUE_BRIGHT = slightlyBrighter(BG_COLOR_BLUE_MEDIUM);
     public static final Color BG_COLOR_BLUE_DARK = slightlyDarker(BG_COLOR_BLUE_MEDIUM);
-    
+
     // green base color of DC styling (#70be44)
     public static final Color BG_COLOR_GREEN_MEDIUM = new ColorUIResource(122, 190, 68);
     public static final Color BG_COLOR_GREEN_BRIGHT = slightlyBrighter(BG_COLOR_GREEN_MEDIUM);
@@ -197,7 +197,7 @@ public final class WidgetUtils {
 
     // additional colors, only intended for special widget coloring such as
     // charts etc.
-    
+
     // Green: #70be44
     @Deprecated
     public static final Color ADDITIONAL_COLOR_GREEN_BRIGHT = BG_COLOR_GREEN_MEDIUM;
@@ -215,7 +215,8 @@ public final class WidgetUtils {
 
     public static final Border BORDER_SHADOW = new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, 6);
 
-    public static final Border BORDER_WIDE_ALTERNATIVE = new LineBorder(COLOR_ALTERNATIVE_BACKGROUND, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_WIDE_ALTERNATIVE =
+            new LineBorder(COLOR_ALTERNATIVE_BACKGROUND, BORDER_WIDE_WIDTH);
     public static final Border BORDER_WIDE_DEFAULT = new LineBorder(COLOR_DEFAULT_BACKGROUND, BORDER_WIDE_WIDTH);
     public static final Border BORDER_WIDE_WELL = new LineBorder(COLOR_WELL_BACKGROUND, BORDER_WIDE_WIDTH);
 
@@ -262,7 +263,7 @@ public final class WidgetUtils {
 
     public static final Border BORDER_BUTTON_DEFAULT = new CompoundBorder(
             new LineBorder(BG_COLOR_LESS_BRIGHT, 1, false), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9,
-                    BORDER_WIDE_WIDTH - 1, 9));
+            BORDER_WIDE_WIDTH - 1, 9));
     public static final Border BORDER_BUTTON_PRIMARY = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
 
     public static final Object BORDER_MENU_ITEM = new EmptyBorder(2, 2, 2, 2);
@@ -301,10 +302,10 @@ public final class WidgetUtils {
      * Invokes a {@link Runnable} as soon as possible. If this is the swing
      * event dispatch thread, it will be run now, or else later using
      * {@link SwingUtilities#invokeLater(Runnable)}
-     * 
+     *
      * @param runnable
      */
-    public static void invokeSwingAction(Runnable runnable) {
+    public static void invokeSwingAction(final Runnable runnable) {
         if (SwingUtilities.isEventDispatchThread()) {
             runnable.run();
         } else {
@@ -312,7 +313,7 @@ public final class WidgetUtils {
         }
     }
 
-    private static Font createFont(String path) {
+    private static Font createFont(final String path) {
         final URL url = ResourceManager.get().getUrl(path);
         if (url == null) {
             throw new IllegalArgumentException("Font resource not found: " + path);
@@ -322,14 +323,14 @@ public final class WidgetUtils {
         try {
             in = url.openStream();
             return Font.createFont(Font.TRUETYPE_FONT, in);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         } finally {
             FileHelper.safeClose(in);
         }
     }
 
-    public static void centerOnScreen(Component component) {
+    public static void centerOnScreen(final Component component) {
         final Dimension paneSize = component.getSize();
         final Dimension screenSize = component.getToolkit().getScreenSize();
         component.setLocation((screenSize.width - paneSize.width) / 2, (screenSize.height - paneSize.height) / 2);
@@ -337,7 +338,7 @@ public final class WidgetUtils {
 
     /**
      * Adds a component to a panel with a grid bag layout
-     * 
+     *
      * @param comp
      * @param panel
      * @param gridx
@@ -346,19 +347,19 @@ public final class WidgetUtils {
      * @param height
      * @param anchor
      */
-    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
-            int anchor) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int width, final int height,
+            final int anchor) {
         addToGridBag(comp, panel, gridx, gridy, width, height, anchor, DEFAULT_PADDING);
     }
 
-    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
-            int anchor, int padding) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int width, final int height,
+            final int anchor, final int padding) {
         addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, 0.0, 0.0);
     }
 
     /**
      * Adds a component to a panel with a grid bag layout
-     * 
+     *
      * @param comp
      * @param panel
      * @param gridx
@@ -368,14 +369,14 @@ public final class WidgetUtils {
      * @param anchor
      * @param padding
      */
-    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
-            int anchor, int padding, double weightx, double weighty) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int width, final int height,
+            final int anchor, final int padding, final double weightx, final double weighty) {
         addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, weightx, weighty,
                 GridBagConstraints.HORIZONTAL);
     }
 
-    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
-            int anchor, int padding, double weightx, double weighty, int fill) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int width, final int height,
+            final int anchor, final int padding, final double weightx, final double weighty, final int fill) {
         LayoutManager layout = panel.getLayout();
         if (!(layout instanceof GridBagLayout)) {
             layout = new GridBagLayout();
@@ -398,7 +399,7 @@ public final class WidgetUtils {
 
     /**
      * Adds a component to a panel with a grid bag layout
-     * 
+     *
      * @param comp
      * @param panel
      * @param gridx
@@ -406,45 +407,46 @@ public final class WidgetUtils {
      * @param width
      * @param height
      */
-    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int width, final int height) {
         addToGridBag(comp, panel, gridx, gridy, width, height, DEFAULT_ANCHOR);
     }
 
-    public static void addToGridBag(Component comp, JPanel panel, int x, int y, int anchor, double weightx,
-            double weighty) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int x, final int y, final int anchor, final double weightx,
+            final double weighty) {
         addToGridBag(comp, panel, x, y, 1, 1, anchor, DEFAULT_PADDING, weightx, weighty);
     }
 
     /**
      * Adds a component to a panel with a grid bag layout
-     * 
+     *
      * @param comp
      * @param panel
      * @param gridx
      * @param gridy
      */
-    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy) {
         addToGridBag(comp, panel, gridx, gridy, 1, 1);
     }
 
-    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, double weightx, double weighty) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final double weightx,
+            final double weighty) {
         addToGridBag(comp, panel, gridx, gridy, 1, 1, DEFAULT_ANCHOR, DEFAULT_PADDING, weightx, weighty);
     }
 
     /**
      * Adds a component to a panel with a grid bag layout
-     * 
+     *
      * @param comp
      * @param panel
      * @param gridx
      * @param gridy
      * @param anchor
      */
-    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int anchor) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int anchor) {
         addToGridBag(comp, panel, gridx, gridy, 1, 1, anchor);
     }
 
-    public static void addAligned(Container container, JComponent component) {
+    public static void addAligned(final Container container, final JComponent component) {
         component.setAlignmentX(Component.LEFT_ALIGNMENT);
         component.setAlignmentY(Component.TOP_ALIGNMENT);
         container.add(component);
@@ -487,7 +489,7 @@ public final class WidgetUtils {
     }
 
     public static void showErrorMessage(final String shortMessage, final Throwable exception) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         Throwable e = exception;
         while (e != null) {
             if (sb.length() != 0) {
@@ -528,25 +530,25 @@ public final class WidgetUtils {
 
     /**
      * Creates a color that is in between two colors, in terms of RGB balance.
-     * 
+     *
      * @param c1
      * @param c2
      * @return
      */
-    public static Color colorBetween(Color c1, Color c2) {
-        int red = (c1.getRed() + c2.getRed()) / 2;
-        int green = (c1.getGreen() + c2.getGreen()) / 2;
-        int blue = (c1.getBlue() + c2.getBlue()) / 2;
+    public static Color colorBetween(final Color c1, final Color c2) {
+        final int red = (c1.getRed() + c2.getRed()) / 2;
+        final int green = (c1.getGreen() + c2.getGreen()) / 2;
+        final int blue = (c1.getBlue() + c2.getBlue()) / 2;
         return new Color(red, green, blue);
     }
 
     /**
      * Moderated version of Color.darker()
-     * 
+     *
      * @param color
      * @return
      */
-    public static Color slightlyDarker(Color color) {
+    public static Color slightlyDarker(final Color color) {
         return new Color(Math.max((int) (color.getRed() * COLOR_SCALE_FACTOR), 0), Math.max(
                 (int) (color.getGreen() * COLOR_SCALE_FACTOR), 0), Math.max(
                 (int) (color.getBlue() * COLOR_SCALE_FACTOR), 0));
@@ -554,11 +556,11 @@ public final class WidgetUtils {
 
     /**
      * Moderated version of Color.brighter()
-     * 
+     *
      * @param color
      * @return
      */
-    public static Color slightlyBrighter(Color color) {
+    public static Color slightlyBrighter(final Color color) {
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
@@ -568,32 +570,35 @@ public final class WidgetUtils {
          * brighter to blue will always return blue, brighter 3. non pure color
          * (non zero rgb) will eventually return white
          */
-        int i = (int) (1.0 / (1.0 - COLOR_SCALE_FACTOR));
+        final int i = (int) (1.0 / (1.0 - COLOR_SCALE_FACTOR));
         if (r == 0 && g == 0 && b == 0) {
             return new Color(i, i, i);
         }
 
-        if (r > 0 && r < i)
+        if (r > 0 && r < i) {
             r = i;
-        if (g > 0 && g < i)
+        }
+        if (g > 0 && g < i) {
             g = i;
-        if (b > 0 && b < i)
+        }
+        if (b > 0 && b < i) {
             b = i;
+        }
 
         return new Color(Math.min((int) (r / COLOR_SCALE_FACTOR), 255), Math.min((int) (g / COLOR_SCALE_FACTOR), 255),
                 Math.min((int) (b / COLOR_SCALE_FACTOR), 255));
     }
 
-    public static String extractText(Component comp) {
+    public static String extractText(final Component comp) {
         if (comp instanceof JLabel) {
             return ((JLabel) comp).getText();
         } else if (comp instanceof JTextComponent) {
             return ((JTextComponent) comp).getText();
         } else if (comp instanceof Container) {
-            Component[] children = ((Container) comp).getComponents();
-            StringBuilder sb = new StringBuilder();
-            for (Component child : children) {
-                String text = extractText(child);
+            final Component[] children = ((Container) comp).getComponents();
+            final StringBuilder sb = new StringBuilder();
+            for (final Component child : children) {
+                final String text = extractText(child);
                 if (!StringUtils.isNullOrEmpty(text)) {
                     if (sb.length() > 0) {
                         sb.append(' ');
@@ -608,7 +613,7 @@ public final class WidgetUtils {
         return "";
     }
 
-    public static DCPanel decorateWithShadow(JComponent comp) {
+    public static DCPanel decorateWithShadow(final JComponent comp) {
         final boolean outline;
         if (comp instanceof DCTablePanel) {
             // table panels has it's own special outline
@@ -624,14 +629,14 @@ public final class WidgetUtils {
      * Decorates a JComponent with a nice shadow border. Since not all
      * JComponents handle opacity correctly, they will be wrapped inside a
      * DCPanel, which actually has the border.
-     * 
+     *
      * @param comp
      * @param outline
      * @param margin
      * @return
      */
-    public static DCPanel decorateWithShadow(JComponent comp, boolean outline, int margin) {
-        DCPanel panel = new DCPanel();
+    public static DCPanel decorateWithShadow(final JComponent comp, final boolean outline, final int margin) {
+        final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());
         Border border = BORDER_SHADOW;
         if (outline) {
@@ -647,17 +652,17 @@ public final class WidgetUtils {
 
     /**
      * Finds a font that is capable of displaying the provided text.
-     * 
+     *
      * @param text
      *            the text to display.
      * @param fallbackFont
      *            the font to fall back to in case no capable font was found
      * @return a font suitable for displaying the text
      */
-    public static Font findCompatibleFont(String text, Font fallbackFont) {
+    public static Font findCompatibleFont(final String text, final Font fallbackFont) {
         final String[] searchFonts = new String[] { Font.SANS_SERIF, Font.SERIF, "Verdana", "Arial Unicode MS",
                 "MS UI Gothic", "MS Mincho", "MS Gothic", "Osaka" };
-        for (String fontName : searchFonts) {
+        for (final String fontName : searchFonts) {
             Font font = fonts.get(fontName);
             if (font == null) {
                 font = new Font(fontName, fallbackFont.getStyle(), fallbackFont.getSize());
@@ -674,13 +679,13 @@ public final class WidgetUtils {
         return fallbackFont;
     }
 
-    public static void setAppropriateFont(JLabel label) {
-        String text = label.getText();
+    public static void setAppropriateFont(final JLabel label) {
+        final String text = label.getText();
         if (text == null) {
             return;
         }
         Font font = label.getFont();
-        int canDisplay = font.canDisplayUpTo(text);
+        final int canDisplay = font.canDisplayUpTo(text);
         if (canDisplay != -1) {
             logger.info("Default font ('{}') was unable to display text ('{}'), searching for alternative.",
                     font.getName(), text);
@@ -692,11 +697,11 @@ public final class WidgetUtils {
         }
     }
 
-    public static void setPrimaryButtonStyle(AbstractButton b) {
+    public static void setPrimaryButtonStyle(final AbstractButton b) {
         b.setUI(PrimaryButtonUI.get());
     }
 
-    public static void setDarkButtonStyle(AbstractButton b) {
+    public static void setDarkButtonStyle(final AbstractButton b) {
         if (b instanceof JToggleButton) {
             b.setUI(DarkToggleButtonUI.get());
         } else {
@@ -704,7 +709,7 @@ public final class WidgetUtils {
         }
     }
 
-    public static void setDefaultButtonStyle(AbstractButton b) {
+    public static void setDefaultButtonStyle(final AbstractButton b) {
         if (b instanceof JToggleButton) {
             b.setUI(DefaultToggleButtonUI.get());
         } else {

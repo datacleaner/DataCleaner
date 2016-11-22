@@ -38,15 +38,15 @@ public class DarkToggleButtonUI extends MetalToggleButtonUI {
 
     private static final DarkToggleButtonUI INSTANCE = new DarkToggleButtonUI();
 
+    private DarkToggleButtonUI() {
+    }
+
     public static DarkToggleButtonUI get() {
         return INSTANCE;
     }
 
-    private DarkToggleButtonUI() {
-    }
-
     @Override
-    public void installDefaults(AbstractButton b) {
+    public void installDefaults(final AbstractButton b) {
         super.installDefaults(b);
         b.setFont(WidgetUtils.FONT_BUTTON);
         b.setBackground(COLOR_BG_DEFAULT);
@@ -55,7 +55,7 @@ public class DarkToggleButtonUI extends MetalToggleButtonUI {
         b.setBorder(WidgetUtils.BORDER_BUTTON_DARK);
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
-    
+
     @Override
     protected Color getSelectColor() {
         return COLOR_BG_SELECT;

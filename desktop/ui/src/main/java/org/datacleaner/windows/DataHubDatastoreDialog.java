@@ -69,10 +69,12 @@ import com.google.inject.Inject;
 
 public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatastore> {
 
+    public static class UserInfo {
+        public String username;
+        public String tenant;
+    }
     private static final Logger LOGGER = LoggerFactory.getLogger(DataHubDatastoreDialog.class);
-
     private static final long serialVersionUID = 1L;
-
     private final JXTextField _hostTextField;
     private final JXTextField _portTextField;
     private final JCheckBox _httpsCheckBox;
@@ -83,36 +85,9 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
     private final JButton _testButton;
     private final DCLabel _urlLabel;
 
-    public static class UserInfo {
-        public String username;
-        public String tenant;
-    }
-
-    public DataHubRepoConnection createConnection() {
-        int port = 8080;
-        try {
-            port = Integer.parseInt(_portTextField.getText());
-        } catch (NumberFormatException e) {
-            // do nothing, fall back to 8080.
-        }
-
-        final String username = _usernameTextField.getText();
-        final String password = new String(_passwordTextField.getPassword());
-
-        return new DataHubRepoConnection(new DataHubConnection(_hostTextField.getText(), port, username, password,
-                _httpsCheckBox.isSelected(),
-                _acceptUnverifiedSslPeersCheckBox.isSelected(), DataHubSecurityMode.valueOf(_securityModeSelector
-                        .getSelectedItem().toString())));
-    }
-
-    private void updateUrlLabel() {
-        final DataHubRepoConnection connection = createConnection();
-        _urlLabel.setText("Repository url: " + connection.getRepoUrl());
-    }
-
     @Inject
-    public DataHubDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
-            @Nullable DataHubDatastore originalDatastore, UserPreferences userPreferences) {
+    public DataHubDatastoreDialog(final WindowContext windowContext, final MutableDatastoreCatalog datastoreCatalog,
+            @Nullable final DataHubDatastore originalDatastore, final UserPreferences userPreferences) {
         super(originalDatastore, datastoreCatalog, windowContext, userPreferences);
 
         _hostTextField = WidgetFactory.createTextField("Hostname");
@@ -131,7 +106,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
 
         final DCDocumentListener genericDocumentListener = new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
                 updateUrlLabel();
             }
@@ -142,7 +117,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _httpsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _httpsCheckBox.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
+            public void actionPerformed(final ActionEvent event) {
                 updateUrlLabel();
                 validateAndUpdate();
             }
@@ -153,18 +128,18 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _acceptUnverifiedSslPeersCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _acceptUnverifiedSslPeersCheckBox.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
+            public void actionPerformed(final ActionEvent event) {
                 validateAndUpdate();
             }
         });
-        
+
         _hostTextField.getDocument().addDocumentListener(genericDocumentListener);
         _portTextField.getDocument().addDocumentListener(genericDocumentListener);
         _usernameTextField.getDocument().addDocumentListener(genericDocumentListener);
         _passwordTextField.getDocument().addDocumentListener(genericDocumentListener);
         _securityModeSelector.addItemListener(new ItemListener() {
             @Override
-            public void itemStateChanged(ItemEvent e) {
+            public void itemStateChanged(final ItemEvent e) {
                 validateAndUpdate();
                 updateUrlLabel();
             }
@@ -174,7 +149,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _testButton = WidgetFactory.createDefaultButton("Test connection", IconUtils.ACTION_REFRESH);
         _testButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
+            public void actionPerformed(final ActionEvent event) {
                 final DataHubRepoConnection connection = createConnection();
                 final String getTenantInfoUrl = connection.getUserInfoUrl();
                 final HttpGet request = new HttpGet(getTenantInfoUrl);
@@ -200,7 +175,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
                         WidgetUtils.showErrorMessage("Server reported error", "Server replied with status "
                                 + statusLine.getStatusCode() + ":\n" + reasonPhrase);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // TODO: This dialog is shown behind the modal dialog
                     WidgetUtils.showErrorMessage("Connection failed",
                             "Connecting to DataHub failed. Did you remember to fill in all the necessary fields?", e);
@@ -226,11 +201,33 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
 
             _usernameTextField.setText(originalDatastore.getUsername());
             _passwordTextField.setText(originalDatastore.getPassword());
-         } else {
+        } else {
             _hostTextField.setText("localhost");
             _portTextField.setText("8080");
         }
         updateUrlLabel();
+    }
+
+    public DataHubRepoConnection createConnection() {
+        int port = 8080;
+        try {
+            port = Integer.parseInt(_portTextField.getText());
+        } catch (final NumberFormatException e) {
+            // do nothing, fall back to 8080.
+        }
+
+        final String username = _usernameTextField.getText();
+        final String password = new String(_passwordTextField.getPassword());
+
+        return new DataHubRepoConnection(new DataHubConnection(_hostTextField.getText(), port, username, password,
+                _httpsCheckBox.isSelected(),
+                _acceptUnverifiedSslPeersCheckBox.isSelected(), DataHubSecurityMode.valueOf(_securityModeSelector
+                .getSelectedItem().toString())));
+    }
+
+    private void updateUrlLabel() {
+        final DataHubRepoConnection connection = createConnection();
+        _urlLabel.setText("Repository url: " + connection.getRepoUrl());
     }
 
     @Override
@@ -247,12 +244,12 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
             return false;
         } else {
             try {
-                int portInt = Integer.parseInt(port);
+                final int portInt = Integer.parseInt(port);
                 if (portInt <= 0) {
                     setStatusError("Please enter a valid (positive port number)");
                     return false;
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 setStatusError("Please enter a valid port number");
                 return false;
             }
@@ -313,7 +310,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
 
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
-        List<Entry<String, JComponent>> result = super.getFormElements();
+        final List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<String, JComponent>("DataHub hostname", _hostTextField));
         result.add(new ImmutableEntry<String, JComponent>("DataHub port", _portTextField));
         result.add(new ImmutableEntry<String, JComponent>("", _httpsCheckBox));
@@ -326,11 +323,11 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         return result;
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         LookAndFeelManager.get().init();
-        UserPreferences userPreferences = new UserPreferencesImpl(null);
-        WindowContext windowContext = new DCWindowContext(null, userPreferences, null);
-        DataHubDatastoreDialog dialog = new DataHubDatastoreDialog(windowContext, null, null, userPreferences);
+        final UserPreferences userPreferences = new UserPreferencesImpl(null);
+        final WindowContext windowContext = new DCWindowContext(null, userPreferences, null);
+        final DataHubDatastoreDialog dialog = new DataHubDatastoreDialog(windowContext, null, null, userPreferences);
 
         dialog.open();
     }

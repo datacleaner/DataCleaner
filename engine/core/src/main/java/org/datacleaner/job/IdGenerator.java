@@ -25,5 +25,5 @@ package org.datacleaner.job;
  */
 public interface IdGenerator {
 
-    public String nextId();
+    String nextId();
 }

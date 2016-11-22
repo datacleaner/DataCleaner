@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this distribution; if not, write to: Free Software Foundation,
  * Inc. 51 Franklin Street, Fifth Floor Boston, MA 02110-1301 USA
- * 
+ *
  */
 package org.datacleaner.extensions;
 
@@ -34,21 +34,21 @@ public class CompoundClassLoader extends ClassLoader {
 
     /**
      * Constructor initializes the class loaders to scan.
-     * 
+     *
      * @param loaders
      *            The class loaders that will be searched.
      */
-    public CompoundClassLoader(Collection<ClassLoader> loaders) {
+    public CompoundClassLoader(final Collection<ClassLoader> loaders) {
         this.loaders = new ArrayList<ClassLoader>(loaders);
     }
 
     @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
+    public Class<?> loadClass(final String name) throws ClassNotFoundException {
         return this.loadClass(name, false);
     }
 
     @Override
-    public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+    public Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
         Class<?> class1 = null;
         if (class1 == null) {
             // already loaded?
@@ -59,9 +59,9 @@ public class CompoundClassLoader extends ClassLoader {
         }
         return class1;
     }
-    
+
     @Override
-    public URL getResource(String name) {
+    public URL getResource(final String name) {
         URL url = null;
         for (final ClassLoader cl : this.loaders) {
             if (url != null) {
@@ -71,14 +71,14 @@ public class CompoundClassLoader extends ClassLoader {
         }
         return url;
     }
-    
+
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
         return new Enumeration<URL>() {
-            
+
             private final URL resource = getResource(name);
             private boolean checked = false;
-            
+
             @Override
             public boolean hasMoreElements() {
                 if (resource == null) {
@@ -90,7 +90,7 @@ public class CompoundClassLoader extends ClassLoader {
                 }
                 return false;
             }
-            
+
             @Override
             public URL nextElement() {
                 return resource;
@@ -98,7 +98,7 @@ public class CompoundClassLoader extends ClassLoader {
         };
     }
 
-    private Class<?> locateClass(String name) {
+    private Class<?> locateClass(final String name) {
         Class<?> result = null;
         for (final ClassLoader cl : this.loaders) {
             if (result != null) {
@@ -106,7 +106,7 @@ public class CompoundClassLoader extends ClassLoader {
             }
             try {
                 result = cl.loadClass(name);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 // Ignore - try the next class loader.
             }
         }

@@ -21,10 +21,10 @@ package org.datacleaner.beans.filter;
 
 /**
  * Defines available criteria for matching filters
- * 
- * 
+ *
+ *
  */
 public enum MatchFilterCriteria {
 
-	ANY, ALL
+    ANY, ALL
 }

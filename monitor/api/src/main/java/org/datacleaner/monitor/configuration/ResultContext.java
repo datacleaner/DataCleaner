@@ -19,9 +19,9 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.result.AnalysisResult;
 
 /**
  * Represents the context of an analysis result stored in the repository.
@@ -30,27 +30,27 @@ public interface ResultContext {
 
     /**
      * Reads and materializes the analysis result.
-     * 
+     *
      * @return
      * @throws IllegalStateException
      *             if an exception occurs while reading or materializing the
      *             analysis result
      */
-    public AnalysisResult getAnalysisResult() throws IllegalStateException;
+    AnalysisResult getAnalysisResult() throws IllegalStateException;
 
     /**
      * Gets the file in the repository that holds this analysis result.
-     * 
+     *
      * @return
      */
-    public RepositoryFile getResultFile();
+    RepositoryFile getResultFile();
 
     /**
      * Gets the job that produced this result (if available).
-     * 
+     *
      * @return the job that produced this result, or null if that job is not
      *         available.
      */
-    public JobContext getJob();
+    JobContext getJob();
 
 }

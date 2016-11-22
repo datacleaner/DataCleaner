@@ -30,7 +30,7 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 
 final class DatastoreDictionaryReferenceDataPageDatastore extends DatastorePageDatastore {
 
-    public DatastoreDictionaryReferenceDataPageDatastore(DatastoreWizardSession session) {
+    public DatastoreDictionaryReferenceDataPageDatastore(final DatastoreWizardSession session) {
         super(session);
     }
 
@@ -46,10 +46,10 @@ final class DatastoreDictionaryReferenceDataPageDatastore extends DatastorePageD
         final String datastore = getString(formParameters, PROPERTY_DATASTORE);
         ReferenceDataHelper.checkUniqueDictionary(name, _session.getWizardContext().getTenantContext()
                 .getConfiguration().getReferenceDataCatalog());
-        
+
         _session.setName(name);
         _session.setDatastore(datastore);
-        
+
         return new DatastoreDictionaryReferenceDataPageSchema(_session);
     }
 }

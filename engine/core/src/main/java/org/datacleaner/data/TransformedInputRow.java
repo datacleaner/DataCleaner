@@ -48,41 +48,25 @@ public final class TransformedInputRow extends AbstractLegacyAwareInputRow {
     private final long _id;
 
     /**
-     * Constructs a {@link TransformedInputRow} based on another row, or returns
-     * the row if it is already a {@link TransformedInputRow}.
-     * 
-     * @param row
-     * @return
-     */
-    public static TransformedInputRow of(InputRow row) {
-        if (row instanceof TransformedInputRow) {
-            // re-use existing transformed input row.
-            return (TransformedInputRow) row;
-        } else {
-            return new TransformedInputRow(row, row.getId());
-        }
-    }
-
-    /**
      * Constructs a {@link TransformedInputRow} based on another row.
-     * 
+     *
      * @param delegate
-     * 
+     *
      * @deprecated use {@link TransformedInputRow#of(InputRow)} instead
      */
     @Deprecated
-    public TransformedInputRow(InputRow delegate) {
+    public TransformedInputRow(final InputRow delegate) {
         this(delegate, null);
     }
 
     /**
      * Constructs a {@link TransformedInputRow} based on another row and a row
      * ID.
-     * 
+     *
      * @param delegate
      * @param rowId
      */
-    public TransformedInputRow(InputRow delegate, Number rowId) {
+    public TransformedInputRow(final InputRow delegate, final Number rowId) {
         if (delegate == null) {
             throw new IllegalArgumentException("Delegate cannot be null");
         }
@@ -95,13 +79,29 @@ public final class TransformedInputRow extends AbstractLegacyAwareInputRow {
         _values = new LinkedHashMap<InputColumn<?>, Object>();
     }
 
-    public TransformedInputRow(InputRow delegate, long rowId) {
+    public TransformedInputRow(final InputRow delegate, final long rowId) {
         if (delegate == null) {
             throw new IllegalArgumentException("Delegate cannot be null");
         }
         _delegate = delegate;
         _id = rowId;
         _values = new LinkedHashMap<InputColumn<?>, Object>();
+    }
+
+    /**
+     * Constructs a {@link TransformedInputRow} based on another row, or returns
+     * the row if it is already a {@link TransformedInputRow}.
+     *
+     * @param row
+     * @return
+     */
+    public static TransformedInputRow of(final InputRow row) {
+        if (row instanceof TransformedInputRow) {
+            // re-use existing transformed input row.
+            return (TransformedInputRow) row;
+        } else {
+            return new TransformedInputRow(row, row.getId());
+        }
     }
 
     @Override
@@ -119,7 +119,7 @@ public final class TransformedInputRow extends AbstractLegacyAwareInputRow {
         return Arrays.asList("_delegate", "_values");
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         doReadObject(stream);
     }
 
@@ -129,14 +129,14 @@ public final class TransformedInputRow extends AbstractLegacyAwareInputRow {
     }
 
     @Override
-    public boolean containsInputColumn(InputColumn<?> inputColumn) {
+    public boolean containsInputColumn(final InputColumn<?> inputColumn) {
         if (inputColumn.isVirtualColumn() && _values.containsKey(inputColumn)) {
             return true;
         }
         return _delegate.containsInputColumn(inputColumn);
     }
 
-    public void addValue(InputColumn<?> inputColumn, Object value) {
+    public void addValue(final InputColumn<?> inputColumn, final Object value) {
         if (inputColumn.isPhysicalColumn()) {
             throw new IllegalArgumentException("Cannot add physical column values to transformed InputRow.");
         }
@@ -145,7 +145,7 @@ public final class TransformedInputRow extends AbstractLegacyAwareInputRow {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E> E getValueInternal(InputColumn<E> column) {
+    public <E> E getValueInternal(final InputColumn<E> column) {
         if (column.isPhysicalColumn()) {
             logger.debug("Column is physical, delegating.");
             return _delegate.getValue(column);
@@ -162,7 +162,7 @@ public final class TransformedInputRow extends AbstractLegacyAwareInputRow {
 
     @Override
     public List<InputColumn<?>> getInputColumns() {
-        List<InputColumn<?>> inputColumns = _delegate.getInputColumns();
+        final List<InputColumn<?>> inputColumns = _delegate.getInputColumns();
         inputColumns.addAll(_values.keySet());
         return inputColumns;
     }

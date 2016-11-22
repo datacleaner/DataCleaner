@@ -102,20 +102,20 @@ public class JaxbMetricAdaptorTest extends TestCase {
         assertEquals(metric1, child1);
         assertEquals(metric2, child2);
     }
-    
+
     public void testReadMetricsList() throws Exception {
         JaxbMetricAdaptor adaptor = new JaxbMetricAdaptor();
         MetricsType metrics;
         try (FileInputStream in = new FileInputStream("src/test/resources/jaxb_metrics.xml")) {
             metrics = adaptor.read(in);
         }
-        
+
         List<MetricType> metricList = metrics.getMetric();
         assertEquals(3, metricList.size());
-        
+
         MetricType metricType = metricList.get(0);
         assertEquals("Record count", metricType.getMetricDisplayName());
-        
+
         MetricIdentifier metric = adaptor.deserialize(metricType);
         assertEquals("MetricIdentifier[analyzerInputName=null,metricDescriptorName=Row count]", metric.toString());
     }

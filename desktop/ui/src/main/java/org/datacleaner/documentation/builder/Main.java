@@ -31,14 +31,14 @@ import com.google.inject.Guice;
 
 /**
  * A simple main class for triggering documentation building.
- * 
+ *
  * Eventually we may want to integrate this into the normal CLI of DataCleaner
  * but at this stage it is experimentation-ware so keeping it separate is both
  * easier and more safe to avoid integration issues.
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         final DCModuleImpl module = new DCModuleImpl(DataCleanerHome.get());
         final DataCleanerConfiguration configuration = Guice.createInjector(module).getInstance(
                 DataCleanerConfiguration.class);
@@ -50,12 +50,12 @@ public class Main {
 
         // clean up the directory
         final List<RepositoryFile> htmlFiles = folder.getFiles(null, ".html");
-        for (RepositoryFile file : htmlFiles) {
+        for (final RepositoryFile file : htmlFiles) {
             file.delete();
         }
 
         docBuilder.writeDocumentationToRepositoryFolder(folder);
-        
+
         System.out.println("Documentation written to: " + folder.getQualifiedPath());
     }
 }

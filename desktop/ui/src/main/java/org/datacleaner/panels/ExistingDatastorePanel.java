@@ -49,7 +49,7 @@ public class ExistingDatastorePanel extends DCPanel {
 
     public void updateDatastores() {
         removeAll();
-        String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
+        final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
         for (int i = 0; i < datastoreNames.length; i++) {
             final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
             final DetailedListItemPanel datastorePanel = new DetailedListItemPanel(IconUtils.getDatastoreIcon(
@@ -57,7 +57,7 @@ public class ExistingDatastorePanel extends DCPanel {
                     DatastorePanel.getDescription(datastore));
             datastorePanel.addMouseListener(new MouseAdapter() {
                 @Override
-                public void mouseClicked(MouseEvent e) {
+                public void mouseClicked(final MouseEvent e) {
                     _datastoreSelectListener.datastoreSelected(datastore);
                 }
             });

@@ -34,7 +34,7 @@ import org.datacleaner.util.ImmutableEntry;
 /**
  * Default {@link RowAnnotationFactory} instance. Stores up to 1000 rows in an
  * in memory annotation.
- * 
+ *
  * @deprecated get your {@link RowAnnotationFactory} from the
  *             {@link DataCleanerEnvironment#getStorageProvider()} method or the
  *             {@link RowAnnotations} class instead.
@@ -45,21 +45,23 @@ public class InMemoryRowAnnotationFactory extends AbstractRowAnnotationFactory {
     private static final long serialVersionUID = 1L;
 
     // contains annotations, mapped to row-ids
-    private final Map<RowAnnotation, Set<Integer>> _annotatedRows = new ConcurrentHashMap<RowAnnotation, Set<Integer>>();
+    private final Map<RowAnnotation, Set<Integer>> _annotatedRows =
+            new ConcurrentHashMap<RowAnnotation, Set<Integer>>();
 
     // contains row id's mapped to rows mapped to distinct counts
-    private final Map<Integer, Map.Entry<InputRow, Integer>> _distinctCounts = new ConcurrentHashMap<Integer, Map.Entry<InputRow, Integer>>();
+    private final Map<Integer, Map.Entry<InputRow, Integer>> _distinctCounts =
+            new ConcurrentHashMap<Integer, Map.Entry<InputRow, Integer>>();
 
     public InMemoryRowAnnotationFactory() {
         this(1000);
     }
 
-    public InMemoryRowAnnotationFactory(int storedRowsThreshold) {
+    public InMemoryRowAnnotationFactory(final int storedRowsThreshold) {
         super(storedRowsThreshold);
     }
 
-    protected int getInMemoryRowCount(RowAnnotation annotation) {
-        Set<Integer> rows = _annotatedRows.get(annotation);
+    protected int getInMemoryRowCount(final RowAnnotation annotation) {
+        final Set<Integer> rows = _annotatedRows.get(annotation);
         if (rows == null) {
             return 0;
         }
@@ -67,29 +69,29 @@ public class InMemoryRowAnnotationFactory extends AbstractRowAnnotationFactory {
     }
 
     @Override
-    protected void resetRows(RowAnnotation annotation) {
+    protected void resetRows(final RowAnnotation annotation) {
         _annotatedRows.remove(annotation);
     }
 
     @Override
-    protected int getDistinctCount(InputRow row) {
+    protected int getDistinctCount(final InputRow row) {
         return _distinctCounts.get(row.getId()).getValue();
     }
-    
+
     @Override
-    public void annotate(InputRow row, int distinctCount, RowAnnotation annotation) {
+    public void annotate(final InputRow row, final int distinctCount, final RowAnnotation annotation) {
         for (int i = 0; i < distinctCount; i++) {
             annotate(row, annotation);
         }
     }
 
     @Override
-    protected void storeRowAnnotation(int rowId, RowAnnotation annotation) {
-        Set<Integer> rowIds = getRowIds(annotation);
+    protected void storeRowAnnotation(final int rowId, final RowAnnotation annotation) {
+        final Set<Integer> rowIds = getRowIds(annotation);
         rowIds.add(rowId);
     }
 
-    private Set<Integer> getRowIds(RowAnnotation annotation) {
+    private Set<Integer> getRowIds(final RowAnnotation annotation) {
         Set<Integer> rowIds = _annotatedRows.get(annotation);
         if (rowIds == null) {
             rowIds = Collections.synchronizedSet(new LinkedHashSet<Integer>());
@@ -99,12 +101,12 @@ public class InMemoryRowAnnotationFactory extends AbstractRowAnnotationFactory {
     }
 
     @Override
-    protected void storeRowValues(int rowId, InputRow row) {
+    protected void storeRowValues(final int rowId, final InputRow row) {
         _distinctCounts.put(rowId, new ImmutableEntry<InputRow, Integer>(row, 1));
     }
-    
+
     @Override
-    public boolean hasSampleRows(RowAnnotation annotation) {
+    public boolean hasSampleRows(final RowAnnotation annotation) {
         if (_annotatedRows.containsKey(annotation)) {
             return true;
         }
@@ -112,13 +114,13 @@ public class InMemoryRowAnnotationFactory extends AbstractRowAnnotationFactory {
     }
 
     @Override
-    public List<InputRow> getSampleRows(RowAnnotation annotation) {
+    public List<InputRow> getSampleRows(final RowAnnotation annotation) {
         final Set<Integer> rowIds = _annotatedRows.get(annotation);
         if (rowIds == null) {
             return Collections.emptyList();
         }
         final List<InputRow> rows = new ArrayList<InputRow>(rowIds.size());
-        for (Integer rowId : rowIds) {
+        for (final Integer rowId : rowIds) {
             final InputRow row = _distinctCounts.get(rowId).getKey();
             rows.add(row);
         }
@@ -126,7 +128,7 @@ public class InMemoryRowAnnotationFactory extends AbstractRowAnnotationFactory {
     }
 
     @Override
-    public void transferAnnotations(RowAnnotation from, RowAnnotation to) {
+    public void transferAnnotations(final RowAnnotation from, final RowAnnotation to) {
         final int rowCountToAdd = from.getRowCount();
         ((RowAnnotationImpl) to).incrementRowCount(rowCountToAdd);
     }

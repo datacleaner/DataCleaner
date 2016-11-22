@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link ComponentBuilder} for {@link Analyzer}s.
- * 
+ *
  * @param <A>
  *            the type of {@link Analyzer} being built.
  */
@@ -74,7 +74,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     private final ConfiguredPropertyDescriptor _escalatingInputProperty;
     private final List<AnalyzerChangeListener> _localChangeListeners;
 
-    public AnalyzerComponentBuilder(AnalysisJobBuilder analysisJobBuilder, AnalyzerDescriptor<A> descriptor) {
+    public AnalyzerComponentBuilder(final AnalysisJobBuilder analysisJobBuilder, final AnalyzerDescriptor<A> descriptor) {
         super(analysisJobBuilder, descriptor, AnalyzerComponentBuilder.class);
 
         final Set<ConfiguredPropertyDescriptor> requiredInputProperties = descriptor.getConfiguredPropertiesForInput(
@@ -96,20 +96,20 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
     /**
      * Builds a temporary list of all listeners, both global and local
-     * 
+     *
      * @return
      */
     private List<AnalyzerChangeListener> getAllListeners() {
-        @SuppressWarnings("deprecation")
+        @SuppressWarnings("deprecation") final
         List<AnalyzerChangeListener> globalChangeListeners = getAnalysisJobBuilder().getAnalyzerChangeListeners();
-        List<AnalyzerChangeListener> list = new ArrayList<>(globalChangeListeners.size() + _localChangeListeners
+        final List<AnalyzerChangeListener> list = new ArrayList<>(globalChangeListeners.size() + _localChangeListeners
                 .size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);
         return list;
     }
 
-    public boolean isMultipleJobsDeterminedBy(ConfiguredPropertyDescriptor propertyDescriptor) {
+    public boolean isMultipleJobsDeterminedBy(final ConfiguredPropertyDescriptor propertyDescriptor) {
         return _multipleJobsSupported && !propertyDescriptor.isArray() && propertyDescriptor.isInputColumn()
                 && propertyDescriptor.isRequired();
     }
@@ -118,8 +118,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         return toAnalyzerJob(true);
     }
 
-    public AnalyzerJob toAnalyzerJob(boolean validate) throws IllegalStateException {
-        AnalyzerJob[] analyzerJobs = toAnalyzerJobs(validate);
+    public AnalyzerJob toAnalyzerJob(final boolean validate) throws IllegalStateException {
+        final AnalyzerJob[] analyzerJobs = toAnalyzerJobs(validate);
 
         if (analyzerJobs == null || analyzerJobs.length == 0) {
             return null;
@@ -137,15 +137,15 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         return toAnalyzerJobs(true);
     }
 
-    public AnalyzerJob[] toAnalyzerJobs(AnalysisJobImmutabilizer immutabilizer) throws IllegalStateException {
+    public AnalyzerJob[] toAnalyzerJobs(final AnalysisJobImmutabilizer immutabilizer) throws IllegalStateException {
         return toAnalyzerJobs(true, immutabilizer);
     }
 
-    public AnalyzerJob[] toAnalyzerJobs(boolean validate) throws IllegalStateException {
+    public AnalyzerJob[] toAnalyzerJobs(final boolean validate) throws IllegalStateException {
         return toAnalyzerJobs(validate, new AnalysisJobImmutabilizer());
     }
 
-    public AnalyzerJob[] toAnalyzerJobs(boolean validate, AnalysisJobImmutabilizer immutabilizer)
+    public AnalyzerJob[] toAnalyzerJobs(final boolean validate, final AnalysisJobImmutabilizer immutabilizer)
             throws IllegalStateException {
         final Map<ConfiguredPropertyDescriptor, Object> configuredProperties = getConfiguredProperties();
 
@@ -163,8 +163,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
         final List<InputColumn<?>> tableLessColumns = new ArrayList<InputColumn<?>>();
         final Map<Table, List<InputColumn<?>>> originatingTables = new LinkedHashMap<Table, List<InputColumn<?>>>();
-        for (InputColumn<?> inputColumn : inputColumns) {
-            Table table = getAnalysisJobBuilder().getOriginatingTable(inputColumn);
+        for (final InputColumn<?> inputColumn : inputColumns) {
+            final Table table = getAnalysisJobBuilder().getOriginatingTable(inputColumn);
             if (table == null) {
                 // some columns (such as those based on an expression) don't
                 // originate from a table. They should be applied to all jobs.
@@ -184,7 +184,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             if (sourceTables.size() == 1) {
                 logger.info("Only a single source table is available, so the source of analyzer '{}' is inferred",
                         this);
-                Table table = sourceTables.get(0);
+                final Table table = sourceTables.get(0);
                 originatingTables.put(table, new ArrayList<InputColumn<?>>());
             } else {
                 throw new IllegalStateException("Could not determine source for analyzer '" + this + "'");
@@ -195,26 +195,26 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             // there's only a single table involved - leave the input columns
             // untouched and keep the output data stream
             final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
-            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
+            final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
                     new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
                     getMetadataProperties(), outputDataStreamJobs);
             return new AnalyzerJob[] { job };
         }
 
-        for (Entry<Table, List<InputColumn<?>>> entry : originatingTables.entrySet()) {
+        for (final Entry<Table, List<InputColumn<?>>> entry : originatingTables.entrySet()) {
             entry.getValue().addAll(tableLessColumns);
         }
 
         final List<AnalyzerJob> jobs = new ArrayList<AnalyzerJob>();
         final Set<Entry<Table, List<InputColumn<?>>>> entrySet = originatingTables.entrySet();
         int partitionIndex = 0;
-        for (Entry<Table, List<InputColumn<?>>> entry : entrySet) {
+        for (final Entry<Table, List<InputColumn<?>>> entry : entrySet) {
             final List<InputColumn<?>> columnsOfTable = entry.getValue();
             if (_escalatingInputProperty == null || _escalatingInputProperty.isArray()) {
                 // escalation will happen only for multi-table input
                 jobs.add(createPartitionedJob(null, columnsOfTable, configuredProperties, partitionIndex++));
             } else {
-                for (InputColumn<?> escalatingColumn : columnsOfTable) {
+                for (final InputColumn<?> escalatingColumn : columnsOfTable) {
                     // escalation happens for each column
                     jobs.add(createPartitionedJob(escalatingColumn, columnsOfTable, configuredProperties,
                             partitionIndex++));
@@ -229,8 +229,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     @Override
-    public AnalyzerComponentBuilder<A> addInputColumn(InputColumn<?> inputColumn,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    public AnalyzerComponentBuilder<A> addInputColumn(final InputColumn<?> inputColumn,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         assert propertyDescriptor.isInputColumn();
         if (inputColumn == null) {
             throw new IllegalArgumentException("InputColumn cannot be null");
@@ -248,8 +248,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     @Override
-    public AnalyzerComponentBuilder<A> removeInputColumn(InputColumn<?> inputColumn,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    public AnalyzerComponentBuilder<A> removeInputColumn(final InputColumn<?> inputColumn,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         assert propertyDescriptor.isInputColumn();
         if (inputColumn == null) {
             throw new IllegalArgumentException("InputColumn cannot be null");
@@ -263,10 +263,10 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     @Override
-    public boolean isConfigured(ConfiguredPropertyDescriptor configuredProperty, boolean throwException) {
+    public boolean isConfigured(final ConfiguredPropertyDescriptor configuredProperty, final boolean throwException) {
         if (isMultipleJobsSupported() && configuredProperty == _escalatingInputProperty) {
             if (_escalatingInputColumns.isEmpty()) {
-                Object propertyValue = super.getConfiguredProperty(configuredProperty);
+                final Object propertyValue = super.getConfiguredProperty(configuredProperty);
                 if (propertyValue != null) {
                     if (propertyValue.getClass().isArray() && Array.getLength(propertyValue) > 0) {
                         setConfiguredProperty(configuredProperty, propertyValue);
@@ -285,11 +285,12 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         return super.isConfigured(configuredProperty, throwException);
     }
 
-    private AnalyzerJob createPartitionedJob(InputColumn<?> escalatingColumnValue, Collection<InputColumn<?>> availableColumns,
-            Map<ConfiguredPropertyDescriptor, Object> configuredProperties, int partitionIndex) {
+    private AnalyzerJob createPartitionedJob(final InputColumn<?> escalatingColumnValue,
+            final Collection<InputColumn<?>> availableColumns,
+            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties, final int partitionIndex) {
         final Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<>(
                 configuredProperties);
-        for (Entry<ConfiguredPropertyDescriptor, Object> jobProperty : jobProperties.entrySet()) {
+        for (final Entry<ConfiguredPropertyDescriptor, Object> jobProperty : jobProperties.entrySet()) {
             final ConfiguredPropertyDescriptor propertyDescriptor = jobProperty.getKey();
             if (propertyDescriptor.isInputColumn()) {
                 final Object unpartitionedValue;
@@ -298,7 +299,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                 } else {
                     unpartitionedValue = jobProperty.getValue();
                 }
-                final Object partitionedValue = partitionValue(propertyDescriptor, unpartitionedValue, availableColumns);
+                final Object partitionedValue =
+                        partitionValue(propertyDescriptor, unpartitionedValue, availableColumns);
                 jobProperty.setValue(partitionedValue);
             }
         }
@@ -321,12 +323,12 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         return job;
     }
 
-    private Object partitionValue(ConfiguredPropertyDescriptor key, Object unpartitionedValue,
-            Collection<InputColumn<?>> availableColumns) {
+    private Object partitionValue(final ConfiguredPropertyDescriptor key, final Object unpartitionedValue,
+            final Collection<InputColumn<?>> availableColumns) {
         if (unpartitionedValue instanceof InputColumn[]) {
             final InputColumn<?>[] array = (InputColumn<?>[]) unpartitionedValue;
             final List<InputColumn<?>> result = new ArrayList<>();
-            for (InputColumn<?> inputColumn : array) {
+            for (final InputColumn<?> inputColumn : array) {
                 if (availableColumns.contains(inputColumn)) {
                     result.add(inputColumn);
                 }
@@ -349,8 +351,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     @Override
-    public AnalyzerComponentBuilder<A> setConfiguredProperty(ConfiguredPropertyDescriptor configuredProperty,
-            Object value) {
+    public AnalyzerComponentBuilder<A> setConfiguredProperty(final ConfiguredPropertyDescriptor configuredProperty,
+            final Object value) {
         if (isMultipleJobsDeterminedBy(configuredProperty)) {
 
             // the dummy value is used just to pass something to the underlying
@@ -361,7 +363,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             if (value == null) {
                 dummyValue = null;
             } else if (ReflectionUtils.isArray(value)) {
-                int length = Array.getLength(value);
+                final int length = Array.getLength(value);
                 for (int i = 0; i < length; i++) {
                     final InputColumn<?> inputColumn = (InputColumn<?>) Array.get(value, i);
                     _escalatingInputColumns.add(inputColumn);
@@ -400,7 +402,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     @Override
-    public Object getConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor) {
+    public Object getConfiguredProperty(final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (isMultipleJobsDeterminedBy(propertyDescriptor)) {
             return _escalatingInputColumns.toArray(new InputColumn[_escalatingInputColumns.size()]);
         } else {
@@ -411,8 +413,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     @Override
     public void onConfigurationChanged() {
         super.onConfigurationChanged();
-        List<AnalyzerChangeListener> listeners = getAllListeners();
-        for (AnalyzerChangeListener listener : listeners) {
+        final List<AnalyzerChangeListener> listeners = getAllListeners();
+        for (final AnalyzerChangeListener listener : listeners) {
             listener.onConfigurationChanged(this);
         }
     }
@@ -420,8 +422,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     @Override
     public void onRequirementChanged() {
         super.onRequirementChanged();
-        List<AnalyzerChangeListener> listeners = getAllListeners();
-        for (AnalyzerChangeListener listener : listeners) {
+        final List<AnalyzerChangeListener> listeners = getAllListeners();
+        for (final AnalyzerChangeListener listener : listeners) {
             listener.onRequirementChanged(this);
         }
     }
@@ -447,7 +449,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
         // create a mutable copy and replace the property values that are
         final Map<ConfiguredPropertyDescriptor, Object> map = new HashMap<>(properties);
-        for (Entry<ConfiguredPropertyDescriptor, Object> entry : map.entrySet()) {
+        for (final Entry<ConfiguredPropertyDescriptor, Object> entry : map.entrySet()) {
             if (isMultipleJobsDeterminedBy(entry.getKey())) {
                 final Object value = entry.getValue();
                 if (Array.getLength(value) > 1) {
@@ -465,28 +467,28 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
      */
     @Override
     protected void onRemovedInternal() {
-        List<AnalyzerChangeListener> listeners = getAllListeners();
-        for (AnalyzerChangeListener listener : listeners) {
+        final List<AnalyzerChangeListener> listeners = getAllListeners();
+        for (final AnalyzerChangeListener listener : listeners) {
             listener.onRemove(this);
         }
     }
 
     /**
      * Adds a change listener to this component
-     * 
+     *
      * @param listener
      */
-    public void addChangeListener(AnalyzerChangeListener listener) {
+    public void addChangeListener(final AnalyzerChangeListener listener) {
         _localChangeListeners.add(listener);
     }
 
     /**
      * Removes a change listener from this component
-     * 
+     *
      * @param listener
      * @return whether or not the listener was found and removed.
      */
-    public boolean removeChangeListener(AnalyzerChangeListener listener) {
+    public boolean removeChangeListener(final AnalyzerChangeListener listener) {
         return _localChangeListeners.remove(listener);
     }
 }

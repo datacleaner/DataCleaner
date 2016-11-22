@@ -43,15 +43,16 @@ public class ProvidedPropertyDescriptorImplTest extends TestCase {
     Map<String, Date> dateMap;
 
     public void testDiscovery() throws Exception {
-        SimpleComponentDescriptor<ProvidedPropertyDescriptorImplTest> desc = new SimpleComponentDescriptor<ProvidedPropertyDescriptorImplTest>(
-                ProvidedPropertyDescriptorImplTest.class, true);
+        SimpleComponentDescriptor<ProvidedPropertyDescriptorImplTest> desc =
+                new SimpleComponentDescriptor<ProvidedPropertyDescriptorImplTest>(
+                        ProvidedPropertyDescriptorImplTest.class, true);
 
         Set<ProvidedPropertyDescriptor> properties = desc.getProvidedProperties();
         assertEquals(3, properties.size());
 
         assertEquals("[ProvidedPropertyDescriptorImpl[field=dateMap,baseType=interface java.util.Map], "
-                + "ProvidedPropertyDescriptorImpl[field=intMap,baseType=interface java.util.Map], "
-                + "ProvidedPropertyDescriptorImpl[field=stringMap,baseType=interface java.util.Map]]",
+                        + "ProvidedPropertyDescriptorImpl[field=intMap,baseType=interface java.util.Map], "
+                        + "ProvidedPropertyDescriptorImpl[field=stringMap,baseType=interface java.util.Map]]",
                 properties.toString());
     }
 

@@ -41,8 +41,8 @@ public abstract class AbstractJobBuilderPopupListener {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final ComponentBuilder _componentBuilder;
 
-    public AbstractJobBuilderPopupListener(ComponentBuilder jobBuilder,
-            AnalysisJobBuilder analysisJobBuilder) {
+    public AbstractJobBuilderPopupListener(final ComponentBuilder jobBuilder,
+            final AnalysisJobBuilder analysisJobBuilder) {
         _componentBuilder = jobBuilder;
         _analysisJobBuilder = analysisJobBuilder;
     }
@@ -55,7 +55,7 @@ public abstract class AbstractJobBuilderPopupListener {
         return _analysisJobBuilder;
     }
 
-    public void showPopup(Component parentComponent, int x, int y) {
+    public void showPopup(final Component parentComponent, final int x, final int y) {
         final Icon renameIcon = ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME, IconUtils.ICON_SIZE_SMALL);
         final JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", renameIcon);
         renameMenuItem.addActionListener(new RenameComponentActionListener(_componentBuilder) {
@@ -75,7 +75,7 @@ public abstract class AbstractJobBuilderPopupListener {
             }
         };
 
-        JPopupMenu popup = new JPopupMenu();
+        final JPopupMenu popup = new JPopupMenu();
         popup.add(renameMenuItem);
         popup.add(removeMenuItem);
         popup.add(new ChangeRequirementMenu(_componentBuilder));

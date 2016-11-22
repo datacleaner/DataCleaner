@@ -23,11 +23,11 @@ import junit.framework.TestCase;
 
 public class StringAnalyzerColumnDelegateTest extends TestCase {
 
-	public void testDiacritics() throws Exception {
-		assertTrue(StringAnalyzerColumnDelegate.isEntirelyLowerCase("šiauliai"));
-		assertFalse(StringAnalyzerColumnDelegate.isEntirelyUpperCase("šiauliai"));
-		
-		assertFalse(StringAnalyzerColumnDelegate.isEntirelyLowerCase("ŠIAULIAI"));
-		assertTrue(StringAnalyzerColumnDelegate.isEntirelyUpperCase("ŠIAULIAI"));
-	}
+    public void testDiacritics() throws Exception {
+        assertTrue(StringAnalyzerColumnDelegate.isEntirelyLowerCase("šiauliai"));
+        assertFalse(StringAnalyzerColumnDelegate.isEntirelyUpperCase("šiauliai"));
+
+        assertFalse(StringAnalyzerColumnDelegate.isEntirelyLowerCase("ŠIAULIAI"));
+        assertTrue(StringAnalyzerColumnDelegate.isEntirelyUpperCase("ŠIAULIAI"));
+    }
 }

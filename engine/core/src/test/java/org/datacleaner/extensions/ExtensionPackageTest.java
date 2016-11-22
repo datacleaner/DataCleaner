@@ -21,10 +21,9 @@ package org.datacleaner.extensions;
 
 import java.io.File;
 
-import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
-import org.datacleaner.extensions.ExtensionPackage;
-
 import junit.framework.TestCase;
+
+import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 
 public class ExtensionPackageTest extends TestCase {
 
@@ -32,7 +31,8 @@ public class ExtensionPackageTest extends TestCase {
         File file = new File("src/test/resources/extensions/DataCleaner-basic-transformers.jar");
         assertTrue("example plugin jar does not exist", file.exists());
 
-        ExtensionPackage extensionPackage = new ExtensionPackage("foobar plugin", "org.datacleaner", true, new File[] { file });
+        ExtensionPackage extensionPackage =
+                new ExtensionPackage("foobar plugin", "org.datacleaner", true, new File[] { file });
 
         assertFalse(extensionPackage.isLoaded());
 

@@ -47,8 +47,8 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
     private final Table _sourceTable;
     private final DataCleanerJobWizardSession _session;
 
-    public ColumnMappingPage(DataCleanerJobWizardSession session, AnalysisJobBuilder analysisJobBuilder,
-            Table sourceTable, Datastore targetDatastore, Table targetTable) {
+    public ColumnMappingPage(final DataCleanerJobWizardSession session, final AnalysisJobBuilder analysisJobBuilder,
+            final Table sourceTable, final Datastore targetDatastore, final Table targetTable) {
         _session = session;
         _analysisJobBuilder = analysisJobBuilder;
         _sourceTable = sourceTable;
@@ -75,12 +75,12 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters) {
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters) {
         final List<ColumnMapping> mappings = new ArrayList<ColumnMapping>();
 
         final Column[] sourceColumns = _sourceTable.getColumns();
         for (int i = 0; i < sourceColumns.length; i++) {
-            List<String> formParameter = formParameters.get("mapping_" + i);
+            final List<String> formParameter = formParameters.get("mapping_" + i);
             if (formParameter != null && !formParameter.isEmpty()) {
                 final String mapping = formParameter.get(0);
                 if (!StringUtils.isNullOrEmpty(mapping)) {
@@ -96,7 +96,7 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
             throw new IllegalStateException("No columns mapped!");
         }
 
-        AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = createAnalyzer(mappings);
+        final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = createAnalyzer(mappings);
 
         return new SelectUpdateStrategyWizardPage(_session, _analysisJobBuilder, _targetDatastore, _targetTable,
                 insert, mappings);

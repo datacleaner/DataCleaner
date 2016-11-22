@@ -39,7 +39,7 @@ public final class FilterOutcomesImpl implements FilterOutcomes {
         this(Collections.EMPTY_LIST);
     }
 
-    public FilterOutcomesImpl(Collection<? extends FilterOutcome> availableOutcomes) {
+    public FilterOutcomesImpl(final Collection<? extends FilterOutcome> availableOutcomes) {
         if (availableOutcomes == null) {
             _outcomes = new HashSet<FilterOutcome>();
         } else {
@@ -49,12 +49,12 @@ public final class FilterOutcomesImpl implements FilterOutcomes {
     }
 
     @Override
-    public void add(FilterOutcome filterOutcome) {
+    public void add(final FilterOutcome filterOutcome) {
         _outcomes.add(filterOutcome);
     }
 
     @Override
-    public boolean contains(FilterOutcome outcome) {
+    public boolean contains(final FilterOutcome outcome) {
         return _outcomes.contains(outcome);
     }
 

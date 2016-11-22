@@ -29,10 +29,10 @@ import java.net.SocketAddress;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.http.InvalidHttpResponseException;
-import org.apache.metamodel.util.FileHelper;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import org.simpleframework.http.core.Container;
@@ -53,12 +53,12 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 
     private final ExtensionSwapClient _client;
 
-    public ExtensionSwapInstallationHttpContainer(ExtensionSwapClient extensionSwapClient, UsageLogger usageLogger) {
+    public ExtensionSwapInstallationHttpContainer(final ExtensionSwapClient extensionSwapClient, final UsageLogger usageLogger) {
         _client = extensionSwapClient;
     }
 
     @Override
-    public void handle(Request req, Response resp) {
+    public void handle(final Request req, final Response resp) {
         PrintStream out = null;
         String callback = null;
         try {
@@ -99,12 +99,12 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
                 resp.setCode(200);
             }
 
-        } catch (InvalidHttpResponseException e) {
+        } catch (final InvalidHttpResponseException e) {
             if (callback != null && out != null) {
                 out.print(callback + "({\"success\":false,\"errorMessage\":\"Could not retrieve extension details\"})");
             }
             resp.setCode(500);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.error("IOException occurred while processing HTTP request", e);
             resp.setCode(400);
         } finally {
@@ -127,7 +127,7 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 
     /**
      * Initializes the extension swap installation HTTP service
-     * 
+     *
      * @param client
      *            the client to use
      * @return a closable that can be invoked in case the service is to be shut
@@ -135,12 +135,12 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
      */
     public Closeable initialize() {
         try {
-            Connection connection = new SocketConnection(this);
-            SocketAddress address = new InetSocketAddress(PORT_NUMBER);
+            final Connection connection = new SocketConnection(this);
+            final SocketAddress address = new InetSocketAddress(PORT_NUMBER);
             connection.connect(address);
             logger.info("HTTP service for ExtensionSwap installation running on port {}", PORT_NUMBER);
             return connection;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.warn("Could not host HTTP service for ExtensionSwap installation on port " + PORT_NUMBER
                     + ". Automatic installations of extensions will not be available.", e);
             return null;

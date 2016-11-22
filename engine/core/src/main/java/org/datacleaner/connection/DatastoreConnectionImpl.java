@@ -25,38 +25,38 @@ import org.slf4j.LoggerFactory;
 
 public class DatastoreConnectionImpl<E extends DataContext> extends UsageAwareDatastoreConnection<E> {
 
-	private static final Logger logger = LoggerFactory.getLogger(DatastoreConnectionImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DatastoreConnectionImpl.class);
 
-	private final E _dataContext;
-	private final SchemaNavigator _schemaNavigator;
-	private final AutoCloseable[] _closeables;
+    private final E _dataContext;
+    private final SchemaNavigator _schemaNavigator;
+    private final AutoCloseable[] _closeables;
 
-	public DatastoreConnectionImpl(E dataContext, Datastore datastore, AutoCloseable... closeables) {
-		super(datastore);
-		_dataContext = dataContext;
-		_schemaNavigator = new SchemaNavigator(dataContext);
-		_closeables = closeables;
-	}
+    public DatastoreConnectionImpl(final E dataContext, final Datastore datastore, final AutoCloseable... closeables) {
+        super(datastore);
+        _dataContext = dataContext;
+        _schemaNavigator = new SchemaNavigator(dataContext);
+        _closeables = closeables;
+    }
 
-	@Override
-	public final E getDataContext() {
-		return _dataContext;
-	}
+    @Override
+    public final E getDataContext() {
+        return _dataContext;
+    }
 
-	@Override
-	public final SchemaNavigator getSchemaNavigator() {
-		return _schemaNavigator;
-	}
+    @Override
+    public final SchemaNavigator getSchemaNavigator() {
+        return _schemaNavigator;
+    }
 
-	@Override
-	protected final void closeInternal() {
-		for (int i = 0; i < _closeables.length; i++) {
+    @Override
+    protected final void closeInternal() {
+        for (int i = 0; i < _closeables.length; i++) {
             final AutoCloseable closeable = _closeables[i];
-			try {
-				closeable.close();
-			} catch (Exception e) {
-				logger.error("Could not close _closeables[" + i + "]", e);
-			}
-		}
-	}
+            try {
+                closeable.close();
+            } catch (final Exception e) {
+                logger.error("Could not close _closeables[" + i + "]", e);
+            }
+        }
+    }
 }

@@ -69,7 +69,7 @@ public class ResultModificationControllerTest extends TestCase {
                 resultModificationListener.onApplicationEvent((ResultModificationEvent) event);
             }
         };
-        
+
         resultModificationController._contextFactory = tenantContextFactory;
         resultModificationController._resultDao = new ResultDaoImpl(tenantContextFactory, applicationEventPublisher);
     }
@@ -81,8 +81,8 @@ public class ResultModificationControllerTest extends TestCase {
         Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3",
                 input);
         assertEquals("{new_result_name=email_standardizer-1338990580902.analysis.result.dat, "
-                + "old_result_name=product_profiling-3.analysis.result.dat, "
-                + "repository_url=/tenant1/results/email_standardizer-1338990580902.analysis.result.dat}",
+                        + "old_result_name=product_profiling-3.analysis.result.dat, "
+                        + "repository_url=/tenant1/results/email_standardizer-1338990580902.analysis.result.dat}",
                 response.toString());
     }
 
@@ -96,8 +96,8 @@ public class ResultModificationControllerTest extends TestCase {
         Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3",
                 input);
         assertEquals("{new_result_name=product_profiling-" + date.getTime() + ".analysis.result.dat, "
-                + "old_result_name=product_profiling-3.analysis.result.dat, "
-                + "repository_url=/tenant1/results/product_profiling-" + date.getTime() + ".analysis.result.dat}",
+                        + "old_result_name=product_profiling-3.analysis.result.dat, "
+                        + "repository_url=/tenant1/results/product_profiling-" + date.getTime() + ".analysis.result.dat}",
                 response.toString());
 
         RepositoryNode executionLogFile = repository.getRepositoryNode("/tenant1/results/product_profiling-"
@@ -113,8 +113,8 @@ public class ResultModificationControllerTest extends TestCase {
         Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3",
                 input);
         assertEquals("{new_result_name=email_standardizer-1355698800000.analysis.result.dat, "
-                + "old_result_name=product_profiling-3.analysis.result.dat, "
-                + "repository_url=/tenant1/results/email_standardizer-1355698800000.analysis.result.dat}",
+                        + "old_result_name=product_profiling-3.analysis.result.dat, "
+                        + "repository_url=/tenant1/results/email_standardizer-1355698800000.analysis.result.dat}",
                 response.toString());
 
         assertNotNull(repository

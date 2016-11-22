@@ -54,18 +54,15 @@ public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Number>
 
     private final OutputDataStream stream2 = OutputDataStreams.pushDataStream(STREAM_NAME2)
             .withColumn("count", ColumnType.INTEGER).withColumn("uuid", ColumnType.STRING).toOutputDataStream();
-
+    @Configured
+    InputColumn<?> column;
+    @Configured(value = PROPERTY_IDENTIFIER, required = false)
+    String identifier;
     private OutputRowCollector collector1;
     private OutputRowCollector collector2;
     private AtomicInteger counter;
     private List<Number> list;
     private boolean _hasBeenValidated = false;
-
-    @Configured
-    InputColumn<?> column;
-
-    @Configured(value = PROPERTY_IDENTIFIER, required = false)
-    String identifier;
 
     @Validate
     public void validate() {
@@ -89,8 +86,8 @@ public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Number>
     }
 
     @Override
-    public void initializeOutputDataStream(OutputDataStream outputDataStream, Query query,
-            OutputRowCollector outputRowCollector) {
+    public void initializeOutputDataStream(final OutputDataStream outputDataStream, final Query query,
+            final OutputRowCollector outputRowCollector) {
         Assert.assertNotNull(outputDataStream);
         Assert.assertNotNull(query);
         Assert.assertNotNull(outputRowCollector);
@@ -106,7 +103,7 @@ public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Number>
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         if (list == null) {
             throw new IllegalStateException("It seems that initialize() has not been invoked on component: "
                     + identifier);

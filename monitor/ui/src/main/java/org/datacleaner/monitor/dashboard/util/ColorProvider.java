@@ -32,7 +32,7 @@ public class ColorProvider {
     public String getNextColor() {
         final Color color;
         Color colorCandidate = SLICE_COLORS[colorIndex];
-        int darkAmount = colorIndex / SLICE_COLORS.length;
+        final int darkAmount = colorIndex / SLICE_COLORS.length;
         for (int j = 0; j < darkAmount; j++) {
             colorCandidate = colorCandidate.slightlyDarker();
         }

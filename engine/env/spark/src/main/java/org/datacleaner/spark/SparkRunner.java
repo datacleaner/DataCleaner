@@ -50,12 +50,12 @@ public class SparkRunner {
         void onJobSubmitted();
     }
 
-    public final static String DATACLEANER_DIR = "/datacleaner";
-    public final static String DATACLEANER_TEMP_DIR = DATACLEANER_DIR + "/temp";
-    public final static String DATACLEANER_LIB_DIR = DATACLEANER_DIR + "/lib";
+    public static final String DATACLEANER_DIR = "/datacleaner";
+    public static final String DATACLEANER_TEMP_DIR = DATACLEANER_DIR + "/temp";
+    public static final String DATACLEANER_LIB_DIR = DATACLEANER_DIR + "/lib";
     public static final String DEFAULT_RESULT_PATH = "/datacleaner/results";
     public static final String RESULT_FILE_EXTENSION = FileFilters.ANALYSIS_RESULT_SER.getExtension();
-    
+
 
     private final FileSystem _hadoopDefaultFS;
     private final ApplicationDriver _applicationDriver;
@@ -64,14 +64,14 @@ public class SparkRunner {
     private final String _jobFilePath;
     private final String _resultFilePath;
 
-    public SparkRunner(String configurationFilePath, String jobFilePath, String resultFilePath) throws IOException {
+    public SparkRunner(final String configurationFilePath, final String jobFilePath, final String resultFilePath) throws IOException {
         _configurationFilePath = configurationFilePath;
         _jobFilePath = jobFilePath;
         _resultFilePath = resultFilePath;
         try {
             _hadoopConfigurationDirectory = HadoopUtils.getHadoopConfigurationDirectoryToUse();
             _hadoopDefaultFS = HadoopUtils.getFileSystem();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException("Could not create Hadoop filesystem", e);
         }
         _applicationDriver = new ApplicationDriver(_hadoopDefaultFS.getUri(), DATACLEANER_LIB_DIR);
@@ -89,23 +89,23 @@ public class SparkRunner {
             URI fileURI;
             try {
                 fileURI = _hadoopDefaultFS.getUri().resolve(filePath);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 fileURI = null;
             }
 
             if ((fileURI == null || !_hadoopDefaultFS.exists(new Path(fileURI))) && upload) {
-                File file = new File(filePath);
+                final File file = new File(filePath);
                 if (!file.isFile()) {
                     throw new IllegalArgumentException("'" + filePath + " does not exist, or is not a file");
                 }
 
-                String fileName = file.toPath().getFileName().toString();
+                final String fileName = file.toPath().getFileName().toString();
                 return _applicationDriver
                         .copyFileToHdfs(file, DATACLEANER_TEMP_DIR + "/" + UUID.randomUUID() + fileName);
             }
 
             return fileURI;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalArgumentException("Path '" + filePath + "' is not a proper file path");
         }
     }
@@ -114,7 +114,7 @@ public class SparkRunner {
         return runJob(null);
     }
 
-    public int runJob(ProgressListener listener) throws Exception {
+    public int runJob(final ProgressListener listener) throws Exception {
         final URI configurationFile = findFile(_configurationFilePath, true);
         final URI jobFile = findFile(_jobFilePath, true);
         final URI resultFile;
@@ -130,7 +130,7 @@ public class SparkRunner {
 
         final SparkLauncher sparkLauncher = _applicationDriver.createSparkLauncher(_hadoopConfigurationDirectory,
                 configurationFile, jobFile, resultFile);
-        Process launchProcess = _applicationDriver.launchProcess(sparkLauncher);
+        final Process launchProcess = _applicationDriver.launchProcess(sparkLauncher);
 
         if (listener != null) {
             listener.onJobSubmitted();

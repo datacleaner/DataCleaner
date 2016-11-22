@@ -20,7 +20,6 @@
 package org.datacleaner.monitor.server.components;
 
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
-import org.datacleaner.monitor.server.components.ComponentHandler;
 
 /**
  * Class ComponentsCacheConfigWrapper Simple wrapper for store to cache with expiration time.
@@ -35,7 +34,8 @@ public class ComponentCacheConfigWrapper {
     public ComponentCacheConfigWrapper() {
     }
 
-    public ComponentCacheConfigWrapper(String tenantName, ComponentStoreHolder componentStoreHolder, ComponentHandler handler) {
+    public ComponentCacheConfigWrapper(final String tenantName, final ComponentStoreHolder componentStoreHolder,
+            final ComponentHandler handler) {
         this.tenantName = tenantName;
         this.componentStoreHolder = componentStoreHolder;
         this.handler = handler;
@@ -46,7 +46,7 @@ public class ComponentCacheConfigWrapper {
         return tenantName;
     }
 
-    public void setTenantName(String tenantName) {
+    public void setTenantName(final String tenantName) {
         this.tenantName = tenantName;
     }
 
@@ -54,7 +54,7 @@ public class ComponentCacheConfigWrapper {
         return componentStoreHolder;
     }
 
-    public void setComponentStoreHolder(ComponentStoreHolder componentStoreHolder) {
+    public void setComponentStoreHolder(final ComponentStoreHolder componentStoreHolder) {
         this.componentStoreHolder = componentStoreHolder;
     }
 
@@ -62,11 +62,11 @@ public class ComponentCacheConfigWrapper {
         return handler;
     }
 
-    public void setHandler(ComponentHandler handler) {
+    public void setHandler(final ComponentHandler handler) {
         this.handler = handler;
     }
 
-    public void updateTimeStamp(){
+    public void updateTimeStamp() {
         componentStoreHolder.updateTimestamp();
     }
 

@@ -23,8 +23,8 @@ import java.util.Calendar;
 
 import junit.framework.TestCase;
 
-import org.easymock.EasyMock;
 import org.datacleaner.job.jaxb.JobMetadataType;
+import org.easymock.EasyMock;
 
 public class JaxbJobMetadataFactoryImplTest extends TestCase {
 
@@ -33,7 +33,7 @@ public class JaxbJobMetadataFactoryImplTest extends TestCase {
 
         AnalysisJob job = EasyMock.createMock(AnalysisJob.class);
         EasyMock.expect(job.getMetadata()).andReturn(AnalysisJobMetadata.EMPTY_METADATA).anyTimes();
-        
+
         EasyMock.replay(job);
 
         JobMetadataType metadata = factory.create(job);

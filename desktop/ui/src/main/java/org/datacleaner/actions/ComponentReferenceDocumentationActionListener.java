@@ -39,14 +39,14 @@ public class ComponentReferenceDocumentationActionListener implements ActionList
     private final DataCleanerConfiguration _configuration;
     private final ComponentDescriptor<?> _componentDescriptor;
 
-    public ComponentReferenceDocumentationActionListener(DataCleanerConfiguration configuration,
-            ComponentDescriptor<?> componentDescriptor) {
+    public ComponentReferenceDocumentationActionListener(final DataCleanerConfiguration configuration,
+            final ComponentDescriptor<?> componentDescriptor) {
         _configuration = configuration;
         _componentDescriptor = componentDescriptor;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         final DataCleanerHomeFolder homeFolder = _configuration.getHomeFolder();
 
         final File homeDirectory = homeFolder.toFile();

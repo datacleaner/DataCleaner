@@ -26,20 +26,20 @@ import junit.framework.TestCase;
 
 public class BerkeleyDbMapTest extends TestCase {
 
-	public void testNull() throws Exception {
-		BerkeleyDbStorageProvider sp = new BerkeleyDbStorageProvider(new File("target"));
-		Map<Integer, String> map = sp.createMap(Integer.class, String.class);
-		
-		assertNull(map.get(1));
-		
-		map.put(1,"foo");
-		assertEquals("foo", map.get(1));
-		
-		map.put(2,"");
-		assertEquals("", map.get(2));
-		
-		map.put(3,null);
-		assertNull(map.get(3));
+    public void testNull() throws Exception {
+        BerkeleyDbStorageProvider sp = new BerkeleyDbStorageProvider(new File("target"));
+        Map<Integer, String> map = sp.createMap(Integer.class, String.class);
 
-	}
+        assertNull(map.get(1));
+
+        map.put(1, "foo");
+        assertEquals("foo", map.get(1));
+
+        map.put(2, "");
+        assertEquals("", map.get(2));
+
+        map.put(3, null);
+        assertNull(map.get(3));
+
+    }
 }

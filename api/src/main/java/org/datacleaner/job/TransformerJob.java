@@ -24,11 +24,11 @@ import org.datacleaner.descriptors.TransformerDescriptor;
 
 /**
  * {@link ComponentJob} subinterface for {@link Transformer}s.
- * 
+ *
  * @see Transformer
  */
 public interface TransformerJob extends ComponentJob, InputColumnSourceJob {
-    
+
     @Override
-    public TransformerDescriptor<?> getDescriptor();
+    TransformerDescriptor<?> getDescriptor();
 }

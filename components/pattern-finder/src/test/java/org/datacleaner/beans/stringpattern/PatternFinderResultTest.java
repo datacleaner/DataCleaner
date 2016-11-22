@@ -19,11 +19,11 @@
  */
 package org.datacleaner.beans.stringpattern;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.api.ParameterizableMetric;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.result.Crosstab;
-
-import junit.framework.TestCase;
 
 public class PatternFinderResultTest extends TestCase {
 

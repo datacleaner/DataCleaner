@@ -28,27 +28,27 @@ public class CompositeTaskListener implements TaskListener {
 
     private final TaskListener[] _listeners;
 
-    public CompositeTaskListener(TaskListener ... listeners) {
+    public CompositeTaskListener(final TaskListener... listeners) {
         _listeners = listeners;
     }
-    
+
     @Override
-    public void onBegin(Task task) {
-        for (TaskListener listener : _listeners) {
+    public void onBegin(final Task task) {
+        for (final TaskListener listener : _listeners) {
             listener.onBegin(task);
         }
     }
 
     @Override
-    public void onComplete(Task task) {
-        for (TaskListener listener : _listeners) {
+    public void onComplete(final Task task) {
+        for (final TaskListener listener : _listeners) {
             listener.onComplete(task);
-        }        
+        }
     }
 
     @Override
-    public void onError(Task task, Throwable throwable) {
-        for (TaskListener listener : _listeners) {
+    public void onError(final Task task, final Throwable throwable) {
+        for (final TaskListener listener : _listeners) {
             listener.onError(task, throwable);
         }
     }

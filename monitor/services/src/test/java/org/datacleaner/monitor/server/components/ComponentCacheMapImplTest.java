@@ -19,9 +19,7 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.*;
 
 import java.util.Collections;
 
@@ -58,14 +56,14 @@ import org.junit.Test;
  */
 public class ComponentCacheMapImplTest {
 
+    TenantContextFactory mockTenantContextFactory;
+    ComponentCache cache;
     private String tenantName = "tenant";
     private String componentName = "name";
 
-    TenantContextFactory mockTenantContextFactory;
-    ComponentCache cache;
-
     private void createComponentCache() {
-        ComponentHandlerFactory compHandlerFac = new ComponentHandlerFactory(new SimpleRemoteComponentsConfigurationImpl());
+        ComponentHandlerFactory compHandlerFac =
+                new ComponentHandlerFactory(new SimpleRemoteComponentsConfigurationImpl());
         cache = new ComponentCache(compHandlerFac, mockTenantContextFactory);
     }
 
@@ -173,7 +171,8 @@ public class ComponentCacheMapImplTest {
 
     private TransformerDescriptor<?> getTransformerDescriptorMock() {
         @SuppressWarnings("unchecked")
-        TransformerDescriptor<ConcatenatorTransformer> transformerDescriptor = createNiceMock(TransformerDescriptor.class);
+        TransformerDescriptor<ConcatenatorTransformer> transformerDescriptor =
+                createNiceMock(TransformerDescriptor.class);
         expect(transformerDescriptor.getDisplayName()).andReturn(componentName).anyTimes();
         expect(transformerDescriptor.getProvidedProperties()).andReturn(
                 Collections.<ProvidedPropertyDescriptor> emptySet()).anyTimes();

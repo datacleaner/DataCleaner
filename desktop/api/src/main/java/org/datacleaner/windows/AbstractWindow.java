@@ -43,10 +43,10 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
     private static final long serialVersionUID = 1L;
     private static final int MIN_WIDTH = 400;
     private static final int MIN_HEIGHT = 300;
-    private volatile boolean initialized = false;
     private final WindowContext _windowContext;
+    private volatile boolean initialized = false;
 
-    public AbstractWindow(WindowContext windowContext) {
+    public AbstractWindow(final WindowContext windowContext) {
         _windowContext = windowContext;
         setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -54,7 +54,7 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
         getContentPane().setBackground(WidgetUtils.BG_COLOR_BRIGHT);
     }
 
-    protected boolean maximizeWindow(){
+    protected boolean maximizeWindow() {
         return false;
     }
 
@@ -62,7 +62,7 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
         updateWindowTitle();
         setIconImage(getWindowIcon());
         setResizable(isWindowResizable());
-        JComponent content = getWindowContent();
+        final JComponent content = getWindowContent();
         getContentPane().add(content);
         final boolean maximizeWindow = maximizeWindow();
         if (maximizeWindow) {
@@ -98,19 +98,19 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
         }
     }
 
-    public Dimension autoSetSize(Component content) {
+    public Dimension autoSetSize(final Component content) {
 
-        Dimension preferredSize = content.getPreferredSize();
+        final Dimension preferredSize = content.getPreferredSize();
 
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        final Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-        int maxWidth = toolkit.getScreenSize().width;
-        int maxHeight = toolkit.getScreenSize().height;
+        final int maxWidth = toolkit.getScreenSize().width;
+        final int maxHeight = toolkit.getScreenSize().height;
         preferredSize.width = Math.min(preferredSize.width, maxWidth);
         preferredSize.height = Math.min(preferredSize.height, maxHeight);
 
         if (isVisible()) {
-            Dimension currentSize = getContentPane().getSize();
+            final Dimension currentSize = getContentPane().getSize();
             preferredSize.width = Math.max(preferredSize.width, currentSize.width);
             preferredSize.width = Math.max(preferredSize.height, currentSize.height);
         }
@@ -129,7 +129,7 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
     protected abstract boolean isCentered();
 
     @Override
-    public final void setVisible(boolean b) {
+    public final void setVisible(final boolean b) {
         if (b == false) {
             throw new UnsupportedOperationException("Window does not support hiding, consider using dispose()");
         }
@@ -163,12 +163,12 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
     }
 
     @Override
-    public void windowOpened(WindowEvent e) {
+    public void windowOpened(final WindowEvent e) {
     }
 
     @Override
-    public final void windowClosing(WindowEvent e) {
-        boolean dispose = onWindowClosing();
+    public final void windowClosing(final WindowEvent e) {
+        final boolean dispose = onWindowClosing();
         if (dispose) {
             dispose();
         }
@@ -190,23 +190,23 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
     }
 
     @Override
-    public void windowClosed(WindowEvent e) {
+    public void windowClosed(final WindowEvent e) {
     }
 
     @Override
-    public void windowIconified(WindowEvent e) {
+    public void windowIconified(final WindowEvent e) {
     }
 
     @Override
-    public void windowDeiconified(WindowEvent e) {
+    public void windowDeiconified(final WindowEvent e) {
     }
 
     @Override
-    public void windowActivated(WindowEvent e) {
+    public void windowActivated(final WindowEvent e) {
     }
 
     @Override
-    public void windowDeactivated(WindowEvent e) {
+    public void windowDeactivated(final WindowEvent e) {
     }
 
     @Override

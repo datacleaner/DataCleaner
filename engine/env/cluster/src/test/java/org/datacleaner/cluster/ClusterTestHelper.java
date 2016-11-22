@@ -80,7 +80,7 @@ public class ClusterTestHelper {
     /**
      * Creates a {@link DataCleanerConfiguration} object (based on a few
      * parameters), typically to use in test methods of this class.
-     * 
+     *
      * @param testName
      * @param multiThreaded
      * @return
@@ -132,7 +132,7 @@ public class ClusterTestHelper {
      * Runs a job that verifies that errors (caused by the
      * {@link MockTransformerThatWillFail} dummy component) are picked up
      * correctly from the slave nodes.
-     * 
+     *
      * @param configuration
      * @param virtualClusterManager
      * @return the list of errors returned, to perform further assertions
@@ -338,16 +338,18 @@ public class ClusterTestHelper {
                 Assert.assertEquals(8, valueMatchAnalyzerResult.getCount("Denmark").intValue());
                 rows = new ArrayList<>(valueMatchAnalyzerResult.getAnnotatedRowsForValue("Denmark").getSampleRows());
                 Assert.assertEquals(8, rows.size());
-                
+
                 Collections.sort(rows, new Comparator<InputRow>() {
                     @Override
                     public int compare(InputRow o1, InputRow o2) {
                         return (int) (o1.getId() - o2.getId());
                     }
                 });
-                
-                Assert.assertEquals("MetaModelInputRow[Row[values=[145, Jytte, Petersen, Denmark, null]]]", rows.get(0).toString());
-                Assert.assertEquals("MetaModelInputRow[Row[values=[287, Jytte, Pedersen, Denmark, 1734 Kbh]]]", rows.get(2).toString());
+
+                Assert.assertEquals("MetaModelInputRow[Row[values=[145, Jytte, Petersen, Denmark, null]]]",
+                        rows.get(0).toString());
+                Assert.assertEquals("MetaModelInputRow[Row[values=[287, Jytte, Pedersen, Denmark, 1734 Kbh]]]",
+                        rows.get(2).toString());
             } else {
                 Assert.fail("Unexpected analyzer result found: " + analyzerResult);
             }
@@ -392,7 +394,7 @@ public class ClusterTestHelper {
      * execute in all contexts. The job does one transformation (concatenates
      * two fields) and inserts this field, together with a source field, into
      * another table.
-     * 
+     *
      * @param configuration
      * @param clusterManager
      * @throws Throwable

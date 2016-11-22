@@ -44,36 +44,34 @@ import org.datacleaner.util.LookAndFeelManager;
 
 /**
  * A toggle button that when selected shows a popup menu.
- * 
+ *
  * To use this button, access the popup menu via {@link #getMenu()} and add
  * items to it.
  */
 public class PopupButton extends JToggleButton {
 
-    private static final long serialVersionUID = 1L;
-
-    public static enum MenuPosition {
-        TOP, BOTTOM, LEFT, RIGHT;
+    public enum MenuPosition {
+        TOP, BOTTOM, LEFT, RIGHT
     }
-
+    private static final long serialVersionUID = 1L;
     private final JPopupMenu popupMenu = new JPopupMenu();
     private MenuPosition menuPosition;
 
-    public PopupButton(String text) {
+    public PopupButton(final String text) {
         this(text, null);
     }
 
-    public PopupButton(String text, Icon icon) {
+    public PopupButton(final String text, final Icon icon) {
         this(text, icon, MenuPosition.BOTTOM);
     }
 
-    public PopupButton(String text, Icon icon, MenuPosition position) {
+    public PopupButton(final String text, final Icon icon, final MenuPosition position) {
         super(text, icon);
         this.menuPosition = position;
 
         addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 if (isSelected()) {
                     showPopup(popupMenu);
                 }
@@ -82,20 +80,20 @@ public class PopupButton extends JToggleButton {
 
         popupMenu.addPopupMenuListener(new PopupMenuListener() {
             @Override
-            public void popupMenuWillBecomeVisible(PopupMenuEvent pme) {
+            public void popupMenuWillBecomeVisible(final PopupMenuEvent pme) {
             }
 
             @Override
-            public void popupMenuCanceled(PopupMenuEvent pme) {
+            public void popupMenuCanceled(final PopupMenuEvent pme) {
             }
 
             @Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent pme) {
+            public void popupMenuWillBecomeInvisible(final PopupMenuEvent pme) {
                 if (UIManager.getBoolean("PopupMenu.consumeEventOnClose")) {
                     setSelected(false);
                 } else {
-                    Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
-                    Point componentLoc = getLocationOnScreen();
+                    final Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
+                    final Point componentLoc = getLocationOnScreen();
                     mouseLoc.x -= componentLoc.x;
                     mouseLoc.y -= componentLoc.y;
                     if (!contains(mouseLoc)) {
@@ -106,19 +104,19 @@ public class PopupButton extends JToggleButton {
         });
     }
 
-    public void setMenuPosition(MenuPosition menuPosition) {
-        this.menuPosition = menuPosition;
-    }
-
     public MenuPosition getMenuPosition() {
         return menuPosition;
     }
 
-    protected void showPopup(JPopupMenu menu) {
+    public void setMenuPosition(final MenuPosition menuPosition) {
+        this.menuPosition = menuPosition;
+    }
+
+    protected void showPopup(final JPopupMenu menu) {
         if (menuPosition == null) {
             menuPosition = MenuPosition.BOTTOM;
         }
-        
+
         final int x;
         final int y;
         switch (menuPosition) {
@@ -151,15 +149,15 @@ public class PopupButton extends JToggleButton {
         return popupMenu;
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         LookAndFeelManager.get().init();
-        PopupButton popupButton = new PopupButton("More", ImageManager.get().getImageIcon("images/menu/more.png"));
-        JPanel toolBarPanel = new JPanel();
+        final PopupButton popupButton = new PopupButton("More", ImageManager.get().getImageIcon("images/menu/more.png"));
+        final JPanel toolBarPanel = new JPanel();
         toolBarPanel.add(popupButton);
-        JToolBar toolBar = new JToolBar();
+        final JToolBar toolBar = new JToolBar();
         toolBar.add(toolBarPanel);
 
-        JPanel popupPanel = new JPanel();
+        final JPanel popupPanel = new JPanel();
         popupPanel.setLayout(new BorderLayout());
         popupPanel.add(new JLabel("This popup has components"), BorderLayout.NORTH);
         popupPanel.add(new JTextArea("Some text", 15, 20), BorderLayout.CENTER);

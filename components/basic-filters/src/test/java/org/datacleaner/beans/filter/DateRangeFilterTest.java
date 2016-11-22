@@ -99,7 +99,7 @@ public class DateRangeFilterTest extends TestCase {
         assertEquals("[MetaModelInputRow[Row[values=[2003-03-10 00:00:00.0]]], "
                 + "MetaModelInputRow[Row[values=[2003-03-18 00:00:00.0]]], "
                 + "MetaModelInputRow[Row[values=[2003-03-24 00:00:00.0]]]]", values.toString());
-        
+
         ajb.close();
     }
 }

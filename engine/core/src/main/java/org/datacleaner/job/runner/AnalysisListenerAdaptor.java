@@ -36,55 +36,55 @@ import org.datacleaner.job.TransformerJob;
 public class AnalysisListenerAdaptor implements AnalysisListener {
 
     @Override
-    public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
+    public void jobBegin(final AnalysisJob job, final AnalysisJobMetrics metrics) {
     }
 
     @Override
-    public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
+    public void jobSuccess(final AnalysisJob job, final AnalysisJobMetrics metrics) {
     }
 
     @Override
-    public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
+    public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
     }
 
     @Override
-    public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, InputRow row, int currentRow) {
+    public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row, final int currentRow) {
         rowProcessingProgress(job, metrics, currentRow);
     }
 
     @Override
-    public void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message) {
+    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob, final ComponentMessage message) {
         // do nothing
     }
 
     /**
-     * 
+     *
      * @param job
      * @param metrics
      * @param currentRow
-     * 
+     *
      * @deprecated use
      *             {@link #rowProcessingProgress(AnalysisJob, RowProcessingMetrics, InputRow, int)}
      *             instead.
      */
     @Deprecated
-    protected void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, int currentRow) {
+    protected void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final int currentRow) {
     }
 
     @Override
-    public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
+    public void rowProcessingSuccess(final AnalysisJob job, final RowProcessingMetrics metrics) {
     }
 
     @Override
-    public void componentBegin(AnalysisJob job, ComponentJob componentJob, ComponentMetrics metrics) {
+    public void componentBegin(final AnalysisJob job, final ComponentJob componentJob, final ComponentMetrics metrics) {
     }
 
     @Override
-    public void componentSuccess(AnalysisJob job, ComponentJob componentJob, AnalyzerResult result) {
+    public void componentSuccess(final AnalysisJob job, final ComponentJob componentJob, final AnalyzerResult result) {
     }
 
     @Override
-    public void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row, Throwable throwable) {
+    public void errorInComponent(final AnalysisJob job, final ComponentJob componentJob, final InputRow row, final Throwable throwable) {
         if (componentJob instanceof AnalyzerJob) {
             errorInAnalyzer(job, (AnalyzerJob) componentJob, row, throwable);
         } else if (componentJob instanceof TransformerJob) {
@@ -95,66 +95,67 @@ public class AnalysisListenerAdaptor implements AnalysisListener {
     }
 
     /**
-     * 
+     *
      * @param job
      * @param filterJob
      * @param row
      * @param throwable
-     * 
+     *
      * @deprecated use
      *             {@link #errorInComponent(AnalysisJob, ComponentJob, InputRow, Throwable)}
      *             instead
      */
     @Deprecated
-    protected void errorInFilter(AnalysisJob job, FilterJob filterJob, InputRow row, Throwable throwable) {
+    protected void errorInFilter(final AnalysisJob job, final FilterJob filterJob, final InputRow row, final Throwable throwable) {
     }
 
     /**
-     * 
+     *
      * @param job
      * @param transformerJob
      * @param row
      * @param throwable
-     * 
+     *
      * @deprecated use
      *             {@link #errorInComponent(AnalysisJob, ComponentJob, InputRow, Throwable)}
      *             instead
      */
     @Deprecated
-    protected void errorInTransformer(AnalysisJob job, TransformerJob transformerJob, InputRow row, Throwable throwable) {
+    protected void errorInTransformer(final AnalysisJob job, final TransformerJob transformerJob, final InputRow row,
+            final Throwable throwable) {
     }
 
     /**
-     * 
+     *
      * @param job
      * @param analyzerJob
      * @param row
      * @param throwable
-     * 
+     *
      * @deprecated use
      *             {@link #errorInComponent(AnalysisJob, ComponentJob, InputRow, Throwable)}
      *             instead
      */
     @Deprecated
-    protected void errorInAnalyzer(AnalysisJob job, AnalyzerJob analyzerJob, InputRow row, Throwable throwable) {
+    protected void errorInAnalyzer(final AnalysisJob job, final AnalyzerJob analyzerJob, final InputRow row, final Throwable throwable) {
     }
 
     @Override
-    public void errorUnknown(AnalysisJob job, Throwable throwable) {
+    public void errorUnknown(final AnalysisJob job, final Throwable throwable) {
         errorUknown(job, throwable);
     }
 
     /**
      * Represents the previous typo in the method name of the errorUnknown
      * method.
-     * 
+     *
      * @param job
      * @param throwable
-     * 
+     *
      * @deprecated use {@link #errorUnknown(AnalysisJob, Throwable)} (this method
      *             retained for forward-going compatibility).
      */
     @Deprecated
-    public void errorUknown(AnalysisJob job, Throwable throwable) {
+    public void errorUknown(final AnalysisJob job, final Throwable throwable) {
     }
 }

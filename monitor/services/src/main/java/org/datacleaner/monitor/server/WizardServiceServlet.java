@@ -26,10 +26,10 @@ import javax.servlet.ServletException;
 
 import org.datacleaner.monitor.shared.WizardService;
 import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.datacleaner.monitor.shared.model.WizardPage;
 import org.datacleaner.monitor.shared.model.WizardSessionIdentifier;
-import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -44,8 +44,8 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
         super.init();
 
         if (_delegate == null) {
-            WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            WizardService delegate = applicationContext.getBean(WizardService.class);
+            final WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final WizardService delegate = applicationContext.getBean(WizardService.class);
             if (delegate == null) {
                 throw new ServletException("No delegate found in application context!");
             }
@@ -56,47 +56,48 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
     public WizardService getDelegate() {
         return _delegate;
     }
-    
+
     @Override
-    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant, String locale) {
+    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(final TenantIdentifier tenant, final String locale) {
         return _delegate.getNonDatastoreConsumingJobWizardIdentifiers(tenant, locale);
     }
 
     @Override
-    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore, String locale) {
+    public List<WizardIdentifier> getJobWizardIdentifiers(final TenantIdentifier tenant,
+            final DatastoreIdentifier selectedDatastore, final String locale) {
         return _delegate.getJobWizardIdentifiers(tenant, selectedDatastore, locale);
     }
 
     @Override
-    public WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
-            DatastoreIdentifier selectedDatastore, String locale) {
+    public WizardPage startJobWizard(final TenantIdentifier tenant, final WizardIdentifier wizardIdentifier,
+            final DatastoreIdentifier selectedDatastore, final String locale) {
         return _delegate.startJobWizard(tenant, wizardIdentifier, selectedDatastore, locale);
     }
 
     @Override
-    public Boolean cancelWizard(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier) {
+    public Boolean cancelWizard(final TenantIdentifier tenant, final WizardSessionIdentifier sessionIdentifier) {
         return _delegate.cancelWizard(tenant, sessionIdentifier);
     }
 
     @Override
-    public WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
-            Map<String, List<String>> formParameters) {
+    public WizardPage nextPage(final TenantIdentifier tenant, final WizardSessionIdentifier sessionIdentifier,
+            final Map<String, List<String>> formParameters) {
         return _delegate.nextPage(tenant, sessionIdentifier, formParameters);
     }
 
     @Override
-    public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant, String locale) {
+    public List<WizardIdentifier> getDatastoreWizardIdentifiers(final TenantIdentifier tenant, final String locale) {
         return _delegate.getDatastoreWizardIdentifiers(tenant, locale);
     }
 
     @Override
-    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard, String locale)
+    public WizardPage startDatastoreWizard(final TenantIdentifier tenant, final WizardIdentifier wizard, final String locale)
             throws IllegalArgumentException {
         return _delegate.startDatastoreWizard(tenant, wizard, locale);
     }
 
     @Override
-    public List<WizardIdentifier> getReferenceDataWizardIdentifiers(final String referenceDataType, 
+    public List<WizardIdentifier> getReferenceDataWizardIdentifiers(final String referenceDataType,
             final TenantIdentifier tenant, final String locale) {
         return _delegate.getReferenceDataWizardIdentifiers(referenceDataType, tenant, locale);
     }
@@ -109,7 +110,7 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
     }
 
     @Override
-    public WizardPage previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier) {
+    public WizardPage previousPage(final TenantIdentifier tenant, final WizardSessionIdentifier sessionIdentifier) {
         return _delegate.previousPage(tenant, sessionIdentifier);
     }
 }

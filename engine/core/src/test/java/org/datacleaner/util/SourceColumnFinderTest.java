@@ -96,20 +96,20 @@ public class SourceColumnFinderTest extends TestCase {
         }
 
         final TransformerJob transformerJob = job.getTransformerJobs().get(0);
-        final  InputColumn<?> transformedColumn = transformerJob.getOutput()[0];
+        final InputColumn<?> transformedColumn = transformerJob.getOutput()[0];
         final FilterOutcome outcome = transformerJob.getComponentRequirement().getProcessingDependencies().iterator()
                 .next();
 
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(job);
-        
+
         final Table transformerOriginTable = sourceColumnFinder.findOriginatingTable(transformedColumn);
         assertEquals("table1", transformerOriginTable.getName());
 
         assertNotNull(outcome);
         final Table filterOriginTable = sourceColumnFinder.findOriginatingTable(outcome);
         assertEquals("table1", filterOriginTable.getName());
-        
+
         final Set<Column> transformerOriginColumns = sourceColumnFinder.findOriginatingColumns(transformedColumn);
         assertEquals(1, MetaModelHelper.getTables(transformerOriginColumns).length);
     }

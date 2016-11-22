@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.metamodel.util.SerializableRef;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Metric;
@@ -36,7 +37,6 @@ import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.LabelUtils;
-import org.apache.metamodel.util.SerializableRef;
 
 /**
  * Represents the result of the {@link ValueMatchAnalyzer}.
@@ -53,9 +53,9 @@ public class ValueMatchAnalyzerResult extends AbstractValueCountingAnalyzerResul
     private final int _totalCount;
     private final SerializableRef<RowAnnotationFactory> _rowAnnotationFactoryRef;
 
-    public ValueMatchAnalyzerResult(InputColumn<?> column, RowAnnotationFactory rowAnnotationFactory,
-            Map<String, RowAnnotation> valueAnnotations, RowAnnotation nullAnnotation,
-            RowAnnotation nonMatchingValuesAnnotation, int totalCount) {
+    public ValueMatchAnalyzerResult(final InputColumn<?> column, final RowAnnotationFactory rowAnnotationFactory,
+            final Map<String, RowAnnotation> valueAnnotations, final RowAnnotation nullAnnotation,
+            final RowAnnotation nonMatchingValuesAnnotation, final int totalCount) {
         _column = column;
         _rowAnnotationFactoryRef = new SerializableRef<RowAnnotationFactory>(rowAnnotationFactory);
         _valueAnnotations = valueAnnotations;
@@ -76,7 +76,7 @@ public class ValueMatchAnalyzerResult extends AbstractValueCountingAnalyzerResul
     }
 
     @Override
-    public Integer getCount(String value) {
+    public Integer getCount(final String value) {
         final RowAnnotation annotation = _valueAnnotations.get(value);
         if (annotation == null) {
             return null;
@@ -101,7 +101,7 @@ public class ValueMatchAnalyzerResult extends AbstractValueCountingAnalyzerResul
     }
 
     @Override
-    public AnnotatedRowsResult getAnnotatedRowsForValue(String value) {
+    public AnnotatedRowsResult getAnnotatedRowsForValue(final String value) {
         if (value == null) {
             return getAnnotatedRowsForNull();
         }
@@ -131,7 +131,7 @@ public class ValueMatchAnalyzerResult extends AbstractValueCountingAnalyzerResul
     @Override
     public Collection<ValueFrequency> getValueCounts() {
         final Set<ValueFrequency> result = new TreeSet<ValueFrequency>();
-        for (Entry<String, RowAnnotation> entry : _valueAnnotations.entrySet()) {
+        for (final Entry<String, RowAnnotation> entry : _valueAnnotations.entrySet()) {
             result.add(new SingleValueFrequency(entry.getKey(), entry.getValue().getRowCount()));
         }
         final int nullCount = getNullCount();
@@ -168,7 +168,7 @@ public class ValueMatchAnalyzerResult extends AbstractValueCountingAnalyzerResul
     }
 
     @Override
-    public boolean hasAnnotatedRows(String value) {
+    public boolean hasAnnotatedRows(final String value) {
         if (_rowAnnotationFactoryRef.get() == null) {
             return false;
         }

@@ -36,30 +36,30 @@ import com.google.common.base.Splitter;
 /**
  * Default {@link EnumMatcher} implementation that uses a normalized/trimmed
  * version of the following values for exact matching:
- * 
+ *
  * <ul>
  * <li>The constant name of the enum</li>
  * <li>The name of the enum, if it implements {@link HasName}</li>
  * <li>The alias(es) of the enum, if it implements {@link HasAliases}</li>
  * </ul>
- * 
+ *
  */
 public class DefaultEnumMatcher implements EnumMatcher<EnumerationValue> {
 
     private final Map<String, EnumerationValue> _exactMatchesMap;
 
-    public DefaultEnumMatcher(Class<? extends Enum<?>> enumClass) {
+    public DefaultEnumMatcher(final Class<? extends Enum<?>> enumClass) {
         this(EnumerationValue.providerFromEnumClass(enumClass));
     }
 
-    public DefaultEnumMatcher(EnumerationProvider enumProvider) {
+    public DefaultEnumMatcher(final EnumerationProvider enumProvider) {
         _exactMatchesMap = new HashMap<String, EnumerationValue>();
 
         final EnumerationValue[] enumConstants = enumProvider.values();
         for (final EnumerationValue e : enumConstants) {
             final String[] aliases = e.getAliases();
             if (aliases != null) {
-                for (String alias : aliases) {
+                for (final String alias : aliases) {
                     putMatch(alias, e);
                 }
             }
@@ -77,9 +77,9 @@ public class DefaultEnumMatcher implements EnumMatcher<EnumerationValue> {
         }
     }
 
-    private void putMatch(String string, EnumerationValue e) {
+    private void putMatch(final String string, final EnumerationValue e) {
         final Collection<String> normalizedStrings = normalize(string, false);
-        for (String normalizedString : normalizedStrings) {
+        for (final String normalizedString : normalizedStrings) {
             _exactMatchesMap.put(normalizedString, e);
         }
     }
@@ -87,7 +87,7 @@ public class DefaultEnumMatcher implements EnumMatcher<EnumerationValue> {
     @Override
     public EnumerationValue suggestMatch(final String string) {
         final Collection<String> normalizedStrings = normalize(string, true);
-        for (String normalizedString : normalizedStrings) {
+        for (final String normalizedString : normalizedStrings) {
             final EnumerationValue exactMatchResult = _exactMatchesMap.get(normalizedString);
             if (exactMatchResult != null) {
                 return exactMatchResult;
@@ -98,12 +98,12 @@ public class DefaultEnumMatcher implements EnumMatcher<EnumerationValue> {
 
     /**
      * Normalizes the incoming string before doing matching
-     * 
+     *
      * @param string
      * @param tokenize
      * @return
      */
-    protected Collection<String> normalize(String string, boolean tokenize) {
+    protected Collection<String> normalize(String string, final boolean tokenize) {
         if (string == null) {
             return Collections.emptyList();
         }
@@ -114,7 +114,7 @@ public class DefaultEnumMatcher implements EnumMatcher<EnumerationValue> {
 
             final Splitter splitter = Splitter.on(' ').omitEmptyStrings();
             final List<String> tokens = splitter.splitToList(string);
-            for (String token : tokens) {
+            for (final String token : tokens) {
                 final Collection<String> normalizedTokens = normalize(token, false);
                 result.addAll(normalizedTokens);
             }

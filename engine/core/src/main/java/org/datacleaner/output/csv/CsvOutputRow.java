@@ -37,7 +37,8 @@ final class CsvOutputRow implements OutputRow {
     private final Ref<OutputStream> _outputStreamRef;
     private final CsvConfiguration _csvConfiguration;
 
-    public CsvOutputRow(Ref<OutputStream> outputStreamRef, CsvConfiguration csvConfiguration, InputColumn<?>[] columns) {
+    public CsvOutputRow(final Ref<OutputStream> outputStreamRef, final CsvConfiguration csvConfiguration,
+            final InputColumn<?>[] columns) {
         _outputStreamRef = outputStreamRef;
         _csvConfiguration = csvConfiguration;
         _columns = columns;
@@ -45,16 +46,16 @@ final class CsvOutputRow implements OutputRow {
     }
 
     @Override
-    public <E> OutputRow setValue(InputColumn<? super E> inputColumn, E value) {
+    public <E> OutputRow setValue(final InputColumn<? super E> inputColumn, final E value) {
         _map.put(inputColumn, value);
         return this;
     }
 
     @Override
-    public OutputRow setValues(InputRow row) {
-        for (InputColumn<?> column : _columns) {
-            Object value = row.getValue(column);
-            @SuppressWarnings("unchecked")
+    public OutputRow setValues(final InputRow row) {
+        for (final InputColumn<?> column : _columns) {
+            final Object value = row.getValue(column);
+            @SuppressWarnings("unchecked") final
             InputColumn<Object> objectColumn = (InputColumn<Object>) column;
             setValue(objectColumn, value);
         }
@@ -76,7 +77,7 @@ final class CsvOutputRow implements OutputRow {
         try {
             final byte[] bytes = line.getBytes(_csvConfiguration.getEncoding());
             outputStream.write(bytes);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }

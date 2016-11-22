@@ -46,7 +46,8 @@ public interface WizardService extends WizardNavigationService, RemoteService {
     List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant, String locale);
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore, String locale);
+    List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore,
+            String locale);
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizard,
@@ -58,11 +59,11 @@ public interface WizardService extends WizardNavigationService, RemoteService {
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard, String locale)
             throws IllegalArgumentException;
-    
+
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    List<WizardIdentifier> getReferenceDataWizardIdentifiers(String referenceDataType, TenantIdentifier tenant, 
+    List<WizardIdentifier> getReferenceDataWizardIdentifiers(String referenceDataType, TenantIdentifier tenant,
             String locale);
-    
+
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     WizardPage startReferenceDataWizard(TenantIdentifier tenant, WizardIdentifier wizard, String locale)
             throws IllegalArgumentException;

@@ -34,11 +34,11 @@ public class FileResolver {
 
     private final File _baseDir;
 
-    public FileResolver(DataCleanerConfiguration configuration) {
+    public FileResolver(final DataCleanerConfiguration configuration) {
         this(configuration == null ? null : configuration.getHomeFolder());
     }
 
-    public FileResolver(DataCleanerHomeFolder homeFolder) {
+    public FileResolver(final DataCleanerHomeFolder homeFolder) {
         if (homeFolder == null) {
             _baseDir = DataCleanerConfigurationImpl.defaultHomeFolder().toFile();
         } else {
@@ -46,7 +46,7 @@ public class FileResolver {
         }
     }
 
-    public FileResolver(File baseDir) {
+    public FileResolver(final File baseDir) {
         if (baseDir == null) {
             throw new IllegalArgumentException("Base directory cannot be null");
         }
@@ -61,7 +61,7 @@ public class FileResolver {
         if (filename == null) {
             return null;
         }
-        
+
         filename = filename.trim();
         if (filename.toLowerCase().startsWith("file://")) {
             filename = filename.substring("file://".length());
@@ -81,7 +81,7 @@ public class FileResolver {
         return file;
     }
 
-    public String toPath(File file) {
+    public String toPath(final File file) {
         if (file == null) {
             return null;
         }

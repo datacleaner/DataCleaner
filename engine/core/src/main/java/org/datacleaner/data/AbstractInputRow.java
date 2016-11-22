@@ -32,42 +32,42 @@ import org.datacleaner.api.InputRow;
  */
 public abstract class AbstractInputRow implements InputRow {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public final <E> E getValue(InputColumn<E> column) {
-		if (column == null) {
-			return null;
-		}
-		if (column instanceof ExpressionBasedInputColumn) {
-			ExpressionBasedInputColumn<E> ebic = (ExpressionBasedInputColumn<E>) column;
-			E value = ebic.evaluate(this);
-			return value;
-		}
-		
+    @Override
+    public final <E> E getValue(final InputColumn<E> column) {
+        if (column == null) {
+            return null;
+        }
+        if (column instanceof ExpressionBasedInputColumn) {
+            final ExpressionBasedInputColumn<E> ebic = (ExpressionBasedInputColumn<E>) column;
+            final E value = ebic.evaluate(this);
+            return value;
+        }
+
         return getValueInternal(column);
-	}
-	
-	@Override
-	public List<Object> getValues(List<InputColumn<?>> columns) {
-	    if (columns == null) {
+    }
+
+    @Override
+    public List<Object> getValues(final List<InputColumn<?>> columns) {
+        if (columns == null) {
             return new ArrayList<Object>(0);
         }
-	    List<Object> result = new ArrayList<Object>(columns.size());
-	    for (InputColumn<?> inputColumn : columns) {
-            Object value = getValue(inputColumn);
+        final List<Object> result = new ArrayList<Object>(columns.size());
+        for (final InputColumn<?> inputColumn : columns) {
+            final Object value = getValue(inputColumn);
             result.add(value);
         }
-	    return result;
-	}
-	
-	@Override
-	public List<Object> getValues(InputColumn<?>... columns) {
-	    if (columns == null) {
-	        return new ArrayList<Object>(0);
-	    }
-	    return getValues(Arrays.asList(columns));
-	}
+        return result;
+    }
 
-	protected abstract <E> E getValueInternal(InputColumn<E> column);
+    @Override
+    public List<Object> getValues(final InputColumn<?>... columns) {
+        if (columns == null) {
+            return new ArrayList<Object>(0);
+        }
+        return getValues(Arrays.asList(columns));
+    }
+
+    protected abstract <E> E getValueInternal(InputColumn<E> column);
 }

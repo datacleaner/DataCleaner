@@ -62,8 +62,8 @@ public class QueryPanel extends FlowPanel {
     private final HTML _resultPanel;
     private final LoadingIndicator _loadingIcon;
 
-    public QueryPanel(TenantIdentifier tenant, DatastoreServiceAsync service, DatastoreIdentifier datastore,
-            SchemaIdentifier schema, List<TableIdentifier> tables) {
+    public QueryPanel(final TenantIdentifier tenant, final DatastoreServiceAsync service, final DatastoreIdentifier datastore,
+            final SchemaIdentifier schema, final List<TableIdentifier> tables) {
         super();
         setStyleName("QueryPanel");
 
@@ -92,21 +92,21 @@ public class QueryPanel extends FlowPanel {
 
         _executeQueryButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 final DCRequestBuilder requestBuilder = new DCRequestBuilder(RequestBuilder.POST, url);
                 final String query = getCurrentQuery();
                 _resultPanel.setVisible(false);
                 _loadingIcon.setVisible(true);
                 requestBuilder.send(query, new DCRequestCallback() {
                     @Override
-                    protected void onSuccess(Request request, Response response) {
+                    protected void onSuccess(final Request request, final Response response) {
                         final String resultText = response.getText();
                         _resultPanel.setHTML(resultText);
                         _resultPanel.setVisible(true);
                     }
 
                     @Override
-                    public void onResponseReceived(Request request, Response response) {
+                    public void onResponseReceived(final Request request, final Response response) {
                         _loadingIcon.setVisible(false);
                         if (response.getStatusCode() == 400) {
                             ErrorHandler.showErrorDialog("Failed to handle query!", response.getStatusText(),
@@ -122,8 +122,8 @@ public class QueryPanel extends FlowPanel {
         final SchemaTree schemaPanel = new SchemaTree(_tenant, _datastore, service);
         schemaPanel.addSelectionHandler(new SelectionHandler<TreeItem>() {
             @Override
-            public void onSelection(SelectionEvent<TreeItem> event) {
-                TreeItem selectedItem = event.getSelectedItem();
+            public void onSelection(final SelectionEvent<TreeItem> event) {
+                final TreeItem selectedItem = event.getSelectedItem();
                 if (selectedItem.getUserObject() instanceof TableIdentifier) {
                     writeQuery((TableIdentifier) selectedItem.getUserObject());
                 }
@@ -133,17 +133,17 @@ public class QueryPanel extends FlowPanel {
         add(schemaPanel);
         add(new HeadingLabel("Query datastore: " + _datastore.getName()));
         add(new Label("Please fill in your query below and click the 'Ok' button to execute it on the server."));
-        
+
         final FlowPanel buttonPanel = new FlowPanel();
-        buttonPanel.add(_queryTextArea);;
+        buttonPanel.add(_queryTextArea);
         buttonPanel.add(_executeQueryButton);
-        
+
         add(buttonPanel);
         add(_loadingIcon);
         add(_resultPanel);
     }
 
-    protected void writeQuery(TableIdentifier table) {
+    protected void writeQuery(final TableIdentifier table) {
         if (table == null) {
             _queryTextArea.setText("SELECT *\nFROM [table] \nLIMIT 50");
         } else {

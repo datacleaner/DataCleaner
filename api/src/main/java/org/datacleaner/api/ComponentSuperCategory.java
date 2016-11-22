@@ -33,25 +33,25 @@ public interface ComponentSuperCategory extends Serializable, HasName, Comparabl
     /**
      * Gets the name of the category. The name is often used as the primary
      * identifier of a category.
-     * 
+     *
      * @return a string name
      */
     @Override
-    public String getName();
+    String getName();
 
     /**
      * Gets the description of the category.
-     * 
+     *
      * @return
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Gets an index for sorting of {@link ComponentSuperCategory} objects. Any
      * value is valid. The sequence of numbers will guide how a presentation of
      * categories will be sorted.
-     * 
+     *
      * @return
      */
-    public int getSortIndex();
+    int getSortIndex();
 }

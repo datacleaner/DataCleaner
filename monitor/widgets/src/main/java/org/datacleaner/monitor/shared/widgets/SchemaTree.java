@@ -49,15 +49,15 @@ public class SchemaTree extends Tree implements OpenHandler<TreeItem> {
     private final DatastoreServiceAsync _service;
     private final TenantIdentifier _tenant;
 
-    public SchemaTree(TenantIdentifier tenant, DatastoreIdentifier datastore, DatastoreServiceAsync service) {
+    public SchemaTree(final TenantIdentifier tenant, final DatastoreIdentifier datastore, final DatastoreServiceAsync service) {
         super();
         addStyleName("SchemaTree");
-        
+
         _tenant = tenant;
         _datastore = datastore;
         _service = service;
 
-        TreeItem rootItem = addItem(SafeHtmlUtils.fromString(datastore.getName()));
+        final TreeItem rootItem = addItem(SafeHtmlUtils.fromString(datastore.getName()));
         rootItem.setUserObject(datastore);
         rootItem.addStyleName("datastoreItem");
         rootItem.addItem(LOADING_ITEM_TEXT);
@@ -66,7 +66,7 @@ public class SchemaTree extends Tree implements OpenHandler<TreeItem> {
     }
 
     @Override
-    public void onOpen(OpenEvent<TreeItem> event) {
+    public void onOpen(final OpenEvent<TreeItem> event) {
         final TreeItem item = event.getTarget();
 
         if (item.getChildCount() == 1) {
@@ -81,15 +81,15 @@ public class SchemaTree extends Tree implements OpenHandler<TreeItem> {
     private void loadChildren(final TreeItem item) {
         final Object object = item.getUserObject();
         if (object instanceof DatastoreIdentifier) {
-            AsyncCallback<List<SchemaIdentifier>> callback = createTreeCallback(item, "schemaItem", true);
+            final AsyncCallback<List<SchemaIdentifier>> callback = createTreeCallback(item, "schemaItem", true);
             _service.getSchemas(_tenant, _datastore, callback);
         } else if (object instanceof SchemaIdentifier) {
-            SchemaIdentifier schema = (SchemaIdentifier) object;
-            AsyncCallback<List<TableIdentifier>> callback = createTreeCallback(item, "tableItem", true);
+            final SchemaIdentifier schema = (SchemaIdentifier) object;
+            final AsyncCallback<List<TableIdentifier>> callback = createTreeCallback(item, "tableItem", true);
             _service.getTables(_tenant, schema, callback);
         } else if (object instanceof TableIdentifier) {
-            TableIdentifier table = (TableIdentifier) object;
-            AsyncCallback<List<ColumnIdentifier>> callback = createTreeCallback(item, "columnItem", false);
+            final TableIdentifier table = (TableIdentifier) object;
+            final AsyncCallback<List<ColumnIdentifier>> callback = createTreeCallback(item, "columnItem", false);
             _service.getColumns(_tenant, table, callback);
         }
     }
@@ -98,9 +98,9 @@ public class SchemaTree extends Tree implements OpenHandler<TreeItem> {
             final String childStyleName, final boolean addLoadingItem) {
         return new DCAsyncCallback<List<E>>() {
             @Override
-            public void onSuccess(List<E> children) {
+            public void onSuccess(final List<E> children) {
                 item.removeItems();
-                for (E child : children) {
+                for (final E child : children) {
                     final String name = child.getName();
                     final TreeItem childItem = item.addItem(SafeHtmlUtils.fromString(name));
                     childItem.setUserObject(child);

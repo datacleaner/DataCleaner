@@ -41,8 +41,8 @@ import org.mozilla.javascript.ScriptableObject;
 @Categorized(ScriptingCategory.class)
 public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
 
-    public static enum Category {
-        VALID, INVALID;
+    public enum Category {
+        VALID, INVALID
     }
 
     @Configured
@@ -62,7 +62,7 @@ public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
     @Initialize
     public void init() {
         _contextFactory = new ContextFactory();
-        Context context = _contextFactory.enterContext();
+        final Context context = _contextFactory.enterContext();
 
         try {
             _script = context.compileString(sourceCode, this.getClass().getSimpleName(), 1, null);
@@ -76,20 +76,20 @@ public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
     }
 
     @Override
-    public Category categorize(InputRow inputRow) {
-        Context context = _contextFactory.enterContext();
+    public Category categorize(final InputRow inputRow) {
+        final Context context = _contextFactory.enterContext();
 
         try {
 
             // this scope is local to the execution of a single row
-            Scriptable scope = context.newObject(_sharedScope);
+            final Scriptable scope = context.newObject(_sharedScope);
             scope.setPrototype(_sharedScope);
             scope.setParentScope(null);
 
             JavaScriptUtils.addToScope(scope, inputRow, columns, "values");
 
-            Object result = _script.exec(context, scope);
-            boolean booleanResult = Context.toBoolean(result);
+            final Object result = _script.exec(context, scope);
+            final boolean booleanResult = Context.toBoolean(result);
 
             if (booleanResult) {
                 return JavaScriptFilter.Category.VALID;
@@ -100,11 +100,11 @@ public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
         }
     }
 
-    public void setSourceCode(String sourceCode) {
+    public void setSourceCode(final String sourceCode) {
         this.sourceCode = sourceCode;
     }
 
-    public void setColumns(InputColumn<?>[] columns) {
+    public void setColumns(final InputColumn<?>[] columns) {
         this.columns = columns;
     }
 }

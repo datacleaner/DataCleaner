@@ -39,7 +39,8 @@ public class SelectFromMapTransformerTest extends TestCase {
         trans.mapColumn = col;
         trans.keys = new String[] { "id", "Name.GivenName", "email.address", "Name.FamilyName",
                 "Name.Something.That.Does.Not.Exist", "Addresses[1].street" };
-        trans.types = new Class[] { Integer.class, String.class, String.class, String.class, String.class, String.class };
+        trans.types =
+                new Class[] { Integer.class, String.class, String.class, String.class, String.class, String.class };
         trans.verifyTypes = true;
 
         assertEquals(

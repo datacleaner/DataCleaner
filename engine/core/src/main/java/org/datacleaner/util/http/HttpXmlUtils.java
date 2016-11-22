@@ -58,53 +58,30 @@ public final class HttpXmlUtils {
     private final HttpClient _httpClient;
 
     @Inject
-    public HttpXmlUtils(UserPreferences userPreferences) {
+    public HttpXmlUtils(final UserPreferences userPreferences) {
         _userPreferences = userPreferences;
         _httpClient = null;
     }
 
-    public HttpXmlUtils(HttpClient httpClient) {
+    public HttpXmlUtils(final HttpClient httpClient) {
         _userPreferences = null;
         _httpClient = httpClient;
     }
 
-    public String getUrlContent(String url, Map<String, String> params) throws IOException {
-        if (params == null) {
-            params = Collections.emptyMap();
-        }
-        logger.info("getUrlContent({},{})", url, params);
-        HttpPost method = new HttpPost(url);
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        for (Entry<String, String> entry : params.entrySet()) {
-            nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
-        }
-        method.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        String response = getHttpClient().execute(method, responseHandler);
-        return response;
-    }
-
-    private HttpClient getHttpClient() {
-        if (_httpClient == null) {
-            return _userPreferences.createHttpClient();
-        }
-        return _httpClient;
-    }
-
-    public static Element getRootNode(HttpClient httpClient, String url) throws InvalidHttpResponseException {
+    public static Element getRootNode(final HttpClient httpClient, final String url) throws InvalidHttpResponseException {
         logger.info("getRootNode({})", url);
         try {
-            HttpGet method = new HttpGet(url);
-            HttpResponse response = httpClient.execute(method);
-            int statusCode = response.getStatusLine().getStatusCode();
+            final HttpGet method = new HttpGet(url);
+            final HttpResponse response = httpClient.execute(method);
+            final int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != 200) {
                 logger.error("Response status code was: {} (url={})", statusCode, url);
                 throw new InvalidHttpResponseException(url, response);
             }
-            InputStream inputStream = response.getEntity().getContent();
-            Document document = XmlUtils.createDocumentBuilder().parse(inputStream);
+            final InputStream inputStream = response.getEntity().getContent();
+            final Document document = XmlUtils.createDocumentBuilder().parse(inputStream);
             return (Element) document.getFirstChild();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -112,12 +89,12 @@ public final class HttpXmlUtils {
         }
     }
 
-    public static List<Node> getChildNodesByName(Node parentNode, String childNodeName) {
-        List<Node> result = new ArrayList<Node>();
+    public static List<Node> getChildNodesByName(final Node parentNode, final String childNodeName) {
+        final List<Node> result = new ArrayList<Node>();
         if (childNodeName != null) {
-            NodeList childNodes = parentNode.getChildNodes();
+            final NodeList childNodes = parentNode.getChildNodes();
             for (int i = 0; i < childNodes.getLength(); i++) {
-                Node childNode = childNodes.item(i);
+                final Node childNode = childNodes.item(i);
                 if (childNodeName.equals(childNode.getNodeName())) {
                     result.add(childNode);
                 }
@@ -126,8 +103,8 @@ public final class HttpXmlUtils {
         return result;
     }
 
-    public static String getChildNodeText(Node node, String childNodeName) {
-        List<Node> childNodes = getChildNodesByName(node, childNodeName);
+    public static String getChildNodeText(final Node node, final String childNodeName) {
+        final List<Node> childNodes = getChildNodesByName(node, childNodeName);
         if (childNodes.isEmpty()) {
             return null;
         }
@@ -138,8 +115,31 @@ public final class HttpXmlUtils {
         return getText(childNodes.get(0));
     }
 
-    public static String getText(Node node) {
-        Element element = (Element) node;
+    public static String getText(final Node node) {
+        final Element element = (Element) node;
         return element.getTextContent();
+    }
+
+    public String getUrlContent(final String url, Map<String, String> params) throws IOException {
+        if (params == null) {
+            params = Collections.emptyMap();
+        }
+        logger.info("getUrlContent({},{})", url, params);
+        final HttpPost method = new HttpPost(url);
+        final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        for (final Entry<String, String> entry : params.entrySet()) {
+            nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+        }
+        method.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+        final ResponseHandler<String> responseHandler = new BasicResponseHandler();
+        final String response = getHttpClient().execute(method, responseHandler);
+        return response;
+    }
+
+    private HttpClient getHttpClient() {
+        if (_httpClient == null) {
+            return _userPreferences.createHttpClient();
+        }
+        return _httpClient;
     }
 }

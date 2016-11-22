@@ -49,13 +49,13 @@ public class SaveAnalysisResultActionListener implements ActionListener {
     private final Ref<AnalysisResult> _result;
     private final UserPreferences _userPreferences;
 
-    public SaveAnalysisResultActionListener(Ref<AnalysisResult> result, UserPreferences userPreferences) {
+    public SaveAnalysisResultActionListener(final Ref<AnalysisResult> result, final UserPreferences userPreferences) {
         _result = result;
         _userPreferences = userPreferences;
     }
 
     @Override
-    public void actionPerformed(ActionEvent event) {
+    public void actionPerformed(final ActionEvent event) {
         if (_result.get() == null) {
             WidgetUtils.showErrorMessage("Result not ready",
                     "Please wait for the job to finish before saving the result");
@@ -81,7 +81,7 @@ public class SaveAnalysisResultActionListener implements ActionListener {
             }
 
             if (file.exists()) {
-                int overwrite = JOptionPane.showConfirmDialog(parent,
+                final int overwrite = JOptionPane.showConfirmDialog(parent,
                         "Are you sure you want to overwrite the file '" + file.getName() + "'?",
                         "Overwrite existing file?", JOptionPane.YES_NO_OPTION);
                 if (overwrite != JOptionPane.YES_OPTION) {
@@ -106,7 +106,7 @@ public class SaveAnalysisResultActionListener implements ActionListener {
                     details.append(unsafeResultElements.size()
                             + " of the result elements encountered an error while saving.\n");
 
-                    for (ComponentJob componentJob : unsafeResultElements.keySet()) {
+                    for (final ComponentJob componentJob : unsafeResultElements.keySet()) {
                         final String componentJobLabel = LabelUtils.getLabel(componentJob);
                         details.append('\n');
                         details.append(" - ");

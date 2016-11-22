@@ -28,7 +28,7 @@ import org.datacleaner.api.QueryOptimizedFilter;
 
 /**
  * {@link ComponentDescriptor} interface for {@link Filter}s.
- * 
+ *
  * @param <F>
  *            the type of {@link Filter}
  * @param <C>
@@ -36,19 +36,19 @@ import org.datacleaner.api.QueryOptimizedFilter;
  */
 public interface FilterDescriptor<F extends Filter<C>, C extends Enum<C>> extends ComponentDescriptor<F> {
 
-    public Class<C> getOutcomeCategoryEnum();
+    Class<C> getOutcomeCategoryEnum();
 
-    public EnumSet<C> getOutcomeCategories();
+    EnumSet<C> getOutcomeCategories();
 
-    public Set<String> getOutcomeCategoryNames();
+    Set<String> getOutcomeCategoryNames();
 
-    public Enum<C> getOutcomeCategoryByName(String category);
+    Enum<C> getOutcomeCategoryByName(String category);
 
     /**
      * Determine whether this {@link Filter} is query optimizable or not. See
      * {@link QueryOptimizedFilter} and {@link Optimizeable} for more details.
-     * 
+     *
      * @return true if this filter can be query optimized.
      */
-    public boolean isQueryOptimizable();
+    boolean isQueryOptimizable();
 }

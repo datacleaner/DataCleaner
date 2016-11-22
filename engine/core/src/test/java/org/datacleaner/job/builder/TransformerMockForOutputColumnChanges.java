@@ -29,8 +29,8 @@ import org.datacleaner.test.MockTransformer;
 public class TransformerMockForOutputColumnChanges extends MockTransformer {
 
     @Configured
-    String[] _outputColumnNames = {"foo","bar"};
-    
+    String[] _outputColumnNames = { "foo", "bar" };
+
     @Override
     public OutputColumns getOutputColumns() {
         return new OutputColumns(String.class, _outputColumnNames);

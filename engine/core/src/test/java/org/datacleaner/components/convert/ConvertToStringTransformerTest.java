@@ -23,12 +23,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-
-import junit.framework.TestCase;
 
 public class ConvertToStringTransformerTest extends TestCase {
 
@@ -37,7 +36,7 @@ public class ConvertToStringTransformerTest extends TestCase {
         InputColumn<Object> col = new MockInputColumn<Object>("foo");
         t.setInput(new InputColumn[] { col });
         t.setNullReplacement("!null!");
-        
+
         assertEquals("OutputColumns[foo (as string)]", t.getOutputColumns().toString());
 
         assertEquals("!null!", t.transform(new MockInputRow().put(col, null))[0]);

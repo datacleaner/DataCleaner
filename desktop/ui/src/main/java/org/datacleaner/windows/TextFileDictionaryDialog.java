@@ -65,8 +65,8 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
     private volatile boolean _nameAutomaticallySet = true;
 
     @Inject
-    protected TextFileDictionaryDialog(@Nullable TextFileDictionary dictionary, MutableReferenceDataCatalog catalog,
-            WindowContext windowContext, DataCleanerConfiguration configuration, UserPreferences userPreferences) {
+    protected TextFileDictionaryDialog(@Nullable final TextFileDictionary dictionary, final MutableReferenceDataCatalog catalog,
+            final WindowContext windowContext, final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
         super(windowContext, ImageManager.get().getImage(IconUtils.DICTIONARY_TEXTFILE_IMAGEPATH));
         _originalDictionary = dictionary;
         _catalog = catalog;
@@ -74,7 +74,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
         _nameTextField = WidgetFactory.createTextField("Dictionary name");
         _nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent e) {
+            protected void onChange(final DocumentEvent e) {
                 _nameAutomaticallySet = false;
             }
         });
@@ -82,7 +82,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
         _resourceSelector = new ResourceSelector(configuration, userPreferences, true);
         _resourceSelector.addListener(new ResourceTypePresenter.Listener() {
             @Override
-            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
+            public void onResourceSelected(final ResourceTypePresenter<?> presenter, final Resource resource) {
                 if (_nameAutomaticallySet || StringUtils.isNullOrEmpty(_nameTextField.getText())) {
                     _nameTextField.setText(resource.getName());
                     _nameAutomaticallySet = true;
@@ -90,7 +90,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
             }
 
             @Override
-            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+            public void onPathEntered(final ResourceTypePresenter<?> presenter, final String path) {
                 if (_nameAutomaticallySet || StringUtils.isNullOrEmpty(_nameTextField.getText())) {
                     _nameTextField.setText(path);
                     _nameAutomaticallySet = true;
@@ -145,7 +145,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
         final JButton saveButton = WidgetFactory.createPrimaryButton("Save dictionary", IconUtils.ACTION_SAVE_BRIGHT);
         saveButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final String name = _nameTextField.getText();
                 if (StringUtils.isNullOrEmpty(name)) {
                     JOptionPane.showMessageDialog(TextFileDictionaryDialog.this,

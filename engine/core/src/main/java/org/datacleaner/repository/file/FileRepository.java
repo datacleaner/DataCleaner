@@ -33,11 +33,11 @@ public class FileRepository extends FileRepositoryFolder implements Repository {
 
     private static final long serialVersionUID = 1L;
 
-    public FileRepository(String filename) {
+    public FileRepository(final String filename) {
         this(new File(filename));
     }
 
-    public FileRepository(File file) {
+    public FileRepository(final File file) {
         super(null, file);
     }
 
@@ -52,11 +52,11 @@ public class FileRepository extends FileRepositoryFolder implements Repository {
     }
 
     @Override
-    public RepositoryNode getRepositoryNode(String path) {
+    public RepositoryNode getRepositoryNode(final String path) {
         RepositoryFolder folder = this;
-        String[] pathParts = path.split("/");
+        final String[] pathParts = path.split("/");
         for (int i = 0; i < pathParts.length - 1; i++) {
-            String pathPart = pathParts[i];
+            final String pathPart = pathParts[i];
             if (!pathPart.isEmpty()) {
                 folder = folder.getFolder(pathPart);
                 if (folder == null) {
@@ -64,11 +64,11 @@ public class FileRepository extends FileRepositoryFolder implements Repository {
                 }
             }
         }
-        String lastPart = pathParts[pathParts.length - 1];
+        final String lastPart = pathParts[pathParts.length - 1];
         if (lastPart.isEmpty()) {
             return folder;
         }
-        RepositoryFile file = folder.getFile(lastPart);
+        final RepositoryFile file = folder.getFile(lastPart);
         if (file == null) {
             return folder.getFolder(lastPart);
         }

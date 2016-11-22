@@ -29,23 +29,22 @@ import org.datacleaner.util.http.HttpBasicMonitorHttpClient;
  *
  */
 public class DataHubDefaultMonitorHttpClient extends HttpBasicMonitorHttpClient {
-    
-    private final String _userName;
 
-    public DataHubDefaultMonitorHttpClient(CloseableHttpClient client, String host, int port, String username, String password) {
-        super(client, host, port, username,password);
-        this._userName = username;
-    }
-    
     private static final String CDI_TICKET_HEADER = "CDI-ticket";
     private static final String CDI_SERVICE_URL_HEADER = "CDI-serviceUrl";
     private static final String CDI_USERID = "CDI-userId";
+    private final String _userName;
+    public DataHubDefaultMonitorHttpClient(final CloseableHttpClient client, final String host, final int port, final String username,
+            final String password) {
+        super(client, host, port, username, password);
+        this._userName = username;
+    }
 
     @Override
-    protected void addSecurityHeaders(HttpUriRequest request) throws Exception {
+    protected void addSecurityHeaders(final HttpUriRequest request) throws Exception {
         request.addHeader(CDI_TICKET_HEADER, "dummy-string");
         request.addHeader(CDI_SERVICE_URL_HEADER, "dummy-string");
-        request.addHeader(CDI_USERID, _userName);        
+        request.addHeader(CDI_USERID, _userName);
     }
 
 }

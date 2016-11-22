@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 public class QueryParameterizableMetricTest extends TestCase {
 
     final QueryParameterizableMetric metric = new QueryParameterizableMetric() {
-        
+
         @Override
         public Collection<String> getParameterSuggestions() {
             return null;
@@ -62,12 +62,12 @@ public class QueryParameterizableMetricTest extends TestCase {
         assertEquals(500, metric.getValue("IN [bar,foo]"));
         assertEquals(600, metric.getValue("IN [foo,baz]"));
     }
-    
+
     public void testDanglingWhitespaces() throws Exception {
         assertEquals(500, metric.getValue("  IN [foo,bar]  "));
         assertEquals(400, metric.getValue("  NOT IN [foo,bar] \t"));
     }
-    
+
     public void testCaseInsensitiveMatch() throws Exception {
         assertEquals(600, metric.getValue("iN [foo,baz]"));
         assertEquals(300, metric.getValue("noT In [foo,baz]"));

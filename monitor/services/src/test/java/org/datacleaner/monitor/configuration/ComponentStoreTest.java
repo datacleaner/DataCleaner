@@ -19,18 +19,19 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import com.google.common.io.Files;
+import java.io.File;
+
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.repository.file.FileRepositoryFolder;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.File;
+import com.google.common.io.Files;
 
 /**
  * Class ComponentsStoreTest
- * 
+ *
  * @since 28.7.15
  */
 public class ComponentStoreTest {

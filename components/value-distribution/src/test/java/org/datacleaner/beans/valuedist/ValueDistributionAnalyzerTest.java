@@ -43,7 +43,7 @@ import org.datacleaner.test.TestHelper;
 import org.junit.Test;
 
 public class ValueDistributionAnalyzerTest {
-    
+
     @Test
     public void testComponentBuilderIsDistributable() {
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
@@ -51,13 +51,14 @@ public class ValueDistributionAnalyzerTest {
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore(datastore);
             ajb.addSourceColumns("customers.country", "customers.city");
-            
-            final AnalyzerComponentBuilder<ValueDistributionAnalyzer> componentBuilder = ajb.addAnalyzer(ValueDistributionAnalyzer.class);
+
+            final AnalyzerComponentBuilder<ValueDistributionAnalyzer> componentBuilder =
+                    ajb.addAnalyzer(ValueDistributionAnalyzer.class);
             assertTrue(componentBuilder.isDistributable());
-            
+
             componentBuilder.addInputColumn(ajb.getSourceColumnByName("country"));
             assertTrue(componentBuilder.isDistributable());
-            
+
             componentBuilder.addInputColumn(ajb.getSourceColumnByName("city"));
             assertTrue(componentBuilder.isDistributable());
         }

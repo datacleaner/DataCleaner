@@ -37,8 +37,8 @@ public class ContextAwareInjectionManager implements InjectionManager {
     private final AnalysisListener _listener;
     private final AnalysisJob _job;
 
-    public ContextAwareInjectionManager(InjectionManager delegate, AnalysisJob job, ComponentJob componentJob,
-            AnalysisListener listener) {
+    public ContextAwareInjectionManager(final InjectionManager delegate, final AnalysisJob job, final ComponentJob componentJob,
+            final AnalysisListener listener) {
         _delegate = delegate;
         _job = job;
         _componentJob = componentJob;
@@ -47,7 +47,7 @@ public class ContextAwareInjectionManager implements InjectionManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E> E getInstance(InjectionPoint<E> injectionPoint) {
+    public <E> E getInstance(final InjectionPoint<E> injectionPoint) {
         final Class<?> baseType = injectionPoint.getBaseType();
         if (baseType == ComponentContext.class) {
             final ComponentContext componentContext = new ComponentContextImpl(_job, _componentJob, _listener);

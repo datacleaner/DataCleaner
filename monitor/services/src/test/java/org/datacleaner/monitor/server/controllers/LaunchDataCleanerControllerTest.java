@@ -26,12 +26,12 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.easymock.EasyMock;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.datacleaner.monitor.server.job.DataCleanerJobContext;
-import org.apache.metamodel.util.FileHelper;
+import org.easymock.EasyMock;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;

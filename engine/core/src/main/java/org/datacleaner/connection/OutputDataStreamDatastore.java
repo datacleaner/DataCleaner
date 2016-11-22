@@ -28,14 +28,13 @@ import org.datacleaner.data.OutputDataStreamDataContext;
  */
 public class OutputDataStreamDatastore extends UsageAwareDatastore<DataContext> {
 
+    private static final long serialVersionUID = 1L;
     private final OutputDataStream _outputDataStream;
 
-    public OutputDataStreamDatastore(OutputDataStream outputDataStream) {
+    public OutputDataStreamDatastore(final OutputDataStream outputDataStream) {
         super(outputDataStream.getName());
         _outputDataStream = outputDataStream;
     }
-
-    private static final long serialVersionUID = 1L;
 
     @Override
     public PerformanceCharacteristics getPerformanceCharacteristics() {

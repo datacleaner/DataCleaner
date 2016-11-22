@@ -39,7 +39,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Job {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected final ApplicationContext getApplicationContext(JobExecutionContext context) {
+    protected final ApplicationContext getApplicationContext(final JobExecutionContext context) {
         try {
             final SchedulerContext schedulerContext = context.getScheduler().getContext();
             final ApplicationContext applicationContext = (ApplicationContext) schedulerContext
@@ -49,7 +49,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Job {
                         Arrays.toString(schedulerContext.getKeys()));
             }
             return applicationContext;
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             logger.error("Couldn't retrieve ApplicationContext from scheduler context", e);
             throw new IllegalStateException(e);
         }

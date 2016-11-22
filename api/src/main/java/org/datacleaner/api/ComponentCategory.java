@@ -30,12 +30,12 @@ import org.apache.metamodel.util.HasName;
  */
 public interface ComponentCategory extends Serializable, HasName {
 
-	/**
-	 * Gets the name of the category. The name is often used as the primary
-	 * identifier of a category.
-	 * 
-	 * @return a string name
-	 */
-	@Override
-	public String getName();
+    /**
+     * Gets the name of the category. The name is often used as the primary
+     * identifier of a category.
+     *
+     * @return a string name
+     */
+    @Override
+    String getName();
 }

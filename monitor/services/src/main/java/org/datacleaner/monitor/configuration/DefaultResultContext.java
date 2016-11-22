@@ -25,20 +25,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.descriptors.PlaceholderComponentJob;
 import org.datacleaner.job.ComponentJob;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.DataSetResult;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.result.NumberResult;
 import org.datacleaner.result.SimpleAnalysisResult;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
-import org.datacleaner.monitor.job.JobContext;
-import org.datacleaner.repository.RepositoryFile;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 
 /**
  * Default implementation of the {@link ResultContext} interface.
@@ -57,12 +57,12 @@ public class DefaultResultContext implements ResultContext {
     public AnalysisResult getAnalysisResult() throws IllegalStateException {
         final Object deserializedObject = _repositoryFile.readFile(new Func<InputStream, Object>() {
             @Override
-            public Object eval(InputStream in) {
+            public Object eval(final InputStream in) {
                 ChangeAwareObjectInputStream inputStream = null;
                 try {
                     inputStream = new ChangeAwareObjectInputStream(in);
                     return inputStream.readObject();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     if (e instanceof RuntimeException) {
                         throw (RuntimeException) e;
                     }
@@ -76,7 +76,7 @@ public class DefaultResultContext implements ResultContext {
         return analysisResult;
     }
 
-    private AnalysisResult toAnalysisResult(Object deserializedObject) {
+    private AnalysisResult toAnalysisResult(final Object deserializedObject) {
         if (deserializedObject instanceof AnalysisResult) {
             // this is the most common case
             return (AnalysisResult) deserializedObject;
@@ -89,26 +89,27 @@ public class DefaultResultContext implements ResultContext {
             final Date creationDate = new Date(_repositoryFile.getLastModified());
             final Map<ComponentJob, AnalyzerResult> results = new HashMap<ComponentJob, AnalyzerResult>(1);
             final JobContext job = getJob();
-            
+
             @SuppressWarnings({ "rawtypes", "unchecked" })
-            final ComponentJob componentJob = new PlaceholderComponentJob(job.getName(), analyzerResult.getClass(), analyzerResult.getClass());
+            final ComponentJob componentJob =
+                    new PlaceholderComponentJob(job.getName(), analyzerResult.getClass(), analyzerResult.getClass());
             results.put(componentJob, analyzerResult);
             return new SimpleAnalysisResult(results, creationDate);
         }
-        
+
         if (deserializedObject instanceof DataSet) {
-            DataSetResult dataSetResult = new DataSetResult((DataSet)deserializedObject);
+            final DataSetResult dataSetResult = new DataSetResult((DataSet) deserializedObject);
             return toAnalysisResult(dataSetResult);
         }
 
         if (deserializedObject instanceof List) {
-            @SuppressWarnings({ "rawtypes", "unchecked" })
+            @SuppressWarnings({ "rawtypes", "unchecked" }) final
             ListResult<?> listResult = new ListResult((List<?>) deserializedObject);
             return toAnalysisResult(listResult);
         }
-        
+
         if (deserializedObject instanceof Number) {
-            NumberResult numberResult = new NumberResult((Number) deserializedObject);
+            final NumberResult numberResult = new NumberResult((Number) deserializedObject);
             return toAnalysisResult(numberResult);
         }
 

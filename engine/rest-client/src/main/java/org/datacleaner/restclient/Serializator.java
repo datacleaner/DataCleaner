@@ -55,94 +55,11 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  * @since 11. 09. 2015
  */
 public class Serializator {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    public static final String ENUM_ALIAS_SEPARATOR = "::";
-    static {
-        SimpleModule myModule = new SimpleModule("RemoteTransformersModule", new Version(1, 0, 0, null, "org.datacleaner", "DataCleaner-remote-transformers"));
-        // our custom serializers
-        myModule.addSerializer(new MyInputColumnSerializer());
-        myModule.addSerializer(new MyEnumSerializer());
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.registerModule(myModule);
-
-        //For better deserialize of enumeration in ComponentScope annotation. - We will ignore unknown values.
-        objectMapper.registerModule(new SimpleModule(){
-            @Override
-            public void setupModule(final SetupContext context) {
-                context.setMixInAnnotations(ComponentScope.ServiceType.class, ComponentScopeServiceTypeMixin.class);
-                context.setMixInAnnotations(ComponentScope.EntityType.class, ComponentScopeEntityTypeMixin.class);
-            }
-        });
+    @JsonDeserialize(using = ComponentScopeServiceTypeDeserializer.class)
+    interface ComponentScopeServiceTypeMixin {
     }
-
-    public static ObjectMapper getJacksonObjectMapper() {
-        return objectMapper;
-    }
-
-    public static ShortNews shortNewsList(String response) {
-        return Serializator.fromString(response, ShortNews.class);
-    }
-
-    public static ComponentList componentList(String response) {
-        ComponentList components = Serializator.fromString(response, ComponentList.class);
-        return components;
-    }
-
-    public static ComponentList.ComponentInfo componentInfo(String response) {
-        return (ComponentList.ComponentInfo) Serializator.fromString(response, ComponentList.ComponentInfo.class);
-    }
-
-    public static String stringProcessStatelessInput(ProcessStatelessInput processStatelessInput) {
-        return Serializator.intoString(processStatelessInput);
-    }
-
-    public static OutputColumns outputColumnsOutput(String response) {
-        return Serializator.fromString(response, OutputColumns.class);
-    }
-
-    public static ProcessStatelessOutput processStatelessOutput(String response) {
-        return (ProcessStatelessOutput) Serializator.fromString(response, ProcessStatelessOutput.class);
-    }
-
-    public static String stringCreateInput(CreateInput createInput) {
-        return Serializator.intoString(createInput);
-    }
-
-    public static String stringProcessInput(ProcessInput processInput) {
-        return Serializator.intoString(processInput);
-    }
-
-    public static ProcessOutput processOutput(String response) {
-        return (ProcessOutput) Serializator.fromString(response, ProcessOutput.class);
-    }
-
-    public static ProcessResult processResult(String response) {
-        return (ProcessResult) Serializator.fromString(response, ProcessResult.class);
-    }
-
-    public static DataCloudUser processDataCloudUser(String response){
-        return (DataCloudUser) Serializator.fromString(response, DataCloudUser.class);
-    }
-
-    private static String intoString(Object value) {
-        try {
-            return objectMapper.writeValueAsString(value);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static <T> T fromString(String value, Class<T> type) {
-        try {
-            if (value == null || value.equals("")) {
-                return null;
-            }
-
-            return objectMapper.readValue(value, type);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @JsonDeserialize(using = ComponentScopeEntityTypeDeserializer.class)
+    interface ComponentScopeEntityTypeMixin {
     }
 
     /**
@@ -153,8 +70,9 @@ public class Serializator {
         protected MyInputColumnSerializer() {
             super(InputColumn.class);
         }
+
         @Override
-        public void serialize(InputColumn value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(final InputColumn value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
             gen.writeString(value.getName());
         }
     }
@@ -182,14 +100,13 @@ public class Serializator {
         }
 
         @Override
-        public JsonNode getSchema(SerializerProvider provider, Type typeHint)
-        {
-            ObjectNode objectNode = createSchemaNode("string", true);
+        public JsonNode getSchema(final SerializerProvider provider, final Type typeHint) {
+            final ObjectNode objectNode = createSchemaNode("string", true);
             if (typeHint != null) {
-                JavaType type = provider.constructType(typeHint);
+                final JavaType type = provider.constructType(typeHint);
                 if (type.isEnumType()) {
-                    ArrayNode enumNode = objectNode.putArray("enum");
-                    for (Object value : type.getRawClass().getEnumConstants()) {
+                    final ArrayNode enumNode = objectNode.putArray("enum");
+                    for (final Object value : type.getRawClass().getEnumConstants()) {
                         enumNode.add(enumValueToSchemaString((Enum) value));
                     }
                 }
@@ -198,17 +115,18 @@ public class Serializator {
         }
 
         @Override
-        public void serialize(Enum value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(final Enum value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
             gen.writeString(value.name());
         }
 
         @Override
-        public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType typeHint) throws JsonMappingException {
-            JsonStringFormatVisitor stringVisitor = visitor.expectStringFormat(typeHint);
+        public void acceptJsonFormatVisitor(final JsonFormatVisitorWrapper visitor, final JavaType typeHint)
+                throws JsonMappingException {
+            final JsonStringFormatVisitor stringVisitor = visitor.expectStringFormat(typeHint);
             if (typeHint != null && stringVisitor != null) {
                 if (typeHint.isEnumType()) {
-                    Set<String> enums = new LinkedHashSet<String>();
-                    for (Object value : typeHint.getRawClass().getEnumConstants()) {
+                    final Set<String> enums = new LinkedHashSet<String>();
+                    for (final Object value : typeHint.getRawClass().getEnumConstants()) {
                         enums.add(enumValueToSchemaString((Enum) value));
                     }
                     stringVisitor.enumTypes(enums);
@@ -216,68 +134,156 @@ public class Serializator {
             }
         }
 
-        protected String enumValueToSchemaString(Enum<?> value) {
+        protected String enumValueToSchemaString(final Enum<?> value) {
             final String enumValue = value.name();
-            String enumName;
+            final String enumName;
             String[] aliases = null;
-            if(value instanceof  HasName) {
-                enumName = ((HasName)value).getName();
+            if (value instanceof HasName) {
+                enumName = ((HasName) value).getName();
             } else {
                 enumName = String.valueOf(value);
             }
-            if(value instanceof HasAliases) {
-                aliases = ((HasAliases)value).getAliases();
+            if (value instanceof HasAliases) {
+                aliases = ((HasAliases) value).getAliases();
             }
             return Serializator.enumValueToSchemaString(enumValue, enumName, aliases);
         }
     }
 
-    public static String enumValueToSchemaString(String enumValue, String enumName, String[] aliases) {
+    private static final class ComponentScopeServiceTypeDeserializer
+            extends JsonDeserializer<ComponentScope.ServiceType> {
+        @Override
+        public ComponentScope.ServiceType deserialize(final JsonParser jsonParser,
+                final DeserializationContext deserializationContext)
+                throws IOException {
+            final String jsonParserText = jsonParser.getText();
+            for (final ComponentScope.ServiceType value : ComponentScope.ServiceType.values()) {
+                if (value.name().equals(jsonParserText)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+
+    private static final class ComponentScopeEntityTypeDeserializer
+            extends JsonDeserializer<ComponentScope.EntityType> {
+        @Override
+        public ComponentScope.EntityType deserialize(final JsonParser jsonParser,
+                final DeserializationContext deserializationContext)
+                throws IOException {
+            final String jsonParserText = jsonParser.getText();
+            for (final ComponentScope.EntityType value : ComponentScope.EntityType.values()) {
+                if (value.name().equals(jsonParserText)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
+    public static final String ENUM_ALIAS_SEPARATOR = "::";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        final SimpleModule myModule = new SimpleModule("RemoteTransformersModule",
+                new Version(1, 0, 0, null, "org.datacleaner", "DataCleaner-remote-transformers"));
+        // our custom serializers
+        myModule.addSerializer(new MyInputColumnSerializer());
+        myModule.addSerializer(new MyEnumSerializer());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.registerModule(myModule);
+
+        //For better deserialize of enumeration in ComponentScope annotation. - We will ignore unknown values.
+        objectMapper.registerModule(new SimpleModule() {
+            @Override
+            public void setupModule(final SetupContext context) {
+                context.setMixInAnnotations(ComponentScope.ServiceType.class, ComponentScopeServiceTypeMixin.class);
+                context.setMixInAnnotations(ComponentScope.EntityType.class, ComponentScopeEntityTypeMixin.class);
+            }
+        });
+    }
+
+    public static ObjectMapper getJacksonObjectMapper() {
+        return objectMapper;
+    }
+
+    public static ShortNews shortNewsList(final String response) {
+        return Serializator.fromString(response, ShortNews.class);
+    }
+
+    public static ComponentList componentList(final String response) {
+        final ComponentList components = Serializator.fromString(response, ComponentList.class);
+        return components;
+    }
+
+    public static ComponentList.ComponentInfo componentInfo(final String response) {
+        return (ComponentList.ComponentInfo) Serializator.fromString(response, ComponentList.ComponentInfo.class);
+    }
+
+    public static String stringProcessStatelessInput(final ProcessStatelessInput processStatelessInput) {
+        return Serializator.intoString(processStatelessInput);
+    }
+
+    public static OutputColumns outputColumnsOutput(final String response) {
+        return Serializator.fromString(response, OutputColumns.class);
+    }
+
+    public static ProcessStatelessOutput processStatelessOutput(final String response) {
+        return (ProcessStatelessOutput) Serializator.fromString(response, ProcessStatelessOutput.class);
+    }
+
+    public static String stringCreateInput(final CreateInput createInput) {
+        return Serializator.intoString(createInput);
+    }
+
+    public static String stringProcessInput(final ProcessInput processInput) {
+        return Serializator.intoString(processInput);
+    }
+
+    public static ProcessOutput processOutput(final String response) {
+        return (ProcessOutput) Serializator.fromString(response, ProcessOutput.class);
+    }
+
+    public static ProcessResult processResult(final String response) {
+        return (ProcessResult) Serializator.fromString(response, ProcessResult.class);
+    }
+
+    public static DataCloudUser processDataCloudUser(final String response) {
+        return (DataCloudUser) Serializator.fromString(response, DataCloudUser.class);
+    }
+
+    private static String intoString(final Object value) {
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (final JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static <T> T fromString(final String value, final Class<T> type) {
+        try {
+            if (value == null || value.equals("")) {
+                return null;
+            }
+
+            return objectMapper.readValue(value, type);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String enumValueToSchemaString(final String enumValue, final String enumName, final String[] aliases) {
         final StringBuilder serialized = new StringBuilder();
         serialized.append(enumValue);
         serialized.append(ENUM_ALIAS_SEPARATOR);
         serialized.append(enumName);
-        if(aliases != null && aliases.length > 0) {
-            for(String alias: aliases) {
-                if(alias != null && !alias.isEmpty()) {
+        if (aliases != null && aliases.length > 0) {
+            for (final String alias : aliases) {
+                if (alias != null && !alias.isEmpty()) {
                     serialized.append(ENUM_ALIAS_SEPARATOR).append(alias);
                 }
             }
         }
         return serialized.toString();
-    }
-
-    @JsonDeserialize(using = ComponentScopeServiceTypeDeserializer.class)
-    interface ComponentScopeServiceTypeMixin {}
-
-    @JsonDeserialize(using = ComponentScopeEntityTypeDeserializer.class)
-    interface ComponentScopeEntityTypeMixin {}
-
-    private static final class ComponentScopeServiceTypeDeserializer extends JsonDeserializer<ComponentScope.ServiceType> {
-        @Override
-        public ComponentScope.ServiceType deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext)
-                throws IOException {
-            final String jsonParserText = jsonParser.getText();
-            for (final ComponentScope.ServiceType value : ComponentScope.ServiceType.values()) {
-                if(value.name().equals(jsonParserText)){
-                    return value;
-                }
-            }
-            return null;
-        }
-    }
-
-    private static final class ComponentScopeEntityTypeDeserializer extends JsonDeserializer<ComponentScope.EntityType> {
-        @Override
-        public ComponentScope.EntityType deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext)
-                throws IOException {
-            final String jsonParserText = jsonParser.getText();
-            for (final ComponentScope.EntityType value : ComponentScope.EntityType.values()) {
-                if(value.name().equals(jsonParserText)){
-                    return value;
-                }
-            }
-            return null;
-        }
     }
 }

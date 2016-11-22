@@ -38,55 +38,55 @@ import com.ibm.icu.text.UnicodeSet;
 /**
  * Performs character set distribution analysis for a single column. Used by the
  * {@link CharacterSetDistributionAnalyzer} for splitting up work.
- * 
- * 
+ *
+ *
  */
 final class CharacterSetDistributionAnalyzerColumnDelegate {
 
-	private static final Logger logger = LoggerFactory.getLogger(CharacterSetDistributionAnalyzerColumnDelegate.class);
-	private final RowAnnotationFactory _annotationFactory;
-	private final Map<String, UnicodeSet> _unicodeSets;
-	private final Map<String, RowAnnotation> _annotations;
+    private static final Logger logger = LoggerFactory.getLogger(CharacterSetDistributionAnalyzerColumnDelegate.class);
+    private final RowAnnotationFactory _annotationFactory;
+    private final Map<String, UnicodeSet> _unicodeSets;
+    private final Map<String, RowAnnotation> _annotations;
 
-	public CharacterSetDistributionAnalyzerColumnDelegate(RowAnnotationFactory annotationFactory,
-			Map<String, UnicodeSet> unicodeSets) {
-		_annotationFactory = annotationFactory;
-		_unicodeSets = unicodeSets;
-		_annotations = new HashMap<String, RowAnnotation>();
-		for (String name : unicodeSets.keySet()) {
-			_annotations.put(name, _annotationFactory.createAnnotation());
-		}
-	}
+    public CharacterSetDistributionAnalyzerColumnDelegate(final RowAnnotationFactory annotationFactory,
+            final Map<String, UnicodeSet> unicodeSets) {
+        _annotationFactory = annotationFactory;
+        _unicodeSets = unicodeSets;
+        _annotations = new HashMap<String, RowAnnotation>();
+        for (final String name : unicodeSets.keySet()) {
+            _annotations.put(name, _annotationFactory.createAnnotation());
+        }
+    }
 
-	public RowAnnotation getAnnotation(String unicodeSetName) {
-		return _annotations.get(unicodeSetName);
-	}
+    public RowAnnotation getAnnotation(final String unicodeSetName) {
+        return _annotations.get(unicodeSetName);
+    }
 
-	public synchronized void run(String value, InputRow row, int distinctCount) {
-		final List<Entry<String, UnicodeSet>> unicodeSetsRemaining = new ArrayList<Entry<String, UnicodeSet>>(
-				_unicodeSets.entrySet());
-		CharIterator charIterator = new CharIterator(value);
-		while (charIterator.hasNext()) {
-			Character c = charIterator.next();
-			if (charIterator.isWhitespace() || charIterator.isDigit()) {
-				logger.debug("Skipping whitespace/digit char: {}", c);
-			} else {
+    public synchronized void run(final String value, final InputRow row, final int distinctCount) {
+        final List<Entry<String, UnicodeSet>> unicodeSetsRemaining = new ArrayList<Entry<String, UnicodeSet>>(
+                _unicodeSets.entrySet());
+        final CharIterator charIterator = new CharIterator(value);
+        while (charIterator.hasNext()) {
+            final Character c = charIterator.next();
+            if (charIterator.isWhitespace() || charIterator.isDigit()) {
+                logger.debug("Skipping whitespace/digit char: {}", c);
+            } else {
 
-				Iterator<Entry<String, UnicodeSet>> it = unicodeSetsRemaining.iterator();
-				while (it.hasNext()) {
-					Entry<String, UnicodeSet> unicodeSet = it.next();
-					if (unicodeSet.getValue().contains(c)) {
-						String name = unicodeSet.getKey();
-						RowAnnotation annotation = _annotations.get(name);
-						_annotationFactory.annotate(row, distinctCount, annotation);
+                final Iterator<Entry<String, UnicodeSet>> it = unicodeSetsRemaining.iterator();
+                while (it.hasNext()) {
+                    final Entry<String, UnicodeSet> unicodeSet = it.next();
+                    if (unicodeSet.getValue().contains(c)) {
+                        final String name = unicodeSet.getKey();
+                        final RowAnnotation annotation = _annotations.get(name);
+                        _annotationFactory.annotate(row, distinctCount, annotation);
 
-						// remove this unicode set from the remaining checks on
-						// this value.
-						it.remove();
-					}
-				}
-			}
-		}
-	}
+                        // remove this unicode set from the remaining checks on
+                        // this value.
+                        it.remove();
+                    }
+                }
+            }
+        }
+    }
 
 }

@@ -23,23 +23,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
+import org.datacleaner.util.StringUtils;
 
 abstract class JdbcConnectionInformationWizardPage extends AbstractFreemarkerWizardPage {
 
     private final AbstractJdbcDatastoreWizardSession _session;
     private final String _templateUrl;
 
-    public JdbcConnectionInformationWizardPage(AbstractJdbcDatastoreWizardSession session, String templateUrl) {
+    public JdbcConnectionInformationWizardPage(final AbstractJdbcDatastoreWizardSession session, final String templateUrl) {
         _session = session;
         _templateUrl = templateUrl;
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters) throws DCUserInputException {
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
+            throws DCUserInputException {
         final String url = getString(formParameters, "url");
 
         if (StringUtils.isNullOrEmpty(url)) {
@@ -54,7 +55,7 @@ abstract class JdbcConnectionInformationWizardPage extends AbstractFreemarkerWiz
 
         return new DatastoreNameAndDescriptionWizardPage(_session.getWizardContext(), getPageIndex() + 1) {
             @Override
-            protected WizardPageController nextPageController(String name, String description) {
+            protected WizardPageController nextPageController(final String name, final String description) {
                 _session.setDescription(description);
                 _session.setName(name);
                 return null;
@@ -69,7 +70,7 @@ abstract class JdbcConnectionInformationWizardPage extends AbstractFreemarkerWiz
 
     @Override
     protected Map<String, Object> getFormModel() {
-        Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<String, Object>();
         map.put("templateUrl", _templateUrl);
         return map;
     }

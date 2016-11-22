@@ -46,7 +46,7 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
                         .getValueCounts();
                 final List<String> result = CollectionUtils.map(valueCounts, new Func<ValueFrequency, String>() {
                     @Override
-                    public String eval(ValueFrequency vc) {
+                    public String eval(final ValueFrequency vc) {
                         return vc.getName();
                     }
                 });
@@ -63,8 +63,8 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
             }
 
             @Override
-            public int getInstanceCount(String instance) {
-                Integer count = getCount(instance);
+            public int getInstanceCount(final String instance) {
+                final Integer count = getCount(instance);
                 if (count == null) {
                     return 0;
                 }
@@ -81,9 +81,9 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
 
         if (original.size() <= preferredMaximum) {
             // check if any composite value freq's can be exploded
-            for (ValueFrequency valueFrequency : original) {
+            for (final ValueFrequency valueFrequency : original) {
                 if (valueFrequency.isComposite()) {
-                    List<ValueFrequency> children = valueFrequency.getChildren();
+                    final List<ValueFrequency> children = valueFrequency.getChildren();
                     if (children != null) {
                         if (result.size() - 1 + children.size() <= preferredMaximum) {
                             // replace with children
@@ -101,7 +101,7 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Value distribution for: ");
         sb.append(getName());
         appendToString(sb, this, 4);
@@ -110,17 +110,17 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
 
     /**
      * Appends a string representation with a maximum amount of entries
-     * 
+     *
      * @param sb
      *            the StringBuilder to append to
-     * 
+     *
      * @param maxEntries
      * @return
      */
-    protected void appendToString(StringBuilder sb, ValueCountingAnalyzerResult groupResult, int maxEntries) {
+    protected void appendToString(final StringBuilder sb, final ValueCountingAnalyzerResult groupResult, int maxEntries) {
         if (maxEntries != 0) {
-            Collection<ValueFrequency> valueCounts = groupResult.getValueCounts();
-            for (ValueFrequency valueCount : valueCounts) {
+            final Collection<ValueFrequency> valueCounts = groupResult.getValueCounts();
+            for (final ValueFrequency valueCount : valueCounts) {
                 sb.append("\n - ");
                 sb.append(valueCount.getName());
                 sb.append(": ");

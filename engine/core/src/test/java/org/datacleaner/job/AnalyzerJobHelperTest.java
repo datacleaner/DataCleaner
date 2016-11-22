@@ -19,7 +19,10 @@
  */
 package org.datacleaner.job;
 
+import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -31,8 +34,6 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
-
-import java.util.List;
 
 public class AnalyzerJobHelperTest extends TestCase {
 
@@ -105,7 +106,7 @@ public class AnalyzerJobHelperTest extends TestCase {
         }
 
         AnalyzerJobHelper analyzerJobHelper = new AnalyzerJobHelper(aj);
-        assertEquals(2,analyzerJobHelper.getAnalyzerJobs().size());
+        assertEquals(2, analyzerJobHelper.getAnalyzerJobs().size());
     }
 
     public void testGetIdentifyingInputColumn() throws Exception {

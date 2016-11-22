@@ -24,19 +24,19 @@ package org.datacleaner.widgets.database;
  */
 public class PostgresqlDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
 
-	public PostgresqlDatabaseConnectionPresenter() {
-		super("jdbc:postgresql://HOSTNAME:PORT/DATABASE");
-	}
+    public PostgresqlDatabaseConnectionPresenter() {
+        super("jdbc:postgresql://HOSTNAME:PORT/DATABASE");
+    }
 
-	@Override
-	protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
-			String param3, String param4) {
-		return "jdbc:postgresql://" + hostname + ":" + port + "/" + database;
-	}
+    @Override
+    protected String getJdbcUrl(final String hostname, final int port, final String database, final String param1, final String param2,
+            final String param3, final String param4) {
+        return "jdbc:postgresql://" + hostname + ":" + port + "/" + database;
+    }
 
-	@Override
-	protected int getDefaultPort() {
-		return 5432;
-	}
+    @Override
+    protected int getDefaultPort() {
+        return 5432;
+    }
 
 }

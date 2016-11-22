@@ -69,7 +69,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
     /**
      * Main constructor for {@link MutableReferenceDataCatalog}.
-     * 
+     *
      * @param immutableDelegate
      * @param configurationWriter
      * @param userPreferences
@@ -84,7 +84,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         _lifeCycleHelper = lifeCycleHelper;
 
         String[] names = _immutableDelegate.getDictionaryNames();
-        for (String name : names) {
+        for (final String name : names) {
             if (containsDictionary(name)) {
                 // remove any copies of the dictionary - the immutable (XML)
                 // version should always win
@@ -94,7 +94,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
 
         names = _immutableDelegate.getSynonymCatalogNames();
-        for (String name : names) {
+        for (final String name : names) {
             if (containsSynonymCatalog(name)) {
                 // remove any copies of the synonym catalog - the immutable
                 // (XML) version should always win
@@ -104,7 +104,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
 
         names = _immutableDelegate.getStringPatternNames();
-        for (String name : names) {
+        for (final String name : names) {
             if (containsStringPattern(name)) {
                 removeStringPattern(getStringPattern(name), false);
             }
@@ -116,13 +116,13 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         assignProvidedProperties(_userPreferences.getUserStringPatterns());
     }
 
-    private void assignProvidedProperties(Collection<?> objects) {
-        for (Object object : objects) {
+    private void assignProvidedProperties(final Collection<?> objects) {
+        for (final Object object : objects) {
             assignProvidedProperties(object);
         }
     }
 
-    private void assignProvidedProperties(Object object) {
+    private void assignProvidedProperties(final Object object) {
         final ComponentDescriptor<?> descriptor = Descriptors.ofComponent(object.getClass());
         _lifeCycleHelper.assignProvidedProperties(descriptor, object);
     }
@@ -132,29 +132,29 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         return _userPreferences.getUserDictionaries().stream().map(d -> d.getName()).toArray(size -> new String[size]);
     }
 
-    public void addDictionary(Dictionary dict) {
+    public void addDictionary(final Dictionary dict) {
         addDictionary(dict, true);
     }
 
-    public void addDictionary(Dictionary dict, boolean externalize) {
+    public void addDictionary(final Dictionary dict, final boolean externalize) {
         addDictionaryInternal(dict, externalize);
-        
-        for (DictionaryChangeListener listener : _dictionaryListeners) {
+
+        for (final DictionaryChangeListener listener : _dictionaryListeners) {
             listener.onAdd(dict);
         }
-        for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryChangeListeners){
+        for (final ReferenceDataChangeListener<Dictionary> listener : _dictionaryChangeListeners) {
             listener.onAdd(dict);
         }
 
     }
 
-    private void addDictionaryInternal(Dictionary dict, boolean externalize) {
-        String name = dict.getName();
+    private void addDictionaryInternal(final Dictionary dict, final boolean externalize) {
+        final String name = dict.getName();
         if (Strings.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Dictionary has no name!");
         }
         final List<Dictionary> dictionaries = _userPreferences.getUserDictionaries();
-        for (Dictionary dictionary : dictionaries) {
+        for (final Dictionary dictionary : dictionaries) {
             if (name.equals(dictionary.getName())) {
                 throw new IllegalArgumentException("Dictionary name '" + name + "' is not unique!");
             }
@@ -169,17 +169,17 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
     }
 
-    public void removeDictionary(Dictionary dict) {
+    public void removeDictionary(final Dictionary dict) {
         removeDictionary(dict, true);
     }
 
-    public void removeDictionary(Dictionary dict, boolean externalize) {
+    public void removeDictionary(final Dictionary dict, final boolean externalize) {
         final List<Dictionary> dictionaries = _userPreferences.getUserDictionaries();
         if (dictionaries.remove(dict)) {
-            for (DictionaryChangeListener listener : _dictionaryListeners) {
+            for (final DictionaryChangeListener listener : _dictionaryListeners) {
                 listener.onRemove(dict);
             }
-            for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryChangeListeners){
+            for (final ReferenceDataChangeListener<Dictionary> listener : _dictionaryChangeListeners) {
                 listener.onRemove(dict);
             }
         }
@@ -189,11 +189,11 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
     }
 
-    public void changeDictionary(Dictionary oldDictionary, Dictionary newDictionary){
+    public void changeDictionary(final Dictionary oldDictionary, final Dictionary newDictionary) {
         changeDictionary(oldDictionary, newDictionary, true);
     }
-    
-    public void changeDictionary(Dictionary oldDictionary, Dictionary newDictionary, boolean externalize) {
+
+    public void changeDictionary(final Dictionary oldDictionary, final Dictionary newDictionary, final boolean externalize) {
         final List<Dictionary> dictionaries = _userPreferences.getUserDictionaries();
         if (dictionaries.remove(oldDictionary)) {
             if (externalize) {
@@ -201,37 +201,38 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
                 _userPreferences.save();
             }
         }
-        
+
         addDictionaryInternal(newDictionary, externalize);
-        for(ReferenceDataChangeListener<Dictionary> listener : _dictionaryChangeListeners){
+        for (final ReferenceDataChangeListener<Dictionary> listener : _dictionaryChangeListeners) {
             listener.onChange(oldDictionary, newDictionary);
         }
-        for (DictionaryChangeListener listener : _dictionaryListeners) {
+        for (final DictionaryChangeListener listener : _dictionaryListeners) {
             listener.onRemove(oldDictionary);
             listener.onAdd(newDictionary);
         }
     }
 
-    public void addStringPattern(StringPattern sp) {
+    public void addStringPattern(final StringPattern sp) {
         addStringPattern(sp, true);
     }
 
-    public void addStringPattern(StringPattern sp, boolean externalize) {
+    public void addStringPattern(final StringPattern sp, final boolean externalize) {
         addStringPatternInternal(sp, externalize);
-        for (StringPatternChangeListener listener : _stringPatternListeners) {
+        for (final StringPatternChangeListener listener : _stringPatternListeners) {
             listener.onAdd(sp);
         }
-        for(ReferenceDataChangeListener<StringPattern> listener : _stringPatternChangeListeners){
+        for (final ReferenceDataChangeListener<StringPattern> listener : _stringPatternChangeListeners) {
             listener.onAdd(sp);
         }
     }
-    private void addStringPatternInternal(StringPattern sp, boolean externalize) {
-        String name = sp.getName();
+
+    private void addStringPatternInternal(final StringPattern sp, final boolean externalize) {
+        final String name = sp.getName();
         if (Strings.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("StringPattern has no name!");
         }
         final List<StringPattern> stringPatterns = _userPreferences.getUserStringPatterns();
-        for (StringPattern stringPattern : stringPatterns) {
+        for (final StringPattern stringPattern : stringPatterns) {
             if (name.equals(stringPattern.getName())) {
                 throw new IllegalArgumentException("StringPattern name '" + name + "' is not unique!");
             }
@@ -248,17 +249,17 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
 
 
-    public void removeStringPattern(StringPattern sp) {
+    public void removeStringPattern(final StringPattern sp) {
         removeStringPattern(sp, true);
     }
 
-    public void removeStringPattern(StringPattern sp, boolean externalize) {
+    public void removeStringPattern(final StringPattern sp, final boolean externalize) {
         final List<StringPattern> stringPatterns = _userPreferences.getUserStringPatterns();
         if (stringPatterns.remove(sp)) {
-            for (StringPatternChangeListener listener : _stringPatternListeners) {
+            for (final StringPatternChangeListener listener : _stringPatternListeners) {
                 listener.onRemove(sp);
             }
-            for(ReferenceDataChangeListener<StringPattern> listener : _stringPatternChangeListeners){
+            for (final ReferenceDataChangeListener<StringPattern> listener : _stringPatternChangeListeners) {
                 listener.onRemove(sp);
             }
         }
@@ -268,11 +269,11 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
     }
 
-    public void changeStringPattern(StringPattern oldPattern, StringPattern newPattern){
+    public void changeStringPattern(final StringPattern oldPattern, final StringPattern newPattern) {
         changeStringPattern(oldPattern, newPattern, true);
     }
-    
-    public void changeStringPattern(StringPattern oldPattern, StringPattern newPattern, boolean externalize){
+
+    public void changeStringPattern(final StringPattern oldPattern, final StringPattern newPattern, final boolean externalize) {
         // The old reference is removed from user preferences and we add a new
         //pattern with the same name but with a different expression value
         final List<StringPattern> stringPatterns = _userPreferences.getUserStringPatterns();
@@ -280,22 +281,22 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         if (externalize) {
             _configurationWriter.removeStringPattern(oldPattern.getName());
             _userPreferences.save();
-        }   
+        }
         addStringPatternInternal(newPattern, externalize);
 
-        for (ReferenceDataChangeListener<StringPattern> listener : _stringPatternChangeListeners) {
+        for (final ReferenceDataChangeListener<StringPattern> listener : _stringPatternChangeListeners) {
             listener.onChange(oldPattern, newPattern);
         }
-        for (StringPatternChangeListener listener : _stringPatternListeners) {
+        for (final StringPatternChangeListener listener : _stringPatternListeners) {
             listener.onRemove(oldPattern);
             listener.onAdd(newPattern);
         }
     }
-    
+
     @Override
-    public Dictionary getDictionary(String name) {
+    public Dictionary getDictionary(final String name) {
         if (name != null) {
-            for (Dictionary dict : _userPreferences.getUserDictionaries()) {
+            for (final Dictionary dict : _userPreferences.getUserDictionaries()) {
                 if (name.equals(dict.getName())) {
                     return dict;
                 }
@@ -310,27 +311,27 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
                 size -> new String[size]);
     }
 
-    public void addSynonymCatalog(SynonymCatalog sc) {
+    public void addSynonymCatalog(final SynonymCatalog sc) {
         addSynonymCatalog(sc, true);
     }
 
-    public void addSynonymCatalog(SynonymCatalog sc, boolean externalize) {
+    public void addSynonymCatalog(final SynonymCatalog sc, final boolean externalize) {
         addSynonymCatalogInternal(sc, externalize);
-        for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
+        for (final SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
             listener.onAdd(sc);
         }
-        for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogChangeListeners){
+        for (final ReferenceDataChangeListener<SynonymCatalog> listener : _synonymCatalogChangeListeners) {
             listener.onAdd(sc);
         }
     }
 
-    private void addSynonymCatalogInternal(SynonymCatalog sc, boolean externalize) {
-        String name = sc.getName();
+    private void addSynonymCatalogInternal(final SynonymCatalog sc, final boolean externalize) {
+        final String name = sc.getName();
         if (Strings.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("SynonymCatalog has no name!");
         }
         final List<SynonymCatalog> synonymCatalogs = _userPreferences.getUserSynonymCatalogs();
-        for (SynonymCatalog synonymCatalog : synonymCatalogs) {
+        for (final SynonymCatalog synonymCatalog : synonymCatalogs) {
             if (name.equals(synonymCatalog.getName())) {
                 throw new IllegalArgumentException("SynonymCatalog name '" + name + "' is not unique!");
             }
@@ -345,18 +346,18 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
             _userPreferences.save();
         }
     }
-    
-    public void removeSynonymCatalog(SynonymCatalog sc) {
+
+    public void removeSynonymCatalog(final SynonymCatalog sc) {
         removeSynonymCatalog(sc, true);
     }
 
-    public void removeSynonymCatalog(SynonymCatalog sc, boolean externalize) {
+    public void removeSynonymCatalog(final SynonymCatalog sc, final boolean externalize) {
         final List<SynonymCatalog> synonymCatalogs = _userPreferences.getUserSynonymCatalogs();
         if (synonymCatalogs.remove(sc)) {
-            for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
+            for (final SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
                 listener.onRemove(sc);
             }
-            for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogChangeListeners){
+            for (final ReferenceDataChangeListener<SynonymCatalog> listener : _synonymCatalogChangeListeners) {
                 listener.onRemove(sc);
             }
         }
@@ -366,33 +367,34 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         }
     }
 
-    public void changeSynonymCatalog(SynonymCatalog oldSynonymcatalog, SynonymCatalog newSynonymCatalog) {
+    public void changeSynonymCatalog(final SynonymCatalog oldSynonymcatalog, final SynonymCatalog newSynonymCatalog) {
         changeSynonymCatalog(oldSynonymcatalog, newSynonymCatalog, true);
     }
-    
-   public void changeSynonymCatalog(SynonymCatalog oldSynonymcatalog, SynonymCatalog newSynonymCatalog, boolean externalize){
-        
-       final List<SynonymCatalog> synonymCatalogs = _userPreferences.getUserSynonymCatalogs();
-       synonymCatalogs.remove(oldSynonymcatalog);
-       if (externalize) {
-           _configurationWriter.removeSynonymCatalog(oldSynonymcatalog.getName());
-           _userPreferences.save();
-       }   
-       addSynonymCatalogInternal(newSynonymCatalog, externalize);
-       
-       for (ReferenceDataChangeListener<SynonymCatalog> listener: _synonymCatalogChangeListeners){
-           listener.onChange(oldSynonymcatalog, newSynonymCatalog);
-       }
-       for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
-           listener.onRemove(oldSynonymcatalog);
-           listener.onAdd(newSynonymCatalog);
-       }
+
+    public void changeSynonymCatalog(final SynonymCatalog oldSynonymcatalog, final SynonymCatalog newSynonymCatalog,
+            final boolean externalize) {
+
+        final List<SynonymCatalog> synonymCatalogs = _userPreferences.getUserSynonymCatalogs();
+        synonymCatalogs.remove(oldSynonymcatalog);
+        if (externalize) {
+            _configurationWriter.removeSynonymCatalog(oldSynonymcatalog.getName());
+            _userPreferences.save();
+        }
+        addSynonymCatalogInternal(newSynonymCatalog, externalize);
+
+        for (final ReferenceDataChangeListener<SynonymCatalog> listener : _synonymCatalogChangeListeners) {
+            listener.onChange(oldSynonymcatalog, newSynonymCatalog);
+        }
+        for (final SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
+            listener.onRemove(oldSynonymcatalog);
+            listener.onAdd(newSynonymCatalog);
+        }
     }
 
     @Override
-    public SynonymCatalog getSynonymCatalog(String name) {
+    public SynonymCatalog getSynonymCatalog(final String name) {
         if (name != null) {
-            for (SynonymCatalog sc : _userPreferences.getUserSynonymCatalogs()) {
+            for (final SynonymCatalog sc : _userPreferences.getUserSynonymCatalogs()) {
                 if (name.equals(sc.getName())) {
                     return sc;
                 }
@@ -408,9 +410,9 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
     }
 
     @Override
-    public StringPattern getStringPattern(String name) {
+    public StringPattern getStringPattern(final String name) {
         if (name != null) {
-            for (StringPattern sp : _userPreferences.getUserStringPatterns()) {
+            for (final StringPattern sp : _userPreferences.getUserStringPatterns()) {
                 if (name.equals(sp.getName())) {
                     return sp;
                 }
@@ -419,51 +421,51 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         return null;
     }
 
-    public void addDictionaryListener(DictionaryChangeListener listener) {
+    public void addDictionaryListener(final DictionaryChangeListener listener) {
         _dictionaryListeners.add(listener);
     }
 
-    public void removeDictionaryListener(DictionaryChangeListener listener) {
+    public void removeDictionaryListener(final DictionaryChangeListener listener) {
         _dictionaryListeners.remove(listener);
     }
-    
-    public void addDictionaryListener(ReferenceDataChangeListener<Dictionary> listener){
+
+    public void addDictionaryListener(final ReferenceDataChangeListener<Dictionary> listener) {
         _dictionaryChangeListeners.add(listener);
     }
-    
-    public void removeDictionaryListener(ReferenceDataChangeListener<Dictionary> listener){
+
+    public void removeDictionaryListener(final ReferenceDataChangeListener<Dictionary> listener) {
         _dictionaryChangeListeners.remove(listener);
     }
 
-    public void addSynonymCatalogListener(SynonymCatalogChangeListener listener) {
+    public void addSynonymCatalogListener(final SynonymCatalogChangeListener listener) {
         _synonymCatalogListeners.add(listener);
     }
 
-    public void removeSynonymCatalogListener(SynonymCatalogChangeListener listener) {
+    public void removeSynonymCatalogListener(final SynonymCatalogChangeListener listener) {
         _synonymCatalogListeners.remove(listener);
     }
-    
-    public void addSynonymCatalogListener(ReferenceDataChangeListener<SynonymCatalog> listener){
-        _synonymCatalogChangeListeners.add(listener); 
+
+    public void addSynonymCatalogListener(final ReferenceDataChangeListener<SynonymCatalog> listener) {
+        _synonymCatalogChangeListeners.add(listener);
     }
-    
-    public void removeSynonymCatalogListener(ReferenceDataChangeListener<SynonymCatalog> listener){
+
+    public void removeSynonymCatalogListener(final ReferenceDataChangeListener<SynonymCatalog> listener) {
         _synonymCatalogChangeListeners.remove(listener);
     }
 
-    public void addStringPatternListener(StringPatternChangeListener listener) {
+    public void addStringPatternListener(final StringPatternChangeListener listener) {
         _stringPatternListeners.add(listener);
     }
 
-    public void removeStringPatternListener(StringPatternChangeListener listener) {
+    public void removeStringPatternListener(final StringPatternChangeListener listener) {
         _stringPatternListeners.remove(listener);
     }
-    
-    public void addStringPatternListener(ReferenceDataChangeListener<StringPattern> listener){
+
+    public void addStringPatternListener(final ReferenceDataChangeListener<StringPattern> listener) {
         _stringPatternChangeListeners.add(listener);
     }
-    
-    public void removeStringPatternListener(ReferenceDataChangeListener<StringPattern> listener){
+
+    public void removeStringPatternListener(final ReferenceDataChangeListener<StringPattern> listener) {
         _stringPatternChangeListeners.remove(listener);
     }
 }

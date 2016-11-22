@@ -19,9 +19,9 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.util.FileResource;
-
 import junit.framework.TestCase;
+
+import org.apache.metamodel.util.FileResource;
 
 public class JsonDatastoreTest extends TestCase {
 

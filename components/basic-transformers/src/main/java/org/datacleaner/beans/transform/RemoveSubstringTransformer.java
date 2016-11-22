@@ -87,13 +87,13 @@ public class RemoveSubstringTransformer implements Transformer {
         final String substring = (caseSensitive ? ConvertToStringTransformer.transformValue(element)
                 : ConvertToStringTransformer.transformValue(element).toLowerCase());
         String resultingString = subtractedString;
-        
+
         if (caseSensitive && !wholeWordsOnly) {
             // special case where we can do a very easy/effective
             // String.replace(..) operation
             return resultingString.replace(substring, "");
         }
-        
+
         String matchedString = (caseSensitive ? resultingString : resultingString.toLowerCase());
 
         final Pattern substringPattern;
@@ -105,8 +105,8 @@ public class RemoveSubstringTransformer implements Transformer {
 
         Matcher matcher = substringPattern.matcher(matchedString);
         while (matcher.find()) {
-            int start = matcher.start();
-            int end = matcher.end();
+            final int start = matcher.start();
+            final int end = matcher.end();
 
             resultingString = resultingString.substring(0, start) + resultingString.substring(end);
             matchedString = (caseSensitive ? resultingString : resultingString.toLowerCase());

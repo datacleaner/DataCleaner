@@ -34,8 +34,8 @@ import org.joda.time.LocalTime;
  * Helper class for the Date/time Analyzer. This class collects all the
  * statistics for a single column. The Date/time Analyzer then consists of a
  * number of these delegates.
- * 
- * 
+ *
+ *
  */
 final class DateAndTimeAnalyzerColumnDelegate {
 
@@ -52,7 +52,7 @@ final class DateAndTimeAnalyzerColumnDelegate {
     private volatile LocalTime _minTime;
     private volatile LocalTime _maxTime;
 
-    public DateAndTimeAnalyzerColumnDelegate(boolean descriptiveStatistics, RowAnnotationFactory annotationFactory) {
+    public DateAndTimeAnalyzerColumnDelegate(final boolean descriptiveStatistics, final RowAnnotationFactory annotationFactory) {
         _annotationFactory = annotationFactory;
         _nullAnnotation = _annotationFactory.createAnnotation();
         _maxDateAnnotation = _annotationFactory.createAnnotation();
@@ -82,8 +82,8 @@ final class DateAndTimeAnalyzerColumnDelegate {
                 }
             }
 
-            LocalDate localDate = new LocalDate(value);
-            LocalTime localTime = new LocalTime(value);
+            final LocalDate localDate = new LocalDate(value);
+            final LocalTime localTime = new LocalTime(value);
             if (_minDate == null) {
                 // first non-null value
                 _minDate = localDate;
@@ -125,7 +125,7 @@ final class DateAndTimeAnalyzerColumnDelegate {
     }
 
     public Date getMean() {
-        double meanTimestamp = _statistics.getMean();
+        final double meanTimestamp = _statistics.getMean();
         if (Double.isNaN(meanTimestamp)) {
             return null;
         }
@@ -134,7 +134,7 @@ final class DateAndTimeAnalyzerColumnDelegate {
 
     public Date getMedian() {
         if (_statistics instanceof DescriptiveStatistics) {
-            double medianTimestamp = ((DescriptiveStatistics) _statistics).getPercentile(50.0);
+            final double medianTimestamp = ((DescriptiveStatistics) _statistics).getPercentile(50.0);
             if (Double.isNaN(medianTimestamp)) {
                 return null;
             }
@@ -145,7 +145,7 @@ final class DateAndTimeAnalyzerColumnDelegate {
 
     public Date getPercentile25() {
         if (_statistics instanceof DescriptiveStatistics) {
-            double percentileTimestamp = ((DescriptiveStatistics) _statistics).getPercentile(25.0);
+            final double percentileTimestamp = ((DescriptiveStatistics) _statistics).getPercentile(25.0);
             if (Double.isNaN(percentileTimestamp)) {
                 return null;
             }
@@ -156,7 +156,7 @@ final class DateAndTimeAnalyzerColumnDelegate {
 
     public Date getPercentile75() {
         if (_statistics instanceof DescriptiveStatistics) {
-            double percentileTimestamp = ((DescriptiveStatistics) _statistics).getPercentile(75.0);
+            final double percentileTimestamp = ((DescriptiveStatistics) _statistics).getPercentile(75.0);
             if (Double.isNaN(percentileTimestamp)) {
                 return null;
             }
@@ -167,7 +167,7 @@ final class DateAndTimeAnalyzerColumnDelegate {
 
     public Number getKurtosis() {
         if (_statistics instanceof DescriptiveStatistics) {
-            double result = ((DescriptiveStatistics) _statistics).getKurtosis();
+            final double result = ((DescriptiveStatistics) _statistics).getKurtosis();
             if (Double.isNaN(result)) {
                 return null;
             }
@@ -178,7 +178,7 @@ final class DateAndTimeAnalyzerColumnDelegate {
 
     public Number getSkewness() {
         if (_statistics instanceof DescriptiveStatistics) {
-            double result = ((DescriptiveStatistics) _statistics).getSkewness();
+            final double result = ((DescriptiveStatistics) _statistics).getSkewness();
             if (Double.isNaN(result)) {
                 return null;
             }

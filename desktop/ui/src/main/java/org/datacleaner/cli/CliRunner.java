@@ -72,7 +72,7 @@ import org.slf4j.LoggerFactory;
  * Contains the execution logic to run a job from the command line.
  */
 public final class CliRunner implements Closeable {
-    private final static Logger logger = LoggerFactory.getLogger(CliRunner.class);
+    private static final Logger logger = LoggerFactory.getLogger(CliRunner.class);
 
     private final CliArguments _arguments;
     private final Ref<OutputStream> _outputStreamRef;
@@ -88,7 +88,7 @@ public final class CliRunner implements Closeable {
      * @param writer
      * @param outputStream
      */
-    protected CliRunner(CliArguments arguments, Writer writer, OutputStream outputStream) {
+    protected CliRunner(final CliArguments arguments, final Writer writer, final OutputStream outputStream) {
         _arguments = arguments;
         if (outputStream == null) {
             final String outputFilePath = arguments.getOutputFile();
@@ -108,7 +108,7 @@ public final class CliRunner implements Closeable {
                     final FileObject outputFile;
                     try {
                         outputFile = VFSUtils.getFileSystemManager().resolveFile(outputFilePath);
-                    } catch (FileSystemException e) {
+                    } catch (final FileSystemException e) {
                         throw new IllegalStateException(e);
                     }
 
@@ -116,7 +116,7 @@ public final class CliRunner implements Closeable {
                         @Override
                         protected Writer fetch() {
                             try {
-                                OutputStream out = outputFile.getContent().getOutputStream();
+                                final OutputStream out = outputFile.getContent().getOutputStream();
                                 return new OutputStreamWriter(out, FileHelper.DEFAULT_ENCODING);
                             } catch (UnsupportedEncodingException | FileSystemException e) {
                                 throw new IllegalStateException(e);
@@ -128,7 +128,7 @@ public final class CliRunner implements Closeable {
                         protected OutputStream fetch() {
                             try {
                                 return outputFile.getContent().getOutputStream();
-                            } catch (FileSystemException e) {
+                            } catch (final FileSystemException e) {
                                 throw new IllegalStateException(e);
                             }
                         }
@@ -143,7 +143,7 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    public CliRunner(CliArguments arguments) {
+    public CliRunner(final CliArguments arguments) {
         this(arguments, null, null);
     }
 
@@ -168,11 +168,11 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private Resource resolveResource(String path) {
+    private Resource resolveResource(final String path) {
         return new ResourceConverter(new DataCleanerConfigurationImpl()).fromString(Resource.class, path);
     }
 
-    public void run(DataCleanerConfiguration configuration) throws Throwable {
+    public void run(final DataCleanerConfiguration configuration) throws Throwable {
         final String jobFilePath = _arguments.getJobFile();
         final CliListType listType = _arguments.getListType();
         try {
@@ -208,7 +208,7 @@ public final class CliRunner implements Closeable {
                 throw new IllegalArgumentException(
                         "Neither --job-file nor --list-type is specified. Try running with -usage to see usage help.");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Exception thrown in {}", e, this);
             System.err.println("Error:");
             e.printStackTrace(System.err);
@@ -219,23 +219,23 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void printColumns(DataCleanerConfiguration configuration) {
-        String datastoreName = _arguments.getDatastoreName();
-        String tableName = _arguments.getTableName();
-        String schemaName = _arguments.getSchemaName();
+    private void printColumns(final DataCleanerConfiguration configuration) {
+        final String datastoreName = _arguments.getDatastoreName();
+        final String tableName = _arguments.getTableName();
+        final String schemaName = _arguments.getSchemaName();
 
         if (datastoreName == null) {
             System.err.println("You need to specify the datastore name!");
         } else if (tableName == null) {
             System.err.println("You need to specify a table name!");
         } else {
-            Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
+            final Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
             if (ds == null) {
                 System.err.println("No such datastore: " + datastoreName);
             } else {
-                DatastoreConnection con = ds.openConnection();
-                DataContext dc = con.getDataContext();
-                Schema schema;
+                final DatastoreConnection con = ds.openConnection();
+                final DataContext dc = con.getDataContext();
+                final Schema schema;
                 if (schemaName == null) {
                     schema = dc.getDefaultSchema();
                 } else {
@@ -244,14 +244,14 @@ public final class CliRunner implements Closeable {
                 if (schema == null) {
                     System.err.println("No such schema: " + schemaName);
                 } else {
-                    Table table = schema.getTableByName(tableName);
+                    final Table table = schema.getTableByName(tableName);
                     if (table == null) {
                         write("No such table: " + tableName);
                     } else {
-                        String[] columnNames = table.getColumnNames();
+                        final String[] columnNames = table.getColumnNames();
                         write("Columns:");
                         write("--------");
-                        for (String columnName : columnNames) {
+                        for (final String columnName : columnNames) {
                             write(columnName);
                         }
                     }
@@ -261,20 +261,20 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void printTables(DataCleanerConfiguration configuration) {
-        String datastoreName = _arguments.getDatastoreName();
-        String schemaName = _arguments.getSchemaName();
+    private void printTables(final DataCleanerConfiguration configuration) {
+        final String datastoreName = _arguments.getDatastoreName();
+        final String schemaName = _arguments.getSchemaName();
 
         if (datastoreName == null) {
             System.err.println("You need to specify the datastore name!");
         } else {
-            Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
+            final Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
             if (ds == null) {
                 System.err.println("No such datastore: " + datastoreName);
             } else {
-                DatastoreConnection con = ds.openConnection();
-                DataContext dc = con.getDataContext();
-                Schema schema;
+                final DatastoreConnection con = ds.openConnection();
+                final DataContext dc = con.getDataContext();
+                final Schema schema;
                 if (schemaName == null) {
                     schema = dc.getDefaultSchema();
                 } else {
@@ -283,13 +283,13 @@ public final class CliRunner implements Closeable {
                 if (schema == null) {
                     System.err.println("No such schema: " + schemaName);
                 } else {
-                    String[] tableNames = schema.getTableNames();
+                    final String[] tableNames = schema.getTableNames();
                     if (tableNames == null || tableNames.length == 0) {
                         System.err.println("No tables in schema!");
                     } else {
                         write("Tables:");
                         write("-------");
-                        for (String tableName : tableNames) {
+                        for (final String tableName : tableNames) {
                             write(tableName);
                         }
                     }
@@ -299,24 +299,24 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void printSchemas(DataCleanerConfiguration configuration) {
-        String datastoreName = _arguments.getDatastoreName();
+    private void printSchemas(final DataCleanerConfiguration configuration) {
+        final String datastoreName = _arguments.getDatastoreName();
 
         if (datastoreName == null) {
             System.err.println("You need to specify the datastore name!");
         } else {
-            Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
+            final Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
             if (ds == null) {
                 System.err.println("No such datastore: " + datastoreName);
             } else {
-                DatastoreConnection con = ds.openConnection();
-                String[] schemaNames = con.getDataContext().getSchemaNames();
+                final DatastoreConnection con = ds.openConnection();
+                final String[] schemaNames = con.getDataContext().getSchemaNames();
                 if (schemaNames == null || schemaNames.length == 0) {
                     write("No schemas in datastore!");
                 } else {
                     write("Schemas:");
                     write("--------");
-                    for (String schemaName : schemaNames) {
+                    for (final String schemaName : schemaNames) {
                         write(schemaName);
                     }
                 }
@@ -325,22 +325,22 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void printDatastores(DataCleanerConfiguration configuration) {
-        String[] datastoreNames = configuration.getDatastoreCatalog().getDatastoreNames();
+    private void printDatastores(final DataCleanerConfiguration configuration) {
+        final String[] datastoreNames = configuration.getDatastoreCatalog().getDatastoreNames();
         if (datastoreNames == null || datastoreNames.length == 0) {
             write("No datastores configured!");
         } else {
             write("Datastores:");
             write("-----------");
-            for (String datastoreName : datastoreNames) {
+            for (final String datastoreName : datastoreNames) {
                 write(datastoreName);
             }
         }
     }
 
-    protected void runJob(DataCleanerConfiguration configuration) throws Throwable {
+    protected void runJob(final DataCleanerConfiguration configuration) throws Throwable {
         if (_arguments.getRunType() == CliRunType.SPARK) {
-            SparkRunner sparkRunner = new SparkRunner(_arguments.getConfigurationFile(), _arguments.getJobFile(),
+            final SparkRunner sparkRunner = new SparkRunner(_arguments.getConfigurationFile(), _arguments.getJobFile(),
                     _arguments.getOutputFile());
             sparkRunner.runJob();
         } else {
@@ -356,7 +356,7 @@ public final class CliRunner implements Closeable {
                 if (_arguments.getDatastoreName() != null) {
                     final Datastore datastore =
                             configuration.getDatastoreCatalog().getDatastore(_arguments.getDatastoreName());
-                    if(datastore == null) {
+                    if (datastore == null) {
                         throw new IllegalArgumentException("No such datastore: " + _arguments.getDatastoreName());
                     }
                     analysisJobBuilder = jobReader.create(inputStream, variableOverrides,
@@ -375,18 +375,18 @@ public final class CliRunner implements Closeable {
 
             if (resultFuture.isSuccessful()) {
                 final CliOutputType outputType = _arguments.getOutputType();
-                AnalysisResultWriter writer = outputType.createWriter();
+                final AnalysisResultWriter writer = outputType.createWriter();
                 writer.write(resultFuture, configuration, _writerRef, _outputStreamRef);
             } else {
                 write("ERROR!");
                 write("------");
 
-                List<Throwable> errors = resultFuture.getErrors();
+                final List<Throwable> errors = resultFuture.getErrors();
                 write(errors.size() + " error(s) occurred while executing the job:");
 
-                for (Throwable throwable : errors) {
+                for (final Throwable throwable : errors) {
                     write("------");
-                    StringWriter stringWriter = new StringWriter();
+                    final StringWriter stringWriter = new StringWriter();
                     throwable.printStackTrace(new PrintWriter(stringWriter));
                     write(stringWriter.toString());
                 }
@@ -396,8 +396,8 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    protected void printAnalyzers(DataCleanerConfiguration configuration) {
-        Collection<AnalyzerDescriptor<?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
+    protected void printAnalyzers(final DataCleanerConfiguration configuration) {
+        final Collection<AnalyzerDescriptor<?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
                 .getAnalyzerDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No analyzers configured!");
@@ -408,8 +408,8 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void printTransformers(DataCleanerConfiguration configuration) {
-        Collection<TransformerDescriptor<?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
+    private void printTransformers(final DataCleanerConfiguration configuration) {
+        final Collection<TransformerDescriptor<?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
                 .getTransformerDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No transformers configured!");
@@ -420,8 +420,8 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void printFilters(DataCleanerConfiguration configuration) {
-        Collection<FilterDescriptor<?, ?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
+    private void printFilters(final DataCleanerConfiguration configuration) {
+        final Collection<FilterDescriptor<?, ?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
                 .getFilterDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No filters configured!");
@@ -432,14 +432,14 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    protected void printBeanDescriptors(Collection<? extends ComponentDescriptor<?>> descriptors) {
+    protected void printBeanDescriptors(final Collection<? extends ComponentDescriptor<?>> descriptors) {
         logger.debug("Printing {} descriptors", descriptors.size());
-        for (ComponentDescriptor<?> descriptor : descriptors) {
+        for (final ComponentDescriptor<?> descriptor : descriptors) {
             write("name: " + descriptor.getDisplayName());
 
             final Set<ConfiguredPropertyDescriptor> propertiesForInput = descriptor.getConfiguredPropertiesForInput();
             if (propertiesForInput.size() == 1) {
-                ConfiguredPropertyDescriptor propertyForInput = propertiesForInput.iterator().next();
+                final ConfiguredPropertyDescriptor propertyForInput = propertiesForInput.iterator().next();
                 if (propertyForInput != null) {
                     if (propertyForInput.isArray()) {
                         write(" - Consumes multiple input columns (type: "
@@ -451,7 +451,7 @@ public final class CliRunner implements Closeable {
                 }
             } else {
                 write(" - Consumes " + propertiesForInput.size() + " named inputs");
-                for (ConfiguredPropertyDescriptor propertyForInput : propertiesForInput) {
+                for (final ConfiguredPropertyDescriptor propertyForInput : propertiesForInput) {
                     if (propertyForInput.isArray()) {
                         write("   Input columns: " + propertyForInput.getName() + " (type: "
                                 + propertyForInput.getTypeArgument(0).getSimpleName() + ")");
@@ -463,7 +463,7 @@ public final class CliRunner implements Closeable {
             }
 
             final Set<ConfiguredPropertyDescriptor> properties = descriptor.getConfiguredProperties();
-            for (ConfiguredPropertyDescriptor property : properties) {
+            for (final ConfiguredPropertyDescriptor property : properties) {
                 if (!property.isInputColumn()) {
                     write(" - Property: name=" + property.getName() + ", type=" + property.getBaseType().getSimpleName()
                             + ", required=" + property.isRequired());
@@ -471,18 +471,18 @@ public final class CliRunner implements Closeable {
             }
 
             if (descriptor instanceof FilterDescriptor<?, ?>) {
-                Set<String> categoryNames = ((FilterDescriptor<?, ?>) descriptor).getOutcomeCategoryNames();
-                for (String categoryName : categoryNames) {
+                final Set<String> categoryNames = ((FilterDescriptor<?, ?>) descriptor).getOutcomeCategoryNames();
+                for (final String categoryName : categoryNames) {
                     write(" - Outcome: " + categoryName);
                 }
             }
         }
     }
 
-    private void write(String str) {
+    private void write(final String str) {
         try {
             _writerRef.get().write(str + "\n");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -495,10 +495,10 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void close(Ref<?> ref) {
+    private void close(final Ref<?> ref) {
         if (ref != null) {
             if (ref instanceof LazyRef) {
-                LazyRef<?> lazyRef = (LazyRef<?>) ref;
+                final LazyRef<?> lazyRef = (LazyRef<?>) ref;
                 if (lazyRef.isFetched()) {
                     FileHelper.safeClose(ref.get());
                 }

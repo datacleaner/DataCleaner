@@ -23,8 +23,8 @@ import java.awt.BorderLayout;
 
 import javax.swing.JComponent;
 
-import org.datacleaner.result.Crosstab;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.result.Crosstab;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.result.DisplayChartCallback;
 import org.datacleaner.widgets.result.DisplayChartCallbackImpl;
@@ -34,58 +34,58 @@ import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 /**
  * A panel that contains the view for a {@link Crosstab}. This includes a
  * DCTable and a chart area that expands if charts are assigned to it.
- * 
+ *
  * These components can be accessed using {@link #getDisplayChartCallback()} and
  * {@link #getTable()}.
- * 
+ *
  * @author Kasper Sørensen
  */
 public class CrosstabPanel extends DCPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final DisplayChartCallback _displayChartCallback;
-	private final DCTable _table;
+    private final DisplayChartCallback _displayChartCallback;
+    private final DCTable _table;
 
-	/**
-	 * 
-	 * @param table
-	 * @param allowAnimations
-	 * 
-	 * @deprecated use {@link #CrosstabPanel(DCTable)} instead
-	 */
-	@Deprecated
-	public CrosstabPanel(DCTable table, boolean allowAnimations) {
-		this(table);
-	}
+    /**
+     *
+     * @param table
+     * @param allowAnimations
+     *
+     * @deprecated use {@link #CrosstabPanel(DCTable)} instead
+     */
+    @Deprecated
+    public CrosstabPanel(final DCTable table, final boolean allowAnimations) {
+        this(table);
+    }
 
-	public CrosstabPanel(DCTable table) {
-		super();
-		_table = table;
+    public CrosstabPanel(final DCTable table) {
+        super();
+        _table = table;
 
-		setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
 
-		final JComponent tableComponent;
-		if ("".equals(table.getColumnName(1))) {
-			tableComponent = table;
-		} else {
-			tableComponent = table.toPanel();
-		}
+        final JComponent tableComponent;
+        if ("".equals(table.getColumnName(1))) {
+            tableComponent = table;
+        } else {
+            tableComponent = table.toPanel();
+        }
 
-		JXCollapsiblePane chartContainer = WidgetFactory.createCollapsiblePane(Direction.UP);
-		chartContainer.setCollapsed(true);
+        final JXCollapsiblePane chartContainer = WidgetFactory.createCollapsiblePane(Direction.UP);
+        chartContainer.setCollapsed(true);
 
-		_displayChartCallback = new DisplayChartCallbackImpl(chartContainer);
+        _displayChartCallback = new DisplayChartCallbackImpl(chartContainer);
 
-		add(chartContainer, BorderLayout.NORTH);
-		add(tableComponent, BorderLayout.CENTER);
-	}
+        add(chartContainer, BorderLayout.NORTH);
+        add(tableComponent, BorderLayout.CENTER);
+    }
 
-	public DisplayChartCallback getDisplayChartCallback() {
-		return _displayChartCallback;
-	}
+    public DisplayChartCallback getDisplayChartCallback() {
+        return _displayChartCallback;
+    }
 
-	public DCTable getTable() {
-		return _table;
-	}
+    public DCTable getTable() {
+        return _table;
+    }
 }

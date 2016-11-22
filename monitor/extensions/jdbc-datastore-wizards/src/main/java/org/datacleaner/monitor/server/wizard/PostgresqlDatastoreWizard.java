@@ -42,13 +42,13 @@ public class PostgresqlDatastoreWizard implements DatastoreWizard {
     }
 
     @Override
-    public DatastoreWizardSession start(DatastoreWizardContext context) {
+    public DatastoreWizardSession start(final DatastoreWizardContext context) {
         final String url = "jdbc:postgresql://<hostname>:5432/<database>";
         return new JdbcDatastoreWizardSession(context, "org.postgresql.Driver", url);
     }
 
     @Override
-    public boolean isApplicableTo(DatastoreWizardContext context) {
+    public boolean isApplicableTo(final DatastoreWizardContext context) {
         final DatabaseDriverCatalog catalog = new DatabaseDriverCatalog(null);
         final boolean installed = catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL);
         return installed;

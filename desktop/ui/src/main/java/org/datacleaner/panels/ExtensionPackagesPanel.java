@@ -71,7 +71,7 @@ public class ExtensionPackagesPanel extends DCPanel {
     private final DataCleanerConfiguration _configuration;
 
     @Inject
-    protected ExtensionPackagesPanel(DataCleanerConfiguration configuration, UserPreferences userPreferences) {
+    protected ExtensionPackagesPanel(final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _configuration = configuration;
         _userPreferences = userPreferences;
@@ -96,11 +96,11 @@ public class ExtensionPackagesPanel extends DCPanel {
                 imageManager.getImageIcon("images/filetypes/archive.png"));
         manualInstallMenuItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getConfiguredFileDirectory());
                 fileChooser.setMultiSelectionEnabled(true);
                 fileChooser.setFileFilter(new ExtensionFilter("DataCleaner extension JAR file (.jar)", ".jar"));
-                int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);
+                final int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);
                 if (result == DCFileChooser.APPROVE_OPTION) {
 
                     final File[] files = fileChooser.getSelectedFiles();
@@ -148,7 +148,7 @@ public class ExtensionPackagesPanel extends DCPanel {
         boolean valid = true;
         final File[] files = extensionPackage.getFiles();
         if (extensionPackage.isExternal()) {
-            for (File file : files) {
+            for (final File file : files) {
                 if (!file.exists()) {
                     valid = false;
                 }
@@ -215,7 +215,7 @@ public class ExtensionPackagesPanel extends DCPanel {
             removeButton.setToolTipText("Remove extension");
             removeButton.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(final ActionEvent e) {
                     _userPreferences.removeExtensionPackage(extensionPackage);
                     removeButton.setEnabled(false);
                     extensionLabel.setText("*** Removal requires application restart ***");
@@ -230,7 +230,7 @@ public class ExtensionPackagesPanel extends DCPanel {
         return extensionPanel;
     }
 
-    private ImageIcon getExtensionIcon(ExtensionPackage extensionPackage) {
+    private ImageIcon getExtensionIcon(final ExtensionPackage extensionPackage) {
         final String iconPath = extensionPackage.getAdditionalProperties().get("icon");
         if (iconPath != null) {
             try {
@@ -239,7 +239,7 @@ public class ExtensionPackagesPanel extends DCPanel {
                 if (imageIcon != null) {
                     return imageIcon;
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Failed to get extension icon of path: " + iconPath, e);
                 }

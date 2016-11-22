@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Incapsulation of the DATACLEANER_HOME folder. This folder is resolved using
  * the following ordered approach:
- * 
+ *
  * <ol>
  * <li>If a DATACLEANER_HOME environment variable exists, it will be used.</li>
  * <li>If the application is running in Java WebStart mode, a sandbox folder
@@ -74,7 +74,7 @@ public final class DataCleanerHome {
         logger.info("Initializing DATACLEANER_HOME");
         try {
             _dataCleanerHome = findDataCleanerHome();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Failed to initialize DATACLEANER_HOME!", e);
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
@@ -101,7 +101,7 @@ public final class DataCleanerHome {
 
         if (!StringUtils.isNullOrEmpty(path)) {
             if (path.startsWith("~")) {
-                String userHomePath = System.getProperty("user.home");
+                final String userHomePath = System.getProperty("user.home");
                 path = path.replace("~", userHomePath);
             }
             candidate = manager.resolveFile(path);
@@ -139,7 +139,7 @@ public final class DataCleanerHome {
                         candidate.createFolder();
                         logger.info("Folder {} created successfully. Attempting to build DATACLEANER_HOME here.",
                                 candidate);
-                    } catch (FileSystemException e) {
+                    } catch (final FileSystemException e) {
                         logger.info("Unable to create folder {}. No write permission in that location.", candidate);
                         candidate = initializeDataCleanerHomeFallback();
                     }
@@ -160,15 +160,15 @@ public final class DataCleanerHome {
         }
 
         if (!isUsable(candidate)) {
-            DataCleanerHomeUpgrader upgrader = new DataCleanerHomeUpgrader();
-            boolean upgraded = upgrader.upgrade(candidate);
+            final DataCleanerHomeUpgrader upgrader = new DataCleanerHomeUpgrader();
+            final boolean upgraded = upgrader.upgrade(candidate);
 
             if (!upgraded) {
                 logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
                 copyIfNonExisting(candidate, manager, DataCleanerConfigurationImpl.DEFAULT_FILENAME);
 
                 final List<String> allFilePaths = getAllInitialFiles();
-                for (String filePath : allFilePaths) {
+                for (final String filePath : allFilePaths) {
                     copyIfNonExisting(candidate, manager, filePath);
                 }
             }
@@ -192,7 +192,7 @@ public final class DataCleanerHome {
     private static FileObject initializeDataCleanerHomeFallback() throws FileSystemException {
         final FileSystemManager manager = VFSUtils.getFileSystemManager();
 
-        FileObject candidate;
+        final FileObject candidate;
 
         // Fallback to user home directory
         final String path = getUserHomeCandidatePath();
@@ -205,8 +205,9 @@ public final class DataCleanerHome {
                 logger.info("Folder {} does not exist. Trying to create it.", candidate);
                 try {
                     candidate.createFolder();
-                    logger.info("Folder {} created successfully. Attempting to build DATACLEANER_HOME here.", candidate);
-                } catch (FileSystemException e) {
+                    logger.info("Folder {} created successfully. Attempting to build DATACLEANER_HOME here.",
+                            candidate);
+                } catch (final FileSystemException e) {
                     logger.info("Unable to create folder {}. No write permission in that location.", candidate);
                     throw new IllegalStateException("User home directory (" + candidate
                             + ") is not writable. DataCleaner requires write access to its home directory.");
@@ -216,7 +217,7 @@ public final class DataCleanerHome {
         return candidate;
     }
 
-    private static boolean isWriteable(FileObject candidate) throws FileSystemException {
+    private static boolean isWriteable(final FileObject candidate) throws FileSystemException {
         if (candidate == null) {
             return false;
         }
@@ -252,14 +253,14 @@ public final class DataCleanerHome {
         return VFSUtils.toFile(_dataCleanerHome);
     }
 
-    private static FileObject copyIfNonExisting(FileObject candidate, FileSystemManager manager, String filename)
+    private static FileObject copyIfNonExisting(final FileObject candidate, final FileSystemManager manager, final String filename)
             throws FileSystemException {
-        FileObject file = candidate.resolveFile(filename);
+        final FileObject file = candidate.resolveFile(filename);
         if (file.exists()) {
             logger.info("File already exists in DATACLEANER_HOME: " + filename);
             return file;
         }
-        FileObject parentFile = file.getParent();
+        final FileObject parentFile = file.getParent();
         if (!parentFile.exists()) {
             parentFile.createFolder();
         }
@@ -277,7 +278,7 @@ public final class DataCleanerHome {
             out = file.getContent().getOutputStream();
 
             FileHelper.copy(in, out);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalArgumentException(e);
         } finally {
             FileHelper.safeClose(in, out);
@@ -293,10 +294,10 @@ public final class DataCleanerHome {
         return path;
     }
 
-    private static boolean isUsable(FileObject candidate) throws FileSystemException {
+    private static boolean isUsable(final FileObject candidate) throws FileSystemException {
         if (candidate != null) {
             if (candidate.exists() && candidate.getType() == FileType.FOLDER) {
-                FileObject conf = candidate.resolveFile(DataCleanerConfigurationImpl.DEFAULT_FILENAME);
+                final FileObject conf = candidate.resolveFile(DataCleanerConfigurationImpl.DEFAULT_FILENAME);
                 if (conf.exists() && conf.getType() == FileType.FILE) {
                     return true;
                 }

@@ -68,7 +68,7 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
     public UniqueKeyCheckAnalyzer() {
     }
 
-    public UniqueKeyCheckAnalyzer(int bufferSize) {
+    public UniqueKeyCheckAnalyzer(final int bufferSize) {
         _bufferSize = bufferSize;
     }
 
@@ -80,13 +80,13 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
             private final CsvWriter csvWriter = new CsvWriter(CSV_CONFIGURATION);
 
             @Override
-            protected void writeHeader(Writer writer) throws IOException {
+            protected void writeHeader(final Writer writer) throws IOException {
                 final String line = csvWriter.buildLine(new String[] { "text", "count" });
                 writer.write(line);
             }
 
             @Override
-            protected void writeRow(Writer writer, String row, int count) throws IOException {
+            protected void writeRow(final Writer writer, final String row, final int count) throws IOException {
                 if (count > 1) {
                     final String line = csvWriter.buildLine(new String[] { row, "" + count });
                     writer.write(line);
@@ -95,14 +95,14 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
             }
 
             @Override
-            protected Writer createWriter(Resource file) {
+            protected Writer createWriter(final Resource file) {
                 return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
             }
         };
         _writeBuffer = new WriteBuffer(_bufferSize, new Action<Iterable<Object[]>>() {
             @Override
-            public void run(Iterable<Object[]> rows) throws Exception {
-                for (Object[] objects : rows) {
+            public void run(final Iterable<Object[]> rows) throws Exception {
+                for (final Object[] objects : rows) {
                     final String string = (String) objects[0];
                     _sorter.append(string);
                 }
@@ -111,7 +111,7 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         final Object value = row.getValue(column);
 
         _rowCount.addAndGet(distinctCount);
@@ -119,7 +119,7 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
         if (value == null) {
             _nullCount.addAndGet(distinctCount);
         } else {
-            String str = value.toString();
+            final String str = value.toString();
 
             for (int i = 0; i < distinctCount; i++) {
                 _writeBuffer.addToBuffer(new Object[] { str });
@@ -134,8 +134,8 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
         File file;
         try {
             file = File.createTempFile("UniqueKeyCheckAnalyzer", ".txt");
-        } catch (Exception e) {
-            File tempDir = FileHelper.getTempDir();
+        } catch (final Exception e) {
+            final File tempDir = FileHelper.getTempDir();
             file = new File(tempDir, "UniqueKeyCheckAnalyzer-" + System.currentTimeMillis() + ".txt");
         }
 

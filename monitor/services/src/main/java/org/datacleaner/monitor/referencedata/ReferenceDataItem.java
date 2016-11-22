@@ -34,7 +34,7 @@ public class ReferenceDataItem implements Serializable {
     public ReferenceDataItem() {
     }
 
-    public ReferenceDataItem(Type type, String name) {
+    public ReferenceDataItem(final Type type, final String name) {
         _type = type;
         _name = name;
     }

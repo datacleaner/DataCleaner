@@ -33,8 +33,8 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
     protected String _schema;
     protected String _table;
     protected String _column;
-    
-    public DatastoreWizardSession(ReferenceDataWizardContext context) {
+
+    public DatastoreWizardSession(final ReferenceDataWizardContext context) {
         super(context);
     }
 
@@ -47,9 +47,9 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
     protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
         return addElementToConfiguration();
     }
-    
+
     protected abstract Element addElementToConfiguration();
-    
+
     public String getName() {
         return _name;
     }
@@ -58,7 +58,7 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
         if (name == null || name.equals("")) {
             throw new DCUserInputException("Name can not be null or empty. ");
         }
-        
+
         _name = name;
     }
 
@@ -70,7 +70,7 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
         if (datastore == null || datastore.equals("")) {
             throw new DCUserInputException("Datastore can not be null or empty. ");
         }
- 
+
         _datastore = datastore;
     }
 
@@ -82,7 +82,7 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
         if (schema == null || schema.equals("")) {
             throw new DCUserInputException("Schema can not be null or empty. ");
         }
- 
+
         _schema = schema;
     }
 
@@ -94,7 +94,7 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
         if (table == null || table.equals("")) {
             throw new DCUserInputException("Table can not be null or empty. ");
         }
-         
+
         _table = table;
     }
 
@@ -106,7 +106,7 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
         if (column == null || column.equals("")) {
             throw new DCUserInputException("Column can not be null or empty. ");
         }
-         
+
         _column = column;
     }
 }

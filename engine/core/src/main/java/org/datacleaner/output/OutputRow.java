@@ -27,9 +27,9 @@ import org.datacleaner.api.InputRow;
  */
 public interface OutputRow {
 
-	public <E> OutputRow setValue(InputColumn<? super E> inputColumn, E value);
+    <E> OutputRow setValue(InputColumn<? super E> inputColumn, E value);
 
-	public OutputRow setValues(InputRow row);
+    OutputRow setValues(InputRow row);
 
-	public void write();
+    void write();
 }

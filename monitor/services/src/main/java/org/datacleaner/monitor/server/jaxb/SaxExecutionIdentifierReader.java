@@ -44,33 +44,22 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class SaxExecutionIdentifierReader extends DefaultHandler {
 
-    private static final Set<String> ELEMENT_NAMES = new HashSet<String>(Arrays.asList("result-id", "execution-status",
-            "trigger-type", "job-begin-date"));
-
     private static class StopParsingException extends SAXException {
         private static final long serialVersionUID = 1L;
     }
-
+    private static final Set<String> ELEMENT_NAMES = new HashSet<String>(Arrays.asList("result-id", "execution-status",
+            "trigger-type", "job-begin-date"));
     private final String _name;
     private final Map<String, String> _valueMap;
     private final StringBuilder _valueBuilder;
 
     private boolean _readChars;
 
-    @Deprecated
-    public static ExecutionIdentifier read(InputStream in) {
-        return new SaxExecutionIdentifierReader().parse(in);
-    }
-    
-    public static ExecutionIdentifier read(InputStream in, String name) {
-        return new SaxExecutionIdentifierReader(name).parse(in);
-    }
-    
     private SaxExecutionIdentifierReader() {
         this("<unknown>");
     }
 
-    private SaxExecutionIdentifierReader(String name) {
+    private SaxExecutionIdentifierReader(final String name) {
         _name = name;
         _valueMap = new HashMap<String, String>();
         _valueBuilder = new StringBuilder();
@@ -78,8 +67,17 @@ public class SaxExecutionIdentifierReader extends DefaultHandler {
         _readChars = false;
     }
 
-    public ExecutionIdentifier parse(InputStream in) {
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+    @Deprecated
+    public static ExecutionIdentifier read(final InputStream in) {
+        return new SaxExecutionIdentifierReader().parse(in);
+    }
+
+    public static ExecutionIdentifier read(final InputStream in, final String name) {
+        return new SaxExecutionIdentifierReader(name).parse(in);
+    }
+
+    public ExecutionIdentifier parse(final InputStream in) {
+        final SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 
         parserFactory.setNamespaceAware(false);
         parserFactory.setValidating(false);
@@ -87,13 +85,13 @@ public class SaxExecutionIdentifierReader extends DefaultHandler {
         final SAXParser parser;
         try {
             parser = parserFactory.newSAXParser();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Failed to create SAX parser", e);
         }
 
         try {
             parser.parse(in, this);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof StopParsingException) {
                 // parsing was stopped intentionally
             } else {
@@ -112,23 +110,23 @@ public class SaxExecutionIdentifierReader extends DefaultHandler {
         return result;
     }
 
-    private Date toDate(String string) {
-		if (string == null) {
-			return null;
-		}
-		Calendar cal = DatatypeConverter.parseDate(string);
-		return cal.getTime();
+    private Date toDate(final String string) {
+        if (string == null) {
+            return null;
+        }
+        final Calendar cal = DatatypeConverter.parseDate(string);
+        return cal.getTime();
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
         final String name = stripNamespace(qName);
         if (ELEMENT_NAMES.contains(name)) {
             _readChars = true;
         }
     }
 
-    private String stripNamespace(String qName) {
+    private String stripNamespace(final String qName) {
         final int colonIndex = qName.indexOf(':');
         if (colonIndex == -1) {
             return qName;
@@ -137,14 +135,14 @@ public class SaxExecutionIdentifierReader extends DefaultHandler {
     }
 
     @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
+    public void characters(final char[] ch, final int start, final int length) throws SAXException {
         if (_readChars) {
             _valueBuilder.append(ch, start, length);
         }
     }
 
     @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    public void endElement(final String uri, final String localName, final String qName) throws SAXException {
         if (_readChars) {
             final String name = stripNamespace(qName);
             _valueMap.put(name, _valueBuilder.toString());

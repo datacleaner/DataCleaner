@@ -65,7 +65,7 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
 
         addComponentListener(new ComponentAdapter() {
             @Override
-            public void componentHidden(ComponentEvent e) {
+            public void componentHidden(final ComponentEvent e) {
                 scroll.getVerticalScrollBar().setValue(0);
             }
         });
@@ -84,7 +84,7 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
     }
 
     @Override
-    public void onAdd(Datastore datastore) {
+    public void onAdd(final Datastore datastore) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -94,7 +94,7 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
     }
 
     @Override
-    public void onRemove(Datastore datastore) {
+    public void onRemove(final Datastore datastore) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -104,7 +104,7 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
     }
 
     @Override
-    public void datastoreSelected(Datastore datastore) {
+    public void datastoreSelected(final Datastore datastore) {
         getWindow().setDatastore(datastore);
     }
 }

@@ -44,7 +44,8 @@ public class TenantContextFactoryImplTest extends TestCase {
         final TenantContext tenantContext = tenantContextFactory.getContext("tenant1");
 
         final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
-        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory().getInjectionManager(configuration);
+        final InjectionManager injectionManager =
+                configuration.getEnvironment().getInjectionManagerFactory().getInjectionManager(configuration);
         assertTrue(injectionManager instanceof TenantInjectionManager);
 
         TenantInjectionManager tenantInjectionManager = (TenantInjectionManager) injectionManager;

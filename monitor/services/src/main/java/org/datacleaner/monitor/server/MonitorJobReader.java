@@ -46,7 +46,7 @@ public class MonitorJobReader {
     private final DataCleanerConfiguration _configuration;
     private final RepositoryFile _jobFile;
 
-    public MonitorJobReader(DataCleanerConfiguration configuration, RepositoryFile jobFile) {
+    public MonitorJobReader(final DataCleanerConfiguration configuration, final RepositoryFile jobFile) {
         _configuration = configuration;
         _jobFile = jobFile;
     }
@@ -61,7 +61,7 @@ public class MonitorJobReader {
         // read metadata
         final AnalysisJobMetadata metadata = _jobFile.readFile(new Func<InputStream, AnalysisJobMetadata>() {
             @Override
-            public AnalysisJobMetadata eval(InputStream in) {
+            public AnalysisJobMetadata eval(final InputStream in) {
                 return jobReader.readMetadata(in);
             }
         });
@@ -72,7 +72,7 @@ public class MonitorJobReader {
         // read job
         final Func<InputStream, AnalysisJobBuilder> readCallback = new Func<InputStream, AnalysisJobBuilder>() {
             @Override
-            public AnalysisJobBuilder eval(InputStream inputStream) {
+            public AnalysisJobBuilder eval(final InputStream inputStream) {
                 if (datastore == null) {
                     final List<String> sourceColumnPaths = metadata.getSourceColumnPaths();
                     final List<ColumnType> sourceColumnTypes = metadata.getSourceColumnTypes();

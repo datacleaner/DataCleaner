@@ -23,7 +23,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 
 /**
  * A synonym catalog represents a set of synonyms which are related.
- * 
+ *
  * Meaningful examples of synonym catalogs:
  * <ul>
  * <li>Country names (with ISO code as master term)</li>
@@ -34,18 +34,18 @@ public interface SynonymCatalog extends ReferenceData {
 
     /**
      * Gets the name of this synonym catalog
-     * 
+     *
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * Opens a connection to the {@link SynonymCatalog}. Keep the connection
      * open while using the synonym catalog in a session, job or so. Close it
      * when you don't expect more interaction.
-     * 
+     *
      * @param configuration
      * @return
      */
-    public SynonymCatalogConnection openConnection(DataCleanerConfiguration configuration);
+    SynonymCatalogConnection openConnection(DataCleanerConfiguration configuration);
 }

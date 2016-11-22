@@ -29,19 +29,19 @@ public class NewsChannelRESTClient {
     private final RESTClient restClient;
     private final String url;
 
-    public NewsChannelRESTClient(String url, String dataCleanerVersion) {
+    public NewsChannelRESTClient(final String url, final String dataCleanerVersion) {
         this.url = url;
         restClient = new RESTClientImpl(null, null, dataCleanerVersion);
     }
 
     public List<ShortNews.Item> getNews(final int count) {
-        String response = call(count);
-        ShortNews news = Serializator.shortNewsList(response);
+        final String response = call(count);
+        final ShortNews news = Serializator.shortNewsList(response);
         return news.getNewsItems();
     }
 
-    private String call(int count) throws RestrictedFunctionalityException {
-        String response = restClient.getResponse(RESTClient.HttpMethod.GET, url + "?count=" + count, "");
+    private String call(final int count) throws RestrictedFunctionalityException {
+        final String response = restClient.getResponse(RESTClient.HttpMethod.GET, url + "?count=" + count, "");
         return response;
     }
 }

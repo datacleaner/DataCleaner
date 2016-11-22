@@ -34,13 +34,13 @@ import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
+import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
-import org.apache.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -54,8 +54,8 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
     private final Map<JComponent, JXTextField> _textFieldDecorations;
 
     @Inject
-    public MultipleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder) {
+    public MultipleStringPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
 
         _textFieldDecorations = new IdentityHashMap<JComponent, JXTextField>();
@@ -66,7 +66,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
         addButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 addTextField("", true);
                 fireValueChanged();
             }
@@ -75,8 +75,8 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
         removeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                int componentCount = _textFieldPanel.getComponentCount();
+            public void actionPerformed(final ActionEvent e) {
+                final int componentCount = _textFieldPanel.getComponentCount();
                 if (componentCount > 0) {
                     removeTextField();
                     _textFieldPanel.updateUI();
@@ -101,7 +101,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
     }
 
     @Override
-    public void initialize(String[] value) {
+    public void initialize(final String[] value) {
         updateComponents(value);
     }
 
@@ -114,15 +114,15 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
             for (int i = 0; i < Math.min(previousValues.length, values.length); i++) {
                 // modify text boxes
                 if (!EqualsBuilder.equals(previousValues[i], values[i])) {
-                    Component decoration = _textFieldPanel.getComponent(i);
-                    JXTextField component = _textFieldDecorations.get(decoration);
+                    final Component decoration = _textFieldPanel.getComponent(i);
+                    final JXTextField component = _textFieldDecorations.get(decoration);
                     component.setText(values[i]);
                 }
             }
 
             while (_textFieldPanel.getComponentCount() < values.length) {
                 // add text boxes if there are too few
-                String nextValue = values[_textFieldPanel.getComponentCount()];
+                final String nextValue = values[_textFieldPanel.getComponentCount()];
                 addTextField(nextValue, false);
             }
 
@@ -134,24 +134,24 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
     }
 
     private void removeTextField() {
-        int componentCount = _textFieldPanel.getComponentCount();
+        final int componentCount = _textFieldPanel.getComponentCount();
         if (componentCount == 0) {
             return;
         }
-        int index = componentCount - 1;
-        Component decoration = _textFieldPanel.getComponent(index);
+        final int index = componentCount - 1;
+        final Component decoration = _textFieldPanel.getComponent(index);
         _textFieldDecorations.remove(decoration);
         _textFieldPanel.remove(index);
     }
 
-    private void addTextField(String value, boolean updateUI) {
-        JXTextField textField = WidgetFactory.createTextField();
+    private void addTextField(final String value, final boolean updateUI) {
+        final JXTextField textField = WidgetFactory.createTextField();
         if (value != null) {
             textField.setText(value);
         }
         textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent e) {
+            protected void onChange(final DocumentEvent e) {
                 fireValueChanged();
             }
         });
@@ -166,14 +166,14 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
         }
     }
 
-    protected JComponent decorateTextField(JXTextField textField, int index) {
+    protected JComponent decorateTextField(final JXTextField textField, final int index) {
         return textField;
     }
 
     @Override
     public String[] getValue() {
-        Component[] components = _textFieldPanel.getComponents();
-        List<String> result = new ArrayList<String>();
+        final Component[] components = _textFieldPanel.getComponents();
+        final List<String> result = new ArrayList<String>();
         for (int i = 0; i < components.length; i++) {
             final Component decoration = components[i];
             final JXTextField textField = _textFieldDecorations.get(decoration);
@@ -186,8 +186,13 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
     }
 
     @Override
+    protected void setValue(final String[] value) {
+        updateComponents(value);
+    }
+
+    @Override
     public boolean isSet() {
-        String[] value = getValue();
+        final String[] value = getValue();
         if (value.length == 0) {
             return false;
         }
@@ -206,16 +211,11 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
     /**
      * Method to be overridden by subclasses in case empty strings inside the
      * arrays are not to be tolerated.
-     * 
+     *
      * @return
      */
     protected boolean isEmptyStringValid() {
         return true;
-    }
-
-    @Override
-    protected void setValue(String[] value) {
-        updateComponents(value);
     }
 
 }

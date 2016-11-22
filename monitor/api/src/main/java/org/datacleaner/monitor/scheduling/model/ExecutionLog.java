@@ -48,14 +48,14 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
         _resultPersisted = false;
     }
 
-    public ExecutionLog(ScheduleDefinition schedule, TriggerType triggerType) {
+    public ExecutionLog(final ScheduleDefinition schedule, final TriggerType triggerType) {
         super(createResultId(schedule), triggerType);
         _schedule = schedule;
         _job = (schedule == null ? null : schedule.getJob());
         _resultPersisted = false;
     }
 
-    private static String createResultId(ScheduleDefinition schedule) {
+    private static String createResultId(final ScheduleDefinition schedule) {
         if (schedule == null) {
             return null;
         }
@@ -63,7 +63,7 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
         return createResultId(job);
     }
 
-    private static String createResultId(JobIdentifier job) {
+    private static String createResultId(final JobIdentifier job) {
         if (job == null) {
             return null;
         }
@@ -74,7 +74,7 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
         return _schedule;
     }
 
-    public void setSchedule(ScheduleDefinition schedule) {
+    public void setSchedule(final ScheduleDefinition schedule) {
         _schedule = schedule;
     }
 
@@ -82,7 +82,7 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
         return _logOutput;
     }
 
-    public void setLogOutput(String logOutput) {
+    public void setLogOutput(final String logOutput) {
         _logOutput = logOutput;
     }
 
@@ -90,15 +90,15 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
         return _jobEndDate;
     }
 
-    public void setJobEndDate(Date jobEndDate) {
+    public void setJobEndDate(final Date jobEndDate) {
         _jobEndDate = jobEndDate;
     }
 
     public JobIdentifier getJob() {
         return _job;
     }
-    
-    public void setJob(JobIdentifier job) {
+
+    public void setJob(final JobIdentifier job) {
         _job = job;
     }
 
@@ -106,7 +106,7 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
         return _triggeredBy;
     }
 
-    public void setTriggeredBy(String triggeredBy) {
+    public void setTriggeredBy(final String triggeredBy) {
         _triggeredBy = triggeredBy;
     }
 
@@ -114,7 +114,7 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
         return _resultPersisted;
     }
 
-    public void setResultPersisted(boolean resultPersisted) {
+    public void setResultPersisted(final boolean resultPersisted) {
         _resultPersisted = resultPersisted;
     }
 

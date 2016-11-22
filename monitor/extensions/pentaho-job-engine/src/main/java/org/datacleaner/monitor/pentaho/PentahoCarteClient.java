@@ -55,7 +55,7 @@ public final class PentahoCarteClient implements Closeable {
     private final CloseableHttpClient _httpClient;
     private final HttpClientContext _httpClientContext;
 
-    public PentahoCarteClient(PentahoJobType pentahoJobType) {
+    public PentahoCarteClient(final PentahoJobType pentahoJobType) {
         _pentahoJobType = pentahoJobType;
         _httpClientContext = createHttpClientContext(pentahoJobType);
         _httpClient = HttpClients.custom().useSystemProperties().build();
@@ -66,7 +66,7 @@ public final class PentahoCarteClient implements Closeable {
         FileHelper.safeClose(_httpClient);
     }
 
-    private HttpClientContext createHttpClientContext(PentahoJobType pentahoJobType) {
+    private HttpClientContext createHttpClientContext(final PentahoJobType pentahoJobType) {
         final String hostname = pentahoJobType.getCarteHostname();
         final Integer port = pentahoJobType.getCartePort();
         final String username = pentahoJobType.getCarteUsername();
@@ -96,7 +96,7 @@ public final class PentahoCarteClient implements Closeable {
                 final Element transstatuslistElement = DomUtils.getChildElementByTagName(serverstatusElement,
                         "transstatuslist");
                 final List<Element> transstatusElements = DomUtils.getChildElements(transstatuslistElement);
-                for (Element transstatusElement : transstatusElements) {
+                for (final Element transstatusElement : transstatusElements) {
                     final String transId = DomUtils.getChildElementValueByTagName(transstatusElement, "id");
                     final String transName = DomUtils.getChildElementValueByTagName(transstatusElement, "transname");
                     final PentahoTransformation transformation = new PentahoTransformation(transId, transName);
@@ -112,10 +112,10 @@ public final class PentahoCarteClient implements Closeable {
         }
     }
 
-    public HttpResponse execute(HttpGet request) {
+    public HttpResponse execute(final HttpGet request) {
         try {
             return _httpClient.execute(request, _httpClientContext);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new PentahoJobException("Failed to invoke HTTP request: " + e.getMessage(), e);
         }
     }
@@ -123,25 +123,25 @@ public final class PentahoCarteClient implements Closeable {
     private DocumentBuilder getDocumentBuilder() {
         try {
             return DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Failed to instantiate a DocumentBuilder for parsing XML", e);
         }
     }
 
-    public Document parse(HttpEntity entity) throws PentahoJobException {
+    public Document parse(final HttpEntity entity) throws PentahoJobException {
         final DocumentBuilder documentBuilder = getDocumentBuilder();
         InputStream content = null;
         try {
             content = entity.getContent();
             return documentBuilder.parse(content);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new PentahoJobException("Failed to parse XML response", e);
         } finally {
             FileHelper.safeClose(content);
         }
     }
 
-    private String getUrl(String serviceName, String id, String name) throws PentahoJobException {
+    private String getUrl(final String serviceName, final String id, final String name) throws PentahoJobException {
         final URLCodec urlCodec = new URLCodec();
 
         final StringBuilder url = new StringBuilder();
@@ -157,7 +157,7 @@ public final class PentahoCarteClient implements Closeable {
             try {
                 final String encodedId = urlCodec.encode(id);
                 url.append(encodedId);
-            } catch (EncoderException e) {
+            } catch (final EncoderException e) {
                 throw new PentahoJobException("Failed to encode transformation id: " + id);
             }
         }
@@ -167,7 +167,7 @@ public final class PentahoCarteClient implements Closeable {
             try {
                 final String encodedName = urlCodec.encode(name);
                 url.append(encodedName);
-            } catch (EncoderException e) {
+            } catch (final EncoderException e) {
                 throw new PentahoJobException("Failed to encode transformation name: " + name);
             }
         }
@@ -175,7 +175,7 @@ public final class PentahoCarteClient implements Closeable {
         return url.toString();
     }
 
-    public String getUrl(String serviceName) throws PentahoJobException {
+    public String getUrl(final String serviceName) throws PentahoJobException {
         return getUrl(serviceName, _pentahoJobType.getTransformationId(), _pentahoJobType.getTransformationName());
     }
 }

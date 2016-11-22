@@ -39,7 +39,7 @@ import org.datacleaner.util.sort.SortMergeWriter;
  * A delegate writer for {@link CreateExcelSpreadsheetAnalyzer} to use together
  * with the {@link SortMergeWriter} when inserting records into an excel
  * spreadsheet.
- * 
+ *
  * Note: Most of this class is actually fairly generic. It could in the future
  * be applied to work on other {@link DataContext} types as well.
  */
@@ -49,7 +49,7 @@ class ExcelDataContextWriter implements Closeable {
     private final String _sheetName;
     private final WriteBuffer _buffer;
 
-    public ExcelDataContextWriter(File file, String sheetName) {
+    public ExcelDataContextWriter(final File file, final String sheetName) {
         _dataContext = new ExcelDataContext(file);
         _sheetName = sheetName;
         _buffer = new WriteBuffer(2000, new Action<Iterable<Object[]>>() {
@@ -58,9 +58,9 @@ class ExcelDataContextWriter implements Closeable {
             public void run(final Iterable<Object[]> records) throws Exception {
                 _dataContext.executeUpdate(new UpdateScript() {
                     @Override
-                    public void run(UpdateCallback callback) {
+                    public void run(final UpdateCallback callback) {
                         final Table table = callback.getDataContext().getDefaultSchema().getTableByName(_sheetName);
-                        for (Object[] objects : records) {
+                        for (final Object[] objects : records) {
                             final RowInsertionBuilder insert = callback.insertInto(table);
                             for (int i = 0; i < objects.length; i++) {
                                 insert.value(i, objects[i]);
@@ -78,15 +78,15 @@ class ExcelDataContextWriter implements Closeable {
         _buffer.flushBuffer();
     }
 
-    public void createTable(List<String> headers) {
+    public void createTable(final List<String> headers) {
         final CreateTable createTable = new CreateTable(_dataContext.getDefaultSchema(), _sheetName);
-        for (String header : headers) {
+        for (final String header : headers) {
             createTable.withColumn(header).ofType(ColumnType.STRING);
         }
         _dataContext.executeUpdate(createTable);
     }
 
-    public void insertValues(Object[] values) {
+    public void insertValues(final Object[] values) {
         _buffer.addToBuffer(values);
     }
 }

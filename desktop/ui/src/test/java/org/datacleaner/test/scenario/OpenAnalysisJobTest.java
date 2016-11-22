@@ -47,7 +47,7 @@ public class OpenAnalysisJobTest extends TestCase {
     /**
      * A very broad integration test which opens a job with (more or less) all
      * built-in analyzers.
-     * 
+     *
      * @throws Exception
      */
     public void testOpenJobWithManyAnalyzers() throws Exception {

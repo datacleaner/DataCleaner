@@ -24,9 +24,9 @@ import java.util.Collection;
 public class MockValueCountingAnalyzerResult extends AbstractValueCountingAnalyzerResult {
 
     private static final long serialVersionUID = 1L;
-    
+
     private final Collection<ValueFrequency> _valueCounts;
-    
+
     public MockValueCountingAnalyzerResult(Collection<ValueFrequency> valueCounts) {
         _valueCounts = valueCounts;
     }

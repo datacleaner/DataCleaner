@@ -19,9 +19,7 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.*;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -59,7 +57,9 @@ public class ComponentHandlerTest {
         DataCleanerConfiguration dcConfigMock = getDCConfigurationMock();
         componentHandler = new ComponentHandler(
                 dcConfigMock,
-                dcConfigMock.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName), componentConfiguration, new SimpleRemoteComponentsConfigurationImpl(), null);
+                dcConfigMock.getEnvironment().getDescriptorProvider()
+                        .getTransformerDescriptorByDisplayName(componentName), componentConfiguration,
+                new SimpleRemoteComponentsConfigurationImpl(), null);
         jsonData = getJsonDataMock();
     }
 
@@ -103,7 +103,8 @@ public class ComponentHandlerTest {
 
     private TransformerDescriptor<?> getTransformerDescriptorMock() {
         @SuppressWarnings("unchecked")
-        TransformerDescriptor<ConcatenatorTransformer> transformerDescriptor = createNiceMock(TransformerDescriptor.class);
+        TransformerDescriptor<ConcatenatorTransformer> transformerDescriptor =
+                createNiceMock(TransformerDescriptor.class);
         expect(transformerDescriptor.getConfiguredProperties()).andReturn(getConfiguredPropertiesMock()).anyTimes();
         expect(transformerDescriptor.getDisplayName()).andReturn("descriptor display name").anyTimes();
         expect(transformerDescriptor.getProvidedProperties()).andReturn(
@@ -121,7 +122,8 @@ public class ComponentHandlerTest {
     }
 
     private Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesMock() {
-        ConfiguredPropertyDescriptor configuredPropertyDescriptorMock = createNiceMock(ConfiguredPropertyDescriptor.class);
+        ConfiguredPropertyDescriptor configuredPropertyDescriptorMock =
+                createNiceMock(ConfiguredPropertyDescriptor.class);
         expect(configuredPropertyDescriptorMock.getName()).andReturn("propertyName").anyTimes();
         expect(configuredPropertyDescriptorMock.isInputColumn()).andReturn(true).anyTimes();
         expect(configuredPropertyDescriptorMock.getDescription()).andReturn("property description").anyTimes();

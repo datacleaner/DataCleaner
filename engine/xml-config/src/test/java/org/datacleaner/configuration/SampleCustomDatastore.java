@@ -21,53 +21,53 @@ package org.datacleaner.configuration;
 
 import java.io.File;
 
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.DataContextFactory;
 import org.datacleaner.api.Configured;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DatastoreConnectionImpl;
 import org.datacleaner.connection.PerformanceCharacteristics;
 import org.datacleaner.connection.PerformanceCharacteristicsImpl;
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.DataContextFactory;
 import org.junit.Ignore;
 
 @Ignore
 public class SampleCustomDatastore implements Datastore {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Configured
-	String name;
+    @Configured
+    String name;
 
-	@Configured
-	File xmlFile;
+    @Configured
+    File xmlFile;
 
-	@Configured
-	String description;
+    @Configured
+    String description;
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public DatastoreConnection openConnection() {
-		DataContext dc = DataContextFactory.createXmlDataContext(xmlFile, false);
-		return new DatastoreConnectionImpl<DataContext>(dc, this);
-	}
+    @Override
+    public DatastoreConnection openConnection() {
+        DataContext dc = DataContextFactory.createXmlDataContext(xmlFile, false);
+        return new DatastoreConnectionImpl<DataContext>(dc, this);
+    }
 
-	@Override
-	public PerformanceCharacteristics getPerformanceCharacteristics() {
-		return new PerformanceCharacteristicsImpl(true, true);
-	}
+    @Override
+    public PerformanceCharacteristics getPerformanceCharacteristics() {
+        return new PerformanceCharacteristicsImpl(true, true);
+    }
 
-	@Override
-	public String getDescription() {
-		return description;
-	}
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
-	@Override
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

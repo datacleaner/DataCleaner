@@ -40,7 +40,7 @@ public class AlertPanel extends FlowPanel {
     private final AlertDefinition _alert;
     private final Anchor _anchor;
 
-    public AlertPanel(SchedulingServiceAsync service, ScheduleDefinition schedule, AlertDefinition alert) {
+    public AlertPanel(final SchedulingServiceAsync service, final ScheduleDefinition schedule, final AlertDefinition alert) {
         super();
         _service = service;
         _schedule = schedule;
@@ -58,30 +58,30 @@ public class AlertPanel extends FlowPanel {
     public AlertDefinition getAlert() {
         return _alert;
     }
-    
+
     public ScheduleDefinition getSchedule() {
         return _schedule;
     }
-    
+
     public void removeAlert() {
         _schedule.getAlerts().remove(_alert);
-        
+
         final TenantIdentifier tenant = _schedule.getTenant();
         _service.updateSchedule(tenant, _schedule, new DCAsyncCallback<ScheduleDefinition>() {
             @Override
-            public void onSuccess(ScheduleDefinition result) {
+            public void onSuccess(final ScheduleDefinition result) {
                 GWT.log("Succesfully removed alert in schedule: " + result);
                 Window.Location.reload();
             }
         });
     }
-    
+
     public void updateAlert() {
         _anchor.setText(_alert.toString());
         final TenantIdentifier tenant = _schedule.getTenant();
         _service.updateSchedule(tenant, _schedule, new DCAsyncCallback<ScheduleDefinition>() {
             @Override
-            public void onSuccess(ScheduleDefinition result) {
+            public void onSuccess(final ScheduleDefinition result) {
                 GWT.log("Succesfully updated alert in schedule: " + result);
             }
         });

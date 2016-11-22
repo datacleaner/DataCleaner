@@ -36,12 +36,12 @@ public class DCComboBoxUI extends BasicComboBoxUI {
 
     /**
      * Factory method used by Swing to instantiate the {@link DCComboBoxUI}
-     * 
+     *
      * @param c
      *            the component
      * @return
      */
-    public static ComponentUI createUI(JComponent c) {
+    public static ComponentUI createUI(final JComponent c) {
         final DCComboBoxUI ui = new DCComboBoxUI();
         return ui;
     }

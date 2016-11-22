@@ -26,34 +26,36 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.TransformerComponentBuilderPanel;
 import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
-public class HelloWorldTransformerPresenter extends TransformerComponentBuilderPanel implements TransformerComponentBuilderPresenter {
+public class HelloWorldTransformerPresenter extends TransformerComponentBuilderPanel
+        implements TransformerComponentBuilderPresenter {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public HelloWorldTransformerPresenter(TransformerComponentBuilder<?> transformerJobBuilder, WindowContext windowContext,
-			PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
-		super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
-	}
+    public HelloWorldTransformerPresenter(final TransformerComponentBuilder<?> transformerJobBuilder,
+            final WindowContext windowContext,
+            final PropertyWidgetFactory propertyWidgetFactory, final AnalyzerBeansConfiguration configuration) {
+        super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
+    }
 
-	@Override
-	protected JComponent decorateMainPanel(final DCPanel panel) {
-		JComponent result = super.decorateMainPanel(panel);
+    @Override
+    protected JComponent decorateMainPanel(final DCPanel panel) {
+        final JComponent result = super.decorateMainPanel(panel);
 
-		JPanel outerPanel = new JPanel(new BorderLayout());
-		JLabel label = new JLabel("Hello DataCleaner users! This label was drawn by our extension!");
-		label.setOpaque(false);
-		label.setBorder(new EmptyBorder(20, 20, 20, 20));
+        final JPanel outerPanel = new JPanel(new BorderLayout());
+        final JLabel label = new JLabel("Hello DataCleaner users! This label was drawn by our extension!");
+        label.setOpaque(false);
+        label.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-		outerPanel.add(label, BorderLayout.NORTH);
-		outerPanel.add(result, BorderLayout.CENTER);
-		return outerPanel;
-	}
+        outerPanel.add(label, BorderLayout.NORTH);
+        outerPanel.add(result, BorderLayout.CENTER);
+        return outerPanel;
+    }
 }

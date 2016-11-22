@@ -151,7 +151,8 @@ public class AnalysisJobBuilderTest extends TestCase {
         // the AnalyzerJob has no Analyzers yet, so it is not "configured".
         assertFalse(analysisJobBuilder.isConfigured());
 
-        AnalyzerComponentBuilder<StringAnalyzer> analyzerJobBuilder = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
+        AnalyzerComponentBuilder<StringAnalyzer> analyzerJobBuilder =
+                analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
 
         List<InputColumn<?>> stringInputColumns = analysisJobBuilder.getAvailableInputColumns(String.class);
         Set<String> columnNames = new TreeSet<String>();
@@ -214,13 +215,15 @@ public class AnalysisJobBuilderTest extends TestCase {
         AnalyzerComponentBuilder<StringAnalyzer> saAjb = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
         saAjb.addInputColumns(analysisJobBuilder.getSourceColumns());
 
-        FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb = analysisJobBuilder.addFilter(MaxRowsFilter.class);
+        FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb =
+                analysisJobBuilder.addFilter(MaxRowsFilter.class);
 
         List<ComponentBuilder> result = analysisJobBuilder.getAvailableUnfilteredBeans(fjb);
         assertEquals(1, result.size());
         assertEquals(result.get(0), saAjb);
 
-        AnalyzerComponentBuilder<PatternFinderAnalyzer> pfAjb = analysisJobBuilder.addAnalyzer(PatternFinderAnalyzer.class);
+        AnalyzerComponentBuilder<PatternFinderAnalyzer> pfAjb =
+                analysisJobBuilder.addAnalyzer(PatternFinderAnalyzer.class);
         pfAjb.addInputColumns(analysisJobBuilder.getSourceColumns());
 
         result = analysisJobBuilder.getAvailableUnfilteredBeans(fjb);
@@ -257,7 +260,8 @@ public class AnalysisJobBuilderTest extends TestCase {
             analysisJobBuilder.addSourceColumn(con.getSchemaNavigator().convertToColumn("EMPLOYEES.EMAIL"));
             emailStdTransformer.addInputColumn(analysisJobBuilder.getSourceColumnByName("email"));
 
-            AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzer = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
+            AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzer =
+                    analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
             stringAnalyzer.addInputColumns(emailStdTransformer.getOutputColumns());
 
             assertSame(filter1.getFilterOutcome(MaxRowsFilter.Category.VALID), stringAnalyzer.getComponentRequirement()
@@ -268,8 +272,9 @@ public class AnalysisJobBuilderTest extends TestCase {
             assertNull(analysisJobBuilder.getDefaultRequirement());
             assertSame(filter2.getFilterOutcome(MaxRowsFilter.Category.VALID), stringAnalyzer.getComponentRequirement()
                     .getProcessingDependencies().iterator().next());
-            assertSame(filter2.getFilterOutcome(MaxRowsFilter.Category.VALID), emailStdTransformer.getComponentRequirement()
-                    .getProcessingDependencies().iterator().next());
+            assertSame(filter2.getFilterOutcome(MaxRowsFilter.Category.VALID),
+                    emailStdTransformer.getComponentRequirement()
+                            .getProcessingDependencies().iterator().next());
         }
     }
 
@@ -369,7 +374,7 @@ public class AnalysisJobBuilderTest extends TestCase {
 
             EasyMock.reportMatcher(tjbMatcher);
             listener2.onRemove(null);
-            
+
             EasyMock.reportMatcher(tjbMatcher);
             listener2.onConfigurationChanged(null);
 

@@ -30,7 +30,7 @@ import org.datacleaner.api.Transformer;
 
 /**
  * Month transformer to convert a String Month value to Month Object.
- * 
+ *
  */
 @Named("Mock Month Transformer")
 public class MockConvertToMonthObjectTransformer implements Transformer {

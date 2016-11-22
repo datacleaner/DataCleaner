@@ -23,12 +23,12 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
-
-import junit.framework.TestCase;
 
 public class SasDatastoreTest extends TestCase {
 

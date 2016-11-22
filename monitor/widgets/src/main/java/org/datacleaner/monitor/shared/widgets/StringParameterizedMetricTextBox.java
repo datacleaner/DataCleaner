@@ -37,12 +37,13 @@ import com.google.gwt.user.client.ui.SuggestOracle;
  */
 public class StringParameterizedMetricTextBox extends SuggestBox {
 
-    public StringParameterizedMetricTextBox(TenantIdentifier tenant, JobIdentifier job, MetricIdentifier metric,
-            String text, CheckBox checkBoxToActivate) {
+    public StringParameterizedMetricTextBox(final TenantIdentifier tenant, final JobIdentifier job, final MetricIdentifier metric,
+            final String text, final CheckBox checkBoxToActivate) {
         this(text, checkBoxToActivate, new StringParameterizedMetricSuggestOracle(tenant, job, metric));
     }
 
-    public StringParameterizedMetricTextBox(String text, final CheckBox checkBoxToActivate, SuggestOracle suggestOracle) {
+    public StringParameterizedMetricTextBox(final String text, final CheckBox checkBoxToActivate,
+            final SuggestOracle suggestOracle) {
         super(suggestOracle);
         setStyleName("form-control");
         addStyleName("StringParameterizedMetricTextBox");
@@ -50,7 +51,7 @@ public class StringParameterizedMetricTextBox extends SuggestBox {
 
         getValueBox().addFocusHandler(new FocusHandler() {
             @Override
-            public void onFocus(FocusEvent event) {
+            public void onFocus(final FocusEvent event) {
                 showSuggestionList();
             }
         });
@@ -58,7 +59,7 @@ public class StringParameterizedMetricTextBox extends SuggestBox {
         if (checkBoxToActivate != null) {
             getValueBox().addKeyUpHandler(new KeyUpHandler() {
                 @Override
-                public void onKeyUp(KeyUpEvent event) {
+                public void onKeyUp(final KeyUpEvent event) {
                     final String text = getText();
                     if (text != null && !"".equals(text)) {
                         // activate checkbox whenever something is written.
@@ -69,8 +70,8 @@ public class StringParameterizedMetricTextBox extends SuggestBox {
         }
     }
 
-    public void setMetric(TenantIdentifier tenant, JobIdentifier job, MetricIdentifier metric) {
-        StringParameterizedMetricSuggestOracle oracle = (StringParameterizedMetricSuggestOracle) getSuggestOracle();
+    public void setMetric(final TenantIdentifier tenant, final JobIdentifier job, final MetricIdentifier metric) {
+        final StringParameterizedMetricSuggestOracle oracle = (StringParameterizedMetricSuggestOracle) getSuggestOracle();
         oracle.setMetric(tenant, job, metric);
     }
 }

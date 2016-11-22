@@ -25,7 +25,7 @@ package org.datacleaner.configuration;
 public class RemoteServerState {
 
     public enum State {
-        NOT_CONNECTED, OK, ERROR, NO_CREDIT;
+        NOT_CONNECTED, OK, ERROR, NO_CREDIT
     }
 
     private State actualState;
@@ -44,7 +44,7 @@ public class RemoteServerState {
         this.emailConfirmed = emailConfirmed;
     }
 
-    public RemoteServerState(final State actualState, final String email, String errorMessage) {
+    public RemoteServerState(final State actualState, final String email, final String errorMessage) {
         this.actualState = actualState;
         this.email = email;
         this.errorMessage = errorMessage;

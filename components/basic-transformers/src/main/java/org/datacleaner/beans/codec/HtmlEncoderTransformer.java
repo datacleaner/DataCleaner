@@ -44,7 +44,7 @@ public class HtmlEncoderTransformer implements Transformer {
     public HtmlEncoderTransformer() {
     }
 
-    public HtmlEncoderTransformer(MockInputColumn<String> column) {
+    public HtmlEncoderTransformer(final MockInputColumn<String> column) {
         this();
         this.column = column;
     }

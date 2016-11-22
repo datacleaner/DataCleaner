@@ -59,14 +59,17 @@ public class ReferenceDataDeserializationTest extends TestCase {
     }
 
     public void testDeserializeSimpleSynonymCatalog() throws Exception {
-        SimpleSynonymCatalog obj = deserialize("src/test/resources/serialized_ref_data/dc_4_synonym_catalog_simple.dat");
+        SimpleSynonymCatalog obj =
+                deserialize("src/test/resources/serialized_ref_data/dc_4_synonym_catalog_simple.dat");
         assertEquals("simple synonym catalog", obj.getName());
-        assertEquals("{DK=DK, DNK=DK, Danmark=DK, Denmark=DK}", new TreeMap<String, String>(obj.getSynonymMap()).toString());
+        assertEquals("{DK=DK, DNK=DK, Danmark=DK, Denmark=DK}",
+                new TreeMap<String, String>(obj.getSynonymMap()).toString());
         assertTrue(obj.isCaseSensitive());
     }
 
     public void testDeserializeTextFileSynonymCatalog() throws Exception {
-        TextFileSynonymCatalog obj = deserialize("src/test/resources/serialized_ref_data/dc_4_synonym_catalog_text_file.dat");
+        TextFileSynonymCatalog obj =
+                deserialize("src/test/resources/serialized_ref_data/dc_4_synonym_catalog_text_file.dat");
         assertEquals("text file synonym catalog", obj.getName());
         assertEquals("synonyms.txt", obj.getFilename());
         assertEquals("UTF8", obj.getEncoding());
@@ -74,7 +77,8 @@ public class ReferenceDataDeserializationTest extends TestCase {
     }
 
     public void testDeserializeDatastoreSynonymCatalog() throws Exception {
-        DatastoreSynonymCatalog obj = deserialize("src/test/resources/serialized_ref_data/dc_4_synonym_catalog_datastore.dat");
+        DatastoreSynonymCatalog obj =
+                deserialize("src/test/resources/serialized_ref_data/dc_4_synonym_catalog_datastore.dat");
         assertEquals("datastore synonym catalog", obj.getName());
         assertEquals("orderdb", obj.getDatastoreName());
         assertEquals("synonyms.master", obj.getMasterTermColumnPath());

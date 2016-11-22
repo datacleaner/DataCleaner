@@ -33,13 +33,13 @@ import org.datacleaner.monitor.job.XmlJobContext;
  */
 public interface DataCleanerJobContext extends XmlJobContext, MetricJobContext {
 
-    public String getSourceDatastoreName();
+    String getSourceDatastoreName();
 
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides);
+    AnalysisJob getAnalysisJob(Map<String, String> variableOverrides);
 
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides, Map<String, String> overrideProperties);
+    AnalysisJob getAnalysisJob(Map<String, String> variableOverrides, Map<String, String> overrideProperties);
 
-    public AnalysisJob getAnalysisJob();
+    AnalysisJob getAnalysisJob();
 
-    public List<String> getSourceColumnPaths();
+    List<String> getSourceColumnPaths();
 }

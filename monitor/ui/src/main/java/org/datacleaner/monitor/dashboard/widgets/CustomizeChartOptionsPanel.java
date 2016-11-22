@@ -61,7 +61,7 @@ public class CustomizeChartOptionsPanel extends FlowPanel {
     private final NumberTextBox _latestNumberOfDaysBox;
     private CheckBox _logScaleCheckBox;
 
-    public CustomizeChartOptionsPanel(ChartOptions chartOptions) {
+    public CustomizeChartOptionsPanel(final ChartOptions chartOptions) {
         super();
         final HorizontalAxisOption horizontalAxisOption = chartOptions.getHorizontalAxisOption();
 
@@ -114,14 +114,14 @@ public class CustomizeChartOptionsPanel extends FlowPanel {
         return new LatestNumberOfDaysHAxisOption().getBeginDate();
     }
 
-    private CellWidget<Date> createDatePickerWidget(Date date) {
-        CellWidget<Date> cellWidget = new CellWidget<Date>(createDatePickerCell(), date);
+    private CellWidget<Date> createDatePickerWidget(final Date date) {
+        final CellWidget<Date> cellWidget = new CellWidget<Date>(createDatePickerCell(), date);
         cellWidget.addStyleName("DateSelectionWidget");
         return cellWidget;
     }
 
     private Cell<Date> createDatePickerCell() {
-        DatePickerCell cell = new DatePickerCell(DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT));
+        final DatePickerCell cell = new DatePickerCell(DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT));
         return cell;
     }
 
@@ -146,10 +146,10 @@ public class CustomizeChartOptionsPanel extends FlowPanel {
         return panel;
     }
 
-    private Panel createTimelineRadioSpecPanel(Widget... widgets) {
+    private Panel createTimelineRadioSpecPanel(final Widget... widgets) {
         final FlowPanel panel = new FlowPanel();
         panel.addStyleName("TimelineRadioSpecPanel");
-        for (Widget widget : widgets) {
+        for (final Widget widget : widgets) {
             panel.add(widget);
         }
         return panel;

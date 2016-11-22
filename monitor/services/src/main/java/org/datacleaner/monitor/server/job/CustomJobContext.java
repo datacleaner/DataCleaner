@@ -67,7 +67,8 @@ public class CustomJobContext implements XmlJobContext {
     private long _cachedReadTime = -1;
     private CustomJavaComponentJob _cachedCustomJavaJob;
 
-    public CustomJobContext(TenantContext tenantContext, CustomJobEngine engine, RepositoryFile file, InjectionManager injectionManager) {
+    public CustomJobContext(final TenantContext tenantContext, final CustomJobEngine engine, final RepositoryFile file,
+            final InjectionManager injectionManager) {
         _tenantContext = tenantContext;
         _engine = engine;
         _file = file;
@@ -93,7 +94,7 @@ public class CustomJobContext implements XmlJobContext {
 
     @Override
     public String getGroupName() {
-        String groupName = getCustomJavaComponentJob().getGroupName();
+        final String groupName = getCustomJavaComponentJob().getGroupName();
         return groupName;
     }
 
@@ -104,13 +105,13 @@ public class CustomJobContext implements XmlJobContext {
         final ComponentConfiguration beanConfiguration = getComponentConfiguration(null);
         final Set<ConfiguredPropertyDescriptor> properties = descriptor.getConfiguredProperties();
         final StringConverter stringConverter = new StringConverter(_injectionManager);
-        for (ConfiguredPropertyDescriptor configuredProperty : properties) {
-            Object value = beanConfiguration.getProperty(configuredProperty);
+        for (final ConfiguredPropertyDescriptor configuredProperty : properties) {
+            final Object value = beanConfiguration.getProperty(configuredProperty);
             String valueString = null;
             try {
                 final Converter<?> customConverter = configuredProperty.createCustomConverter();
                 valueString = stringConverter.serialize(value, customConverter);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (logger.isWarnEnabled()) {
                     logger.warn("Could not serialize value " + value + " to string, returning null variable value", e);
                 } else {
@@ -134,7 +135,7 @@ public class CustomJobContext implements XmlJobContext {
             final Class<?> customJavaClass = Class.forName(className, true, getClass().getClassLoader());
             final ComponentDescriptor<?> descriptor = Descriptors.ofComponent(customJavaClass);
             return descriptor;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new NoSuchComponentException(CustomJob.class, className);
         }
     }
@@ -146,9 +147,9 @@ public class CustomJobContext implements XmlJobContext {
             _cachedCustomJavaJob = _file
                     .readFile(new Func<InputStream, CustomJavaComponentJob>() {
                         @Override
-                        public CustomJavaComponentJob eval(InputStream in) {
+                        public CustomJavaComponentJob eval(final InputStream in) {
                             final JaxbCustomJavaComponentJobAdaptor adaptor = new JaxbCustomJavaComponentJobAdaptor();
-                            CustomJavaComponentJob result = adaptor.unmarshal(in);
+                            final CustomJavaComponentJob result = adaptor.unmarshal(in);
                             _cachedReadTime = System.currentTimeMillis();
                             return result;
                         }
@@ -161,23 +162,24 @@ public class CustomJobContext implements XmlJobContext {
     public void toXml(final OutputStream out) {
         _file.readFile(new Action<InputStream>() {
             @Override
-            public void run(InputStream in) throws Exception {
+            public void run(final InputStream in) throws Exception {
                 FileHelper.copy(in, out);
             }
         });
     }
 
-    public ComponentConfiguration getComponentConfiguration(CustomJob customJavaJob) {
+    public ComponentConfiguration getComponentConfiguration(final CustomJob customJavaJob) {
         final ComponentDescriptor<?> descriptor = getDescriptor();
-        final Map<ConfiguredPropertyDescriptor, Object> propertyMap = new HashMap<ConfiguredPropertyDescriptor, Object>();
+        final Map<ConfiguredPropertyDescriptor, Object> propertyMap =
+                new HashMap<ConfiguredPropertyDescriptor, Object>();
         final PropertiesType propertiesType = getCustomJavaComponentJob().getProperties();
         final StringConverter stringConverter = new StringConverter(_injectionManager);
 
         // build initial map based on default values from the customJob instance
         if (customJavaJob != null) {
             final Set<ConfiguredPropertyDescriptor> configuredProperties = descriptor.getConfiguredProperties();
-            for (ConfiguredPropertyDescriptor property : configuredProperties) {
-                Object value = property.getValue(customJavaJob);
+            for (final ConfiguredPropertyDescriptor property : configuredProperties) {
+                final Object value = property.getValue(customJavaJob);
                 propertyMap.put(property, value);
             }
         }
@@ -185,7 +187,7 @@ public class CustomJobContext implements XmlJobContext {
         // then build/override map based upon specified <property> elements in the XML file
         if (propertiesType != null) {
             final List<Property> propertyTypes = propertiesType.getProperty();
-            for (Property propertyType : propertyTypes) {
+            for (final Property propertyType : propertyTypes) {
                 final String name = propertyType.getName();
                 final String value = propertyType.getValue();
                 setProperty(descriptor, propertyMap, name, value, stringConverter);
@@ -195,8 +197,8 @@ public class CustomJobContext implements XmlJobContext {
         return new ImmutableComponentConfiguration(propertyMap);
     }
 
-    private void setProperty(ComponentDescriptor<?> descriptor, Map<ConfiguredPropertyDescriptor, Object> propertyMap,
-                             String name, String valueString, StringConverter stringConverter) {
+    private void setProperty(final ComponentDescriptor<?> descriptor, final Map<ConfiguredPropertyDescriptor, Object> propertyMap,
+            final String name, final String valueString, final StringConverter stringConverter) {
         final ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty(name);
         if (configuredProperty == null) {
             throw new ComponentConfigurationException("No such configured property in class '"

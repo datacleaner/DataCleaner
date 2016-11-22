@@ -55,8 +55,8 @@ public class CustomizeMetricsPanel extends FlowPanel {
     private DashboardServiceAsync _service;
     private TenantIdentifier _tenantIdentifier;
 
-    public CustomizeMetricsPanel(DashboardServiceAsync service, TenantIdentifier tenantIdentifier,
-            TimelineDefinition timelineDefinition) {
+    public CustomizeMetricsPanel(final DashboardServiceAsync service, final TenantIdentifier tenantIdentifier,
+            final TimelineDefinition timelineDefinition) {
         super();
         _service = service;
         _tenantIdentifier = tenantIdentifier;
@@ -70,7 +70,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
         descriptorService.getJobMetrics(_tenantIdentifier, _timelineDefinition.getJobIdentifier(),
                 new DCAsyncCallback<JobMetrics>() {
                     @Override
-                    public void onSuccess(JobMetrics jobMetrics) {
+                    public void onSuccess(final JobMetrics jobMetrics) {
                         setJobMetrics(jobMetrics);
                     }
                 });
@@ -84,11 +84,11 @@ public class CustomizeMetricsPanel extends FlowPanel {
         formulaMetricButton.addStyleName("MetricFormulaButton");
         formulaMetricButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 final DefineMetricPopup popup = new DefineMetricPopup(_tenantIdentifier, jobMetrics, true,
                         new DefineMetricPopup.Handler() {
                             @Override
-                            public void onMetricDefined(MetricIdentifier metric) {
+                            public void onMetricDefined(final MetricIdentifier metric) {
                                 addFormulaMetric(jobMetrics, metric);
                             }
                         });
@@ -112,14 +112,14 @@ public class CustomizeMetricsPanel extends FlowPanel {
             isMetricGroupVisibleByDefault = true;
         }
 
-        for (MetricGroup metricGroup : metricGroups) {
+        for (final MetricGroup metricGroup : metricGroups) {
             final FlowPanel metricGroupPanel = createMetricGroupPanel(metricGroup, isMetricGroupVisibleByDefault);
             add(metricGroupPanel);
         }
 
         // add formula metrics
         final List<MetricIdentifier> metrics = _timelineDefinition.getMetrics();
-        for (MetricIdentifier metric : metrics) {
+        for (final MetricIdentifier metric : metrics) {
             if (metric.isFormulaBased()) {
                 addFormulaMetric(jobMetrics, metric);
             }
@@ -128,7 +128,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
         onMetricsLoaded();
     }
 
-    private void addFormulaMetric(JobMetrics jobMetrics, MetricIdentifier metric) {
+    private void addFormulaMetric(final JobMetrics jobMetrics, final MetricIdentifier metric) {
         if (_formulaMetricsPanel == null) {
             _formulaMetricsPanel = new FlowPanel();
             _formulaMetricsPanel.addStyleName("FormulaMetricsPanel");
@@ -138,7 +138,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
             add(metricGroupPanel);
         }
 
-        FormulaMetricPresenter presenter = new FormulaMetricPresenter(_tenantIdentifier, jobMetrics, metric);
+        final FormulaMetricPresenter presenter = new FormulaMetricPresenter(_tenantIdentifier, jobMetrics, metric);
         _metricPresenters.add(presenter);
         _formulaMetricsPanel.add(presenter);
     }
@@ -149,15 +149,16 @@ public class CustomizeMetricsPanel extends FlowPanel {
     protected void onMetricsLoaded() {
     }
 
-    private FlowPanel createMetricGroupPanel(MetricGroup metricGroup, boolean isMetricGroupVisible) {
+    private FlowPanel createMetricGroupPanel(final MetricGroup metricGroup, boolean isMetricGroupVisible) {
         final FlowPanel innerPanel = new FlowPanel();
         innerPanel.setStyleName("contents");
 
         final List<MetricIdentifier> activeMetrics = _timelineDefinition.getMetrics();
         final List<MetricIdentifier> availableMetrics = metricGroup.getMetrics();
-        final MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics = new MultipleColumnParameterizedMetricsPresenter(
-                metricGroup);
-        for (MetricIdentifier metricIdentifier : availableMetrics) {
+        final MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics =
+                new MultipleColumnParameterizedMetricsPresenter(
+                        metricGroup);
+        for (final MetricIdentifier metricIdentifier : availableMetrics) {
             final MetricPresenter presenter = createMetricPresenter(columnParameterizedMetrics, metricGroup,
                     metricIdentifier, activeMetrics);
             if (presenter != null) {
@@ -179,8 +180,8 @@ public class CustomizeMetricsPanel extends FlowPanel {
         return createMetricGroupPanel(title, innerPanel, metricGroup, isMetricGroupVisible);
     }
 
-    private FlowPanel createMetricGroupPanel(String title, final Panel innerPanel, MetricGroup metricGroup,
-            boolean isMetricGroupVisibleByDefault) {
+    private FlowPanel createMetricGroupPanel(final String title, final Panel innerPanel, final MetricGroup metricGroup,
+            final boolean isMetricGroupVisibleByDefault) {
         final FlowPanel metricGroupPanel = new FlowPanel();
         metricGroupPanel.setStyleName("MetricGroupPanel");
 
@@ -188,9 +189,9 @@ public class CustomizeMetricsPanel extends FlowPanel {
 
         heading.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 // toggle visibility
-                boolean expanded = metricGroupPanel.getStyleName().indexOf("expanded") != -1;
+                final boolean expanded = metricGroupPanel.getStyleName().indexOf("expanded") != -1;
                 setExpanded(metricGroupPanel, !expanded);
             }
         });
@@ -200,7 +201,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
         return metricGroupPanel;
     }
 
-    private void setExpanded(FlowPanel metricGroupPanel, boolean visible) {
+    private void setExpanded(final FlowPanel metricGroupPanel, final boolean visible) {
         if (visible) {
             metricGroupPanel.removeStyleDependentName("collapsed");
             metricGroupPanel.addStyleDependentName("expanded");
@@ -211,8 +212,8 @@ public class CustomizeMetricsPanel extends FlowPanel {
     }
 
     private MetricPresenter createMetricPresenter(
-            MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics, MetricGroup metricGroup,
-            MetricIdentifier metricIdentifier, List<MetricIdentifier> activeMetrics) {
+            final MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics, final MetricGroup metricGroup,
+            final MetricIdentifier metricIdentifier, final List<MetricIdentifier> activeMetrics) {
         if (metricIdentifier.isParameterizedByColumnName()) {
             final ColumnParameterizedMetricPresenter presenter = new ColumnParameterizedMetricPresenter(
                     metricIdentifier, activeMetrics, metricGroup);
@@ -232,7 +233,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
         final List<MetricIdentifier> metrics = new ArrayList<MetricIdentifier>();
 
         // add single metrics
-        for (MetricPresenter metricPresenter : _metricPresenters) {
+        for (final MetricPresenter metricPresenter : _metricPresenters) {
             final List<MetricIdentifier> selectedMetrics = metricPresenter.getSelectedMetrics();
             metrics.addAll(selectedMetrics);
         }

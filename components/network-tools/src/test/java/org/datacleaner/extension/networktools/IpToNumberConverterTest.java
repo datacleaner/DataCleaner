@@ -26,47 +26,47 @@ import org.datacleaner.data.MockInputRow;
 
 public class IpToNumberConverterTest extends TestCase {
 
-	public void testConvertToNumber() throws Exception {
-		IpToNumberConverter trans = new IpToNumberConverter();
-		trans.ipColumn = new MockInputColumn<String>("my ip", String.class);
+    public void testConvertToNumber() throws Exception {
+        IpToNumberConverter trans = new IpToNumberConverter();
+        trans.ipColumn = new MockInputColumn<String>("my ip", String.class);
 
-		Number[] result;
+        Number[] result;
 
-		result = trans.transform(new MockInputRow().put(trans.ipColumn, ""));
-		assertEquals(1, result.length);
-		assertNull(result[0]);
+        result = trans.transform(new MockInputRow().put(trans.ipColumn, ""));
+        assertEquals(1, result.length);
+        assertNull(result[0]);
 
-		result = trans.transform(new MockInputRow().put(trans.ipColumn,
-				"foobar"));
-		assertEquals(1, result.length);
-		assertNull(result[0]);
+        result = trans.transform(new MockInputRow().put(trans.ipColumn,
+                "foobar"));
+        assertEquals(1, result.length);
+        assertNull(result[0]);
 
-		result = trans.transform(new MockInputRow().put(trans.ipColumn,
-				"4324.42342.43242.43"));
-		assertEquals(1, result.length);
-		assertNull(result[0]);
+        result = trans.transform(new MockInputRow().put(trans.ipColumn,
+                "4324.42342.43242.43"));
+        assertEquals(1, result.length);
+        assertNull(result[0]);
 
-		result = trans.transform(new MockInputRow().put(trans.ipColumn,
-				"127.0.0.1"));
-		assertEquals(1, result.length);
-		assertEquals(2130706433l, result[0].longValue());
+        result = trans.transform(new MockInputRow().put(trans.ipColumn,
+                "127.0.0.1"));
+        assertEquals(1, result.length);
+        assertEquals(2130706433l, result[0].longValue());
 
-		result = trans.transform(new MockInputRow().put(trans.ipColumn,
-				"255.255.255.255"));
-		assertEquals(1, result.length);
-		assertEquals(4294967295l, result[0].longValue());
+        result = trans.transform(new MockInputRow().put(trans.ipColumn,
+                "255.255.255.255"));
+        assertEquals(1, result.length);
+        assertEquals(4294967295l, result[0].longValue());
 
-		result = trans.transform(new MockInputRow().put(trans.ipColumn,
-				"168.102.10.36"));
-		assertEquals(1, result.length);
-		assertEquals(2825259556l, result[0].longValue());
-		
-		result = trans.transform(new MockInputRow().put(trans.ipColumn,
-				"192.168.199.1"));
-		assertEquals(1, result.length);
-		assertEquals(3232286465l, result[0].longValue());
-		
-		// backwards check
-		assertEquals("192.168.199.1", new NumberToIpConverter().transform(result[0]));
-	}
+        result = trans.transform(new MockInputRow().put(trans.ipColumn,
+                "168.102.10.36"));
+        assertEquals(1, result.length);
+        assertEquals(2825259556l, result[0].longValue());
+
+        result = trans.transform(new MockInputRow().put(trans.ipColumn,
+                "192.168.199.1"));
+        assertEquals(1, result.length);
+        assertEquals(3232286465l, result[0].longValue());
+
+        // backwards check
+        assertEquals("192.168.199.1", new NumberToIpConverter().transform(result[0]));
+    }
 }

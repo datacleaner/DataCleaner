@@ -28,12 +28,12 @@ public class SkipHeaderLineFunction implements Function<Tuple2<Object[], Long>, 
     private static final long serialVersionUID = 1L;
     private final int _linesToSkip;
 
-    public SkipHeaderLineFunction(int columnNameLineNumber) {
+    public SkipHeaderLineFunction(final int columnNameLineNumber) {
         _linesToSkip = columnNameLineNumber;
     }
 
     @Override
-    public Boolean call(Tuple2<Object[], Long> v1) throws Exception {
+    public Boolean call(final Tuple2<Object[], Long> v1) throws Exception {
         return v1._2 >= _linesToSkip;
     }
 

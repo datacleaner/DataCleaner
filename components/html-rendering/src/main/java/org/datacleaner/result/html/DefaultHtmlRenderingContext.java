@@ -36,12 +36,12 @@ public class DefaultHtmlRenderingContext implements HtmlRenderingContext {
     }
 
     @Override
-    public String escapeHtml(String str) {
+    public String escapeHtml(final String str) {
         return StringEscapeUtils.escapeHtml(str);
     }
 
     @Override
-    public String escapeJson(String str) {
+    public String escapeJson(final String str) {
         return StringEscapeUtils.escapeJavaScript(str);
     }
 

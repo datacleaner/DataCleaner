@@ -49,10 +49,11 @@ public class RegexParserTransformerTest extends TestCase {
         assertEquals("foobar (group 3)", outputColumns.getColumnName(3));
 
         assertArrayEquals(new String[] { "aabb", "aa", "bb", null }, t.transform(new MockInputRow().put(col, "aabb")));
-        assertArrayEquals(new String[] { "cccc", null, null, "cccc" }, t.transform(new MockInputRow().put(col, "cccc")));
+        assertArrayEquals(new String[] { "cccc", null, null, "cccc" },
+                t.transform(new MockInputRow().put(col, "cccc")));
         assertArrayEquals(new String[] { null, null, null, null }, t.transform(new MockInputRow().put(col, "dddd")));
     }
-    
+
     public void testExpressionForDimensions() throws Exception {
         MockInputColumn<String> col = new MockInputColumn<String>("foobar", String.class);
 
@@ -63,9 +64,10 @@ public class RegexParserTransformerTest extends TestCase {
 
         assertEquals("[12x34, 12, x, 34]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 12x34 bar"))));
         assertEquals("[12X34, 12, X, 34]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 12X34 bar"))));
-        assertEquals("[1,2x3,4, 1,2, x, 3,4]", Arrays.toString(t.transform(new MockInputRow().put(col, "foo 1,2x3,4 bar"))));
+        assertEquals("[1,2x3,4, 1,2, x, 3,4]",
+                Arrays.toString(t.transform(new MockInputRow().put(col, "foo 1,2x3,4 bar"))));
     }
-    
+
     public void testFindAllMultiMatch() throws Exception {
         final MockOutputRowCollector outputRowCollector = new MockOutputRowCollector();
         final MockInputColumn<String> col = new MockInputColumn<String>("foobar", String.class);
@@ -78,14 +80,14 @@ public class RegexParserTransformerTest extends TestCase {
 
         final String[] transformResult1 = t.transform(new MockInputRow().put(col, "foo 12x34 bar 56x78 baz 9x10 "));
         assertEquals("[12x34, 12, x, 34]", Arrays.toString(transformResult1));
-        
+
         final List<Object[]> output1 = outputRowCollector.getOutput();
         assertEquals(2, output1.size());
-        
+
         assertEquals("[56x78, 56, x, 78]", Arrays.toString(output1.get(0)));
         assertEquals("[9x10, 9, x, 10]", Arrays.toString(output1.get(1)));
     }
-    
+
     public void testFindAllNoMatch() throws Exception {
         final MockOutputRowCollector outputRowCollector = new MockOutputRowCollector();
         final MockInputColumn<String> col = new MockInputColumn<String>("foobar", String.class);
@@ -98,7 +100,7 @@ public class RegexParserTransformerTest extends TestCase {
 
         final String[] transformResult1 = t.transform(new MockInputRow().put(col, "foo"));
         assertEquals("[null, null, null, null]", Arrays.toString(transformResult1));
-        
+
         final List<Object[]> output1 = outputRowCollector.getOutput();
         assertEquals(0, output1.size());
     }

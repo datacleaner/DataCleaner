@@ -21,11 +21,11 @@ package org.datacleaner.beans.numbers;
 
 import java.util.Arrays;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-
-import junit.framework.TestCase;
 
 public class RoundNumberTransformerTest extends TestCase {
 
@@ -58,10 +58,10 @@ public class RoundNumberTransformerTest extends TestCase {
         assertEquals("[100]", Arrays.toString(transformer.transform(new MockInputRow().put(col, 100))));
         assertEquals("[0]", Arrays.toString(transformer.transform(new MockInputRow().put(col, 0.4))));
     }
-    
+
     public void testRoundToSeventh() throws Exception {
         transformer._roundFactor = 7;
-        assertEquals("[98]", Arrays.toString(transformer.transform(new MockInputRow().put(col, 100))));        
+        assertEquals("[98]", Arrays.toString(transformer.transform(new MockInputRow().put(col, 100))));
         assertEquals("[70]", Arrays.toString(transformer.transform(new MockInputRow().put(col, 71))));
         assertEquals("[63]", Arrays.toString(transformer.transform(new MockInputRow().put(col, 65))));
     }

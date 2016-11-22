@@ -31,25 +31,25 @@ import org.datacleaner.result.renderer.TextRenderingFormat;
  */
 public enum CliOutputType {
 
-	TEXT(TextRenderingFormat.class), HTML(HtmlRenderingFormat.class), SERIALIZED(null);
+    TEXT(TextRenderingFormat.class), HTML(HtmlRenderingFormat.class), SERIALIZED(null);
 
-	private final Class<? extends RenderingFormat<?>> _renderingFormat;
+    private final Class<? extends RenderingFormat<?>> _renderingFormat;
 
-	private CliOutputType(Class<? extends RenderingFormat<?>> renderingFormat) {
-		_renderingFormat = renderingFormat;
-	}
+    CliOutputType(final Class<? extends RenderingFormat<?>> renderingFormat) {
+        _renderingFormat = renderingFormat;
+    }
 
-	public Class<? extends RenderingFormat<?>> getRenderingFormat() {
-		return _renderingFormat;
-	}
-	
-	public AnalysisResultWriter createWriter() {
-	    if (this == TEXT ){ 
-	        return new TextAnalysisResultWriter();
-	    } else if (this == HTML) {
-	        return new HtmlAnalysisResultWriter();
-	    } else {
-	        return new SerializedAnalysisResultWriter();
-	    }
-	}
+    public Class<? extends RenderingFormat<?>> getRenderingFormat() {
+        return _renderingFormat;
+    }
+
+    public AnalysisResultWriter createWriter() {
+        if (this == TEXT) {
+            return new TextAnalysisResultWriter();
+        } else if (this == HTML) {
+            return new HtmlAnalysisResultWriter();
+        } else {
+            return new SerializedAnalysisResultWriter();
+        }
+    }
 }

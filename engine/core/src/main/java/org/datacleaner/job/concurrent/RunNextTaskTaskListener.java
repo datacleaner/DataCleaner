@@ -23,28 +23,28 @@ import org.datacleaner.job.tasks.Task;
 
 public final class RunNextTaskTaskListener implements TaskListener {
 
-	private final Task _nextTask;
-	private final TaskListener _nextListener;
-	private final TaskRunner _taskRunner;
+    private final Task _nextTask;
+    private final TaskListener _nextListener;
+    private final TaskRunner _taskRunner;
 
-	public RunNextTaskTaskListener(TaskRunner taskRunner, Task nextTask, TaskListener nextListener) {
-		_taskRunner = taskRunner;
-		_nextTask = nextTask;
-		_nextListener = nextListener;
-	}
+    public RunNextTaskTaskListener(final TaskRunner taskRunner, final Task nextTask, final TaskListener nextListener) {
+        _taskRunner = taskRunner;
+        _nextTask = nextTask;
+        _nextListener = nextListener;
+    }
 
-	@Override
-	public void onBegin(Task task) {
-	}
+    @Override
+    public void onBegin(final Task task) {
+    }
 
-	@Override
-	public void onComplete(Task task) {
-		_taskRunner.run(_nextTask, _nextListener);
-	}
+    @Override
+    public void onComplete(final Task task) {
+        _taskRunner.run(_nextTask, _nextListener);
+    }
 
-	@Override
-	public void onError(Task task, Throwable throwable) {
-		_nextListener.onError(task, throwable);
-	}
+    @Override
+    public void onError(final Task task, final Throwable throwable) {
+        _nextListener.onError(task, throwable);
+    }
 
 }

@@ -34,24 +34,24 @@ public class SortHelper {
     /**
      * Creates a comparator for the {@link InputColumn} based on its type
      * (sorting numerically or lexicographically).
-     * 
+     *
      * @param column
      *            the column to sort on
      * @param columnIndex
      *            the index of the column in the input {@link Row}
      * @return the comparator instance
      */
-    public static Comparator<Row> createComparator(InputColumn<?> column, final int columnIndex) {
+    public static Comparator<Row> createComparator(final InputColumn<?> column, final int columnIndex) {
         final Class<?> dataType = column.getDataType();
         final boolean isNumber = dataType != null && ReflectionUtils.isNumber(dataType);
         final boolean isDate = dataType != null && ReflectionUtils.isDate(dataType);
 
         return new Comparator<Row>() {
             @Override
-            public int compare(Row row1, Row row2) {
+            public int compare(final Row row1, final Row row2) {
                 final Comparable<?> value1 = getComparableValue(row1, columnIndex, isNumber, isDate);
                 final Comparable<?> value2 = getComparableValue(row2, columnIndex, isNumber, isDate);
-                int comparableResult = CompareUtils.compareUnbound(value1, value2);
+                final int comparableResult = CompareUtils.compareUnbound(value1, value2);
                 if (comparableResult != 0) {
                     return comparableResult;
                 } else {
@@ -60,7 +60,7 @@ public class SortHelper {
                     // exactly the same. Now look at other values of all the
                     // columns to
                     // find if the two rows are same.
-                    int numberOfSelectItems = row1.getSelectItems().length;
+                    final int numberOfSelectItems = row1.getSelectItems().length;
                     for (int i = 0; i < numberOfSelectItems; i++) {
                         final String rowValue1 = (String) row1.getValue(i);
                         final String rowValue2 = (String) row2.getValue(i);
@@ -78,7 +78,7 @@ public class SortHelper {
         };
     }
 
-    private static Comparable<?> getComparableValue(Row row, int columnIndex, boolean isNumber, boolean isDate) {
+    private static Comparable<?> getComparableValue(final Row row, final int columnIndex, final boolean isNumber, final boolean isDate) {
         final String value = (String) row.getValue(columnIndex);
         if (isNumber) {
             final Number result = ConvertToNumberTransformer.transformValue(value);

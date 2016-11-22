@@ -31,23 +31,23 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.SourceColumnComboBox;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class MultiSourceColumnComboBoxPanel extends DCPanel {
 
     private static final long serialVersionUID = 6598553122965748098L;
-    private Datastore _datastore;
-    private Table _table;
     private final DCPanel _sourceComboBoxPanel;
     private final DCPanel _buttonPanel;
     private final List<SourceColumnComboBox> _sourceColumnComboBoxes;
+    private Datastore _datastore;
+    private Table _table;
 
     public MultiSourceColumnComboBoxPanel() {
         _sourceComboBoxPanel = new DCPanel();
@@ -67,7 +67,7 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 
         addButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 createSourceColumnComboBox(null);
             }
 
@@ -75,8 +75,8 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 
         removeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                int componentCount = _sourceComboBoxPanel.getComponentCount();
+            public void actionPerformed(final ActionEvent e) {
+                final int componentCount = _sourceComboBoxPanel.getComponentCount();
                 if (componentCount > 0) {
                     _sourceComboBoxPanel.remove(componentCount - 1);
                     _sourceComboBoxPanel.updateUI();
@@ -88,8 +88,8 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
         createSourceColumnComboBox(null);
     }
 
-    private void createSourceColumnComboBox(Column column) {
-        SourceColumnComboBox sourceColumnComboBox = (_table == null) ? new SourceColumnComboBox(_datastore)
+    private void createSourceColumnComboBox(final Column column) {
+        final SourceColumnComboBox sourceColumnComboBox = (_table == null) ? new SourceColumnComboBox(_datastore)
                 : new SourceColumnComboBox(_datastore, _table);
         sourceColumnComboBox.setSelectedItem(column);
         _sourceColumnComboBoxes.add(sourceColumnComboBox);
@@ -99,20 +99,20 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 
     /**
      * Creates a panel containing ButtonPanel and SourceComboboxPanel
-     * 
+     *
      * @return DCPanel
      */
     public DCPanel createPanel() {
-        DCPanel parentPanel = new DCPanel();
+        final DCPanel parentPanel = new DCPanel();
         parentPanel.setLayout(new BorderLayout());
         parentPanel.add(_sourceComboBoxPanel, BorderLayout.CENTER);
         parentPanel.add(_buttonPanel, BorderLayout.EAST);
         return parentPanel;
     }
 
-    public void setModel(Datastore datastore) {
+    public void setModel(final Datastore datastore) {
         _datastore = datastore;
-        for (SourceColumnComboBox comboBox : _sourceColumnComboBoxes) {
+        for (final SourceColumnComboBox comboBox : _sourceColumnComboBoxes) {
             comboBox.setModel(datastore);
         }
     }
@@ -121,13 +121,13 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
      * Returns the column names selected as String[].
      */
     public String[] getColumnNames() {
-        List<Column> columns = getColumns();
+        final List<Column> columns = getColumns();
         return convertToStringArry(columns);
     }
 
-    private String[] convertToStringArry(List<Column> columns) {
-        List<String> columnNamesAsString = new ArrayList<String>();
-        for (Column column : columns) {
+    private String[] convertToStringArry(final List<Column> columns) {
+        final List<String> columnNamesAsString = new ArrayList<String>();
+        for (final Column column : columns) {
             columnNamesAsString.add(column.getQualifiedLabel());
         }
         return columnNamesAsString.toArray(new String[0]);
@@ -137,28 +137,28 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
      * Returns the columns selected as Column[].
      */
     public List<Column> getColumns() {
-        List<Column> columns = new ArrayList<Column>();
-        Component[] components = _sourceComboBoxPanel.getComponents();
-        for (Component component : components) {
+        final List<Column> columns = new ArrayList<Column>();
+        final Component[] components = _sourceComboBoxPanel.getComponents();
+        for (final Component component : components) {
             if (component instanceof SourceColumnComboBox) {
-                SourceColumnComboBox sourceColumnComboBox = (SourceColumnComboBox) component;
+                final SourceColumnComboBox sourceColumnComboBox = (SourceColumnComboBox) component;
                 columns.add(sourceColumnComboBox.getSelectedItem());
             }
         }
         return columns;
     }
 
-    public void setColumns(Collection<Column> columns) {
-        Iterator<Column> it = columns.iterator();
-        Component[] components = _sourceComboBoxPanel.getComponents();
-        for (Component component : components) {
+    public void setColumns(final Collection<Column> columns) {
+        final Iterator<Column> it = columns.iterator();
+        final Component[] components = _sourceComboBoxPanel.getComponents();
+        for (final Component component : components) {
             if (component instanceof SourceColumnComboBox) {
                 if (!it.hasNext()) {
                     return;
                 }
 
-                Column column = it.next();
-                SourceColumnComboBox sourceColumnComboBox = (SourceColumnComboBox) component;
+                final Column column = it.next();
+                final SourceColumnComboBox sourceColumnComboBox = (SourceColumnComboBox) component;
                 sourceColumnComboBox.setSelectedItem(column);
             }
         }
@@ -171,10 +171,10 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
     /**
      * updates the SourceColumnComboBoxes with the provided datastore and table
      */
-    public void updateSourceComboBoxes(Datastore datastore, Table table) {
+    public void updateSourceComboBoxes(final Datastore datastore, final Table table) {
         _datastore = datastore;
         _table = table;
-        for (SourceColumnComboBox sourceColComboBox : _sourceColumnComboBoxes) {
+        for (final SourceColumnComboBox sourceColComboBox : _sourceColumnComboBoxes) {
             sourceColComboBox.setModel(datastore, table);
         }
     }

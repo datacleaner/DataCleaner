@@ -23,6 +23,6 @@ import org.datacleaner.result.ResultProducer;
 
 public interface DrillToDetailsCallback {
 
-	public void drillToDetails(String title, ResultProducer resultProducer);
+    void drillToDetails(String title, ResultProducer resultProducer);
 
 }

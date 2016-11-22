@@ -35,12 +35,12 @@ import org.springframework.web.context.WebApplicationContext;
 public class SharedTaskRunner implements TaskRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(SharedTaskRunner.class);
-            
+
     private TaskRunner _delegate;
-    
+
     public TaskRunner getDelegate() {
         if (_delegate == null) {
-            WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
             if (applicationContext == null) {
                 logger.warn("No WebApplicationContext available! Creating a temporary delegate!");
                 _delegate = createTemporaryDelegate();
@@ -50,13 +50,13 @@ public class SharedTaskRunner implements TaskRunner {
         }
         return _delegate;
     }
-    
-    private TaskRunner createTemporaryDelegate() {
-        return new MultiThreadedTaskRunner(Runtime.getRuntime().availableProcessors());
+
+    public void setDelegate(final TaskRunner delegate) {
+        _delegate = delegate;
     }
 
-    public void setDelegate(TaskRunner delegate) {
-        _delegate = delegate;
+    private TaskRunner createTemporaryDelegate() {
+        return new MultiThreadedTaskRunner(Runtime.getRuntime().availableProcessors());
     }
 
     @Override
@@ -65,12 +65,12 @@ public class SharedTaskRunner implements TaskRunner {
     }
 
     @Override
-    public void run(TaskRunnable taskRunnable) {
+    public void run(final TaskRunnable taskRunnable) {
         getDelegate().run(taskRunnable);
     }
 
     @Override
-    public void run(Task task, TaskListener listener) {
+    public void run(final Task task, final TaskListener listener) {
         getDelegate().run(task, listener);
     }
 
@@ -78,7 +78,7 @@ public class SharedTaskRunner implements TaskRunner {
     public void shutdown() {
         getDelegate().shutdown();
     }
-    
+
     @Override
     public String toString() {
         return "SharedTaskRunner[" + getDelegate() + "]";

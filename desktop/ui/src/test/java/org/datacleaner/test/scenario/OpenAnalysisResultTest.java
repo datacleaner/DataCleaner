@@ -24,11 +24,11 @@ import java.awt.GraphicsEnvironment;
 import junit.framework.TestCase;
 
 import org.apache.commons.vfs2.FileObject;
-import org.datacleaner.util.VFSUtils;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.user.UserPreferencesImpl;
+import org.datacleaner.util.VFSUtils;
 import org.datacleaner.windows.AbstractWindow;
 import org.datacleaner.windows.ResultWindow;
 
@@ -43,7 +43,7 @@ public class OpenAnalysisResultTest extends TestCase {
     /**
      * A very broad integration test which opens a result with (more or less)
      * all built-in analyzer results.
-     * 
+     *
      * @throws Exception
      */
     public void testOpenJobWithAllAnalyzers() throws Exception {
@@ -57,7 +57,8 @@ public class OpenAnalysisResultTest extends TestCase {
         FileObject file = VFSUtils.getFileSystemManager().resolveFile(
                 "src/test/resources/all_analyzers.analysis.result.dat");
 
-        OpenAnalysisJobActionListener listener = new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
+        OpenAnalysisJobActionListener listener =
+                new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
         ResultWindow window = listener.openAnalysisResult(file, module);
         assertNotNull(window);
 
@@ -75,7 +76,8 @@ public class OpenAnalysisResultTest extends TestCase {
         FileObject file = VFSUtils.getFileSystemManager().resolveFile(
                 "src/test/resources/densityplot.analysis.result.dat");
 
-        OpenAnalysisJobActionListener listener = new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
+        OpenAnalysisJobActionListener listener =
+                new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
         ResultWindow window = listener.openAnalysisResult(file, module);
         assertNotNull(window);
 
@@ -93,7 +95,8 @@ public class OpenAnalysisResultTest extends TestCase {
         FileObject file = VFSUtils.getFileSystemManager().resolveFile(
                 "src/test/resources/stackedarea.analysis.result.dat");
 
-        OpenAnalysisJobActionListener listener = new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
+        OpenAnalysisJobActionListener listener =
+                new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
         ResultWindow window = listener.openAnalysisResult(file, module);
         assertNotNull(window);
 
@@ -111,7 +114,8 @@ public class OpenAnalysisResultTest extends TestCase {
         FileObject file = VFSUtils.getFileSystemManager().resolveFile(
                 "src/test/resources/scatterplot.analysis.result.dat");
 
-        OpenAnalysisJobActionListener listener = new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
+        OpenAnalysisJobActionListener listener =
+                new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
         ResultWindow window = listener.openAnalysisResult(file, module);
         assertNotNull(window);
 

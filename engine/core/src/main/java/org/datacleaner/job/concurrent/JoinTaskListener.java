@@ -31,62 +31,63 @@ import org.slf4j.LoggerFactory;
  */
 public final class JoinTaskListener implements TaskListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(JoinTaskListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(JoinTaskListener.class);
 
-	private final AtomicInteger _countDown;
-	private final TaskListener _nestedTaskListener;
-	private volatile Throwable _error;
-	
-	public JoinTaskListener(int tasksToWaitFor, TaskListener ... nestedTaskListeners) {
-	    this(tasksToWaitFor, new CompositeTaskListener(nestedTaskListeners));
-	}
+    private final AtomicInteger _countDown;
+    private final TaskListener _nestedTaskListener;
+    private volatile Throwable _error;
 
-	public JoinTaskListener(int tasksToWaitFor, TaskListener nestedTaskListener) {
-		_nestedTaskListener = nestedTaskListener;
+    public JoinTaskListener(final int tasksToWaitFor, final TaskListener... nestedTaskListeners) {
+        this(tasksToWaitFor, new CompositeTaskListener(nestedTaskListeners));
+    }
 
-		if (tasksToWaitFor == 0) {
-			logger.warn("Was asked to join execution after 0 tasks, this might be a bug. Continuing with immediate completion.");
-			// immediate completion
-			_countDown = new AtomicInteger(1);
-			onComplete(null);
-		} else {
-			_countDown = new AtomicInteger(tasksToWaitFor);
-		}
-	}
+    public JoinTaskListener(final int tasksToWaitFor, final TaskListener nestedTaskListener) {
+        _nestedTaskListener = nestedTaskListener;
 
-	@Override
-	public String toString() {
-		return "Join[countDown=" + _countDown.get() + "]";
-	}
+        if (tasksToWaitFor == 0) {
+            logger.warn(
+                    "Was asked to join execution after 0 tasks, this might be a bug. Continuing with immediate completion.");
+            // immediate completion
+            _countDown = new AtomicInteger(1);
+            onComplete(null);
+        } else {
+            _countDown = new AtomicInteger(tasksToWaitFor);
+        }
+    }
 
-	@Override
-	public void onBegin(Task task) {
-	}
+    @Override
+    public String toString() {
+        return "Join[countDown=" + _countDown.get() + "]";
+    }
 
-	@Override
-	public void onComplete(Task task) {
-		final int count = _countDown.decrementAndGet();
-		logger.debug("onComplete(), count = {}", count);
-		invokeNested(count, task);
-	}
+    @Override
+    public void onBegin(final Task task) {
+    }
 
-	@Override
-	public void onError(Task task, Throwable throwable) {
-		_error = throwable;
-		final int count = _countDown.decrementAndGet();
-		logger.debug("onComplete(), count = {}", count);
-		invokeNested(count, task);
-	}
+    @Override
+    public void onComplete(final Task task) {
+        final int count = _countDown.decrementAndGet();
+        logger.debug("onComplete(), count = {}", count);
+        invokeNested(count, task);
+    }
 
-	private void invokeNested(final int count, Task task) {
-		if (count == 0) {
-			if (_error == null) {
-				logger.debug("Calling onComplete(...) on nested TaskListener ()");
-				_nestedTaskListener.onComplete(task);
-			} else {
-				logger.debug("Calling onError(...) on nested TaskListener ()");
-				_nestedTaskListener.onError(task, _error);
-			}
-		}
-	}
+    @Override
+    public void onError(final Task task, final Throwable throwable) {
+        _error = throwable;
+        final int count = _countDown.decrementAndGet();
+        logger.debug("onComplete(), count = {}", count);
+        invokeNested(count, task);
+    }
+
+    private void invokeNested(final int count, final Task task) {
+        if (count == 0) {
+            if (_error == null) {
+                logger.debug("Calling onComplete(...) on nested TaskListener ()");
+                _nestedTaskListener.onComplete(task);
+            } else {
+                logger.debug("Calling onError(...) on nested TaskListener ()");
+                _nestedTaskListener.onError(task, _error);
+            }
+        }
+    }
 }

@@ -36,7 +36,7 @@ public class SimpleAnalysisResultTest extends TestCase {
      * times. The test asserts that the job definition saved in one of the
      * result files can be used to retrieve information from the other analysis
      * results as well.
-     * 
+     *
      * @throws Exception
      */
     public void testDeserializeAndCompare() throws Exception {
@@ -44,7 +44,7 @@ public class SimpleAnalysisResultTest extends TestCase {
 
         for (int i = 0; i < analysisResults.length; i++) {
             String filename = "src/test/resources/resultfiles/out" + (i + 1) + ".analysis.result.dat";
-            
+
             try {
                 ChangeAwareObjectInputStream in = new ChangeAwareObjectInputStream(new FileInputStream(filename));
                 analysisResults[i] = (AnalysisResult) in.readObject();
@@ -52,10 +52,10 @@ public class SimpleAnalysisResultTest extends TestCase {
             } catch (Exception e) {
                 throw new IllegalStateException("Failed to deserialize file: " + filename, e);
             }
-            
+
             assertNotNull(analysisResults[i]);
             assertTrue(analysisResults[i] instanceof SimpleAnalysisResult);
-            
+
         }
 
         Map<ComponentJob, AnalyzerResult> resultMap = analysisResults[0].getResultMap();

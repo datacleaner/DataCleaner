@@ -25,10 +25,10 @@ import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import junit.framework.TestCase;
+
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-
-import junit.framework.TestCase;
 
 public class TextFileSynonymCatalogTest extends TestCase {
 
@@ -77,7 +77,7 @@ public class TextFileSynonymCatalogTest extends TestCase {
 
             byte[] bytes;
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    ObjectOutputStream os = new ObjectOutputStream(baos)) {
+                 ObjectOutputStream os = new ObjectOutputStream(baos)) {
                 os.writeObject(cat);
                 os.flush();
                 bytes = baos.toByteArray();

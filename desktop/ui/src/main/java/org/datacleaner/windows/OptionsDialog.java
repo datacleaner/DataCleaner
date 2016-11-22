@@ -81,11 +81,11 @@ public class OptionsDialog extends AbstractWindow {
     private final DataCleanerConfiguration _configuration;
 
     @Inject
-    protected OptionsDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
-            UserPreferences userPreferences, DatabaseDriversPanel databaseDriversPanel,
-            ExtensionPackagesPanel extensionPackagesPanel, HadoopClustersOptionsPanel hadoopClustersOptionsPanel) {
+    protected OptionsDialog(final WindowContext windowContext, final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences, final DatabaseDriversPanel databaseDriversPanel,
+            final ExtensionPackagesPanel extensionPackagesPanel, final HadoopClustersOptionsPanel hadoopClustersOptionsPanel) {
         super(windowContext);
-        setMinimumSize(new Dimension(500,500));
+        setMinimumSize(new Dimension(500, 500));
         _userPreferences = userPreferences;
         _configuration = configuration;
         _tabbedPane = new CloseableTabbedPane(true);
@@ -116,7 +116,7 @@ public class OptionsDialog extends AbstractWindow {
     public void selectDatabaseDriversTab() {
         _tabbedPane.setSelectedIndex(2);
     }
-    
+
     public void selectHadoopClustersTab() {
         _tabbedPane.setSelectedIndex(3);
     }
@@ -163,13 +163,13 @@ public class OptionsDialog extends AbstractWindow {
 
         final ActionListener actionListener = new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
+            public void actionPerformed(final ActionEvent event) {
                 try {
-                    int columns = Integer.parseInt(columnsTextField.getText());
-                    QuickAnalysisStrategy newStrategy = new QuickAnalysisStrategy(columns,
+                    final int columns = Integer.parseInt(columnsTextField.getText());
+                    final QuickAnalysisStrategy newStrategy = new QuickAnalysisStrategy(columns,
                             valueDistributionCheckBox.isSelected(), patternFinderCheckBox.isSelected());
                     QuickAnalysisStrategy.saveToUserPreferences(newStrategy, _userPreferences);
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     // skip this action, could not parse columns
                 }
             }
@@ -178,7 +178,7 @@ public class OptionsDialog extends AbstractWindow {
         patternFinderCheckBox.addActionListener(actionListener);
         columnsTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 actionListener.actionPerformed(null);
             }
         });
@@ -197,7 +197,7 @@ public class OptionsDialog extends AbstractWindow {
         proxyCheckBox.setOpaque(false);
         proxyCheckBox.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 _userPreferences.setProxyEnabled(proxyCheckBox.isSelected());
             }
         });
@@ -208,7 +208,7 @@ public class OptionsDialog extends AbstractWindow {
         proxyHostField.setText(_userPreferences.getProxyHostname());
         proxyHostField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent e) {
+            protected void onChange(final DocumentEvent e) {
                 _userPreferences.setProxyHostname(proxyHostField.getText());
             }
         });
@@ -219,11 +219,11 @@ public class OptionsDialog extends AbstractWindow {
         proxyPortField.setDocument(new NumberDocument());
         proxyPortField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 int port;
                 try {
                     port = Integer.parseInt(proxyPortField.getText());
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     port = 8080;
                 }
                 _userPreferences.setProxyPort(port);
@@ -238,7 +238,7 @@ public class OptionsDialog extends AbstractWindow {
         proxyAuthCheckBox.setOpaque(false);
         proxyAuthCheckBox.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 _userPreferences.setProxyAuthenticationEnabled(proxyAuthCheckBox.isSelected());
             }
         });
@@ -248,7 +248,7 @@ public class OptionsDialog extends AbstractWindow {
         proxyUsernameField.setText(_userPreferences.getProxyUsername());
         proxyUsernameField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 _userPreferences.setProxyUsername(proxyUsernameField.getText());
             }
         });
@@ -259,7 +259,7 @@ public class OptionsDialog extends AbstractWindow {
         proxyPasswordField.setText(_userPreferences.getProxyPassword());
         proxyPasswordField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 _userPreferences.setProxyPassword(String.valueOf(proxyPasswordField.getPassword()));
             }
         });
@@ -269,8 +269,8 @@ public class OptionsDialog extends AbstractWindow {
         WidgetUtils.addToGridBag(proxyAuthCheckBox, proxyPanel, 0, 2, 2, 1);
         WidgetUtils.addToGridBag(proxyAuthPanel, proxyPanel, 0, 3, 2, 1);
 
-        ActionListener actionListener = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        final ActionListener actionListener = new ActionListener() {
+            public void actionPerformed(final ActionEvent e) {
                 proxyHostField.setEnabled(proxyCheckBox.isSelected());
                 proxyPortField.setEnabled(proxyCheckBox.isSelected());
                 proxyAuthCheckBox.setEnabled(proxyCheckBox.isSelected());
@@ -296,15 +296,16 @@ public class OptionsDialog extends AbstractWindow {
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 
         int row = 0;
-        
+
         final DescriptionLabel descriptionLabel = new DescriptionLabel(
                 "Performance options are currently not configurable while you're running the application. "
                         + "You need to edit the applications configuration file for this. The configuration file is named "
-                        + "<b>" + DataCleanerConfigurationImpl.DEFAULT_FILENAME + "</b> and is located in the root of the folder where "
+                        + "<b>" + DataCleanerConfigurationImpl.DEFAULT_FILENAME
+                        + "</b> and is located in the root of the folder where "
                         + "you've installed DataCleaner.");
         WidgetUtils.addToGridBag(descriptionLabel, panel, 0, row, 3, 1, GridBagConstraints.NORTH, 0, 1.0, 0.1);
         row++;
-        
+
         WidgetUtils.addToGridBag(Box.createVerticalGlue(), panel, 0, row, 3, 1, GridBagConstraints.NORTH, 0, 1.0, 0.1);
         row++;
 
@@ -327,7 +328,7 @@ public class OptionsDialog extends AbstractWindow {
         }
 
         row++;
-        
+
         final StorageProvider storageProvider = _configuration.getEnvironment().getStorageProvider();
         WidgetUtils.addToGridBag(new JLabel("Storage provider type:"), panel, 0, row);
         WidgetUtils.addToGridBag(new JLabel(storageProvider.getClass().getSimpleName()), panel, 1, row);
@@ -336,7 +337,7 @@ public class OptionsDialog extends AbstractWindow {
                         "The storage provider is used for staging data during and after analysis, typically to store the results on disk in stead of holding everything in memory."),
                 panel, 2, row);
         row++;
-        
+
         WidgetUtils.addToGridBag(Box.createVerticalGlue(), panel, 0, row, 3, 1, GridBagConstraints.NORTH, 0, 1.0, 0.1);
         row++;
 
@@ -348,7 +349,7 @@ public class OptionsDialog extends AbstractWindow {
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
         closeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 _userPreferences.save();
                 OptionsDialog.this.dispose();
             }

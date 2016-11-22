@@ -23,11 +23,11 @@ import junit.framework.TestCase;
 
 public class DescriptorExceptionTest extends TestCase {
 
-	public void testConstructors() throws Exception {
-		assertNull(new DescriptorException().getMessage());
-		assertEquals("foo", new DescriptorException("foo").getMessage());
-		assertEquals("foo", new DescriptorException("foo", new NullPointerException("bar")).getMessage());
-		assertEquals("java.lang.NullPointerException: bar",
-				new DescriptorException(new NullPointerException("bar")).getMessage());
-	}
+    public void testConstructors() throws Exception {
+        assertNull(new DescriptorException().getMessage());
+        assertEquals("foo", new DescriptorException("foo").getMessage());
+        assertEquals("foo", new DescriptorException("foo", new NullPointerException("bar")).getMessage());
+        assertEquals("java.lang.NullPointerException: bar",
+                new DescriptorException(new NullPointerException("bar")).getMessage());
+    }
 }

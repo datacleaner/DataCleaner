@@ -62,7 +62,7 @@ public class CompareFilterTest extends TestCase {
         assertEquals(CompareFilter.Category.FALSE, f.categorize(new MockInputRow().put(column, "")));
         assertEquals(CompareFilter.Category.FALSE, f.categorize(new MockInputRow().put(column, null)));
     }
-    
+
     public void testCompareStringsWithInOperator() throws Exception {
         final MockInputColumn<String> column = new MockInputColumn<>("col", String.class);
         CompareFilter f = new CompareFilter(column, CompareFilter.Operator.IN, " USA   ,  GBR  ");
@@ -73,7 +73,7 @@ public class CompareFilterTest extends TestCase {
         assertEquals(CompareFilter.Category.FALSE, f.categorize(new MockInputRow().put(column, "")));
         assertEquals(CompareFilter.Category.FALSE, f.categorize(new MockInputRow().put(column, null)));
     }
-    
+
     public void testCompareNumbers() throws Exception {
         final MockInputColumn<Integer> column = new MockInputColumn<>("col", Integer.class);
         CompareFilter f = new CompareFilter(column, CompareFilter.Operator.GREATER_THAN, "100");

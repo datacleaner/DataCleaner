@@ -34,7 +34,7 @@ abstract class PentahoCarteConfigurationPage extends AbstractFreemarkerWizardPag
 
     private final int _pageIndex;
 
-    public PentahoCarteConfigurationPage(int pageIndex) {
+    public PentahoCarteConfigurationPage(final int pageIndex) {
         _pageIndex = pageIndex;
     }
 
@@ -44,13 +44,14 @@ abstract class PentahoCarteConfigurationPage extends AbstractFreemarkerWizardPag
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters) throws DCUserInputException {
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
+            throws DCUserInputException {
         final String hostname = getString(formParameters, "hostname");
         final String portStr = getString(formParameters, "port");
         final int port;
         try {
             port = Integer.parseInt(portStr);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new DCUserInputException("Not a valid port number: " + portStr);
         }
 
@@ -59,7 +60,8 @@ abstract class PentahoCarteConfigurationPage extends AbstractFreemarkerWizardPag
         return nextPageController(hostname, port, username, password);
     }
 
-    protected abstract WizardPageController nextPageController(String hostname, int port, String username, String password);
+    protected abstract WizardPageController nextPageController(String hostname, int port, String username,
+            String password);
 
     @Override
     protected String getTemplateFilename() {

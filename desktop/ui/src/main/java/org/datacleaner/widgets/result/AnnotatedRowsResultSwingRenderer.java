@@ -112,7 +112,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
                 final DCComboBox<String> comboBox = new DCComboBox<String>(VIEWS);
                 comboBox.addListener(new Listener<String>() {
                     @Override
-                    public void onItemSelected(String item) {
+                    public void onItemSelected(final String item) {
                         if (item == VIEWS[0]) {
                             applyDetailedView();
                         } else {
@@ -144,8 +144,8 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
         }
 
         public void applyDistinctValuesView() {
-            InputColumn<?>[] highlightedColumns = _result.getHighlightedColumns();
-            TableModel tableModel = _result.toDistinctValuesTableModel(highlightedColumns[0]);
+            final InputColumn<?>[] highlightedColumns = _result.getHighlightedColumns();
+            final TableModel tableModel = _result.toDistinctValuesTableModel(highlightedColumns[0]);
             _table.setModel(tableModel);
             _table.autoSetHorizontalScrollEnabled();
             _table.setHighlighters(new Highlighter[0]);
@@ -154,15 +154,15 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
         public void applyDetailedView() {
             _table.setModel(_result.toTableModel());
             _table.autoSetHorizontalScrollEnabled();
-            InputColumn<?>[] highlightedColumns = _result.getHighlightedColumns();
-            List<InputColumn<?>> inputColumns = _result.getInputColumns();
+            final InputColumn<?>[] highlightedColumns = _result.getHighlightedColumns();
+            final List<InputColumn<?>> inputColumns = _result.getInputColumns();
 
             if (inputColumns.size() > highlightedColumns.length) {
                 // if there's context information available (columns
                 // besides the actual columns of interest) then highlight the
                 // columns of interest.
                 if (highlightedColumns.length > 0) {
-                    int[] highligthedColumnIndexes = new int[highlightedColumns.length];
+                    final int[] highligthedColumnIndexes = new int[highlightedColumns.length];
                     for (int i = 0; i < highligthedColumnIndexes.length; i++) {
                         highligthedColumnIndexes[i] = _result.getColumnIndex(highlightedColumns[i]);
                     }
@@ -181,7 +181,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
                     IconUtils.GENERIC_DATASTORE_IMAGEPATH);
             saveAsDatastoreItem.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(final ActionEvent e) {
                     final String datastoreName = JOptionPane.showInputDialog("Datastore name");
                     final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegateImpl(
                             (MutableDatastoreCatalog) _datastoreCatalog);
@@ -196,8 +196,8 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
             final JMenuItem saveAsCsvItem = WidgetFactory.createMenuItem("As CSV file", IconUtils.CSV_IMAGEPATH);
             saveAsCsvItem.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
+                public void actionPerformed(final ActionEvent e) {
+                    final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
                     fileChooser.addChoosableFileFilter(FileFilters.CSV);
                     if (fileChooser.showSaveDialog(saveToFileButton) == JFileChooser.APPROVE_OPTION) {
                         File selectedFile = fileChooser.getSelectedFile();
@@ -205,11 +205,11 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
                             selectedFile = new File(selectedFile.getPath() + ".csv");
                         }
 
-                        OutputWriter writer = CsvOutputWriterFactory.getWriter(selectedFile.getAbsolutePath(),
+                        final OutputWriter writer = CsvOutputWriterFactory.getWriter(selectedFile.getAbsolutePath(),
                                 inputColumns);
                         performWrite(writer);
 
-                        File dir = selectedFile.getParentFile();
+                        final File dir = selectedFile.getParentFile();
                         _userPreferences.setAnalysisJobDirectory(dir);
                     }
                 }
@@ -221,9 +221,9 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
             return saveToFileButton;
         }
 
-        private void performWrite(OutputWriter writer) {
-            for (InputRow row : _result.getSampleRows()) {
-                OutputRow outputRow = writer.createRow();
+        private void performWrite(final OutputWriter writer) {
+            for (final InputRow row : _result.getSampleRows()) {
+                final OutputRow outputRow = writer.createRow();
                 outputRow.setValues(row);
                 outputRow.write();
             }
@@ -249,7 +249,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 
     @Override
     public AnnotatedRowResultPanel render(final AnnotatedRowsResult result) {
-        AnnotatedRowResultPanel panel = new AnnotatedRowResultPanel(result, userPreferences, datastoreCatalog);
+        final AnnotatedRowResultPanel panel = new AnnotatedRowResultPanel(result, userPreferences, datastoreCatalog);
         return panel;
     }
 

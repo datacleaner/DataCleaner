@@ -19,6 +19,12 @@
  */
 package org.datacleaner.job;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -26,12 +32,6 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.util.CollectionUtils2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Helper class that wraps a collection of {@link AnalyzerJob}s and provides
@@ -44,98 +44,13 @@ public class AnalyzerJobHelper {
 
     private final Collection<AnalyzerJob> _jobs;
 
-    public AnalyzerJobHelper(Collection<AnalyzerJob> jobs) {
+    public AnalyzerJobHelper(final Collection<AnalyzerJob> jobs) {
         _jobs = jobs;
     }
 
-    public AnalyzerJobHelper(AnalysisJob analysisJob) {
+    public AnalyzerJobHelper(final AnalysisJob analysisJob) {
         this(analysisJob.flattened().flatMap(analysisJob1 -> analysisJob1.getAnalyzerJobs().stream())
                 .collect(Collectors.toList()));
-    }
-
-    public Collection<AnalyzerJob> getAnalyzerJobs() {
-        return _jobs;
-    }
-
-    /**
-     * Gets the "best candidate" to be the same (or a copy of) the analyzer job
-     * provided in parameter.
-     * 
-     * @param analyzerJob
-     * @return
-     */
-    public AnalyzerJob getAnalyzerJob(final AnalyzerJob analyzerJob) {
-        if (_jobs.contains(analyzerJob)) {
-            return analyzerJob;
-        }
-
-        final String analyzerInputName;
-        final InputColumn<?> inputColumn = getIdentifyingInputColumn(analyzerJob);
-        if (inputColumn == null) {
-            analyzerInputName = null;
-        } else {
-            analyzerInputName = inputColumn.getName();
-        }
-        return getAnalyzerJob(analyzerJob.getDescriptor().getDisplayName(), analyzerJob.getName(), analyzerInputName);
-    }
-
-    /**
-     * Gets the "best candidate" analyzer job based on search criteria offered
-     * in parameters.
-     * 
-     * @param descriptorName
-     * @param analyzerName
-     * @param analyzerInputName
-     * @return
-     */
-    public AnalyzerJob getAnalyzerJob(final String descriptorName, final String analyzerName,
-            final String analyzerInputName) {
-        List<AnalyzerJob> candidates = new ArrayList<AnalyzerJob>(_jobs);
-
-        // filter analyzers of the corresponding type
-        candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-            @Override
-            public Boolean eval(AnalyzerJob o) {
-                final String actualDescriptorName = o.getDescriptor().getDisplayName();
-                return descriptorName.equals(actualDescriptorName);
-            }
-        });
-
-        if (analyzerName != null) {
-            // filter analyzers with a particular name
-            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                @Override
-                public Boolean eval(AnalyzerJob o) {
-                    final String actualAnalyzerName = o.getName();
-                    return analyzerName.equals(actualAnalyzerName);
-                }
-            });
-        }
-
-        if (analyzerInputName != null) {
-            // filter analyzers with a particular input
-            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                @Override
-                public Boolean eval(AnalyzerJob o) {
-                    final InputColumn<?> inputColumn = getIdentifyingInputColumn(o);
-                    if (inputColumn == null) {
-                        return false;
-                    }
-
-                    return analyzerInputName.equals(inputColumn.getName());
-                }
-            });
-        }
-
-        if (candidates.isEmpty()) {
-            logger.error("No more AnalyzerJob candidates to choose from");
-            return null;
-        } else if (candidates.size() > 1) {
-            logger.warn("Multiple ({}) AnalyzerJob candidates to choose from, picking first");
-        }
-
-        AnalyzerJob analyzerJob = candidates.iterator().next();
-        return analyzerJob;
     }
 
     /**
@@ -143,7 +58,7 @@ public class AnalyzerJobHelper {
      * such a column. With an identifying input column, a externalizable
      * reference to the {@link ComponentJob} can be build, based on the
      * descriptor name, component name and the identifying column.
-     * 
+     *
      * @param o
      * @return
      */
@@ -168,5 +83,90 @@ public class AnalyzerJobHelper {
             return inputColumns[0];
         }
         return null;
+    }
+
+    public Collection<AnalyzerJob> getAnalyzerJobs() {
+        return _jobs;
+    }
+
+    /**
+     * Gets the "best candidate" to be the same (or a copy of) the analyzer job
+     * provided in parameter.
+     *
+     * @param analyzerJob
+     * @return
+     */
+    public AnalyzerJob getAnalyzerJob(final AnalyzerJob analyzerJob) {
+        if (_jobs.contains(analyzerJob)) {
+            return analyzerJob;
+        }
+
+        final String analyzerInputName;
+        final InputColumn<?> inputColumn = getIdentifyingInputColumn(analyzerJob);
+        if (inputColumn == null) {
+            analyzerInputName = null;
+        } else {
+            analyzerInputName = inputColumn.getName();
+        }
+        return getAnalyzerJob(analyzerJob.getDescriptor().getDisplayName(), analyzerJob.getName(), analyzerInputName);
+    }
+
+    /**
+     * Gets the "best candidate" analyzer job based on search criteria offered
+     * in parameters.
+     *
+     * @param descriptorName
+     * @param analyzerName
+     * @param analyzerInputName
+     * @return
+     */
+    public AnalyzerJob getAnalyzerJob(final String descriptorName, final String analyzerName,
+            final String analyzerInputName) {
+        List<AnalyzerJob> candidates = new ArrayList<AnalyzerJob>(_jobs);
+
+        // filter analyzers of the corresponding type
+        candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+            @Override
+            public Boolean eval(final AnalyzerJob o) {
+                final String actualDescriptorName = o.getDescriptor().getDisplayName();
+                return descriptorName.equals(actualDescriptorName);
+            }
+        });
+
+        if (analyzerName != null) {
+            // filter analyzers with a particular name
+            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+                @Override
+                public Boolean eval(final AnalyzerJob o) {
+                    final String actualAnalyzerName = o.getName();
+                    return analyzerName.equals(actualAnalyzerName);
+                }
+            });
+        }
+
+        if (analyzerInputName != null) {
+            // filter analyzers with a particular input
+            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+                @Override
+                public Boolean eval(final AnalyzerJob o) {
+                    final InputColumn<?> inputColumn = getIdentifyingInputColumn(o);
+                    if (inputColumn == null) {
+                        return false;
+                    }
+
+                    return analyzerInputName.equals(inputColumn.getName());
+                }
+            });
+        }
+
+        if (candidates.isEmpty()) {
+            logger.error("No more AnalyzerJob candidates to choose from");
+            return null;
+        } else if (candidates.size() > 1) {
+            logger.warn("Multiple ({}) AnalyzerJob candidates to choose from, picking first");
+        }
+
+        final AnalyzerJob analyzerJob = candidates.iterator().next();
+        return analyzerJob;
     }
 }

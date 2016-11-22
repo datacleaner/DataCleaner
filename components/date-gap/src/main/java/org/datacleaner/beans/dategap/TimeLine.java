@@ -29,149 +29,149 @@ import java.util.TreeSet;
 
 /**
  * Represents a timeline of some entity. A timeline contains several intervals.
- * 
- * 
+ *
+ *
  */
 public class TimeLine implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private NavigableSet<TimeInterval> intervals = new TreeSet<TimeInterval>();
+    private NavigableSet<TimeInterval> intervals = new TreeSet<TimeInterval>();
 
-	public TimeLine() {
-	}
+    public TimeLine() {
+    }
 
-	public void addInterval(TimeInterval i) {
-		intervals.add(i);
-	}
+    public void addInterval(final TimeInterval i) {
+        intervals.add(i);
+    }
 
-	/**
-	 * Gets the intervals registered in this timeline
-	 * 
-	 * @return
-	 */
-	public SortedSet<TimeInterval> getIntervals() {
-		return Collections.unmodifiableSortedSet(intervals);
-	}
+    /**
+     * Gets the intervals registered in this timeline
+     *
+     * @return
+     */
+    public SortedSet<TimeInterval> getIntervals() {
+        return Collections.unmodifiableSortedSet(intervals);
+    }
 
-	/**
-	 * Gets a set of intervals without any overlaps
-	 * 
-	 * @return
-	 */
-	public SortedSet<TimeInterval> getFlattenedIntervals() {
-		return getFlattenedIntervals(intervals);
-	}
+    /**
+     * Gets a set of intervals without any overlaps
+     *
+     * @return
+     */
+    public SortedSet<TimeInterval> getFlattenedIntervals() {
+        return getFlattenedIntervals(intervals);
+    }
 
-	private SortedSet<TimeInterval> getFlattenedIntervals(SortedSet<TimeInterval> intervals) {
-		SortedSet<TimeInterval> result = new TreeSet<TimeInterval>();
-		for (TimeInterval interval : intervals) {
-			for (Iterator<TimeInterval> it = result.iterator(); it.hasNext();) {
-				TimeInterval ti = it.next();
-				if (ti.overlapsWith(interval)) {
-					it.remove();
-					interval = TimeInterval.merge(ti, interval);
-				}
-			}
-			result.add(interval);
-		}
+    private SortedSet<TimeInterval> getFlattenedIntervals(final SortedSet<TimeInterval> intervals) {
+        final SortedSet<TimeInterval> result = new TreeSet<TimeInterval>();
+        for (TimeInterval interval : intervals) {
+            for (final Iterator<TimeInterval> it = result.iterator(); it.hasNext(); ) {
+                final TimeInterval ti = it.next();
+                if (ti.overlapsWith(interval)) {
+                    it.remove();
+                    interval = TimeInterval.merge(ti, interval);
+                }
+            }
+            result.add(interval);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * Gets a set of intervals representing the times where there are more than
-	 * one interval overlaps.
-	 * 
-	 * @param includeSingleTimeInstanceIntervals
-	 *            whether or not to include intervals if only the ends of two
-	 *            (or more) intervals are overlapping. If, for example, there
-	 *            are two intervals, A-to-B and B-to-C. Should "B-to-B" be
-	 *            included because B actually overlaps?
-	 * 
-	 * @return
-	 */
-	public SortedSet<TimeInterval> getOverlappingIntervals(boolean includeSingleTimeInstanceIntervals) {
-		SortedSet<TimeInterval> result = new TreeSet<TimeInterval>();
-		for (TimeInterval interval1 : intervals) {
-			for (TimeInterval interval2 : intervals) {
-				if (interval1 != interval2) {
-					TimeInterval overlap = interval1.getOverlap(interval2);
-					if (overlap != null) {
-						result.add(overlap);
-					}
-				}
-			}
-		}
+    /**
+     * Gets a set of intervals representing the times where there are more than
+     * one interval overlaps.
+     *
+     * @param includeSingleTimeInstanceIntervals
+     *            whether or not to include intervals if only the ends of two
+     *            (or more) intervals are overlapping. If, for example, there
+     *            are two intervals, A-to-B and B-to-C. Should "B-to-B" be
+     *            included because B actually overlaps?
+     *
+     * @return
+     */
+    public SortedSet<TimeInterval> getOverlappingIntervals(final boolean includeSingleTimeInstanceIntervals) {
+        SortedSet<TimeInterval> result = new TreeSet<TimeInterval>();
+        for (final TimeInterval interval1 : intervals) {
+            for (final TimeInterval interval2 : intervals) {
+                if (interval1 != interval2) {
+                    final TimeInterval overlap = interval1.getOverlap(interval2);
+                    if (overlap != null) {
+                        result.add(overlap);
+                    }
+                }
+            }
+        }
 
-		result = getFlattenedIntervals(result);
+        result = getFlattenedIntervals(result);
 
-		if (!includeSingleTimeInstanceIntervals) {
-			for (Iterator<TimeInterval> it = result.iterator(); it.hasNext();) {
-				TimeInterval timeInterval = it.next();
-				if (timeInterval.isSingleTimeInstance()) {
-					it.remove();
-				}
-			}
-		}
+        if (!includeSingleTimeInstanceIntervals) {
+            for (final Iterator<TimeInterval> it = result.iterator(); it.hasNext(); ) {
+                final TimeInterval timeInterval = it.next();
+                if (timeInterval.isSingleTimeInstance()) {
+                    it.remove();
+                }
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * Gets a set of intervals representing the times that are NOT represented
-	 * in this timeline.
-	 * 
-	 * @return
-	 */
-	public SortedSet<TimeInterval> getTimeGapIntervals() {
-		SortedSet<TimeInterval> flattenedIntervals = getFlattenedIntervals();
-		SortedSet<TimeInterval> gaps = new TreeSet<TimeInterval>();
+    /**
+     * Gets a set of intervals representing the times that are NOT represented
+     * in this timeline.
+     *
+     * @return
+     */
+    public SortedSet<TimeInterval> getTimeGapIntervals() {
+        final SortedSet<TimeInterval> flattenedIntervals = getFlattenedIntervals();
+        final SortedSet<TimeInterval> gaps = new TreeSet<TimeInterval>();
 
-		TimeInterval previous = null;
-		for (TimeInterval timeInterval : flattenedIntervals) {
-			if (previous != null) {
-				long from = previous.getTo();
-				long to = timeInterval.getFrom();
-				TimeInterval gap = new TimeInterval(from, to);
-				gaps.add(gap);
-			}
-			previous = timeInterval;
-		}
+        TimeInterval previous = null;
+        for (final TimeInterval timeInterval : flattenedIntervals) {
+            if (previous != null) {
+                final long from = previous.getTo();
+                final long to = timeInterval.getFrom();
+                final TimeInterval gap = new TimeInterval(from, to);
+                gaps.add(gap);
+            }
+            previous = timeInterval;
+        }
 
-		return gaps;
-	}
+        return gaps;
+    }
 
-	/**
-	 * Gets the first date in this timeline
-	 * 
-	 * @return
-	 */
-	public Date getFrom() {
-		TimeInterval first = intervals.first();
-		if (first != null) {
-			return new Date(first.getFrom());
-		}
-		return null;
-	}
+    /**
+     * Gets the first date in this timeline
+     *
+     * @return
+     */
+    public Date getFrom() {
+        final TimeInterval first = intervals.first();
+        if (first != null) {
+            return new Date(first.getFrom());
+        }
+        return null;
+    }
 
-	/**
-	 * Gets the last date in this timeline
-	 * 
-	 * @return
-	 */
-	public Date getTo() {
-		Long to = null;
-		for (TimeInterval interval : intervals) {
-			if (to == null) {
-				to = interval.getTo();
-			} else {
-				to = Math.max(interval.getTo(), to);
-			}
-		}
-		if (to != null) {
-			return new Date(to);
-		}
-		return null;
-	}
+    /**
+     * Gets the last date in this timeline
+     *
+     * @return
+     */
+    public Date getTo() {
+        Long to = null;
+        for (final TimeInterval interval : intervals) {
+            if (to == null) {
+                to = interval.getTo();
+            } else {
+                to = Math.max(interval.getTo(), to);
+            }
+        }
+        if (to != null) {
+            return new Date(to);
+        }
+        return null;
+    }
 }

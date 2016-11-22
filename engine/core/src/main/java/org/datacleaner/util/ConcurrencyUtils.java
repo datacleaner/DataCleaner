@@ -54,7 +54,7 @@ public class ConcurrencyUtils {
         // prevent instantiation
     }
 
-    public static void awaitCountDown(CountDownLatch countDownLatch, String countDownLatchId) {
+    public static void awaitCountDown(final CountDownLatch countDownLatch, final String countDownLatchId) {
         int iteration = 0;
         try {
             boolean finished = false;
@@ -66,7 +66,7 @@ public class ConcurrencyUtils {
                             + (iteration * AWAIT_TIMEOUT_MINUTES) + " minutes...");
                 }
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new IllegalStateException("Awaiting completion of '" + countDownLatchId + "' was interrupted!", e);
         }
     }

@@ -27,8 +27,8 @@ import org.datacleaner.descriptors.Descriptors;
 
 public class DateGapAnalyzerTest extends TestCase {
 
-	public void testDescriptor() throws Exception {
-		AnalyzerDescriptor<DateGapAnalyzer> descriptor = Descriptors.ofAnalyzer(DateGapAnalyzer.class);
-		assertEquals("Date gap analyzer", descriptor.getDisplayName());
-	}
+    public void testDescriptor() throws Exception {
+        AnalyzerDescriptor<DateGapAnalyzer> descriptor = Descriptors.ofAnalyzer(DateGapAnalyzer.class);
+        assertEquals("Date gap analyzer", descriptor.getDisplayName());
+    }
 }

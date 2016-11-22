@@ -36,20 +36,20 @@ public class PrimaryButtonUI extends PlasticButtonUI {
 
     private static final PrimaryButtonUI INSTANCE = new PrimaryButtonUI();
 
+    private PrimaryButtonUI() {
+    }
+
     public static PrimaryButtonUI get() {
         return INSTANCE;
     }
 
-    private PrimaryButtonUI() {
-    }
-
     @Override
-    protected boolean is3D(AbstractButton b) {
+    protected boolean is3D(final AbstractButton b) {
         return false;
     }
 
     @Override
-    public void installDefaults(AbstractButton b) {
+    public void installDefaults(final AbstractButton b) {
         super.installDefaults(b);
         b.setFocusPainted(false);
         b.setFont(WidgetUtils.FONT_BUTTON);

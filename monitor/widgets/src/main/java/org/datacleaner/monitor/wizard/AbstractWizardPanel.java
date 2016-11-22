@@ -50,13 +50,13 @@ public abstract class AbstractWizardPanel implements WizardPanel {
     }
 
     @Override
-    public void setHeader(String header) {
+    public void setHeader(final String header) {
         final Widget firstWidget = _parentPanel.getWidget(0);
         if (firstWidget instanceof HeadingLabel) {
-            HeadingLabel headingLabel = (HeadingLabel) firstWidget;
+            final HeadingLabel headingLabel = (HeadingLabel) firstWidget;
             headingLabel.setText(header);
         } else {
-            HeadingLabel headingLabel = new HeadingLabel(header);
+            final HeadingLabel headingLabel = new HeadingLabel(header);
             _parentPanel.insert(headingLabel, 0);
         }
     }
@@ -66,15 +66,15 @@ public abstract class AbstractWizardPanel implements WizardPanel {
         return _buttonPanel;
     }
 
-    @Override
-    public void setContent(IsWidget w) {
-        _contentPanel.setWidget(w);
-    }
-    
     protected Widget getContent() {
         return _contentPanel.getWidget();
     }
-    
+
+    @Override
+    public void setContent(final IsWidget w) {
+        _contentPanel.setWidget(w);
+    }
+
     protected SimplePanel getContentPanel() {
         return _contentPanel;
     }

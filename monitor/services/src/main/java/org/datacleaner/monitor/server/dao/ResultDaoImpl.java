@@ -24,8 +24,9 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
-import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.SimpleAnalysisResult;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Predicate;
 import org.datacleaner.monitor.configuration.ResultContext;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -34,10 +35,9 @@ import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.SimpleAnalysisResult;
 import org.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -52,13 +52,42 @@ public class ResultDaoImpl implements ResultDao {
     private final ApplicationEventPublisher _eventPublisher;
 
     @Autowired
-    public ResultDaoImpl(TenantContextFactory tenantContextFactory, ApplicationEventPublisher eventPublisher) {
+    public ResultDaoImpl(final TenantContextFactory tenantContextFactory, final ApplicationEventPublisher eventPublisher) {
         _tenantContextFactory = tenantContextFactory;
         _eventPublisher = eventPublisher;
     }
 
+    protected static List<RepositoryFile> getResultsForJob(final String jobName, final RepositoryFolder resultsFolder) {
+
+        final String extension = FileFilters.ANALYSIS_RESULT_SER.getExtension();
+        final String prefix = jobName + "-";
+
+        final List<RepositoryFile> candidatesByFilename = resultsFolder.getFiles(prefix, extension);
+
+        final List<RepositoryFile> files = CollectionUtils.filter(candidatesByFilename,
+                new Predicate<RepositoryFile>() {
+                    @Override
+                    public Boolean eval(final RepositoryFile file) {
+                        // check that the remainding part of the file is ONLY a
+                        // timestamp - or else it might be a name conflict
+                        // between similarly named jobs.
+                        String timestampPart = file.getName();
+                        timestampPart = timestampPart.substring(prefix.length());
+                        timestampPart = timestampPart.substring(0, timestampPart.length() - extension.length());
+                        try {
+                            Long.parseLong(timestampPart);
+                            return true;
+                        } catch (final NumberFormatException e) {
+                            return false;
+                        }
+                    }
+                });
+
+        return files;
+    }
+
     @Override
-    public List<RepositoryFile> getResultsForJob(TenantIdentifier tenantIdentifier, JobIdentifier job) {
+    public List<RepositoryFile> getResultsForJob(final TenantIdentifier tenantIdentifier, final JobIdentifier job) {
         final TenantContext context = _tenantContextFactory.getContext(tenantIdentifier.getId());
         final RepositoryFolder resultsFolder = context.getResultFolder();
         final String jobName = job.getName();
@@ -67,7 +96,7 @@ public class ResultDaoImpl implements ResultDao {
     }
 
     @Override
-    public ResultContext getLatestResult(TenantIdentifier tenantIdentifier, JobIdentifier job) {
+    public ResultContext getLatestResult(final TenantIdentifier tenantIdentifier, final JobIdentifier job) {
         final TenantContext context = _tenantContextFactory.getContext(tenantIdentifier.getId());
         final RepositoryFolder resultsFolder = context.getResultFolder();
         final String jobName = job.getName();
@@ -82,54 +111,25 @@ public class ResultDaoImpl implements ResultDao {
         return context.getResult(resultFile.getName());
     }
 
-    protected static List<RepositoryFile> getResultsForJob(String jobName, RepositoryFolder resultsFolder) {
-
-        final String extension = FileFilters.ANALYSIS_RESULT_SER.getExtension();
-        final String prefix = jobName + "-";
-
-        final List<RepositoryFile> candidatesByFilename = resultsFolder.getFiles(prefix, extension);
-
-        final List<RepositoryFile> files = CollectionUtils.filter(candidatesByFilename,
-                new Predicate<RepositoryFile>() {
-                    @Override
-                    public Boolean eval(RepositoryFile file) {
-                        // check that the remainding part of the file is ONLY a
-                        // timestamp - or else it might be a name conflict
-                        // between similarly named jobs.
-                        String timestampPart = file.getName();
-                        timestampPart = timestampPart.substring(prefix.length());
-                        timestampPart = timestampPart.substring(0, timestampPart.length() - extension.length());
-                        try {
-                            Long.parseLong(timestampPart);
-                            return true;
-                        } catch (NumberFormatException e) {
-                            return false;
-                        }
-                    }
-                });
-
-        return files;
-    }
-
     @Override
-    public ResultContext getResult(TenantIdentifier tenant, RepositoryFile resultFile) {
+    public ResultContext getResult(final TenantIdentifier tenant, final RepositoryFile resultFile) {
         if (resultFile == null) {
             return null;
         }
-        TenantContext context = _tenantContextFactory.getContext(tenant);
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
         return context.getResult(resultFile.getName());
     }
 
     @Override
-    public ResultContext updateResult(TenantIdentifier tenantIdentifier, RepositoryFile resultFile,
-            JobIdentifier newJob, Date newTimestamp) {
-        ResultContext result = getResult(tenantIdentifier, resultFile);
+    public ResultContext updateResult(final TenantIdentifier tenantIdentifier, final RepositoryFile resultFile,
+            final JobIdentifier newJob, final Date newTimestamp) {
+        final ResultContext result = getResult(tenantIdentifier, resultFile);
         return updateResult(tenantIdentifier, result, newJob, newTimestamp);
     }
 
     @Override
-    public ResultContext updateResult(TenantIdentifier tenantIdentifier, ResultContext result, JobIdentifier newJob,
-            Date newDate) {
+    public ResultContext updateResult(final TenantIdentifier tenantIdentifier, final ResultContext result, final JobIdentifier newJob,
+            final Date newDate) {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenantIdentifier);
 
         final RepositoryFile existingFile = result.getResultFile();
@@ -152,7 +152,7 @@ public class ResultDaoImpl implements ResultDao {
         final int lastIndexOfDash = oldFilename.lastIndexOf('-');
         assert lastIndexOfDash != -1;
 
-        int extensionStartIndex = oldFilename.indexOf('.', lastIndexOfDash);
+        final int extensionStartIndex = oldFilename.indexOf('.', lastIndexOfDash);
         assert extensionStartIndex != -1;
         final String extension = oldFilename.substring(extensionStartIndex);
 
@@ -170,7 +170,7 @@ public class ResultDaoImpl implements ResultDao {
 
         final Action<OutputStream> writeAction = new Action<OutputStream>() {
             @Override
-            public void run(OutputStream out) throws Exception {
+            public void run(final OutputStream out) throws Exception {
                 final ObjectOutputStream oos = new ObjectOutputStream(out);
                 oos.writeObject(newAnalysisResult);
             }

@@ -69,8 +69,7 @@ public class SerializatorTest {
     private Object fromString(String value, Class<?> type) {
         try {
             return objectMapper.readValue(value, type);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error(e.getMessage());
 
             return null;

@@ -34,24 +34,24 @@ public interface ComponentJob extends HasName, InputColumnSinkJob, OutputDataStr
 
     /**
      * Gets the descriptor of this component type.
-     * 
+     *
      * @return a descriptor of this component type
      */
-    public ComponentDescriptor<?> getDescriptor();
+    ComponentDescriptor<?> getDescriptor();
 
     /**
      * Gets the name of this component job.
-     * 
+     *
      * @return an optional name given by the user to identify this component in
      *         a job (can be null if no name is assigned).
      */
     @Override
-    public String getName();
+    String getName();
 
     /**
      * Gets metadata properties associated with this component.
-     * 
+     *
      * @return
      */
-    public Map<String, String> getMetadataProperties();
+    Map<String, String> getMetadataProperties();
 }

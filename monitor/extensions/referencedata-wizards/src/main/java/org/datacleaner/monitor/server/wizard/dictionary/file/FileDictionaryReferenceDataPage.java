@@ -25,7 +25,7 @@ import org.datacleaner.monitor.shared.model.DCUserInputException;
 
 final class FileDictionaryReferenceDataPage extends FilePage {
 
-    public FileDictionaryReferenceDataPage(FileDictionaryReferenceDataWizardSession session) {
+    public FileDictionaryReferenceDataPage(final FileDictionaryReferenceDataWizardSession session) {
         super(session);
     }
 

@@ -38,7 +38,7 @@ public class MongoDbDatastoreTest extends TestCase {
         assertEquals("user", ds1.getUsername());
         assertEquals("[p, w]", Arrays.toString(ds1.getPassword()));
         assertEquals(null, ds1.getTableDefs());
-        
+
         assertTrue(ds1.getPerformanceCharacteristics().isQueryOptimizationPreferred());
     }
 }

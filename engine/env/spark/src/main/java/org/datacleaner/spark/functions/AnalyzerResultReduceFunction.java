@@ -45,12 +45,12 @@ public final class AnalyzerResultReduceFunction implements
 
     private final SparkJobContext _sparkJobContext;
 
-    public AnalyzerResultReduceFunction(SparkJobContext sparkJobContext) {
+    public AnalyzerResultReduceFunction(final SparkJobContext sparkJobContext) {
         _sparkJobContext = sparkJobContext;
     }
 
     @Override
-    public NamedAnalyzerResult call(NamedAnalyzerResult namedAnalyzerResult1, NamedAnalyzerResult namedAnalyzerResult2)
+    public NamedAnalyzerResult call(final NamedAnalyzerResult namedAnalyzerResult1, final NamedAnalyzerResult namedAnalyzerResult2)
             throws Exception {
 
         assert namedAnalyzerResult1.getName().equals(namedAnalyzerResult2.getName());
@@ -101,7 +101,7 @@ public final class AnalyzerResultReduceFunction implements
         return reducer;
     }
 
-    protected ResultDescriptor getResultDescriptor(ComponentJob componentJob, AnalyzerResult analyzerResult) {
+    protected ResultDescriptor getResultDescriptor(final ComponentJob componentJob, final AnalyzerResult analyzerResult) {
         final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
         if (descriptor instanceof ResultDescriptor) {
             return (ResultDescriptor) descriptor;

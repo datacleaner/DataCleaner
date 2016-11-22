@@ -21,63 +21,63 @@ package org.datacleaner.beans.stringpattern;
 
 public class SimpleToken implements Token {
 
-	private TokenType _type;
-	private StringBuilder _stringBuilder;
+    private TokenType _type;
+    private StringBuilder _stringBuilder;
 
-	public SimpleToken(TokenType type, StringBuilder stringBuilder) {
-		_type = type;
-		_stringBuilder = stringBuilder;
-	}
+    public SimpleToken(final TokenType type, final StringBuilder stringBuilder) {
+        _type = type;
+        _stringBuilder = stringBuilder;
+    }
 
-	public SimpleToken(TokenType type, String string) {
-		_type = type;
-		_stringBuilder = new StringBuilder(string);
-	}
+    public SimpleToken(final TokenType type, final String string) {
+        _type = type;
+        _stringBuilder = new StringBuilder(string);
+    }
 
-	public SimpleToken(TokenType type, char c) {
-		_type = type;
-		_stringBuilder = new StringBuilder();
-		_stringBuilder.append(c);
-	}
+    public SimpleToken(final TokenType type, final char c) {
+        _type = type;
+        _stringBuilder = new StringBuilder();
+        _stringBuilder.append(c);
+    }
 
-	@Override
-	public String getString() {
-		return _stringBuilder.toString();
-	}
+    @Override
+    public String getString() {
+        return _stringBuilder.toString();
+    }
 
-	public void appendChar(char c) {
-		_stringBuilder.append(c);
-	}
+    public void appendChar(final char c) {
+        _stringBuilder.append(c);
+    }
 
-	public void appendString(String s) {
-		_stringBuilder.append(s);
-	}
+    public void appendString(final String s) {
+        _stringBuilder.append(s);
+    }
 
-	public void prependChar(char c) {
-		_stringBuilder.insert(0, c);
-	}
+    public void prependChar(final char c) {
+        _stringBuilder.insert(0, c);
+    }
 
-	@Override
-	public int length() {
-		return _stringBuilder.length();
-	}
+    @Override
+    public int length() {
+        return _stringBuilder.length();
+    }
 
-	@Override
-	public char charAt(int index) {
-		return _stringBuilder.charAt(index);
-	}
+    @Override
+    public char charAt(final int index) {
+        return _stringBuilder.charAt(index);
+    }
 
-	@Override
-	public TokenType getType() {
-		return _type;
-	}
+    @Override
+    public TokenType getType() {
+        return _type;
+    }
 
-	public void setType(TokenType type) {
-		_type = type;
-	}
+    public void setType(final TokenType type) {
+        _type = type;
+    }
 
-	@Override
-	public String toString() {
-		return "Token['" + getString() + "' (" + _type + ")]";
-	}
+    @Override
+    public String toString() {
+        return "Token['" + getString() + "' (" + _type + ")]";
+    }
 }

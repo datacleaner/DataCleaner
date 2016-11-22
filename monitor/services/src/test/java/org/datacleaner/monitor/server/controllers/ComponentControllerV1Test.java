@@ -19,6 +19,11 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.TestCase.assertTrue;
+import static org.easymock.EasyMock.*;
+
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -54,11 +59,6 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.easymock.EasyMock.*;
 
 public class ComponentControllerV1Test {
     private String tenant = "demo";
@@ -115,7 +115,7 @@ public class ComponentControllerV1Test {
     private ComponentStoreHolder getComponentsStoreHolder() {
         CreateInput createInput = new CreateInput();
         ProcessStatelessInput input = createSampleInput();
-        createInput.configuration =  input.configuration;
+        createInput.configuration = input.configuration;
         long timeoutMs = 1000L;
         ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(timeoutMs, createInput, id, componentName);
 
@@ -171,7 +171,7 @@ public class ComponentControllerV1Test {
         ArrayNode row = json.arrayNode();
         row.add(json.textNode("Hello"));
         row.add(json.textNode("World"));
-        ((ArrayNode)input.data).add(row);
+        ((ArrayNode) input.data).add(row);
         return input;
     }
 
@@ -189,7 +189,8 @@ public class ComponentControllerV1Test {
     @Test
     public void testProcessStateless() throws Exception {
         ProcessStatelessInput input = createSampleInput();
-        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, null, false, input);
+        ProcessStatelessOutput output =
+                componentControllerV1.processStateless(tenant, componentName, null, false, input);
         JsonNode rows = output.rows;
         Assert.assertEquals("Output should have one row group", 1, rows.size());
         Assert.assertEquals("Output should have one row", 1, rows.get(0).size());
@@ -202,7 +203,8 @@ public class ComponentControllerV1Test {
 
         ProcessStatelessInput input = createSampleInput();
 
-        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, "map", false, input);
+        ProcessStatelessOutput output =
+                componentControllerV1.processStateless(tenant, componentName, "map", false, input);
         JsonNode rows = output.rows;
         Assert.assertEquals("Output should have one row group", 1, rows.size());
         Assert.assertEquals("Output should have one row", 1, rows.get(0).size());

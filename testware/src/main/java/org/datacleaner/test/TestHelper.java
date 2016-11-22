@@ -33,7 +33,7 @@ import org.junit.Assert;
 public class TestHelper {
 
     public static DataSource createSampleDatabaseDataSource() {
-        BasicDataSource _dataSource = new BasicDataSource();
+        final BasicDataSource _dataSource = new BasicDataSource();
         _dataSource.setDriverClassName("org.hsqldb.jdbcDriver");
         _dataSource.setUrl("jdbc:hsqldb:res:orderdb;readonly=true");
         _dataSource.setMaxActive(-1);
@@ -41,11 +41,11 @@ public class TestHelper {
         return _dataSource;
     }
 
-    public static Datastore createSampleDatabaseDatastore(String name) {
+    public static Datastore createSampleDatabaseDatastore(final String name) {
         return new TestDatastore(name, createSampleDatabaseDataSource());
     }
 
-    public static void assertXmlFilesEquals(File benchmarkFile, File outputFile) {
+    public static void assertXmlFilesEquals(final File benchmarkFile, final File outputFile) {
         final String output = FileHelper.readFileAsString(outputFile);
 
         if (!benchmarkFile.exists()) {
@@ -56,22 +56,22 @@ public class TestHelper {
         Assert.assertEquals(trimXmlForComparison(benchmark), trimXmlForComparison(output));
     }
 
-    public static String trimXmlForComparison(String xml) {
+    public static String trimXmlForComparison(final String xml) {
         if (xml == null) {
             return null;
         }
         return xml.trim().replace("\r\n", "\n");
     }
-    
+
     public static boolean isInternetConnected() {
         return isInternetConnected("google.com");
     }
 
-    public static boolean isInternetConnected(String hostnameToCheck) {
+    public static boolean isInternetConnected(final String hostnameToCheck) {
         try {
             InetAddress.getByName(hostnameToCheck);
             return true;
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             return false;
         }
     }

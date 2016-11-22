@@ -47,7 +47,11 @@ public final class ExtensionPackage implements Serializable, HasName {
     private static final Logger logger = LoggerFactory.getLogger(ExtensionPackage.class);
 
     private static Collection<ClassLoader> _allExtensionClassLoaders = new ArrayList<ClassLoader>();
-
+    private final File[] _files;
+    private final String _name;
+    private final String _scanPackage;
+    private final boolean _scanRecursive;
+    private final Map<String, String> _additionalProperties;
     private transient boolean _loaded = false;
     private transient int _loadedAnalyzers;
     private transient int _loadedTransformers;
@@ -55,13 +59,7 @@ public final class ExtensionPackage implements Serializable, HasName {
     private transient int _loadedRenderers;
     private transient ClassLoader _classLoader;
 
-    private final File[] _files;
-    private final String _name;
-    private final String _scanPackage;
-    private final boolean _scanRecursive;
-    private final Map<String, String> _additionalProperties;
-
-    public ExtensionPackage(String name, String scanPackage, boolean scanRecursive, File[] files) {
+    public ExtensionPackage(final String name, String scanPackage, final boolean scanRecursive, final File[] files) {
         _name = name;
         if (scanPackage == null) {
             scanPackage = "";
@@ -72,6 +70,19 @@ public final class ExtensionPackage implements Serializable, HasName {
         _additionalProperties = new HashMap<String, String>();
     }
 
+    /**
+     * Gets the classloader that represents the currently loaded extensions'
+     * classes.
+     *
+     * @return
+     */
+    public static ClassLoader getExtensionClassLoader() {
+        final Collection<ClassLoader> childClassLoaders = new ArrayList<>();
+        childClassLoaders.addAll(_allExtensionClassLoaders);
+        childClassLoaders.add(ClassLoaderUtils.getParentClassLoader());
+        return new CompoundClassLoader(childClassLoaders);
+    }
+
     public File[] getFiles() {
         return Arrays.copyOf(_files, _files.length);
     }
@@ -79,7 +90,7 @@ public final class ExtensionPackage implements Serializable, HasName {
     /**
      * Determines if this extension is externally installed from a file not in
      * the primary classpath.
-     * 
+     *
      * @return
      */
     public boolean isExternal() {
@@ -89,7 +100,7 @@ public final class ExtensionPackage implements Serializable, HasName {
     /**
      * Determines if this extension is internally installed by being placed on
      * the primary classpath.
-     * 
+     *
      * @return
      */
     private boolean isInternal() {
@@ -136,14 +147,14 @@ public final class ExtensionPackage implements Serializable, HasName {
         return _files;
     }
 
-    public ExtensionPackage loadDescriptors(DescriptorProvider descriptorProvider) throws IllegalStateException {
+    public ExtensionPackage loadDescriptors(final DescriptorProvider descriptorProvider) throws IllegalStateException {
         if (!_loaded) {
 
             final ClasspathScanDescriptorProvider classpathScanner;
-            if(descriptorProvider instanceof ClasspathScanDescriptorProvider) {
+            if (descriptorProvider instanceof ClasspathScanDescriptorProvider) {
                 classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
-            } else if(descriptorProvider instanceof CompositeDescriptorProvider) {
-                classpathScanner = ((CompositeDescriptorProvider)descriptorProvider).findClasspathScanProvider();
+            } else if (descriptorProvider instanceof CompositeDescriptorProvider) {
+                classpathScanner = ((CompositeDescriptorProvider) descriptorProvider).findClasspathScanProvider();
             } else {
                 throw new IllegalStateException(
                         "Can only load user extensions when descriptor provider is of classpath scanner type.");
@@ -199,19 +210,6 @@ public final class ExtensionPackage implements Serializable, HasName {
 
     public int getLoadedTransformers() {
         return _loadedTransformers;
-    }
-
-    /**
-     * Gets the classloader that represents the currently loaded extensions'
-     * classes.
-     * 
-     * @return
-     */
-    public static ClassLoader getExtensionClassLoader() {
-        final Collection<ClassLoader> childClassLoaders = new ArrayList<>();
-        childClassLoaders.addAll(_allExtensionClassLoaders);
-        childClassLoaders.add(ClassLoaderUtils.getParentClassLoader());
-        return new CompoundClassLoader(childClassLoaders);
     }
 
     public String getDescription() {

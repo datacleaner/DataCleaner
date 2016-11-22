@@ -45,7 +45,7 @@ public class ValueMatchAnalyzerResultReducer implements AnalyzerResultReducer<Va
     RowAnnotationFactory _rowAnnotationFactory;
 
     @Override
-    public ValueMatchAnalyzerResult reduce(Collection<? extends ValueMatchAnalyzerResult> analyzerResults) {
+    public ValueMatchAnalyzerResult reduce(final Collection<? extends ValueMatchAnalyzerResult> analyzerResults) {
         final ValueMatchAnalyzerResult firstResult = analyzerResults.iterator().next();
 
         final InputColumn<?> column = firstResult.getColumn();
@@ -55,10 +55,11 @@ public class ValueMatchAnalyzerResultReducer implements AnalyzerResultReducer<Va
 
         int totalCount = 0;
 
-        for (ValueMatchAnalyzerResult analyzerResult : analyzerResults) {
+        for (final ValueMatchAnalyzerResult analyzerResult : analyzerResults) {
             final AnnotatedRowsResult slaveNullAnnotation = analyzerResult.getAnnotatedRowsForNull();
-            final AnnotatedRowsResult slaveUnexpectedValuesAnnotation = analyzerResult.getAnnotatedRowsForUnexpectedValues();
-            
+            final AnnotatedRowsResult slaveUnexpectedValuesAnnotation =
+                    analyzerResult.getAnnotatedRowsForUnexpectedValues();
+
             totalCount += analyzerResult.getTotalCount();
             reduce(nullAnnotation, slaveNullAnnotation);
             reduce(unexpectedValuesAnnotation, slaveUnexpectedValuesAnnotation);
@@ -75,7 +76,7 @@ public class ValueMatchAnalyzerResultReducer implements AnalyzerResultReducer<Va
                             masterAnnotation = _rowAnnotationFactory.createAnnotation();
                             valueAnnotations.put(expectedValue, masterAnnotation);
                         }
-                        
+
                         reduce(masterAnnotation, annotatedRowsResultForExpectedValue);
                     }
                 }
@@ -87,7 +88,7 @@ public class ValueMatchAnalyzerResultReducer implements AnalyzerResultReducer<Va
         return result;
     }
 
-    private void reduce(RowAnnotation annotation, AnnotatedRowsResult annotatedRowsResult) {
+    private void reduce(final RowAnnotation annotation, final AnnotatedRowsResult annotatedRowsResult) {
         if (annotatedRowsResult == null) {
             return;
         }
@@ -98,7 +99,7 @@ public class ValueMatchAnalyzerResultReducer implements AnalyzerResultReducer<Va
 
         final List<InputRow> rows = annotatedRowsResult.getSampleRows();
         if (rows.size() == rowCount) {
-            for (InputRow row : rows) {
+            for (final InputRow row : rows) {
                 _rowAnnotationFactory.annotate(row, annotation);
             }
         } else {

@@ -49,14 +49,11 @@ import org.slf4j.LoggerFactory;
 
 class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListener.ReorderColumnsCallback {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final Logger logger = LoggerFactory.getLogger(StreamColumnListPanel.class);
-
-    public static interface Listener {
-        public void onValueChanged(StreamColumnListPanel panel);
+    public interface Listener {
+        void onValueChanged(StreamColumnListPanel panel);
     }
-
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(StreamColumnListPanel.class);
     private final Table _table;
     private final List<Listener> _listeners;
     private final DCPanel _selectedCheckboxesPanel;
@@ -64,7 +61,7 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
 
     private DCPanel _buttonPanelForSelected;
 
-    public StreamColumnListPanel(AnalysisJobBuilder rootAnalysisJobBuilder, Table table, Listener listener) {
+    public StreamColumnListPanel(final AnalysisJobBuilder rootAnalysisJobBuilder, final Table table, final Listener listener) {
         super();
         _table = table;
         _listeners = new ArrayList<>();
@@ -93,8 +90,8 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
         selectAllButton.setFont(WidgetUtils.FONT_SMALL);
         selectAllButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                for (DCCheckBox<InputColumn<?>> checkBox : getAvailableInputColumnCheckBoxes()) {
+            public void actionPerformed(final ActionEvent e) {
+                for (final DCCheckBox<InputColumn<?>> checkBox : getAvailableInputColumnCheckBoxes()) {
                     checkBox.setSelected(true);
                 }
                 fireValueChanged();
@@ -105,8 +102,8 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
         selectNoneButton.setFont(WidgetUtils.FONT_SMALL);
         selectNoneButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                for (DCCheckBox<InputColumn<?>> checkBox : getSelectedInputColumnCheckBoxes()) {
+            public void actionPerformed(final ActionEvent e) {
+                for (final DCCheckBox<InputColumn<?>> checkBox : getSelectedInputColumnCheckBoxes()) {
                     checkBox.setSelected(false);
                 }
                 fireValueChanged();
@@ -121,7 +118,7 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
         // only show the "selected" button panel when there are any selections
         addListener(new Listener() {
             @Override
-            public void onValueChanged(StreamColumnListPanel panel) {
+            public void onValueChanged(final StreamColumnListPanel panel) {
                 refresh();
             }
         });
@@ -136,12 +133,12 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
         add(_availableCheckboxesPanel);
     }
 
-    public void addListener(Listener listener) {
+    public void addListener(final Listener listener) {
         _listeners.add(listener);
     }
 
     private void fireValueChanged() {
-        for (Listener listener : _listeners) {
+        for (final Listener listener : _listeners) {
             listener.onValueChanged(this);
         }
     }
@@ -162,22 +159,22 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
         return getInputColumnCheckBoxes(_availableCheckboxesPanel);
     }
 
-    private List<DCCheckBox<InputColumn<?>>> getInputColumnCheckBoxes(DCPanel panel) {
+    private List<DCCheckBox<InputColumn<?>>> getInputColumnCheckBoxes(final DCPanel panel) {
         final Component[] components = panel.getComponents();
         return CollectionUtils.map(components, new Func<Component, DCCheckBox<InputColumn<?>>>() {
             @SuppressWarnings("unchecked")
             @Override
-            public DCCheckBox<InputColumn<?>> eval(Component component) {
+            public DCCheckBox<InputColumn<?>> eval(final Component component) {
                 return (DCCheckBox<InputColumn<?>>) component;
             }
         });
     }
 
-    public void addInputColumn(InputColumn<?> inputColumn, boolean coalesced) {
+    public void addInputColumn(final InputColumn<?> inputColumn, final boolean coalesced) {
         final DCCheckBox<InputColumn<?>> checkBox = new DCCheckBox<>(inputColumn.getName(), coalesced);
         checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
             @Override
-            public void onItemSelected(InputColumn<?> item, boolean selected) {
+            public void onItemSelected(final InputColumn<?> item, final boolean selected) {
                 if (selected) {
                     _availableCheckboxesPanel.remove(checkBox);
                     _selectedCheckboxesPanel.add(checkBox);
@@ -199,10 +196,10 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
 
     public List<InputColumn<?>> getAllInputColumns() {
         final List<InputColumn<?>> result = new ArrayList<>();
-        for (DCCheckBox<InputColumn<?>> checkBox : getSelectedInputColumnCheckBoxes()) {
+        for (final DCCheckBox<InputColumn<?>> checkBox : getSelectedInputColumnCheckBoxes()) {
             result.add(checkBox.getValue());
         }
-        for (DCCheckBox<InputColumn<?>> checkBox : getAvailableInputColumnCheckBoxes()) {
+        for (final DCCheckBox<InputColumn<?>> checkBox : getAvailableInputColumnCheckBoxes()) {
             result.add(checkBox.getValue());
         }
         return result;
@@ -210,7 +207,7 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
 
     public List<InputColumn<?>> getCoalescedInputColumns() {
         final List<InputColumn<?>> result = new ArrayList<>();
-        for (DCCheckBox<InputColumn<?>> checkBox : getSelectedInputColumnCheckBoxes()) {
+        for (final DCCheckBox<InputColumn<?>> checkBox : getSelectedInputColumnCheckBoxes()) {
             result.add(checkBox.getValue());
         }
         return result;
@@ -226,11 +223,11 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
     }
 
     @Override
-    public void reorderColumns(InputColumn<?>[] newValue) {
+    public void reorderColumns(final InputColumn<?>[] newValue) {
         final List<DCCheckBox<InputColumn<?>>> selectedInputColumnCheckBoxes = getSelectedInputColumnCheckBoxes();
 
         _selectedCheckboxesPanel.removeAll();
-        for (InputColumn<?> inputColumn : newValue) {
+        for (final InputColumn<?> inputColumn : newValue) {
             // find the corresponding checkbox and add it
             boolean found = false;
             for (int i = 0; i < selectedInputColumnCheckBoxes.size(); i++) {

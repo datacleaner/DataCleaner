@@ -22,15 +22,15 @@ package org.datacleaner.user;
 import org.datacleaner.reference.StringPattern;
 
 
-/** 
+/**
  *  Use {@link org.datacleaner.user.ReferenceDataChangeListener} instead
  */
 @Deprecated
 public interface StringPatternChangeListener {
 
     @Deprecated
-	public void onAdd(StringPattern stringPattern);
+    void onAdd(StringPattern stringPattern);
 
     @Deprecated
-	public void onRemove(StringPattern stringPattern);
+    void onRemove(StringPattern stringPattern);
 }

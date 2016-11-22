@@ -59,7 +59,8 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
     private final List<RowProcessingConsumer> _consumers;
     private final Map<FilterConsumer, FilterOutcome> _optimizedFilters;
 
-    public RowProcessingQueryOptimizerImpl(Datastore datastore, List<RowProcessingConsumer> consumers, Query baseQuery) {
+    public RowProcessingQueryOptimizerImpl(final Datastore datastore, final List<RowProcessingConsumer> consumers,
+            final Query baseQuery) {
         _datastore = datastore;
         _consumers = consumers;
         _baseQuery = baseQuery;
@@ -109,14 +110,14 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
         }
     }
 
-    private boolean isOptimizable(FilterConsumer filterConsumer) {
+    private boolean isOptimizable(final FilterConsumer filterConsumer) {
         final FilterDescriptor<?, ?> descriptor = filterConsumer.getComponentJob().getDescriptor();
         if (!descriptor.isQueryOptimizable()) {
             logger.debug("FilterBeanDescriptor not optimizable: {}", descriptor);
             return false;
         }
         final InputColumn<?>[] input = filterConsumer.getRequiredInput();
-        for (InputColumn<?> inputColumn : input) {
+        for (final InputColumn<?> inputColumn : input) {
             if (inputColumn.isVirtualColumn()) {
                 logger.debug("InputColumn is virtual: {}, so filter is not optimizable: {}", inputColumn,
                         filterConsumer);
@@ -135,7 +136,7 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
 
         if (!_datastore.getPerformanceCharacteristics().isQueryOptimizationPreferred()) {
             // the datastore doesn't prefer query optimization
-            Class<?> filterClass = filterConsumer.getComponentJob().getDescriptor().getComponentClass();
+            final Class<?> filterClass = filterConsumer.getComponentJob().getDescriptor().getComponentClass();
             if (!ArrayUtils.contains(ALWAYS_OPTIMIZABLE, filterClass)) {
                 logger.debug(
                         "Datastore performance characteristics indicate that query optimization will not improve performance for {}, stopping",
@@ -172,8 +173,8 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
             }
 
             if (componentJob instanceof InputColumnSinkJob) {
-                InputColumn<?>[] requiredColumns = ((InputColumnSinkJob) componentJob).getInput();
-                for (InputColumn<?> column : requiredColumns) {
+                final InputColumn<?>[] requiredColumns = ((InputColumnSinkJob) componentJob).getInput();
+                for (final InputColumn<?> column : requiredColumns) {
                     if (column.isVirtualColumn()) {
                         if (!satisfiedColumns.contains(column)) {
                             logger.debug(
@@ -205,8 +206,8 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
             }
 
             if (componentJob instanceof InputColumnSourceJob) {
-                InputColumn<?>[] output = ((InputColumnSourceJob) componentJob).getOutput();
-                for (InputColumn<?> column : output) {
+                final InputColumn<?>[] output = ((InputColumnSourceJob) componentJob).getOutput();
+                for (final InputColumn<?> column : output) {
                     satisfiedColumns.add(column);
                 }
             }
@@ -224,7 +225,7 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
             // create a copy/clone of the original query
             q = q.clone();
 
-            for (Entry<FilterConsumer, FilterOutcome> entry : entries) {
+            for (final Entry<FilterConsumer, FilterOutcome> entry : entries) {
 
                 final FilterConsumer consumer = entry.getKey();
 
@@ -245,8 +246,8 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
 
     @Override
     public List<RowProcessingConsumer> getOptimizedConsumers() {
-        List<RowProcessingConsumer> result = new ArrayList<RowProcessingConsumer>(_consumers);
-        for (FilterConsumer filterConsumer : _optimizedFilters.keySet()) {
+        final List<RowProcessingConsumer> result = new ArrayList<RowProcessingConsumer>(_consumers);
+        for (final FilterConsumer filterConsumer : _optimizedFilters.keySet()) {
             if (filterConsumer.isRemoveableUponOptimization()) {
                 result.remove(filterConsumer);
             }

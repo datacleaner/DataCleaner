@@ -34,7 +34,7 @@ public abstract class MultiStreamComponent implements Transformer, HasOutputData
     }
 
     @Override
-    public final Object[] transform(InputRow inputRow) {
+    public final Object[] transform(final InputRow inputRow) {
         run(inputRow);
         return transformerOutputValues;
     }
@@ -43,7 +43,7 @@ public abstract class MultiStreamComponent implements Transformer, HasOutputData
      * Method invoked for each {@link InputRow} that this component is
      * consuming. The row may pertain to either of the configured input data
      * streams.
-     * 
+     *
      * @param inputRow
      */
     protected abstract void run(InputRow inputRow);

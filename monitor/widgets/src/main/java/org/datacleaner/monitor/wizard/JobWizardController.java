@@ -66,8 +66,8 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
     private ScheduleDefinition _scheduleDefinitionForJob = null;
 
-    public JobWizardController(WizardPanel wizardPanel, TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
-            DatastoreIdentifier datastoreIdentifier, WizardServiceAsync wizardService) {
+    public JobWizardController(final WizardPanel wizardPanel, final TenantIdentifier tenant, final WizardIdentifier wizardIdentifier,
+            final DatastoreIdentifier datastoreIdentifier, final WizardServiceAsync wizardService) {
         super(wizardPanel, tenant, wizardIdentifier, wizardService);
         _datastoreIdentifier = datastoreIdentifier;
 
@@ -104,7 +104,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         getWizardPanel().setHeader("Build job: " + wizardIdentifier.getDisplayName());
         setLoading();
 
-        WizardServiceAsync wizardService = getWizardService();
+        final WizardServiceAsync wizardService = getWizardService();
         wizardService.startJobWizard(getTenant(), wizardIdentifier, _datastoreIdentifier, getLocaleName(),
                 createNextPageCallback());
     }
@@ -119,7 +119,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         final Button closeButton = DCButtons.primaryButton(null, "Close");
         closeButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 closeWizardAfterFinishing(jobName, "scheduling");
             }
         });
@@ -132,15 +132,15 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         contentPanel.addStyleName("WizardFinishedPanel");
 
         if (jobName != null && clientConfig.isScheduleEditor()) {
-            	 
-           	contentPanel.add(_loadingIndicator);
+
+            contentPanel.add(_loadingIndicator);
             setContent(contentPanel);
-                 
-           	getSchedule(new Runnable() {
-           		
-           		@Override
+
+            getSchedule(new Runnable() {
+
+                @Override
                 public void run() {
-           			
+
                     final Anchor triggerAnchor = createTriggerAnchor(jobName);
                     final Anchor schedulingAnchor = createSchedulingAnchor(jobName);
 
@@ -148,32 +148,32 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
                     // metrics on the dashboard" anchor as well. Add it?
 
                     contentPanel.remove(_loadingIndicator);
-                    
+
                     populateContentPanel(jobName, closeButton, contentPanel);
                     contentPanel.add(triggerAnchor);
                     contentPanel.add(schedulingAnchor);
-                    
-               }
-          	}, jobName);
-      } else {
-         	populateContentPanel(jobName, closeButton, contentPanel);
-      }
+
+                }
+            }, jobName);
+        } else {
+            populateContentPanel(jobName, closeButton, contentPanel);
+        }
     }
 
-	private void populateContentPanel(final String jobName,
-			final Button closeButton, final FlowPanel contentPanel) {
-		if (jobName == null) {
-		    contentPanel.add(new Label("Job created! Wizard finished."));
-		} else {
-		    contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
-		}
-		contentPanel.add(new Label("Click 'Close' to return, or click one of the links below to start using the job."));
-		setContent(contentPanel);
-		getWizardPanel().getButtonPanel().clear();
-		getWizardPanel().getButtonPanel().addButton(closeButton);
-	}
+    private void populateContentPanel(final String jobName,
+            final Button closeButton, final FlowPanel contentPanel) {
+        if (jobName == null) {
+            contentPanel.add(new Label("Job created! Wizard finished."));
+        } else {
+            contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
+        }
+        contentPanel.add(new Label("Click 'Close' to return, or click one of the links below to start using the job."));
+        setContent(contentPanel);
+        getWizardPanel().getButtonPanel().clear();
+        getWizardPanel().getButtonPanel().addButton(closeButton);
+    }
 
-    protected Anchor createSchedulingAnchor(String jobName) {
+    protected Anchor createSchedulingAnchor(final String jobName) {
         final Anchor anchor = new Anchor("Set up a job schedule");
         anchor.addStyleName("ScheduleJob");
         ClickHandler clickHandler = new CustomizeScheduleClickHandler(null, schedulingService, getTenant(),
@@ -183,8 +183,8 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         return anchor;
     }
 
-    protected Anchor createTriggerAnchor(String jobName) {
-        Anchor anchor = new Anchor("Run this job now");
+    protected Anchor createTriggerAnchor(final String jobName) {
+        final Anchor anchor = new Anchor("Run this job now");
         anchor.addStyleName("TriggerJob");
         ClickHandler clickHandler = new TriggerJobClickHandler(schedulingService, getTenant(),
                 _scheduleDefinitionForJob);
@@ -196,8 +196,8 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
     private void getSchedule(final Runnable runnable, final String jobName) {
         schedulingService.getSchedules(getTenant(), true, new DCAsyncCallback<List<ScheduleDefinition>>() {
             @Override
-            public void onSuccess(List<ScheduleDefinition> result) {
-                for (ScheduleDefinition scheduleDefinition : result) {
+            public void onSuccess(final List<ScheduleDefinition> result) {
+                for (final ScheduleDefinition scheduleDefinition : result) {
                     if (scheduleDefinition.getJob().getName().equals(jobName)) {
                         _scheduleDefinitionForJob = scheduleDefinition;
                         runnable.run();
@@ -220,7 +220,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
         setNextClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 for (int i = 0; i < datastoreRadios.size(); i++) {
                     final RadioButton radio = datastoreRadios.get(i);
                     if (radio.getValue().booleanValue()) {
@@ -252,7 +252,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         getWizardService().getNonDatastoreConsumingJobWizardIdentifiers(getTenant(), getLocaleName(),
                 new DCAsyncCallback<List<WizardIdentifier>>() {
                     @Override
-                    public void onSuccess(List<WizardIdentifier> wizards) {
+                    public void onSuccess(final List<WizardIdentifier> wizards) {
                         _wizards = wizards;
                         showNonDatastoreConsumingWizardSelection(wizardSelectionPanel, wizards, radios);
                     }
@@ -271,7 +271,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             final RadioButton radio = new RadioButton("initialSelection", wizard.getDisplayName());
             radio.addClickHandler(new ClickHandler() {
                 @Override
-                public void onClick(ClickEvent event) {
+                public void onClick(final ClickEvent event) {
                     GWT.log("Clicked: " + wizard + " - expected " + wizard.getExpectedPageCount() + " pages");
                     _stepsBeforeWizardPages = 1;
                     setSteps(wizard.getExpectedPageCount() + getStepsBeforeWizardPages(), false);
@@ -291,7 +291,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
         datastoreService.getAvailableDatastores(getTenant(), new DCAsyncCallback<List<DatastoreIdentifier>>() {
             @Override
-            public void onSuccess(List<DatastoreIdentifier> datastores) {
+            public void onSuccess(final List<DatastoreIdentifier> datastores) {
                 _datastores = datastores;
                 showDatastoreSelection(datastoreSelectionPanel, datastores, radios);
             }
@@ -306,7 +306,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             final RadioButton radio = new RadioButton("initialSelection", datastore.getName());
             radio.addClickHandler(new ClickHandler() {
                 @Override
-                public void onClick(ClickEvent event) {
+                public void onClick(final ClickEvent event) {
                     GWT.log("Clicked: " + datastore);
                     _stepsBeforeWizardPages = 2;
                     setSteps(getStepsBeforeWizardPages(), true);
@@ -332,7 +332,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         getWizardService().getJobWizardIdentifiers(getTenant(), _datastoreIdentifier, getLocaleName(),
                 new DCAsyncCallback<List<WizardIdentifier>>() {
                     @Override
-                    public void onSuccess(List<WizardIdentifier> wizards) {
+                    public void onSuccess(final List<WizardIdentifier> wizards) {
                         showWizardSelection(wizards);
                     }
                 });
@@ -354,7 +354,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
                 final RadioButton radio = new RadioButton("wizardIdentifier", wizard.getDisplayName());
                 radio.addClickHandler(new ClickHandler() {
                     @Override
-                    public void onClick(ClickEvent event) {
+                    public void onClick(final ClickEvent event) {
                         setSteps(wizard.getExpectedPageCount() + getStepsBeforeWizardPages());
                         setProgress(progress);
                     }
@@ -367,7 +367,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
         setNextClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 for (int i = 0; i < radios.size(); i++) {
                     final RadioButton radio = radios.get(i);
                     if (radio.getValue().booleanValue()) {

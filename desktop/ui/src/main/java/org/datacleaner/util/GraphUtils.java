@@ -43,51 +43,50 @@ import edu.uci.ics.jung.visualization.util.ArrowFactory;
  */
 public class GraphUtils {
 
+    public static final Shape ARROW_SHAPE = ArrowFactory.getWedgeArrow(6, 6);
     private static final BasicStroke stroke = new BasicStroke(1.2f);
 
     private GraphUtils() {
         // prevent instantiation
     }
-    
-    public static final Shape ARROW_SHAPE = ArrowFactory.getWedgeArrow(6, 6);
 
-    public static <V, E> void applyStyles(VisualizationViewer<V, E> visualizationViewer) {
+    public static <V, E> void applyStyles(final VisualizationViewer<V, E> visualizationViewer) {
         final RenderContext<V, E> renderContext = visualizationViewer.getRenderContext();
 
         renderContext.setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM, false));
         renderContext.setEdgeStrokeTransformer(new Transformer<E, Stroke>() {
             @Override
-            public Stroke transform(E input) {
+            public Stroke transform(final E input) {
                 return stroke;
             }
         });
         renderContext.setEdgeDrawPaintTransformer(new Transformer<E, Paint>() {
             @Override
-            public Paint transform(E input) {
+            public Paint transform(final E input) {
                 return WidgetUtils.BG_COLOR_MEDIUM;
             }
         });
         renderContext.setVertexLabelRenderer(new DefaultVertexLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM));
         renderContext.setEdgeFontTransformer(GraphUtils.<E> createFontTransformer());
         renderContext.setVertexFontTransformer(GraphUtils.<V> createFontTransformer());
-        
+
         final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<Object, Integer>() {
             @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
+            public void mouseWheelMoved(final MouseWheelEvent e) {
                 // avoid zooming
                 return;
             }
         };
         graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
         graphMouse.setZoomAtMouse(false);
-        
+
         visualizationViewer.setGraphMouse(graphMouse);
     }
 
     private static <E> Transformer<E, Font> createFontTransformer() {
         return new Transformer<E, Font>() {
             @Override
-            public Font transform(E input) {
+            public Font transform(final E input) {
                 final Font defaultFont = WidgetUtils.FONT_SMALL;
                 if (input == null) {
                     return defaultFont;

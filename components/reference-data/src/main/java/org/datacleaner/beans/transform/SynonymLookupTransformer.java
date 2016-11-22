@@ -65,7 +65,7 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
 
         private final String _name;
 
-        ReplacedSynonymsType(String name) {
+        ReplacedSynonymsType(final String name) {
             _name = name;
         }
 
@@ -104,8 +104,8 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     public SynonymLookupTransformer() {
     }
 
-    public SynonymLookupTransformer(InputColumn<String> column, SynonymCatalog synonymCatalog,
-            boolean retainOriginalValue, DataCleanerConfiguration configuration) {
+    public SynonymLookupTransformer(final InputColumn<String> column, final SynonymCatalog synonymCatalog,
+            final boolean retainOriginalValue, final DataCleanerConfiguration configuration) {
         this();
         this.column = column;
         this.synonymCatalog = synonymCatalog;
@@ -148,7 +148,7 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     }
 
     @Override
-    public Object[] transform(InputRow inputRow) {
+    public Object[] transform(final InputRow inputRow) {
         final String originalValue = inputRow.getValue(column);
 
         if (originalValue == null) {

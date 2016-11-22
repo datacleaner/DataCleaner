@@ -37,24 +37,23 @@ import org.springframework.stereotype.Component;
 
 @Component("RefereceDataService")
 public class ReferenceDataServiceImpl implements ReferenceDataService, ApplicationContextAware {
-    private ApplicationContext _applicationContext;
-
     @Autowired
     TenantContextFactory _contextFactory;
+    private ApplicationContext _applicationContext;
 
     @Override
-    public Set<ReferenceDataItem> getDictionaries(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getDictionaries(final TenantIdentifier tenant) {
         return namesToList(ReferenceDataItem.Type.DICTIONARY, getReferenceDataCatalog(tenant).getDictionaryNames());
     }
 
     @Override
-    public Set<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getSynonymCatalogs(final TenantIdentifier tenant) {
         return namesToList(ReferenceDataItem.Type.SYNONYM_CATALOG,
                 getReferenceDataCatalog(tenant).getSynonymCatalogNames());
     }
 
     @Override
-    public Set<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getStringPatterns(final TenantIdentifier tenant) {
         return namesToList(ReferenceDataItem.Type.STRING_PATTERN,
                 getReferenceDataCatalog(tenant).getStringPatternNames());
     }
@@ -87,14 +86,14 @@ public class ReferenceDataServiceImpl implements ReferenceDataService, Applicati
         return false;
     }
 
-    private ReferenceDataCatalog getReferenceDataCatalog(TenantIdentifier tenant) {
+    private ReferenceDataCatalog getReferenceDataCatalog(final TenantIdentifier tenant) {
         return _contextFactory.getContext(tenant).getConfiguration().getReferenceDataCatalog();
     }
 
-    private Set<ReferenceDataItem> namesToList(ReferenceDataItem.Type type, String[] allNames) {
+    private Set<ReferenceDataItem> namesToList(final ReferenceDataItem.Type type, final String[] allNames) {
         final Set<ReferenceDataItem> set = new HashSet<>();
 
-        for (String name : allNames) {
+        for (final String name : allNames) {
             set.add(new ReferenceDataItem(type, name));
         }
 
@@ -102,7 +101,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService, Applicati
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         System.out.println("The application context has been initialized: " + applicationContext.getDisplayName());
         _applicationContext = applicationContext;
     }

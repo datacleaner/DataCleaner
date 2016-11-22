@@ -60,14 +60,14 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
     private final FilterComponentBuilder<?, ?> _filterComponentBuilder;
     private final DCPanel _outcomePanel;
 
-    public FilterComponentBuilderPanel(FilterComponentBuilder<?, ?> filterJobBuilder, WindowContext windowContext,
-            PropertyWidgetFactory propertyWidgetFactory) {
+    public FilterComponentBuilderPanel(final FilterComponentBuilder<?, ?> filterJobBuilder, final WindowContext windowContext,
+            final PropertyWidgetFactory propertyWidgetFactory) {
         this(null, 95, 95, filterJobBuilder, windowContext, propertyWidgetFactory);
     }
 
-    protected FilterComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-            int watermarkVerticalPosition, FilterComponentBuilder<?, ?> filterComponentBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory) {
+    protected FilterComponentBuilderPanel(final Image watermarkImage, final int watermarkHorizontalPosition,
+            final int watermarkVerticalPosition, final FilterComponentBuilder<?, ?> filterComponentBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory) {
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, filterComponentBuilder,
                 propertyWidgetFactory);
 
@@ -89,7 +89,7 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
         final JButton helpButton = WidgetFactory.createSmallButton(IconUtils.ACTION_HELP);
         helpButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final DCPanel messagePanel = new DCPanel();
                 messagePanel.setLayout(new BorderLayout());
                 messagePanel.add(new JLabel(imageManager.getImageIcon("images/help/help_requirement_mapping.png")),
@@ -119,7 +119,7 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
         _filterComponentBuilder.removeChangeListener(this);
     }
 
-    protected JComponent decorateMainPanel(DCPanel panel) {
+    protected JComponent decorateMainPanel(final DCPanel panel) {
         final JComponent result = super.decorateMainPanel(panel);
 
         final FormPanel outcomeFormPanel = new FormPanel();
@@ -135,19 +135,19 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
     }
 
     @Override
-    public void onAdd(FilterComponentBuilder<?, ?> fjb) {
+    public void onAdd(final FilterComponentBuilder<?, ?> fjb) {
     }
 
     @Override
-    public void onConfigurationChanged(FilterComponentBuilder<?, ?> fjb) {
+    public void onConfigurationChanged(final FilterComponentBuilder<?, ?> fjb) {
         onConfigurationChanged();
     }
 
     @Override
-    public void onRemove(FilterComponentBuilder<?, ?> fjb) {
+    public void onRemove(final FilterComponentBuilder<?, ?> fjb) {
     }
 
     @Override
-    public void onRequirementChanged(FilterComponentBuilder<?, ?> filterJobBuilder) {
+    public void onRequirementChanged(final FilterComponentBuilder<?, ?> filterJobBuilder) {
     }
 }

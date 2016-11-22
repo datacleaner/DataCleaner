@@ -55,16 +55,17 @@ public class JsonUpdateDataBuilderTest {
         String jsonString = JsonUpdateDataBuilder.buildJsonArray(updateData);
         assertThat(jsonString, is("[{\"grId\":\"21\",\"fields\":{\"testfield\":null}}]"));
     }
-    
+
     @Test
     public void shouldConvertSourceRecordByDescriptionIdentifierToJSON() {
         Map<String, Object> fields = new HashMap<String, Object>();
         fields.put("testfield", "testvalue");
-        SourceRecordIdentifier data = new SourceRecordIdentifier("mySource", "myId", "myTypeKey","myTypeDescription");
+        SourceRecordIdentifier data = new SourceRecordIdentifier("mySource", "myId", "myTypeKey", "myTypeDescription");
         List<SourceRecordIdentifier> updateData = new ArrayList<SourceRecordIdentifier>();
         updateData.add(data);
         String jsonString = JsonUpdateDataBuilder.<List<SourceRecordIdentifier>> buildJsonArray(updateData);
-        assertThat(jsonString, is("[{\"recordTypeKey\":\"myTypeKey\",\"sourceName\":\"mySource\",\"sourceRecordId\":\"myId\",\"recordTypeDescription\":\"myTypeDescription\"}]"));
-        
+        assertThat(jsonString,
+                is("[{\"recordTypeKey\":\"myTypeKey\",\"sourceName\":\"mySource\",\"sourceRecordId\":\"myId\",\"recordTypeDescription\":\"myTypeDescription\"}]"));
+
     }
 }

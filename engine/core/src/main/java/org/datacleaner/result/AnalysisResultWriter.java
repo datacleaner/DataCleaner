@@ -31,6 +31,6 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
  */
 public interface AnalysisResultWriter {
 
-    public void write(AnalysisResult result, DataCleanerConfiguration configuration, Ref<Writer> writerRef,
+    void write(AnalysisResult result, DataCleanerConfiguration configuration, Ref<Writer> writerRef,
             Ref<OutputStream> outputStreamRef) throws Exception;
 }

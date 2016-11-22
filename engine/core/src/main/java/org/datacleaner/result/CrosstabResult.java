@@ -23,25 +23,25 @@ import org.datacleaner.api.AnalyzerResult;
 
 public class CrosstabResult implements AnalyzerResult {
 
-	private static final long serialVersionUID = 1L;
-	
-	private final Crosstab<?> crosstab;
+    private static final long serialVersionUID = 1L;
 
-	public CrosstabResult(Crosstab<?> crosstab) {
-		super();
-		this.crosstab = crosstab;
-	}
+    private final Crosstab<?> crosstab;
 
-	public Crosstab<?> getCrosstab() {
-		return crosstab;
-	}
+    public CrosstabResult(final Crosstab<?> crosstab) {
+        super();
+        this.crosstab = crosstab;
+    }
 
-	public String toString(int maxEntries) {
-		return crosstab.toString(maxEntries);
-	}
+    public Crosstab<?> getCrosstab() {
+        return crosstab;
+    }
 
-	@Override
-	public String toString() {
-		return crosstab.toString();
-	}
+    public String toString(final int maxEntries) {
+        return crosstab.toString(maxEntries);
+    }
+
+    @Override
+    public String toString() {
+        return crosstab.toString();
+    }
 }

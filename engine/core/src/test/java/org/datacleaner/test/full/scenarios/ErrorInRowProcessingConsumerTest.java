@@ -55,12 +55,10 @@ import org.datacleaner.util.CollectionUtils2;
 /**
  * Tests that a job where one of the row processing consumers fail is gracefully
  * error handled.
- * 
- * 
+ *
+ *
  */
 public class ErrorInRowProcessingConsumerTest extends TestCase {
-
-    private static final AtomicBoolean closed = new AtomicBoolean();
 
     @Named("Errornous analyzer")
     public static class ErrornousAnalyzer implements Analyzer<NumberResult> {
@@ -94,6 +92,7 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
         }
 
     }
+    private static final AtomicBoolean closed = new AtomicBoolean();
 
     public void testScenario() throws Exception {
         closed.set(false);
@@ -102,19 +101,20 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
 
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("my db");
         DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
-        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(environment);
+        DataCleanerConfiguration conf =
+                new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(environment);
 
         AnalysisJob job;
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
             ajb.setDatastore(datastore);
-            
+
             SchemaNavigator schemaNavigator = datastore.openConnection().getSchemaNavigator();
             Column column = schemaNavigator.convertToColumn("PUBLIC.EMPLOYEES.EMAIL");
             assertNotNull(column);
-            
+
             ajb.addSourceColumn(column);
             ajb.addAnalyzer(ErrornousAnalyzer.class).addInputColumn(ajb.getSourceColumns().get(0));
-            
+
             job = ajb.toAnalysisJob();
         }
 

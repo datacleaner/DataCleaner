@@ -35,47 +35,47 @@ import org.datacleaner.widgets.table.DCTable;
 
 public class AnnotatedRowsResultSwingRendererTest extends TestCase {
 
-	public void testInitialViewState() throws Exception {
-		AnnotatedRowsResultSwingRenderer renderer = new AnnotatedRowsResultSwingRenderer();
-		renderer.userPreferences = new UserPreferencesImpl(null);
-		renderer.datastoreCatalog = new DatastoreCatalogImpl();
+    public void testInitialViewState() throws Exception {
+        AnnotatedRowsResultSwingRenderer renderer = new AnnotatedRowsResultSwingRenderer();
+        renderer.userPreferences = new UserPreferencesImpl(null);
+        renderer.datastoreCatalog = new DatastoreCatalogImpl();
 
-		RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
-		RowAnnotation annotation = annotationFactory.createAnnotation();
+        RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
+        RowAnnotation annotation = annotationFactory.createAnnotation();
 
-		MockInputColumn<String> colFoo = new MockInputColumn<String>("foo", String.class);
-		MockInputColumn<String> colBar = new MockInputColumn<String>("bar", String.class);
-		MockInputColumn<String> colBaz = new MockInputColumn<String>("baz", String.class);
+        MockInputColumn<String> colFoo = new MockInputColumn<String>("foo", String.class);
+        MockInputColumn<String> colBar = new MockInputColumn<String>("bar", String.class);
+        MockInputColumn<String> colBaz = new MockInputColumn<String>("baz", String.class);
 
-		MockInputRow row1 = new MockInputRow().put(colFoo, "1").put(colBar, "2").put(colBaz, "3");
-		annotationFactory.annotate(row1, 1, annotation);
+        MockInputRow row1 = new MockInputRow().put(colFoo, "1").put(colBar, "2").put(colBaz, "3");
+        annotationFactory.annotate(row1, 1, annotation);
 
-		MockInputRow row2 = new MockInputRow().put(colFoo, "4").put(colBar, "5").put(colBaz, "6");
-		annotationFactory.annotate(row2, 1, annotation);
+        MockInputRow row2 = new MockInputRow().put(colFoo, "4").put(colBar, "5").put(colBaz, "6");
+        annotationFactory.annotate(row2, 1, annotation);
 
-		// test multiple highlighted columns
-		InputColumn<?>[] highlightedColumns = new InputColumn[] { colFoo, colBaz };
+        // test multiple highlighted columns
+        InputColumn<?>[] highlightedColumns = new InputColumn[] { colFoo, colBaz };
 
-		AnnotatedRowResultPanel panel = renderer.render(new AnnotatedRowsResult(annotation, annotationFactory,
-				highlightedColumns));
+        AnnotatedRowResultPanel panel = renderer.render(new AnnotatedRowsResult(annotation, annotationFactory,
+                highlightedColumns));
 
-		DCTable table = panel.getTable();
-		assertEquals(2, table.getRowCount());
-		assertEquals(3, table.getColumnCount());
-		assertEquals("1", table.getValueAt(0, 0));
-		assertEquals("2", table.getValueAt(0, 1));
-		assertEquals("3", table.getValueAt(0, 2));
+        DCTable table = panel.getTable();
+        assertEquals(2, table.getRowCount());
+        assertEquals(3, table.getColumnCount());
+        assertEquals("1", table.getValueAt(0, 0));
+        assertEquals("2", table.getValueAt(0, 1));
+        assertEquals("3", table.getValueAt(0, 2));
 
-		// test single highlighted column
-		highlightedColumns = new InputColumn[] { colFoo };
+        // test single highlighted column
+        highlightedColumns = new InputColumn[] { colFoo };
 
-		panel = renderer.render(new AnnotatedRowsResult(annotation, annotationFactory, highlightedColumns));
+        panel = renderer.render(new AnnotatedRowsResult(annotation, annotationFactory, highlightedColumns));
 
-		table = panel.getTable();
-		assertEquals(2, table.getRowCount());
-		assertEquals(3, table.getColumnCount());
-		assertEquals("1", table.getValueAt(0, 0));
-		assertEquals("2", table.getValueAt(0, 1));
-		assertEquals("3", table.getValueAt(0, 2));
-	}
+        table = panel.getTable();
+        assertEquals(2, table.getRowCount());
+        assertEquals(3, table.getColumnCount());
+        assertEquals("1", table.getValueAt(0, 0));
+        assertEquals("2", table.getValueAt(0, 1));
+        assertEquals("3", table.getValueAt(0, 2));
+    }
 }

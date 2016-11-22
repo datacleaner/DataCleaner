@@ -50,7 +50,7 @@ public final class CsvParserFunction implements Function<String, Object[]> {
     }
 
     @Override
-    public Object[] call(String csvLine) throws Exception {
+    public Object[] call(final String csvLine) throws Exception {
         final CSVParser csvParser = new CSVParser(_csvConfiguration.getSeparatorChar(),
                 _csvConfiguration.getQuoteChar(), _csvConfiguration.getEscapeChar());
         final String[] values = csvParser.parseLine(csvLine);

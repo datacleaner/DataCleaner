@@ -22,9 +22,9 @@ package org.datacleaner.monitor.configuration;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.apache.metamodel.util.FileHelper;
-
 import junit.framework.TestCase;
+
+import org.apache.metamodel.util.FileHelper;
 
 public class WriteDefaultTenantConfigurationActionTest extends TestCase {
 

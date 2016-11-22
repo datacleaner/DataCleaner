@@ -24,5 +24,5 @@ package org.datacleaner.connection;
  */
 public interface UsernameDatastore extends Datastore {
 
-	public String getUsername();
+    String getUsername();
 }

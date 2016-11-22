@@ -31,6 +31,6 @@ public interface AnalyzerComponentBuilderPresenter extends ComponentBuilderPrese
      * {@inheritDoc}
      */
     @Override
-    public AnalyzerComponentBuilder<?> getComponentBuilder();
+    AnalyzerComponentBuilder<?> getComponentBuilder();
 
 }

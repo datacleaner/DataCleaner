@@ -25,9 +25,9 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.datacleaner.util.ReadObjectBuilder;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
+import org.datacleaner.util.ReadObjectBuilder;
 
 public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {
 
@@ -35,12 +35,12 @@ public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {
 
     private final List<? extends Datastore> _datastores;
 
-    public CompositeDatastore(String name, List<? extends Datastore> datastores) {
+    public CompositeDatastore(final String name, final List<? extends Datastore> datastores) {
         super(name);
         _datastores = datastores;
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, CompositeDatastore.class).readObject(stream);
     }
 
@@ -52,7 +52,7 @@ public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
         final List<DataContext> dataContexts = new ArrayList<DataContext>(_datastores.size());
         final List<Closeable> closeables = new ArrayList<Closeable>(_datastores.size());
-        for (Datastore datastore : _datastores) {
+        for (final Datastore datastore : _datastores) {
             final DatastoreConnection con = datastore.openConnection();
             final DataContext dc = con.getDataContext();
             closeables.add(con);
@@ -67,7 +67,7 @@ public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {
     public PerformanceCharacteristics getPerformanceCharacteristics() {
         boolean queryOptimizationPreferred = true;
         boolean naturalRecordOrderConsistent = true;
-        for (Datastore datastore : _datastores) {
+        for (final Datastore datastore : _datastores) {
             final PerformanceCharacteristics performanceCharacteristics = datastore.getPerformanceCharacteristics();
             queryOptimizationPreferred = queryOptimizationPreferred
                     && performanceCharacteristics.isQueryOptimizationPreferred();
@@ -78,7 +78,7 @@ public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         super.decorateIdentity(identifiers);
         identifiers.add(_datastores);
     }

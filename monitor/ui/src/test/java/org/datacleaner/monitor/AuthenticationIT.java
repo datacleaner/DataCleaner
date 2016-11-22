@@ -19,6 +19,9 @@
  */
 package org.datacleaner.monitor;
 
+import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.given;
+
 import java.io.IOException;
 
 import org.apache.http.HttpStatus;
@@ -29,9 +32,6 @@ import org.junit.Test;
 import org.junit.rules.ExternalResource;
 
 import io.restassured.RestAssured;
-
-import static io.restassured.RestAssured.get;
-import static io.restassured.RestAssured.given;
 
 public class AuthenticationIT {
     private static final String JOBS_PATH = "/jobs/";

@@ -25,13 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.job.AnalysisJobMetadata;
-import org.datacleaner.job.ImmutableAnalysisJobMetadata;
+import junit.framework.TestCase;
+
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.util.DateUtils;
 import org.apache.metamodel.util.Month;
-
-import junit.framework.TestCase;
+import org.datacleaner.job.AnalysisJobMetadata;
+import org.datacleaner.job.ImmutableAnalysisJobMetadata;
 
 public class ImmutableAnalysisJobMetadataTest extends TestCase {
 
@@ -48,9 +48,9 @@ public class ImmutableAnalysisJobMetadataTest extends TestCase {
         Map<String, String> variables = new HashMap<String, String>();
         variables.put("foo", "bar");
 
-        Map<String, String> properties = new HashMap<String,String>() ;
-        properties.put("abc", "def") ;
-        
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.put("abc", "def");
+
         AnalysisJobMetadata metadata = new ImmutableAnalysisJobMetadata(jobName, jobVersion, jobDescription, author,
                 createdDate, updatedDate, datastoreName, sourceColumnPaths, sourceColumnTypes, variables, properties);
 

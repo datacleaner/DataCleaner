@@ -45,7 +45,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 @Description("Wraps another (external) Analysis job's transformations and invokes them as an integrated part of the current job. Using this transformation you can compose parent and child jobs for more coarse or more fine granularity of transformations.")
 @Categorized(CompositionCategory.class)
 public class InvokeChildAnalysisJobTransformer extends AbstractWrappedAnalysisJobTransformer {
-    
+
     public static final String PROPERTY_JOB_RESOURCE = "Analysis job";
 
     @Configured
@@ -57,12 +57,12 @@ public class InvokeChildAnalysisJobTransformer extends AbstractWrappedAnalysisJo
 
     @Override
     protected AnalysisJob createWrappedAnalysisJob() {
-        AnalysisJob job = analysisJobResource.read(new Func<InputStream, AnalysisJob>() {
+        final AnalysisJob job = analysisJobResource.read(new Func<InputStream, AnalysisJob>() {
             @Override
-            public AnalysisJob eval(InputStream in) {
-                JaxbJobReader reader = new JaxbJobReader(getDataCleanerConfiguration());
-                AnalysisJobBuilder jobBuilder = reader.create(in);
-                AnalysisJob job = jobBuilder.toAnalysisJob(false);
+            public AnalysisJob eval(final InputStream in) {
+                final JaxbJobReader reader = new JaxbJobReader(getDataCleanerConfiguration());
+                final AnalysisJobBuilder jobBuilder = reader.create(in);
+                final AnalysisJob job = jobBuilder.toAnalysisJob(false);
                 return job;
             }
         });
@@ -70,19 +70,19 @@ public class InvokeChildAnalysisJobTransformer extends AbstractWrappedAnalysisJo
     }
 
     @Override
-    protected Map<InputColumn<?>, InputColumn<?>> getInputColumnConversion(AnalysisJob wrappedAnalysisJob) {
-        Collection<InputColumn<?>> sourceColumns = wrappedAnalysisJob.getSourceColumns();
+    protected Map<InputColumn<?>, InputColumn<?>> getInputColumnConversion(final AnalysisJob wrappedAnalysisJob) {
+        final Collection<InputColumn<?>> sourceColumns = wrappedAnalysisJob.getSourceColumns();
         if (input.length < sourceColumns.size()) {
             throw new IllegalStateException("Wrapped job defines " + sourceColumns.size()
                     + " columns, but transformer input only defines " + input.length);
         }
 
-        Map<InputColumn<?>, InputColumn<?>> result = new LinkedHashMap<InputColumn<?>, InputColumn<?>>();
+        final Map<InputColumn<?>, InputColumn<?>> result = new LinkedHashMap<InputColumn<?>, InputColumn<?>>();
         int i = 0;
-        Iterator<InputColumn<?>> it = sourceColumns.iterator();
+        final Iterator<InputColumn<?>> it = sourceColumns.iterator();
         while (it.hasNext()) {
-            InputColumn<?> parentColumn = input[i];
-            InputColumn<?> childColumn = it.next();
+            final InputColumn<?> parentColumn = input[i];
+            final InputColumn<?> childColumn = it.next();
             result.put(parentColumn, childColumn);
             i++;
         }

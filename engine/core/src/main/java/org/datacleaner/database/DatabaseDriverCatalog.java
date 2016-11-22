@@ -40,10 +40,6 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class DatabaseDriverCatalog implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final Logger logger = LoggerFactory.getLogger(DatabaseDriverCatalog.class);
-
     public static final String DATABASE_NAME_JDBC_ODBC_BRIDGE = "JDBC-ODBC bridge";
     public static final String DATABASE_NAME_TERADATA = "Teradata";
     public static final String DATABASE_NAME_H2 = "H2";
@@ -66,7 +62,8 @@ public class DatabaseDriverCatalog implements Serializable {
     public static final String DATABASE_NAME_PERVASIVE = "Pervasive";
     public static final String DATABASE_NAME_CUBRID = "Cubrid";
     public static final String DATABASE_NAME_HIVE = "Apache Hive";
-
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseDriverCatalog.class);
     private static final List<DatabaseDriverDescriptor> _databaseDrivers;
 
     static {
@@ -140,7 +137,8 @@ public class DatabaseDriverCatalog implements Serializable {
                 "org.pentaho.di.jdbc.KettleDriver", null, "jdbc:kettle:file://<filename>");
         add(DATABASE_NAME_JDBC_ODBC_BRIDGE, "images/datastore-types/databases/odbc.png",
                 "sun.jdbc.odbc.JdbcOdbcDriver", null, "jdbc:odbc:<data-source-name>");
-        add(DATABASE_NAME_HIVE, "images/datastore-types/databases/hive.png", new HiveDriverPreparer(), "org.apache.hive.jdbc.HiveDriver",
+        add(DATABASE_NAME_HIVE, "images/datastore-types/databases/hive.png", new HiveDriverPreparer(),
+                "org.apache.hive.jdbc.HiveDriver",
                 "http://repo1.maven.org/maven2/org/apache/hive/hive-jdbc/1.2.1/hive-jdbc-1.2.1.jar",
                 "jdbc:hive2://<hostname>:10000/<database>");
 
@@ -150,36 +148,19 @@ public class DatabaseDriverCatalog implements Serializable {
     private final UserPreferences _userPreferences;
 
     @Inject
-    public DatabaseDriverCatalog(UserPreferences userPreferences) {
+    public DatabaseDriverCatalog(final UserPreferences userPreferences) {
         _userPreferences = userPreferences;
     }
 
-    public List<DatabaseDriverDescriptor> getDatabaseDrivers() {
-        return _databaseDrivers;
-    }
-
-    public List<DatabaseDriverDescriptor> getInstalledWorkingDatabaseDrivers() {
-        return CollectionUtils.filter(_databaseDrivers, new Predicate<DatabaseDriverDescriptor>() {
-
-            @Override
-            public Boolean eval(DatabaseDriverDescriptor input) {
-                if (getState(input) == DatabaseDriverState.INSTALLED_WORKING) {
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    private static void add(String databaseName, String iconImagePath, String driverClassName, String[] downloadUrls,
-            String[] urlTemplates) {
+    private static void add(final String databaseName, final String iconImagePath, final String driverClassName, final String[] downloadUrls,
+            final String[] urlTemplates) {
         _databaseDrivers.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, downloadUrls,
                 urlTemplates));
     }
 
-    private static void add(String databaseName, String iconImagePath, String driverClassName, String downloadUrl,
-            String... urlTemplates) {
-        String[] urls;
+    private static void add(final String databaseName, final String iconImagePath, final String driverClassName, final String downloadUrl,
+            final String... urlTemplates) {
+        final String[] urls;
         if (downloadUrl == null) {
             urls = null;
         } else {
@@ -188,40 +169,19 @@ public class DatabaseDriverCatalog implements Serializable {
         add(databaseName, iconImagePath, driverClassName, urls, urlTemplates);
     }
 
-    private static void add(String databaseName, String iconImagePath, DriverPreparer driverPreparer,
-            String driverClassName, String downloadUrl, String... urlTemplates) {
+    private static void add(final String databaseName, final String iconImagePath, final DriverPreparer driverPreparer,
+            final String driverClassName, final String downloadUrl, final String... urlTemplates) {
         if (driverPreparer != null) {
             try {
                 driverPreparer.prepare();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Could not run driver preparation", e);
             }
         }
         add(databaseName, iconImagePath, driverClassName, downloadUrl, urlTemplates);
     }
 
-    public DatabaseDriverState getState(DatabaseDriverDescriptor databaseDescriptor) {
-        String driverClassName = databaseDescriptor.getDriverClassName();
-        if (_userPreferences != null) {
-            List<UserDatabaseDriver> drivers = _userPreferences.getDatabaseDrivers();
-            for (UserDatabaseDriver userDatabaseDriver : drivers) {
-                if (userDatabaseDriver.getDriverClassName().equals(driverClassName)) {
-                    return userDatabaseDriver.getState();
-                }
-            }
-        }
-        try {
-            Class.forName(driverClassName);
-            return DatabaseDriverState.INSTALLED_WORKING;
-        } catch (ClassNotFoundException e) {
-            return DatabaseDriverState.NOT_INSTALLED;
-        } catch (Exception e) {
-            logger.warn("Unexpected error occurred while initializing driver class: " + driverClassName, e);
-            return DatabaseDriverState.INSTALLED_NOT_WORKING;
-        }
-    }
-
-    public static String getIconImagePath(DatabaseDriverDescriptor dd) {
+    public static String getIconImagePath(final DatabaseDriverDescriptor dd) {
         String iconImagePath = null;
         if (dd != null) {
             iconImagePath = dd.getIconImagePath();
@@ -232,11 +192,11 @@ public class DatabaseDriverCatalog implements Serializable {
         return iconImagePath;
     }
 
-    public static DatabaseDriverDescriptor getDatabaseDriverByDriverDatabaseName(String databaseName) {
+    public static DatabaseDriverDescriptor getDatabaseDriverByDriverDatabaseName(final String databaseName) {
         if (databaseName == null) {
             return null;
         }
-        for (DatabaseDriverDescriptor databaseDriver : _databaseDrivers) {
+        for (final DatabaseDriverDescriptor databaseDriver : _databaseDrivers) {
             if (databaseName.equals(databaseDriver.getDisplayName())) {
                 return databaseDriver;
             }
@@ -244,11 +204,11 @@ public class DatabaseDriverCatalog implements Serializable {
         return null;
     }
 
-    public static DatabaseDriverDescriptor getDatabaseDriverByDriverClassName(String driverClass) {
+    public static DatabaseDriverDescriptor getDatabaseDriverByDriverClassName(final String driverClass) {
         if (driverClass == null) {
             return null;
         }
-        for (DatabaseDriverDescriptor databaseDriver : _databaseDrivers) {
+        for (final DatabaseDriverDescriptor databaseDriver : _databaseDrivers) {
             if (driverClass.equals(databaseDriver.getDriverClassName())) {
                 return databaseDriver;
             }
@@ -256,12 +216,50 @@ public class DatabaseDriverCatalog implements Serializable {
         return null;
     }
 
-    public boolean isInstalled(String databaseName) {
-        DatabaseDriverDescriptor databaseDriver = getDatabaseDriverByDriverDatabaseName(databaseName);
+    public List<DatabaseDriverDescriptor> getDatabaseDrivers() {
+        return _databaseDrivers;
+    }
+
+    public List<DatabaseDriverDescriptor> getInstalledWorkingDatabaseDrivers() {
+        return CollectionUtils.filter(_databaseDrivers, new Predicate<DatabaseDriverDescriptor>() {
+
+            @Override
+            public Boolean eval(final DatabaseDriverDescriptor input) {
+                if (getState(input) == DatabaseDriverState.INSTALLED_WORKING) {
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    public DatabaseDriverState getState(final DatabaseDriverDescriptor databaseDescriptor) {
+        final String driverClassName = databaseDescriptor.getDriverClassName();
+        if (_userPreferences != null) {
+            final List<UserDatabaseDriver> drivers = _userPreferences.getDatabaseDrivers();
+            for (final UserDatabaseDriver userDatabaseDriver : drivers) {
+                if (userDatabaseDriver.getDriverClassName().equals(driverClassName)) {
+                    return userDatabaseDriver.getState();
+                }
+            }
+        }
+        try {
+            Class.forName(driverClassName);
+            return DatabaseDriverState.INSTALLED_WORKING;
+        } catch (final ClassNotFoundException e) {
+            return DatabaseDriverState.NOT_INSTALLED;
+        } catch (final Exception e) {
+            logger.warn("Unexpected error occurred while initializing driver class: " + driverClassName, e);
+            return DatabaseDriverState.INSTALLED_NOT_WORKING;
+        }
+    }
+
+    public boolean isInstalled(final String databaseName) {
+        final DatabaseDriverDescriptor databaseDriver = getDatabaseDriverByDriverDatabaseName(databaseName);
         if (databaseDriver == null) {
             return false;
         }
         return getState(databaseDriver) == DatabaseDriverState.INSTALLED_WORKING;
     }
-    
+
 }

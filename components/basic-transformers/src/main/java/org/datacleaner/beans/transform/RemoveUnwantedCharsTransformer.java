@@ -55,7 +55,7 @@ public class RemoveUnwantedCharsTransformer implements Transformer {
     public RemoveUnwantedCharsTransformer() {
     }
 
-    public RemoveUnwantedCharsTransformer(InputColumn<String> inputColumn) {
+    public RemoveUnwantedCharsTransformer(final InputColumn<String> inputColumn) {
         column = inputColumn;
     }
 
@@ -65,12 +65,12 @@ public class RemoveUnwantedCharsTransformer implements Transformer {
     }
 
     @Override
-    public Object[] transform(InputRow row) {
+    public Object[] transform(final InputRow row) {
         final String value = row.getValue(column);
         return transform(value);
     }
 
-    public Object[] transform(String value) {
+    public Object[] transform(final String value) {
         if (value == null) {
             return new Object[1];
         }

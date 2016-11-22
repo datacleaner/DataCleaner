@@ -27,12 +27,12 @@ import org.datacleaner.job.AnalysisJob;
 public class InjectionManagerFactoryImpl implements InjectionManagerFactory {
 
     @Override
-    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
+    public InjectionManager getInjectionManager(final DataCleanerConfiguration configuration, final AnalysisJob job) {
         return new InjectionManagerImpl(configuration, job);
     }
 
     @Override
-    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
+    public InjectionManager getInjectionManager(final DataCleanerConfiguration configuration) {
         return getInjectionManager(configuration, null);
     }
 }

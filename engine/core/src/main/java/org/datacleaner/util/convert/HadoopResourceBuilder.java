@@ -29,25 +29,25 @@ import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.util.HadoopResource;
 
 public class HadoopResourceBuilder {
-    private final URI _uri;
-    private final String _clusterReferenceName;
-    private final Configuration _configuration;
-
     /**
      * A regular expression {@link Pattern} that matches resource URIs
      * containing template items for the server definition, for instance:
-     * 
+     *
      * hdfs://{myserver}/foo/bar.txt
-     * 
+     *
      * <ul>
      * <li>Group 1: The scheme (example 'hdfs')</li>
      * <li>Group 2: The template name (example 'myserver')</li>
      * <li>Group 3: The path (example '/foo/bar.txt')</li>
      * </ul>
      */
-    public static final Pattern RESOURCE_SCHEME_PATTERN = Pattern.compile("([\\w\\+\\-\\.]+)://\\{([\\w\\.\\W\\s]*)\\}(.*)");
+    public static final Pattern RESOURCE_SCHEME_PATTERN =
+            Pattern.compile("([\\w\\+\\-\\.]+)://\\{([\\w\\.\\W\\s]*)\\}(.*)");
+    private final URI _uri;
+    private final String _clusterReferenceName;
+    private final Configuration _configuration;
 
-    public HadoopResourceBuilder(ServerInformationCatalog catalog, String templatedUri) {
+    public HadoopResourceBuilder(final ServerInformationCatalog catalog, final String templatedUri) {
         final Matcher matcher = RESOURCE_SCHEME_PATTERN.matcher(templatedUri);
         if (!matcher.matches()) {
             _clusterReferenceName = null;

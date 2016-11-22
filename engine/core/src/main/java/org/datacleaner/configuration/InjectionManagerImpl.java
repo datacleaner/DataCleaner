@@ -64,11 +64,11 @@ public class InjectionManagerImpl implements InjectionManager {
     /**
      * Constructs an {@link InjectionManager} for use within the scope of a job
      * execution.
-     * 
+     *
      * @param configuration
      * @param job
      */
-    public InjectionManagerImpl(DataCleanerConfiguration configuration, AnalysisJob job) {
+    public InjectionManagerImpl(final DataCleanerConfiguration configuration, final AnalysisJob job) {
         _configuration = configuration;
         _job = job;
         _rowAnntationFactoryRef = createRowAnnotationFactoryRef();
@@ -78,10 +78,10 @@ public class InjectionManagerImpl implements InjectionManager {
      * Creates a new {@link InjectionManager} without any job-context.
      * Convenient for use outside of an actual job, mimicing a job situation
      * etc.
-     * 
+     *
      * @param configuration
      */
-    public InjectionManagerImpl(DataCleanerConfiguration configuration) {
+    public InjectionManagerImpl(final DataCleanerConfiguration configuration) {
         this(configuration, null);
     }
 
@@ -90,7 +90,7 @@ public class InjectionManagerImpl implements InjectionManager {
             @Override
             protected RowAnnotationFactory fetch() {
                 logger.info("Creating RowAnnotationFactory for job: {}", _job);
-                RowAnnotationFactory rowAnnotationFactory = _configuration.getEnvironment().getStorageProvider()
+                final RowAnnotationFactory rowAnnotationFactory = _configuration.getEnvironment().getStorageProvider()
                         .createRowAnnotationFactory();
                 if (rowAnnotationFactory == null) {
                     throw new IllegalStateException("Storage provider returned null RowAnnotationFactory!");
@@ -102,14 +102,14 @@ public class InjectionManagerImpl implements InjectionManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <E> E getInstance(InjectionPoint<E> injectionPoint) {
-        Object instance = getInstanceInternal(injectionPoint);
+    public final <E> E getInstance(final InjectionPoint<E> injectionPoint) {
+        final Object instance = getInstanceInternal(injectionPoint);
         if (instance == null) {
             logger.debug("Could not handle injection for injection point: {}", injectionPoint);
         }
         return (E) instance;
     }
-    
+
     private DataCleanerConfiguration getConfiguration() {
         if (_configuration == null) {
             return new DataCleanerConfigurationImpl();
@@ -118,7 +118,7 @@ public class InjectionManagerImpl implements InjectionManager {
     }
 
     @SuppressWarnings("deprecation")
-    protected Object getInstanceInternal(InjectionPoint<?> injectionPoint) {
+    protected Object getInstanceInternal(final InjectionPoint<?> injectionPoint) {
         final Class<?> baseType = injectionPoint.getBaseType();
         if (baseType == ReferenceDataCatalog.class) {
             return getConfiguration().getReferenceDataCatalog();
@@ -177,14 +177,14 @@ public class InjectionManagerImpl implements InjectionManager {
             if (injectionPoint.getAnnotation(Provided.class) != null && injectionPoint.isGenericType()) {
                 final Class<?> clazz1 = injectionPoint.getGenericTypeArgument(0);
                 if (baseType == List.class) {
-                    List<?> list = getConfiguration().getEnvironment().getStorageProvider().createList(clazz1);
+                    final List<?> list = getConfiguration().getEnvironment().getStorageProvider().createList(clazz1);
                     return list;
                 } else if (baseType == Set.class) {
-                    Set<?> set = getConfiguration().getEnvironment().getStorageProvider().createSet(clazz1);
+                    final Set<?> set = getConfiguration().getEnvironment().getStorageProvider().createSet(clazz1);
                     return set;
                 } else if (baseType == Map.class) {
-                    Class<?> clazz2 = (Class<?>) injectionPoint.getGenericTypeArgument(1);
-                    Map<?, ?> map = getConfiguration().getEnvironment().getStorageProvider().createMap(clazz1, clazz2);
+                    final Class<?> clazz2 = (Class<?>) injectionPoint.getGenericTypeArgument(1);
+                    final Map<?, ?> map = getConfiguration().getEnvironment().getStorageProvider().createMap(clazz1, clazz2);
                     return map;
                 }
             }

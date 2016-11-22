@@ -21,11 +21,11 @@ package org.datacleaner.monitor.server;
 
 import java.util.Locale;
 
+import org.apache.metamodel.util.Func;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.wizard.job.JobWizard;
 import org.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.apache.metamodel.util.Func;
 
 /**
  * Default implementation of {@link JobWizardContext}.
@@ -38,8 +38,8 @@ public final class JobWizardContextImpl implements JobWizardContext {
     private final JobWizard _jobWizard;
     private final Locale _locale;
 
-    public JobWizardContextImpl(JobWizard jobWizard, TenantContext tenantContext, Datastore sourceDatastore,
-            Func<String, Object> sessionFunc, Locale locale) {
+    public JobWizardContextImpl(final JobWizard jobWizard, final TenantContext tenantContext, final Datastore sourceDatastore,
+            final Func<String, Object> sessionFunc, final Locale locale) {
         _jobWizard = jobWizard;
         _tenantContext = tenantContext;
         _sourceDatastore = sourceDatastore;

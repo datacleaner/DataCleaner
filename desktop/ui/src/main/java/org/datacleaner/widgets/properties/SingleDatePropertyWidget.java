@@ -39,32 +39,32 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
     private final JButton _changeButton;
 
     @Inject
-    public SingleDatePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder, WindowContext windowContext) {
+    public SingleDatePropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder, final WindowContext windowContext) {
         super(componentBuilder, propertyDescriptor);
-        
+
         _settingDialog = new SingleDatePropertySettingDialog(windowContext, this);
         _changeButton = createChangeButton();
         _valueLabel = createValueLabel();
         createContent();
     }
-    
+
     @Override
     protected void onPanelRemove() {
         super.onPanelRemove();
         _settingDialog.dispose();
     }
-    
+
     private JLabel createValueLabel() {
         final JLabel valueLabel = new JLabel();
         final Date currentValue = getCurrentValue() == null ? new TodayDate() : getCurrentValue();
         setValue(currentValue);
         fireValueChanged();
         valueLabel.setText(_settingDialog.getFormattedString());
-        
+
         return valueLabel;
     }
-    
+
     private JButton createChangeButton() {
         final JButton changeButton = new JButton("Select");
         changeButton.addActionListener(e -> _settingDialog.setVisible(true));
@@ -72,10 +72,10 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
         changeButton.setMinimumSize(buttonSize);
         changeButton.setPreferredSize(buttonSize);
         changeButton.setMaximumSize(buttonSize);
-        
+
         return changeButton;
     }
-    
+
     private void createContent() {
         final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());
@@ -83,19 +83,19 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
         panel.add(_changeButton, BorderLayout.EAST);
         add(panel);
     }
-    
-    public void updateValue(String newValue) {
+
+    public void updateValue(final String newValue) {
         _valueLabel.setText(newValue);
         fireValueChanged();
     }
 
     @Override
-    protected void setValue(final Date value) {
-        _settingDialog.setValue(value);
+    public Date getValue() {
+        return _settingDialog.getValue();
     }
 
     @Override
-    public Date getValue() {
-        return _settingDialog.getValue();
+    protected void setValue(final Date value) {
+        _settingDialog.setValue(value);
     }
 }

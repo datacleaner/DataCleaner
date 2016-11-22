@@ -26,12 +26,12 @@ package org.datacleaner.monitor.shared.model;
 public class DCSecurityException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
-    
+
     public DCSecurityException() {
         super();
     }
-    
-    public DCSecurityException(String message) {
+
+    public DCSecurityException(final String message) {
         super(message);
     }
 }

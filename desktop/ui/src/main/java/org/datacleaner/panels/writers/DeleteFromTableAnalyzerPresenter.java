@@ -71,9 +71,9 @@ class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
     private final ConfiguredPropertyDescriptor _conditionColumnNamesProperty;
     private final MultipleMappedColumnsPropertyWidget[] _inputColumnPropertyWidgets;
 
-    public DeleteFromTableAnalyzerPresenter(AnalyzerComponentBuilder<DeleteFromTableAnalyzer> analyzerJobBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration, DCModule dcModule) {
+    public DeleteFromTableAnalyzerPresenter(final AnalyzerComponentBuilder<DeleteFromTableAnalyzer> analyzerJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration, final DCModule dcModule) {
         super(analyzerJobBuilder, propertyWidgetFactory);
         _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
@@ -115,8 +115,9 @@ class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
             // the InputColumn<?>[] property
             assert _conditionInputColumnsProperty != null;
             assert _conditionInputColumnsProperty.getType() == InputColumn[].class;
-            final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedPrefixedColumnsPropertyWidget(
-                    analyzerJobBuilder, _conditionInputColumnsProperty, _conditionColumnNamesProperty, " = ");
+            final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget =
+                    new MultipleMappedPrefixedColumnsPropertyWidget(
+                            analyzerJobBuilder, _conditionInputColumnsProperty, _conditionColumnNamesProperty, " = ");
 
             _overriddenPropertyWidgets.put(_conditionInputColumnsProperty, inputColumnsPropertyWidget);
 
@@ -135,10 +136,10 @@ class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
 
         tableNamePropertyWidget.addComboListener(new Listener<Table>() {
             @Override
-            public void onItemSelected(Table item) {
+            public void onItemSelected(final Table item) {
                 // update the column combo boxes when the table is selected
                 for (int i = 1; i < _inputColumnPropertyWidgets.length; i++) {
-                    MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = _inputColumnPropertyWidgets[i];
+                    final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = _inputColumnPropertyWidgets[i];
                     inputColumnsPropertyWidget.setTable(item);
                 }
             }
@@ -149,7 +150,7 @@ class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
         tableNamePropertyWidget.setSchema(datastorePropertyWidget.getValue(), schemaNamePropertyWidget.getSchema());
 
         for (int i = 1; i < _inputColumnPropertyWidgets.length; i++) {
-            MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = _inputColumnPropertyWidgets[i];
+            final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = _inputColumnPropertyWidgets[i];
             inputColumnsPropertyWidget.setTable(tableNamePropertyWidget.getTable());
         }
     }
@@ -158,14 +159,14 @@ class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
         final ConfiguredPropertyTaskPane taskPane1 = new ConfiguredPropertyTaskPane("Table to delete from",
                 IconUtils.getImagePathForClass(UpdateTableAnalyzer.class), Arrays.asList(_datastoreProperty,
-                        _schemaNameProperty, _tableNameProperty, _bufferSizeProperty));
+                _schemaNameProperty, _tableNameProperty, _bufferSizeProperty));
 
         final ConfiguredPropertyTaskPane taskPane2 = new ConfiguredPropertyTaskPane("Delete condition",
                 "images/model/column.png", Arrays.asList(_conditionInputColumnsProperty));
 
         final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling",
                 IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,
-                        _additionalErrorLogValuesProperty), false);
+                _additionalErrorLogValuesProperty), false);
 
         final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
         propertyTaskPanes.add(taskPane1);
@@ -175,8 +176,8 @@ class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
             return _overriddenPropertyWidgets.get(propertyDescriptor);
         }

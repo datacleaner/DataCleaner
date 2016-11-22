@@ -25,8 +25,8 @@ import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.JobMetrics;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.datacleaner.monitor.shared.widgets.NumberTextBox;
 import org.datacleaner.monitor.shared.widgets.MetricAnchor;
+import org.datacleaner.monitor.shared.widgets.NumberTextBox;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -41,7 +41,7 @@ import com.google.gwt.user.client.ui.Widget;
  * Panel used to customize/edit an {@link AlertDefinition}.
  */
 public class CustomizeAlertPanel extends Composite {
-    
+
     interface MyUiBinder extends UiBinder<Widget, CustomizeAlertPanel> {
     }
 
@@ -56,7 +56,7 @@ public class CustomizeAlertPanel extends Composite {
     @UiField
     TextBox descriptionTextBox;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     MetricAnchor metricAnchor;
 
     @UiField
@@ -68,7 +68,7 @@ public class CustomizeAlertPanel extends Composite {
     @UiField
     FlowPanel severityPanel;
 
-    public CustomizeAlertPanel(TenantIdentifier tenant, JobIdentifier job, AlertDefinition alert, JobMetrics result) {
+    public CustomizeAlertPanel(final TenantIdentifier tenant, final JobIdentifier job, final AlertDefinition alert, final JobMetrics result) {
         super();
 
         _alert = alert;
@@ -93,8 +93,8 @@ public class CustomizeAlertPanel extends Composite {
         maximumValueTextBox.setNumberValue(_alert.getMaximumValue());
     }
 
-    private RadioButton createRadioButton(String group, String label, AlertSeverity severity) {
-        RadioButton radioButton = new RadioButton(group, label);
+    private RadioButton createRadioButton(final String group, final String label, final AlertSeverity severity) {
+        final RadioButton radioButton = new RadioButton(group, label);
         radioButton.addStyleDependentName(severity.toString());
         if (_alert.getSeverity() == severity) {
             radioButton.setValue(true);
@@ -106,11 +106,11 @@ public class CustomizeAlertPanel extends Composite {
     public AlertDefinition updateAlert() {
         final Integer max = maximumValueTextBox.getNumberValue();
         final Integer min = minimumValueTextBox.getNumberValue();
-        
+
         if (max == null && min == null) {
             throw new DCUserInputException("Please enter a maximum or a minimum value for the selected metric.");
         }
-        
+
         _alert.setMetricIdentifier(metricAnchor.getMetric());
         _alert.setDescription(descriptionTextBox.getText());
         _alert.setMaximumValue(max);

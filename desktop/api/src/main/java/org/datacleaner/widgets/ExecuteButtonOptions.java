@@ -76,12 +76,12 @@ public class ExecuteButtonOptions {
 
     }
 
-    private static abstract class SimpleExecutionMenuItem implements ExecutionMenuItem {
+    private abstract static class SimpleExecutionMenuItem implements ExecutionMenuItem {
 
         private final String _text;
         private final String _iconPath;
 
-        public SimpleExecutionMenuItem(String text, String iconPath) {
+        public SimpleExecutionMenuItem(final String text, final String iconPath) {
             _text = text;
             _iconPath = iconPath;
         }
@@ -98,11 +98,11 @@ public class ExecuteButtonOptions {
 
         @Override
         public final ActionListener createActionListener(final AnalysisJobBuilder analysisJobBuilder,
-                final Action<AnalysisJobBuilder> executeAction, AnalysisJobBuilderWindow analysisJobBuilderWindow) {
+                final Action<AnalysisJobBuilder> executeAction, final AnalysisJobBuilderWindow analysisJobBuilderWindow) {
             return event -> {
                 try {
                     run(analysisJobBuilder, executeAction, analysisJobBuilderWindow);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     WidgetUtils.showErrorMessage("Unexpected error",
                             "An error occurred while executing job in mode '" + getText() + "'", e);
                 }
@@ -129,8 +129,8 @@ public class ExecuteButtonOptions {
         }
 
         @Override
-        public ActionListener createActionListener(AnalysisJobBuilder analysisJobBuilder,
-                Action<AnalysisJobBuilder> executeAction, AnalysisJobBuilderWindow analysisJobBuilderWindow) {
+        public ActionListener createActionListener(final AnalysisJobBuilder analysisJobBuilder,
+                final Action<AnalysisJobBuilder> executeAction, final AnalysisJobBuilderWindow analysisJobBuilderWindow) {
             return null;
         }
     }
@@ -141,16 +141,16 @@ public class ExecuteButtonOptions {
         // initialize the default menu items
         addMenuItem(new SimpleExecutionMenuItem("Run normally", IconUtils.ACTION_EXECUTE) {
             @Override
-            protected void run(AnalysisJobBuilder analysisJobBuilder, Action<AnalysisJobBuilder> executeAction,
-                    AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
+            protected void run(final AnalysisJobBuilder analysisJobBuilder, final Action<AnalysisJobBuilder> executeAction,
+                    final AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
                 executeAction.run(analysisJobBuilder);
             }
         });
 
         addMenuItem(new SimpleExecutionMenuItem("Run first N records", IconUtils.ACTION_PREVIEW) {
             @Override
-            protected void run(AnalysisJobBuilder analysisJobBuilder, Action<AnalysisJobBuilder> executeAction,
-                    AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
+            protected void run(final AnalysisJobBuilder analysisJobBuilder, final Action<AnalysisJobBuilder> executeAction,
+                    final AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
                 final Integer maxRows = WidgetFactory.showMaxRowsDialog(100);
 
                 if (maxRows != null) {
@@ -162,11 +162,12 @@ public class ExecuteButtonOptions {
                             .filter(o -> o instanceof AnalyzerComponentBuilder)
                             .collect(Collectors.toSet());
 
-                    SourceColumnFinder scf = new SourceColumnFinder();
+                    final SourceColumnFinder scf = new SourceColumnFinder();
                     scf.addSources(jobBuilderCopy);
 
                     final Set<ComponentBuilder> filtered =
-                            analyzers.stream().filter(acb -> PreviewUtils.hasFilterPresent(scf, acb)).collect(Collectors.toSet());
+                            analyzers.stream().filter(acb -> PreviewUtils.hasFilterPresent(scf, acb))
+                                    .collect(Collectors.toSet());
 
                     if (filtered.size() == 0) {
                         PreviewUtils.limitJobRows(jobBuilderCopy, jobBuilderCopy.getComponentBuilders(), maxRows);
@@ -174,7 +175,8 @@ public class ExecuteButtonOptions {
                         PreviewUtils.limitJobRows(jobBuilderCopy, jobBuilderCopy.getFilterComponentBuilders(), maxRows);
 
                         final Set<ComponentBuilder> unfilteredAnalyzers =
-                                analyzers.stream().filter(acb -> !PreviewUtils.hasFilterPresent(scf, acb)).collect(Collectors.toSet());
+                                analyzers.stream().filter(acb -> !PreviewUtils.hasFilterPresent(scf, acb))
+                                        .collect(Collectors.toSet());
 
                         // TODO: This may risk running through more input rows than intended, but alternative is worse.
                         // TODO: Transformers implementing HasAnalyzerResult will _not_ undergo special filtering.
@@ -189,8 +191,8 @@ public class ExecuteButtonOptions {
 
         addMenuItem(new SimpleExecutionMenuItem("Run single-threaded", IconUtils.MODEL_ROW) {
             @Override
-            protected void run(AnalysisJobBuilder analysisJobBuilder, Action<AnalysisJobBuilder> executeAction,
-                    AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
+            protected void run(final AnalysisJobBuilder analysisJobBuilder, final Action<AnalysisJobBuilder> executeAction,
+                    final AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
                 final DataCleanerConfiguration baseConfiguration = analysisJobBuilder.getConfiguration();
                 final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl(baseConfiguration)
                         .withEnvironment(new DataCleanerEnvironmentImpl(baseConfiguration.getEnvironment())
@@ -204,27 +206,27 @@ public class ExecuteButtonOptions {
         });
     }
 
-    public static void addMenuItem(ExecutionMenuItem menuItem) {
+    private ExecuteButtonOptions() {
+        // prevent instantiation
+    }
+
+    public static void addMenuItem(final ExecutionMenuItem menuItem) {
         MENU_ITEMS.add(menuItem);
     }
 
-    public static void addMenuItem(int index, ExecutionMenuItem menuItem) {
+    public static void addMenuItem(final int index, final ExecutionMenuItem menuItem) {
         MENU_ITEMS.add(index, menuItem);
     }
 
-    public static void removeMenuItem(ExecutionMenuItem menuItem) {
+    public static void removeMenuItem(final ExecutionMenuItem menuItem) {
         MENU_ITEMS.remove(menuItem);
     }
 
-    public static void removeMenuItem(int index) {
+    public static void removeMenuItem(final int index) {
         MENU_ITEMS.remove(index);
     }
 
     public static List<ExecutionMenuItem> getMenuItems() {
         return Collections.unmodifiableList(MENU_ITEMS);
-    }
-
-    private ExecuteButtonOptions() {
-        // prevent instantiation
     }
 }

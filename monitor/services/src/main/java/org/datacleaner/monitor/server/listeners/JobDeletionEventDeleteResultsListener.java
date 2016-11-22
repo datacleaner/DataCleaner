@@ -41,12 +41,12 @@ public class JobDeletionEventDeleteResultsListener implements ApplicationListene
     ResultDao resultDao;
 
     @Override
-    public void onApplicationEvent(JobDeletionEvent event) {
+    public void onApplicationEvent(final JobDeletionEvent event) {
         final TenantIdentifier tenantIdentifier = new TenantIdentifier(event.getTenant());
         final JobIdentifier jobIdentifier = new JobIdentifier(event.getJobName());
 
         final List<RepositoryFile> results = resultDao.getResultsForJob(tenantIdentifier, jobIdentifier);
-        for (RepositoryFile repositoryFile : results) {
+        for (final RepositoryFile repositoryFile : results) {
             repositoryFile.delete();
         }
     }

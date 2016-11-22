@@ -21,6 +21,10 @@ package org.datacleaner.monitor.server;
 
 import java.util.List;
 
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Func;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.monitor.configuration.TenantContext;
@@ -32,10 +36,6 @@ import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.shared.model.SchemaIdentifier;
 import org.datacleaner.monitor.shared.model.TableIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,18 +52,18 @@ public class DatastoreServiceImpl implements DatastoreService {
     private final TenantContextFactory _tenantContextFactory;
 
     @Autowired
-    public DatastoreServiceImpl(TenantContextFactory tenantContextFactory) {
+    public DatastoreServiceImpl(final TenantContextFactory tenantContextFactory) {
         _tenantContextFactory = tenantContextFactory;
     }
 
     @Override
-    public List<DatastoreIdentifier> getAvailableDatastores(TenantIdentifier tenant) {
+    public List<DatastoreIdentifier> getAvailableDatastores(final TenantIdentifier tenant) {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         return tenantContext.getDatastores();
     }
 
     @Override
-    public SchemaIdentifier getDefaultSchema(TenantIdentifier tenant, DatastoreIdentifier datastoreId)
+    public SchemaIdentifier getDefaultSchema(final TenantIdentifier tenant, final DatastoreIdentifier datastoreId)
             throws DatastoreConnectionException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final Datastore datastore = tenantContext.getDatastore(datastoreId);
@@ -74,7 +74,7 @@ public class DatastoreServiceImpl implements DatastoreService {
         try (final DatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getDefaultSchema();
             return new SchemaIdentifier(datastoreId, schema.getName());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Failed to open connection to datastore: " + datastoreId.getName(), e);
             throw new DatastoreConnectionException(e.getMessage());
         }
@@ -94,12 +94,12 @@ public class DatastoreServiceImpl implements DatastoreService {
             final List<SchemaIdentifier> schemaIdentifiers = CollectionUtils.map(schemaNames,
                     new Func<String, SchemaIdentifier>() {
                         @Override
-                        public SchemaIdentifier eval(String schemaName) {
+                        public SchemaIdentifier eval(final String schemaName) {
                             return new SchemaIdentifier(datastoreId, schemaName);
                         }
                     });
             return schemaIdentifiers;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Failed to open connection to datastore: " + datastoreId.getName(), e);
             throw new DatastoreConnectionException(e.getMessage());
         }
@@ -118,7 +118,7 @@ public class DatastoreServiceImpl implements DatastoreService {
             final List<TableIdentifier> tableIdentifiers = CollectionUtils.map(tableNames,
                     new Func<String, TableIdentifier>() {
                         @Override
-                        public TableIdentifier eval(String tableName) {
+                        public TableIdentifier eval(final String tableName) {
                             return new TableIdentifier(schemaId, tableName);
                         }
                     });
@@ -143,7 +143,7 @@ public class DatastoreServiceImpl implements DatastoreService {
             final List<ColumnIdentifier> columnIdentifiers = CollectionUtils.map(columnNames,
                     new Func<String, ColumnIdentifier>() {
                         @Override
-                        public ColumnIdentifier eval(String columnName) {
+                        public ColumnIdentifier eval(final String columnName) {
                             return new ColumnIdentifier(tableId, columnName);
                         }
                     });

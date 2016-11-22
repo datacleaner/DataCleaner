@@ -50,13 +50,11 @@ import org.slf4j.LoggerFactory;
  */
 public final class CloseableTabbedPane extends JTabbedPane {
 
-    private static final long serialVersionUID = -411551524171347329L;
-    private static Logger _logger = LoggerFactory.getLogger(CloseableTabbedPane.class);
-
     public static final Color COLOR_BACKGROUND = WidgetUtils.COLOR_DEFAULT_BACKGROUND;
     public static final Color COLOR_FOREGROUND_SELECTED = WidgetUtils.BG_COLOR_DARKEST;
     public static final Color COLOR_FOREGROUND = WidgetUtils.BG_COLOR_LESS_DARK;
-    
+    private static final long serialVersionUID = -411551524171347329L;
+    private static Logger _logger = LoggerFactory.getLogger(CloseableTabbedPane.class);
     private final List<TabCloseListener> _closeListeners = new LinkedList<TabCloseListener>();
     private final List<Integer> _unclosables = new LinkedList<Integer>();
     private final List<Integer> _separators = new LinkedList<Integer>();
@@ -72,11 +70,11 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
     /**
      * Create a tabbed pane
-     * 
+     *
      * @param addBorder
      *            add a small border around the tabbed pane?
      */
-    public CloseableTabbedPane(boolean addBorder) {
+    public CloseableTabbedPane(final boolean addBorder) {
         super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
         setUI(new CloseableTabbedPaneUI(this));
         setForeground(COLOR_FOREGROUND);
@@ -93,12 +91,12 @@ public final class CloseableTabbedPane extends JTabbedPane {
      * with a {@link TabCloseListener}, you can use {@link #getTabCount()} and
      * when it is 1, you can call {@link #setUncloseableTab(int)}(0) to make the
      * last tab unclosable.
-     * 
+     *
      * @return
-     * 
+     *
      * @see #setCloseableTab(int);
      */
-    public CloseableTabbedPane setUnclosableTab(int val) {
+    public CloseableTabbedPane setUnclosableTab(final int val) {
         if (!_unclosables.contains(val)) {
             _unclosables.add(val);
         }
@@ -107,7 +105,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
     public void addSeparator() {
         synchronized (this) {
-            int tabCountBefore = getTabCount();
+            final int tabCountBefore = getTabCount();
             addTab("SEPARATOR", new JLabel());
             _separators.add(tabCountBefore);
         }
@@ -116,17 +114,17 @@ public final class CloseableTabbedPane extends JTabbedPane {
     /**
      * Use this method to reverse the actions of {@link #setUnclosableTab(int)}
      */
-    public void setClosableTab(int val) {
+    public void setClosableTab(final int val) {
         // cast to Object to ensure the RIGHT remove(...) method is invoked in
         // _unclosables
-        Object value = Integer.valueOf(val);
+        final Object value = Integer.valueOf(val);
         _unclosables.remove(value);
     }
 
     @SuppressWarnings("unchecked")
-    public <E extends Component> List<E> getTabsOfClass(Class<E> clazz) {
-        List<E> list = new ArrayList<E>();
-        Component[] components = getComponents();
+    public <E extends Component> List<E> getTabsOfClass(final Class<E> clazz) {
+        final List<E> list = new ArrayList<E>();
+        final Component[] components = getComponents();
         for (Component component : components) {
             if (component instanceof JScrollPane) {
                 component = ((JScrollPane) component).getViewport().getComponent(0);
@@ -142,17 +140,17 @@ public final class CloseableTabbedPane extends JTabbedPane {
      * Add a tab close listener. On close events, the listener is responsible
      * for deleting the tab or otherwise reacting to the event.
      */
-    public void addTabCloseListener(TabCloseListener lis) {
+    public void addTabCloseListener(final TabCloseListener lis) {
         _closeListeners.add(lis);
     }
 
     /** Remove a tab close listener */
-    public void removeTabCloseListener(TabCloseListener lis) {
+    public void removeTabCloseListener(final TabCloseListener lis) {
         _closeListeners.remove(lis);
     }
 
-    public void closeTab(int tabIndex) {
-        Component component = getComponent(tabIndex);
+    public void closeTab(final int tabIndex) {
+        final Component component = getComponent(tabIndex);
         remove(tabIndex);
 
         int selectedIndex = getSelectedIndex();
@@ -163,11 +161,11 @@ public final class CloseableTabbedPane extends JTabbedPane {
         }
 
         if (!_closeListeners.isEmpty()) {
-            TabCloseEvent ev = new TabCloseEvent(this, tabIndex, component);
-            for (TabCloseListener l : _closeListeners) {
+            final TabCloseEvent ev = new TabCloseEvent(this, tabIndex, component);
+            for (final TabCloseListener l : _closeListeners) {
                 try {
                     l.tabClosed(ev);
-                } catch (Exception ex) {
+                } catch (final Exception ex) {
                     _logger.error(ex.toString(), ex);
                 }
             }
@@ -176,7 +174,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
     @Override
     public void remove(final Component component) {
-        int index = indexOfComponent(component);
+        final int index = indexOfComponent(component);
         remove(index);
     }
 
@@ -191,12 +189,12 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
         // move all right click listeners for tabs above this index down
         {
-            Set<Integer> keySet = new TreeSet<Integer>(Collections.reverseOrder());
+            final Set<Integer> keySet = new TreeSet<Integer>(Collections.reverseOrder());
             keySet.addAll(_rightClickActionListeners.keySet());
-            for (Integer key : keySet) {
-                int curIndex = key.intValue();
+            for (final Integer key : keySet) {
+                final int curIndex = key.intValue();
                 if (curIndex > removedIndex) {
-                    ActionListener actionListener = _rightClickActionListeners.get(curIndex);
+                    final ActionListener actionListener = _rightClickActionListeners.get(curIndex);
                     _rightClickActionListeners.remove(curIndex);
                     _rightClickActionListeners.put(curIndex - 1, actionListener);
                 }
@@ -205,12 +203,12 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
         // move all double click listeners for tabs above this index down
         {
-            Set<Integer> keySet = new TreeSet<Integer>(Collections.reverseOrder());
+            final Set<Integer> keySet = new TreeSet<Integer>(Collections.reverseOrder());
             keySet.addAll(_doubleClickActionListeners.keySet());
-            for (Integer key : keySet) {
-                int curIndex = key.intValue();
+            for (final Integer key : keySet) {
+                final int curIndex = key.intValue();
                 if (curIndex > removedIndex) {
-                    ActionListener actionListener = _doubleClickActionListeners.get(curIndex);
+                    final ActionListener actionListener = _doubleClickActionListeners.get(curIndex);
                     _doubleClickActionListeners.remove(curIndex);
                     _doubleClickActionListeners.put(curIndex - 1, actionListener);
                 }
@@ -219,9 +217,9 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
         // moved all the uncloseable tabs for tabs above this index down
         {
-            for (ListIterator<Integer> it = _unclosables.listIterator(); it.hasNext();) {
-                Integer tabIndex = it.next();
-                int curIndex = tabIndex.intValue();
+            for (final ListIterator<Integer> it = _unclosables.listIterator(); it.hasNext(); ) {
+                final Integer tabIndex = it.next();
+                final int curIndex = tabIndex.intValue();
                 if (curIndex == removedIndex) {
                     it.remove();
                 } else if (curIndex > removedIndex) {
@@ -256,24 +254,24 @@ public final class CloseableTabbedPane extends JTabbedPane {
         return _separators;
     }
 
-    public void setRightClickActionListener(int index, ActionListener actionListener) {
+    public void setRightClickActionListener(final int index, final ActionListener actionListener) {
         _rightClickActionListeners.put(index, actionListener);
     }
 
-    public ActionListener getRightClickActionListener(int index) {
+    public ActionListener getRightClickActionListener(final int index) {
         return _rightClickActionListeners.get(index);
     }
 
-    public void setDoubleClickActionListener(int index, ActionListener actionListener) {
+    public void setDoubleClickActionListener(final int index, final ActionListener actionListener) {
         _doubleClickActionListeners.put(index, actionListener);
     }
 
-    public ActionListener getDoubleClickActionListener(int index) {
+    public ActionListener getDoubleClickActionListener(final int index) {
         return _doubleClickActionListeners.get(index);
     }
 
     @Override
-    public Color getForegroundAt(int index) {
+    public Color getForegroundAt(final int index) {
         if (getSelectedIndex() == index) {
             return COLOR_FOREGROUND_SELECTED;
         }
@@ -285,27 +283,27 @@ public final class CloseableTabbedPane extends JTabbedPane {
         repaint();
     }
 
-    public boolean isCloseable(int i) {
+    public boolean isCloseable(final int i) {
         return !isUncloseable(i);
     }
 
-    public boolean isUncloseable(int i) {
+    public boolean isUncloseable(final int i) {
         return _unclosables.contains(i);
     }
 
-    public Rectangle getTabBounds(int tabIndex) {
+    public Rectangle getTabBounds(final int tabIndex) {
         return getUI().getTabBounds(this, tabIndex);
     }
 
     public void bindTabTitleToBanner(final DCBannerPanel bannerPanel) {
-        ChangeListener changeListener = new ChangeListener() {
+        final ChangeListener changeListener = new ChangeListener() {
             @Override
-            public void stateChanged(ChangeEvent e) {
-                int selectedIndex = getSelectedIndex();
+            public void stateChanged(final ChangeEvent e) {
+                final int selectedIndex = getSelectedIndex();
                 if (selectedIndex == -1) {
                     return;
                 }
-                String title = getTitleAt(selectedIndex);
+                final String title = getTitleAt(selectedIndex);
                 bannerPanel.setTitle2(title);
                 bannerPanel.updateUI();
             }

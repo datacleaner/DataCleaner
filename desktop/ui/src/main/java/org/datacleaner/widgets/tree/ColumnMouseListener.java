@@ -32,16 +32,16 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.reference.DatastoreDictionary;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.actions.QuickAnalysisActionListener;
 import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.windows.DatastoreDictionaryDialog;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
 
 import com.google.inject.Injector;
 
@@ -52,16 +52,16 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
     private final InjectorBuilder _injectorBuilder;
 
     @Inject
-    protected ColumnMouseListener(SchemaTree schemaTree, AnalysisJobBuilder analysisJobBuilder,
-            InjectorBuilder injectorBuilder) {
+    protected ColumnMouseListener(final SchemaTree schemaTree, final AnalysisJobBuilder analysisJobBuilder,
+            final InjectorBuilder injectorBuilder) {
         _schemaTree = schemaTree;
         _analysisJobBuilder = analysisJobBuilder;
         _injectorBuilder = injectorBuilder;
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
+    public void mouseClicked(final MouseEvent e) {
+        final TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
         if (path == null) {
             return;
         }
@@ -69,7 +69,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
         final Object userObject = node.getUserObject();
         if (userObject instanceof Column) {
             final Column column = (Column) userObject;
-            int button = e.getButton();
+            final int button = e.getButton();
 
             if (button == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
                 // double click = toggle column
@@ -85,7 +85,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
                 }
                 toggleColumnItem.addActionListener(new ActionListener() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
+                    public void actionPerformed(final ActionEvent e) {
                         toggleColumn(column);
                     }
                 });
@@ -94,15 +94,15 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
                         IconUtils.DICTIONARY_IMAGEPATH);
                 createDictionaryItem.addActionListener(new ActionListener() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
-                        String datastoreName = _analysisJobBuilder.getDatastoreConnection().getDatastore().getName();
-                        DatastoreDictionary dictionary = new DatastoreDictionary(column.getName(), datastoreName,
+                    public void actionPerformed(final ActionEvent e) {
+                        final String datastoreName = _analysisJobBuilder.getDatastoreConnection().getDatastore().getName();
+                        final DatastoreDictionary dictionary = new DatastoreDictionary(column.getName(), datastoreName,
                                 column.getQualifiedLabel());
 
-                        Injector injector = _injectorBuilder.with(DatastoreDictionary.class, dictionary)
+                        final Injector injector = _injectorBuilder.with(DatastoreDictionary.class, dictionary)
                                 .createInjector();
 
-                        DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
+                        final DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
                         dialog.setVisible(true);
                     }
                 });
@@ -110,9 +110,9 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
                 final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
                         IconUtils.MODEL_QUICK_ANALYSIS);
 
-                Injector injector = _injectorBuilder.with(Column[].class, new Column[] { column })
+                final Injector injector = _injectorBuilder.with(Column[].class, new Column[] { column })
                         .with(Table.class, null).createInjector();
-                QuickAnalysisActionListener quickAnalysisActionListener = injector
+                final QuickAnalysisActionListener quickAnalysisActionListener = injector
                         .getInstance(QuickAnalysisActionListener.class);
 
                 quickAnalysisMenuItem.addActionListener(quickAnalysisActionListener);
@@ -136,7 +136,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
     /**
      * toggles whether or not the column is in the source selection
      */
-    public void toggleColumn(Column column) {
+    public void toggleColumn(final Column column) {
         if (_analysisJobBuilder.containsSourceColumn(column)) {
             _analysisJobBuilder.removeSourceColumn(column);
         } else {

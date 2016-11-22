@@ -57,7 +57,7 @@ public class CreateExcelSpreadsheetAnalyzerIT {
 
         final TransformerComponentBuilder<MultiStreamTestTransformer> transformer = new TransformerComponentBuilder<>(
                 jobBuilder, new SimpleDescriptorProvider().getTransformerDescriptorForClass(
-                        MultiStreamTestTransformer.class), new PrefixedIdGenerator());
+                MultiStreamTestTransformer.class), new PrefixedIdGenerator());
 
         transformer.addInputColumns(jobBuilder.getSourceColumns());
 
@@ -90,7 +90,7 @@ public class CreateExcelSpreadsheetAnalyzerIT {
 
         final AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> excelWriter = new AnalyzerComponentBuilder<>(
                 jobBuilder, new SimpleDescriptorProvider().getAnalyzerDescriptorForClass(
-                        CreateExcelSpreadsheetAnalyzer.class));
+                CreateExcelSpreadsheetAnalyzer.class));
 
         excelWriter.addInputColumns(jobBuilder.getAvailableInputColumns(excelWriter));
         excelWriter.setConfiguredProperty(AbstractOutputWriterAnalyzer.PROPERTY_FIELD_NAMES, datastoreTableDefinition

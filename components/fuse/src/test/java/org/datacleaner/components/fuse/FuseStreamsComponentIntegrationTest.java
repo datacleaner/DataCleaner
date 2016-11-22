@@ -63,34 +63,9 @@ public class FuseStreamsComponentIntegrationTest {
     private final DataCleanerConfigurationImpl multiThreadedConfiguration = new DataCleanerConfigurationImpl()
             .withDatastores(datastore).withEnvironment(
                     new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(4)));
-    
+
     @Rule
     public Timeout globalTimeout = Timeout.seconds(20);
-
-    @Test
-    public void testAssumptionsAboutOrderdb() throws Exception {
-        try (final DatastoreConnection connection = datastore.openConnection()) {
-            final DataContext dataContext = connection.getDataContext();
-
-            final Row countCustomers = MetaModelHelper.executeSingleRowQuery(dataContext,
-                    dataContext.query().from("customers").selectCount().toQuery());
-            Assert.assertEquals(COUNT_CUSTOMERS, countCustomers.getValue(0));
-
-            final Row countEmployees = MetaModelHelper.executeSingleRowQuery(dataContext,
-                    dataContext.query().from("employees").selectCount().toQuery());
-            Assert.assertEquals(COUNT_EMPLOYEES, countEmployees.getValue(0));
-        }
-    }
-
-    @Test
-    public void testUnionTablesSingleThreaded() throws Throwable {
-        testUnionTables(singleThreadedConfiguration);
-    }
-
-    @Test
-    public void testUnionTablesMultiThreaded() throws Throwable {
-        testUnionTables(multiThreadedConfiguration);
-    }
 
     private static void testUnionTables(DataCleanerConfiguration configuration) throws Throwable {
         final AnalysisJob job;
@@ -140,16 +115,6 @@ public class FuseStreamsComponentIntegrationTest {
         // size of BOTH "employees" and "customers" tables.
         final ListResult<?> result = (ListResult<?>) results.get(0);
         Assert.assertEquals(COUNT_CUSTOMERS + COUNT_EMPLOYEES, result.getValues().size());
-    }
-
-    @Test
-    public void testFuseOutputDataStreamsSingleThreaded() throws Throwable {
-        testFuseOutputDataStreams(singleThreadedConfiguration);
-    }
-
-    @Test
-    public void testFuseOutputDataStreamsMultiThreaded() throws Throwable {
-        testFuseOutputDataStreams(multiThreadedConfiguration);
     }
 
     private static void testFuseOutputDataStreams(DataCleanerConfiguration configuration) throws Throwable {
@@ -233,6 +198,41 @@ public class FuseStreamsComponentIntegrationTest {
         final int expectedValues = 2 * (COUNT_CUSTOMERS - (COUNT_CUSTOMERS / 3)) + 2;
 
         Assert.assertEquals(expectedValues, result.getValues().size());
+    }
+
+    @Test
+    public void testAssumptionsAboutOrderdb() throws Exception {
+        try (final DatastoreConnection connection = datastore.openConnection()) {
+            final DataContext dataContext = connection.getDataContext();
+
+            final Row countCustomers = MetaModelHelper.executeSingleRowQuery(dataContext,
+                    dataContext.query().from("customers").selectCount().toQuery());
+            Assert.assertEquals(COUNT_CUSTOMERS, countCustomers.getValue(0));
+
+            final Row countEmployees = MetaModelHelper.executeSingleRowQuery(dataContext,
+                    dataContext.query().from("employees").selectCount().toQuery());
+            Assert.assertEquals(COUNT_EMPLOYEES, countEmployees.getValue(0));
+        }
+    }
+
+    @Test
+    public void testUnionTablesSingleThreaded() throws Throwable {
+        testUnionTables(singleThreadedConfiguration);
+    }
+
+    @Test
+    public void testUnionTablesMultiThreaded() throws Throwable {
+        testUnionTables(multiThreadedConfiguration);
+    }
+
+    @Test
+    public void testFuseOutputDataStreamsSingleThreaded() throws Throwable {
+        testFuseOutputDataStreams(singleThreadedConfiguration);
+    }
+
+    @Test
+    public void testFuseOutputDataStreamsMultiThreaded() throws Throwable {
+        testFuseOutputDataStreams(multiThreadedConfiguration);
     }
 
     @Test

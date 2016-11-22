@@ -32,7 +32,7 @@ public class JobTriggeredEvent extends ApplicationEvent {
 
     private final ExecutionLog _executionLog;
 
-    public JobTriggeredEvent(Object source, ExecutionLog executionLog) {
+    public JobTriggeredEvent(final Object source, final ExecutionLog executionLog) {
         super(source);
         _executionLog = executionLog;
     }

@@ -39,7 +39,7 @@ public @interface ExternalDocumentation {
     /**
      * Defines the types of {@link DocumentationLink}s that are available
      */
-    public static enum DocumentationType {
+    enum DocumentationType {
 
         /**
          * Written reference documentation style documents.
@@ -64,43 +64,43 @@ public @interface ExternalDocumentation {
         TECH
     }
 
-    public static @interface DocumentationLink {
+    @interface DocumentationLink {
 
         /**
          * Gets the title/name of the documentation item.
-         * 
+         *
          * @return
          */
-        public String title();
+        String title();
 
         /**
          * Gets the HTTP(S) URL that this documentation item resides at
-         * 
+         *
          * @return
          */
-        public String url();
+        String url();
 
         /**
          * Gets the {@link DocumentationType} of this link
-         * 
+         *
          * @return
          */
-        public DocumentationType type();
+        DocumentationType type();
 
         /**
          * Defines the version of DataCleaner that this documentation item was
          * based on
-         * 
+         *
          * @return
          */
-        public String version();
+        String version();
     }
 
     /**
      * Defines the external documentation links that are defined for this
      * component.
-     * 
+     *
      * @return
      */
-    public DocumentationLink[] value();
+    DocumentationLink[] value();
 }

@@ -48,83 +48,82 @@ import org.datacleaner.util.NamedPatternMatch;
 @Deprecated
 public class NameStandardizerTransformer implements Transformer {
 
-	public static final String[] DEFAULT_PATTERNS = { "FIRSTNAME LASTNAME", "TITULATION. FIRSTNAME LASTNAME",
-			"TITULATION FIRSTNAME LASTNAME", "FIRSTNAME MIDDLENAME LASTNAME", "TITULATION. FIRSTNAME MIDDLENAME LASTNAME",
-			"LASTNAME, FIRSTNAME", "LASTNAME, FIRSTNAME MIDDLENAME" };
+    public enum NamePart implements HasGroupLiteral {
+        FIRSTNAME, LASTNAME, MIDDLENAME, TITULATION;
 
-	public static enum NamePart implements HasGroupLiteral {
-		FIRSTNAME, LASTNAME, MIDDLENAME, TITULATION;
+        @Override
+        public String getGroupLiteral() {
+            if (this == TITULATION) {
+                return "(Mr|Ms|Mrs|Hr|Fru|Frk|Miss|Mister)";
+            }
+            return null;
+        }
+    }
+    public static final String[] DEFAULT_PATTERNS = { "FIRSTNAME LASTNAME", "TITULATION. FIRSTNAME LASTNAME",
+            "TITULATION FIRSTNAME LASTNAME", "FIRSTNAME MIDDLENAME LASTNAME",
+            "TITULATION. FIRSTNAME MIDDLENAME LASTNAME",
+            "LASTNAME, FIRSTNAME", "LASTNAME, FIRSTNAME MIDDLENAME" };
+    @Inject
+    @Configured
+    InputColumn<String> inputColumn;
 
-		@Override
-		public String getGroupLiteral() {
-			if (this == TITULATION) {
-				return "(Mr|Ms|Mrs|Hr|Fru|Frk|Miss|Mister)";
-			}
-			return null;
-		}
-	}
+    @Inject
+    @Configured("Name patterns")
+    String[] stringPatterns = DEFAULT_PATTERNS;
 
-	@Inject
-	@Configured
-	InputColumn<String> inputColumn;
+    private List<NamedPattern<NamePart>> namedPatterns;
 
-	@Inject
-	@Configured("Name patterns")
-	String[] stringPatterns = DEFAULT_PATTERNS;
+    @Initialize
+    public void init() {
+        if (stringPatterns == null) {
+            stringPatterns = new String[0];
+        }
 
-	private List<NamedPattern<NamePart>> namedPatterns;
+        namedPatterns = new ArrayList<NamedPattern<NamePart>>();
 
-	@Initialize
-	public void init() {
-		if (stringPatterns == null) {
-			stringPatterns = new String[0];
-		}
+        for (final String stringPattern : stringPatterns) {
+            namedPatterns.add(new NamedPattern<NamePart>(stringPattern, NamePart.class));
+        }
+    }
 
-		namedPatterns = new ArrayList<NamedPattern<NamePart>>();
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(String.class, "Firstname", "Lastname", "Middlename", "Titulation");
+    }
 
-		for (String stringPattern : stringPatterns) {
-			namedPatterns.add(new NamedPattern<NamePart>(stringPattern, NamePart.class));
-		}
-	}
+    @Override
+    public String[] transform(final InputRow inputRow) {
+        final String value = inputRow.getValue(inputColumn);
+        return transform(value);
+    }
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(String.class, "Firstname", "Lastname", "Middlename", "Titulation");
-	}
+    public String[] transform(final String value) {
+        String firstName = null;
+        String lastName = null;
+        String middleName = null;
+        String titulation = null;
 
-	@Override
-	public String[] transform(InputRow inputRow) {
-		String value = inputRow.getValue(inputColumn);
-		return transform(value);
-	}
+        if (value != null) {
+            for (final NamedPattern<NamePart> namedPattern : namedPatterns) {
+                final NamedPatternMatch<NamePart> match = namedPattern.match(value);
+                if (match != null) {
+                    firstName = match.get(NamePart.FIRSTNAME);
+                    lastName = match.get(NamePart.LASTNAME);
+                    middleName = match.get(NamePart.MIDDLENAME);
+                    titulation = match.get(NamePart.TITULATION);
+                    break;
+                }
+            }
+        }
+        return new String[] { firstName, lastName, middleName, titulation };
+    }
 
-	public String[] transform(String value) {
-		String firstName = null;
-		String lastName = null;
-		String middleName = null;
-		String titulation = null;
+    @SuppressWarnings("unchecked")
+    public void setInputColumn(final InputColumn<?> inputColumn) {
+        this.inputColumn = (InputColumn<String>) inputColumn;
+    }
 
-		if (value != null) {
-			for (NamedPattern<NamePart> namedPattern : namedPatterns) {
-				NamedPatternMatch<NamePart> match = namedPattern.match(value);
-				if (match != null) {
-					firstName = match.get(NamePart.FIRSTNAME);
-					lastName = match.get(NamePart.LASTNAME);
-					middleName = match.get(NamePart.MIDDLENAME);
-					titulation = match.get(NamePart.TITULATION);
-					break;
-				}
-			}
-		}
-		return new String[] { firstName, lastName, middleName, titulation };
-	}
-
-	@SuppressWarnings("unchecked")
-	public void setInputColumn(InputColumn<?> inputColumn) {
-		this.inputColumn = (InputColumn<String>) inputColumn;
-	}
-
-	public void setStringPatterns(String... stringPatterns) {
-		this.stringPatterns = stringPatterns;
-	}
+    public void setStringPatterns(final String... stringPatterns) {
+        this.stringPatterns = stringPatterns;
+    }
 }

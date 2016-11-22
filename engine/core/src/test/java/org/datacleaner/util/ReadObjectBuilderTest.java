@@ -34,7 +34,7 @@ public class ReadObjectBuilderTest extends TestCase {
                 "src/test/resources/analyzerbeans-0.4-datastores.dat"))) {
             deserializedObject = objectInputStream.readObject();
         }
-        
+
         assertTrue(deserializedObject instanceof List);
 
         @SuppressWarnings("unchecked")

@@ -46,24 +46,24 @@ public @interface FileProperty {
     /**
      * Defines the access modes available for a file property
      */
-    public static enum FileAccessMode {
-        OPEN, SAVE;
+    enum FileAccessMode {
+        OPEN, SAVE
     }
 
     /**
      * Defines whether or not the property is used to open an existing file or
      * to specify a file to save.
-     * 
+     *
      * @return the access mode of this file property
      */
-    public FileAccessMode accessMode() default FileAccessMode.OPEN;
+    FileAccessMode accessMode() default FileAccessMode.OPEN;
 
     /**
      * Defines an (array of) file extension to suggest/expect. Extensions will
      * be automatically prefixed with a dot and are case insensitive. Examples:
      * "csv", "xls", "txt" etc.
-     * 
+     *
      * @return the expected file extension of this file property
      */
-    public String[] extension() default {};
+    String[] extension() default {};
 }

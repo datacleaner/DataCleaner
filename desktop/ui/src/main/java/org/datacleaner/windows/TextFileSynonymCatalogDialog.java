@@ -65,9 +65,9 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
     private volatile boolean _nameAutomaticallySet = true;
 
     @Inject
-    protected TextFileSynonymCatalogDialog(@Nullable TextFileSynonymCatalog synonymCatalog,
-            MutableReferenceDataCatalog catalog, WindowContext windowContext, DataCleanerConfiguration configuration,
-            UserPreferences userPreferences) {
+    protected TextFileSynonymCatalogDialog(@Nullable final TextFileSynonymCatalog synonymCatalog,
+            final MutableReferenceDataCatalog catalog, final WindowContext windowContext, final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences) {
         super(windowContext, ImageManager.get().getImage(IconUtils.SYNONYM_CATALOG_TEXTFILE_IMAGEPATH));
         _originalsynonymCatalog = synonymCatalog;
         _catalog = catalog;
@@ -75,7 +75,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
         _nameTextField = WidgetFactory.createTextField("Synonym catalog name");
         _nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent e) {
+            protected void onChange(final DocumentEvent e) {
                 _nameAutomaticallySet = false;
             }
         });
@@ -83,7 +83,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
         _resourceSelector = new ResourceSelector(configuration, userPreferences, true);
         _resourceSelector.addListener(new ResourceTypePresenter.Listener() {
             @Override
-            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
+            public void onResourceSelected(final ResourceTypePresenter<?> presenter, final Resource resource) {
                 if (_nameAutomaticallySet || StringUtils.isNullOrEmpty(_nameTextField.getText())) {
                     _nameTextField.setText(resource.getName());
                     _nameAutomaticallySet = true;
@@ -91,7 +91,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
             }
 
             @Override
-            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+            public void onPathEntered(final ResourceTypePresenter<?> presenter, final String path) {
                 if (_nameAutomaticallySet || StringUtils.isNullOrEmpty(_nameTextField.getText())) {
                     _nameTextField.setText(path);
                     _nameAutomaticallySet = true;
@@ -148,7 +148,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
                 IconUtils.ACTION_SAVE_BRIGHT);
         saveButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final String name = _nameTextField.getText();
                 if (StringUtils.isNullOrEmpty(name)) {
                     JOptionPane.showMessageDialog(TextFileSynonymCatalogDialog.this,

@@ -28,44 +28,44 @@ import javax.swing.Timer;
 
 public abstract class MoveComponentTimerActionListener implements ActionListener {
 
-	private final JComponent component;
-	private final int x;
-	private final int y;
-	private volatile int numSteps;
+    private final JComponent component;
+    private final int x;
+    private final int y;
+    private volatile int numSteps;
 
-	public MoveComponentTimerActionListener(JComponent component, int x, int y, int numSteps) {
-		if (numSteps <= 0) {
-			throw new IllegalArgumentException("numSteps must be a postive number");
-		}
-		this.component = component;
-		this.x = x;
-		this.y = y;
-		this.numSteps = numSteps;
-	}
+    public MoveComponentTimerActionListener(final JComponent component, final int x, final int y, final int numSteps) {
+        if (numSteps <= 0) {
+            throw new IllegalArgumentException("numSteps must be a postive number");
+        }
+        this.component = component;
+        this.x = x;
+        this.y = y;
+        this.numSteps = numSteps;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Timer timer = (Timer) e.getSource();
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        final Timer timer = (Timer) e.getSource();
 
-		Point location = component.getLocation();
-		int currentX = location.x;
-		int currentY = location.y;
-		if (currentX == x && currentY == y) {
-			timer.stop();
-		} else if (numSteps <= 1) {
-			component.setLocation(x, y);
-			done();
-		} else {
-			int diffX = x - currentX;
-			diffX = diffX / numSteps;
-			int diffY = y - currentY;
-			diffY = diffY / numSteps;
+        final Point location = component.getLocation();
+        final int currentX = location.x;
+        final int currentY = location.y;
+        if (currentX == x && currentY == y) {
+            timer.stop();
+        } else if (numSteps <= 1) {
+            component.setLocation(x, y);
+            done();
+        } else {
+            int diffX = x - currentX;
+            diffX = diffX / numSteps;
+            int diffY = y - currentY;
+            diffY = diffY / numSteps;
 
-			component.setLocation(currentX + diffX, currentY + diffY);
-		}
+            component.setLocation(currentX + diffX, currentY + diffY);
+        }
 
-		numSteps--;
-	}
+        numSteps--;
+    }
 
-	protected abstract void done();
+    protected abstract void done();
 }

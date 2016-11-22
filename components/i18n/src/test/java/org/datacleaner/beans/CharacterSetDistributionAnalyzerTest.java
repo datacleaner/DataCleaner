@@ -20,48 +20,29 @@
 package org.datacleaner.beans;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
 import org.apache.metamodel.util.EqualsBuilder;
-import org.apache.metamodel.util.FileResource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputDataStream;
-import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.configuration.DataCleanerEnvironment;
-import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
-import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.AnalyzerJob;
-import org.datacleaner.job.OutputDataStreamJob;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerComponentBuilder;
-import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
-import org.datacleaner.job.runner.AnalysisResultFuture;
-import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CharacterSetDistributionResult;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabNavigator;
-import org.datacleaner.result.ListResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory;
-import org.datacleaner.test.MockAnalyzer;
 
 import com.ibm.icu.text.UnicodeSet;
 
 public class CharacterSetDistributionAnalyzerTest extends TestCase {
 
-    private static final String CHARSET_NAMES = "[Arabic, Armenian, Bengali, Cyrillic, Devanagari, Georgian, Greek, Gujarati, Gurmukhi, Han, Hangul, Hebrew, Hiragana, Kannada, Katakana, Latin, ASCII, Latin, non-ASCII, Malayalam, Oriya, Syriac, Tamil, Telugu, Thaana, Thai]";
+    private static final String CHARSET_NAMES =
+            "[Arabic, Armenian, Bengali, Cyrillic, Devanagari, Georgian, Greek, Gujarati, Gurmukhi, Han, Hangul, Hebrew, Hiragana, Kannada, Katakana, Latin, ASCII, Latin, non-ASCII, Malayalam, Oriya, Syriac, Tamil, Telugu, Thaana, Thai]";
 
     public void testCreateFilters() throws Exception {
         Map<String, UnicodeSet> unicodeSets = CharacterSetDistributionAnalyzer.createUnicodeSets();
@@ -112,14 +93,18 @@ public class CharacterSetDistributionAnalyzerTest extends TestCase {
 
         assertEquals(CHARSET_NAMES, crosstab.getDimension("Measures").getCategories().toString());
 
-        CrosstabNavigator<?> cyrillicNavigation = crosstab.navigate().where("Column", "foo").where("Measures", "Cyrillic");
+        CrosstabNavigator<?> cyrillicNavigation =
+                crosstab.navigate().where("Column", "foo").where("Measures", "Cyrillic");
         assertEquals("1", cyrillicNavigation.get().toString());
-        AnnotatedRowsResult cyrillicAnnotatedRowsResult = (AnnotatedRowsResult) cyrillicNavigation.explore().getResult();
+        AnnotatedRowsResult cyrillicAnnotatedRowsResult =
+                (AnnotatedRowsResult) cyrillicNavigation.explore().getResult();
         InputRow[] annotatedRows = cyrillicAnnotatedRowsResult.getRows();
         assertEquals(1, annotatedRows.length);
         assertEquals("Данныечистого", annotatedRows[0].getValue(col1));
-        assertEquals("12", crosstab.navigate().where("Column", "foo").where("Measures", "Latin, ASCII").get().toString());
-        assertEquals("2", crosstab.navigate().where("Column", "foo").where("Measures", "Latin, non-ASCII").get().toString());
+        assertEquals("12",
+                crosstab.navigate().where("Column", "foo").where("Measures", "Latin, ASCII").get().toString());
+        assertEquals("2",
+                crosstab.navigate().where("Column", "foo").where("Measures", "Latin, non-ASCII").get().toString());
 
         String resultString = new CrosstabTextRenderer().render(result);
         String[] resultLines = resultString.split("\n");

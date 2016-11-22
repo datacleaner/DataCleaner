@@ -53,7 +53,7 @@ public class AbstractComponentBuilderTest extends TestCase {
     /**
      * See issue https://github.com/datacleaner/DataCleaner/issues/574 which
      * this test reproduces.
-     * 
+     *
      * @throws Exception
      */
     public void testGetOutputDataStreamsWhenConsumingEscalateToMultipleJobs() throws Exception {
@@ -103,11 +103,11 @@ public class AbstractComponentBuilderTest extends TestCase {
             // but the stream itself should be mutated, not replaced, so same
             // instance is expected
             assertSame(streams1.get(0), streams2.get(0));
-            
+
             // now change the name of the stream
             analyzer.setConfiguredProperty("Stream name", "another stream name");
             final List<OutputDataStream> streams3 = analyzer.getOutputDataStreams();
-            
+
             // now we expect a completely new stream instance
             assertNotSame(streams1.get(0), streams3.get(0));
         } finally {

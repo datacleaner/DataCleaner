@@ -43,94 +43,95 @@ import org.datacleaner.reference.DictionaryConnection;
 @Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class DictionaryMatcherTransformer implements Transformer {
 
-	@Configured
-	Dictionary[] _dictionaries;
+    @Configured
+    Dictionary[] _dictionaries;
 
-	@Configured
-	InputColumn<?> _column;
+    @Configured
+    InputColumn<?> _column;
 
-	@Configured
-	MatchOutputType _outputType = MatchOutputType.TRUE_FALSE;
-	
-	@Provided
-	DataCleanerConfiguration _configuration;
-	
-	private DictionaryConnection[] dictionaryConnections;
+    @Configured
+    MatchOutputType _outputType = MatchOutputType.TRUE_FALSE;
 
-	public DictionaryMatcherTransformer() {
-	}
+    @Provided
+    DataCleanerConfiguration _configuration;
 
-	public DictionaryMatcherTransformer(InputColumn<?> column, Dictionary[] dictionaries, DataCleanerConfiguration configuration) {
-		this();
-		_column = column;
-		_dictionaries = dictionaries;
-		_configuration = configuration;
-	}
+    private DictionaryConnection[] dictionaryConnections;
 
-	public void setDictionaries(Dictionary[] dictionaries) {
-		_dictionaries = dictionaries;
-	}
+    public DictionaryMatcherTransformer() {
+    }
 
-	public void setColumn(InputColumn<?> column) {
-		_column = column;
-	}
+    public DictionaryMatcherTransformer(final InputColumn<?> column, final Dictionary[] dictionaries,
+            final DataCleanerConfiguration configuration) {
+        this();
+        _column = column;
+        _dictionaries = dictionaries;
+        _configuration = configuration;
+    }
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		String columnName = _column.getName();
-		String[] names = new String[_dictionaries.length];
-		for (int i = 0; i < names.length; i++) {
-			names[i] = columnName + " in '" + _dictionaries[i].getName() + "'";
-		}
-		Class<?>[] types = new Class[_dictionaries.length];
-		for (int i = 0; i < types.length; i++) {
-			types[i] = _outputType.getOutputClass();
-		}
-		return new OutputColumns(names, types);
-	}
-	
-	@Initialize
-	public void init() {
-	    dictionaryConnections = new DictionaryConnection[_dictionaries.length];
-	    for (int i = 0; i < _dictionaries.length; i++) {
+    public void setDictionaries(final Dictionary[] dictionaries) {
+        _dictionaries = dictionaries;
+    }
+
+    public void setColumn(final InputColumn<?> column) {
+        _column = column;
+    }
+
+    @Override
+    public OutputColumns getOutputColumns() {
+        final String columnName = _column.getName();
+        final String[] names = new String[_dictionaries.length];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = columnName + " in '" + _dictionaries[i].getName() + "'";
+        }
+        final Class<?>[] types = new Class[_dictionaries.length];
+        for (int i = 0; i < types.length; i++) {
+            types[i] = _outputType.getOutputClass();
+        }
+        return new OutputColumns(names, types);
+    }
+
+    @Initialize
+    public void init() {
+        dictionaryConnections = new DictionaryConnection[_dictionaries.length];
+        for (int i = 0; i < _dictionaries.length; i++) {
             dictionaryConnections[i] = _dictionaries[i].openConnection(_configuration);
         }
-	}
-	
-	@Close
-	public void close() {
-	    if (dictionaryConnections != null) {
-	        for (int i = 0; i < dictionaryConnections.length; i++) {
-	            dictionaryConnections[i].close();
+    }
+
+    @Close
+    public void close() {
+        if (dictionaryConnections != null) {
+            for (int i = 0; i < dictionaryConnections.length; i++) {
+                dictionaryConnections[i].close();
             }
-	        dictionaryConnections=null;
-	    }
-	}
+            dictionaryConnections = null;
+        }
+    }
 
-	@Override
-	public Object[] transform(InputRow inputRow) {
-		Object value = inputRow.getValue(_column);
-		return transform(value);
-	}
+    @Override
+    public Object[] transform(final InputRow inputRow) {
+        final Object value = inputRow.getValue(_column);
+        return transform(value);
+    }
 
-	public Object[] transform(final Object value) {
-		String stringValue = ConvertToStringTransformer.transformValue(value);
-		Object[] result = new Object[_dictionaries.length];
-		if (stringValue != null) {
-			for (int i = 0; i < result.length; i++) {
-				boolean containsValue = dictionaryConnections[i].containsValue(stringValue);
-				if (_outputType == MatchOutputType.TRUE_FALSE) {
-					result[i] = containsValue;
-				} else if (_outputType == MatchOutputType.INPUT_OR_NULL) {
-					if (containsValue) {
-						result[i] = stringValue;
-					} else {
-						result[i] = null;
-					}
-				}
-			}
-		}
-		return result;
-	}
+    public Object[] transform(final Object value) {
+        final String stringValue = ConvertToStringTransformer.transformValue(value);
+        final Object[] result = new Object[_dictionaries.length];
+        if (stringValue != null) {
+            for (int i = 0; i < result.length; i++) {
+                final boolean containsValue = dictionaryConnections[i].containsValue(stringValue);
+                if (_outputType == MatchOutputType.TRUE_FALSE) {
+                    result[i] = containsValue;
+                } else if (_outputType == MatchOutputType.INPUT_OR_NULL) {
+                    if (containsValue) {
+                        result[i] = stringValue;
+                    } else {
+                        result[i] = null;
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
 }

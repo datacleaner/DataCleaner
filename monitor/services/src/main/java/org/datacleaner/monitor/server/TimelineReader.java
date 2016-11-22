@@ -28,5 +28,5 @@ import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
  */
 public interface TimelineReader {
 
-    public TimelineDefinition read(InputStream inputStream);
+    TimelineDefinition read(InputStream inputStream);
 }

@@ -46,17 +46,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ComponentStoreImpl implements ComponentStore {
 
     public static final String FOLDER_NAME = "components";
-    
+
     private static final Logger logger = LoggerFactory.getLogger(ComponentStore.class);
-    
+
     private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock(true);
     private final Lock readLock = rwLock.readLock();
     private final Lock writeLock = rwLock.writeLock();
     private final ObjectMapper objectMapper = Serializator.getJacksonObjectMapper();
     private final RepositoryFolder componentsFolder;
 
-    public ComponentStoreImpl(Repository repository, String tenantId) {
-        RepositoryFolder tenantFolder = repository.getFolder(tenantId);
+    public ComponentStoreImpl(final Repository repository, final String tenantId) {
+        final RepositoryFolder tenantFolder = repository.getFolder(tenantId);
         componentsFolder = tenantFolder.getOrCreateFolder(FOLDER_NAME);
     }
 
@@ -66,19 +66,19 @@ public class ComponentStoreImpl implements ComponentStore {
      * @param instanceId
      * @return
      */
-    public ComponentStoreHolder get(String instanceId) {
+    public ComponentStoreHolder get(final String instanceId) {
         logger.info("Read component with id: {}", instanceId);
         readLock.lock();
         final ComponentStoreHolder[] conf = new ComponentStoreHolder[1];
         try {
-            RepositoryFile configFile = componentsFolder.getFile(instanceId);
+            final RepositoryFile configFile = componentsFolder.getFile(instanceId);
             if (configFile == null) {
                 return null;
             }
             configFile.readFile(new Action<InputStream>() {
                 @Override
-                public void run(InputStream arg) throws Exception {
-                    String theString = IOUtils.toString(arg);
+                public void run(final InputStream arg) throws Exception {
+                    final String theString = IOUtils.toString(arg);
                     conf[0] = objectMapper.readValue(theString, ComponentStoreHolder.class);
                 }
             });
@@ -96,7 +96,7 @@ public class ComponentStoreImpl implements ComponentStore {
     public void store(final ComponentStoreHolder configuration) {
         logger.info("Store component with id: {}", configuration.getInstanceId());
         writeLock.lock();
-        RepositoryFile configFile = componentsFolder.getFile(configuration.getInstanceId());
+        final RepositoryFile configFile = componentsFolder.getFile(configuration.getInstanceId());
         if (configFile != null) {
             // I must delete old file.
             configFile.delete();
@@ -104,10 +104,10 @@ public class ComponentStoreImpl implements ComponentStore {
         try {
             componentsFolder.createFile(configuration.getInstanceId(), new Action<OutputStream>() {
                 @Override
-                public void run(OutputStream fileOutput) throws Exception {
-                    String jsonConf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+                public void run(final OutputStream fileOutput) throws Exception {
+                    final String jsonConf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(
                             configuration);
-                    InputStream jsonConfStream = IOUtils.toInputStream(jsonConf);
+                    final InputStream jsonConfStream = IOUtils.toInputStream(jsonConf);
                     FileHelper.copy(jsonConfStream, fileOutput);
                 }
             });
@@ -122,10 +122,10 @@ public class ComponentStoreImpl implements ComponentStore {
      * @param instanceId
      * @return
      */
-    public boolean remove(String instanceId) {
+    public boolean remove(final String instanceId) {
         writeLock.lock();
         try {
-            RepositoryFile configFile = componentsFolder.getFile(instanceId);
+            final RepositoryFile configFile = componentsFolder.getFile(instanceId);
             if (configFile == null) {
                 logger.info("Component with id: {} is not in store.", instanceId);
                 return false;
@@ -149,12 +149,12 @@ public class ComponentStoreImpl implements ComponentStore {
         readLock.lock();
         final List<ComponentStoreHolder> holderList = new ArrayList<>();
         try {
-            List<RepositoryFile> files = componentsFolder.getFiles();
-            for (RepositoryFile file : files) {
+            final List<RepositoryFile> files = componentsFolder.getFiles();
+            for (final RepositoryFile file : files) {
                 file.readFile(new Action<InputStream>() {
                     @Override
-                    public void run(InputStream arg) throws Exception {
-                        String theString = IOUtils.toString(arg);
+                    public void run(final InputStream arg) throws Exception {
+                        final String theString = IOUtils.toString(arg);
                         holderList.add(objectMapper.readValue(theString, ComponentStoreHolder.class));
                     }
                 });

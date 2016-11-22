@@ -51,7 +51,7 @@ public class PentahoJobContext implements XmlJobContext, MetricJobContext {
     private final PentahoJobEngine _engine;
     private final TenantContext _tenantContext;
 
-    public PentahoJobContext(TenantContext tenantContext, PentahoJobEngine engine, RepositoryFile file) {
+    public PentahoJobContext(final TenantContext tenantContext, final PentahoJobEngine engine, final RepositoryFile file) {
         _tenantContext = tenantContext;
         _engine = engine;
         _file = file;
@@ -85,10 +85,10 @@ public class PentahoJobContext implements XmlJobContext, MetricJobContext {
     }
 
     public PentahoJobType getPentahoJobType() {
-        PentahoJobType pentahoJobType = _file.readFile(new Func<InputStream, PentahoJobType>() {
+        final PentahoJobType pentahoJobType = _file.readFile(new Func<InputStream, PentahoJobType>() {
             @Override
-            public PentahoJobType eval(InputStream in) {
-                JaxbPentahoJobTypeAdaptor adaptor = new JaxbPentahoJobTypeAdaptor();
+            public PentahoJobType eval(final InputStream in) {
+                final JaxbPentahoJobTypeAdaptor adaptor = new JaxbPentahoJobTypeAdaptor();
                 return adaptor.unmarshal(in);
             }
         });
@@ -104,7 +104,7 @@ public class PentahoJobContext implements XmlJobContext, MetricJobContext {
     public void toXml(final OutputStream out) {
         _file.readFile(new Action<InputStream>() {
             @Override
-            public void run(InputStream in) throws Exception {
+            public void run(final InputStream in) throws Exception {
                 FileHelper.copy(in, out);
             }
         });

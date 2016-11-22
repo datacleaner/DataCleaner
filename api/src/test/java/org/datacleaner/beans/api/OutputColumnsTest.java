@@ -19,9 +19,9 @@
  */
 package org.datacleaner.beans.api;
 
-import org.datacleaner.api.OutputColumns;
-
 import junit.framework.TestCase;
+
+import org.datacleaner.api.OutputColumns;
 
 @SuppressWarnings("deprecation")
 public class OutputColumnsTest extends TestCase {

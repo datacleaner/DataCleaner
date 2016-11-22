@@ -43,50 +43,50 @@ import org.datacleaner.components.categories.DataStructuresCategory;
 @Categorized(DataStructuresCategory.class)
 public class SelectFromListTransformer implements Transformer {
 
-	@Inject
-	@Configured
-	InputColumn<List<?>> listColumn;
+    @Inject
+    @Configured
+    InputColumn<List<?>> listColumn;
 
-	@Inject
-	@Configured
-	@Description("A list of (0-based) indices to use for fetching values from the list.")
-	Number[] indices = { 0, 1, 2 };
+    @Inject
+    @Configured
+    @Description("A list of (0-based) indices to use for fetching values from the list.")
+    Number[] indices = { 0, 1, 2 };
 
-	@Inject
-	@Configured
-	Class<?> elementType;
+    @Inject
+    @Configured
+    Class<?> elementType;
 
-	@Inject
-	@Configured
-	@Description("Verify that expected element type and actual type are the same")
-	boolean verifyTypes = false;
+    @Inject
+    @Configured
+    @Description("Verify that expected element type and actual type are the same")
+    boolean verifyTypes = false;
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		String[] names = new String[indices.length];
-		Class<?>[] types = new Class[indices.length];
-		for (int i = 0; i < indices.length; i++) {
-			names[i] = listColumn.getName() + "[" + indices[i] + "]";
-			types[i] = elementType;
-		}
-		return new OutputColumns(names, types);
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        final String[] names = new String[indices.length];
+        final Class<?>[] types = new Class[indices.length];
+        for (int i = 0; i < indices.length; i++) {
+            names[i] = listColumn.getName() + "[" + indices[i] + "]";
+            types[i] = elementType;
+        }
+        return new OutputColumns(names, types);
+    }
 
-	@Override
-	public Object[] transform(InputRow row) {
-		final Object[] result = new Object[indices.length];
+    @Override
+    public Object[] transform(final InputRow row) {
+        final Object[] result = new Object[indices.length];
 
-		List<?> list = row.getValue(listColumn);
-		if (list != null && !list.isEmpty()) {
-			for (int i = 0; i < indices.length; i++) {
-				int index = indices[i].intValue();
-				if (index >= 0 && index < list.size()) {
-					Object value = list.get(index);
-					result[i] = value;
-				}
-			}
-		}
+        final List<?> list = row.getValue(listColumn);
+        if (list != null && !list.isEmpty()) {
+            for (int i = 0; i < indices.length; i++) {
+                final int index = indices[i].intValue();
+                if (index >= 0 && index < list.size()) {
+                    final Object value = list.get(index);
+                    result[i] = value;
+                }
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

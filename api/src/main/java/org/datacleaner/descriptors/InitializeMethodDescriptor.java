@@ -28,45 +28,45 @@ import org.datacleaner.api.Initialize;
 /**
  * Descriptor for an initialize method. The most common way of registering an
  * initialize method is using the @Initialize annotation.
- * 
+ *
  * @see Initialize
- * 
- * 
+ *
+ *
  */
 public interface InitializeMethodDescriptor extends Serializable {
 
     /**
      * Determines if this initialize method is distributed or not. 
-     * 
+     *
      * @return
-     * 
+     *
      * @see Initialize#distributed()
      */
-    public boolean isDistributed();
+    boolean isDistributed();
 
     /**
      * Invokes the initialize method
-     * 
+     *
      * @param component
      *            the component to initialize
      */
-    public void initialize(Object component);
+    void initialize(Object component);
 
     /**
      * Gets the annotations of the method
-     * 
+     *
      * @return the annotations of the method
      */
-    public Set<Annotation> getAnnotations();
+    Set<Annotation> getAnnotations();
 
     /**
      * Gets a particular annotation of the method
-     * 
+     *
      * @param <A>
      *            the annotation type
      * @param annotationClass
      *            the annotation class to look for
      * @return a matching annotation or null, if none is present
      */
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass);
+    <A extends Annotation> A getAnnotation(Class<A> annotationClass);
 }

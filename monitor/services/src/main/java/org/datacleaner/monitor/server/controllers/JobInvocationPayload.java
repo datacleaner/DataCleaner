@@ -20,7 +20,9 @@
 package org.datacleaner.monitor.server.controllers;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Bean which represents the payload of invoking a DC job using the
@@ -36,10 +38,6 @@ public class JobInvocationPayload implements Serializable {
 
     private List<Map<String, Object>> columnValueMap;
 
-    public void setRows(List<JobInvocationRowData> rows) {
-        this.rows = rows;
-    }
-
     public List<JobInvocationRowData> getRows() {
         if (rows == null) {
             rows = new ArrayList<JobInvocationRowData>();
@@ -47,26 +45,30 @@ public class JobInvocationPayload implements Serializable {
         return rows;
     }
 
-    public void addRow(Object[] values) {
-        getRows().add(new JobInvocationRowData(values));
+    public void setRows(final List<JobInvocationRowData> rows) {
+        this.rows = rows;
     }
 
-    public void setColumns(List<String> columns) {
-        this.columns = columns;
+    public void addRow(final Object[] values) {
+        getRows().add(new JobInvocationRowData(values));
     }
 
     public List<String> getColumns() {
         return columns;
     }
 
+    public void setColumns(final List<String> columns) {
+        this.columns = columns;
+    }
+
     public List<Map<String, Object>> getColumnValueMap() {
-        if(columnValueMap == null){
+        if (columnValueMap == null) {
             columnValueMap = new ArrayList<>();
         }
         return columnValueMap;
     }
 
-    public void setColumnValueMap(List<Map<String, Object>> columnValueMap) {
+    public void setColumnValueMap(final List<Map<String, Object>> columnValueMap) {
         this.columnValueMap = columnValueMap;
     }
 

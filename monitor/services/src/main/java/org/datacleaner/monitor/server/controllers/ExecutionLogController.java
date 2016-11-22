@@ -26,6 +26,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.JobContext;
@@ -33,8 +35,6 @@ import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping({"/{tenant}/logs/{result:.+}", "/{tenant}/results/{result:.+}.analysis.execution.log.xml"})
+@RequestMapping({ "/{tenant}/logs/{result:.+}", "/{tenant}/results/{result:.+}.analysis.execution.log.xml" })
 public class ExecutionLogController {
 
     private static final String EXTENSION = FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension();
@@ -70,7 +70,7 @@ public class ExecutionLogController {
             final String jobName = resultName.substring(0, resultName.length() - ("-latest" + EXTENSION).length());
             resultFile = resultsFolder.getLatestFile(jobName, EXTENSION);
             if (resultFile == null) {
-                JobContext job = context.getJob(jobName);
+                final JobContext job = context.getJob(jobName);
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "No execution logs for job: " + job.getName());
                 return;
             }
@@ -88,7 +88,7 @@ public class ExecutionLogController {
         final ServletOutputStream out = response.getOutputStream();
         resultFile.readFile(new Action<InputStream>() {
             @Override
-            public void run(InputStream in) throws Exception {
+            public void run(final InputStream in) throws Exception {
                 FileHelper.copy(in, out);
             }
         });

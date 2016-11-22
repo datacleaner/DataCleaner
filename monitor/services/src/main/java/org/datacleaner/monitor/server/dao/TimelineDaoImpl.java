@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
@@ -39,7 +40,6 @@ import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.RepositoryNode;
 import org.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +54,13 @@ public class TimelineDaoImpl implements TimelineDao {
     private final Repository _repository;
 
     @Autowired
-    public TimelineDaoImpl(TenantContextFactory tenantContextFactory, Repository repository) {
+    public TimelineDaoImpl(final TenantContextFactory tenantContextFactory, final Repository repository) {
         _tenantContextFactory = tenantContextFactory;
         _repository = repository;
     }
 
     @Override
-    public boolean removeTimeline(TimelineIdentifier timeline) {
+    public boolean removeTimeline(final TimelineIdentifier timeline) {
         if (timeline == null) {
             return false;
         }
@@ -74,7 +74,7 @@ public class TimelineDaoImpl implements TimelineDao {
 
         try {
             node.delete();
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             logger.warn("Attempt to delete node failed: " + node, e);
             return false;
         }
@@ -83,15 +83,16 @@ public class TimelineDaoImpl implements TimelineDao {
     }
 
     @Override
-    public Map<TimelineIdentifier, TimelineDefinition> getTimelinesForJob(TenantIdentifier tenant, JobIdentifier job) {
-        final Map<TimelineIdentifier, TimelineDefinition> result = new HashMap<TimelineIdentifier, TimelineDefinition>();
+    public Map<TimelineIdentifier, TimelineDefinition> getTimelinesForJob(final TenantIdentifier tenant, final JobIdentifier job) {
+        final Map<TimelineIdentifier, TimelineDefinition> result =
+                new HashMap<TimelineIdentifier, TimelineDefinition>();
         if (job == null) {
             return result;
         }
 
         final List<TimelineIdentifier> timelinesForTenant = getTimelinesForTenant(tenant);
 
-        for (TimelineIdentifier timelineIdentifier : timelinesForTenant) {
+        for (final TimelineIdentifier timelineIdentifier : timelinesForTenant) {
             final TimelineDefinition timelineDefinition = getTimelineDefinition(timelineIdentifier);
             if (job.equals(timelineDefinition.getJobIdentifier())) {
                 result.put(timelineIdentifier, timelineDefinition);
@@ -102,12 +103,12 @@ public class TimelineDaoImpl implements TimelineDao {
     }
 
     @Override
-    public List<TimelineIdentifier> getTimelinesForTenant(TenantIdentifier tenant) {
+    public List<TimelineIdentifier> getTimelinesForTenant(final TenantIdentifier tenant) {
         final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
         final List<TimelineIdentifier> result = new ArrayList<TimelineIdentifier>();
 
-        List<RepositoryFolder> folders = timelinesFolder.getFolders();
-        for (RepositoryFolder repositoryFolder : folders) {
+        final List<RepositoryFolder> folders = timelinesFolder.getFolders();
+        for (final RepositoryFolder repositoryFolder : folders) {
             final DashboardGroup group = new DashboardGroup(repositoryFolder.getName());
             addTimelines(result, group, repositoryFolder);
         }
@@ -116,10 +117,11 @@ public class TimelineDaoImpl implements TimelineDao {
         return result;
     }
 
-    private void addTimelines(List<TimelineIdentifier> result, DashboardGroup group, RepositoryFolder repositoryFolder) {
+    private void addTimelines(final List<TimelineIdentifier> result, final DashboardGroup group,
+            final RepositoryFolder repositoryFolder) {
         final String extension = FileFilters.ANALYSIS_TIMELINE_XML.getExtension();
         final List<RepositoryFile> files = repositoryFolder.getFiles(null, extension);
-        for (RepositoryFile file : files) {
+        for (final RepositoryFile file : files) {
             final String timelineName = file.getName().substring(0, file.getName().length() - extension.length());
             final TimelineIdentifier timelineIdentifier = new TimelineIdentifier(timelineName, file.getQualifiedPath(),
                     group);
@@ -128,7 +130,7 @@ public class TimelineDaoImpl implements TimelineDao {
     }
 
     @Override
-    public TimelineIdentifier updateTimeline(TimelineIdentifier identifier, TimelineDefinition definition) {
+    public TimelineIdentifier updateTimeline(final TimelineIdentifier identifier, final TimelineDefinition definition) {
         final RepositoryFile file = (RepositoryFile) _repository.getRepositoryNode(identifier.getPath());
 
         file.writeFile(new WriteTimelineAction(definition));
@@ -137,7 +139,7 @@ public class TimelineDaoImpl implements TimelineDao {
     }
 
     @Override
-    public TimelineDefinition getTimelineDefinition(TimelineIdentifier timeline) {
+    public TimelineDefinition getTimelineDefinition(final TimelineIdentifier timeline) {
         final String path = timeline.getPath();
 
         logger.info("Reading timeline from file: {}", path);
@@ -152,7 +154,7 @@ public class TimelineDaoImpl implements TimelineDao {
         final TimelineDefinition timelineDefinition = timelineNode
                 .readFile(new Func<InputStream, TimelineDefinition>() {
                     @Override
-                    public TimelineDefinition eval(InputStream in) {
+                    public TimelineDefinition eval(final InputStream in) {
                         final TimelineReader reader = new JaxbTimelineReader();
                         final TimelineDefinition timelineDefinition = reader.read(in);
                         return timelineDefinition;

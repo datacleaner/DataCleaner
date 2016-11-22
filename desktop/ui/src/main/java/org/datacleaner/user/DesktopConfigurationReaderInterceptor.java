@@ -57,27 +57,27 @@ public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationR
 
     private final Repository _homeRepository;
 
-    public DesktopConfigurationReaderInterceptor(FileObject dataCleanerHome) {
+    public DesktopConfigurationReaderInterceptor(final FileObject dataCleanerHome) {
         this(new VfsRepository(dataCleanerHome));
     }
 
-    public DesktopConfigurationReaderInterceptor(FileObject dataCleanerHome, Resource propertiesResource) {
+    public DesktopConfigurationReaderInterceptor(final FileObject dataCleanerHome, final Resource propertiesResource) {
         this(new VfsRepository(dataCleanerHome), propertiesResource);
     }
 
-    public DesktopConfigurationReaderInterceptor(File dataCleanerHome) {
+    public DesktopConfigurationReaderInterceptor(final File dataCleanerHome) {
         this(new FileRepository(dataCleanerHome));
     }
 
-    public DesktopConfigurationReaderInterceptor(File dataCleanerHome, Resource propertiesResource) {
+    public DesktopConfigurationReaderInterceptor(final File dataCleanerHome, final Resource propertiesResource) {
         this(new FileRepository(dataCleanerHome), propertiesResource);
     }
 
-    public DesktopConfigurationReaderInterceptor(Repository homeRepository) {
+    public DesktopConfigurationReaderInterceptor(final Repository homeRepository) {
         this(homeRepository, null);
     }
 
-    public DesktopConfigurationReaderInterceptor(Repository homeRepository, Resource propertiesResource) {
+    public DesktopConfigurationReaderInterceptor(final Repository homeRepository, final Resource propertiesResource) {
         super(propertiesResource, BASE_ENVIRONMENT);
         _homeRepository = homeRepository;
     }
@@ -92,8 +92,8 @@ public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationR
     }
 
     @Override
-    public Class<?> loadClass(String className) throws ClassNotFoundException {
-        ClassLoader classLoader = ExtensionPackage.getExtensionClassLoader();
+    public Class<?> loadClass(final String className) throws ClassNotFoundException {
+        final ClassLoader classLoader = ExtensionPackage.getExtensionClassLoader();
         return Class.forName(className, true, classLoader);
     }
 

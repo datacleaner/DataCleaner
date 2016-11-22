@@ -24,7 +24,7 @@ public abstract class AbstractRepositoryNode implements RepositoryNode {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public final int compareTo(RepositoryNode o) {
+    public final int compareTo(final RepositoryNode o) {
         if (o == null) {
             return 1;
         }
@@ -33,7 +33,7 @@ public abstract class AbstractRepositoryNode implements RepositoryNode {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * This implementation of the method can be used as a reference. It uses the
      * parent's qualified path and appends '/' and this node's own name to it.
      * Can also be overridden by subclasses in case a more effective way is
@@ -41,7 +41,7 @@ public abstract class AbstractRepositoryNode implements RepositoryNode {
      */
     @Override
     public String getQualifiedPath() {
-        RepositoryFolder parent = getParent();
+        final RepositoryFolder parent = getParent();
         if (parent == null || parent instanceof Repository) {
             return '/' + getName();
         }
@@ -54,13 +54,13 @@ public abstract class AbstractRepositoryNode implements RepositoryNode {
     }
 
     @Override
-    public final boolean equals(Object obj) {
+    public final boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
         if (obj instanceof RepositoryNode) {
-            String otherQualifiedPath = ((RepositoryNode) obj).getQualifiedPath();
-            boolean equalPath = getQualifiedPath().equals(otherQualifiedPath);
+            final String otherQualifiedPath = ((RepositoryNode) obj).getQualifiedPath();
+            final boolean equalPath = getQualifiedPath().equals(otherQualifiedPath);
             return equalPath;
         }
 

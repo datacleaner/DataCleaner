@@ -78,9 +78,9 @@ public class PropertyWidgetFactoryTest extends TestCase {
 
     public void testCreateAllPropertyTypes() throws Exception {
         final DCModule dcModule = new DCModuleImpl();
-        
+
         Injector injector;
-        
+
         injector = Guice.createInjector(dcModule);
         DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
         MutableReferenceDataCatalog referenceDataCatalog = (MutableReferenceDataCatalog) configuration
@@ -188,7 +188,8 @@ public class PropertyWidgetFactoryTest extends TestCase {
                 null, new TextFileSynonymCatalog("foo", new File("foobar"), true, "UTF8"));
 
         performAssertions(propertyWidgetFactory, "Synonym catalog array property",
-                MultipleSynonymCatalogsPropertyWidget.class, new SynonymCatalog[0], new SynonymCatalog[] { syn1, syn3 });
+                MultipleSynonymCatalogsPropertyWidget.class, new SynonymCatalog[0],
+                new SynonymCatalog[] { syn1, syn3 });
 
         performAssertions(propertyWidgetFactory, "Datastore property", SingleDatastorePropertyWidget.class, null,
                 new ExcelDatastore("my ds", null, "target/foobar.xlsx"));

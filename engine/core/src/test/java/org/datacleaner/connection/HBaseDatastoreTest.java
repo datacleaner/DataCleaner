@@ -29,7 +29,7 @@ public class HBaseDatastoreTest extends TestCase {
         assertEquals("localhost", ds1.getZookeeperHostname());
         assertEquals(1234, ds1.getZookeeperPort());
         assertEquals(null, ds1.getTableDefs());
-        
+
         PerformanceCharacteristics performanceCharacteristics = ds1.getPerformanceCharacteristics();
         assertEquals(false, performanceCharacteristics.isNaturalRecordOrderConsistent());
         assertEquals(true, performanceCharacteristics.isQueryOptimizationPreferred());

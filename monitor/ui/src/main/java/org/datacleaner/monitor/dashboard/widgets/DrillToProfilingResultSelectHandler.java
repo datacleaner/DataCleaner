@@ -55,13 +55,38 @@ public class DrillToProfilingResultSelectHandler {
 
     private PlotItem _item;
 
-    public DrillToProfilingResultSelectHandler(PlotItem item, TimelineDefinition timelineDefinition,
-            TimelineData timelineData) {
+    public DrillToProfilingResultSelectHandler(final PlotItem item, final TimelineDefinition timelineDefinition,
+            final TimelineData timelineData) {
         _item = item;
         _timelineDefinition = timelineDefinition;
         _timelineData = timelineData;
         _popup = new DCPopupPanel("Inspect profiling result?");
         _popup.addStyleName("DrillToProfilingResultPopupPanel");
+    }
+
+    public static String toCamelCase(String analyzerDescriptorName) {
+        if (analyzerDescriptorName == null) {
+            return "";
+        }
+        analyzerDescriptorName = analyzerDescriptorName.trim();
+        final StringBuilder sb = new StringBuilder(analyzerDescriptorName);
+
+        boolean capitalizeNext = true;
+        for (int i = 0; i < sb.length(); i++) {
+            final char c = sb.charAt(i);
+            if (c == ' ' || c == '\t' || c == '\n' || c == '\r') {
+                sb.deleteCharAt(i);
+                capitalizeNext = true;
+                i--;
+            } else if (capitalizeNext) {
+                if (Character.isLowerCase(c)) {
+                    sb.setCharAt(i, Character.toUpperCase(c));
+                }
+                capitalizeNext = false;
+            }
+        }
+
+        return sb.toString();
     }
 
     public void onSelect() {
@@ -84,8 +109,8 @@ public class DrillToProfilingResultSelectHandler {
         final Button showResultButton = DCButtons.primaryButton("glyphicon-stats", "Show results");
         showResultButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
-                Frame frame = new Frame(url);
+            public void onClick(final ClickEvent event) {
+                final Frame frame = new Frame(url);
                 frame.setPixelSize(800, 500);
                 _popup.setWidget(frame);
                 _popup.removeButton(showResultButton);
@@ -96,14 +121,14 @@ public class DrillToProfilingResultSelectHandler {
         final Button showResultFullPageButton = DCButtons.defaultButton("glyphicon-stats", "Show results (new window)");
         showResultFullPageButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 Window.open(url, "_blank", null);
             }
         });
 
         final SafeHtml labelHtml = new SafeHtmlBuilder().appendHtmlConstant(
                 "Do you wish to inspect the profiling result for ").appendEscaped(metricLabel).appendEscapedLines(
-                        "\ncollected at ").appendEscaped(formattedDate).appendHtmlConstant("?").toSafeHtml();
+                "\ncollected at ").appendEscaped(formattedDate).appendHtmlConstant("?").toSafeHtml();
 
         _popup.setWidget(new HTML(labelHtml));
         _popup.removeButtons();
@@ -118,37 +143,12 @@ public class DrillToProfilingResultSelectHandler {
     /**
      * Create a URL bookmark-part (ie. that part with a hash-sign) to make sure
      * that the result URL will point to the correct analyzer tab.
-     * 
+     *
      * @param analyzerDescriptorName
      * @return
      */
-    private String createResultUrlBookmark(String analyzerDescriptorName) {
+    private String createResultUrlBookmark(final String analyzerDescriptorName) {
         return "#analysisResultDescriptorGroup_" + toCamelCase(analyzerDescriptorName);
-    }
-
-    public static String toCamelCase(String analyzerDescriptorName) {
-        if (analyzerDescriptorName == null) {
-            return "";
-        }
-        analyzerDescriptorName = analyzerDescriptorName.trim();
-        StringBuilder sb = new StringBuilder(analyzerDescriptorName);
-
-        boolean capitalizeNext = true;
-        for (int i = 0; i < sb.length(); i++) {
-            char c = sb.charAt(i);
-            if (c == ' ' || c == '\t' || c == '\n' || c == '\r') {
-                sb.deleteCharAt(i);
-                capitalizeNext = true;
-                i--;
-            } else if (capitalizeNext) {
-                if (Character.isLowerCase(c)) {
-                    sb.setCharAt(i, Character.toUpperCase(c));
-                }
-                capitalizeNext = false;
-            }
-        }
-
-        return sb.toString();
     }
 
     private String getAnalyzerDescriptorName() {

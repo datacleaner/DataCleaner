@@ -37,12 +37,12 @@ public interface RemoteComponentsConfiguration {
      * @param componentDescriptor
      * @return
      */
-    public boolean isAllowed(ComponentDescriptor<?> componentDescriptor);
+    boolean isAllowed(ComponentDescriptor<?> componentDescriptor);
 
     /**
      * Method returns map with default values of properties.
      *
      * @param componentDescriptor
      */
-    public Map<PropertyDescriptor, Object> getDefaultValues(ComponentDescriptor<?> componentDescriptor);
+    Map<PropertyDescriptor, Object> getDefaultValues(ComponentDescriptor<?> componentDescriptor);
 }

@@ -32,23 +32,24 @@ import org.datacleaner.storage.RowAnnotationImpl;
 public class ReferentialIntegrityAnalyzerReducer implements AnalyzerResultReducer<ReferentialIntegrityAnalyzerResult> {
 
     @Override
-    public ReferentialIntegrityAnalyzerResult reduce(final Collection<? extends ReferentialIntegrityAnalyzerResult> partialResults) {
+    public ReferentialIntegrityAnalyzerResult reduce(
+            final Collection<? extends ReferentialIntegrityAnalyzerResult> partialResults) {
         if (partialResults.isEmpty()) {
             return null;
         }
-        
+
         final RowAnnotation reducerAnnotation = new RowAnnotationImpl();
         final InMemoryRowAnnotationFactory2 reducerAnnotationFactory = new InMemoryRowAnnotationFactory2();
         InputColumn<?>[] highlightedColumns = null;
-        
-        for (ReferentialIntegrityAnalyzerResult partialResult : partialResults) {
+
+        for (final ReferentialIntegrityAnalyzerResult partialResult : partialResults) {
             final List<InputRow> partialRows = partialResult.getSampleRows();
-            for (InputRow partialRow : partialRows) {
+            for (final InputRow partialRow : partialRows) {
                 reducerAnnotationFactory.annotate(partialRow, reducerAnnotation);
             }
             highlightedColumns = partialResult.getHighlightedColumns();
         }
-        
+
         return new ReferentialIntegrityAnalyzerResult(reducerAnnotation, reducerAnnotationFactory, highlightedColumns);
     }
 

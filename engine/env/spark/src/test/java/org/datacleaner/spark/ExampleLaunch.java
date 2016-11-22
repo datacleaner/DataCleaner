@@ -26,7 +26,7 @@ import org.apache.spark.launcher.SparkLauncher;
 
 /**
  * Prerequisites:
- * 
+ *
  * <ul>
  * <li>Make sure to set SPARK_HOME as either an environment variable or system
  * property.</li>
@@ -42,12 +42,12 @@ import org.apache.spark.launcher.SparkLauncher;
  * <li>DataCleaner-env-spark-[version]-jar-with-dependencies.jar</li>
  * </ul>
  * this can be done with a command a la:
- * 
+ *
  * <pre>
  * hadoop fs -mkdir /datacleaner/lib
  * hadoop fs -put /path/to/DataCleaner-env-spark-4.5.1-SNAPSHOT-jar-with-dependencies.jar /datacleaner/lib
  * </pre>
- * 
+ *
  * </li>
  * </ul>
  */
@@ -64,7 +64,7 @@ public class ExampleLaunch {
         if (System.getenv("SPARK_HOME") == null) {
             System.setProperty("SPARK_HOME", SPARK_HOME);
         }
-        
+
         final ApplicationDriver launcher = new ApplicationDriver(HDFS_NAMENODE, HDFS_JAR_LOCATION);
 
         // copy test files to the desired location

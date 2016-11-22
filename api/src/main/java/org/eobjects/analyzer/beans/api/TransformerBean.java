@@ -31,7 +31,7 @@ import org.datacleaner.api.Transformer;
 
 /**
  * Legacy {@link TransformerBean} annotation.
- * 
+ *
  * @deprecated use {@link Named} instead. See {@link Transformer} for general instructions on building a transformer.
  */
 @Retention(RetentionPolicy.RUNTIME)

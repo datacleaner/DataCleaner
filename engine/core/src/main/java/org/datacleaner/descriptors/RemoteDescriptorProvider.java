@@ -35,7 +35,7 @@ public interface RemoteDescriptorProvider extends DescriptorProvider {
     String DATACLOUD_NEWS_CHANNEL_URL = DATACLEANER_BASE_URL + "/ws/lastnews";
     String DATACLOUD_SERVER_NAME = "DataCloud";
 
-    public RemoteServerData getServerData();
+    RemoteServerData getServerData();
 
-    public RemoteServerState getServerState();
+    RemoteServerState getServerState();
 }

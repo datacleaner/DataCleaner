@@ -24,18 +24,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.easymock.EasyMock;
 
-import junit.framework.TestCase;
-
 public class CsvConfigurationWizardPageTest extends TestCase {
 
     public void testBuildConfigurationFromParameters() throws Exception {
         final WizardPageController pageMock = EasyMock.createMock(WizardPageController.class);
-        
+
         final Resource file = null;
         final CsvConfigurationWizardPage page = new CsvConfigurationWizardPage(file) {
             @Override
@@ -57,7 +57,7 @@ public class CsvConfigurationWizardPageTest extends TestCase {
         parameters.put("encoding", Arrays.asList("UTF8"));
 
         final WizardPageController result = page.nextPageController(parameters);
-        
+
         assertSame(result, pageMock);
     }
 }

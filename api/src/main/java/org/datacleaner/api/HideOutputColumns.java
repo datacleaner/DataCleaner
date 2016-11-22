@@ -38,5 +38,5 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface HideOutputColumns {
 
-    public boolean isHidden() default true;
+    boolean isHidden() default true;
 }

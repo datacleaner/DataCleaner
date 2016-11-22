@@ -106,56 +106,93 @@ import com.google.common.collect.Maps;
 @Component("schedulingService")
 public class SchedulingServiceImpl implements SchedulingService, ApplicationContextAware {
 
-    private static final Logger logger = LoggerFactory.getLogger(SchedulingServiceImpl.class);
+    private final class HotFolderAlterationListener extends FileAlterationListenerAdaptor {
+        private static final String PROPERTIES_FILE_EXTENSION = ".properties";
 
+        private final JobIdentifier job;
+        private final TenantIdentifier tenant;
+        private final String overridePropertiesFilePath;
+
+        private HotFolderAlterationListener(final JobIdentifier job, final ScheduleDefinition schedule) {
+            this.job = job;
+            this.tenant = schedule.getTenant();
+
+            final String hotFolderPath = schedule.getHotFolder();
+            final File hotFolder = new File(hotFolderPath);
+            final String overridePropertiesFileName = job.getName() + PROPERTIES_FILE_EXTENSION;
+            if (hotFolder.isDirectory()) {
+                overridePropertiesFilePath = new File(hotFolder, overridePropertiesFileName).getAbsolutePath();
+            } else if (hotFolderPath.endsWith(PROPERTIES_FILE_EXTENSION)) {
+                overridePropertiesFilePath = hotFolderPath;
+            } else {
+                overridePropertiesFilePath = FilenameUtils.getFullPath(hotFolderPath) + overridePropertiesFileName;
+            }
+        }
+
+        @Override
+        public void onFileCreate(final File file) {
+            logger.info("file {} created in hot folder, triggering execution of job {}.", file.getName(), job
+                    .getName());
+
+            triggerJobExecution();
+        }
+
+        @Override
+        public void onFileChange(final File file) {
+            logger.info("file {} changed in hot folder, triggering execution of job {}.", file.getName(), job
+                    .getName());
+
+            triggerJobExecution();
+        }
+
+        private void triggerJobExecution() {
+            final FileResource overrideProperties = new FileResource(overridePropertiesFilePath);
+            Map<String, String> propertiesMap = null;
+
+            if (overrideProperties.isExists()) {
+                try {
+                    final Properties properties = new Properties();
+                    properties.load(overrideProperties.read());
+
+                    propertiesMap = Maps.fromProperties(properties);
+                } catch (final IOException e) {
+                    logger.warn("Exception occurred when loading properties file {} for hot folder trigger of job {}.",
+                            overridePropertiesFilePath, job.getName());
+                }
+            }
+
+            triggerExecution(tenant, job, propertiesMap, TriggerType.HOTFOLDER);
+        }
+    }
     public static final String EXTENSION_SCHEDULE_XML = ".schedule.xml";
-
+    private static final Logger logger = LoggerFactory.getLogger(SchedulingServiceImpl.class);
     private final Repository _repository;
     private final TenantContextFactory _tenantContextFactory;
     private final Scheduler _scheduler;
     private final SchedulingServiceConfiguration _schedulingServiceConfiguration;
     private final FileAlterationMonitor _hotFolderMonitor = new FileAlterationMonitor();
-
     private ApplicationContext _applicationContext;
     private Map<String, FileAlterationObserver> _registeredHotFolders = new HashMap<>();
-
-    /**
-     * Creates a default single-node scheduler
-     * 
-     * @return
-     */
-    public static Scheduler createDefaultScheduler() {
-        try {
-            StdSchedulerFactory factory = new StdSchedulerFactory();
-            Scheduler scheduler = factory.getScheduler();
-            return scheduler;
-        } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-            throw new IllegalStateException("Failed to create scheduler", e);
-        }
-    }
 
     /**
      * @param repository
      * @param tenantContextFactory
      */
-    public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory) {
+    public SchedulingServiceImpl(final Repository repository, final TenantContextFactory tenantContextFactory) {
         this(repository, tenantContextFactory, createDefaultScheduler(), new SchedulingServiceConfiguration());
     }
 
     /**
      * Default constructor.
-     * 
+     *
      * @param repository
      * @param tenantContextFactory
      * @param scheduler
      * @param schedulingServiceConfiguration
      */
     @Autowired
-    public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory, Scheduler scheduler,
-            SchedulingServiceConfiguration schedulingServiceConfiguration) {
+    public SchedulingServiceImpl(final Repository repository, final TenantContextFactory tenantContextFactory, final Scheduler scheduler,
+            final SchedulingServiceConfiguration schedulingServiceConfiguration) {
         if (repository == null) {
             throw new IllegalArgumentException("Repository cannot be null");
         }
@@ -174,6 +211,86 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         _schedulingServiceConfiguration = schedulingServiceConfiguration;
     }
 
+    /**
+     * Creates a default single-node scheduler
+     *
+     * @return
+     */
+    public static Scheduler createDefaultScheduler() {
+        try {
+            final StdSchedulerFactory factory = new StdSchedulerFactory();
+            final Scheduler scheduler = factory.getScheduler();
+            return scheduler;
+        } catch (final Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            throw new IllegalStateException("Failed to create scheduler", e);
+        }
+    }
+
+    protected static CronExpression toCronExpressionForOneTimeSchedule(String scheduleExpression) {
+        scheduleExpression = scheduleExpression.trim();
+        final CronExpression cronExpression;
+        try {
+            final Date oneTimeSchedule = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(scheduleExpression);
+            final Calendar dateInfoExtractor = Calendar.getInstance();
+            dateInfoExtractor.setTime(oneTimeSchedule);
+            final int month = dateInfoExtractor.get(Calendar.MONTH) + 1;
+            final StringBuilder cronStringBuilder = new StringBuilder();
+            final String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND)).append(
+                    " ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ").append(dateInfoExtractor.get(
+                    Calendar.HOUR_OF_DAY)).append(" ").append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH))
+                    .append(" ").append(month).append(" ? ").append(dateInfoExtractor.get(Calendar.YEAR)).toString();
+            cronExpression = new CronExpression(cronBuilder);
+        } catch (final ParseException e) {
+            throw new IllegalStateException("Failed to parse cron expression for one time schedule: "
+                    + scheduleExpression, e);
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.info("Cron expression summary ({}): {}", scheduleExpression, cronExpression.getExpressionSummary()
+                    .replaceAll("\n", ", "));
+        }
+
+        return cronExpression;
+    }
+
+    protected static CronExpression toCronExpression(String scheduleExpression) {
+        scheduleExpression = scheduleExpression.trim();
+
+        final CronExpression cronExpression;
+
+        try {
+            // CRON expression: Sec Min Hr DoM M DoW (Y)
+
+            if ("@yearly".equals(scheduleExpression) || "@annually".equals(scheduleExpression)) {
+                cronExpression = new CronExpression("0 0 0 1 1 ? *");
+            } else if ("@monthly".equals(scheduleExpression)) {
+                cronExpression = new CronExpression("0 0 0 1 * ?");
+            } else if ("@weekly".equals(scheduleExpression)) {
+                cronExpression = new CronExpression("0 0 0 ? * 1");
+            } else if ("@daily".equals(scheduleExpression)) {
+                cronExpression = new CronExpression("0 0 0 * * ?");
+            } else if ("@hourly".equals(scheduleExpression)) {
+                cronExpression = new CronExpression("0 0 * * * ?");
+            } else if ("@minutely".equals(scheduleExpression) || "@every_minute".equals(scheduleExpression)) {
+                cronExpression = new CronExpression("0 * * * * ?");
+            } else {
+                cronExpression = new CronExpression(scheduleExpression);
+            }
+        } catch (final ParseException e) {
+            throw new IllegalStateException("Failed to parse cron expression: " + scheduleExpression, e);
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.info("Cron expression summary ({}): {}", scheduleExpression, cronExpression.getExpressionSummary()
+                    .replaceAll("\n", ", "));
+        }
+
+        return cronExpression;
+    }
+
     public Scheduler getScheduler() {
         return _scheduler;
     }
@@ -187,14 +304,14 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         // initialize tenants by scanning tenant folders
         if (_schedulingServiceConfiguration.isTenantInitialization()) {
             final List<RepositoryFolder> tenantFolders = _repository.getFolders();
-            for (RepositoryFolder tenantFolder : tenantFolders) {
+            for (final RepositoryFolder tenantFolder : tenantFolders) {
                 final TenantIdentifier tenant = new TenantIdentifier(tenantFolder.getName());
                 final String tenantId = tenant.getId();
 
                 final List<ScheduleDefinition> schedules = getSchedules(tenant, true);
                 logger.info("Initializing {} schedules for tenant {}", schedules.size(), tenantId);
 
-                for (ScheduleDefinition schedule : schedules) {
+                for (final ScheduleDefinition schedule : schedules) {
                     initializeSchedule(schedule);
                 }
             }
@@ -205,16 +322,16 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             if (!_scheduler.isStarted()) {
                 _scheduler.start();
             }
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             throw new IllegalStateException("Failed to start scheduler", e);
         }
 
         try {
             _hotFolderMonitor.start();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Failed to start file alteration monitor", e);
         }
-       
+
         if (_schedulingServiceConfiguration.isTenantInitialization()) {
             logTriggers();
         }
@@ -224,7 +341,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     private void logTriggers() {
         final List<RepositoryFolder> tenantFolders = _repository.getFolders();
-        for (RepositoryFolder tenantFolder : tenantFolders) {
+        for (final RepositoryFolder tenantFolder : tenantFolders) {
             final String tenantId = tenantFolder.getName();
             try {
                 final Set<TriggerKey> triggerKeys = _scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(
@@ -232,11 +349,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 if (triggerKeys == null || triggerKeys.isEmpty()) {
                     logger.info("No triggers initialized for tenant: {}", tenantId);
                 } else {
-                    for (TriggerKey triggerKey : triggerKeys) {
+                    for (final TriggerKey triggerKey : triggerKeys) {
                         logger.info("Trigger of tenant {}: {}", tenantId, triggerKey);
                     }
                 }
-            } catch (SchedulerException e) {
+            } catch (final SchedulerException e) {
                 logger.warn("Failed to get triggers of tenant: " + tenantId, e);
             }
         }
@@ -246,35 +363,35 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     public void shutdown() {
         try {
             _scheduler.shutdown();
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             logger.error("Failed to shutdown scheduler: " + e.getMessage(), e);
         }
 
         try {
             _hotFolderMonitor.stop();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Failed to shutdown file alteration monitor: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, boolean loadProperties) {
+    public List<ScheduleDefinition> getSchedules(final TenantIdentifier tenant, final boolean loadProperties) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final List<JobIdentifier> jobs = context.getJobs();
         final List<ScheduleDefinition> schedules = new ArrayList<ScheduleDefinition>(jobs.size());
-        for (JobIdentifier job : jobs) {
+        for (final JobIdentifier job : jobs) {
             try {
                 final ScheduleDefinition schedule;
-                
+
                 if (loadProperties) {
                     schedule = getSchedule(tenant, job);
                 } else {
                     schedule = getScheduleWithoutProperties(tenant, job);
                 }
-                
+
                 schedules.add(schedule);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Failed to initialize schedule for tenant '" + tenant.getId() + "' job '" + job.getName()
                         + "'.", e);
             }
@@ -287,7 +404,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         return getScheduleWithProperties(tenant, jobIdentifier, null);
     }
 
-    private ScheduleDefinition getScheduleWithProperties(final TenantIdentifier tenant, 
+    private ScheduleDefinition getScheduleWithProperties(final TenantIdentifier tenant,
             final JobIdentifier jobIdentifier, final Map<String, String> overrideProperties) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
@@ -317,7 +434,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         } else {
             schedule = scheduleFile.readFile(new Func<InputStream, ScheduleDefinition>() {
                 @Override
-                public ScheduleDefinition eval(InputStream inputStream) {
+                public ScheduleDefinition eval(final InputStream inputStream) {
                     return reader.read(inputStream, jobIdentifier, tenant, groupName);
                 }
             });
@@ -328,16 +445,16 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         return schedule;
     }
-    
-    private ScheduleDefinition getScheduleWithoutProperties(final TenantIdentifier tenant, 
+
+    private ScheduleDefinition getScheduleWithoutProperties(final TenantIdentifier tenant,
             final JobIdentifier jobIdentifier) {
         final JobContext jobContext = getJobContext(tenant, jobIdentifier);
         final String groupName = jobContext.getGroupName();
         final ScheduleDefinition schedule = new ScheduleDefinition(tenant, jobIdentifier, groupName);
-        
+
         return schedule;
     }
-    
+
     private JobContext getJobContext(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
         final String jobName = jobIdentifier.getName();
         final TenantContext context = _tenantContextFactory.getContext(tenant);
@@ -346,10 +463,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         if (jobContext == null) {
             throw new IllegalArgumentException("No such job: " + jobName);
         }
-        
+
         return jobContext;
     }
-    
+
     @Override
     public ScheduleDefinition updateSchedule(final TenantIdentifier tenant,
             final ScheduleDefinition scheduleDefinition) {
@@ -366,8 +483,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         final Action<OutputStream> writeAction = new Action<OutputStream>() {
             @Override
-            public void run(OutputStream out) throws Exception {
-                JaxbScheduleWriter writer = new JaxbScheduleWriter();
+            public void run(final OutputStream out) throws Exception {
+                final JaxbScheduleWriter writer = new JaxbScheduleWriter();
                 writer.write(scheduleDefinition, out);
             }
         };
@@ -413,12 +530,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     logger.info("Adding trigger to scheduler: {} | {}", jobName, cronExpression);
                     _scheduler.scheduleJob(jobDetail, trigger);
 
-                }
-
-                else if (triggerType == TriggerType.ONETIME) {
+                } else if (triggerType == TriggerType.ONETIME) {
                     final String scheduleDate = schedule.getDateForOneTimeSchedule();
                     final CronExpression cronExpression = toCronExpressionForOneTimeSchedule(scheduleDate);
-                    Date nextValidTimeAfter = cronExpression.getNextValidTimeAfter(new Date());
+                    final Date nextValidTimeAfter = cronExpression.getNextValidTimeAfter(new Date());
                     if (nextValidTimeAfter != null) {
                         final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
                         final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId).forJob(
@@ -429,16 +544,16 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     }
                 } else if (triggerType == TriggerType.HOTFOLDER) {
                     final String hotFolder = schedule.getHotFolder();
-                    
+
                     if (hotFolder != null) {
-                        FileAlterationObserver observer = createObserver(hotFolder);
-                    
+                        final FileAlterationObserver observer = createObserver(hotFolder);
+
                         observer.addListener(new HotFolderAlterationListener(job, schedule));
-                    
+
                         _hotFolderMonitor.addObserver(observer);
-                        
+
                         _registeredHotFolders.put(jobListenerName, observer);
-                    
+
                         logger.info("Adding hot folder {} as trigger for job {}", hotFolder, jobListenerName);
                     }
                 } else {
@@ -449,7 +564,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     logger.info("Adding listener to scheduler: {}", jobListenerName);
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -457,7 +572,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
     }
 
-    private FileAlterationObserver createObserver(String fileName) {
+    private FileAlterationObserver createObserver(final String fileName) {
         final File file = new File(fileName);
 
         if (file.isDirectory()) {
@@ -468,35 +583,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
     }
 
-    protected static CronExpression toCronExpressionForOneTimeSchedule(String scheduleExpression) {
-        scheduleExpression = scheduleExpression.trim();
-        final CronExpression cronExpression;
-        try {
-            Date oneTimeSchedule = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(scheduleExpression);
-            Calendar dateInfoExtractor = Calendar.getInstance();
-            dateInfoExtractor.setTime(oneTimeSchedule);
-            int month = dateInfoExtractor.get(Calendar.MONTH) + 1;
-            StringBuilder cronStringBuilder = new StringBuilder();
-            String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND)).append(
-                    " ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ").append(dateInfoExtractor.get(
-                            Calendar.HOUR_OF_DAY)).append(" ").append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH))
-                    .append(" ").append(month).append(" ? ").append(dateInfoExtractor.get(Calendar.YEAR)).toString();
-            cronExpression = new CronExpression(cronBuilder);
-        } catch (ParseException e) {
-            throw new IllegalStateException("Failed to parse cron expression for one time schedule: "
-                    + scheduleExpression, e);
-        }
-
-        if (logger.isInfoEnabled()) {
-            logger.info("Cron expression summary ({}): {}", scheduleExpression, cronExpression.getExpressionSummary()
-                    .replaceAll("\n", ", "));
-        }
-
-        return cronExpression;
-    }
-
     @Override
-    public void removeSchedule(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException {
+    public void removeSchedule(final TenantIdentifier tenant, final JobIdentifier job) throws DCSecurityException {
         logger.info("Removing schedule for job: " + job);
         final String jobName = job.getName();
         final String tenantId = tenant.getId();
@@ -504,7 +592,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         try {
             _scheduler.deleteJob(new JobKey(jobName, tenantId));
             _scheduler.getListenerManager().removeJobListener(jobListenerName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -513,43 +601,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         removeHotFolder(jobListenerName);
     }
 
-    protected static CronExpression toCronExpression(String scheduleExpression) {
-        scheduleExpression = scheduleExpression.trim();
-
-        final CronExpression cronExpression;
-
-        try {
-            // CRON expression: Sec Min Hr DoM M DoW (Y)
-
-            if ("@yearly".equals(scheduleExpression) || "@annually".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 0 1 1 ? *");
-            } else if ("@monthly".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 0 1 * ?");
-            } else if ("@weekly".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 0 ? * 1");
-            } else if ("@daily".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 0 * * ?");
-            } else if ("@hourly".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 * * * ?");
-            } else if ("@minutely".equals(scheduleExpression) || "@every_minute".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 * * * * ?");
-            } else {
-                cronExpression = new CronExpression(scheduleExpression);
-            }
-        } catch (ParseException e) {
-            throw new IllegalStateException("Failed to parse cron expression: " + scheduleExpression, e);
-        }
-
-        if (logger.isInfoEnabled()) {
-            logger.info("Cron expression summary ({}): {}", scheduleExpression, cronExpression.getExpressionSummary()
-                    .replaceAll("\n", ", "));
-        }
-
-        return cronExpression;
-    }
-
     @Override
-    public boolean cancelExecution(TenantIdentifier tenant, ExecutionLog execution) throws DCSecurityException {
+    public boolean cancelExecution(final TenantIdentifier tenant, final ExecutionLog execution) throws DCSecurityException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(execution.getJob());
         final JobEngine<?> jobEngine = job.getJobEngine();
@@ -558,18 +611,18 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
+    public ExecutionLog triggerExecution(final TenantIdentifier tenant, final JobIdentifier job) {
         return triggerExecution(tenant, job, null);
     }
 
     @Override
-    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
-            Map<String, String> overrideProperties) {
+    public ExecutionLog triggerExecution(final TenantIdentifier tenant, final JobIdentifier job,
+            final Map<String, String> overrideProperties) {
         return triggerExecution(tenant, job, overrideProperties, TriggerType.MANUAL);
     }
 
-    private ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
-            Map<String, String> overrideProperties, final TriggerType manual) {
+    private ExecutionLog triggerExecution(final TenantIdentifier tenant, final JobIdentifier job,
+            final Map<String, String> overrideProperties, final TriggerType manual) {
         final String jobNameToBeTriggered = job.getName();
 
         final ScheduleDefinition schedule = getScheduleWithProperties(tenant, job, overrideProperties);
@@ -579,10 +632,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         try {
             boolean addJob = true;
-            GroupMatcher<JobKey> matcher = GroupMatcher.jobGroupEquals(tenant.getId());
-            Set<JobKey> jobKeys = _scheduler.getJobKeys(matcher);
-            for (JobKey jobKey : jobKeys) {
-                String jobName = jobKey.getName();
+            final GroupMatcher<JobKey> matcher = GroupMatcher.jobGroupEquals(tenant.getId());
+            final Set<JobKey> jobKeys = _scheduler.getJobKeys(matcher);
+            for (final JobKey jobKey : jobKeys) {
+                final String jobName = jobKey.getName();
                 if (jobName.equals(jobNameToBeTriggered)) {
                     addJob = false;
                     break;
@@ -610,7 +663,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             jobDataMap.put(ExecuteJob.DETAIL_EXECUTION_LOG, execution);
 
             _scheduler.triggerJob(new JobKey(jobNameToBeTriggered, tenant.getId()), jobDataMap);
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             throw new IllegalStateException("Unexpected error invoking scheduler", e);
         }
 
@@ -618,7 +671,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) {
+    public ExecutionLog getLatestExecution(final TenantIdentifier tenant, final JobIdentifier job) {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
 
@@ -634,7 +687,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) throws IllegalStateException {
+    public List<ExecutionIdentifier> getAllExecutions(final TenantIdentifier tenant, final JobIdentifier job)
+            throws IllegalStateException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
         final List<RepositoryFile> files = resultFolder.getFiles(job.getName(), FileFilters.ANALYSIS_EXECUTION_LOG_XML
@@ -648,12 +702,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                             final ExecutionIdentifier result = file.readFile(
                                     new Func<InputStream, ExecutionIdentifier>() {
                                         @Override
-                                        public ExecutionIdentifier eval(InputStream in) {
+                                        public ExecutionIdentifier eval(final InputStream in) {
                                             return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
                                         }
                                     });
                             return result;
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             logger.warn("The file " + file.getQualifiedPath()
                                     + " could not be read or parsed correctly " + e);
                             return new ExecutionIdentifier("Execution failed for " + FilenameUtils.getBaseName(file
@@ -668,7 +722,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public ExecutionLog getExecution(TenantIdentifier tenant, ExecutionIdentifier executionIdentifier)
+    public ExecutionLog getExecution(final TenantIdentifier tenant, final ExecutionIdentifier executionIdentifier)
             throws DCSecurityException {
         if (executionIdentifier == null) {
             return null;
@@ -688,7 +742,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             return null;
         }
 
-        JobIdentifier jobIdentifier = JobIdentifier.fromExecutionIdentifier(executionIdentifier);
+        final JobIdentifier jobIdentifier = JobIdentifier.fromExecutionIdentifier(executionIdentifier);
 
         return readExecutionLogFile(file, jobIdentifier, tenant, 3);
     }
@@ -699,10 +753,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         final ExecutionLog result = file.readFile(new Func<InputStream, ExecutionLog>() {
             @Override
-            public ExecutionLog eval(InputStream in) {
+            public ExecutionLog eval(final InputStream in) {
                 try {
                     return reader.read(in, jobIdentifier, tenant);
-                } catch (JaxbException e) {
+                } catch (final JaxbException e) {
                     if (retries > 0) {
                         logger.debug(
                                 "Failed to read execution log in first pass. This could be because it is also being written at this time. Retrying.");
@@ -722,7 +776,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             // retry
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 // do nothing
             }
             return readExecutionLogFile(file, jobIdentifier, tenant, retries - 1);
@@ -732,12 +786,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         _applicationContext = applicationContext;
         try {
-            SchedulerContext schedulerContext = _scheduler.getContext();
+            final SchedulerContext schedulerContext = _scheduler.getContext();
             schedulerContext.put(AbstractQuartzJob.APPLICATION_CONTEXT, _applicationContext);
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             logger.error(
                     "Failed to get scheduler context and set application context on it. Expect issues when invoking jobs, or set property '"
                             + AbstractQuartzJob.APPLICATION_CONTEXT + " on the scheduler's context manually'.", e);
@@ -745,12 +799,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)
+    public List<JobIdentifier> getDependentJobCandidates(final TenantIdentifier tenant, final ScheduleDefinition schedule)
             throws DCSecurityException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final List<JobIdentifier> jobs = tenantContext.getJobs();
         final List<JobIdentifier> result = new ArrayList<JobIdentifier>();
-        for (JobIdentifier job : jobs) {
+        for (final JobIdentifier job : jobs) {
             final String jobName = job.getName();
             if (!jobName.equals(schedule.getJob().getName())) {
                 result.add(job);
@@ -761,82 +815,23 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public String getServerDate() {
-        Date serverDate = new Date();
-        Calendar calendar = Calendar.getInstance();
+        final Date serverDate = new Date();
+        final Calendar calendar = Calendar.getInstance();
         calendar.setTime(serverDate);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String serverDateFormat = dateFormat.format(serverDate);
-        String timeStampName = calendar.getTimeZone().getDisplayName();
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final String serverDateFormat = dateFormat.format(serverDate);
+        final String timeStampName = calendar.getTimeZone().getDisplayName();
         logger.info("Date and TimeStamp for one time schedule: {} | {}", serverDate, timeStampName);
         return serverDateFormat;
     }
 
-    void removeHotFolder(String jobIdentifier) {
+    void removeHotFolder(final String jobIdentifier) {
         final FileAlterationObserver observer = _registeredHotFolders.get(jobIdentifier);
         _hotFolderMonitor.removeObserver(observer);
         try {
             observer.destroy();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.info("Removing hot folder trigger for job {}", jobIdentifier);
-        }
-    }
-    
-    private final class HotFolderAlterationListener extends FileAlterationListenerAdaptor {
-        private static final String PROPERTIES_FILE_EXTENSION = ".properties";
-        
-        private final JobIdentifier job;
-        private final TenantIdentifier tenant;
-        private final String overridePropertiesFilePath;
-
-        private HotFolderAlterationListener(final JobIdentifier job, final ScheduleDefinition schedule) {
-            this.job = job;
-            this.tenant = schedule.getTenant();
-
-            final String hotFolderPath = schedule.getHotFolder();
-            final File hotFolder = new File(hotFolderPath);
-            final String overridePropertiesFileName = job.getName() + PROPERTIES_FILE_EXTENSION;
-            if (hotFolder.isDirectory()) {
-                overridePropertiesFilePath = new File(hotFolder, overridePropertiesFileName).getAbsolutePath();
-            } else if (hotFolderPath.endsWith(PROPERTIES_FILE_EXTENSION)) {
-                overridePropertiesFilePath = hotFolderPath;
-            } else {
-                overridePropertiesFilePath = FilenameUtils.getFullPath(hotFolderPath) + overridePropertiesFileName;
-            }
-        }
-
-        @Override
-        public void onFileCreate(File file) {
-            logger.info("file {} created in hot folder, triggering execution of job {}.", file.getName(), job
-                    .getName());
-
-            triggerJobExecution();
-        }
-
-        @Override
-        public void onFileChange(File file) {
-            logger.info("file {} changed in hot folder, triggering execution of job {}.", file.getName(), job
-                    .getName());
-
-            triggerJobExecution();
-        }
-
-        private void triggerJobExecution() {
-            final FileResource overrideProperties = new FileResource(overridePropertiesFilePath);
-            Map<String, String> propertiesMap = null;
-            
-            if (overrideProperties.isExists()) {
-                try {
-                    Properties properties = new Properties();
-                    properties.load(overrideProperties.read());
-                    
-                    propertiesMap = Maps.fromProperties(properties);
-                } catch (IOException e) {
-                    logger.warn("Exception occurred when loading properties file {} for hot folder trigger of job {}.",
-                            overridePropertiesFilePath, job.getName());
-                }
-            }
-            
-            triggerExecution(tenant, job, propertiesMap, TriggerType.HOTFOLDER);
         }
     }
 }

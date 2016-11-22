@@ -41,33 +41,31 @@ import org.datacleaner.util.LookAndFeelManager;
  * Defines a common combobox class that has a more convenient listening
  * mechanism (the JComboBox can be quite confusing because of the cycle of
  * {@link ActionListener}s and {@link ItemListener}s).
- * 
+ *
  * @param <E>
  *            the type of element in the combo
  */
 public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
 
-    private static final long serialVersionUID = 1L;
-
-    public static interface Listener<E> {
-        public void onItemSelected(E item);
+    public interface Listener<E> {
+        void onItemSelected(E item);
     }
-
+    private static final long serialVersionUID = 1L;
     private final List<Listener<E>> _listeners = new ArrayList<Listener<E>>();
 
     public DCComboBox() {
         this(new DefaultComboBoxModel<E>());
     }
 
-    public DCComboBox(Collection<E> items) {
+    public DCComboBox(final Collection<E> items) {
         this(new DefaultComboBoxModel<E>(new Vector<E>(items)));
     }
 
-    public DCComboBox(E[] items) {
+    public DCComboBox(final E[] items) {
         this(new DefaultComboBoxModel<E>(items));
     }
 
-    public DCComboBox(ComboBoxModel<E> model) {
+    public DCComboBox(final ComboBoxModel<E> model) {
         super(model);
         super.addItemListener(this);
     }
@@ -79,13 +77,13 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
     }
 
     @Override
-    public void setSelectedItem(Object newItem) {
+    public void setSelectedItem(final Object newItem) {
         final E previousItem = getSelectedItem();
         if (previousItem == newItem) {
             return;
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked") final
         E item = (E) newItem;
 
         // super.setSelectedItem(...) will notify all listeners (through of the
@@ -93,11 +91,11 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
         super.setSelectedItem(item);
     }
 
-    public void addListener(Listener<E> listener) {
+    public void addListener(final Listener<E> listener) {
         _listeners.add(listener);
     }
 
-    public void removeListener(Listener<E> listener) {
+    public void removeListener(final Listener<E> listener) {
         _listeners.remove(listener);
     }
 
@@ -106,7 +104,7 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
      */
     @Deprecated
     @Override
-    public void addItemListener(ItemListener aListener) {
+    public void addItemListener(final ItemListener aListener) {
         super.addItemListener(aListener);
     }
 
@@ -115,12 +113,12 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
      */
     @Deprecated
     @Override
-    public void addActionListener(ActionListener l) {
+    public void addActionListener(final ActionListener l) {
         super.addActionListener(l);
     }
 
     @Override
-    public void itemStateChanged(ItemEvent e) {
+    public void itemStateChanged(final ItemEvent e) {
         final int stateChange = e.getStateChange();
         if (stateChange == ItemEvent.SELECTED) {
             @SuppressWarnings("unchecked")
@@ -138,17 +136,17 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
         notifyListeners(getSelectedItem());
     }
 
-    private void notifyListeners(E item) {
+    private void notifyListeners(final E item) {
         // notify listeners
-        for (Listener<E> listener : _listeners) {
+        for (final Listener<E> listener : _listeners) {
             listener.onItemSelected(item);
         }
     }
 
-    public boolean containsItem(E item) {
-        int itemCount = getItemCount();
+    public boolean containsItem(final E item) {
+        final int itemCount = getItemCount();
         for (int i = 0; i < itemCount; i++) {
-            Object anItem = getItemAt(i);
+            final Object anItem = getItemAt(i);
             if (anItem == null) {
                 if (item == null) {
                     return true;
@@ -165,12 +163,12 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
     public String toString() {
         return "DCComboBox[items=" + getItemCount() + ", selected=" + getSelectedItem() + "]";
     }
-    
-    public static void main(String[] args) {
+
+    public static void main(final String[] args) {
         LookAndFeelManager.get().init();
-        JPanel comboPanel = new JPanel();
+        final JPanel comboPanel = new JPanel();
         comboPanel.setLayout(new BorderLayout());
-        comboPanel.add(new DCComboBox<String>(new String[] {"a", "b", "c"}), BorderLayout.NORTH);
+        comboPanel.add(new DCComboBox<String>(new String[] { "a", "b", "c" }), BorderLayout.NORTH);
 
         final JFrame frame = new JFrame("test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

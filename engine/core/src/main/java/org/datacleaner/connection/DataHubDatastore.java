@@ -35,8 +35,8 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
     private final boolean _acceptUnverifiedSslPeers;
     private final DataHubSecurityMode _securityMode;
 
-    public DataHubDatastore(String name, String host, Integer port, String username, String password,
-            boolean https, boolean acceptUnverifiedSslPeers, DataHubSecurityMode dataHubSecurityMode) {
+    public DataHubDatastore(final String name, final String host, final Integer port, final String username, final String password,
+            final boolean https, final boolean acceptUnverifiedSslPeers, final DataHubSecurityMode dataHubSecurityMode) {
         super(name);
         _host = host;
         _port = port;
@@ -83,8 +83,8 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
 
     @Override
     public UpdateableDatastoreConnection openConnection() {
-        DatastoreConnection connection = super.openConnection();
-        return (UpdateableDatastoreConnection)connection;
+        final DatastoreConnection connection = super.openConnection();
+        return (UpdateableDatastoreConnection) connection;
     }
 
     @Override

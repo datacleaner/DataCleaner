@@ -148,9 +148,10 @@ public class CompositeAnalysisListenerTest extends TestCase {
         };
 
 
-        final CompositeAnalysisListener compositeAnalysisListener = new CompositeAnalysisListener(faultyListener, goodListener);
+        final CompositeAnalysisListener compositeAnalysisListener =
+                new CompositeAnalysisListener(faultyListener, goodListener);
 
-        compositeAnalysisListener.componentBegin(null, null , null);
+        compositeAnalysisListener.componentBegin(null, null, null);
         assertEquals(1, counter.get());
         compositeAnalysisListener.componentSuccess(null, null, null);
         assertEquals(2, counter.get());

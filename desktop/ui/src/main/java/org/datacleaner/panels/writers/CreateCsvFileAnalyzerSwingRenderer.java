@@ -39,8 +39,8 @@ public class CreateCsvFileAnalyzerSwingRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<CreateCsvFileAnalyzer> ajb) {
-        Class<CreateCsvFileAnalyzer> componentClass = ajb.getDescriptor().getComponentClass();
+    public RendererPrecedence getPrecedence(final AnalyzerComponentBuilder<CreateCsvFileAnalyzer> ajb) {
+        final Class<CreateCsvFileAnalyzer> componentClass = ajb.getDescriptor().getComponentClass();
         if (componentClass == CreateCsvFileAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -48,7 +48,7 @@ public class CreateCsvFileAnalyzerSwingRenderer implements
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<CreateCsvFileAnalyzer> ajb) {
+    public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<CreateCsvFileAnalyzer> ajb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
                 PropertyWidgetFactory.class);
         return new CustomHeaderColumnNamesAnalyzerJobPanel(ajb, propertyWidgetFactory);

@@ -94,10 +94,10 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     private final DatabaseDriverCatalog _databaseDriverCatalog;
     private final UserPreferences _userPreferences;
 
-    public DatastoreManagementPanel(DataCleanerConfiguration configuration,
-            AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
-            Provider<OptionsDialog> optionsDialogProvider, DCModule dcModule,
-            DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
+    public DatastoreManagementPanel(final DataCleanerConfiguration configuration,
+            final AnalysisJobBuilderWindow analysisJobBuilderWindow, final DCGlassPane glassPane,
+            final Provider<OptionsDialog> optionsDialogProvider, final DCModule dcModule,
+            final DatabaseDriverCatalog databaseDriverCatalog, final UserPreferences userPreferences) {
         super(analysisJobBuilderWindow);
 
         _datastorePanels = new ArrayList<DatastorePanel>();
@@ -112,10 +112,10 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         _analyzeButton = WidgetFactory.createPrimaryButton("Build job", IconUtils.MODEL_JOB);
         _analyzeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                for (DatastorePanel datastorePanel : _datastorePanels) {
+            public void actionPerformed(final ActionEvent e) {
+                for (final DatastorePanel datastorePanel : _datastorePanels) {
                     if (datastorePanel.isSelected()) {
-                        Datastore datastore = datastorePanel.getDatastore();
+                        final Datastore datastore = datastorePanel.getDatastore();
 
                         // open the connection here, to make any connection
                         // issues apparent early
@@ -133,19 +133,19 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         _searchDatastoreTextField = WidgetFactory.createTextField("Search/filter datastores");
         _searchDatastoreTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 String text = _searchDatastoreTextField.getText();
                 if (StringUtils.isNullOrEmpty(text)) {
                     // when there is no search query, set all datastores
                     // visible
-                    for (DatastorePanel datastorePanel : _datastorePanels) {
+                    for (final DatastorePanel datastorePanel : _datastorePanels) {
                         datastorePanel.setVisible(true);
                     }
                 } else {
                     // do a case insensitive search
                     text = text.trim().toLowerCase();
-                    for (DatastorePanel datastorePanel : _datastorePanels) {
-                        String name = datastorePanel.getDatastore().getName().toLowerCase();
+                    for (final DatastorePanel datastorePanel : _datastorePanels) {
+                        final String name = datastorePanel.getDatastore().getName().toLowerCase();
                         datastorePanel.setVisible(name.indexOf(text) != -1);
                     }
                     selectFirstVisibleDatastore();
@@ -154,7 +154,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         });
         _searchDatastoreTextField.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e) {
+            public void keyPressed(final KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     clickAnalyzeButton();
                 } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -200,7 +200,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     }
 
     private void updateDatastores() {
-        Datastore selectedDatastore = getSelectedDatastore();
+        final Datastore selectedDatastore = getSelectedDatastore();
         _datastoreListPanel.removeAll();
         _datastorePanels.clear();
 
@@ -216,10 +216,10 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
         boolean selectFirst = true;
 
-        String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
+        final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
         for (int i = 0; i < datastoreNames.length; i++) {
             final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
-            DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this, getWindow()
+            final DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this, getWindow()
                     .getWindowContext(), _userPreferences, _dcModule);
             _datastorePanels.add(datastorePanel);
             _datastoreListPanel.add(datastorePanel);
@@ -235,9 +235,17 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         }
     }
 
-    public void setSelectedDatastore(Datastore datastore) {
+    public Datastore getSelectedDatastore() {
+        final DatastorePanel datastorePanel = getSelectedDatastorePanel();
+        if (datastorePanel == null) {
+            return null;
+        }
+        return datastorePanel.getDatastore();
+    }
+
+    public void setSelectedDatastore(final Datastore datastore) {
         if (datastore != null) {
-            for (DatastorePanel panel : _datastorePanels) {
+            for (final DatastorePanel panel : _datastorePanels) {
                 if (datastore.equals(panel.getDatastore())) {
                     panel.setSelected(true);
                 } else {
@@ -245,14 +253,6 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                 }
             }
         }
-    }
-
-    public Datastore getSelectedDatastore() {
-        DatastorePanel datastorePanel = getSelectedDatastorePanel();
-        if (datastorePanel == null) {
-            return null;
-        }
-        return datastorePanel.getDatastore();
     }
 
     private DCPanel createNewDatastorePanel() {
@@ -269,7 +269,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         final DatastoreDescriptors datastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog);
         for (int i = 0; i < Math.min(datastoreDescriptors.getAvailableDatastoreDescriptors().size(),
                 panel1ItemsCount); i++) {
-            DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
+            final DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
             if (datastoreDescriptor.isPromoted()) {
                 panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
                         datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(), datastoreDescriptor
@@ -282,7 +282,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         panel2.setLayout(new FlowLayout(alignment, 10, 10));
 
         for (int i = panel1ItemsCount; i < datastoreDescriptors.getAvailableDatastoreDescriptors().size(); i++) {
-            DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
+            final DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
             if (datastoreDescriptor.isPromoted()) {
                 panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
                         datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(), datastoreDescriptor
@@ -303,8 +303,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         return containerPanel;
     }
 
-    private Component createMoreDatabasesButton(List<DatastoreDescriptor> availableDatastoreDescriptors,
-            Set<String> promotedDatabases) {
+    private Component createMoreDatabasesButton(final List<DatastoreDescriptor> availableDatastoreDescriptors,
+            final Set<String> promotedDatabases) {
         final PopupButton moreDatastoreTypesButton = WidgetFactory.createDefaultPopupButton("More databases",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         moreDatastoreTypesButton.setMenuPosition(MenuPosition.TOP);
@@ -312,7 +312,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         final JPopupMenu moreDatastoreTypesMenu = moreDatastoreTypesButton.getMenu();
 
         for (int i = 0; i < availableDatastoreDescriptors.size(); i++) {
-            DatastoreDescriptor datastoreDescriptor = availableDatastoreDescriptors.get(i);
+            final DatastoreDescriptor datastoreDescriptor = availableDatastoreDescriptors.get(i);
             if (!promotedDatabases.contains(datastoreDescriptor.getName())) {
                 final String imagePath = datastoreDescriptor.getIconPath();
                 final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
@@ -329,8 +329,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                 imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
         databaseDriversMenuItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                OptionsDialog dialog = _optionsDialogProvider.get();
+            public void actionPerformed(final ActionEvent e) {
+                final OptionsDialog dialog = _optionsDialogProvider.get();
                 dialog.selectDatabaseDriversTab();
                 dialog.setVisible(true);
             }
@@ -342,7 +342,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
     private <D extends Datastore> JButton createNewDatastoreButton(final String title, final String description,
             final String imagePath, final Class<D> datastoreClass, final Class<? extends AbstractDialog> dialogClass,
-            DCPopupBubble.Position popupPosition) {
+            final DCPopupBubble.Position popupPosition) {
         final ImageIcon icon = imageManager.getImageIcon(imagePath);
         final JButton button = WidgetFactory.createImageButton(icon);
 
@@ -358,12 +358,12 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
             final Class<? extends AbstractDialog> dialogClass) {
         return new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
+            public void actionPerformed(final ActionEvent event) {
                 final Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null)
                         .createInjector();
                 final AbstractDialog dialog = injectorWithNullDatastore.getInstance(dialogClass);
                 if (dialog instanceof JdbcDatastoreDialog) {
-                    JdbcDatastoreDialog jdbcDatastoreDialog = (JdbcDatastoreDialog) dialog;
+                    final JdbcDatastoreDialog jdbcDatastoreDialog = (JdbcDatastoreDialog) dialog;
                     jdbcDatastoreDialog.setSelectedDatabase(title);
                 }
                 dialog.setVisible(true);
@@ -384,7 +384,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     }
 
     @Override
-    public void onAdd(Datastore datastore) {
+    public void onAdd(final Datastore datastore) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -394,7 +394,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     }
 
     @Override
-    public void onRemove(Datastore datastore) {
+    public void onRemove(final Datastore datastore) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -406,7 +406,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     private void selectFirstVisibleDatastore() {
         boolean found = false;
 
-        for (DatastorePanel datastorePanel : _datastorePanels) {
+        for (final DatastorePanel datastorePanel : _datastorePanels) {
             if (datastorePanel.isVisible()) {
                 setSelectedDatastorePanel(datastorePanel);
                 found = true;
@@ -418,12 +418,12 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     }
 
     private void selectNextVisibleDatastore() {
-        DatastorePanel selectedDatastorePanel = getSelectedDatastorePanel();
+        final DatastorePanel selectedDatastorePanel = getSelectedDatastorePanel();
         if (selectedDatastorePanel != null) {
 
-            int indexOf = _datastorePanels.indexOf(selectedDatastorePanel);
+            final int indexOf = _datastorePanels.indexOf(selectedDatastorePanel);
             for (int i = indexOf + 1; i < _datastorePanels.size(); i++) {
-                DatastorePanel panel = _datastorePanels.get(i);
+                final DatastorePanel panel = _datastorePanels.get(i);
                 if (panel.isVisible()) {
                     setSelectedDatastorePanel(panel);
                     break;
@@ -433,12 +433,12 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     }
 
     private void selectPreviousVisibleDatastore() {
-        DatastorePanel selectedDatastorePanel = getSelectedDatastorePanel();
+        final DatastorePanel selectedDatastorePanel = getSelectedDatastorePanel();
         if (selectedDatastorePanel != null) {
 
-            int indexOf = _datastorePanels.indexOf(selectedDatastorePanel);
+            final int indexOf = _datastorePanels.indexOf(selectedDatastorePanel);
             for (int i = indexOf - 1; i >= 0; i--) {
-                DatastorePanel panel = _datastorePanels.get(i);
+                final DatastorePanel panel = _datastorePanels.get(i);
                 if (panel.isVisible()) {
                     setSelectedDatastorePanel(panel);
                     break;
@@ -447,8 +447,17 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         }
     }
 
-    public void setSelectedDatastorePanel(DatastorePanel datastorePanel) {
-        for (DatastorePanel panel : _datastorePanels) {
+    public DatastorePanel getSelectedDatastorePanel() {
+        for (final DatastorePanel panel : _datastorePanels) {
+            if (panel.isVisible() && panel.isSelected()) {
+                return panel;
+            }
+        }
+        return null;
+    }
+
+    public void setSelectedDatastorePanel(final DatastorePanel datastorePanel) {
+        for (final DatastorePanel panel : _datastorePanels) {
             if (datastorePanel == panel) {
                 panel.setSelected(true);
             } else {
@@ -456,15 +465,6 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
             }
         }
         requestSearchFieldFocus();
-    }
-
-    public DatastorePanel getSelectedDatastorePanel() {
-        for (DatastorePanel panel : _datastorePanels) {
-            if (panel.isVisible() && panel.isSelected()) {
-                return panel;
-            }
-        }
-        return null;
     }
 
     public void clickAnalyzeButton() {

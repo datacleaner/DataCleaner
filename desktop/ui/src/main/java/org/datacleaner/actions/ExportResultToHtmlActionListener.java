@@ -53,15 +53,15 @@ public class ExportResultToHtmlActionListener implements ActionListener {
     private final UserPreferences _userPreferences;
     private final DataCleanerConfiguration _configuration;
 
-    public ExportResultToHtmlActionListener(Ref<AnalysisResult> result, DataCleanerConfiguration configuration,
-            UserPreferences userPreferences) {
+    public ExportResultToHtmlActionListener(final Ref<AnalysisResult> result, final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences) {
         _result = result;
         _configuration = configuration;
         _userPreferences = userPreferences;
     }
 
     @Override
-    public void actionPerformed(ActionEvent event) {
+    public void actionPerformed(final ActionEvent event) {
         final AnalysisResult analysisResult = _result.get();
         if (analysisResult == null) {
             WidgetUtils.showErrorMessage("Result not ready",
@@ -88,7 +88,7 @@ public class ExportResultToHtmlActionListener implements ActionListener {
             }
 
             if (file.exists()) {
-                int overwrite = JOptionPane.showConfirmDialog(parent, "Are you sure you want to overwrite the file '"
+                final int overwrite = JOptionPane.showConfirmDialog(parent, "Are you sure you want to overwrite the file '"
                         + file.getName() + "'?", "Overwrite existing file?", JOptionPane.YES_NO_OPTION);
                 if (overwrite != JOptionPane.YES_OPTION) {
                     return;
@@ -116,14 +116,15 @@ public class ExportResultToHtmlActionListener implements ActionListener {
                 protected void done() {
                     try {
                         get();
-                    } catch (ExecutionException e) {
+                    } catch (final ExecutionException e) {
                         logger.error("ExecutionException occurred while getting the result of the HTML rendering", e);
                         final Throwable cause = e.getCause();
                         WidgetUtils.showErrorMessage("Error writing result to HTML page", cause);
-                    } catch (InterruptedException e) {
+                    } catch (final InterruptedException e) {
                         logger.warn("Unexpected interrupt in done() method!");
                     }
-                };
+                }
+
             }.execute();
         }
     }

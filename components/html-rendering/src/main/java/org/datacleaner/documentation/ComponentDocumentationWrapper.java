@@ -59,7 +59,7 @@ public class ComponentDocumentationWrapper {
 
     private final ComponentDescriptor<?> _componentDescriptor;
 
-    public ComponentDocumentationWrapper(ComponentDescriptor<?> componentDescriptor) {
+    public ComponentDocumentationWrapper(final ComponentDescriptor<?> componentDescriptor) {
         _componentDescriptor = componentDescriptor;
     }
 
@@ -122,7 +122,7 @@ public class ComponentDocumentationWrapper {
         return true;
     }
 
-    public String getIconSrc(int width) throws IOException {
+    public String getIconSrc(final int width) throws IOException {
         // Attach the image  
         final Image descriptorIcon = IconUtils.getDescriptorIcon(_componentDescriptor, width).getImage();
 
@@ -149,9 +149,10 @@ public class ComponentDocumentationWrapper {
         return iconHtmlRepresentation;
     }
 
-    public int getIconSizeLarge(){
+    public int getIconSizeLarge() {
         return IconUtils.ICON_SIZE_LARGE;
     }
+
     public boolean isAnalyzer() {
         return _componentDescriptor instanceof AnalyzerDescriptor;
     }
@@ -177,9 +178,9 @@ public class ComponentDocumentationWrapper {
     public MetricDocumentationWrapper[] getMetrics() {
         final HasAnalyzerResultComponentDescriptor<?> descriptor = getHasAnalyzerResultComponentDescriptor();
         final Set<MetricDescriptor> metrics = descriptor.getResultMetrics();
-        MetricDocumentationWrapper[] result = new MetricDocumentationWrapper[metrics.size()];
+        final MetricDocumentationWrapper[] result = new MetricDocumentationWrapper[metrics.size()];
         int i = 0;
-        for (MetricDescriptor metricDescriptor : metrics) {
+        for (final MetricDescriptor metricDescriptor : metrics) {
             result[i] = new MetricDocumentationWrapper(metricDescriptor);
             i++;
         }
@@ -190,9 +191,10 @@ public class ComponentDocumentationWrapper {
         if (_componentDescriptor instanceof HasAnalyzerResultComponentDescriptor) {
             return (HasAnalyzerResultComponentDescriptor<?>) _componentDescriptor;
         }
-        @SuppressWarnings("unchecked")
-        Class<? extends HasAnalyzerResult<?>> componentClass = (Class<? extends HasAnalyzerResult<?>>) _componentDescriptor
-                .getComponentClass();
+        @SuppressWarnings("unchecked") final
+        Class<? extends HasAnalyzerResult<?>> componentClass =
+                (Class<? extends HasAnalyzerResult<?>>) _componentDescriptor
+                        .getComponentClass();
         return new SimpleHasAnalyzerResultComponentDescriptor<>(componentClass);
     }
 
@@ -201,7 +203,7 @@ public class ComponentDocumentationWrapper {
             final EnumSet<?> outcomes = ((FilterDescriptor<?, ?>) _componentDescriptor).getOutcomeCategories();
             final FilterOutcomeDocumentationWrapper[] result = new FilterOutcomeDocumentationWrapper[outcomes.size()];
             int i = 0;
-            for (Enum<?> outcome : outcomes) {
+            for (final Enum<?> outcome : outcomes) {
                 result[i] = new FilterOutcomeDocumentationWrapper(outcome);
                 i++;
             }
@@ -213,7 +215,7 @@ public class ComponentDocumentationWrapper {
     /**
      * Gets the "href" attribute content if a link to this component should be
      * made from elsewhere in the component docs.
-     * 
+     *
      * @return
      */
     public String getHref() {

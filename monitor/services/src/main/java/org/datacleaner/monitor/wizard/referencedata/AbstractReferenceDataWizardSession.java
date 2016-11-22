@@ -34,10 +34,10 @@ import org.w3c.dom.Element;
  */
 public abstract class AbstractReferenceDataWizardSession implements ReferenceDataWizardSession {
 
-    private final ReferenceDataWizardContext _wizardContext;
     protected final DomConfigurationWriter _writer;
+    private final ReferenceDataWizardContext _wizardContext;
 
-    public AbstractReferenceDataWizardSession(ReferenceDataWizardContext wizardContext) {
+    public AbstractReferenceDataWizardSession(final ReferenceDataWizardContext wizardContext) {
         _wizardContext = wizardContext;
         final Resource resource = getWizardContext().getTenantContext().getConfigurationFile().toResource();
         _writer = new DomConfigurationWriter(resource);
@@ -59,7 +59,7 @@ public abstract class AbstractReferenceDataWizardSession implements ReferenceDat
         final TenantContext tenantContext = _wizardContext.getTenantContext();
         final Element updatedReferenceDataSubSection = getUpdatedReferenceDataSubSection(documentBuilder);
         final ReferenceDataDao referenceDataDao = getReferenceDataDao();
-        
+
         return referenceDataDao.updateReferenceDataSubSection(tenantContext, updatedReferenceDataSubSection);
     }
 
@@ -70,7 +70,7 @@ public abstract class AbstractReferenceDataWizardSession implements ReferenceDat
     /**
      * Returns updated reference data sub-section (dictionaries, synonym-catalogs, string-patterns).
      * @param documentBuilder
-     * 
+     *
      * @return
      */
     protected abstract Element getUpdatedReferenceDataSubSection(DocumentBuilder documentBuilder);

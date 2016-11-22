@@ -62,7 +62,7 @@ public class ValueDistributionAndStringAnalysisTest extends TestCase {
     public void testScenario() throws Exception {
         final TaskRunner taskRunner = new MultiThreadedTaskRunner(5);
         final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
-        
+
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(environment);
 
         AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
@@ -90,7 +90,8 @@ public class ValueDistributionAndStringAnalysisTest extends TestCase {
             valueDistribuitionJobBuilder.setConfiguredProperty("Bottom n most frequent values", null);
         }
 
-        AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzerJob = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
+        AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzerJob =
+                analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
         stringAnalyzerJob.addInputColumns(analysisJobBuilder.getAvailableInputColumns(String.class));
 
         AnalysisJob analysisJob = analysisJobBuilder.toAnalysisJob();
@@ -187,7 +188,8 @@ public class ValueDistributionAndStringAnalysisTest extends TestCase {
         AnnotatedRowsResult arr = (AnnotatedRowsResult) resultProducer.getResult();
         List<InputRow> rows = arr.getSampleRows();
         assertEquals(1, rows.size());
-        assertEquals("Foon Yue", rows.get(0).getValue(analysisJobBuilder.getSourceColumnByName("FIRSTNAME")).toString());
+        assertEquals("Foon Yue",
+                rows.get(0).getValue(analysisJobBuilder.getSourceColumnByName("FIRSTNAME")).toString());
 
         resultProducer = crosstab.where("Column", "FIRSTNAME").where("Measures", "Diacritic chars").explore();
         assertNull(resultProducer);

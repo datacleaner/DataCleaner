@@ -46,21 +46,21 @@ public class TestHelper {
         JobEngineManager jobEngineManager = new SimpleJobEngineManager();
         TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
                 new DataCleanerEnvironmentImpl(), jobEngineManager);
-        return tenantContextFactory.getContext("demo"); 
+        return tenantContextFactory.getContext("demo");
     }
-    
+
     public static Map<String, List<String>> getFormParameters() {
         final Map<String, List<String>> formParameters = new HashMap<>();
         formParameters.put("name", getListWithValue("name-value"));
         formParameters.put("datastore", getListWithValue("datastore-value"));
-        
+
         return formParameters;
     }
-    
+
     private static List<String> getListWithValue(String value) {
         List<String> list = new ArrayList<>();
         list.add(value);
- 
+
         return list;
     }
 
@@ -68,25 +68,25 @@ public class TestHelper {
         final ReferenceDataWizardContext contextMock = EasyMock.createMock(ReferenceDataWizardContext.class);
         EasyMock.expect(contextMock.getTenantContext()).andReturn(getTenantContextMock()).times(2);
         EasyMock.replay(contextMock);
-        
+
         return contextMock;
     }
-    
+
     private static TenantContext getTenantContextMock() {
         final TenantContext tenantContextMock = EasyMock.createMock(TenantContext.class);
         EasyMock.expect(tenantContextMock.getConfigurationFile()).andReturn(getConfigurationFileMock()).times(2);
         EasyMock.expect(tenantContextMock.getConfiguration()).andReturn(getConfigurationMock()).times(2);
-        EasyMock.replay(tenantContextMock); 
-        
+        EasyMock.replay(tenantContextMock);
+
         return tenantContextMock;
     }
-    
+
     private static RepositoryFile getConfigurationFileMock() {
         final RepositoryFile repositoryFileMock = EasyMock.createMock(RepositoryFile.class);
         EasyMock.expect(repositoryFileMock.toResource()).andReturn(getResourceMock()).times(2);
         EasyMock.replay(repositoryFileMock);
 
-        return repositoryFileMock; 
+        return repositoryFileMock;
     }
 
     private static DataCleanerConfiguration getConfigurationMock() {
@@ -96,13 +96,13 @@ public class TestHelper {
 
         return configurationMock;
     }
-    
+
     private static ReferenceDataCatalog getReferenceDataCatalogMock() {
         final ReferenceDataCatalog referenceDataCatalogMock = EasyMock.createMock(ReferenceDataCatalog.class);
 
         return referenceDataCatalogMock;
     }
-    
+
     private static Resource getResourceMock() {
         final Resource resourceMock = EasyMock.createMock(Resource.class);
         EasyMock.expect(resourceMock.read(EasyMock.anyObject(Func.class))).andReturn(null).times(2);

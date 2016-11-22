@@ -42,126 +42,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ComponentCache {
-    private static final Logger logger = LoggerFactory.getLogger(ComponentCache.class);
-    private static final long CHECK_INTERVAL = 5 * 60 * 1000;
-    private static final long CLOSE_TIMEOUT = 60 * 1000;
-
-    private final Map<String, ComponentCacheConfigWrapper> data = new ConcurrentHashMap<>();
-    private final Thread checkerThread;
-    private final TimeoutChecker checker;
-    private final ComponentHandlerFactory componentHandlerFactory;
-    private final TenantContextFactory _tenantContextFactory;
-
-    @Autowired
-    public ComponentCache(ComponentHandlerFactory componentHandlerFactory, TenantContextFactory tenantCtxFac) {
-        this.componentHandlerFactory = componentHandlerFactory;
-        this._tenantContextFactory = tenantCtxFac;
-        checker = new TimeoutChecker();
-        checkerThread = new Thread(checker);
-        checkerThread.setDaemon(true);
-        checkerThread.start();
-    }
-
-    /**
-     * Put configuration of component to the cache
-     */
-    public void put(String tenant, TenantContext tenantContext, ComponentStoreHolder componentsHolder) {
-        logger.info("Put component. name: {}, instanceId: {}.", componentsHolder.getComponentName(),
-                componentsHolder.getInstanceId());
-        ComponentHandler handler = componentHandlerFactory.createComponent(
-                tenantContext,
-                componentsHolder.getComponentName(),
-                componentsHolder.getCreateInput().configuration);
-        ComponentCacheConfigWrapper wrapper = new ComponentCacheConfigWrapper(tenant, componentsHolder, handler);
-        data.put(componentsHolder.getInstanceId(), wrapper);
-        tenantContext.getComponentStore().store(wrapper.getComponentStoreHolder());
-    }
-
-    /**
-     * Read configuration from cache. If configurationHolder is not in cache, is loaded from repository,
-     * but in this case in holder is only configuration
-     */
-    public ComponentCacheConfigWrapper get(String id, String tenant, TenantContext tenantContext) {
-        logger.info("Get component with id: " + id);
-        ComponentCacheConfigWrapper componentCacheConfigWrapper = data.get(id);
-        if (componentCacheConfigWrapper == null) {
-            logger.warn("Configuration {} does not exist in cache.", id);
-            ComponentStore store = tenantContext.getComponentStore();
-            ComponentStoreHolder storeConfig = store.get(id);
-            if (storeConfig == null) {
-                logger.warn("Configuration {} does not exist in store.", id);
-                return null;
-            } else {
-                ComponentHandler componentHandler = componentHandlerFactory.createComponent(
-                        tenantContext,
-                        storeConfig.getComponentName(),
-                        storeConfig.getCreateInput().configuration);
-                componentCacheConfigWrapper = new ComponentCacheConfigWrapper(tenant, storeConfig, componentHandler);
-                data.put(id, componentCacheConfigWrapper);
-            }
-        }
-        componentCacheConfigWrapper.updateTimeStamp();
-        return componentCacheConfigWrapper;
-    }
-
-    /**
-     * Remove configuration from memory and store. And this component is destroyed.
-     */
-    public boolean remove(String id, TenantContext tenantContext) {
-        boolean inCache = removeConfigurationOnlyFromCache(id);
-        boolean inStore = removeConfigurationOnlyFromStore(id, tenantContext);
-        logger.info("Component {} was removed from cache and closed.", id);
-        return inCache || inStore;
-    }
-
-
-    private boolean removeConfigurationOnlyFromCache(String id) {
-        ComponentCacheConfigWrapper config = data.get(id);
-        if (config != null) {
-            data.remove(id);
-            config.getHandler().closeComponent();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean removeConfigurationOnlyFromStore(String id, TenantContext tenantContext) {
-        ComponentStore store = tenantContext.getComponentStore();
-        return store.remove(id);
-    }
-
-    /**
-     * Close all component in memory. All components configuration are still in repository.
-     */
-    @PreDestroy
-    public void close() throws InterruptedException {
-        logger.info("Closing Components cache.");
-
-        synchronized (checker) {
-            checker.stop();
-            checker.notifyAll();
-        }
-        long maxTime = System.currentTimeMillis() + CLOSE_TIMEOUT;
-        while (checkerThread.isAlive()) {
-            Thread.sleep(500);
-            if (maxTime < System.currentTimeMillis()) {
-                logger.error("Problem with closing checking thread.");
-                break;
-            }
-        }
-
-        for (ComponentCacheConfigWrapper componentCacheConfigWrapper : data.values()) {
-            componentCacheConfigWrapper.getHandler().closeComponent();
-            logger.info("Component with id: {} was closed.", componentCacheConfigWrapper.getComponentStoreHolder().getInstanceId());
-            // Configuration is still in store.
-        }
-
-        data.clear();
-        logger.info("Components cache was closed.");
-    }
-
-
     /**
      * Thread for checking the timeout for each component and updating the configuration is the store.
      */
@@ -187,7 +67,7 @@ public class ComponentCache {
                     if (running) {
                         try {
                             wait(CHECK_INTERVAL);
-                        } catch (InterruptedException e) {
+                        } catch (final InterruptedException e) {
                             running = false;
                             logger.error("Thread for component cache checking has been interrupted.", e);
                         }
@@ -200,32 +80,33 @@ public class ComponentCache {
 
         private void check() {
             allIdInCache = new HashSet<>(data.keySet());
-            for(TenantContext tenantContext: _tenantContextFactory.getActiveTenantContexts()) {
+            for (final TenantContext tenantContext : _tenantContextFactory.getActiveTenantContexts()) {
                 checkTenantComponents(tenantContext);
             }
-            for (String instanceId : allIdInCache) {
+            for (final String instanceId : allIdInCache) {
                 removeConfigurationOnlyFromCache(instanceId);
-                logger.info("TimeoutChecker - Configuration {} is not in the store. It was removed from the cache.", instanceId);
+                logger.info("TimeoutChecker - Configuration {} is not in the store. It was removed from the cache.",
+                        instanceId);
             }
         }
 
-        private void checkTenantComponents(TenantContext tenantContext) {
-            List<ComponentStoreHolder> configurationList = tenantContext.getComponentStore().getList();
+        private void checkTenantComponents(final TenantContext tenantContext) {
+            final List<ComponentStoreHolder> configurationList = tenantContext.getComponentStore().getList();
 
-            for (ComponentStoreHolder componentStoreHolder: configurationList) {
+            for (final ComponentStoreHolder componentStoreHolder : configurationList) {
                 checkComponentStoreHolder(tenantContext, componentStoreHolder);
             }
         }
 
-        private void checkComponentStoreHolder(TenantContext tenantContext, ComponentStoreHolder componentStoreHolder) {
-            String instanceId = componentStoreHolder.getInstanceId();
+        private void checkComponentStoreHolder(final TenantContext tenantContext, final ComponentStoreHolder componentStoreHolder) {
+            final String instanceId = componentStoreHolder.getInstanceId();
             allIdInCache.remove(instanceId);
-            ComponentCacheConfigWrapper cache = data.get(instanceId);
+            final ComponentCacheConfigWrapper cache = data.get(instanceId);
 
             if (cache == null) {
                 removeFromStore(tenantContext, componentStoreHolder);
             } else {
-                long maxTimestamp = Math.max(
+                final long maxTimestamp = Math.max(
                         cache.getComponentStoreHolder().getUseTimestamp(), componentStoreHolder.getUseTimestamp());
 
                 if (maxTimestamp + componentStoreHolder.getTimeout() < System.currentTimeMillis()) {
@@ -236,16 +117,16 @@ public class ComponentCache {
             }
         }
 
-        private void remove(TenantContext tenantContext, ComponentStoreHolder componentStoreHolder) {
-            String instanceId = componentStoreHolder.getInstanceId();
+        private void remove(final TenantContext tenantContext, final ComponentStoreHolder componentStoreHolder) {
+            final String instanceId = componentStoreHolder.getInstanceId();
             logger.info("TimeoutChecker - Old configuration {} for tenant {} was removed from the store and the cache.",
                     instanceId, tenantContext.getTenantId());
             removeConfigurationOnlyFromCache(instanceId);
             removeConfigurationOnlyFromStore(instanceId, tenantContext);
         }
 
-        private void removeFromStore(TenantContext tenantContext, ComponentStoreHolder componentStoreHolder) {
-            String instanceId = componentStoreHolder.getInstanceId();
+        private void removeFromStore(final TenantContext tenantContext, final ComponentStoreHolder componentStoreHolder) {
+            final String instanceId = componentStoreHolder.getInstanceId();
 
             if (!componentStoreHolder.isValid()) {
                 logger.info("TimeoutChecker - Old configuration {} for tenant {}  was removed from the store.",
@@ -254,8 +135,9 @@ public class ComponentCache {
             }
         }
 
-        private void update(ComponentCacheConfigWrapper cache, TenantContext tenantContext, ComponentStoreHolder componentStoreHolder) {
-            String instanceId = componentStoreHolder.getInstanceId();
+        private void update(final ComponentCacheConfigWrapper cache, final TenantContext tenantContext,
+                final ComponentStoreHolder componentStoreHolder) {
+            final String instanceId = componentStoreHolder.getInstanceId();
 
             if (cache.getComponentStoreHolder().getUseTimestamp() <= componentStoreHolder.getUseTimestamp()) {
                 logger.info("TimeoutChecker - Timestamp of the component {} was updated in the cache from the store.",
@@ -267,5 +149,122 @@ public class ComponentCache {
                 tenantContext.getComponentStore().store(cache.getComponentStoreHolder());
             }
         }
+    }
+    private static final Logger logger = LoggerFactory.getLogger(ComponentCache.class);
+    private static final long CHECK_INTERVAL = 5 * 60 * 1000;
+    private static final long CLOSE_TIMEOUT = 60 * 1000;
+    private final Map<String, ComponentCacheConfigWrapper> data = new ConcurrentHashMap<>();
+    private final Thread checkerThread;
+    private final TimeoutChecker checker;
+    private final ComponentHandlerFactory componentHandlerFactory;
+    private final TenantContextFactory _tenantContextFactory;
+
+    @Autowired
+    public ComponentCache(final ComponentHandlerFactory componentHandlerFactory, final TenantContextFactory tenantCtxFac) {
+        this.componentHandlerFactory = componentHandlerFactory;
+        this._tenantContextFactory = tenantCtxFac;
+        checker = new TimeoutChecker();
+        checkerThread = new Thread(checker);
+        checkerThread.setDaemon(true);
+        checkerThread.start();
+    }
+
+    /**
+     * Put configuration of component to the cache
+     */
+    public void put(final String tenant, final TenantContext tenantContext, final ComponentStoreHolder componentsHolder) {
+        logger.info("Put component. name: {}, instanceId: {}.", componentsHolder.getComponentName(),
+                componentsHolder.getInstanceId());
+        final ComponentHandler handler = componentHandlerFactory.createComponent(
+                tenantContext,
+                componentsHolder.getComponentName(),
+                componentsHolder.getCreateInput().configuration);
+        final ComponentCacheConfigWrapper wrapper = new ComponentCacheConfigWrapper(tenant, componentsHolder, handler);
+        data.put(componentsHolder.getInstanceId(), wrapper);
+        tenantContext.getComponentStore().store(wrapper.getComponentStoreHolder());
+    }
+
+    /**
+     * Read configuration from cache. If configurationHolder is not in cache, is loaded from repository,
+     * but in this case in holder is only configuration
+     */
+    public ComponentCacheConfigWrapper get(final String id, final String tenant, final TenantContext tenantContext) {
+        logger.info("Get component with id: " + id);
+        ComponentCacheConfigWrapper componentCacheConfigWrapper = data.get(id);
+        if (componentCacheConfigWrapper == null) {
+            logger.warn("Configuration {} does not exist in cache.", id);
+            final ComponentStore store = tenantContext.getComponentStore();
+            final ComponentStoreHolder storeConfig = store.get(id);
+            if (storeConfig == null) {
+                logger.warn("Configuration {} does not exist in store.", id);
+                return null;
+            } else {
+                final ComponentHandler componentHandler = componentHandlerFactory.createComponent(
+                        tenantContext,
+                        storeConfig.getComponentName(),
+                        storeConfig.getCreateInput().configuration);
+                componentCacheConfigWrapper = new ComponentCacheConfigWrapper(tenant, storeConfig, componentHandler);
+                data.put(id, componentCacheConfigWrapper);
+            }
+        }
+        componentCacheConfigWrapper.updateTimeStamp();
+        return componentCacheConfigWrapper;
+    }
+
+    /**
+     * Remove configuration from memory and store. And this component is destroyed.
+     */
+    public boolean remove(final String id, final TenantContext tenantContext) {
+        final boolean inCache = removeConfigurationOnlyFromCache(id);
+        final boolean inStore = removeConfigurationOnlyFromStore(id, tenantContext);
+        logger.info("Component {} was removed from cache and closed.", id);
+        return inCache || inStore;
+    }
+
+    private boolean removeConfigurationOnlyFromCache(final String id) {
+        final ComponentCacheConfigWrapper config = data.get(id);
+        if (config != null) {
+            data.remove(id);
+            config.getHandler().closeComponent();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean removeConfigurationOnlyFromStore(final String id, final TenantContext tenantContext) {
+        final ComponentStore store = tenantContext.getComponentStore();
+        return store.remove(id);
+    }
+
+    /**
+     * Close all component in memory. All components configuration are still in repository.
+     */
+    @PreDestroy
+    public void close() throws InterruptedException {
+        logger.info("Closing Components cache.");
+
+        synchronized (checker) {
+            checker.stop();
+            checker.notifyAll();
+        }
+        final long maxTime = System.currentTimeMillis() + CLOSE_TIMEOUT;
+        while (checkerThread.isAlive()) {
+            Thread.sleep(500);
+            if (maxTime < System.currentTimeMillis()) {
+                logger.error("Problem with closing checking thread.");
+                break;
+            }
+        }
+
+        for (final ComponentCacheConfigWrapper componentCacheConfigWrapper : data.values()) {
+            componentCacheConfigWrapper.getHandler().closeComponent();
+            logger.info("Component with id: {} was closed.",
+                    componentCacheConfigWrapper.getComponentStoreHolder().getInstanceId());
+            // Configuration is still in store.
+        }
+
+        data.clear();
+        logger.info("Components cache was closed.");
     }
 }

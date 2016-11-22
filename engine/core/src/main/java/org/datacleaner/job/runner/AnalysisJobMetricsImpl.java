@@ -29,7 +29,7 @@ final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
     private final AnalysisJob _job;
     private final RowProcessingPublishers _publishers;
 
-    public AnalysisJobMetricsImpl(AnalysisJob job, RowProcessingPublishers publishers) {
+    public AnalysisJobMetricsImpl(final AnalysisJob job, final RowProcessingPublishers publishers) {
         _job = job;
         _publishers = publishers;
     }
@@ -40,7 +40,7 @@ final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
     }
 
     @Override
-    public ComponentMetrics getComponentMetrics(ComponentJob componentJob) {
+    public ComponentMetrics getComponentMetrics(final ComponentJob componentJob) {
         final Table table = getRowProcessingTable(componentJob);
         final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics(table);
         return new ComponentMetricsImpl(rowProcessingMetrics, componentJob);
@@ -53,7 +53,7 @@ final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
     }
 
     @Override
-    public RowProcessingMetrics getRowProcessingMetrics(Table table) {
+    public RowProcessingMetrics getRowProcessingMetrics(final Table table) {
         final RowProcessingStream stream = _publishers.getStream(table);
         final RowProcessingPublisher publisher = _publishers.getRowProcessingPublisher(stream);
         if (publisher == null) {
@@ -63,10 +63,10 @@ final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
     }
 
     @Override
-    public Table getRowProcessingTable(ComponentJob componentJob) {
-        SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+    public Table getRowProcessingTable(final ComponentJob componentJob) {
+        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(_job);
-        Table[] tables = _publishers.getTables(sourceColumnFinder, componentJob);
+        final Table[] tables = _publishers.getTables(sourceColumnFinder, componentJob);
         if (tables == null || tables.length == 0) {
             return null;
         }

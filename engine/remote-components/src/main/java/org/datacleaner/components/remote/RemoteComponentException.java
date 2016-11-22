@@ -25,7 +25,7 @@ package org.datacleaner.components.remote;
 public class RemoteComponentException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public RemoteComponentException(String message) {
+    public RemoteComponentException(final String message) {
         super(message);
     }
 }

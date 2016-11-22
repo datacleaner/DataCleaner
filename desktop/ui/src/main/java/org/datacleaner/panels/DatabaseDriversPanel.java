@@ -81,8 +81,9 @@ public class DatabaseDriversPanel extends DCPanel {
     private final CloseableHttpClient _httpClient;
 
     @Inject
-    protected DatabaseDriversPanel(DataCleanerConfiguration configuration, WindowContext windowContext,
-            UserPreferences userPreferences, DatabaseDriverCatalog databaseDriverCatalog, CloseableHttpClient httpClient) {
+    protected DatabaseDriversPanel(final DataCleanerConfiguration configuration, final WindowContext windowContext,
+            final UserPreferences userPreferences, final DatabaseDriverCatalog databaseDriverCatalog,
+            final CloseableHttpClient httpClient) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _windowContext = windowContext;
         _userPreferences = userPreferences;
@@ -90,19 +91,19 @@ public class DatabaseDriversPanel extends DCPanel {
         _httpClient = httpClient;
         setLayout(new BorderLayout());
 
-        DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
-        String[] datastoreNames = datastoreCatalog.getDatastoreNames();
-        for (String name : datastoreNames) {
-            Datastore datastore = datastoreCatalog.getDatastore(name);
+        final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
+        final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
+        for (final String name : datastoreNames) {
+            final Datastore datastore = datastoreCatalog.getDatastore(name);
             if (datastore instanceof JdbcDatastore) {
-                String driverClass = ((JdbcDatastore) datastore).getDriverClass();
+                final String driverClass = ((JdbcDatastore) datastore).getDriverClass();
                 if (driverClass != null) {
                     _usedDriverClassNames.add(driverClass);
                 }
             }
         }
 
-        for (UserDatabaseDriver driver : _userPreferences.getDatabaseDrivers()) {
+        for (final UserDatabaseDriver driver : _userPreferences.getDatabaseDrivers()) {
             _usedDriverClassNames.add(driver.getDriverClassName());
         }
 
@@ -121,7 +122,7 @@ public class DatabaseDriversPanel extends DCPanel {
                 IconUtils.ICON_SIZE_MENU_ITEM));
 
         final List<DatabaseDriverDescriptor> drivers = _databaseDriverCatalog.getDatabaseDrivers();
-        for (DatabaseDriverDescriptor dd : drivers) {
+        for (final DatabaseDriverDescriptor dd : drivers) {
             final String[] urls = dd.getDownloadUrls();
             if (urls != null && _databaseDriverCatalog.getState(dd) == DatabaseDriverState.NOT_INSTALLED) {
                 final JMenuItem downloadAndInstallMenuItem = WidgetFactory.createMenuItem(dd.getDisplayName(),
@@ -139,8 +140,8 @@ public class DatabaseDriversPanel extends DCPanel {
                 IconUtils.FILE_ARCHIVE);
         localJarFilesMenuItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                AddDatabaseDriverDialog dialog = new AddDatabaseDriverDialog(_databaseDriverCatalog,
+            public void actionPerformed(final ActionEvent e) {
+                final AddDatabaseDriverDialog dialog = new AddDatabaseDriverDialog(_databaseDriverCatalog,
                         DatabaseDriversPanel.this, _windowContext, _userPreferences);
                 dialog.setVisible(true);
             }
@@ -218,7 +219,7 @@ public class DatabaseDriversPanel extends DCPanel {
             row++;
         }
 
-        for (UserDatabaseDriver driver : unknownManuallyInstalledDrivers) {
+        for (final UserDatabaseDriver driver : unknownManuallyInstalledDrivers) {
             final String driverClassName = driver.getDriverClassName();
             final Icon driverIcon = imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
                     IconUtils.ICON_SIZE_SMALL);
@@ -252,7 +253,7 @@ public class DatabaseDriversPanel extends DCPanel {
         return table;
     }
 
-    private boolean isUsed(String driverClassName) {
+    private boolean isUsed(final String driverClassName) {
         return _usedDriverClassNames.contains(driverClassName);
     }
 
@@ -260,7 +261,7 @@ public class DatabaseDriversPanel extends DCPanel {
             final List<UserDatabaseDriver> userPreferencesDatabaseDrivers,
             final List<DatabaseDriverDescriptor> databaseDrivers) {
         final List<UserDatabaseDriver> unknownDrivers = new ArrayList<>();
-        for (UserDatabaseDriver driver : userPreferencesDatabaseDrivers) {
+        for (final UserDatabaseDriver driver : userPreferencesDatabaseDrivers) {
             if (isDriverMissing(driver, databaseDrivers)) {
                 unknownDrivers.add(driver);
             }
@@ -271,7 +272,7 @@ public class DatabaseDriversPanel extends DCPanel {
     private boolean isDriverMissing(final UserDatabaseDriver driver,
             final List<DatabaseDriverDescriptor> databaseDrivers) {
         final String driverClassName = driver.getDriverClassName();
-        for (DatabaseDriverDescriptor descriptor : databaseDrivers) {
+        for (final DatabaseDriverDescriptor descriptor : databaseDrivers) {
             if (descriptor.getDriverClassName().equals(driverClassName)) {
                 return false;
             }
@@ -282,7 +283,7 @@ public class DatabaseDriversPanel extends DCPanel {
     private ActionListener createDownloadActionListener(final DatabaseDriverDescriptor dd) {
         final FileDownloadListener downloadListener = new FileDownloadListener() {
             @Override
-            public void onFilesDownloaded(FileObject[] files) {
+            public void onFilesDownloaded(final FileObject[] files) {
                 final String driverClassName = dd.getDriverClassName();
 
                 logger.info("Registering and loading driver '{}' in files '{}'", driverClassName, files);
@@ -292,7 +293,7 @@ public class DatabaseDriversPanel extends DCPanel {
 
                 try {
                     userDatabaseDriver.loadDriver();
-                } catch (IllegalStateException e) {
+                } catch (final IllegalStateException e) {
                     WidgetUtils.showErrorMessage("Error while loading driver", "Error message: " + e.getMessage(), e);
                 }
                 updateDriverList();

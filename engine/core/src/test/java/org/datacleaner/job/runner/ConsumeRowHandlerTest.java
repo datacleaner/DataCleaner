@@ -114,7 +114,8 @@ public class ConsumeRowHandlerTest extends TestCase {
     }
 
     public void testMultiRecordOutputScenario() throws Exception {
-        final TransformerComponentBuilder<MockMultiRowTransformer> tr1 = ajb.addTransformer(MockMultiRowTransformer.class);
+        final TransformerComponentBuilder<MockMultiRowTransformer> tr1 =
+                ajb.addTransformer(MockMultiRowTransformer.class);
         tr1.setConfiguredProperty("Count to what?", ajb.getSourceColumnByName("age"));
 
         final TransformerComponentBuilder<MockTransformer> tr2 = ajb.addTransformer(MockTransformer.class);

@@ -42,31 +42,13 @@ import org.datacleaner.user.DataCleanerHome;
  */
 public final class Main {
 
-    public static void main(String[] args) {
-        main(args, true, true);
-    }
-
-    public static void main(String[] args, boolean initializeSystemProperties, boolean initializeLogging) {
-        if (initializeSystemProperties) {
-            initializeSystemProperties(args);
-        }
-
-        if (initializeLogging) {
-            initializeLogging();
-        }
-
-        final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
-        final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
-        bootstrap.run();
-    }
-
     /**
      * Initializes system properties based on the arguments passed
-     * 
+     *
      * @param args
      * @return
      */
-    protected static Map<String, String> initializeSystemProperties(String[] args) {
+    protected static Map<String, String> initializeSystemProperties(final String[] args) {
         final Map<String, String> result = new HashMap<String, String>();
         final Pattern pattern = Pattern.compile("-D(.+)=(.+)");
         for (final String arg : args) {
@@ -84,7 +66,7 @@ public final class Main {
     /**
      * Initializes logging, specifically by looking for log4j.xml or
      * log4j.properties file in DataCleaner's home directory.
-     * 
+     *
      * @return true if a logging configuration file was found, or false
      *         otherwise
      */
@@ -122,14 +104,14 @@ public final class Main {
             DOMConfigurator.configure(url);
             return false;
 
-        } catch (NoClassDefFoundError e) {
+        } catch (final NoClassDefFoundError e) {
             // can happen if log4j is not on the classpath
             println("Failed to initialize logging, class not found: " + e.getMessage());
             return false;
         }
     }
 
-    private static boolean initializeLoggingFromDirectory(File directory) {
+    private static boolean initializeLoggingFromDirectory(final File directory) {
         try {
             final File xmlConfigurationFile = new File(directory, "log4j.xml");
             if (xmlConfigurationFile.exists() && xmlConfigurationFile.isFile()) {
@@ -137,7 +119,7 @@ public final class Main {
                 DOMConfigurator.configure(xmlConfigurationFile.toURI().toURL());
                 return true;
             }
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             // no xml logging found, ignore
         }
 
@@ -148,7 +130,7 @@ public final class Main {
                 PropertyConfigurator.configure(propertiesConfigurationFile.toURI().toURL());
                 return true;
             }
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             // no properties logging found, ignore
         }
         return false;
@@ -157,10 +139,28 @@ public final class Main {
     /**
      * Prints a message to the console. This mechanism is to be used only before
      * logging is configured.
-     * 
+     *
      * @param string
      */
-    private static void println(String string) {
+    private static void println(final String string) {
         System.out.println(string);
+    }
+
+    public static void main(final String[] args) {
+        main(args, true, true);
+    }
+
+    public static void main(final String[] args, final boolean initializeSystemProperties, final boolean initializeLogging) {
+        if (initializeSystemProperties) {
+            initializeSystemProperties(args);
+        }
+
+        if (initializeLogging) {
+            initializeLogging();
+        }
+
+        final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
+        final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
+        bootstrap.run();
     }
 }

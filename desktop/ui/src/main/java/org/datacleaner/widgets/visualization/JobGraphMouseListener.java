@@ -69,7 +69,7 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
 
 /**
  * Listener for mouse events on the {@link JobGraph}.
- * 
+ *
  * Note that this class implements two interfaces and is thus added as two
  * distinct listener types: {@link MouseListener} and {@link GraphMouseListener}
  */
@@ -89,8 +89,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     private Point _pressedPoint;
 
-    public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter, JobGraphActions actions,
-            WindowContext windowContext, UsageLogger usageLogger) {
+    public JobGraphMouseListener(final JobGraphContext graphContext, final JobGraphLinkPainter linkPainter, final JobGraphActions actions,
+            final WindowContext windowContext, final UsageLogger usageLogger) {
         _graphContext = graphContext;
         _linkPainter = linkPainter;
         _actions = actions;
@@ -100,31 +100,31 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     /**
      * Invoked when a component is double-clicked
-     * 
+     *
      * @param componentBuilder
      * @param me
      */
-    public void onComponentDoubleClicked(ComponentBuilder componentBuilder, MouseEvent me) {
+    public void onComponentDoubleClicked(final ComponentBuilder componentBuilder, final MouseEvent me) {
         _actions.showConfigurationDialog(componentBuilder);
     }
 
     /**
      * Invoked when a {@link Table} is double clicked
-     * 
+     *
      * @param table
      * @param me
      */
-    public void onTableDoubleClicked(final Table table, MouseEvent me) {
+    public void onTableDoubleClicked(final Table table, final MouseEvent me) {
         _actions.showTableConfigurationDialog(table);
     }
 
     /**
      * Invoked when a {@link Table} is right-clicked
-     * 
+     *
      * @param table
      * @param me
      */
-    public void onTableRightClicked(Table table, MouseEvent me) {
+    public void onTableRightClicked(final Table table, final MouseEvent me) {
         final JPopupMenu popup = new JPopupMenu();
 
         popup.add(createLinkMenuItem(table));
@@ -143,7 +143,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     /**
      * Invoked when a component is right-clicked
-     * 
+     *
      * @param componentBuilder
      * @param me
      */
@@ -156,7 +156,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                 ImageManager.get().getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
         configureComponentMenuItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 _actions.showConfigurationDialog(componentBuilder);
             }
         });
@@ -167,8 +167,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             popup.add(createLinkMenuItem(componentBuilder));
         }
 
-        for (OutputDataStream dataStream : componentBuilder.getOutputDataStreams()) {
-            JobGraphLinkPainter.VertexContext vertexContext = new JobGraphLinkPainter.VertexContext(componentBuilder,
+        for (final OutputDataStream dataStream : componentBuilder.getOutputDataStreams()) {
+            final JobGraphLinkPainter.VertexContext vertexContext = new JobGraphLinkPainter.VertexContext(componentBuilder,
                     componentBuilder.getOutputDataStreamJobBuilder(dataStream), dataStream);
             popup.add(createLinkMenuItem(vertexContext));
         }
@@ -182,8 +182,9 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) componentBuilder;
             final JMenuItem previewMenuItem = new JMenuItem("Preview data",
                     ImageManager.get().getImageIcon(IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
-            if(tjb.getDescriptor() instanceof RemoteTransformerDescriptor) {
-                previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, null, tjb, 10));
+            if (tjb.getDescriptor() instanceof RemoteTransformerDescriptor) {
+                previewMenuItem
+                        .addActionListener(new PreviewTransformedDataActionListener(_windowContext, null, tjb, 10));
             } else {
                 previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));
             }
@@ -217,7 +218,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                 imageManager.getImageIcon(IconUtils.ACTION_ADD_DARK, IconUtils.ICON_SIZE_SMALL));
         menuItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 _linkPainter.startLink(from);
             }
         });
@@ -226,7 +227,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     /**
      * Invoked when the canvas is right-clicked
-     * 
+     *
      * @param me
      */
     public void onCanvasRightClicked(final MouseEvent me) {
@@ -237,11 +238,11 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         final Point point = me.getPoint();
         final AnalysisJobBuilder analysisJobBuilder = _graphContext.getMainAnalysisJobBuilder();
         final DataCleanerConfiguration configuration = analysisJobBuilder.getConfiguration();
-        
+
         // add component options
         final Set<ComponentSuperCategory> superCategories = configuration.getEnvironment().getDescriptorProvider()
                 .getComponentSuperCategories();
-        for (ComponentSuperCategory superCategory : superCategories) {
+        for (final ComponentSuperCategory superCategory : superCategories) {
             final DescriptorMenuBuilder menuBuilder = new DescriptorMenuBuilder(analysisJobBuilder, _usageLogger,
                     superCategory, point);
 
@@ -250,13 +251,13 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             menuBuilder.addItemsToMenu(menu);
             popup.add(menu);
         }
-        
+
         // add (datastore and job) metadata option
         {
             final JMenuItem menuItem = WidgetFactory.createMenuItem("Job metadata", IconUtils.MODEL_METADATA);
             menuItem.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(final ActionEvent e) {
                     final MetadataDialog dialog = new MetadataDialog(_windowContext, analysisJobBuilder);
                     dialog.open();
                 }
@@ -268,7 +269,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     }
 
     @Override
-    public void graphReleased(Object v, MouseEvent me) {
+    public void graphReleased(final Object v, final MouseEvent me) {
         logger.debug("Graph released");
 
         if (isLeftClick(me)) {
@@ -323,7 +324,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     }
 
     @Override
-    public void graphPressed(Object v, MouseEvent me) {
+    public void graphPressed(final Object v, final MouseEvent me) {
         logger.debug("graphPressed({}, {})", v, me);
         _pressedPoint = me.getPoint();
         _clickCaught = false;
@@ -351,13 +352,13 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     }
 
     @Override
-    public void graphClicked(Object v, MouseEvent me) {
+    public void graphClicked(final Object v, final MouseEvent me) {
         logger.debug("graphClicked({}, {})", v, me);
         // We do nothing. We show the menu only when the mouse is released
     }
 
     @Override
-    public void mouseReleased(MouseEvent me) {
+    public void mouseReleased(final MouseEvent me) {
         logger.debug("mouseReleased({}) (clickCaught={})", me, _clickCaught);
         if (!_clickCaught) {
             if (isRightClick(me)) {
@@ -368,13 +369,13 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         _clickCaught = false;
     }
 
-    private boolean isLeftClick(MouseEvent me) {
-        int button = me.getButton();
+    private boolean isLeftClick(final MouseEvent me) {
+        final int button = me.getButton();
         return button == MouseEvent.BUTTON1 && (!me.isMetaDown());
     }
 
-    private boolean isRightClick(MouseEvent me) {
-        int button = me.getButton();
+    private boolean isRightClick(final MouseEvent me) {
+        final int button = me.getButton();
         if (button == MouseEvent.BUTTON2) {
             return true;
         }

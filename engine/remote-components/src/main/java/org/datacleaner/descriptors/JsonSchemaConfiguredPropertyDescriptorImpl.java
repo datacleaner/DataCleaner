@@ -49,17 +49,55 @@ import com.fasterxml.jackson.module.jsonSchema.types.ValueTypeSchema;
 public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfiguredPropertyDescriptor
         implements EnumerationProvider {
 
-    private static final long serialVersionUID = 1L;
+    private class EnumerationValueConverter implements Converter<Object> {
 
+        @Override
+        public Object fromString(final Class<?> type, final String serializedForm) {
+            for (final EnumerationValue valueCandidate : enumValues) {
+                if (valueCandidate.getValue().equals(serializedForm)) {
+                    return valueCandidate;
+                } else if (valueCandidate.getName().equals(serializedForm)) {
+                    return valueCandidate;
+                } else {
+                    for (final String alias : valueCandidate.getAliases()) {
+                        if (alias.equals(serializedForm)) {
+                            return valueCandidate;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String toString(final Object instance) {
+            if (instance == null) {
+                return null;
+            }
+            if (instance instanceof EnumerationValue) {
+                return ((EnumerationValue) instance).getValue();
+            }
+            if (instance instanceof Enum) {
+                return ((Enum<?>) instance).name();
+            }
+            throw new IllegalArgumentException("Cannot serialize value of type " + instance.getClass());
+        }
+
+        @Override
+        public boolean isConvertable(final Class<?> type) {
+            return type.isAssignableFrom(EnumerationValue.class) && isEnum();
+        }
+    }
+    private static final long serialVersionUID = 1L;
     private final JsonSchema schema;
     private final boolean isInputColumn;
     private boolean isArray;
     private Class<?> baseType;
     private EnumerationValue[] enumValues;
 
-    public JsonSchemaConfiguredPropertyDescriptorImpl(String name, JsonSchema schema, boolean isInputColumn,
-            String description, boolean required, ComponentDescriptor<?> component,
-            Map<Class<? extends Annotation>, Annotation> annotations, JsonNode defaultValue) {
+    public JsonSchemaConfiguredPropertyDescriptorImpl(final String name, final JsonSchema schema, final boolean isInputColumn,
+            final String description, final boolean required, final ComponentDescriptor<?> component,
+            final Map<Class<? extends Annotation>, Annotation> annotations, final JsonNode defaultValue) {
         super(name, description, required, component, annotations, defaultValue);
         this.schema = schema;
         this.isInputColumn = isInputColumn;
@@ -68,7 +106,7 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
 
     private void init() {
         isArray = schema.isArraySchema();
-        JsonSchema baseSchema;
+        final JsonSchema baseSchema;
 
         if (isArray) {
             baseSchema = ((ArraySchema) schema).getItems().asSingleItems().getSchema();
@@ -78,19 +116,20 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
 
         enumValues = new EnumerationValue[0]; // default
         if (baseSchema instanceof ValueTypeSchema) {
-            Set<String> enums = ((ValueTypeSchema) baseSchema).getEnums();
+            final Set<String> enums = ((ValueTypeSchema) baseSchema).getEnums();
             if (enums != null && !enums.isEmpty()) {
                 enumValues = new EnumerationValue[enums.size()];
                 int i = 0;
-                for (String value : enums) {
+                for (final String value : enums) {
 
-                    String enumValue, enumName;
-                    String[] enumAliases;
-                    String[] tokens = value.split(Serializator.ENUM_ALIAS_SEPARATOR);
-                    if(tokens.length == 0) {
+                    final String enumValue;
+                    final String enumName;
+                    final String[] enumAliases;
+                    final String[] tokens = value.split(Serializator.ENUM_ALIAS_SEPARATOR);
+                    if (tokens.length == 0) {
                         continue;
                     }
-                    if(tokens.length == 1) {
+                    if (tokens.length == 1) {
                         enumValue = tokens[0];
                         enumName = tokens[0];
                         enumAliases = new String[0];
@@ -132,7 +171,7 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
         return isInputColumn;
     }
 
-    private Class<?> schemaToJavaType(JsonSchema schema) {
+    private Class<?> schemaToJavaType(final JsonSchema schema) {
         // try to convert
         if (isEnum()) {
             return EnumerationValue.class;
@@ -163,16 +202,16 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
     }
 
     @Override
-    public EnumerationValue forString(String value) {
-        if(enumValues == null) {
+    public EnumerationValue forString(final String value) {
+        if (enumValues == null) {
             return null;
         }
-        for(EnumerationValue candidate: enumValues) {
-            if(value.equals(candidate.getValue()) || value.equals(candidate.getName())) {
+        for (final EnumerationValue candidate : enumValues) {
+            if (value.equals(candidate.getValue()) || value.equals(candidate.getName())) {
                 return candidate;
             }
-            for(String alias: candidate.getAliases()) {
-                if(value.equals(alias)) {
+            for (final String alias : candidate.getAliases()) {
+                if (value.equals(alias)) {
                     return candidate;
                 }
             }
@@ -183,45 +222,5 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
     @Override
     public Converter<?> createCustomConverter() {
         return isEnum() ? new EnumerationValueConverter() : null;
-    }
-
-    private class EnumerationValueConverter implements Converter<Object> {
-
-        @Override
-        public Object fromString(Class<?> type, String serializedForm) {
-            for(EnumerationValue valueCandidate: enumValues) {
-                if(valueCandidate.getValue().equals(serializedForm)) {
-                    return valueCandidate;
-                } else if(valueCandidate.getName().equals(serializedForm)) {
-                    return valueCandidate;
-                } else {
-                    for(String alias: valueCandidate.getAliases()) {
-                        if(alias.equals(serializedForm)) {
-                            return valueCandidate;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public String toString(Object instance) {
-            if(instance == null) {
-                return null;
-            }
-            if(instance instanceof EnumerationValue) {
-                return ((EnumerationValue)instance).getValue();
-            }
-            if(instance instanceof Enum) {
-                return ((Enum<?>)instance).name();
-            }
-            throw new IllegalArgumentException("Cannot serialize value of type " + instance.getClass());
-        }
-
-        @Override
-        public boolean isConvertable(Class<?> type) {
-            return type.isAssignableFrom(EnumerationValue.class) && isEnum();
-        }
     }
 }

@@ -34,63 +34,63 @@ import org.slf4j.LoggerFactory;
 
 final class DatastoreOutputRow implements OutputRow {
 
-	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputRow.class);
+    private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputRow.class);
 
-	private final PreparedStatement _insertStatement;
-	private final InputColumn<?>[] _columns;
-	private final Map<Integer, Object> _parameters;
+    private final PreparedStatement _insertStatement;
+    private final InputColumn<?>[] _columns;
+    private final Map<Integer, Object> _parameters;
 
-	public DatastoreOutputRow(PreparedStatement insertStatement, InputColumn<?>[] columns) {
-		_insertStatement = insertStatement;
-		_columns = columns;
-		_parameters = new HashMap<Integer, Object>();
-	}
+    public DatastoreOutputRow(final PreparedStatement insertStatement, final InputColumn<?>[] columns) {
+        _insertStatement = insertStatement;
+        _columns = columns;
+        _parameters = new HashMap<Integer, Object>();
+    }
 
-	@Override
-	public <E> OutputRow setValue(InputColumn<? super E> inputColumn, E value) {
-		int index = -1;
-		for (int i = 0; i < _columns.length; i++) {
-			if (inputColumn.equals(_columns[i])) {
-				index = i;
-			}
-		}
-		if (index == -1) {
-			throw new IllegalArgumentException("Column '" + inputColumn + "' is not being written");
-		}
+    @Override
+    public <E> OutputRow setValue(final InputColumn<? super E> inputColumn, final E value) {
+        int index = -1;
+        for (int i = 0; i < _columns.length; i++) {
+            if (inputColumn.equals(_columns[i])) {
+                index = i;
+            }
+        }
+        if (index == -1) {
+            throw new IllegalArgumentException("Column '" + inputColumn + "' is not being written");
+        }
 
-		if (value != null && !DatastoreOutputWriter.isDirectlyInsertableType(inputColumn)) {
-			_parameters.put(index + 1, value.toString());
-		} else {
-			_parameters.put(index + 1, value);
-		}
-		return this;
-	}
+        if (value != null && !DatastoreOutputWriter.isDirectlyInsertableType(inputColumn)) {
+            _parameters.put(index + 1, value.toString());
+        } else {
+            _parameters.put(index + 1, value);
+        }
+        return this;
+    }
 
-	@Override
-	public void write() {
-		synchronized (_insertStatement) {
-			final Set<Entry<Integer, Object>> entries = _parameters.entrySet();
-			try {
-				for (Entry<Integer, Object> entry : entries) {
-					_insertStatement.setObject(entry.getKey(), entry.getValue());
-				}
-				logger.debug("Writing row based on statement: {}", _insertStatement);
-				_insertStatement.executeUpdate();
-			} catch (SQLException e) {
-				logger.error("Exception occurred while executing statement with parameters: {}", _parameters);
-				throw new IllegalStateException(e);
-			}
-		}
-	}
+    @Override
+    public void write() {
+        synchronized (_insertStatement) {
+            final Set<Entry<Integer, Object>> entries = _parameters.entrySet();
+            try {
+                for (final Entry<Integer, Object> entry : entries) {
+                    _insertStatement.setObject(entry.getKey(), entry.getValue());
+                }
+                logger.debug("Writing row based on statement: {}", _insertStatement);
+                _insertStatement.executeUpdate();
+            } catch (final SQLException e) {
+                logger.error("Exception occurred while executing statement with parameters: {}", _parameters);
+                throw new IllegalStateException(e);
+            }
+        }
+    }
 
-	@Override
-	public OutputRow setValues(InputRow row) {
-		for (InputColumn<?> column : _columns) {
-			Object value = row.getValue(column);
-			@SuppressWarnings("unchecked")
-			InputColumn<Object> objectColumn = (InputColumn<Object>) column;
-			setValue(objectColumn, value);
-		}
-		return this;
-	}
+    @Override
+    public OutputRow setValues(final InputRow row) {
+        for (final InputColumn<?> column : _columns) {
+            final Object value = row.getValue(column);
+            @SuppressWarnings("unchecked") final
+            InputColumn<Object> objectColumn = (InputColumn<Object>) column;
+            setValue(objectColumn, value);
+        }
+        return this;
+    }
 }

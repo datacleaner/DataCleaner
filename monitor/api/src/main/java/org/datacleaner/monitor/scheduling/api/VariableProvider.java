@@ -30,5 +30,5 @@ import org.datacleaner.monitor.scheduling.model.ExecutionLog;
  */
 public interface VariableProvider {
 
-    public Map<String, String> provideValues(JobContext job, ExecutionLog execution);
+    Map<String, String> provideValues(JobContext job, ExecutionLog execution);
 }

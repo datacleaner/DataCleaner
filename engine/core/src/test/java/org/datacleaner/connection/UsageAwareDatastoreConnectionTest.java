@@ -34,7 +34,8 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
 
         UpdateableDatastoreConnectionLease connection1 = (UpdateableDatastoreConnectionLease) ds.openConnection();
 
-        try (UsageAwareDatastoreConnection<?> usageAware = (UsageAwareDatastoreConnection<?>) connection1.getDelegate();) {
+        try (UsageAwareDatastoreConnection<?> usageAware = (UsageAwareDatastoreConnection<?>) connection1
+                .getDelegate()) {
 
             assertTrue(ds.isDatastoreConnectionOpen());
             assertEquals(1, usageAware.getUsageCount());
@@ -88,11 +89,11 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
 
         class TestConnection extends UsageAwareDatastoreConnection<DataContext> {
 
+            private final AtomicInteger _closeCount = new AtomicInteger();
+
             public TestConnection() {
                 super(null);
             }
-
-            private final AtomicInteger _closeCount = new AtomicInteger();
 
             @Override
             public SchemaNavigator getSchemaNavigator() {
@@ -148,7 +149,7 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
             }
             threads[i].start();
         }
-        
+
         for (int i = 0; i < threads.length; i++) {
             try {
                 threads[i].join();

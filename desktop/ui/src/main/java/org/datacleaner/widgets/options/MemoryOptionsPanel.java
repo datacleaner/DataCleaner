@@ -58,10 +58,10 @@ public class MemoryOptionsPanel extends DCPanel {
         WidgetUtils.addToGridBag(new JLabel("Free memory:"), this, 0, 3);
         WidgetUtils.addToGridBag(freeMemoryLabel, this, 1, 3);
 
-        JButton button = WidgetFactory.createDefaultButton("Perform garbage collection");
+        final JButton button = WidgetFactory.createDefaultButton("Perform garbage collection");
         button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 System.gc();
                 System.runFinalization();
             }
@@ -73,12 +73,12 @@ public class MemoryOptionsPanel extends DCPanel {
             private final NumberFormat nf = NumberFormat.getIntegerInstance();
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
 
-                long totalMemory = runtime.totalMemory();
-                long freeMemory = runtime.freeMemory();
-                long maxMemory = runtime.maxMemory();
-                long usedMemory = totalMemory - freeMemory;
+                final long totalMemory = runtime.totalMemory();
+                final long freeMemory = runtime.freeMemory();
+                final long maxMemory = runtime.maxMemory();
+                final long usedMemory = totalMemory - freeMemory;
 
                 if (maxMemory == Long.MAX_VALUE) {
                     maxMemoryLabel.setText("(no limit)");

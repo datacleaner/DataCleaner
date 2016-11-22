@@ -102,8 +102,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     private final ApplicationContext _applicationContext;
 
     @Autowired
-    public DataCleanerJobEngine(ClusterManagerFactory clusterManagerFactory, DescriptorProvider descriptorProvider,
-            ApplicationContext applicationContext) {
+    public DataCleanerJobEngine(final ClusterManagerFactory clusterManagerFactory, final DescriptorProvider descriptorProvider,
+            final ApplicationContext applicationContext) {
         super(FileFilters.ANALYSIS_XML.getExtension());
         _clusterManagerFactory = clusterManagerFactory;
         _descriptorProvider = descriptorProvider;
@@ -112,16 +112,16 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     }
 
     /**
-     * 
+     *
      * @param clusterManagerFactory
      * @param descriptorProvider
-     * 
+     *
      * @deprecated use
      *             {@link #DataCleanerJobEngine(ClusterManagerFactory, DescriptorProvider, ApplicationContext)}
      *             instead
      */
     @Deprecated
-    public DataCleanerJobEngine(ClusterManagerFactory clusterManagerFactory, DescriptorProvider descriptorProvider) {
+    public DataCleanerJobEngine(final ClusterManagerFactory clusterManagerFactory, final DescriptorProvider descriptorProvider) {
         this(clusterManagerFactory, descriptorProvider, null);
     }
 
@@ -131,14 +131,14 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     }
 
     @Override
-    protected DataCleanerJobContext getJobContext(TenantContext tenantContext, RepositoryFile file) {
+    protected DataCleanerJobContext getJobContext(final TenantContext tenantContext, final RepositoryFile file) {
         final DataCleanerJobContext job = new DataCleanerJobContextImpl(this, tenantContext, file);
         return job;
     }
 
     @Override
-    public MetricValues getMetricValues(MetricJobContext job, ResultContext result,
-            List<MetricIdentifier> metricIdentifiers) {
+    public MetricValues getMetricValues(final MetricJobContext job, final ResultContext result,
+            final List<MetricIdentifier> metricIdentifiers) {
         final AnalysisJob analysisJob;
         if (job == null) {
             analysisJob = null;
@@ -151,8 +151,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     }
 
     @Override
-    public void executeJob(TenantContext tenantContext, ExecutionLog execution, ExecutionLogger executionLogger,
-            Map<String, String> variables) throws Exception {
+    public void executeJob(final TenantContext tenantContext, final ExecutionLog execution, final ExecutionLogger executionLogger,
+            final Map<String, String> variables) throws Exception {
 
         final AnalysisListener analysisListener = createAnalysisListener(execution, executionLogger);
 
@@ -181,7 +181,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
      * Executes the job on the server in normal mode
      *
      */
-    private void runJobNormalMode(TenantContext tenantContext, ExecutionLog execution, ExecutionLogger executionLogger,
+    private void runJobNormalMode(final TenantContext tenantContext, final ExecutionLog execution, final ExecutionLogger executionLogger,
             final AnalysisListener analysisListener, final DataCleanerJobContext job,
             final DataCleanerConfiguration configuration, final AnalysisJob analysisJob) {
         preExecuteJob(tenantContext, job, analysisJob);
@@ -219,16 +219,17 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
      * Sends the job on Hadoop for execution
      *
      */
-    private void runJobOnHadoop(DataCleanerConfiguration configuration, ExecutionIdentifier executionIndentifier,
-            AnalysisJob analysisJob, TenantContext tenantContext, AnalysisListener analysisListener,
-            ExecutionLogger executionLogger, ExecutionLog execution) throws Exception {
-        
+    private void runJobOnHadoop(final DataCleanerConfiguration configuration, final ExecutionIdentifier executionIndentifier,
+            final AnalysisJob analysisJob, final TenantContext tenantContext, final AnalysisListener analysisListener,
+            final ExecutionLogger executionLogger, final ExecutionLog execution) throws Exception {
+
         if (!HadoopJobExecutionUtils.isSparkHomeSet()) {
-            final Exception exception = new Exception("Error while trying to run Hadoop Job. The environment variable SPARK_HOME is not set.");
+            final Exception exception = new Exception(
+                    "Error while trying to run Hadoop Job. The environment variable SPARK_HOME is not set.");
             executionLogger.setStatusFailed(null, null, exception);
             return;
         }
-      
+
         final Datastore datastore = analysisJob.getDatastore();
         if (!HadoopJobExecutionUtils.isValidSourceDatastore(datastore)) {
             final Exception exception = new Exception(
@@ -236,10 +237,11 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             executionLogger.setStatusFailed(null, null, exception);
             return;
         }
-        
+
         final String jobName = HadoopJobExecutionUtils.getUrlReadyJobName(executionIndentifier.getResultId());
         final String hadoopJobFileName = SparkRunner.DATACLEANER_TEMP_DIR + "/" + jobName + ".analysis.xml";
-        final String hadoopJobResultFileName = SparkRunner.DEFAULT_RESULT_PATH + "/" + jobName + SparkRunner.RESULT_FILE_EXTENSION;
+        final String hadoopJobResultFileName =
+                SparkRunner.DEFAULT_RESULT_PATH + "/" + jobName + SparkRunner.RESULT_FILE_EXTENSION;
         final String uri = HadoopUtils.getFileSystem().getUri().resolve(hadoopJobFileName).toString();
         final HdfsResource analysisJobResource = new HdfsResource(uri);
 
@@ -253,7 +255,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             final SparkRunner sparkRunner = new SparkRunner(configurationFile.getAbsolutePath(), analysisJobResource
                     .getFilepath(), hadoopJobResultFileName);
 
-            SwingWorker<Integer, Void> worker = new SwingWorker<Integer, Void>() {
+            final SwingWorker<Integer, Void> worker = new SwingWorker<Integer, Void>() {
                 @Override
                 protected Integer doInBackground() throws Exception {
 
@@ -282,7 +284,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
                 protected void done() {
                     executionLogger.log("Download job results");
                     // copy the file from Hadoop to the server
-                    getResultFileFromCluster(tenantContext, executionLogger,hadoopJobResultFileName, jobName);
+                    getResultFileFromCluster(tenantContext, executionLogger, hadoopJobResultFileName, jobName);
                     if (!execution.getExecutionStatus().equals(ExecutionStatus.FAILURE)) {
                         // the result is null so that there is no EMPTY result
                         // is persisted. The method will create an empty result file. We already copied one from Hadoop.
@@ -294,7 +296,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             };
 
             worker.execute();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // Exception occurred when interacting with Hadoop Cluster
             executionLogger.setStatusFailed(null, null, e);
             executionLogger.log("Job failed, please check Hadoop and/or DataCleaner monitor logs");
@@ -302,7 +304,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         executionLogger.flushLog();
     }
 
-    private AnalysisListener createAnalysisListener(ExecutionLog execution, ExecutionLogger executionLogger) {
+    private AnalysisListener createAnalysisListener(final ExecutionLog execution, final ExecutionLogger executionLogger) {
         // we always want a MonitorAnalysisListener instance
         final AnalysisListener monitorAnalysisListener = new MonitorAnalysisListener(execution, executionLogger);
 
@@ -322,7 +324,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     }
 
     @Override
-    public boolean cancelJob(TenantContext tenantContext, ExecutionLog execution) {
+    public boolean cancelJob(final TenantContext tenantContext, final ExecutionLog execution) {
         final AnalysisResultFuture resultFuture = getRunningJob(tenantContext, execution);
         if (resultFuture == null) {
             logger.info("cancelJob(...) invoked but job not found: {}, {}", tenantContext, execution);
@@ -333,13 +335,13 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             logger.info("Invoking cancel on job: {}, {}", tenantContext, execution);
             resultFuture.cancel();
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Unexpected exception thrown while cancelling job: " + tenantContext + ", " + execution, e);
             return false;
         }
     }
 
-    private void removeRunningJob(TenantContext tenantContext, ExecutionLog execution) {
+    private void removeRunningJob(final TenantContext tenantContext, final ExecutionLog execution) {
         if (tenantContext == null || execution == null) {
             return;
         }
@@ -347,7 +349,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         _runningJobs.remove(key);
     }
 
-    private void putRunningJob(TenantContext tenantContext, ExecutionLog execution, AnalysisResultFuture resultFuture) {
+    private void putRunningJob(final TenantContext tenantContext, final ExecutionLog execution, final AnalysisResultFuture resultFuture) {
         if (tenantContext == null || execution == null) {
             return;
         }
@@ -355,7 +357,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         _runningJobs.put(key, resultFuture);
     }
 
-    private AnalysisResultFuture getRunningJob(TenantContext tenantContext, ExecutionLog execution) {
+    private AnalysisResultFuture getRunningJob(final TenantContext tenantContext, final ExecutionLog execution) {
         if (tenantContext == null || execution == null) {
             return null;
         }
@@ -365,19 +367,20 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
 
     /**
      * Validates a job before loading it with a concrete datastore.
-     * 
+     *
      * @param context
      * @param job
-     * 
+     *
      * @throws FileNotFoundException
      */
-    private void preLoadJob(DataCleanerConfiguration configuration, DataCleanerJobContext job) throws FileNotFoundException,
+    private void preLoadJob(final DataCleanerConfiguration configuration, final DataCleanerJobContext job)
+            throws FileNotFoundException,
             ResourceException {
         final String sourceDatastoreName = job.getSourceDatastoreName();
         final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(sourceDatastoreName);
 
         if (datastore instanceof ResourceDatastore) {
-            Resource resource = ((ResourceDatastore) datastore).getResource();
+            final Resource resource = ((ResourceDatastore) datastore).getResource();
             if (resource == null || !resource.isExists()) {
                 logger.warn("Raising ResourceException from datastore: {}", datastore);
                 throw new ResourceException(resource, "Resource does not exist: " + resource);
@@ -394,14 +397,14 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
 
     /**
      * Validates a job before executing it.
-     * 
+     *
      * @param context
      * @param job
      * @param analysisJob
-     * 
+     *
      * @throws NoSuchDatastoreException
      */
-    private void preExecuteJob(TenantContext context, DataCleanerJobContext job, AnalysisJob analysisJob)
+    private void preExecuteJob(final TenantContext context, final DataCleanerJobContext job, final AnalysisJob analysisJob)
             throws NoSuchDatastoreException {
         final Datastore datastore = analysisJob.getDatastore();
 
@@ -417,8 +420,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     }
 
     @Override
-    public Collection<String> getMetricParameterSuggestions(MetricJobContext job, ResultContext result,
-            MetricIdentifier metricIdentifier) {
+    public Collection<String> getMetricParameterSuggestions(final MetricJobContext job, final ResultContext result,
+            final MetricIdentifier metricIdentifier) {
 
         final String analyzerDescriptorName = metricIdentifier.getAnalyzerDescriptorName();
         final String metricDescriptorName = metricIdentifier.getMetricDescriptorName();
@@ -471,7 +474,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     }
 
     @Override
-    public Collection<InputColumn<?>> getMetricParameterColumns(MetricJobContext job, ComponentJob component) {
+    public Collection<InputColumn<?>> getMetricParameterColumns(final MetricJobContext job, final ComponentJob component) {
         if (component instanceof InputColumnSinkJob) {
             final InputColumnSinkJob inputColumnSinkJob = (InputColumnSinkJob) component;
             final InputColumn<?>[] inputColumns = inputColumnSinkJob.getInput();
@@ -480,7 +483,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         return Collections.emptyList();
     }
 
-    private void getResultFileFromCluster(TenantContext tenantContext, ExecutionLogger executionLogger, String hadoopResultFileName, String jobName) {
+    private void getResultFileFromCluster(final TenantContext tenantContext, final ExecutionLogger executionLogger,
+            final String hadoopResultFileName, final String jobName) {
         HdfsResource resultsResource = null;
         try {
             resultsResource = new HdfsResource(HadoopUtils.getFileSystem().getUri().resolve(hadoopResultFileName)
@@ -490,17 +494,17 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
 
                 final String fileName = HadoopJobExecutionUtils.getUrlReadyJobName(jobName)
                         + FileFilters.ANALYSIS_RESULT_SER.getExtension();
-                final Resource resourceFile = repositoryResultFolder.createFile(fileName, null).toResource(); 
-                
+                final Resource resourceFile = repositoryResultFolder.createFile(fileName, null).toResource();
+
                 logger.info("Writing the result to" + resourceFile.getQualifiedPath());
                 FileHelper.copy(resultsResource, resourceFile);
             } else {
-                final String message = "An error has occured while running the job. The result was not persisted on Hadoop. Please check Hadoop and/or DataCleaner logs";
+                final String message =
+                        "An error has occured while running the job. The result was not persisted on Hadoop. Please check Hadoop and/or DataCleaner logs";
                 final Exception error = new Exception(message);
                 executionLogger.setStatusFailed(null, null, error);
             }
-        }
-        catch (Exception e) {
+        } catch (final Exception e) {
             executionLogger.setStatusFailed(null, null, e);
         }
     }

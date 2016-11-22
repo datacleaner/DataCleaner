@@ -50,8 +50,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JaxbPojoDatastoreAdaptorTest extends TestCase {
 
     public void testSerializeAndDeserialize() throws Exception {
-        final Object map1 = buildMap("{'some_number':1234, 'gender':'M','address':{'city':'Copenhagen','country':'DK','additional_info':null}}");
-        final Object map2 = buildMap("{'some_number':5678,'gender':'M','address':{'city':'Amsterdam','countries':['NL','IN']}}");
+        final Object map1 = buildMap(
+                "{'some_number':1234, 'gender':'M','address':{'city':'Copenhagen','country':'DK','additional_info':null}}");
+        final Object map2 =
+                buildMap("{'some_number':5678,'gender':'M','address':{'city':'Amsterdam','countries':['NL','IN']}}");
 
         SimpleTableDef tableDef = new SimpleTableDef("bar", new String[] { "id", "name", "details", "bytes" },
                 new ColumnType[] { ColumnType.INTEGER, ColumnType.VARCHAR, ColumnType.MAP, ColumnType.BINARY });

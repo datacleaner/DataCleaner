@@ -21,6 +21,8 @@ package org.datacleaner.monitor.scheduling.quartz;
 
 import java.io.File;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.io.FileUtils;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContext;
@@ -48,8 +50,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.google.common.io.Files;
-
-import junit.framework.TestCase;
 
 public class ExecuteJobTest extends TestCase {
 
@@ -114,7 +114,8 @@ public class ExecuteJobTest extends TestCase {
             String logOutput = log.getLogOutput();
             assertTrue(logOutput, logOutput.indexOf("- No such datastore: orderdb (NoSuchDatastoreException)") != -1);
             assertTrue(logOutput,
-                    logOutput.indexOf("org.datacleaner.job.NoSuchDatastoreException: No such datastore: orderdb") != -1);
+                    logOutput.indexOf("org.datacleaner.job.NoSuchDatastoreException: No such datastore: orderdb")
+                            != -1);
         } finally {
             RepositoryNode logNode = repo.getRepositoryNode("/tenant3/results/" + executionId
                     + ".analysis.execution.log.xml");
@@ -124,6 +125,7 @@ public class ExecuteJobTest extends TestCase {
             logNode.delete();
         }
     }
+
     /**
      * Testing Hadoop execution in debug mode. The example job from example_hadoop_repo should be modified accordingly. 
      */
@@ -133,38 +135,39 @@ public class ExecuteJobTest extends TestCase {
         targetDir.deleteOnExit();
         FileUtils.copyDirectory(new File("src/test/resources/example_hadoop_repo"), targetDir);
 
-        final Repository repository = new FileRepository(targetDir); 
+        final Repository repository = new FileRepository(targetDir);
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                 "context/application-context.xml");
+                "context/application-context.xml");
 
-        final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
-                 new DefaultJobEngineManager(applicationContext));
+        final TenantContextFactory tenantContextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
+                        new DefaultJobEngineManager(applicationContext));
 
         final TenantIdentifier tenantIdentifier = new TenantIdentifier("tenant");
         final TenantContext tenantContext = tenantContextFactory.getContext(tenantIdentifier);
         final JobIdentifier jobIdentifier = new JobIdentifier("hadoop_job");
-        
+
         final ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, jobIdentifier, "Hadoop");
         schedule.setRunOnHadoop(true);
-        assertTrue(schedule.isRunOnHadoop()); 
+        assertTrue(schedule.isRunOnHadoop());
         final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
         final JobEngineManager manager = applicationContext.getBean(JobEngineManager.class);
-        
+
         assertTrue(manager instanceof DefaultJobEngineManager);
 
         final JobEngine<?> engine;
-        
+
         engine = manager.getJobEngine(DataCleanerJobContext.class);
         assertEquals(DataCleanerJobEngine.class, engine.getClass());
-        
+
         final String executionId = new ExecuteJob().executeJob(tenantContext, execution, null, manager);
         assertNotNull(executionId);
         try {
             final SchedulingService schedulingService = new SchedulingServiceImpl(repository, tenantContextFactory);
 
             final ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
-            assertEquals("SUCCESS", log.getExecutionStatus().toString()); 
+            assertEquals("SUCCESS", log.getExecutionStatus().toString());
 
         } finally {
             final RepositoryNode logNode = repository.getRepositoryNode("/tenant/results/" + executionId
@@ -174,7 +177,7 @@ public class ExecuteJobTest extends TestCase {
             // cleanup
             logNode.delete();
         }
-        
-        
+
+
     }
 }

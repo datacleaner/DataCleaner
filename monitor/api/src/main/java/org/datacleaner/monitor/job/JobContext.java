@@ -33,55 +33,55 @@ public interface JobContext extends HasName {
 
     /**
      * Gets the name of the job
-     * 
+     *
      * @return
      */
     @Override
-    public String getName();
+    String getName();
 
     /**
      * Gets the tenant of this job's context.
-     * 
+     *
      * @return
      */
-    public TenantContext getTenantContext();
+    TenantContext getTenantContext();
 
     /**
      * Gets the {@link JobEngine} responsible for running this type of job
-     * 
+     *
      * @return
      */
-    public JobEngine<?> getJobEngine();
+    JobEngine<?> getJobEngine();
 
     /**
      * Gets the file in the repository which holds the file, or null if the job
      * is not contained within a repository file.
-     * 
+     *
      * @return
      */
-    public RepositoryFile getJobFile();
+    RepositoryFile getJobFile();
 
     /**
      * Gets a name of a group of jobs. Usually this group will say something
      * about the datastore that the job pertains to, or will be another similar
      * category of jobs.
-     * 
+     *
      * @return
      */
-    public String getGroupName();
+    String getGroupName();
 
     /**
      * Gets any known variables of the job, optionally mapped to their default
      * values.
-     * 
+     *
      * @return
      */
-    public Map<String, String> getVariables();
+    Map<String, String> getVariables();
 
     /**
      * Gets any metadata properties that the job may hold.
-     * 
+     *
      * @return
      */
-    public Map<String, String> getMetadataProperties();
+    Map<String, String> getMetadataProperties();
 }

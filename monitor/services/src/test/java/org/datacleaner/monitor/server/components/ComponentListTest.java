@@ -19,6 +19,9 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -39,9 +42,6 @@ import org.datacleaner.restclient.ComponentList.ComponentInfo;
 import org.easymock.IExpectationSetters;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
-
 @SuppressWarnings("rawtypes")
 public class ComponentListTest {
     private static final int COMPONENTS_COUNT = 5;
@@ -59,8 +59,7 @@ public class ComponentListTest {
             assertFalse(encoded.contains("/"));
             String decoded = URLDecoder.decode(encoded, encoding);
             assertTrue(decoded.equals(url));
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             fail();
         }
     }
@@ -81,7 +80,8 @@ public class ComponentListTest {
         componentDescriptorMock = createNiceMock(ComponentDescriptor.class);
         expect(componentDescriptorMock.getConfiguredProperties()).andReturn(getConfiguredPropertiesMock()).anyTimes();
         expect(componentDescriptorMock.getDisplayName()).andReturn("descriptor display name").anyTimes();
-        expect(componentDescriptorMock.getComponentSuperCategory()).andReturn(getComponentSuperCategoryMock()).anyTimes();
+        expect(componentDescriptorMock.getComponentSuperCategory()).andReturn(getComponentSuperCategoryMock())
+                .anyTimes();
         expect(componentDescriptorMock.getComponentCategories()).andReturn(Collections.EMPTY_SET).anyTimes();
         replay(componentDescriptorMock);
 

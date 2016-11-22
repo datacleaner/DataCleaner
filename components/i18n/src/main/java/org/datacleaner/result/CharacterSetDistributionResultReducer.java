@@ -32,10 +32,10 @@ public class CharacterSetDistributionResultReducer extends
         AbstractCrosstabResultReducer<CharacterSetDistributionResult> {
 
     @Override
-    protected Serializable reduceValues(List<Object> slaveValues, String category1, String category2,
-            Collection<? extends CharacterSetDistributionResult> results, Class<?> valueClass) {
+    protected Serializable reduceValues(final List<Object> slaveValues, final String category1, final String category2,
+            final Collection<? extends CharacterSetDistributionResult> results, final Class<?> valueClass) {
         int sum = 0;
-        for (Object slaveValue : slaveValues) {
+        for (final Object slaveValue : slaveValues) {
             sum += ((Number) slaveValue).intValue();
         }
         return sum;
@@ -43,8 +43,8 @@ public class CharacterSetDistributionResultReducer extends
 
     @SuppressWarnings("unchecked")
     @Override
-    protected CharacterSetDistributionResult buildResult(Crosstab<?> crosstab,
-            Collection<? extends CharacterSetDistributionResult> results) {
+    protected CharacterSetDistributionResult buildResult(final Crosstab<?> crosstab,
+            final Collection<? extends CharacterSetDistributionResult> results) {
         final CharacterSetDistributionResult firstResult = results.iterator().next();
 
         final InputColumn<String>[] columns = firstResult.getColumns();

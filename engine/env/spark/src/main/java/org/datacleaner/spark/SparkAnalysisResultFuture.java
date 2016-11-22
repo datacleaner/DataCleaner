@@ -42,7 +42,7 @@ public class SparkAnalysisResultFuture extends AbstractAnalysisResult implements
     private final List<Tuple2<String, AnalyzerResult>> _results;
     private final SparkJobContext _sparkJobContext;
 
-    public SparkAnalysisResultFuture(List<Tuple2<String, AnalyzerResult>> results, SparkJobContext sparkJobContext) {
+    public SparkAnalysisResultFuture(final List<Tuple2<String, AnalyzerResult>> results, final SparkJobContext sparkJobContext) {
         _creationDate = new Date();
         _results = results;
         _sparkJobContext = sparkJobContext;
@@ -69,7 +69,7 @@ public class SparkAnalysisResultFuture extends AbstractAnalysisResult implements
     }
 
     @Override
-    public void await(long timeout, TimeUnit timeUnit) {
+    public void await(final long timeout, final TimeUnit timeUnit) {
     }
 
     @Override
@@ -93,7 +93,7 @@ public class SparkAnalysisResultFuture extends AbstractAnalysisResult implements
     @Override
     public List<AnalyzerResult> getResults() throws AnalysisJobFailedException {
         final List<AnalyzerResult> list = new ArrayList<>();
-        for (Tuple2<String, AnalyzerResult> tuple : _results) {
+        for (final Tuple2<String, AnalyzerResult> tuple : _results) {
             list.add(tuple._2);
         }
         return list;
@@ -102,7 +102,7 @@ public class SparkAnalysisResultFuture extends AbstractAnalysisResult implements
     @Override
     public Map<ComponentJob, AnalyzerResult> getResultMap() throws AnalysisJobFailedException {
         final Map<ComponentJob, AnalyzerResult> resultMap = new HashMap<>();
-        for (Tuple2<String, AnalyzerResult> tuple : _results) {
+        for (final Tuple2<String, AnalyzerResult> tuple : _results) {
             final ComponentJob component = _sparkJobContext.getComponentByKey(tuple._1);
             final AnalyzerResult analyzerResult = tuple._2;
             if (analyzerResult != null) {

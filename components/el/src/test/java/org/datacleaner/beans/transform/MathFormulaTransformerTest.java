@@ -19,11 +19,11 @@
  */
 package org.datacleaner.beans.transform;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-
-import junit.framework.TestCase;
 
 public class MathFormulaTransformerTest extends TestCase {
 

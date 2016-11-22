@@ -27,22 +27,22 @@ import org.datacleaner.windows.AbstractDatastoreDialog;
  */
 public interface DatastoreDescriptor {
 
-    public String getName();
+    String getName();
 
-    public String getDescription();
+    String getDescription();
 
-    public Class<? extends Datastore> getDatastoreClass();
+    Class<? extends Datastore> getDatastoreClass();
 
-    public Class<? extends AbstractDatastoreDialog<? extends Datastore>> getDatastoreDialogClass();
+    Class<? extends AbstractDatastoreDialog<? extends Datastore>> getDatastoreDialogClass();
 
-    public String getIconPath();
+    String getIconPath();
 
     /**
      * Determines if the datastore is promoted, fx: should have its own icon in
      * the @{link DatastoreManagementPanel} or be hidden in the dropdown menu.
      */
-    public boolean isPromoted();
+    boolean isPromoted();
 
-    public boolean isUpdatable();
+    boolean isUpdatable();
 
 }

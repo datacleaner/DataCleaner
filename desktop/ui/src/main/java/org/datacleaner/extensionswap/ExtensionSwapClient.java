@@ -50,20 +50,20 @@ public final class ExtensionSwapClient {
     private final UserPreferences _userPreferences;
     private final DataCleanerConfiguration _configuration;
 
-    public ExtensionSwapClient(WindowContext windowContext, UserPreferences userPreferences,
-            DataCleanerConfiguration configuration) {
+    public ExtensionSwapClient(final WindowContext windowContext, final UserPreferences userPreferences,
+            final DataCleanerConfiguration configuration) {
         this(DEFAULT_WEBSITE_HOSTNAME, windowContext, userPreferences, configuration);
     }
 
-    public ExtensionSwapClient(String websiteHostname, WindowContext windowContext, UserPreferences userPreferences,
-            DataCleanerConfiguration configuration) {
+    public ExtensionSwapClient(final String websiteHostname, final WindowContext windowContext, final UserPreferences userPreferences,
+            final DataCleanerConfiguration configuration) {
         _windowContext = windowContext;
         _baseUrl = "http://" + websiteHostname + "/ws/extension/";
         _userPreferences = userPreferences;
         _configuration = configuration;
     }
 
-    public ExtensionPackage registerExtensionPackage(ExtensionSwapPackage extensionSwapPackage, File jarFile) {
+    public ExtensionPackage registerExtensionPackage(final ExtensionSwapPackage extensionSwapPackage, final File jarFile) {
         final ExtensionReader reader = new ExtensionReader();
         final ExtensionPackage extensionPackage = reader.readExternalExtension(new File[] { jarFile });
 
@@ -74,7 +74,7 @@ public final class ExtensionSwapClient {
         return extensionPackage;
     }
 
-    public ExtensionSwapPackage getExtensionSwapPackage(String id) {
+    public ExtensionSwapPackage getExtensionSwapPackage(final String id) {
         final CloseableHttpClient httpClient = _userPreferences.createHttpClient();
         try {
             final Element rootNode = HttpXmlUtils.getRootNode(httpClient, _baseUrl + id);
@@ -90,32 +90,32 @@ public final class ExtensionSwapClient {
     public void registerExtensionPackage(final ExtensionSwapPackage extensionSwapPackage, final String username) {
         downloadJarFile(extensionSwapPackage, username, new FileDownloadListener() {
             @Override
-            public void onFilesDownloaded(FileObject[] files) {
-                File jarFile = VFSUtils.toFile(files[0]);
+            public void onFilesDownloaded(final FileObject[] files) {
+                final File jarFile = VFSUtils.toFile(files[0]);
                 registerExtensionPackage(extensionSwapPackage, jarFile);
             }
         });
     }
 
-    private void downloadJarFile(ExtensionSwapPackage extensionSwapPackage, String username,
-            FileDownloadListener listener) {
+    private void downloadJarFile(final ExtensionSwapPackage extensionSwapPackage, final String username,
+            final FileDownloadListener listener) {
         String url = _baseUrl + extensionSwapPackage.getId() + "/jarfile";
         if (!StringUtils.isNullOrEmpty(username)) {
             url = url + "?username=" + username;
         }
 
-        String filename = extensionSwapPackage.getId() + ".jar";
-        FileObject targetDirectory = VFSUtils.toFileObject(_userPreferences.getExtensionsDirectory());
-        WebServiceHttpClient httpClient = new SimpleWebServiceHttpClient(_userPreferences.createHttpClient());
-        DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
+        final String filename = extensionSwapPackage.getId() + ".jar";
+        final FileObject targetDirectory = VFSUtils.toFileObject(_userPreferences.getExtensionsDirectory());
+        final WebServiceHttpClient httpClient = new SimpleWebServiceHttpClient(_userPreferences.createHttpClient());
+        final DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
                 targetDirectory, new String[] { filename }, listener, _windowContext, httpClient);
         actionListener.actionPerformed(null);
     }
 
-    public boolean isInstalled(ExtensionSwapPackage extensionSwapPackage) {
-        List<ExtensionPackage> extensionPackages = _userPreferences.getExtensionPackages();
-        for (ExtensionPackage extensionPackage : extensionPackages) {
-            String id = extensionPackage.getAdditionalProperties().get(EXTENSIONSWAP_ID_PROPERTY);
+    public boolean isInstalled(final ExtensionSwapPackage extensionSwapPackage) {
+        final List<ExtensionPackage> extensionPackages = _userPreferences.getExtensionPackages();
+        for (final ExtensionPackage extensionPackage : extensionPackages) {
+            final String id = extensionPackage.getAdditionalProperties().get(EXTENSIONSWAP_ID_PROPERTY);
             if (extensionSwapPackage.getId().equals(id)) {
                 return true;
             }

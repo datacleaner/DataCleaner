@@ -27,17 +27,17 @@ import org.apache.metamodel.data.Row;
  * An {@link OutputRowCollector} is a consumer of output rows from
  * {@link Transformer}s, as well as {@link Analyzer}s implementing
  * {@link HasOutputDataStreams}.
- * 
+ *
  * Usually {@link Transformer}s don't need to interact directly with an
  * {@link OutputRowCollector}, because the returned values of the
  * {@link Transformer#transform(org.datacleaner.data.InputRow)} method
  * automatically get's channeled to the {@link OutputRowCollector} by the
  * framework.
- * 
+ *
  * But some advanced {@link Transformer}s may have a need to put several rows
  * into the stream of output rows, and for this, a {@link Transformer} can
  * inject an {@link OutputRowCollector} in order to generate multiple records.
- * 
+ *
  * {@link OutputRowCollector} can be injected into {@link Transformer}s using
  * the {@link Provided} and {@link Inject} annotations.
  */
@@ -45,18 +45,18 @@ public interface OutputRowCollector {
 
     /**
      * Puts transformed values into the output stream.
-     * 
+     *
      * @param values
      *            an array of output values, equivalent to the return type of
      *            {@link Transformer#transform(org.datacleaner.data.InputRow)}
      */
-    public void putValues(Object... values);
+    void putValues(Object... values);
 
     /**
      * Puts a row (containing values) into the output stream.
-     * 
+     *
      * @param row
      *            a row containing values to put into the output stream.
      */
-    public void putRow(Row row);
+    void putRow(Row row);
 }

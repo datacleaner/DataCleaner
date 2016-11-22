@@ -19,10 +19,10 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
 
 public class DatastoreDictionaryReferenceDataWizardSessionTest {
     @Test

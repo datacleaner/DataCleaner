@@ -41,7 +41,7 @@ public class JavaScatterGroup implements IScatterGroup {
     private final RowAnnotationFactory _rowAnnotationFactory;
     private final Map<Pair<Number, Number>, RowAnnotation> _annotations = new LinkedHashMap<>();
 
-    public JavaScatterGroup(String name, RowAnnotationFactory rowAnnotationFactory) {
+    public JavaScatterGroup(final String name, final RowAnnotationFactory rowAnnotationFactory) {
         _name = name;
         _rowAnnotationFactory = rowAnnotationFactory;
     }
@@ -55,7 +55,7 @@ public class JavaScatterGroup implements IScatterGroup {
         return _rowAnnotationFactory;
     }
 
-    private RowAnnotation getAnnotation(Number x, Number y) {
+    private RowAnnotation getAnnotation(final Number x, final Number y) {
         if (_annotations.containsKey(new ImmutablePair<>(x, y))) {
             return _annotations.get(new ImmutablePair<>(x, y));
         } else {
@@ -65,12 +65,12 @@ public class JavaScatterGroup implements IScatterGroup {
         }
     }
 
-    public void register(Number x, Number y, InputRow row, int distinctCount) {
+    public void register(final Number x, final Number y, final InputRow row, final int distinctCount) {
         final RowAnnotation annotation = getAnnotation(x, y);
         _rowAnnotationFactory.annotate(row, distinctCount, annotation);
     }
 
-    public RowAnnotation getRowAnnotation(Number x, Number y) {
+    public RowAnnotation getRowAnnotation(final Number x, final Number y) {
         return _annotations.get(new ImmutablePair<>(x, y));
     }
 

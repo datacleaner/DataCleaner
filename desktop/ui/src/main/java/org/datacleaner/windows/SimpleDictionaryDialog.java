@@ -57,8 +57,8 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
     private final DCCheckBox<Boolean> _caseSensitiveCheckBox;
 
     @Inject
-    protected SimpleDictionaryDialog(@Nullable SimpleDictionary dictionary, MutableReferenceDataCatalog catalog,
-            WindowContext windowContext) {
+    protected SimpleDictionaryDialog(@Nullable final SimpleDictionary dictionary, final MutableReferenceDataCatalog catalog,
+            final WindowContext windowContext) {
         super(windowContext, ImageManager.get().getImage(IconUtils.DICTIONARY_SIMPLE_IMAGEPATH));
         _originalDictionary = dictionary;
         _catalog = catalog;
@@ -77,7 +77,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
             final Collection<String> values = dictionary.getValueSet();
             final StringBuilder sb = new StringBuilder();
             boolean first = true;
-            for (String value : values) {
+            for (final String value : values) {
                 if (first) {
                     first = false;
                 } else {
@@ -119,7 +119,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
                 IconUtils.ACTION_SAVE_BRIGHT);
         createDictionaryButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final String name = _nameTextField.getText();
                 if (StringUtils.isNullOrEmpty(name)) {
                     JOptionPane.showMessageDialog(SimpleDictionaryDialog.this,

@@ -43,23 +43,23 @@ public class ComponentReferenceDocumentationBuilder {
 
     private final DescriptorProvider _descriptorProvider;
 
-    public ComponentReferenceDocumentationBuilder(DescriptorProvider descriptorProvider) {
+    public ComponentReferenceDocumentationBuilder(final DescriptorProvider descriptorProvider) {
         _descriptorProvider = descriptorProvider;
     }
 
-    public boolean writeDocumentationToDirectory(File directory) {
+    public boolean writeDocumentationToDirectory(final File directory) {
         if (!directory.exists()) {
             directory.mkdirs();
         }
         return writeDocumentationToRepositoryFolder(new FileRepository(directory));
     }
 
-    public boolean writeDocumentationToRepositoryFolder(RepositoryFolder folder) {
+    public boolean writeDocumentationToRepositoryFolder(final RepositoryFolder folder) {
         boolean success = true;
         final RepositoryFile indexFile = createOrUpdateFile(folder, "index.html", new Action<OutputStream>() {
             @Override
-            public void run(OutputStream out) throws Exception {
-                IndexDocumentationBuilder index = new IndexDocumentationBuilder(_descriptorProvider);
+            public void run(final OutputStream out) throws Exception {
+                final IndexDocumentationBuilder index = new IndexDocumentationBuilder(_descriptorProvider);
                 index.write(out);
             }
         });
@@ -75,12 +75,12 @@ public class ComponentReferenceDocumentationBuilder {
                 final String filename = componentWrapper.getHref();
                 final RepositoryFile file = createOrUpdateFile(folder, filename, new Action<OutputStream>() {
                     @Override
-                    public void run(OutputStream out) throws Exception {
+                    public void run(final OutputStream out) throws Exception {
                         componentDocumentationBuilder.write(componentWrapper, out);
                     }
                 });
                 logger.info("Wrote: {}", file);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // don't crash the whole run if something goes wrong
                 logger.error("Unexpected error occurred while writing documentation for {}", componentDescriptor, e);
                 success = false;
@@ -90,7 +90,8 @@ public class ComponentReferenceDocumentationBuilder {
         return success;
     }
 
-    private RepositoryFile createOrUpdateFile(RepositoryFolder folder, String filename, Action<OutputStream> writeAction) {
+    private RepositoryFile createOrUpdateFile(final RepositoryFolder folder, final String filename,
+            final Action<OutputStream> writeAction) {
         RepositoryFile file = folder.getFile(filename);
         if (file == null) {
             file = folder.createFile(filename, writeAction);

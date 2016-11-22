@@ -64,27 +64,31 @@ import org.slf4j.LoggerFactory;
  * Descriptor provider implementation that works by scanning particular packages
  * in the classpath for annotated classes. Descriptors will be generated based
  * on encountered annotations.
- * 
+ *
  * This implementation also supports adding single descriptors by using the
  * add... methods.
- * 
+ *
  * Classes with the {@link Named} annotation will be picked by the classpath
  * scanner. Furthermore the legacy annotations {@link org.eobjects.analyzer.beans.api.AnalyzerBean},
  * {@link org.eobjects.analyzer.beans.api.TransformerBean} and {@link org.eobjects.analyzer.beans.api.FilterBean} are currently being checked
  * for.
- * 
+ *
  * <li>{@link RendererBean}</li>
- * 
- * 
+ *
+ *
  */
 public final class ClasspathScanDescriptorProvider extends AbstractDescriptorProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(ClasspathScanDescriptorProvider.class);
 
-    private final Map<String, AnalyzerDescriptor<?>> _analyzerBeanDescriptors = new HashMap<String, AnalyzerDescriptor<?>>();
-    private final Map<String, FilterDescriptor<?, ?>> _filterBeanDescriptors = new HashMap<String, FilterDescriptor<?, ?>>();
-    private final Map<String, TransformerDescriptor<?>> _transformerBeanDescriptors = new HashMap<String, TransformerDescriptor<?>>();
-    private final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
+    private final Map<String, AnalyzerDescriptor<?>> _analyzerBeanDescriptors =
+            new HashMap<String, AnalyzerDescriptor<?>>();
+    private final Map<String, FilterDescriptor<?, ?>> _filterBeanDescriptors =
+            new HashMap<String, FilterDescriptor<?, ?>>();
+    private final Map<String, TransformerDescriptor<?>> _transformerBeanDescriptors =
+            new HashMap<String, TransformerDescriptor<?>>();
+    private final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors =
+            new HashMap<String, RendererBeanDescriptor<?>>();
     private final TaskRunner _taskRunner;
     private final Predicate<Class<? extends RenderingFormat<?>>> _renderingFormatPredicate;
     private final AtomicInteger _tasksPending;
@@ -101,10 +105,10 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
      * {@link TaskRunner}. The taskrunner will be used to perform the classpath
      * scan, potentially in a parallel fashion.
-     * 
+     *
      * @param taskRunner
      */
-    public ClasspathScanDescriptorProvider(TaskRunner taskRunner) {
+    public ClasspathScanDescriptorProvider(final TaskRunner taskRunner) {
         this(taskRunner, new TruePredicate<Class<? extends RenderingFormat<?>>>());
     }
 
@@ -112,14 +116,14 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
      * {@link TaskRunner}. The taskrunner will be used to perform the classpath
      * scan, potentially in a parallel fashion.
-     * 
+     *
      * @param taskRunner
      * @param excludedRenderingFormats
      *            rendering formats to exclude from loading into the descriptor
      *            provider
      */
-    public ClasspathScanDescriptorProvider(TaskRunner taskRunner,
-            Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats) {
+    public ClasspathScanDescriptorProvider(final TaskRunner taskRunner,
+            final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats) {
         this(taskRunner, createRenderingFormatPredicate(excludedRenderingFormats));
     }
 
@@ -127,7 +131,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
      * {@link TaskRunner}. The taskrunner will be used to perform the classpath
      * scan, potentially in a parallel fashion.
-     * 
+     *
      * @param taskRunner
      * @param excludedRenderingFormats
      *            rendering formats to exclude from loading into the descriptor
@@ -136,8 +140,9 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      *            whether or not to automatically load descriptors when they are
      *            requested by class names.
      */
-    public ClasspathScanDescriptorProvider(TaskRunner taskRunner,
-            Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats, boolean autoLoadDescriptorClasses) {
+    public ClasspathScanDescriptorProvider(final TaskRunner taskRunner,
+            final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats,
+            final boolean autoLoadDescriptorClasses) {
         this(taskRunner, createRenderingFormatPredicate(excludedRenderingFormats), autoLoadDescriptorClasses);
     }
 
@@ -145,14 +150,14 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
      * {@link TaskRunner}. The taskrunner will be used to perform the classpath
      * scan, potentially in a parallel fashion.
-     * 
+     *
      * @param taskRunner
      * @param renderingFormatPredicate
      *            predicate function to apply when evaluating if a particular
      *            rendering format is of interest or not
      */
-    public ClasspathScanDescriptorProvider(TaskRunner taskRunner,
-            Predicate<Class<? extends RenderingFormat<?>>> renderingFormatPredicate) {
+    public ClasspathScanDescriptorProvider(final TaskRunner taskRunner,
+            final Predicate<Class<? extends RenderingFormat<?>>> renderingFormatPredicate) {
         this(taskRunner, renderingFormatPredicate, false);
     }
 
@@ -160,7 +165,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
      * {@link TaskRunner}. The taskrunner will be used to perform the classpath
      * scan, potentially in a parallel fashion.
-     * 
+     *
      * @param taskRunner
      * @param renderingFormatPredicate
      *            predicate function to apply when evaluating if a particular
@@ -169,8 +174,9 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      *            whether or not to automatically load descriptors when they are
      *            requested by class names.
      */
-    public ClasspathScanDescriptorProvider(TaskRunner taskRunner,
-            Predicate<Class<? extends RenderingFormat<?>>> renderingFormatPredicate, boolean autoLoadDescriptorClasses) {
+    public ClasspathScanDescriptorProvider(final TaskRunner taskRunner,
+            final Predicate<Class<? extends RenderingFormat<?>>> renderingFormatPredicate,
+            final boolean autoLoadDescriptorClasses) {
         super(autoLoadDescriptorClasses);
         _taskRunner = taskRunner;
         _tasksPending = new AtomicInteger(0);
@@ -178,7 +184,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     private static Predicate<Class<? extends RenderingFormat<?>>> createRenderingFormatPredicate(
-            Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats) {
+            final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats) {
         if (excludedRenderingFormats == null || excludedRenderingFormats.isEmpty()) {
             return new TruePredicate<Class<? extends RenderingFormat<?>>>();
         }
@@ -188,21 +194,21 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     /**
      * Scans a package in the classpath (of the current thread's context
      * classloader) for annotated components.
-     * 
+     *
      * @param packageName
      *            the package name to scan
      * @param recursive
      *            whether or not to scan subpackages recursively
      * @return
      */
-    public ClasspathScanDescriptorProvider scanPackage(String packageName, boolean recursive) {
+    public ClasspathScanDescriptorProvider scanPackage(final String packageName, final boolean recursive) {
         return scanPackage(packageName, recursive, ClassLoaderUtils.getParentClassLoader(), false);
     }
 
     /**
      * Scans a package in the classpath (of a particular classloader) for
      * annotated components.
-     * 
+     *
      * @param packageName
      *            the package name to scan
      * @param recursive
@@ -219,7 +225,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     /**
      * Scans a package in the classpath (of a particular classloader) for
      * annotated components.
-     * 
+     *
      * @param packageName
      *            the package name to scan
      * @param recursive
@@ -243,7 +249,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      * Scans a package in the classpath (of a particular classloader) for
      * annotated components. Optionally restricted by a set of JAR files to look
      * in.
-     * 
+     *
      * @param packageName
      *            the package name to scan
      * @param recursive
@@ -267,18 +273,18 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         _tasksPending.incrementAndGet();
         final TaskListener listener = new TaskListener() {
             @Override
-            public void onBegin(Task task) {
+            public void onBegin(final Task task) {
                 logger.debug("Scan of '{}' beginning", packageName);
             }
 
             @Override
-            public void onComplete(Task task) {
+            public void onComplete(final Task task) {
                 logger.debug("Scan of '{}' complete", packageName);
                 taskDone();
             }
 
             @Override
-            public void onError(Task task, Throwable throwable) {
+            public void onError(final Task task, final Throwable throwable) {
                 logger.info("Scan of '{}' failed: {}", packageName, throwable.getMessage());
                 logger.warn("Exception occurred while scanning and installing package: " + packageName, throwable);
                 taskDone();
@@ -298,7 +304,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
                 logger.debug("Using ClassLoader: {}", classLoader);
 
                 if (jarFiles != null && jarFiles.length > 0) {
-                    for (File file : jarFiles) {
+                    for (final File file : jarFiles) {
                         if (!file.exists()) {
                             logger.debug("Omitting JAR file because it does not exist: {}", file);
                         } else if (file.isDirectory()) {
@@ -314,7 +320,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
                             try (JarFile jarFile = new JarFile(file)) {
                                 scanJar(jarFile, classLoader, packagePath, recursive, strictClassLoader);
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 logger.error("Failed to scan package '" + packageName + "' in file: " + file, e);
                             }
                         }
@@ -331,8 +337,9 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
                         try {
                             scanUrl(resource, classLoader, packagePath, recursive, strictClassLoader);
-                        } catch (Exception e) {
-                            logger.error("Failed to scan package '" + packageName + "' in resource/URL: " + resource, e);
+                        } catch (final Exception e) {
+                            logger.error("Failed to scan package '" + packageName + "' in resource/URL: " + resource,
+                                    e);
                         }
                     }
 
@@ -344,7 +351,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         return this;
     }
 
-    private void scanUrl(URL resource, final ClassLoader classLoader, final String packagePath,
+    private void scanUrl(final URL resource, final ClassLoader classLoader, final String packagePath,
             final boolean recursive, final boolean strictClassLoader) throws IOException {
 
         final String file = resource.getFile();
@@ -357,10 +364,10 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             scanDirectory(dir, recursive, classLoader, strictClassLoader);
         } else {
 
-            URLConnection connection = resource.openConnection();
+            final URLConnection connection = resource.openConnection();
             if (connection instanceof JarURLConnection) {
                 logger.debug("Getting JarFile from JarURLConnection: {}", connection);
-                JarFile jarFile = ((JarURLConnection) connection).getJarFile();
+                final JarFile jarFile = ((JarURLConnection) connection).getJarFile();
                 // note: We are NOT closing this JarFile, because it is still
                 // used by the JarURLConnection
                 scanJar(jarFile, classLoader, packagePath, recursive, strictClassLoader);
@@ -408,14 +415,14 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     /**
      * Resolve the given jar file URL into a JarFile object.
      */
-    private JarFile getJarFile(String jarFileUrl) throws IOException {
+    private JarFile getJarFile(final String jarFileUrl) throws IOException {
         if (jarFileUrl.startsWith("file:")) {
             try {
                 final URI uri = new URI(jarFileUrl.replaceAll(" ", "\\%20"));
                 final String jarFileName = uri.getSchemeSpecificPart();
                 logger.debug("Creating new JarFile based on URI-scheme filename: {}", jarFileName);
                 return new JarFile(jarFileName);
-            } catch (URISyntaxException ex) {
+            } catch (final URISyntaxException ex) {
                 // Fallback for URLs that are not valid URIs (should hardly ever
                 // happen).
                 final String jarFileName = jarFileUrl.substring("file:".length());
@@ -428,11 +435,11 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         }
     }
 
-    private boolean isClass(String entryName) {
+    private boolean isClass(final String entryName) {
         return entryName.endsWith(".class");
     }
 
-    protected boolean isClassInPackage(String entryName, String packagePath, boolean recursive) {
+    protected boolean isClassInPackage(final String entryName, final String packagePath, final boolean recursive) {
         if (!entryName.startsWith(packagePath)) {
             return false;
         }
@@ -451,7 +458,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
     private void scanJar(final JarFile jarFile, final ClassLoader classLoader, final String packagePath,
             final boolean recursive, final boolean strictClassLoader) throws IOException {
-        Enumeration<JarEntry> entries = jarFile.entries();
+        final Enumeration<JarEntry> entries = jarFile.entries();
 
         while (entries.hasMoreElements()) {
             final JarEntry entry = entries.nextElement();
@@ -460,7 +467,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
                 public InputStream get() {
                     try {
                         return jarFile.getInputStream(entry);
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         throw new IllegalStateException("Failed to read JAR entry InputStream", e);
                     }
                 }
@@ -469,21 +476,21 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         }
     }
 
-    private void scanEntry(JarEntry entry, String packagePath, boolean recursive, ClassLoader classLoader,
-            boolean strictClassLoader, Ref<InputStream> entryInputStream) throws IOException {
-        String entryName = entry.getName();
+    private void scanEntry(final JarEntry entry, final String packagePath, final boolean recursive, final ClassLoader classLoader,
+            final boolean strictClassLoader, final Ref<InputStream> entryInputStream) throws IOException {
+        final String entryName = entry.getName();
         if (isClassInPackage(entryName, packagePath, recursive)) {
             logger.debug("Scanning JAR class file entry: {}", entryName);
-            InputStream inputStream = entryInputStream.get();
+            final InputStream inputStream = entryInputStream.get();
 
             try {
                 scanInputStreamOfClassFile(inputStream, classLoader, strictClassLoader);
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 logger.error("Failed to scan JAR class file entry: " + entryName, e);
-            } catch (NoClassDefFoundError e) {
+            } catch (final NoClassDefFoundError e) {
                 logger.error("Failed to scan JAR class file entry: " + entryName, e);
             }
-           
+
         } else {
 
             if (logger.isInfoEnabled()) {
@@ -498,7 +505,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         }
     }
 
-    private void scanDirectory(File dir, boolean recursive, ClassLoader classLoader, final boolean strictClassLoader) {
+    private void scanDirectory(final File dir, final boolean recursive, final ClassLoader classLoader, final boolean strictClassLoader) {
         if (!dir.exists()) {
             throw new IllegalArgumentException("Directory '" + dir + "' does not exist");
         }
@@ -509,16 +516,16 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
         final File[] classFiles = dir.listFiles(new FilenameFilter() {
             @Override
-            public boolean accept(File file, String filename) {
+            public boolean accept(final File file, final String filename) {
                 return filename.endsWith(".class");
             }
         });
 
-        for (File file : classFiles) {
+        for (final File file : classFiles) {
             final InputStream inputStream = FileHelper.getInputStream(file);
             try {
                 scanInputStream(inputStream, classLoader, strictClassLoader);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 logger.error("Could not read file", e);
             } finally {
                 FileHelper.safeClose(inputStream);
@@ -526,9 +533,9 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         }
 
         if (recursive) {
-            File[] subDirectories = dir.listFiles(new FileFilter() {
+            final File[] subDirectories = dir.listFiles(new FileFilter() {
                 @Override
-                public boolean accept(File file) {
+                public boolean accept(final File file) {
                     return file.isDirectory();
                 }
             });
@@ -536,7 +543,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
                 if (logger.isInfoEnabled() && subDirectories.length > 0) {
                     logger.trace("Recursively scanning " + subDirectories.length + " subdirectories");
                 }
-                for (File subDir : subDirectories) {
+                for (final File subDir : subDirectories) {
                     scanDirectory(subDir, true, classLoader, strictClassLoader);
                 }
             }
@@ -544,12 +551,12 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     /**
-     * 
+     *
      * @param inputStream
      * @param classLoader
      * @param strictClassLoader
      * @throws IOException
-     * 
+     *
      * @{@link deprecated} use
      *         {@link #scanInputStreamOfClassFile(InputStream, ClassLoader, boolean)}
      *         instead.
@@ -567,7 +574,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             final DCClassVisitor visitor = new DCClassVisitor(classLoader, _renderingFormatPredicate);
             classReader.accept(visitor, ClassReader.SKIP_CODE);
 
-            Class<?> beanClass = visitor.getBeanClass();
+            final Class<?> beanClass = visitor.getBeanClass();
             if (beanClass == null) {
                 return;
             }
@@ -578,25 +585,25 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             }
 
             if (visitor.isAnalyzer()) {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings("unchecked") final
                 Class<? extends Analyzer<?>> analyzerClass = (Class<? extends Analyzer<?>>) beanClass;
                 logger.debug("Adding analyzer class: {}", beanClass);
                 addAnalyzerClass(analyzerClass);
             }
             if (visitor.isTransformer()) {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings("unchecked") final
                 Class<? extends Transformer> transformerClass = (Class<? extends Transformer>) beanClass;
                 logger.debug("Adding transformer class: {}", beanClass);
                 addTransformerClass(transformerClass);
             }
             if (visitor.isFilter()) {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings("unchecked") final
                 Class<? extends Filter<? extends Enum<?>>> filterClass = (Class<? extends Filter<?>>) beanClass;
                 logger.debug("Adding filter class: {}", beanClass);
                 addFilterClass(filterClass);
             }
             if (visitor.isRenderer()) {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings("unchecked") final
                 Class<? extends Renderer<?, ?>> rendererClass = (Class<? extends Renderer<?, ?>>) beanClass;
                 logger.debug("Adding renderer class: {}", beanClass);
                 addRendererClass(rendererClass);
@@ -606,7 +613,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         }
     }
 
-    public ClasspathScanDescriptorProvider addAnalyzerClass(Class<? extends Analyzer<?>> clazz) {
+    public ClasspathScanDescriptorProvider addAnalyzerClass(final Class<? extends Analyzer<?>> clazz) {
         AnalyzerDescriptor<?> descriptor = _analyzerBeanDescriptors.get(clazz.getName());
         if (descriptor == null) {
             try {
@@ -619,7 +626,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         return this;
     }
 
-    public ClasspathScanDescriptorProvider addTransformerClass(Class<? extends Transformer> clazz) {
+    public ClasspathScanDescriptorProvider addTransformerClass(final Class<? extends Transformer> clazz) {
         TransformerDescriptor<? extends Transformer> descriptor = _transformerBeanDescriptors.get(clazz
                 .getName());
         if (descriptor == null) {
@@ -633,7 +640,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         return this;
     }
 
-    public ClasspathScanDescriptorProvider addFilterClass(Class<? extends Filter<?>> clazz) {
+    public ClasspathScanDescriptorProvider addFilterClass(final Class<? extends Filter<?>> clazz) {
         FilterDescriptor<? extends Filter<?>, ?> descriptor = _filterBeanDescriptors.get(clazz.getName());
         if (descriptor == null) {
             try {
@@ -646,7 +653,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         return this;
     }
 
-    public ClasspathScanDescriptorProvider addRendererClass(Class<? extends Renderer<?, ?>> clazz) {
+    public ClasspathScanDescriptorProvider addRendererClass(final Class<? extends Renderer<?, ?>> clazz) {
         RendererBeanDescriptor<?> descriptor = _rendererBeanDescriptors.get(clazz.getName());
         if (descriptor == null) {
             try {
@@ -660,7 +667,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     private void taskDone() {
-        int tasks = _tasksPending.decrementAndGet();
+        final int tasks = _tasksPending.decrementAndGet();
 
         notifyListeners();
 
@@ -683,7 +690,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
                 try {
                     logger.info("Scan tasks still pending, waiting");
                     wait();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     logger.debug("Interrupted while awaiting task completion", e);
                 }
             }

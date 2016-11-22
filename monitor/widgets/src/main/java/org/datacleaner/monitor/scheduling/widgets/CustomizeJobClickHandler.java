@@ -43,7 +43,7 @@ import com.google.gwt.user.client.ui.UIObject;
  * customize a job's properties.
  */
 public class CustomizeJobClickHandler implements ClickHandler {
-	
+
     private final SchedulePanel _schedulePanel;
     private final ScheduleDefinition _schedule;
     private final TenantIdentifier _tenant;
@@ -51,25 +51,26 @@ public class CustomizeJobClickHandler implements ClickHandler {
     private final ClientConfig _clientConfig;
     private final DCPopupPanel _popup;
 
-    public CustomizeJobClickHandler(SchedulePanel schedulePanel, TenantIdentifier tenant,ScheduleDefinition schedule,final SchedulingServiceAsync service, ClientConfig clientConfig) {
+    public CustomizeJobClickHandler(final SchedulePanel schedulePanel, final TenantIdentifier tenant, final ScheduleDefinition schedule,
+            final SchedulingServiceAsync service, final ClientConfig clientConfig) {
         _schedulePanel = schedulePanel;
         _tenant = tenant;
         _schedule = schedule;
         _service = service;
         _clientConfig = clientConfig;
-        
+
         _popup = new DCPopupPanel(null);
         _popup.setGlassEnabled(false);
         _popup.setAutoHideEnabled(true);
         _popup.getButtonPanel().setVisible(false);
     }
-    
+
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(final ClickEvent event) {
         final JobIdentifier job = _schedulePanel.getSchedule().getJob();
         final MenuBar menuBar = new MenuBar(true);
 
-        menuBar.addItem("Execution History" ,new HistoryCommand(_schedule, _service, _tenant,_popup));
+        menuBar.addItem("Execution History", new HistoryCommand(_schedule, _service, _tenant, _popup));
 
         final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job.getType());
         if (analysisJob && _clientConfig.isWebstartAvailable()) {
@@ -80,12 +81,12 @@ public class CustomizeJobClickHandler implements ClickHandler {
         menuBar.addItem("Copy job", new CopyJobCommand(_tenant, job, _popup));
         menuBar.addItem("Delete job", new DeleteJobCommand(_tenant, job, _popup));
         menuBar.addItem("Add Alert", new AddAlertCommand(_schedule, _service, _popup));
-        
+
         if (analysisJob) {
             menuBar.addSeparator();
             menuBar.addItem("View Job Definition", new ViewJobDefinitionCommand(_tenant, job, _popup));
         }
-        
+
         _popup.setWidget(menuBar);
         _popup.showRelativeTo((UIObject) event.getSource());
     }

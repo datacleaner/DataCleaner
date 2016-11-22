@@ -29,5 +29,5 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
  */
 public interface ComponentConfiguration extends Serializable {
 
-    public Object getProperty(ConfiguredPropertyDescriptor propertyDescriptor);
+    Object getProperty(ConfiguredPropertyDescriptor propertyDescriptor);
 }

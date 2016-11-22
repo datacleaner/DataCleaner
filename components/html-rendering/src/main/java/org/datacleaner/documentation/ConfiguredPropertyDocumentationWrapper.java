@@ -36,7 +36,7 @@ public class ConfiguredPropertyDocumentationWrapper {
 
     private final ConfiguredPropertyDescriptor _property;
 
-    public ConfiguredPropertyDocumentationWrapper(ConfiguredPropertyDescriptor property) {
+    public ConfiguredPropertyDocumentationWrapper(final ConfiguredPropertyDescriptor property) {
         _property = property;
     }
 

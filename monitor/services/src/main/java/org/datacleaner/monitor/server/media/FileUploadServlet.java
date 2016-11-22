@@ -64,17 +64,64 @@ public class FileUploadServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUploadServlet.class);
 
+    protected static String toFilename(final String name) {
+        if (name == null) {
+            return null;
+        }
+        if (name.endsWith("/") || name.endsWith("\\")) {
+            final String substr = name.substring(0, name.length() - 1);
+            return toFilename(substr);
+        }
+        final int index1 = name.lastIndexOf('\\');
+        final int index2 = name.lastIndexOf('/');
+        final int index = Math.max(index1, index2);
+        if (index != -1) {
+            return name.substring(index + 1);
+        }
+        return name;
+    }
+
+    /**
+     * Clears the HTTP session of the request from any file-upload related
+     * state.
+     *
+     * @param req
+     */
+    public static final void clearSession(final HttpServletRequest req) {
+        final HttpSession session = req.getSession();
+        clearSession(session);
+    }
+
+    /**
+     * Clears the HTTP session from any file-upload related state.
+     *
+     * @param session
+     */
+    public static final void clearSession(final HttpSession session) {
+        int index = 0;
+        while (true) {
+            final String sessionKey = "file_upload_" + index;
+            final Object sessionValue = session.getAttribute(sessionKey);
+            if (sessionValue == null) {
+                return;
+            } else {
+                session.removeAttribute(sessionKey);
+            }
+            index++;
+        }
+    }
+
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         clearSession(req);
 
         File tempFolder = FileHelper.getTempDir();
         try {
-            File subDirectory = new File(tempFolder, ".datacleaner_upload");
+            final File subDirectory = new File(tempFolder, ".datacleaner_upload");
             if (subDirectory.mkdirs()) {
                 tempFolder = subDirectory;
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Could not create subdirectory in temp folder", e);
         }
 
@@ -90,14 +137,14 @@ public class FileUploadServlet extends HttpServlet {
             int index = 0;
             @SuppressWarnings("unchecked")
             final List<DiskFileItem> items = servletFileUpload.parseRequest(req);
-            for (DiskFileItem item : items) {
+            for (final DiskFileItem item : items) {
                 if (item.isFormField()) {
                     logger.warn("Ignoring form field in request: {}", item);
                 } else {
                     final String sessionKey = "file_upload_" + index;
                     final File file = item.getStoreLocation();
 
-                    String filename = toFilename(item.getName());
+                    final String filename = toFilename(item.getName());
                     logger.info("File '{}' uploaded to temporary location: {}", filename, file);
 
                     session.setAttribute(sessionKey, file);
@@ -114,7 +161,7 @@ public class FileUploadServlet extends HttpServlet {
                     index++;
                 }
             }
-        } catch (FileUploadException e) {
+        } catch (final FileUploadException e) {
             logger.error("Unexpected file upload exception: " + e.getMessage(), e);
             throw new IOException(e);
         }
@@ -133,52 +180,5 @@ public class FileUploadServlet extends HttpServlet {
         // write result as JSON
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(resp.getOutputStream(), resultMap);
-    }
-
-    protected static String toFilename(String name) {
-        if (name == null) {
-            return null;
-        }
-        if (name.endsWith("/") || name.endsWith("\\")) {
-            final String substr = name.substring(0, name.length() - 1);
-            return toFilename(substr);
-        }
-        int index1 = name.lastIndexOf('\\');
-        int index2 = name.lastIndexOf('/');
-        int index = Math.max(index1, index2);
-        if (index != -1) {
-            return name.substring(index + 1);
-        }
-        return name;
-    }
-
-    /**
-     * Clears the HTTP session of the request from any file-upload related
-     * state.
-     * 
-     * @param req
-     */
-    public static final void clearSession(HttpServletRequest req) {
-        final HttpSession session = req.getSession();
-        clearSession(session);
-    }
-
-    /**
-     * Clears the HTTP session from any file-upload related state.
-     * 
-     * @param session
-     */
-    public static final void clearSession(HttpSession session) {
-        int index = 0;
-        while (true) {
-            final String sessionKey = "file_upload_" + index;
-            final Object sessionValue = session.getAttribute(sessionKey);
-            if (sessionValue == null) {
-                return;
-            } else {
-                session.removeAttribute(sessionKey);
-            }
-            index++;
-        }
     }
 }

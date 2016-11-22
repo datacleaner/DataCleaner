@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
 
 final class DatastoreDictionaryReferenceDataWizardSession extends DatastoreWizardSession {
 
-    public DatastoreDictionaryReferenceDataWizardSession(ReferenceDataWizardContext context) {
+    public DatastoreDictionaryReferenceDataWizardSession(final ReferenceDataWizardContext context) {
         super(context);
     }
 

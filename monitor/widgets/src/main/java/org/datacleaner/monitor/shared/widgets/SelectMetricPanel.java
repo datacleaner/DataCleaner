@@ -52,8 +52,8 @@ public class SelectMetricPanel extends FlowPanel {
     private final ListBox _columnParameterSelectionBox;
     private final StringParameterizedMetricTextBox _queryParameterTextBox;
 
-    public SelectMetricPanel(TenantIdentifier tenant, JobMetrics jobMetrics, MetricIdentifier existingMetric,
-            boolean displayNameVisible) {
+    public SelectMetricPanel(final TenantIdentifier tenant, final JobMetrics jobMetrics, final MetricIdentifier existingMetric,
+            final boolean displayNameVisible) {
         super();
         addStyleName("SelectMetricPanel");
         _tenant = tenant;
@@ -89,7 +89,7 @@ public class SelectMetricPanel extends FlowPanel {
 
         _metricGroupSelectionBox.addChangeHandler(new ChangeHandler() {
             @Override
-            public void onChange(ChangeEvent event) {
+            public void onChange(final ChangeEvent event) {
                 _metricSelectionBox.setVisible(false);
 
                 final MetricGroup group = getSelectedMetricGroup();
@@ -101,7 +101,7 @@ public class SelectMetricPanel extends FlowPanel {
 
                 _metricSelectionBox.clear();
                 _metricSelectionBox.addItem("(Select metric)");
-                for (MetricIdentifier metric : metrics) {
+                for (final MetricIdentifier metric : metrics) {
                     _metricSelectionBox.addItem(metric.getMetricDescriptorName());
                 }
 
@@ -111,7 +111,7 @@ public class SelectMetricPanel extends FlowPanel {
 
         _metricSelectionBox.addChangeHandler(new ChangeHandler() {
             @Override
-            public void onChange(ChangeEvent event) {
+            public void onChange(final ChangeEvent event) {
                 _columnParameterSelectionBox.clear();
                 _columnParameterSelectionBox.setVisible(false);
                 _queryParameterTextBox.setVisible(false);
@@ -123,22 +123,22 @@ public class SelectMetricPanel extends FlowPanel {
 
                 if (metric.isParameterizedByColumnName()) {
                     _columnParameterSelectionBox.setVisible(true);
-                    List<String> columnNames = getSelectedMetricGroup().getColumnNames();
-                    for (String columnName : columnNames) {
+                    final List<String> columnNames = getSelectedMetricGroup().getColumnNames();
+                    for (final String columnName : columnNames) {
                         _columnParameterSelectionBox.addItem(columnName);
                     }
                 } else if (metric.isParameterizedByQueryString()) {
                     _queryParameterTextBox.setMetric(_tenant, _jobMetrics.getJob(), metric);
                     _queryParameterTextBox.setVisible(true);
                 }
-                
+
                 setDisplayName(metric.getMetricDescriptorName(), true);
             }
         });
 
         final List<MetricGroup> metricGroups = _jobMetrics.getMetricGroups();
         _metricGroupSelectionBox.addItem("(Select metric group)");
-        for (MetricGroup metricGroup : metricGroups) {
+        for (final MetricGroup metricGroup : metricGroups) {
             _metricGroupSelectionBox.addItem(metricGroup.getName());
         }
 
@@ -171,10 +171,10 @@ public class SelectMetricPanel extends FlowPanel {
         }
     }
 
-    private void selectItem(ListBox listBox, String itemText) {
-        int itemCount = listBox.getItemCount();
+    private void selectItem(final ListBox listBox, final String itemText) {
+        final int itemCount = listBox.getItemCount();
         for (int i = 0; i < itemCount; i++) {
-            String text = listBox.getItemText(i);
+            final String text = listBox.getItemText(i);
             if (text.equals(itemText)) {
                 listBox.setSelectedIndex(i);
                 DomEvent.fireNativeEvent(Document.get().createChangeEvent(), listBox);
@@ -200,24 +200,24 @@ public class SelectMetricPanel extends FlowPanel {
         return _displayNameBox.isVisible();
     }
 
-    public void setDisplayNameVisible(boolean visible) {
+    public void setDisplayNameVisible(final boolean visible) {
         _displayNameBox.setVisible(visible);
         _displayNameLabel.setVisible(visible);
     }
-    
-    public void setDisplayName(String string) {
-        setDisplayName(string, false);
-    }
 
-    public void setDisplayName(String string, boolean fireEvents) {
+    public void setDisplayName(final String string, final boolean fireEvents) {
         _displayNameBox.setValue(string, fireEvents);
     }
 
     public String getDisplayName() {
         return _displayNameBox.getText();
     }
-    
-    public void addDisplayNameValueChangeHandler(ValueChangeHandler<String> handler) {
+
+    public void setDisplayName(final String string) {
+        setDisplayName(string, false);
+    }
+
+    public void addDisplayNameValueChangeHandler(final ValueChangeHandler<String> handler) {
         _displayNameBox.addValueChangeHandler(handler);
     }
 
@@ -230,7 +230,7 @@ public class SelectMetricPanel extends FlowPanel {
         }
 
         if (copy.isParameterizedByColumnName()) {
-            String columnName = _columnParameterSelectionBox.getItemText(_columnParameterSelectionBox
+            final String columnName = _columnParameterSelectionBox.getItemText(_columnParameterSelectionBox
                     .getSelectedIndex());
             copy.setParamColumnName(columnName);
         } else if (copy.isParameterizedByQueryString()) {
@@ -240,7 +240,7 @@ public class SelectMetricPanel extends FlowPanel {
     }
 
     private MetricGroup getSelectedMetricGroup() {
-        int index = _metricGroupSelectionBox.getSelectedIndex();
+        final int index = _metricGroupSelectionBox.getSelectedIndex();
         if (index == -1 || index == 0) {
             throw new DCUserInputException("No metric group selected");
         }

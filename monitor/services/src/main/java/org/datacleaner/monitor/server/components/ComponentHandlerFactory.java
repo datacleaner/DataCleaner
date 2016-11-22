@@ -42,7 +42,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Factory for ComponentHandler instances
- * 
+ *
  * @since 18.8.15
  */
 
@@ -59,21 +59,22 @@ public class ComponentHandlerFactory {
     private ApplicationContext appCtx;
 
     @Autowired
-    public ComponentHandlerFactory(@Qualifier("published-components") RemoteComponentsConfiguration remoteComponentsConfiguration) {
+    public ComponentHandlerFactory(
+            @Qualifier("published-components") final RemoteComponentsConfiguration remoteComponentsConfiguration) {
         this._remoteComponentsConfiguration = remoteComponentsConfiguration;
     }
 
     /**
      * Creates new Handler from configuration
-     * 
+     *
      * @param tenantContext
      * @param componentName
      * @param configuration
      * @return
      * @throws RuntimeException
      */
-    public ComponentHandler createComponent(TenantContext tenantContext, String componentName,
-            ComponentConfiguration configuration) throws RuntimeException {
+    public ComponentHandler createComponent(final TenantContext tenantContext, final String componentName,
+            final ComponentConfiguration configuration) throws RuntimeException {
         return new ComponentHandler(
                 tenantContext.getConfiguration(),
                 resolveDescriptor(tenantContext.getConfiguration().getEnvironment(), componentName),
@@ -82,16 +83,17 @@ public class ComponentHandlerFactory {
 
     @PostConstruct
     private void initialize() {
-        Collection<AnalysisListener> listeners = BeanFactoryUtils.beansOfTypeIncludingAncestors(appCtx, AnalysisListener.class).values();
-        if(listeners.size() == 1) {
+        final Collection<AnalysisListener> listeners =
+                BeanFactoryUtils.beansOfTypeIncludingAncestors(appCtx, AnalysisListener.class).values();
+        if (listeners.size() == 1) {
             analysisListener = listeners.iterator().next();
-        } else if(listeners.size() > 1) {
+        } else if (listeners.size() > 1) {
             analysisListener = new CompositeAnalysisListener(listeners.toArray(new AnalysisListener[listeners.size()]));
         }
     }
 
-    public ComponentDescriptor<?> resolveDescriptor(DataCleanerEnvironment env, String componentName) {
-        ComponentDescriptor<?> descriptor = env.getDescriptorProvider()
+    public ComponentDescriptor<?> resolveDescriptor(final DataCleanerEnvironment env, final String componentName) {
+        final ComponentDescriptor<?> descriptor = env.getDescriptorProvider()
                 .getComponentDescriptorByDisplayName(componentName);
         if (descriptor == null) {
             logger.info("Component {} not found.", componentName);

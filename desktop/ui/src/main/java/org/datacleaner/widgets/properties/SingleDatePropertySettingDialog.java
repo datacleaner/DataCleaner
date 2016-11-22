@@ -51,20 +51,18 @@ import org.datacleaner.windows.AbstractDialog;
 import org.jdesktop.swingx.JXDatePicker;
 
 public class SingleDatePropertySettingDialog extends AbstractDialog {
+    public static final String LABEL_PARTICULAR = "Particular date";
+    public static final String LABEL_TODAY = "Today";
     private static final long serialVersionUID = 1L;
-    
     private static final int DIALOG_WIDTH = 270;
     private static final int DIALOG_HEIGHT = 390;
-
     private static final String TITLE = "Set date value";
     private static final String STATIC_GROUP = "Fixed date";
     private static final String DYNAMIC_GROUP = "Resolved at execution";
     private static final String IMAGE_PATH = "images/window/banner-tabledef.png";
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String TODAY_PLUS_DEFAULT_VALUE = "+0d +0m +0y";
-    public static final String LABEL_PARTICULAR = "Particular date";
     private static final String LABEL_NOW = "Now";
-    public static final String LABEL_TODAY = "Today";
     private static final String LABEL_TODAY_PLUS = "Today plus";
     private static final String LABEL_YESTERDAY = "Yesterday";
 
@@ -78,13 +76,13 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     private final JTextField _todayPlusTextField;
     private final JButton _closeButton;
 
-    protected SingleDatePropertySettingDialog(WindowContext windowContext, SingleDatePropertyWidget widget) {
+    protected SingleDatePropertySettingDialog(final WindowContext windowContext, final SingleDatePropertyWidget widget) {
         super(windowContext, ImageManager.get().getImage(IMAGE_PATH));
 
         _widget = widget;
         _buttonGroup = new ButtonGroup();
         _closeButton = createCloseButton();
-        
+
         _dateNowRadio = getRadioButton(LABEL_NOW);
         _dateTodayRadio = getRadioButton(LABEL_TODAY);
         _todayPlusRadio = getRadioButton(LABEL_TODAY_PLUS);
@@ -94,20 +92,20 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
         _datePicker = createDatePicker();
         _todayPlusTextField = createTodayPlusTextField();
     }
-    
+
     private JButton createCloseButton() {
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_SAVE_BRIGHT);
         closeButton.addActionListener(e -> {
             if (isParticularDateSpecified()) {
                 updateWidget();
             }
-            
+
             dispose();
         });
-        
+
         return closeButton;
     }
-    
+
     private boolean isParticularDateSpecified() {
         return (!_dateNowRadio.isSelected() &&
                 !_dateTodayRadio.isSelected() &&
@@ -115,7 +113,7 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
                 !_todayPlusRadio.isSelected() &&
                 !_datePicker.getEditor().getText().isEmpty());
     }
-    
+
     private JTextField createTodayPlusTextField() {
         final JTextField textField = new JTextField(TODAY_PLUS_DEFAULT_VALUE);
         textField.addFocusListener(new FocusListener() {
@@ -128,8 +126,8 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
             public void focusLost(final FocusEvent e) {
                 updateWidget();
             }
-        }); 
-        
+        });
+
         return textField;
     }
 
@@ -143,19 +141,19 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
             _widget.fireValueChangedActionListener();
         }
     }
-    
+
     public String getFormattedString() {
-        if (_dateNowRadio.isSelected() || _dateTodayRadio.isSelected() || _dateYesterdayRadio.isSelected() || 
+        if (_dateNowRadio.isSelected() || _dateTodayRadio.isSelected() || _dateYesterdayRadio.isSelected() ||
                 _todayPlusRadio.isSelected()) {
             return String.format("%s", getLabelForFormattedString());
         } else {
             return String.format("%s", getValue().toString());
         }
     }
-    
+
     private String getLabelForFormattedString() {
         final String label;
-        
+
         if (_dateNowRadio.isSelected()) {
             label = LABEL_NOW;
         } else if (_dateTodayRadio.isSelected()) {
@@ -167,10 +165,10 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
         } else {
             label = LABEL_PARTICULAR;
         }
-        
+
         return label;
     }
-    
+
     private JXDatePicker createDatePicker() {
         final JXDatePicker datePicker = new JXDatePicker();
         datePicker.setFormats(DATE_FORMAT);
@@ -189,16 +187,16 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
                 // this for some reason does not work properly, so value can not be updated here
             }
         });
-        
+
         return datePicker;
     }
-    
+
     private JRadioButton getRadioButton(final String label) {
         final JRadioButton radioButton = new JRadioButton(label);
         radioButton.setBackground(WidgetUtils.BG_COLOR_BRIGHT);
         radioButton.setSelected(false);
         radioButton.addActionListener(e -> updateWidget());
-        
+
         return radioButton;
     }
 
@@ -207,9 +205,9 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
         final DCPanel formPanel = createFormPanel();
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, _closeButton);
         final DescriptionLabel descriptionLabel = new DescriptionLabel("Option 'Now' will set the current datetime. "
-            + "Option 'Today plus' can be used for relative dates and the final value will always be computed in the " 
+                + "Option 'Today plus' can be used for relative dates and the final value will always be computed in the "
                 + "runtime. Options 'Today' and 'Yesterday' will set today's or yesterday's date with time of 0:00. ");
-        
+
         final DCPanel mainPanel = new DCPanel();
         mainPanel.setOpaque(true);
         mainPanel.setLayout(new BorderLayout());
@@ -220,7 +218,7 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
 
         return mainPanel;
     }
-    
+
     private DCPanel createFormPanel() {
         final JPanel staticPanel = createStaticPanel();
         final JPanel dynamicPanel = createDynamicPanel();
@@ -230,17 +228,17 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
 
         return formPanel;
     }
-    
+
     private JPanel createStaticPanel() {
         final JPanel panel = new JPanel(new GridLayout(0, 1));
         final Border border = BorderFactory.createTitledBorder(STATIC_GROUP);
         panel.setBorder(border);
         WidgetUtils.addToGridBag(new JLabel(LABEL_PARTICULAR), panel, 0, 0);
         WidgetUtils.addToGridBag(_datePicker, panel, 1, 0);
-        
+
         return panel;
     }
-    
+
     private JPanel createDynamicPanel() {
         final JPanel panel = new JPanel(new GridLayout(0, 1));
         final Border border = BorderFactory.createTitledBorder(DYNAMIC_GROUP);
@@ -254,21 +252,21 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(_dateTodayRadio, panel, 0, row);
         row++;
         WidgetUtils.addToGridBag(_dateYesterdayRadio, panel, 0, row);
-        
+
         return panel;
     }
-        
+
     private void createRadioGroup() {
         _buttonGroup.add(_dateNowRadio);
         _buttonGroup.add(_dateTodayRadio);
         _buttonGroup.add(_dateYesterdayRadio);
         _buttonGroup.add(_todayPlusRadio);
-    } 
-    
+    }
+
     private void clearRadioGroup() {
         _buttonGroup.clearSelection();
     }
-    
+
     public Date getValue() {
         if (_dateNowRadio.isSelected()) {
             return new NowDate();
@@ -292,7 +290,7 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
             _dateYesterdayRadio.setSelected(true);
         } else if (value instanceof ShiftedToday) {
             _todayPlusRadio.setSelected(true);
-            _todayPlusTextField.setText(((ShiftedToday)value).getInput());
+            _todayPlusTextField.setText(((ShiftedToday) value).getInput());
         } else if (value != null) {
             clearRadioGroup();
             _datePicker.setDate(value);
@@ -303,7 +301,7 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     public String getWindowTitle() {
         return TITLE;
     }
-    
+
     @Override
     protected String getBannerTitle() {
         return TITLE;

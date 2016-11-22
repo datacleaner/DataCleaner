@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.datacleaner.util.ResourceManager;
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.util.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +59,7 @@ public class ImageServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         final String pathInfo = req.getPathInfo();
         logger.debug("Path info: {}", pathInfo);
 
@@ -97,7 +97,7 @@ public class ImageServlet extends HttpServlet {
         }
     }
 
-    private void validatePath(String path, HttpServletResponse resp) {
+    private void validatePath(String path, final HttpServletResponse resp) {
         if (path == null) {
             throw new IllegalArgumentException("Resource path cannot be null");
         }

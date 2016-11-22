@@ -24,72 +24,72 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Set;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
-import org.apache.metamodel.util.HasName;
 
 /**
  * Descriptor class for {@link AnalyzerResult} metrics.
- * 
+ *
  * @since AnalyzerBeans 0.16
  */
 public interface MetricDescriptor extends Serializable, HasName, Comparable<MetricDescriptor> {
 
     /**
      * Gets the metric value for a particular {@link AnalyzerResult}.
-     * 
+     *
      * @param result
      * @param metricParameters
      * @return the metric value of the particular {@link AnalyzerResult}.
      */
-    public Number getValue(AnalyzerResult result, MetricParameters metricParameters);
+    Number getValue(AnalyzerResult result, MetricParameters metricParameters);
 
     /**
      * Gets a collection of suggested metric parameters. How these suggestions
      * are created depends upon the AnalyzerResult's data and capabilities, so
      * therefore the quality or extensiveness of the suggestions is not
      * guaranteed and should be considered a sample more than a direction.
-     * 
+     *
      * @return an interable of suggested metric parameters.
      */
-    public Collection<String> getMetricParameterSuggestions(AnalyzerResult result);
+    Collection<String> getMetricParameterSuggestions(AnalyzerResult result);
 
     /**
      * Gets the optional description of the metric
-     * 
+     *
      * @return a humanly readable description of the metric
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Gets any additional annotations for the metric.
-     * 
+     *
      * @return additional annotations for the metric.
      */
-    public Set<Annotation> getAnnotations();
+    Set<Annotation> getAnnotations();
 
     /**
      * Gets a particular annotation for the metric, if available.
-     * 
+     *
      * @param annotationClass
      * @return a particular annotation for the metric, if available.
      */
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass);
+    <A extends Annotation> A getAnnotation(Class<A> annotationClass);
 
     /**
      * Determines whether this metric is parameterized with an
      * {@link InputColumn}.
-     * 
+     *
      * @return true if this metric is parameterized with an {@link InputColumn},
      *         or false if not.
      */
-    public boolean isParameterizedByInputColumn();
+    boolean isParameterizedByInputColumn();
 
     /**
      * Determines whether this metric is parameterized with an {@link String}.
-     * 
+     *
      * @return true if this metric is parameterized with an {@link String}, or
      *         false if not.
      */
-    public boolean isParameterizedByString();
+    boolean isParameterizedByString();
 }

@@ -38,7 +38,7 @@ public class CsvDatastoreTest extends TestCase {
         col = schemaNavigator.convertToColumn("projects.csv.product");
         assertNotNull(col);
     }
-    
+
     public void testGetResourceBasedOnString() throws Exception {
         CsvDatastore datastore = new CsvDatastore("foo", "src/test/resources/projects.csv");
         Resource resource = datastore.getResource();

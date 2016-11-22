@@ -24,7 +24,7 @@ import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 
 public class TestEnvironment {
-    
+
     public static final int THREAD_COUNT = 16;
 
     private static final MultiThreadedTaskRunner TASK_RUNNER = new MultiThreadedTaskRunner(THREAD_COUNT);

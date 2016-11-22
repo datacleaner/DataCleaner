@@ -51,9 +51,9 @@ public class RoundNumberTransformer implements Transformer {
     public OutputColumns getOutputColumns() {
         return new OutputColumns(String.class, _number.getName() + " (rounded)");
     }
-    
+
     @Override
-    public Integer[] transform(InputRow row) {
+    public Integer[] transform(final InputRow row) {
         Number number = row.getValue(_number);
         if (number != null) {
             number = Math.round(number.doubleValue() / _roundFactor) * _roundFactor;

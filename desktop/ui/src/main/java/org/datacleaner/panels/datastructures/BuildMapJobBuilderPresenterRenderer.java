@@ -51,7 +51,7 @@ public class BuildMapJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerComponentBuilder<BuildMapTransformer> tjb) {
+    public RendererPrecedence getPrecedence(final TransformerComponentBuilder<BuildMapTransformer> tjb) {
         if (tjb.getDescriptor().getComponentClass() == BuildMapTransformer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -59,7 +59,7 @@ public class BuildMapJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<BuildMapTransformer> tjb) {
+    public TransformerComponentBuilderPresenter render(final TransformerComponentBuilder<BuildMapTransformer> tjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
                 PropertyWidgetFactory.class);
 

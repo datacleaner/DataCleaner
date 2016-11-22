@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A delegate for the AnalysisRunner to put the state of a single job into.
- * 
+ *
  * As opposed to the AnalysisRunner, this class is NOT thread-safe (which is why
  * the AnalysisRunner instantiates a new delegate for each execution).
  */
@@ -60,7 +60,7 @@ final class AnalysisRunnerJobDelegate {
     private final boolean _includeNonDistributedTasks;
 
     /**
-     * 
+     *
      * @param job
      * @param configuration
      * @param taskRunner
@@ -74,9 +74,9 @@ final class AnalysisRunnerJobDelegate {
      *            typically be true, on slave nodes in a cluster, this will
      *            typically be false.
      */
-    public AnalysisRunnerJobDelegate(AnalysisJob job, DataCleanerConfiguration configuration, TaskRunner taskRunner,
-            AnalysisListener analysisListener, Queue<JobAndResult> resultQueue, ErrorAware errorAware,
-            boolean includeNonDistributedTasks) {
+    public AnalysisRunnerJobDelegate(final AnalysisJob job, final DataCleanerConfiguration configuration, final TaskRunner taskRunner,
+            final AnalysisListener analysisListener, final Queue<JobAndResult> resultQueue, final ErrorAware errorAware,
+            final boolean includeNonDistributedTasks) {
         _job = job;
         _configuration = configuration;
         _taskRunner = taskRunner;
@@ -88,7 +88,7 @@ final class AnalysisRunnerJobDelegate {
 
     /**
      * Runs the job
-     * 
+     *
      * @return
      */
     public AnalysisResultFuture run() {
@@ -120,7 +120,7 @@ final class AnalysisRunnerJobDelegate {
                     analysisJobMetrics);
 
             return new AnalysisResultFutureImpl(_resultQueue, jobCompletionTaskListener, _errorAware);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             _analysisListener.errorUnknown(_job, e);
             throw e;
         }
@@ -129,14 +129,14 @@ final class AnalysisRunnerJobDelegate {
 
     /**
      * Starts row processing job flows.
-     * 
+     *
      * @param publishers
      * @param analysisJobMetrics
-     * 
+     *
      * @param injectionManager
      */
-    private void scheduleRowProcessing(RowProcessingPublishers publishers, LifeCycleHelper lifeCycleHelper,
-            JobCompletionTaskListener jobCompletionTaskListener, AnalysisJobMetrics analysisJobMetrics) {
+    private void scheduleRowProcessing(final RowProcessingPublishers publishers, final LifeCycleHelper lifeCycleHelper,
+            final JobCompletionTaskListener jobCompletionTaskListener, final AnalysisJobMetrics analysisJobMetrics) {
 
         logger.info("Created {} row processor publisher(s)", publishers.size());
         final TaskListener rowProcessorPublishersDoneCompletionListener = new JoinTaskListener(publishers.size(),
@@ -156,7 +156,7 @@ final class AnalysisRunnerJobDelegate {
         while (!remainingRowProcessingPublishers.isEmpty()) {
             boolean progressThisIteration = false;
 
-            for (Iterator<RowProcessingPublisher> it = remainingRowProcessingPublishers.iterator(); it.hasNext();) {
+            for (final Iterator<RowProcessingPublisher> it = remainingRowProcessingPublishers.iterator(); it.hasNext(); ) {
                 final RowProcessingPublisher rowProcessingPublisher = it.next();
                 final boolean started = rowProcessingPublisher.runRowProcessing(_resultQueue,
                         rowProcessorPublishersDoneCompletionListener);
@@ -172,7 +172,7 @@ final class AnalysisRunnerJobDelegate {
                     // Give way for the data processing to happen in other
                     // threads. Better to sleep() than to yield().
                     Thread.sleep(100);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     // do nothing
                 }
             }
@@ -182,10 +182,10 @@ final class AnalysisRunnerJobDelegate {
     /**
      * Prevents that any row processing components have input from different
      * tables.
-     * 
+     *
      * @param job
      */
-    private void validateSingleTableInput(AnalysisJob job) {
+    private void validateSingleTableInput(final AnalysisJob job) {
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(job);
         validateSingleTableInput(sourceColumnFinder, job.getTransformerJobs());
@@ -196,18 +196,18 @@ final class AnalysisRunnerJobDelegate {
     /**
      * Prevents that any row processing components have input from different
      * tables.
-     * 
+     *
      * @param sourceColumnFinder
      * @param componentJobs
      */
     private void validateSingleTableInput(final SourceColumnFinder sourceColumnFinder,
             final Collection<? extends ComponentJob> componentJobs) {
-        for (ComponentJob componentJob : componentJobs) {
+        for (final ComponentJob componentJob : componentJobs) {
             if (!componentJob.getDescriptor().isMultiStreamComponent()) {
                 Table originatingTable = null;
                 final InputColumn<?>[] input = componentJob.getInput();
 
-                for (InputColumn<?> inputColumn : input) {
+                for (final InputColumn<?> inputColumn : input) {
                     final Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
                     if (table != null) {
                         if (originatingTable == null) {
@@ -223,7 +223,7 @@ final class AnalysisRunnerJobDelegate {
             }
 
             final OutputDataStreamJob[] outputDataStreamJobs = componentJob.getOutputDataStreamJobs();
-            for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
+            for (final OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
                 validateSingleTableInput(outputDataStreamJob.getJob());
             }
         }

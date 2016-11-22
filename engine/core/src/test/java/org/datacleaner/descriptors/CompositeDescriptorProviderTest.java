@@ -57,6 +57,7 @@ public class CompositeDescriptorProviderTest {
     @Test
     public void testGetAnalyzerDescriptorByClass() {
         Assert.assertEquals(ad1, dp.getAnalyzerDescriptorForClass(AnalyzerMock.class));
-        Assert.assertEquals(ad2, dp.getAnalyzerDescriptorForClass(AnnotationBasedAnalyzerComponentDescriptorTest.OneMoreMockAnalyzer.class));
+        Assert.assertEquals(ad2, dp.getAnalyzerDescriptorForClass(
+                AnnotationBasedAnalyzerComponentDescriptorTest.OneMoreMockAnalyzer.class));
     }
 }

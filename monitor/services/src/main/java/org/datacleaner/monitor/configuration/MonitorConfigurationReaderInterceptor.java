@@ -48,37 +48,37 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
 
     private final TenantContext _tenantContext;
     private final Repository _repository;
-    
-    public static DataCleanerEnvironmentImpl createBaseEnvironment(InjectionManagerFactory injectionManagerFactory) {
-        return BASE_ENVIRONMENT.withInjectionManagerFactory(injectionManagerFactory);
-    }
 
-    public MonitorConfigurationReaderInterceptor(Repository repository, TenantContext tenantContext,
-            InjectionManagerFactory injectionManagerFactory) {
+    public MonitorConfigurationReaderInterceptor(final Repository repository, final TenantContext tenantContext,
+            final InjectionManagerFactory injectionManagerFactory) {
         this(repository, tenantContext, null, injectionManagerFactory);
     }
 
-    public MonitorConfigurationReaderInterceptor(Repository repository, TenantContext tenantContext,
-            Map<String, String> propertyOverrides, InjectionManagerFactory injectionManagerFactory) {
+    public MonitorConfigurationReaderInterceptor(final Repository repository, final TenantContext tenantContext,
+            final Map<String, String> propertyOverrides, final InjectionManagerFactory injectionManagerFactory) {
         super(propertyOverrides, createBaseEnvironment(injectionManagerFactory));
         _repository = repository;
         _tenantContext = tenantContext;
     }
 
     /**
-     * 
+     *
      * @param repository
      * @param tenantContext
      * @param environment
-     * 
+     *
      * @deprecated use
      *             {@link #MonitorConfigurationReaderInterceptor(Repository, TenantContext)}
      *             instead
      */
     @Deprecated
-    public MonitorConfigurationReaderInterceptor(Repository repository, TenantContext tenantContext,
-            DataCleanerEnvironment environment) {
+    public MonitorConfigurationReaderInterceptor(final Repository repository, final TenantContext tenantContext,
+            final DataCleanerEnvironment environment) {
         this(repository, tenantContext, environment.getInjectionManagerFactory());
+    }
+
+    public static DataCleanerEnvironmentImpl createBaseEnvironment(final InjectionManagerFactory injectionManagerFactory) {
+        return BASE_ENVIRONMENT.withInjectionManagerFactory(injectionManagerFactory);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
 
     @Override
     protected List<ResourceTypeHandler<?>> getExtraResourceTypeHandlers() {
-        List<ResourceTypeHandler<?>> handlers = super.getExtraResourceTypeHandlers();
+        final List<ResourceTypeHandler<?>> handlers = super.getExtraResourceTypeHandlers();
         handlers.add(new RepositoryFileResourceTypeHandler(_repository, _tenantContext.getTenantId()));
         return handlers;
     }

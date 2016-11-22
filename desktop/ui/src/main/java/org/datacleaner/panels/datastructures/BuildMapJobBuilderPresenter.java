@@ -46,9 +46,9 @@ final class BuildMapJobBuilderPresenter extends TransformerComponentBuilderPanel
 
     private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _overriddenPropertyWidgets;
 
-    public BuildMapJobBuilderPresenter(TransformerComponentBuilder<BuildMapTransformer> tjb,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration) {
+    public BuildMapJobBuilderPresenter(final TransformerComponentBuilder<BuildMapTransformer> tjb,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration) {
         super(tjb, windowContext, propertyWidgetFactory, configuration);
 
         _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
@@ -60,7 +60,7 @@ final class BuildMapJobBuilderPresenter extends TransformerComponentBuilderPanel
         final MultipleMappedStringsPropertyWidget propertyWidget = new MultipleMappedStringsPropertyWidget(tjb,
                 valuesProperty, keysProperty) {
             @Override
-            protected String getDefaultMappedString(InputColumn<?> inputColumn) {
+            protected String getDefaultMappedString(final InputColumn<?> inputColumn) {
                 return inputColumn.getName();
             }
         };
@@ -69,8 +69,8 @@ final class BuildMapJobBuilderPresenter extends TransformerComponentBuilderPanel
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
             return _overriddenPropertyWidgets.get(propertyDescriptor);
         }

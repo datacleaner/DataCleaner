@@ -29,41 +29,39 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class SwaggerParameter {
-    public static enum In {
+    public enum In {
         HEADER("header"),
         PATH("path"),
         QUERY("query"),
-        BODY("body"),
-        ;
+        BODY("body"),;
 
         private String value = "";
 
-        private In(String value) {
+        In(final String value) {
             this.value = value;
         }
 
         public String getValue() {
             return value;
         }
-    };
+    }
 
-    public static enum Type {
+    public enum Type {
         STRING("string"),
         INTEGER("integer"),
         BOOLEAN("boolean"),
-        OBJECT("object"),
-        ;
+        OBJECT("object"),;
 
         private String value = "";
 
-        private Type(String value) {
+        Type(final String value) {
             this.value = value;
         }
 
         public String getValue() {
             return value;
         }
-    };
+    }
 
     private String in = "";
     private String name = "";
@@ -77,7 +75,7 @@ public class SwaggerParameter {
         return in;
     }
 
-    public void setIn(String in) {
+    public void setIn(final String in) {
         this.in = in;
     }
 
@@ -85,7 +83,7 @@ public class SwaggerParameter {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -93,7 +91,7 @@ public class SwaggerParameter {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -101,7 +99,7 @@ public class SwaggerParameter {
         return required;
     }
 
-    public void setRequired(Boolean required) {
+    public void setRequired(final Boolean required) {
         this.required = required;
     }
 
@@ -109,7 +107,7 @@ public class SwaggerParameter {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -117,7 +115,7 @@ public class SwaggerParameter {
         return items;
     }
 
-    public void setItems(Map<String, String> items) {
+    public void setItems(final Map<String, String> items) {
         this.items = items;
     }
 
@@ -125,21 +123,18 @@ public class SwaggerParameter {
         return schema;
     }
 
-    public void setSchema(Map<String, String> schema) {
+    public void setSchema(final Map<String, String> schema) {
         this.schema = schema;
     }
 
-    public void setTypeByClass(Class<?> clazz) {
+    public void setTypeByClass(final Class<?> clazz) {
         if (clazz.getName().equals(String.class.getName())) {
             setType(Type.STRING.getValue());
-        }
-        else if (clazz.getName().equals(Integer.class.getName()) || clazz.getName().equals(int.class.getName())) {
+        } else if (clazz.getName().equals(Integer.class.getName()) || clazz.getName().equals(int.class.getName())) {
             setType(Type.INTEGER.getValue());
-        }
-        else if (clazz.getName().equals(Boolean.class.getName()) || clazz.getName().equals(boolean.class.getName())) {
+        } else if (clazz.getName().equals(Boolean.class.getName()) || clazz.getName().equals(boolean.class.getName())) {
             setType(Type.BOOLEAN.getValue());
-        }
-        else {
+        } else {
             setType(null);
             schema.put("$ref", "#/definitions/GenericObject");
         }

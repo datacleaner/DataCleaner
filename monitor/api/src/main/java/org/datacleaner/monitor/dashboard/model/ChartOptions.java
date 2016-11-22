@@ -27,37 +27,35 @@ import java.util.Date;
  */
 public class ChartOptions implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * Defines options pertaining to the horizontal axis (time dimension) of the
      * chart.
      */
-    public static interface HorizontalAxisOption extends Serializable {
-        public Date getBeginDate();
+    public interface HorizontalAxisOption extends Serializable {
+        Date getBeginDate();
 
-        public Date getEndDate();
+        Date getEndDate();
     }
 
     /**
      * Defines options pertaining to the vertical axis (metric values) of the
      * chart.
      */
-    public static interface VerticalAxisOption extends Serializable {
+    public interface VerticalAxisOption extends Serializable {
         /**
          * Gets the height (in pixels) of the chart
-         * 
+         *
          * @return
          */
-        public int getHeight();
+        int getHeight();
 
-        public Integer getMinimumValue();
+        Integer getMinimumValue();
 
-        public Integer getMaximumValue();
-        
-        public boolean isLogarithmicScale();
+        Integer getMaximumValue();
+
+        boolean isLogarithmicScale();
     }
-
+    private static final long serialVersionUID = 1L;
     private HorizontalAxisOption _horizontalAxisOption;
     private VerticalAxisOption _verticalAxisOption;
 
@@ -65,11 +63,13 @@ public class ChartOptions implements Serializable {
         this(new DefaultHAxisOption(), new DefaultVAxisOption());
     }
 
-    public ChartOptions(Date begin, Date end, Integer height, Integer minimumValue, Integer maximumValue, boolean logarithmicScale) {
-        this(new DefaultHAxisOption(begin, end), new DefaultVAxisOption(height, minimumValue, maximumValue, logarithmicScale));
+    public ChartOptions(final Date begin, final Date end, final Integer height, final Integer minimumValue, final Integer maximumValue,
+            final boolean logarithmicScale) {
+        this(new DefaultHAxisOption(begin, end),
+                new DefaultVAxisOption(height, minimumValue, maximumValue, logarithmicScale));
     }
 
-    public ChartOptions(HorizontalAxisOption horizontalAxisOption, VerticalAxisOption verticalAxisOption) {
+    public ChartOptions(final HorizontalAxisOption horizontalAxisOption, final VerticalAxisOption verticalAxisOption) {
         _horizontalAxisOption = horizontalAxisOption;
         _verticalAxisOption = verticalAxisOption;
     }
@@ -81,6 +81,6 @@ public class ChartOptions implements Serializable {
     public VerticalAxisOption getVerticalAxisOption() {
         return _verticalAxisOption;
     }
-    
-    
+
+
 }

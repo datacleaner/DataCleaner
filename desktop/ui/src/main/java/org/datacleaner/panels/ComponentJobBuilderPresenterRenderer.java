@@ -54,23 +54,23 @@ public class ComponentJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(ComponentBuilder renderable) {
+    public RendererPrecedence getPrecedence(final ComponentBuilder renderable) {
         return RendererPrecedence.LOW;
     }
 
     @Override
-    public ComponentBuilderPresenter render(ComponentBuilder renderable) {
+    public ComponentBuilderPresenter render(final ComponentBuilder renderable) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(renderable)
                 .getInstance(PropertyWidgetFactory.class);
 
         if (renderable instanceof FilterComponentBuilder) {
-            FilterComponentBuilder<?, ?> fjb = (FilterComponentBuilder<?, ?>) renderable;
+            final FilterComponentBuilder<?, ?> fjb = (FilterComponentBuilder<?, ?>) renderable;
             return new FilterComponentBuilderPanel(fjb, windowContext, propertyWidgetFactory);
         } else if (renderable instanceof TransformerComponentBuilder) {
-            TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) renderable;
+            final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) renderable;
             return new TransformerComponentBuilderPanel(tjb, windowContext, propertyWidgetFactory, configuration);
         } else if (renderable instanceof AnalyzerComponentBuilder) {
-            AnalyzerComponentBuilder<?> ajb = (AnalyzerComponentBuilder<?>) renderable;
+            final AnalyzerComponentBuilder<?> ajb = (AnalyzerComponentBuilder<?>) renderable;
             return new AnalyzerComponentBuilderPanel(ajb, propertyWidgetFactory);
         }
         throw new UnsupportedOperationException();

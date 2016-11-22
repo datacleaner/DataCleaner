@@ -67,7 +67,7 @@ public class ProgressInformationPanel extends DCPanel {
     private final ConcurrentMap<Table, ProgressCounter> _progressTimingCounters;
     private final Stopwatch _stopWatch;
 
-    public ProgressInformationPanel(boolean running) {
+    public ProgressInformationPanel(final boolean running) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         setLayout(new BorderLayout());
         _tableProgressInformationPanels = new ConcurrentHashMap<>();
@@ -104,11 +104,11 @@ public class ProgressInformationPanel extends DCPanel {
         return new LocalTime().toString(DATE_TIME_FORMAT);
     }
 
-    public void addUserLog(String string) {
+    public void addUserLog(final String string) {
         appendMessage("\n" + getTimestamp() + " INFO: " + string);
     }
 
-    public void addUserLog(String message, Throwable throwable, boolean jobFinished) {
+    public void addUserLog(final String message, Throwable throwable, final boolean jobFinished) {
         final StringWriter stringWriter = new StringWriter();
         stringWriter.append("\n").append(getTimestamp());
 
@@ -117,7 +117,8 @@ public class ProgressInformationPanel extends DCPanel {
             stringWriter.append(message);
             appendMessage(stringWriter.toString());
 
-            final RestrictedFunctionalityException restrictedFunctionalityException = (RestrictedFunctionalityException) throwable;
+            final RestrictedFunctionalityException restrictedFunctionalityException =
+                    (RestrictedFunctionalityException) throwable;
             final String exceptionMessage = restrictedFunctionalityException.getMessage();
             final RestrictedFunctionalityCallToAction[] callToActions = restrictedFunctionalityException
                     .getCallToActions();
@@ -150,9 +151,10 @@ public class ProgressInformationPanel extends DCPanel {
         appendMessage(stringWriter.toString());
 
         if (jobFinished) {
-            final Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
-                    .values();
-            for (TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
+            final Collection<TableProgressInformationPanel> tableProgressInformationPanels =
+                    _tableProgressInformationPanels
+                            .values();
+            for (final TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
                 tableProgressInformationPanel.setProgressStopped(throwable != null);
             }
         }
@@ -166,12 +168,12 @@ public class ProgressInformationPanel extends DCPanel {
      * @param printWriter
      * @param throwable
      */
-    protected void printStackTrace(PrintWriter printWriter, Throwable throwable) {
+    protected void printStackTrace(final PrintWriter printWriter, final Throwable throwable) {
         throwable.printStackTrace(printWriter);
         Throwable cause = throwable.getCause();
         while (cause != null) {
             if (cause instanceof SQLException) {
-                SQLException nextException = ((SQLException) cause).getNextException();
+                final SQLException nextException = ((SQLException) cause).getNextException();
                 if (nextException != null) {
                     printWriter.print("Next exception: ");
                     printStackTrace(printWriter, nextException);
@@ -203,14 +205,14 @@ public class ProgressInformationPanel extends DCPanel {
         });
     }
 
-    private TableProgressInformationPanel getTableProgressInformationPanel(Table table, int expectedRows) {
+    private TableProgressInformationPanel getTableProgressInformationPanel(final Table table, int expectedRows) {
         TableProgressInformationPanel tableProgressInformationPanel = _tableProgressInformationPanels.get(table);
         if (tableProgressInformationPanel == null) {
             if (expectedRows == -1) {
                 expectedRows = Integer.MAX_VALUE;
             }
             tableProgressInformationPanel = new TableProgressInformationPanel(table, expectedRows);
-            TableProgressInformationPanel previous = _tableProgressInformationPanels.putIfAbsent(table,
+            final TableProgressInformationPanel previous = _tableProgressInformationPanels.putIfAbsent(table,
                     tableProgressInformationPanel);
             if (previous != null) {
                 tableProgressInformationPanel = previous;
@@ -227,7 +229,7 @@ public class ProgressInformationPanel extends DCPanel {
      */
     public void updateProgress(final Table table, final int currentRow) {
         final TableProgressInformationPanel tableProgressInformationPanel = getTableProgressInformationPanel(table, -1);
-        boolean greater = tableProgressInformationPanel.setProgress(currentRow);
+        final boolean greater = tableProgressInformationPanel.setProgress(currentRow);
 
         if (!greater) {
             // this may happen because of the multithreaded nature of the
@@ -239,14 +241,14 @@ public class ProgressInformationPanel extends DCPanel {
         ProgressCounter counter = _progressTimingCounters.get(table);
         if (counter == null) {
             counter = new ProgressCounter();
-            ProgressCounter previous = _progressTimingCounters.put(table, counter);
+            final ProgressCounter previous = _progressTimingCounters.put(table, counter);
             if (previous != null) {
                 counter = previous;
             }
         }
 
         final boolean log;
-        int previousCount = counter.get();
+        final int previousCount = counter.get();
         if (currentRow - previousCount > 1000) {
             log = counter.setIfSignificantToUser(currentRow);
         } else {
@@ -257,16 +259,16 @@ public class ProgressInformationPanel extends DCPanel {
         }
     }
 
-    private String formatNumber(int number) {
-        NumberFormat nf = NumberFormat.getInstance();
+    private String formatNumber(final int number) {
+        final NumberFormat nf = NumberFormat.getInstance();
         return nf.format(number);
     }
 
     public void onCancelled() {
         appendMessage("\n--- DataCleaner job cancelled at " + getTimestamp() + " ---");
-        Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
+        final Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
                 .values();
-        for (TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
+        for (final TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
             tableProgressInformationPanel.setProgressCancelled();
         }
     }
@@ -276,7 +278,7 @@ public class ProgressInformationPanel extends DCPanel {
      *
      * @param table
      */
-    public void updateProgressFinished(Table table) {
+    public void updateProgressFinished(final Table table) {
         final TableProgressInformationPanel tableProgressInformationPanel = getTableProgressInformationPanel(table, -1);
         tableProgressInformationPanel.setProgressFinished();
     }
@@ -289,10 +291,10 @@ public class ProgressInformationPanel extends DCPanel {
             addUserLog("Job success! Elapsed time: " + _stopWatch);
         }
 
-        Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
+        final Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
                 .values();
 
-        for (TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
+        for (final TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
             tableProgressInformationPanel.setProgressFinished();
         }
     }
@@ -308,7 +310,7 @@ public class ProgressInformationPanel extends DCPanel {
         sb.append('\n');
         sb.append('\n');
         sb.append(messageString);
-        for (RestrictedFunctionalityCallToAction callToAction : callToActions) {
+        for (final RestrictedFunctionalityCallToAction callToAction : callToActions) {
             sb.append('\n');
             sb.append(" - " + callToAction.getName() + " - " + callToAction.getHref());
         }

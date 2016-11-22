@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link TokenizerTransformer}.
- * 
+ *
  * @author Kasper Sørensen
  */
 class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
@@ -51,22 +51,22 @@ class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
     private SingleNumberPropertyWidget _numTokensPropertyWidget;
     private SingleEnumPropertyWidget _tokenTargetPropertyWidget;
 
-    public TokenizerJobBuilderPresenter(TransformerComponentBuilder<?> transformerJobBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration) {
+    public TokenizerJobBuilderPresenter(final TransformerComponentBuilder<?> transformerJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         final PropertyWidget<?> propertyWidget = super.createPropertyWidget(componentBuilder, propertyDescriptor);
         final String propertyName = propertyDescriptor.getName();
         if ("Token target".equals(propertyName)) {
             _tokenTargetPropertyWidget = (SingleEnumPropertyWidget) propertyWidget;
             _tokenTargetPropertyWidget.addComboListener(new Listener<Enum<?>>() {
                 @Override
-                public void onItemSelected(Enum<?> item) {
+                public void onItemSelected(final Enum<?> item) {
                     if (_numTokensPropertyWidget == null) {
                         logger.warn("No property widget for 'num tokens' found!");
                         return;
@@ -81,7 +81,7 @@ class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
                     }
                 }
             });
-            
+
             if (_numTokensPropertyWidget != null && _tokenTargetPropertyWidget.getValue() == TokenTarget.ROWS) {
                 _numTokensPropertyWidget.setEnabled(false);
             }

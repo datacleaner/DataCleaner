@@ -30,24 +30,24 @@ public interface ReferenceData extends Serializable, HasName {
 
     /**
      * Gets the name of the reference data item.
-     * 
+     *
      * @return a String containing the name of this reference data item.
      */
     @Override
-    public String getName();
+    String getName();
 
     /**
      * Gets an optional description of the reference data item.
-     * 
+     *
      * @return a String description, or null if no description is available.
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Sets the description of the reference data item.
-     * 
+     *
      * @param description
      *            the new description of the reference data item.
      */
-    public void setDescription(String description);
+    void setDescription(String description);
 }

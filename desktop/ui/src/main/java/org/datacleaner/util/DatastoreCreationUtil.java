@@ -50,14 +50,14 @@ public class DatastoreCreationUtil {
 
         private final List<String> _extensions;
 
-        private FileDatastoreEnum(String... extensions) {
+        FileDatastoreEnum(final String... extensions) {
             _extensions = Arrays.asList(extensions);
         }
 
-        protected static FileDatastoreEnum getDatastoreTypeFromResource(Resource resource) {
+        protected static FileDatastoreEnum getDatastoreTypeFromResource(final Resource resource) {
             final String extension = FilenameUtils.getExtension(resource.getName());
 
-            for (FileDatastoreEnum datastoreType : EnumSet.allOf(FileDatastoreEnum.class)) {
+            for (final FileDatastoreEnum datastoreType : EnumSet.allOf(FileDatastoreEnum.class)) {
                 if (datastoreType._extensions.contains(extension.toLowerCase())) {
                     return datastoreType;
                 }
@@ -67,19 +67,19 @@ public class DatastoreCreationUtil {
         }
     }
 
-    public static FileDatastoreEnum inferDatastoreTypeFromResource(Resource resource) {
+    public static FileDatastoreEnum inferDatastoreTypeFromResource(final Resource resource) {
         if (resource instanceof FileResource) {
-            FileResource fileResource = (FileResource) resource;
+            final FileResource fileResource = (FileResource) resource;
             final File file = fileResource.getFile();
             if (file.isDirectory()) {
                 return FileDatastoreEnum.SAS;
             }
         }
-        
+
         return FileDatastoreEnum.getDatastoreTypeFromResource(resource);
     }
 
-    public static Datastore createAndAddUniqueDatastoreFromResource(DatastoreCatalog catalog, Resource resource) {
+    public static Datastore createAndAddUniqueDatastoreFromResource(final DatastoreCatalog catalog, final Resource resource) {
         String name = resource.getName();
         if (catalog.containsDatastore(name)) {
             final String originalName = name;
@@ -88,22 +88,23 @@ public class DatastoreCreationUtil {
                 name = originalName + "_" + prefix++;
             } while (catalog.containsDatastore(name));
         }
-        Datastore datastore = createDatastoreFromResource(resource, name);
+        final Datastore datastore = createDatastoreFromResource(resource, name);
         if (catalog instanceof MutableDatastoreCatalog) {
             ((MutableDatastoreCatalog) catalog).addDatastore(datastore);
         }
         return datastore;
     }
 
-    public static Datastore createDatastoreFromResource(Resource resource, String datastoreName) {
+    public static Datastore createDatastoreFromResource(final Resource resource, final String datastoreName) {
         return createDatastoreFromEnum(inferDatastoreTypeFromResource(resource), resource, datastoreName);
     }
 
-    public static Datastore createDatastoreFromEnum(FileDatastoreEnum fileDatastore, Resource resource, String datastoreName) {
+    public static Datastore createDatastoreFromEnum(final FileDatastoreEnum fileDatastore, final Resource resource,
+            final String datastoreName) {
         if (fileDatastore == null) {
             throw new IllegalArgumentException("Unrecognized file type for: " + resource.getQualifiedPath());
         }
-        
+
         switch (fileDatastore) {
         case CSV:
             final CsvConfigurationDetection detection = new CsvConfigurationDetection(resource);
@@ -114,7 +115,7 @@ public class DatastoreCreationUtil {
         case ACCESS:
             return new AccessDatastore(datastoreName, resource.getQualifiedPath());
         case SAS:
-            FileResource fileResource = (FileResource) resource;
+            final FileResource fileResource = (FileResource) resource;
             return new SasDatastore(datastoreName, fileResource.getFile());
         case DBASE:
             return new DbaseDatastore(datastoreName, resource.getQualifiedPath());

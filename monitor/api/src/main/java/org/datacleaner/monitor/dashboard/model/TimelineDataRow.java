@@ -34,7 +34,7 @@ public class TimelineDataRow implements Comparable<TimelineDataRow>, Serializabl
     private List<Number> _metricValues;
     private String _resultFilePath;
 
-    public TimelineDataRow(Date date, String resultFilePath) {
+    public TimelineDataRow(final Date date, final String resultFilePath) {
         _date = date;
         _resultFilePath = resultFilePath;
     }
@@ -47,15 +47,15 @@ public class TimelineDataRow implements Comparable<TimelineDataRow>, Serializabl
         return _date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(final Date date) {
         _date = date;
     }
-    
+
     public String getResultFilePath() {
         return _resultFilePath;
     }
-    
-    public void setResultFilePath(String resultFilePath) {
+
+    public void setResultFilePath(final String resultFilePath) {
         _resultFilePath = resultFilePath;
     }
 
@@ -63,7 +63,7 @@ public class TimelineDataRow implements Comparable<TimelineDataRow>, Serializabl
         return _metricValues;
     }
 
-    public void setMetricValues(List<Number> metricValues) {
+    public void setMetricValues(final List<Number> metricValues) {
         _metricValues = metricValues;
     }
 
@@ -73,22 +73,22 @@ public class TimelineDataRow implements Comparable<TimelineDataRow>, Serializabl
     }
 
     @SuppressWarnings("deprecation")
-    private String format(Date d) {
+    private String format(final Date d) {
         return (d.getYear() + 1900) + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":"
                 + d.getMinutes();
     }
 
     @Override
-    public int compareTo(TimelineDataRow other) {
+    public int compareTo(final TimelineDataRow other) {
         int diff = _date.compareTo(other.getDate());
         if (diff != 0) {
             return diff;
         }
 
-        List<Number> otherMetricValues = other.getMetricValues();
+        final List<Number> otherMetricValues = other.getMetricValues();
         for (int i = 0; i < _metricValues.size(); i++) {
-            Number metricValue = _metricValues.get(i);
-            Number otherMetricValue = otherMetricValues.get(i);
+            final Number metricValue = _metricValues.get(i);
+            final Number otherMetricValue = otherMetricValues.get(i);
             diff = metricValue.intValue() - otherMetricValue.intValue();
             if (diff != 0) {
                 return diff;

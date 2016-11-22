@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.transform;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -84,7 +84,7 @@ public class RemoveDictionaryMatchesTransformerTest {
                 .getOutputColumns().toString());
         assertEquals(List.class, transformer.getOutputColumns().getColumnType(1));
     }
-    
+
     @Test
     public void testWordBoundarySplitting() throws Throwable {
         transformer._removedMatchesType = RemovedMatchesType.STRING;

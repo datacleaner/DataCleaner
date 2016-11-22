@@ -69,7 +69,7 @@ public class CompoundComponentRequirementRejectionStreetTest extends TestCase {
     public void testScenario() throws Throwable {
         final AnalysisJob job;
 
-        try (DatastoreConnection connection = datastore.openConnection();) {
+        try (DatastoreConnection connection = datastore.openConnection()) {
             final DataContext dataContext = connection.getDataContext();
             final Table table = dataContext.getTableByQualifiedLabel("PUBLIC.CUSTOMERS");
             final Row row = MetaModelHelper.executeSingleRowQuery(dataContext, dataContext.query().from(table)
@@ -93,8 +93,9 @@ public class CompoundComponentRequirementRejectionStreetTest extends TestCase {
                 trans1.setName("trans1");
                 trans1.addInputColumn(jobBuilder.getSourceColumns().get(0));
 
-                final FilterComponentBuilder<EvenOddFilter, org.datacleaner.test.mock.EvenOddFilter.Category> filter1 = jobBuilder
-                        .addFilter(EvenOddFilter.class);
+                final FilterComponentBuilder<EvenOddFilter, org.datacleaner.test.mock.EvenOddFilter.Category> filter1 =
+                        jobBuilder
+                                .addFilter(EvenOddFilter.class);
                 filter1.setName("filter1");
                 filter1.addInputColumn(trans1.getOutputColumns().get(0));
 
@@ -104,8 +105,9 @@ public class CompoundComponentRequirementRejectionStreetTest extends TestCase {
                 trans2.addInputColumn(jobBuilder.getSourceColumns().get(1));
                 trans2.setRequirement(filter1, valid);
 
-                final FilterComponentBuilder<EvenOddFilter, org.datacleaner.test.mock.EvenOddFilter.Category> filter2 = jobBuilder
-                        .addFilter(EvenOddFilter.class);
+                final FilterComponentBuilder<EvenOddFilter, org.datacleaner.test.mock.EvenOddFilter.Category> filter2 =
+                        jobBuilder
+                                .addFilter(EvenOddFilter.class);
                 filter2.setName("filter2");
                 filter2.addInputColumn(trans2.getOutputColumns().get(0));
 

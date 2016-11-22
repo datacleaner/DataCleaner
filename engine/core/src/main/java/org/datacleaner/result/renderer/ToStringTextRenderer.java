@@ -28,7 +28,7 @@ import org.datacleaner.api.RendererPrecedence;
 
 /**
  * A very simple renderer that "renders" the toString() method of results, if a specialized toString() method is available.
- * 
+ *
  * Mostly used for testing (or result types that implement a meaningful
  * toString() method.
  */
@@ -36,21 +36,21 @@ import org.datacleaner.api.RendererPrecedence;
 public class ToStringTextRenderer implements Renderer<AnalyzerResult, String> {
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerResult renderable) {
+    public RendererPrecedence getPrecedence(final AnalyzerResult renderable) {
         try {
             // only apply to classes that has a specialized toString() method.
             final Method toStringMethod = renderable.getClass().getDeclaredMethod("toString");
             if (toStringMethod != null) {
                 return RendererPrecedence.LOW;
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // ignore
         }
         return RendererPrecedence.NOT_CAPABLE;
     }
 
     @Override
-    public String render(AnalyzerResult result) {
+    public String render(final AnalyzerResult result) {
         return result.toString();
     }
 

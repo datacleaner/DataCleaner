@@ -50,7 +50,7 @@ public class ErrorDialog extends AbstractDialog {
     private final String _shortMessage;
     private final String _detailedMessage;
 
-    public ErrorDialog(String shortMessage, String detailedMessage) {
+    public ErrorDialog(final String shortMessage, final String detailedMessage) {
         super(null, ImageManager.get().getImage("images/window/banner-error.png"));
         _shortMessage = shortMessage;
         _detailedMessage = detailedMessage;
@@ -90,7 +90,7 @@ public class ErrorDialog extends AbstractDialog {
         detailedMessagePane.setOpaque(false);
         detailedMessagePane.addHyperlinkListener(new HyperlinkListener() {
             @Override
-            public void hyperlinkUpdate(HyperlinkEvent event) {
+            public void hyperlinkUpdate(final HyperlinkEvent event) {
                 if (HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
                     final String href = event.getDescription();
                     if (!Strings.isNullOrEmpty(href)) {
@@ -105,7 +105,7 @@ public class ErrorDialog extends AbstractDialog {
         final JButton button = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
         button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 ErrorDialog.this.close();
             }
         });

@@ -58,14 +58,14 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link MonitorHttpClient} for CAS (Centralized Authentication System) enabled
  * environments.
- * 
+ *
  * This client requires that CAS is installed with the RESTful API, which is
  * described in detail here: https://wiki.jasig.org/display/CASUM/RESTful+API
  */
 public class CASMonitorHttpClient implements MonitorHttpClient {
 
     private static final Logger logger = LoggerFactory.getLogger(CASMonitorHttpClient.class);
-    
+
     private final Charset charset = Charset.forName("UTF-8");
 
     private final CloseableHttpClient _httpClient;
@@ -77,8 +77,8 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
     private String _requestedService;
     private String _casRestServiceUrl;
 
-    public CASMonitorHttpClient(CloseableHttpClient client, String casServerUrl, String username, String password,
-            String monitorBaseUrl) {
+    public CASMonitorHttpClient(final CloseableHttpClient client, final String casServerUrl, final String username, final String password,
+            final String monitorBaseUrl) {
         _httpClient = client;
         _casServerUrl = casServerUrl;
         _username = username;
@@ -105,7 +105,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
                     logger.debug("Got a ticket granting ticket: {}", ticketGrantingTicket);
 
                     return ticketGrantingTicket;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     if (e instanceof RuntimeException) {
                         throw (RuntimeException) e;
                     }
@@ -151,7 +151,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
     protected String retrieveTicketGrantingTicket() throws Exception {
         try {
             return _ticketGrantingTicketRef.get();
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             if (e.getCause() instanceof SSLPeerUnverifiedException) {
                 // Unverified SSL peer exceptions needs to be rethrown
                 // specifically, since they can be caught and the user may
@@ -159,21 +159,21 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
                 throw (SSLPeerUnverifiedException) e.getCause();
             }
             throw e;
-        }        
+        }
     }
-    
+
     /**
      * Override this method to add extra security headers when needed.
-     * 
+     *
      * @param request The request.
      * @throws Exception Adding the headers resulted in a problem.
      */
-    protected void addSecurityHeaders(HttpUriRequest request) throws Exception {
+    protected void addSecurityHeaders(final HttpUriRequest request) throws Exception {
         // Nothing to do...
     }
-    
+
     protected String getTicket(final String requestedService, final String casServiceUrl,
-            final String ticketGrantingTicket, HttpContext context) throws IOException, Exception {
+            final String ticketGrantingTicket, final HttpContext context) throws IOException, Exception {
         final HttpPost post = new HttpPost(casServiceUrl + "/" + ticketGrantingTicket);
         final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
         parameters.add(new BasicNameValuePair("service", requestedService));
@@ -186,7 +186,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         return ticket;
     }
 
-    protected HttpResponse executeHttpRequest(HttpUriRequest req, HttpContext context) throws IOException {
+    protected HttpResponse executeHttpRequest(final HttpUriRequest req, final HttpContext context) throws IOException {
         logger.debug("Executing HTTP request: {}", req);
         return _httpClient.execute(req, context);
     }
@@ -200,8 +200,9 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
 
         if (statusCode == 302) {
             final String reason = statusLine.getReasonPhrase();
-            throwError("Unexpected HTTP status code from CAS service: 302. This indicates that the RESTful API for CAS is not installed. Reason: "
-                    + reason);
+            throwError(
+                    "Unexpected HTTP status code from CAS service: 302. This indicates that the RESTful API for CAS is not installed. Reason: "
+                            + reason);
         }
 
         if (statusCode != 201) {
@@ -217,7 +218,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         ticketServiceRequest.releaseConnection();
 
         final String locationResponse = locationHeader.getValue();
-        int tgtIndex = locationResponse.indexOf("TGT");
+        final int tgtIndex = locationResponse.indexOf("TGT");
         if (tgtIndex == -1) {
             throwError("No TGT element in 'Location' header: " + locationResponse);
         }
@@ -231,7 +232,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         return ticketGrantingTicket;
     }
 
-    private String readResponse(HttpEntity entity) throws Exception {
+    private String readResponse(final HttpEntity entity) throws Exception {
         final InputStream in = entity.getContent();
         if (in == null) {
             return null;
@@ -256,7 +257,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         }
     }
 
-    private void throwError(String message) throws Exception {
+    private void throwError(final String message) throws Exception {
         throw new IllegalStateException(message);
     }
 
@@ -274,13 +275,13 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
                 } else {
                     EntityUtils.consume(response.getEntity());
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Failed to log out of CAS: " + e.getMessage(), e);
             } finally {
                 request.releaseConnection();
             }
         }
-        
+
         FileHelper.safeClose(_httpClient);
     }
 
@@ -291,7 +292,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
     protected String getCasServerUrl() {
         return _casServerUrl;
     }
-    
+
     /**
      * Returns the user name.
      * @return The username.

@@ -22,25 +22,25 @@ package org.datacleaner.job;
 /**
  * Exception thrown in case a job is being opened and it references an
  * unexisting datastore.
- * 
- * 
+ *
+ *
  */
 public class NoSuchDatastoreException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
-	private final String _datastoreName;
+    private static final long serialVersionUID = 1L;
+    private final String _datastoreName;
 
-	public NoSuchDatastoreException(String datastoreName) {
-		super();
-		_datastoreName = datastoreName;
-	}
+    public NoSuchDatastoreException(final String datastoreName) {
+        super();
+        _datastoreName = datastoreName;
+    }
 
-	public String getDatastoreName() {
-		return _datastoreName;
-	}
+    public String getDatastoreName() {
+        return _datastoreName;
+    }
 
-	@Override
-	public String getMessage() {
-		return "No such datastore: " + _datastoreName;
-	}
+    @Override
+    public String getMessage() {
+        return "No such datastore: " + _datastoreName;
+    }
 }

@@ -46,8 +46,8 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
             final DomConfigurationWriter configurationWriter, final UserPreferences userPreferences) {
         _configurationWriter = configurationWriter;
         _userPreferences = userPreferences;
-        String[] datastoreNames = immutableDelegate.getDatastoreNames();
-        for (String name : datastoreNames) {
+        final String[] datastoreNames = immutableDelegate.getDatastoreNames();
+        for (final String name : datastoreNames) {
             if (containsDatastore(name)) {
                 // remove any copies of the datastore - the immutable (XML)
                 // version should always win
@@ -57,14 +57,14 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
         }
     }
 
-    public void removeDatastore(Datastore ds) {
+    public void removeDatastore(final Datastore ds) {
         removeDatastore(ds, true);
     }
 
-    private synchronized void removeDatastore(Datastore ds, boolean externalize) {
+    private synchronized void removeDatastore(final Datastore ds, final boolean externalize) {
         final List<Datastore> datastores = _userPreferences.getUserDatastores();
         if (datastores.remove(ds)) {
-            for (DatastoreChangeListener listener : _listeners) {
+            for (final DatastoreChangeListener listener : _listeners) {
                 listener.onRemove(ds);
             }
         }
@@ -74,23 +74,23 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
         }
     }
 
-    public void addDatastore(Datastore ds) {
+    public void addDatastore(final Datastore ds) {
         addDatastore(ds, true);
     }
 
-    private synchronized void addDatastore(Datastore ds, boolean externalize) {
+    private synchronized void addDatastore(final Datastore ds, final boolean externalize) {
         final String name = ds.getName();
         if (StringUtils.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Datastore has no name!");
         }
         final List<Datastore> datastores = _userPreferences.getUserDatastores();
-        for (Datastore datastore : datastores) {
+        for (final Datastore datastore : datastores) {
             if (name.equals(datastore.getName())) {
                 throw new IllegalArgumentException("A datastore with the name '" + name + "' already exists!");
             }
         }
         datastores.add(ds);
-        for (DatastoreChangeListener listener : _listeners) {
+        for (final DatastoreChangeListener listener : _listeners) {
             listener.onAdd(ds);
         }
         if (externalize) {
@@ -104,7 +104,7 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
     @Override
     public String[] getDatastoreNames() {
         final List<Datastore> datastores = _userPreferences.getUserDatastores();
-        String[] names = new String[datastores.size()];
+        final String[] names = new String[datastores.size()];
         for (int i = 0; i < names.length; i++) {
             names[i] = datastores.get(i).getName();
         }
@@ -112,12 +112,12 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
     }
 
     @Override
-    public Datastore getDatastore(String name) {
+    public Datastore getDatastore(final String name) {
         if (name == null) {
             return null;
         }
         final List<Datastore> datastores = _userPreferences.getUserDatastores();
-        for (Datastore datastore : datastores) {
+        for (final Datastore datastore : datastores) {
             if (name.equals(datastore.getName())) {
                 return datastore;
             }
@@ -125,12 +125,12 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
         return null;
     }
 
-    public void addListener(DatastoreChangeListener listener) {
+    public void addListener(final DatastoreChangeListener listener) {
         _listeners.add(listener);
     }
 
-    public void removeListener(DatastoreChangeListener listener) {
+    public void removeListener(final DatastoreChangeListener listener) {
         _listeners.remove(listener);
     }
-    
+
 }

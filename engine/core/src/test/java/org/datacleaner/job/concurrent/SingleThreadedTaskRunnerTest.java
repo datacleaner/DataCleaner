@@ -19,47 +19,45 @@
  */
 package org.datacleaner.job.concurrent;
 
-import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
-import org.datacleaner.job.concurrent.TaskRunner;
-import org.datacleaner.job.tasks.Task;
-
 import junit.framework.TestCase;
+
+import org.datacleaner.job.tasks.Task;
 
 public class SingleThreadedTaskRunnerTest extends TestCase {
 
-	private static class SimpleRecursiveTask implements Task {
-		private TaskRunner taskRunner;
-		private Task nextTask;
-		private char charToPrint;
-		private StringBuilder sb;
+    private static class SimpleRecursiveTask implements Task {
+        private TaskRunner taskRunner;
+        private Task nextTask;
+        private char charToPrint;
+        private StringBuilder sb;
 
-		public SimpleRecursiveTask(StringBuilder sb, char c, Task nextTask, TaskRunner taskRunner) {
-			this.sb = sb;
-			this.charToPrint = c;
-			this.nextTask = nextTask;
-			this.taskRunner = taskRunner;
-		}
+        public SimpleRecursiveTask(StringBuilder sb, char c, Task nextTask, TaskRunner taskRunner) {
+            this.sb = sb;
+            this.charToPrint = c;
+            this.nextTask = nextTask;
+            this.taskRunner = taskRunner;
+        }
 
-		@Override
-		public void execute() throws Exception {
-			sb.append(charToPrint);
-			if (nextTask != null) {
-				taskRunner.run(nextTask, null);
-			}
-			sb.append(charToPrint);
-		}
-	}
+        @Override
+        public void execute() throws Exception {
+            sb.append(charToPrint);
+            if (nextTask != null) {
+                taskRunner.run(nextTask, null);
+            }
+            sb.append(charToPrint);
+        }
+    }
 
-	public void testNonQueuedChronology() throws Exception {
-		SingleThreadedTaskRunner runner = new SingleThreadedTaskRunner();
+    public void testNonQueuedChronology() throws Exception {
+        SingleThreadedTaskRunner runner = new SingleThreadedTaskRunner();
 
-		StringBuilder sb = new StringBuilder();
-		Task task3 = new SimpleRecursiveTask(sb, 'c', null, null);
-		Task task2 = new SimpleRecursiveTask(sb, 'b', task3, runner);
-		Task task1 = new SimpleRecursiveTask(sb, 'a', task2, runner);
+        StringBuilder sb = new StringBuilder();
+        Task task3 = new SimpleRecursiveTask(sb, 'c', null, null);
+        Task task2 = new SimpleRecursiveTask(sb, 'b', task3, runner);
+        Task task1 = new SimpleRecursiveTask(sb, 'a', task2, runner);
 
-		runner.run(task1, null);
+        runner.run(task1, null);
 
-		assertEquals("abccba", sb.toString());
-	}
+        assertEquals("abccba", sb.toString());
+    }
 }

@@ -29,117 +29,117 @@ import org.datacleaner.result.renderer.TextRenderingFormat;
 
 public class MockRenderers {
 
-	public static class RenderableString implements Renderable {
-		private final String str;
+    @RendererBean(TextRenderingFormat.class)
+    public interface InvalidRenderer3 extends Renderer<AnalyzerResult, Integer> {
+    }
 
-		public RenderableString(String str) {
-			this.str = str;
-		}
+    public static class RenderableString implements Renderable {
+        private final String str;
 
-		@Override
-		public String toString() {
-			return str;
-		}
-	}
+        public RenderableString(String str) {
+            this.str = str;
+        }
 
-	@RendererBean(TextRenderingFormat.class)
-	public static class FooPrecedenceRenderer implements Renderer<RenderableString, String> {
-		@Override
-		public RendererPrecedence getPrecedence(RenderableString renderable) {
-			if (renderable.toString().equals("foo")) {
-				return RendererPrecedence.HIGHEST;
-			}
-			return RendererPrecedence.HIGH;
-		}
+        @Override
+        public String toString() {
+            return str;
+        }
+    }
 
-		@Override
-		public String render(RenderableString renderable) {
-			return "high";
-		}
-	}
+    @RendererBean(TextRenderingFormat.class)
+    public static class FooPrecedenceRenderer implements Renderer<RenderableString, String> {
+        @Override
+        public RendererPrecedence getPrecedence(RenderableString renderable) {
+            if (renderable.toString().equals("foo")) {
+                return RendererPrecedence.HIGHEST;
+            }
+            return RendererPrecedence.HIGH;
+        }
 
-	@RendererBean(TextRenderingFormat.class)
-	public static class BarPrecedenceRenderer implements Renderer<RenderableString, String> {
-		@Override
-		public RendererPrecedence getPrecedence(RenderableString renderable) {
-			if (renderable.toString().equals("bar")) {
-				return RendererPrecedence.HIGHEST;
-			}
-			return RendererPrecedence.LOW;
-		}
+        @Override
+        public String render(RenderableString renderable) {
+            return "high";
+        }
+    }
 
-		@Override
-		public String render(RenderableString renderable) {
-			return "low";
-		}
-	}
+    @RendererBean(TextRenderingFormat.class)
+    public static class BarPrecedenceRenderer implements Renderer<RenderableString, String> {
+        @Override
+        public RendererPrecedence getPrecedence(RenderableString renderable) {
+            if (renderable.toString().equals("bar")) {
+                return RendererPrecedence.HIGHEST;
+            }
+            return RendererPrecedence.LOW;
+        }
 
-	@RendererBean(TextRenderingFormat.class)
-	public static class ConditionalPrecedenceRenderer implements Renderer<RenderableString, String> {
+        @Override
+        public String render(RenderableString renderable) {
+            return "low";
+        }
+    }
 
-		@Override
-		public RendererPrecedence getPrecedence(RenderableString renderable) {
-			// renderable's toString() method should return the name of the
-			// precedence (can also be used for testing exceptions in
-			// resolving).
-			return RendererPrecedence.valueOf(renderable.toString());
-		}
+    @RendererBean(TextRenderingFormat.class)
+    public static class ConditionalPrecedenceRenderer implements Renderer<RenderableString, String> {
 
-		@Override
-		public String render(RenderableString renderable) {
-			return "low";
-		}
-	}
+        @Override
+        public RendererPrecedence getPrecedence(RenderableString renderable) {
+            // renderable's toString() method should return the name of the
+            // precedence (can also be used for testing exceptions in
+            // resolving).
+            return RendererPrecedence.valueOf(renderable.toString());
+        }
 
-	@RendererBean(TextRenderingFormat.class)
-	public static class InvalidRenderer1 implements Renderer<AnalyzerResult, Object> {
+        @Override
+        public String render(RenderableString renderable) {
+            return "low";
+        }
+    }
 
-		@Override
-		public RendererPrecedence getPrecedence(AnalyzerResult renderable) {
-			return RendererPrecedence.MEDIUM;
-		}
+    @RendererBean(TextRenderingFormat.class)
+    public static class InvalidRenderer1 implements Renderer<AnalyzerResult, Object> {
 
-		@Override
-		public Object render(AnalyzerResult result) {
-			return null;
-		}
-	}
+        @Override
+        public RendererPrecedence getPrecedence(AnalyzerResult renderable) {
+            return RendererPrecedence.MEDIUM;
+        }
 
-	@RendererBean(TextRenderingFormat.class)
-	public static interface InvalidRenderer3 extends Renderer<AnalyzerResult, Integer> {
-	}
+        @Override
+        public Object render(AnalyzerResult result) {
+            return null;
+        }
+    }
 
-	@RendererBean(InvalidRenderingFormat.class)
-	public static class InvalidRenderer4 implements Renderer<AnalyzerResult, Integer> {
+    @RendererBean(InvalidRenderingFormat.class)
+    public static class InvalidRenderer4 implements Renderer<AnalyzerResult, Integer> {
 
-		@Override
-		public RendererPrecedence getPrecedence(AnalyzerResult renderable) {
-			return RendererPrecedence.MEDIUM;
-		}
+        @Override
+        public RendererPrecedence getPrecedence(AnalyzerResult renderable) {
+            return RendererPrecedence.MEDIUM;
+        }
 
-		@Override
-		public Integer render(AnalyzerResult result) {
-			return null;
-		}
-	}
+        @Override
+        public Integer render(AnalyzerResult result) {
+            return null;
+        }
+    }
 
-	public static class InvalidRenderer2 implements Renderer<AnalyzerResult, String> {
-		@Override
-		public RendererPrecedence getPrecedence(AnalyzerResult renderable) {
-			return RendererPrecedence.MEDIUM;
-		}
+    public static class InvalidRenderer2 implements Renderer<AnalyzerResult, String> {
+        @Override
+        public RendererPrecedence getPrecedence(AnalyzerResult renderable) {
+            return RendererPrecedence.MEDIUM;
+        }
 
-		@Override
-		public String render(AnalyzerResult result) {
-			return null;
-		}
-	}
+        @Override
+        public String render(AnalyzerResult result) {
+            return null;
+        }
+    }
 
-	public static abstract class InvalidRenderingFormat implements RenderingFormat<Number> {
+    public abstract static class InvalidRenderingFormat implements RenderingFormat<Number> {
 
-		@Override
-		public Class<Number> getOutputClass() {
-			return Number.class;
-		}
-	}
+        @Override
+        public Class<Number> getOutputClass() {
+            return Number.class;
+        }
+    }
 }

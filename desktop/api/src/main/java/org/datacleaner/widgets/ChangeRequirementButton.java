@@ -54,7 +54,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
     private final ComponentBuilder _componentBuilder;
 
-    public ChangeRequirementButton(ComponentBuilder componentBuilder) {
+    public ChangeRequirementButton(final ComponentBuilder componentBuilder) {
         super(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT, filterIcon);
         _componentBuilder = componentBuilder;
         addActionListener(this);
@@ -63,7 +63,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         final JPopupMenu popup = new JPopupMenu();
 
         final ChangeRequirementMenuBuilder menuBuilder = new ChangeRequirementMenuBuilder(_componentBuilder) {
@@ -73,7 +73,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
             }
         };
         final List<JMenuItem> menuItems = menuBuilder.createMenuItems();
-        for (JMenuItem menuItem : menuItems) {
+        for (final JMenuItem menuItem : menuItems) {
             popup.add(menuItem);
         }
 
@@ -83,7 +83,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     public void updateText() {
         logger.debug("updateText()");
 
-        Runnable runnable = new Runnable() {
+        final Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 final ComponentRequirement requirement = _componentBuilder.getComponentRequirement();
@@ -102,7 +102,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
             } else {
                 SwingUtilities.invokeAndWait(runnable);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Failed to update ChangeRequirementButton", e);
         }
     }

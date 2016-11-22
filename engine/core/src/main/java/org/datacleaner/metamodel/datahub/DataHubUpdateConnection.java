@@ -31,13 +31,13 @@ import org.datacleaner.util.http.MonitorHttpClient;
  * Note: Some REST controllers do not need the tenant info. Others do.
  */
 public class DataHubUpdateConnection {
-    public final static String CONTEXT_PATH = "/service/v1";
-    public final static String GOLDEN_RECORDS_PATH = "/goldenrecords/batch";
-    public final static String SOURCE_RECORDS_PATH = "/sourcerecords/batch";
+    public static final String CONTEXT_PATH = "/service/v1";
+    public static final String GOLDEN_RECORDS_PATH = "/goldenrecords/batch";
+    public static final String SOURCE_RECORDS_PATH = "/sourcerecords/batch";
 
     private final DataHubConnection _connection;
 
-    public DataHubUpdateConnection(DataHubConnection connection) {
+    public DataHubUpdateConnection(final DataHubConnection connection) {
         _connection = connection;
     }
 
@@ -54,17 +54,17 @@ public class DataHubUpdateConnection {
     }
 
     private String getContextUrl() {
-        URIBuilder uriBuilder = _connection.getBaseUrlBuilder();
+        final URIBuilder uriBuilder = _connection.getBaseUrlBuilder();
         appendToPath(uriBuilder, CONTEXT_PATH);
 
         try {
             return uriBuilder.build().toString();
-        } catch (URISyntaxException uriSyntaxException) {
+        } catch (final URISyntaxException uriSyntaxException) {
             throw new IllegalStateException(uriSyntaxException);
         }
     }
 
-    private URIBuilder appendToPath(URIBuilder uriBuilder, String pathSegment) {
+    private URIBuilder appendToPath(final URIBuilder uriBuilder, final String pathSegment) {
         if (uriBuilder.getPath() != null) {
             uriBuilder.setPath(uriBuilder.getPath() + pathSegment);
         }

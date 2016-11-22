@@ -30,7 +30,7 @@ public interface ServerInformationCatalog extends Serializable {
      * @param name
      * @return
      */
-    public default boolean containsServer(String name) {
+    default boolean containsServer(final String name) {
         return getServer(name) != null;
     }
 
@@ -39,7 +39,7 @@ public interface ServerInformationCatalog extends Serializable {
      *
      * @return
      */
-    public String[] getServerNames();
+    String[] getServerNames();
 
     /**
      * Gets a server by its name.
@@ -47,5 +47,5 @@ public interface ServerInformationCatalog extends Serializable {
      * @param name
      * @return ServerInformation requested, or if no such server, null
      */
-    public ServerInformation getServer(String name);
+    ServerInformation getServer(String name);
 }

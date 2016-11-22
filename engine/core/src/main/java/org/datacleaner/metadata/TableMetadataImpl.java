@@ -35,9 +35,9 @@ public final class TableMetadataImpl extends AbstractHasMetadataAnnotations impl
     private final ImmutableList<ColumnMetadata> _columnMetadata;
     private final ImmutableList<ColumnGroupMetadata> _columnGroupMetadata;
 
-    public TableMetadataImpl(String tableName, Collection<? extends ColumnMetadata> columnMetadata,
-            Collection<? extends ColumnGroupMetadata> columnGroupMetadata,
-            Collection<? extends MetadataAnnotation> annotations) {
+    public TableMetadataImpl(final String tableName, final Collection<? extends ColumnMetadata> columnMetadata,
+            final Collection<? extends ColumnGroupMetadata> columnGroupMetadata,
+            final Collection<? extends MetadataAnnotation> annotations) {
         super(annotations);
         _tableName = tableName;
         _columnMetadata = ImmutableList.copyOf(columnMetadata);
@@ -50,12 +50,12 @@ public final class TableMetadataImpl extends AbstractHasMetadataAnnotations impl
     }
 
     @Override
-    public ColumnMetadata getColumnMetadataByName(String columnName) {
+    public ColumnMetadata getColumnMetadataByName(final String columnName) {
         return getByName(columnName, _columnMetadata);
     }
 
     @Override
-    public ColumnMetadata getColumnMetadata(Column column) {
+    public ColumnMetadata getColumnMetadata(final Column column) {
         if (column == null) {
             return null;
         }
@@ -69,7 +69,7 @@ public final class TableMetadataImpl extends AbstractHasMetadataAnnotations impl
     }
 
     @Override
-    public ColumnGroupMetadata getColumnGroupMetadataByName(String groupName) {
+    public ColumnGroupMetadata getColumnGroupMetadataByName(final String groupName) {
         return getByName(groupName, _columnGroupMetadata);
     }
 

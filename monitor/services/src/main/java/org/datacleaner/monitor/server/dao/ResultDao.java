@@ -36,37 +36,37 @@ public interface ResultDao {
     /**
      * Gets all results (as a list of {@link RepositoryFile}s) for a particular
      * job.
-     * 
+     *
      * Use {@link #getResult(TenantIdentifier, RepositoryFile)} on relevant
      * elements of the list, if needed.
-     * 
+     *
      * @param tenantIdentifier
      * @param job
      * @return
      */
-    public List<RepositoryFile> getResultsForJob(TenantIdentifier tenantIdentifier, JobIdentifier job);
+    List<RepositoryFile> getResultsForJob(TenantIdentifier tenantIdentifier, JobIdentifier job);
 
     /**
      * Gets a {@link ResultContext} of a particular {@link RepositoryFile}.
-     * 
+     *
      * @param tenant
      * @param resultFile
      * @return
      */
-    public ResultContext getResult(TenantIdentifier tenant, RepositoryFile resultFile);
+    ResultContext getResult(TenantIdentifier tenant, RepositoryFile resultFile);
 
     /**
      * Gets the latest result of a particular job
-     * 
+     *
      * @param tenant
      * @param job
      * @return
      */
-    public ResultContext getLatestResult(TenantIdentifier tenant, JobIdentifier job);
+    ResultContext getLatestResult(TenantIdentifier tenant, JobIdentifier job);
 
     /**
      * Updates an existing result with a new job and/or new timestamp
-     * 
+     *
      * @param tenantIdentifier
      * @param resultFile
      * @param newJob
@@ -75,12 +75,12 @@ public interface ResultDao {
      *            the new timestamp of the result, or null if unchanged
      * @return
      */
-    public ResultContext updateResult(TenantIdentifier tenantIdentifier, RepositoryFile resultFile,
+    ResultContext updateResult(TenantIdentifier tenantIdentifier, RepositoryFile resultFile,
             JobIdentifier newJob, Date newTimestamp);
 
     /**
      * Updates an existing result with a new job and/or new timestamp
-     * 
+     *
      * @param tenantIdentifier
      * @param repositoryFile
      * @param newJob
@@ -89,6 +89,6 @@ public interface ResultDao {
      *            the new timestamp of the result, or null if unchanged
      * @return
      */
-    public ResultContext updateResult(TenantIdentifier tenantIdentifier, ResultContext result, JobIdentifier newJob,
+    ResultContext updateResult(TenantIdentifier tenantIdentifier, ResultContext result, JobIdentifier newJob,
             Date newTimestamp);
 }

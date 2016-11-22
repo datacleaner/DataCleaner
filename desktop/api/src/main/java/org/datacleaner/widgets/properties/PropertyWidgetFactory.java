@@ -28,18 +28,18 @@ import org.datacleaner.job.builder.ComponentBuilder;
  */
 public interface PropertyWidgetFactory {
 
-    public PropertyWidgetCollection getPropertyWidgetCollection();
+    PropertyWidgetCollection getPropertyWidgetCollection();
 
-    public ComponentBuilder getComponentBuilder();
+    ComponentBuilder getComponentBuilder();
 
-    public PropertyWidget<?> create(String propertyName);
+    PropertyWidget<?> create(String propertyName);
 
     /**
      * Creates (and registers) a widget that fits the specified configured
      * property.
-     * 
+     *
      * @param propertyDescriptor
      * @return
      */
-    public PropertyWidget<?> create(ConfiguredPropertyDescriptor propertyDescriptor);
+    PropertyWidget<?> create(ConfiguredPropertyDescriptor propertyDescriptor);
 }

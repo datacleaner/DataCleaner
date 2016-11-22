@@ -169,7 +169,8 @@ public class DashboardServiceImplTest extends TestCase {
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
         String name = "Product type distribution (the lower the better).analysis.timeline.xml";
-        String path = "/tenant1/timelines/Product data/Product type distribution (the lower the better).analysis.timeline.xml";
+        String path =
+                "/tenant1/timelines/Product data/Product type distribution (the lower the better).analysis.timeline.xml";
         DashboardGroup group = new DashboardGroup("Product data");
         TimelineDefinition timeline = service.getTimelineDefinition(tenant, new TimelineIdentifier(name, path, group));
 

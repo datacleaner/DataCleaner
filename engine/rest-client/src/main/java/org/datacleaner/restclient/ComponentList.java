@@ -34,16 +34,6 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
  * @since 24. 07. 2015
  */
 public class ComponentList {
-    private List<ComponentInfo> components = new ArrayList<>();
-
-    public void add(ComponentInfo componentInfo) {
-        components.add(componentInfo);
-    }
-
-    public List<ComponentInfo> getComponents() {
-        return components;
-    }
-
     /**
      * Data storage class for particular component.
      */
@@ -56,27 +46,29 @@ public class ComponentList {
         private Boolean isEnabled = null;
         private byte[] iconData = null;
 
-        public ComponentInfo setProperties(Map<String, PropertyInfo> properties) {
-            this.properties = properties;
-            return this;
-        }
-
         public Map<String, PropertyInfo> getProperties() {
             return properties;
+        }
+
+        public ComponentInfo setProperties(final Map<String, PropertyInfo> properties) {
+            this.properties = properties;
+            return this;
         }
 
         public String getName() {
             return name;
         }
 
-        public ComponentInfo setName(String name) {
+        public ComponentInfo setName(final String name) {
             this.name = name;
             return this;
         }
 
-        public JsonNode getAnnotations() { return annotations; }
+        public JsonNode getAnnotations() {
+            return annotations;
+        }
 
-        public void setAnnotations(JsonNode annotations) {
+        public void setAnnotations(final JsonNode annotations) {
             this.annotations = annotations;
         }
 
@@ -84,7 +76,7 @@ public class ComponentList {
             return createURL;
         }
 
-        public ComponentInfo setCreateURL(String createURL) {
+        public ComponentInfo setCreateURL(final String createURL) {
             this.createURL = createURL;
             return this;
         }
@@ -93,7 +85,7 @@ public class ComponentList {
             return iconData;
         }
 
-        public ComponentInfo setIconData(byte[] iconData) {
+        public ComponentInfo setIconData(final byte[] iconData) {
             this.iconData = iconData;
             return this;
         }
@@ -109,7 +101,7 @@ public class ComponentList {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonPropertyOrder({ "name", "type", "description", "required", "inputColumn"})
+    @JsonPropertyOrder({ "name", "type", "description", "required", "inputColumn" })
     public static class PropertyInfo {
         private String name;
         /** More human-readable class name, which contains also info about generics. */
@@ -123,7 +115,7 @@ public class ComponentList {
         private JsonNode annotations;
         private JsonNode defaultValue;
 
-        public void setIsInputColumn(boolean inputColumn) {
+        public void setIsInputColumn(final boolean inputColumn) {
             isInputColumn = inputColumn;
         }
 
@@ -131,39 +123,39 @@ public class ComponentList {
             return isInputColumn;
         }
 
-        public void setInputColumn(boolean inputColumn) {
+        public void setInputColumn(final boolean inputColumn) {
             isInputColumn = inputColumn;
-        }
-
-        public void setName(String name) {
-            this.name = name;
         }
 
         public String getName() {
             return name;
         }
 
-        public void setDescription(String description) {
-            this.description = description;
+        public void setName(final String name) {
+            this.name = name;
         }
 
         public String getDescription() {
             return description;
         }
 
-        public void setRequired(boolean required) {
-            this.required = required;
+        public void setDescription(final String description) {
+            this.description = description;
         }
 
         public boolean isRequired() {
             return required;
         }
 
+        public void setRequired(final boolean required) {
+            this.required = required;
+        }
+
         public String getClassName() {
             return className;
         }
 
-        public void setClassName(String className) {
+        public void setClassName(final String className) {
             this.className = className;
         }
 
@@ -171,7 +163,7 @@ public class ComponentList {
             return schema;
         }
 
-        public void setSchema(JsonSchema schema) {
+        public void setSchema(final JsonSchema schema) {
             this.schema = schema;
         }
 
@@ -179,20 +171,33 @@ public class ComponentList {
             return classDetails;
         }
 
-        public void setClassDetails(String classDetails) {
+        public void setClassDetails(final String classDetails) {
             this.classDetails = classDetails;
         }
 
-        public JsonNode getAnnotations() { return annotations; }
+        public JsonNode getAnnotations() {
+            return annotations;
+        }
 
-        public void setAnnotations(JsonNode annotations) { this.annotations = annotations; }
+        public void setAnnotations(final JsonNode annotations) {
+            this.annotations = annotations;
+        }
 
         public JsonNode getDefaultValue() {
             return defaultValue;
         }
 
-        public void setDefaultValue(JsonNode defaultValue) {
+        public void setDefaultValue(final JsonNode defaultValue) {
             this.defaultValue = defaultValue;
         }
+    }
+    private List<ComponentInfo> components = new ArrayList<>();
+
+    public void add(final ComponentInfo componentInfo) {
+        components.add(componentInfo);
+    }
+
+    public List<ComponentInfo> getComponents() {
+        return components;
     }
 }

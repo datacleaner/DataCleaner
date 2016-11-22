@@ -21,9 +21,9 @@ package org.datacleaner.connection;
 
 import java.util.Arrays;
 
-import org.apache.commons.lang.SerializationUtils;
-
 import junit.framework.TestCase;
+
+import org.apache.commons.lang.SerializationUtils;
 
 public class XmlDatastoreTest extends TestCase {
 
@@ -35,7 +35,7 @@ public class XmlDatastoreTest extends TestCase {
     }
 
     public void testGetDatastoreConnection() throws Exception {
-        try (DatastoreConnection con = ds.openConnection();) {
+        try (DatastoreConnection con = ds.openConnection()) {
             String[] tableNames = con.getDataContext().getDefaultSchema().getTableNames();
             assertEquals("[greeting]", Arrays.toString(tableNames));
         }

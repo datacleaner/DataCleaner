@@ -30,66 +30,66 @@ public interface ConfigurationReaderInterceptor {
     /**
      * Intercepts a filename, allowing for eg. replacing variables or changing
      * relative paths to absolute paths.
-     * 
+     *
      * @param filename
      * @return
-     * 
+     *
      * @deprecated use {@link #createResource(String)} instead.
      */
     @Deprecated
-    public String createFilename(String filename);
+    String createFilename(String filename);
 
     /**
      * Intercepts a resource creation, allowing for eg. limiting types or do
      * special processing.
-     * 
+     *
      * @param resourceUrl
      * @param tempDataCleanerConfiguration The temporary/partially built configuration. Do _not_ store
      * @return
      */
-    public Resource createResource(String resourceUrl, DataCleanerConfiguration tempDataCleanerConfiguration);
+    Resource createResource(String resourceUrl, DataCleanerConfiguration tempDataCleanerConfiguration);
 
     /**
      * Gets a temporary storage directory
-     * 
+     *
      * @return
      */
-    public String getTemporaryStorageDirectory();
+    String getTemporaryStorageDirectory();
 
     /**
      * Loads a class
-     * 
+     *
      * @param className
      * @return
      * @throws ClassNotFoundException
      */
-    public Class<?> loadClass(String className) throws ClassNotFoundException;
+    Class<?> loadClass(String className) throws ClassNotFoundException;
 
     /**
      * Gets an optional override of properties in the configuration.
-     * 
+     *
      * @param variablePath
      *            the path of a variable, eg. "datastoreCatalog.orderdb.url" or
      *            "referenceDataCatalog.my_dictionary.filename".
      * @return a variable override, or null if the variable is not overridden.
      */
-    public String getPropertyOverride(String variablePath);
+    String getPropertyOverride(String variablePath);
 
     /**
      * Creates a base {@link DataCleanerEnvironment} object for initial building
      * of the resulting configuration. This method allows to bootstrap the base
      * configuration used, eg. by providing a specific injection manager.
-     * 
+     *
      * @return a base {@link DataCleanerEnvironment} for further building of the
      *         configuration.
      */
-    public DataCleanerEnvironment createBaseEnvironment();
+    DataCleanerEnvironment createBaseEnvironment();
 
     /**
      * Gets the home folder to use as per
      * {@link DataCleanerConfiguration#getHomeFolder()}.
-     * 
+     *
      * @return
      */
-    public DataCleanerHomeFolder getHomeFolder();
+    DataCleanerHomeFolder getHomeFolder();
 }

@@ -47,8 +47,8 @@ public class StringAnalyzerResultReducer extends AbstractCrosstabResultReducer<S
             StringAnalyzer.MEASURE_MAX_WHITE_SPACES, StringAnalyzer.MEASURE_MAX_WORDS));
 
     @Override
-    protected Serializable reduceValues(List<Object> slaveValues, String category1, String category2,
-            Collection<? extends StringAnalyzerResult> results, Class<?> valueClass) {
+    protected Serializable reduceValues(final List<Object> slaveValues, final String category1, final String category2,
+            final Collection<? extends StringAnalyzerResult> results, final Class<?> valueClass) {
 
         // category2 = measure
 
@@ -63,11 +63,11 @@ public class StringAnalyzerResultReducer extends AbstractCrosstabResultReducer<S
         }
     }
 
-    private Serializable weightedAverage(List<Object> slaveValues, Collection<? extends StringAnalyzerResult> results,
-            String columnName, String measureName) {
+    private Serializable weightedAverage(final List<Object> slaveValues, final Collection<? extends StringAnalyzerResult> results,
+            final String columnName, final String measureName) {
         final AverageBuilder averageBuilder = new AverageBuilder();
 
-        for (StringAnalyzerResult analyzerResult : results) {
+        for (final StringAnalyzerResult analyzerResult : results) {
             final Crosstab<?> crosstab = analyzerResult.getCrosstab();
             final CrosstabNavigator<?> nav = crosstab.where(StringAnalyzer.DIMENSION_COLUMN, columnName);
 
@@ -82,7 +82,8 @@ public class StringAnalyzerResultReducer extends AbstractCrosstabResultReducer<S
     }
 
     @Override
-    protected StringAnalyzerResult buildResult(Crosstab<?> crosstab, Collection<? extends StringAnalyzerResult> results) {
+    protected StringAnalyzerResult buildResult(final Crosstab<?> crosstab,
+            final Collection<? extends StringAnalyzerResult> results) {
         final StringAnalyzerResult firstResult = results.iterator().next();
         final InputColumn<String>[] columns = firstResult.getColumns();
         return new StringAnalyzerResult(columns, crosstab);

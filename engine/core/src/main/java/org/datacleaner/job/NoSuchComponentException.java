@@ -25,8 +25,8 @@ import org.datacleaner.descriptors.DescriptorProvider;
  * Exception thrown in case a job is being opened and it references an
  * unexisting component, such as an analyzer or transformer name which is not
  * resolved using the {@link DescriptorProvider}.
- * 
- * 
+ *
+ *
  */
 public class NoSuchComponentException extends RuntimeException {
 
@@ -35,7 +35,7 @@ public class NoSuchComponentException extends RuntimeException {
     private final Class<?> _componentType;
     private final String _componentName;
 
-    public NoSuchComponentException(Class<?> componentType, String componentName) {
+    public NoSuchComponentException(final Class<?> componentType, final String componentName) {
         super();
         _componentType = componentType;
         _componentName = componentName;
@@ -46,11 +46,11 @@ public class NoSuchComponentException extends RuntimeException {
         return "No such " + (_componentType == null ? "component" : _componentType.getSimpleName())
                 + " descriptor: " + _componentName;
     }
-    
+
     public String getComponentName() {
         return _componentName;
     }
-    
+
     public Class<?> getComponentType() {
         return _componentType;
     }

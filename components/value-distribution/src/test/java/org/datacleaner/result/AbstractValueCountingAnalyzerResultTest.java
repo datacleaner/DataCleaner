@@ -46,7 +46,8 @@ public class AbstractValueCountingAnalyzerResultTest extends TestCase {
 
         Collection<ValueFrequency> reduced = analyzerResult.getReducedValueFrequencies(10);
         assertEquals(list.size(), reduced.size());
-        assertEquals("[[hey->40], [yo->40], [bah->30], [buh->20], [bar->10], [baz->10], [foo->10]]", reduced.toString());
+        assertEquals("[[hey->40], [yo->40], [bah->30], [buh->20], [bar->10], [baz->10], [foo->10]]",
+                reduced.toString());
     }
 
     public void testGetReducedValueFrequenciesExpandUniques() throws Exception {

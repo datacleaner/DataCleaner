@@ -26,7 +26,7 @@ final class ArrayBatchSource<I> implements BatchSource<I> {
 
     private final Object[] _input;
 
-    public ArrayBatchSource(Object[] input) {
+    public ArrayBatchSource(final Object[] input) {
         _input = input;
     }
 
@@ -37,7 +37,7 @@ final class ArrayBatchSource<I> implements BatchSource<I> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public I getInput(int index) {
+    public I getInput(final int index) {
         return (I) _input[index];
     }
 

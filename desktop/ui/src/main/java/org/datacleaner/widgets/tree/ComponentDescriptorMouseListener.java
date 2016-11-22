@@ -43,14 +43,14 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
     private final AnalysisJobBuilder _analysisJobBuilder;
 
     @Inject
-    protected ComponentDescriptorMouseListener(SchemaTree schemaTree, AnalysisJobBuilder analysisJobBuilder) {
+    protected ComponentDescriptorMouseListener(final SchemaTree schemaTree, final AnalysisJobBuilder analysisJobBuilder) {
         _schemaTree = schemaTree;
         _analysisJobBuilder = analysisJobBuilder;
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
+    public void mouseClicked(final MouseEvent e) {
+        final TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
         if (path == null) {
             return;
         }
@@ -64,7 +64,7 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
         }
     }
 
-    private void showComponentPopupMenu(Object userObject, MouseEvent mouseEvent) {
+    private void showComponentPopupMenu(final Object userObject, final MouseEvent mouseEvent) {
         final ComponentDescriptor<?> componentDescriptor = (ComponentDescriptor<?>) userObject;
 
         if (SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() > 1) {
@@ -75,7 +75,7 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
                     IconUtils.getDescriptorIcon(componentDescriptor, IconUtils.ICON_SIZE_MENU_ITEM, false));
             addTableItem.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(final ActionEvent e) {
                     _analysisJobBuilder.addComponent(componentDescriptor);
                 }
             });
@@ -92,12 +92,12 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
         }
     }
 
-    private void showLibraryPopupMenu(Object userObject, MouseEvent mouseEvent) {
+    private void showLibraryPopupMenu(final Object userObject, final MouseEvent mouseEvent) {
         final JMenuItem refreshLibraryMenuItem = WidgetFactory.createMenuItem("Refresh", IconUtils.MENU_REFRESH);
 
         refreshLibraryMenuItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider().refresh();
             }
         });

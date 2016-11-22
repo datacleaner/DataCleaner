@@ -22,11 +22,11 @@ package org.datacleaner.beans.transform;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.joda.time.LocalDate;
-
-import junit.framework.TestCase;
 
 public class FormatDateTransformerTest extends TestCase {
 

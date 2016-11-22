@@ -31,8 +31,8 @@ import org.datacleaner.util.CharIterator;
  * Helper class for the String Analyzer. This class collects all the statistics
  * for a single column. The String Analyzer then consists of a number of these
  * delegates.
- * 
- * 
+ *
+ *
  */
 final class StringAnalyzerColumnDelegate {
 
@@ -70,7 +70,7 @@ final class StringAnalyzerColumnDelegate {
     private volatile Integer _maxWords;
     private volatile Integer _minWords;
 
-    public StringAnalyzerColumnDelegate(RowAnnotationFactory annotationFactory) {
+    public StringAnalyzerColumnDelegate(final RowAnnotationFactory annotationFactory) {
         _annotationFactory = annotationFactory;
         _nullAnnotation = annotationFactory.createAnnotation();
         _blankAnnotation = annotationFactory.createAnnotation();
@@ -87,7 +87,15 @@ final class StringAnalyzerColumnDelegate {
         _minWordsAnnotation = annotationFactory.createAnnotation();
     }
 
-    public synchronized void run(InputRow row, final String value, int distinctCount) {
+    protected static boolean isEntirelyLowerCase(final String value) {
+        return value.equals(value.toLowerCase());
+    }
+
+    protected static boolean isEntirelyUpperCase(final String value) {
+        return value.equals(value.toUpperCase());
+    }
+
+    public synchronized void run(final InputRow row, final String value, final int distinctCount) {
         _numRows += distinctCount;
 
         if (value == null) {
@@ -113,7 +121,7 @@ final class StringAnalyzerColumnDelegate {
             int numLowercase = 0;
 
             boolean firstLetter = true;
-            CharIterator it = new CharIterator(value);
+            final CharIterator it = new CharIterator(value);
             while (it.hasNext()) {
                 it.next();
                 if (it.isLetter()) {
@@ -240,14 +248,6 @@ final class StringAnalyzerColumnDelegate {
         }
     }
 
-    protected static boolean isEntirelyLowerCase(String value) {
-        return value.equals(value.toLowerCase());
-    }
-
-    protected static boolean isEntirelyUpperCase(String value) {
-        return value.equals(value.toUpperCase());
-    }
-
     public int getNumRows() {
         return _numRows;
     }
@@ -331,7 +331,7 @@ final class StringAnalyzerColumnDelegate {
     public RowAnnotation getNullAnnotation() {
         return _nullAnnotation;
     }
-    
+
     public RowAnnotation getBlankAnnotation() {
         return _blankAnnotation;
     }

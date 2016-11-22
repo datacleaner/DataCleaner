@@ -48,7 +48,8 @@ public class CancellationAndMultiThreadingTest extends TestCase {
             Thread thread = new Thread() {
                 public void run() {
                     runScenario();
-                };
+                }
+
             };
             thread.start();
             threads[i] = thread;

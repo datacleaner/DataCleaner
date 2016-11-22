@@ -28,91 +28,93 @@ import javax.swing.JButton;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.reference.StringPattern;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.StringPattern;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.windows.ReferenceDataDialog;
 
-public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<StringPattern> implements
-    ReferenceDataChangeListener<StringPattern> {
+public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<StringPattern>
+        implements
+        ReferenceDataChangeListener<StringPattern> {
 
-	private final MutableReferenceDataCatalog _referenceDataCatalog;
-	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
+    private final MutableReferenceDataCatalog _referenceDataCatalog;
+    private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
-	@Inject
-	public MultipleStringPatternPropertyWidget(ComponentBuilder componentBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor, MutableReferenceDataCatalog referenceDataCatalog,
-			Provider<ReferenceDataDialog> referenceDataDialogProvider) {
-		super(componentBuilder, propertyDescriptor, StringPattern.class);
-		_referenceDataCatalog = referenceDataCatalog;
-		_referenceDataDialogProvider = referenceDataDialogProvider;
-	}
+    @Inject
+    public MultipleStringPatternPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor, final MutableReferenceDataCatalog referenceDataCatalog,
+            final Provider<ReferenceDataDialog> referenceDataDialogProvider) {
+        super(componentBuilder, propertyDescriptor, StringPattern.class);
+        _referenceDataCatalog = referenceDataCatalog;
+        _referenceDataDialogProvider = referenceDataDialogProvider;
+    }
 
-	@Override
-	public void onPanelAdd() {
-		super.onPanelAdd();
-		_referenceDataCatalog.addStringPatternListener(this);
-	}
+    @Override
+    public void onPanelAdd() {
+        super.onPanelAdd();
+        _referenceDataCatalog.addStringPatternListener(this);
+    }
 
-	@Override
-	public void onPanelRemove() {
-		super.onPanelRemove();
-		_referenceDataCatalog.removeStringPatternListener(this);
-	}
+    @Override
+    public void onPanelRemove() {
+        super.onPanelRemove();
+        _referenceDataCatalog.removeStringPatternListener(this);
+    }
 
-	@Override
-	protected DCPanel createButtonPanel() {
-		DCPanel buttonPanel = super.createButtonPanel();
+    @Override
+    protected DCPanel createButtonPanel() {
+        final DCPanel buttonPanel = super.createButtonPanel();
 
-		final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
-		dialogButton.setToolTipText("Configure string patterns");
-		dialogButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
-				dialog.selectStringPatternsTab();
-				dialog.setVisible(true);
-			}
-		});
+        final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
+        dialogButton.setToolTipText("Configure string patterns");
+        dialogButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+                dialog.selectStringPatternsTab();
+                dialog.setVisible(true);
+            }
+        });
 
-		buttonPanel.add(dialogButton);
-		return buttonPanel;
-	}
+        buttonPanel.add(dialogButton);
+        return buttonPanel;
+    }
 
-	@Override
-	protected StringPattern[] getAvailableValues() {
-		String[] names = _referenceDataCatalog.getStringPatternNames();
-		StringPattern[] result = new StringPattern[names.length];
-		for (int i = 0; i < names.length; i++) {
-			result[i] = _referenceDataCatalog.getStringPattern(names[i]);
-		}
-		return result;
-	}
+    @Override
+    protected StringPattern[] getAvailableValues() {
+        final String[] names = _referenceDataCatalog.getStringPatternNames();
+        final StringPattern[] result = new StringPattern[names.length];
+        for (int i = 0; i < names.length; i++) {
+            result[i] = _referenceDataCatalog.getStringPattern(names[i]);
+        }
+        return result;
+    }
 
-	@Override
-	protected String getName(StringPattern item) {
-		return item.getName();
-	}
+    @Override
+    protected String getName(final StringPattern item) {
+        return item.getName();
+    }
 
-	@Override
-	public void onAdd(StringPattern stringPattern) {
-		addCheckBox(stringPattern, false);
-	}
+    @Override
+    public void onAdd(final StringPattern stringPattern) {
+        addCheckBox(stringPattern, false);
+    }
 
-	@Override
-	public void onRemove(StringPattern stringPattern) {
-		removeCheckBox(stringPattern);
-	}
+    @Override
+    public void onRemove(final StringPattern stringPattern) {
+        removeCheckBox(stringPattern);
+    }
 
-	@Override
-	public void onChange(StringPattern oldPattern, StringPattern newPattern) {
-	    editCheckBox(oldPattern, newPattern);
-	}
-	@Override
-	protected String getNotAvailableText() {
-		return "- no string patterns available - ";
-	}
+    @Override
+    public void onChange(final StringPattern oldPattern, final StringPattern newPattern) {
+        editCheckBox(oldPattern, newPattern);
+    }
+
+    @Override
+    protected String getNotAvailableText() {
+        return "- no string patterns available - ";
+    }
 }

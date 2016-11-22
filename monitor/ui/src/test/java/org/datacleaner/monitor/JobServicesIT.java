@@ -19,6 +19,9 @@
  */
 package org.datacleaner.monitor;
 
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.equalTo;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -30,9 +33,6 @@ import org.junit.Test;
 import org.junit.rules.ExternalResource;
 
 import io.restassured.RestAssured;
-
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.equalTo;
 
 public class JobServicesIT {
     private static final String JOBS_PATH = "/jobs/";
@@ -60,7 +60,7 @@ public class JobServicesIT {
                 "Customer profiling",
                 "product_profiling",
         };
-        
+
         for (String name : jobNames) {
             testJob(name);
         }

@@ -25,66 +25,66 @@ import org.datacleaner.api.Converter;
 @Convertable(MyConvertable.DefaultConverter.class)
 public class MyConvertable {
 
-	public static class DefaultConverter implements Converter<MyConvertable> {
+    public static class DefaultConverter implements Converter<MyConvertable> {
 
-		@Override
-		public MyConvertable fromString(Class<?> type, String serializedForm) {
-			String[] tokens = serializedForm.split(":");
-			MyConvertable instance = new MyConvertable();
-			instance.setName(tokens[0]);
-			instance.setDescription(tokens[1]);
-			return instance;
-		}
+        @Override
+        public MyConvertable fromString(Class<?> type, String serializedForm) {
+            String[] tokens = serializedForm.split(":");
+            MyConvertable instance = new MyConvertable();
+            instance.setName(tokens[0]);
+            instance.setDescription(tokens[1]);
+            return instance;
+        }
 
-		@Override
-		public String toString(MyConvertable instance) {
-			return instance.getName() + ":" + instance.getDescription();
-		}
+        @Override
+        public String toString(MyConvertable instance) {
+            return instance.getName() + ":" + instance.getDescription();
+        }
 
-		@Override
-		public boolean isConvertable(Class<?> type) {
-			return type == MyConvertable.class;
-		}
-	}
-	
-	public static class SecondaryConverter implements Converter<MyConvertable> {
+        @Override
+        public boolean isConvertable(Class<?> type) {
+            return type == MyConvertable.class;
+        }
+    }
 
-		@Override
-		public MyConvertable fromString(Class<?> type, String serializedForm) {
-			String[] tokens = serializedForm.split("\\|");
-			MyConvertable instance = new MyConvertable();
-			instance.setName(tokens[0]);
-			instance.setDescription(tokens[1]);
-			return instance;
-		}
+    public static class SecondaryConverter implements Converter<MyConvertable> {
 
-		@Override
-		public String toString(MyConvertable instance) {
-			return instance.getName() + "|" + instance.getDescription();
-		}
+        @Override
+        public MyConvertable fromString(Class<?> type, String serializedForm) {
+            String[] tokens = serializedForm.split("\\|");
+            MyConvertable instance = new MyConvertable();
+            instance.setName(tokens[0]);
+            instance.setDescription(tokens[1]);
+            return instance;
+        }
 
-		@Override
-		public boolean isConvertable(Class<?> type) {
-			return type == MyConvertable.class;
-		}
-	}
+        @Override
+        public String toString(MyConvertable instance) {
+            return instance.getName() + "|" + instance.getDescription();
+        }
 
-	private String name;
-	private String description;
+        @Override
+        public boolean isConvertable(Class<?> type) {
+            return type == MyConvertable.class;
+        }
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    private String name;
+    private String description;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

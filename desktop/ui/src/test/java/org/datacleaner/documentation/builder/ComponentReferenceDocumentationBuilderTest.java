@@ -45,7 +45,7 @@ public class ComponentReferenceDocumentationBuilderTest {
         final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(CharacterSetDistributionAnalyzer.class));
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(ReferenceDataMatcherAnalyzer.class));
-        
+
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(TokenizerTransformer.class));
 

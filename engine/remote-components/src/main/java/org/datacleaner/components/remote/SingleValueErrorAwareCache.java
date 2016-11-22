@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  *<p>
  * This class is NOT thread-safe.
  */
-public abstract class SingleValueErrorAwareCache<K,V> {
+public abstract class SingleValueErrorAwareCache<K, V> {
 
     private static final Logger logger = LoggerFactory.getLogger(SingleValueErrorAwareCache.class);
     private static final long EXCEPTION_EXPIRATION_TIME = 1000;
@@ -40,16 +40,17 @@ public abstract class SingleValueErrorAwareCache<K,V> {
     private K cachedValueKey;
 
     /** The actual value retrieval procedure */
-    abstract protected V fetch(K key) throws Exception;
+    protected abstract V fetch(K key) throws Exception;
 
     /** Returns the cached value/exception. If nothing cached, calls {@link #fetch}, caches the value/exception and returns/throws it. */
-    public V getCachedValue(K key) throws Exception {
+    public V getCachedValue(final K key) throws Exception {
         if (cachedValueKey != null) {
             if (key.equals(cachedValueKey)) {
                 if (cachedValue != null) {
                     logger.debug("Reusing cached output columns, nothing changed");
                     return cachedValue;
-                } else if (cachedException != null && System.currentTimeMillis() < (cachedExceptionTimestamp + EXCEPTION_EXPIRATION_TIME)) {
+                } else if (cachedException != null && System.currentTimeMillis() < (cachedExceptionTimestamp
+                        + EXCEPTION_EXPIRATION_TIME)) {
                     logger.debug("Retrowing last exception, nothing changed in last seconds");
                     throw cachedException;
                 }
@@ -60,7 +61,7 @@ public abstract class SingleValueErrorAwareCache<K,V> {
         cachedValue = null;
         try {
             return cachedValue = fetch(key);
-        } catch(Exception e) {
+        } catch (final Exception e) {
             cachedException = e;
             cachedExceptionTimestamp = System.currentTimeMillis();
             throw e;

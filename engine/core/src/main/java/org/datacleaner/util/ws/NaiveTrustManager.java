@@ -30,11 +30,11 @@ import javax.net.ssl.X509TrustManager;
 public class NaiveTrustManager implements X509TrustManager {
 
     @Override
-    public void checkClientTrusted(X509Certificate[] certs, String authType) throws CertificateException {
+    public void checkClientTrusted(final X509Certificate[] certs, final String authType) throws CertificateException {
     }
 
     @Override
-    public void checkServerTrusted(X509Certificate[] certs, String authType) throws CertificateException {
+    public void checkServerTrusted(final X509Certificate[] certs, final String authType) throws CertificateException {
     }
 
     @Override

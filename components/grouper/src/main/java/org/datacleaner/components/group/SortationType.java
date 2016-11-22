@@ -27,7 +27,7 @@ enum SortationType implements HasName {
 
     private final String _name;
 
-    private SortationType(String name) {
+    SortationType(final String name) {
         _name = name;
     }
 

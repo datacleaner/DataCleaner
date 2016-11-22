@@ -44,22 +44,22 @@ public final class OutputDataStreamsViewer extends DCPanel {
 
     private final ComponentBuilder _componentBuilder;
 
-    public OutputDataStreamsViewer(ComponentBuilder componentBuilder) {
+    public OutputDataStreamsViewer(final ComponentBuilder componentBuilder) {
         super();
         _componentBuilder = componentBuilder;
-        
+
         setLayout(new VerticalLayout(4));
     }
 
     public void refresh() {
         removeAll();
-        
+
         setEnabled(false);
-        for (OutputDataStream outputDataStream : _componentBuilder.getOutputDataStreams()) {
+        for (final OutputDataStream outputDataStream : _componentBuilder.getOutputDataStreams()) {
             setEnabled(true);
-            
+
             final List<InputColumn<?>> inputColumns = new ArrayList<>();
-            for (Column column : outputDataStream.getTable().getColumns()) {
+            for (final Column column : outputDataStream.getTable().getColumns()) {
                 inputColumns.add(new MetaModelInputColumn(column));
             }
             final JLabel tableNameLabel = new JLabel(outputDataStream.getName(), ImageManager.get().getImageIcon(
@@ -67,8 +67,9 @@ public final class OutputDataStreamsViewer extends DCPanel {
             tableNameLabel.setOpaque(false);
             tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
             tableNameLabel.setBorder(new EmptyBorder(5, 5, 0, 5));
-            final ColumnListTable columnListTable = new ColumnListTable(inputColumns, _componentBuilder.getAnalysisJobBuilder(),
-                    true, false, null);
+            final ColumnListTable columnListTable =
+                    new ColumnListTable(inputColumns, _componentBuilder.getAnalysisJobBuilder(),
+                            true, false, null);
             columnListTable.setBorder(new EmptyBorder(0, 5, 5, 5));
 
             add(tableNameLabel);

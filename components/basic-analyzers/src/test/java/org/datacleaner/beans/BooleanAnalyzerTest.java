@@ -19,13 +19,13 @@
  */
 package org.datacleaner.beans;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.ParameterizableMetric;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
-
-import junit.framework.TestCase;
 
 public class BooleanAnalyzerTest extends TestCase {
 
@@ -78,14 +78,15 @@ public class BooleanAnalyzerTest extends TestCase {
         ba.run(new MockInputRow().put(c[0], false).put(c[1], true), 1);
 
         final BooleanAnalyzerResult result = ba.getResult();
-        
+
         final ParameterizableMetric trueCountMetric = result.getTrueCount();
         assertEquals("[b1, b2]", trueCountMetric.getParameterSuggestions().toString());
         assertEquals(5, trueCountMetric.getValue("b1"));
         assertEquals(0, trueCountMetric.getValue("foobar"));
 
         final ParameterizableMetric combinationCountMetric = result.getCombinationCount();
-        assertEquals("[Most frequent, Least frequent, true,true, false,true, true,false]", combinationCountMetric.getParameterSuggestions().toString());
+        assertEquals("[Most frequent, Least frequent, true,true, false,true, true,false]",
+                combinationCountMetric.getParameterSuggestions().toString());
 
         assertEquals(4, combinationCountMetric.getValue("Most frequent").intValue());
         assertEquals(2, combinationCountMetric.getValue("Combination 1").intValue());
@@ -96,7 +97,7 @@ public class BooleanAnalyzerTest extends TestCase {
         assertEquals(2, combinationCountMetric.getValue("false,true").intValue());
         assertEquals(1, combinationCountMetric.getValue(" true , false ").intValue());
         assertEquals(0, combinationCountMetric.getValue("false,false").intValue());
-        
+
         assertEquals(0, combinationCountMetric.getValue("false,foobar").intValue());
     }
 }

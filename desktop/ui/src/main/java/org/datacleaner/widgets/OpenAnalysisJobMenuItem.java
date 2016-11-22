@@ -78,7 +78,7 @@ public class OpenAnalysisJobMenuItem extends JMenuItem implements ActionListener
     }
 
     @Override
-    public void actionPerformed(ActionEvent event) {
+    public void actionPerformed(final ActionEvent event) {
         _openAnalysisJobActionListener.openFile(_file);
     }
 }

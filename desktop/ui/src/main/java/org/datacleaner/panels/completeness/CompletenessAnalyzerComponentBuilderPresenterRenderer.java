@@ -44,7 +44,7 @@ public class CompletenessAnalyzerComponentBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<CompletenessAnalyzer> ajb) {
+    public RendererPrecedence getPrecedence(final AnalyzerComponentBuilder<CompletenessAnalyzer> ajb) {
         if (ajb.getDescriptor().getComponentClass() == CompletenessAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -52,8 +52,9 @@ public class CompletenessAnalyzerComponentBuilderPresenterRenderer implements
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<CompletenessAnalyzer> ajb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
+    public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<CompletenessAnalyzer> ajb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
 
         return new CompletenessAnalyzerComponentBuilderPresenter(ajb, propertyWidgetFactory);
     }

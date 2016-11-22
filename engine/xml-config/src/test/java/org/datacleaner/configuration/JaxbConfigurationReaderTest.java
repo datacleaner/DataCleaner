@@ -28,6 +28,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -86,8 +88,6 @@ import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.storage.StorageProvider;
 import org.junit.Assert;
 
-import junit.framework.TestCase;
-
 public class JaxbConfigurationReaderTest extends TestCase {
 
     private final JaxbConfigurationReader reader = new JaxbConfigurationReader();
@@ -117,7 +117,8 @@ public class JaxbConfigurationReaderTest extends TestCase {
         DescriptorProvider descriptorProvider = configuration.getEnvironment().getDescriptorProvider();
 
         assertTrue(descriptorProvider instanceof CompositeDescriptorProvider);
-        ClasspathScanDescriptorProvider scanner = ((CompositeDescriptorProvider)descriptorProvider).findClasspathScanProvider();
+        ClasspathScanDescriptorProvider scanner =
+                ((CompositeDescriptorProvider) descriptorProvider).findClasspathScanProvider();
 
         Predicate<Class<? extends RenderingFormat<?>>> predicate = scanner.getRenderingFormatPredicate();
         assertNotNull(predicate);
@@ -392,7 +393,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
 
         Datastore compositeDatastore = datastoreCatalog.getDatastore("my_composite");
         {
-            try (DatastoreConnection con = compositeDatastore.openConnection();) {
+            try (DatastoreConnection con = compositeDatastore.openConnection()) {
                 DataContext dataContext = con.getDataContext();
                 String[] schemaNames = dataContext.getSchemaNames();
                 assertEquals("[PUBLIC, Spreadsheet2003.xls, developers.mdb, resources]", Arrays.toString(schemaNames));
@@ -579,7 +580,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         Assert.assertEquals(0, remoteConf.getServerList().size());
     }
 
-    public void testServerConfigurations(){
+    public void testServerConfigurations() {
         DataCleanerConfiguration configuration = getConfigurationFromXMLFile();
         ServerInformationCatalog serverInformationCatalog = configuration.getServerInformationCatalog();
         Assert.assertTrue(serverInformationCatalog.containsServer("environment"));
@@ -617,10 +618,11 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 .getSynonymCatalog("synonyms2");
         assertEquals("relative/path/to/synonyms.txt", synonyms2.getFilename());
     }
-    
+
     public void testReadFixedWidthDatastore() throws Exception {
         DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-job-fixed-width-datastore.xml"));
-        assertEquals("[employees-hadoop, my fixed width ds]", Arrays.toString(configuration.getDatastoreCatalog().getDatastoreNames()));
+        assertEquals("[employees-hadoop, my fixed width ds]",
+                Arrays.toString(configuration.getDatastoreCatalog().getDatastoreNames()));
     }
 }

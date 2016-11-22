@@ -42,7 +42,8 @@ public class ComponentRESTClientTest {
     private static final String PASSWORD = "admin";
     private static final String COMPONENT_NAME = "Concatenator";
     private static final String INSTANCE_ID = "0166fb12-d403-408f-b2bc-61eb898ee338";
-    private ComponentRESTClient componentRESTClient = new ComponentRESTClient(HOST, USERNAME, PASSWORD, "demo", "version");
+    private ComponentRESTClient componentRESTClient =
+            new ComponentRESTClient(HOST, USERNAME, PASSWORD, "demo", "version");
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
@@ -51,8 +52,7 @@ public class ComponentRESTClientTest {
             ComponentList componentList = componentRESTClient.getAllComponents(false);
             logger.info(componentList.toString());
             Assert.assertTrue(componentList != null);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -63,8 +63,7 @@ public class ComponentRESTClientTest {
             ComponentList.ComponentInfo componentInfo = componentRESTClient.getComponentInfo(COMPONENT_NAME, false);
             logger.info(componentInfo.toString());
             Assert.assertTrue(componentInfo != null);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -75,11 +74,11 @@ public class ComponentRESTClientTest {
             ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
             processStatelessInput.configuration = getConfiguration();
             processStatelessInput.data = getInputData();
-            ProcessStatelessOutput processStatelessOutput = componentRESTClient.processStateless(COMPONENT_NAME, processStatelessInput);
+            ProcessStatelessOutput processStatelessOutput =
+                    componentRESTClient.processStateless(COMPONENT_NAME, processStatelessInput);
             logger.info(processStatelessOutput.toString());
             Assert.assertTrue(processStatelessOutput != null);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -89,12 +88,11 @@ public class ComponentRESTClientTest {
         try {
             String timeout = "60000";
             CreateInput createInput = getCreateInput();
-            String response  = componentRESTClient.createComponent(COMPONENT_NAME,
+            String response = componentRESTClient.createComponent(COMPONENT_NAME,
                     timeout, createInput);
             logger.info(response);
             Assert.assertFalse(response.isEmpty());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -106,8 +104,7 @@ public class ComponentRESTClientTest {
             ProcessOutput processOutput = componentRESTClient.processComponent(INSTANCE_ID, processInput);
             logger.info(processOutput.toString());
             Assert.assertTrue(processOutput != null);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -120,8 +117,7 @@ public class ComponentRESTClientTest {
             if (processResult != null) {
                 logger.info(processResult.toString());
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -130,9 +126,9 @@ public class ComponentRESTClientTest {
     public void testDeleteComponent() throws Exception {
         try {
             componentRESTClient.deleteComponent(INSTANCE_ID);
-        }
-        catch (Exception e) {
-            Assert.assertTrue(e.getMessage().contains("Connection refused") || e.getMessage().contains("HTTP error code: 404"));
+        } catch (Exception e) {
+            Assert.assertTrue(
+                    e.getMessage().contains("Connection refused") || e.getMessage().contains("HTTP error code: 404"));
         }
     }
 
@@ -186,8 +182,7 @@ public class ComponentRESTClientTest {
             JsonNode jsonNode = objectMapper.convertValue(value, JsonNode.class);
 
             return jsonNode;
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             logger.error(e.getMessage());
 
             return null;

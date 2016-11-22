@@ -69,10 +69,10 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
     private final ConfiguredPropertyDescriptor _additionalErrorLogValuesProperty;
     private final ConfiguredPropertyDescriptor _bufferSizeProperty;
     private final ConfiguredPropertyDescriptor _truncateTableProperty;
-    
-    public InsertIntoTableJobBuilderPresenter(AnalyzerComponentBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration, DCModule dcModule) {
+
+    public InsertIntoTableJobBuilderPresenter(final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration, final DCModule dcModule) {
         super(analyzerJobBuilder, propertyWidgetFactory);
         _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
@@ -111,8 +111,9 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
         // the InputColumn<?>[] property
         assert _inputColumnsProperty != null;
         assert _inputColumnsProperty.getType() == InputColumn[].class;
-        final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedPrefixedColumnsPropertyWidget(
-                analyzerJobBuilder, _inputColumnsProperty, _columnNamesProperty, " → ");
+        final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget =
+                new MultipleMappedPrefixedColumnsPropertyWidget(
+                        analyzerJobBuilder, _inputColumnsProperty, _columnNamesProperty, " → ");
         _overriddenPropertyWidgets.put(_inputColumnsProperty, inputColumnsPropertyWidget);
 
         // the String[] property
@@ -127,7 +128,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
         tableNamePropertyWidget.addComboListener(new Listener<Table>() {
             @Override
-            public void onItemSelected(Table item) {
+            public void onItemSelected(final Table item) {
                 // update the column combo boxes when the table is selected
                 inputColumnsPropertyWidget.setTable(item);
             }
@@ -143,11 +144,11 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
         final ConfiguredPropertyTaskPane taskPane = new ConfiguredPropertyTaskPane("Insert mapping",
                 "images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
-                        _inputColumnsProperty, _truncateTableProperty, _bufferSizeProperty));
+                _inputColumnsProperty, _truncateTableProperty, _bufferSizeProperty));
 
         final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling",
                 IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,
-                        _additionalErrorLogValuesProperty), false);
+                _additionalErrorLogValuesProperty), false);
 
         final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
         propertyTaskPanes.add(taskPane);
@@ -156,8 +157,8 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
             return _overriddenPropertyWidgets.get(propertyDescriptor);
         }

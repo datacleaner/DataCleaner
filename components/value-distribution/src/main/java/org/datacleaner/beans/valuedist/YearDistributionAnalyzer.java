@@ -52,7 +52,7 @@ import org.datacleaner.result.CrosstabResult;
 @Description("Finds the distribution of years from Date values.")
 @Concurrent(true)
 @Categorized(DateAndTimeCategory.class)
-@Distributed(reducer=DatePartDistributionResultReducer.class)
+@Distributed(reducer = DatePartDistributionResultReducer.class)
 public class YearDistributionAnalyzer implements Analyzer<CrosstabResult> {
 
     private final Map<InputColumn<Date>, ConcurrentMap<Integer, AtomicInteger>> distributionMap;
@@ -66,15 +66,15 @@ public class YearDistributionAnalyzer implements Analyzer<CrosstabResult> {
 
     @Initialize
     public void init() {
-        for (InputColumn<Date> col : dateColumns) {
+        for (final InputColumn<Date> col : dateColumns) {
             final ConcurrentMap<Integer, AtomicInteger> countMap = new ConcurrentHashMap<Integer, AtomicInteger>();
             distributionMap.put(col, countMap);
         }
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
-        for (InputColumn<Date> col : dateColumns) {
+    public void run(final InputRow row, final int distinctCount) {
+        for (final InputColumn<Date> col : dateColumns) {
             final Date value = row.getValue(col);
             if (value != null) {
                 final Calendar c = Calendar.getInstance();
@@ -95,24 +95,24 @@ public class YearDistributionAnalyzer implements Analyzer<CrosstabResult> {
         final CrosstabDimension yearDimension = new CrosstabDimension("Year");
 
         final SortedSet<Integer> years = new TreeSet<Integer>();
-        for (InputColumn<Date> col : dateColumns) {
+        for (final InputColumn<Date> col : dateColumns) {
             final Map<Integer, AtomicInteger> countMap = distributionMap.get(col);
             final Set<Integer> yearsOfColumn = countMap.keySet();
             years.addAll(yearsOfColumn);
         }
 
-        for (Integer year : years) {
+        for (final Integer year : years) {
             yearDimension.addCategory(year + "");
         }
 
         final Crosstab<Integer> crosstab = new Crosstab<Integer>(Integer.class, columnDimension, yearDimension);
-        for (InputColumn<Date> col : dateColumns) {
+        for (final InputColumn<Date> col : dateColumns) {
             columnDimension.addCategory(col.getName());
             final CrosstabNavigator<Integer> nav = crosstab.where(columnDimension, col.getName());
 
             final Map<Integer, AtomicInteger> countMap = distributionMap.get(col);
 
-            for (Entry<Integer, AtomicInteger> entry : countMap.entrySet()) {
+            for (final Entry<Integer, AtomicInteger> entry : countMap.entrySet()) {
                 final Integer year = entry.getKey();
                 final AtomicInteger count = entry.getValue();
                 nav.where(yearDimension, year + "").put(count.intValue());
@@ -123,7 +123,7 @@ public class YearDistributionAnalyzer implements Analyzer<CrosstabResult> {
     }
 
     // used only for unittesting
-    public void setDateColumns(InputColumn<Date>[] dateColumns) {
+    public void setDateColumns(final InputColumn<Date>[] dateColumns) {
         this.dateColumns = dateColumns;
     }
 }

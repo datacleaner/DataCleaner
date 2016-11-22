@@ -19,6 +19,8 @@
  */
 package org.datacleaner.configuration;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
@@ -63,19 +65,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import static org.junit.Assert.*;
-
 public class DomConfigurationWriterTest {
 
+    private static final String PASSWORD_ENCODED = "enc:00em6E9KEO9FG42CH0yrVQ==";
     @Rule
     public TemporaryFolder _temporaryFolder = new TemporaryFolder();
-
-    private DomConfigurationWriter configurationWriter;
-
-    private static final String PASSWORD_ENCODED = "enc:00em6E9KEO9FG42CH0yrVQ==";
-
     @Rule
     public TestName testName = new TestName();
+    private DomConfigurationWriter configurationWriter;
 
     @Before
     public void setUp() throws Exception {
@@ -215,7 +212,7 @@ public class DomConfigurationWriterTest {
         assertEquals("<salesforce-datastore name=\"name\">\n" + "  <username>username</username>\n" + "  <password>"
                 + PASSWORD_ENCODED + "</password>\n"
                 + "  <security-token>securityToken</security-token>\n</salesforce-datastore>\n", transform(
-                        externalized));
+                externalized));
     }
 
     @Test
@@ -238,18 +235,18 @@ public class DomConfigurationWriterTest {
 
         assertEquals(expectedConfiguration.toString(), transform(externalized));
     }
-    
+
     @Test
     public void testExternalizeJsonDatastore() throws Exception {
-        final JsonDatastore jsonDatastore = new JsonDatastore("my Json", new FileResource("c:/test/json.json")); 
+        final JsonDatastore jsonDatastore = new JsonDatastore("my Json", new FileResource("c:/test/json.json"));
         jsonDatastore.setDescription("My Json datastore");
         final Element elem = configurationWriter.toElement(jsonDatastore, "json.json");
 
         final String str = transform(elem);
-        assertEquals("<json-datastore description=\"My Json datastore\" name=\"my Json\">\n" + 
-                "  <filename>json.json</filename>\n" + 
-                "</json-datastore>\n", str); 
-        
+        assertEquals("<json-datastore description=\"My Json datastore\" name=\"my Json\">\n" +
+                "  <filename>json.json</filename>\n" +
+                "</json-datastore>\n", str);
+
     }
 
     @Test
@@ -347,9 +344,9 @@ public class DomConfigurationWriterTest {
         DirectConnectionHadoopClusterInformation directConnectionHadoopClusterInformation =
                 (DirectConnectionHadoopClusterInformation) serverInformationCatalog.getServer("namenode");
         assertEquals(URI.create("hdfs://localhost:8020/"), directConnectionHadoopClusterInformation.getNameNodeUri());
-        
+
         configurationWriter.removeHadoopClusterServerInformation("namenode");
-        
+
         final String str2 = transform(configurationWriter.getDocument());
         assertFalse(str2, str2.contains("namenode"));
     }
@@ -361,18 +358,22 @@ public class DomConfigurationWriterTest {
         helper.generateCoreFile();
         // Prepare "environment"
         try {
-            System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR, helper.getConfFolder().getAbsolutePath());
+            System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR,
+                    helper.getConfFolder().getAbsolutePath());
 
-            final HadoopResource hadoopResource = new HadoopResource(URI.create("example-dates.csv"), new Configuration(),
-                    HadoopResource.DEFAULT_CLUSTERREFERENCE);
+            final HadoopResource hadoopResource =
+                    new HadoopResource(URI.create("example-dates.csv"), new Configuration(),
+                            HadoopResource.DEFAULT_CLUSTERREFERENCE);
             configurationWriter.externalize(new CsvDatastore("csvDatastore", hadoopResource));
             final String str = transform(configurationWriter.getDocument());
-            final File file = new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
+            final File file =
+                    new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
             FileHelper.writeStringAsFile(file, str);
 
             final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
 
-            final CsvDatastore csvDatastore = (CsvDatastore) configuration.getDatastoreCatalog().getDatastore("csvDatastore");
+            final CsvDatastore csvDatastore =
+                    (CsvDatastore) configuration.getDatastoreCatalog().getDatastore("csvDatastore");
             final HadoopResource resource = (HadoopResource) csvDatastore.getResource();
             assertNotNull(resource);
             assertEquals("example-dates.csv", resource.getFilepath());
@@ -408,44 +409,48 @@ public class DomConfigurationWriterTest {
     @Test
     public void testWriteAndReadFixedWidthDatastore() throws Exception {
         final FileResource fileResource = new FileResource("test.csv");
-        final FixedWidthDatastore fixedWidthDatastore = new FixedWidthDatastore("my fixed width ds", fileResource, fileResource.getName(),"UTF-8", 20, false, true, true, 1); 
+        final FixedWidthDatastore fixedWidthDatastore =
+                new FixedWidthDatastore("my fixed width ds", fileResource, fileResource.getName(), "UTF-8", 20, false,
+                        true, true, 1);
         fixedWidthDatastore.setDescription("bar");
-        
+
         final Element externalized = configurationWriter.externalize(fixedWidthDatastore);
         final String str = transform(externalized);
-        assertEquals("<fixed-width-datastore description=\"bar\" name=\"my fixed width ds\">\n" + 
-                "  <filename>test.csv</filename>\n" + 
-                "  <encoding>UTF-8</encoding>\n" + 
-                "  <width-specification>\n" + 
-                "    <fixed-value-width>20</fixed-value-width>\n" + 
-                "  </width-specification>\n" + 
-                "  <header-line-number>1</header-line-number>\n" + 
-                "  <fail-on-inconsistencies>false</fail-on-inconsistencies>\n" + 
-                "  <skip-ebcdic-header>true</skip-ebcdic-header>\n" + 
+        assertEquals("<fixed-width-datastore description=\"bar\" name=\"my fixed width ds\">\n" +
+                "  <filename>test.csv</filename>\n" +
+                "  <encoding>UTF-8</encoding>\n" +
+                "  <width-specification>\n" +
+                "    <fixed-value-width>20</fixed-value-width>\n" +
+                "  </width-specification>\n" +
+                "  <header-line-number>1</header-line-number>\n" +
+                "  <fail-on-inconsistencies>false</fail-on-inconsistencies>\n" +
+                "  <skip-ebcdic-header>true</skip-ebcdic-header>\n" +
                 "  <eol-present>true</eol-present>\n" +
-                "</fixed-width-datastore>\n", str); 
+                "</fixed-width-datastore>\n", str);
 
-        
-        final FixedWidthDatastore fixedWidthDatastore2 = new FixedWidthDatastore("my fixed width ds 2", fileResource, fileResource.getName(),"UTF-8", new int[] {19, 22}, false, false, true, 1, null); 
+
+        final FixedWidthDatastore fixedWidthDatastore2 =
+                new FixedWidthDatastore("my fixed width ds 2", fileResource, fileResource.getName(), "UTF-8",
+                        new int[] { 19, 22 }, false, false, true, 1, null);
         fixedWidthDatastore2.setDescription("bar");
-        
+
         final Element externalized2 = configurationWriter.externalize(fixedWidthDatastore2);
         final String str2 = transform(externalized2);
-        assertEquals("<fixed-width-datastore description=\"bar\" name=\"my fixed width ds 2\">\n" + 
-                "  <filename>test.csv</filename>\n" + 
-                "  <encoding>UTF-8</encoding>\n" + 
-                "  <width-specification>\n" + 
-                "    <value-width>19</value-width>\n" + 
-                "    <value-width>22</value-width>\n" + 
-                "  </width-specification>\n" + 
-                "  <header-line-number>1</header-line-number>\n" + 
-                "  <fail-on-inconsistencies>false</fail-on-inconsistencies>\n" + 
-                "  <skip-ebcdic-header>false</skip-ebcdic-header>\n" + 
+        assertEquals("<fixed-width-datastore description=\"bar\" name=\"my fixed width ds 2\">\n" +
+                "  <filename>test.csv</filename>\n" +
+                "  <encoding>UTF-8</encoding>\n" +
+                "  <width-specification>\n" +
+                "    <value-width>19</value-width>\n" +
+                "    <value-width>22</value-width>\n" +
+                "  </width-specification>\n" +
+                "  <header-line-number>1</header-line-number>\n" +
+                "  <fail-on-inconsistencies>false</fail-on-inconsistencies>\n" +
+                "  <skip-ebcdic-header>false</skip-ebcdic-header>\n" +
                 "  <eol-present>true</eol-present>\n" +
-                "</fixed-width-datastore>\n", str2); 
-        
+                "</fixed-width-datastore>\n", str2);
+
     }
-    
+
     private String transform(Node elem) throws Exception {
         return XmlUtils.writeDocumentToString(elem, false).replace("\r", "");
     }

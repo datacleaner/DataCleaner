@@ -53,24 +53,24 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
         this(500);
     }
 
-    public InMemoryRowAnnotationFactory2(int maxSampleRecords) {
+    public InMemoryRowAnnotationFactory2(final int maxSampleRecords) {
         this(Math.min(10, DEFAULT_SAMPLE_LIMIT / maxSampleRecords), 500);
     }
 
     /**
-     * 
+     *
      * @param maxSampleSets
      *            the maximum number of sample record collections to keep
      * @param maxSampleRecords
      *            the maximum number of records to keep in each collection
      */
-    public InMemoryRowAnnotationFactory2(int maxSampleSets, int maxSampleRecords) {
+    public InMemoryRowAnnotationFactory2(final int maxSampleSets, final int maxSampleRecords) {
         _storage = new ConcurrentHashMap<>();
         _maxSampleSets = Math.max(0, maxSampleSets);
         _maxSampleRecords = Math.max(0, maxSampleRecords);
     }
 
-    private void addInputRowsToCollection(Collection<InputRow> rowCollection, Collection<InputRow> rows) {
+    private void addInputRowsToCollection(final Collection<InputRow> rowCollection, final Collection<InputRow> rows) {
         if (rowCollection == null) {
             return;
         }
@@ -79,7 +79,7 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
             return;
         }
 
-        for (InputRow inputRow : rows) {
+        for (final InputRow inputRow : rows) {
             synchronized (rowCollection) {
                 rowCollection.add(inputRow);
                 size++;
@@ -90,7 +90,7 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
         }
     }
 
-    private Collection<InputRow> getInputRowCollection(int defaultSize, RowAnnotation annotation) {
+    private Collection<InputRow> getInputRowCollection(final int defaultSize, final RowAnnotation annotation) {
         List<InputRow> rowCollection = _storage.get(annotation);
         if (rowCollection == null) {
             if (_storage.size() >= _maxSampleSets) {
@@ -106,7 +106,7 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
     }
 
     @Override
-    public void annotate(InputRow row, RowAnnotation annotation) {
+    public void annotate(final InputRow row, final RowAnnotation annotation) {
         super.annotate(row, annotation);
 
         final Collection<InputRow> rowCollection = getInputRowCollection(10, annotation);
@@ -121,14 +121,14 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
     }
 
     @Override
-    public void resetAnnotation(RowAnnotation annotation) {
+    public void resetAnnotation(final RowAnnotation annotation) {
         super.resetAnnotation(annotation);
 
         _storage.remove(annotation);
     }
 
     @Override
-    public List<InputRow> getSampleRows(RowAnnotation annotation) {
+    public List<InputRow> getSampleRows(final RowAnnotation annotation) {
         final List<InputRow> collection = _storage.get(annotation);
         if (collection == null) {
             return Collections.emptyList();
@@ -137,7 +137,7 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
     }
 
     @Override
-    public void transferAnnotations(RowAnnotation from, RowAnnotation to) {
+    public void transferAnnotations(final RowAnnotation from, final RowAnnotation to) {
         super.transferAnnotations(from, to);
 
         final Collection<InputRow> fromCollection = _storage.get(from);
@@ -145,7 +145,7 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
             return;
         }
 
-        Collection<InputRow> toCollection = getInputRowCollection(fromCollection.size(), to);
+        final Collection<InputRow> toCollection = getInputRowCollection(fromCollection.size(), to);
 
         addInputRowsToCollection(toCollection, fromCollection);
 
@@ -153,7 +153,7 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
     }
 
     @Override
-    public boolean hasSampleRows(RowAnnotation annotation) {
+    public boolean hasSampleRows(final RowAnnotation annotation) {
         return _storage.containsKey(annotation);
     }
 }

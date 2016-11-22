@@ -45,11 +45,11 @@ public class RepositoryFileResource extends AbstractResource implements Serializ
     /**
      * Constructs a {@link RepositoryFileResource} based on a {@link Repository}
      * and a qualified path for the file
-     * 
+     *
      * @param repo
      * @param qualifiedPath
      */
-    public RepositoryFileResource(Repository repo, String qualifiedPath) {
+    public RepositoryFileResource(final Repository repo, final String qualifiedPath) {
         _qualifiedPath = qualifiedPath;
 
         final RepositoryFile file = (RepositoryFile) repo.getRepositoryNode(qualifiedPath);
@@ -62,10 +62,10 @@ public class RepositoryFileResource extends AbstractResource implements Serializ
     /**
      * Constructs a {@link RepositoryFileResource} based on a
      * {@link RepositoryFile}.
-     * 
+     *
      * @param file
      */
-    public RepositoryFileResource(RepositoryFile file) {
+    public RepositoryFileResource(final RepositoryFile file) {
         _fileRef = new SerializableRef<RepositoryFile>(file);
         _qualifiedPath = file.getQualifiedPath();
     }
@@ -74,26 +74,24 @@ public class RepositoryFileResource extends AbstractResource implements Serializ
      * Recreates the {@link RepositoryFileResource} after deserialization, if
      * the {@link RepositoryFile} could not be included in the serialized
      * object.
-     * 
+     *
      * @param repository
      * @return
      */
-    public RepositoryFileResource recreate(Repository repository) {
+    public RepositoryFileResource recreate(final Repository repository) {
         return new RepositoryFileResource(repository, _qualifiedPath);
     }
 
     /**
      * Gets the underlying {@link RepositoryFile}.
-     * 
+     *
      * @return
      */
     public RepositoryFile getRepositoryFile() throws ResourceException {
         if (_fileRef == null || _fileRef.get() == null) {
-            throw new ResourceException(
-                    this,
-                    "RepositoryFile '"
-                            + _qualifiedPath
-                            + "' is not available since it was not serializable. The RepositoryFileResource instance can be recreated using a live repository and the qualified path of the file.");
+            throw new ResourceException(this, "RepositoryFile '" + _qualifiedPath
+                    + "' is not available since it was not serializable. The RepositoryFileResource instance can "
+                    + "be recreated using a live repository and the qualified path of the file.");
         }
         return _fileRef.get();
     }
@@ -104,9 +102,9 @@ public class RepositoryFileResource extends AbstractResource implements Serializ
      * file was not serializable, then the qualified path can be used to
      * recreate a new {@link RepositoryFileResource} if a {@link Repository} is
      * also available.
-     * 
+     *
      * @see #recreate(Repository)
-     * 
+     *
      * @return
      */
     public String getQualifiedPath() {

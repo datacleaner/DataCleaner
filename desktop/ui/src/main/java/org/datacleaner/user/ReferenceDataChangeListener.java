@@ -24,11 +24,11 @@ package org.datacleaner.user;
  * @param <ReferenceData>
  */
 public interface ReferenceDataChangeListener<ReferenceData> {
-    
-    public void onAdd(ReferenceData referenceData);
 
-    public void onChange(ReferenceData oldReferenceData, ReferenceData newReferenceData);
-    
-    public void onRemove(ReferenceData referenceData);
+    void onAdd(ReferenceData referenceData);
+
+    void onChange(ReferenceData oldReferenceData, ReferenceData newReferenceData);
+
+    void onRemove(ReferenceData referenceData);
 
 }

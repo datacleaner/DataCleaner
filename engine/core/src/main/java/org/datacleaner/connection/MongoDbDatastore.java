@@ -38,31 +38,31 @@ public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext>
     private final char[] _password;
     private final SimpleTableDef[] _tableDefs;
 
-    public MongoDbDatastore(String name, String databaseName) {
+    public MongoDbDatastore(final String name, final String databaseName) {
         this(name, null, null, databaseName);
     }
 
-    public MongoDbDatastore(String name, String hostname, Integer port, String databaseName) {
+    public MongoDbDatastore(final String name, final String hostname, final Integer port, final String databaseName) {
         this(name, hostname, port, databaseName, null, (char[]) null);
     }
 
-    public MongoDbDatastore(String name, String hostname, Integer port, String databaseName, String username,
-            String password) {
+    public MongoDbDatastore(final String name, final String hostname, final Integer port, final String databaseName, final String username,
+            final String password) {
         this(name, hostname, port, databaseName, username, password == null ? null : password.toCharArray());
     }
 
-    public MongoDbDatastore(String name, String hostname, Integer port, String databaseName, String username,
-            char[] password) {
+    public MongoDbDatastore(final String name, final String hostname, final Integer port, final String databaseName, final String username,
+            final char[] password) {
         this(name, hostname, port, databaseName, username, password, null);
     }
 
-    public MongoDbDatastore(String name, String hostname, Integer port, String databaseName, String username,
-            String password, SimpleTableDef[] tableDefs) {
+    public MongoDbDatastore(final String name, final String hostname, final Integer port, final String databaseName, final String username,
+            final String password, final SimpleTableDef[] tableDefs) {
         this(name, hostname, port, databaseName, username, password == null ? null : password.toCharArray(), tableDefs);
     }
 
-    public MongoDbDatastore(String name, String hostname, Integer port, String databaseName, String username,
-            char[] password, SimpleTableDef[] tableDefs) {
+    public MongoDbDatastore(final String name, String hostname, Integer port, final String databaseName, final String username,
+            final char[] password, final SimpleTableDef[] tableDefs) {
         super(name);
         if (StringUtils.isNullOrEmpty(databaseName)) {
             throw new IllegalArgumentException("Database name cannot be null");
@@ -100,7 +100,7 @@ public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext>
                         _password, _tableDefs);
             }
             return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dataContext, this);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -140,7 +140,7 @@ public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext>
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         super.decorateIdentity(identifiers);
         identifiers.add(_databaseName);
         identifiers.add(_hostname);

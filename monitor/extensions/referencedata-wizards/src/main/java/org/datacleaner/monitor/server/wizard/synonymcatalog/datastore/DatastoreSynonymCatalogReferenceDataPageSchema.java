@@ -28,12 +28,12 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 
 final class DatastoreSynonymCatalogReferenceDataPageSchema extends DatastorePageSchema {
 
-    public DatastoreSynonymCatalogReferenceDataPageSchema(DatastoreSynonymCatalogReferenceDataWizardSession session) {
+    public DatastoreSynonymCatalogReferenceDataPageSchema(final DatastoreSynonymCatalogReferenceDataWizardSession session) {
         super(session);
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         _session.setSchema(getString(formParameters, PROPERTY_SCHEMA));
 

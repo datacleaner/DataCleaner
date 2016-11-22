@@ -40,15 +40,15 @@ public class DisplayOutputWritersAction {
 
     private final AnalysisJobBuilder _analysisJobBuilder;
 
-    public DisplayOutputWritersAction(AnalysisJobBuilder analysisJobBuilder) {
+    public DisplayOutputWritersAction(final AnalysisJobBuilder analysisJobBuilder) {
         _analysisJobBuilder = analysisJobBuilder;
     }
 
-    public final void showPopup(JComponent component) {
-        JPopupMenu popup = new JPopupMenu();
+    public final void showPopup(final JComponent component) {
+        final JPopupMenu popup = new JPopupMenu();
 
-        List<JMenuItem> menuItems = createMenuItems();
-        for (JMenuItem menuItem : menuItems) {
+        final List<JMenuItem> menuItems = createMenuItems();
+        for (final JMenuItem menuItem : menuItems) {
             popup.add(menuItem);
         }
 
@@ -56,13 +56,13 @@ public class DisplayOutputWritersAction {
     }
 
     public List<JMenuItem> createMenuItems() {
-        List<JMenuItem> result = new ArrayList<JMenuItem>();
+        final List<JMenuItem> result = new ArrayList<JMenuItem>();
         for (final ComponentDescriptor<?> descriptor : getDescriptors()) {
-            JMenuItem outputWriterMenuItem = new DescriptorMenuItem(_analysisJobBuilder, null, descriptor, false);
+            final JMenuItem outputWriterMenuItem = new DescriptorMenuItem(_analysisJobBuilder, null, descriptor, false);
             outputWriterMenuItem.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    ComponentBuilder componentBuilder = _analysisJobBuilder.addComponent(descriptor);
+                public void actionPerformed(final ActionEvent e) {
+                    final ComponentBuilder componentBuilder = _analysisJobBuilder.addComponent(descriptor);
 
                     configure(_analysisJobBuilder, componentBuilder);
                 }
@@ -72,11 +72,12 @@ public class DisplayOutputWritersAction {
         return result;
     }
 
-    protected void configure(AnalysisJobBuilder analysisJobBuilder, ComponentBuilder componentBuilder) {
+    protected void configure(final AnalysisJobBuilder analysisJobBuilder, final ComponentBuilder componentBuilder) {
     }
 
     protected Collection<? extends ComponentDescriptor<?>> getDescriptors() {
-        final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider();
+        final DescriptorProvider descriptorProvider =
+                _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider();
         final Collection<? extends ComponentDescriptor<?>> descriptors = descriptorProvider
                 .getComponentDescriptorsOfSuperCategory(new WriteSuperCategory());
         return descriptors;

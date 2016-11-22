@@ -19,16 +19,16 @@
  */
 package org.datacleaner.util;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.beans.writers.InsertIntoTableAnalyzer;
 import org.datacleaner.descriptors.Descriptors;
 
-import junit.framework.TestCase;
-
 public class IconUtilsTest extends TestCase {
 
-	public void testGetBundledIconForDescriptor() throws Exception {
-		String imagePath = IconUtils.getDescriptorImagePath(Descriptors.ofAnalyzer(InsertIntoTableAnalyzer.class),
-				getClass().getClassLoader(), false);
-		assertEquals("org/datacleaner/beans/writers/InsertIntoTableAnalyzer.png", imagePath);
-	}
+    public void testGetBundledIconForDescriptor() throws Exception {
+        String imagePath = IconUtils.getDescriptorImagePath(Descriptors.ofAnalyzer(InsertIntoTableAnalyzer.class),
+                getClass().getClassLoader(), false);
+        assertEquals("org/datacleaner/beans/writers/InsertIntoTableAnalyzer.png", imagePath);
+    }
 }

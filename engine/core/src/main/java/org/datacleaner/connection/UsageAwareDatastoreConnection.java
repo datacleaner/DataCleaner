@@ -19,10 +19,10 @@
  */
 package org.datacleaner.connection;
 
+import org.apache.metamodel.DataContext;
 import org.datacleaner.util.UsageAwareCloseable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.metamodel.DataContext;
 
 /**
  * An abstract pooled {@link DatastoreConnection} that is aware of the amount of
@@ -30,12 +30,13 @@ import org.apache.metamodel.DataContext;
  * making sure that it will only close if all usages of the datastore are
  * closed.
  */
-public abstract class UsageAwareDatastoreConnection<E extends DataContext> extends UsageAwareCloseable implements DatastoreConnection {
+public abstract class UsageAwareDatastoreConnection<E extends DataContext> extends UsageAwareCloseable
+        implements DatastoreConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(UsageAwareDatastoreConnection.class);
     private final Datastore _datastore;
 
-    public UsageAwareDatastoreConnection(Datastore datastore) {
+    public UsageAwareDatastoreConnection(final Datastore datastore) {
         super(logger);
         _datastore = datastore;
     }
@@ -60,7 +61,7 @@ public abstract class UsageAwareDatastoreConnection<E extends DataContext> exten
         }
         return "<null>";
     }
-    
+
     @Override
     public int getUsageCount() {
         return super.getUsageCount();

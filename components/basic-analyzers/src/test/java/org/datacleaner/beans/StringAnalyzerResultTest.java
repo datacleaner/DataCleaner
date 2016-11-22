@@ -23,12 +23,12 @@ import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.HasNameMapper;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.HasNameMapper;
 
 public class StringAnalyzerResultTest extends TestCase {
 
@@ -40,21 +40,21 @@ public class StringAnalyzerResultTest extends TestCase {
             try {
                 Object obj = ois.readObject();
                 assertNotNull(obj);
-                
+
                 AnalysisResult result = (AnalysisResult) obj;
-                
+
                 AnalyzerResult analyzerResult = result.getResults().get(0);
                 assertNotNull(analyzerResult);
-                
+
                 StringAnalyzerResult stringAnalyzerResult = (StringAnalyzerResult) analyzerResult;
-                
+
                 InputColumn<String>[] cols = stringAnalyzerResult.getColumns();
                 assertEquals("[id, address1, address2]", CollectionUtils.map(cols, new HasNameMapper()).toString());
-                
+
                 assertNotNull(stringAnalyzerResult.getNullCount(cols[0]));
                 assertNotNull(stringAnalyzerResult.getNullCount(cols[1]));
                 assertNotNull(stringAnalyzerResult.getNullCount(cols[2]));
-                
+
                 assertNull(stringAnalyzerResult.getBlankCount(cols[0]));
                 assertNull(stringAnalyzerResult.getBlankCount(cols[1]));
                 assertNull(stringAnalyzerResult.getBlankCount(cols[2]));

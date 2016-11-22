@@ -73,8 +73,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     private final JPasswordField _keystorePasswordField;
 
     @Inject
-    public ElasticSearchDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
-            @Nullable final ElasticSearchDatastore originalDatastore, UserPreferences userPreferences) {
+    public ElasticSearchDatastoreDialog(final WindowContext windowContext, final MutableDatastoreCatalog catalog,
+            @Nullable final ElasticSearchDatastore originalDatastore, final UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
         setSaveButtonEnabled(false);
@@ -102,7 +102,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _clientTypeComboBox.addItemListener(new ItemListener() {
 
             @Override
-            public void itemStateChanged(ItemEvent e) {
+            public void itemStateChanged(final ItemEvent e) {
                 final int eventType = e.getStateChange();
                 if (eventType == ItemEvent.SELECTED) {
                     final ElasticSearchDatastore.ClientType newSelectedItem = (ClientType) e.getItem();
@@ -120,7 +120,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                         _keystorePathField.setEnabled(false);
                         _keystorePasswordField.setEnabled(false);
                     } else {
-                        if(newSelectedItem.equals(ClientType.REST)) {
+                        if (newSelectedItem.equals(ClientType.REST)) {
                             _clusterNameTextField.setText("");
                             _clusterNameTextField.setEnabled(false);
                         } else {
@@ -144,7 +144,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                                 _hostnameTextField.setText(originalDatastore.getHostname());
                             }
                             if (originalDatastore.getPort() == null) {
-                                _portTextField.setText(""+ElasticSearchDatastore.DEFAULT_PORT);
+                                _portTextField.setText("" + ElasticSearchDatastore.DEFAULT_PORT);
                             } else {
                                 _portTextField.setText("" + originalDatastore.getPort());
                             }
@@ -156,9 +156,9 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                         } else {
                             _hostnameTextField.setText("localhost");
                             if (ElasticSearchDatastore.ClientType.REST.equals(newSelectedItem)) {
-                                _portTextField.setText(""+ElasticSearchDatastore.DEFAULT_PORT);
+                                _portTextField.setText("" + ElasticSearchDatastore.DEFAULT_PORT);
                             } else {
-                                _portTextField.setText(""+ElasticSearchDatastore.TRANSPORT_PORT);
+                                _portTextField.setText("" + ElasticSearchDatastore.TRANSPORT_PORT);
                             }
                             _sslCheckBox.setSelected(DEFAULT_SSL);
                         }
@@ -171,7 +171,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         final DCDocumentListener verifyAndUpdateDocumentListener = new DCDocumentListener() {
 
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         };
@@ -180,7 +180,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _sslCheckBox.setOpaque(false);
         _sslCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _sslCheckBox.addItemListener(e -> {
-            int stateChange = e.getStateChange();
+            final int stateChange = e.getStateChange();
 
             if (stateChange == ItemEvent.SELECTED) {
                 _keystorePathField.setEnabled(true);
@@ -219,7 +219,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
         if (originalDatastore == null) {
             _hostnameTextField.setText("localhost");
-            _portTextField.setText(""+ElasticSearchDatastore.DEFAULT_PORT);
+            _portTextField.setText("" + ElasticSearchDatastore.DEFAULT_PORT);
             _clientTypeComboBox.setSelectedItem(DEFAULT_CLIENT_TYPE);
         } else {
             _clientTypeComboBox.setSelectedItem(originalDatastore.getClientType());
@@ -246,7 +246,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         }
 
         final ElasticSearchDatastore.ClientType selectedClientType = (ClientType) _clientTypeComboBox.getSelectedItem();
-        if (ElasticSearchDatastore.ClientType.TRANSPORT.equals(selectedClientType) || ElasticSearchDatastore.ClientType.REST.equals(selectedClientType)) {
+        if (ElasticSearchDatastore.ClientType.TRANSPORT.equals(selectedClientType)
+                || ElasticSearchDatastore.ClientType.REST.equals(selectedClientType)) {
             final String hostname = _hostnameTextField.getText();
             if (StringUtils.isNullOrEmpty(hostname)) {
                 setStatusError("Please enter hostname");
@@ -259,12 +260,12 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                 return false;
             } else {
                 try {
-                    int portInt = Integer.parseInt(port);
+                    final int portInt = Integer.parseInt(port);
                     if (portInt <= 0) {
                         setStatusError("Please enter a valid (positive port number)");
                         return false;
                     }
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     setStatusError("Please enter a valid port number");
                     return false;
                 }
@@ -362,7 +363,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
-        List<Entry<String, JComponent>> result = super.getFormElements();
+        final List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<>("Cluster name", _clusterNameTextField));
         result.add(new ImmutableEntry<>("Index name", _indexNameTextField));
         result.add(new ImmutableEntry<>("Client type", _clientTypeComboBox));

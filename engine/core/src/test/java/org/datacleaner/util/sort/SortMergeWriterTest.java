@@ -75,7 +75,8 @@ public class SortMergeWriterTest extends TestCase {
 
             protected void writeHeader(Writer writer) throws IOException {
                 writer.write("text,count\n");
-            };
+            }
+
         };
 
         sorter.append(new String[] { "foo", "foo" });
@@ -94,7 +95,7 @@ public class SortMergeWriterTest extends TestCase {
         File file = sorter.write("target/sort_merge_arrays-deduped.csv");
         assertTrue(file.exists());
 
-        try (BufferedReader br = FileHelper.getBufferedReader(file);) {
+        try (BufferedReader br = FileHelper.getBufferedReader(file)) {
             assertEquals("text,count", br.readLine());
             assertEquals("bar,3", br.readLine());
             assertEquals("barfoo,3", br.readLine());
@@ -124,7 +125,7 @@ public class SortMergeWriterTest extends TestCase {
 
             protected void writeHeader(Writer writer) throws IOException {
                 writer.write("text,count\n");
-            };
+            }
 
             @Override
             protected void writeNull(Writer writer, int nullCount) throws IOException {
@@ -167,7 +168,7 @@ public class SortMergeWriterTest extends TestCase {
 
             protected void writeHeader(Writer writer) throws IOException {
                 writer.write("text,count\n");
-            };
+            }
 
             @Override
             protected void writeNull(Writer writer, int nullCount) throws IOException {
@@ -214,7 +215,7 @@ public class SortMergeWriterTest extends TestCase {
 
             protected void writeHeader(Writer writer) throws IOException {
                 writer.write("text,count\n");
-            };
+            }
 
             @Override
             protected File createTempFile() throws IOException {
@@ -257,7 +258,8 @@ public class SortMergeWriterTest extends TestCase {
 
             protected void writeHeader(Writer writer) throws IOException {
                 writer.write("number,count\n");
-            };
+            }
+
         };
 
         sorter.append("02");

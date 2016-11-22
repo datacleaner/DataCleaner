@@ -28,6 +28,8 @@ import java.util.TreeMap;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.events.JobModificationEvent;
@@ -36,8 +38,6 @@ import org.datacleaner.monitor.server.SchedulingServiceImpl;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +64,10 @@ public class JobModificationController {
     @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    public Map<String, String> modifyJob(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
-            @RequestBody final JobModificationPayload input, HttpServletResponse httpServletResponse) throws IOException {
+    public Map<String, String> modifyJob(@PathVariable("tenant") final String tenant,
+            @PathVariable("job") String jobName,
+            @RequestBody final JobModificationPayload input, final HttpServletResponse httpServletResponse)
+            throws IOException {
 
         logger.info("Request payload: {} - {}", jobName, input);
 
@@ -82,7 +84,8 @@ public class JobModificationController {
 
         final String extension = existingFile.getName().substring(jobName.length());
 
-        final RepositoryFile oldScheduleFile = tenantContext.getJobFolder().getFile(jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
+        final RepositoryFile oldScheduleFile =
+                tenantContext.getJobFolder().getFile(jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
 
         final String nameInput = input.getName();
 
@@ -98,7 +101,7 @@ public class JobModificationController {
             public void run(final OutputStream out) throws Exception {
                 existingFile.readFile(new Action<InputStream>() {
                     @Override
-                    public void run(InputStream in) throws Exception {
+                    public void run(final InputStream in) throws Exception {
                         FileHelper.copy(in, out);
                     }
                 });
@@ -114,7 +117,7 @@ public class JobModificationController {
             } else {
                 httpServletResponse.setStatus(HttpServletResponse.SC_CONFLICT);
                 httpServletResponse.setContentType("text/plain");
-                String errorText = "A job file with the name '" + newFilename
+                final String errorText = "A job file with the name '" + newFilename
                         + "' already exists, and the 'overwrite' flag is non-true.";
                 httpServletResponse.getOutputStream().write(errorText.getBytes());
                 return null;
@@ -140,7 +143,8 @@ public class JobModificationController {
         return response;
     }
 
-    private void renameSchedule(final RepositoryFile oldScheduleFile, final String nameInput, final RepositoryFolder jobFolder) {
+    private void renameSchedule(final RepositoryFile oldScheduleFile, final String nameInput,
+            final RepositoryFolder jobFolder) {
         final String newScheduleFilename = nameInput + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML;
 
         final Action<OutputStream> writeScheduleAction = new Action<OutputStream>() {

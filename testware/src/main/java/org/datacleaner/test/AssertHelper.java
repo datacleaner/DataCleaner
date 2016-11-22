@@ -30,11 +30,11 @@ public class AssertHelper {
     /**
      * Replaces every occurence of a file path starting with file:// prefix with
      * [MASKED FILE PATH]. Useful for testing DataCleaner job XML files against benchmarks
-     * 
+     *
      * Example: Replaces 
      * <property name="File" value="file://C:/CUSTOMERS_address_correction.csv"/> 
      * with <property name="File" value="file://[MASKED FILE PATH]"/>
-     * 
+     *
      * @param fileString
      *            The text to replace file paths in
      * @return

@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
+import org.datacleaner.util.StringUtils;
 
 /**
  * Page for entering a name and a description for a datastore.
@@ -41,19 +41,19 @@ public abstract class DatastoreNameAndDescriptionWizardPage extends AbstractFree
     private final String _suggestedName;
     private final String _suggestedDescription;
 
-    public DatastoreNameAndDescriptionWizardPage(DatastoreWizardContext context, int pageIndex, String suggestedName,
-            String suggestedDescription) {
+    public DatastoreNameAndDescriptionWizardPage(final DatastoreWizardContext context, final int pageIndex, final String suggestedName,
+            final String suggestedDescription) {
         _context = context;
         _pageIndex = pageIndex;
         _suggestedName = (suggestedName == null ? "" : suggestedName);
         _suggestedDescription = (suggestedDescription == null ? "" : suggestedDescription);
     }
 
-    public DatastoreNameAndDescriptionWizardPage(DatastoreWizardContext context, int pageIndex, String suggestedName) {
+    public DatastoreNameAndDescriptionWizardPage(final DatastoreWizardContext context, final int pageIndex, final String suggestedName) {
         this(context, pageIndex, suggestedName, null);
     }
 
-    public DatastoreNameAndDescriptionWizardPage(DatastoreWizardContext context, int pageIndex) {
+    public DatastoreNameAndDescriptionWizardPage(final DatastoreWizardContext context, final int pageIndex) {
         this(context, pageIndex, null);
     }
 
@@ -63,7 +63,7 @@ public abstract class DatastoreNameAndDescriptionWizardPage extends AbstractFree
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final String name = formParameters.get("name").get(0);
 

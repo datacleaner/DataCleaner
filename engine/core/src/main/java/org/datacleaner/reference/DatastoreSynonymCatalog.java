@@ -46,13 +46,13 @@ public final class DatastoreSynonymCatalog extends AbstractReferenceData impleme
     private final String[] _synonymColumnPaths;
     private final boolean _loadIntoMemory;
 
-    public DatastoreSynonymCatalog(String name, String datastoreName, String masterTermColumnPath,
-            String[] synonymColumnPaths) {
+    public DatastoreSynonymCatalog(final String name, final String datastoreName, final String masterTermColumnPath,
+            final String[] synonymColumnPaths) {
         this(name, datastoreName, masterTermColumnPath, synonymColumnPaths, true);
     }
 
-    public DatastoreSynonymCatalog(String name, String datastoreName, String masterTermColumnPath,
-            String[] synonymColumnPaths, boolean loadIntoMemory) {
+    public DatastoreSynonymCatalog(final String name, final String datastoreName, final String masterTermColumnPath,
+            final String[] synonymColumnPaths, final boolean loadIntoMemory) {
         super(name);
         _datastoreName = datastoreName;
         _masterTermColumnPath = masterTermColumnPath;
@@ -60,8 +60,25 @@ public final class DatastoreSynonymCatalog extends AbstractReferenceData impleme
         _loadIntoMemory = loadIntoMemory;
     }
 
+    protected static String getMasterTerm(final Row row, final Column column) {
+        final Object value = row.getValue(column);
+        return ConvertToStringTransformer.transformValue(value);
+    }
+
+    protected static String[] getSynonyms(final Row row, final Column[] columns) {
+        final List<String> synonyms = new ArrayList<String>();
+        for (final Column synonymColumn : columns) {
+            final Object value = row.getValue(synonymColumn);
+            if (value != null) {
+                final String stringValue = value.toString();
+                synonyms.add(stringValue);
+            }
+        }
+        return synonyms.toArray(new String[synonyms.size()]);
+    }
+
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final DatastoreSynonymCatalog other = (DatastoreSynonymCatalog) obj;
             return Objects.equals(_datastoreName, other._datastoreName)
@@ -85,7 +102,7 @@ public final class DatastoreSynonymCatalog extends AbstractReferenceData impleme
     }
 
     @Override
-    public SynonymCatalogConnection openConnection(DataCleanerConfiguration configuration) {
+    public SynonymCatalogConnection openConnection(final DataCleanerConfiguration configuration) {
         final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(_datastoreName);
         if (datastore == null) {
             throw new NoSuchDatastoreException(_datastoreName);
@@ -105,7 +122,7 @@ public final class DatastoreSynonymCatalog extends AbstractReferenceData impleme
         return new DatastoreSynonymCatalogConnection(this, datastoreConnection);
     }
 
-    public Column[] getSynonymColumns(DatastoreConnection datastoreConnection) {
+    public Column[] getSynonymColumns(final DatastoreConnection datastoreConnection) {
         final Column[] columns = new Column[_synonymColumnPaths.length];
         for (int i = 0; i < columns.length; i++) {
             final String columnPath = _synonymColumnPaths[i];
@@ -139,7 +156,7 @@ public final class DatastoreSynonymCatalog extends AbstractReferenceData impleme
                 final Row row = dataSet.getRow();
                 final String masterTerm = getMasterTerm(row, masterTermColumn);
                 final String[] synonyms = getSynonyms(row, columns);
-                for (String synonym : synonyms) {
+                for (final String synonym : synonyms) {
                     synonymMap.put(synonym, masterTerm);
                 }
             }
@@ -149,23 +166,6 @@ public final class DatastoreSynonymCatalog extends AbstractReferenceData impleme
         return simpleSynonymCatalog;
     }
 
-    protected static String getMasterTerm(Row row, Column column) {
-        Object value = row.getValue(column);
-        return ConvertToStringTransformer.transformValue(value);
-    }
-
-    protected static String[] getSynonyms(Row row, Column[] columns) {
-        List<String> synonyms = new ArrayList<String>();
-        for (Column synonymColumn : columns) {
-            final Object value = row.getValue(synonymColumn);
-            if (value != null) {
-                final String stringValue = value.toString();
-                synonyms.add(stringValue);
-            }
-        }
-        return synonyms.toArray(new String[synonyms.size()]);
-    }
-    
     public boolean isLoadIntoMemory() {
         return _loadIntoMemory;
     }

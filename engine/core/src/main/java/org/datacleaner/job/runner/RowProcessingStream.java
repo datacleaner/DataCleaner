@@ -34,26 +34,26 @@ public class RowProcessingStream {
     private final Table _table;
     private final boolean _sourceTable;
 
-    public static RowProcessingStream ofOutputDataStream(OutputDataStreamJob outputDataStreamJob) {
+    private RowProcessingStream(final AnalysisJob analysisJob, final Table table, final boolean sourceTable) {
+        _analysisJob = analysisJob;
+        _table = table;
+        _sourceTable = sourceTable;
+    }
+
+    public static RowProcessingStream ofOutputDataStream(final OutputDataStreamJob outputDataStreamJob) {
         return new RowProcessingStream(outputDataStreamJob.getJob(), outputDataStreamJob.getOutputDataStream()
                 .getTable(), false);
     }
 
-    public static RowProcessingStream ofSourceTable(AnalysisJob analysisJob, Table table) {
+    public static RowProcessingStream ofSourceTable(final AnalysisJob analysisJob, final Table table) {
         return new RowProcessingStream(analysisJob, table, true);
-    }
-
-    private RowProcessingStream(AnalysisJob analysisJob, Table table, boolean sourceTable) {
-        _analysisJob = analysisJob;
-        _table = table;
-        _sourceTable = sourceTable;
     }
 
     /**
      * Determines if this RowProcessingStream is acting on a source
      * {@link Table} or not (in which case it would normally represent an
      * {@link OutputDataStream})
-     * 
+     *
      * @return
      */
     public boolean isSourceTable() {
@@ -62,7 +62,7 @@ public class RowProcessingStream {
 
     /**
      * Gets the {@link AnalysisJob} that this stream will be executing.
-     * 
+     *
      * @return
      */
     public AnalysisJob getAnalysisJob() {
@@ -72,7 +72,7 @@ public class RowProcessingStream {
     /**
      * Gets the logical or physical {@link Table} that this stream's records
      * matches.
-     * 
+     *
      * @return
      */
     public Table getTable() {
@@ -85,7 +85,7 @@ public class RowProcessingStream {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -95,7 +95,7 @@ public class RowProcessingStream {
         final RowProcessingStream other = (RowProcessingStream) obj;
         return Objects.equals(_analysisJob, other._analysisJob) && Objects.equals(_table, other._table);
     }
-    
+
     @Override
     public String toString() {
         return getTable().getName();

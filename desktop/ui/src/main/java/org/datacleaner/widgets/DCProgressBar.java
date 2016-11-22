@@ -42,7 +42,7 @@ public class DCProgressBar extends JProgressBar {
     private Color _progressBarColor = WidgetUtils.BG_COLOR_BLUE_BRIGHT;
     private boolean _showAsFull;
 
-    public DCProgressBar(int min, int max) {
+    public DCProgressBar(final int min, final int max) {
         super(min, max);
         setMinimumSize(new Dimension(10, DEFAULT_HEIGHT));
 
@@ -52,7 +52,7 @@ public class DCProgressBar extends JProgressBar {
 
     @Override
     public Dimension getPreferredSize() {
-        int width = super.getPreferredSize().width;
+        final int width = super.getPreferredSize().width;
         return new Dimension(width, DEFAULT_HEIGHT);
     }
 
@@ -69,7 +69,7 @@ public class DCProgressBar extends JProgressBar {
      * @return whether or not the value was greater, and thus updated
      */
     public boolean setValueIfGreater(final int newValue) {
-        boolean greater = _value.setIfSignificantToUser(newValue);
+        final boolean greater = _value.setIfSignificantToUser(newValue);
         if (greater) {
             WidgetUtils.invokeSwingAction(new Runnable() {
                 @Override
@@ -81,12 +81,12 @@ public class DCProgressBar extends JProgressBar {
         return greater;
     }
 
-    public void setShowAsFull(boolean showAsFull) {
-        _showAsFull = showAsFull;
-    }
-
     public boolean isShowAsFull() {
         return _showAsFull;
+    }
+
+    public void setShowAsFull(final boolean showAsFull) {
+        _showAsFull = showAsFull;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class DCProgressBar extends JProgressBar {
      */
     @Deprecated
     @Override
-    public void setValue(int newValue) {
+    public void setValue(final int newValue) {
         setValueIfGreater(newValue);
     }
 
@@ -122,16 +122,16 @@ public class DCProgressBar extends JProgressBar {
         return barWidth;
     }
 
-    public void setProgressBarColor(Color progressBarColor) {
-        _progressBarColor = progressBarColor;
-    }
-
     public Color getProgressBarColor() {
         return _progressBarColor;
     }
 
+    public void setProgressBarColor(final Color progressBarColor) {
+        _progressBarColor = progressBarColor;
+    }
+
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
         final int width = getWidth();
         final int height = getHeight();
 

@@ -29,8 +29,8 @@ import org.datacleaner.reference.Dictionary;
 public interface DictionaryChangeListener {
 
     @Deprecated
-	public void onAdd(Dictionary dictionary);
+    void onAdd(Dictionary dictionary);
 
     @Deprecated
-	public void onRemove(Dictionary dictionary);
+    void onRemove(Dictionary dictionary);
 }

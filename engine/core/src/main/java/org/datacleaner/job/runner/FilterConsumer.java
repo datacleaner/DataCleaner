@@ -38,8 +38,8 @@ final class FilterConsumer extends AbstractRowProcessingConsumer implements RowP
     private final InputColumn<?>[] _inputColumns;
     private final boolean _concurrent;
 
-    public FilterConsumer(Filter<?> filter, FilterJob filterJob, InputColumn<?>[] inputColumns,
-            RowProcessingPublisher publisher) {
+    public FilterConsumer(final Filter<?> filter, final FilterJob filterJob, final InputColumn<?>[] inputColumns,
+            final RowProcessingPublisher publisher) {
         super(publisher, filterJob, filterJob);
         _filter = filter;
         _filterJob = filterJob;
@@ -48,7 +48,7 @@ final class FilterConsumer extends AbstractRowProcessingConsumer implements RowP
     }
 
     private boolean determineConcurrent() {
-        Concurrent concurrent = _filterJob.getDescriptor().getAnnotation(Concurrent.class);
+        final Concurrent concurrent = _filterJob.getDescriptor().getAnnotation(Concurrent.class);
         if (concurrent == null) {
             // filter are by default concurrent
             return true;
@@ -72,9 +72,9 @@ final class FilterConsumer extends AbstractRowProcessingConsumer implements RowP
     }
 
     @Override
-    public void consumeInternal(InputRow row, int distinctCount, FilterOutcomes outcomes, RowProcessingChain chain) {
-        Enum<?> category = _filter.categorize(row);
-        FilterOutcome outcome = new ImmutableFilterOutcome(_filterJob, category);
+    public void consumeInternal(final InputRow row, final int distinctCount, final FilterOutcomes outcomes, final RowProcessingChain chain) {
+        final Enum<?> category = _filter.categorize(row);
+        final FilterOutcome outcome = new ImmutableFilterOutcome(_filterJob, category);
         outcomes.add(outcome);
         chain.processNext(row, distinctCount, outcomes);
     }
@@ -89,11 +89,11 @@ final class FilterConsumer extends AbstractRowProcessingConsumer implements RowP
         return "FilterConsumer[" + _filter + "]";
     }
 
-    public boolean isQueryOptimizable(FilterOutcome filterOutcome) {
+    public boolean isQueryOptimizable(final FilterOutcome filterOutcome) {
         if (_filter instanceof QueryOptimizedFilter) {
-            @SuppressWarnings("rawtypes")
+            @SuppressWarnings("rawtypes") final
             QueryOptimizedFilter queryOptimizedFilter = (QueryOptimizedFilter) _filter;
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings("unchecked") final
             boolean optimizable = queryOptimizedFilter.isOptimizable(filterOutcome.getCategory());
             return optimizable;
         }

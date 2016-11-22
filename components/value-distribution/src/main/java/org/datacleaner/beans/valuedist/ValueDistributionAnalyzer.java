@@ -47,7 +47,8 @@ import org.slf4j.LoggerFactory;
 
 @Named("Value distribution")
 @Description("Gets the distributions of values that occur in a dataset.\nOften used as an initial way to see if a lot of repeated values are to be expected, if nulls occur and if a few un-repeated values add exceptions to the typical usage-pattern.")
-@ExternalDocumentation({ @DocumentationLink(title = "Analyzer rundown", url = "https://www.youtube.com/watch?v=hZWxB_eu_A0", type = DocumentationType.VIDEO, version = "4.0") })
+@ExternalDocumentation({
+        @DocumentationLink(title = "Analyzer rundown", url = "https://www.youtube.com/watch?v=hZWxB_eu_A0", type = DocumentationType.VIDEO, version = "4.0") })
 @Concurrent(true)
 public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnalyzerResult> {
 
@@ -57,59 +58,52 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
     public static final String PROPERTY_RECORD_DRILL_DOWN_INFORMATION = "Record drill-down information";
 
     private static final Logger logger = LoggerFactory.getLogger(ValueDistributionAnalyzer.class);
-
+    private final Map<String, ValueDistributionGroup> _valueDistributionGroups;
     @Inject
     @Configured(value = PROPERTY_COLUMN, order = 1)
     @ColumnProperty(escalateToMultipleJobs = true)
     InputColumn<?> _column;
-
     @Inject
     @Configured(value = PROPERTY_GROUP_COLUMN, required = false, order = 2)
     InputColumn<String> _groupColumn;
-
     @Inject
     @Configured(value = PROPERTY_RECORD_UNIQUE_VALUES, required = false, order = 3)
     boolean _recordUniqueValues = true;
-
     @Inject
     @Configured(value = PROPERTY_RECORD_DRILL_DOWN_INFORMATION, required = false, order = 4)
     @Description("Record extra information to allow drilling to the records that represent a particular value in the distribution")
     boolean _recordDrillDownInformation = true;
-
     @Inject
     @Configured(value = "Top n most frequent values", required = false, order = 5)
     @Deprecated
     Integer _topFrequentValues;
-
     @Inject
     @Configured(value = "Bottom n most frequent values", required = false, order = 6)
     @Deprecated
     Integer _bottomFrequentValues;
-
     @Inject
     @Provided
     RowAnnotationFactory _annotationFactory;
 
-    private final Map<String, ValueDistributionGroup> _valueDistributionGroups;
-
     /**
      * Constructor used for testing and ad-hoc purposes
-     * 
+     *
      * @param column
      * @param recordUniqueValues
      */
-    public ValueDistributionAnalyzer(InputColumn<?> column, boolean recordUniqueValues) {
+    public ValueDistributionAnalyzer(final InputColumn<?> column, final boolean recordUniqueValues) {
         this(column, null, recordUniqueValues);
     }
 
     /**
      * Constructor used for testing and ad-hoc purposes
-     * 
+     *
      * @param column
      * @param groupColumn
      * @param recordUniqueValues
      */
-    public ValueDistributionAnalyzer(InputColumn<?> column, InputColumn<String> groupColumn, boolean recordUniqueValues) {
+    public ValueDistributionAnalyzer(final InputColumn<?> column, final InputColumn<String> groupColumn,
+            final boolean recordUniqueValues) {
         this();
         _column = column;
         _groupColumn = groupColumn;
@@ -126,7 +120,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         final Object value = row.getValue(_column);
         if (_groupColumn == null) {
             runInternal(row, value, distinctCount);
@@ -136,11 +130,11 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
         }
     }
 
-    public void runInternal(InputRow row, Object value, int distinctCount) {
+    public void runInternal(final InputRow row, final Object value, final int distinctCount) {
         runInternal(row, value, _column.getName(), distinctCount);
     }
 
-    public void runInternal(InputRow row, Object value, String group, int distinctCount) {
+    public void runInternal(final InputRow row, final Object value, final String group, final int distinctCount) {
         final ValueDistributionGroup valueDistributionGroup = getValueDistributionGroup(group);
         final String stringValue;
         if (value == null) {
@@ -152,7 +146,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
         valueDistributionGroup.run(row, stringValue, distinctCount);
     }
 
-    private ValueDistributionGroup getValueDistributionGroup(String group) {
+    private ValueDistributionGroup getValueDistributionGroup(final String group) {
         ValueDistributionGroup valueDistributionGroup = _valueDistributionGroups.get(group);
         if (valueDistributionGroup == null) {
             synchronized (this) {
@@ -184,7 +178,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
             logger.info("getResult() invoked, processing {} groups", _valueDistributionGroups.size());
 
             final SortedSet<SingleValueDistributionResult> groupedResults = new TreeSet<>();
-            for (String group : _valueDistributionGroups.keySet()) {
+            for (final String group : _valueDistributionGroups.keySet()) {
                 final ValueDistributionGroup valueDistributibutionGroup = getValueDistributionGroup(group);
                 final SingleValueDistributionResult result = valueDistributibutionGroup
                         .createResult(_recordUniqueValues);
@@ -194,34 +188,34 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
         }
     }
 
-    public void setAnnotationFactory(RowAnnotationFactory annotationFactory) {
+    public void setAnnotationFactory(final RowAnnotationFactory annotationFactory) {
         _annotationFactory = annotationFactory;
     }
 
     /**
-     * 
+     *
      * @param collectionFactory
      * @deprecated use of this property is no longer adviced. It will be phased
      *             out in later versions of DataCleaner
      */
     @Deprecated
-    public void setCollectionFactory(CollectionFactory collectionFactory) {
+    public void setCollectionFactory(final CollectionFactory collectionFactory) {
         // do nothing
     }
 
-    public void setColumn(InputColumn<?> column) {
+    public void setColumn(final InputColumn<?> column) {
         _column = column;
     }
 
-    public void setGroupColumn(InputColumn<String> groupColumn) {
+    public void setGroupColumn(final InputColumn<String> groupColumn) {
         _groupColumn = groupColumn;
     }
 
-    public void setRecordDrillDownInformation(boolean recordDrillDownInformation) {
+    public void setRecordDrillDownInformation(final boolean recordDrillDownInformation) {
         _recordDrillDownInformation = recordDrillDownInformation;
     }
 
-    public void setRecordUniqueValues(boolean recordUniqueValues) {
+    public void setRecordUniqueValues(final boolean recordUniqueValues) {
         _recordUniqueValues = recordUniqueValues;
     }
 }

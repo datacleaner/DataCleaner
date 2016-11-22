@@ -31,20 +31,18 @@ import org.datacleaner.monitor.scheduling.model.ExecutionLog;
  */
 public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, HasName {
 
-    private static final long serialVersionUID = 1L;
-
     public static final String JOB_TYPE_ANALYSIS_JOB = "DataCleanerAnalysisJob";
     public static final String JOB_TYPE_CUSTOM_JOB = "CustomJob";
-
+    private static final long serialVersionUID = 1L;
     private String _name;
     private String _type;
 
-    public JobIdentifier(String name, String type) {
+    public JobIdentifier(final String name, final String type) {
         _name = name;
         _type = type;
     }
 
-    public JobIdentifier(String name) {
+    public JobIdentifier(final String name) {
         this(name, null);
     }
 
@@ -52,59 +50,7 @@ public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, H
         this(null);
     }
 
-    public String getType() {
-        return _type;
-    }
-
-    public void setType(String type) {
-        _type = type;
-    }
-
-    @Override
-    public String getName() {
-        return _name;
-    }
-
-    public void setName(String name) {
-        _name = name;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((_name == null) ? 0 : _name.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        JobIdentifier other = (JobIdentifier) obj;
-        if (_name == null) {
-            if (other._name != null)
-                return false;
-        } else if (!_name.equals(other._name))
-            return false;
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "JobIdentifier[name=" + _name + "]";
-    }
-
-    @Override
-    public int compareTo(JobIdentifier o) {
-        return getName().compareTo(o.getName());
-    }
-
-    public static JobIdentifier fromResultId(String resultId) {
+    public static JobIdentifier fromResultId(final String resultId) {
         if (resultId == null || "".equals(resultId)) {
             throw new IllegalArgumentException("Result ID cannot be null or empty string");
         }
@@ -118,25 +64,82 @@ public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, H
         final String timestamp = resultId.substring(lastIndexOfDash + 1);
         try {
             Long.parseLong(timestamp);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new IllegalArgumentException("Result ID '" + resultId
                     + "' does not match expected pattern: [jobname]-[timestamp]");
         }
-        
+
         final String jobName = resultId.substring(0, lastIndexOfDash);
 
         return new JobIdentifier(jobName);
     }
 
-    public static JobIdentifier fromExecutionIdentifier(ExecutionIdentifier executionIdentifier) {
+    public static JobIdentifier fromExecutionIdentifier(final ExecutionIdentifier executionIdentifier) {
         if (executionIdentifier instanceof ExecutionLog) {
-            JobIdentifier job = ((ExecutionLog) executionIdentifier).getJob();
+            final JobIdentifier job = ((ExecutionLog) executionIdentifier).getJob();
             if (job != null) {
                 return job;
             }
         }
-        String resultId = executionIdentifier.getResultId();
+        final String resultId = executionIdentifier.getResultId();
         return fromResultId(resultId);
+    }
+
+    public String getType() {
+        return _type;
+    }
+
+    public void setType(final String type) {
+        _type = type;
+    }
+
+    @Override
+    public String getName() {
+        return _name;
+    }
+
+    public void setName(final String name) {
+        _name = name;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((_name == null) ? 0 : _name.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final JobIdentifier other = (JobIdentifier) obj;
+        if (_name == null) {
+            if (other._name != null) {
+                return false;
+            }
+        } else if (!_name.equals(other._name)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "JobIdentifier[name=" + _name + "]";
+    }
+
+    @Override
+    public int compareTo(final JobIdentifier o) {
+        return getName().compareTo(o.getName());
     }
 
 }

@@ -58,10 +58,11 @@ import com.google.inject.Injector;
 
 /**
  * {@link PropertyWidget} for single datastore properties. Shown as a combo box.
- * 
+ *
  * @author Kasper Sørensen
  */
-public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datastore> implements DatastoreChangeListener {
+public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datastore>
+        implements DatastoreChangeListener {
 
     private static final Logger logger = LoggerFactory.getLogger(SingleDatastorePropertyWidget.class);
 
@@ -70,29 +71,27 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     private final DCPanel _panelAroundButton;
     private final PopupButton _createDatastoreButton;
     private final Class<?> _datastoreClass;
-    private volatile DatastoreConnection _connection;
-
     private final DCModule _dcModule;
-
+    private volatile DatastoreConnection _connection;
     private boolean _onlyUpdatableDatastores = false;
 
     @Inject
-    public SingleDatastorePropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor, DatastoreCatalog datastoreCatalog, DCModule dcModule) {
+    public SingleDatastorePropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor, final DatastoreCatalog datastoreCatalog, final DCModule dcModule) {
         super(componentBuilder, propertyDescriptor);
         _datastoreCatalog = datastoreCatalog;
         _dcModule = dcModule;
         _datastoreClass = propertyDescriptor.getBaseType();
 
-        String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
-        List<Datastore> list = new ArrayList<Datastore>();
+        final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
+        final List<Datastore> list = new ArrayList<Datastore>();
 
         if (!propertyDescriptor.isRequired()) {
             list.add(null);
         }
 
         for (int i = 0; i < datastoreNames.length; i++) {
-            Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
+            final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
             if (ReflectionUtils.is(datastore.getClass(), _datastoreClass)) {
                 // only include correct subtypes of datastore, it may be eg. a
                 // CsvDatastore property.
@@ -104,13 +103,13 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
         addComboListener(new Listener<Datastore>() {
             @Override
-            public void onItemSelected(Datastore item) {
+            public void onItemSelected(final Datastore item) {
                 openConnection(item);
                 fireValueChanged();
             }
         });
 
-        Datastore currentValue = (Datastore) componentBuilder.getConfiguredProperty(propertyDescriptor);
+        final Datastore currentValue = (Datastore) componentBuilder.getConfiguredProperty(propertyDescriptor);
         setValue(currentValue);
 
         _createDatastoreButton = WidgetFactory.createSmallPopupButton("", IconUtils.ACTION_CREATE_TABLE);
@@ -130,7 +129,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         add(panel);
     }
 
-    public void setOnlyUpdatableDatastores(boolean onlyUpdatableDatastores) {
+    public void setOnlyUpdatableDatastores(final boolean onlyUpdatableDatastores) {
         _onlyUpdatableDatastores = onlyUpdatableDatastores;
         final JPopupMenu menu = _createDatastoreButton.getMenu();
         menu.removeAll();
@@ -141,10 +140,10 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         final DatabaseDriverCatalog databaseDriverCatalog = _dcModule.createInjectorBuilder().getInstance(
                 DatabaseDriverCatalog.class);
 
-        List<DatastoreDescriptor> availableDatastoreDescriptors = new DatastoreDescriptors(databaseDriverCatalog)
+        final List<DatastoreDescriptor> availableDatastoreDescriptors = new DatastoreDescriptors(databaseDriverCatalog)
                 .getAvailableDatastoreDescriptors();
 
-        for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
+        for (final DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
             if (_onlyUpdatableDatastores) {
                 if (!datastoreDescriptor.isUpdatable()) {
                     continue;
@@ -161,16 +160,17 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     }
 
     private ActionListener createActionListener(final String datastoreName,
-            final Class<? extends Datastore> datastoreClass, final Class<? extends AbstractDialog> datastoreDialogClass) {
+            final Class<? extends Datastore> datastoreClass,
+            final Class<? extends AbstractDialog> datastoreDialogClass) {
         return new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null)
                         .createInjector();
                 final AbstractDialog dialog = injectorWithNullDatastore.getInstance(datastoreDialogClass);
                 if (dialog instanceof JdbcDatastoreDialog) {
-                    JdbcDatastoreDialog jdbcDatastoreDialog = (JdbcDatastoreDialog) dialog;
+                    final JdbcDatastoreDialog jdbcDatastoreDialog = (JdbcDatastoreDialog) dialog;
                     jdbcDatastoreDialog.setSelectedDatabase(datastoreName);
                 }
                 dialog.setVisible(true);
@@ -179,7 +179,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         };
     }
 
-    public void addComboListener(Listener<Datastore> listener) {
+    public void addComboListener(final Listener<Datastore> listener) {
         _comboBox.addListener(listener);
     }
 
@@ -202,14 +202,14 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
     @Override
     public Datastore getValue() {
-        Object selectedItem = _comboBox.getSelectedItem();
-        Datastore datastore = (Datastore) selectedItem;
+        final Object selectedItem = _comboBox.getSelectedItem();
+        final Datastore datastore = (Datastore) selectedItem;
         openConnection(datastore);
         return datastore;
     }
 
     @Override
-    protected void setValue(Datastore value) {
+    protected void setValue(final Datastore value) {
         if (value == null) {
             _comboBox.setSelectedItem(null);
             return;
@@ -226,7 +226,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         _comboBox.setEditable(false);
     }
 
-    private void openConnection(Datastore datastore) {
+    private void openConnection(final Datastore datastore) {
         if (_connection != null && _connection.getDatastore() == datastore) {
             return;
         }
@@ -237,14 +237,14 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         if (datastore != null) {
             try {
                 _connection = datastore.openConnection();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Could not open connection to datastore: {}", datastore);
             }
         }
     }
 
     @Override
-    public void onAdd(Datastore datastore) {
+    public void onAdd(final Datastore datastore) {
         if (ReflectionUtils.is(datastore.getClass(), _datastoreClass)) {
             _comboBox.setEditable(true);
             _comboBox.addItem(datastore);
@@ -253,7 +253,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     }
 
     @Override
-    public void onRemove(Datastore datastore) {
+    public void onRemove(final Datastore datastore) {
         _comboBox.setEditable(true);
         _comboBox.removeItem(datastore);
         _comboBox.setEditable(false);
@@ -262,7 +262,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     public void connectToSchemaNamePropertyWidget(final SchemaNamePropertyWidget schemaNamePropertyWidget) {
         addComboListener(new Listener<Datastore>() {
             @Override
-            public void onItemSelected(Datastore item) {
+            public void onItemSelected(final Datastore item) {
                 schemaNamePropertyWidget.setDatastore(item);
             }
         });

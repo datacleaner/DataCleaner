@@ -57,7 +57,7 @@ public class ComponentDocumentationBuilder {
         this(false);
     }
 
-    public ComponentDocumentationBuilder(boolean breadcrumbs) {
+    public ComponentDocumentationBuilder(final boolean breadcrumbs) {
         _breadcrumbs = breadcrumbs;
         _freemarkerConfiguration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 
@@ -65,14 +65,38 @@ public class ComponentDocumentationBuilder {
         _freemarkerConfiguration.setTemplateLoader(templateLoader);
         try {
             _template = _freemarkerConfiguration.getTemplate("template_component.html");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Failed to load template", e);
         }
     }
 
     /**
+     * Used to convert an image object to buffered image. Used in
+     * {@link #createDocumentation(ComponentDescriptor, OutputStream)()}
+     *
+     * @param image
+     * @return buffered image
+     */
+    public static BufferedImage toBufferedImage(final Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
+        }
+
+        // Create a buffered image with transparency
+        final BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null),
+                BufferedImage.TYPE_INT_ARGB);
+
+        final Graphics2D bufferedGraphics = bufferedImage.createGraphics();
+        bufferedGraphics.drawImage(image, 0, 0, null);
+        bufferedGraphics.dispose();
+
+        // Return the buffered image
+        return bufferedImage;
+    }
+
+    /**
      * Creates the reference documentation for a {@link Component}.
-     * 
+     *
      * @param componentDescriptor
      *            the {@link ComponentDescriptor} of the {@link Component} of
      *            interest.
@@ -80,13 +104,13 @@ public class ComponentDocumentationBuilder {
      *            the target {@link OutputStream} to write to
      * @throws IOException
      */
-    public void write(ComponentDescriptor<?> componentDescriptor, OutputStream outputStream) throws IOException {
+    public void write(final ComponentDescriptor<?> componentDescriptor, final OutputStream outputStream) throws IOException {
         write(new ComponentDocumentationWrapper(componentDescriptor), outputStream);
     }
 
     /**
      * Creates the reference documentation for a {@link Component}.
-     * 
+     *
      * @param componentWrapper
      *            the {@link ComponentDocumentationWrapper} of the
      *            {@link Component} of interest.
@@ -94,7 +118,7 @@ public class ComponentDocumentationBuilder {
      *            the target {@link OutputStream} to write to
      * @throws IOException
      */
-    public void write(ComponentDocumentationWrapper componentWrapper, OutputStream outputStream) throws IOException {
+    public void write(final ComponentDocumentationWrapper componentWrapper, final OutputStream outputStream) throws IOException {
 
         final Map<String, Object> data = new HashMap<>();
 
@@ -108,15 +132,16 @@ public class ComponentDocumentationBuilder {
                 final List<ConfiguredPropertyDescriptor> properties = new ArrayList<ConfiguredPropertyDescriptor>(
                         configuredProperties);
                 final List<ConfiguredPropertyDocumentationWrapper> propertyList = new ArrayList<>();
-                for (ConfiguredPropertyDescriptor property : properties) {
+                for (final ConfiguredPropertyDescriptor property : properties) {
                     final HiddenProperty hiddenProperty = property.getAnnotation(HiddenProperty.class);
                     final Deprecated deprecatedProperty = property.getAnnotation(Deprecated.class);
 
                     // we do not show hidden or deprecated properties in docs
                     if ((hiddenProperty == null || hiddenProperty.hiddenForLocalAccess() == false)
                             && deprecatedProperty == null) {
-                        final ConfiguredPropertyDocumentationWrapper wrapper = new ConfiguredPropertyDocumentationWrapper(
-                                property);
+                        final ConfiguredPropertyDocumentationWrapper wrapper =
+                                new ConfiguredPropertyDocumentationWrapper(
+                                        property);
                         propertyList.add(wrapper);
                     }
                 }
@@ -129,41 +154,17 @@ public class ComponentDocumentationBuilder {
             _template.process(data, out);
             out.flush();
             out.close();
-        } catch (TemplateException e) {
+        } catch (final TemplateException e) {
             throw new IllegalStateException("Unexpected templare exception", e);
         }
     }
 
     /**
      * Gets the freemarker configuration.
-     * 
+     *
      * @return
      */
     public Configuration getFreemarkerconfiguration() {
         return _freemarkerConfiguration;
-    }
-
-    /**
-     * Used to convert an image object to buffered image. Used in
-     * {@link #createDocumentation(ComponentDescriptor, OutputStream)()}
-     * 
-     * @param image
-     * @return buffered image
-     */
-    public static BufferedImage toBufferedImage(Image image) {
-        if (image instanceof BufferedImage) {
-            return (BufferedImage) image;
-        }
-
-        // Create a buffered image with transparency
-        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null),
-                BufferedImage.TYPE_INT_ARGB);
-
-        final Graphics2D bufferedGraphics = bufferedImage.createGraphics();
-        bufferedGraphics.drawImage(image, 0, 0, null);
-        bufferedGraphics.dispose();
-
-        // Return the buffered image
-        return bufferedImage;
     }
 }

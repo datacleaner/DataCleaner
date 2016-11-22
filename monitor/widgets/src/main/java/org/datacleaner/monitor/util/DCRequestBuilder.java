@@ -31,19 +31,19 @@ public class DCRequestBuilder {
 
     private final RequestBuilder _requestBuilder;
 
-    public DCRequestBuilder(Method method, String url) {
+    public DCRequestBuilder(final Method method, final String url) {
         _requestBuilder = new RequestBuilder(method, url);
     }
 
-    public void send(String requestData, DCRequestCallback callback) {
+    public void send(final String requestData, final DCRequestCallback callback) {
         try {
             _requestBuilder.sendRequest(requestData, callback);
-        } catch (RequestException e) {
+        } catch (final RequestException e) {
             ErrorHandler.showErrorDialog("Error sending request", e.getMessage(), e);
         }
     }
 
-    public void setHeader(String header, String value) {
+    public void setHeader(final String header, final String value) {
         _requestBuilder.setHeader(header, value);
     }
 }

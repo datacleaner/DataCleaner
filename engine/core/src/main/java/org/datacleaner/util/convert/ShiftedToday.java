@@ -32,7 +32,7 @@ public class ShiftedToday extends Date implements ExpressionDate {
     private static final long serialVersionUID = 1L;
     private final String _input;
 
-    public ShiftedToday(String input) {
+    public ShiftedToday(final String input) {
         _input = validateInput(input);
         final int[] counts = parseCounts();
 
@@ -48,8 +48,8 @@ public class ShiftedToday extends Date implements ExpressionDate {
 
         setTime(calendar.getTime().getTime());
     }
-    
-    private static String validateInput(String input) {
+
+    private static String validateInput(final String input) {
         final String regexp = "shifted_today[(](.+)[)]";
         final Pattern pattern = Pattern.compile(regexp);
         final Matcher matcher = pattern.matcher(input);
@@ -57,7 +57,7 @@ public class ShiftedToday extends Date implements ExpressionDate {
         if (matcher.find()) {
             return matcher.group(1);
         }
-        
+
         return input;
     }
 
@@ -70,14 +70,14 @@ public class ShiftedToday extends Date implements ExpressionDate {
             throw new RuntimeException(
                     String.format("Specified value ('%s') does not match allowed format (1d 2m 3y). ", _input));
         }
-        
+
         return new int[] {
                 Integer.parseInt(matcher.group(1)),
                 Integer.parseInt(matcher.group(2)),
                 Integer.parseInt(matcher.group(3))
         };
     }
-    
+
     public String getInput() {
         return _input;
     }

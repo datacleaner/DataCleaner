@@ -29,8 +29,9 @@ public class MainTest extends TestCase {
 
     public void testInitializeSystemProperties() throws Exception {
         Map<String, String> properties = Main
-                .initializeSystemProperties("-job hey.xml -Dfoo=bar -Dfoo=bar -DdatastoreCatalog.orderdb.url=foobar -hello world"
-                        .split(" "));
+                .initializeSystemProperties(
+                        "-job hey.xml -Dfoo=bar -Dfoo=bar -DdatastoreCatalog.orderdb.url=foobar -hello world"
+                                .split(" "));
         assertEquals(2, properties.size());
         assertEquals("foobar", properties.get("datastoreCatalog.orderdb.url"));
         assertEquals("bar", properties.get("foo"));

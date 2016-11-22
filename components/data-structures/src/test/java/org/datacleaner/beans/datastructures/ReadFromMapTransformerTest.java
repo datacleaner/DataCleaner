@@ -34,32 +34,32 @@ import org.datacleaner.job.AbstractOutputRowCollector;
 
 public class ReadFromMapTransformerTest extends TestCase {
 
-	public void testTransform() throws Exception {
-		final List<Object[]> result = new ArrayList<Object[]>();
-		final ReadFromMapTransformer trans = new ReadFromMapTransformer();
-		final InputColumn<Map<String, ?>> col = new MockInputColumn<Map<String, ?>>("foo");
-		trans.mapColumn = col;
-		trans.valueType = Integer.class;
-		trans.verifyTypes = true;
-		trans.outputRowCollector = new AbstractOutputRowCollector() {
-			@Override
-			public void putValues(Object... values) {
-				result.add(values);
-			}
-		};
+    public void testTransform() throws Exception {
+        final List<Object[]> result = new ArrayList<Object[]>();
+        final ReadFromMapTransformer trans = new ReadFromMapTransformer();
+        final InputColumn<Map<String, ?>> col = new MockInputColumn<Map<String, ?>>("foo");
+        trans.mapColumn = col;
+        trans.valueType = Integer.class;
+        trans.verifyTypes = true;
+        trans.outputRowCollector = new AbstractOutputRowCollector() {
+            @Override
+            public void putValues(Object... values) {
+                result.add(values);
+            }
+        };
 
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		map.put("foo", 1);
-		map.put("bar", 2);
-		map.put("baz", 3);
+        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        map.put("foo", 1);
+        map.put("bar", 2);
+        map.put("baz", 3);
 
-		Object[] transformerOutput = trans.transform(new MockInputRow().put(col, map));
+        Object[] transformerOutput = trans.transform(new MockInputRow().put(col, map));
 
-		assertNull(transformerOutput);
-		assertEquals(3, result.size());
-		assertEquals("[foo, 1]", Arrays.toString(result.get(0)));
-		assertEquals("[bar, 2]", Arrays.toString(result.get(1)));
-		assertEquals("[baz, 3]", Arrays.toString(result.get(2)));
-	}
+        assertNull(transformerOutput);
+        assertEquals(3, result.size());
+        assertEquals("[foo, 1]", Arrays.toString(result.get(0)));
+        assertEquals("[bar, 2]", Arrays.toString(result.get(1)));
+        assertEquals("[baz, 3]", Arrays.toString(result.get(2)));
+    }
 
 }

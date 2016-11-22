@@ -27,8 +27,8 @@ import org.datacleaner.result.CrosstabResult;
 
 /**
  * Result type of the StringAnalyzer
- * 
- * 
+ *
+ *
  */
 @Distributed(reducer = StringAnalyzerResultReducer.class)
 public class StringAnalyzerResult extends CrosstabResult {
@@ -37,7 +37,7 @@ public class StringAnalyzerResult extends CrosstabResult {
 
     private final InputColumn<String>[] _columns;
 
-    public StringAnalyzerResult(InputColumn<String>[] columns, Crosstab<?> crosstab) {
+    public StringAnalyzerResult(final InputColumn<String>[] columns, final Crosstab<?> crosstab) {
         super(crosstab);
         _columns = columns;
     }
@@ -47,128 +47,128 @@ public class StringAnalyzerResult extends CrosstabResult {
     }
 
     @Metric(StringAnalyzer.MEASURE_AVG_CHARS)
-    public double getAvgChars(InputColumn<?> col) {
+    public double getAvgChars(final InputColumn<?> col) {
         return (Double) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_AVG_CHARS).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_AVG_WHITE_SPACES)
-    public double getAvgWhitespaces(InputColumn<?> col) {
+    public double getAvgWhitespaces(final InputColumn<?> col) {
         return (Double) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_AVG_WHITE_SPACES).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_DIACRITIC_CHARS)
-    public int getDiacritiChars(InputColumn<?> col) {
+    public int getDiacritiChars(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_DIACRITIC_CHARS).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_DIGIT_CHARS)
-    public int getDigitChars(InputColumn<?> col) {
+    public int getDigitChars(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_DIGIT_CHARS).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_ENTIRELY_LOWERCASE_COUNT)
-    public int getEntirelyLowerCaseCount(InputColumn<?> col) {
+    public int getEntirelyLowerCaseCount(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_ENTIRELY_LOWERCASE_COUNT).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_ENTIRELY_UPPERCASE_COUNT)
-    public int getEntirelyUpperCaseCount(InputColumn<?> col) {
+    public int getEntirelyUpperCaseCount(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_ENTIRELY_UPPERCASE_COUNT).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_LOWERCASE_CHARS)
-    public int getLowerCaseChars(InputColumn<?> col) {
+    public int getLowerCaseChars(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_LOWERCASE_CHARS).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_MAX_CHARS)
-    public int getMaxChars(InputColumn<?> col) {
+    public int getMaxChars(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_MAX_CHARS).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_MAX_WHITE_SPACES)
-    public int getMaxWhitespaces(InputColumn<?> col) {
+    public int getMaxWhitespaces(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_MAX_WHITE_SPACES).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_MAX_WORDS)
-    public int getMaxWords(InputColumn<?> col) {
+    public int getMaxWords(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_MAX_WORDS).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_MIN_CHARS)
-    public int getMinChars(InputColumn<?> col) {
+    public int getMinChars(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_MIN_CHARS).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_MIN_WHITE_SPACES)
-    public int getMinWhitespaces(InputColumn<?> col) {
+    public int getMinWhitespaces(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_MIN_WHITE_SPACES).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_MIN_WORDS)
-    public int getMinWords(InputColumn<?> col) {
+    public int getMinWords(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_MIN_WORDS).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_NON_LETTER_CHARS)
-    public int getNonLetterChars(InputColumn<?> col) {
+    public int getNonLetterChars(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_NON_LETTER_CHARS).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_NULL_COUNT)
-    public int getNullCount(InputColumn<?> col) {
+    public int getNullCount(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_NULL_COUNT).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_BLANK_COUNT)
-    public Integer getBlankCount(InputColumn<?> col) {
+    public Integer getBlankCount(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_BLANK_COUNT).safeGet(null);
     }
 
     @Metric(StringAnalyzer.MEASURE_ROW_COUNT)
-    public int getRowCount(InputColumn<?> col) {
+    public int getRowCount(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_ROW_COUNT).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_TOTAL_CHAR_COUNT)
-    public int getTotalCharCount(InputColumn<?> col) {
+    public int getTotalCharCount(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_TOTAL_CHAR_COUNT).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_UPPERCASE_CHARS)
-    public int getUpperCaseChars(InputColumn<?> col) {
+    public int getUpperCaseChars(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_UPPERCASE_CHARS).get();
     }
 
     @Metric(StringAnalyzer.MEASURE_UPPERCASE_CHARS_EXCL_FIRST_LETTERS)
-    public int getUpperCaseCharsExcludingFirstLetters(InputColumn<?> col) {
+    public int getUpperCaseCharsExcludingFirstLetters(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_UPPERCASE_CHARS_EXCL_FIRST_LETTERS)
                 .get();
     }
 
     @Metric(StringAnalyzer.MEASURE_WORD_COUNT)
-    public int getWordCount(InputColumn<?> col) {
+    public int getWordCount(final InputColumn<?> col) {
         return (Integer) getCrosstab().where(StringAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_WORD_COUNT).get();
     }

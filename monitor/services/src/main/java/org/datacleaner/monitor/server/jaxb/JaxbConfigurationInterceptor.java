@@ -52,7 +52,6 @@ import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.JaxbPojoDatastoreAdaptor;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
 import org.datacleaner.configuration.jaxb.ClasspathScannerType;
-import org.datacleaner.configuration.jaxb.ClasspathScannerType.Package;
 import org.datacleaner.configuration.jaxb.Configuration;
 import org.datacleaner.configuration.jaxb.ConfigurationMetadataType;
 import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
@@ -77,10 +76,10 @@ import org.springframework.stereotype.Component;
 /**
  * Interceptor class which transforms a tenant's configuration as it is being
  * used at runtime on the server, into it's form as seen by the client.
- * 
+ *
  * There are many differences in these two variants of the configuration files,
  * but also a few similarities:
- * 
+ *
  * <ul>
  * <li>The datastores are the same.</li>
  * <li>The reference data items are the same.</li>
@@ -106,13 +105,13 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
     private final boolean _replaceDatastores;
 
     @Autowired
-    public JaxbConfigurationInterceptor(TenantContextFactory contextFactory, ConfigurationFactory configurationFactory)
+    public JaxbConfigurationInterceptor(final TenantContextFactory contextFactory, final ConfigurationFactory configurationFactory)
             throws JAXBException {
         this(contextFactory, configurationFactory, true);
     }
 
-    public JaxbConfigurationInterceptor(TenantContextFactory contextFactory, ConfigurationFactory configurationFactory,
-            boolean replaceDatastores) throws JAXBException {
+    public JaxbConfigurationInterceptor(final TenantContextFactory contextFactory, final ConfigurationFactory configurationFactory,
+            final boolean replaceDatastores) throws JAXBException {
         this(contextFactory, configurationFactory, replaceDatastores, new Ref<Calendar>() {
             @Override
             public Calendar get() {
@@ -121,8 +120,8 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         });
     }
 
-    public JaxbConfigurationInterceptor(TenantContextFactory contextFactory, ConfigurationFactory configurationFactory,
-            boolean replaceDatastores, Ref<Calendar> calRef) throws JAXBException {
+    public JaxbConfigurationInterceptor(final TenantContextFactory contextFactory, final ConfigurationFactory configurationFactory,
+            final boolean replaceDatastores, final Ref<Calendar> calRef) throws JAXBException {
         _contextFactory = contextFactory;
         _configurationFactory = configurationFactory;
         _replaceDatastores = replaceDatastores;
@@ -151,7 +150,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         configuration.setCustomDescriptorProvider(null);
         final List<String> scannedPackages = _configurationFactory.getScannedPackages();
         final ClasspathScannerType descriptorProvider = new ClasspathScannerType();
-        for (String packageName : scannedPackages) {
+        for (final String packageName : scannedPackages) {
             descriptorProvider.getPackage().add(newPackage(packageName, true));
         }
         configuration.setClasspathScanner(descriptorProvider);
@@ -179,16 +178,17 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
      * Replaces all "live" datastores with POJO based datastores. This will
      * allow working with sample data, but not modifying live data on the
      * server.
-     * 
+     *
      * @param context
      * @param job
      * @param datastoreName
-     * 
+     *
      * @param originalDatastoreCatalog
      * @return
      */
     private DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context,
-            final DataCleanerJobContext job, String datastoreName, final DatastoreCatalogType originalDatastoreCatalog) {
+            final DataCleanerJobContext job, String datastoreName,
+            final DatastoreCatalogType originalDatastoreCatalog) {
         final DataCleanerConfiguration configuration = context.getConfiguration();
 
         final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
@@ -220,13 +220,13 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                 if (job == null) {
                     schema = con.getDataContext().getDefaultSchema();
                 } else {
-                    String columnPath = job.getSourceColumnPaths().get(0);
-                    Column column = con.getDataContext().getColumnByQualifiedLabel(columnPath);
+                    final String columnPath = job.getSourceColumnPaths().get(0);
+                    final Column column = con.getDataContext().getColumnByQualifiedLabel(columnPath);
                     schema = column.getTable().getSchema();
                 }
                 usageSchema.setName(schema.getName());
-                String[] tableNames = schema.getTableNames();
-                for (String tableName : tableNames) {
+                final String[] tableNames = schema.getTableNames();
+                for (final String tableName : tableNames) {
                     usageSchema.addTable(new MutableTable(tableName).setSchema(usageSchema).setRemarks(
                             REMARK_INCLUDE_IN_QUERY));
                 }
@@ -244,17 +244,17 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         return interceptDatastoreCatalog(context, datastoreUsage);
     }
 
-    public DatastoreCatalogType interceptDatastoreCatalog(TenantContext context,
-            Map<String, MutableSchema> datastoreUsage) {
+    public DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context,
+            final Map<String, MutableSchema> datastoreUsage) {
         return interceptDatastoreCatalog(context.getConfiguration(), datastoreUsage);
     }
 
     /**
-     * 
+     *
      * @param datastoreCatalog
      * @param datastoreUsage
      * @return
-     * 
+     *
      * @deprecated use {@link #interceptDatastoreCatalog(TenantContext, Map)}
      *             instead
      */
@@ -265,7 +265,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                 datastoreUsage);
     }
 
-    private DatastoreCatalogType interceptDatastoreCatalog(DataCleanerConfiguration configuration,
+    private DatastoreCatalogType interceptDatastoreCatalog(final DataCleanerConfiguration configuration,
             final Map<String, MutableSchema> datastoreUsage) {
 
         final DatastoreCatalogType newDatastoreCatalog = new DatastoreCatalogType();
@@ -279,9 +279,9 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                 // a comparator that takes the column number into account.
                 final Comparator<Column> columnComparator = new Comparator<Column>() {
                     @Override
-                    public int compare(Column o1, Column o2) {
+                    public int compare(final Column o1, final Column o2) {
                         if (o1.getTable() == o2.getTable()) {
-                            int diff = o1.getColumnNumber() - o2.getColumnNumber();
+                            final int diff = o1.getColumnNumber() - o2.getColumnNumber();
                             if (diff != 0) {
                                 return diff;
                             }
@@ -332,7 +332,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                                 final PojoTableType pojoTable = adaptor.createPojoTable(dataContext, sourceTable,
                                         usageColumns, maxRows);
                                 pojoTables.add(pojoTable);
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 // allow omitting errornous tables here.
                                 logger.error("Failed to serialize table '" + sourceTable + "' of datastore '" + name
                                         + "' to POJO format: " + e.getMessage(), e);
@@ -345,7 +345,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                     pojoDatastoreType.setDescription(datastore.getDescription());
 
                     newDatastoreCatalog.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(pojoDatastoreType);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // allow omitting errornous datastores here.
                     logger.error("Failed to serialize datastore '" + name + "' to POJO format: " + e.getMessage(), e);
                 }
@@ -355,8 +355,8 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         return newDatastoreCatalog;
     }
 
-    private Package newPackage(String packageName, boolean recursive) {
-        Package p = new Package();
+    private Package newPackage(final String packageName, final boolean recursive) {
+        final Package p = new Package();
         p.setValue(packageName);
         p.setRecursive(recursive);
         return p;
@@ -364,11 +364,11 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
     private Marshaller createMarshaller() {
         try {
-            Marshaller marshaller = _jaxbContext.createMarshaller();
+            final Marshaller marshaller = _jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.setEventHandler(new JaxbValidationEventHandler());
             return marshaller;
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -376,16 +376,16 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
     public DatatypeFactory getDatatypeFactory() {
         try {
             return DatatypeFactory.newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public XMLGregorianCalendar createDate(Calendar calendar) {
+    public XMLGregorianCalendar createDate(final Calendar calendar) {
         if (calendar == null) {
             return null;
         }
-        GregorianCalendar cal = new GregorianCalendar();
+        final GregorianCalendar cal = new GregorianCalendar();
         cal.setTime(calendar.getTime());
         cal.setTimeZone(calendar.getTimeZone());
         return getDatatypeFactory().newXMLGregorianCalendar(cal);

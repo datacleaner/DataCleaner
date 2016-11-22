@@ -52,85 +52,56 @@ public class DCPanel extends JPanel {
     private final Color _bottomColor;
     private final Color _topColor;
 
-    public static DCPanel around(Component component) {
-        DCPanel panel = new DCPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        panel.add(component);
-        return panel;
-    }
-
-    public static DCPanel flow(Component... components) {
-        return flow(Alignment.LEFT, components);
-    }
-
-    public static DCPanel flow(Alignment alignment, Component... components) {
-        return flow(alignment, 10, 2, components);
-    }
-
-    public static DCPanel flow(Alignment alignment, int hgap, int vgap, Component... components) {
-        DCPanel panel = new DCPanel();
-        // Instead of hgap we use horizontal struts. This is to avoid initial
-        // and last gaps.
-        panel.setLayout(new FlowLayout(alignment.getFlowLayoutAlignment(), 0, vgap));
-        for (int i = 0; i < components.length; i++) {
-            if (i != 0) {
-                panel.add(Box.createHorizontalStrut(hgap));
-            }
-            panel.add(components[i]);
-        }
-        return panel;
-    }
-
     public DCPanel() {
         this(null, 0, 0);
     }
 
-    public DCPanel(Color bgColor) {
+    public DCPanel(final Color bgColor) {
         this(null, 0, 0, bgColor, bgColor);
     }
 
     /**
-     * 
+     *
      * @param topColor
      * @param bottomColor
-     * 
+     *
      * @deprecated since version 4 we no longer encourage gradient background.
      *             Use {@link #DCPanel(Color)} instead.
      */
     @Deprecated
-    public DCPanel(Color topColor, Color bottomColor) {
+    public DCPanel(final Color topColor, final Color bottomColor) {
         this(null, 0, 0, topColor, bottomColor);
     }
 
     /**
-     * 
+     *
      * @param watermark
      * @param horizontalAlignmentInPercent
      *            horizontal alignment of the watermark in percent where 0 is
      *            LEFT and 100 is RIGHT
      */
-    public DCPanel(Image watermark, int horizontalAlignmentInPercent, int verticalAlignmentInPercent) {
+    public DCPanel(final Image watermark, final int horizontalAlignmentInPercent, final int verticalAlignmentInPercent) {
         this(watermark, horizontalAlignmentInPercent, verticalAlignmentInPercent, null, null);
     }
 
-    public DCPanel(Image watermark, int horizontalAlignmentInPercent, int verticalAlignmentInPercent, Color bgColor) {
+    public DCPanel(final Image watermark, final int horizontalAlignmentInPercent, final int verticalAlignmentInPercent, final Color bgColor) {
         this(watermark, horizontalAlignmentInPercent, verticalAlignmentInPercent, bgColor, bgColor);
     }
 
     /**
-     * 
+     *
      * @param watermark
      * @param horizontalAlignmentInPercent
      * @param verticalAlignmentInPercent
      * @param topColor
      * @param bottomColor
-     * 
+     *
      * @deprecated since version 4 we no longer encourage gradient background.
      *             Use {@link #DCPanel(Image, int, int, Color)} instead.
      */
     @Deprecated
-    public DCPanel(Image watermark, int horizontalAlignmentInPercent, int verticalAlignmentInPercent, Color topColor,
-            Color bottomColor) {
+    public DCPanel(final Image watermark, final int horizontalAlignmentInPercent, final int verticalAlignmentInPercent, final Color topColor,
+            final Color bottomColor) {
         super();
         if (topColor == null || bottomColor == null) {
             setOpaque(false);
@@ -145,7 +116,7 @@ public class DCPanel extends JPanel {
         _horizontalAlignment = horizontalAlignmentInPercent / 100f;
         _verticalAlignment = verticalAlignmentInPercent / 100f;
         if (watermark != null) {
-            ImageIcon icon = new ImageIcon(watermark);
+            final ImageIcon icon = new ImageIcon(watermark);
             _imageWidth = icon.getIconWidth();
             _imageHeight = icon.getIconHeight();
         } else {
@@ -154,8 +125,37 @@ public class DCPanel extends JPanel {
         }
     }
 
+    public static DCPanel around(final Component component) {
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel.add(component);
+        return panel;
+    }
+
+    public static DCPanel flow(final Component... components) {
+        return flow(Alignment.LEFT, components);
+    }
+
+    public static DCPanel flow(final Alignment alignment, final Component... components) {
+        return flow(alignment, 10, 2, components);
+    }
+
+    public static DCPanel flow(final Alignment alignment, final int hgap, final int vgap, final Component... components) {
+        final DCPanel panel = new DCPanel();
+        // Instead of hgap we use horizontal struts. This is to avoid initial
+        // and last gaps.
+        panel.setLayout(new FlowLayout(alignment.getFlowLayoutAlignment(), 0, vgap));
+        for (int i = 0; i < components.length; i++) {
+            if (i != 0) {
+                panel.add(Box.createHorizontalStrut(hgap));
+            }
+            panel.add(components[i]);
+        }
+        return panel;
+    }
+
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
         if (_topColor != null) {
             if (isOpaque()) {
                 paintPanelBackgroundColor(g);
@@ -172,8 +172,8 @@ public class DCPanel extends JPanel {
         }
     }
 
-    protected void paintPanelBackgroundImage(Graphics g, Image watermark, int imageWidth, int imageHeight,
-            float horizontalAlignment, float verticalAlignment) {
+    protected void paintPanelBackgroundImage(final Graphics g, final Image watermark, final int imageWidth, final int imageHeight,
+            final float horizontalAlignment, final float verticalAlignment) {
         int x = getWidth() - imageWidth;
         x = (int) (x * horizontalAlignment);
 
@@ -183,15 +183,15 @@ public class DCPanel extends JPanel {
         g.drawImage(watermark, x, y, imageWidth, imageHeight, this);
     }
 
-    protected void paintPanelBackgroundColor(Graphics g) {
-        Paint paint;
+    protected void paintPanelBackgroundColor(final Graphics g) {
+        final Paint paint;
         if (_topColor == _bottomColor || _bottomColor == null) {
             paint = _topColor;
         } else {
             paint = new GradientPaint(0, 0, _topColor, 0, getHeight(), _bottomColor);
         }
         if (g instanceof Graphics2D) {
-            Graphics2D g2d = (Graphics2D) g;
+            final Graphics2D g2d = (Graphics2D) g;
             g2d.setPaint(paint);
         } else {
             g.setColor(_topColor);
@@ -199,12 +199,12 @@ public class DCPanel extends JPanel {
         g.fillRect(0, 0, getWidth(), getHeight());
     }
 
-    public DCPanel setPreferredSize(int width, int height) {
+    public DCPanel setPreferredSize(final int width, final int height) {
         setPreferredSize(new Dimension(width, height));
         return this;
     }
 
-    public DCPanel setTitledBorder(String title) {
+    public DCPanel setTitledBorder(final String title) {
         setBorder(new TitledBorder(title));
         return this;
     }

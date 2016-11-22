@@ -28,6 +28,11 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.MutableRef;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -37,160 +42,155 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.SourceColumnComboBox;
 import org.datacleaner.widgets.properties.AbstractPropertyWidget;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.EqualsBuilder;
-import org.apache.metamodel.util.MutableRef;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
  * Property widget for the {@link TableLookupTransformer}'s output columns
  * property, which is defined as a String array, but should be shown as a list
  * of {@link SourceColumnComboBox}es.
- * 
+ *
  * @author Kasper Sørensen
  */
 public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidget<String[]> {
 
-	private final List<SourceColumnComboBox> _comboBoxes;
-	private final MutableRef<Table> _tableRef;
-	private final DCPanel _comboBoxPanel;
+    private final List<SourceColumnComboBox> _comboBoxes;
+    private final MutableRef<Table> _tableRef;
+    private final DCPanel _comboBoxPanel;
 
-	public TableLookupOutputColumnsPropertyWidget(ComponentBuilder componentBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor) {
-		super(componentBuilder, propertyDescriptor);
-		_comboBoxes = new ArrayList<SourceColumnComboBox>();
+    public TableLookupOutputColumnsPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
+        super(componentBuilder, propertyDescriptor);
+        _comboBoxes = new ArrayList<SourceColumnComboBox>();
 
-		_tableRef = new MutableRef<Table>();
+        _tableRef = new MutableRef<Table>();
 
-		_comboBoxPanel = new DCPanel();
-		_comboBoxPanel.setLayout(new VerticalLayout(2));
+        _comboBoxPanel = new DCPanel();
+        _comboBoxPanel.setLayout(new VerticalLayout(2));
 
-		final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-		addButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				addComboBox(null, true);
-				fireValueChanged();
-			}
-		});
+        final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                addComboBox(null, true);
+                fireValueChanged();
+            }
+        });
 
-		final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-		removeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				final int componentCount = _comboBoxPanel.getComponentCount();
-				if (componentCount > 0) {
-					removeComboBox();
-					_comboBoxPanel.updateUI();
-					fireValueChanged();
-				}
-			}
-		});
+        final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final int componentCount = _comboBoxPanel.getComponentCount();
+                if (componentCount > 0) {
+                    removeComboBox();
+                    _comboBoxPanel.updateUI();
+                    fireValueChanged();
+                }
+            }
+        });
 
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setBorder(new EmptyBorder(0, 4, 0, 0));
-		buttonPanel.setLayout(new VerticalLayout(2));
-		buttonPanel.add(addButton);
-		buttonPanel.add(removeButton);
+        final DCPanel buttonPanel = new DCPanel();
+        buttonPanel.setBorder(new EmptyBorder(0, 4, 0, 0));
+        buttonPanel.setLayout(new VerticalLayout(2));
+        buttonPanel.add(addButton);
+        buttonPanel.add(removeButton);
 
-		final DCPanel outerPanel = new DCPanel();
-		outerPanel.setLayout(new BorderLayout());
+        final DCPanel outerPanel = new DCPanel();
+        outerPanel.setLayout(new BorderLayout());
 
-		outerPanel.add(_comboBoxPanel, BorderLayout.CENTER);
-		outerPanel.add(buttonPanel, BorderLayout.EAST);
+        outerPanel.add(_comboBoxPanel, BorderLayout.CENTER);
+        outerPanel.add(buttonPanel, BorderLayout.EAST);
 
-		add(outerPanel);
-		
-		String[] currentValue = getCurrentValue();
-		setValue(currentValue);
-	}
+        add(outerPanel);
 
-	protected void addComboBox(String value, boolean updateUI) {
-		SourceColumnComboBox comboBox = new SourceColumnComboBox();
-		final Column column;
-		Table table = _tableRef.get();
-		if (value == null) {
-			column = null;
-		} else if (table == null) {
-			column = new MutableColumn(value);
-		} else {
-			column = table.getColumnByName(value);
-		}
-		comboBox.setModel(table);
+        final String[] currentValue = getCurrentValue();
+        setValue(currentValue);
+    }
 
-		comboBox.setEditable(true);
-		comboBox.setSelectedItem(column);
-		comboBox.setEditable(false);
-		comboBox.addColumnSelectedListener(new Listener<Column>() {
-			@Override
-			public void onItemSelected(Column item) {
-				fireValueChanged();
-			}
-		});
+    protected void addComboBox(final String value, final boolean updateUI) {
+        final SourceColumnComboBox comboBox = new SourceColumnComboBox();
+        final Column column;
+        final Table table = _tableRef.get();
+        if (value == null) {
+            column = null;
+        } else if (table == null) {
+            column = new MutableColumn(value);
+        } else {
+            column = table.getColumnByName(value);
+        }
+        comboBox.setModel(table);
 
-		_comboBoxes.add(comboBox);
-		_comboBoxPanel.add(comboBox);
+        comboBox.setEditable(true);
+        comboBox.setSelectedItem(column);
+        comboBox.setEditable(false);
+        comboBox.addColumnSelectedListener(new Listener<Column>() {
+            @Override
+            public void onItemSelected(final Column item) {
+                fireValueChanged();
+            }
+        });
 
-		if (updateUI) {
-			_comboBoxPanel.updateUI();
-		}
-	}
+        _comboBoxes.add(comboBox);
+        _comboBoxPanel.add(comboBox);
 
-	public void setTable(Table table) {
-		_tableRef.set(table);
-		for (SourceColumnComboBox comboBox : _comboBoxes) {
-			comboBox.setModel(table);
-		}
-	}
+        if (updateUI) {
+            _comboBoxPanel.updateUI();
+        }
+    }
 
-	@Override
-	public String[] getValue() {
-		List<String> result = new ArrayList<String>();
-		for (SourceColumnComboBox comboBox : _comboBoxes) {
-			Column column = comboBox.getSelectedItem();
-			if (column != null) {
-				result.add(column.getName());
-			}
-		}
-		return result.toArray(new String[result.size()]);
-	}
+    public void setTable(final Table table) {
+        _tableRef.set(table);
+        for (final SourceColumnComboBox comboBox : _comboBoxes) {
+            comboBox.setModel(table);
+        }
+    }
 
-	@Override
-	protected void setValue(String[] values) {
-		if (values == null || values.length == 0) {
-			values = new String[1];
-		}
-		final String[] previousValues = getValue();
-		if (!EqualsBuilder.equals(values, previousValues)) {
-			for (int i = 0; i < Math.min(previousValues.length, values.length); i++) {
-				// modify combo boxes
-				if (!EqualsBuilder.equals(previousValues[i], values[i])) {
-					SourceColumnComboBox comboBox = _comboBoxes.get(i);
-					comboBox.setEditable(true);
-					comboBox.setSelectedItem(values[i]);
-					comboBox.setEditable(false);
-				}
-			}
+    @Override
+    public String[] getValue() {
+        final List<String> result = new ArrayList<String>();
+        for (final SourceColumnComboBox comboBox : _comboBoxes) {
+            final Column column = comboBox.getSelectedItem();
+            if (column != null) {
+                result.add(column.getName());
+            }
+        }
+        return result.toArray(new String[result.size()]);
+    }
 
-			while (_comboBoxes.size() < values.length) {
-				// add combo boxes if there are too few
-				String nextValue = values[_comboBoxes.size()];
-				addComboBox(nextValue, false);
-			}
+    @Override
+    protected void setValue(String[] values) {
+        if (values == null || values.length == 0) {
+            values = new String[1];
+        }
+        final String[] previousValues = getValue();
+        if (!EqualsBuilder.equals(values, previousValues)) {
+            for (int i = 0; i < Math.min(previousValues.length, values.length); i++) {
+                // modify combo boxes
+                if (!EqualsBuilder.equals(previousValues[i], values[i])) {
+                    final SourceColumnComboBox comboBox = _comboBoxes.get(i);
+                    comboBox.setEditable(true);
+                    comboBox.setSelectedItem(values[i]);
+                    comboBox.setEditable(false);
+                }
+            }
 
-			while (_comboBoxes.size() > values.length) {
-				// remove text boxes if there are too many
-				removeComboBox();
-			}
-			_comboBoxPanel.updateUI();
-		}
-	}
+            while (_comboBoxes.size() < values.length) {
+                // add combo boxes if there are too few
+                final String nextValue = values[_comboBoxes.size()];
+                addComboBox(nextValue, false);
+            }
 
-	private void removeComboBox() {
-		final int comboBoxIndex = _comboBoxes.size() - 1;
-		_comboBoxes.remove(comboBoxIndex);
-		_comboBoxPanel.remove(comboBoxIndex);
-	}
+            while (_comboBoxes.size() > values.length) {
+                // remove text boxes if there are too many
+                removeComboBox();
+            }
+            _comboBoxPanel.updateUI();
+        }
+    }
+
+    private void removeComboBox() {
+        final int comboBoxIndex = _comboBoxes.size() - 1;
+        _comboBoxes.remove(comboBoxIndex);
+        _comboBoxPanel.remove(comboBoxIndex);
+    }
 }

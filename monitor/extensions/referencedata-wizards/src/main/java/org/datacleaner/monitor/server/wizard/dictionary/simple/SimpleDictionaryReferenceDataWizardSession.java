@@ -39,7 +39,7 @@ final class SimpleDictionaryReferenceDataWizardSession extends AbstractReference
     private String _values;
     private String _caseSensitive;
 
-    public SimpleDictionaryReferenceDataWizardSession(ReferenceDataWizardContext context) {
+    public SimpleDictionaryReferenceDataWizardSession(final ReferenceDataWizardContext context) {
         super(context);
     }
 

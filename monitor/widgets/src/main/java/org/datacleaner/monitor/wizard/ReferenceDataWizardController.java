@@ -40,11 +40,11 @@ import com.google.gwt.user.client.ui.RadioButton;
  */
 public class ReferenceDataWizardController extends AbstractWizardController<WizardServiceAsync> {
 
-    private int _stepsBeforeWizardPages;
     private final String _referenceDataType;
+    private int _stepsBeforeWizardPages;
 
-    public ReferenceDataWizardController(String referenceDataType, WizardPanel wizardPanel, TenantIdentifier tenant,
-            WizardIdentifier wizardIdentifier, WizardServiceAsync wizardService) {
+    public ReferenceDataWizardController(final String referenceDataType, final WizardPanel wizardPanel, final TenantIdentifier tenant,
+            final WizardIdentifier wizardIdentifier, final WizardServiceAsync wizardService) {
         super(wizardPanel, tenant, wizardIdentifier, wizardService);
         _referenceDataType = referenceDataType;
         _stepsBeforeWizardPages = 0;
@@ -69,7 +69,7 @@ public class ReferenceDataWizardController extends AbstractWizardController<Wiza
         getWizardPanel().setHeader("Register reference data: " + wizardIdentifier.getDisplayName());
         setLoading();
 
-        WizardServiceAsync wizardService = getWizardService();
+        final WizardServiceAsync wizardService = getWizardService();
         wizardService
                 .startReferenceDataWizard(getTenant(), wizardIdentifier, getLocaleName(), createNextPageCallback());
     }
@@ -80,7 +80,7 @@ public class ReferenceDataWizardController extends AbstractWizardController<Wiza
         getWizardService().getReferenceDataWizardIdentifiers(_referenceDataType, getTenant(), getLocaleName(),
                 new DCAsyncCallback<List<WizardIdentifier>>() {
                     @Override
-                    public void onSuccess(List<WizardIdentifier> wizards) {
+                    public void onSuccess(final List<WizardIdentifier> wizards) {
                         showWizardSelection(wizards);
                     }
                 });
@@ -110,10 +110,10 @@ public class ReferenceDataWizardController extends AbstractWizardController<Wiza
 
         setNextClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 for (int i = 0; i < radios.size(); i++) {
                     final RadioButton radio = radios.get(i);
-                    
+
                     if (radio.getValue()) {
                         final WizardIdentifier wizard = wizards.get(i);
                         setWizardIdentifier(wizard);
@@ -138,7 +138,7 @@ public class ReferenceDataWizardController extends AbstractWizardController<Wiza
         final Button button = DCButtons.primaryButton(null, "Close");
         button.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 closeWizardAfterFinishing(referenceDataName, "referencedata");
             }
         });

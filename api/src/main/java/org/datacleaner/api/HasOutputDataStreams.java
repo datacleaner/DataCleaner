@@ -24,10 +24,10 @@ import org.apache.metamodel.query.Query;
 /**
  * Interface for components that produce data streams as an output of their
  * work.
- * 
+ *
  * Each output data stream has a {@link OutputDataStream} that describe the
  * metadata and structure of the output data stream.
- * 
+ *
  * For each output data stream that is relevant (consumed by one or more
  * components) the
  * {@link #initializeOutputDataStream(OutputDataStream, Query, OutputRowCollector)}
@@ -37,10 +37,10 @@ public interface HasOutputDataStreams {
 
     /**
      * Gets the {@link OutputDataStream}s that this component can produce.
-     * 
+     *
      * @return
      */
-    public OutputDataStream[] getOutputDataStreams();
+    OutputDataStream[] getOutputDataStreams();
 
     /**
      * Method invoked for each {@link OutputDataStream} that is consumed. The
@@ -48,10 +48,10 @@ public interface HasOutputDataStreams {
      * before initialization time (see {@link Initialize}) of the component. The
      * method passes on an {@link OutputRowCollector} which makes it possible
      * for this component to post records into the output data stream.
-     * 
+     *
      * If a particular {@link OutputDataStream} is NOT consumed by any following
      * components then this method will not be called.
-     * 
+     *
      * @param outputDataStream
      * @param query
      *            the query posted towards the {@link OutputDataStream}. In most
@@ -63,6 +63,6 @@ public interface HasOutputDataStreams {
      *            an {@link OutputRowCollector} which the component should use
      *            to post records into the output stream.
      */
-    public void initializeOutputDataStream(OutputDataStream outputDataStream, Query query,
+    void initializeOutputDataStream(OutputDataStream outputDataStream, Query query,
             OutputRowCollector outputRowCollector);
 }

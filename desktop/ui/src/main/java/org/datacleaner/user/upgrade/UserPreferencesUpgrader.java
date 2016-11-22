@@ -32,7 +32,7 @@ class UserPreferencesUpgrader {
 
     private final FileObject _newFolder;
 
-    public UserPreferencesUpgrader(FileObject newFolder) {
+    public UserPreferencesUpgrader(final FileObject newFolder) {
         _newFolder = newFolder;
     }
 

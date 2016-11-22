@@ -24,11 +24,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.job.JobEngine;
 import org.datacleaner.monitor.job.JobEngineManager;
+import org.datacleaner.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +41,11 @@ public class SimpleJobEngineManager implements JobEngineManager {
 
     private final Collection<JobEngine<?>> _jobEngines;
 
-    public SimpleJobEngineManager(JobEngine<?>... jobEngines) {
+    public SimpleJobEngineManager(final JobEngine<?>... jobEngines) {
         _jobEngines = Arrays.asList(jobEngines);
     }
 
-    public SimpleJobEngineManager(Collection<JobEngine<?>> jobEngines) {
+    public SimpleJobEngineManager(final Collection<JobEngine<?>> jobEngines) {
         _jobEngines = jobEngines;
     }
 
@@ -56,15 +56,15 @@ public class SimpleJobEngineManager implements JobEngineManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends JobContext> JobEngine<? extends T> getJobEngine(T jobContext) {
+    public <T extends JobContext> JobEngine<? extends T> getJobEngine(final T jobContext) {
         return (JobEngine<? extends T>) getJobEngine(jobContext.getClass());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends JobContext> JobEngine<? extends T> getJobEngine(Class<T> jobContext) {
+    public <T extends JobContext> JobEngine<? extends T> getJobEngine(final Class<T> jobContext) {
         final Collection<JobEngine<?>> jobEngines = getJobEngines();
-        for (JobEngine<?> jobEngine : jobEngines) {
+        for (final JobEngine<?> jobEngine : jobEngines) {
             final Class<?> jobEngineTypeParameter = ReflectionUtils.getTypeParameter(jobEngine.getClass(),
                     JobEngine.class, 0);
             if (ReflectionUtils.is(jobContext, jobEngineTypeParameter)) {
@@ -75,9 +75,9 @@ public class SimpleJobEngineManager implements JobEngineManager {
     }
 
     @Override
-    public JobEngine<?> getJobEngine(TenantContext tenantContext, String jobName) {
+    public JobEngine<?> getJobEngine(final TenantContext tenantContext, final String jobName) {
         final Collection<JobEngine<?>> jobEngines = getJobEngines();
-        for (JobEngine<?> jobEngine : jobEngines) {
+        for (final JobEngine<?> jobEngine : jobEngines) {
             if (jobEngine.containsJob(tenantContext, jobName)) {
                 return jobEngine;
             }
@@ -90,29 +90,29 @@ public class SimpleJobEngineManager implements JobEngineManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E extends JobEngine<?>> E getJobEngineOfType(Class<E> cls) {
+    public <E extends JobEngine<?>> E getJobEngineOfType(final Class<E> cls) {
         if (cls == null) {
             throw new IllegalArgumentException("JobEngine class cannot be null");
         }
-        
-        Collection<JobEngine<?>> jobEngines = getJobEngines();
-        
-        for (JobEngine<?> engine : jobEngines) {
+
+        final Collection<JobEngine<?>> jobEngines = getJobEngines();
+
+        for (final JobEngine<?> engine : jobEngines) {
             // look for exact matching classes
             if (engine.getClass() == cls) {
                 return (E) engine;
             }
         }
-        for (JobEngine<?> engine : jobEngines) {
+        for (final JobEngine<?> engine : jobEngines) {
             // take any sub class
             if (ReflectionUtils.is(engine.getClass(), cls)) {
                 return (E) engine;
             }
         }
-        
+
         // build meaningful error message
         final List<String> types = new ArrayList<String>();
-        for (JobEngine<?> engine : jobEngines) {
+        for (final JobEngine<?> engine : jobEngines) {
             types.add(engine.getClass().getName());
         }
         throw new UnsupportedOperationException("No job engine available of type: " + cls.getName()

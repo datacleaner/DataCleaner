@@ -46,15 +46,15 @@ public class SimpleAnalysisResult extends AbstractAnalysisResult implements Seri
         this(new HashMap<ComponentJob, AnalyzerResult>());
     }
 
-    public SimpleAnalysisResult(AnalysisResult result){
+    public SimpleAnalysisResult(final AnalysisResult result) {
         this(result.getResultMap(), new Date());
     }
 
-    public SimpleAnalysisResult(Map<ComponentJob, AnalyzerResult> results) {
+    public SimpleAnalysisResult(final Map<ComponentJob, AnalyzerResult> results) {
         this(results, new Date());
     }
 
-    public SimpleAnalysisResult(Map<ComponentJob, AnalyzerResult> results, Date creationDate) {
+    public SimpleAnalysisResult(final Map<ComponentJob, AnalyzerResult> results, final Date creationDate) {
         _results = results;
         _creationDate = creationDate;
     }

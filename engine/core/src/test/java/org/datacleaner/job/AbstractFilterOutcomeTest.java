@@ -22,6 +22,8 @@ package org.datacleaner.job;
 import java.io.File;
 import java.util.Collection;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -29,8 +31,6 @@ import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.LazyFilterOutcome;
 import org.datacleaner.test.MockFilter;
 import org.datacleaner.test.MockFilter.Category;
-
-import junit.framework.TestCase;
 
 public class AbstractFilterOutcomeTest extends TestCase {
 
@@ -48,7 +48,7 @@ public class AbstractFilterOutcomeTest extends TestCase {
             assertTrue(fo1 instanceof LazyFilterOutcome);
 
             final FilterJob filterJob = filterJobBuilder.toFilterJob();
-            
+
             Collection<FilterOutcome> filterOutcomes = filterJob.getFilterOutcomes();
             fo2 = null;
             for (FilterOutcome filterOutcome : filterOutcomes) {
@@ -60,11 +60,11 @@ public class AbstractFilterOutcomeTest extends TestCase {
             assertNotNull(fo2);
             assertTrue(fo2 instanceof ImmutableFilterOutcome);
         }
-        
+
         final AnalysisJobImmutabilizer immutabilizer = new AnalysisJobImmutabilizer();
         final FilterOutcome loadedFilterOutcome1 = immutabilizer.load(fo1);
         final FilterOutcome loadedFilterOutcome2 = immutabilizer.load(fo2);
-        
+
         assertTrue(loadedFilterOutcome1.equals(loadedFilterOutcome2));
         assertEquals(loadedFilterOutcome1.hashCode(), loadedFilterOutcome2.hashCode());
     }

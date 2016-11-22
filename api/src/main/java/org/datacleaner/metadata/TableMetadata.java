@@ -31,17 +31,17 @@ public interface TableMetadata extends HasName, HasMetadataAnnotations, HasColum
 
     /**
      * Gets {@link ColumnGroupMetadata} by the name of the group.
-     * 
+     *
      * @param groupName
      * @return a {@link ColumnGroupMetadata} object, or null if no group
      *         matching the name was found
      */
-    public ColumnGroupMetadata getColumnGroupMetadataByName(String groupName);
+    ColumnGroupMetadata getColumnGroupMetadataByName(String groupName);
 
     /**
      * Gets all {@link ColumnGroupMetadata} objects available.
-     * 
+     *
      * @return
      */
-    public List<ColumnGroupMetadata> getColumnGroupMetadata();
+    List<ColumnGroupMetadata> getColumnGroupMetadata();
 }

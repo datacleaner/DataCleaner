@@ -31,11 +31,15 @@ public class CreateInput {
     public ComponentConfiguration configuration;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-        CreateInput that = (CreateInput) o;
+        final CreateInput that = (CreateInput) o;
 
         return !(configuration != null ? !configuration.equals(that.configuration) : that.configuration != null);
 

@@ -25,16 +25,16 @@ package org.datacleaner.output;
  */
 public interface OutputWriter {
 
-	/**
-	 * Creates a new row in the output.
-	 * 
-	 * @return
-	 */
-	public OutputRow createRow();
+    /**
+     * Creates a new row in the output.
+     *
+     * @return
+     */
+    OutputRow createRow();
 
-	/**
-	 * Closes the output writing sequence. Implementing classes should flush and
-	 * close any outputstreams etc. here.
-	 */
-	public void close();
+    /**
+     * Closes the output writing sequence. Implementing classes should flush and
+     * close any outputstreams etc. here.
+     */
+    void close();
 }

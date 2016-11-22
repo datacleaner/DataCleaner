@@ -47,7 +47,7 @@ public class PatternFinderResultReducerTest extends TestCase {
 
         String text = new CrosstabTextRenderer().render(finalResult.getSingleCrosstab());
         String[] lines = text.split("\n");
-        
+
         assertEquals("                  Match count Sample      ", lines[0]);
         assertEquals("Aaa Aaa                     4 Foo Bar     ", lines[1]);
         assertEquals("Aaaaa aaaaa                 3 Foo bar     ", lines[2]);
@@ -56,7 +56,7 @@ public class PatternFinderResultReducerTest extends TestCase {
         assertEquals("Aaa aaa aaa                 1 Foo bar baz ", lines[5]);
         assertEquals("Aaaaa AAAAA AAAAA           1 Hello THERE WORLD ", lines[6]);
 
-        assertEquals(7,lines.length);
+        assertEquals(7, lines.length);
 
         Collection<String> suggestions = finalResult.getMatchCount().getParameterSuggestions();
         assertEquals("[Aaa Aaa, Aaaaa aaaaa, Aaaaaa, Aaa AAA AAA, Aaa aaa aaa, Aaaaa AAAAA AAAAA]",

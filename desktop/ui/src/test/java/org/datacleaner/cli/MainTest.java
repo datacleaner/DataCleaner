@@ -108,7 +108,8 @@ public class MainTest extends TestCase {
         assertEquals(
                 "-ot (--output-type) [TEXT | HTML | SERIALIZED]             : How to represent the result of the job",
                 lines[8].trim());
-        assertEquals("-properties (--properties-file) PATH                       : Path to a custom properties file",lines[9].trim());
+        assertEquals("-properties (--properties-file) PATH                       : Path to a custom properties file",
+                lines[9].trim());
 
         assertEquals(
                 "-runtype (--runtype) [LOCAL | SPARK]                       : How/where to run the job",
@@ -153,7 +154,9 @@ public class MainTest extends TestCase {
     }
 
     public void testListColumns() throws Throwable {
-        Main.main("-conf src/test/resources/cli-examples/conf.xml -ds orderdb -schema PUBLIC -table EMPLOYEES -list COLUMNS".split(" "));
+        Main.main(
+                "-conf src/test/resources/cli-examples/conf.xml -ds orderdb -schema PUBLIC -table EMPLOYEES -list COLUMNS"
+                        .split(" "));
 
         String out = _stringWriter.toString().replaceAll("\r\n", "\n");
         assertEquals(
@@ -199,11 +202,13 @@ public class MainTest extends TestCase {
     }
 
     public void testExampleEmployeesJob() throws Throwable {
-        Main.main("-conf src/test/resources/cli-examples/conf.xml -job src/test/resources/cli-examples/employees_job.xml".split(" "));
+        Main.main(
+                "-conf src/test/resources/cli-examples/conf.xml -job src/test/resources/cli-examples/employees_job.xml"
+                        .split(" "));
 
         String out = _stringWriter.toString().replaceAll("\r\n", "\n");
         List<String> lines = Splitter.on('\n').splitToList(out);
-        
+
         assertTrue(out, out.indexOf("- Value count (company.com): 4") != -1);
         assertTrue(out, out.indexOf("- Value count (eobjects.org): 2") != -1);
 
@@ -215,7 +220,9 @@ public class MainTest extends TestCase {
 
     public void testWriteToFile() throws Throwable {
         String filename = "target/test_write_to_file.txt";
-        Main.main(("-conf src/test/resources/cli-examples/conf.xml -job src/test/resources/cli-examples/employees_job.xml -of " + filename).split(" "));
+        Main.main(
+                ("-conf src/test/resources/cli-examples/conf.xml -job src/test/resources/cli-examples/employees_job.xml -of "
+                        + filename).split(" "));
 
         File file = new File(filename);
         assertTrue(file.exists());
@@ -225,7 +232,9 @@ public class MainTest extends TestCase {
 
     public void testWriteHtmlToFile() throws Throwable {
         String filename = "target/test_write_html_to_file.html";
-        Main.main(("-conf src/test/resources/cli-examples/conf.xml -job src/test/resources/cli-examples/employees_job.xml -of " + filename + " -ot HTML").split(" "));
+        Main.main(
+                ("-conf src/test/resources/cli-examples/conf.xml -job src/test/resources/cli-examples/employees_job.xml -of "
+                        + filename + " -ot HTML").split(" "));
 
         File file = new File(filename);
         assertTrue(file.exists());
@@ -296,8 +305,10 @@ public class MainTest extends TestCase {
 
     public void testWriteSerializedToFile() throws Throwable {
         String filename = "target/test_write_serialized_to_file.analysis.result.dat";
-        Main.main(("-conf src/test/resources/cli-examples/conf.xml -job src/test/resources/cli-examples/employees_job.xml -of " + filename + " -ot SERIALIZED")
-                .split(" "));
+        Main.main(
+                ("-conf src/test/resources/cli-examples/conf.xml -job src/test/resources/cli-examples/employees_job.xml -of "
+                        + filename + " -ot SERIALIZED")
+                        .split(" "));
 
         File file = new File(filename);
         assertTrue(file.exists());

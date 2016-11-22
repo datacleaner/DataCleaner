@@ -46,20 +46,20 @@ public class JaxbJobMetadataFactoryImpl implements JaxbJobMetadataFactory {
         this(null, null, null, null);
     }
 
-    public JaxbJobMetadataFactoryImpl(String author, String jobName, String jobDescription, String jobVersion) {
+    public JaxbJobMetadataFactoryImpl(final String author, final String jobName, final String jobDescription, final String jobVersion) {
         _author = author;
         _jobName = jobName;
         _jobDescription = jobDescription;
         _jobVersion = jobVersion;
         try {
             _datatypeFactory = DatatypeFactory.newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public final JobMetadataType create(AnalysisJob analysisJob) throws Exception {
+    public final JobMetadataType create(final AnalysisJob analysisJob) throws Exception {
         final JobMetadataType jobMetadata = new JobMetadataType();
 
         buildMainSection(jobMetadata, analysisJob);
@@ -69,7 +69,7 @@ public class JaxbJobMetadataFactoryImpl implements JaxbJobMetadataFactory {
         return jobMetadata;
     }
 
-    protected void buildProperties(JobMetadataType jobMetadata, AnalysisJob analysisJob) throws Exception {
+    protected void buildProperties(final JobMetadataType jobMetadata, final AnalysisJob analysisJob) throws Exception {
         final AnalysisJobMetadata metadata = getMetadata(analysisJob);
         if (metadata != null) {
             final Map<String, String> properties = metadata.getProperties();
@@ -77,7 +77,7 @@ public class JaxbJobMetadataFactoryImpl implements JaxbJobMetadataFactory {
                 final MetadataProperties propertiesType = new MetadataProperties();
                 final List<Property> propertyList = propertiesType.getProperty();
 
-                for (Entry<String, String> entry : properties.entrySet()) {
+                for (final Entry<String, String> entry : properties.entrySet()) {
                     final Property property = new Property();
                     property.setName(entry.getKey());
                     property.setValue(entry.getValue());
@@ -89,12 +89,12 @@ public class JaxbJobMetadataFactoryImpl implements JaxbJobMetadataFactory {
         }
     }
 
-    protected void buildMainSection(JobMetadataType jobMetadata, AnalysisJob analysisJob) throws Exception {
+    protected void buildMainSection(final JobMetadataType jobMetadata, final AnalysisJob analysisJob) throws Exception {
         final AnalysisJobMetadata metadata = getMetadata(analysisJob);
 
         final Date createdDate = metadata.getCreatedDate();
         if (createdDate != null) {
-            GregorianCalendar c = new GregorianCalendar();
+            final GregorianCalendar c = new GregorianCalendar();
             c.setTime(createdDate);
             jobMetadata.setCreatedDate(_datatypeFactory.newXMLGregorianCalendar(c));
         }
@@ -105,7 +105,7 @@ public class JaxbJobMetadataFactoryImpl implements JaxbJobMetadataFactory {
         jobMetadata.setJobVersion(_jobVersion == null ? metadata.getJobVersion() : _jobVersion);
     }
 
-    protected AnalysisJobMetadata getMetadata(AnalysisJob analysisJob) {
+    protected AnalysisJobMetadata getMetadata(final AnalysisJob analysisJob) {
         final AnalysisJobMetadata metadata = analysisJob.getMetadata();
         if (metadata == null) {
             return AnalysisJobMetadata.EMPTY_METADATA;

@@ -19,6 +19,8 @@
  */
 package org.datacleaner.spark;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
@@ -50,8 +52,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-
-import static org.junit.Assert.*;
 
 public class SparkAnalysisRunnerTest {
     private static class TestSparkJobLifeCycleListener implements SparkJobLifeCycleListener {
@@ -125,7 +125,7 @@ public class SparkAnalysisRunnerTest {
             throw (Exception) result.getErrors().get(0);
         }
     }
-    
+
     @Test
     public void testEscalatedValueDistributionScenario() throws Exception {
         final AnalysisResultFuture result = runAnalysisJob("DCTest - " + getName(), URI.create(
@@ -141,7 +141,7 @@ public class SparkAnalysisRunnerTest {
 
         final List<? extends ValueDistributionAnalyzerResult> valueDistributionAnalyzerResults =
                 result.getResults(ValueDistributionAnalyzerResult.class);
-        assertEquals(2,valueDistributionAnalyzerResults.size());
+        assertEquals(2, valueDistributionAnalyzerResults.size());
 
         final ValueDistributionAnalyzerResult
                 vdAnalyzerResult = valueDistributionAnalyzerResults.get(0);
@@ -188,7 +188,7 @@ public class SparkAnalysisRunnerTest {
             } else {
                 sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"), URI.create(
                         "src/test/resources/write-job.analysis.xml"), URI.create(
-                                "src/test/resources/jobProperties/noResult.properties"), sparkContext);
+                        "src/test/resources/jobProperties/noResult.properties"), sparkContext);
             }
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
@@ -323,8 +323,10 @@ public class SparkAnalysisRunnerTest {
         final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result.getResults(
                 ValueDistributionAnalyzerResult.class).get(0);
         assertEquals(GroupedValueDistributionResult.class, completeValueDistributionAnalyzerResult.getClass());
-        final GroupedValueDistributionResult completeGroupedResult = (GroupedValueDistributionResult) completeValueDistributionAnalyzerResult;
-        final Iterator<? extends ValueCountingAnalyzerResult> iterator = completeGroupedResult.getGroupResults().iterator();
+        final GroupedValueDistributionResult completeGroupedResult =
+                (GroupedValueDistributionResult) completeValueDistributionAnalyzerResult;
+        final Iterator<? extends ValueCountingAnalyzerResult> iterator =
+                completeGroupedResult.getGroupResults().iterator();
         final ReducedSingleValueDistributionResult group1 = (ReducedSingleValueDistributionResult) iterator.next();
         final ReducedSingleValueDistributionResult group2 = (ReducedSingleValueDistributionResult) iterator.next();
 
@@ -375,7 +377,7 @@ public class SparkAnalysisRunnerTest {
         final StringAnalyzerResult stringAnalyzerResult = result.getResults(StringAnalyzerResult.class).get(0);
         assertNotNull(stringAnalyzerResult);
     }
-    
+
     @Test
     public void testLifeCycleListener() throws Exception {
         final String appName = "DCTest - " + getName();

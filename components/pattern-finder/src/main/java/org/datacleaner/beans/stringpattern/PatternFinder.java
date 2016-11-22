@@ -30,9 +30,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * A string pattern finder. This component can consume rows and produce string
  * patterns. It does not contain the actual logic to store/persist the rows, but
  * has callback methods so that it's rather easy to implement this on your own.
- * 
- * 
- * 
+ *
+ *
+ *
  * @param <R>
  *            the type representing the row. Enables the user of the class to
  *            use his own row type, such as InputRow, String[] or even just
@@ -44,13 +44,13 @@ public abstract class PatternFinder<R> {
     private final TokenizerConfiguration _configuration;
     private final Tokenizer _tokenizer;
 
-    public PatternFinder(Tokenizer tokenizer, TokenizerConfiguration configuration) {
+    public PatternFinder(final Tokenizer tokenizer, final TokenizerConfiguration configuration) {
         _configuration = configuration;
         _tokenizer = tokenizer;
         _patterns = new ConcurrentHashMap<>();
     }
 
-    public PatternFinder(TokenizerConfiguration configuration) {
+    public PatternFinder(final TokenizerConfiguration configuration) {
         this(new DefaultTokenizer(configuration), configuration);
     }
 
@@ -59,7 +59,7 @@ public abstract class PatternFinder<R> {
      * for each value in your dataset. Repeated values are handled correctly but
      * if available it is more effecient to handle only the distinct values and
      * their corresponding distinct counts.
-     * 
+     *
      * @param row
      *            the row containing the value
      * @param value
@@ -68,11 +68,11 @@ public abstract class PatternFinder<R> {
      * @param distinctCount
      *            the count of the value
      */
-    public void run(R row, String value, int distinctCount) {
+    public void run(final R row, final String value, final int distinctCount) {
         final List<Token> tokens;
         try {
             tokens = _tokenizer.tokenize(value);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             throw new IllegalStateException("Error occurred while tokenizing value: " + value, e);
         }
 
@@ -83,7 +83,7 @@ public abstract class PatternFinder<R> {
         // all matching pattern codes.
         synchronized (patterns) {
             boolean match = false;
-            for (TokenPattern pattern : patterns) {
+            for (final TokenPattern pattern : patterns) {
                 if (pattern.match(tokens)) {
                     storeMatch(pattern, row, value, distinctCount);
                     match = true;
@@ -95,7 +95,7 @@ public abstract class PatternFinder<R> {
                 final TokenPattern pattern;
                 try {
                     pattern = new TokenPatternImpl(value, tokens, _configuration);
-                } catch (RuntimeException e) {
+                } catch (final RuntimeException e) {
                     throw new IllegalStateException("Error occurred while creating pattern for: " + tokens, e);
                 }
 
@@ -108,11 +108,11 @@ public abstract class PatternFinder<R> {
     /**
      * Gets a collection of known {@link TokenPattern}s that matches the pattern
      * code
-     * 
+     *
      * @param patternCode
      * @return
      */
-    private Collection<TokenPattern> getOrCreatePatterns(String patternCode) {
+    private Collection<TokenPattern> getOrCreatePatterns(final String patternCode) {
         // first try the cheapest get(..) method
         final Collection<TokenPattern> patterns = _patterns.get(patternCode);
         if (patterns != null) {
@@ -131,14 +131,14 @@ public abstract class PatternFinder<R> {
     /**
      * Creates an almost unique String code for a list of tokens. This code is
      * used to improve search time when looking for potential matching patterns.
-     * 
+     *
      * @param tokens
      * @return
      */
-    private String getPatternCode(List<Token> tokens) {
+    private String getPatternCode(final List<Token> tokens) {
         final StringBuilder sb = new StringBuilder();
         sb.append(tokens.size());
-        for (Token token : tokens) {
+        for (final Token token : tokens) {
             sb.append(token.getType().ordinal());
         }
         return sb.toString();
@@ -147,7 +147,7 @@ public abstract class PatternFinder<R> {
     public Collection<TokenPattern> getPatterns() {
         final Set<TokenPattern> result = new HashSet<TokenPattern>();
         final Collection<Collection<TokenPattern>> values = _patterns.values();
-        for (Collection<TokenPattern> set : values) {
+        for (final Collection<TokenPattern> set : values) {
             result.addAll(set);
         }
         return result;
@@ -156,7 +156,7 @@ public abstract class PatternFinder<R> {
     /**
      * This method is invoked every time a new pattern is created (ie. when a
      * match could not be found in the existing patterns).
-     * 
+     *
      * @param pattern
      *            the newly produced pattern
      * @param row
@@ -172,7 +172,7 @@ public abstract class PatternFinder<R> {
      * This method is invoked every time a tokenized value matches an existing
      * pattern. All existing patterns will previously have been created using
      * the storeNewPattern(...) method.
-     * 
+     *
      * @param pattern
      *            the existing pattern
      * @param row

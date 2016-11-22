@@ -29,76 +29,76 @@ import org.slf4j.LoggerFactory;
  */
 public final class TaskRunnable implements Runnable {
 
-	private final static Logger logger = LoggerFactory.getLogger(TaskRunnable.class);
-	private final Task _task;
-	private final TaskListener _listener;
+    private static final Logger logger = LoggerFactory.getLogger(TaskRunnable.class);
+    private final Task _task;
+    private final TaskListener _listener;
 
-	public TaskRunnable(Task task, TaskListener listener) {
-		if (task == null && listener == null) {
-			throw new IllegalArgumentException("both task and listener cannot be null");
-		}
-		_task = task;
-		_listener = listener;
-	}
+    public TaskRunnable(final Task task, final TaskListener listener) {
+        if (task == null && listener == null) {
+            throw new IllegalArgumentException("both task and listener cannot be null");
+        }
+        _task = task;
+        _listener = listener;
+    }
 
-	@Override
-	public final void run() {
-		if (_listener == null) {
+    @Override
+    public void run() {
+        if (_listener == null) {
 
-			// execute without listener
-			try {
-				_task.execute();
-			} catch (Throwable t) {
-				logger.warn("No TaskListener to inform of error!", t);
-			}
+            // execute without listener
+            try {
+                _task.execute();
+            } catch (final Throwable t) {
+                logger.warn("No TaskListener to inform of error!", t);
+            }
 
-		} else {
+        } else {
 
-			// execute with listener
-			_listener.onBegin(_task);
-			try {
-				if (_task != null) {
-					_task.execute();
-				}
-				_listener.onComplete(_task);
-			} catch (Throwable t) {
-				_listener.onError(_task, t);
-			}
-		}
-	}
+            // execute with listener
+            _listener.onBegin(_task);
+            try {
+                if (_task != null) {
+                    _task.execute();
+                }
+                _listener.onComplete(_task);
+            } catch (final Throwable t) {
+                _listener.onError(_task, t);
+            }
+        }
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append('[');
-		if (_task != null) {
-			sb.append("task=" + _task);
-			if (_listener != null) {
-				sb.append(',');
-			}
-		}
-		if (_listener != null) {
-			sb.append("listener=" + _listener);
-		}
-		sb.append(']');
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        if (_task != null) {
+            sb.append("task=" + _task);
+            if (_listener != null) {
+                sb.append(',');
+            }
+        }
+        if (_listener != null) {
+            sb.append("listener=" + _listener);
+        }
+        sb.append(']');
+        return sb.toString();
+    }
 
-	/**
-	 * Gets the task to run, or null if none exists
-	 * 
-	 * @return the task to run, or null if none exists
-	 */
-	public final Task getTask() {
-		return _task;
-	}
+    /**
+     * Gets the task to run, or null if none exists
+     *
+     * @return the task to run, or null if none exists
+     */
+    public Task getTask() {
+        return _task;
+    }
 
-	/**
-	 * Gets the task listener for the task, or null if none exists.
-	 * 
-	 * @return the task listener for the task, or null if none exists.
-	 */
-	public final TaskListener getListener() {
-		return _listener;
-	}
+    /**
+     * Gets the task listener for the task, or null if none exists.
+     *
+     * @return the task listener for the task, or null if none exists.
+     */
+    public TaskListener getListener() {
+        return _listener;
+    }
 }

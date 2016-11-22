@@ -23,8 +23,8 @@ import java.io.Closeable;
 
 public interface StringPatternConnection extends Closeable {
 
-    public boolean matches(String string);
+    boolean matches(String string);
 
     @Override
-    public void close();
+    void close();
 }

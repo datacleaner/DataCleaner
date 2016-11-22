@@ -48,7 +48,8 @@ public class StringPatternMatchFilterTest extends TestCase {
 
         lifeCycleHelper.initialize(descriptor, filter);
 
-        assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
+        assertEquals(ValidationCategory.VALID,
+                filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
         assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
 
         lifeCycleHelper.close(descriptor, filter, true);
@@ -57,7 +58,8 @@ public class StringPatternMatchFilterTest extends TestCase {
         filter = new StringPatternFilter(column, new StringPattern[] { stringPattern }, MatchFilterCriteria.ALL,
                 configuration);
         filter.init();
-        assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
+        assertEquals(ValidationCategory.VALID,
+                filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
         assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
         filter.close();
     }
@@ -69,7 +71,8 @@ public class StringPatternMatchFilterTest extends TestCase {
         StringPatternFilter filter = new StringPatternFilter(column, new StringPattern[] { stringPattern1,
                 stringPattern2 }, MatchFilterCriteria.ANY, configuration);
         filter.init();
-        assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
+        assertEquals(ValidationCategory.VALID,
+                filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
         assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
         assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "ankit@")));
         filter.close();
@@ -77,7 +80,8 @@ public class StringPatternMatchFilterTest extends TestCase {
         filter = new StringPatternFilter(column, new StringPattern[] { stringPattern1, stringPattern2 },
                 MatchFilterCriteria.ALL, configuration);
         filter.init();
-        assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
+        assertEquals(ValidationCategory.VALID,
+                filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
         assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
         assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "ankit@")));
         filter.close();

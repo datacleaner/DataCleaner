@@ -26,9 +26,10 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import com.google.common.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.cache.Cache;
 
 /**
  * The {@link ImageManager} class serves as a utility for fetching images used
@@ -43,9 +44,12 @@ public final class ImageManager {
     private final Cache<String, Image> _cachedImageIcons = CollectionUtils2.createCache(500, 5 * 60);
     private final ResourceManager resourceManager = ResourceManager.get();
 
+    private ImageManager() {
+    }
+
     /**
      * Gets the singleton instance of ImageManager.
-     * 
+     *
      * @return
      */
     public static ImageManager get() {
@@ -54,9 +58,9 @@ public final class ImageManager {
 
     /**
      * Gets the singleton instance of ImageManager.
-     * 
+     *
      * @return
-     * 
+     *
      * @deprecated use {@link #get()} instead
      */
     @Deprecated
@@ -64,26 +68,23 @@ public final class ImageManager {
         return get();
     }
 
-    private ImageManager() {
-    }
-
-    public ImageIcon getImageIcon(String imagePath, ClassLoader... classLoaders) {
+    public ImageIcon getImageIcon(final String imagePath, final ClassLoader... classLoaders) {
         if (imagePath.endsWith(".gif")) {
             // animated gif's will loose their animations if loaded as images
-            URL url = resourceManager.getUrl(imagePath, classLoaders);
+            final URL url = resourceManager.getUrl(imagePath, classLoaders);
             return new ImageIcon(url);
         }
         return new ImageIcon(getImage(imagePath, classLoaders));
     }
 
-    public ImageIcon getImageIcon(String imagePath, int newWidth, ClassLoader... classLoaders) {
+    public ImageIcon getImageIcon(final String imagePath, final int newWidth, final ClassLoader... classLoaders) {
         return new ImageIcon(getImage(imagePath, newWidth, classLoaders));
     }
 
-    public Image getImage(String imagePath, ClassLoader... classLoaders) {
+    public Image getImage(final String imagePath, final ClassLoader... classLoaders) {
         Image image = _cachedImageIcons.getIfPresent(imagePath);
         if (image == null) {
-            URL url = resourceManager.getUrl(imagePath, classLoaders);
+            final URL url = resourceManager.getUrl(imagePath, classLoaders);
 
             if (url == null && classLoaders != null && classLoaders.length > 0) {
                 return getImage(imagePath, new ClassLoader[0]);
@@ -97,7 +98,7 @@ public final class ImageManager {
 
             try {
                 image = ImageIO.read(url);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new IllegalStateException("Could not read image from url:" + url);
             }
             if (image == null) {
@@ -108,14 +109,14 @@ public final class ImageManager {
         return image;
     }
 
-    public Image getImage(String imagePath, int newWidth, ClassLoader... classLoaders) {
+    public Image getImage(final String imagePath, final int newWidth, final ClassLoader... classLoaders) {
         Image image = _cachedImageIcons.getIfPresent(imagePath + ",width=" + newWidth);
         if (image == null) {
             image = getImage(imagePath, classLoaders);
-            int width = image.getWidth(null);
-            int height = image.getHeight(null);
+            final int width = image.getWidth(null);
+            final int height = image.getHeight(null);
             if (width > newWidth) {
-                int newHeight = newWidth * height / width;
+                final int newHeight = newWidth * height / width;
                 image = image.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
                 _cachedImageIcons.put(imagePath + ",width=" + newWidth, image);
             }
@@ -123,11 +124,11 @@ public final class ImageManager {
         return image;
     }
 
-    public Image getImageFromCache(String key) {
+    public Image getImageFromCache(final String key) {
         return _cachedImageIcons.getIfPresent(key);
     }
 
-    public void storeImageIntoCache(String key, Image image) {
+    public void storeImageIntoCache(final String key, final Image image) {
         _cachedImageIcons.put(key, image);
     }
 }

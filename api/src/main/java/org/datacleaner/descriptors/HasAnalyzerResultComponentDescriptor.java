@@ -24,7 +24,7 @@ import org.datacleaner.api.HasAnalyzerResult;
 
 /**
  * Descriptor interface for beans that produce {@link AnalyzerResult}s.
- * 
+ *
  * @param <B>
  */
 public interface HasAnalyzerResultComponentDescriptor<B extends HasAnalyzerResult<?>> extends ResultDescriptor,

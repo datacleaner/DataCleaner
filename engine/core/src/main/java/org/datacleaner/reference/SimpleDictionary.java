@@ -50,19 +50,19 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     private final Set<String> _valueSet;
     private final boolean _caseSensitive;
 
-    public SimpleDictionary(String name, String... values) {
+    public SimpleDictionary(final String name, final String... values) {
         this(name, true, values);
     }
 
-    public SimpleDictionary(String name, boolean caseSensitive, String... values) {
+    public SimpleDictionary(final String name, final boolean caseSensitive, final String... values) {
         this(name, createValueSet(values, caseSensitive), caseSensitive);
     }
 
-    public SimpleDictionary(String name, Collection<String> values) {
+    public SimpleDictionary(final String name, final Collection<String> values) {
         this(name, values, false);
     }
 
-    public SimpleDictionary(String name, Collection<String> values, boolean caseSensitive) {
+    public SimpleDictionary(final String name, final Collection<String> values, final boolean caseSensitive) {
         super(name);
         if (caseSensitive) {
             _valueSet = Sets.newHashSet(values);
@@ -72,11 +72,11 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
         _caseSensitive = caseSensitive;
     }
 
-    private static Set<String> createValueSet(Object[] array, boolean caseSensitive) {
+    private static Set<String> createValueSet(final Object[] array, final boolean caseSensitive) {
         return createValueSet(Iterators.forArray(array), caseSensitive);
     }
 
-    private static Set<String> createValueSet(Iterator<?> iterator, boolean caseSensitive) {
+    private static Set<String> createValueSet(final Iterator<?> iterator, final boolean caseSensitive) {
         final Set<String> valueSet = Sets.newHashSet();
         while (iterator.hasNext()) {
             final Object value = iterator.next();
@@ -91,10 +91,10 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
         return valueSet;
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         final Adaptor adaptor = new Adaptor() {
             @Override
-            public void deserialize(GetField getField, Serializable serializable) throws Exception {
+            public void deserialize(final GetField getField, final Serializable serializable) throws Exception {
                 final boolean caseSensitive = getField.get("_caseSensitive", true);
 
                 // handle potentially missing caseSensitive flag
@@ -108,17 +108,17 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
                 try {
                     final Object oldValues = getField.get("_values", null);
                     if (oldValues != null) {
-                        @SuppressWarnings("deprecation")
+                        @SuppressWarnings("deprecation") final
                         SimpleReferenceValues srv = (SimpleReferenceValues) oldValues;
                         @SuppressWarnings("deprecation")
                         final Object[] values = srv.getValues();
                         final Set<String> valueSet = createValueSet(values, caseSensitive);
-                        
+
                         final Field valuesField = SimpleDictionary.class.getDeclaredField("_valueSet");
                         valuesField.setAccessible(true);
                         valuesField.set(serializable, valueSet);
                     }
-                } catch (IllegalArgumentException e) {
+                } catch (final IllegalArgumentException e) {
                     // happens for newer versions of the object type.
                 }
             }
@@ -127,7 +127,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final SimpleDictionary other = (SimpleDictionary) obj;
             return Objects.equals(_valueSet, other._valueSet) && Objects.equals(_caseSensitive, other._caseSensitive);
@@ -136,7 +136,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     }
 
     @Override
-    public DictionaryConnection openConnection(DataCleanerConfiguration configuration) {
+    public DictionaryConnection openConnection(final DataCleanerConfiguration configuration) {
         return new DictionaryConnection() {
 
             @Override
@@ -146,7 +146,8 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
 
             @Override
             public Iterator<String> getLengthSortedValues() {
-                final SortedSet<String> connectionValueSet = new TreeSet<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
+                final SortedSet<String> connectionValueSet = new TreeSet<>(
+                        Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
                 connectionValueSet.addAll(_valueSet);
                 return connectionValueSet.iterator();
             }
@@ -171,7 +172,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     public Set<String> getValueSet() {
         return _valueSet;
     }
-    
+
     @Override
     public boolean isCaseSensitive() {
         return _caseSensitive;

@@ -36,15 +36,13 @@ public class RESTClientImplTest {
 
         try {
             restClient.getResponse(RESTClient.HttpMethod.GET, "", requestBody);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("URI is not absolute"));
         }
 
         try {
             restClient.getResponse(RESTClient.HttpMethod.GET, URL, requestBody);
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -53,8 +51,7 @@ public class RESTClientImplTest {
     public void testGetResponse() throws Exception {
         try {
             restClient.getResponse(RESTClient.HttpMethod.GET, URL, "");
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }

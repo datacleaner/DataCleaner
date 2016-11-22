@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 /**
  * Commonly used {@link ComponentMessage} which represents a message from the
  * component to the end user inspecting the log of a job's execution.
- * 
+ *
  * Components are advised to only publish this type of message with especially
  * relevant information. Use a regular {@link Logger} for background information
  * of relevance to the system administration.
@@ -33,7 +33,7 @@ public class ExecutionLogMessage implements ComponentMessage {
 
     private final String _message;
 
-    public ExecutionLogMessage(String message) {
+    public ExecutionLogMessage(final String message) {
         _message = message;
     }
 

@@ -29,48 +29,48 @@ import org.datacleaner.job.tasks.Task;
 
 public final class RowConsumerTaskListener implements TaskListener {
 
-	private final AtomicInteger _counter = new AtomicInteger();
-	private final AtomicBoolean _errorsReported = new AtomicBoolean(false);
-	private final AnalysisListener _analysisListener;
-	private final AnalysisJob _analysisJob;
-	private final TaskRunner _taskRunner;
+    private final AtomicInteger _counter = new AtomicInteger();
+    private final AtomicBoolean _errorsReported = new AtomicBoolean(false);
+    private final AnalysisListener _analysisListener;
+    private final AnalysisJob _analysisJob;
+    private final TaskRunner _taskRunner;
 
-	public RowConsumerTaskListener(AnalysisJob analysisJob, AnalysisListener analysisListener, TaskRunner taskRunner) {
-		_analysisListener = analysisListener;
-		_analysisJob = analysisJob;
-		_taskRunner = taskRunner;
-	}
+    public RowConsumerTaskListener(final AnalysisJob analysisJob, final AnalysisListener analysisListener, final TaskRunner taskRunner) {
+        _analysisListener = analysisListener;
+        _analysisJob = analysisJob;
+        _taskRunner = taskRunner;
+    }
 
-	@Override
-	public void onBegin(Task task) {
-	}
+    @Override
+    public void onBegin(final Task task) {
+    }
 
-	@Override
-	public void onComplete(Task task) {
-		incrementCounter();
-	}
+    @Override
+    public void onComplete(final Task task) {
+        incrementCounter();
+    }
 
-	@Override
-	public void onError(Task task, Throwable throwable) {
-		boolean alreadyRegisteredError = _errorsReported.getAndSet(true);
-		if (!alreadyRegisteredError) {
-			_analysisListener.errorUnknown(_analysisJob, throwable);
-		}
+    @Override
+    public void onError(final Task task, final Throwable throwable) {
+        final boolean alreadyRegisteredError = _errorsReported.getAndSet(true);
+        if (!alreadyRegisteredError) {
+            _analysisListener.errorUnknown(_analysisJob, throwable);
+        }
 
-		incrementCounter();
-	}
+        incrementCounter();
+    }
 
-	private void incrementCounter() {
-		_counter.incrementAndGet();
-	}
+    private void incrementCounter() {
+        _counter.incrementAndGet();
+    }
 
-	public boolean isErrornous() {
-		return _errorsReported.get();
-	}
+    public boolean isErrornous() {
+        return _errorsReported.get();
+    }
 
-	public void awaitTasks(final int numTasks) {
-		while (numTasks > _counter.get() && !isErrornous()) {
-			_taskRunner.assistExecution();
-		}
-	}
+    public void awaitTasks(final int numTasks) {
+        while (numTasks > _counter.get() && !isErrornous()) {
+            _taskRunner.assistExecution();
+        }
+    }
 }

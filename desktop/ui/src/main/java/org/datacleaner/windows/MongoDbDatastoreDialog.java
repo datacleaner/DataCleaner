@@ -55,8 +55,8 @@ public class MongoDbDatastoreDialog extends AbstractDatastoreDialog<MongoDbDatas
     private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
     @Inject
-    public MongoDbDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
-            @Nullable MongoDbDatastore originalDatastore, UserPreferences userPreferences) {
+    public MongoDbDatastoreDialog(final WindowContext windowContext, final MutableDatastoreCatalog catalog,
+            @Nullable final MongoDbDatastore originalDatastore, final UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
         _datastoreNameTextField = WidgetFactory.createTextField();

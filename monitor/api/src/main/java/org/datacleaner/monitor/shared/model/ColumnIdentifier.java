@@ -31,7 +31,7 @@ public class ColumnIdentifier implements Serializable, HasName {
     private TableIdentifier _table;
     private String _name;
 
-    public ColumnIdentifier(TableIdentifier table, String name) {
+    public ColumnIdentifier(final TableIdentifier table, final String name) {
         _table = table;
         _name = name;
     }
@@ -45,7 +45,7 @@ public class ColumnIdentifier implements Serializable, HasName {
         return _name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         _name = name;
     }
 
@@ -53,7 +53,7 @@ public class ColumnIdentifier implements Serializable, HasName {
         return _table;
     }
 
-    public void setTable(TableIdentifier table) {
+    public void setTable(final TableIdentifier table) {
         _table = table;
     }
 }

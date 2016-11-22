@@ -31,31 +31,31 @@ public interface RepositoryNode extends Serializable, HasName, Comparable<Reposi
 
     /**
      * Gets the parent folder of this node.
-     * 
+     *
      * @return the parent folder of this node.
      */
-    public RepositoryFolder getParent();
+    RepositoryFolder getParent();
 
     /**
      * Gets the name of this node.
-     * 
+     *
      * @return the name of this node.
      */
-    public String getName();
+    String getName();
 
     /**
      * Gets the qualified path of this node.
-     * 
+     *
      * @return the qualified path of this node.
      */
-    public String getQualifiedPath();
+    String getQualifiedPath();
 
     /**
      * Attempts to delete the repository node.
-     * 
+     *
      * @throws IllegalStateException
      *             if the node is not deletable, eg. if it is a read-only file,
      *             a non-empty directory or similar.
      */
-    public void delete() throws IllegalStateException;
+    void delete() throws IllegalStateException;
 }

@@ -32,7 +32,7 @@ public class TimelineIdentifier implements Serializable {
     private String _path;
     private DashboardGroup _group;
 
-    public TimelineIdentifier(String name, String path, DashboardGroup group) {
+    public TimelineIdentifier(final String name, final String path, final DashboardGroup group) {
         _name = name;
         _path = path;
         _group = group;
@@ -41,7 +41,7 @@ public class TimelineIdentifier implements Serializable {
     public TimelineIdentifier() {
         this(null, null, null);
     }
-    
+
     public DashboardGroup getGroup() {
         return _group;
     }
@@ -50,7 +50,7 @@ public class TimelineIdentifier implements Serializable {
         return _path;
     }
 
-    public void setPath(String path) {
+    public void setPath(final String path) {
         _path = path;
     }
 
@@ -58,7 +58,7 @@ public class TimelineIdentifier implements Serializable {
         return _name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         _name = name;
     }
 

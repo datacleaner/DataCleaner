@@ -23,8 +23,8 @@ import org.datacleaner.api.RenderingFormat;
 
 public class TextRenderingFormat implements RenderingFormat<CharSequence> {
 
-	@Override
-	public Class<CharSequence> getOutputClass() {
-		return CharSequence.class;
-	}
+    @Override
+    public Class<CharSequence> getOutputClass() {
+        return CharSequence.class;
+    }
 }

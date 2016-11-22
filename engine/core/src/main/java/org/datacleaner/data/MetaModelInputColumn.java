@@ -19,10 +19,10 @@
  */
 package org.datacleaner.data;
 
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.util.ReflectionUtils;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.util.ReflectionUtils;
 
 public final class MetaModelInputColumn extends AbstractInputColumn<Object> {
 
@@ -30,7 +30,7 @@ public final class MetaModelInputColumn extends AbstractInputColumn<Object> {
 
     private final Column _column;
 
-    public MetaModelInputColumn(Column column) {
+    public MetaModelInputColumn(final Column column) {
         if (column == null) {
             throw new IllegalArgumentException("column cannot be null");
         }
@@ -38,8 +38,8 @@ public final class MetaModelInputColumn extends AbstractInputColumn<Object> {
     }
 
     @SuppressWarnings("unchecked")
-    public <E> InputColumn<E> narrow(Class<E> e) {
-        Class<?> javaEquivalentClass = _column.getType().getJavaEquivalentClass();
+    public <E> InputColumn<E> narrow(final Class<E> e) {
+        final Class<?> javaEquivalentClass = _column.getType().getJavaEquivalentClass();
         if (ReflectionUtils.is(javaEquivalentClass, e)) {
             return (InputColumn<E>) this;
         }
@@ -57,15 +57,15 @@ public final class MetaModelInputColumn extends AbstractInputColumn<Object> {
     }
 
     @Override
-    protected boolean equalsInternal(AbstractInputColumn<?> that) {
-        MetaModelInputColumn that2 = (MetaModelInputColumn) that;
+    protected boolean equalsInternal(final AbstractInputColumn<?> that) {
+        final MetaModelInputColumn that2 = (MetaModelInputColumn) that;
         return _column.equals(that2._column);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Class<? extends Object> getDataType() {
-        ColumnType type = _column.getType();
+        final ColumnType type = _column.getType();
         if (type == null) {
             return null;
         } else if (type == ColumnType.CLOB) {

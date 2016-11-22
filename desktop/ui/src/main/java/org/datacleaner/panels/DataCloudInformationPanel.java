@@ -54,11 +54,11 @@ public class DataCloudInformationPanel extends JPanel {
 
     private final DCLabel text;
     private final JButton optionButton;
-    final private DCHtmlBox htmlBoxDataCloud =
+    private final DCHtmlBox htmlBoxDataCloud =
             new DCHtmlBox("More information on <a href=\"http://datacleaner.org\">datacleaner.org</a>");
 
-    public DataCloudInformationPanel(RightInformationPanel rightPanel, final DataCleanerConfiguration configuration,
-            final UserPreferences userPreferences, WindowContext windowContext, AbstractWindow owner) {
+    public DataCloudInformationPanel(final RightInformationPanel rightPanel, final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences, final WindowContext windowContext, final AbstractWindow owner) {
         super();
         optionButton = WidgetFactory.createDefaultButton("Sign in to DataCloud", IconUtils.MENU_OPTIONS);
         optionButton.addActionListener(new ActionListener() {
@@ -79,7 +79,7 @@ public class DataCloudInformationPanel extends JPanel {
         });
         setLayout(new VerticalLayout(10));
 
-        DCLabel header = DCLabel.darkMultiLine("DataCloud status");
+        final DCLabel header = DCLabel.darkMultiLine("DataCloud status");
         header.setFont(WidgetUtils.FONT_HEADER1);
         header.setIcon(ImageManager.get().getImageIcon("images/menu/datacloud.png"));
         add(header);
@@ -92,7 +92,7 @@ public class DataCloudInformationPanel extends JPanel {
         add(htmlBoxDataCloud);
     }
 
-    public void setInformationStatus(RemoteServerState remoteServerState) {
+    public void setInformationStatus(final RemoteServerState remoteServerState) {
         optionButton.setVisible(false);
         text.setText("");
         String panelContent = "";
@@ -139,7 +139,7 @@ public class DataCloudInformationPanel extends JPanel {
         return _foreground;
     }
 
-    private String addLine(String text, String newLine) {
+    private String addLine(final String text, final String newLine) {
         return text + "<p>" + newLine + "</p>";
     }
 }

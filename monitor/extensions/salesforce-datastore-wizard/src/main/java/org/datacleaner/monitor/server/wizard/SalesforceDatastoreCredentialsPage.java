@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
+import org.datacleaner.util.StringUtils;
 
 /**
  * Page for entering salesforce credentials
@@ -38,7 +38,7 @@ final class SalesforceDatastoreCredentialsPage extends AbstractFreemarkerWizardP
     private String _username = "";
     private String _password = "";
 
-    public SalesforceDatastoreCredentialsPage(SalesforceDatastoreWizardSession session) {
+    public SalesforceDatastoreCredentialsPage(final SalesforceDatastoreWizardSession session) {
         _session = session;
     }
 
@@ -48,7 +48,8 @@ final class SalesforceDatastoreCredentialsPage extends AbstractFreemarkerWizardP
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters) throws DCUserInputException {
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
+            throws DCUserInputException {
         _username = formParameters.get("sfdc_username").get(0);
         _password = formParameters.get("sfdc_password").get(0);
 
@@ -71,7 +72,7 @@ final class SalesforceDatastoreCredentialsPage extends AbstractFreemarkerWizardP
 
     @Override
     protected Map<String, Object> getFormModel() {
-        Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<String, Object>();
         model.put("sfdc_username", _username);
         model.put("sfdc_password", _password);
         return model;

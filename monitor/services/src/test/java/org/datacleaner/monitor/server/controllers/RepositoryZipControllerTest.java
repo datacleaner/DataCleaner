@@ -31,14 +31,13 @@ import java.util.zip.ZipOutputStream;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;
 
 import com.google.common.io.Files;
-
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 
 public class RepositoryZipControllerTest extends TestCase {
 

@@ -44,6 +44,7 @@ public class ReverseTokenizerTest extends TestCase {
         List<Token> tokens = tokenizer.tokenize("hello there __????!");
         assertEquals(7, tokens.size());
         assertEquals("[Token['hello' (TEXT)], Token[' ' (WHITESPACE)], Token['there' (TEXT)], "
-                + "Token[' ' (WHITESPACE)], Token['__' (DELIM)], Token['????' (MIXED)], Token['!' (DELIM)]]", tokens.toString());
+                        + "Token[' ' (WHITESPACE)], Token['__' (DELIM)], Token['????' (MIXED)], Token['!' (DELIM)]]",
+                tokens.toString());
     }
 }

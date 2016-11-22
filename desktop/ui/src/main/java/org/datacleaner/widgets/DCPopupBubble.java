@@ -35,49 +35,50 @@ import org.datacleaner.util.WidgetUtils;
 
 public class DCPopupBubble {
 
-    public static interface PopupCallback {
+    public enum Position {
+        TOP, BOTTOM
+    }
+
+    public interface PopupCallback {
         /**
          * Give a last chance to refuse popping up
          * @return true if the popup is okay, false to inhibit
          */
         boolean onBeforeShow();
     }
-    
-    public static enum Position {
-        TOP, BOTTOM
-    }
-    
-    private static final Image BACKGROUND_IMAGE_BOTTOM = ImageManager.get().getImage("images/window/popup-bubble-bottom.png");
+    private static final Image BACKGROUND_IMAGE_BOTTOM =
+            ImageManager.get().getImage("images/window/popup-bubble-bottom.png");
     private static final Image BACKGROUND_IMAGE_TOP = ImageManager.get().getImage("images/window/popup-bubble-top.png");
-    
+
     private final DCGlassPane _glassPane;
     private final DCPanel _panel;
     private int _xOnScreen;
     private int _yOnScreen;
     private Position _position;
 
-    public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen) {
+    public DCPopupBubble(final DCGlassPane glassPane, final String text, final int xOnScreen, final int yOnScreen) {
         this(glassPane, text, xOnScreen, yOnScreen, (Icon) null);
     }
-    
-    public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen, String iconPath) {
+
+    public DCPopupBubble(final DCGlassPane glassPane, final String text, final int xOnScreen, final int yOnScreen, final String iconPath) {
         this(glassPane, text, xOnScreen, yOnScreen, ImageManager.get().getImageIcon(iconPath));
     }
-    
-    public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen, Icon icon) {
+
+    public DCPopupBubble(final DCGlassPane glassPane, final String text, final int xOnScreen, final int yOnScreen, final Icon icon) {
         this(glassPane, text, xOnScreen, yOnScreen, icon, Position.BOTTOM);
     }
 
-    public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen, Icon icon, Position position) {
+    public DCPopupBubble(final DCGlassPane glassPane, final String text, final int xOnScreen, final int yOnScreen, final Icon icon,
+            final Position position) {
         _glassPane = glassPane;
         _position = position;
-        
+
         if (_position == Position.BOTTOM) {
             _panel = new DCPanel(BACKGROUND_IMAGE_BOTTOM, 0, 0);
         } else {
             _panel = new DCPanel(BACKGROUND_IMAGE_TOP, 0, 0);
         }
-        
+
         _xOnScreen = xOnScreen;
         _yOnScreen = yOnScreen;
         final DCLabel label = DCLabel.bright(text);
@@ -99,16 +100,16 @@ public class DCPopupBubble {
     }
 
     private void initLocation() {
-        Point locationOnScreen = _glassPane.getLocationOnScreen();
+        final Point locationOnScreen = _glassPane.getLocationOnScreen();
         int x = _xOnScreen - locationOnScreen.x - 40;
         if (x < 0) {
             x = 0;
         }
-        int y = _yOnScreen - locationOnScreen.y;
+        final int y = _yOnScreen - locationOnScreen.y;
         _panel.setLocation(x, y);
     }
 
-    public void showTooltip(int timeoutMillis) {
+    public void showTooltip(final int timeoutMillis) {
         initLocation();
         _glassPane.showTooltip(_panel, timeoutMillis);
     }
@@ -122,7 +123,7 @@ public class DCPopupBubble {
         _glassPane.remove(_panel);
     }
 
-    public void setLocationOnScreen(int x, int y) {
+    public void setLocationOnScreen(final int x, final int y) {
         _xOnScreen = x;
         _yOnScreen = y;
     }
@@ -134,7 +135,7 @@ public class DCPopupBubble {
     public void attachTo(final JComponent component, final PopupCallback popupCallback) {
         component.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent e) {
+            public void mouseEntered(final MouseEvent e) {
                 if (popupCallback != null && !popupCallback.onBeforeShow()) {
                     return;
                 } else if (component.isEnabled()) {
@@ -152,12 +153,12 @@ public class DCPopupBubble {
             }
 
             @Override
-            public void mouseExited(MouseEvent e) {
+            public void mouseExited(final MouseEvent e) {
                 DCPopupBubble.this.hide();
             }
 
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(final MouseEvent e) {
                 DCPopupBubble.this.hide();
             }
         });

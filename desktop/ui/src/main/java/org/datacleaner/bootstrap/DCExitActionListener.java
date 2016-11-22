@@ -24,72 +24,73 @@ import org.slf4j.LoggerFactory;
 
 class DCExitActionListener implements ExitActionListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(DCExitActionListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(DCExitActionListener.class);
 
-	@Override
-	public void exit(final int statusCode) {
-		Thread thread = new Thread() {
-			@Override
-			public void run() {
-				try {
-					// sleep for 5 seconds, to give the non-daemon threads a
-					// chance to shut down the applications properly
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
+    public static void printThreadInformation(final ThreadGroup threadGroup, final String prefix) {
+        logger.warn("Thread group: " + threadGroup);
 
-				if (logger.isWarnEnabled()) {
-					logger.warn("Some threads are still running:");
+        final ThreadGroup[] groups = new ThreadGroup[threadGroup.activeGroupCount() + 2];
+        final int groupCount = threadGroup.enumerate(groups);
+        for (int i = 0; i < groupCount; i++) {
+            final ThreadGroup group = groups[i];
+            printThreadInformation(group, prefix + "  ");
+        }
 
-					ThreadGroup topLevelThreadGroup = null;
-					{
-						ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
-						while (threadGroup != null) {
-							topLevelThreadGroup = threadGroup;
-							threadGroup = threadGroup.getParent();
-						}
-					}
-					printThreadInformation(topLevelThreadGroup, "");
+        final Thread[] threads = new Thread[threadGroup.activeCount() + 4];
+        final int threadCount = threadGroup.enumerate(threads);
 
-					logger.warn("Invoking system.exit({})", statusCode);
-				}
+        for (int i = 0; i < threadCount; i++) {
+            final Thread thread = threads[i];
+            if (thread != null) {
+                final boolean alive = thread.isAlive();
+                final boolean daemon = thread.isDaemon();
+                logger.warn(
+                        prefix + "thread #" + (i + 1) + " (" + (alive ? "alive" : "dead") + (daemon ? ",daemon" : "")
+                                + ")" + ": " + thread);
+                if (alive && !daemon) {
+                    final StackTraceElement[] stackTrace = thread.getStackTrace();
+                    for (int j = stackTrace.length - 1; j >= 0; j--) {
+                        logger.warn(prefix + " | stack " + (j + 1) + ": " + stackTrace[j]);
+                    }
+                }
+            }
+        }
+    }
 
-				System.exit(statusCode);
-			}
-		};
-		thread.setDaemon(true);
+    @Override
+    public void exit(final int statusCode) {
+        final Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    // sleep for 5 seconds, to give the non-daemon threads a
+                    // chance to shut down the applications properly
+                    Thread.sleep(5000);
+                } catch (final InterruptedException e) {
+                }
 
-		logger.info("Scheduling shutdown thread");
-		thread.start();
-	}
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Some threads are still running:");
 
-	public static void printThreadInformation(ThreadGroup threadGroup, String prefix) {
-		logger.warn("Thread group: " + threadGroup);
+                    ThreadGroup topLevelThreadGroup = null;
+                    {
+                        ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+                        while (threadGroup != null) {
+                            topLevelThreadGroup = threadGroup;
+                            threadGroup = threadGroup.getParent();
+                        }
+                    }
+                    printThreadInformation(topLevelThreadGroup, "");
 
-		ThreadGroup[] groups = new ThreadGroup[threadGroup.activeGroupCount() + 2];
-		int groupCount = threadGroup.enumerate(groups);
-		for (int i = 0; i < groupCount; i++) {
-			ThreadGroup group = groups[i];
-			printThreadInformation(group, prefix + "  ");
-		}
+                    logger.warn("Invoking system.exit({})", statusCode);
+                }
 
-		Thread[] threads = new Thread[threadGroup.activeCount() + 4];
-		int threadCount = threadGroup.enumerate(threads);
+                System.exit(statusCode);
+            }
+        };
+        thread.setDaemon(true);
 
-		for (int i = 0; i < threadCount; i++) {
-			Thread thread = threads[i];
-			if (thread != null) {
-				boolean alive = thread.isAlive();
-				boolean daemon = thread.isDaemon();
-				logger.warn(prefix + "thread #" + (i + 1) + " (" + (alive ? "alive" : "dead") + (daemon ? ",daemon" : "")
-						+ ")" + ": " + thread);
-				if (alive && !daemon) {
-					StackTraceElement[] stackTrace = thread.getStackTrace();
-					for (int j = stackTrace.length - 1; j >= 0; j--) {
-						logger.warn(prefix + " | stack " + (j + 1) + ": " + stackTrace[j]);
-					}
-				}
-			}
-		}
-	}
+        logger.info("Scheduling shutdown thread");
+        thread.start();
+    }
 }

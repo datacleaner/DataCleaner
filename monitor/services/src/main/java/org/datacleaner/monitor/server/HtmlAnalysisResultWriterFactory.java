@@ -21,13 +21,13 @@ package org.datacleaner.monitor.server;
 
 import java.util.Map.Entry;
 
+import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.html.BaseHeadElement;
 import org.datacleaner.result.html.FlotChartLocator;
 import org.datacleaner.result.html.HeadElement;
 import org.datacleaner.result.html.HtmlAnalysisResultWriter;
-import org.apache.metamodel.util.Predicate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -43,23 +43,23 @@ public class HtmlAnalysisResultWriterFactory {
         return resourcesDirectory;
     }
 
+    public void setResourcesDirectory(final String resourcesDirectory) {
+        this.resourcesDirectory = resourcesDirectory;
+    }
+
     public String getFlotLibraryLocation() {
         return flotLibraryLocation;
     }
 
-    public void setFlotLibraryLocation(String flotLibraryLocation) {
+    public void setFlotLibraryLocation(final String flotLibraryLocation) {
         this.flotLibraryLocation = flotLibraryLocation;
     }
 
-    public void setResourcesDirectory(String resourcesDirectory) {
-        this.resourcesDirectory = resourcesDirectory;
-    }
-
     public HtmlAnalysisResultWriter create(
-            boolean tabs,
-            Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate,
-            boolean headers) {
-        
+            final boolean tabs,
+            final Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate,
+            final boolean headers) {
+
         if (null != flotLibraryLocation) {
             FlotChartLocator.setFlotHome(flotLibraryLocation);
         }

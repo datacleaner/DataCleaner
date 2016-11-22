@@ -132,7 +132,8 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
         assertEquals(
                 "[MetaModelInputColumn[source1], MetaModelInputColumn[source3], MetaModelInputColumn[source4], MetaModelInputColumn[source5]]",
                 Arrays.toString(propertyWidget.getValue()));
-        assertEquals("[source1, source3, source4, source5]", Arrays.toString(mappedColumnNamesPropertyWidget.getValue()));
+        assertEquals("[source1, source3, source4, source5]",
+                Arrays.toString(mappedColumnNamesPropertyWidget.getValue()));
 
         Map<InputColumn<?>, DCCheckBox<InputColumn<?>>> checkBoxes = propertyWidget.getCheckBoxes();
 

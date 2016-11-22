@@ -76,27 +76,27 @@ public class BuildMapTransformer implements Transformer {
     @Description("Add key/value pairs to this (optional) existing map")
     InputColumn<Map<String, Object>> addToExistingMap;
 
-    public void setIncludeNullValues(boolean includeNullValues) {
+    public void setIncludeNullValues(final boolean includeNullValues) {
         this.includeNullValues = includeNullValues;
     }
 
-    public void setKeys(String[] keys) {
+    public void setKeys(final String[] keys) {
         this.keys = keys;
     }
 
-    public void setRetainKeyOrder(boolean retainKeyOrder) {
+    public void setRetainKeyOrder(final boolean retainKeyOrder) {
         this.retainKeyOrder = retainKeyOrder;
     }
 
-    public void setValues(InputColumn<?>[] values) {
+    public void setValues(final InputColumn<?>[] values) {
         this.values = values;
     }
 
     @Override
     public OutputColumns getOutputColumns() {
-        StringBuilder sb = new StringBuilder("Map: ");
+        final StringBuilder sb = new StringBuilder("Map: ");
         for (int i = 0; i < keys.length; i++) {
-            String key = keys[i];
+            final String key = keys[i];
             sb.append(key);
             if (sb.length() > 30) {
                 sb.append("...");
@@ -107,12 +107,12 @@ public class BuildMapTransformer implements Transformer {
                 sb.append(",");
             }
         }
-        OutputColumns outputColumns = new OutputColumns(new String[] { sb.toString() }, new Class[] { Map.class });
+        final OutputColumns outputColumns = new OutputColumns(new String[] { sb.toString() }, new Class[] { Map.class });
         return outputColumns;
     }
 
     @Override
-    public Map<String, ?>[] transform(InputRow row) {
+    public Map<String, ?>[] transform(final InputRow row) {
         final Map<String, Object> existingMap;
         if (addToExistingMap != null) {
             existingMap = row.getValue(addToExistingMap);
@@ -137,7 +137,7 @@ public class BuildMapTransformer implements Transformer {
             }
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked") final
         Map<String, ?>[] result = new Map[] { map };
 
         return result;

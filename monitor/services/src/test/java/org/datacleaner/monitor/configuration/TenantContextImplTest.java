@@ -22,6 +22,8 @@ package org.datacleaner.monitor.configuration;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -31,8 +33,6 @@ import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
-
-import junit.framework.TestCase;
 
 public class TenantContextImplTest extends TestCase {
 
@@ -72,7 +72,7 @@ public class TenantContextImplTest extends TestCase {
         DataCleanerConfiguration configuration = tenantContext.getConfiguration();
         assertNotNull(configuration);
     }
-    
+
     public void testConfigurationWithOverrideProperties() throws Exception {
         final String overrideFilename = "foo2/bar2.csv";
         final String datastoreName = "SomeCSV";

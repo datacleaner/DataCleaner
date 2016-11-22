@@ -23,9 +23,9 @@ import junit.framework.TestCase;
 
 public class DatastoreOutputUtilsTest extends TestCase {
 
-	public void testSafeName() throws Exception {
-		assertEquals("db_hi_1293", DatastoreOutputUtils.safeName("|hi 1293"));
-		assertEquals("hi_1293", DatastoreOutputUtils.safeName("hi 1293"));
-		assertEquals("db1293", DatastoreOutputUtils.safeName("1293"));
-	}
+    public void testSafeName() throws Exception {
+        assertEquals("db_hi_1293", DatastoreOutputUtils.safeName("|hi 1293"));
+        assertEquals("hi_1293", DatastoreOutputUtils.safeName("hi 1293"));
+        assertEquals("db1293", DatastoreOutputUtils.safeName("1293"));
+    }
 }

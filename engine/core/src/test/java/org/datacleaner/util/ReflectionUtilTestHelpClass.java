@@ -45,7 +45,7 @@ public class ReflectionUtilTestHelpClass {
             return super.getA() + 0;
         }
     }
-    
+
     public static class ClassC extends ClassA {
         private boolean c;
 

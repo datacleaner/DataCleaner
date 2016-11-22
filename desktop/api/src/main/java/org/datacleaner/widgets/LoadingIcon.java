@@ -29,10 +29,7 @@ import org.datacleaner.util.ImageManager;
 
 public class LoadingIcon extends JLabel {
 
-    private static final long serialVersionUID = 1L;
-
     public static final String ICON_PATH = "images/status/loading.gif";
-
     /**
      * @deprecated instantiate a new {@link ImageIcon} based on
      *             {@link #ICON_PATH} because the animation requires a single
@@ -41,10 +38,11 @@ public class LoadingIcon extends JLabel {
      */
     @Deprecated
     public static final ImageIcon ICON = ImageManager.get().getImageIcon(ICON_PATH);
+    private static final long serialVersionUID = 1L;
 
     public LoadingIcon() {
         super();
-        ImageIcon icon = ImageManager.get().getImageIcon(ICON_PATH);
+        final ImageIcon icon = ImageManager.get().getImageIcon(ICON_PATH);
         setIcon(icon);
         icon.setImageObserver(this);
         setHorizontalAlignment(JLabel.CENTER);
@@ -56,7 +54,7 @@ public class LoadingIcon extends JLabel {
         ICON.setImageObserver(null);
     }
 
-    public LoadingIcon setPreferredSize(int w, int h) {
+    public LoadingIcon setPreferredSize(final int w, final int h) {
         setPreferredSize(new Dimension(w, h));
         return this;
     }

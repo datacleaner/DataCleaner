@@ -46,7 +46,7 @@ import com.google.inject.Injector;
 
 @RendererBean(SwingRenderingFormat.class)
 public class MockAnalyzerResultSwingRenderer implements Renderer<MockAnalyzerFutureResult, JComponent> {
-    
+
     @Override
     public RendererPrecedence getPrecedence(MockAnalyzerFutureResult renderable) {
         return RendererPrecedence.MEDIUM;
@@ -55,13 +55,13 @@ public class MockAnalyzerResultSwingRenderer implements Renderer<MockAnalyzerFut
     @Override
     public JComponent render(MockAnalyzerFutureResult renderable) {
         DCLabel resultLabel = new DCLabel(false, renderable.getMockMessage(), Color.GREEN, null);
-        
+
         final DCPanel resultPanel = new DCPanel();
         resultPanel.add(resultLabel);
-        
+
         return resultPanel;
     }
-    
+
     public static void main(String[] args) {
         LookAndFeelManager.get().init();
 
@@ -77,7 +77,8 @@ public class MockAnalyzerResultSwingRenderer implements Renderer<MockAnalyzerFut
 
         AnalyzerComponentBuilder<MockFutureAnalyzer> mockAnalyzerResultFutureAnalyzerBuilder = ajb
                 .addAnalyzer(MockFutureAnalyzer.class);
-        mockAnalyzerResultFutureAnalyzerBuilder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.ADDRESSLINE2"));
+        mockAnalyzerResultFutureAnalyzerBuilder
+                .addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.ADDRESSLINE2"));
 
         ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
         resultWindow.setVisible(true);

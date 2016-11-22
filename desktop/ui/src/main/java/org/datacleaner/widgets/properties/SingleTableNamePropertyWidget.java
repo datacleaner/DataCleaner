@@ -64,10 +64,10 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
 
     /**
      * Creates the property widget
-     * 
+     *
      * @param componentBuilder
      * @param propertyDescriptor
-     * 
+     *
      * @deprecated use
      *             {@link #SingleTableNamePropertyWidget(ComponentBuilder, ConfiguredPropertyDescriptor, WindowContext)}
      *             instead.
@@ -80,7 +80,7 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
 
     /**
      * Creates the property widget
-     * 
+     *
      * @param componentBuilder
      * @param propertyDescriptor
      * @param windowContext
@@ -97,7 +97,7 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         _comboBox.setEditable(false);
         addComboListener(new Listener<Table>() {
             @Override
-            public void onItemSelected(Table item) {
+            public void onItemSelected(final Table item) {
                 fireValueChanged();
             }
         });
@@ -106,7 +106,7 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         createTableButton.setToolTipText("Create table");
         createTableButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final Schema schema = _schemaRef.get();
                 final Datastore datastore = _datastoreRef.get();
                 if (datastore instanceof UpdateableDatastore) {
@@ -115,7 +115,7 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
                             getCreateTableColumnSuggestions());
                     dialog.addListener(new CreateTableDialog.Listener() {
                         @Override
-                        public void onTableCreated(UpdateableDatastore datastore, Schema schema, String tableName) {
+                        public void onTableCreated(final UpdateableDatastore datastore, final Schema schema, final String tableName) {
                             try (UpdateableDatastoreConnection con = datastore.openConnection()) {
                                 con.getDataContext().refreshSchemas();
                                 final Schema newSchema = con.getDataContext().getSchemaByName(schema.getName());
@@ -149,7 +149,7 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
                 componentBuilder);
         columns = CollectionUtils.filter(columns, new Predicate<InputColumn<?>>() {
             @Override
-            public Boolean eval(InputColumn<?> column) {
+            public Boolean eval(final InputColumn<?> column) {
                 if (column instanceof MutableInputColumn) {
                     return !((MutableInputColumn<?>) column).isHidden();
                 }
@@ -159,21 +159,21 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         return columns;
     }
 
-    public void addComboListener(Listener<Table> listener) {
+    public void addComboListener(final Listener<Table> listener) {
         _comboBox.addListener(listener);
     }
 
     /**
      * @param schema
-     * 
+     *
      * @deprecated use {@link #setSchema(Datastore, Schema)} instead
      */
     @Deprecated
-    public void setSchema(Schema schema) {
+    public void setSchema(final Schema schema) {
         setSchema(null, schema);
     }
 
-    public void setSchema(Datastore datastore, Schema schema) {
+    public void setSchema(final Datastore datastore, final Schema schema) {
         _panelAroundButton.setVisible(CreateTableDialog.isCreateTableAppropriate(datastore, schema));
 
         final String previousValue = getValue();
@@ -190,12 +190,12 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
             if (previousValue == null) {
                 if (schema.getTableCount() == 1) {
                     // if there is only 1 table, select that
-                    Table table = schema.getTables()[0];
+                    final Table table = schema.getTables()[0];
                     _comboBox.setSelectedItem(table);
                 }
             } else {
                 // select table by name
-                Table table = schema.getTableByName(previousValue);
+                final Table table = schema.getTableByName(previousValue);
                 _comboBox.setSelectedItem(table);
             }
         }
@@ -203,7 +203,7 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
 
     /**
      * Gets the combo box containing the available {@link Table}s
-     * 
+     *
      * @return
      */
     public DCComboBox<Table> getComboBox() {
@@ -217,10 +217,6 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
             return null;
         }
         return table.getName();
-    }
-
-    public Table getTable() {
-        return (Table) _comboBox.getSelectedItem();
     }
 
     @Override
@@ -244,5 +240,9 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         _comboBox.setEditable(false);
 
         fireValueChanged();
+    }
+
+    public Table getTable() {
+        return (Table) _comboBox.getSelectedItem();
     }
 }

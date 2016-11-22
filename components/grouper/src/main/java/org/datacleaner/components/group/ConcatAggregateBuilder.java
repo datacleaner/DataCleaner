@@ -26,20 +26,20 @@ final class ConcatAggregateBuilder extends AbstractRowNumberAwareAggregateBuilde
     private final String _concatenationSeparator;
     private final StringBuilder _result;
 
-    public ConcatAggregateBuilder(SortationType sortationType, boolean skipNulls, String concatenationSeparator) {
+    public ConcatAggregateBuilder(final SortationType sortationType, final boolean skipNulls, final String concatenationSeparator) {
         super(sortationType, skipNulls);
         _concatenationSeparator = concatenationSeparator;
         _result = new StringBuilder();
     }
 
     @Override
-    protected void addSorted(Object o) {
+    protected void addSorted(final Object o) {
         if (!Strings.isNullOrEmpty(_concatenationSeparator) && _result.length() != 0) {
             _result.append(_concatenationSeparator);
         }
         _result.append(o == null ? "" : o.toString());
     }
-    
+
     @Override
     public String getAggregateSorted() {
         return _result.toString();

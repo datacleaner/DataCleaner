@@ -40,7 +40,7 @@ public abstract class UsageAwareCloseable implements Closeable {
         final String threadName;
         final StackTraceElement[] stackTrace;
 
-        CloseEvent(String name, StackTraceElement[] trace) {
+        CloseEvent(final String name, final StackTraceElement[] trace) {
             threadName = name;
             stackTrace = trace;
         }
@@ -58,7 +58,7 @@ public abstract class UsageAwareCloseable implements Closeable {
         this(LoggerFactory.getLogger(UsageAwareCloseable.class));
     }
 
-    public UsageAwareCloseable(Logger logger) {
+    public UsageAwareCloseable(final Logger logger) {
         _logger = logger;
         _usageCount = new AtomicInteger(1);
         _closed = new AtomicBoolean(false);
@@ -73,16 +73,16 @@ public abstract class UsageAwareCloseable implements Closeable {
     }
 
     private void logNearestStack() {
-        StackTraceElement[] stackTrace = new Throwable().getStackTrace();
+        final StackTraceElement[] stackTrace = new Throwable().getStackTrace();
         for (int i = 1; i < stackTrace.length && i < STACK_TRACE_ELEMENTS_TO_LOG; i++) {
-            StackTraceElement ste = stackTrace[i];
+            final StackTraceElement ste = stackTrace[i];
             _logger.debug(" - {} @ line {}", ste.getClassName(), ste.getLineNumber());
         }
     }
 
-    private void logStack(StackTraceElement[] stackTrace) {
+    private void logStack(final StackTraceElement[] stackTrace) {
         for (int i = 1; i < stackTrace.length && i < STACK_TRACE_ELEMENTS_TO_LOG; i++) {
-            StackTraceElement ste = stackTrace[i];
+            final StackTraceElement ste = stackTrace[i];
             _logger.debug(" - {} @ line {}", ste.getClassName(), ste.getLineNumber());
         }
     }
@@ -128,7 +128,7 @@ public abstract class UsageAwareCloseable implements Closeable {
                 _closeEvents.add(new CloseEvent(Thread.currentThread().getName(), new Throwable().getStackTrace()));
                 final int numCloses = _closeEvents.size();
                 int i = 1;
-                for (CloseEvent closeEvent : _closeEvents) {
+                for (final CloseEvent closeEvent : _closeEvents) {
                     _logger.debug("Stack trace when close() no. {} of {}: ", i, numCloses);
                     _logger.debug("Thread name: {}", closeEvent.threadName);
                     logStack(closeEvent.stackTrace);
@@ -171,7 +171,7 @@ public abstract class UsageAwareCloseable implements Closeable {
 
     /**
      * Gets the amount of usages this datacontext provider currently has.
-     * 
+     *
      * @return
      */
     protected int getUsageCount() {

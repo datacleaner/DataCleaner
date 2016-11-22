@@ -48,7 +48,7 @@ public class CustomizeTimelineHandler implements ClickHandler {
     private CustomizeMetricsPanel _customizeMetricsPanel;
     private CustomizeChartOptionsPanel _customizeChartOptionsPanel;
 
-    public CustomizeTimelineHandler(DashboardServiceAsync service, TimelinePanel timelinePanel) {
+    public CustomizeTimelineHandler(final DashboardServiceAsync service, final TimelinePanel timelinePanel) {
         _service = service;
         _timelinePanel = timelinePanel;
 
@@ -59,7 +59,7 @@ public class CustomizeTimelineHandler implements ClickHandler {
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(final ClickEvent event) {
         showPopup();
     }
 
@@ -73,7 +73,7 @@ public class CustomizeTimelineHandler implements ClickHandler {
         final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 final List<MetricIdentifier> selectedMetrics = _customizeMetricsPanel.getSelectedMetrics();
                 if (selectedMetrics == null || selectedMetrics.isEmpty()) {
                     Window.alert("Please select one or more metrics to plot in the timeline");

@@ -42,16 +42,16 @@ public class AnnotatedRowsHtmlRenderer implements Renderer<AnnotatedRowsResult, 
     private static final int MAX_ROWS = 100;
 
     @Override
-    public RendererPrecedence getPrecedence(AnnotatedRowsResult renderable) {
+    public RendererPrecedence getPrecedence(final AnnotatedRowsResult renderable) {
         return RendererPrecedence.MEDIUM;
     }
 
     @Override
     public HtmlFragment render(final AnnotatedRowsResult result) {
-        SimpleHtmlFragment htmlFragment = new SimpleHtmlFragment();
+        final SimpleHtmlFragment htmlFragment = new SimpleHtmlFragment();
 
-        InputColumn<?>[] highlightedColumns = result.getHighlightedColumns();
-        int[] highlightedIndexes = new int[highlightedColumns.length];
+        final InputColumn<?>[] highlightedColumns = result.getHighlightedColumns();
+        final int[] highlightedIndexes = new int[highlightedColumns.length];
         for (int i = 0; i < highlightedColumns.length; i++) {
             highlightedIndexes[i] = result.getColumnIndex(highlightedColumns[i]);
         }

@@ -169,7 +169,7 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             _errorDataContext = createErrorDataContext();
         }
 
-        int bufferSize = bufferSizeOption.calculateBufferSize(0); //TODO what buffer size? needed?
+        final int bufferSize = bufferSizeOption.calculateBufferSize(0); //TODO what buffer size? needed?
         logger.info("Row buffer size set to {}", bufferSize);
 
         _writeBuffer = new WriteBuffer(bufferSize, this);
@@ -203,23 +203,23 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
         return datastore.getName() + " - " + tableName;
     }
 
-    private void validateCsvHeaders(CsvDataContext dc) {
-        Schema schema = dc.getDefaultSchema();
+    private void validateCsvHeaders(final CsvDataContext dc) {
+        final Schema schema = dc.getDefaultSchema();
         if (schema.getTableCount() == 0) {
             // nothing to worry about, we will create the table ourselves
             return;
         }
-        Table table = schema.getTables()[0];
+        final Table table = schema.getTables()[0];
 
         // verify that table names correspond to what we need!
 
-        for (String columnName : conditionColumnNames) {
-            Column column = table.getColumnByName(columnName);
+        for (final String columnName : conditionColumnNames) {
+            final Column column = table.getColumnByName(columnName);
             if (column == null) {
                 throw new IllegalStateException("Error log file does not have required column header: " + columnName);
             }
         }
-        Column column = table.getColumnByName(ERROR_MESSAGE_COLUMN_NAME);
+        final Column column = table.getColumnByName(ERROR_MESSAGE_COLUMN_NAME);
         if (column == null) {
             throw new IllegalStateException("Error log file does not have required column: "
                     + ERROR_MESSAGE_COLUMN_NAME);
@@ -232,7 +232,7 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
         if (errorLogFile == null || TEMP_DIR.equals(errorLogFile)) {
             try {
                 file = File.createTempFile("updation_error", ".csv");
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new IllegalStateException("Could not create new temp file", e);
             }
         } else if (errorLogFile.isDirectory()) {
@@ -251,9 +251,9 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             // create table if no table exists.
             dc.executeUpdate(new UpdateScript() {
                 @Override
-                public void run(UpdateCallback cb) {
+                public void run(final UpdateCallback cb) {
                     TableCreationBuilder tableBuilder = cb.createTable(schema, "error_table");
-                    for (String columnName : conditionColumnNames) {
+                    for (final String columnName : conditionColumnNames) {
                         tableBuilder = tableBuilder.withColumn(columnName);
                     }
 
@@ -268,7 +268,7 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
 
         final Object[] rowData;
         if (additionalErrorLogValues == null) {
@@ -282,7 +282,7 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
 
         if (additionalErrorLogValues != null) {
             for (int i = 0; i < additionalErrorLogValues.length; i++) {
-                Object value = row.getValue(additionalErrorLogValues[i]);
+                final Object value = row.getValue(additionalErrorLogValues[i]);
                 rowData[conditionColumnNames.length + i] = value;
             }
         }
@@ -292,14 +292,14 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             // the
             // error data will be more complete if first loop finished.
             for (int i = 0; i < conditionValues.length; i++) {
-                int index = i;
+                final int index = i;
                 rowData[index] = TypeConverter.convertType(rowData[index], _targetConditionColumns[i]);
 
                 if (logger.isDebugEnabled()) {
                     logger.debug("Value for {} set to: {}", conditionColumnNames[i], rowData[index]);
                 }
             }
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             for (int i = 0; i < distinctCount; i++) {
                 errorOccurred(rowData, e);
             }
@@ -324,7 +324,7 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
 
         final FileDatastore errorDatastore;
         if (_errorDataContext != null) {
-            Resource resource = _errorDataContext.getResource();
+            final Resource resource = _errorDataContext.getResource();
             errorDatastore = new CsvDatastore(resource.getName(), resource);
         } else {
             errorDatastore = null;
@@ -340,16 +340,16 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
     @Override
     public void run(final Iterable<Object[]> buffer) throws Exception {
 
-        UpdateableDatastoreConnection con = datastore.openConnection();
+        final UpdateableDatastoreConnection con = datastore.openConnection();
         try {
             final Column[] whereColumns = con.getSchemaNavigator().convertToColumns(schemaName, tableName,
                     conditionColumnNames);
             final UpdateableDataContext dc = con.getUpdateableDataContext();
             dc.executeUpdate(new BatchUpdateScript() {
                 @Override
-                public void run(UpdateCallback callback) {
+                public void run(final UpdateCallback callback) {
                     int deleteCount = 0;
-                    for (Object[] rowData : buffer) {
+                    for (final Object[] rowData : buffer) {
                         RowDeletionBuilder deletionBuilder = callback.deleteFrom(tableName);
 
                         for (int i = 0; i < whereColumns.length; i++) {
@@ -392,7 +392,7 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             logger.warn("Error occurred while deleting record. Writing to error stream", e);
             _errorDataContext.executeUpdate(new UpdateScript() {
                 @Override
-                public void run(UpdateCallback cb) {
+                public void run(final UpdateCallback cb) {
                     RowInsertionBuilder insertBuilder = cb
                             .insertInto(_errorDataContext.getDefaultSchema().getTables()[0]);
 
@@ -404,12 +404,13 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
     }
 
     @Override
-    public void configureForTransformedData(AnalysisJobBuilder analysisJobBuilder, TransformerDescriptor<?> descriptor) {
+    public void configureForTransformedData(final AnalysisJobBuilder analysisJobBuilder,
+            final TransformerDescriptor<?> descriptor) {
         final List<Table> tables = analysisJobBuilder.getSourceTables();
         if (tables.size() == 1) {
             final List<MetaModelInputColumn> sourceColumns = analysisJobBuilder.getSourceColumnsOfTable(tables.get(0));
             final List<InputColumn<?>> primaryKeys = new ArrayList<InputColumn<?>>();
-            for (MetaModelInputColumn inputColumn : sourceColumns) {
+            for (final MetaModelInputColumn inputColumn : sourceColumns) {
                 if (inputColumn.getPhysicalColumn().isPrimaryKey()) {
                     primaryKeys.add(inputColumn);
                 }
@@ -422,7 +423,7 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
     }
 
     @Override
-    public void configureForFilterOutcome(AnalysisJobBuilder analysisJobBuilder, FilterDescriptor<?, ?> descriptor,
-            String categoryName) {
+    public void configureForFilterOutcome(final AnalysisJobBuilder analysisJobBuilder, final FilterDescriptor<?, ?> descriptor,
+            final String categoryName) {
     }
 }

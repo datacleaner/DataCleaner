@@ -25,13 +25,13 @@ import java.io.Serializable;
  * Represents an annotation (aka a mark, a label or a categorization) of a row.
  * RowAnnotations are used typically by analyzers in order to label rows for
  * later use, typically drill-to-detail functionality.
- * 
+ *
  * RowAnnotations are created through the RowAnnotationFactory, which is
  * injectable using the @Provided annotation.
- * 
+ *
  * @see RowAnnotationFactory
  */
 public interface RowAnnotation extends Serializable {
 
-	public int getRowCount();
+    int getRowCount();
 }

@@ -29,27 +29,27 @@ public interface DatastoreCatalog extends Serializable {
     /**
      * Determines if a datastore by a specific name is contained in the
      * {@link DatastoreCatalog}.
-     * 
+     *
      * @param name
      * @return
      */
-    public default boolean containsDatastore(String name) {
+    default boolean containsDatastore(final String name) {
         return getDatastore(name) != null;
-    };
+    }
 
     /**
      * Gets all the names of the datastores in this datastore catalog.
-     * 
+     *
      * @return
      */
-    public String[] getDatastoreNames();
+    String[] getDatastoreNames();
 
     /**
      * Gets a datastore by it's name. If no such datastore is found, null will
      * be returned.
-     * 
+     *
      * @param name
      * @return
      */
-    public Datastore getDatastore(String name);
+    Datastore getDatastore(String name);
 }

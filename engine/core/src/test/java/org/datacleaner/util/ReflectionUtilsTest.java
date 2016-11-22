@@ -21,7 +21,9 @@ package org.datacleaner.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
 import junit.framework.TestCase;
+
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
@@ -33,19 +35,21 @@ import org.datacleaner.util.ReflectionUtilTestHelpClass.ClassC;
 
 public class ReflectionUtilsTest extends TestCase {
 
-    public InputColumn<String> stringInputColumn;
+    private static class MySubclass extends AnnotatedRowsResult implements AnalyzerResult {
 
+        private static final long serialVersionUID = 1L;
+
+        public MySubclass() {
+            super(null, null);
+        }
+    }
+    public InputColumn<String> stringInputColumn;
     @SuppressWarnings("rawtypes")
     public InputColumn rawInputColumn;
-
     public InputColumn<?> unspecifiedInputColumn;
-
     public InputColumn<? extends Number> unspecifiedNumberInputColumn;
-
     public InputColumn<String>[] stringInputColumns;
-
     public InputColumn<? super Number>[] unspecifiedNumberSuperclassInputColumns;
-
     public InputColumn<Comparable<String>> stringComparableInputColumn;
 
     public void testExplodeCamelCase() throws Exception {
@@ -99,15 +103,6 @@ public class ReflectionUtilsTest extends TestCase {
         assertTrue(ReflectionUtils.isNumber(double.class));
         assertFalse(ReflectionUtils.isNumber(double[].class));
         assertFalse(ReflectionUtils.isNumber(Double[].class));
-    }
-
-    private static class MySubclass extends AnnotatedRowsResult implements AnalyzerResult {
-
-        private static final long serialVersionUID = 1L;
-
-        public MySubclass() {
-            super(null, null);
-        }
     }
 
     public void testGetHierarchyDistance() throws Exception {

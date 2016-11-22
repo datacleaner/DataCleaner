@@ -32,13 +32,13 @@ import org.datacleaner.user.UserPreferences;
  * {@link AnalysisJobBuilderWindow} has it's name because it's primary purpose
  * is to present a job that is being built. Behind the covers this job state is
  * respresented in the {@link AnalysisJobBuilder} class.
- * 
+ *
  * Besides job building, an {@link AnalysisJobBuilderWindow} also handles
  * datastore selection and menus in general.
  */
 public interface AnalysisJobBuilderWindow extends DCWindow {
 
-    public enum AnalysisWindowPanelType implements HasName {
+    enum AnalysisWindowPanelType implements HasName {
 
         WELCOME("Welcome"),
 
@@ -50,7 +50,7 @@ public interface AnalysisJobBuilderWindow extends DCWindow {
 
         private final String _name;
 
-        private AnalysisWindowPanelType(String name) {
+        AnalysisWindowPanelType(final String name) {
             _name = name;
         }
 
@@ -63,133 +63,133 @@ public interface AnalysisJobBuilderWindow extends DCWindow {
     /**
      * Gets whether or not the datastore has been set in this window (ie. if the
      * tree is showing a datastore).
-     * 
+     *
      * @return true if a datastore is set.
      */
-    public boolean isDatastoreSet();
+    boolean isDatastoreSet();
 
     /**
      * Initializes the window to use a particular datastore in the schema tree.
-     * 
+     *
      * @param datastore
      */
-    public void setDatastore(final Datastore datastore);
+    void setDatastore(final Datastore datastore);
 
     /**
      * Initializes the window to use a particular datastore in the schema tree.
-     * 
+     *
      * @param datastore
      * @param expandTree
      *            true if the datastore tree should be initially expanded.
      */
-    public void setDatastore(final Datastore datastore, boolean expandTree);
-
-    /**
-     * Sets the job file of the window (will be visible in the title and more).
-     * 
-     * @param jobFile
-     */
-    public void setJobFile(FileObject jobFile);
+    void setDatastore(final Datastore datastore, boolean expandTree);
 
     /**
      * Gets the current job file
-     * 
+     *
      * @return
      */
-    public FileObject getJobFile();
+    FileObject getJobFile();
+
+    /**
+     * Sets the job file of the window (will be visible in the title and more).
+     *
+     * @param jobFile
+     */
+    void setJobFile(FileObject jobFile);
+
+    /**
+     * Gets whether datastore selection is enabled.
+     *
+     * @see #setDatastoreSelectionEnabled(boolean)
+     * @return a boolean indicating whether or not datastore selection is
+     *         enabled.
+     */
+    boolean isDatastoreSelectionEnabled();
 
     /**
      * Sets whether or not datastore selection should be enabled (default is
      * true). If disabled, only a single datastore will be usable within this
      * window.
-     * 
+     *
      * @param datastoreSelectionEnabled
      */
-    public void setDatastoreSelectionEnabled(boolean datastoreSelectionEnabled);
-
-    /**
-     * Gets whether datastore selection is enabled.
-     * 
-     * @see #setDatastoreSelectionEnabled(boolean)
-     * @return a boolean indicating whether or not datastore selection is
-     *         enabled.
-     */
-    public boolean isDatastoreSelectionEnabled();
+    void setDatastoreSelectionEnabled(boolean datastoreSelectionEnabled);
 
     /**
      * Applies property values for all job components visible in the window.
      */
-    public void applyPropertyValues();
+    void applyPropertyValues();
 
     /**
      * Gets the status text of the status label. Useful if something goes wrong
      * - this status label will typically have a humanly readable explanation.
-     * 
+     *
      * @return
      */
-    public String getStatusLabelText();
+    String getStatusLabelText();
 
     /**
      * Sets the status label text. Note that the status label text changes based
      * on multiple events, so the duration of a given text may not be for long.
-     * 
+     *
      * @param statusLabelText
      */
-    public void setStatusLabelText(String statusLabelText);
+    void setStatusLabelText(String statusLabelText);
 
     /**
      * Sets the icon of the status label to indicate an error situation
      */
-    public void setStatusLabelError();
+    void setStatusLabelError();
 
     /**
      * Sets the icon of the status label to indicate a warning situation
      */
-    public void setStatusLabelWarning();
+    void setStatusLabelWarning();
 
     /**
      * Sets the icon of the status label to indicate an valid situation
      */
-    public void setStatusLabelValid();
+    void setStatusLabelValid();
 
     /**
      * Sets the icon of the status label to indicate an notice/informational
      * situation
      */
-    public void setStatusLabelNotice();
+    void setStatusLabelNotice();
 
     /**
      * Gets the {@link AnalysisJobBuilder} that the window currently represents.
-     * 
+     *
      * @return
      */
-    public AnalysisJobBuilder getAnalysisJobBuilder();
+    AnalysisJobBuilder getAnalysisJobBuilder();
 
     /**
      * Changes the current panel showing in the builder
-     * 
+     *
      * @param panel
      */
-    public void changePanel(AnalysisWindowPanelType panel);
+    void changePanel(AnalysisWindowPanelType panel);
 
     /**
      * Gets the {@link DataCleanerConfiguration} that the window is based on.
-     * 
+     *
      * @return
      */
-    public DataCleanerConfiguration getConfiguration();
+    DataCleanerConfiguration getConfiguration();
 
     /**
      * Gets the {@link UserPreferences} of the current session
-     * 
+     *
      * @return
      */
-    public UserPreferences getUserPreferences();
+    UserPreferences getUserPreferences();
 
     /**
      * Gets the {@link DCModule} that this window is scoped within
-     * 
+     *
      * @return
      */
-    public DCModule getDCModule();
+    DCModule getDCModule();
 }

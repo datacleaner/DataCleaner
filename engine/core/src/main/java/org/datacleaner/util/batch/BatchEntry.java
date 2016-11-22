@@ -28,7 +28,7 @@ final class BatchEntry<I, O> {
     private final CountDownLatch _countDownLatch;
     private volatile O _output;
 
-    public BatchEntry(I input) {
+    public BatchEntry(final I input) {
         _input = input;
         _countDownLatch = new CountDownLatch(1);
     }
@@ -41,12 +41,12 @@ final class BatchEntry<I, O> {
         return _output;
     }
 
-    public void setOutput(O output) {
+    public void setOutput(final O output) {
         _output = output;
         _countDownLatch.countDown();
     }
 
-    public boolean await(long waitMillis) throws InterruptedException {
+    public boolean await(final long waitMillis) throws InterruptedException {
         return _countDownLatch.await(waitMillis, TimeUnit.MILLISECONDS);
     }
 }

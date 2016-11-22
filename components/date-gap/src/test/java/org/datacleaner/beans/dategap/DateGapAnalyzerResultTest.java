@@ -56,7 +56,9 @@ public class DateGapAnalyzerResultTest extends TestCase {
         gaps.put("foo", timeIntervals);
 
         DateGapAnalyzerResult result = new DateGapAnalyzerResult("from", "to", null, completeIntervals, gaps, overlaps);
-        assertEquals("DateGapAnalyzerResult[gaps={foo=[TimeInterval[1000000->1002000], TimeInterval[1004000->1005000]]}]", result.toString());
+        assertEquals(
+                "DateGapAnalyzerResult[gaps={foo=[TimeInterval[1000000->1002000], TimeInterval[1004000->1005000]]}]",
+                result.toString());
     }
 
     public void testToStringGapsWithNullLabel() throws Exception {
@@ -67,8 +69,10 @@ public class DateGapAnalyzerResultTest extends TestCase {
         timeIntervals.add(new TimeInterval(1000 * 1000, 1002 * 1000));
         timeIntervals.add(new TimeInterval(1004 * 1000, 1005 * 1000));
         gaps.put(null, timeIntervals);
-        
+
         DateGapAnalyzerResult result = new DateGapAnalyzerResult("from", "to", null, completeIntervals, gaps, overlaps);
-        assertEquals("DateGapAnalyzerResult[gaps={null=[TimeInterval[1000000->1002000], TimeInterval[1004000->1005000]]}]", result.toString());
+        assertEquals(
+                "DateGapAnalyzerResult[gaps={null=[TimeInterval[1000000->1002000], TimeInterval[1004000->1005000]]}]",
+                result.toString());
     }
 }

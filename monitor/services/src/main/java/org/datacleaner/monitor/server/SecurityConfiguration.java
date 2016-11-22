@@ -33,15 +33,15 @@ public class SecurityConfiguration {
         return securityMode;
     }
 
-    public void setSecurityMode(String securityMode) {
+    public void setSecurityMode(final String securityMode) {
         this.securityMode = securityMode;
-    }
-
-    public void setCasServerUrl(String casServerUrl) {
-        this.casServerUrl = casServerUrl;
     }
 
     public String getCasServerUrl() {
         return casServerUrl;
+    }
+
+    public void setCasServerUrl(final String casServerUrl) {
+        this.casServerUrl = casServerUrl;
     }
 }

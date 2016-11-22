@@ -19,9 +19,9 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.file;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertNotEquals;
+
+import org.junit.Test;
 
 public class FileDictionaryReferenceDataPageTest {
     @Test

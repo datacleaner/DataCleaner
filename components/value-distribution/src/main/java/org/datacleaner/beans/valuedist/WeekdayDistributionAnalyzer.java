@@ -46,70 +46,70 @@ import org.datacleaner.result.CrosstabResult;
 @Description("Finds the distribution of weekdays from Date values.")
 @Concurrent(true)
 @Categorized(DateAndTimeCategory.class)
-@Distributed(reducer=WeekdayDistributionResultReducer.class)
+@Distributed(reducer = WeekdayDistributionResultReducer.class)
 public class WeekdayDistributionAnalyzer implements Analyzer<CrosstabResult> {
 
-	private final Map<InputColumn<Date>, Map<Integer, AtomicInteger>> distributionMap;
+    private final Map<InputColumn<Date>, Map<Integer, AtomicInteger>> distributionMap;
 
-	@Configured
-	InputColumn<Date>[] dateColumns;
+    @Configured
+    InputColumn<Date>[] dateColumns;
 
-	public WeekdayDistributionAnalyzer() {
-		distributionMap = new HashMap<InputColumn<Date>, Map<Integer, AtomicInteger>>();
-	}
+    public WeekdayDistributionAnalyzer() {
+        distributionMap = new HashMap<InputColumn<Date>, Map<Integer, AtomicInteger>>();
+    }
 
-	@Initialize
-	public void init() {
-		for (InputColumn<Date> col : dateColumns) {
-			Map<Integer, AtomicInteger> countMap = new HashMap<Integer, AtomicInteger>(7);
-			for (int i = Calendar.SUNDAY; i <= Calendar.SATURDAY; i++) {
-				// put a count of 0 for each day of the week
-				countMap.put(i, new AtomicInteger(0));
-			}
-			distributionMap.put(col, countMap);
-		}
-	}
+    @Initialize
+    public void init() {
+        for (final InputColumn<Date> col : dateColumns) {
+            final Map<Integer, AtomicInteger> countMap = new HashMap<Integer, AtomicInteger>(7);
+            for (int i = Calendar.SUNDAY; i <= Calendar.SATURDAY; i++) {
+                // put a count of 0 for each day of the week
+                countMap.put(i, new AtomicInteger(0));
+            }
+            distributionMap.put(col, countMap);
+        }
+    }
 
-	@Override
-	public void run(InputRow row, int distinctCount) {
-		for (InputColumn<Date> col : dateColumns) {
-			Date value = row.getValue(col);
-			if (value != null) {
-				Calendar c = Calendar.getInstance();
-				c.setTime(value);
-				int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-				Map<Integer, AtomicInteger> countMap = distributionMap.get(col);
-				AtomicInteger count = countMap.get(dayOfWeek);
-				count.addAndGet(distinctCount);
-			}
-		}
-	}
+    @Override
+    public void run(final InputRow row, final int distinctCount) {
+        for (final InputColumn<Date> col : dateColumns) {
+            final Date value = row.getValue(col);
+            if (value != null) {
+                final Calendar c = Calendar.getInstance();
+                c.setTime(value);
+                final int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+                final Map<Integer, AtomicInteger> countMap = distributionMap.get(col);
+                final AtomicInteger count = countMap.get(dayOfWeek);
+                count.addAndGet(distinctCount);
+            }
+        }
+    }
 
-	@Override
-	public CrosstabResult getResult() {
-		CrosstabDimension columnDimension = new CrosstabDimension("Column");
-		CrosstabDimension weekdayDimension = new CrosstabDimension("Weekday");
-		weekdayDimension.addCategory("Sunday").addCategory("Monday").addCategory("Tuesday").addCategory("Wednesday")
-				.addCategory("Thursday").addCategory("Friday").addCategory("Saturday");
-		Crosstab<Integer> crosstab = new Crosstab<Integer>(Integer.class, columnDimension, weekdayDimension);
-		for (InputColumn<Date> col : dateColumns) {
-			columnDimension.addCategory(col.getName());
-			CrosstabNavigator<Integer> nav = crosstab.where(columnDimension, col.getName());
-			Map<Integer, AtomicInteger> countMap = distributionMap.get(col);
-			nav.where(weekdayDimension, "Sunday").put(countMap.get(Calendar.SUNDAY).get());
-			nav.where(weekdayDimension, "Monday").put(countMap.get(Calendar.MONDAY).get());
-			nav.where(weekdayDimension, "Tuesday").put(countMap.get(Calendar.TUESDAY).get());
-			nav.where(weekdayDimension, "Wednesday").put(countMap.get(Calendar.WEDNESDAY).get());
-			nav.where(weekdayDimension, "Thursday").put(countMap.get(Calendar.THURSDAY).get());
-			nav.where(weekdayDimension, "Friday").put(countMap.get(Calendar.FRIDAY).get());
-			nav.where(weekdayDimension, "Saturday").put(countMap.get(Calendar.SATURDAY).get());
-		}
+    @Override
+    public CrosstabResult getResult() {
+        final CrosstabDimension columnDimension = new CrosstabDimension("Column");
+        final CrosstabDimension weekdayDimension = new CrosstabDimension("Weekday");
+        weekdayDimension.addCategory("Sunday").addCategory("Monday").addCategory("Tuesday").addCategory("Wednesday")
+                .addCategory("Thursday").addCategory("Friday").addCategory("Saturday");
+        final Crosstab<Integer> crosstab = new Crosstab<Integer>(Integer.class, columnDimension, weekdayDimension);
+        for (final InputColumn<Date> col : dateColumns) {
+            columnDimension.addCategory(col.getName());
+            final CrosstabNavigator<Integer> nav = crosstab.where(columnDimension, col.getName());
+            final Map<Integer, AtomicInteger> countMap = distributionMap.get(col);
+            nav.where(weekdayDimension, "Sunday").put(countMap.get(Calendar.SUNDAY).get());
+            nav.where(weekdayDimension, "Monday").put(countMap.get(Calendar.MONDAY).get());
+            nav.where(weekdayDimension, "Tuesday").put(countMap.get(Calendar.TUESDAY).get());
+            nav.where(weekdayDimension, "Wednesday").put(countMap.get(Calendar.WEDNESDAY).get());
+            nav.where(weekdayDimension, "Thursday").put(countMap.get(Calendar.THURSDAY).get());
+            nav.where(weekdayDimension, "Friday").put(countMap.get(Calendar.FRIDAY).get());
+            nav.where(weekdayDimension, "Saturday").put(countMap.get(Calendar.SATURDAY).get());
+        }
 
-		return new CrosstabResult(crosstab);
-	}
+        return new CrosstabResult(crosstab);
+    }
 
-	// used only for unittesting
-	public void setDateColumns(InputColumn<Date>[] dateColumns) {
-		this.dateColumns = dateColumns;
-	}
+    // used only for unittesting
+    public void setDateColumns(final InputColumn<Date>[] dateColumns) {
+        this.dateColumns = dateColumns;
+    }
 }

@@ -30,18 +30,18 @@ import org.jdesktop.swingx.action.OpenBrowserAction;
 
 public class NeopostToolbarButton extends JButton {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public NeopostToolbarButton() {
-		this(ImageManager.get().getImageIcon("images/powered-by-neopost-dark.png"));
-	}
+    public NeopostToolbarButton() {
+        this(ImageManager.get().getImageIcon("images/powered-by-neopost-dark.png"));
+    }
 
-	public NeopostToolbarButton(Icon icon) {
-		super(icon);
-		addActionListener(new OpenBrowserAction("http://www.neopost.com"));
-		setOpaque(false);
-		setBorder(new EmptyBorder(4, 4, 4, 4));
-		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		setToolTipText("Powered by Neopost");
-	}
+    public NeopostToolbarButton(final Icon icon) {
+        super(icon);
+        addActionListener(new OpenBrowserAction("http://www.neopost.com"));
+        setOpaque(false);
+        setBorder(new EmptyBorder(4, 4, 4, 4));
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        setToolTipText("Powered by Neopost");
+    }
 }

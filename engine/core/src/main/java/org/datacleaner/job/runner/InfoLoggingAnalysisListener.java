@@ -44,17 +44,17 @@ public class InfoLoggingAnalysisListener extends AnalysisListenerAdaptor {
     }
 
     @Override
-    public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
+    public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
         logger.info("Processing of '{}' start", metrics.getTable().getName());
     }
-    
+
     @Override
-    public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
+    public void rowProcessingSuccess(final AnalysisJob job, final RowProcessingMetrics metrics) {
         logger.info("Processing of '{}' success", metrics.getTable().getName());
     }
-    
+
     @Override
-    public void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message) {
+    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob, final ComponentMessage message) {
         if (message instanceof ExecutionLogMessage) {
             logger.info(((ExecutionLogMessage) message).getMessage() + " (" + LabelUtils.getLabel(componentJob) + ")");
         }

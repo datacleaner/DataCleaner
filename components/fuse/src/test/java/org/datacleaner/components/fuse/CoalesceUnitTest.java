@@ -19,6 +19,8 @@
  */
 package org.datacleaner.components.fuse;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.api.InputColumn;
@@ -27,8 +29,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import static org.junit.Assert.assertEquals;
 
 public class CoalesceUnitTest {
     @Rule
@@ -60,8 +60,10 @@ public class CoalesceUnitTest {
                 .getOutputDataType());
 
         // no common ancestors
-        assertEquals(Object.class, new CoalesceUnit(stringCol1, stringCol1, integerCol1).updateInputColumns(allColumns).getOutputDataType());
-        assertEquals(Object.class, new CoalesceUnit(stringCol1, stringCol1, objCol1).updateInputColumns(allColumns).getOutputDataType());
+        assertEquals(Object.class, new CoalesceUnit(stringCol1, stringCol1, integerCol1).updateInputColumns(allColumns)
+                .getOutputDataType());
+        assertEquals(Object.class,
+                new CoalesceUnit(stringCol1, stringCol1, objCol1).updateInputColumns(allColumns).getOutputDataType());
         assertEquals(Object.class, new CoalesceUnit(objCol1).updateInputColumns(allColumns).getOutputDataType());
     }
 
@@ -84,7 +86,7 @@ public class CoalesceUnitTest {
         Assert.assertArrayEquals(allInputColumns2, unit.getInputColumns());
     }
 
-    private <E> MockInputColumn<? extends E> createColumn(String tableName, String columnName, Class<E> clazz){
+    private <E> MockInputColumn<? extends E> createColumn(String tableName, String columnName, Class<E> clazz) {
         return new MockInputColumn<>(columnName, clazz, new MutableColumn(columnName, new MutableTable(tableName)));
     }
 
@@ -94,7 +96,7 @@ public class CoalesceUnitTest {
                 { createColumn("a", "foo1", String.class), createColumn("a", "foo2", String.class) };
         InputColumn<?>[] colsB =
                 { createColumn("b", "foo1", String.class), createColumn("b", "foo2", String.class) };
-        InputColumn<?>[] mixedCols = { colsA[0], colsA[1], colsB[0], colsB[1]};
+        InputColumn<?>[] mixedCols = { colsA[0], colsA[1], colsB[0], colsB[1] };
 
         CoalesceUnit namesCoalesceUnit = new CoalesceUnit("foo1", "foo2");
         CoalesceUnit pathsCoalesceUnit = new CoalesceUnit("b.foo1", "b.foo2");

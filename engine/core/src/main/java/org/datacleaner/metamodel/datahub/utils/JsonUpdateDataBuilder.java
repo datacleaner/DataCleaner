@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonUpdateDataBuilder {
 
-    public static <T> String buildJsonArray(T objectData) {
+    public static <T> String buildJsonArray(final T objectData) {
 
         final OutputStream os = new ByteArrayOutputStream();
         final ObjectMapper mapper = new ObjectMapper();
@@ -36,7 +36,7 @@ public class JsonUpdateDataBuilder {
             mapper.writeValue(os, objectData);
             final byte[] data = ((ByteArrayOutputStream) os).toByteArray();
             json = new String(data, "UTF-8");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
         return json;

@@ -48,22 +48,23 @@ import org.slf4j.LoggerFactory;
 
 public class ReorderColumnsActionListener implements ActionListener {
 
-    public static interface ReorderColumnsCallback {
-        public InputColumn<?>[] getColumns();
-        public void reorderColumns(InputColumn<?>[] newValue);
+    public interface ReorderColumnsCallback {
+        InputColumn<?>[] getColumns();
+
+        void reorderColumns(InputColumn<?>[] newValue);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(ReorderColumnsActionListener.class);
 
     private final ReorderColumnsCallback _callback;
 
-    public ReorderColumnsActionListener(ReorderColumnsCallback callback) {
+    public ReorderColumnsActionListener(final ReorderColumnsCallback callback) {
         _callback = callback;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        InputColumn<?>[] currentValue = _callback.getColumns();
+    public void actionPerformed(final ActionEvent e) {
+        final InputColumn<?>[] currentValue = _callback.getColumns();
         if (currentValue == null || currentValue.length == 0) {
             WidgetUtils.showErrorMessage("No columns selected", "Cannot reorder columns, when none is selected.");
             return;
@@ -92,7 +93,7 @@ public class ReorderColumnsActionListener implements ActionListener {
         final JButton saveButton = WidgetFactory.createPrimaryButton("Save order", IconUtils.ACTION_SAVE_BRIGHT);
         saveButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 saveReorderedValue(list);
                 dialog.dispose();
             }
@@ -101,7 +102,7 @@ public class ReorderColumnsActionListener implements ActionListener {
         final JButton cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
         cancelButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 dialog.dispose();
             }
         });
@@ -139,9 +140,9 @@ public class ReorderColumnsActionListener implements ActionListener {
             final JButton moveDownButton = WidgetFactory.createSmallButton("/images/actions/move-down.png");
             moveDownButton.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    InputColumn<?> col1 = list.get(index);
-                    InputColumn<?> col2 = list.get(index + 1);
+                public void actionPerformed(final ActionEvent e) {
+                    final InputColumn<?> col1 = list.get(index);
+                    final InputColumn<?> col2 = list.get(index + 1);
                     list.set(index, col2);
                     list.set(index + 1, col1);
                     updateTableModel(table, list);
@@ -151,9 +152,9 @@ public class ReorderColumnsActionListener implements ActionListener {
             final JButton moveUpButton = WidgetFactory.createSmallButton("/images/actions/move-up.png");
             moveUpButton.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    InputColumn<?> col1 = list.get(index);
-                    InputColumn<?> col2 = list.get(index - 1);
+                public void actionPerformed(final ActionEvent e) {
+                    final InputColumn<?> col1 = list.get(index);
+                    final InputColumn<?> col2 = list.get(index - 1);
                     list.set(index, col2);
                     list.set(index - 1, col1);
                     updateTableModel(table, list);
@@ -186,7 +187,7 @@ public class ReorderColumnsActionListener implements ActionListener {
         moveColumn.setMinWidth(70);
     }
 
-    public void saveReorderedValue(List<InputColumn<?>> list) {
+    public void saveReorderedValue(final List<InputColumn<?>> list) {
         logger.info("Saving reordered columns: {}", list);
 
         final InputColumn<?>[] newValue = list.toArray(new InputColumn[list.size()]);

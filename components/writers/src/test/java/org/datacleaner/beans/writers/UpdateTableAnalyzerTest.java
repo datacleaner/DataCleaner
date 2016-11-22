@@ -23,14 +23,6 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.easymock.EasyMock;
-import org.datacleaner.api.ComponentContext;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.JdbcDatastore;
-import org.datacleaner.connection.UpdateableDatastoreConnection;
-import org.datacleaner.data.MockInputColumn;
-import org.datacleaner.data.MockInputRow;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.UpdateCallback;
 import org.apache.metamodel.UpdateScript;
@@ -40,6 +32,14 @@ import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.api.ComponentContext;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.connection.UpdateableDatastoreConnection;
+import org.datacleaner.data.MockInputColumn;
+import org.datacleaner.data.MockInputRow;
+import org.easymock.EasyMock;
 
 public class UpdateTableAnalyzerTest extends TestCase {
 

@@ -47,26 +47,24 @@ import org.jfree.util.UnitType;
  */
 public final class ChartUtils {
 
-    private static final Stroke STROKE_NORMAL = new BasicStroke(1.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-    private static final Stroke STROKE_WIDE = new BasicStroke(2.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-
     /**
      * The threshold value advised to use when considering if there are too many
      * categories/bars/slices for a chart to render or not.
      */
     public static final int CATEGORY_COUNT_DISPLAY_THRESHOLD = SystemProperties.getInt(
             "datacleaner.chart.categories.threshold", 1000);
-
     public static final int WIDTH_WIDE = 900;
     public static final int WIDTH_NORMAL = 600;
     public static final int HEIGHT_WIDE = 400;
     public static final int HEIGHT_NORMAL = 600;
+    private static final Stroke STROKE_NORMAL = new BasicStroke(1.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    private static final Stroke STROKE_WIDE = new BasicStroke(2.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
     private ChartUtils() {
         // prevent instantiation
     }
 
-    public static ChartPanel createPanel(JFreeChart chart, boolean wide) {
+    public static ChartPanel createPanel(final JFreeChart chart, final boolean wide) {
         if (wide) {
             return createPanel(chart, WIDTH_WIDE, HEIGHT_WIDE);
         } else {
@@ -74,27 +72,27 @@ public final class ChartUtils {
         }
     }
 
-    public static ChartPanel createPanel(JFreeChart chart, int width, int height) {
+    public static ChartPanel createPanel(final JFreeChart chart, final int width, final int height) {
         final ChartPanel panel = new ChartPanel(chart);
         panel.setPreferredSize(new Dimension(width, height));
         return panel;
     }
 
-    public static void applyStyles(JFreeChart chart) {
-        TextTitle title = chart.getTitle();
+    public static void applyStyles(final JFreeChart chart) {
+        final TextTitle title = chart.getTitle();
         if (title != null) {
             title.setFont(WidgetUtils.FONT_HEADER1);
             title.setBackgroundPaint(WidgetUtils.BG_COLOR_BRIGHTEST);
         }
 
         for (int i = 0; i < chart.getSubtitleCount(); i++) {
-            Title subtitle = chart.getSubtitle(i);
+            final Title subtitle = chart.getSubtitle(i);
             if (subtitle instanceof TextTitle) {
                 ((TextTitle) subtitle).setFont(WidgetUtils.FONT_NORMAL);
             }
         }
 
-        LegendTitle legend = chart.getLegend();
+        final LegendTitle legend = chart.getLegend();
         if (legend != null) {
             legend.setItemFont(WidgetUtils.FONT_SMALL);
         }
@@ -126,7 +124,7 @@ public final class ChartUtils {
             // tweaks for bar charts
             final CategoryPlot categoryPlot = (CategoryPlot) plot;
 
-            int columnCount = categoryPlot.getDataset().getColumnCount();
+            final int columnCount = categoryPlot.getDataset().getColumnCount();
             if (columnCount > 1) {
                 categoryPlot.setDomainGridlinesVisible(true);
             } else {
@@ -146,7 +144,7 @@ public final class ChartUtils {
             renderer.setBaseOutlineStroke(STROKE_WIDE);
 
             if (renderer instanceof BarRenderer) {
-                BarRenderer barRenderer = (BarRenderer) renderer;
+                final BarRenderer barRenderer = (BarRenderer) renderer;
                 barRenderer.setShadowPaint(WidgetUtils.BG_COLOR_BRIGHT);
                 barRenderer.setBarPainter(new StandardBarPainter());
             }

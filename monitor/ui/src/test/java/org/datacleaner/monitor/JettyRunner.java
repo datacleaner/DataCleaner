@@ -33,19 +33,48 @@ import org.eclipse.jetty.webapp.WebAppContext;
 /**
  * This class provides a convenient way to interactively test the web
  * application by running it in your IDE.
- * 
+ *
  * To set it up in eclipse, do the following:
- * 
+ *
  * - In eclipse, make sure that this project (DataCleaner-webapp) has visibility
  * into the DataCleaner-monitor-ui project. (Configure build path -> Projects ->
  * Add project...)
- * 
+ *
  * - Run this java class's main method as a Java application.
- * 
+ *
  * - Run the DataCleaner-monitor-ui project as a
  * "Web Application (running on external an web server)".
  */
 public class JettyRunner {
+
+    private static void createExitListenerThread(final Server server) {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                try {
+                    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                        if ("exit".equals(line)) {
+                            System.out.println("Signal 'stop' -> server!");
+                            try {
+                                server.stop();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            System.out.println("Signal 'destroy' -> server!");
+                            server.destroy();
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.err.println("Graceful shutdown thread failed.");
+                }
+            }
+        };
+        thread.setDaemon(true);
+        thread.start();
+    }
 
     public static void main(String[] args) throws Exception {
         File webappFolder = new File("../../monitor/ui/src/main/webapp");
@@ -82,34 +111,5 @@ public class JettyRunner {
                 }
             }
         }
-    }
-
-    private static void createExitListenerThread(final Server server) {
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                try {
-                    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                        if ("exit".equals(line)) {
-                            System.out.println("Signal 'stop' -> server!");
-                            try {
-                                server.stop();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            System.out.println("Signal 'destroy' -> server!");
-                            server.destroy();
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.err.println("Graceful shutdown thread failed.");
-                }
-            }
-        };
-        thread.setDaemon(true);
-        thread.start();
     }
 }

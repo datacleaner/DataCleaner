@@ -27,29 +27,29 @@ import org.datacleaner.data.MockInputRow;
 
 public class JavaScriptFilterTest extends TestCase {
 
-	public void testNotNullFilteringString() throws Exception {
-		JavaScriptFilter filter = new JavaScriptFilter();
-		filter.setSourceCode("my_col != null;");
-		InputColumn<String> myCol = new MockInputColumn<String>("my_col", String.class);
-		filter.setColumns(new InputColumn[] { myCol });
-		filter.init();
+    public void testNotNullFilteringString() throws Exception {
+        JavaScriptFilter filter = new JavaScriptFilter();
+        filter.setSourceCode("my_col != null;");
+        InputColumn<String> myCol = new MockInputColumn<String>("my_col", String.class);
+        filter.setColumns(new InputColumn[] { myCol });
+        filter.init();
 
-		assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, "hi")));
-		assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, "")));
-		assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, " ")));
-		assertEquals(JavaScriptFilter.Category.INVALID, filter.categorize(new MockInputRow().put(myCol, null)));
-	}
+        assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, "hi")));
+        assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, "")));
+        assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, " ")));
+        assertEquals(JavaScriptFilter.Category.INVALID, filter.categorize(new MockInputRow().put(myCol, null)));
+    }
 
-	public void testNotNullFilteringNumber() throws Exception {
-		JavaScriptFilter filter = new JavaScriptFilter();
-		filter.setSourceCode("my_col != null;");
-		InputColumn<Number> myCol = new MockInputColumn<Number>("my_col", Number.class);
-		filter.setColumns(new InputColumn[] { myCol });
-		filter.init();
+    public void testNotNullFilteringNumber() throws Exception {
+        JavaScriptFilter filter = new JavaScriptFilter();
+        filter.setSourceCode("my_col != null;");
+        InputColumn<Number> myCol = new MockInputColumn<Number>("my_col", Number.class);
+        filter.setColumns(new InputColumn[] { myCol });
+        filter.init();
 
-		assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, 1)));
-		assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, -1)));
-		assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, 0)));
-		assertEquals(JavaScriptFilter.Category.INVALID, filter.categorize(new MockInputRow().put(myCol, null)));
-	}
+        assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, 1)));
+        assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, -1)));
+        assertEquals(JavaScriptFilter.Category.VALID, filter.categorize(new MockInputRow().put(myCol, 0)));
+        assertEquals(JavaScriptFilter.Category.INVALID, filter.categorize(new MockInputRow().put(myCol, null)));
+    }
 }

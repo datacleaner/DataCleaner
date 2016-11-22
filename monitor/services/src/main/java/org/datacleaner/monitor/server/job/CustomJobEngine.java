@@ -53,7 +53,7 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
     }
 
     @Override
-    protected CustomJobContext getJobContext(TenantContext context, RepositoryFile file) {
+    protected CustomJobContext getJobContext(final TenantContext context, final RepositoryFile file) {
         final DataCleanerConfiguration configuration = context.getConfiguration();
         final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
                 .getInjectionManager(configuration);
@@ -62,8 +62,8 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
     }
 
     @Override
-    public void executeJob(TenantContext context, ExecutionLog execution, ExecutionLogger executionLogger,
-            Map<String, String> variables) throws Exception {
+    public void executeJob(final TenantContext context, final ExecutionLog execution, final ExecutionLogger executionLogger,
+            final Map<String, String> variables) throws Exception {
         executionLogger.setStatusRunning();
 
         final JobIdentifier jobIdentifier = execution.getJob();
@@ -73,7 +73,7 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
         final ComponentDescriptor<?> descriptor = jobContext.getDescriptor();
         try {
             customJob = (CustomJob) descriptor.newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             executionLogger.setStatusFailed(this, descriptor, e);
             return;
         }
@@ -99,12 +99,12 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
                 result = customJob.execute(callback);
                 executionLogger.log("Succesfully executed job instance, closing");
                 lifeCycleHelper.close(descriptor, customJob, true);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 lifeCycleHelper.close(descriptor, customJob, false);
                 throw e;
             }
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             executionLogger.setStatusFailed(this, null, e);
             return;
         }
@@ -118,7 +118,7 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
     }
 
     @Override
-    public boolean cancelJob(TenantContext tenantContext, ExecutionLog executionLog) {
+    public boolean cancelJob(final TenantContext tenantContext, final ExecutionLog executionLog) {
         // always return false - cannot stop a custom method from running
         return false;
     }

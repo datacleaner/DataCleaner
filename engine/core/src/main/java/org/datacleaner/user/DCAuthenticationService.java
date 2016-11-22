@@ -33,34 +33,34 @@ import org.datacleaner.util.http.HttpXmlUtils;
  */
 public class DCAuthenticationService implements AuthenticationService {
 
-	private final HttpXmlUtils _httpXmlUtils;
+    private final HttpXmlUtils _httpXmlUtils;
 
-	@Inject
-	public DCAuthenticationService(HttpXmlUtils httpXmlUtils) {
-		_httpXmlUtils = httpXmlUtils;
-	}
+    @Inject
+    public DCAuthenticationService(final HttpXmlUtils httpXmlUtils) {
+        _httpXmlUtils = httpXmlUtils;
+    }
 
-	@Override
-	public boolean auth(String username, char[] password) {
+    @Override
+    public boolean auth(final String username, final char[] password) {
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("username", username);
-		try {
-			String salt = _httpXmlUtils.getUrlContent("https://datacleaner.org/ws/get_salt", params);
+        final Map<String, String> params = new HashMap<String, String>();
+        params.put("username", username);
+        try {
+            final String salt = _httpXmlUtils.getUrlContent("https://datacleaner.org/ws/get_salt", params);
 
-			if (salt != null && !"not found".equals(salt)) {
-				String hashedPassword = Jcrypt.crypt(salt, new String(password));
+            if (salt != null && !"not found".equals(salt)) {
+                final String hashedPassword = Jcrypt.crypt(salt, new String(password));
 
-				params.put("hashed_password", hashedPassword);
-				String accepted = _httpXmlUtils.getUrlContent("https://datacleaner.org/ws/login", params);
+                params.put("hashed_password", hashedPassword);
+                final String accepted = _httpXmlUtils.getUrlContent("https://datacleaner.org/ws/login", params);
 
-				if ("true".equals(accepted)) {
-					return true;
-				}
-			}
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
-		return false;
-	}
+                if ("true".equals(accepted)) {
+                    return true;
+                }
+            }
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        }
+        return false;
+    }
 }

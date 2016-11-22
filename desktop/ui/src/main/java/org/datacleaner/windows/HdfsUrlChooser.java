@@ -98,8 +98,8 @@ public class HdfsUrlChooser extends JComponent {
 
         private static final long serialVersionUID = 1L;
 
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected,
+                final boolean cellHasFocus) {
 
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -108,7 +108,7 @@ public class HdfsUrlChooser extends JComponent {
                 return this;
             }
 
-            FileStatus fileStatus = (FileStatus) value;
+            final FileStatus fileStatus = (FileStatus) value;
 
             final String name;
             if (fileStatus.isDirectory()) {
@@ -133,7 +133,7 @@ public class HdfsUrlChooser extends JComponent {
         Icon _icon = DIRECTORY_ICON;
         int _depth = 0;
 
-        public void paintIcon(Component c, Graphics g, int x, int y) {
+        public void paintIcon(final Component c, final Graphics g, final int x, final int y) {
 
             if (c.getComponentOrientation().isLeftToRight()) {
                 _icon.paintIcon(c, g, x + _depth * SPACE, y);
@@ -157,8 +157,8 @@ public class HdfsUrlChooser extends JComponent {
 
         IndentIcon ii = new IndentIcon();
 
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected,
+                final boolean cellHasFocus) {
 
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -167,7 +167,7 @@ public class HdfsUrlChooser extends JComponent {
                 return this;
             }
 
-            Path directory = (Path) value;
+            final Path directory = (Path) value;
             final String directoryName = directory.getName();
             if (directoryName.isEmpty()) {
                 final URI uri = directory.toUri();
@@ -191,7 +191,7 @@ public class HdfsUrlChooser extends JComponent {
 
         private static final long serialVersionUID = 1L;
 
-       
+
         LinkedList<Path> directories = new LinkedList<>();
         int[] depths = null;
 
@@ -202,13 +202,13 @@ public class HdfsUrlChooser extends JComponent {
         }
 
         public void updateDirectories() {
-            Path dir = getCurrentDirectory();
+            final Path dir = getCurrentDirectory();
             if (dir != null) {
                 addItem(dir);
             }
         }
 
-        private void addItem(Path directory) {
+        private void addItem(final Path directory) {
             if (directory == null) {
                 return;
             }
@@ -217,17 +217,17 @@ public class HdfsUrlChooser extends JComponent {
             directories.add(getRoot());
 
             Path p = directory;
-            List<Path> paths = new ArrayList<>(10);
+            final List<Path> paths = new ArrayList<>(10);
             do {
                 paths.add(p);
             } while ((p = p.getParent()) != null);
 
-            int pathCount = paths.size();
+            final int pathCount = paths.size();
 
             for (int i = 0; i < pathCount; i++) {
                 p = paths.get(i);
                 if (directories.contains(p)) {
-                    int topIndex = directories.indexOf(p);
+                    final int topIndex = directories.indexOf(p);
                     for (int j = i - 1; j >= 0; j--) {
                         directories.add(topIndex + i - j, paths.get(j));
                     }
@@ -241,8 +241,8 @@ public class HdfsUrlChooser extends JComponent {
         private void calculateDepths() {
             depths = new int[directories.size()];
             for (int i = 0; i < depths.length; i++) {
-                Path dir = directories.get(i);
-                Path parent = dir.getParent();
+                final Path dir = directories.get(i);
+                final Path parent = dir.getParent();
                 depths[i] = 0;
                 if (parent != null) {
                     for (int j = i - 1; j >= 0; j--) {
@@ -255,7 +255,7 @@ public class HdfsUrlChooser extends JComponent {
             }
         }
 
-        public int getDepth(int i) {
+        public int getDepth(final int i) {
             if (depths == null || i < 0 || i > depths.length) {
                 return 0;
             }
@@ -269,7 +269,7 @@ public class HdfsUrlChooser extends JComponent {
         }
 
         @Override
-        public void setSelectedItem(Object selectedDirectory) {
+        public void setSelectedItem(final Object selectedDirectory) {
             this.selectedDirectory = (Path) selectedDirectory;
             fireContentsChanged(this, -1, -1);
         }
@@ -280,7 +280,7 @@ public class HdfsUrlChooser extends JComponent {
         }
 
         @Override
-        public Path getElementAt(int index) {
+        public Path getElementAt(final int index) {
             return directories.get(index);
         }
 
@@ -310,7 +310,7 @@ public class HdfsUrlChooser extends JComponent {
 
                 // Add pointer to the parent directory
                 if (!_currentDirectory.isRoot()) {
-                    FileStatus[] newFileStatuses = new FileStatus[fileStatuses.length + 1];
+                    final FileStatus[] newFileStatuses = new FileStatus[fileStatuses.length + 1];
                     final FileStatus levelUp = new FileStatus();
                     levelUp.setSymlink(_currentDirectory.getParent());
                     newFileStatuses[0] = levelUp;
@@ -318,7 +318,7 @@ public class HdfsUrlChooser extends JComponent {
                     System.arraycopy(fileStatuses, 0, newFileStatuses, 1, fileStatuses.length);
                     fileStatuses = newFileStatuses;
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 fileStatuses = new FileStatus[0];
             }
 
@@ -347,6 +347,7 @@ public class HdfsUrlChooser extends JComponent {
             updateFileList();
         }
     }
+
     public static final Icon DIRECTORY_ICON = UIManager.getIcon("FileView.directoryIcon");
     public static final Icon FILE_ICON = UIManager.getIcon("FileView.fileIcon");
     public static final Icon COMPUTER_ICON = UIManager.getIcon("FileView.computerIcon");
@@ -366,7 +367,7 @@ public class HdfsUrlChooser extends JComponent {
 
     private HdfsComboBoxModel _directoryComboBoxModel = new HdfsComboBoxModel();
 
-    HdfsUrlChooser(URI uri, OpenType openType) {
+    HdfsUrlChooser(URI uri, final OpenType openType) {
         if (uri != null) {
             if (!HDFS_SCHEME.equals(uri.getScheme())) {
                 throw new IllegalArgumentException("Only HDFS allowed");
@@ -398,7 +399,7 @@ public class HdfsUrlChooser extends JComponent {
         _fileList.setBorder(WidgetUtils.BORDER_THIN);
         _fileList.setCellRenderer(new HdfsFileListRenderer());
         _fileList.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
+            public void mouseClicked(final MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
                     selectOrBrowsePath(false);
                 }
@@ -446,9 +447,10 @@ public class HdfsUrlChooser extends JComponent {
         add(panel, BorderLayout.CENTER);
     }
 
-    public static URI showDialog(Component parent, final ServerInformationCatalog serverInformationCatalog, final String selectedServer, 
-            URI currentUri, OpenType openType) throws HeadlessException {
-        
+    public static URI showDialog(final Component parent, final ServerInformationCatalog serverInformationCatalog,
+            final String selectedServer,
+            final URI currentUri, final OpenType openType) throws HeadlessException {
+
         final HdfsUrlChooser chooser = new HdfsUrlChooser(currentUri, openType);
         if (chooser._dialog != null) {
             // Prevent to show second instance of _dialog if the previous one
@@ -489,13 +491,13 @@ public class HdfsUrlChooser extends JComponent {
         return null;
     }
 
-    private void selectOrBrowsePath(boolean selectDirectory) {
+    private void selectOrBrowsePath(final boolean selectDirectory) {
         // Double-click detected
         final FileStatus element = _fileList.getModel().getElementAt(_fileList.getSelectedIndex());
         if (element.isSymlink()) {
             try {
                 _currentDirectory = element.getSymlink();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 logger.warn("Could not get the symlink value for element {}", element, e);
             }
         } else if (element.isFile() || (element.isDirectory() && selectDirectory)) {
@@ -515,8 +517,9 @@ public class HdfsUrlChooser extends JComponent {
      * @return True if a configuration was yielded.
      * @param serverInformationCatalog
      */
-    private boolean scanHadoopConfigFiles(final ServerInformationCatalog serverInformationCatalog,  final String selectedServer) {
-        
+    private boolean scanHadoopConfigFiles(final ServerInformationCatalog serverInformationCatalog,
+            final String selectedServer) {
+
         final HadoopClusterInformation clusterInformation;
         if (selectedServer != null) {
             clusterInformation = (HadoopClusterInformation) serverInformationCatalog.getServer(selectedServer);
@@ -524,7 +527,7 @@ public class HdfsUrlChooser extends JComponent {
             clusterInformation = (HadoopClusterInformation) serverInformationCatalog.getServer(
                     HadoopResource.DEFAULT_CLUSTERREFERENCE);
         }
-        
+
         if (clusterInformation == null) {
             return false;
         }
@@ -535,7 +538,7 @@ public class HdfsUrlChooser extends JComponent {
 
         try {
             _fileSystem = FileSystem.newInstance(configuration);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalArgumentException("Illegal URI when showing HDFS chooser", e);
         }
         final HdfsDirectoryModel model = (HdfsDirectoryModel) _fileList.getModel();
@@ -546,12 +549,11 @@ public class HdfsUrlChooser extends JComponent {
     private void updateDirectories() {
         _directoryComboBoxModel.updateDirectories();
     }
-    
-   
-    
+
+
     private void updateCurrentDirectory(final Path directory) {
         _currentDirectory = directory;
-        
+
         if (directory != null) {
             _fileSystem = HdfsUtils.getFileSystemFromUri(directory.toUri());
             ((HdfsDirectoryModel) _fileList.getModel()).updateFileList();
@@ -576,13 +578,13 @@ public class HdfsUrlChooser extends JComponent {
         if (_fileSystem != null && getUri() != null) {
             try {
                 _fileSystem.listStatus(new Path(getUri()));
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    protected void createDialog(Component chooser, Component parent, ComponentListener listener) {
+    protected void createDialog(final Component chooser, final Component parent, final ComponentListener listener) {
         _dialog = WidgetFactory.createModalDialog(chooser, parent, _openType.getTitle(), true);
 
         if (listener != null) {
@@ -602,9 +604,9 @@ public class HdfsUrlChooser extends JComponent {
     }
 
     // Test
-    public static void main(String[] args) throws URISyntaxException {
+    public static void main(final String[] args) throws URISyntaxException {
         LookAndFeelManager.get().init();
-        
+
         final List<ServerInformation> servers = new ArrayList<>();
         servers.add(new EnvironmentBasedHadoopClusterInformation("default", "hadoop conf dir"));
         servers.add(new DirectoryBasedHadoopClusterInformation("directory", "directopry set up",
@@ -612,25 +614,27 @@ public class HdfsUrlChooser extends JComponent {
         servers.add(new DirectConnectionHadoopClusterInformation("namenode", "directconnection", new URI(
                 "hdfs://192.168.0.255:9000/")));
         final ServerInformationCatalog serverInformationCatalog = new ServerInformationCatalogImpl(servers);
-        
+
         final JFrame frame = new JFrame("test");
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(DEFAULT_WIDTH, 400);
         frame.pack();
         frame.setVisible(true);
-        
+
         final WindowContext windowContext = new DCWindowContext(null, null, null);
-        final SelectHadoopClusterDialog selectHadoopConfigurationDialog = new SelectHadoopClusterDialog(windowContext, serverInformationCatalog, null); 
+        final SelectHadoopClusterDialog selectHadoopConfigurationDialog =
+                new SelectHadoopClusterDialog(windowContext, serverInformationCatalog, null);
         selectHadoopConfigurationDialog.setVisible(true);
-        final String selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration(); 
-        
+        final String selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration();
+
         try {
-            
-            URI selectedFile = HdfsUrlChooser.showDialog(frame, serverInformationCatalog, selectedServer, null, OpenType.LOAD);
+
+            final URI selectedFile =
+                    HdfsUrlChooser.showDialog(frame, serverInformationCatalog, selectedServer, null, OpenType.LOAD);
             System.out.println("Normal exit, selected file: " + selectedFile);
             System.exit(0);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.err.println("Abnormal exit");
             e.printStackTrace(System.err);
             System.exit(1);

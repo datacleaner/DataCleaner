@@ -28,8 +28,8 @@ import javax.swing.JButton;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.reference.Dictionary;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.Dictionary;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
@@ -42,16 +42,16 @@ import org.jdesktop.swingx.HorizontalLayout;
 
 
 public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dictionary> implements
- ReferenceDataChangeListener<Dictionary> {
+        ReferenceDataChangeListener<Dictionary> {
 
     private final DCComboBox<Dictionary> _comboBox;
     private final MutableReferenceDataCatalog _referenceDataCatalog;
     private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
     @Inject
-    public SingleDictionaryPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder, MutableReferenceDataCatalog referenceDataCatalog,
-            Provider<ReferenceDataDialog> referenceDataDialogProvider) {
+    public SingleDictionaryPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder, final MutableReferenceDataCatalog referenceDataCatalog,
+            final Provider<ReferenceDataDialog> referenceDataDialogProvider) {
         super(componentBuilder, propertyDescriptor);
         _referenceDataCatalog = referenceDataCatalog;
         _referenceDataDialogProvider = referenceDataDialogProvider;
@@ -65,16 +65,16 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
         }
 
         final String[] dictionaryNames = referenceDataCatalog.getDictionaryNames();
-        for (String name : dictionaryNames) {
+        for (final String name : dictionaryNames) {
             _comboBox.addItem(referenceDataCatalog.getDictionary(name));
         }
 
-        Dictionary currentValue = getCurrentValue();
+        final Dictionary currentValue = getCurrentValue();
         _comboBox.setSelectedItem(currentValue);
 
         _comboBox.addListener(new Listener<Dictionary>() {
             @Override
-            public void onItemSelected(Dictionary item) {
+            public void onItemSelected(final Dictionary item) {
                 fireValueChanged();
             }
         });
@@ -83,8 +83,8 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
         dialogButton.setToolTipText("Configure dictionaries");
         dialogButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+            public void actionPerformed(final ActionEvent e) {
+                final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
                 dialog.selectDictionariesTab();
                 dialog.setVisible(true);
             }
@@ -116,24 +116,24 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
     }
 
     @Override
-    protected void setValue(Dictionary value) {
+    protected void setValue(final Dictionary value) {
         _comboBox.setEditable(true);
         _comboBox.setSelectedItem(value);
         _comboBox.setEditable(false);
     }
 
     @Override
-    public void onAdd(Dictionary dictionary) {
+    public void onAdd(final Dictionary dictionary) {
         _comboBox.addItem(dictionary);
     }
 
     @Override
-    public void onRemove(Dictionary dictionary) {
+    public void onRemove(final Dictionary dictionary) {
         _comboBox.removeItem(dictionary);
     }
 
     @Override
-    public void onChange(Dictionary oldDictionary, Dictionary newDictionary) {
+    public void onChange(final Dictionary oldDictionary, final Dictionary newDictionary) {
         final Dictionary selectedItem = _comboBox.getSelectedItem();
         _comboBox.removeItem(oldDictionary);
         _comboBox.addItem(newDictionary);

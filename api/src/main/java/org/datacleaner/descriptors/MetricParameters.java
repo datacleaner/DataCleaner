@@ -33,16 +33,16 @@ public class MetricParameters {
         this(null, null);
     }
 
-    public MetricParameters(InputColumn<?> queryInputColumn) {
+    public MetricParameters(final InputColumn<?> queryInputColumn) {
         this(null, queryInputColumn);
     }
 
-    public MetricParameters(String queryString) {
+    public MetricParameters(final String queryString) {
         this(queryString, null);
 
     }
 
-    public MetricParameters(String queryString, InputColumn<?> queryInputColumn) {
+    public MetricParameters(final String queryString, final InputColumn<?> queryInputColumn) {
         _queryString = queryString;
         _queryInputColumn = queryInputColumn;
     }

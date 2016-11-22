@@ -66,7 +66,7 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
         private final JPanel _parent;
         private File _directory;
 
-        public DirectoryPathPanel(File directory, JPanel parent) {
+        public DirectoryPathPanel(final File directory, final JPanel parent) {
             _parent = parent;
             _directory = directory;
             if (directory == null) {
@@ -78,7 +78,7 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
             _directoryTextField.addFileSelectionListener(new FileSelectionListener() {
 
                 @Override
-                public void onSelected(FilenameTextField filenameTextField, File file) {
+                public void onSelected(final FilenameTextField filenameTextField, final File file) {
                     _directory = file;
                     validateAndUpdate();
                 }
@@ -96,7 +96,7 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
             _removeButton.addActionListener(new ActionListener() {
 
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(final ActionEvent e) {
                     _pathPanels.remove(DirectoryPathPanel.this);
                     _parent.remove(DirectoryPathPanel.this);
                     validateAndUpdate();
@@ -112,15 +112,15 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
     private final JXTextField _nameTextField;
     private final JXTextField _descriptionTextField;
-    private List<DirectoryPathPanel> _pathPanels;
-    private DirectoryBasedHadoopClusterInformation _server;
     private final MutableServerInformationCatalog _serverInformationCatalog;
     private final JButton _saveButton;
     private final JButton _cancelButton;
+    private List<DirectoryPathPanel> _pathPanels;
+    private DirectoryBasedHadoopClusterInformation _server;
 
-    public DirectoryBasedHadoopClusterDialog(WindowContext windowContext,
+    public DirectoryBasedHadoopClusterDialog(final WindowContext windowContext,
             final DirectoryBasedHadoopClusterInformation server,
-            MutableServerInformationCatalog serverInformationCatalog) {
+            final MutableServerInformationCatalog serverInformationCatalog) {
         super(windowContext, ImageManager.get().getImage(IconUtils.FILE_HDFS));
         _server = server;
         _serverInformationCatalog = serverInformationCatalog;
@@ -141,7 +141,7 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
 
         _nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
@@ -152,7 +152,7 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
         _cancelButton.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 DirectoryBasedHadoopClusterDialog.this.close();
             }
         });
@@ -160,7 +160,7 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
         _saveButton.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 if (_server != null) {
                     _serverInformationCatalog.removeServer(_server);
                 }
@@ -169,9 +169,9 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
 
                     final DirectoryBasedHadoopClusterInformation newServer = new DirectoryBasedHadoopClusterInformation(
                             _nameTextField.getText(), _descriptionTextField.getText(), paths.toArray(new String[paths
-                                    .size()]));
+                            .size()]));
                     _serverInformationCatalog.addServerInformation(newServer);
-                } catch (Exception exception) {
+                } catch (final Exception exception) {
                     WidgetUtils.showErrorMessage("Error", exception);
                     invalidateForm(exception);
                     return;
@@ -183,12 +183,12 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
 
     }
 
-    private List<DirectoryPathPanel> getDirectoriesListPanel(JPanel parent) {
+    private List<DirectoryPathPanel> getDirectoriesListPanel(final JPanel parent) {
         _pathPanels = new ArrayList<>();
         if (_server != null) {
             final String[] directories = _server.getDirectories();
             if (directories != null) {
-                for (String directory : directories) {
+                for (final String directory : directories) {
                     final DirectoryPathPanel directoryPanel = new DirectoryPathPanel(new File(directory),
                             parent);
                     _pathPanels.add(directoryPanel);
@@ -229,13 +229,13 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
         listPanel.addContainerListener(new ContainerListener() {
 
             @Override
-            public void componentRemoved(ContainerEvent e) {
+            public void componentRemoved(final ContainerEvent e) {
                 formPanel.revalidate();
                 formPanel.repaint();
             }
 
             @Override
-            public void componentAdded(ContainerEvent e) {
+            public void componentAdded(final ContainerEvent e) {
                 formPanel.revalidate();
                 formPanel.repaint();
             }
@@ -281,7 +281,7 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
     }
 
     private void validateAndUpdate() {
-        boolean valid = validateForm();
+        final boolean valid = validateForm();
         setSaveButtonEnabled(valid);
     }
 
@@ -297,12 +297,12 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
         }
         return true;
     }
-    
-    private void invalidateForm(Exception exception) {
+
+    private void invalidateForm(final Exception exception) {
         setSaveButtonEnabled(false);
     }
 
-    private void setSaveButtonEnabled(boolean enabled) {
+    private void setSaveButtonEnabled(final boolean enabled) {
         _saveButton.setEnabled(enabled);
     }
 

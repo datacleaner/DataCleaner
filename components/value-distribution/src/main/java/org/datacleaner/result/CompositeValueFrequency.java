@@ -38,15 +38,15 @@ public final class CompositeValueFrequency extends AbstractValueFrequency implem
 
     /**
      * Creates a composite value frequency based on a list of child values.
-     * 
+     *
      * @param name
      * @param children
      */
-    public CompositeValueFrequency(String name, List<ValueFrequency> children) {
+    public CompositeValueFrequency(final String name, final List<ValueFrequency> children) {
         _name = name;
         _children = children;
         int sum = 0;
-        for (ValueFrequency child : _children) {
+        for (final ValueFrequency child : _children) {
             sum += child.getCount();
         }
         _count = sum;
@@ -55,16 +55,16 @@ public final class CompositeValueFrequency extends AbstractValueFrequency implem
     /**
      * Creates a composite value frequency based on a list of child values and a
      * constant count for all children.
-     * 
+     *
      * @param name
      * @param values
      * @param count
      */
-    public CompositeValueFrequency(String name, Collection<String> values, final int count) {
+    public CompositeValueFrequency(final String name, final Collection<String> values, final int count) {
         _name = name;
         _children = CollectionUtils.map(values, new Func<String, ValueFrequency>() {
             @Override
-            public ValueFrequency eval(String str) {
+            public ValueFrequency eval(final String str) {
                 return new SingleValueFrequency(str, count);
             }
         });
@@ -74,11 +74,11 @@ public final class CompositeValueFrequency extends AbstractValueFrequency implem
     /**
      * Creates a composite value frequency for a group of values which have a
      * count but no details about the children.
-     * 
+     *
      * @param name
      * @param count
      */
-    public CompositeValueFrequency(String name, int count) {
+    public CompositeValueFrequency(final String name, final int count) {
         _name = name;
         _children = null;
         _count = count;

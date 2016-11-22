@@ -38,7 +38,9 @@ public class MetaModelInputColumnTest extends TestCase {
     public void testGetDataTypeWhenClob() throws Exception {
         assertEquals(String.class,
                 new MetaModelInputColumn(new MutableColumn("foobar", ColumnType.VARCHAR)).getDataType());
-        assertEquals(String.class, new MetaModelInputColumn(new MutableColumn("foobar", ColumnType.CLOB)).getDataType());
-        assertEquals(byte[].class, new MetaModelInputColumn(new MutableColumn("foobar", ColumnType.BLOB)).getDataType());
+        assertEquals(String.class,
+                new MetaModelInputColumn(new MutableColumn("foobar", ColumnType.CLOB)).getDataType());
+        assertEquals(byte[].class,
+                new MetaModelInputColumn(new MutableColumn("foobar", ColumnType.BLOB)).getDataType());
     }
 }

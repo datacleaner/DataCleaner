@@ -31,7 +31,7 @@ public final class DCUncaughtExceptionHandler implements UncaughtExceptionHandle
     private static final Logger logger = LoggerFactory.getLogger(DCUncaughtExceptionHandler.class);
 
     @Override
-    public void uncaughtException(Thread t, final Throwable e) {
+    public void uncaughtException(final Thread t, final Throwable e) {
         if (isIgnoreIssue(e)) {
             logger.debug("Ignoring uncaught exception", e);
             return;
@@ -43,7 +43,7 @@ public final class DCUncaughtExceptionHandler implements UncaughtExceptionHandle
             final StringBuilder sb = new StringBuilder(e.getMessage());
             final RestrictedFunctionalityCallToAction[] callToActions = ((RestrictedFunctionalityException) e)
                     .getCallToActions();
-            for (RestrictedFunctionalityCallToAction callToAction : callToActions) {
+            for (final RestrictedFunctionalityCallToAction callToAction : callToActions) {
                 sb.append('\n');
                 sb.append(" - " + callToAction.getName() + " - " + callToAction.getHref());
             }
@@ -72,11 +72,11 @@ public final class DCUncaughtExceptionHandler implements UncaughtExceptionHandle
     /**
      * Intentionally dirty (because it's hard to make this sorta stuff pretty)
      * method used to identify known issues that we cannot do anything about
-     * 
+     *
      * @param e
      * @return
      */
-    private boolean isIgnoreIssue(Throwable e) {
+    private boolean isIgnoreIssue(final Throwable e) {
         final StackTraceElement[] stackTrace = e.getStackTrace();
         /**
          * <pre>

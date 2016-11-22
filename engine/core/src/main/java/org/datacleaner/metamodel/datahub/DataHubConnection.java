@@ -36,9 +36,9 @@ import org.datacleaner.util.http.MonitorHttpClient;
 
 public class DataHubConnection {
 
-    public final static String CAS_PATH = "/cas";
-    public final static String DEFAULT_SCHEMA = "MDM";
-    
+    public static final String CAS_PATH = "/cas";
+    public static final String DEFAULT_SCHEMA = "MDM";
+
 
     private final String _hostname;
     private final int _port;
@@ -47,11 +47,11 @@ public class DataHubConnection {
     private final String _password;
 
     private final String _scheme;
-    private boolean _acceptUnverifiedSslPeers;
     private final DataHubSecurityMode _securityMode;
-    
-    public DataHubConnection(String hostname, Integer port, String username, String password,
-            boolean useHTTPS, boolean acceptUnverifiedSslPeers, DataHubSecurityMode dataHubSecurityMode) {
+    private boolean _acceptUnverifiedSslPeers;
+
+    public DataHubConnection(final String hostname, final Integer port, final String username, final String password,
+            final boolean useHTTPS, final boolean acceptUnverifiedSslPeers, final DataHubSecurityMode dataHubSecurityMode) {
 
         _hostname = hostname;
         _port = port;
@@ -63,7 +63,7 @@ public class DataHubConnection {
         _securityMode = dataHubSecurityMode;
     }
 
-    public MonitorHttpClient getHttpClient(String contextUrl) {
+    public MonitorHttpClient getHttpClient(final String contextUrl) {
         final HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
         if (_acceptUnverifiedSslPeers) {
             clientBuilder.setSSLSocketFactory(SecurityUtils.createUnsafeSSLConnectionSocketFactory());
@@ -82,7 +82,7 @@ public class DataHubConnection {
      * @param contextUrl
      * @return A client.
      */
-    public MonitorHttpClient getServiceClient(String contextUrl) {
+    public MonitorHttpClient getServiceClient(final String contextUrl) {
         final HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
         if (_acceptUnverifiedSslPeers) {
             clientBuilder.setSSLSocketFactory(SecurityUtils.createUnsafeSSLConnectionSocketFactory());
@@ -94,9 +94,9 @@ public class DataHubConnection {
         } else {
             return new DataHubDefaultMonitorHttpClient(httpClient, getHostname(), getPort(), _username, _password);
         }
-        
+
     }
-    
+
     public String getHostname() {
         return _hostname;
     }
@@ -106,19 +106,19 @@ public class DataHubConnection {
     }
 
     private String getCasServerUrl() {
-        
-        URIBuilder uriBuilder = getBaseUrlBuilder();
+
+        final URIBuilder uriBuilder = getBaseUrlBuilder();
         appendToPath(uriBuilder, CAS_PATH);
 
         try {
             return uriBuilder.build().toString();
-        } catch (URISyntaxException uriSyntaxException) {
+        } catch (final URISyntaxException uriSyntaxException) {
             throw new IllegalStateException(uriSyntaxException);
         }
     }
 
     protected URIBuilder getBaseUrlBuilder() {
-        URIBuilder baseUriBuilder = new URIBuilder();
+        final URIBuilder baseUriBuilder = new URIBuilder();
         baseUriBuilder.setScheme(_scheme);
         baseUriBuilder.setHost(_hostname);
 
@@ -128,12 +128,12 @@ public class DataHubConnection {
         }
         return baseUriBuilder;
     }
- 
-    private URIBuilder appendToPath(URIBuilder uriBuilder, String pathSegment) {
-        if(uriBuilder.getPath() != null) {
+
+    private URIBuilder appendToPath(final URIBuilder uriBuilder, final String pathSegment) {
+        if (uriBuilder.getPath() != null) {
             uriBuilder.setPath(uriBuilder.getPath() + pathSegment);
         }
-        
+
         return uriBuilder.setPath(pathSegment);
     }
 }

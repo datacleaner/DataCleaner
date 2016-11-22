@@ -28,5 +28,5 @@ import org.datacleaner.job.FilterOutcomes;
  */
 public interface RowProcessingChain {
 
-    public void processNext(InputRow row, int distinctCount, FilterOutcomes outcomes);
+    void processNext(InputRow row, int distinctCount, FilterOutcomes outcomes);
 }

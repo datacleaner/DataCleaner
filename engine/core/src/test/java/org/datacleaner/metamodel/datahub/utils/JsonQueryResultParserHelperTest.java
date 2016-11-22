@@ -36,7 +36,8 @@ public class JsonQueryResultParserHelperTest {
     @Test
     public void testShouldParseQueryResult()
             throws JsonParseException, IOException {
-        String result = "{\"table\":{\"header\":[\"CUSTOMERNUMBER\",\"CUSTOMERNAME\",\"LINKAGE\"],\"rows\":[[\"bla1\",null,\"[{source_name=SRCA1, source_id=316013}, {source_name=SRCA1, source_id=394129}]\"],[\"bla2\",\"blieb2\",\"[{source_name=SRCA2, source_id=316013}, {source_name=SRCA2, source_id=394129}]\"]]}}";
+        String result =
+                "{\"table\":{\"header\":[\"CUSTOMERNUMBER\",\"CUSTOMERNAME\",\"LINKAGE\"],\"rows\":[[\"bla1\",null,\"[{source_name=SRCA1, source_id=316013}, {source_name=SRCA1, source_id=394129}]\"],[\"bla2\",\"blieb2\",\"[{source_name=SRCA2, source_id=316013}, {source_name=SRCA2, source_id=394129}]\"]]}}";
         InputStream is = new ByteArrayInputStream(result.getBytes());
         JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
         MutableColumn[] columns = new MutableColumn[3];

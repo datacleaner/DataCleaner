@@ -85,7 +85,8 @@ public class ValueDistributionAnalyzerResultReducerTest {
         ValueDistributionAnalyzerResultReducer reducer = new ValueDistributionAnalyzerResultReducer();
         ValueDistributionAnalyzerResult reducedValueDistributionResult = reducer.reduce(partialResults);
 
-        ReducedSingleValueDistributionResult reducedResult = (ReducedSingleValueDistributionResult) reducedValueDistributionResult;
+        ReducedSingleValueDistributionResult reducedResult =
+                (ReducedSingleValueDistributionResult) reducedValueDistributionResult;
         assertEquals(0, reducedResult.getNullCount());
         assertEquals(Integer.valueOf(4), reducedResult.getDistinctCount());
         assertEquals(21, reducedResult.getTotalCount());
@@ -109,8 +110,9 @@ public class ValueDistributionAnalyzerResultReducerTest {
         valueDist1.runInternal(new MockInputRow(), "hello", "group2", 1);
         final ValueDistributionAnalyzerResult partialResult1 = valueDist1.getResult();
 
-        final Collection<? extends ValueCountingAnalyzerResult> partialSingleResultList1 = ((GroupedValueDistributionResult) partialResult1)
-                .getGroupResults();
+        final Collection<? extends ValueCountingAnalyzerResult> partialSingleResultList1 =
+                ((GroupedValueDistributionResult) partialResult1)
+                        .getGroupResults();
         // Confirm what we got from the the first analyzer...
         {
             assertEquals(2, partialSingleResultList1.size());
@@ -142,8 +144,9 @@ public class ValueDistributionAnalyzerResultReducerTest {
 
         // Confirm what we got from the the second analyzer...
         {
-            final Collection<? extends ValueCountingAnalyzerResult> partialSingleResultList2 = ((GroupedValueDistributionResult) partialResult2)
-                    .getGroupResults();
+            final Collection<? extends ValueCountingAnalyzerResult> partialSingleResultList2 =
+                    ((GroupedValueDistributionResult) partialResult2)
+                            .getGroupResults();
             assertEquals(2, partialSingleResultList2.size());
             final Iterator<? extends ValueCountingAnalyzerResult> iterator2 = partialSingleResultList2.iterator();
             final SingleValueDistributionResult group1Analyzer2 = (SingleValueDistributionResult) iterator2.next();
@@ -170,12 +173,15 @@ public class ValueDistributionAnalyzerResultReducerTest {
         // Assert the aggregates from the reduced groups
         {
             final GroupedValueDistributionResult groupedReducedResult = (GroupedValueDistributionResult) reducedResult;
-            final Iterator<? extends ValueCountingAnalyzerResult> reducedGroupsIterator = groupedReducedResult.getGroupResults().iterator();
-            ReducedSingleValueDistributionResult firstReducedGroup = (ReducedSingleValueDistributionResult) reducedGroupsIterator
-                    .next();
-            ReducedSingleValueDistributionResult secondReducedGroup = (ReducedSingleValueDistributionResult) reducedGroupsIterator
-                    .next();
-            
+            final Iterator<? extends ValueCountingAnalyzerResult> reducedGroupsIterator =
+                    groupedReducedResult.getGroupResults().iterator();
+            ReducedSingleValueDistributionResult firstReducedGroup =
+                    (ReducedSingleValueDistributionResult) reducedGroupsIterator
+                            .next();
+            ReducedSingleValueDistributionResult secondReducedGroup =
+                    (ReducedSingleValueDistributionResult) reducedGroupsIterator
+                            .next();
+
             // The order is non-deterministic...
             if (firstReducedGroup.getName().equals("group1")) {
                 assertEquals("group1", firstReducedGroup.getName());

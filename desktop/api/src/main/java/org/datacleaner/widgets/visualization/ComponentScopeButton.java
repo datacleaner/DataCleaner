@@ -63,17 +63,18 @@ public class ComponentScopeButton extends JButton implements ActionListener {
         _menuBuilder = menuBuilder;
         _topLevelJobBuilder = componentBuilder.getAnalysisJobBuilder().getRootJobBuilder();
         addActionListener(this);
-        updateText(_componentBuilder.getAnalysisJobBuilder(), _menuBuilder.findComponentBuilder(_componentBuilder.getAnalysisJobBuilder()));
+        updateText(_componentBuilder.getAnalysisJobBuilder(),
+                _menuBuilder.findComponentBuilder(_componentBuilder.getAnalysisJobBuilder()));
         WidgetUtils.setDefaultButtonStyle(this);
     }
 
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         final JPopupMenu popup = new JPopupMenu();
 
         final List<JMenuItem> menuItems = _menuBuilder.createMenuItems();
-        for (JMenuItem menuItem : menuItems) {
+        for (final JMenuItem menuItem : menuItems) {
             popup.add(menuItem);
         }
 
@@ -83,7 +84,7 @@ public class ComponentScopeButton extends JButton implements ActionListener {
     public void updateText(final AnalysisJobBuilder osJobBuilder, final ComponentBuilder osComponentBuilder) {
         logger.debug("updateText()");
 
-        Runnable runnable = new Runnable() {
+        final Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 if (osJobBuilder == _topLevelJobBuilder) {
@@ -99,7 +100,7 @@ public class ComponentScopeButton extends JButton implements ActionListener {
             } else {
                 SwingUtilities.invokeAndWait(runnable);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Failed to update ComponentScopeButton", e);
         }
     }

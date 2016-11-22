@@ -28,22 +28,23 @@ import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 
 public class AnalyzerComponentBuilderTest extends TestCase {
 
-	private AnalysisJobBuilder ajb;
+    private AnalysisJobBuilder ajb;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
+    }
 
-	public void testAddUnnamedColumnToMultiColumnAnalyzer() throws Exception {
-		AnalyzerComponentBuilder<DateGapAnalyzer> analyzer = ajb.addAnalyzer(DateGapAnalyzer.class);
-		try {
-			analyzer.addInputColumn(new MockInputColumn<String>("foo", String.class));
-			fail("Exception expected");
-		} catch (Exception e) {
-			assertEquals("There are 2 named input columns in \"Date gap analyzer\", please specify which one to configure",
-					e.getMessage());
-		}
-	}
+    public void testAddUnnamedColumnToMultiColumnAnalyzer() throws Exception {
+        AnalyzerComponentBuilder<DateGapAnalyzer> analyzer = ajb.addAnalyzer(DateGapAnalyzer.class);
+        try {
+            analyzer.addInputColumn(new MockInputColumn<String>("foo", String.class));
+            fail("Exception expected");
+        } catch (Exception e) {
+            assertEquals(
+                    "There are 2 named input columns in \"Date gap analyzer\", please specify which one to configure",
+                    e.getMessage());
+        }
+    }
 }

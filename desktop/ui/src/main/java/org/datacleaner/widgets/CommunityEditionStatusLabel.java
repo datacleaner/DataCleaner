@@ -42,18 +42,19 @@ public class CommunityEditionStatusLabel extends JLabel {
 
     private final RightInformationPanel _rightPanel;
 
-    public CommunityEditionStatusLabel(RightInformationPanel rightPanel) {
+    public CommunityEditionStatusLabel(final RightInformationPanel rightPanel) {
         super(Version.getEdition());
         _rightPanel = rightPanel;
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-        final CommunityEditionInformationPanel communityEditionInformationPanel = new CommunityEditionInformationPanel();
+        final CommunityEditionInformationPanel communityEditionInformationPanel =
+                new CommunityEditionInformationPanel();
         setIcon(ImageManager.get().getImageIcon("images/editions/community.png", IconUtils.ICON_SIZE_SMALL));
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         _rightPanel.addTabToPane(PANEL_NAME, communityEditionInformationPanel);
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(final MouseEvent e) {
                 onMouseClick();
             }
         });

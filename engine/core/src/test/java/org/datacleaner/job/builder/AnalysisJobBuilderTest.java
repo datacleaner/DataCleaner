@@ -19,15 +19,13 @@
  */
 package org.datacleaner.job.builder;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.mock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
+
+import junit.framework.TestCase;
 
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
@@ -42,8 +40,6 @@ import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.MockTransformer;
 import org.datacleaner.test.mock.MockDatastore;
 import org.easymock.EasyMock;
-
-import junit.framework.TestCase;
 
 public class AnalysisJobBuilderTest extends TestCase {
     private MutableTable _table;
@@ -176,8 +172,9 @@ public class AnalysisJobBuilderTest extends TestCase {
 
         final AnalysisJobBuilder analyzer0Analyzer0DataStream0JobBuilder = analyzer0Analyzer0
                 .getOutputDataStreamJobBuilder(analyzer0Analyzer0OutputDataStreams.get(0));
-        final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer0Analyzer0Analyzer0 = analyzer0Analyzer0DataStream0JobBuilder
-                .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+        final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer0Analyzer0Analyzer0 =
+                analyzer0Analyzer0DataStream0JobBuilder
+                        .addAnalyzer(MockOutputDataStreamAnalyzer.class);
         analyzer0Analyzer0Analyzer0.setName("analyzer0Analyzer0Analyzer0");
         analyzer0Analyzer0Analyzer0.addInputColumn(analyzer0Analyzer0DataStream0JobBuilder.getSourceColumns().get(0));
 
@@ -206,8 +203,9 @@ public class AnalysisJobBuilderTest extends TestCase {
 
         final AnalysisJobBuilder analyzer1Analyzer0DataStream0JobBuilder = analyzer1Analyzer0
                 .getOutputDataStreamJobBuilder(analyzer1Analyzer0OutputDataStreams.get(0));
-        final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1Analyzer0Analyzer0 = analyzer1Analyzer0DataStream0JobBuilder
-                .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+        final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1Analyzer0Analyzer0 =
+                analyzer1Analyzer0DataStream0JobBuilder
+                        .addAnalyzer(MockOutputDataStreamAnalyzer.class);
         analyzer1Analyzer0Analyzer0.setName("analyzer1Analyzer0Analyzer0");
         analyzer1Analyzer0Analyzer0.addInputColumn(analyzer0Analyzer0DataStream0JobBuilder.getSourceColumns().get(0));
 
@@ -247,7 +245,7 @@ public class AnalysisJobBuilderTest extends TestCase {
         transformerChangeListener.onOutputChanged(anyObject(TransformerComponentBuilder.class),
                 EasyMock.<List<MutableInputColumn<?>>> anyObject());
         expectLastCall().times(2); // Both configuration and removal will
-                                   // trigger this
+        // trigger this
         transformerChangeListener.onConfigurationChanged(anyObject(TransformerComponentBuilder.class));
         expectLastCall().times(1);
 

@@ -41,7 +41,7 @@ public class OutputDataStreamDataContext extends QueryPostprocessDataContext {
 
     private final OutputDataStream _outputDataStream;
 
-    public OutputDataStreamDataContext(OutputDataStream outputDataStream) {
+    public OutputDataStreamDataContext(final OutputDataStream outputDataStream) {
         _outputDataStream = outputDataStream;
     }
 
@@ -73,7 +73,7 @@ public class OutputDataStreamDataContext extends QueryPostprocessDataContext {
     }
 
     @Override
-    protected DataSet materializeMainSchemaTable(Table table, Column[] columns, int maxRows) {
+    protected DataSet materializeMainSchemaTable(final Table table, final Column[] columns, final int maxRows) {
         return new EmptyDataSet(columns);
     }
 

@@ -23,46 +23,46 @@ import junit.framework.TestCase;
 
 public class RegexStringPatternTest extends TestCase {
 
-	public void testEquals() throws Exception {
-		RegexStringPattern rsp1 = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", true);
-		RegexStringPattern rsp2 = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.com", true);
+    public void testEquals() throws Exception {
+        RegexStringPattern rsp1 = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", true);
+        RegexStringPattern rsp2 = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.com", true);
 
-		assertFalse(rsp1.equals(rsp2));
+        assertFalse(rsp1.equals(rsp2));
 
-		rsp2 = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", true);
-		assertTrue(rsp1.equals(rsp1));
-	}
+        rsp2 = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", true);
+        assertTrue(rsp1.equals(rsp1));
+    }
 
-	public void testMatchesEntireString() throws Exception {
-		RegexStringPattern rsp = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", true);
-		assertEquals("Danish email", rsp.getName());
-		
-		try (StringPatternConnection rspConnection = rsp.openConnection(null)) {
-		    assertTrue(rspConnection.matches("kasper@eobjects.dk"));
-		    assertFalse(rspConnection.matches("kasper@eobjects.org"));
-		    assertFalse(rspConnection.matches("kasper[at]eobjects.org"));
-		    assertFalse(rspConnection.matches("@eobjects.dk"));
-		    assertFalse(rspConnection.matches(" kasper@eobjects.dk"));
-		    assertFalse(rspConnection.matches("kasper@eobjects.dk "));
-		    assertFalse(rspConnection.matches("hello kasper@eobjects.dk world"));
-		    assertFalse(rspConnection.matches(null));
-		}
+    public void testMatchesEntireString() throws Exception {
+        RegexStringPattern rsp = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", true);
+        assertEquals("Danish email", rsp.getName());
 
-	}
+        try (StringPatternConnection rspConnection = rsp.openConnection(null)) {
+            assertTrue(rspConnection.matches("kasper@eobjects.dk"));
+            assertFalse(rspConnection.matches("kasper@eobjects.org"));
+            assertFalse(rspConnection.matches("kasper[at]eobjects.org"));
+            assertFalse(rspConnection.matches("@eobjects.dk"));
+            assertFalse(rspConnection.matches(" kasper@eobjects.dk"));
+            assertFalse(rspConnection.matches("kasper@eobjects.dk "));
+            assertFalse(rspConnection.matches("hello kasper@eobjects.dk world"));
+            assertFalse(rspConnection.matches(null));
+        }
 
-	public void testMatchesNotEntireString() throws Exception {
-		RegexStringPattern rsp = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", false);
-		assertEquals("Danish email", rsp.getName());
+    }
 
-	      try (StringPatternConnection rspConnection = rsp.openConnection(null)) {
-	          assertTrue(rspConnection.matches("kasper@eobjects.dk"));
-	          assertFalse(rspConnection.matches("kasper@eobjects.org"));
-	          assertFalse(rspConnection.matches("kasper[at]eobjects.org"));
-	          assertFalse(rspConnection.matches("@eobjects.dk"));
-	          assertTrue(rspConnection.matches(" kasper@eobjects.dk"));
-	          assertTrue(rspConnection.matches("kasper@eobjects.dk "));
-	          assertTrue(rspConnection.matches("hello kasper@eobjects.dk world"));
-	          assertFalse(rspConnection.matches(null));
-	      }
-	}
+    public void testMatchesNotEntireString() throws Exception {
+        RegexStringPattern rsp = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", false);
+        assertEquals("Danish email", rsp.getName());
+
+        try (StringPatternConnection rspConnection = rsp.openConnection(null)) {
+            assertTrue(rspConnection.matches("kasper@eobjects.dk"));
+            assertFalse(rspConnection.matches("kasper@eobjects.org"));
+            assertFalse(rspConnection.matches("kasper[at]eobjects.org"));
+            assertFalse(rspConnection.matches("@eobjects.dk"));
+            assertTrue(rspConnection.matches(" kasper@eobjects.dk"));
+            assertTrue(rspConnection.matches("kasper@eobjects.dk "));
+            assertTrue(rspConnection.matches("hello kasper@eobjects.dk world"));
+            assertFalse(rspConnection.matches(null));
+        }
+    }
 }

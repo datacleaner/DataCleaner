@@ -25,9 +25,9 @@ import java.util.Comparator;
 /**
  * A comparable that delegates to {@link Comparator} methods, but tolerates null
  * values by checking for this before delegating.
- * 
- * 
- * 
+ *
+ *
+ *
  * @param <E>
  *            any comparable type
  */
@@ -35,21 +35,21 @@ public class NullTolerableComparator<E extends Comparable<? super E>> implements
 
     private static final long serialVersionUID = 1L;
 
-    public static <E extends Comparable<? super E>> Comparator<E> get(Class<E> clazz) {
-		return new NullTolerableComparator<E>();
-	}
+    public static <E extends Comparable<? super E>> Comparator<E> get(final Class<E> clazz) {
+        return new NullTolerableComparator<E>();
+    }
 
-	@Override
-	public int compare(E o1, E o2) {
-		if (o1 == null && o2 == null) {
-			return 0;
-		}
-		if (o1 == null) {
-			return -1;
-		}
-		if (o2 == null) {
-			return 1;
-		}
-		return o1.compareTo(o2);
-	}
+    @Override
+    public int compare(final E o1, final E o2) {
+        if (o1 == null && o2 == null) {
+            return 0;
+        }
+        if (o1 == null) {
+            return -1;
+        }
+        if (o2 == null) {
+            return 1;
+        }
+        return o1.compareTo(o2);
+    }
 }

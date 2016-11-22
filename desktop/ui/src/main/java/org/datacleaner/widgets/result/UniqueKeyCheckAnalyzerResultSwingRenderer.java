@@ -31,11 +31,11 @@ import javax.swing.table.DefaultTableModel;
 
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.uniqueness.UniqueKeyCheckAnalyzerResult;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ChartUtils;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.table.DCTable;
@@ -49,10 +49,11 @@ import org.jfree.data.DefaultKeyedValues;
 import org.jfree.data.general.DefaultPieDataset;
 
 @RendererBean(SwingRenderingFormat.class)
-public class UniqueKeyCheckAnalyzerResultSwingRenderer extends AbstractRenderer<UniqueKeyCheckAnalyzerResult, JComponent> {
+public class UniqueKeyCheckAnalyzerResultSwingRenderer
+        extends AbstractRenderer<UniqueKeyCheckAnalyzerResult, JComponent> {
 
     @Override
-    public JComponent render(UniqueKeyCheckAnalyzerResult result) {
+    public JComponent render(final UniqueKeyCheckAnalyzerResult result) {
         final int nullCount = result.getNullCount();
         final int nonUniqueCount = result.getNonUniqueCount();
 
@@ -83,7 +84,7 @@ public class UniqueKeyCheckAnalyzerResultSwingRenderer extends AbstractRenderer<
         chart.setSubtitles(subTitles);
 
         ChartUtils.applyStyles(chart);
-        ChartPanel chartPanel = ChartUtils.createPanel(chart, false);
+        final ChartPanel chartPanel = ChartUtils.createPanel(chart, false);
 
         final DCPanel leftPanel = new DCPanel();
         leftPanel.setLayout(new VerticalLayout());

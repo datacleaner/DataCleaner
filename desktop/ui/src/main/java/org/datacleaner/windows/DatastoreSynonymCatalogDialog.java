@@ -68,15 +68,15 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
     private Datastore _datastore;
 
     @Inject
-    protected DatastoreSynonymCatalogDialog(@Nullable DatastoreSynonymCatalog synonymCatalog,
-            MutableReferenceDataCatalog mutableReferenceCatalog, DatastoreCatalog datastoreCatalog,
-            WindowContext windowContext) {
+    protected DatastoreSynonymCatalogDialog(@Nullable final DatastoreSynonymCatalog synonymCatalog,
+            final MutableReferenceDataCatalog mutableReferenceCatalog, final DatastoreCatalog datastoreCatalog,
+            final WindowContext windowContext) {
         super(windowContext, ImageManager.get().getImage(IconUtils.SYNONYM_CATALOG_DATASTORE_IMAGEPATH));
         _originalsynonymCatalog = synonymCatalog;
         _datastoreCatalog = datastoreCatalog;
         _mutableReferenceCatalog = mutableReferenceCatalog;
         _nameTextField = WidgetFactory.createTextField("Synonym catalog name");
-        String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
+        final String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
 
         _datastoreComboBox = new JComboBox<String>(comboBoxModel);
         _masterTermColumnComboBox = new SourceColumnComboBox();
@@ -86,15 +86,15 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         _datastoreComboBox.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                String datastoreName = (String) _datastoreComboBox.getSelectedItem();
+            public void actionPerformed(final ActionEvent e) {
+                final String datastoreName = (String) _datastoreComboBox.getSelectedItem();
                 if (datastoreName != null) {
                     _datastore = _datastoreCatalog.getDatastore(datastoreName);
                     _masterTermColumnComboBox.setModel(_datastore);
                     _masterTermColumnComboBox.addColumnSelectedListener(new Listener<Column>() {
 
                         @Override
-                        public void onItemSelected(Column column) {
+                        public void onItemSelected(final Column column) {
                             final Table table;
                             if (column == null) {
                                 table = null;
@@ -112,21 +112,21 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         });
 
         if (synonymCatalog != null) {
-            String datastoreName = synonymCatalog.getDatastoreName();
+            final String datastoreName = synonymCatalog.getDatastoreName();
 
             _nameTextField.setText(synonymCatalog.getName());
             _datastoreComboBox.setSelectedItem(datastoreName);
 
-            Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
+            final Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
             if (datastore != null) {
                 try (final DatastoreConnection datastoreConnection = datastore.openConnection()) {
-                    SchemaNavigator sn = datastoreConnection.getSchemaNavigator();
+                    final SchemaNavigator sn = datastoreConnection.getSchemaNavigator();
 
-                    Column masterTermColumn = sn.convertToColumn(synonymCatalog.getMasterTermColumnPath());
+                    final Column masterTermColumn = sn.convertToColumn(synonymCatalog.getMasterTermColumnPath());
                     _masterTermColumnComboBox.setSelectedItem(masterTermColumn);
 
-                    String[] synonymColumnPaths = synonymCatalog.getSynonymColumnPaths();
-                    Column[] synonymColumns = sn.convertToColumns(synonymColumnPaths);
+                    final String[] synonymColumnPaths = synonymCatalog.getSynonymColumnPaths();
+                    final Column[] synonymColumns = sn.convertToColumns(synonymColumnPaths);
                     _synonymColumnsPanel.setColumns(Arrays.asList(synonymColumns));
                 }
             }
@@ -166,23 +166,23 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
                 IconUtils.ACTION_SAVE_BRIGHT);
         saveButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                String name = _nameTextField.getText();
+            public void actionPerformed(final ActionEvent e) {
+                final String name = _nameTextField.getText();
                 if (StringUtils.isNullOrEmpty(name)) {
                     JOptionPane.showMessageDialog(DatastoreSynonymCatalogDialog.this,
                             "Please fill out the name of the synonym catalog");
                     return;
                 }
 
-                String nameOfDatastore = (String) _datastoreComboBox.getSelectedItem();
+                final String nameOfDatastore = (String) _datastoreComboBox.getSelectedItem();
                 if (StringUtils.isNullOrEmpty(nameOfDatastore)) {
                     JOptionPane.showMessageDialog(DatastoreSynonymCatalogDialog.this,
                             "Please select a character encoding");
                     return;
                 }
 
-                Column selectedItem = _masterTermColumnComboBox.getSelectedItem();
-                String[] synonymColumnNames = _synonymColumnsPanel.getColumnNames();
+                final Column selectedItem = _masterTermColumnComboBox.getSelectedItem();
+                final String[] synonymColumnNames = _synonymColumnsPanel.getColumnNames();
 
                 final DatastoreSynonymCatalog dataStoreBasedSynonymCatalog = new DatastoreSynonymCatalog(name,
                         nameOfDatastore, selectedItem.getQualifiedLabel(), synonymColumnNames);

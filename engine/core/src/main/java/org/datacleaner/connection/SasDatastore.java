@@ -29,28 +29,28 @@ import org.eobjects.metamodel.sas.metamodel.SasDataContext;
  */
 public class SasDatastore extends UsageAwareDatastore<DataContext> implements FileDatastore {
 
-	private static final long serialVersionUID = 1L;
-	private final File _directory;
+    private static final long serialVersionUID = 1L;
+    private final File _directory;
 
-	public SasDatastore(String name, File directory) {
-		super(name);
-		_directory = directory;
-	}
+    public SasDatastore(final String name, final File directory) {
+        super(name);
+        _directory = directory;
+    }
 
-	@Override
-	public PerformanceCharacteristics getPerformanceCharacteristics() {
-		return new PerformanceCharacteristicsImpl(false, true);
-	}
+    @Override
+    public PerformanceCharacteristics getPerformanceCharacteristics() {
+        return new PerformanceCharacteristicsImpl(false, true);
+    }
 
-	@Override
-	protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
-		DataContext dataContext = new SasDataContext(_directory);
-		return new DatastoreConnectionImpl<DataContext>(dataContext, this);
-	}
+    @Override
+    protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
+        final DataContext dataContext = new SasDataContext(_directory);
+        return new DatastoreConnectionImpl<DataContext>(dataContext, this);
+    }
 
-	@Override
-	public String getFilename() {
-		return _directory.getAbsolutePath();
-	}
+    @Override
+    public String getFilename() {
+        return _directory.getAbsolutePath();
+    }
 
 }

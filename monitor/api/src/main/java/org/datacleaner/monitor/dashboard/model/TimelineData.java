@@ -30,7 +30,7 @@ import java.util.List;
 public class TimelineData implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     private List<TimelineDataRow> _rows;
 
     public List<TimelineDataRow> getRows() {
@@ -39,8 +39,8 @@ public class TimelineData implements Serializable {
         }
         return _rows;
     }
-    
-    public void setRows(List<TimelineDataRow> rows) {
+
+    public void setRows(final List<TimelineDataRow> rows) {
         _rows = rows;
     }
 

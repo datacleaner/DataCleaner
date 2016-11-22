@@ -66,12 +66,12 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
     private final DataCleanerConfiguration _configuration;
     private final CompositeAnalysisListener _analysisListener;
 
-    public DistributedAnalysisRunner(DataCleanerConfiguration configuration, ClusterManager clusterManager) {
+    public DistributedAnalysisRunner(final DataCleanerConfiguration configuration, final ClusterManager clusterManager) {
         this(configuration, clusterManager, new AnalysisListener[0]);
     }
 
-    public DistributedAnalysisRunner(DataCleanerConfiguration configuration, ClusterManager clusterManager,
-            AnalysisListener... listeners) {
+    public DistributedAnalysisRunner(final DataCleanerConfiguration configuration, final ClusterManager clusterManager,
+            final AnalysisListener... listeners) {
         _configuration = configuration;
         _clusterManager = clusterManager;
         _analysisListener = new CompositeAnalysisListener(listeners);
@@ -81,7 +81,7 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
      * Determines if an {@link AnalysisJob} is distributable or not. If this
      * method returns false, calling {@link #run(AnalysisJob)} with the job will
      * typically throw a {@link UnsupportedOperationException}.
-     * 
+     *
      * @param job
      * @return
      */
@@ -89,14 +89,14 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
         try {
             failIfJobIsUnsupported(job);
             return true;
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return false;
         }
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if the job is not distributable (either because components
      *             are not distributable in their nature, or because some
@@ -115,16 +115,16 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
         final RowProcessingPublisher publisher = getRowProcessingPublisher(publishers);
         publisher.initializeConsumers(new TaskListener() {
             @Override
-            public void onError(Task task, Throwable throwable) {
+            public void onError(final Task task, final Throwable throwable) {
                 logger.error("Failed to initialize consumers at master node!", throwable);
             }
 
             @Override
-            public void onComplete(Task task) {
+            public void onComplete(final Task task) {
             }
 
             @Override
-            public void onBegin(Task task) {
+            public void onBegin(final Task task) {
             }
         });
 
@@ -169,7 +169,7 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
                 resultFuture = new DistributedAnalysisResultFuture(results, reducer);
             }
 
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             _analysisListener.errorUnknown(job, e);
             throw e;
         }
@@ -184,7 +184,7 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
     /**
      * Spawns a new thread for awaiting the result future (which will force the
      * reducer to inform about the progress).
-     * 
+     *
      * @param job
      * @param analysisJobMetrics
      * @param resultFuture
@@ -221,11 +221,11 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
                 logger.info("Dispatching slave job {} of {}", i + 1, chunks);
                 final AnalysisResultFuture slaveResultFuture = _clusterManager.dispatchJob(slaveJob, context);
                 results.add(slaveResultFuture);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 _analysisListener.errorUnknown(job, e);
                 // exceptions due to dispatching jobs are added as the first of
                 // the job's errors, and the rest of the execution is aborted.
-                AnalysisResultFuture errorResult = new FailedAnalysisResultFuture(e);
+                final AnalysisResultFuture errorResult = new FailedAnalysisResultFuture(e);
                 results.add(0, errorResult);
                 break;
             }
@@ -236,13 +236,13 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
     /**
      * Creates a slave job by copying the original job and adding a
      * {@link MaxRowsFilter} as a default requirement.
-     * 
+     *
      * @param job
      * @param firstRow
      * @param maxRows
      * @return
      */
-    private AnalysisJob buildSlaveJob(AnalysisJob job, int slaveJobIndex, int firstRow, int maxRows) {
+    private AnalysisJob buildSlaveJob(final AnalysisJob job, final int slaveJobIndex, final int firstRow, final int maxRows) {
         logger.info("Building slave job {} with firstRow={} and maxRow={}", slaveJobIndex + 1, firstRow, maxRows);
 
         try (final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(_configuration, job)) {
@@ -271,11 +271,11 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
     /**
      * Finds a source column which is appropriate for an ORDER BY clause in the
      * generated paginated queries
-     * 
+     *
      * @param jobBuilder
      * @return
      */
-    private InputColumn<?> findOrderByColumn(AnalysisJobBuilder jobBuilder) {
+    private InputColumn<?> findOrderByColumn(final AnalysisJobBuilder jobBuilder) {
         final Table sourceTable = jobBuilder.getSourceTables().get(0);
 
         // preferred strategy: Use the primary key
@@ -326,7 +326,7 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
         return sourceColumn;
     }
 
-    private RowProcessingPublishers getRowProcessingPublishers(AnalysisJob job, LifeCycleHelper lifeCycleHelper) {
+    private RowProcessingPublishers getRowProcessingPublishers(final AnalysisJob job, final LifeCycleHelper lifeCycleHelper) {
         final SingleThreadedTaskRunner taskRunner = new SingleThreadedTaskRunner();
 
         final ErrorAwareAnalysisListener errorAwareAnalysisListener = new ErrorAwareAnalysisListener();
@@ -336,7 +336,7 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
         return publishers;
     }
 
-    private RowProcessingPublisher getRowProcessingPublisher(RowProcessingPublishers publishers) {
+    private RowProcessingPublisher getRowProcessingPublisher(final RowProcessingPublishers publishers) {
         final RowProcessingStream[] streams = publishers.getStreams();
 
         if (streams.length != 1) {
@@ -349,7 +349,7 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
         return publisher;
     }
 
-    private void failIfJobIsUnsupported(AnalysisJob job) throws UnsupportedOperationException {
+    private void failIfJobIsUnsupported(final AnalysisJob job) throws UnsupportedOperationException {
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(_configuration, job);
         try {
             if (!jobBuilder.isDistributable()) {

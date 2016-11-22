@@ -52,8 +52,8 @@ public class TableDefinitionDialog extends AbstractDialog {
     private final SimpleTableDefsPanel _tableDefsPanel;
     private final Action<SimpleTableDef[]> _saveAction;
 
-    public TableDefinitionDialog(WindowContext windowContext, SchemaFactory schemaFactory, SimpleTableDef[] tableDefs,
-            Action<SimpleTableDef[]> saveAction) {
+    public TableDefinitionDialog(final WindowContext windowContext, final SchemaFactory schemaFactory, final SimpleTableDef[] tableDefs,
+            final Action<SimpleTableDef[]> saveAction) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
 
         setBackgroundColor(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
@@ -84,7 +84,7 @@ public class TableDefinitionDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        DCPanel panel = new DCPanel();
+        final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());
         panel.add(_tableDefsPanel, BorderLayout.CENTER);
         panel.add(createButtonPanel(), BorderLayout.SOUTH);
@@ -97,11 +97,11 @@ public class TableDefinitionDialog extends AbstractDialog {
                 IconUtils.ACTION_SAVE_BRIGHT);
         saveButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
+            public void actionPerformed(final ActionEvent event) {
                 final SimpleTableDef[] tableDefs = _tableDefsPanel.getTableDefs();
                 try {
                     _saveAction.run(tableDefs);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     WidgetUtils.showErrorMessage("Could not save table definitions", e);
                 }
                 TableDefinitionDialog.this.dispose();
@@ -111,7 +111,7 @@ public class TableDefinitionDialog extends AbstractDialog {
         final JButton cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
         cancelButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 TableDefinitionDialog.this.dispose();
             }
         });

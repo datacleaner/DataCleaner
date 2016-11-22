@@ -60,7 +60,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
 
     /**
      * Constructs the {@link TenantContext}.
-     * 
+     *
      * @param tenantId
      * @param repository
      * @param environment
@@ -70,8 +70,8 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
      *            provide tenant-specific injection options.
      * @param jobEngineManager
      */
-    public TenantContextImpl(String tenantId, Repository repository, DataCleanerEnvironment environment,
-            JobEngineManager jobEngineManager) {
+    public TenantContextImpl(final String tenantId, final Repository repository, final DataCleanerEnvironment environment,
+            final JobEngineManager jobEngineManager) {
         _tenantId = tenantId;
         _repository = repository;
         _jobEngineManager = jobEngineManager;
@@ -92,7 +92,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
         final LoadingCache<JobIdentifier, JobContext> cache = CacheBuilder.newBuilder()
                 .expireAfterWrite(5, TimeUnit.SECONDS).build(new CacheLoader<JobIdentifier, JobContext>() {
                     @Override
-                    public JobContext load(JobIdentifier job) throws Exception {
+                    public JobContext load(final JobIdentifier job) throws Exception {
                         final String jobName = job.getName();
                         if (StringUtils.isNullOrEmpty(jobName)) {
                             throw new NoSuchObjectException();
@@ -115,7 +115,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
         final List<JobIdentifier> jobs = new ArrayList<JobIdentifier>();
 
         final Collection<JobEngine<?>> jobEngines = _jobEngineManager.getJobEngines();
-        for (JobEngine<?> jobEngine : jobEngines) {
+        for (final JobEngine<?> jobEngine : jobEngines) {
             final List<JobIdentifier> jobEngineJobs = jobEngine.getJobs(this);
             jobs.addAll(jobEngineJobs);
         }
@@ -124,15 +124,15 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     }
 
     @Override
-    public JobContext getJob(JobIdentifier jobIdentifier) throws IllegalArgumentException {
+    public JobContext getJob(final JobIdentifier jobIdentifier) throws IllegalArgumentException {
         if (jobIdentifier == null) {
             throw new IllegalArgumentException("JobIdentifier cannot be null");
         }
 
         try {
             return _jobCache.get(jobIdentifier);
-        } catch (ExecutionException e) {
-            Throwable cause = e.getCause();
+        } catch (final ExecutionException e) {
+            final Throwable cause = e.getCause();
             if (cause instanceof NoSuchObjectException) {
                 // expected exception at this point
                 return null;
@@ -148,7 +148,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     public DataCleanerConfiguration getConfiguration() {
         return _configurationCache.getAnalyzerBeansConfiguration();
     }
-    
+
     @Override
     public DataCleanerConfiguration getConfiguration(final Map<String, String> overrideProperties) {
         if (overrideProperties == null) {
@@ -176,7 +176,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     }
 
     @Override
-    protected ResultContext getResult(RepositoryFile resultFile) {
+    protected ResultContext getResult(final RepositoryFile resultFile) {
         if (resultFile == null) {
             return null;
         }

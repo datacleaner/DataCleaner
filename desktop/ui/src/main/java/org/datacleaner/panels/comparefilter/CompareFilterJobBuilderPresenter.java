@@ -41,8 +41,8 @@ class CompareFilterComponentBuilderPresenter extends FilterComponentBuilderPanel
 
     private static final long serialVersionUID = 1L;
 
-    public CompareFilterComponentBuilderPresenter(FilterComponentBuilder<?, ?> filterJobBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory) {
+    public CompareFilterComponentBuilderPresenter(final FilterComponentBuilder<?, ?> filterJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory) {
         super(filterJobBuilder, windowContext, propertyWidgetFactory);
     }
 

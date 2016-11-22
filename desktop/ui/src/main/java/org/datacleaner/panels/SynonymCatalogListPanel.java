@@ -55,195 +55,195 @@ import com.google.inject.Injector;
 
 public final class SynonymCatalogListPanel extends DCPanel implements ReferenceDataChangeListener<SynonymCatalog> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.get();
-	private final DataCleanerConfiguration _configuration;
-	private final MutableReferenceDataCatalog _catalog;
-	private final DCPanel _listPanel;
-	private final DCGlassPane _glassPane;
-	private final InjectorBuilder _injectorBuilder;
+    private static final ImageManager imageManager = ImageManager.get();
+    private final DataCleanerConfiguration _configuration;
+    private final MutableReferenceDataCatalog _catalog;
+    private final DCPanel _listPanel;
+    private final DCGlassPane _glassPane;
+    private final InjectorBuilder _injectorBuilder;
 
-	@Inject
-	protected SynonymCatalogListPanel(DCGlassPane glassPane, DataCleanerConfiguration configuration,
-			InjectorBuilder injectorBuilder) {
-		super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-		_glassPane = glassPane;
-		_configuration = configuration;
-		_injectorBuilder = injectorBuilder;
-		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
-		_catalog.addSynonymCatalogListener(this);
+    @Inject
+    protected SynonymCatalogListPanel(final DCGlassPane glassPane, final DataCleanerConfiguration configuration,
+            final InjectorBuilder injectorBuilder) {
+        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        _glassPane = glassPane;
+        _configuration = configuration;
+        _injectorBuilder = injectorBuilder;
+        _catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
+        _catalog.addSynonymCatalogListener(this);
 
-		_listPanel = new DCPanel();
-		_listPanel.setLayout(new VerticalLayout(4));
+        _listPanel = new DCPanel();
+        _listPanel.setLayout(new VerticalLayout(4));
 
-		updateComponents();
+        updateComponents();
 
-		final DCLabel newSynonymCatalogsLabel = DCLabel.dark("Create new synonym catalog:");
-		newSynonymCatalogsLabel.setFont(WidgetUtils.FONT_HEADER1);
+        final DCLabel newSynonymCatalogsLabel = DCLabel.dark("Create new synonym catalog:");
+        newSynonymCatalogsLabel.setFont(WidgetUtils.FONT_HEADER1);
 
-		final DCLabel existingSynonymCatalogsLabel = DCLabel.dark("Existing synonym catalogs:");
-		existingSynonymCatalogsLabel.setFont(WidgetUtils.FONT_HEADER1);
+        final DCLabel existingSynonymCatalogsLabel = DCLabel.dark("Existing synonym catalogs:");
+        existingSynonymCatalogsLabel.setFont(WidgetUtils.FONT_HEADER1);
 
-		setLayout(new VerticalLayout(10));
-		add(newSynonymCatalogsLabel);
-		add(createNewSynonymCatalogsPanel());
-		add(Box.createVerticalStrut(10));
-		add(existingSynonymCatalogsLabel);
-		setBorder(new EmptyBorder(10, 10, 10, 0));
-		add(_listPanel);
-	}
+        setLayout(new VerticalLayout(10));
+        add(newSynonymCatalogsLabel);
+        add(createNewSynonymCatalogsPanel());
+        add(Box.createVerticalStrut(10));
+        add(existingSynonymCatalogsLabel);
+        setBorder(new EmptyBorder(10, 10, 10, 0));
+        add(_listPanel);
+    }
 
-	private DCPanel createNewSynonymCatalogsPanel() {
+    private static String getDescription(final SynonymCatalog synonymCatalog) {
+        if (synonymCatalog.getDescription() != null) {
+            return synonymCatalog.getDescription();
+        }
+        if (synonymCatalog instanceof TextFileSynonymCatalog) {
+            return ((TextFileSynonymCatalog) synonymCatalog).getFilename();
+        } else if (synonymCatalog instanceof DatastoreSynonymCatalog) {
+            final DatastoreSynonymCatalog datastoreSynonymCatalog = (DatastoreSynonymCatalog) synonymCatalog;
+            return datastoreSynonymCatalog.getDatastoreName() + ": "
+                    + datastoreSynonymCatalog.getMasterTermColumnPath();
+        }
+        return "";
+    }
 
-		final JButton textFileSynonymCatalogButton = createButton(
-				IconUtils.SYNONYM_CATALOG_TEXTFILE_IMAGEPATH,
-				"<html><b>Text file synonym catalog</b><br/>Synonyms from a file with master terms and comma-separated synonyms.</html>");
-		textFileSynonymCatalogButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Injector injector = _injectorBuilder.with(TextFileSynonymCatalog.class, null).createInjector();
-				TextFileSynonymCatalogDialog dialog = injector.getInstance(TextFileSynonymCatalogDialog.class);
-				dialog.setVisible(true);
-			}
-		});
+    private DCPanel createNewSynonymCatalogsPanel() {
 
-		final JButton datastoreSynonymCatalogButton = createButton(IconUtils.SYNONYM_CATALOG_DATASTORE_IMAGEPATH,
-				"<html><b>Datastore synonym catalog</b><br/>Synonym catalog based on columns in a registered datastore.</html>");
-		datastoreSynonymCatalogButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Injector injector = _injectorBuilder.with(DatastoreSynonymCatalog.class, null).createInjector();
-				DatastoreSynonymCatalogDialog dialog = injector.getInstance(DatastoreSynonymCatalogDialog.class);
-				dialog.setVisible(true);
-			}
-		});
+        final JButton textFileSynonymCatalogButton = createButton(
+                IconUtils.SYNONYM_CATALOG_TEXTFILE_IMAGEPATH,
+                "<html><b>Text file synonym catalog</b><br/>Synonyms from a file with master terms and comma-separated synonyms.</html>");
+        textFileSynonymCatalogButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final Injector injector = _injectorBuilder.with(TextFileSynonymCatalog.class, null).createInjector();
+                final TextFileSynonymCatalogDialog dialog = injector.getInstance(TextFileSynonymCatalogDialog.class);
+                dialog.setVisible(true);
+            }
+        });
 
-		final HelpIcon helpIcon = new HelpIcon("<b>Synonym catalogs</b><br>"
-				+ "A synonym catalog is reference data used for replacing odd values with correct ones. "
-				+ "A synonym in this sense can also be eg. a standardized value or a code for a given entity.<br>"
-				+ "Synonyms can be used throughout DataCleaner for matching, replacing values and more..");
+        final JButton datastoreSynonymCatalogButton = createButton(IconUtils.SYNONYM_CATALOG_DATASTORE_IMAGEPATH,
+                "<html><b>Datastore synonym catalog</b><br/>Synonym catalog based on columns in a registered datastore.</html>");
+        datastoreSynonymCatalogButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final Injector injector = _injectorBuilder.with(DatastoreSynonymCatalog.class, null).createInjector();
+                final DatastoreSynonymCatalogDialog dialog = injector.getInstance(DatastoreSynonymCatalogDialog.class);
+                dialog.setVisible(true);
+            }
+        });
 
-		final DCPanel panel = DCPanel.flow(textFileSynonymCatalogButton, datastoreSynonymCatalogButton,
-				Box.createHorizontalStrut(100), helpIcon);
-		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
-		return panel;
-	}
+        final HelpIcon helpIcon = new HelpIcon("<b>Synonym catalogs</b><br>"
+                + "A synonym catalog is reference data used for replacing odd values with correct ones. "
+                + "A synonym in this sense can also be eg. a standardized value or a code for a given entity.<br>"
+                + "Synonyms can be used throughout DataCleaner for matching, replacing values and more..");
 
-	private JButton createButton(String imagePath, String description) {
-		final JButton button = WidgetFactory.createImageButton(imageManager.getImageIcon(imagePath));
+        final DCPanel panel = DCPanel.flow(textFileSynonymCatalogButton, datastoreSynonymCatalogButton,
+                Box.createHorizontalStrut(100), helpIcon);
+        panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
+        return panel;
+    }
 
-		final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0, imagePath);
-		popupBubble.attachTo(button);
+    private JButton createButton(final String imagePath, final String description) {
+        final JButton button = WidgetFactory.createImageButton(imageManager.getImageIcon(imagePath));
 
-		return button;
-	}
+        final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0, imagePath);
+        popupBubble.attachTo(button);
 
-	private void updateComponents() {
-		_listPanel.removeAll();
+        return button;
+    }
 
-		final String[] names = _catalog.getSynonymCatalogNames();
-		Arrays.sort(names);
+    private void updateComponents() {
+        _listPanel.removeAll();
 
-		final Icon icon = imageManager.getImageIcon("images/model/synonym.png");
+        final String[] names = _catalog.getSynonymCatalogNames();
+        Arrays.sort(names);
 
-		for (final String name : names) {
-			final SynonymCatalog synonymCatalog = _catalog.getSynonymCatalog(name);
+        final Icon icon = imageManager.getImageIcon("images/model/synonym.png");
 
-			final DCLabel synonymCatalogLabel = DCLabel.dark("<html><b>" + name + "</b><br/>"
-					+ getDescription(synonymCatalog) + "</html>");
-			synonymCatalogLabel.setIcon(icon);
-			synonymCatalogLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
+        for (final String name : names) {
+            final SynonymCatalog synonymCatalog = _catalog.getSynonymCatalog(name);
 
-			final JButton editButton = WidgetFactory.createSmallButton(IconUtils.ACTION_EDIT);
-			editButton.setToolTipText("Edit synonym catalog");
+            final DCLabel synonymCatalogLabel = DCLabel.dark("<html><b>" + name + "</b><br/>"
+                    + getDescription(synonymCatalog) + "</html>");
+            synonymCatalogLabel.setIcon(icon);
+            synonymCatalogLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
 
-			if (synonymCatalog instanceof TextFileSynonymCatalog) {
-				editButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						Injector injector = _injectorBuilder.with(TextFileSynonymCatalog.class, synonymCatalog)
-								.createInjector();
-						TextFileSynonymCatalogDialog dialog = injector.getInstance(TextFileSynonymCatalogDialog.class);
-						dialog.setVisible(true);
-					}
-				});
-			} else if (synonymCatalog instanceof DatastoreSynonymCatalog) {
-				editButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						Injector injector = _injectorBuilder.with(DatastoreSynonymCatalog.class, synonymCatalog)
-								.createInjector();
-						DatastoreSynonymCatalogDialog dialog = injector
-								.getInstance(DatastoreSynonymCatalogDialog.class);
-						dialog.setVisible(true);
-					}
-				});
-			} else {
-				editButton.setEnabled(false);
-			}
+            final JButton editButton = WidgetFactory.createSmallButton(IconUtils.ACTION_EDIT);
+            editButton.setToolTipText("Edit synonym catalog");
 
-			final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-			removeButton.setToolTipText("Remove synonym catalog");
-			removeButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					int result = JOptionPane.showConfirmDialog(SynonymCatalogListPanel.this,
-							"Are you sure you wish to remove the synonym catalog '" + name + "'?", "Confirm remove",
-							JOptionPane.YES_NO_OPTION);
-					if (result == JOptionPane.YES_OPTION) {
-						_catalog.removeSynonymCatalog(synonymCatalog);
-					}
-				}
-			});
+            if (synonymCatalog instanceof TextFileSynonymCatalog) {
+                editButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
+                        final Injector injector = _injectorBuilder.with(TextFileSynonymCatalog.class, synonymCatalog)
+                                .createInjector();
+                        final TextFileSynonymCatalogDialog dialog = injector.getInstance(TextFileSynonymCatalogDialog.class);
+                        dialog.setVisible(true);
+                    }
+                });
+            } else if (synonymCatalog instanceof DatastoreSynonymCatalog) {
+                editButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
+                        final Injector injector = _injectorBuilder.with(DatastoreSynonymCatalog.class, synonymCatalog)
+                                .createInjector();
+                        final DatastoreSynonymCatalogDialog dialog = injector
+                                .getInstance(DatastoreSynonymCatalogDialog.class);
+                        dialog.setVisible(true);
+                    }
+                });
+            } else {
+                editButton.setEnabled(false);
+            }
 
-			final DCPanel synonymCatalogPanel = new DCPanel();
-			synonymCatalogPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
-			WidgetUtils.addToGridBag(synonymCatalogLabel, synonymCatalogPanel, 0, 0, 1.0, 0.0);
-			WidgetUtils.addToGridBag(editButton, synonymCatalogPanel, 1, 0, GridBagConstraints.EAST);
-			WidgetUtils.addToGridBag(removeButton, synonymCatalogPanel, 2, 0, GridBagConstraints.EAST);
-			_listPanel.add(synonymCatalogPanel);
-		}
+            final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
+            removeButton.setToolTipText("Remove synonym catalog");
+            removeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    final int result = JOptionPane.showConfirmDialog(SynonymCatalogListPanel.this,
+                            "Are you sure you wish to remove the synonym catalog '" + name + "'?", "Confirm remove",
+                            JOptionPane.YES_NO_OPTION);
+                    if (result == JOptionPane.YES_OPTION) {
+                        _catalog.removeSynonymCatalog(synonymCatalog);
+                    }
+                }
+            });
 
-		if (names.length == 0) {
-			_listPanel.add(DCLabel.dark("(none)"));
-		}
+            final DCPanel synonymCatalogPanel = new DCPanel();
+            synonymCatalogPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
+            WidgetUtils.addToGridBag(synonymCatalogLabel, synonymCatalogPanel, 0, 0, 1.0, 0.0);
+            WidgetUtils.addToGridBag(editButton, synonymCatalogPanel, 1, 0, GridBagConstraints.EAST);
+            WidgetUtils.addToGridBag(removeButton, synonymCatalogPanel, 2, 0, GridBagConstraints.EAST);
+            _listPanel.add(synonymCatalogPanel);
+        }
 
-		updateUI();
-	}
+        if (names.length == 0) {
+            _listPanel.add(DCLabel.dark("(none)"));
+        }
 
-	private static String getDescription(SynonymCatalog synonymCatalog) {
-		if (synonymCatalog.getDescription() != null) {
-			return synonymCatalog.getDescription();
-		}
-		if (synonymCatalog instanceof TextFileSynonymCatalog) {
-			return ((TextFileSynonymCatalog) synonymCatalog).getFilename();
-		} else if (synonymCatalog instanceof DatastoreSynonymCatalog) {
-			DatastoreSynonymCatalog datastoreSynonymCatalog = (DatastoreSynonymCatalog) synonymCatalog;
-			return datastoreSynonymCatalog.getDatastoreName() + ": "
-					+ datastoreSynonymCatalog.getMasterTermColumnPath();
-		}
-		return "";
-	}
-
-	@Override
-	public void onAdd(SynonymCatalog synonymCatalog) {
-	    SwingUtilities.invokeLater(() -> updateComponents());
-	}
-
-	@Override
-	public void onRemove(SynonymCatalog synonymCatalog) {
-	    SwingUtilities.invokeLater(() -> updateComponents());
-	}
-
-	@Override
-	public void removeNotify() {
-		super.removeNotify();
-		_catalog.removeSynonymCatalogListener(this);
-	}
+        updateUI();
+    }
 
     @Override
-    public void onChange(SynonymCatalog oldReferenceData, SynonymCatalog newReferenceData) {
+    public void onAdd(final SynonymCatalog synonymCatalog) {
+        SwingUtilities.invokeLater(() -> updateComponents());
+    }
+
+    @Override
+    public void onRemove(final SynonymCatalog synonymCatalog) {
+        SwingUtilities.invokeLater(() -> updateComponents());
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        _catalog.removeSynonymCatalogListener(this);
+    }
+
+    @Override
+    public void onChange(final SynonymCatalog oldReferenceData, final SynonymCatalog newReferenceData) {
         SwingUtilities.invokeLater(() -> updateComponents());
     }
 }

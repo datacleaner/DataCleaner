@@ -62,7 +62,8 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
      *                   (the table doesn't have it as a Component child). So changing our content doesn't automatically
      *                   revalidate and repaint the table. Must be called explicitly.
      */
-    public MutableInputColumnListPanel(AnalysisJobBuilder analysisJobBuilder, MutableInputColumn<?> inputColumn, JComponent panelOwner) {
+    public MutableInputColumnListPanel(final AnalysisJobBuilder analysisJobBuilder, final MutableInputColumn<?> inputColumn,
+            final JComponent panelOwner) {
         _analysisJobBuilder = analysisJobBuilder;
         _inputColumn = inputColumn;
 
@@ -73,7 +74,7 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
 
         _textField.addFocusListener(new FocusAdapter() {
             @Override
-            public void focusLost(FocusEvent e) {
+            public void focusLost(final FocusEvent e) {
                 if (!_inputColumn.getName().equals(_textField.getText())) {
                     _inputColumn.setName(_textField.getText());
 
@@ -95,7 +96,7 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
         resetButton.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 _textField.setText(_inputColumn.getInitialName());
             }
         });
@@ -113,15 +114,15 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
     }
 
     @Override
-    public void onNameChanged(MutableInputColumn<?> column, String oldName, String newName) {
+    public void onNameChanged(final MutableInputColumn<?> column, final String oldName, final String newName) {
         _textField.setText(newName);
-        if(panelOwner != null) {
+        if (panelOwner != null) {
             panelOwner.repaint();
         }
     }
 
     @Override
-    public void onVisibilityChanged(MutableInputColumn<?> column, boolean hidden) {
+    public void onVisibilityChanged(final MutableInputColumn<?> column, final boolean hidden) {
         // do nothing (the visibility button is also a listener itself)
         _visibilityButton.setSelected(!hidden);
     }

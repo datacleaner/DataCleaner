@@ -31,20 +31,20 @@ import java.util.Comparator;
 public class VersionComparator implements Comparator<String> {
 
     @Override
-    public int compare(String o1, String o2) {
-        String[] o1Split = o1.split("\\.");
-        String[] o2Split = o2.split("\\.");
+    public int compare(final String o1, final String o2) {
+        final String[] o1Split = o1.split("\\.");
+        final String[] o2Split = o2.split("\\.");
 
         for (int i = 0; i < Math.min(o1Split.length, o2Split.length); i++) {
             int specialEndCounter = 0;
-            Integer o1Part;
+            final Integer o1Part;
             if (o1Split[i].contains("-")) {
                 specialEndCounter++;
                 o1Part = Integer.parseInt(o1Split[i].substring(0, o1Split[i].lastIndexOf("-")));
             } else {
                 o1Part = Integer.parseInt(o1Split[i]);
             }
-            Integer o2Part;
+            final Integer o2Part;
             if (o2Split[i].contains("-")) {
                 specialEndCounter++;
                 o2Part = Integer.parseInt(o2Split[i].substring(0, o2Split[i].lastIndexOf("-")));
@@ -52,7 +52,7 @@ public class VersionComparator implements Comparator<String> {
                 o2Part = Integer.parseInt(o2Split[i]);
             }
 
-            int compareTo = o1Part.compareTo(o2Part);
+            final int compareTo = o1Part.compareTo(o2Part);
             if (compareTo == 0) {
                 // check if there was one SNAPSHOT/RC1/beta and one release - release is
                 // ofc newer despite the same number
@@ -76,8 +76,8 @@ public class VersionComparator implements Comparator<String> {
             }
         }
 
-        Integer o1SplitLength = (Integer) o1Split.length;
-        Integer o2SplitLength = (Integer) o2Split.length;
+        final Integer o1SplitLength = (Integer) o1Split.length;
+        final Integer o2SplitLength = (Integer) o2Split.length;
         return o1SplitLength.compareTo(o2SplitLength);
     }
 

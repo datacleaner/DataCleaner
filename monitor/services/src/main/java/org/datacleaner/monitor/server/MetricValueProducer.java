@@ -33,7 +33,7 @@ import org.datacleaner.repository.RepositoryFile;
  */
 public interface MetricValueProducer {
 
-    public MetricValues getMetricValues(List<MetricIdentifier> metricIdentifiers, RepositoryFile resultFile,
+    MetricValues getMetricValues(List<MetricIdentifier> metricIdentifiers, RepositoryFile resultFile,
             TenantIdentifier tenant, JobIdentifier jobIdentifier);
 
 }

@@ -35,48 +35,48 @@ import org.datacleaner.components.categories.FilterCategory;
 @Categorized(FilterCategory.class)
 public class StringValueRangeFilter implements Filter<RangeFilterCategory> {
 
-	@Configured(order = 1)
-	InputColumn<String> column;
+    @Configured(order = 1)
+    InputColumn<String> column;
 
-	@Configured(order = 2)
-	@Description("The lowest valid string value, eg. AAA")
-	String lowestValue;
+    @Configured(order = 2)
+    @Description("The lowest valid string value, eg. AAA")
+    String lowestValue;
 
-	@Configured(order = 3)
-	@Description("The highest valid string value, eg. xxx")
-	String highestValue;
+    @Configured(order = 3)
+    @Description("The highest valid string value, eg. xxx")
+    String highestValue;
 
-	public StringValueRangeFilter() {
-	}
+    public StringValueRangeFilter() {
+    }
 
-	public StringValueRangeFilter(String lowestValue, String highestValue) {
-		this.lowestValue = lowestValue;
-		this.highestValue = highestValue;
-	}
+    public StringValueRangeFilter(final String lowestValue, final String highestValue) {
+        this.lowestValue = lowestValue;
+        this.highestValue = highestValue;
+    }
 
-	@Validate
-	public void validate() {
-		if (lowestValue.compareTo(highestValue) > 0) {
-			throw new IllegalStateException("Lowest value is greater than the highest value");
-		}
-	}
+    @Validate
+    public void validate() {
+        if (lowestValue.compareTo(highestValue) > 0) {
+            throw new IllegalStateException("Lowest value is greater than the highest value");
+        }
+    }
 
-	@Override
-	public RangeFilterCategory categorize(InputRow inputRow) {
-		String value = inputRow.getValue(column);
-		return categorize(value);
-	}
+    @Override
+    public RangeFilterCategory categorize(final InputRow inputRow) {
+        final String value = inputRow.getValue(column);
+        return categorize(value);
+    }
 
-	protected RangeFilterCategory categorize(String value) {
-		if (value == null) {
-			return RangeFilterCategory.LOWER;
-		}
-		if (value.compareTo(lowestValue) < 0) {
-			return RangeFilterCategory.LOWER;
-		}
-		if (value.compareTo(highestValue) > 0) {
-			return RangeFilterCategory.HIGHER;
-		}
-		return RangeFilterCategory.VALID;
-	}
+    protected RangeFilterCategory categorize(final String value) {
+        if (value == null) {
+            return RangeFilterCategory.LOWER;
+        }
+        if (value.compareTo(lowestValue) < 0) {
+            return RangeFilterCategory.LOWER;
+        }
+        if (value.compareTo(highestValue) > 0) {
+            return RangeFilterCategory.HIGHER;
+        }
+        return RangeFilterCategory.VALID;
+    }
 }

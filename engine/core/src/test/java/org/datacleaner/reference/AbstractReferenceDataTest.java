@@ -30,79 +30,79 @@ import org.datacleaner.test.TestHelper;
 
 public class AbstractReferenceDataTest extends TestCase {
 
-	private ReferenceDataCatalogImpl referenceDataCatalog;
+    private ReferenceDataCatalogImpl referenceDataCatalog;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
 
-		if (referenceDataCatalog == null) {
-			Datastore ds = TestHelper.createSampleDatabaseDatastore("my_jdbc_connection");
+        if (referenceDataCatalog == null) {
+            Datastore ds = TestHelper.createSampleDatabaseDatastore("my_jdbc_connection");
 
-			List<Dictionary> dictionaries = new ArrayList<Dictionary>();
-			dictionaries.add(new DatastoreDictionary("datastore_dict", "my_jdbc_connection", "EMPLOYEES.LASTNAME"));
-			dictionaries.add(new TextFileDictionary("dict_txt", "src/test/resources/lastnames.txt", "UTF-8"));
-			dictionaries.add(new SimpleDictionary("valuelist_dict", "hello", "hi", "greetings", "godday"));
+            List<Dictionary> dictionaries = new ArrayList<Dictionary>();
+            dictionaries.add(new DatastoreDictionary("datastore_dict", "my_jdbc_connection", "EMPLOYEES.LASTNAME"));
+            dictionaries.add(new TextFileDictionary("dict_txt", "src/test/resources/lastnames.txt", "UTF-8"));
+            dictionaries.add(new SimpleDictionary("valuelist_dict", "hello", "hi", "greetings", "godday"));
 
-			List<SynonymCatalog> synonymCatalogs = new ArrayList<SynonymCatalog>();
-			synonymCatalogs.add(new TextFileSynonymCatalog("textfile_syn", "src/test/resources/synonym-countries.txt",
-					false, "UTF-8"));
-			synonymCatalogs.add(new DatastoreSynonymCatalog("datastore_syn", ds.getName(), "CUSTOMERS.CUSTOMERNAME",
-					new String[] { "CUSTOMERS.CUSTOMERNUMBER", "CUSTOMERS.PHONE" }));
+            List<SynonymCatalog> synonymCatalogs = new ArrayList<SynonymCatalog>();
+            synonymCatalogs.add(new TextFileSynonymCatalog("textfile_syn", "src/test/resources/synonym-countries.txt",
+                    false, "UTF-8"));
+            synonymCatalogs.add(new DatastoreSynonymCatalog("datastore_syn", ds.getName(), "CUSTOMERS.CUSTOMERNAME",
+                    new String[] { "CUSTOMERS.CUSTOMERNUMBER", "CUSTOMERS.PHONE" }));
 
-			List<StringPattern> stringPatterns = new ArrayList<StringPattern>();
-			stringPatterns.add(new RegexStringPattern("regex danish mail", "[a-z]+@[a-z]+\\.dk", true));
+            List<StringPattern> stringPatterns = new ArrayList<StringPattern>();
+            stringPatterns.add(new RegexStringPattern("regex danish mail", "[a-z]+@[a-z]+\\.dk", true));
 
-			referenceDataCatalog = new ReferenceDataCatalogImpl(dictionaries, synonymCatalogs, stringPatterns);
-		}
-	}
+            referenceDataCatalog = new ReferenceDataCatalogImpl(dictionaries, synonymCatalogs, stringPatterns);
+        }
+    }
 
-	public void testSerializationAndDeserializationOfDictionaries() throws Exception {
+    public void testSerializationAndDeserializationOfDictionaries() throws Exception {
 
-		String[] dictionaryNames = referenceDataCatalog.getDictionaryNames();
+        String[] dictionaryNames = referenceDataCatalog.getDictionaryNames();
 
-		for (String name : dictionaryNames) {
-			Dictionary dict = referenceDataCatalog.getDictionary(name);
+        for (String name : dictionaryNames) {
+            Dictionary dict = referenceDataCatalog.getDictionary(name);
 
-			if (dict instanceof AbstractReferenceData) {
-				System.out.println("Cloning dictionary: " + dict);
-				Object clone = SerializationUtils.clone(dict);
-				if (!dict.equals(clone)) {
-					dict.equals(clone);
-				}
-				assertEquals(dict, clone);
-			}
-		}
-	}
+            if (dict instanceof AbstractReferenceData) {
+                System.out.println("Cloning dictionary: " + dict);
+                Object clone = SerializationUtils.clone(dict);
+                if (!dict.equals(clone)) {
+                    dict.equals(clone);
+                }
+                assertEquals(dict, clone);
+            }
+        }
+    }
 
-	public void testSerializationAndDeserializationOfSynonymCatalogs() throws Exception {
-		String[] synonymCatalogNames = referenceDataCatalog.getSynonymCatalogNames();
+    public void testSerializationAndDeserializationOfSynonymCatalogs() throws Exception {
+        String[] synonymCatalogNames = referenceDataCatalog.getSynonymCatalogNames();
 
-		for (String name : synonymCatalogNames) {
-			SynonymCatalog sc = referenceDataCatalog.getSynonymCatalog(name);
+        for (String name : synonymCatalogNames) {
+            SynonymCatalog sc = referenceDataCatalog.getSynonymCatalog(name);
 
-			if (sc instanceof AbstractReferenceData) {
-				System.out.println("Cloning synonym catalog: " + sc);
-				Object clone = SerializationUtils.clone(sc);
-				assertEquals(sc, clone);
-			}
-		}
-	}
+            if (sc instanceof AbstractReferenceData) {
+                System.out.println("Cloning synonym catalog: " + sc);
+                Object clone = SerializationUtils.clone(sc);
+                assertEquals(sc, clone);
+            }
+        }
+    }
 
-	public void testSerializationAndDeserializationOfStringPatterns() throws Exception {
-		String[] patternNames = referenceDataCatalog.getStringPatternNames();
+    public void testSerializationAndDeserializationOfStringPatterns() throws Exception {
+        String[] patternNames = referenceDataCatalog.getStringPatternNames();
 
-		for (String name : patternNames) {
-			StringPattern pattern = referenceDataCatalog.getStringPattern(name);
+        for (String name : patternNames) {
+            StringPattern pattern = referenceDataCatalog.getStringPattern(name);
 
-			if (pattern instanceof AbstractReferenceData) {
-				System.out.println("Cloning string pattern: " + pattern);
-				Object clone = SerializationUtils.clone(pattern);
-				if (!pattern.equals(clone)) {
-					System.out.println();
-				}
-				assertEquals(pattern, clone);
-			}
-		}
-	}
+            if (pattern instanceof AbstractReferenceData) {
+                System.out.println("Cloning string pattern: " + pattern);
+                Object clone = SerializationUtils.clone(pattern);
+                if (!pattern.equals(clone)) {
+                    System.out.println();
+                }
+                assertEquals(pattern, clone);
+            }
+        }
+    }
 }

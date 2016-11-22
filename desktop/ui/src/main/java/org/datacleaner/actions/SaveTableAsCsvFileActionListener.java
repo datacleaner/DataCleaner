@@ -63,9 +63,9 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
     private DataCleanerConfiguration _configuration;
 
     @Inject
-    protected SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowContext windowContext,
-            DCModule parentModule, UserPreferences userPreferences, DataCleanerConfiguration configuration,
-            InjectorBuilder injectorBuilder) {
+    protected SaveTableAsCsvFileActionListener(final Datastore datastore, final Table table, final WindowContext windowContext,
+            final DCModule parentModule, final UserPreferences userPreferences, final DataCleanerConfiguration configuration,
+            final InjectorBuilder injectorBuilder) {
         _datastore = datastore;
         _table = table;
         _windowContext = windowContext;
@@ -75,7 +75,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         final AnalysisJobBuilder ajb = new AnalysisJobBuilder(_configuration);
         ajb.setDatastore(_datastore);
         ajb.addSourceColumns(_table.getColumns());
@@ -83,7 +83,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
         final AnalyzerComponentBuilder<CreateCsvFileAnalyzer> csvOutputAnalyzerBuilder = ajb
                 .addAnalyzer(CreateCsvFileAnalyzer.class);
         csvOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
-        File directory = _userPreferences.getConfiguredFileDirectory();
+        final File directory = _userPreferences.getConfiguredFileDirectory();
         csvOutputAnalyzerBuilder.getComponentInstance().setFile(new File(directory, _table.getName() + ".csv"));
 
         final PropertyWidgetFactory propertyWidgetFactory = _parentModule.createChildInjectorForComponent(
@@ -130,10 +130,10 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
         runButton.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, ajb));
+            public void actionPerformed(final ActionEvent e) {
+                final Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, ajb));
 
-                ResultWindow window = injector.getInstance(ResultWindow.class);
+                final ResultWindow window = injector.getInstance(ResultWindow.class);
                 window.open();
                 dialog.close();
                 window.startAnalysis();
@@ -143,7 +143,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
         final JButton closeButton = WidgetFactory.createDefaultButton("Close", IconUtils.ACTION_CLOSE_DARK);
         closeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 dialog.close();
             }
         });

@@ -27,8 +27,8 @@ public interface ComponentRemovalListener<C extends ComponentBuilder> {
     /**
      * Method invoked when a component is removed from a
      * {@link AnalysisJobBuilder}
-     * 
+     *
      * @param componentBuilder
      */
-    public void onRemove(C componentBuilder);
+    void onRemove(C componentBuilder);
 }

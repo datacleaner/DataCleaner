@@ -32,7 +32,7 @@ public class SugarCrmDatastore extends UsageAwareDatastore<SugarCrmDataContext> 
     private final String _username;
     private final String _password;
 
-    public SugarCrmDatastore(String name, String baseUrl, String username, String password) {
+    public SugarCrmDatastore(final String name, final String baseUrl, final String username, final String password) {
         super(name);
         _baseUrl = baseUrl;
         _username = username;
@@ -46,7 +46,8 @@ public class SugarCrmDatastore extends UsageAwareDatastore<SugarCrmDataContext> 
 
     @Override
     protected UsageAwareDatastoreConnection<SugarCrmDataContext> createDatastoreConnection() {
-        final SugarCrmDataContext dataContext = new SugarCrmDataContext(_baseUrl, _username, _password, "AnalyzerBeans");
+        final SugarCrmDataContext dataContext =
+                new SugarCrmDataContext(_baseUrl, _username, _password, "AnalyzerBeans");
         return new DatastoreConnectionImpl<SugarCrmDataContext>(dataContext, this, dataContext);
 
     }

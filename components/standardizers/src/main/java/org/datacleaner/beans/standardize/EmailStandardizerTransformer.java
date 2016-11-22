@@ -43,54 +43,52 @@ import org.datacleaner.util.NamedPatternMatch;
 @Deprecated
 public class EmailStandardizerTransformer implements Transformer {
 
-	public static final NamedPattern<EmailPart> EMAIL_PATTERN = new NamedPattern<EmailPart>("USERNAME@DOMAIN",
-			EmailPart.class);
+    public enum EmailPart implements HasGroupLiteral {
+        USERNAME("([a-zA-Z0-9\\._%+-]+)"), DOMAIN("([a-zA-Z0-9\\._%+-]+\\.[a-zA-Z0-9\\._%+-]{2,4})");
 
-	public static enum EmailPart implements HasGroupLiteral {
-		USERNAME("([a-zA-Z0-9\\._%+-]+)"), DOMAIN("([a-zA-Z0-9\\._%+-]+\\.[a-zA-Z0-9\\._%+-]{2,4})");
+        private String groupLiteral;
 
-		private String groupLiteral;
+        EmailPart(final String groupLiteral) {
+            this.groupLiteral = groupLiteral;
+        }
 
-		private EmailPart(String groupLiteral) {
-			this.groupLiteral = groupLiteral;
-		}
+        @Override
+        public String getGroupLiteral() {
+            return groupLiteral;
+        }
+    }
+    public static final NamedPattern<EmailPart> EMAIL_PATTERN = new NamedPattern<EmailPart>("USERNAME@DOMAIN",
+            EmailPart.class);
+    @Inject
+    @Configured
+    InputColumn<String> inputColumn;
 
-		@Override
-		public String getGroupLiteral() {
-			return groupLiteral;
-		}
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(String.class, "Username", "Domain");
+    }
 
-	@Inject
-	@Configured
-	InputColumn<String> inputColumn;
+    @Override
+    public String[] transform(final InputRow inputRow) {
+        final String value = inputRow.getValue(inputColumn);
+        return transform(value);
+    }
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(String.class, "Username", "Domain");
-	}
+    public String[] transform(final String value) {
+        String username = null;
+        String domain = null;
 
-	@Override
-	public String[] transform(InputRow inputRow) {
-		String value = inputRow.getValue(inputColumn);
-		return transform(value);
-	}
+        if (value != null) {
+            final NamedPatternMatch<EmailPart> match = EMAIL_PATTERN.match(value);
+            if (match != null) {
+                username = match.get(EmailPart.USERNAME);
+                domain = match.get(EmailPart.DOMAIN);
+            }
+        }
+        return new String[] { username, domain };
+    }
 
-	public String[] transform(String value) {
-		String username = null;
-		String domain = null;
-
-		if (value != null) {
-			NamedPatternMatch<EmailPart> match = EMAIL_PATTERN.match(value);
-			if (match != null) {
-				username = match.get(EmailPart.USERNAME);
-				domain = match.get(EmailPart.DOMAIN);
-			}
-		}
-		return new String[] { username, domain };
-	}
-
-	public void setInputColumn(InputColumn<String> inputColumn) {
-		this.inputColumn = inputColumn;
-	}
+    public void setInputColumn(final InputColumn<String> inputColumn) {
+        this.inputColumn = inputColumn;
+    }
 }

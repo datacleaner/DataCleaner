@@ -19,30 +19,31 @@
  */
 package org.datacleaner.output.excel;
 
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.output.AbstractMetaModelOutputWriter;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.output.AbstractMetaModelOutputWriter;
 
 final class ExcelOutputWriter extends AbstractMetaModelOutputWriter {
 
-	private final String _filename;
-	private final Table _table;
+    private final String _filename;
+    private final Table _table;
 
-	public ExcelOutputWriter(UpdateableDataContext dataContext, String filename, Table table, InputColumn<?>[] columns) {
-		super(dataContext, columns, 2000);
-		_filename = filename;
-		_table = table;
-	}
-	
-	@Override
-	public void afterClose() {
-		ExcelOutputWriterFactory.release(_filename);
-	}
+    public ExcelOutputWriter(final UpdateableDataContext dataContext, final String filename, final Table table,
+            final InputColumn<?>[] columns) {
+        super(dataContext, columns, 2000);
+        _filename = filename;
+        _table = table;
+    }
 
-	@Override
-	protected Table getTable() {
-		return _table;
-	}
+    @Override
+    public void afterClose() {
+        ExcelOutputWriterFactory.release(_filename);
+    }
+
+    @Override
+    protected Table getTable() {
+        return _table;
+    }
 
 }

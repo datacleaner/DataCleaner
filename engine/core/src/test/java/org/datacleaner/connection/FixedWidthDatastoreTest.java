@@ -21,11 +21,11 @@ package org.datacleaner.connection;
 
 import java.util.Arrays;
 
+import junit.framework.TestCase;
+
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileResource;
-
-import junit.framework.TestCase;
 
 public class FixedWidthDatastoreTest extends TestCase {
 
@@ -60,10 +60,13 @@ public class FixedWidthDatastoreTest extends TestCase {
             assertEquals("[name, email]", Arrays.toString(table.getColumnNames()));
         }
     }
-    
+
     public void testResource() throws Exception {
         final FileResource resource = new FileResource("mytest.txt");
-        final FixedWidthDatastore fixedWidthDatastore = new FixedWidthDatastore("name", resource, resource.getName(), "UTF-8", 20, false, false, false, 0);
-        assertEquals("FixedWidthDatastore[name=name, filename=mytest.txt, encoding=UTF-8, headerLineNumber=0, valueWidths=[], fixedValueWidth=20]", fixedWidthDatastore.toString());
+        final FixedWidthDatastore fixedWidthDatastore =
+                new FixedWidthDatastore("name", resource, resource.getName(), "UTF-8", 20, false, false, false, 0);
+        assertEquals(
+                "FixedWidthDatastore[name=name, filename=mytest.txt, encoding=UTF-8, headerLineNumber=0, valueWidths=[], fixedValueWidth=20]",
+                fixedWidthDatastore.toString());
     }
 }

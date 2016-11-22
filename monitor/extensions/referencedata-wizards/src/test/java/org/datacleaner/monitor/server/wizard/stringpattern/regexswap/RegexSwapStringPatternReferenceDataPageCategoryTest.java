@@ -19,22 +19,24 @@
  */
 package org.datacleaner.monitor.server.wizard.stringpattern.regexswap;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+
+import org.junit.Test;
 
 public class RegexSwapStringPatternReferenceDataPageCategoryTest {
 
     @Test
     public void testGetPageIndex() throws Exception {
-        RegexSwapStringPatternReferenceDataPageCategory page = new RegexSwapStringPatternReferenceDataPageCategory(null);
+        RegexSwapStringPatternReferenceDataPageCategory page =
+                new RegexSwapStringPatternReferenceDataPageCategory(null);
         assertEquals(new Integer(0), page.getPageIndex());
     }
 
     @Test
     public void testGetTemplateFilename() throws Exception {
-        RegexSwapStringPatternReferenceDataPageCategory page = new RegexSwapStringPatternReferenceDataPageCategory(null);
+        RegexSwapStringPatternReferenceDataPageCategory page =
+                new RegexSwapStringPatternReferenceDataPageCategory(null);
         assertNotEquals("", page.getTemplateFilename());
     }
 }

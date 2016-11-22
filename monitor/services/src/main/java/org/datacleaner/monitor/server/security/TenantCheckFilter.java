@@ -56,10 +56,10 @@ public class TenantCheckFilter extends GenericFilterBean {
     }
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException,
+    public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain) throws IOException,
             ServletException {
         if (req instanceof HttpServletRequest) {
-            if("OPTIONS".equals(((HttpServletRequest) req).getMethod())) {
+            if ("OPTIONS".equals(((HttpServletRequest) req).getMethod())) {
                 // OPTIONS should succeed even without authentication
                 // DO NOTHING.
             } else {
@@ -86,7 +86,7 @@ public class TenantCheckFilter extends GenericFilterBean {
                             final String message = "User " + username + " (" + userTenantId
                                     + ") is not authorized to access tenant: " + urlTenantId;
                             if (resp instanceof HttpServletResponse) {
-                                HttpServletResponse response = (HttpServletResponse) resp;
+                                final HttpServletResponse response = (HttpServletResponse) resp;
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);
                                 return;
                             } else {

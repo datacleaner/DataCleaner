@@ -51,7 +51,7 @@ public class TableLookupJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerComponentBuilder<TableLookupTransformer> tjb) {
+    public RendererPrecedence getPrecedence(final TransformerComponentBuilder<TableLookupTransformer> tjb) {
         if (tjb.getDescriptor().getComponentClass() == TableLookupTransformer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -59,7 +59,7 @@ public class TableLookupJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<TableLookupTransformer> tjb) {
+    public TransformerComponentBuilderPresenter render(final TransformerComponentBuilder<TableLookupTransformer> tjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
                 PropertyWidgetFactory.class);
 

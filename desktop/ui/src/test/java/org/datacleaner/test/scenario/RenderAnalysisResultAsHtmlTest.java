@@ -49,7 +49,7 @@ public class RenderAnalysisResultAsHtmlTest extends TestCase {
      * A very broad integration test which opens an analysis result with (more
      * or less) all built-in analyzer results and verifies that there is a
      * renderer for each of them
-     * 
+     *
      * @throws Exception
      */
     public void testOpenJobWithAllAnalyzers() throws Exception {

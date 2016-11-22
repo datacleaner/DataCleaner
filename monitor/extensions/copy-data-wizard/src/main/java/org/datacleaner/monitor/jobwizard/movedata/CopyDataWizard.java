@@ -33,7 +33,7 @@ public class CopyDataWizard extends DataCleanerJobWizard {
     }
 
     @Override
-    public DataCleanerJobWizardSession startInternal(JobWizardContext context) {
+    public DataCleanerJobWizardSession startInternal(final JobWizardContext context) {
         return new CopyDataWizardSession(context);
     }
 

@@ -35,15 +35,15 @@ public class DefaultButtonUI extends MetalButtonUI {
 
     private static final DefaultButtonUI INSTANCE = new DefaultButtonUI();
 
+    private DefaultButtonUI() {
+    }
+
     public static DefaultButtonUI get() {
         return INSTANCE;
     }
 
-    private DefaultButtonUI() {
-    }
-
     @Override
-    public void installDefaults(AbstractButton b) {
+    public void installDefaults(final AbstractButton b) {
         super.installDefaults(b);
         b.setFocusPainted(false);
         b.setFont(WidgetUtils.FONT_BUTTON);

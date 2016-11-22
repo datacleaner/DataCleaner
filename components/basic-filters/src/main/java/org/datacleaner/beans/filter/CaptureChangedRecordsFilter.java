@@ -153,7 +153,7 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
 
             captureStateFile.write(new Action<OutputStream>() {
                 @Override
-                public void run(OutputStream out) throws Exception {
+                public void run(final OutputStream out) throws Exception {
                     properties.store(out, null);
                 }
             });
@@ -166,13 +166,13 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
      * since the same file may be used for multiple purposes, even multiple
      * filters of the same type. Of course this is not desired configuration,
      * but may be more convenient for lazy users!
-     * 
+     *
      * @return
      */
     private String getPropertyKey() {
         if (StringUtils.isNullOrEmpty(captureStateIdentifier)) {
             if (lastModifiedColumn.isPhysicalColumn()) {
-                Table table = lastModifiedColumn.getPhysicalColumn().getTable();
+                final Table table = lastModifiedColumn.getPhysicalColumn().getTable();
                 if (table != null && !StringUtils.isNullOrEmpty(table.getName())) {
                     return table.getName() + "." + lastModifiedColumn.getName() + ".GreatestLastModifiedValue";
                 }
@@ -191,7 +191,7 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
 
         captureStateFile.read(new Action<InputStream>() {
             @Override
-            public void run(InputStream in) throws Exception {
+            public void run(final InputStream in) throws Exception {
                 properties.load(in);
             }
         });
@@ -199,7 +199,7 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
     }
 
     @Override
-    public ValidationCategory categorize(InputRow inputRow) {
+    public ValidationCategory categorize(final InputRow inputRow) {
         final Object lastModified = inputRow.getValue(lastModifiedColumn);
         final long rowMillis;
         final int rowNanos;

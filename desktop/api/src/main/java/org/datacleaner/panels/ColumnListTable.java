@@ -79,28 +79,30 @@ public final class ColumnListTable extends DCPanel {
 
     private final boolean _editable;
 
-    public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalysisJobBuilder analysisJobBuilder,
-            boolean addShadowBorder, WindowContext windowContext) {
+    public ColumnListTable(final Collection<? extends InputColumn<?>> columns, final AnalysisJobBuilder analysisJobBuilder,
+            final boolean addShadowBorder, final WindowContext windowContext) {
         this(null, columns, analysisJobBuilder, addShadowBorder, true, windowContext);
     }
-    
-    public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalysisJobBuilder analysisJobBuilder,
-            boolean addShadowBorder, boolean editable, WindowContext windowContext) {
+
+    public ColumnListTable(final Collection<? extends InputColumn<?>> columns, final AnalysisJobBuilder analysisJobBuilder,
+            final boolean addShadowBorder, final boolean editable, final WindowContext windowContext) {
         this(null, columns, analysisJobBuilder, addShadowBorder, editable, windowContext);
     }
 
-    public ColumnListTable(Table table, AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder,
-            WindowContext windowContext) {
+    public ColumnListTable(final Table table, final AnalysisJobBuilder analysisJobBuilder, final boolean addShadowBorder,
+            final WindowContext windowContext) {
         this(table, null, analysisJobBuilder, addShadowBorder, true, windowContext);
     }
-    
-    public ColumnListTable(Table table, AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder, boolean editable,
-            WindowContext windowContext) {
+
+    public ColumnListTable(final Table table, final AnalysisJobBuilder analysisJobBuilder, final boolean addShadowBorder,
+            final boolean editable,
+            final WindowContext windowContext) {
         this(table, null, analysisJobBuilder, addShadowBorder, editable, windowContext);
     }
 
-    private ColumnListTable(Table table, Collection<? extends InputColumn<?>> columns,
-            AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder, boolean editable, WindowContext windowContext) {
+    private ColumnListTable(final Table table, final Collection<? extends InputColumn<?>> columns,
+            final AnalysisJobBuilder analysisJobBuilder, final boolean addShadowBorder, final boolean editable,
+            final WindowContext windowContext) {
         super();
         _table = table;
         _analysisJobBuilder = analysisJobBuilder;
@@ -142,7 +144,7 @@ public final class ColumnListTable extends DCPanel {
                 removeButton.setToolTipText("Remove table from source");
                 removeButton.addActionListener(new ActionListener() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
+                    public void actionPerformed(final ActionEvent e) {
                         _analysisJobBuilder.removeSourceTable(_table);
                     }
                 });
@@ -159,7 +161,7 @@ public final class ColumnListTable extends DCPanel {
         _columnTable.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
 
         if (columns != null) {
-            for (InputColumn<?> column : columns) {
+            for (final InputColumn<?> column : columns) {
                 addColumn(column, false);
             }
         }
@@ -182,7 +184,7 @@ public final class ColumnListTable extends DCPanel {
             headers = HEADERS_WITHOUT_ACTIONS;
         }
 
-        TableModel model = new DefaultTableModel(headers, _columns.size());
+        final TableModel model = new DefaultTableModel(headers, _columns.size());
         int i = 0;
         for (final Entry<InputColumn<?>, JComponent> entry : _columns.entrySet()) {
             final InputColumn<?> column = entry.getKey();
@@ -200,7 +202,7 @@ public final class ColumnListTable extends DCPanel {
                 removeButton.setToolTipText("Remove column from source");
                 removeButton.addActionListener(new ActionListener() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
+                    public void actionPerformed(final ActionEvent e) {
                         _analysisJobBuilder.removeSourceColumn(column.getPhysicalColumn());
                     }
                 });
@@ -221,14 +223,14 @@ public final class ColumnListTable extends DCPanel {
 
         _columnTable.setRowHeight(DCTable.EDITABLE_TABLE_ROW_HEIGHT);
 
-        DCPanel tablePanel = _columnTable.toPanel();
+        final DCPanel tablePanel = _columnTable.toPanel();
         if (_addShadowBorder) {
             tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
         }
         add(tablePanel, BorderLayout.CENTER);
     }
 
-    protected JComponent createComponentForColumn(InputColumn<?> column) {
+    protected JComponent createComponentForColumn(final InputColumn<?> column) {
         if (column instanceof MutableInputColumn<?>) {
             final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
 
@@ -246,11 +248,11 @@ public final class ColumnListTable extends DCPanel {
         return _table;
     }
 
-    public void addColumn(InputColumn<?> column) {
+    public void addColumn(final InputColumn<?> column) {
         addColumn(column, true);
     }
 
-    public void addColumn(InputColumn<?> column, boolean updatePanel) {
+    public void addColumn(final InputColumn<?> column, final boolean updatePanel) {
         if (_columns.containsKey(column)) {
             return;
         }
@@ -260,15 +262,15 @@ public final class ColumnListTable extends DCPanel {
         }
     }
 
-    public void removeColumn(InputColumn<?> column) {
+    public void removeColumn(final InputColumn<?> column) {
         removeColumn(column, true);
     }
 
-    public void removeColumn(InputColumn<?> column, boolean updatePanel) {
+    public void removeColumn(final InputColumn<?> column, final boolean updatePanel) {
         if (!_columns.containsKey(column)) {
             return;
         }
-        JComponent panel = _columns.remove(column);
+        final JComponent panel = _columns.remove(column);
         if (panel instanceof Closeable) {
             FileHelper.safeClose(panel);
         }
@@ -277,16 +279,16 @@ public final class ColumnListTable extends DCPanel {
         }
     }
 
-    public void setColumns(List<? extends InputColumn<?>> columns) {
+    public void setColumns(final List<? extends InputColumn<?>> columns) {
         final List<InputColumn<?>> copyOfOldList = new ArrayList<InputColumn<?>>(_columns.keySet());
-        for (InputColumn<?> column : copyOfOldList) {
+        for (final InputColumn<?> column : copyOfOldList) {
             removeColumn(column, false);
         }
 
         assert _columns.isEmpty();
         _columns.clear();
 
-        for (InputColumn<?> column : columns) {
+        for (final InputColumn<?> column : columns) {
             addColumn(column, false);
         }
 
@@ -296,9 +298,9 @@ public final class ColumnListTable extends DCPanel {
     public int getColumnCount() {
         return _columns.size();
     }
-    
+
     public boolean isEditable() {
         return _editable;
     }
-    
+
 }

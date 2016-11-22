@@ -27,7 +27,7 @@ import org.datacleaner.metadata.ColumnMeaning;
 
 public class DefaultEnumMatcherTest extends TestCase {
 
-    public static enum TestEnum implements HasName, HasAliases {
+    public enum TestEnum implements HasName, HasAliases {
         FOO, BAR, BAZ;
 
         @Override
@@ -47,7 +47,8 @@ public class DefaultEnumMatcherTest extends TestCase {
         }
     }
 
-    private final DefaultEnumMatcher matcher = new DefaultEnumMatcher(EnumerationValue.providerFromEnumClass(TestEnum.class));
+    private final DefaultEnumMatcher matcher =
+            new DefaultEnumMatcher(EnumerationValue.providerFromEnumClass(TestEnum.class));
 
     public void testSuggestByAlias() throws Exception {
         assertEquals(TestEnum.FOO, matcher.suggestMatch("fu").asJavaEnum());

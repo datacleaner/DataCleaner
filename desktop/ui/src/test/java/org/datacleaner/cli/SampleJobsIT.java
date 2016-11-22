@@ -36,7 +36,7 @@ public class SampleJobsIT {
     public void testCopyEmployeesToCustomerTable() throws Exception {
         final Map<String, String[]> expectedResultSets = new HashMap<>();
         expectedResultSets.put("RESULT: orderdb - CUSTOMERS (19 columns)",
-                new String[] {"23 inserts executed"});
+                new String[] { "23 inserts executed" });
 
         testJob("Copy employees to customer table", expectedResultSets);
     }
@@ -48,12 +48,12 @@ public class SampleJobsIT {
         // pattern for the second match and therefore check it less strict then desirable. Revert it to a more
         // strict check once that issue has been fixed.
         expectedResultSets.put("RESULT: Birthdate Patterns (birthdate)",
-                new String[] {"Match count Sample",
+                new String[] { "Match count Sample",
                         "####-##-##        4661",
                         "##         427",
-                        "a/a                 27"});
+                        "a/a                 27" });
         expectedResultSets.put("RESULT: Number analyzer (Age in years)",
-                new String[] {"Age in years",
+                new String[] { "Age in years",
                         "Row count                  5115",
                         "Null count                   29",
                         "Highest value",
@@ -70,13 +70,13 @@ public class SampleJobsIT {
                         "25th percentile",
                         "75th percentile",
                         "Skewness",
-                        "Kurtosis"});
+                        "Kurtosis" });
 
         // TODO: Because of https://github.com/datacleaner/DataCleaner/issues/1589 we don't know the exact
         // number produced by the next resultset and therefore check it less strict then desirable. Fill in
         // the exact numbers when fixing that issue.
         expectedResultSets.put("RESULT: Month distribution (birthdate (as date))",
-                new String[] {"birthdate (as date)",
+                new String[] { "birthdate (as date)",
                         "January",
                         "February",
                         "March",
@@ -88,7 +88,7 @@ public class SampleJobsIT {
                         "September",
                         "October",
                         "November",
-                        "December"});
+                        "December" });
 
         testJob("Customer age analysis", expectedResultSets);
     }
@@ -96,10 +96,12 @@ public class SampleJobsIT {
     @Test
     public void testCustomerFilter() throws Exception {
         final Map<String, String[]> expectedResultSets = new HashMap<>();
-        expectedResultSets.put("RESULT: output-Customers-correct-data.csv (15 columns) (70.0 =< Age in years =< 80.0=LOWER)",
-                new String[] { "inserts executed" });
-        expectedResultSets.put("RESULT: output-Customers-age-null-or-invalid.csv (15 columns) (FilterOutcome[category=HIGHER] OR FilterOutcome[category=NULL])",
-                new String[] { "inserts executed" });
+        expectedResultSets
+                .put("RESULT: output-Customers-correct-data.csv (15 columns) (70.0 =< Age in years =< 80.0=LOWER)",
+                        new String[] { "inserts executed" });
+        expectedResultSets
+                .put("RESULT: output-Customers-age-null-or-invalid.csv (15 columns) (FilterOutcome[category=HIGHER] OR FilterOutcome[category=NULL])",
+                        new String[] { "inserts executed" });
 
         testJob("Customer filtering", expectedResultSets);
     }
@@ -108,14 +110,14 @@ public class SampleJobsIT {
     public void testCustomerProfiling() throws Exception {
         final Map<String, String[]> expectedResultSets = new HashMap<>();
         expectedResultSets.put("RESULT: Unique key check (id)",
-                new String[] {"Unique key check result:",
+                new String[] { "Unique key check result:",
                         "- Row count: 5115",
                         "- Null count: 0",
                         "- Unique count: 5100",
-                        "- Non-unique count: 15"});
+                        "- Non-unique count: 15" });
 
         expectedResultSets.put("RESULT: Currencies (income_currency)",
-                new String[] {"SingleValueDistributionResult:",
+                new String[] { "SingleValueDistributionResult:",
                         "- Distinct count: 6",
                         "- Null count: 0",
                         "- Total count: 5115",
@@ -125,24 +127,24 @@ public class SampleJobsIT {
                         "- Value count (USD): 1271",
                         "- Value count (DKR): 513",
                         "- Value count (<blank>): 0",
-                        "- Value count (n/a): 12"});
+                        "- Value count (n/a): 12" });
 
         expectedResultSets.put("RESULT: Gender matcher (gender)",
-               new String[] {"ValueMatchAnalyzerResult:",
-                       "- Null count: 0",
-                       "- Unexpected value count: 67",
-                       "- Value count (M): 2483",
-                       "- Value count (F): 2122",
-                       "- Value count (U): 443"});
+                new String[] { "ValueMatchAnalyzerResult:",
+                        "- Null count: 0",
+                        "- Unexpected value count: 67",
+                        "- Value count (M): 2483",
+                        "- Value count (F): 2122",
+                        "- Value count (U): 443" });
 
         expectedResultSets.put("RESULT: Address completeness (address_line,post_code,city,country)",
-                new String[] {"CompletenessAnalyzerResult:",
+                new String[] { "CompletenessAnalyzerResult:",
                         "- Row count: 5115",
                         "- Valid row count: 5053",
-                        "- Invalid row count: 62"});
+                        "- Invalid row count: 62" });
 
         expectedResultSets.put("RESULT: Character set distribution (given_name,family_name,company)",
-                new String[] {"given_name family_name     company",
+                new String[] { "given_name family_name     company",
                         "Arabic                     0           0           0",
                         "Armenian                   0           0           0",
                         "Bengali                    0           0           0",
@@ -166,13 +168,13 @@ public class SampleJobsIT {
                         "Tamil                      0           0           0",
                         "Telugu                     0           0           0",
                         "Thaana                     0           0           0",
-                        "Thai                       0           0           0"});
+                        "Thai                       0           0           0" });
 
         expectedResultSets.put("RESULT: Names completeness (given_name,family_name,company)",
-                new String[] {"CompletenessAnalyzerResult:",
+                new String[] { "CompletenessAnalyzerResult:",
                         "- Row count: 5115",
                         "- Valid row count: 5103",
-                        "- Invalid row count: 12"});
+                        "- Invalid row count: 12" });
 
         testJob("Customer profiling", expectedResultSets);
     }
@@ -181,8 +183,8 @@ public class SampleJobsIT {
     public void testDenormalizeOrderTotalsAndPresentAsStackedAreaChart() throws Exception {
         final Map<String, String[]> expectedResultSets = new HashMap<>();
         expectedResultSets.put("RESULT: Stacked area plot (13 columns)",
-                new String[] {"JavaStackedAreaAnalyzerResult:",
-                        "(no metrics)"});
+                new String[] { "JavaStackedAreaAnalyzerResult:",
+                        "(no metrics)" });
 
         testJob("Denormalize order totals and present as stacked area chart", expectedResultSets);
     }
@@ -191,18 +193,18 @@ public class SampleJobsIT {
     public void testExportOfOrdersDataMart() throws Exception {
         final Map<String, String[]> expectedResultSets = new HashMap<>();
         expectedResultSets.put("RESULT: orders_w_dimensions.csv (10 columns)",
-                new String[] {"2996 inserts executed"});
+                new String[] { "2996 inserts executed" });
 
         expectedResultSets.put("RESULT: Lookup customers",
-                new String[] {"CategorizationResult:",
+                new String[] { "CategorizationResult:",
                         "- Category count (Match):",
                         "- Category count (Miss): 0",
-                        "- Category count (Cached):"});
+                        "- Category count (Cached):" });
 
         // Because the Country standardizer renders its results in a random order, we can't validate the
         // actual number for each country.
         expectedResultSets.put("RESULT: Country standardizer",
-                new String[] {"CountryStandardizationResult:",
+                new String[] { "CountryStandardizationResult:",
                         "- Category count (",
                         "- Category count (",
                         "- Category count (",
@@ -223,13 +225,13 @@ public class SampleJobsIT {
                         "- Category count (",
                         "- Category count (",
                         "- Category count (",
-                        "- Category count ("});
+                        "- Category count (" });
 
         expectedResultSets.put("RESULT: Lookup products",
-                new String[] {"CategorizationResult:",
+                new String[] { "CategorizationResult:",
                         "- Category count (Match):",
                         "- Category count (Miss): 0",
-                        "- Category count (Cached):"});
+                        "- Category count (Cached):" });
 
         testJob("Export of Orders data mart", expectedResultSets);
     }
@@ -239,7 +241,7 @@ public class SampleJobsIT {
         final Map<String, String[]> expectedResultSets = new HashMap<>();
 
         expectedResultSets.put("RESULT: Unrecognized job titles (Trimmed job title)",
-                new String[] {"SingleValueDistributionResult:",
+                new String[] { "SingleValueDistributionResult:",
                         "- Distinct count: 172",
                         "- Null count: 0",
                         "- Total count: 1739",
@@ -410,28 +412,29 @@ public class SampleJobsIT {
                         "- Value count (Sales engineer): 2",
                         "- Value count (Senior business analyst): 2",
                         "- Value count (Solution director): 2",
-                        "- Value count (Tech arch): 2"});
+                        "- Value count (Tech arch): 2" });
 
-        expectedResultSets.put("RESULT: Job title distribution (Recognized job title) (Is job title recognized?=NOT_NULL)",
-                new String[] {"SingleValueDistributionResult:",
-                        "- Distinct count: 14",
-                        "- Null count: 0",
-                        "- Total count: 3376",
-                        "- Unique count: 0",
-                        "- Value count ((dirt)): 585",
-                        "- Value count (Consultant): 578",
-                        "- Value count (Executive): 548",
-                        "- Value count (Student/Intern): 467",
-                        "- Value count (Software developer): 439",
-                        "- Value count ((honorific)): 247",
-                        "- Value count (Manager): 181",
-                        "- Value count (Analyst): 147",
-                        "- Value count (Database administrator): 105",
-                        "- Value count (Academic): 45",
-                        "- Value count (Independent): 15",
-                        "- Value count (Data warehouse developer): 10",
-                        "- Value count (Sales): 5",
-                        "- Value count (Marketeer): 4"});
+        expectedResultSets
+                .put("RESULT: Job title distribution (Recognized job title) (Is job title recognized?=NOT_NULL)",
+                        new String[] { "SingleValueDistributionResult:",
+                                "- Distinct count: 14",
+                                "- Null count: 0",
+                                "- Total count: 3376",
+                                "- Unique count: 0",
+                                "- Value count ((dirt)): 585",
+                                "- Value count (Consultant): 578",
+                                "- Value count (Executive): 548",
+                                "- Value count (Student/Intern): 467",
+                                "- Value count (Software developer): 439",
+                                "- Value count ((honorific)): 247",
+                                "- Value count (Manager): 181",
+                                "- Value count (Analyst): 147",
+                                "- Value count (Database administrator): 105",
+                                "- Value count (Academic): 45",
+                                "- Value count (Independent): 15",
+                                "- Value count (Data warehouse developer): 10",
+                                "- Value count (Sales): 5",
+                                "- Value count (Marketeer): 4" });
 
         testJob("Job title analytics", expectedResultSets);
     }
@@ -440,20 +443,22 @@ public class SampleJobsIT {
     public void testOrderDBCustomersAndEmployeesUnion() throws Exception {
         final Map<String, String[]> expectedResultSets = new HashMap<>();
         expectedResultSets.put("RESULT: Unique person identifier check (CUSTOMERNUMBER)",
-                new String[] {"Unique key check result:",
+                new String[] { "Unique key check result:",
                         "- Row count: 236",
                         "- Null count: 0",
                         "- Unique count: 230",
-                        "- Non-unique count: 6"});
+                        "- Non-unique count: 6" });
 
-        expectedResultSets.put("RESULT: Completeness analyzer (CUSTOMERNUMBER,CONTACTFIRSTNAME,CONTACTLASTNAME,JOBTITLE)",
-                new String[] {"CompletenessAnalyzerResult:",
-                        "- Row count: 237",
-                        "- Valid row count: 236",
-                        "- Invalid row count: 1"});
+        expectedResultSets
+                .put("RESULT: Completeness analyzer (CUSTOMERNUMBER,CONTACTFIRSTNAME,CONTACTLASTNAME,JOBTITLE)",
+                        new String[] { "CompletenessAnalyzerResult:",
+                                "- Row count: 237",
+                                "- Valid row count: 236",
+                                "- Invalid row count: 1" });
 
-        expectedResultSets.put("RESULT: orderdb-people - incomplete-records (JOBTITLE,CUSTOMERNUMBER,CONTACTFIRSTNAME,CONTACTLASTNAME)",
-                new String[] {"1 inserts executed"});
+        expectedResultSets
+                .put("RESULT: orderdb-people - incomplete-records (JOBTITLE,CUSTOMERNUMBER,CONTACTFIRSTNAME,CONTACTLASTNAME)",
+                        new String[] { "1 inserts executed" });
 
         testJob("OrderDB Customers and Employees union", expectedResultSets);
     }
@@ -462,16 +467,17 @@ public class SampleJobsIT {
     public void testUSCustomerSTATECheck() throws Exception {
         final Map<String, String[]> expectedResultSets = new HashMap<>();
         expectedResultSets.put("RESULT: Country Completeness (COUNTRY)",
-                new String[] {"CompletenessAnalyzerResult:",
+                new String[] { "CompletenessAnalyzerResult:",
                         "- Row count: 214",
                         "- Valid row count: 203",
-                        "- Invalid row count: 11"});
+                        "- Invalid row count: 11" });
 
-        expectedResultSets.put("RESULT: US-customers-without-state.csv (CUSTOMERNUMBER,CUSTOMERNAME) (STATE is null?=NULL)",
-                new String[] {"11 inserts executed"});
+        expectedResultSets
+                .put("RESULT: US-customers-without-state.csv (CUSTOMERNUMBER,CUSTOMERNAME) (STATE is null?=NULL)",
+                        new String[] { "11 inserts executed" });
 
         expectedResultSets.put("RESULT: US state distribution (STATE) (STATE is null?=NOT_NULL)",
-                new String[] {"SingleValueDistributionResult:",
+                new String[] { "SingleValueDistributionResult:",
                         "- Distinct count: 10",
                         "- Null count: 0",
                         "- Total count: 41",
@@ -481,7 +487,7 @@ public class SampleJobsIT {
                         "- Value count (NY): 6",
                         "- Value count (CT): 4",
                         "- Value count (California): 3",
-                        "- Value count (PA): 3"});
+                        "- Value count (PA): 3" });
 
         testJob("US Customer STATE check", expectedResultSets);
     }

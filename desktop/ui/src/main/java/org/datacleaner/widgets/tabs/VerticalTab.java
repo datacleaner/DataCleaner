@@ -28,7 +28,7 @@ public class VerticalTab<C extends JComponent> implements Tab<C> {
     private final JButton _button;
     private final C _contents;
 
-    public VerticalTab(JButton button, C component) {
+    public VerticalTab(final JButton button, final C component) {
         _button = button;
         _contents = component;
     }
@@ -39,7 +39,7 @@ public class VerticalTab<C extends JComponent> implements Tab<C> {
     }
 
     @Override
-    public void setIcon(Icon icon) {
+    public void setIcon(final Icon icon) {
         _button.setIcon(icon);
     }
 
@@ -49,7 +49,7 @@ public class VerticalTab<C extends JComponent> implements Tab<C> {
     }
 
     @Override
-    public void setTooltip(String tooltip) {
+    public void setTooltip(final String tooltip) {
         _button.setToolTipText(tooltip);
     }
 
@@ -59,7 +59,7 @@ public class VerticalTab<C extends JComponent> implements Tab<C> {
     }
 
     @Override
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         _button.setText(title);
     }
 

@@ -28,7 +28,6 @@ import java.util.TimeZone;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 
@@ -44,8 +43,8 @@ public class ConvertToDateTransformerTest extends TestCase {
         realTimeZone = TimeZone.getDefault();
         TimeZone.setDefault(TimeZone.getTimeZone(TEST_TIMEZONE));
         dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-    };
-    
+    }
+
     @Override
     protected void tearDown() throws Exception {
         TimeZone.setDefault(realTimeZone);

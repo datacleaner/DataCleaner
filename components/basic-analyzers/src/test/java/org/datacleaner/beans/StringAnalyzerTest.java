@@ -62,7 +62,7 @@ public class StringAnalyzerTest extends TestCase {
         String[] resultLines = renderedResult.split("\n");
         assertEquals(22, resultLines.length);
 
-        int i=0;
+        int i = 0;
         assertEquals("                                      greetings  greeters ", resultLines[i++]);
         assertEquals("Row count                                     4         4 ", resultLines[i++]);
         assertEquals("Null count                                    0         0 ", resultLines[i++]);
@@ -102,7 +102,7 @@ public class StringAnalyzerTest extends TestCase {
         String[] resultLines = renderedResult.split("\n");
         assertEquals(22, resultLines.length);
 
-        int i=0;
+        int i = 0;
         assertEquals("                                      greetings  greeters ", resultLines[i++]);
         assertEquals("Row count                                     9         9 ", resultLines[i++]);
         assertEquals("Null count                                    0         3 ", resultLines[i++]);
@@ -137,7 +137,7 @@ public class StringAnalyzerTest extends TestCase {
         assertEquals(5, tableModel.getRowCount());
         assertEquals("greetings", tableModel.getColumnName(0));
         assertEquals("greeters", tableModel.getColumnName(1));
-        
+
         assertEquals(" HËJSÄN", tableModel.getValueAt(0, 0).toString());
         assertEquals("eobjects.org", tableModel.getValueAt(0, 1).toString());
         for (int j = 1; j < 4; j++) {
@@ -169,7 +169,7 @@ public class StringAnalyzerTest extends TestCase {
         String[] resultLines = renderedResult.split("\n");
         assertEquals(22, resultLines.length);
 
-        int i=0;
+        int i = 0;
         assertEquals("                                      greetings  greeters ", resultLines[i++]);
         assertEquals("Row count                                     0         0 ", resultLines[i++]);
         assertEquals("Null count                                    0         0 ", resultLines[i++]);

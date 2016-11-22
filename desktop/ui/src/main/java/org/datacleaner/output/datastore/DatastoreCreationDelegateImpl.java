@@ -34,12 +34,12 @@ public class DatastoreCreationDelegateImpl implements DatastoreCreationDelegate 
 
     private final DatastoreCatalog _datastoreCatalog;
 
-    public DatastoreCreationDelegateImpl(DatastoreCatalog datastoreCatalog) {
+    public DatastoreCreationDelegateImpl(final DatastoreCatalog datastoreCatalog) {
         _datastoreCatalog = datastoreCatalog;
     }
 
     @Override
-    public void createDatastore(Datastore datastore) {
+    public void createDatastore(final Datastore datastore) {
         final String name = datastore.getName();
         synchronized (_datastoreCatalog) {
             if (_datastoreCatalog.containsDatastore(name)) {

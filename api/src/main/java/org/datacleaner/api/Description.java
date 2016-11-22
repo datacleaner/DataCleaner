@@ -38,7 +38,7 @@ public @interface Description {
 
     /**
      * Determines the description of the annotated element
-     * 
+     *
      * @return a String representing the description of the annotated element
      */
     String value();

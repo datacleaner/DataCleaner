@@ -65,124 +65,124 @@ import com.google.inject.Injector;
 /**
  * Renderer for {@link PatternFinderAnalyzer} results. Displays crosstabs with
  * optional charts displaying the distribution of the patterns.
- * 
+ *
  * @author Kasper Sørensen
- * 
+ *
  */
 @RendererBean(SwingRenderingFormat.class)
 public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFinderResult, JComponent> {
 
-	private static final Logger logger = LoggerFactory.getLogger(PatternFinderResultSwingRenderer.class);
+    private static final Logger logger = LoggerFactory.getLogger(PatternFinderResultSwingRenderer.class);
 
-	private static final int MAX_EXPANDED_GROUPS = 30;
+    private static final int MAX_EXPANDED_GROUPS = 30;
 
-	@Inject
-	WindowContext windowContext;
+    @Inject
+    WindowContext windowContext;
 
-	@Inject
-	RendererFactory rendererFactory;
+    @Inject
+    RendererFactory rendererFactory;
 
-	@Inject
-	ReferenceDataCatalog referenceDataCatalog;
+    @Inject
+    ReferenceDataCatalog referenceDataCatalog;
 
-	private PatternFinderResultSwingRendererCrosstabDelegate delegateRenderer;
+    private PatternFinderResultSwingRendererCrosstabDelegate delegateRenderer;
 
-	@Override
-	public JComponent render(PatternFinderResult result) {
-		delegateRenderer = new PatternFinderResultSwingRendererCrosstabDelegate(windowContext, rendererFactory,
-				(MutableReferenceDataCatalog) referenceDataCatalog);
-		if (result.isGroupingEnabled()) {
-			return renderGroupedResult(result);
-		} else {
-			Crosstab<?> singleCrosstab = result.getSingleCrosstab();
-			return renderCrosstab(singleCrosstab);
-		}
-	}
+    @Override
+    public JComponent render(final PatternFinderResult result) {
+        delegateRenderer = new PatternFinderResultSwingRendererCrosstabDelegate(windowContext, rendererFactory,
+                (MutableReferenceDataCatalog) referenceDataCatalog);
+        if (result.isGroupingEnabled()) {
+            return renderGroupedResult(result);
+        } else {
+            final Crosstab<?> singleCrosstab = result.getSingleCrosstab();
+            return renderCrosstab(singleCrosstab);
+        }
+    }
 
-	public JComponent renderGroupedResult(PatternFinderResult result) {
-		final DCPanel panel = new DCPanel();
-		panel.setLayout(new VerticalLayout(0));
-		final Map<String, Crosstab<?>> crosstabs = result.getGroupedCrosstabs();
-		boolean collapsed = false;
-		if (crosstabs.size() > MAX_EXPANDED_GROUPS) {
-			collapsed = true;
-		}
+    public JComponent renderGroupedResult(final PatternFinderResult result) {
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new VerticalLayout(0));
+        final Map<String, Crosstab<?>> crosstabs = result.getGroupedCrosstabs();
+        boolean collapsed = false;
+        if (crosstabs.size() > MAX_EXPANDED_GROUPS) {
+            collapsed = true;
+        }
 
-		final Set<Entry<String, Crosstab<?>>> entries = crosstabs.entrySet();
-		for (Entry<String, Crosstab<?>> entry : entries) {
-			final String groupName = entry.getKey();
-			if (panel.getComponentCount() != 0) {
-				panel.add(Box.createVerticalStrut(10));
-			}
-			final Crosstab<?> crosstab = entry.getValue();
+        final Set<Entry<String, Crosstab<?>>> entries = crosstabs.entrySet();
+        for (final Entry<String, Crosstab<?>> entry : entries) {
+            final String groupName = entry.getKey();
+            if (panel.getComponentCount() != 0) {
+                panel.add(Box.createVerticalStrut(10));
+            }
+            final Crosstab<?> crosstab = entry.getValue();
 
-			final Ref<JComponent> componentRef = new LazyRef<JComponent>() {
-				@Override
-				protected JComponent fetch() {
-					logger.info("Rendering group result '{}'", groupName);
-					final JComponent renderedResult = delegateRenderer.render(new CrosstabResult(crosstab));
-					final DCPanel decoratedPanel = createDecoration(renderedResult);
-					return decoratedPanel;
-				}
-			};
+            final Ref<JComponent> componentRef = new LazyRef<JComponent>() {
+                @Override
+                protected JComponent fetch() {
+                    logger.info("Rendering group result '{}'", groupName);
+                    final JComponent renderedResult = delegateRenderer.render(new CrosstabResult(crosstab));
+                    final DCPanel decoratedPanel = createDecoration(renderedResult);
+                    return decoratedPanel;
+                }
+            };
 
-			final int patternCount = crosstab.getDimension(
-					crosstab.getDimensionIndex(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN)).getCategoryCount();
-			final String expandedLabel = (patternCount == 1 ? "1 pattern" : patternCount + " patterns") + " in group '"
-					+ LabelUtils.getLabel(entry.getKey() + "'");
-			final String collapsedLabel = expandedLabel;
-			final DCCollapsiblePanel collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, expandedLabel,
-					collapsed, componentRef);
-			panel.add(collapsiblePanel.toPanel());
-		}
-		return panel;
-	}
+            final int patternCount = crosstab.getDimension(
+                    crosstab.getDimensionIndex(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN)).getCategoryCount();
+            final String expandedLabel = (patternCount == 1 ? "1 pattern" : patternCount + " patterns") + " in group '"
+                    + LabelUtils.getLabel(entry.getKey() + "'");
+            final String collapsedLabel = expandedLabel;
+            final DCCollapsiblePanel collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, expandedLabel,
+                    collapsed, componentRef);
+            panel.add(collapsiblePanel.toPanel());
+        }
+        return panel;
+    }
 
-	private DCPanel createDecoration(JComponent renderedResult) {
-		renderedResult.setBorder(WidgetUtils.BORDER_SHADOW);
-		final DCPanel wrappingPanel = new DCPanel();
-		wrappingPanel.setLayout(new BorderLayout());
-		wrappingPanel.add(renderedResult, BorderLayout.CENTER);
-		wrappingPanel.setBorder(new EmptyBorder(4, 20, 4, 4));
-		return wrappingPanel;
-	}
+    private DCPanel createDecoration(final JComponent renderedResult) {
+        renderedResult.setBorder(WidgetUtils.BORDER_SHADOW);
+        final DCPanel wrappingPanel = new DCPanel();
+        wrappingPanel.setLayout(new BorderLayout());
+        wrappingPanel.add(renderedResult, BorderLayout.CENTER);
+        wrappingPanel.setBorder(new EmptyBorder(4, 20, 4, 4));
+        return wrappingPanel;
+    }
 
-	public JComponent renderCrosstab(Crosstab<?> crosstab) {
-		CrosstabResult crosstabResult = new CrosstabResult(crosstab);
-		return delegateRenderer.render(crosstabResult);
-	}
+    public JComponent renderCrosstab(final Crosstab<?> crosstab) {
+        final CrosstabResult crosstabResult = new CrosstabResult(crosstab);
+        return delegateRenderer.render(crosstabResult);
+    }
 
-	/**
-	 * A main method that will display the results of a few example pattern
-	 * finder analyzers. Useful for tweaking the charts and UI.
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		LookAndFeelManager.get().init();
+    /**
+     * A main method that will display the results of a few example pattern
+     * finder analyzers. Useful for tweaking the charts and UI.
+     *
+     * @param args
+     */
+    public static void main(final String[] args) {
+        LookAndFeelManager.get().init();
 
-		Injector injector = Guice.createInjector(new DCModuleImpl());
+        final Injector injector = Guice.createInjector(new DCModuleImpl());
 
-		// run a small job
-		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
-		Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
-		DatastoreConnection con = ds.openConnection();
-		Table table = con.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
-		ajb.setDatastore(ds);
-		ajb.addSourceColumns(table.getLiteralColumns());
-		ajb.addAnalyzer(PatternFinderAnalyzer.class).addInputColumns(ajb.getSourceColumns())
-				.setName("Ungrouped pattern finders");
+        // run a small job
+        final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
+        final Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
+        final DatastoreConnection con = ds.openConnection();
+        final Table table = con.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
+        ajb.setDatastore(ds);
+        ajb.addSourceColumns(table.getLiteralColumns());
+        ajb.addAnalyzer(PatternFinderAnalyzer.class).addInputColumns(ajb.getSourceColumns())
+                .setName("Ungrouped pattern finders");
 
-		final AnalyzerComponentBuilder<PatternFinderAnalyzer> groupedPatternFinder = ajb.addAnalyzer(
-				PatternFinderAnalyzer.class);
-		ajb.addSourceColumns("PUBLIC.OFFICES.CITY", "PUBLIC.OFFICES.TERRITORY");
-		groupedPatternFinder.setName("Grouped PF");
-		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.CITY"));
-		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.TERRITORY"), groupedPatternFinder
-				.getDescriptor().getConfiguredProperty("Group column"));
+        final AnalyzerComponentBuilder<PatternFinderAnalyzer> groupedPatternFinder = ajb.addAnalyzer(
+                PatternFinderAnalyzer.class);
+        ajb.addSourceColumns("PUBLIC.OFFICES.CITY", "PUBLIC.OFFICES.TERRITORY");
+        groupedPatternFinder.setName("Grouped PF");
+        groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.CITY"));
+        groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.TERRITORY"), groupedPatternFinder
+                .getDescriptor().getConfiguredProperty("Group column"));
 
-		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
-		resultWindow.setVisible(true);
-		resultWindow.startAnalysis();
-	}
+        final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
+        resultWindow.setVisible(true);
+        resultWindow.startAnalysis();
+    }
 }

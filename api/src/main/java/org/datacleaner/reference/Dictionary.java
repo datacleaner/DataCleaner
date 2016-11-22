@@ -27,21 +27,21 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 
 /**
  * A dictionary represents a set of values grouped together with a label.
- * 
+ *
  * Examples of meaningful dictionaries:
  * <ul>
  * <li>Lastnames</li>
  * <li>Female given names</li>
  * <li>Product codes</li>
  * </ul>
- * 
+ *
  * Often times a dictionary will implement a caching mechanism to prevent having
  * to hold all values of the dictionary in memory.
- * 
+ *
  * @see Initialize
  * @see Close
- * 
- * 
+ *
+ *
  */
 public interface Dictionary extends ReferenceData, Serializable {
 
@@ -49,20 +49,20 @@ public interface Dictionary extends ReferenceData, Serializable {
      * Opens a connection to the {@link Dictionary}. Keep the connection open
      * while using the dictionary in a session, job or so. Close it when you
      * don't expect more interaction.
-     * 
+     *
      * @param configuration
      * @return
      */
-    public DictionaryConnection openConnection(DataCleanerConfiguration configuration);
-    
+    DictionaryConnection openConnection(DataCleanerConfiguration configuration);
+
     /**
      * Determines if the {@link Dictionary} is defined as "case sensitive"
      * meaning that the dictionary terms can be matched to regardless of text
      * casing.
-     * 
+     *
      * @return
      */
-    public default boolean isCaseSensitive() {
+    default boolean isCaseSensitive() {
         return true;
     }
 }

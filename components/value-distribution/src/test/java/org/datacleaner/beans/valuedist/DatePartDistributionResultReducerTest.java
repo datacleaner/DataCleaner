@@ -22,15 +22,15 @@ package org.datacleaner.beans.valuedist;
 import java.util.Arrays;
 import java.util.Date;
 
+import junit.framework.TestCase;
+
+import org.apache.metamodel.util.DateUtils;
+import org.apache.metamodel.util.Month;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
-import org.apache.metamodel.util.DateUtils;
-import org.apache.metamodel.util.Month;
-
-import junit.framework.TestCase;
 
 public class DatePartDistributionResultReducerTest extends TestCase {
 

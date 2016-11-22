@@ -25,17 +25,17 @@ import java.util.Collection;
  * Represents a parameterizable metric definition. With this instance you allow
  * metrics to provide (potentially dynamic) metadata about the metric to hint
  * how it should be properly parameterized.
- * 
+ *
  * Use the {@link #getValue(String)} with an actual parameter to retrieve the
  * metric value.
- * 
+ *
  * @see Metric
- * 
+ *
  * @since AnalyzerBeans 0.16
  */
 public interface ParameterizableMetric {
 
-    public Collection<String> getParameterSuggestions();
+    Collection<String> getParameterSuggestions();
 
-    public Number getValue(String parameter);
+    Number getValue(String parameter);
 }

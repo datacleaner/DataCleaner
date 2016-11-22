@@ -44,9 +44,9 @@ public class CsvDatastoreWizard implements DatastoreWizard {
     public DatastoreWizardSession start(final DatastoreWizardContext context) {
         return new CsvDatastoreWizardSession(context);
     }
-    
+
     @Override
-    public boolean isApplicableTo(DatastoreWizardContext context) {
+    public boolean isApplicableTo(final DatastoreWizardContext context) {
         return true;
     }
 

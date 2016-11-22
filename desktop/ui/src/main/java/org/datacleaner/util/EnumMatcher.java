@@ -21,11 +21,11 @@ package org.datacleaner.util;
 
 /**
  * Represents a component capable of matching Strings to enum values
- * 
+ *
  * @param <E>
  */
 public interface EnumMatcher<E> {
 
-    public E suggestMatch(String string);
+    E suggestMatch(String string);
 
 }

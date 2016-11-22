@@ -36,8 +36,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * AnalysisListener that will register errors
- * 
- * 
+ *
+ *
  */
 public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor implements ErrorAware {
 
@@ -46,7 +46,7 @@ public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor im
     private final List<Throwable> _errors = new LinkedList<Throwable>();
     private final AtomicBoolean _cancelled = new AtomicBoolean(false);
 
-    protected void handleError(AnalysisJob job, Throwable throwable) {
+    protected void handleError(final AnalysisJob job, final Throwable throwable) {
         final boolean cancellation = throwable instanceof AnalysisJobCancellation;
         if (cancellation) {
             _cancelled.set(true);
@@ -67,7 +67,7 @@ public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor im
         Throwable t = throwable;
         while (t != null) {
             if (t instanceof SQLException) {
-                SQLException nextException = ((SQLException) t).getNextException();
+                final SQLException nextException = ((SQLException) t).getNextException();
                 if (nextException != null) {
                     logger.warn("SQLException.getNextException() stack trace:", nextException);
                 }
@@ -94,25 +94,25 @@ public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor im
     }
 
     @Override
-    public void errorInFilter(AnalysisJob job, FilterJob filterJob, InputRow row, Throwable throwable) {
+    public void errorInFilter(final AnalysisJob job, final FilterJob filterJob, final InputRow row, final Throwable throwable) {
         logger.warn("errorInFilter({},{},{},{})", new Object[] { job, filterJob, row, throwable });
         handleError(job, throwable);
     }
 
     @Override
-    public void errorInTransformer(AnalysisJob job, TransformerJob transformerJob, InputRow row, Throwable throwable) {
+    public void errorInTransformer(final AnalysisJob job, final TransformerJob transformerJob, final InputRow row, final Throwable throwable) {
         logger.warn("errorInTransformer({},{},{},{})", new Object[] { job, transformerJob, row, throwable });
         handleError(job, throwable);
     }
 
     @Override
-    public void errorInAnalyzer(AnalysisJob job, AnalyzerJob analyzerJob, InputRow row, Throwable throwable) {
+    public void errorInAnalyzer(final AnalysisJob job, final AnalyzerJob analyzerJob, final InputRow row, final Throwable throwable) {
         logger.warn("errorInAnalyzer({},{},{},{})", new Object[] { job, analyzerJob, row, throwable });
         handleError(job, throwable);
     }
-    
+
     @Override
-    public void errorUnknown(AnalysisJob job, Throwable throwable) {
+    public void errorUnknown(final AnalysisJob job, final Throwable throwable) {
         logger.warn("errorUnknown({},{})", new Object[] { job, throwable });
         handleError(job, throwable);
     }

@@ -40,7 +40,7 @@ public class FailedAnalysisResultFuture implements AnalysisResultFuture {
 
     private final Exception _error;
 
-    public FailedAnalysisResultFuture(Exception error) {
+    public FailedAnalysisResultFuture(final Exception error) {
         _error = error;
     }
 
@@ -73,7 +73,7 @@ public class FailedAnalysisResultFuture implements AnalysisResultFuture {
     }
 
     @Override
-    public void await(long timeout, TimeUnit timeUnit) {
+    public void await(final long timeout, final TimeUnit timeUnit) {
     }
 
     @Override
@@ -92,12 +92,12 @@ public class FailedAnalysisResultFuture implements AnalysisResultFuture {
     }
 
     @Override
-    public AnalyzerResult getResult(ComponentJob componentJob) throws AnalysisJobFailedException {
+    public AnalyzerResult getResult(final ComponentJob componentJob) throws AnalysisJobFailedException {
         return null;
     }
-    
+
     @Override
-    public <R extends AnalyzerResult> List<? extends R> getResults(Class<R> resultClass) {
+    public <R extends AnalyzerResult> List<? extends R> getResults(final Class<R> resultClass) {
         return Collections.emptyList();
     }
 

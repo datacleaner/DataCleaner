@@ -33,7 +33,7 @@ public class DatastoreHelper {
     public static String getDatastoreOptions(final TenantContext tenantContext) {
         final List<String> names = new ArrayList<>();
 
-        for (DatastoreIdentifier datastoreId : tenantContext.getDatastores()) {
+        for (final DatastoreIdentifier datastoreId : tenantContext.getDatastores()) {
             names.add(datastoreId.getName());
         }
 
@@ -43,7 +43,7 @@ public class DatastoreHelper {
     public static String getSchemaOptions(final TenantContext tenantContext, final String datastoreName) {
         final List<String> names = new ArrayList<>();
 
-        for (Schema schema : getDatastore(tenantContext, datastoreName).openConnection().getSchemaNavigator()
+        for (final Schema schema : getDatastore(tenantContext, datastoreName).openConnection().getSchemaNavigator()
                 .getSchemas()) {
             names.add(schema.getName());
         }
@@ -51,24 +51,24 @@ public class DatastoreHelper {
         return getOptionsHtml(names);
     }
 
-    public static String getTableOptions(TenantContext tenantContext, String datastoreName, String schemaName) {
+    public static String getTableOptions(final TenantContext tenantContext, final String datastoreName, final String schemaName) {
         final List<String> names = new ArrayList<>();
-        
-        for (Table table : getSchema(tenantContext, datastoreName, schemaName).getTables()) {
+
+        for (final Table table : getSchema(tenantContext, datastoreName, schemaName).getTables()) {
             names.add(table.getName());
         }
-        
+
         return getOptionsHtml(names);
     }
 
-    public static String getColumnOptions(TenantContext tenantContext, String datastoreName, String schemaName,
-            String tableName) {
+    public static String getColumnOptions(final TenantContext tenantContext, final String datastoreName, final String schemaName,
+            final String tableName) {
         final List<String> names = new ArrayList<>();
-        
-        for (Column column : getTable(tenantContext, datastoreName, schemaName, tableName).getColumns()) {
+
+        for (final Column column : getTable(tenantContext, datastoreName, schemaName, tableName).getColumns()) {
             names.add(column.getName());
         }
-        
+
         return getOptionsHtml(names);
     }
 
@@ -79,7 +79,7 @@ public class DatastoreHelper {
 
         final StringBuilder builder = new StringBuilder();
 
-        for (String name : allNames) {
+        for (final String name : allNames) {
             final String option = String.format("<option value=\"%s\">%s</option>", name, name);
             builder.append(option);
         }

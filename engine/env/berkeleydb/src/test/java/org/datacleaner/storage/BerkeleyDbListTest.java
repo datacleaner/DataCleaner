@@ -26,59 +26,59 @@ import junit.framework.TestCase;
 
 public class BerkeleyDbListTest extends TestCase {
 
-	private BerkeleyDbStorageProvider sp = new BerkeleyDbStorageProvider(new File("target"));
+    private BerkeleyDbStorageProvider sp = new BerkeleyDbStorageProvider(new File("target"));
 
-	public void testAdd() throws Exception {
-		BerkeleyDbList<String> list = (BerkeleyDbList<String>) sp.createList(String.class);
+    public void testAdd() throws Exception {
+        BerkeleyDbList<String> list = (BerkeleyDbList<String>) sp.createList(String.class);
 
-		list.add("foo1");
-		list.add("foo2");
-		list.add("foo3");
-		list.add("foo4");
+        list.add("foo1");
+        list.add("foo2");
+        list.add("foo3");
+        list.add("foo4");
 
-		assertEquals("[foo1, foo2, foo3, foo4]", list.toString());
+        assertEquals("[foo1, foo2, foo3, foo4]", list.toString());
 
-		list.add(2, "foo5");
+        list.add(2, "foo5");
 
-		assertEquals("[foo1, foo2, foo5, foo3, foo4]", list.toString());
+        assertEquals("[foo1, foo2, foo5, foo3, foo4]", list.toString());
 
-		list.add(null);
+        list.add(null);
 
-		assertEquals("[foo1, foo2, foo5, foo3, foo4, null]", list.toString());
-		
-	}
+        assertEquals("[foo1, foo2, foo5, foo3, foo4, null]", list.toString());
 
-	public void testSet() throws Exception {
-		List<String> list = sp.createList(String.class);
+    }
 
-		list.add("foo1");
-		list.add("foo2");
-		list.add("foo3");
-		list.add("foo4");
+    public void testSet() throws Exception {
+        List<String> list = sp.createList(String.class);
 
-		list.set(1, "foobar");
+        list.add("foo1");
+        list.add("foo2");
+        list.add("foo3");
+        list.add("foo4");
 
-		assertEquals("[foo1, foobar, foo3, foo4]", list.toString());
-	}
+        list.set(1, "foobar");
 
-	public void testRemove() throws Exception {
-		List<String> list = sp.createList(String.class);
+        assertEquals("[foo1, foobar, foo3, foo4]", list.toString());
+    }
 
-		list.add("foo1");
-		list.add("foo2");
-		list.add("foo3");
-		list.add("foo4");
+    public void testRemove() throws Exception {
+        List<String> list = sp.createList(String.class);
 
-		list.remove("foo2");
+        list.add("foo1");
+        list.add("foo2");
+        list.add("foo3");
+        list.add("foo4");
 
-		assertEquals("[foo1, foo3, foo4]", list.toString());
+        list.remove("foo2");
 
-		list.remove(0);
+        assertEquals("[foo1, foo3, foo4]", list.toString());
 
-		assertEquals("[foo3, foo4]", list.toString());
+        list.remove(0);
 
-		list.remove(1);
+        assertEquals("[foo3, foo4]", list.toString());
 
-		assertEquals("[foo3]", list.toString());
-	}
+        list.remove(1);
+
+        assertEquals("[foo3]", list.toString());
+    }
 }

@@ -34,8 +34,8 @@ public class PublishJobToMonitorActionListener extends PublishFileToMonitorActio
 
     private final DelegateFileObject _jobFile;
 
-    public PublishJobToMonitorActionListener(DelegateFileObject jobFile, WindowContext windowContext,
-            UserPreferences userPreferences) {
+    public PublishJobToMonitorActionListener(final DelegateFileObject jobFile, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
         super(windowContext, userPreferences);
         _jobFile = jobFile;
     }
@@ -46,7 +46,7 @@ public class PublishJobToMonitorActionListener extends PublishFileToMonitorActio
     }
 
     @Override
-    protected String getUploadUrl(MonitorConnection monitorConnection) {
+    protected String getUploadUrl(final MonitorConnection monitorConnection) {
         return _jobFile.getName().getURI();
     }
 
@@ -54,7 +54,7 @@ public class PublishJobToMonitorActionListener extends PublishFileToMonitorActio
     protected InputStream getTransferStream() {
         try {
             return _jobFile.getContent().getInputStream();
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -63,7 +63,7 @@ public class PublishJobToMonitorActionListener extends PublishFileToMonitorActio
     protected long getExpectedSize() {
         try {
             return _jobFile.getContent().getSize();
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new IllegalStateException(e);
         }
     }

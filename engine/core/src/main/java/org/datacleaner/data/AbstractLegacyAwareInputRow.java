@@ -32,7 +32,7 @@ import org.datacleaner.api.InputRow;
  * Abstract super-class for {@link InputRow} implementations that are aware of
  * (and impacted by) the change of {@link InputRow#getId()} which was changed
  * from type int to long.
- * 
+ *
  * To enable deserialization of old objects where the value is stored as an int,
  * but should be deserialized into a long, this class provides a mechanism for
  * converting the values.
@@ -50,15 +50,15 @@ abstract class AbstractLegacyAwareInputRow extends AbstractInputRow {
     /**
      * Subclasses should call this method within their
      * readObject(ObjectInputStream) invocations
-     * 
+     *
      * @param stream
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    protected void doReadObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    protected void doReadObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         final GetField readFields = stream.readFields();
 
-        for (String fieldName : getFieldNamesInAdditionToId()) {
+        for (final String fieldName : getFieldNamesInAdditionToId()) {
             final Object value = readFields.get(fieldName, null);
             setField(fieldName, value);
         }
@@ -76,12 +76,12 @@ abstract class AbstractLegacyAwareInputRow extends AbstractInputRow {
         setField(getFieldNameForNewId(), rowNumber);
     }
 
-    private void setField(String fieldName, Object value) {
+    private void setField(final String fieldName, final Object value) {
         try {
             final Field field = getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
             field.set(this, value);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Failed to set field '" + fieldName + "' to value: " + value, e);
         }
     }

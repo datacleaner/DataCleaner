@@ -23,14 +23,14 @@ import org.datacleaner.api.InputColumn;
 
 /**
  * Interface for job objects that consume input columns in a job.
- * 
- * 
+ *
+ *
  */
 public interface InputColumnSinkJob {
 
-	/**
-	 * @return the originating (if any) columns that generated the new columns
-	 */
-	public InputColumn<?>[] getInput();
+    /**
+     * @return the originating (if any) columns that generated the new columns
+     */
+    InputColumn<?>[] getInput();
 
 }

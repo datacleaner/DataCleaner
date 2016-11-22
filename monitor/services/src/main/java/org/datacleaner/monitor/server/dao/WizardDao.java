@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.model.WizardIdentifier;
@@ -30,7 +31,6 @@ import org.datacleaner.monitor.shared.model.WizardPage;
 import org.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 import org.datacleaner.monitor.wizard.Wizard;
 import org.datacleaner.monitor.wizard.WizardSession;
-import org.apache.metamodel.util.Func;
 
 /**
  * A kind of DAO (Data Access Object) and utility class for {@link Wizard}
@@ -40,53 +40,53 @@ public interface WizardDao {
 
     /**
      * Gets all wizards of a specific type
-     * 
+     *
      * @param wizardClass
      * @return
      */
-    public <W extends Wizard<?, ?>> Collection<W> getWizardsOfType(Class<W> wizardClass);
+    <W extends Wizard<?, ?>> Collection<W> getWizardsOfType(Class<W> wizardClass);
 
     /**
      * Starts a wizard session
-     * 
+     *
      * @param wizardIdentifier
      * @param session
      * @return
      */
-    public WizardPage startSession(WizardIdentifier wizardIdentifier, WizardSession session);
+    WizardPage startSession(WizardIdentifier wizardIdentifier, WizardSession session);
 
     /**
      * Closes a wizard session
-     * 
+     *
      * @param sessionId
      */
-    public void closeSession(String sessionId);
+    void closeSession(String sessionId);
 
     /**
      * Navigates to the next page in a wizard session.
-     * 
+     *
      * @param tenant
      * @param sessionIdentifier
      * @param formParameters
      * @return
      * @throws DCUserInputException
      */
-    public WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
+    WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             Map<String, List<String>> formParameters) throws DCUserInputException;
-    
+
     /**
      * Navigates to the previous page in a wizard session.
-     * 
+     *
      * @param tenant
      * @param sessionIdentifier
      * @return
      */
-    public WizardPage previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier);
+    WizardPage previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier);
 
     /**
      * Creates a function representing the HTTP session of the user.
-     * 
+     *
      * @return
      */
-    public Func<String, Object> createSessionFunc();
+    Func<String, Object> createSessionFunc();
 }

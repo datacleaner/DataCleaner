@@ -37,8 +37,8 @@ public @interface Optimizeable {
     /**
      * Determines if the component can be removed from a job once it's
      * optimization has been applied.
-     * 
+     *
      * @return
      */
-    public boolean removeableUponOptimization() default true;
+    boolean removeableUponOptimization() default true;
 }

@@ -36,27 +36,27 @@ import org.datacleaner.util.CharIterator;
 @Deprecated
 public class SingleWordFilter implements Filter<ValidationCategory> {
 
-	@Configured
-	InputColumn<String> input;
+    @Configured
+    InputColumn<String> input;
 
-	@Override
-	public ValidationCategory categorize(InputRow inputRow) {
-		String value = inputRow.getValue(input);
-		return filter(value);
-	}
+    @Override
+    public ValidationCategory categorize(final InputRow inputRow) {
+        final String value = inputRow.getValue(input);
+        return filter(value);
+    }
 
-	protected ValidationCategory filter(String value) {
-		if (value == null || value.length() == 0) {
-			return ValidationCategory.INVALID;
-		}
-		CharIterator it = new CharIterator(value);
-		while (it.hasNext()) {
-			it.next();
-			if (!it.isLetter()) {
-				return ValidationCategory.INVALID;
-			}
-		}
-		return ValidationCategory.VALID;
-	}
+    protected ValidationCategory filter(final String value) {
+        if (value == null || value.length() == 0) {
+            return ValidationCategory.INVALID;
+        }
+        final CharIterator it = new CharIterator(value);
+        while (it.hasNext()) {
+            it.next();
+            if (!it.isLetter()) {
+                return ValidationCategory.INVALID;
+            }
+        }
+        return ValidationCategory.VALID;
+    }
 
 }

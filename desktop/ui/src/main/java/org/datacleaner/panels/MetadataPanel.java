@@ -58,7 +58,7 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
     private final JXTextField _jobDescriptionTextField;
     private final JXTextField _authorTextField;
 
-    public MetadataPanel(AnalysisJobBuilder analysisJobBuilder) {
+    public MetadataPanel(final AnalysisJobBuilder analysisJobBuilder) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _analysisJobBuilder = analysisJobBuilder;
 
@@ -74,24 +74,24 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
         _jobNameTextField = WidgetFactory.createTextField("Job name", 30);
         _jobNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
-                String text = _jobNameTextField.getText();
+            protected void onChange(final DocumentEvent event) {
+                final String text = _jobNameTextField.getText();
                 _analysisJobBuilder.getAnalysisJobMetadata().setJobName(text);
             }
         });
         _jobDescriptionTextField = WidgetFactory.createTextField("Job description", 30);
         _jobDescriptionTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
-                String text = _jobDescriptionTextField.getText();
+            protected void onChange(final DocumentEvent event) {
+                final String text = _jobDescriptionTextField.getText();
                 _analysisJobBuilder.getAnalysisJobMetadata().setJobDescription(text);
             }
         });
         _authorTextField = WidgetFactory.createTextField("Author", 30);
         _authorTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
-                String text = _authorTextField.getText();
+            protected void onChange(final DocumentEvent event) {
+                final String text = _authorTextField.getText();
                 _analysisJobBuilder.getAnalysisJobMetadata().setAuthor(text);
             }
         });
@@ -129,22 +129,22 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
         final DefaultTableModel model = new DefaultTableModel(COLUMN_NAMES, sourceColumns.size());
 
         int i = 0;
-        for (InputColumn<?> inputColumn : sourceColumns) {
-            Column column = inputColumn.getPhysicalColumn();
+        for (final InputColumn<?> inputColumn : sourceColumns) {
+            final Column column = inputColumn.getPhysicalColumn();
             model.setValueAt(column.getTable().getName(), i, 0);
             model.setValueAt(column.getName(), i, 1);
             model.setValueAt(column.getType(), i, 2);
             model.setValueAt(column.getNativeType(), i, 3);
             model.setValueAt(column.getColumnSize(), i, 4);
 
-            Boolean nullable = column.isNullable();
+            final Boolean nullable = column.isNullable();
             if (nullable != null && nullable.booleanValue()) {
                 model.setValueAt(validIcon, i, 5);
             } else {
                 model.setValueAt("", i, 5);
             }
 
-            boolean indexed = column.isIndexed();
+            final boolean indexed = column.isIndexed();
             if (indexed) {
                 model.setValueAt(validIcon, i, 6);
             } else {
@@ -156,13 +156,13 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 
         _table.setModel(model);
     }
-    
+
     @Override
     public void addNotify() {
         super.addNotify();
         _analysisJobBuilder.addSourceColumnChangeListener(this);
     }
-    
+
     @Override
     public void removeNotify() {
         super.removeNotify();
@@ -170,12 +170,12 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
     }
 
     @Override
-    public void onAdd(InputColumn<?> sourceColumn) {
+    public void onAdd(final InputColumn<?> sourceColumn) {
         updateComponents();
     }
 
     @Override
-    public void onRemove(InputColumn<?> sourceColumn) {
+    public void onRemove(final InputColumn<?> sourceColumn) {
         updateComponents();
     }
 

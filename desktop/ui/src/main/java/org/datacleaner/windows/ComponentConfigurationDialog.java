@@ -61,12 +61,11 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     private final ComponentBuilder _componentBuilder;
     private final ComponentScopeButton _componentScopeButton;
     private final ChangeRequirementButton _changeRequirementButton;
-
-    private boolean _changingScope;
     private final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> _renderer;
+    private boolean _changingScope;
 
-    public ComponentConfigurationDialog(WindowContext windowContext, ComponentBuilder componentBuilder,
-            Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer) {
+    public ComponentConfigurationDialog(final WindowContext windowContext, final ComponentBuilder componentBuilder,
+            final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer) {
         super(windowContext, getBannerImage(componentBuilder));
 
         _componentBuilder = componentBuilder;
@@ -94,7 +93,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         _changeRequirementButton = new ChangeRequirementButton(_componentBuilder);
     }
 
-    private static Image getBannerImage(ComponentBuilder componentBuilder) {
+    private static Image getBannerImage(final ComponentBuilder componentBuilder) {
         final ImageIcon descriptorIcon = IconUtils.getDescriptorIcon(componentBuilder.getDescriptor(),
                 IconUtils.ICON_SIZE_LARGE);
         return descriptorIcon.getImage();
@@ -115,7 +114,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         return _componentBuilder.getDescriptor().getDisplayName();
     }
 
-    private String getBannerTitle2(boolean onlyIfDifferentThanTitle1) {
+    private String getBannerTitle2(final boolean onlyIfDifferentThanTitle1) {
         final String title2 = LabelUtils.getLabel(_componentBuilder);
         if (onlyIfDifferentThanTitle1 && getBannerTitle().equals(title2)) {
             return null;
@@ -124,12 +123,13 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     }
 
     @Override
-    protected DCBannerPanel createBanner(Image bannerImage) {
+    protected DCBannerPanel createBanner(final Image bannerImage) {
         final String remoteServerName;
 
         if (_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
-            final RemoteTransformerDescriptor<?> remoteTransformerDescriptor = (RemoteTransformerDescriptor<?>) (_componentBuilder
-                    .getDescriptor());
+            final RemoteTransformerDescriptor<?> remoteTransformerDescriptor =
+                    (RemoteTransformerDescriptor<?>) (_componentBuilder
+                            .getDescriptor());
             remoteServerName = " ("
                     + remoteTransformerDescriptor.getRemoteDescriptorProvider().getServerData().getServerName() + ")";
         } else {
@@ -185,7 +185,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
         closeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 ComponentConfigurationDialog.this.dispose();
             }
         });
@@ -199,7 +199,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     }
 
     @Override
-    public void onRemove(ComponentBuilder componentBuilder) {
+    public void onRemove(final ComponentBuilder componentBuilder) {
         if (!_changingScope) {
             close();
         }

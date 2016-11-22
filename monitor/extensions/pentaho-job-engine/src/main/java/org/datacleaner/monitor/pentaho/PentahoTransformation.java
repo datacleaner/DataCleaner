@@ -26,7 +26,7 @@ public class PentahoTransformation {
     private final String _id;
     private final String _name;
 
-    public PentahoTransformation(String id, String name) {
+    public PentahoTransformation(final String id, final String name) {
         _id = id;
         _name = name;
     }
@@ -42,12 +42,12 @@ public class PentahoTransformation {
     /**
      * Determines if this {@link PentahoTransformation} matches the queried id
      * and/or name
-     * 
+     *
      * @param id
      * @param name
      * @return
      */
-    public boolean matches(String id, String name) {
+    public boolean matches(final String id, final String name) {
         if (id == null && name == null) {
             return false;
         }

@@ -31,9 +31,9 @@ import org.datacleaner.api.Converter;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 
-import au.com.bytecode.opencsv.CSVParser;
-
 import com.google.common.base.Splitter;
+
+import au.com.bytecode.opencsv.CSVParser;
 
 /**
  * A {@link Converter} for maps.
@@ -44,14 +44,14 @@ public class MapStringToStringConverter implements Converter<Map<?, ?>> {
             '\\');
 
     @Override
-    public Map<?, ?> fromString(Class<?> type, String serializedForm) {
+    public Map<?, ?> fromString(final Class<?> type, final String serializedForm) {
         try {
             final CSVParser csvParser = new CSVParser(configuration.getSeparatorChar(), configuration.getQuoteChar(),
                     configuration.getEscapeChar());
 
             final Map<String, String> map = new LinkedHashMap<>();
             final Iterable<String> lines = Splitter.on('\n').split(serializedForm);
-            for (String line : lines) {
+            for (final String line : lines) {
                 final String[] values = csvParser.parseLine(line);
                 if (values.length == 2) {
                     String value = values[1];
@@ -62,7 +62,7 @@ public class MapStringToStringConverter implements Converter<Map<?, ?>> {
                 }
             }
             return map;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -84,7 +84,7 @@ public class MapStringToStringConverter implements Converter<Map<?, ?>> {
     }
 
     @Override
-    public boolean isConvertable(Class<?> type) {
+    public boolean isConvertable(final Class<?> type) {
         return ReflectionUtils.is(type, Map.class);
     }
 

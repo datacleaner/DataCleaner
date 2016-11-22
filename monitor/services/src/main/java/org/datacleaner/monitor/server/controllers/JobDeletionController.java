@@ -67,9 +67,9 @@ public class JobDeletionController {
 
         final JobContext job = tenantContext.getJob(jobName);
 
-        RepositoryFile file = job.getJobFile();
+        final RepositoryFile file = job.getJobFile();
         file.delete();
-        
+
         final RepositoryFile scheduleFile = tenantContext.getJobFolder().getFile(
                 jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
         if (scheduleFile != null) {

@@ -19,18 +19,19 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-
 public class DatastoreDictionaryReferenceDataPageTableTest {
     @Test
     public void testNextPage() throws Exception {
         final DatastoreWizardSession sessionMock = EasyMock.createMock(DatastoreWizardSession.class);
-        final DatastoreDictionaryReferenceDataPageTable page = new DatastoreDictionaryReferenceDataPageTable(sessionMock);
+        final DatastoreDictionaryReferenceDataPageTable page =
+                new DatastoreDictionaryReferenceDataPageTable(sessionMock);
         assertNotNull(page.nextPageController(TestHelper.getFormParameters()));
     }
 }

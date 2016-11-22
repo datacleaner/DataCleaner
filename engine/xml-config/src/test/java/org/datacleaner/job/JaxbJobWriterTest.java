@@ -31,6 +31,8 @@ import java.util.List;
 
 import javax.xml.datatype.DatatypeFactory;
 
+import junit.framework.TestCase;
+
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
@@ -67,8 +69,6 @@ import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
 
-import junit.framework.TestCase;
-
 @SuppressWarnings("deprecation")
 public class JaxbJobWriterTest extends TestCase {
 
@@ -91,7 +91,7 @@ public class JaxbJobWriterTest extends TestCase {
 
         };
         _writer = new JaxbJobWriter(new DataCleanerConfigurationImpl(), _metadataFactory);
-    };
+    }
 
     public void testColumnPathWhenColumnNameIsBlank() throws Exception {
         final CsvDatastore ds = new CsvDatastore("input", "src/test/resources/csv_with_blank_column_name.txt", null,
@@ -220,7 +220,8 @@ public class JaxbJobWriterTest extends TestCase {
             assertEquals("    <source>", lines[7]);
             assertEquals("        <data-context ref=_db_/>", lines[8]);
             assertEquals("        <columns>", lines[9]);
-            assertEquals("            <column id=_col_orderdate_ path=_ORDERS.ORDERDATE_ type=_TIMESTAMP_/>", lines[10]);
+            assertEquals("            <column id=_col_orderdate_ path=_ORDERS.ORDERDATE_ type=_TIMESTAMP_/>",
+                    lines[10]);
             assertEquals("            <column id=_col_shippeddate_ path=_ORDERS.SHIPPEDDATE_ type=_TIMESTAMP_/>",
                     lines[11]);
             assertEquals("        </columns>", lines[12]);
@@ -419,7 +420,7 @@ public class JaxbJobWriterTest extends TestCase {
      * Helper method to make sure that some of the locale-dependent settings of
      * the pattern finder are standardized in order to make the test
      * cross-platform compatible.
-     * 
+     *
      * @param pfb
      */
     private void makeCrossPlatformCompatible(AnalyzerComponentBuilder<PatternFinderAnalyzer> pfb) {
@@ -443,7 +444,7 @@ public class JaxbJobWriterTest extends TestCase {
             _writer.write(analysisJob, bos);
             bos.flush();
         }
-        
+
         final File benchmarkFile = new File(benchmarkFolder, filename);
         TestHelper.assertXmlFilesEquals(benchmarkFile, outputFile);
     }

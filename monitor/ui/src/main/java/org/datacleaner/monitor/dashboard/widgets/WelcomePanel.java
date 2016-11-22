@@ -58,10 +58,10 @@ public class WelcomePanel extends Composite {
 
         DCButtons.applyDefaultStyle(newTimelineButton);
         DCButtons.applyPrimaryStyle(toggleWelcomeTextButton);
-        
+
         toggleWelcomeTextButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 welcomeTextPanel.setVisible(!welcomeTextPanel.isVisible());
                 updateToggleButtonStyle();
             }
@@ -69,7 +69,7 @@ public class WelcomePanel extends Composite {
         updateToggleButtonStyle();
     }
 
-    public void setWelcomeTextVisible(boolean visible) {
+    public void setWelcomeTextVisible(final boolean visible) {
         welcomeTextPanel.setVisible(visible);
         updateToggleButtonStyle();
     }

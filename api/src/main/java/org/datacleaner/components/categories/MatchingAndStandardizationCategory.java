@@ -25,5 +25,5 @@ package org.datacleaner.components.categories;
 @Deprecated
 public class MatchingAndStandardizationCategory extends AbstractComponentCategory {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 }

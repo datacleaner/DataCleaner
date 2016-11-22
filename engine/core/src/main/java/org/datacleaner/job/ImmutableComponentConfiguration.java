@@ -41,7 +41,7 @@ public final class ImmutableComponentConfiguration implements ComponentConfigura
     private final Map<PropertyDescriptor, Object> _properties;
     private final transient Map<PropertyDescriptor, Object> _transientProperties;
 
-    public ImmutableComponentConfiguration(Map<? extends PropertyDescriptor, Object> properties) {
+    public ImmutableComponentConfiguration(final Map<? extends PropertyDescriptor, Object> properties) {
         if (properties == null) {
             _properties = ImmutableMap.of();
             _transientProperties = null;
@@ -73,7 +73,7 @@ public final class ImmutableComponentConfiguration implements ComponentConfigura
     }
 
     @Override
-    public Object getProperty(ConfiguredPropertyDescriptor propertyDescriptor) {
+    public Object getProperty(final ConfiguredPropertyDescriptor propertyDescriptor) {
         final Object result = _properties.get(propertyDescriptor);
         if (result == null && _transientProperties != null) {
             return _transientProperties.get(propertyDescriptor);
@@ -93,7 +93,7 @@ public final class ImmutableComponentConfiguration implements ComponentConfigura
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

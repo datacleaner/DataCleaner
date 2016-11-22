@@ -57,8 +57,8 @@ public class SugarCrmDatastoreDialog extends AbstractDatastoreDialog<SugarCrmDat
     private final JPasswordField _passwordTextField;
 
     @Inject
-    public SugarCrmDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
-            @Nullable SugarCrmDatastore originalDatastore, UserPreferences userPreferences) {
+    public SugarCrmDatastoreDialog(final WindowContext windowContext, final MutableDatastoreCatalog datastoreCatalog,
+            @Nullable final SugarCrmDatastore originalDatastore, final UserPreferences userPreferences) {
         super(originalDatastore, datastoreCatalog, windowContext, userPreferences);
 
         _baseUrlTextField = WidgetFactory.createTextField("Base URL");
@@ -76,22 +76,22 @@ public class SugarCrmDatastoreDialog extends AbstractDatastoreDialog<SugarCrmDat
             _usernameTextField.setText("admin");
             _baseUrlTextField.setText("http://localhost/sugarcrm");
         }
-        
+
         _baseUrlTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
         _usernameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
         _passwordTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
@@ -104,13 +104,13 @@ public class SugarCrmDatastoreDialog extends AbstractDatastoreDialog<SugarCrmDat
             setStatusError("Please enter a datastore name");
             return false;
         }
-        
+
         final String username = _usernameTextField.getText();
         if (StringUtils.isNullOrEmpty(username)) {
             setStatusError("Please enter username");
             return false;
         }
-        
+
         final String baseUrl = _baseUrlTextField.getText();
         if (StringUtils.isNullOrEmpty(baseUrl)) {
             setStatusError("Please enter base URL");
@@ -146,24 +146,24 @@ public class SugarCrmDatastoreDialog extends AbstractDatastoreDialog<SugarCrmDat
     protected String getDatastoreIconPath() {
         return IconUtils.SUGAR_CRM_IMAGEPATH;
     }
-    
+
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
-        List<Entry<String, JComponent>> result = super.getFormElements();
-        
-        DCPanel baseUrlPanel = new DCPanel(Color.WHITE);
-        FlowLayout layout = (FlowLayout) baseUrlPanel.getLayout();
+        final List<Entry<String, JComponent>> result = super.getFormElements();
+
+        final DCPanel baseUrlPanel = new DCPanel(Color.WHITE);
+        final FlowLayout layout = (FlowLayout) baseUrlPanel.getLayout();
         layout.setVgap(0);
         layout.setHgap(0);
-        HelpIcon baseUrlHelpIcon = new HelpIcon(
+        final HelpIcon baseUrlHelpIcon = new HelpIcon(
                 "The base URL is the first part of any URL that you use when you access the SugarCRM system.");
         baseUrlHelpIcon.setBorder(WidgetUtils.BORDER_EMPTY);
         _baseUrlTextField.setBorder(WidgetUtils.BORDER_EMPTY);
         baseUrlPanel.add(_baseUrlTextField);
         baseUrlPanel.add(baseUrlHelpIcon);
-        
+
         result.add(new ImmutableEntry<String, JComponent>("Salesforce security token", baseUrlPanel));
-        
+
         result.add(new ImmutableEntry<String, JComponent>("Salesforce username", _usernameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Salesforce password", _passwordTextField));
         return result;

@@ -59,43 +59,45 @@ public class ComponentContextImplTest extends TestCase {
         final AnalysisJob job;
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
             jobBuilder.setDatastore(datastore);
-            jobBuilder.addSourceColumns("id","name");
-            
-            TransformerComponentBuilder<MockTransformer> mockTransformer = jobBuilder.addTransformer(MockTransformer.class);
+            jobBuilder.addSourceColumns("id", "name");
+
+            TransformerComponentBuilder<MockTransformer> mockTransformer =
+                    jobBuilder.addTransformer(MockTransformer.class);
             mockTransformer.addInputColumn(jobBuilder.getSourceColumnByName("name"));
             mockTransformer.setName("FOO");
-            
+
             AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer.addInputColumns(mockTransformer.getOutputColumns());
-            
+
             job = jobBuilder.toAnalysisJob();
         }
-        
+
         final List<ComponentMessage> messages = new ArrayList<>();
         AnalysisListener listener = new AnalysisListenerAdaptor() {
             @Override
-            public void onComponentMessage(AnalysisJob jobParameter, ComponentJob componentJob, ComponentMessage message) {
+            public void onComponentMessage(AnalysisJob jobParameter, ComponentJob componentJob,
+                    ComponentMessage message) {
                 assertSame(job, jobParameter);
                 assertEquals("ImmutableTransformerJob[name=FOO,transformer=Mock transformer]", componentJob.toString());
                 messages.add(message);
             }
         };
-        
+
         AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration, listener);
         AnalysisResultFuture resultFuture = runner.run(job);
-        
+
         resultFuture.await();
-        
+
         if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
-        
+
         assertEquals(2, messages.size());
-        
+
         MockTransformerMessage message = (MockTransformerMessage) messages.get(0);
         assertEquals("MockTransformerMessage[Mocking: Kasper]", message.toString());
         assertEquals("MockTransformerMessage[Mocking: Claudia]", messages.get(1).toString());
-        
+
         assertEquals("MetaModelInputColumn[foo.table.name]", message.getColumn().toString());
     }
 }

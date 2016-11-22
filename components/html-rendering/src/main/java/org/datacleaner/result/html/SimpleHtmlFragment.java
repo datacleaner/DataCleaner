@@ -37,24 +37,24 @@ public class SimpleHtmlFragment implements HtmlFragment {
     }
 
     @Override
-    public void initialize(HtmlRenderingContext context) {
+    public void initialize(final HtmlRenderingContext context) {
         // do nothing
     }
 
-    public SimpleHtmlFragment addBodyElement(String html) {
+    public SimpleHtmlFragment addBodyElement(final String html) {
         return addBodyElement(new SimpleBodyElement(html));
     }
 
-    public SimpleHtmlFragment addBodyElement(BodyElement bodyElement) {
+    public SimpleHtmlFragment addBodyElement(final BodyElement bodyElement) {
         _bodyElements.add(bodyElement);
         return this;
     }
 
-    public SimpleHtmlFragment addHeadElement(String html) {
+    public SimpleHtmlFragment addHeadElement(final String html) {
         return addHeadElement(new SimpleHeadElement(html));
     }
 
-    public SimpleHtmlFragment addHeadElement(HeadElement headElement) {
+    public SimpleHtmlFragment addHeadElement(final HeadElement headElement) {
         _headElements.add(headElement);
         return this;
     }

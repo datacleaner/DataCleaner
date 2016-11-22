@@ -19,12 +19,12 @@
  */
 package org.datacleaner.util.convert;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class ShiftedTodayTest {
     @Test
@@ -35,25 +35,25 @@ public class ShiftedTodayTest {
             System.out.println(x.toString());
         }
     }
-    
+
     @Test
     public void testMonthChangeByDays() throws Exception {
         ShiftedToday shiftedToday = new ShiftedToday("42d0m0y");
         assertEquals(getTodayPlus(42, 0, 0), shiftedToday);
     }
-    
+
     @Test
     public void testNegativeShifts() throws Exception {
         ShiftedToday shiftedToday = new ShiftedToday("-3d-2m-1y");
         assertEquals(getTodayPlus(-3, -2, -1), shiftedToday);
-    } 
-    
-    @Test(expected=RuntimeException.class)
+    }
+
+    @Test(expected = RuntimeException.class)
     public void testEmpty() throws Exception {
         final String input = "";
         new ShiftedToday(input);
     }
-    
+
     @Test
     public void testExpression() throws Exception {
         final String shift = "-0d+0m+0y";
@@ -61,7 +61,7 @@ public class ShiftedTodayTest {
         ShiftedToday shiftedToday = new ShiftedToday(input);
         assertEquals(shift, shiftedToday.getInput());
     }
-    
+
     @Test
     public void testZeroShift() throws Exception {
         ShiftedToday shiftedToday = new ShiftedToday("0d0m0y");
@@ -73,7 +73,7 @@ public class ShiftedTodayTest {
         ShiftedToday shiftedToday = new ShiftedToday("+1d0m0y");
         assertEquals(getTodayPlus(1, 0, 0), shiftedToday);
     }
-    
+
     @Test
     public void testMinus() throws Exception {
         ShiftedToday shiftedToday = new ShiftedToday("0d0m-1y");
@@ -85,7 +85,7 @@ public class ShiftedTodayTest {
         ShiftedToday shiftedToday = new ShiftedToday("   0d +0m   -0y  ");
         assertEquals(getTodayPlus(0, 0, 0), shiftedToday);
     }
-    
+
     private Date getTodayPlus(int days, int months, int years) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
@@ -96,7 +96,7 @@ public class ShiftedTodayTest {
         calendar.add(Calendar.DAY_OF_MONTH, days);
         calendar.add(Calendar.MONTH, months);
         calendar.add(Calendar.YEAR, years);
-        
+
         return calendar.getTime();
     }
 }

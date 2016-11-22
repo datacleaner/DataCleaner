@@ -34,7 +34,7 @@ public class TodayDate extends Date implements ExpressionDate {
     }
 
     public static long calculateMillis() {
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         // set time to 00:00:00.000
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);

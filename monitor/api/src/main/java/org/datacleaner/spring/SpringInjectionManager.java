@@ -57,14 +57,14 @@ final class SpringInjectionManager extends InjectionManagerImpl {
 
     private final ApplicationContext _applicationContext;
 
-    public SpringInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job,
-            ApplicationContext applicationContext) {
+    public SpringInjectionManager(final DataCleanerConfiguration configuration, final AnalysisJob job,
+            final ApplicationContext applicationContext) {
         super(configuration, job);
         _applicationContext = applicationContext;
     }
 
     @Override
-    protected Object getInstanceInternal(InjectionPoint<?> injectionPoint) {
+    protected Object getInstanceInternal(final InjectionPoint<?> injectionPoint) {
         Object instance = super.getInstanceInternal(injectionPoint);
         if (instance == null) {
             final Class<?> baseType = injectionPoint.getBaseType();
@@ -78,17 +78,17 @@ final class SpringInjectionManager extends InjectionManagerImpl {
                 if (beans.isEmpty()) {
                     logger.warn("No beans resolved of type {} (in {})", baseType, injectionPoint.getInstance());
                 } else if (beans.size() == 1) {
-                    Object bean = beans.values().iterator().next();
+                    final Object bean = beans.values().iterator().next();
                     logger.debug("Resolved spring bean for injection: {}", bean);
                     instance = bean;
                 } else {
                     logger.warn("Multiple beans resolved of type {}: ", baseType, beans);
 
-                    Object bean = beans.values().iterator().next();
+                    final Object bean = beans.values().iterator().next();
                     logger.warn("Picking the first bean candidate for injection: {}", bean);
                     instance = bean;
                 }
-            } catch (BeansException e) {
+            } catch (final BeansException e) {
                 logger.warn("Could not resolve spring bean of type " + baseType + " for injection", e);
             }
         }

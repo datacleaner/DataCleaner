@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Task listener that runs for every component to close it after execution of a
  * job.
- * 
+ *
  * This class is NOT a {@link Task} because it needs to run regardless of
  * errors, which tasks don't.
  */
@@ -51,8 +51,9 @@ public class CloseTaskListener implements TaskListener {
     private final AnalysisListener _analysisListener;
     private final AnalysisJob _analysisJob;
 
-    public CloseTaskListener(LifeCycleHelper lifeCycleHelper, RowProcessingPublisher publisher, RowProcessingConsumer consumer, AtomicBoolean success,
-            TaskListener nextTaskListener, AnalysisListener analysisListener, AnalysisJob analysisJob) {
+    public CloseTaskListener(final LifeCycleHelper lifeCycleHelper, final RowProcessingPublisher publisher,
+            final RowProcessingConsumer consumer, final AtomicBoolean success,
+            final TaskListener nextTaskListener, final AnalysisListener analysisListener, final AnalysisJob analysisJob) {
         _lifeCycleHelper = lifeCycleHelper;
         _publisher = publisher;
         _consumer = consumer;
@@ -64,7 +65,7 @@ public class CloseTaskListener implements TaskListener {
 
     private void cleanup() {
         logger.debug("cleanup()");
-        
+
         final int publishersLeft = _consumer.onPublisherClosed(_publisher);
         if (publishersLeft == 0) {
             final Object component = _consumer.getComponent();
@@ -78,17 +79,17 @@ public class CloseTaskListener implements TaskListener {
     }
 
     @Override
-    public void onBegin(Task task) {
+    public void onBegin(final Task task) {
         if (_nextTaskListener != null) {
             _nextTaskListener.onBegin(task);
         }
     }
 
     @Override
-    public void onComplete(Task task) {
+    public void onComplete(final Task task) {
         try {
             cleanup();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             onErrorInternal(task, e, false);
             return;
         }
@@ -98,17 +99,17 @@ public class CloseTaskListener implements TaskListener {
     }
 
     @Override
-    public void onError(Task task, Throwable throwable) {
+    public void onError(final Task task, final Throwable throwable) {
         onErrorInternal(task, throwable, true);
     }
 
-    private void onErrorInternal(Task task, Throwable throwable, boolean doCleanup) {
+    private void onErrorInternal(final Task task, final Throwable throwable, final boolean doCleanup) {
         final boolean previouslySuccessful = _success.getAndSet(false);
 
         if (doCleanup) {
             try {
                 cleanup();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throwable.addSuppressed(e);
             }
         }

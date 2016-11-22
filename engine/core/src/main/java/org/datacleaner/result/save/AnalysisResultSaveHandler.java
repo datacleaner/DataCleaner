@@ -45,16 +45,36 @@ public class AnalysisResultSaveHandler {
     private final Resource _resource;
     private Map<ComponentJob, AnalyzerResult> _unsafeResultElements;
 
-    public AnalysisResultSaveHandler(AnalysisResult analysisResult, Resource resource) {
+    public AnalysisResultSaveHandler(final AnalysisResult analysisResult, final Resource resource) {
         _analysisResult = analysisResult;
         _resource = resource;
+    }
+
+    private static void saveOrThrow(final AnalysisResult analysisResult, final Resource resource) {
+        final SimpleAnalysisResult simpleAnalysisResult;
+        if (analysisResult instanceof SimpleAnalysisResult) {
+            simpleAnalysisResult = (SimpleAnalysisResult) analysisResult;
+        } else {
+            simpleAnalysisResult = new SimpleAnalysisResult(analysisResult.getResultMap(),
+                    analysisResult.getCreationDate());
+        }
+
+        final OutputStream out = resource.write();
+        try {
+            SerializationUtils.serialize(simpleAnalysisResult, out);
+        } catch (final SerializationException e) {
+            logger.error("Error serializing analysis result: " + analysisResult, e);
+            throw e;
+        } finally {
+            FileHelper.safeClose(out);
+        }
     }
 
     public boolean saveAttempt() {
         try {
             saveOrThrow();
             return true;
-        } catch (SerializationException e) {
+        } catch (final SerializationException e) {
             return false;
         }
     }
@@ -68,41 +88,21 @@ public class AnalysisResultSaveHandler {
         saveOrThrow(_analysisResult, _resource);
     }
 
-    private static void saveOrThrow(AnalysisResult analysisResult, Resource resource) {
-        final SimpleAnalysisResult simpleAnalysisResult;
-        if (analysisResult instanceof SimpleAnalysisResult) {
-            simpleAnalysisResult = (SimpleAnalysisResult) analysisResult;
-        } else {
-            simpleAnalysisResult = new SimpleAnalysisResult(analysisResult.getResultMap(),
-                    analysisResult.getCreationDate());
-        }
-
-        final OutputStream out = resource.write();
-        try {
-            SerializationUtils.serialize(simpleAnalysisResult, out);
-        } catch (SerializationException e) {
-            logger.error("Error serializing analysis result: " + analysisResult, e);
-            throw e;
-        } finally {
-            FileHelper.safeClose(out);
-        }
-    }
-
     /**
      * Gets a map of unsafe result elements, ie. elements that cannot be saved
      * because serialization fails.
-     * 
+     *
      * @return
      */
     public Map<ComponentJob, AnalyzerResult> getUnsafeResultElements() {
         if (_unsafeResultElements == null) {
             _unsafeResultElements = new LinkedHashMap<>();
             final Map<ComponentJob, AnalyzerResult> resultMap = _analysisResult.getResultMap();
-            for (Entry<ComponentJob, AnalyzerResult> entry : resultMap.entrySet()) {
-                AnalyzerResult analyzerResult = entry.getValue();
+            for (final Entry<ComponentJob, AnalyzerResult> entry : resultMap.entrySet()) {
+                final AnalyzerResult analyzerResult = entry.getValue();
                 try {
                     SerializationUtils.serialize(analyzerResult, new NullOutputStream());
-                } catch (SerializationException e) {
+                } catch (final SerializationException e) {
                     _unsafeResultElements.put(entry.getKey(), analyzerResult);
                 }
             }
@@ -112,7 +112,7 @@ public class AnalysisResultSaveHandler {
 
     /**
      * Creates a safe {@link AnalysisResult} for saving
-     * 
+     *
      * @return a new {@link AnalysisResult} or null if it is not possible to
      *         create a result that is safer than the previous.
      */
@@ -123,7 +123,7 @@ public class AnalysisResultSaveHandler {
         }
 
         final Map<ComponentJob, AnalyzerResult> resultMap = new LinkedHashMap<>(_analysisResult.getResultMap());
-        for (ComponentJob unsafeKey : unsafeKeys) {
+        for (final ComponentJob unsafeKey : unsafeKeys) {
             resultMap.remove(unsafeKey);
         }
 

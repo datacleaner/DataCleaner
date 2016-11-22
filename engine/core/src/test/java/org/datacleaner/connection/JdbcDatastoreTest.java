@@ -19,74 +19,74 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.commons.lang.SerializationUtils;
-
 import junit.framework.TestCase;
+
+import org.apache.commons.lang.SerializationUtils;
 
 public class JdbcDatastoreTest extends TestCase {
 
-	public void testEquals() throws Exception {
-		JdbcDatastore ds1 = new JdbcDatastore("hello", "url", "driver", "username", "pw", true);
-		JdbcDatastore ds2;
+    public void testEquals() throws Exception {
+        JdbcDatastore ds1 = new JdbcDatastore("hello", "url", "driver", "username", "pw", true);
+        JdbcDatastore ds2;
 
-		ds2 = new JdbcDatastore("hello", "url", "driver", "username", "pw", true);
-		assertEquals(ds1, ds2);
+        ds2 = new JdbcDatastore("hello", "url", "driver", "username", "pw", true);
+        assertEquals(ds1, ds2);
 
-		ds2 = new JdbcDatastore("hello1", "url", "driver", "username", "pw", true);
-		assertFalse(ds1.equals(ds2));
+        ds2 = new JdbcDatastore("hello1", "url", "driver", "username", "pw", true);
+        assertFalse(ds1.equals(ds2));
 
-		ds2 = new JdbcDatastore("hello", "url2", "driver", "username", "pw", true);
-		assertFalse(ds1.equals(ds2));
-	}
+        ds2 = new JdbcDatastore("hello", "url2", "driver", "username", "pw", true);
+        assertFalse(ds1.equals(ds2));
+    }
 
-	public void testSerializationAndDeserialization() throws Exception {
-		JdbcDatastore ds = new JdbcDatastore("name", "url", "driver", "username", "pw", true);
+    public void testSerializationAndDeserialization() throws Exception {
+        JdbcDatastore ds = new JdbcDatastore("name", "url", "driver", "username", "pw", true);
 
-		Object clone = SerializationUtils.clone(ds);
-		assertEquals(ds, clone);
-	}
+        Object clone = SerializationUtils.clone(ds);
+        assertEquals(ds, clone);
+    }
 
-	public void testGetters() throws Exception {
-		JdbcDatastore ds = new JdbcDatastore("name", "url", "driver", "username", "pw", true);
+    public void testGetters() throws Exception {
+        JdbcDatastore ds = new JdbcDatastore("name", "url", "driver", "username", "pw", true);
 
-		assertEquals(null, ds.getDatasourceJndiUrl());
-		assertEquals("name", ds.getName());
-		assertEquals("url", ds.getJdbcUrl());
-		assertEquals("driver", ds.getDriverClass());
-		assertEquals("username", ds.getUsername());
-		assertEquals("pw", ds.getPassword());
-		assertEquals(true, ds.isMultipleConnections());
+        assertEquals(null, ds.getDatasourceJndiUrl());
+        assertEquals("name", ds.getName());
+        assertEquals("url", ds.getJdbcUrl());
+        assertEquals("driver", ds.getDriverClass());
+        assertEquals("username", ds.getUsername());
+        assertEquals("pw", ds.getPassword());
+        assertEquals(true, ds.isMultipleConnections());
 
-		assertEquals("JdbcDatastore[name=name,url=url]", ds.toString());
+        assertEquals("JdbcDatastore[name=name,url=url]", ds.toString());
 
-		ds = new JdbcDatastore("name1", "url1", "driver1", "username1", "pw1", false);
+        ds = new JdbcDatastore("name1", "url1", "driver1", "username1", "pw1", false);
 
-		assertEquals(null, ds.getDatasourceJndiUrl());
-		assertEquals("name1", ds.getName());
-		assertEquals("url1", ds.getJdbcUrl());
-		assertEquals("driver1", ds.getDriverClass());
-		assertEquals("username1", ds.getUsername());
-		assertEquals("pw1", ds.getPassword());
-		assertEquals(false, ds.isMultipleConnections());
+        assertEquals(null, ds.getDatasourceJndiUrl());
+        assertEquals("name1", ds.getName());
+        assertEquals("url1", ds.getJdbcUrl());
+        assertEquals("driver1", ds.getDriverClass());
+        assertEquals("username1", ds.getUsername());
+        assertEquals("pw1", ds.getPassword());
+        assertEquals(false, ds.isMultipleConnections());
 
-		assertEquals("JdbcDatastore[name=name1,url=url1]", ds.toString());
-		
-		ds = new JdbcDatastore("name2","jndi2");
+        assertEquals("JdbcDatastore[name=name1,url=url1]", ds.toString());
 
-		assertEquals("jndi2", ds.getDatasourceJndiUrl());
-		assertEquals("name2", ds.getName());
-		assertEquals(null, ds.getJdbcUrl());
-		assertEquals(null, ds.getDriverClass());
-		assertEquals(null, ds.getUsername());
-		assertEquals(null, ds.getPassword());
-		assertEquals(false, ds.isMultipleConnections());
+        ds = new JdbcDatastore("name2", "jndi2");
 
-		assertEquals("JdbcDatastore[name=name2,jndi=jndi2]", ds.toString());
-	}
+        assertEquals("jndi2", ds.getDatasourceJndiUrl());
+        assertEquals("name2", ds.getName());
+        assertEquals(null, ds.getJdbcUrl());
+        assertEquals(null, ds.getDriverClass());
+        assertEquals(null, ds.getUsername());
+        assertEquals(null, ds.getPassword());
+        assertEquals(false, ds.isMultipleConnections());
 
-	public void testToStringDataSource() throws Exception {
-		JdbcDatastore ds = new JdbcDatastore("foo", "bar");
+        assertEquals("JdbcDatastore[name=name2,jndi=jndi2]", ds.toString());
+    }
 
-		assertEquals("JdbcDatastore[name=foo,jndi=bar]", ds.toString());
-	}
+    public void testToStringDataSource() throws Exception {
+        JdbcDatastore ds = new JdbcDatastore("foo", "bar");
+
+        assertEquals("JdbcDatastore[name=foo,jndi=bar]", ds.toString());
+    }
 }

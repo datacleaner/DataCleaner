@@ -40,42 +40,42 @@ import org.slf4j.LoggerFactory;
 @Description("Resolves the IP of a hostname")
 public class ResolveHostnameTransformer implements Transformer {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(ResolveHostnameTransformer.class);
+    private static final Logger logger = LoggerFactory
+            .getLogger(ResolveHostnameTransformer.class);
 
-	@Configured
-	InputColumn<String> hostnameColumn;
+    @Configured
+    InputColumn<String> hostnameColumn;
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(String.class, hostnameColumn.getName() + " (ip address)");
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(String.class, hostnameColumn.getName() + " (ip address)");
+    }
 
-	@Override
-	public String[] transform(InputRow inputRow) {
-		final String hostname = inputRow.getValue(hostnameColumn);
-		String result = null;
-		if (!StringUtils.isNullOrEmpty(hostname)) {
-			try {
-				InetAddress addr = InetAddress.getByName(hostname);
-				byte[] ip = addr.getAddress();
-				assert ip.length == 4;
-				result = toUnsigned(ip[0]) + "." + toUnsigned(ip[1]) + "."
-						+ toUnsigned(ip[2]) + "." + toUnsigned(ip[3]);
-			} catch (UnknownHostException e) {
-				logger.error("Unknown host: " + hostname, e);
-			} catch (Exception e) {
-				logger.error("Unexpected error", e);
-			}
-		}
-		return new String[] { result };
-	}
+    @Override
+    public String[] transform(final InputRow inputRow) {
+        final String hostname = inputRow.getValue(hostnameColumn);
+        String result = null;
+        if (!StringUtils.isNullOrEmpty(hostname)) {
+            try {
+                final InetAddress addr = InetAddress.getByName(hostname);
+                final byte[] ip = addr.getAddress();
+                assert ip.length == 4;
+                result = toUnsigned(ip[0]) + "." + toUnsigned(ip[1]) + "."
+                        + toUnsigned(ip[2]) + "." + toUnsigned(ip[3]);
+            } catch (final UnknownHostException e) {
+                logger.error("Unknown host: " + hostname, e);
+            } catch (final Exception e) {
+                logger.error("Unexpected error", e);
+            }
+        }
+        return new String[] { result };
+    }
 
-	private int toUnsigned(byte b) {
-		if (b < 0) {
-			return b + 256;
-		}
-		return b;
-	}
+    private int toUnsigned(final byte b) {
+        if (b < 0) {
+            return b + 256;
+        }
+        return b;
+    }
 
 }

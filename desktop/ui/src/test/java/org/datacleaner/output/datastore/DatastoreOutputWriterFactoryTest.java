@@ -25,15 +25,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.output.OutputWriter;
-import org.datacleaner.output.OutputWriterScenarioHelper;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.output.OutputWriter;
+import org.datacleaner.output.OutputWriterScenarioHelper;
 
 public class DatastoreOutputWriterFactoryTest extends TestCase {
 
@@ -86,7 +86,8 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
                     } catch (RuntimeException e) {
                         _exception = e;
                     }
-                };
+                }
+
             };
         }
         for (int i = 0; i < threads.length; i++) {
@@ -108,7 +109,8 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
             String[] tableNames = dc.getDefaultSchema().getTableNames();
             Arrays.sort(tableNames);
 
-            assertEquals("[TAB_1, TAB_2, TAB_3, TAB_4, TAB_5, TAB_6, TAB_7, TAB_8, TAB_9]", Arrays.toString(tableNames));
+            assertEquals("[TAB_1, TAB_2, TAB_3, TAB_4, TAB_5, TAB_6, TAB_7, TAB_8, TAB_9]",
+                    Arrays.toString(tableNames));
         }
     }
 

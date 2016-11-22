@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this distribution; if not, write to: Free Software Foundation,
  * Inc. 51 Franklin Street, Fifth Floor Boston, MA 02110-1301 USA
- * 
+ *
  */
 package org.datacleaner.extensions;
 
@@ -36,7 +36,7 @@ public class CompoundClassloaderTest {
      * a test class. The test creates a ScanningClassLoader combining the two
      * class loaders. The FooBarPlugin and the Baz class must both be resolvable
      * from the ScanningClassLoader.
-     * 
+     *
      * @throws ClassNotFoundException
      */
     @Test

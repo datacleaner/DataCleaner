@@ -228,8 +228,9 @@ public class TransformerComponentBuilderTest extends TestCase {
 
         TransformerDescriptor<ConvertToNumberTransformer> descriptor = Descriptors
                 .ofTransformer(ConvertToNumberTransformer.class);
-        TransformerComponentBuilder<ConvertToNumberTransformer> builder = new TransformerComponentBuilder<ConvertToNumberTransformer>(
-                new AnalysisJobBuilder(null), descriptor, IdGenerator);
+        TransformerComponentBuilder<ConvertToNumberTransformer> builder =
+                new TransformerComponentBuilder<ConvertToNumberTransformer>(
+                        new AnalysisJobBuilder(null), descriptor, IdGenerator);
         assertFalse(builder.isConfigured());
 
         ConvertToNumberTransformer configurableBean = builder.getComponentInstance();

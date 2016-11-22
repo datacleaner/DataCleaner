@@ -49,8 +49,10 @@ public class CustomColumnTypeTest extends TestCase {
             builder.setDatastore(new CsvDatastore("Names", "src/test/resources/month-strings.csv"));
             builder.addSourceColumns("month");
 
-            TransformerComponentBuilder<MockConvertToMonthObjectTransformer> convertTransformer = builder.addTransformer(
-                    MockConvertToMonthObjectTransformer.class).addInputColumn(builder.getSourceColumnByName("month"));
+            TransformerComponentBuilder<MockConvertToMonthObjectTransformer> convertTransformer =
+                    builder.addTransformer(
+                            MockConvertToMonthObjectTransformer.class)
+                            .addInputColumn(builder.getSourceColumnByName("month"));
             monthObjectColumn = convertTransformer.getOutputColumns().get(0);
 
             builder.addAnalyzer(MockMonthConsumingAnalyzer.class).addInputColumns(monthObjectColumn);

@@ -47,12 +47,12 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
     private final Class<? extends AnalyzerResult> _resultClass;
     private final String _methodName;
 
-    public MetricDescriptorImpl(Class<? extends AnalyzerResult> resultClass, Method method) {
+    public MetricDescriptorImpl(final Class<? extends AnalyzerResult> resultClass, final Method method) {
         _resultClass = resultClass;
         _method = method;
         _method.setAccessible(true);
 
-        String metricName = ReflectionUtils.getAnnotation(_method, Metric.class).value();
+        final String metricName = ReflectionUtils.getAnnotation(_method, Metric.class).value();
         if (StringUtils.isNullOrEmpty(metricName)) {
             throw new IllegalStateException("Metric method has no name: " + _method);
         }
@@ -62,7 +62,7 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
 
     public Method getMethod() {
         if (_method == null) {
-            Method method = ReflectionUtils.getMethod(_resultClass, _methodName, true);
+            final Method method = ReflectionUtils.getMethod(_resultClass, _methodName, true);
             if (method == null) {
                 throw new IllegalStateException("No such method: " + _methodName + " in " + _resultClass);
             }
@@ -81,8 +81,8 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
     }
 
     @Override
-    public Collection<String> getMetricParameterSuggestions(AnalyzerResult result) {
-        Method method = getMethod();
+    public Collection<String> getMetricParameterSuggestions(final AnalyzerResult result) {
+        final Method method = getMethod();
         final Class<?> returnType = method.getReturnType();
         if (ReflectionUtils.is(returnType, ParameterizableMetric.class)) {
             final Object[] methodParameters = createMethodParameters(method, null);
@@ -90,7 +90,7 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
                 final Object returnValue = method.invoke(result, methodParameters);
                 final ParameterizableMetric parameterizableMetric = (ParameterizableMetric) returnValue;
                 return parameterizableMetric.getParameterSuggestions();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Could not invoke metric getter " + _methodName, e);
             }
         }
@@ -98,12 +98,12 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
     }
 
     @Override
-    public Number getValue(AnalyzerResult result, MetricParameters metricParameters) {
+    public Number getValue(final AnalyzerResult result, final MetricParameters metricParameters) {
         if (result == null) {
             throw new IllegalArgumentException("AnalyzerResult cannot be null");
         }
-        Method method = getMethod();
-        Object[] methodParameters = createMethodParameters(method, metricParameters);
+        final Method method = getMethod();
+        final Object[] methodParameters = createMethodParameters(method, metricParameters);
         try {
             final Object returnValue = method.invoke(result, methodParameters);
             final Number number;
@@ -114,12 +114,12 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
                 number = (Number) returnValue;
             }
             return number;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Could not invoke metric getter " + _methodName, e);
         }
     }
 
-    private Object[] createMethodParameters(Method method, MetricParameters metricParameters) {
+    private Object[] createMethodParameters(final Method method, final MetricParameters metricParameters) {
         final Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes == null || parameterTypes.length == 0) {
             return null;
@@ -142,13 +142,13 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
 
     @Override
     public boolean isParameterizedByInputColumn() {
-        Method method = getMethod();
+        final Method method = getMethod();
         final Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes == null || parameterTypes.length == 0) {
             return false;
         }
 
-        for (Class<?> parameterType : parameterTypes) {
+        for (final Class<?> parameterType : parameterTypes) {
             if (InputColumn.class == parameterType) {
                 return true;
             }
@@ -159,7 +159,7 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
 
     @Override
     public boolean isParameterizedByString() {
-        Method method = getMethod();
+        final Method method = getMethod();
         final Class<?> returnType = method.getReturnType();
         if (ReflectionUtils.is(returnType, ParameterizableMetric.class)) {
             return true;
@@ -170,7 +170,7 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
             return false;
         }
 
-        for (Class<?> parameterType : parameterTypes) {
+        for (final Class<?> parameterType : parameterTypes) {
             if (String.class == parameterType) {
                 return true;
             }
@@ -181,12 +181,12 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
 
     @Override
     public Set<Annotation> getAnnotations() {
-        Annotation[] annotations = getMethod().getAnnotations();
+        final Annotation[] annotations = getMethod().getAnnotations();
         return new HashSet<Annotation>(Arrays.asList(annotations));
     }
 
     @Override
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+    public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
         return ReflectionUtils.getAnnotation(getMethod(), annotationClass);
     }
 
@@ -200,24 +200,31 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        MetricDescriptorImpl other = (MetricDescriptorImpl) obj;
+        }
+        final MetricDescriptorImpl other = (MetricDescriptorImpl) obj;
         if (_resultClass == null) {
-            if (other._resultClass != null)
+            if (other._resultClass != null) {
                 return false;
-        } else if (!_resultClass.equals(other._resultClass))
+            }
+        } else if (!_resultClass.equals(other._resultClass)) {
             return false;
+        }
         if (_methodName == null) {
-            if (other._methodName != null)
+            if (other._methodName != null) {
                 return false;
-        } else if (!_methodName.equals(other._methodName))
+            }
+        } else if (!_methodName.equals(other._methodName)) {
             return false;
+        }
         return true;
     }
 }

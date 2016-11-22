@@ -23,14 +23,14 @@ package org.datacleaner.api;
  * {@link ComponentMessage} that can be published (via {@link ComponentContext}
  * by components if certain functionality is restricted - typically because it's
  * a paid for function or because an approval process is pending or so.
- * 
+ *
  * Typically the user interface will have special handling available for this
  * message type to guide him in the direction of unlocking the restricted
  * functionality.
- * 
+ *
  * Publishing the message once per job should be sufficient. Dispatching of more
  * than one such message may be disregarded by the user interface.
- * 
+ *
  * This class and {@link RestrictedFunctionalityException} are two ways to
  * archieve something quite similar. The main difference is that a
  * {@link RestrictedFunctionalityMessage} can be used in scenarios where a job
@@ -47,14 +47,15 @@ public class RestrictedFunctionalityMessage implements ComponentMessage {
 
     /**
      * Constructs a {@link RestrictedFunctionalityMessage}
-     * 
+     *
      * @param message
      *            a message to the user about what and why he is being
      *            restricted in functionality.
      * @param callToActions
      *            an array of call to actions for the user to pick from.
      */
-    public RestrictedFunctionalityMessage(String message, RestrictedFunctionalityCallToAction... callToActions) {
+    public RestrictedFunctionalityMessage(final String message,
+            final RestrictedFunctionalityCallToAction... callToActions) {
         _message = message;
         _callToActions = callToActions;
     }

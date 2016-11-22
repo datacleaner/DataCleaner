@@ -35,31 +35,31 @@ public interface DataCleanerConfiguration extends Serializable {
      * @see DatastoreCatalog
      * @return the datastore catalog defined in this configuration
      */
-    public DatastoreCatalog getDatastoreCatalog();
+    DatastoreCatalog getDatastoreCatalog();
 
     /**
      * @see ReferenceDataCatalog
      * @return the reference data catalog defined in this configuration
      */
-    public ReferenceDataCatalog getReferenceDataCatalog();
+    ReferenceDataCatalog getReferenceDataCatalog();
 
     /**
      * @return the server informtation catalog defined in this configuration
      */
-    public ServerInformationCatalog getServerInformationCatalog();
+    ServerInformationCatalog getServerInformationCatalog();
 
     /**
      * Gets the home folder of this configuration.
-     * 
+     *
      * @return
      */
-    public DataCleanerHomeFolder getHomeFolder();
+    DataCleanerHomeFolder getHomeFolder();
 
     /**
      * Gets the {@link DataCleanerEnvironment} that this configuration refers
      * to.
-     * 
+     *
      * @return
      */
-    public DataCleanerEnvironment getEnvironment();
+    DataCleanerEnvironment getEnvironment();
 }

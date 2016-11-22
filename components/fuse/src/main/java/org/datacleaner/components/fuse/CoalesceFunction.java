@@ -25,11 +25,11 @@ class CoalesceFunction {
 
     private final boolean _considerEmptyStringAsNull;
 
-    public CoalesceFunction(boolean considerEmptyStringAsNull) {
+    public CoalesceFunction(final boolean considerEmptyStringAsNull) {
         _considerEmptyStringAsNull = considerEmptyStringAsNull;
     }
 
-    public Object coalesce(List<? extends Object> values) {
+    public Object coalesce(final List<? extends Object> values) {
         for (final Object value : values) {
             if (value != null) {
                 if (_considerEmptyStringAsNull) {

@@ -21,8 +21,8 @@ package org.datacleaner.windows;
 
 import javax.inject.Inject;
 
-import org.datacleaner.connection.OdbDatastore;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.OdbDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
@@ -32,38 +32,39 @@ import org.datacleaner.widgets.AbstractResourceTextField;
 
 public final class OdbDatastoreDialog extends AbstractFileBasedDatastoreDialog<OdbDatastore> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	protected OdbDatastoreDialog(@Nullable OdbDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowContext windowContext, UserPreferences userPreferences) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
-	}
+    @Inject
+    protected OdbDatastoreDialog(@Nullable final OdbDatastore originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog,
+            final WindowContext windowContext, final UserPreferences userPreferences) {
+        super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
+    }
 
-	@Override
-	protected String getBannerTitle() {
-		return "OpenOffice.org database";
-	}
+    @Override
+    protected String getBannerTitle() {
+        return "OpenOffice.org database";
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return "OpenOffice.org database | Datastore";
-	}
+    @Override
+    public String getWindowTitle() {
+        return "OpenOffice.org database | Datastore";
+    }
 
-	@Override
-	protected OdbDatastore createDatastore(String name, String filename) {
-		return new OdbDatastore(name, filename);
-	}
+    @Override
+    protected OdbDatastore createDatastore(final String name, final String filename) {
+        return new OdbDatastore(name, filename);
+    }
 
-	@Override
-	protected String getDatastoreIconPath() {
-		return IconUtils.ODB_IMAGEPATH;
-	}
+    @Override
+    protected String getDatastoreIconPath() {
+        return IconUtils.ODB_IMAGEPATH;
+    }
 
-	@Override
-	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
-		filenameField.addChoosableFileFilter(FileFilters.ODB);
-		filenameField.addChoosableFileFilter(FileFilters.ALL);
-		filenameField.setSelectedFileFilter(FileFilters.ODB);
-	}
+    @Override
+    protected void setFileFilters(final AbstractResourceTextField<?> filenameField) {
+        filenameField.addChoosableFileFilter(FileFilters.ODB);
+        filenameField.addChoosableFileFilter(FileFilters.ALL);
+        filenameField.setSelectedFileFilter(FileFilters.ODB);
+    }
 }

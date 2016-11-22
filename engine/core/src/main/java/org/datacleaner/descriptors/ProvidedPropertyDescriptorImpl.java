@@ -21,53 +21,53 @@ package org.datacleaner.descriptors;
 
 import java.lang.reflect.Field;
 
+import org.apache.metamodel.DataContext;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.storage.CollectionFactory;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.ReflectionUtils;
-import org.apache.metamodel.DataContext;
 
 final class ProvidedPropertyDescriptorImpl extends AbstractPropertyDescriptor implements ProvidedPropertyDescriptor {
-	
-	private static final long serialVersionUID = 1L;
 
-	protected ProvidedPropertyDescriptorImpl(Field field, ComponentDescriptor<?> componentDescriptor)
-			throws DescriptorException {
-		super(field, componentDescriptor);
-	}
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public boolean isSet() {
-		return ReflectionUtils.isSet(getBaseType());
-	}
+    protected ProvidedPropertyDescriptorImpl(final Field field, final ComponentDescriptor<?> componentDescriptor)
+            throws DescriptorException {
+        super(field, componentDescriptor);
+    }
 
-	@Override
-	public boolean isList() {
-		return ReflectionUtils.isList(getBaseType());
-	}
+    @Override
+    public boolean isSet() {
+        return ReflectionUtils.isSet(getBaseType());
+    }
 
-	@Override
-	public boolean isMap() {
-		return ReflectionUtils.isMap(getBaseType());
-	}
+    @Override
+    public boolean isList() {
+        return ReflectionUtils.isList(getBaseType());
+    }
 
-	@Override
-	public boolean isSchemaNavigator() {
-		return getBaseType() == SchemaNavigator.class;
-	}
+    @Override
+    public boolean isMap() {
+        return ReflectionUtils.isMap(getBaseType());
+    }
 
-	@Override
-	public boolean isRowAnnotationFactory() {
-		return getBaseType() == RowAnnotationFactory.class;
-	}
+    @Override
+    public boolean isSchemaNavigator() {
+        return getBaseType() == SchemaNavigator.class;
+    }
 
-	@Override
-	public boolean isDataContext() {
-		return getBaseType() == DataContext.class;
-	}
+    @Override
+    public boolean isRowAnnotationFactory() {
+        return getBaseType() == RowAnnotationFactory.class;
+    }
 
-	@Override
-	public boolean isCollectionFactory() {
-		return getBaseType() == CollectionFactory.class;
-	}
+    @Override
+    public boolean isDataContext() {
+        return getBaseType() == DataContext.class;
+    }
+
+    @Override
+    public boolean isCollectionFactory() {
+        return getBaseType() == CollectionFactory.class;
+    }
 }

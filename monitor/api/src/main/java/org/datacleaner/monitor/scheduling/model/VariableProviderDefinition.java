@@ -34,7 +34,7 @@ public class VariableProviderDefinition implements Serializable {
         return _className;
     }
 
-    public void setClassName(String className) {
+    public void setClassName(final String className) {
         _className = className;
     }
 
@@ -47,19 +47,24 @@ public class VariableProviderDefinition implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        VariableProviderDefinition other = (VariableProviderDefinition) obj;
+        }
+        final VariableProviderDefinition other = (VariableProviderDefinition) obj;
         if (_className == null) {
-            if (other._className != null)
+            if (other._className != null) {
                 return false;
-        } else if (!_className.equals(other._className))
+            }
+        } else if (!_className.equals(other._className)) {
             return false;
+        }
         return true;
     }
 

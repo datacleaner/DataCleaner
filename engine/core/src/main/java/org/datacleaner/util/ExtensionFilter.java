@@ -36,24 +36,24 @@ public class ExtensionFilter extends FileFilter implements FilenameFilter {
     private final String _extension;
     private final boolean _includeDirectories;
 
-    public ExtensionFilter(String desc, String extension) {
+    public ExtensionFilter(final String desc, final String extension) {
         this(desc, extension, true);
     }
 
-    public ExtensionFilter(String desc, String extension, boolean includeDirectories) {
+    public ExtensionFilter(final String desc, final String extension, final boolean includeDirectories) {
         _includeDirectories = includeDirectories;
         _desc = desc;
         _extension = extension.toLowerCase();
     }
 
-    public boolean accept(Resource resource) {
+    public boolean accept(final Resource resource) {
         if (resource == null) {
             return false;
         }
         return accept(resource.getName());
     }
 
-    public boolean accept(String filename) {
+    public boolean accept(final String filename) {
         if (filename.length() < _extension.length()) {
             return false;
         }
@@ -62,7 +62,7 @@ public class ExtensionFilter extends FileFilter implements FilenameFilter {
     }
 
     @Override
-    public boolean accept(File f) {
+    public boolean accept(final File f) {
         if (f.isDirectory()) {
             return _includeDirectories;
         }
@@ -71,7 +71,7 @@ public class ExtensionFilter extends FileFilter implements FilenameFilter {
     }
 
     @Override
-    public boolean accept(File dir, String name) {
+    public boolean accept(final File dir, final String name) {
         final int startIndex = name.length() - _extension.length();
         if (startIndex < 0) {
             return false;

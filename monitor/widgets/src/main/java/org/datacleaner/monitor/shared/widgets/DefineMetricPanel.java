@@ -85,7 +85,7 @@ public class DefineMetricPanel extends FlowPanel {
 
         _formulaCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
+            public void onValueChange(final ValueChangeEvent<Boolean> event) {
                 final boolean formulaBased = event.getValue();
                 _formulaTextBox.setVisible(formulaBased);
                 _formulaAddMetricButton.setVisible(formulaBased);
@@ -108,7 +108,7 @@ public class DefineMetricPanel extends FlowPanel {
                 // an existing formula is being recreated
                 _formulaTextBox.setText(existingMetric.getFormula());
                 final List<MetricIdentifier> children = existingMetric.getChildren();
-                for (MetricIdentifier child : children) {
+                for (final MetricIdentifier child : children) {
                     addSelection(createSelectMetricPanel(child, formulaBased));
                 }
             }
@@ -119,7 +119,7 @@ public class DefineMetricPanel extends FlowPanel {
         // add listener for limiting amount of metric selections
         _formulaCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
+            public void onValueChange(final ValueChangeEvent<Boolean> event) {
                 final boolean formulaBased = event.getValue();
                 updateFormulaState(formulaBased);
             }
@@ -127,14 +127,14 @@ public class DefineMetricPanel extends FlowPanel {
 
         _formulaAddMetricButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 final SelectMetricPanel panel = createSelectMetricPanel(null, true);
                 addSelection(panel);
             }
         });
         _formulaRemoveMetricButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 if (_selectMetricPanels.size() > 1) {
                     removeSelection();
                 }
@@ -142,8 +142,8 @@ public class DefineMetricPanel extends FlowPanel {
         });
     }
 
-    private SelectMetricPanel createSelectMetricPanel(MetricIdentifier child, boolean formulaBased) {
-        SelectMetricPanel panel = new SelectMetricPanel(_tenant, _jobMetrics, child, formulaBased);
+    private SelectMetricPanel createSelectMetricPanel(final MetricIdentifier child, final boolean formulaBased) {
+        final SelectMetricPanel panel = new SelectMetricPanel(_tenant, _jobMetrics, child, formulaBased);
         if (child == null) {
             char c = 'A';
             c += _selectMetricPanels.size();
@@ -166,7 +166,7 @@ public class DefineMetricPanel extends FlowPanel {
         final StringBuilder formulaBuilder = new StringBuilder();
         char c = 'A';
 
-        for (SelectMetricPanel panel : _selectMetricPanels) {
+        for (final SelectMetricPanel panel : _selectMetricPanels) {
             // show display name, since it will be used in the formula
             // as a variable
             panel.setDisplayNameVisible(formulaBased);
@@ -197,7 +197,7 @@ public class DefineMetricPanel extends FlowPanel {
             private String previousValue = displayName;
 
             @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
+            public void onValueChange(final ValueChangeEvent<String> event) {
                 final String value = event.getValue();
                 GWT.log("Value changed. Previous: " + previousValue + ", New: " + value);
                 if (previousValue != null && !previousValue.trim().isEmpty()) {
@@ -218,8 +218,8 @@ public class DefineMetricPanel extends FlowPanel {
         if (_formulaCheckBox.getValue()) {
             final String formula = _formulaTextBox.getValue();
             final List<MetricIdentifier> children = new ArrayList<MetricIdentifier>();
-            for (SelectMetricPanel panel : _selectMetricPanels) {
-                MetricIdentifier childMetric = panel.getMetric();
+            for (final SelectMetricPanel panel : _selectMetricPanels) {
+                final MetricIdentifier childMetric = panel.getMetric();
                 validateFormulaChildMetric(childMetric);
                 children.add(childMetric);
             }
@@ -229,20 +229,20 @@ public class DefineMetricPanel extends FlowPanel {
         }
     }
 
-    private void validateFormulaChildMetric(MetricIdentifier childMetric) throws DCUserInputException {
+    private void validateFormulaChildMetric(final MetricIdentifier childMetric) throws DCUserInputException {
         final String displayName = childMetric.getDisplayName();
         if (displayName == null || displayName.trim().isEmpty()) {
             throw new DCUserInputException("Please provide formula symbols for all child metrics.");
         }
 
-        char firstChar = displayName.trim().charAt(0);
+        final char firstChar = displayName.trim().charAt(0);
         if (!Character.isLetter(firstChar)) {
             throw new DCUserInputException("Formula symbol '" + displayName + "' must start with a letter.");
         }
 
         final int length = displayName.length();
         for (int i = 0; i < length; i++) {
-            char c = displayName.charAt(i);
+            final char c = displayName.charAt(i);
             if (c != ' ' && c != '_' && !Character.isLetter(c) && !Character.isDigit(c)) {
                 throw new DCUserInputException("Formula symbol '" + displayName + "' contains invalid character: " + c);
             }

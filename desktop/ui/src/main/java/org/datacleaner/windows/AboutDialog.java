@@ -75,19 +75,80 @@ import org.jdesktop.swingx.action.OpenBrowserAction;
  */
 public class AboutDialog extends AbstractDialog {
 
-    private static final long serialVersionUID = 1L;
-
     public static class LicensedProject {
         public String name;
         public String websiteUrl;
         public String license;
     }
-
+    private static final long serialVersionUID = 1L;
     private static final ResourceManager resourceManager = ResourceManager.get();
     private static final ImageManager imageManager = ImageManager.get();
 
-    public AboutDialog(WindowContext windowContext) {
+    public AboutDialog(final WindowContext windowContext) {
         super(windowContext);
+    }
+
+    public static List<LicensedProject> getLicensedProjects() {
+        final List<LicensedProject> result = new ArrayList<AboutDialog.LicensedProject>();
+        final URL url = resourceManager.getUrl("licenses/dependency-licenses.csv");
+        if (url == null) {
+            throw new IllegalStateException("Could not find dependencies file");
+        }
+        try {
+            final DataContext dc = DataContextFactory.createCsvDataContext(url.openStream(), ',', '"');
+            final Table table = dc.getDefaultSchema().getTables()[0];
+            final Column projectColumn = table.getColumnByName("Project");
+            final Column websiteColumn = table.getColumnByName("Website");
+            final Column licenseColumn = table.getColumnByName("License");
+            final Query q = dc.query().from(table).select(table.getColumns()).orderBy(projectColumn).asc().toQuery();
+            final DataSet ds = dc.executeQuery(q);
+            while (ds.next()) {
+                final LicensedProject licensedProject = new LicensedProject();
+                final Row row = ds.getRow();
+                final String licenseName = row.getValue(licenseColumn).toString();
+
+                licensedProject.name = row.getValue(projectColumn).toString();
+                licensedProject.websiteUrl = row.getValue(websiteColumn).toString();
+                licensedProject.license = getLicense(licenseName);
+
+                result.add(licensedProject);
+            }
+
+        } catch (final IOException e) {
+            throw new IllegalStateException("Error occurred while reading dependencies file", e);
+        }
+
+        return result;
+    }
+
+    public static String getLicense(final String licenseName) {
+        final URL url = resourceManager.getUrl("licenses/" + licenseName + ".txt");
+        if (url == null) {
+            throw new IllegalArgumentException("Could not find license file for license: " + licenseName);
+        }
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(url.openStream(), FileHelper.UTF_8_ENCODING));
+            final StringBuilder sb = new StringBuilder();
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                if (sb.length() != 0) {
+                    sb.append('\n');
+                }
+                sb.append(line);
+            }
+
+            return sb.toString();
+        } catch (final Exception e) {
+            throw new IllegalStateException("Error occurred while reading license file: " + licenseName, e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (final IOException e) {
+                    // do nothing
+                }
+            }
+        }
     }
 
     @Override
@@ -112,7 +173,7 @@ public class AboutDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
+        final CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
 
         tabbedPane.addTab("About DataCleaner",
                 imageManager.getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_LARGE), getAboutPanel(),
@@ -144,7 +205,7 @@ public class AboutDialog extends AbstractDialog {
         dcLicenseButton.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 licenseHeader.setText("Displaying license of DataCleaner");
                 licenseLabel.setText(dcLicense);
             }
@@ -158,11 +219,11 @@ public class AboutDialog extends AbstractDialog {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                    boolean cellHasFocus) {
+            public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected,
+                    final boolean cellHasFocus) {
                 if (value instanceof LicensedProject) {
-                    LicensedProject project = (LicensedProject) value;
-                    String name = project.name;
+                    final LicensedProject project = (LicensedProject) value;
+                    final String name = project.name;
                     return super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
                 } else if (value instanceof String) {
                     return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -172,11 +233,11 @@ public class AboutDialog extends AbstractDialog {
         });
         librariesComboBox.addItemListener(new ItemListener() {
             @Override
-            public void itemStateChanged(ItemEvent e) {
-                Object item = e.getItem();
+            public void itemStateChanged(final ItemEvent e) {
+                final Object item = e.getItem();
                 if (item instanceof LicensedProject) {
                     visitProjectButton.setEnabled(true);
-                    LicensedProject project = (LicensedProject) item;
+                    final LicensedProject project = (LicensedProject) item;
                     licenseLabel.setText(project.license);
                     licenseHeader.setText("Displaying license of " + project.name + "");
                 } else {
@@ -189,10 +250,10 @@ public class AboutDialog extends AbstractDialog {
 
         visitProjectButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                Object item = librariesComboBox.getSelectedItem();
-                LicensedProject project = (LicensedProject) item;
-                String websiteUrl = project.websiteUrl;
+            public void actionPerformed(final ActionEvent e) {
+                final Object item = librariesComboBox.getSelectedItem();
+                final LicensedProject project = (LicensedProject) item;
+                final String websiteUrl = project.websiteUrl;
                 if (!StringUtils.isNullOrEmpty(websiteUrl)) {
                     new OpenBrowserAction(websiteUrl).actionPerformed(e);
                 }
@@ -201,7 +262,7 @@ public class AboutDialog extends AbstractDialog {
 
         librariesComboBox.addItem("- select project -");
         final List<LicensedProject> licensedProjects = getLicensedProjects();
-        for (LicensedProject licensedProject : licensedProjects) {
+        for (final LicensedProject licensedProject : licensedProjects) {
             librariesComboBox.addItem(licensedProject);
         }
 
@@ -304,70 +365,7 @@ public class AboutDialog extends AbstractDialog {
         return "About DataCleaner | DataCleaner";
     }
 
-    public static List<LicensedProject> getLicensedProjects() {
-        final List<LicensedProject> result = new ArrayList<AboutDialog.LicensedProject>();
-        final URL url = resourceManager.getUrl("licenses/dependency-licenses.csv");
-        if (url == null) {
-            throw new IllegalStateException("Could not find dependencies file");
-        }
-        try {
-            DataContext dc = DataContextFactory.createCsvDataContext(url.openStream(), ',', '"');
-            Table table = dc.getDefaultSchema().getTables()[0];
-            Column projectColumn = table.getColumnByName("Project");
-            Column websiteColumn = table.getColumnByName("Website");
-            Column licenseColumn = table.getColumnByName("License");
-            Query q = dc.query().from(table).select(table.getColumns()).orderBy(projectColumn).asc().toQuery();
-            DataSet ds = dc.executeQuery(q);
-            while (ds.next()) {
-                final LicensedProject licensedProject = new LicensedProject();
-                final Row row = ds.getRow();
-                final String licenseName = row.getValue(licenseColumn).toString();
-
-                licensedProject.name = row.getValue(projectColumn).toString();
-                licensedProject.websiteUrl = row.getValue(websiteColumn).toString();
-                licensedProject.license = getLicense(licenseName);
-
-                result.add(licensedProject);
-            }
-
-        } catch (IOException e) {
-            throw new IllegalStateException("Error occurred while reading dependencies file", e);
-        }
-
-        return result;
-    }
-
-    public static String getLicense(final String licenseName) {
-        URL url = resourceManager.getUrl("licenses/" + licenseName + ".txt");
-        if (url == null) {
-            throw new IllegalArgumentException("Could not find license file for license: " + licenseName);
-        }
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(url.openStream(), FileHelper.UTF_8_ENCODING));
-            final StringBuilder sb = new StringBuilder();
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                if (sb.length() != 0) {
-                    sb.append('\n');
-                }
-                sb.append(line);
-            }
-
-            return sb.toString();
-        } catch (Exception e) {
-            throw new IllegalStateException("Error occurred while reading license file: " + licenseName, e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    // do nothing
-                }
-            }
-        }
-    }
-
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         new AboutDialog(new DCWindowContext(null, null, null)).setVisible(true);
     }
 }

@@ -31,28 +31,28 @@ import org.datacleaner.job.ComponentJob;
  * maybe also system services would implement this interface to be able to react
  * to progress notifications or errors occurring in the execution of the
  * analysis.
- * 
- * 
+ *
+ *
  */
 public interface AnalysisListener {
 
-    public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics);
+    void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics);
 
-    public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics);
+    void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics);
 
     /**
      * Notifies the listener that a row processing operation is about to begin.
-     * 
+     *
      * @param job
      *            the job that is being run
      * @param metrics
      *            metrics for the row processing operation
      */
-    public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics);
+    void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics);
 
     /**
      * Notifies the listener about progress in the row processing operation.
-     * 
+     *
      * @param job
      *            the job that is being run
      * @param metrics
@@ -64,12 +64,12 @@ public interface AnalysisListener {
      *            start at 1 and continue typically to
      *            {@link RowProcessingMetrics#getExpectedRows()}.
      */
-    public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, InputRow row, int rowNumber);
+    void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, InputRow row, int rowNumber);
 
     /**
      * Notifies the listener that a component published a message (using
      * {@link ComponentContext#publishMessage(ComponentMessage)}).
-     * 
+     *
      * @param job
      *            the job that is being run
      * @param componentJob
@@ -77,36 +77,36 @@ public interface AnalysisListener {
      * @param message
      *            the message itself
      */
-    public void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message);
+    void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message);
 
     /**
      * Notifies the listener that row processing has finished successfully.
-     * 
+     *
      * @param job
      * @param metrics
      */
-    public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics);
+    void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics);
 
     /**
      * Notifies the listener that a component has begun processing
-     * 
+     *
      * @param job
      * @param componentJob
      * @param metrics
      */
-    public void componentBegin(AnalysisJob job, ComponentJob componentJob, ComponentMetrics metrics);
+    void componentBegin(AnalysisJob job, ComponentJob componentJob, ComponentMetrics metrics);
 
     /**
      * Notifies the listener that a component has finished processing
-     * 
+     *
      * @param job
      * @param componentJob
      * @param result
      *            the result of the component, if any
      */
-    public void componentSuccess(AnalysisJob job, ComponentJob componentJob, AnalyzerResult result);
+    void componentSuccess(AnalysisJob job, ComponentJob componentJob, AnalyzerResult result);
 
-    public void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row, Throwable throwable);
+    void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row, Throwable throwable);
 
-    public void errorUnknown(AnalysisJob job, Throwable throwable);
+    void errorUnknown(AnalysisJob job, Throwable throwable);
 }

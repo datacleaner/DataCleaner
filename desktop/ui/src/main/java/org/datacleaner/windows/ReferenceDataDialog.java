@@ -61,7 +61,7 @@ public final class ReferenceDataDialog extends AbstractDialog {
     private volatile int _selectedTab;
 
     @Inject
-    protected ReferenceDataDialog(WindowContext windowContext, InjectorBuilder injectorBuilder) {
+    protected ReferenceDataDialog(final WindowContext windowContext, final InjectorBuilder injectorBuilder) {
         super(windowContext, imageManager.getImage("images/window/banner-reference-data.png"));
         _glassPane = new DCGlassPane(this);
         _tabbedPane = new CloseableTabbedPane(true);
@@ -69,8 +69,8 @@ public final class ReferenceDataDialog extends AbstractDialog {
         _injectorBuilder = injectorBuilder;
     }
 
-    private JComponent scrolleable(JComponent comp) {
-        JScrollPane scroll = WidgetUtils.scrolleable(comp);
+    private JComponent scrolleable(final JComponent comp) {
+        final JScrollPane scroll = WidgetUtils.scrolleable(comp);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         return scroll;
     }
@@ -113,7 +113,7 @@ public final class ReferenceDataDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        Injector injectorWithGlassPane = _injectorBuilder.with(DCGlassPane.class, _glassPane).createInjector();
+        final Injector injectorWithGlassPane = _injectorBuilder.with(DCGlassPane.class, _glassPane).createInjector();
 
         final DictionaryListPanel dictionaryListPanel = injectorWithGlassPane.getInstance(DictionaryListPanel.class);
         final SynonymCatalogListPanel synonymCatalogListPanel = injectorWithGlassPane
@@ -121,11 +121,14 @@ public final class ReferenceDataDialog extends AbstractDialog {
         final StringPatternListPanel stringPatternListPanel = injectorWithGlassPane
                 .getInstance(StringPatternListPanel.class);
 
-        _tabbedPane.addTab("Dictionaries", new ImageIcon(imageManager.getImage(IconUtils.DICTIONARY_IMAGEPATH, IconUtils.ICON_SIZE_TAB)),
+        _tabbedPane.addTab("Dictionaries",
+                new ImageIcon(imageManager.getImage(IconUtils.DICTIONARY_IMAGEPATH, IconUtils.ICON_SIZE_TAB)),
                 scrolleable(dictionaryListPanel));
-        _tabbedPane.addTab("Synonyms", new ImageIcon(imageManager.getImage(IconUtils.SYNONYM_CATALOG_IMAGEPATH, IconUtils.ICON_SIZE_TAB)),
+        _tabbedPane.addTab("Synonyms",
+                new ImageIcon(imageManager.getImage(IconUtils.SYNONYM_CATALOG_IMAGEPATH, IconUtils.ICON_SIZE_TAB)),
                 scrolleable(synonymCatalogListPanel));
-        _tabbedPane.addTab("String patterns", new ImageIcon(imageManager.getImage(IconUtils.STRING_PATTERN_IMAGEPATH, IconUtils.ICON_SIZE_TAB)),
+        _tabbedPane.addTab("String patterns",
+                new ImageIcon(imageManager.getImage(IconUtils.STRING_PATTERN_IMAGEPATH, IconUtils.ICON_SIZE_TAB)),
                 scrolleable(stringPatternListPanel));
 
         _tabbedPane.setUnclosableTab(0);
@@ -139,7 +142,7 @@ public final class ReferenceDataDialog extends AbstractDialog {
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
         closeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 ReferenceDataDialog.this.dispose();
             }
         });

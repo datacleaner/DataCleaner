@@ -24,10 +24,10 @@ import java.util.List;
 
 /**
  * Represents a row of data where each value pertain to a column.
- * 
+ *
  * An InputRow can contain both values that are physical (ie. a raw output from
  * a datastore) and virtual (ie. generated values, created by Transformers).
- * 
+ *
  * @see Transformer
  * @see InputColumn
  */
@@ -36,50 +36,50 @@ public interface InputRow extends Serializable {
     /**
      * Gets a value from the row on a given column position, or null if no value
      * exists at this column position.
-     * 
+     *
      * @param <E>
      * @param column
      * @return
      */
-    public <E> E getValue(InputColumn<E> column);
+    <E> E getValue(InputColumn<E> column);
 
     /**
      * An id identifying this row. The id is guaranteed to be unique (and
      * typically sequential) within a single dataset only.
-     * 
+     *
      * @return an identifier for this row
      */
-    public long getId();
+    long getId();
 
     /**
      * @return the input columns represented in this row
      */
-    public List<InputColumn<?>> getInputColumns();
+    List<InputColumn<?>> getInputColumns();
 
     /**
      * Determines whether a particular {@link InputColumn} is mapped within the
      * row or not.
-     * 
+     *
      * @param inputColumn
      * @return true if the input column is mapped in this input row
      */
-    public boolean containsInputColumn(InputColumn<?> inputColumn);
+    boolean containsInputColumn(InputColumn<?> inputColumn);
 
     /**
      * Gets multiple values in one go. Will delegate to
      * {@link #getValue(InputColumn)} for each column in the array.
-     * 
+     *
      * @param columns
      * @return
      */
-    public List<Object> getValues(InputColumn<?>... columns);
+    List<Object> getValues(InputColumn<?>... columns);
 
     /**
      * Gets multiple values in one go. Will delegate to
      * {@link #getValue(InputColumn)} for each column in the list.
-     * 
+     *
      * @param columns
      * @return
      */
-    public List<Object> getValues(List<InputColumn<?>> columns);
+    List<Object> getValues(List<InputColumn<?>> columns);
 }

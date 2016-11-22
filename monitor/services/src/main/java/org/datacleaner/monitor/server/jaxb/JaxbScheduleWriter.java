@@ -43,13 +43,13 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
         super(Schedule.class);
     }
 
-    public void write(ScheduleDefinition scheduleDefinition, OutputStream outputStream) {
-        Schedule schedule = createSchedule(scheduleDefinition);
+    public void write(final ScheduleDefinition scheduleDefinition, final OutputStream outputStream) {
+        final Schedule schedule = createSchedule(scheduleDefinition);
 
         marshal(schedule, outputStream);
     }
 
-    public Schedule createSchedule(ScheduleDefinition scheduleDefinition) {
+    public Schedule createSchedule(final ScheduleDefinition scheduleDefinition) {
         final Schedule schedule = new Schedule();
         if (scheduleDefinition == null) {
             return schedule;
@@ -62,7 +62,7 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
             }
         } else if (scheduleDefinition.getTriggerType() == TriggerType.PERIODIC) {
             schedule.setCronExpression(scheduleDefinition.getCronExpression());
-        }else if (scheduleDefinition.getTriggerType() == TriggerType.ONETIME) {
+        } else if (scheduleDefinition.getTriggerType() == TriggerType.ONETIME) {
             schedule.setOneTime(scheduleDefinition.getDateForOneTimeSchedule());
         } else if (scheduleDefinition.getTriggerType() == TriggerType.HOTFOLDER) {
             schedule.setHotFolder(scheduleDefinition.getHotFolder());
@@ -78,16 +78,16 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
         }
 
         final Boolean runOnHadoop = scheduleDefinition.isRunOnHadoop();
-        if (runOnHadoop != null && runOnHadoop.booleanValue()){
+        if (runOnHadoop != null && runOnHadoop.booleanValue()) {
             schedule.setRunOnHadoop(runOnHadoop);
         }
         final boolean distributedExecution = scheduleDefinition.isDistributedExecution();
         schedule.setDistributedExecution(distributedExecution);
-        
+
 
         final Alerts alerts = new Alerts();
         final List<AlertDefinition> alertDefinitions = scheduleDefinition.getAlerts();
-        for (AlertDefinition alertDefinition : alertDefinitions) {
+        for (final AlertDefinition alertDefinition : alertDefinitions) {
             final Alert alert = createAlert(alertDefinition);
             alerts.getAlert().add(alert);
         }
@@ -96,7 +96,7 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
         return schedule;
     }
 
-    private Alert createAlert(AlertDefinition alertDefinition) {
+    private Alert createAlert(final AlertDefinition alertDefinition) {
         final Alert alert = new Alert();
         alert.setDescription(alertDefinition.getDescription());
         alert.setMinimumValue((alertDefinition.getMinimumValue() == null ? null : alertDefinition.getMinimumValue()
@@ -108,7 +108,7 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
         return alert;
     }
 
-    private AlertSeverityType createSeverity(AlertSeverity severity) {
+    private AlertSeverityType createSeverity(final AlertSeverity severity) {
         if (severity == null) {
             return null;
         }

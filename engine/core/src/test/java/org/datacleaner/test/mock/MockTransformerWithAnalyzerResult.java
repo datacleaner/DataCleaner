@@ -38,10 +38,9 @@ import org.datacleaner.result.NumberResult;
 @Named("MockTransformerWithAnalyzerResult")
 public class MockTransformerWithAnalyzerResult implements Transformer, HasAnalyzerResult<NumberResult> {
 
+    private final AtomicInteger _counter;
     @Configured
     InputColumn<?> column;
-
-    private final AtomicInteger _counter;
 
     public MockTransformerWithAnalyzerResult() {
         _counter = new AtomicInteger();

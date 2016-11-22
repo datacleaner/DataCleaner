@@ -41,19 +41,21 @@ public class AbstractCrosstabResultReducerTest extends TestCase {
         crosstab2.where("Column", "col1").where("Measure", "Valid count").put(20, true);
         crosstab2.where("Column", "col2").where("Measure", "Valid count").put(21, true);
 
-        final AbstractCrosstabResultReducer<CrosstabResult> reducer = new AbstractCrosstabResultReducer<CrosstabResult>() {
+        final AbstractCrosstabResultReducer<CrosstabResult> reducer =
+                new AbstractCrosstabResultReducer<CrosstabResult>() {
 
-            @Override
-            protected Serializable reduceValues(List<Object> slaveValues, String category1, String category2,
-                    Collection<? extends CrosstabResult> results, Class<?> valueClass) {
-                return sumAsInteger(slaveValues);
-            }
+                    @Override
+                    protected Serializable reduceValues(List<Object> slaveValues, String category1, String category2,
+                            Collection<? extends CrosstabResult> results, Class<?> valueClass) {
+                        return sumAsInteger(slaveValues);
+                    }
 
-            @Override
-            protected CrosstabResult buildResult(Crosstab<?> crosstab, Collection<? extends CrosstabResult> results) {
-                return new CrosstabResult(crosstab);
-            }
-        };
+                    @Override
+                    protected CrosstabResult buildResult(Crosstab<?> crosstab,
+                            Collection<? extends CrosstabResult> results) {
+                        return new CrosstabResult(crosstab);
+                    }
+                };
 
         final CrosstabResult result1 = new CrosstabResult(crosstab1);
         final CrosstabResult result2 = new CrosstabResult(crosstab2);
@@ -66,7 +68,7 @@ public class AbstractCrosstabResultReducerTest extends TestCase {
         assertEquals(30, crosstab.where("Column", "col1").where("Measure", "Valid count").get());
         assertEquals(32, crosstab.where("Column", "col2").where("Measure", "Valid count").get());
     }
-    
+
     public void testSumAsDouble() throws Exception {
         Number sum = AbstractCrosstabResultReducer.sumAsDouble(Arrays.asList(123.1d, null, 124d, 125d, 12d));
         assertTrue(sum instanceof Double);

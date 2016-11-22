@@ -24,17 +24,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Class ComponentNotAllowed
- * 
+ *
  */
 @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Component is not allowed.")
 public class ComponentNotAllowed extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    private ComponentNotAllowed(String msg) {
+    private ComponentNotAllowed(final String msg) {
         super(msg);
     }
 
-    public static ComponentNotAllowed createInstanceNotAllowed(String componentName) {
+    public static ComponentNotAllowed createInstanceNotAllowed(final String componentName) {
         return new ComponentNotAllowed("Component with name " + componentName + " is not allowed.");
     }
 }

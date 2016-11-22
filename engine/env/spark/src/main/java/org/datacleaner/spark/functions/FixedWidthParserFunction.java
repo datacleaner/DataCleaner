@@ -27,9 +27,9 @@ public class FixedWidthParserFunction implements Function<String, Object[]> {
 
     private static final long serialVersionUID = 1L;
     private final FixedWidthConfiguration _fixedWidthConfiguration;
-    private final int _expectedLineLength; 
+    private final int _expectedLineLength;
 
-    public FixedWidthParserFunction(FixedWidthConfiguration fixedWidthConfiguration) {
+    public FixedWidthParserFunction(final FixedWidthConfiguration fixedWidthConfiguration) {
         _fixedWidthConfiguration = fixedWidthConfiguration;
         int expectedLineLength = 0;
         if (_fixedWidthConfiguration.getFixedValueWidth() == -1) {
@@ -37,13 +37,14 @@ public class FixedWidthParserFunction implements Function<String, Object[]> {
                 expectedLineLength += _fixedWidthConfiguration.getValueWidth(i);
             }
         }
-        _expectedLineLength = expectedLineLength;  
-       
+        _expectedLineLength = expectedLineLength;
+
     }
 
     @Override
-    public Object[] call(String line) throws Exception {
-        final FixedWidthLineParser fixedWidthParser = new FixedWidthLineParser(_fixedWidthConfiguration, _expectedLineLength, 0);
+    public Object[] call(final String line) throws Exception {
+        final FixedWidthLineParser fixedWidthParser =
+                new FixedWidthLineParser(_fixedWidthConfiguration, _expectedLineLength, 0);
         return fixedWidthParser.parseLine(line);
     }
 }

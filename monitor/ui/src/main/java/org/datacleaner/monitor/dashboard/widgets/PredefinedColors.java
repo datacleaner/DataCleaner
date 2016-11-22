@@ -23,14 +23,16 @@ import org.datacleaner.monitor.shared.widgets.Color;
 
 public enum PredefinedColors {
 
-    LIGHT_GRAY("Light gray", Color.LIGHT_GRAY), GRAY("Gray", Color.GRAY), DARK_GRAY("Dark gray", Color.DARK_GRAY), BLACK("Black", Color.BLACK),
-    RED("Red", Color.RED), PINK("Pink", Color.PINK), ORANGE("Orange", Color.ORANGE), YELLOW("Yellow", Color.YELLOW), GREEN("Green", Color.GREEN),
+    LIGHT_GRAY("Light gray", Color.LIGHT_GRAY), GRAY("Gray", Color.GRAY), DARK_GRAY("Dark gray",
+            Color.DARK_GRAY), BLACK("Black", Color.BLACK),
+    RED("Red", Color.RED), PINK("Pink", Color.PINK), ORANGE("Orange", Color.ORANGE), YELLOW("Yellow",
+            Color.YELLOW), GREEN("Green", Color.GREEN),
     MAGENTA("Magenta", Color.MAGENTA), CYAN("Cyan", Color.CYAN), BLUE("Blue", Color.BLUE);
 
     private String _name;
     private Color _color;
 
-    PredefinedColors(String name, Color color) {
+    PredefinedColors(final String name, final Color color) {
         _name = name;
         _color = color;
     }

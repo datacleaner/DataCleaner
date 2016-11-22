@@ -43,19 +43,19 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     private final List<DescriptorProvider> delegates;
     private final Set<DescriptorProviderListener> activeListeners;
 
-    public CompositeDescriptorProvider(){
+    public CompositeDescriptorProvider() {
         delegates = new ArrayList<>();
         activeListeners = new HashSet<>();
     }
 
-    public void addDelegates(List<DescriptorProvider> descriptorProviders) {
-        for (DescriptorProvider descriptorProvider : descriptorProviders) {
+    public void addDelegates(final List<DescriptorProvider> descriptorProviders) {
+        for (final DescriptorProvider descriptorProvider : descriptorProviders) {
             addDelegate(descriptorProvider);
         }
     }
 
-    public void addDelegate(DescriptorProvider descriptorProvider) {
-        for (DescriptorProviderListener activeListener : activeListeners) {
+    public void addDelegate(final DescriptorProvider descriptorProvider) {
+        for (final DescriptorProviderListener activeListener : activeListeners) {
             descriptorProvider.addListener(activeListener);
         }
         delegates.add(descriptorProvider);
@@ -63,14 +63,14 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
 
     @Override
     public void refresh() {
-        for (DescriptorProvider provider : delegates) {
+        for (final DescriptorProvider provider : delegates) {
             provider.refresh();
         }
     }
-    
-    private void removeDuplicateComponents(Collection<? extends ComponentDescriptor<?>> col) {
+
+    private void removeDuplicateComponents(final Collection<? extends ComponentDescriptor<?>> col) {
         final Set<String> names = new HashSet<>();
-        for (Iterator<? extends ComponentDescriptor<?>> it = col.iterator(); it.hasNext();) {
+        for (final Iterator<? extends ComponentDescriptor<?>> it = col.iterator(); it.hasNext(); ) {
             final ComponentDescriptor<?> componentDescriptor = it.next();
             final boolean newName = names.add(componentDescriptor.getDisplayName());
             if (!newName) {
@@ -82,7 +82,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     @Override
     public Collection<AnalyzerDescriptor<?>> getAnalyzerDescriptors() {
         final Collection<AnalyzerDescriptor<?>> col = new ArrayList<>();
-        for (DescriptorProvider provider : delegates) {
+        for (final DescriptorProvider provider : delegates) {
             col.addAll(provider.getAnalyzerDescriptors());
         }
         removeDuplicateComponents(col);
@@ -90,8 +90,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public <A extends Analyzer<?>> AnalyzerDescriptor<A> getAnalyzerDescriptorForClass(Class<A> analyzerClass) {
-        for (DescriptorProvider provider : delegates) {
+    public <A extends Analyzer<?>> AnalyzerDescriptor<A> getAnalyzerDescriptorForClass(final Class<A> analyzerClass) {
+        for (final DescriptorProvider provider : delegates) {
             final AnalyzerDescriptor<A> descriptor = provider.getAnalyzerDescriptorForClass(analyzerClass);
             if (descriptor != null) {
                 return descriptor;
@@ -101,8 +101,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public AnalyzerDescriptor<?> getAnalyzerDescriptorByDisplayName(String name) {
-        for (DescriptorProvider provider : delegates) {
+    public AnalyzerDescriptor<?> getAnalyzerDescriptorByDisplayName(final String name) {
+        for (final DescriptorProvider provider : delegates) {
             final AnalyzerDescriptor<?> descriptor = provider.getAnalyzerDescriptorByDisplayName(name);
             if (descriptor != null) {
                 return descriptor;
@@ -110,10 +110,10 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
         }
         return null;
     }
-    
+
     @Override
-    public ComponentDescriptor<?> getComponentDescriptorByDisplayName(String name) {
-        for (DescriptorProvider provider : delegates) {
+    public ComponentDescriptor<?> getComponentDescriptorByDisplayName(final String name) {
+        for (final DescriptorProvider provider : delegates) {
             final ComponentDescriptor<?> descriptor = provider.getComponentDescriptorByDisplayName(name);
             if (descriptor != null) {
                 return descriptor;
@@ -125,7 +125,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     @Override
     public Collection<TransformerDescriptor<?>> getTransformerDescriptors() {
         final Collection<TransformerDescriptor<?>> col = new ArrayList<>();
-        for (DescriptorProvider provider : delegates) {
+        for (final DescriptorProvider provider : delegates) {
             col.addAll(provider.getTransformerDescriptors());
         }
         removeDuplicateComponents(col);
@@ -134,8 +134,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
 
     @Override
     public <T extends Transformer> TransformerDescriptor<T> getTransformerDescriptorForClass(
-            Class<T> transformerClass) {
-        for (DescriptorProvider provider : delegates) {
+            final Class<T> transformerClass) {
+        for (final DescriptorProvider provider : delegates) {
             final TransformerDescriptor<T> descriptor = provider.getTransformerDescriptorForClass(transformerClass);
             if (descriptor != null) {
                 return descriptor;
@@ -145,8 +145,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public TransformerDescriptor<?> getTransformerDescriptorByDisplayName(String name) {
-        for (DescriptorProvider provider : delegates) {
+    public TransformerDescriptor<?> getTransformerDescriptorByDisplayName(final String name) {
+        for (final DescriptorProvider provider : delegates) {
             final TransformerDescriptor<?> descriptor = provider.getTransformerDescriptorByDisplayName(name);
             if (descriptor != null) {
                 return descriptor;
@@ -158,7 +158,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     @Override
     public Collection<FilterDescriptor<?, ?>> getFilterDescriptors() {
         final Collection<FilterDescriptor<?, ?>> col = new ArrayList<>();
-        for (DescriptorProvider provider : delegates) {
+        for (final DescriptorProvider provider : delegates) {
             col.addAll(provider.getFilterDescriptors());
         }
         removeDuplicateComponents(col);
@@ -167,8 +167,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
 
     @Override
     public <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> getFilterDescriptorForClass(
-            Class<F> filterClass) {
-        for (DescriptorProvider provider : delegates) {
+            final Class<F> filterClass) {
+        for (final DescriptorProvider provider : delegates) {
             final FilterDescriptor<F, C> descriptor = provider.getFilterDescriptorForClass(filterClass);
             if (descriptor != null) {
                 return descriptor;
@@ -178,8 +178,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public FilterDescriptor<?, ?> getFilterDescriptorByDisplayName(String name) {
-        for (DescriptorProvider provider : delegates) {
+    public FilterDescriptor<?, ?> getFilterDescriptorByDisplayName(final String name) {
+        for (final DescriptorProvider provider : delegates) {
             final FilterDescriptor<?, ?> descriptor = provider.getFilterDescriptorByDisplayName(name);
             if (descriptor != null) {
                 return descriptor;
@@ -192,8 +192,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     public Set<ComponentSuperCategory> getComponentSuperCategories() {
         final Set<ComponentSuperCategory> result = new TreeSet<>();
         final Collection<? extends ComponentDescriptor<?>> descriptors = getComponentDescriptors();
-        for (ComponentDescriptor<?> componentDescriptor : descriptors) {
-            ComponentSuperCategory superCategory = componentDescriptor.getComponentSuperCategory();
+        for (final ComponentDescriptor<?> componentDescriptor : descriptors) {
+            final ComponentSuperCategory superCategory = componentDescriptor.getComponentSuperCategory();
             result.add(superCategory);
         }
         return result;
@@ -202,7 +202,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     @Override
     public Collection<? extends ComponentDescriptor<?>> getComponentDescriptors() {
         final Collection<ComponentDescriptor<?>> col = new ArrayList<>();
-        for (DescriptorProvider provider : delegates) {
+        for (final DescriptorProvider provider : delegates) {
             col.addAll(provider.getComponentDescriptors());
         }
         removeDuplicateComponents(col);
@@ -211,9 +211,9 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
 
     @Override
     public Collection<? extends ComponentDescriptor<?>> getComponentDescriptorsOfSuperCategory(
-            ComponentSuperCategory category) {
+            final ComponentSuperCategory category) {
         final Collection<ComponentDescriptor<?>> col = new ArrayList<>();
-        for (DescriptorProvider provider : delegates) {
+        for (final DescriptorProvider provider : delegates) {
             col.addAll(provider.getComponentDescriptorsOfSuperCategory(category));
         }
         removeDuplicateComponents(col);
@@ -223,7 +223,7 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     @Override
     public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptors() {
         final Collection<RendererBeanDescriptor<?>> col = new ArrayList<>();
-        for (DescriptorProvider provider : delegates) {
+        for (final DescriptorProvider provider : delegates) {
             col.addAll(provider.getRendererBeanDescriptors());
         }
         removeDuplicateComponents(col);
@@ -232,8 +232,8 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
 
     @Override
     public <R extends Renderer<?, ?>> RendererBeanDescriptor<R> getRendererBeanDescriptorForClass(
-            Class<R> rendererBeanClass) {
-        for (DescriptorProvider provider : delegates) {
+            final Class<R> rendererBeanClass) {
+        for (final DescriptorProvider provider : delegates) {
             final RendererBeanDescriptor<R> descriptor = provider.getRendererBeanDescriptorForClass(rendererBeanClass);
             if (descriptor != null) {
                 return descriptor;
@@ -244,9 +244,9 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
 
     @Override
     public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptorsForRenderingFormat(
-            Class<? extends RenderingFormat<?>> renderingFormat) {
+            final Class<? extends RenderingFormat<?>> renderingFormat) {
         final Collection<RendererBeanDescriptor<?>> col = new ArrayList<>();
-        for (DescriptorProvider provider : delegates) {
+        for (final DescriptorProvider provider : delegates) {
             col.addAll(provider.getRendererBeanDescriptorsForRenderingFormat(renderingFormat));
         }
         removeDuplicateComponents(col);
@@ -254,23 +254,23 @@ public class CompositeDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public void addListener(DescriptorProviderListener listener) {
+    public void addListener(final DescriptorProviderListener listener) {
         activeListeners.add(listener);
-        for (DescriptorProvider provider : delegates) {
+        for (final DescriptorProvider provider : delegates) {
             provider.addListener(listener);
         }
     }
 
     @Override
-    public void removeListener(DescriptorProviderListener listener) {
+    public void removeListener(final DescriptorProviderListener listener) {
         activeListeners.remove(listener);
-        for (DescriptorProvider provider : delegates) {
+        for (final DescriptorProvider provider : delegates) {
             provider.removeListener(listener);
         }
     }
 
     public ClasspathScanDescriptorProvider findClasspathScanProvider() {
-        for (DescriptorProvider provider : delegates) {
+        for (final DescriptorProvider provider : delegates) {
             if (provider instanceof ClasspathScanDescriptorProvider) {
                 return (ClasspathScanDescriptorProvider) provider;
             }

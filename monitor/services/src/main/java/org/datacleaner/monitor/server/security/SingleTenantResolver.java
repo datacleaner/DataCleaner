@@ -26,12 +26,12 @@ public class SingleTenantResolver implements TenantResolver {
 
     private String _tenantId;
 
-    public void setTenantId(String tenantId) {
+    public void setTenantId(final String tenantId) {
         _tenantId = tenantId;
     }
 
     @Override
-    public String getTenantId(String username) {
+    public String getTenantId(final String username) {
         return _tenantId;
     }
 }

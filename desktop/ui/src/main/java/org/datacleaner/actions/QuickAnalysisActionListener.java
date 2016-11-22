@@ -52,8 +52,8 @@ public class QuickAnalysisActionListener implements ActionListener {
     private final DataCleanerConfiguration _configuration;
 
     @Inject
-    protected QuickAnalysisActionListener(Datastore datastore, @Nullable Table table, @Nullable Column[] columns,
-            DCModule dcModule, UserPreferences userPreferences, DataCleanerConfiguration configuration) {
+    protected QuickAnalysisActionListener(final Datastore datastore, @Nullable final Table table, @Nullable final Column[] columns,
+            final DCModule dcModule, final UserPreferences userPreferences, final DataCleanerConfiguration configuration) {
         _datastore = datastore;
         _table = table;
         _columns = columns;
@@ -77,7 +77,7 @@ public class QuickAnalysisActionListener implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent event) {
+    public void actionPerformed(final ActionEvent event) {
         final AnalysisJobBuilder ajb = new AnalysisJobBuilder(_configuration);
         ajb.setDatastore(_datastore);
         ajb.addSourceColumns(getColumns());
@@ -92,11 +92,11 @@ public class QuickAnalysisActionListener implements ActionListener {
                 throw new IllegalStateException("Unknown job configuration issue!");
             }
 
-            Injector injector = Guice.createInjector(new DCModuleImpl(_dcModule, ajb));
+            final Injector injector = Guice.createInjector(new DCModuleImpl(_dcModule, ajb));
 
-            RunAnalysisActionListener actionListener = injector.getInstance(RunAnalysisActionListener.class);
+            final RunAnalysisActionListener actionListener = injector.getInstance(RunAnalysisActionListener.class);
             actionListener.actionPerformed(event);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             WidgetUtils.showErrorMessage("Error", "Could not perform quick analysis on table " + _table.getName(), e);
         }
 

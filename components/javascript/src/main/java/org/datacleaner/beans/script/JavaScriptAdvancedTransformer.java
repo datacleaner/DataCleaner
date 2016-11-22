@@ -84,13 +84,13 @@ public class JavaScriptAdvancedTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        String[] names = new String[returnTypes.length];
-        Class<?>[] types = new Class[returnTypes.length];
+        final String[] names = new String[returnTypes.length];
+        final Class<?>[] types = new Class[returnTypes.length];
         for (int i = 0; i < returnTypes.length; i++) {
             names[i] = "JavaScript output " + (i + 1);
             types[i] = returnTypes[i];
         }
-        OutputColumns outputColumns = new OutputColumns(names, types);
+        final OutputColumns outputColumns = new OutputColumns(names, types);
         return outputColumns;
     }
 
@@ -98,7 +98,7 @@ public class JavaScriptAdvancedTransformer implements Transformer {
     public void init() {
         _contextFactory = new ContextFactory();
 
-        Context context = _contextFactory.enterContext();
+        final Context context = _contextFactory.enterContext();
         try {
             _script = context.compileString(sourceCode, this.getClass().getSimpleName(), 1, null);
             _sharedScope = context.initStandardObjects();
@@ -124,7 +124,7 @@ public class JavaScriptAdvancedTransformer implements Transformer {
 
     @Close
     public void close() {
-        Context context = _contextFactory.enterContext();
+        final Context context = _contextFactory.enterContext();
         try {
             _closeFunction.call(context, _sharedScope, _sharedScope, new Object[0]);
         } finally {
@@ -133,16 +133,16 @@ public class JavaScriptAdvancedTransformer implements Transformer {
     }
 
     @Override
-    public Object[] transform(InputRow inputRow) {
-        Context context = _contextFactory.enterContext();
+    public Object[] transform(final InputRow inputRow) {
+        final Context context = _contextFactory.enterContext();
         try {
-            String[] columnNames = new String[columns.length];
-            Object[] values = new Object[columns.length];
+            final String[] columnNames = new String[columns.length];
+            final Object[] values = new Object[columns.length];
             for (int i = 0; i < columns.length; i++) {
                 columnNames[i] = columns[i].getName();
                 values[i] = inputRow.getValue(columns[i]);
             }
-            Object[] args = { columnNames, values, rowCollector };
+            final Object[] args = { columnNames, values, rowCollector };
             _transformFunction.call(context, _sharedScope, _sharedScope, args);
             return null;
         } finally {

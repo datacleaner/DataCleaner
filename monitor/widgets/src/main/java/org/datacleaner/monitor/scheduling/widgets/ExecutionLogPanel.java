@@ -75,8 +75,8 @@ public class ExecutionLogPanel extends Composite {
     @UiField(provided = true)
     LoadingIndicator loadingIndicator;
 
-    public ExecutionLogPanel(SchedulingServiceAsync service, TenantIdentifier tenant, ExecutionLog executionLog,
-            boolean pollForUpdates) {
+    public ExecutionLogPanel(final SchedulingServiceAsync service, final TenantIdentifier tenant, final ExecutionLog executionLog,
+            final boolean pollForUpdates) {
         super();
 
         _service = service;
@@ -91,11 +91,11 @@ public class ExecutionLogPanel extends Composite {
             loadingIndicator.setVisible(false);
         } else {
             updateContent(executionLog);
-            
+
             if (pollForUpdates) {
                 final ExecutionLogPoller poller = new ExecutionLogPoller(_service, _tenant, new Callback() {
                     @Override
-                    public void updateExecutionLog(ExecutionLog executionLog) {
+                    public void updateExecutionLog(final ExecutionLog executionLog) {
                         updateContent(executionLog);
                     }
                 });
@@ -134,7 +134,8 @@ public class ExecutionLogPanel extends Composite {
             if (triggerType != null) {
                 switch (triggerType) {
                 case PERIODIC:
-                    triggerLabel.setText("Scheduled: Periodic '" + executionLog.getSchedule().getCronExpression() + "'");
+                    triggerLabel
+                            .setText("Scheduled: Periodic '" + executionLog.getSchedule().getCronExpression() + "'");
                     break;
                 case DEPENDENT:
                     triggerLabel.setText("Scheduled: After '" + executionLog.getSchedule().getDependentJob().getName()
@@ -144,8 +145,9 @@ public class ExecutionLogPanel extends Composite {
                     triggerLabel.setText("Manually triggered");
                     break;
                 case ONETIME:
-                	triggerLabel.setText("Scheduled: OneTime '" + executionLog.getSchedule().getDateForOneTimeSchedule() + "'");
-                	break;
+                    triggerLabel.setText(
+                            "Scheduled: OneTime '" + executionLog.getSchedule().getDateForOneTimeSchedule() + "'");
+                    break;
                 case HOTFOLDER:
                     triggerLabel.setText("Hot folder '" + executionLog.getSchedule().getHotFolder() + "' triggered");
                 }
@@ -154,7 +156,7 @@ public class ExecutionLogPanel extends Composite {
             triggeredByLabel.setText(executionLog.getTriggeredBy());
 
             logOutputLabel.setText(executionLog.getLogOutput());
-            
+
             resultAnchor.setResult(executionLog);
         }
 

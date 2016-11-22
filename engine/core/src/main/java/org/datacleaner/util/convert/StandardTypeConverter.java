@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default implementation of the {@link Converter} interface. This converter is
  * able to convert single instances (not arrays or collections) of:
- * 
+ *
  * <ul>
  * <li>Boolean</li>
  * <li>Byte</li>
@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
  * <li>java.util.Calendar</li>
  * <li>java.util.regex.Pattern</li>
  * </ul>
- * 
+ *
  * If given a {@link Serializable} type it will also attempt serializing it to a
  * byte-array string.
  */
@@ -89,13 +89,28 @@ public class StandardTypeConverter implements Converter<Object> {
         this(null, null);
     }
 
-    public StandardTypeConverter(DataCleanerConfiguration configuration, Converter<Object> parentConverter) {
+    public StandardTypeConverter(final DataCleanerConfiguration configuration, final Converter<Object> parentConverter) {
         _configuration = configuration;
         _parentConverter = parentConverter;
     }
 
+    private static final Date toDate(final String str) {
+        try {
+            return new SimpleDateFormat(dateFormatString).parse(str);
+        } catch (final ParseException e) {
+
+            final Date date = ConvertToDateTransformer.getInternalInstance().transformValue(str);
+            if (date == null) {
+                logger.error("Could not parse date: " + str, e);
+                throw new IllegalArgumentException(e);
+            } else {
+                return date;
+            }
+        }
+    }
+
     @Override
-    public Object fromString(Class<?> type, String str) {
+    public Object fromString(final Class<?> type, final String str) {
         if (ReflectionUtils.isString(type)) {
             return str;
         }
@@ -126,41 +141,41 @@ public class StandardTypeConverter implements Converter<Object> {
         if (ReflectionUtils.is(type, Class.class)) {
             try {
                 return Class.forName(str);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw new IllegalArgumentException("Class not found: " + str, e);
             }
         }
-        if(ReflectionUtils.is(type, EnumerationValue.class)) {
+        if (ReflectionUtils.is(type, EnumerationValue.class)) {
             return new EnumerationValue(str);
         }
         if (type.isEnum()) {
             try {
-                Object[] enumConstants = type.getEnumConstants();
+                final Object[] enumConstants = type.getEnumConstants();
 
                 // first look for enum constant matches
-                Method nameMethod = Enum.class.getMethod("name");
-                for (Object e : enumConstants) {
-                    String name = (String) nameMethod.invoke(e);
+                final Method nameMethod = Enum.class.getMethod("name");
+                for (final Object e : enumConstants) {
+                    final String name = (String) nameMethod.invoke(e);
                     if (name.equals(str)) {
                         return e;
                     }
                 }
 
                 // check for aliased enums
-                for (Object e : enumConstants) {
-                    String name = (String) nameMethod.invoke(e);
-                    Field field = type.getField(name);
-                    Alias alias = ReflectionUtils.getAnnotation(field, Alias.class);
+                for (final Object e : enumConstants) {
+                    final String name = (String) nameMethod.invoke(e);
+                    final Field field = type.getField(name);
+                    final Alias alias = ReflectionUtils.getAnnotation(field, Alias.class);
                     if (alias != null) {
-                        String[] aliasValues = alias.value();
-                        for (String aliasValue : aliasValues) {
+                        final String[] aliasValues = alias.value();
+                        for (final String aliasValue : aliasValues) {
                             if (aliasValue.equals(str)) {
                                 return e;
                             }
                         }
                     }
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Unexpected error occurred while examining enum", e);
             }
             throw new IllegalArgumentException("No such enum '" + str + "' in enum class: " + type.getName());
@@ -173,20 +188,20 @@ public class StandardTypeConverter implements Converter<Object> {
             return fileResolver.toFile(str);
         }
         if (ReflectionUtils.is(type, Calendar.class)) {
-            Date date = toDate(str);
-            Calendar c = Calendar.getInstance();
+            final Date date = toDate(str);
+            final Calendar c = Calendar.getInstance();
             c.setTime(date);
             return c;
         }
         if (ReflectionUtils.is(type, Pattern.class)) {
             try {
                 return Pattern.compile(str);
-            } catch (PatternSyntaxException e) {
+            } catch (final PatternSyntaxException e) {
                 throw new IllegalArgumentException("Invalid regular expression syntax in '" + str + "'.", e);
             }
         }
         if (ReflectionUtils.is(type, java.sql.Date.class)) {
-            Date date = toDate(str);
+            final Date date = toDate(str);
             return new java.sql.Date(date.getTime());
         }
         if (ReflectionUtils.isNumber(type)) {
@@ -194,14 +209,14 @@ public class StandardTypeConverter implements Converter<Object> {
         }
         if (ReflectionUtils.is(type, Serializable.class)) {
             logger.warn("fromString(...): No built-in handling of type: {}, using deserialization", type.getName());
-            byte[] bytes = (byte[]) _parentConverter.fromString(byte[].class, str);
+            final byte[] bytes = (byte[]) _parentConverter.fromString(byte[].class, str);
             ChangeAwareObjectInputStream objectInputStream = null;
             try {
                 objectInputStream = new ChangeAwareObjectInputStream(new ByteArrayInputStream(bytes));
                 objectInputStream.addClassLoader(type.getClassLoader());
-                Object obj = objectInputStream.readObject();
+                final Object obj = objectInputStream.readObject();
                 return obj;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Could not deserialize to " + type + ".", e);
             } finally {
                 FileHelper.safeClose(objectInputStream);
@@ -239,10 +254,11 @@ public class StandardTypeConverter implements Converter<Object> {
         } else if (o instanceof Class) {
             result = ((Class<?>) o).getName();
         } else if (o instanceof EnumerationValue) {
-            result = ((EnumerationValue)o).getValue();
+            result = ((EnumerationValue) o).getValue();
         } else if (o instanceof Serializable) {
-            logger.info("toString(...): No built-in handling of type: {}, using serialization.", o.getClass().getName());
-            byte[] bytes = SerializationUtils.serialize((Serializable) o);
+            logger.info("toString(...): No built-in handling of type: {}, using serialization.",
+                    o.getClass().getName());
+            final byte[] bytes = SerializationUtils.serialize((Serializable) o);
             result = _parentConverter.toString(bytes);
         } else {
             logger.warn("toString(...): Could not convert type: {}", o.getClass().getName());
@@ -251,23 +267,8 @@ public class StandardTypeConverter implements Converter<Object> {
         return result;
     }
 
-    private static final Date toDate(String str) {
-        try {
-            return new SimpleDateFormat(dateFormatString).parse(str);
-        } catch (ParseException e) {
-
-            Date date = ConvertToDateTransformer.getInternalInstance().transformValue(str);
-            if (date == null) {
-                logger.error("Could not parse date: " + str, e);
-                throw new IllegalArgumentException(e);
-            } else {
-                return date;
-            }
-        }
-    }
-
     @Override
-    public boolean isConvertable(Class<?> type) {
+    public boolean isConvertable(final Class<?> type) {
         return ReflectionUtils.is(type, Serializable.class) || type.isPrimitive();
     }
 }

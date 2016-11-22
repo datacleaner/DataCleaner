@@ -24,12 +24,12 @@ import java.nio.file.WatchService;
 /**
  * A monitoring mechanism for file change events. Typically used by file-based
  * reference data to monitor changes to the reference data files.
- * 
+ *
  * @deprecated as of Java 7 the preferred way to monitor files is to use
  *             {@link WatchService}.
  */
 @Deprecated
 public interface FileMonitor {
 
-    public boolean hasChanged();
+    boolean hasChanged();
 }

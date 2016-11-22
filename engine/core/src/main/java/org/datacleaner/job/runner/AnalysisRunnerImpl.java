@@ -29,8 +29,8 @@ import org.datacleaner.job.concurrent.TaskRunner;
 
 /**
  * Default implementation of the AnalysisRunner interface.
- * 
- * 
+ *
+ *
  */
 public class AnalysisRunnerImpl implements AnalysisRunner {
 
@@ -39,21 +39,21 @@ public class AnalysisRunnerImpl implements AnalysisRunner {
 
     /**
      * Creates an AnalysisRunner based on a configuration, with no listeners
-     * 
+     *
      * @param configuration
      */
-    public AnalysisRunnerImpl(DataCleanerConfiguration configuration) {
+    public AnalysisRunnerImpl(final DataCleanerConfiguration configuration) {
         this(configuration, new AnalysisListener[0]);
     }
 
     /**
      * Create an AnalysisRunner with a set of listeners, based on a
      * configuration
-     * 
+     *
      * @param configuration
      * @param sharedAnalysisListeners
      */
-    public AnalysisRunnerImpl(DataCleanerConfiguration configuration, AnalysisListener... sharedAnalysisListeners) {
+    public AnalysisRunnerImpl(final DataCleanerConfiguration configuration, final AnalysisListener... sharedAnalysisListeners) {
         if (configuration == null) {
             throw new IllegalArgumentException("configuration cannot be null");
         }
@@ -80,9 +80,10 @@ public class AnalysisRunnerImpl implements AnalysisRunner {
         }
 
         // set up the task runner that is aware of errors
-        final TaskRunner taskRunner = new ErrorAwareTaskRunnerWrapper(errorListener, _configuration.getEnvironment().getTaskRunner());
+        final TaskRunner taskRunner =
+                new ErrorAwareTaskRunnerWrapper(errorListener, _configuration.getEnvironment().getTaskRunner());
 
-        boolean includedNonDistributed = isNonDistributedTasksIncluded();
+        final boolean includedNonDistributed = isNonDistributedTasksIncluded();
 
         // the delegate will do all the actual work
         final AnalysisRunnerJobDelegate delegate = new AnalysisRunnerJobDelegate(job, _configuration, taskRunner,
@@ -96,7 +97,7 @@ public class AnalysisRunnerImpl implements AnalysisRunner {
      * distributed=false) should be included or not in the work executed. On
      * single-node executions, this will typically be true, on slave nodes in a
      * cluster, this will typically be false.
-     * 
+     *
      * @return
      */
     protected boolean isNonDistributedTasksIncluded() {

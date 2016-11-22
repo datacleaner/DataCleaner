@@ -27,7 +27,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.datacleaner.util.StringUtils;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.JobContext;
@@ -37,8 +38,7 @@ import org.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,16 +66,16 @@ public class LaunchResourcesController {
     TenantContextFactory _tenantContextFactory;
 
     @RequestMapping("/images/app-icon.png")
-    public void fetchAppIcon(HttpServletResponse response) throws IOException {
+    public void fetchAppIcon(final HttpServletResponse response) throws IOException {
         fetchImage(response, "launch-datacleaner-app-icon.png");
     }
 
     @RequestMapping("/images/splash.png")
-    public void fetchSplashImage(HttpServletResponse response) throws IOException {
+    public void fetchSplashImage(final HttpServletResponse response) throws IOException {
         fetchImage(response, "launch-datacleaner-splash.png");
     }
 
-    private void fetchImage(HttpServletResponse response, String path) throws IOException {
+    private void fetchImage(final HttpServletResponse response, final String path) throws IOException {
         response.setContentType("image/png");
 
         final InputStream in = getClass().getResourceAsStream(path);
@@ -85,7 +85,7 @@ public class LaunchResourcesController {
         }
         try {
             FileHelper.copy(in, response.getOutputStream());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // errors here often happens when the client aborts because the
             // client Java already has a cached version of the file.
             if (logger.isInfoEnabled()) {
@@ -104,9 +104,9 @@ public class LaunchResourcesController {
             final HttpServletResponse response) throws Exception {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        
+
         final DataCleanerJobContext jobContext;
-        if (StringUtils.isNullOrEmpty(jobName)) { 
+        if (StringUtils.isNullOrEmpty(jobName)) {
             jobContext = null;
         } else {
             final JobContext job = tenantContext.getJob(jobName);
@@ -124,7 +124,7 @@ public class LaunchResourcesController {
 
         confFile.readFile(new Action<InputStream>() {
             @Override
-            public void run(InputStream in) throws Exception {
+            public void run(final InputStream in) throws Exception {
                 // intercept the input stream to decorate it with client-side
                 // config elements.
                 _configurationInterceptor.intercept(tenant, jobContext, datastoreName, in, out);
@@ -133,13 +133,13 @@ public class LaunchResourcesController {
     }
 
     @RequestMapping(value = "/{filename:.+}.jar")
-    public void fetchJarFile(HttpServletRequest request, HttpServletResponse response,
-            @PathVariable("tenant") final String tenant, @PathVariable("filename") String filename) throws Exception {
+    public void fetchJarFile(final HttpServletRequest request, final HttpServletResponse response,
+            @PathVariable("tenant") final String tenant, @PathVariable("filename") final String filename) throws Exception {
 
         final InputStream in;
         try {
             in = _launchArtifactProvider.readJarFile(filename + ".jar");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             // file was not found
             response.sendError(404, e.getMessage());
             return;
@@ -156,7 +156,7 @@ public class LaunchResourcesController {
 
         try {
             FileHelper.copy(in, out);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // errors here often happens when the client aborts because the
             // client Java already has a cached version of the file.
             if (logger.isInfoEnabled()) {

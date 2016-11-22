@@ -49,7 +49,7 @@ public class ResultsFolderController {
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") String tenant) {
+    public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") final String tenant) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final RepositoryFolder resultsFolder = context.getResultFolder();
@@ -59,8 +59,8 @@ public class ResultsFolderController {
         {
             final List<RepositoryFile> files = resultsFolder.getFiles(null,
                     FileFilters.ANALYSIS_RESULT_SER.getExtension());
-            for (RepositoryFile file : files) {
-                Map<String, String> map = new HashMap<String, String>();
+            for (final RepositoryFile file : files) {
+                final Map<String, String> map = new HashMap<String, String>();
                 map.put("filename", file.getName());
                 map.put("repository_path", file.getQualifiedPath());
                 result.add(map);

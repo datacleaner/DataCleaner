@@ -19,9 +19,9 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.file;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertNotEquals;
+
+import org.junit.Test;
 
 public class FileSynonymCatalogReferenceDataPageTest {
 

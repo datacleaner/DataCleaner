@@ -39,13 +39,13 @@ public class JsonQueryDatasetResponseParser {
     // String result =
     // "{\"table\":{\"header\":[\"CUSTOMERNUMBER\",\"CUSTOMERNAME\",\"CONTACTLASTNAME\",\"CONTACTFIRSTNAME\",\"PHONE\",\"ADDRESSLINE1\",\"ADDRESSLINE2\",\"CITY\",\"STATE\",\"POSTALCODE\",\"COUNTRY\",\"SALESREPEMPLOYEENUMBER\",\"CREDITLIMIT\"],\"rows\":[]}}";
 
-    public List<Object[]> parseQueryResult(InputStream inputStream) throws JsonParseException, IOException {
+    public List<Object[]> parseQueryResult(final InputStream inputStream) throws JsonParseException, IOException {
         _parsingRows = false;
         _parsingRow = false;
         _arrayCount = 0;
-        List<Object[]> queryResult = new ArrayList<Object[]>();
-        JsonFactory factory = new JsonFactory();
-        JsonParser parser = factory.createParser(inputStream);
+        final List<Object[]> queryResult = new ArrayList<Object[]>();
+        final JsonFactory factory = new JsonFactory();
+        final JsonParser parser = factory.createParser(inputStream);
         JsonToken token = parser.nextToken();
         while (token != null) {
             switch (parser.getCurrentToken()) {

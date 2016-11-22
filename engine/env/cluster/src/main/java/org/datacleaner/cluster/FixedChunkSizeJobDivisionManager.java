@@ -31,7 +31,7 @@ public class FixedChunkSizeJobDivisionManager implements JobDivisionManager {
 
     private final int _chunkSize;
 
-    public FixedChunkSizeJobDivisionManager(int chunkSize) {
+    public FixedChunkSizeJobDivisionManager(final int chunkSize) {
         if (chunkSize <= 0) {
             throw new IllegalArgumentException("Chunk size must be a positive integer");
         }
@@ -39,7 +39,7 @@ public class FixedChunkSizeJobDivisionManager implements JobDivisionManager {
     }
 
     @Override
-    public int calculateDivisionCount(AnalysisJob masterJob, int expectedRows) {
+    public int calculateDivisionCount(final AnalysisJob masterJob, final int expectedRows) {
         final int chunkCount = (int) Math.ceil((1.0d * expectedRows / _chunkSize));
 
         return chunkCount;

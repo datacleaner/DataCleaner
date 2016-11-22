@@ -70,42 +70,41 @@ import com.googlecode.gflot.client.options.SelectionOptions.SelectionMode;
 import com.googlecode.gflot.client.options.TimeSeriesAxisOptions;
 
 /**
- * 
+ *
  * Gflot design implementation for TimeLines
- * 
+ *
  */
 public class TimelineDesigner {
 
+    interface Binder extends UiBinder<Widget, TimelineDesigner> {
+    }
     /**
      * The width of the full panel, minus the width of the group selection
      * panel, minus 10 px margin
      */
     public static final int WIDTH = 540;
-
     /**
      * UI Binder
      */
     private static Binder _binder = GWT.create(Binder.class);
-
-    @UiField
-    HTMLPanel container;
-
     private final TimelineDefinition _timelineDefinition;
     private final TimelineData _timelineData;
     private final TimelinePanel _timelinePanel;
     private final boolean _isDashboardEditor;
 
     private final PopupPanel _popup;
-
+    @UiField
+    HTMLPanel container;
     // the data point most recently hovered across (to compensate for 'too
     // precise' clickhandler).
     private PlotItem _activePlotItem;
+    /**
+     * legend panel
+     */
+    private LegendPanel legendPanel;
 
-    interface Binder extends UiBinder<Widget, TimelineDesigner> {
-    }
-
-    public TimelineDesigner(TimelineDefinition timelineDefinition, TimelineData timelineData,
-            TimelinePanel timelinePanel, boolean isDashboardEditor) {
+    public TimelineDesigner(final TimelineDefinition timelineDefinition, final TimelineData timelineData,
+            final TimelinePanel timelinePanel, final boolean isDashboardEditor) {
         _timelineDefinition = timelineDefinition;
         _timelineData = timelineData;
         _timelinePanel = timelinePanel;
@@ -115,13 +114,8 @@ public class TimelineDesigner {
     }
 
     /**
-     * legend panel
-     */
-    private LegendPanel legendPanel;
-
-    /**
      * get legend Panel widget to be added to timeline
-     * 
+     *
      * @return
      */
     public LegendPanel getLegendPanel() {
@@ -133,7 +127,7 @@ public class TimelineDesigner {
      */
     public Widget createPlot() {
 
-        ColorProvider colorProvider = new ColorProvider();
+        final ColorProvider colorProvider = new ColorProvider();
 
         final ChartOptions chartOptions = _timelineDefinition.getChartOptions();
         final Integer height = chartOptions.getVerticalAxisOption().getHeight();
@@ -152,7 +146,7 @@ public class TimelineDesigner {
         plotOptions.setGlobalSeriesOptions(GlobalSeriesOptions.create()
                 .setLineSeriesOptions(LineSeriesOptions.create().setShow(true).setLineWidth(2))
                 .setPointsOptions(PointsSeriesOptions.create().setShow(true).setRadius(1)));
-        LegendOptions legendOptions = LegendOptions.create();
+        final LegendOptions legendOptions = LegendOptions.create();
         legendOptions.setShow(false);
         plotOptions.setLegendOptions(legendOptions);
 
@@ -209,7 +203,7 @@ public class TimelineDesigner {
         return widget;
     }
 
-    private SimplePlot createPlot(PlotModel model, PlotOptions plotOptions, Integer height) {
+    private SimplePlot createPlot(final PlotModel model, final PlotOptions plotOptions, final Integer height) {
         final SimplePlot plot = new SimplePlot(model, plotOptions);
         plot.setWidth(WIDTH);
         plot.setStyleName("TimelineChart");
@@ -220,12 +214,12 @@ public class TimelineDesigner {
         return plot;
     }
 
-    private void addSelectedListener(SimplePlot plot, final PlotOptions plotOptions, final Integer height) {
+    private void addSelectedListener(final SimplePlot plot, final PlotOptions plotOptions, final Integer height) {
         final PlotModel model = plot.getModel();
         // use selections to zoom
         plot.addSelectedListener(new PlotSelectedListener() {
             @Override
-            public void onPlotSelected(PlotSelectionArea area) {
+            public void onPlotSelected(final PlotSelectionArea area) {
                 GWT.log("Got a selection: " + area);
 
                 final Range yRange = area.getY();
@@ -252,7 +246,7 @@ public class TimelineDesigner {
         button.setStyleName("ZoomOutButton");
         button.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 final AbstractAxisOptions<?> yAxisOptions = plotOptions.getYAxisOptions(1);
                 yAxisOptions.clearMinimum();
                 yAxisOptions.clearMaximum();
@@ -271,11 +265,11 @@ public class TimelineDesigner {
         return button;
     }
 
-    private void transformToLogarithmicScale(AxisOptions axisOptions) {
+    private void transformToLogarithmicScale(final AxisOptions axisOptions) {
         axisOptions.setTransform(new TransformAxis() {
 
             @Override
-            public double transform(double value) {
+            public double transform(final double value) {
                 if (value == 0) {
                     return -1;
                 }
@@ -283,7 +277,7 @@ public class TimelineDesigner {
             }
 
             @Override
-            public double inverseTransform(double value) {
+            public double inverseTransform(final double value) {
                 if (value == -1) {
                     return 0;
                 }
@@ -292,15 +286,15 @@ public class TimelineDesigner {
         });
     }
 
-    private void createTimeLineAndLegendItems(ColorProvider colorProvider, PlotModel model,
-            final List<MetricIdentifier> metrics, int index) {
+    private void createTimeLineAndLegendItems(final ColorProvider colorProvider, final PlotModel model,
+            final List<MetricIdentifier> metrics, final int index) {
         String color = metrics.get(index).getMetricColor();
         color = (color == "" || color == null) ? colorProvider.getNextColor() : color;
         addLegendItem(legendPanel, metrics, index, color);
-        SeriesHandler series = model.addSeries(Series.of(metrics.get(index).getDisplayName()).setColor(color));
-        List<TimelineDataRow> rows = _timelineData.getRows();
+        final SeriesHandler series = model.addSeries(Series.of(metrics.get(index).getDisplayName()).setColor(color));
+        final List<TimelineDataRow> rows = _timelineData.getRows();
 
-        for (TimelineDataRow timelineDataRow : rows) {
+        for (final TimelineDataRow timelineDataRow : rows) {
             final Date date = timelineDataRow.getDate();
             final List<Number> metricValues = timelineDataRow.getMetricValues();
             if (metricValues.size() > index) {
@@ -316,10 +310,10 @@ public class TimelineDesigner {
         }
     }
 
-    private void addPlotClickListener(SimplePlot plot) {
+    private void addPlotClickListener(final SimplePlot plot) {
         plot.addClickListener(new PlotClickListener() {
             @Override
-            public void onPlotClick(Plot plot, PlotPosition position, PlotItem item) {
+            public void onPlotClick(final Plot plot, final PlotPosition position, PlotItem item) {
                 GWT.log("Clicked! plot=" + plot + ", position=" + position + ", item=" + item);
                 if (item == null) {
                     if (_activePlotItem == null) {
@@ -336,10 +330,10 @@ public class TimelineDesigner {
         }, false);
     }
 
-    private void addHoverListener(SimplePlot plot) {
+    private void addHoverListener(final SimplePlot plot) {
         plot.addHoverListener(new PlotHoverListener() {
             @Override
-            public void onPlotHover(Plot plot, PlotPosition position, PlotItem item) {
+            public void onPlotHover(final Plot plot, final PlotPosition position, final PlotItem item) {
                 if (item == _activePlotItem && _popup.isShowing()) {
                     return;
                 }
@@ -361,16 +355,16 @@ public class TimelineDesigner {
 
         plot.addDomHandler(new MouseOutHandler() {
             @Override
-            public void onMouseOut(MouseOutEvent event) {
+            public void onMouseOut(final MouseOutEvent event) {
                 _activePlotItem = null;
                 _popup.hide();
             }
         }, MouseOutEvent.getType());
     }
 
-    private void addLegendItem(final LegendPanel legendPanel, final List<MetricIdentifier> metrics, int index,
-            String color) {
-        Legend legend = new Legend(metrics.get(index).getDisplayName(), color);
+    private void addLegendItem(final LegendPanel legendPanel, final List<MetricIdentifier> metrics, final int index,
+            final String color) {
+        final Legend legend = new Legend(metrics.get(index).getDisplayName(), color);
         legendPanel.addLegend(legend, new LegendClickHandler(metrics.get(index).getDisplayName(), metrics.get(index),
                 _timelinePanel, legend, _isDashboardEditor));
     }

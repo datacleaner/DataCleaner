@@ -27,7 +27,7 @@ import java.util.Collection;
  */
 public interface Synonym {
 
-    public String getMasterTerm();
+    String getMasterTerm();
 
-    public Collection<String> getSynonyms();
+    Collection<String> getSynonyms();
 }

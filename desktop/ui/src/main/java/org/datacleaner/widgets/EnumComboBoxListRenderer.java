@@ -24,45 +24,45 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import org.datacleaner.util.StringUtils;
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.util.StringUtils;
 
 /**
  * {@link ListCellRenderer} for enums in a combobox.
  */
 public class EnumComboBoxListRenderer extends DCListCellRenderer {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final Icon _icon;
+    private final Icon _icon;
 
-	public EnumComboBoxListRenderer() {
-		this(null);
-	}
+    public EnumComboBoxListRenderer() {
+        this(null);
+    }
 
-	public EnumComboBoxListRenderer(Icon icon) {
-		super();
-		_icon = icon;
-	}
+    public EnumComboBoxListRenderer(final Icon icon) {
+        super();
+        _icon = icon;
+    }
 
-	@Override
-	public JLabel getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-			boolean cellHasFocus) {
-		final JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    @Override
+    public JLabel getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected,
+            final boolean cellHasFocus) {
+        final JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-		if (value == null) {
-			result.setText("- none -");
-		} else if (value instanceof HasName) {
-			String name = ((HasName) value).getName();
-			if (!StringUtils.isNullOrEmpty(name)) {
-				result.setText(name);
-			}
-		}
+        if (value == null) {
+            result.setText("- none -");
+        } else if (value instanceof HasName) {
+            final String name = ((HasName) value).getName();
+            if (!StringUtils.isNullOrEmpty(name)) {
+                result.setText(name);
+            }
+        }
 
-		if (_icon != null) {
-			result.setIcon(_icon);
-		}
+        if (_icon != null) {
+            result.setIcon(_icon);
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

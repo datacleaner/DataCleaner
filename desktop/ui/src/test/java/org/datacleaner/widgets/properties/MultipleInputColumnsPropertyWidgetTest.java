@@ -33,8 +33,8 @@ import org.datacleaner.actions.ReorderColumnsActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
-import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.ELInputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -58,7 +58,8 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
             ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput()
                     .iterator().next();
 
-            MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
+            MultipleInputColumnsPropertyWidget widget =
+                    new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
             widget.onPanelAdd();
 
             // initialize with null
@@ -80,7 +81,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
             value = widget.getValue();
             assertEquals("[MetaModelInputColumn[foo]]", Arrays.toString(value));
             assertEquals("foo,foobar", getAvailableCheckBoxValues(widget));
-            
+
             widget.onPanelRemove();
         }
     }
@@ -98,7 +99,8 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
                     .iterator().next();
 
             // initialize with a expression column
-            MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
+            MultipleInputColumnsPropertyWidget widget =
+                    new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
             InputColumn<?>[] value = new InputColumn[] { new ELInputColumn("Hello #{name}") };
             widget.initialize(value);
 
@@ -143,7 +145,8 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
                     .iterator().next();
 
             // initialize with "baz" + "foo"
-            MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
+            MultipleInputColumnsPropertyWidget widget =
+                    new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
             InputColumn<?>[] value = new InputColumn[] { ajb.getSourceColumnByName("baz"),
                     ajb.getSourceColumnByName("foo") };
             widget.initialize(value);
@@ -177,7 +180,8 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
             final InputColumn<?>[] propertyValue = (InputColumn<?>[]) analyzer.getConfiguredProperty(property);
             assertEquals(3, propertyValue.length);
 
-            final MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(analyzer, property);
+            final MultipleInputColumnsPropertyWidget widget =
+                    new MultipleInputColumnsPropertyWidget(analyzer, property);
             widget.onOutputChanged(transformer, transformer.getOutputColumns());
 
             widget.initialize(propertyValue);
@@ -201,7 +205,8 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
                     .iterator().next();
 
             // initialize with all 3 columns + an expression
-            MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
+            MultipleInputColumnsPropertyWidget widget =
+                    new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
             InputColumn<?>[] value = CollectionUtils.array(ajb.getSourceColumns().toArray(new InputColumn[0]),
                     new ELInputColumn("Hello #{name}"));
             widget.initialize(value);
@@ -222,7 +227,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 
     /**
      * Helper method to determine which checkboxes are shown
-     * 
+     *
      * @param widget
      * @return
      */

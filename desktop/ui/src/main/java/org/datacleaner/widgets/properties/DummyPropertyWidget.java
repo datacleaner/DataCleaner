@@ -27,40 +27,40 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 
 public class DummyPropertyWidget implements PropertyWidget<Object> {
 
-	private final ConfiguredPropertyDescriptor _propertyDescriptor;
-	private Object _value;
+    private final ConfiguredPropertyDescriptor _propertyDescriptor;
+    private Object _value;
 
-	@Inject
-	protected DummyPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
-		_propertyDescriptor = propertyDescriptor;
-	}
+    @Inject
+    protected DummyPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor) {
+        _propertyDescriptor = propertyDescriptor;
+    }
 
-	@Override
-	public JComponent getWidget() {
-		return new JLabel("Not yet implemented");
-	}
+    @Override
+    public JComponent getWidget() {
+        return new JLabel("Not yet implemented");
+    }
 
-	@Override
-	public boolean isSet() {
-		return _value != null;
-	}
+    @Override
+    public boolean isSet() {
+        return _value != null;
+    }
 
-	@Override
-	public Object getValue() {
-		return _value;
-	}
-	
-	@Override
-	public ConfiguredPropertyDescriptor getPropertyDescriptor() {
-		return _propertyDescriptor;
-	}
+    @Override
+    public Object getValue() {
+        return _value;
+    }
 
-	@Override
-	public void onValueTouched(Object value) {
-		_value = value;
-	}
+    @Override
+    public ConfiguredPropertyDescriptor getPropertyDescriptor() {
+        return _propertyDescriptor;
+    }
 
-	@Override
-	public void initialize(Object value) {
-	}
+    @Override
+    public void onValueTouched(final Object value) {
+        _value = value;
+    }
+
+    @Override
+    public void initialize(final Object value) {
+    }
 }

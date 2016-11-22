@@ -42,14 +42,14 @@ public class MysqlDatastoreWizard implements DatastoreWizard {
     }
 
     @Override
-    public DatastoreWizardSession start(DatastoreWizardContext context) {
+    public DatastoreWizardSession start(final DatastoreWizardContext context) {
         final String url = "jdbc:mysql://<hostname>:3306/<database>?defaultFetchSize=" + Integer.MIN_VALUE
                 + "&largeRowSizeThreshold=1024";
         return new JdbcDatastoreWizardSession(context, "org.mysql.jdbc.Driver", url);
     }
 
     @Override
-    public boolean isApplicableTo(DatastoreWizardContext context) {
+    public boolean isApplicableTo(final DatastoreWizardContext context) {
         final DatabaseDriverCatalog catalog = new DatabaseDriverCatalog(null);
         final boolean installed = catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL);
         return installed;

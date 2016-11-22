@@ -36,15 +36,15 @@ public class ExecutionLogPoller {
     /**
      * Callback interface of the poller
      */
-    public static interface Callback {
-        public void updateExecutionLog(ExecutionLog executionLog);
+    public interface Callback {
+        void updateExecutionLog(ExecutionLog executionLog);
     }
 
     private final SchedulingServiceAsync _service;
     private final TenantIdentifier _tenant;
     private final Callback _callback;
 
-    public ExecutionLogPoller(SchedulingServiceAsync service, TenantIdentifier tenant, Callback callback) {
+    public ExecutionLogPoller(final SchedulingServiceAsync service, final TenantIdentifier tenant, final Callback callback) {
         _service = service;
         _tenant = tenant;
         _callback = callback;
@@ -69,15 +69,16 @@ public class ExecutionLogPoller {
             public void run() {
                 _service.getExecution(_tenant, executionLog, new DCAsyncCallback<ExecutionLog>() {
                     @Override
-                    public void onSuccess(ExecutionLog result) {
+                    public void onSuccess(final ExecutionLog result) {
                         _callback.updateExecutionLog(result);
                         schedulePoll(result);
                     }
 
-                    public void onFailure(Throwable e) {
+                    public void onFailure(final Throwable e) {
                         GWT.log("Failed to get execution log, silently ignoring...", e);
                         schedulePoll(executionLog); // retry with previous log
-                    };
+                    }
+
                 });
             }
         }.schedule(1000);

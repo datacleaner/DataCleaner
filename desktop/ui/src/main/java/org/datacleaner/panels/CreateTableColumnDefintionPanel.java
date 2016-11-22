@@ -67,12 +67,12 @@ public class CreateTableColumnDefintionPanel extends DCPanel {
     // column is nullable or not.
     private Boolean _notNull;
 
-    public CreateTableColumnDefintionPanel(CreateTableDialog parentDialog) {
+    public CreateTableColumnDefintionPanel(final CreateTableDialog parentDialog) {
         this(parentDialog, "", ColumnType.STRING, false);
     }
 
-    public CreateTableColumnDefintionPanel(CreateTableDialog parentDialog, String name, ColumnType columnType,
-            boolean primaryKey) {
+    public CreateTableColumnDefintionPanel(final CreateTableDialog parentDialog, final String name, final ColumnType columnType,
+            final boolean primaryKey) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _parentDialog = parentDialog;
         _nameTextField = WidgetFactory.createTextField("Column name");
@@ -85,7 +85,7 @@ public class CreateTableColumnDefintionPanel extends DCPanel {
         final DCCheckBox<Boolean> notNullCheckBox = new DCCheckBox<Boolean>("Not null?", false);
         notNullCheckBox.addListener(new Listener<Boolean>() {
             @Override
-            public void onItemSelected(Boolean item, boolean selected) {
+            public void onItemSelected(final Boolean item, final boolean selected) {
                 _notNull = selected;
             }
         });
@@ -93,7 +93,7 @@ public class CreateTableColumnDefintionPanel extends DCPanel {
         final JButton removeButton = WidgetFactory.createSmallButton("Remove", IconUtils.ACTION_REMOVE_DARK);
         removeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent evt) {
+            public void actionPerformed(final ActionEvent evt) {
                 _parentDialog.removeColumnDefinitionPanel(CreateTableColumnDefintionPanel.this);
             }
         });

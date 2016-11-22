@@ -29,5 +29,5 @@ import org.datacleaner.api.AnalyzerResult;
  */
 public interface TableModelResult extends AnalyzerResult {
 
-    public TableModel toTableModel();
+    TableModel toTableModel();
 }

@@ -40,8 +40,8 @@ public class JobGraphContext {
     private final JobGraph _jobGraph;
     private final AnalysisJobBuilder _analysisJobBuilder;
 
-    public JobGraphContext(JobGraph jobGraph, VisualizationViewer<Object, JobGraphLink> visualizationViewer,
-            AnalysisJobBuilder analysisJobBuilder) {
+    public JobGraphContext(final JobGraph jobGraph, final VisualizationViewer<Object, JobGraphLink> visualizationViewer,
+            final AnalysisJobBuilder analysisJobBuilder) {
         _jobGraph = jobGraph;
         _visualizationViewer = visualizationViewer;
         _analysisJobBuilder = analysisJobBuilder;
@@ -61,7 +61,7 @@ public class JobGraphContext {
      * exist if the job has components which publish {@link OutputDataStream}s.
      * Therefore the {@link #getAnalysisJobBuilder(Object)} method is preferred
      * if any vertex-specific interaction is needed.
-     * 
+     *
      * @return
      */
     public AnalysisJobBuilder getMainAnalysisJobBuilder() {
@@ -71,28 +71,28 @@ public class JobGraphContext {
     /**
      * Gets the {@link AnalysisJobBuilder} object pertaining to a particular
      * vertex on the {@link JobGraph}.
-     * 
+     *
      * @param vertex
      * @return
      */
-    public AnalysisJobBuilder getAnalysisJobBuilder(Object vertex) {
+    public AnalysisJobBuilder getAnalysisJobBuilder(final Object vertex) {
         if (vertex instanceof ComponentBuilder) {
             return ((ComponentBuilder) vertex).getAnalysisJobBuilder();
         }
         return _analysisJobBuilder;
     }
 
-    public Object getVertex(MouseEvent me) {
+    public Object getVertex(final MouseEvent me) {
         return getVertex(me.getPoint());
     }
 
     /**
      * Gets the vertex at a particular point, or null if it does not exist.
-     * 
+     *
      * @param p
      * @return
      */
-    public Object getVertex(Point2D p) {
+    public Object getVertex(final Point2D p) {
         final GraphElementAccessor<?, ?> pickSupport = _visualizationViewer.getPickSupport();
 
         @SuppressWarnings("rawtypes")

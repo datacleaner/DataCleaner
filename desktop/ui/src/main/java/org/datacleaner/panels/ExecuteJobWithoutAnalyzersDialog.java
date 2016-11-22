@@ -66,8 +66,8 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
     private final UserPreferences _userPreferences;
     private final DCModule _dcModule;
 
-    public ExecuteJobWithoutAnalyzersDialog(DCModule dcModule, WindowContext windowContext,
-            AnalysisJobBuilder analysisJobBuilder, UserPreferences userPreferences) {
+    public ExecuteJobWithoutAnalyzersDialog(final DCModule dcModule, final WindowContext windowContext,
+            final AnalysisJobBuilder analysisJobBuilder, final UserPreferences userPreferences) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-execute.png"));
         setBackgroundColor(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _dcModule = dcModule;
@@ -114,7 +114,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
         final JButton cancelButton = createButton("Cancel", IconUtils.ACTION_REMOVE_DARK);
         cancelButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 close();
             }
         });
@@ -137,7 +137,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
             final String filenameExtension) {
         return new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 final AnalysisJob copyAnalysisJob = _analysisJobBuilder.toAnalysisJob(false);
                 final AnalysisJobBuilder copyAnalysisJobBuilder = new AnalysisJobBuilder(
                         _analysisJobBuilder.getConfiguration(), copyAnalysisJob);
@@ -172,12 +172,12 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
         };
     }
 
-    private JButton createButton(String text, String imagePath) {
-        JButton button = WidgetFactory.createDefaultButton(text, imagePath);
+    private JButton createButton(final String text, final String imagePath) {
+        final JButton button = WidgetFactory.createDefaultButton(text, imagePath);
         return button;
     }
 
-    private FileResource createResource(String filenamePrefix, String extension) {
+    private FileResource createResource(final String filenamePrefix, final String extension) {
         final File directory = _userPreferences.getSaveDatastoreDirectory();
         int attempt = 0;
         while (true) {
@@ -197,14 +197,14 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         LookAndFeelManager.get().init();
 
-        DCWindowContext windowContext = new DCWindowContext(new DataCleanerConfigurationImpl(),
+        final DCWindowContext windowContext = new DCWindowContext(new DataCleanerConfigurationImpl(),
                 new UserPreferencesImpl(null), null);
 
-        UserPreferences userPreferences = new UserPreferencesImpl(null);
-        ExecuteJobWithoutAnalyzersDialog dialog = new ExecuteJobWithoutAnalyzersDialog(new DCModuleImpl(),
+        final UserPreferences userPreferences = new UserPreferencesImpl(null);
+        final ExecuteJobWithoutAnalyzersDialog dialog = new ExecuteJobWithoutAnalyzersDialog(new DCModuleImpl(),
                 windowContext, null, userPreferences);
         dialog.open();
     }

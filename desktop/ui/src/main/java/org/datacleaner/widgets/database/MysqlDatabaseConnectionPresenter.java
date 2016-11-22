@@ -30,9 +30,10 @@ public class MysqlDatabaseConnectionPresenter extends UrlTemplateDatabaseConnect
     }
 
     @Override
-    protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
-            String param3, String param4) {
-        return "jdbc:mysql://" + hostname + ":" + port + "/" + database + "?defaultFetchSize=" + Integer.MIN_VALUE + "&largeRowSizeThreshold=1024";
+    protected String getJdbcUrl(final String hostname, final int port, final String database, final String param1, final String param2,
+            final String param3, final String param4) {
+        return "jdbc:mysql://" + hostname + ":" + port + "/" + database + "?defaultFetchSize=" + Integer.MIN_VALUE
+                + "&largeRowSizeThreshold=1024";
     }
 
     @Override

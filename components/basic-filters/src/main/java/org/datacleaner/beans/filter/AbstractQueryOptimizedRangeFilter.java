@@ -55,12 +55,12 @@ abstract class AbstractQueryOptimizedRangeFilter<E> implements QueryOptimizedFil
     public abstract E getLowestValue();
 
     @Override
-    public RangeFilterCategory categorize(InputRow inputRow) {
-        E value = inputRow.getValue(getColumn());
+    public RangeFilterCategory categorize(final InputRow inputRow) {
+        final E value = inputRow.getValue(getColumn());
         return categorize(value);
     }
 
-    protected RangeFilterCategory categorize(E value) {
+    protected RangeFilterCategory categorize(final E value) {
         if (value == null) {
             return RangeFilterCategory.LOWER;
         }
@@ -75,7 +75,7 @@ abstract class AbstractQueryOptimizedRangeFilter<E> implements QueryOptimizedFil
     }
 
     @Override
-    public boolean isOptimizable(RangeFilterCategory category) {
+    public boolean isOptimizable(final RangeFilterCategory category) {
         return true;
     }
 
@@ -94,7 +94,7 @@ abstract class AbstractQueryOptimizedRangeFilter<E> implements QueryOptimizedFil
     }
 
     @Override
-    public Query optimizeQuery(Query q, RangeFilterCategory category) {
+    public Query optimizeQuery(final Query q, final RangeFilterCategory category) {
         final Column col = getColumn().getPhysicalColumn();
         final SelectItem selectItem = new SelectItem(col);
         switch (category) {
@@ -117,22 +117,22 @@ abstract class AbstractQueryOptimizedRangeFilter<E> implements QueryOptimizedFil
             }
 
             final FilterItem orFilter1;
-            {
-                final FilterItem f1 = new FilterItem(selectItem, OperatorType.GREATER_THAN, lowestValue);
-                final FilterItem f2 = new FilterItem(selectItem, OperatorType.EQUALS_TO, lowestValue);
-                orFilter1 = new FilterItem(f1, f2);
-            }
+        {
+            final FilterItem f1 = new FilterItem(selectItem, OperatorType.GREATER_THAN, lowestValue);
+            final FilterItem f2 = new FilterItem(selectItem, OperatorType.EQUALS_TO, lowestValue);
+            orFilter1 = new FilterItem(f1, f2);
+        }
 
-            final FilterItem orFilter2;
-            {
-                final FilterItem f3 = new FilterItem(selectItem, OperatorType.LESS_THAN, highestValue);
-                final FilterItem f4 = new FilterItem(selectItem, OperatorType.EQUALS_TO, highestValue);
-                orFilter2 = new FilterItem(f3, f4);
-            }
+        final FilterItem orFilter2;
+        {
+            final FilterItem f3 = new FilterItem(selectItem, OperatorType.LESS_THAN, highestValue);
+            final FilterItem f4 = new FilterItem(selectItem, OperatorType.EQUALS_TO, highestValue);
+            orFilter2 = new FilterItem(f3, f4);
+        }
 
-            q.where(orFilter1);
-            q.where(orFilter2);
-            return q;
+        q.where(orFilter1);
+        q.where(orFilter2);
+        return q;
         default:
             throw new UnsupportedOperationException();
         }

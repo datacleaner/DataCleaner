@@ -75,7 +75,7 @@ public class LaunchDataCleanerController {
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.analyze.jnlp", method = RequestMethod.GET)
     @ResponseBody
-    public void launchDataCleanerForDatastore(HttpServletRequest request, HttpServletResponse response,
+    public void launchDataCleanerForDatastore(final HttpServletRequest request, final HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("datastore") String datastoreName)
             throws IOException {
         datastoreName = datastoreName.replaceAll("\\+", " ");
@@ -103,7 +103,7 @@ public class LaunchDataCleanerController {
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(value = "/{tenant}/jobs/{job:.+}.launch.jnlp", method = RequestMethod.GET)
     @ResponseBody
-    public void launchDataCleanerForJob(HttpServletRequest request, HttpServletResponse response,
+    public void launchDataCleanerForJob(final HttpServletRequest request, final HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {
         jobName = jobName.replaceAll("\\+", " ");
 
@@ -136,7 +136,7 @@ public class LaunchDataCleanerController {
                 datastoreName, confPath);
     }
 
-    private int getPort(HttpServletRequest request, final String scheme) {
+    private int getPort(final HttpServletRequest request, final String scheme) {
         final int port;
         if ("https".equals(scheme) && request.getServerPort() == 80) {
             port = 443;
@@ -146,7 +146,7 @@ public class LaunchDataCleanerController {
         return port;
     }
 
-    private void writeJnlpResponse(HttpServletRequest request, final String tenant, final HttpServletResponse response,
+    private void writeJnlpResponse(final HttpServletRequest request, final String tenant, final HttpServletResponse response,
             final String scheme, final String hostname, final int port, final String contextPath,
             final String jnlpHref, final String jobPath, final String datastoreName, final String confPath)
             throws UnsupportedEncodingException, IOException {
@@ -215,9 +215,9 @@ public class LaunchDataCleanerController {
         }
     }
 
-    private void insertJarFiles(ServletContext context, Writer out, String templateLine) throws IOException {
-        List<String> jarFilenames = _launchArtifactProvider.getJarFilenames();
-        for (String filename : jarFilenames) {
+    private void insertJarFiles(final ServletContext context, final Writer out, final String templateLine) throws IOException {
+        final List<String> jarFilenames = _launchArtifactProvider.getJarFilenames();
+        for (final String filename : jarFilenames) {
             final String line;
             if (filename.startsWith("http://") || filename.startsWith("https://")) {
                 line = templateLine.replaceAll("\\$JAR_HREF", filename);
@@ -229,7 +229,7 @@ public class LaunchDataCleanerController {
         }
     }
 
-    private String createBaseUrl(String scheme, String hostname, int port, String contextPath, String tenant) {
+    private String createBaseUrl(final String scheme, final String hostname, final int port, final String contextPath, final String tenant) {
         final StringBuilder baseUrl = new StringBuilder();
         baseUrl.append(scheme);
         baseUrl.append("://");
@@ -254,7 +254,7 @@ public class LaunchDataCleanerController {
         return baseUrl.toString();
     }
 
-    public void setSecurityURLHolder(SecurityConfiguration securityURLHolder) {
+    public void setSecurityURLHolder(final SecurityConfiguration securityURLHolder) {
         this.securityURLHolder = securityURLHolder;
     }
 

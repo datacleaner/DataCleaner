@@ -38,12 +38,10 @@ import org.slf4j.LoggerFactory;
  * A factory that can resolve the best suited {@link Renderer} for a particular
  * {@link Renderable}. The resolving mechanism inspects the available renderers
  * in the {@link DescriptorProvider}.
- * 
- * 
+ *
+ *
  */
 public final class RendererFactory {
-
-    private static final Logger logger = LoggerFactory.getLogger(RendererFactory.class);
 
     /**
      * Represents a selection of a renderer. Will be used to store everything
@@ -54,7 +52,7 @@ public final class RendererFactory {
         private final RendererPrecedence precedence;
         private final int hierarchyDistance;
 
-        public RendererSelection(Renderer<?, ?> renderer, RendererPrecedence precedence, int hierarchyDistance) {
+        public RendererSelection(final Renderer<?, ?> renderer, final RendererPrecedence precedence, final int hierarchyDistance) {
             this.renderer = renderer;
             this.precedence = precedence;
             this.hierarchyDistance = hierarchyDistance;
@@ -72,70 +70,77 @@ public final class RendererFactory {
             return hierarchyDistance;
         }
     }
-
+    private static final Logger logger = LoggerFactory.getLogger(RendererFactory.class);
     private final DescriptorProvider _descriptorProvider;
     private final RendererInitializer _rendererInitializer;
 
     /**
      * Constructs a renderer factory
-     * 
+     *
      * @param configuration
      * @param job
      *            optionally a job which the instantiated renderers pertain to.
      */
-    public RendererFactory(DataCleanerConfiguration configuration) {
+    public RendererFactory(final DataCleanerConfiguration configuration) {
         this(configuration, defaultRendererInitializer(configuration));
     }
 
-    private static RendererInitializer defaultRendererInitializer(DataCleanerConfiguration configuration) {
+    public RendererFactory(final DataCleanerConfiguration configuration, final RendererInitializer rendererInitializer) {
+        this(configuration.getEnvironment().getDescriptorProvider(), rendererInitializer);
+    }
+
+    public RendererFactory(final DataCleanerEnvironment environment, final RendererInitializer rendererInitializer) {
+        this(environment.getDescriptorProvider(), rendererInitializer);
+    }
+
+    /**
+     * Constructs a renderer factory
+     *
+     * @param descriptorProvider
+     * @param rendererInitializer
+     *
+     * @deprecated use {@link #RendererFactory(AnalyzerBeansConfiguration)}
+     *             instead.
+     */
+    @Deprecated
+    public RendererFactory(final DescriptorProvider descriptorProvider, final RendererInitializer rendererInitializer) {
+        _descriptorProvider = descriptorProvider;
+        _rendererInitializer = rendererInitializer;
+    }
+
+    private static RendererInitializer defaultRendererInitializer(final DataCleanerConfiguration configuration) {
         final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
                 .getInjectionManager(configuration);
 
         return new DefaultRendererInitializer(injectionManager);
     }
 
-    public RendererFactory(DataCleanerConfiguration configuration, RendererInitializer rendererInitializer) {
-        this(configuration.getEnvironment().getDescriptorProvider(), rendererInitializer);
-    }
-
-    public RendererFactory(DataCleanerEnvironment environment, RendererInitializer rendererInitializer) {
-        this(environment.getDescriptorProvider(), rendererInitializer);
-    }
-
-    /**
-     * Constructs a renderer factory
-     * 
-     * @param descriptorProvider
-     * @param rendererInitializer
-     * 
-     * @deprecated use {@link #RendererFactory(AnalyzerBeansConfiguration)}
-     *             instead.
-     */
-    @Deprecated
-    public RendererFactory(DescriptorProvider descriptorProvider, RendererInitializer rendererInitializer) {
-        _descriptorProvider = descriptorProvider;
-        _rendererInitializer = rendererInitializer;
+    @SuppressWarnings("unchecked")
+    private static <I extends Renderable, O> Renderer<I, O> instantiate(final RendererBeanDescriptor<?> descriptor) {
+        final Class<? extends Renderer<?, ?>> componentClass = descriptor.getComponentClass();
+        final Renderer<?, ?> renderer = ReflectionUtils.newInstance(componentClass);
+        return (Renderer<I, O>) renderer;
     }
 
     /**
      * Gets the best suited {@link Renderer} for the given {@link Renderable} to
      * the given {@link RenderingFormat}.
-     * 
+     *
      * @param <I>
      * @param <O>
      * @param renderable
      * @param renderingFormat
      * @return
      */
-    public <I extends Renderable, O> Renderer<? super I, ? extends O> getRenderer(I renderable,
-            Class<? extends RenderingFormat<? extends O>> renderingFormat) {
+    public <I extends Renderable, O> Renderer<? super I, ? extends O> getRenderer(final I renderable,
+            final Class<? extends RenderingFormat<? extends O>> renderingFormat) {
 
         RendererSelection bestMatch = null;
 
-        Collection<RendererBeanDescriptor<?>> descriptors = _descriptorProvider
+        final Collection<RendererBeanDescriptor<?>> descriptors = _descriptorProvider
                 .getRendererBeanDescriptorsForRenderingFormat(renderingFormat);
-        for (RendererBeanDescriptor<?> descriptor : descriptors) {
-            RendererSelection rendererMatch = isRendererMatch(descriptor, renderable, bestMatch);
+        for (final RendererBeanDescriptor<?> descriptor : descriptors) {
+            final RendererSelection rendererMatch = isRendererMatch(descriptor, renderable, bestMatch);
             if (rendererMatch != null) {
                 bestMatch = rendererMatch;
             }
@@ -146,7 +151,7 @@ public final class RendererFactory {
             return null;
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked") final
         Renderer<? super I, ? extends O> renderer = (Renderer<? super I, ? extends O>) bestMatch.getRenderer();
 
         if (logger.isInfoEnabled()) {
@@ -160,7 +165,7 @@ public final class RendererFactory {
     /**
      * Checks if a particular renderer (descriptor) is a good match for a
      * particular renderer.
-     * 
+     *
      * @param rendererDescriptor
      *            the renderer (descriptor) to check.
      * @param renderable
@@ -171,8 +176,8 @@ public final class RendererFactory {
      * @return a {@link RendererSelection} object if the renderer is a match, or
      *         null if not.
      */
-    private RendererSelection isRendererMatch(RendererBeanDescriptor<?> rendererDescriptor, Renderable renderable,
-            RendererSelection bestMatch) {
+    private RendererSelection isRendererMatch(final RendererBeanDescriptor<?> rendererDescriptor, final Renderable renderable,
+            final RendererSelection bestMatch) {
         final Class<? extends Renderable> renderableType = rendererDescriptor.getRenderableType();
         final Class<? extends Renderable> renderableClass = renderable.getClass();
         if (ReflectionUtils.is(renderableClass, renderableType)) {
@@ -183,7 +188,7 @@ public final class RendererFactory {
                 final int hierarchyDistance;
                 try {
                     hierarchyDistance = ReflectionUtils.getHierarchyDistance(renderableClass, renderableType);
-                } catch (IllegalArgumentException e) {
+                } catch (final IllegalArgumentException e) {
                     logger.warn(
                             "Failed to determine hierarchy distance between renderable type '{}' and renderable of class '{}'",
                             renderableType, renderableClass, e);
@@ -204,8 +209,8 @@ public final class RendererFactory {
         return null;
     }
 
-    private RendererSelection isRendererCapable(RendererBeanDescriptor<?> rendererDescriptor, Renderable renderable,
-            RendererSelection bestMatch) {
+    private RendererSelection isRendererCapable(final RendererBeanDescriptor<?> rendererDescriptor, final Renderable renderable,
+            final RendererSelection bestMatch) {
         final Renderer<Renderable, ?> renderer = instantiate(rendererDescriptor);
 
         if (_rendererInitializer != null) {
@@ -234,7 +239,7 @@ public final class RendererFactory {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Could not get precedence of renderer, returning null", e);
             return null;
         }
@@ -243,12 +248,5 @@ public final class RendererFactory {
         final int hierarchyDistance = ReflectionUtils.getHierarchyDistance(renderable.getClass(), renderableType);
 
         return new RendererSelection(renderer, precedence, hierarchyDistance);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <I extends Renderable, O> Renderer<I, O> instantiate(RendererBeanDescriptor<?> descriptor) {
-        final Class<? extends Renderer<?, ?>> componentClass = descriptor.getComponentClass();
-        final Renderer<?, ?> renderer = ReflectionUtils.newInstance(componentClass);
-        return (Renderer<I, O>) renderer;
     }
 }

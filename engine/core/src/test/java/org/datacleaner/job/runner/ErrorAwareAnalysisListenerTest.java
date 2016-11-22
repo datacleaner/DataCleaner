@@ -68,7 +68,8 @@ public class ErrorAwareAnalysisListenerTest extends TestCase {
                 string.indexOf("org.apache.metamodel.MetaModelException: java.sql.SQLException: foo") != -1);
 
         assertTrue(string,
-                string.indexOf("WARN  ErrorAwareAnalysisListener - SQLException.getNextException() stack trace:") != -1);
+                string.indexOf("WARN  ErrorAwareAnalysisListener - SQLException.getNextException() stack trace:")
+                        != -1);
 
         assertTrue(string, string.indexOf("java.sql.SQLException: baz") != -1);
 

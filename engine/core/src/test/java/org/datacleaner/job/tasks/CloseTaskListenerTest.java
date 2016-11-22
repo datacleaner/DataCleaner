@@ -19,6 +19,9 @@
  */
 package org.datacleaner.job.tasks;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.datacleaner.api.Close;
@@ -37,9 +40,6 @@ import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.TestEnvironment;
 import org.datacleaner.test.TestHelper;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class CloseTaskListenerTest {
     public static class OnCloseFailingMockAnalyzer extends MockOutputDataStreamAnalyzer {
@@ -88,7 +88,7 @@ public class CloseTaskListenerTest {
 
         boolean hasCorrectException = false; // We can't really trust the order of errors.
         for (Throwable error : errors) {
-            if(error instanceof  PreviousErrorsExistException) {
+            if (error instanceof PreviousErrorsExistException) {
                 hasCorrectException = true;
                 assertEquals(3, error.getSuppressed().length);
                 assertEquals(OnCloseFailingMockAnalyzer.OUCH_ON_CLOSE, error.getSuppressed()[0].getMessage());

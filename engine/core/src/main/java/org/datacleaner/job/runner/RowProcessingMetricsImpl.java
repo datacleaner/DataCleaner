@@ -39,7 +39,7 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
     private final RowProcessingPublisher _publisher;
     private final Ref<Integer> _expectedRows;
 
-    public RowProcessingMetricsImpl(RowProcessingPublishers publishers, RowProcessingPublisher publisher) {
+    public RowProcessingMetricsImpl(final RowProcessingPublishers publishers, final RowProcessingPublisher publisher) {
         _publishers = publishers;
         _publisher = publisher;
         _expectedRows = createExpectedRowsRef();
@@ -74,7 +74,7 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
     @Override
     public ComponentJob[] getResultProducers() {
         final List<ComponentJob> resultProducers = new ArrayList<ComponentJob>();
-        for (RowProcessingConsumer consumer : _publisher.getConsumers()) {
+        for (final RowProcessingConsumer consumer : _publisher.getConsumers()) {
             if (consumer.isResultProducer()) {
                 resultProducers.add(consumer.getComponentJob());
             }
@@ -85,9 +85,9 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
     @Override
     public AnalyzerJob[] getAnalyzerJobs() {
         final List<AnalyzerJob> analyzerJobs = new ArrayList<AnalyzerJob>();
-        for (RowProcessingConsumer consumer : _publisher.getConsumers()) {
+        for (final RowProcessingConsumer consumer : _publisher.getConsumers()) {
             if (consumer instanceof AnalyzerConsumer) {
-                AnalyzerJob analyzerJob = ((AnalyzerConsumer) consumer).getComponentJob();
+                final AnalyzerJob analyzerJob = ((AnalyzerConsumer) consumer).getComponentJob();
                 analyzerJobs.add(analyzerJob);
             }
         }

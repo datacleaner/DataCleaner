@@ -23,9 +23,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.metamodel.csv.CsvConfiguration;
-
 import junit.framework.TestCase;
+
+import org.apache.metamodel.csv.CsvConfiguration;
 
 public class CsvConfigurationDetectionTest extends TestCase {
 
@@ -47,12 +47,12 @@ public class CsvConfigurationDetectionTest extends TestCase {
         CsvConfigurationDetection detection = new CsvConfigurationDetection(new File(
                 "src/test/resources/csv-detect/csv_single_line.csv"));
         final List<String> list = new ArrayList<>();
-        list.add("myId"); 
-        list.add("MyName"); 
-        
+        list.add("myId");
+        list.add("MyName");
+
         CsvConfiguration configuration = detection.suggestCsvConfiguration(list);
         assertFalse(configuration.isMultilineValues());
-        assertNotNull(configuration.getColumnNamingStrategy()); 
+        assertNotNull(configuration.getColumnNamingStrategy());
     }
 
 }

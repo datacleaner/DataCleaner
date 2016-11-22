@@ -24,73 +24,74 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
+import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.api.ExpressionBasedInputColumn;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.data.ELInputColumn;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.widgets.properties.PropertyWidget;
-import org.apache.metamodel.util.CollectionUtils;
 
 /**
  * Action listener for adding an expression based input column
- * 
+ *
  * @author Kasper Sørensen
  */
 public class AddExpressionBasedColumnActionListener implements ActionListener {
 
-	private final PropertyWidget<InputColumn<?>> _singlePropertyWidget;
-	private final PropertyWidget<InputColumn<?>[]> _multiplePropertyWidget;
+    private final PropertyWidget<InputColumn<?>> _singlePropertyWidget;
+    private final PropertyWidget<InputColumn<?>[]> _multiplePropertyWidget;
 
-	public static AddExpressionBasedColumnActionListener forSingleColumn(PropertyWidget<InputColumn<?>> singlePropertyWidget) {
-		return new AddExpressionBasedColumnActionListener(singlePropertyWidget, null);
-	}
+    private AddExpressionBasedColumnActionListener(final PropertyWidget<InputColumn<?>> singlePropertyWidget,
+            final PropertyWidget<InputColumn<?>[]> multiplePropertyWidget) {
+        _singlePropertyWidget = singlePropertyWidget;
+        _multiplePropertyWidget = multiplePropertyWidget;
+    }
 
-	public static AddExpressionBasedColumnActionListener forMultipleColumns(
-			PropertyWidget<InputColumn<?>[]> multiplePropertyWidget) {
-		return new AddExpressionBasedColumnActionListener(null, multiplePropertyWidget);
-	}
+    public static AddExpressionBasedColumnActionListener forSingleColumn(
+            final PropertyWidget<InputColumn<?>> singlePropertyWidget) {
+        return new AddExpressionBasedColumnActionListener(singlePropertyWidget, null);
+    }
 
-	private AddExpressionBasedColumnActionListener(PropertyWidget<InputColumn<?>> singlePropertyWidget,
-			PropertyWidget<InputColumn<?>[]> multiplePropertyWidget) {
-		_singlePropertyWidget = singlePropertyWidget;
-		_multiplePropertyWidget = multiplePropertyWidget;
-	}
+    public static AddExpressionBasedColumnActionListener forMultipleColumns(
+            final PropertyWidget<InputColumn<?>[]> multiplePropertyWidget) {
+        return new AddExpressionBasedColumnActionListener(null, multiplePropertyWidget);
+    }
 
-	public PropertyWidget<?> getPropertyWidget() {
-		return _singlePropertyWidget == null ? _multiplePropertyWidget : _singlePropertyWidget;
-	}
+    public PropertyWidget<?> getPropertyWidget() {
+        return _singlePropertyWidget == null ? _multiplePropertyWidget : _singlePropertyWidget;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String expression = JOptionPane.showInputDialog(getPropertyWidget().getWidget(),
-				"In stead of referencing a column you can also enter an expression.\n"
-						+ "An expression may either be a constant string or an EL-expression\n"
-						+ "that can access the other columns using the #{column_name} syntax.", "");
-		addExpressionBasedInputColumn(expression);
-	}
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        final String expression = JOptionPane.showInputDialog(getPropertyWidget().getWidget(),
+                "In stead of referencing a column you can also enter an expression.\n"
+                        + "An expression may either be a constant string or an EL-expression\n"
+                        + "that can access the other columns using the #{column_name} syntax.", "");
+        addExpressionBasedInputColumn(expression);
+    }
 
-	public void addExpressionBasedInputColumn(String expression) {
-		if (!StringUtils.isNullOrEmpty(expression)) {
-			ExpressionBasedInputColumn<?> expressionBasedInputColumn;
-			if (expression.indexOf("#{") != -1) {
-				expressionBasedInputColumn = new ELInputColumn(expression);
-			} else {
-				expressionBasedInputColumn = new ConstantInputColumn(expression);
-			}
+    public void addExpressionBasedInputColumn(final String expression) {
+        if (!StringUtils.isNullOrEmpty(expression)) {
+            final ExpressionBasedInputColumn<?> expressionBasedInputColumn;
+            if (expression.indexOf("#{") != -1) {
+                expressionBasedInputColumn = new ELInputColumn(expression);
+            } else {
+                expressionBasedInputColumn = new ConstantInputColumn(expression);
+            }
 
-			if (_multiplePropertyWidget != null) {
-				InputColumn<?>[] currentValue = _multiplePropertyWidget.getValue();
-				if (currentValue == null) {
-					currentValue = new InputColumn[0];
-				}
+            if (_multiplePropertyWidget != null) {
+                InputColumn<?>[] currentValue = _multiplePropertyWidget.getValue();
+                if (currentValue == null) {
+                    currentValue = new InputColumn[0];
+                }
 
-				@SuppressWarnings("unchecked")
-				final InputColumn<?>[] newValue = CollectionUtils.array(currentValue, expressionBasedInputColumn);
-				_multiplePropertyWidget.onValueTouched(newValue);
-			} else {
-				_singlePropertyWidget.onValueTouched(expressionBasedInputColumn);
-			}
-		}
-	}
+                @SuppressWarnings("unchecked")
+                final InputColumn<?>[] newValue = CollectionUtils.array(currentValue, expressionBasedInputColumn);
+                _multiplePropertyWidget.onValueTouched(newValue);
+            } else {
+                _singlePropertyWidget.onValueTouched(expressionBasedInputColumn);
+            }
+        }
+    }
 }

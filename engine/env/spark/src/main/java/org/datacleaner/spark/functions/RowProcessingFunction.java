@@ -66,9 +66,9 @@ import scala.Tuple2;
 /**
  * The main Spark function which applies the DataCleaner row processing
  * framework onto RDDs of InputRows.
- * 
+ *
  * The main vehicle used to do this is the {@link ConsumeRowHandler}.
- * 
+ *
  * This class implements two interfaces because it has two (quite similar)
  * styles of usages in the {@link SparkAnalysisRunner}.
  */
@@ -86,7 +86,7 @@ public final class RowProcessingFunction implements
     }
 
     @Override
-    public Iterable<Tuple2<String, NamedAnalyzerResult>> call(Iterator<InputRow> inputRowIterator) throws Exception {
+    public Iterable<Tuple2<String, NamedAnalyzerResult>> call(final Iterator<InputRow> inputRowIterator) throws Exception {
         logger.info("call(Iterator) invoked");
 
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
@@ -99,8 +99,8 @@ public final class RowProcessingFunction implements
     }
 
     @Override
-    public Iterator<Tuple2<String, NamedAnalyzerResult>> call(Integer partitionNumber,
-            Iterator<InputRow> inputRowIterator) throws Exception {
+    public Iterator<Tuple2<String, NamedAnalyzerResult>> call(final Integer partitionNumber,
+            final Iterator<InputRow> inputRowIterator) throws Exception {
         logger.info("call({}, Iterator) invoked", partitionNumber);
 
         final AnalysisJobBuilder jobBuilder = _sparkJobContext.getAnalysisJobBuilder();
@@ -120,11 +120,11 @@ public final class RowProcessingFunction implements
     /**
      * Applies any partition-specific configuration to the job builder before
      * building it.
-     * 
+     *
      * @param jobBuilder
      * @param partitionNumber
      */
-    private void configureComponentsBeforeBuilding(AnalysisJobBuilder jobBuilder, int partitionNumber) {
+    private void configureComponentsBeforeBuilding(final AnalysisJobBuilder jobBuilder, final int partitionNumber) {
         // update datastores and resource properties to point to node-specific
         // targets if possible. This way parallel writing to files on HDFS does
         // not cause any inconsistencies because each node is writing to a
@@ -170,19 +170,19 @@ public final class RowProcessingFunction implements
 
         // recursively apply this function also on output data stream jobs
         final List<AnalysisJobBuilder> children = jobBuilder.getConsumedOutputDataStreamsJobBuilders();
-        for (AnalysisJobBuilder childJobBuilder : children) {
+        for (final AnalysisJobBuilder childJobBuilder : children) {
             configureComponentsBeforeBuilding(childJobBuilder, partitionNumber);
         }
     }
 
     /**
      * Creates a {@link Resource} replacement to use for configured properties.
-     * 
+     *
      * @param resource
      * @param partitionNumber
      * @return a replacement resource, or null if it shouldn't be replaced
      */
-    private Resource createReplacementResource(final Resource resource, int partitionNumber) {
+    private Resource createReplacementResource(final Resource resource, final int partitionNumber) {
         final String formattedPartitionNumber = String.format("%05d", partitionNumber);
         if (resource instanceof HdfsResource || resource instanceof HadoopResource) {
             final String path = resource.getQualifiedPath() + "/part-" + formattedPartitionNumber;
@@ -209,14 +209,14 @@ public final class RowProcessingFunction implements
 
     /**
      * Creates a {@link Datastore} replacement to use for configured properties
-     * 
+     *
      * @param cb
      * @param datastore
      * @param replacementResource
      * @return a replacement datastore, or null if it shouldn't be replaced
      */
-    private ResourceDatastore createReplacementDatastore(ComponentBuilder cb, ResourceDatastore datastore,
-            Resource replacementResource) {
+    private ResourceDatastore createReplacementDatastore(final ComponentBuilder cb, final ResourceDatastore datastore,
+            final Resource replacementResource) {
         final String name = datastore.getName();
         if (datastore instanceof CsvDatastore) {
             final CsvConfiguration csvConfiguration = ((CsvDatastore) datastore).getCsvConfiguration();
@@ -231,7 +231,7 @@ public final class RowProcessingFunction implements
         return datastore;
     }
 
-    private List<Tuple2<String, NamedAnalyzerResult>> executePartition(Iterator<InputRow> inputRowIterator,
+    private List<Tuple2<String, NamedAnalyzerResult>> executePartition(final Iterator<InputRow> inputRowIterator,
             final AnalysisJob analysisJob) {
         _sparkJobContext.triggerOnPartitionProcessingStart();
         final DataCleanerConfiguration configuration = _sparkJobContext.getConfiguration();
@@ -258,7 +258,7 @@ public final class RowProcessingFunction implements
                 .getConsumers());
 
         // await any future results
-        for (ListIterator<Tuple2<String, NamedAnalyzerResult>> it = analyzerResults.listIterator(); it.hasNext();) {
+        for (final ListIterator<Tuple2<String, NamedAnalyzerResult>> it = analyzerResults.listIterator(); it.hasNext(); ) {
             final Tuple2<String, NamedAnalyzerResult> tuple = it.next();
             final NamedAnalyzerResult namedAnalyzerResult = tuple._2;
             final AnalyzerResult analyzerResult = namedAnalyzerResult.getAnalyzerResult();
@@ -272,7 +272,7 @@ public final class RowProcessingFunction implements
 
         // close components
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration, analysisJob, false);
-        for (RowProcessingConsumer consumer : consumeRowHandler.getConsumers()) {
+        for (final RowProcessingConsumer consumer : consumeRowHandler.getConsumers()) {
             lifeCycleHelper.close(consumer.getComponentJob().getDescriptor(), consumer.getComponent(), true);
         }
         _sparkJobContext.triggerOnPartitionProcessingEnd();
@@ -280,10 +280,10 @@ public final class RowProcessingFunction implements
     }
 
     private List<Tuple2<String, NamedAnalyzerResult>> getAnalyzerResults(
-            Collection<RowProcessingConsumer> rowProcessingConsumers) {
+            final Collection<RowProcessingConsumer> rowProcessingConsumers) {
         final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = new ArrayList<>();
 
-        for (RowProcessingConsumer consumer : rowProcessingConsumers) {
+        for (final RowProcessingConsumer consumer : rowProcessingConsumers) {
             if (consumer.isResultProducer()) {
                 final HasAnalyzerResult<?> resultProducer = (HasAnalyzerResult<?>) consumer.getComponent();
                 final AnalyzerResult analyzerResult = resultProducer.getResult();
@@ -293,10 +293,10 @@ public final class RowProcessingFunction implements
                 analyzerResults.add(tuple);
             }
 
-            for (ActiveOutputDataStream activeOutputDataStream : consumer.getActiveOutputDataStreams()) {
-                List<RowProcessingConsumer> outputDataStreamConsumers = activeOutputDataStream.getPublisher()
+            for (final ActiveOutputDataStream activeOutputDataStream : consumer.getActiveOutputDataStreams()) {
+                final List<RowProcessingConsumer> outputDataStreamConsumers = activeOutputDataStream.getPublisher()
                         .getConsumers();
-                List<Tuple2<String, NamedAnalyzerResult>> outputDataStreamsAnalyzerResults = getAnalyzerResults(
+                final List<Tuple2<String, NamedAnalyzerResult>> outputDataStreamsAnalyzerResults = getAnalyzerResults(
                         outputDataStreamConsumers);
                 analyzerResults.addAll(outputDataStreamsAnalyzerResults);
             }

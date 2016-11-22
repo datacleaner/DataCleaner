@@ -47,7 +47,7 @@ import org.datacleaner.storage.RowAnnotations;
 
 /**
  * Number analyzer, which provides statistical information for number values:
- * 
+ *
  * <ul>
  * <li>Highest value</li>
  * <li>Lowest value</li>
@@ -82,27 +82,24 @@ public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {
     public static final String MEASURE_PERCENTILE75 = "75th percentile";
     public static final String MEASURE_KURTOSIS = "Kurtosis";
     public static final String MEASURE_SKEWNESS = "Skewness";
-
-    private Map<InputColumn<? extends Number>, NumberAnalyzerColumnDelegate> _columnDelegates = new HashMap<InputColumn<? extends Number>, NumberAnalyzerColumnDelegate>();
-
     @Inject
     @Configured
     InputColumn<? extends Number>[] _columns;
-
     @Inject
     @Configured
     @Description("Gather so-called descriptive statistics, including median, skewness, kurtosis and percentiles, which have a larger memory-footprint.")
     boolean descriptiveStatistics = false;
-
     @Inject
     @Provided
     RowAnnotationFactory _annotationFactory;
+    private Map<InputColumn<? extends Number>, NumberAnalyzerColumnDelegate> _columnDelegates =
+            new HashMap<InputColumn<? extends Number>, NumberAnalyzerColumnDelegate>();
 
     public NumberAnalyzer() {
     }
 
     @SafeVarargs
-    public NumberAnalyzer(InputColumn<? extends Number>... columns) {
+    public NumberAnalyzer(final InputColumn<? extends Number>... columns) {
         this();
         _columns = columns;
         _annotationFactory = RowAnnotations.getDefaultFactory();
@@ -111,16 +108,16 @@ public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {
 
     @Initialize
     public void init() {
-        for (InputColumn<? extends Number> column : _columns) {
+        for (final InputColumn<? extends Number> column : _columns) {
             _columnDelegates.put(column, new NumberAnalyzerColumnDelegate(descriptiveStatistics, _annotationFactory));
         }
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
-        for (InputColumn<? extends Number> column : _columns) {
-            NumberAnalyzerColumnDelegate delegate = _columnDelegates.get(column);
-            Number value = row.getValue(column);
+    public void run(final InputRow row, final int distinctCount) {
+        for (final InputColumn<? extends Number> column : _columns) {
+            final NumberAnalyzerColumnDelegate delegate = _columnDelegates.get(column);
+            final Number value = row.getValue(column);
 
             delegate.run(row, value, distinctCount);
         }
@@ -128,7 +125,7 @@ public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {
 
     @Override
     public NumberAnalyzerResult getResult() {
-        CrosstabDimension measureDimension = new CrosstabDimension(DIMENSION_MEASURE);
+        final CrosstabDimension measureDimension = new CrosstabDimension(DIMENSION_MEASURE);
         measureDimension.addCategory(MEASURE_ROW_COUNT);
         measureDimension.addCategory(MEASURE_NULL_COUNT);
         measureDimension.addCategory(MEASURE_HIGHEST_VALUE);
@@ -149,18 +146,18 @@ public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {
             measureDimension.addCategory(MEASURE_KURTOSIS);
         }
 
-        CrosstabDimension columnDimension = new CrosstabDimension(DIMENSION_COLUMN);
-        for (InputColumn<? extends Number> column : _columns) {
+        final CrosstabDimension columnDimension = new CrosstabDimension(DIMENSION_COLUMN);
+        for (final InputColumn<? extends Number> column : _columns) {
             columnDimension.addCategory(column.getName());
         }
 
-        Crosstab<Number> crosstab = new Crosstab<Number>(Number.class, columnDimension, measureDimension);
-        for (InputColumn<? extends Number> column : _columns) {
-            CrosstabNavigator<Number> nav = crosstab.navigate().where(columnDimension, column.getName());
-            NumberAnalyzerColumnDelegate delegate = _columnDelegates.get(column);
+        final Crosstab<Number> crosstab = new Crosstab<Number>(Number.class, columnDimension, measureDimension);
+        for (final InputColumn<? extends Number> column : _columns) {
+            final CrosstabNavigator<Number> nav = crosstab.navigate().where(columnDimension, column.getName());
+            final NumberAnalyzerColumnDelegate delegate = _columnDelegates.get(column);
 
-            StatisticalSummary s = delegate.getStatistics();
-            int nullCount = delegate.getNullCount();
+            final StatisticalSummary s = delegate.getStatistics();
+            final int nullCount = delegate.getNullCount();
 
             nav.where(measureDimension, MEASURE_NULL_COUNT).put(nullCount);
 
@@ -168,10 +165,10 @@ public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {
                 addAttachment(nav, delegate.getNullAnnotation(), column);
             }
 
-            int numRows = delegate.getNumRows();
+            final int numRows = delegate.getNumRows();
             nav.where(measureDimension, MEASURE_ROW_COUNT).put(numRows);
 
-            long nonNullCount = s.getN();
+            final long nonNullCount = s.getN();
 
             if (nonNullCount > 0) {
                 final double highestValue = s.getMax();
@@ -229,7 +226,7 @@ public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {
         return new NumberAnalyzerResult(_columns, crosstab);
     }
 
-    private void addAttachment(CrosstabNavigator<Number> nav, RowAnnotation annotation, InputColumn<?> column) {
+    private void addAttachment(final CrosstabNavigator<Number> nav, final RowAnnotation annotation, final InputColumn<?> column) {
         nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(annotation, _annotationFactory, column));
     }
 }

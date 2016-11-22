@@ -24,11 +24,11 @@ package org.datacleaner.util;
  */
 public class ApiStringUtils {
 
-    public static String explodeCamelCase(String str, boolean excludeGetOrSet) {
+    public static String explodeCamelCase(final String str, final boolean excludeGetOrSet) {
         if (str == null) {
             return "";
         }
-        StringBuilder sb = new StringBuilder(str.trim());
+        final StringBuilder sb = new StringBuilder(str.trim());
         if (sb.length() > 1) {
             if (excludeGetOrSet) {
                 if (str.startsWith("get") || str.startsWith("set")) {
@@ -47,7 +47,7 @@ public class ApiStringUtils {
             boolean previousUpperCase = true;
 
             for (int i = 1; i < sb.length(); i++) {
-                char currentChar = sb.charAt(i);
+                final char currentChar = sb.charAt(i);
                 if (!previousUpperCase) {
                     if (Character.isUpperCase(currentChar)) {
                         sb.setCharAt(i, Character.toLowerCase(currentChar));

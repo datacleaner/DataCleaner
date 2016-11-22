@@ -21,6 +21,7 @@ package org.datacleaner.widgets.tabs;
 
 import java.awt.Component;
 import java.util.EventObject;
+
 import javax.swing.JTabbedPane;
 
 /**
@@ -29,57 +30,57 @@ import javax.swing.JTabbedPane;
  */
 public final class TabCloseEvent extends EventObject {
 
-	private static final long serialVersionUID = -8865377836780462308L;
+    private static final long serialVersionUID = -8865377836780462308L;
 
-	/**
-	 * The index of the closing tab
-	 */
-	private final int _tabIndex;
+    /**
+     * The index of the closing tab
+     */
+    private final int _tabIndex;
 
-	/**
-	 * The contents of the closed tab
-	 */
-	private final Component _tabContents;
+    /**
+     * The contents of the closed tab
+     */
+    private final Component _tabContents;
 
-	/**
-	 * Construct an event for the indicated tab number associated with the
-	 * indicated JTabbedPane
-	 */
-	public TabCloseEvent(JTabbedPane pane, int tabIndex, Component tabContents) {
-		super(pane);
-		_tabIndex = tabIndex;
-		_tabContents = tabContents;
-	}
+    /**
+     * Construct an event for the indicated tab number associated with the
+     * indicated JTabbedPane
+     */
+    public TabCloseEvent(final JTabbedPane pane, final int tabIndex, final Component tabContents) {
+        super(pane);
+        _tabIndex = tabIndex;
+        _tabContents = tabContents;
+    }
 
-	/**
-	 * Get the closed tab index
-	 * 
-	 * @return the tab that is closed
-	 */
-	public int getTabIndex() {
-		return _tabIndex;
-	}
+    /**
+     * Get the closed tab index
+     *
+     * @return the tab that is closed
+     */
+    public int getTabIndex() {
+        return _tabIndex;
+    }
 
-	public Component getTabContents() {
-		return _tabContents;
-	}
+    public Component getTabContents() {
+        return _tabContents;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof TabCloseEvent) {
-			TabCloseEvent that = (TabCloseEvent) obj;
-			return this._tabIndex == that._tabIndex;
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof TabCloseEvent) {
+            final TabCloseEvent that = (TabCloseEvent) obj;
+            return this._tabIndex == that._tabIndex;
+        }
+        return false;
+    }
 
-	@Override
-	public int hashCode() {
-		return _tabIndex;
-	}
+    @Override
+    public int hashCode() {
+        return _tabIndex;
+    }
 
-	@Override
-	public String toString() {
-		return "TabCloseEvent[tabIndex=" + _tabIndex + "]";
-	}
+    @Override
+    public String toString() {
+        return "TabCloseEvent[tabIndex=" + _tabIndex + "]";
+    }
 }

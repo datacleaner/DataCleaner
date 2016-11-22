@@ -69,7 +69,7 @@ public class MathFormulaTransformer implements Transformer {
 
         _columnAliases = new HashMap<String, List<String>>();
         int i = 1;
-        for (InputColumn<Number> inputColumn : _input) {
+        for (final InputColumn<Number> inputColumn : _input) {
             final String name = inputColumn.getName();
             final List<String> list = new ArrayList<String>(3);
             final String variableName1 = StringUtils.replaceWhitespaces(name.toLowerCase(), "_");
@@ -83,14 +83,14 @@ public class MathFormulaTransformer implements Transformer {
     }
 
     @Override
-    public Number[] transform(InputRow inputRow) {
+    public Number[] transform(final InputRow inputRow) {
         final SimpleContext context = new SimpleContext();
 
-        for (InputColumn<Number> inputColumn : _input) {
-            Number value = inputRow.getValue(inputColumn);
-            ValueExpression valueExpression = _factory.createValueExpression(value, Number.class);
-            List<String> aliases = _columnAliases.get(inputColumn.getName());
-            for (String alias : aliases) {
+        for (final InputColumn<Number> inputColumn : _input) {
+            final Number value = inputRow.getValue(inputColumn);
+            final ValueExpression valueExpression = _factory.createValueExpression(value, Number.class);
+            final List<String> aliases = _columnAliases.get(inputColumn.getName());
+            for (final String alias : aliases) {
                 context.setVariable(alias, valueExpression);
             }
         }
@@ -103,7 +103,7 @@ public class MathFormulaTransformer implements Transformer {
             assert value instanceof Number;
 
             if (value instanceof Double) {
-                double dbl = ((Double) value).doubleValue();
+                final double dbl = ((Double) value).doubleValue();
                 if (Double.isNaN(dbl) || Double.isInfinite(dbl)) {
                     // we don't want to present infinity and NaN - null is a
                     // better replacement.
@@ -112,7 +112,7 @@ public class MathFormulaTransformer implements Transformer {
             }
 
             return new Number[] { (Number) value };
-        } catch (ArithmeticException e) {
+        } catch (final ArithmeticException e) {
             return new Number[] { null };
         }
     }

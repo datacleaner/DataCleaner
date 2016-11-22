@@ -37,7 +37,7 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 /**
  * Specialized {@link Renderer} for a {@link AnalysisJobBuilder} for
  * {@link UpdateTableAnalyzer}.
- * 
+ *
  * @author Kasper Sørensen
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
@@ -54,7 +54,7 @@ public class UpdateTableJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<UpdateTableAnalyzer> ajb) {
+    public RendererPrecedence getPrecedence(final AnalyzerComponentBuilder<UpdateTableAnalyzer> ajb) {
         if (ajb.getDescriptor().getComponentClass() == UpdateTableAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -62,7 +62,7 @@ public class UpdateTableJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<UpdateTableAnalyzer> ajb) {
+    public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<UpdateTableAnalyzer> ajb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
                 PropertyWidgetFactory.class);
 

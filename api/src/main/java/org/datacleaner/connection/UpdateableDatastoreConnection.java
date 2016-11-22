@@ -27,10 +27,10 @@ import org.apache.metamodel.UpdateableDataContext;
  */
 public interface UpdateableDatastoreConnection extends DatastoreConnection {
 
-	/**
-	 * Gets a {@link DataContext} reference which is updateable.
-	 * 
-	 * @return
-	 */
-	public UpdateableDataContext getUpdateableDataContext();
+    /**
+     * Gets a {@link DataContext} reference which is updateable.
+     *
+     * @return
+     */
+    UpdateableDataContext getUpdateableDataContext();
 }

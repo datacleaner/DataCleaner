@@ -52,17 +52,17 @@ public final class LifeCycleHelper {
 
     /**
      * @param injectionManager
-     * 
+     *
      * @deprecated use {@link #LifeCycleHelper(InjectionManager, boolean)}
      *             instead
      */
     @Deprecated
-    public LifeCycleHelper(InjectionManager injectionManager) {
+    public LifeCycleHelper(final InjectionManager injectionManager) {
         this(injectionManager, true);
     }
 
     /**
-     * 
+     *
      * @param injectionManager
      * @param referenceDataActivationManager
      * @param includeNonDistributedTasks
@@ -72,13 +72,13 @@ public final class LifeCycleHelper {
      *            single-node executions, this will typically be true, on slave
      *            nodes in a cluster, this will typically be false.
      */
-    public LifeCycleHelper(InjectionManager injectionManager, boolean includeNonDistributedTasks) {
+    public LifeCycleHelper(final InjectionManager injectionManager, final boolean includeNonDistributedTasks) {
         _injectionManager = injectionManager;
         _includeNonDistributedTasks = includeNonDistributedTasks;
     }
 
     /**
-     * 
+     *
      * @param configuration
      * @param job
      * @param referenceDataActivationManager
@@ -89,7 +89,8 @@ public final class LifeCycleHelper {
      *            single-node executions, this will typically be true, on slave
      *            nodes in a cluster, this will typically be false.
      */
-    public LifeCycleHelper(DataCleanerConfiguration configuration, AnalysisJob job, boolean includeNonDistributedTasks) {
+    public LifeCycleHelper(final DataCleanerConfiguration configuration, final AnalysisJob job,
+            final boolean includeNonDistributedTasks) {
         if (configuration == null) {
             _injectionManager = null;
         } else {
@@ -114,29 +115,29 @@ public final class LifeCycleHelper {
 
     /**
      * Assigns/injects {@link Configured} property values to a component.
-     * 
+     *
      * @param descriptor
      * @param component
      * @param componentConfiguration
      */
-    public void assignConfiguredProperties(ComponentDescriptor<?> descriptor, Object component,
-            ComponentConfiguration componentConfiguration) {
+    public void assignConfiguredProperties(final ComponentDescriptor<?> descriptor, final Object component,
+            final ComponentConfiguration componentConfiguration) {
         final AssignConfiguredPropertiesHelper helper = new AssignConfiguredPropertiesHelper();
         helper.assignProperties(component, descriptor, componentConfiguration);
     }
 
     /**
      * Assigns/injects {@link Provided} property values to a component.
-     * 
+     *
      * @param descriptor
      * @param component
      */
-    public void assignProvidedProperties(ComponentDescriptor<?> descriptor, Object component) {
+    public void assignProvidedProperties(final ComponentDescriptor<?> descriptor, final Object component) {
         final Set<ProvidedPropertyDescriptor> providedDescriptors = descriptor.getProvidedProperties();
-        for (ProvidedPropertyDescriptor providedDescriptor : providedDescriptors) {
+        for (final ProvidedPropertyDescriptor providedDescriptor : providedDescriptors) {
 
-            InjectionPoint<Object> injectionPoint = new PropertyInjectionPoint(providedDescriptor, component);
-            Object value = _injectionManager.getInstance(injectionPoint);
+            final InjectionPoint<Object> injectionPoint = new PropertyInjectionPoint(providedDescriptor, component);
+            final Object value = _injectionManager.getInstance(injectionPoint);
             providedDescriptor.setValue(component, value);
 
         }
@@ -147,16 +148,16 @@ public final class LifeCycleHelper {
      * typically done after
      * {@link #assignProvidedProperties(ComponentDescriptor, Object)} and
      * {@link #assignConfiguredProperties(ComponentDescriptor, Object, ComponentConfiguration)}
-     * 
+     *
      * Usually validation is light-weight, idempotent and quick, as compared to
      * {@link #initialize(ComponentDescriptor, Object, boolean)}.
-     * 
+     *
      * @param descriptor
      * @param component
      */
-    public void validate(ComponentDescriptor<?> descriptor, Object component) {
+    public void validate(final ComponentDescriptor<?> descriptor, final Object component) {
         final Set<ValidateMethodDescriptor> validateDescriptors = descriptor.getValidateMethods();
-        for (ValidateMethodDescriptor validateDescriptor : validateDescriptors) {
+        for (final ValidateMethodDescriptor validateDescriptor : validateDescriptors) {
             validateDescriptor.validate(component);
         }
     }
@@ -166,16 +167,16 @@ public final class LifeCycleHelper {
      * {@link #assignProvidedProperties(ComponentDescriptor, Object)} and
      * {@link #assignConfiguredProperties(ComponentDescriptor, Object, ComponentConfiguration)}
      * .
-     * 
+     *
      * This initialization also includes a validation, see
      * {@link #validate(ComponentDescriptor, Object)}.
-     * 
+     *
      * @param descriptor
      * @param component
      */
-    public void initialize(ComponentDescriptor<?> descriptor, Object component) {
+    public void initialize(final ComponentDescriptor<?> descriptor, final Object component) {
         final Set<InitializeMethodDescriptor> initializeDescriptors = descriptor.getInitializeMethods();
-        for (InitializeMethodDescriptor initializeDescriptor : initializeDescriptors) {
+        for (final InitializeMethodDescriptor initializeDescriptor : initializeDescriptors) {
             if (_includeNonDistributedTasks || initializeDescriptor.isDistributed()) {
                 initializeDescriptor.initialize(component);
             }
@@ -184,13 +185,13 @@ public final class LifeCycleHelper {
 
     /**
      * Closes a component after use.
-     * 
+     *
      * @param descriptor
      * @param component
      */
-    public void close(ComponentDescriptor<?> descriptor, Object component, boolean success) {
+    public void close(final ComponentDescriptor<?> descriptor, final Object component, final boolean success) {
         final Set<CloseMethodDescriptor> closeMethods = descriptor.getCloseMethods();
-        for (CloseMethodDescriptor closeDescriptor : closeMethods) {
+        for (final CloseMethodDescriptor closeDescriptor : closeMethods) {
             if (_includeNonDistributedTasks || closeDescriptor.isDistributed()) {
                 if (success && closeDescriptor.isEnabledOnSuccess()) {
                     closeDescriptor.close(component);
@@ -205,15 +206,15 @@ public final class LifeCycleHelper {
 
     /**
      * Closes a component after user.
-     * 
+     *
      * @param descriptor
      * @param component
-     * 
+     *
      * @deprecated use {@link #close(ComponentDescriptor, Object, boolean)}
      *             instead.
      */
     @Deprecated
-    public void close(ComponentDescriptor<?> descriptor, Object component) {
+    public void close(final ComponentDescriptor<?> descriptor, final Object component) {
         close(descriptor, component, true);
     }
 }

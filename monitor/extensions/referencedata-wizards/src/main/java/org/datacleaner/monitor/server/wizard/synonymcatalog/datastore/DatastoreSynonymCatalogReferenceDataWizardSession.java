@@ -33,7 +33,7 @@ final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreW
     private String _synonymColumn;
     private String _addNextSynonymColumn;
 
-    public DatastoreSynonymCatalogReferenceDataWizardSession(ReferenceDataWizardContext context) {
+    public DatastoreSynonymCatalogReferenceDataWizardSession(final ReferenceDataWizardContext context) {
         super(context);
     }
 

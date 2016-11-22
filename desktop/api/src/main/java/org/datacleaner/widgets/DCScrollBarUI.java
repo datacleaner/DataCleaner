@@ -31,12 +31,12 @@ public class DCScrollBarUI extends BasicScrollBarUI {
 
     /**
      * Factory method used by Swing to instantiate the {@link DCScrollBarUI}
-     * 
+     *
      * @param c
      *            the scrollbar component
      * @return
      */
-    public static ComponentUI createUI(JComponent c) {
+    public static ComponentUI createUI(final JComponent c) {
         return new DCScrollBarUI();
     }
 

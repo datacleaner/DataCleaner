@@ -55,23 +55,23 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
     private final String _encoding;
     private final boolean _caseSensitive;
 
-    public TextFileDictionary(String name, String filename, String encoding) {
+    public TextFileDictionary(final String name, final String filename, final String encoding) {
         this(name, filename, encoding, true);
     }
 
-    public TextFileDictionary(String name, String filename, String encoding, boolean caseSensitive) {
+    public TextFileDictionary(final String name, final String filename, final String encoding, final boolean caseSensitive) {
         super(name);
         _filename = filename;
         _encoding = encoding;
         _caseSensitive = caseSensitive;
     }
-    
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        Adaptor adaptor = new Adaptor() {
+
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        final Adaptor adaptor = new Adaptor() {
             @Override
-            public void deserialize(GetField getField, Serializable serializable) throws Exception {
+            public void deserialize(final GetField getField, final Serializable serializable) throws Exception {
                 final boolean caseSensitive = getField.get("_caseSensitive", true);
-                Field field = TextFileDictionary.class.getDeclaredField("_caseSensitive");
+                final Field field = TextFileDictionary.class.getDeclaredField("_caseSensitive");
                 field.setAccessible(true);
                 field.set(serializable, caseSensitive);
             }
@@ -80,7 +80,7 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final TextFileDictionary other = (TextFileDictionary) obj;
             return Objects.equals(_filename, other._filename) && Objects.equals(_encoding, other._encoding)
@@ -90,12 +90,12 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
     }
 
     @Override
-    public DictionaryConnection openConnection(DataCleanerConfiguration configuration) {
+    public DictionaryConnection openConnection(final DataCleanerConfiguration configuration) {
         final ResourceConverter rc = new ResourceConverter(configuration);
         final Resource resource = rc.fromString(Resource.class, _filename);
         final Set<String> values = resource.read(new Func<InputStream, Set<String>>() {
             @Override
-            public Set<String> eval(InputStream in) {
+            public Set<String> eval(final InputStream in) {
                 final Set<String> values = new HashSet<>();
                 final BufferedReader reader = FileHelper.getBufferedReader(in, getEncoding());
                 try {
@@ -107,7 +107,7 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
                         values.add(line);
                         line = reader.readLine();
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     logger.error("Failed to read line from resource: {}", resource, e);
                 } finally {
                     FileHelper.safeClose(reader);

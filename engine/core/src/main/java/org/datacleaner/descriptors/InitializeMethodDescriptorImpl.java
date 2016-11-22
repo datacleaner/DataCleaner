@@ -27,20 +27,20 @@ final class InitializeMethodDescriptorImpl extends AbstractMethodDescriptor impl
 
     private static final long serialVersionUID = 1L;
 
-    protected InitializeMethodDescriptorImpl(Method method, ComponentDescriptor<?> componentDescriptor) {
+    protected InitializeMethodDescriptorImpl(final Method method, final ComponentDescriptor<?> componentDescriptor) {
         super(method, componentDescriptor);
     }
 
     @Override
     public boolean isDistributed() {
-        Close annotation = getAnnotation(Close.class);
+        final Close annotation = getAnnotation(Close.class);
         if (annotation == null) {
             return true;
         }
         return annotation.distributed();
     }
 
-    public void initialize(Object component) throws IllegalStateException {
+    public void initialize(final Object component) throws IllegalStateException {
         invoke(component);
     }
 }

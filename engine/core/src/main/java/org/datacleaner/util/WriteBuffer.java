@@ -42,7 +42,7 @@ public class WriteBuffer {
     private final Action<Iterable<Object[]>> _flushAction;
     private final AtomicInteger _batchNumber;
 
-    public WriteBuffer(int bufferSize, Action<Iterable<Object[]>> flushAction) {
+    public WriteBuffer(final int bufferSize, final Action<Iterable<Object[]>> flushAction) {
         if (bufferSize <= 0) {
             throw new IllegalArgumentException("Buffer size must be a positive integer");
         }
@@ -55,18 +55,18 @@ public class WriteBuffer {
         return _buffer;
     }
 
-    public final void addToBuffer(Object[] rowData) {
+    public final void addToBuffer(final Object[] rowData) {
         while (!_buffer.offer(rowData)) {
             flushBuffer();
         }
     }
 
     public final void flushBuffer() {
-        int flushSize = _buffer.size();
+        final int flushSize = _buffer.size();
         if (flushSize == 0) {
             return;
         }
-        
+
         logger.info("Flushing {} rows in write buffer", flushSize);
 
         final List<Object[]> copy = new ArrayList<Object[]>(flushSize);
@@ -79,11 +79,11 @@ public class WriteBuffer {
         }
 
         try {
-            int batchNo = _batchNumber.incrementAndGet();
+            final int batchNo = _batchNumber.incrementAndGet();
             logger.info("Write batch no. {} starting", batchNo);
             _flushAction.run(copy);
             logger.info("Write batch no. {} finished", batchNo);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }

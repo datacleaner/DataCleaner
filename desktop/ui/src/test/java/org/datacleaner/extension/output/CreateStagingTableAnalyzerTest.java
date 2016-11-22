@@ -67,7 +67,7 @@ public class CreateStagingTableAnalyzerTest {
     @Test
     public void testValidateNonExistingDatastore() {
         when(datastoreCatalog.getDatastore(DATASTORE_NAME)).thenReturn(null);
-        
+
         createStagingTableAnalyzer.validate();
     }
 
@@ -88,7 +88,7 @@ public class CreateStagingTableAnalyzerTest {
         expectedException.expectMessage("Datastore \"" + DATASTORE_NAME
                 + "\" is not located in \"Written datastores\" directory \"" + userPreferences
                 .getSaveDatastoreDirectory().getPath() + "\".");
-        
+
         createStagingTableAnalyzer.validate();
     }
 

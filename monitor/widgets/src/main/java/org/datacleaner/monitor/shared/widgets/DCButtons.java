@@ -27,40 +27,40 @@ import com.google.gwt.user.client.ui.Button;
  */
 public class DCButtons {
 
-    public static Button primaryButton(String glyphiconName, String text) {
-        Button button = new Button(createHtml(glyphiconName, text));
+    public static Button primaryButton(final String glyphiconName, final String text) {
+        final Button button = new Button(createHtml(glyphiconName, text));
         applyPrimaryStyle(button);
         return button;
     }
 
-    public static Button defaultButton(String glyphiconName, String text) {
-        Button button = new Button(createHtml(glyphiconName, text));
+    public static Button defaultButton(final String glyphiconName, final String text) {
+        final Button button = new Button(createHtml(glyphiconName, text));
         applyDefaultStyle(button);
         return button;
     }
 
-    public static Button dangerButton(String glyphiconName, String text) {
-        Button button = new Button(createHtml(glyphiconName, text));
+    public static Button dangerButton(final String glyphiconName, final String text) {
+        final Button button = new Button(createHtml(glyphiconName, text));
         applyDangerStyle(button);
         return button;
     }
 
-    public static void applyDefaultStyle(Button button) {
+    public static void applyDefaultStyle(final Button button) {
         button.setStylePrimaryName("btn");
         button.addStyleName("btn-default");
     }
 
-    public static void applyPrimaryStyle(Button button) {
+    public static void applyPrimaryStyle(final Button button) {
         button.setStylePrimaryName("btn");
         button.addStyleName("btn-primary");
     }
 
-    public static void applyDangerStyle(Button button) {
+    public static void applyDangerStyle(final Button button) {
         button.setStylePrimaryName("btn");
         button.addStyleName("btn-danger");
     }
 
-    public static String createHtml(String glyphiconName, String text) {
+    public static String createHtml(final String glyphiconName, final String text) {
         if (glyphiconName == null) {
             return text;
         }

@@ -35,21 +35,21 @@ import org.junit.Test;
  * This class tests the old xml schedule configuration which doesn't have a 'run on hadoop' setting 
  *
  */
-public class JaxbScheduleReaderTest{
+public class JaxbScheduleReaderTest {
 
-    
+
     @Test
-    public void testReader() throws FileNotFoundException{
+    public void testReader() throws FileNotFoundException {
         final File file = new File("src/test/resources/CustomerCompleteness_example.schedule.xml");
         final FileInputStream fileInputStream = new FileInputStream(file);
         final JaxbScheduleReader reader = new JaxbScheduleReader();
-        final JobIdentifier job =new JobIdentifier();
+        final JobIdentifier job = new JobIdentifier();
         TenantIdentifier tenant = new TenantIdentifier();
-        String groupName="test";
-        final ScheduleDefinition schedule = reader.read(fileInputStream, job, tenant, groupName); 
-        assertEquals("@daily",schedule.getCronExpression());
+        String groupName = "test";
+        final ScheduleDefinition schedule = reader.read(fileInputStream, job, tenant, groupName);
+        assertEquals("@daily", schedule.getCronExpression());
         assertFalse(schedule.isDistributedExecution());
-        assertFalse(schedule.isRunOnHadoop()); 
-        
+        assertFalse(schedule.isRunOnHadoop());
+
     }
 }

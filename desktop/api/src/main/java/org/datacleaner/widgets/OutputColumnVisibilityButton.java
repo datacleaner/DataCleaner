@@ -37,7 +37,7 @@ public class OutputColumnVisibilityButton extends DCCheckBox<MutableInputColumn<
     private static final Icon NOT_SELECTED_ICON = ImageManager.get().getImageIcon(
             "images/widgets/output_column_visibility_hidden.png");
 
-    public OutputColumnVisibilityButton(MutableInputColumn<?> column) {
+    public OutputColumnVisibilityButton(final MutableInputColumn<?> column) {
         super(null, !column.isHidden());
         setValue(column);
         addListener(this);
@@ -49,7 +49,7 @@ public class OutputColumnVisibilityButton extends DCCheckBox<MutableInputColumn<
     }
 
     @Override
-    public void onItemSelected(MutableInputColumn<?> item, boolean selected) {
+    public void onItemSelected(final MutableInputColumn<?> item, final boolean selected) {
         item.setHidden(!selected);
     }
 }

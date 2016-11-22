@@ -48,16 +48,16 @@ public abstract class AbstractDatabaseConnectionPresenter implements DatabaseCon
     /**
      * Creates a text field as per the default design of a
      * {@link DatabaseConnectionPresenter}.
-     * 
+     *
      * @param promptText
      * @return
      */
-    protected static JXTextField createTextField(String promptText) {
+    protected static JXTextField createTextField(final String promptText) {
         return WidgetFactory.createTextField(promptText, JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
     }
 
     @Override
-    public boolean initialize(JdbcDatastore datastore) {
+    public boolean initialize(final JdbcDatastore datastore) {
         _usernameTextField.setText(datastore.getUsername());
         _passwordField.setText(datastore.getPassword());
         return true;
@@ -65,7 +65,7 @@ public abstract class AbstractDatabaseConnectionPresenter implements DatabaseCon
 
     @Override
     public final JComponent getWidget() {
-        DCPanel panel = new DCPanel();
+        final DCPanel panel = new DCPanel();
 
         int row = layoutGridBagAboveCredentials(panel);
 
@@ -73,11 +73,11 @@ public abstract class AbstractDatabaseConnectionPresenter implements DatabaseCon
 
         layoutGridBagBelowCredentials(panel, row);
 
-        JScrollPane scrolleable = WidgetUtils.scrolleable(panel);
+        final JScrollPane scrolleable = WidgetUtils.scrolleable(panel);
         return scrolleable;
     }
 
-    protected int layoutGridBagCredentials(DCPanel panel, int row) {
+    protected int layoutGridBagCredentials(final DCPanel panel, int row) {
         row++;
         WidgetUtils.addToGridBag(DCLabel.dark("Username:"), panel, 0, row);
         WidgetUtils.addToGridBag(_usernameTextField, panel, 1, row, 1.0, 0.0);
@@ -91,23 +91,23 @@ public abstract class AbstractDatabaseConnectionPresenter implements DatabaseCon
 
     /**
      * Lays out components in a panel with a gridbag layout.
-     * 
+     *
      * @param panel
      * @return the latest row number in the grid bag
      */
-    protected int layoutGridBagAboveCredentials(DCPanel panel) {
+    protected int layoutGridBagAboveCredentials(final DCPanel panel) {
         return -1;
-    };
+    }
 
     /**
      * Lays out components in a panel with a gridbag layout.
-     * 
+     *
      * @param panel
      * @param row
      *            the latest row number in the grid bag
      */
-    protected void layoutGridBagBelowCredentials(DCPanel panel, int row) {
-    };
+    protected void layoutGridBagBelowCredentials(final DCPanel panel, final int row) {
+    }
 
     public JXTextField getUsernameTextField() {
         return _usernameTextField;

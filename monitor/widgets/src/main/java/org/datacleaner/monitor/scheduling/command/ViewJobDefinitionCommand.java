@@ -28,21 +28,22 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 
 public class ViewJobDefinitionCommand implements Command {
- 
-	private TenantIdentifier _tenant;
-	private JobIdentifier _job ;
-	private DCPopupPanel _popup;
-	
-	public ViewJobDefinitionCommand(TenantIdentifier tenantIdentifier,JobIdentifier jobIdentifier,DCPopupPanel popupPanel) {
-		_tenant = tenantIdentifier;
-		_job = jobIdentifier;
-		_popup = popupPanel;
-	}
-	
-	@Override
-	public void execute() {
-            String url = Urls.createRepositoryUrl(_tenant, "jobs/" + _job.getName() + ".analysis.xml");
-            Window.open(url, "datacleaner_job_details", null);
-            _popup.hide();
+
+    private TenantIdentifier _tenant;
+    private JobIdentifier _job;
+    private DCPopupPanel _popup;
+
+    public ViewJobDefinitionCommand(final TenantIdentifier tenantIdentifier, final JobIdentifier jobIdentifier,
+            final DCPopupPanel popupPanel) {
+        _tenant = tenantIdentifier;
+        _job = jobIdentifier;
+        _popup = popupPanel;
+    }
+
+    @Override
+    public void execute() {
+        final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + _job.getName() + ".analysis.xml");
+        Window.open(url, "datacleaner_job_details", null);
+        _popup.hide();
     }
 }

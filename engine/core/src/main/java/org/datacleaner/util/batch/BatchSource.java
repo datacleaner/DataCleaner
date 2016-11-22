@@ -24,15 +24,15 @@ import java.util.List;
 /**
  * Defines a source for a batch transformation. A source contains input elements
  * to be processed.
- * 
+ *
  * @param <E>
  *            the input element type
  */
 public interface BatchSource<E> {
-    
-    public List<E> toList();
 
-    public int size();
+    List<E> toList();
 
-    public E getInput(int index);
+    int size();
+
+    E getInput(int index);
 }

@@ -43,8 +43,8 @@ public class DatastoreServiceServlet extends SecureGwtServlet implements Datasto
         super.init();
 
         if (_delegate == null) {
-            WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            DatastoreService delegate = applicationContext.getBean(DatastoreService.class);
+            final WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final DatastoreService delegate = applicationContext.getBean(DatastoreService.class);
             if (delegate == null) {
                 throw new ServletException("No delegate found in application context!");
             }
@@ -53,27 +53,27 @@ public class DatastoreServiceServlet extends SecureGwtServlet implements Datasto
     }
 
     @Override
-    public List<DatastoreIdentifier> getAvailableDatastores(TenantIdentifier tenant) {
+    public List<DatastoreIdentifier> getAvailableDatastores(final TenantIdentifier tenant) {
         return _delegate.getAvailableDatastores(tenant);
     }
 
     @Override
-    public SchemaIdentifier getDefaultSchema(TenantIdentifier tenant, DatastoreIdentifier datastore) {
+    public SchemaIdentifier getDefaultSchema(final TenantIdentifier tenant, final DatastoreIdentifier datastore) {
         return _delegate.getDefaultSchema(tenant, datastore);
     }
 
     @Override
-    public List<SchemaIdentifier> getSchemas(TenantIdentifier tenant, DatastoreIdentifier datastore) {
+    public List<SchemaIdentifier> getSchemas(final TenantIdentifier tenant, final DatastoreIdentifier datastore) {
         return _delegate.getSchemas(tenant, datastore);
     }
 
     @Override
-    public List<TableIdentifier> getTables(TenantIdentifier tenant, SchemaIdentifier schema) {
+    public List<TableIdentifier> getTables(final TenantIdentifier tenant, final SchemaIdentifier schema) {
         return _delegate.getTables(tenant, schema);
     }
 
     @Override
-    public List<ColumnIdentifier> getColumns(TenantIdentifier tenant, TableIdentifier table) {
+    public List<ColumnIdentifier> getColumns(final TenantIdentifier tenant, final TableIdentifier table) {
         return _delegate.getColumns(tenant, table);
     }
 

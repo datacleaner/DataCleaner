@@ -75,25 +75,43 @@ import org.datacleaner.descriptors.TransformerDescriptor;
  */
 public final class IconUtils {
 
+    private static class DisabledFilter extends RGBImageFilter {
+        @Override
+        public int filterRGB(final int x, final int y, final int rgb) {
+
+            if ((rgb >> 24) == 0x00) { // is transparent
+                return rgb;
+            }
+
+            final int red = new Color(rgb).getRed();
+            final int green = new Color(rgb).getGreen();
+            final int blue = new Color(rgb).getBlue();
+
+            final int max = Math.max(Math.max(red, green), blue);
+            final int min = Math.min(Math.min(red, green), blue);
+            final int gray = brighter((max + min) / 2, 40);
+
+            return (rgb & 0xff000000) | (gray << 16) | (gray << 8) | gray;
+        }
+
+        private int brighter(final int rgb, final int percent) {
+            final double q = 255 * percent * 0.01;
+            final double k = (255 - q) / 255;
+            return (int) (k * rgb + q);
+        }
+    }
     public static final int ICON_SIZE_LARGE = 32;
     public static final int ICON_SIZE_MEDIUM = 22;
     public static final int ICON_SIZE_SMALL = 16;
-
     public static final int ICON_SIZE_MENU_ITEM = ICON_SIZE_SMALL;
     public static final int ICON_SIZE_BUTTON = ICON_SIZE_MEDIUM;
     public static final int ICON_SIZE_TAB = ICON_SIZE_MEDIUM;
     public static final int ICON_SIZE_TASK_PANE = ICON_SIZE_SMALL;
-
-    private static final ImageIcon ICON_TRANSPARENT_SMALL = createTransparentIcon(ICON_SIZE_SMALL);
-    private static final ImageIcon ICON_TRANSPARENT_MEDIUM = createTransparentIcon(ICON_SIZE_MEDIUM);
-    private static final ImageIcon ICON_TRANSPARENT_LARGE = createTransparentIcon(ICON_SIZE_LARGE);
-
     public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
     public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
     public static final String FILTER_OUTCOME_PATH = "images/component-types/filter-outcome.png";
     public static final String OUTPUT_DATA_STREAM_PATH = "images/component-types/output-data-stream.png";
-
     public static final String MODEL_SCHEMA = "images/model/schema.png";
     public static final String MODEL_SCHEMA_INFORMATION = "images/model/schema_information.png";
     public static final String MODEL_TABLE = "images/model/table.png";
@@ -108,7 +126,6 @@ public final class IconUtils {
     public static final String MODEL_METADATA = "images/model/metadata.png";
     public static final String MODEL_QUICK_ANALYSIS = ANALYZER_IMAGEPATH;
     public static final String MODEL_COMPONENT_LIBRARY = "images/model/component_library.png";
-
     public static final String MENU_OPEN = "images/menu/open.png";
     public static final String MENU_NEW = "images/menu/new.png";
     public static final String MENU_EXECUTE = "images/menu/execute.png";
@@ -117,19 +134,16 @@ public final class IconUtils {
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
     public static final String MENU_DATACLOUD = "images/menu/datacloud.png";
     public static final String MENU_DOCUMENTATION = "images/menu/documentation.png";
-
     public static final String ACTION_EXECUTE = "images/menu/execute.png";
     public static final String ACTION_EDIT = "images/actions/edit.png";
     public static final String ACTION_SAVE_BRIGHT = "images/actions/save_bright.png";
     public static final String ACTION_SAVE_DARK = "images/actions/save_dark.png";
-
     /**
      * @deprecated use {@link #ACTION_SAVE_BRIGHT} or {@link #ACTION_SAVE_DARK}
      *             instead
      */
     @Deprecated
     public static final String ACTION_SAVE = ACTION_SAVE_DARK;
-
     public static final String ACTION_CLOSE_BRIGHT = "images/actions/close_bright.png";
     public static final String ACTION_CLOSE_DARK = "images/actions/close_dark.png";
     public static final String ACTION_COPY = "images/actions/copy.png";
@@ -138,19 +152,16 @@ public final class IconUtils {
     public static final String ACTION_REMOVE_DARK = "images/actions/remove_dark.png";
     public static final String ACTION_ADD_BRIGHT = "images/actions/add_bright.png";
     public static final String ACTION_REMOVE_BRIGHT = "images/actions/remove_bright.png";
-    
     /**
      * @deprecated use {@link #ACTION_ADD_DARK} or {@link #ACTION_ADD_BRIGHT}
      */
     @Deprecated
     public static final String ACTION_ADD = ACTION_ADD_DARK;
-    
     /**
      * @deprecated use {@link #ACTION_REMOVE_DARK} or {@link #ACTION_REMOVE_BRIGHT}
      */
     @Deprecated
     public static final String ACTION_REMOVE = ACTION_REMOVE_DARK;
-    
     public static final String ACTION_RESET = "images/actions/reset.png";
     public static final String ACTION_RENAME = "images/actions/rename.png";
     public static final String ACTION_REFRESH = "images/actions/refresh.png";
@@ -168,45 +179,35 @@ public final class IconUtils {
     public static final String ACTION_DELETE = "images/actions/delete.png";
     public static final String ACTION_DROP_TABLE = "images/actions/drop_table.png";
     public static final String ACTION_CREATE_TABLE = "images/actions/create_table.png";
-
     public static final String APPLICATION_ICON = "images/window/app-icon.png";
     public static final String WEBSITE = "images/actions/website.png";
     public static final String PLUGIN = "images/component-types/plugin.png";
-
     public static final String STATUS_VALID = "images/status/valid.png";
     public static final String STATUS_INFO = "images/status/info.png";
     public static final String STATUS_WARNING = "images/status/warning.png";
     public static final String STATUS_ERROR = "images/status/error.png";
-
     public static final String ACTION_REORDER_COLUMNS = "images/actions/reorder-columns.png";
-
     public static final String CHART_BAR = "images/chart-types/bar.png";
     public static final String CHART_LINE = "images/chart-types/line.png";
     public static final String CHART_SCATTER = "images/chart-types/scatter.png";
-
     public static final String CLOUD_GREY = "images/datacloud/cloudGrey.png";
     public static final String CLOUD_ORANGE = "images/datacloud/cloudOrange.png";
     public static final String CLOUD_GREEN = "images/datacloud/cloudGreen.png";
     public static final String CLOUD_RED = "images/datacloud/cloudRed.png";
-
     public static final String DICTIONARY_IMAGEPATH = "images/model/dictionary.png";
     public static final String DICTIONARY_SIMPLE_IMAGEPATH = "images/model/dictionary_simple.png";
     public static final String DICTIONARY_TEXTFILE_IMAGEPATH = "images/model/dictionary_textfile.png";
     public static final String DICTIONARY_DATASTORE_IMAGEPATH = "images/model/dictionary_datastore.png";
-
     public static final String NEWS_CHANNEL_READ_STATUS = "images/news/news_channel_read.png";
     public static final String NEWS_CHANNEL_TITLE_ICON = "images/news/news_channel_title.png";
     public static final String NEWS_CHANNEL_NOT_READ_STATUS = "images/news/news_channel_not_read.png";
-
     public static final String SYNONYM_CATALOG_IMAGEPATH = "images/model/synonym.png";
     public static final String SYNONYM_CATALOG_TEXTFILE_IMAGEPATH = "images/model/synonym_textfile.png";
     public static final String SYNONYM_CATALOG_DATASTORE_IMAGEPATH = "images/model/synonym_datastore.png";
-
     public static final String STRING_PATTERN_IMAGEPATH = "images/model/stringpattern.png";
     public static final String STRING_PATTERN_SIMPLE_IMAGEPATH = "images/model/stringpattern_simple.png";
     public static final String STRING_PATTERN_REGEX_IMAGEPATH = "images/model/stringpattern_regex.png";
     public static final String STRING_PATTERN_REGEXSWAP_IMAGEPATH = "images/model/stringpattern_regexswap.png";
-
     public static final String CLOUD_IMAGEPATH = "images/datastore-types/cloud.png";
     public static final String GENERIC_DATASTORE_IMAGEPATH = "images/model/datastore.png";
     public static final String CSV_IMAGEPATH = "images/datastore-types/csv.png";
@@ -228,7 +229,6 @@ public final class IconUtils {
     public static final String ELASTICSEARCH_IMAGEPATH = "images/datastore-types/elasticsearch.png";
     public static final String DATAHUB_IMAGEPATH = "images/datastore-types/datahub.png";
     public static final String NEO4J_IMAGEPATH = "images/datastore-types/neo4j.png";
-
     public static final String FILE_FOLDER = "images/filetypes/folder.png";
     public static final String FILE_ARCHIVE = "images/filetypes/archive.png";
     public static final String FILE_FILE = "images/filetypes/file.png";
@@ -237,22 +237,21 @@ public final class IconUtils {
     public static final String FILE_HOME_FOLDER = "images/filetypes/home-folder.png";
     public static final String FILE_HIDDEN_FOLDER = "images/filetypes/hidden-folder.png";
     public static final String FILE_SEARCH = "images/filetypes/search-folder.png";
-
     public static final String REMOTE_ICON_OVERLAY = "images/remote-icon-overlay.png";
     public static final String REMOTE_ICON_OVERLAY_SMALL = "images/remote-icon-overlay-small.png";
-
     public static final String PASSWORD_INPUT = "images/widgets/PasswordInput.png";
     public static final String USERNAME_INPUT = "images/widgets/UsernameInput.png";
-
     public static final String COMPONENT_TYPE_WRITE_DATA = "images/component-types/type_output_writer.png";
-
+    private static final ImageIcon ICON_TRANSPARENT_SMALL = createTransparentIcon(ICON_SIZE_SMALL);
+    private static final ImageIcon ICON_TRANSPARENT_MEDIUM = createTransparentIcon(ICON_SIZE_MEDIUM);
+    private static final ImageIcon ICON_TRANSPARENT_LARGE = createTransparentIcon(ICON_SIZE_LARGE);
     private static final ImageManager _imageManager = ImageManager.get();
 
     private IconUtils() {
         // prevent instantiation
     }
 
-    public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, boolean configured, int iconWidth) {
+    public static Icon getDescriptorIcon(final ComponentDescriptor<?> descriptor, final boolean configured, final int iconWidth) {
         boolean serverDown = false;
 
         if (descriptor instanceof RemoteTransformerDescriptor) {
@@ -264,7 +263,7 @@ public final class IconUtils {
         }
 
         if (descriptor instanceof HasIcon) {
-            ImageIcon imageIcon = getIconFromData(descriptor, iconWidth);
+            final ImageIcon imageIcon = getIconFromData(descriptor, iconWidth);
 
             if (imageIcon != null) {
                 return serverDown ? addErrorOverlay(imageIcon) : imageIcon;
@@ -280,7 +279,7 @@ public final class IconUtils {
         return addErrorOverlay(descriptorIcon);
     }
 
-    public static ImageIcon addErrorOverlay(ImageIcon imageIcon) {
+    public static ImageIcon addErrorOverlay(final ImageIcon imageIcon) {
         final int offset = 4;
         final int iconWidth = imageIcon.getIconWidth();
         final int decorationSize = iconWidth / 2;
@@ -295,18 +294,18 @@ public final class IconUtils {
 
     /**
      * Gets the icon of a component based on it's {@link ComponentDescriptor}.
-     * 
+     *
      * @param descriptor
      * @param newWidth
      * @return
      */
-    public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth) {
+    public static ImageIcon getDescriptorIcon(final ComponentDescriptor<?> descriptor, final int newWidth) {
         return getDescriptorIcon(descriptor, newWidth, false);
     }
 
     /**
      * Gets the icon of a component based on it's {@link ComponentDescriptor}.
-     * 
+     *
      * @param descriptor
      * @param newWidth
      * @param allowTransparentForUnspecific
@@ -315,10 +314,10 @@ public final class IconUtils {
      *            where the icon is not a requirement.
      * @return
      */
-    public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth,
-            boolean allowTransparentForUnspecific) {
+    public static ImageIcon getDescriptorIcon(final ComponentDescriptor<?> descriptor, final int newWidth,
+            final boolean allowTransparentForUnspecific) {
         if (descriptor instanceof HasIcon) {
-            ImageIcon imageIcon = getIconFromData(descriptor, newWidth);
+            final ImageIcon imageIcon = getIconFromData(descriptor, newWidth);
 
             if (imageIcon != null) {
                 return imageIcon;
@@ -334,16 +333,16 @@ public final class IconUtils {
         return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
     }
 
-    private static ImageIcon getIconFromData(ComponentDescriptor<?> componentDescriptor, int width) {
-        String cacheKey = "remote: " + componentDescriptor.getDisplayName() + ",width=" + width;
-        Image image = _imageManager.getImageFromCache(cacheKey);
+    private static ImageIcon getIconFromData(final ComponentDescriptor<?> componentDescriptor, final int width) {
+        final String cacheKey = "remote: " + componentDescriptor.getDisplayName() + ",width=" + width;
+        final Image image = _imageManager.getImageFromCache(cacheKey);
         ImageIcon imageIcon;
 
         if (image == null) {
-            HasIcon descriptorWithIcon = (HasIcon) componentDescriptor;
+            final HasIcon descriptorWithIcon = (HasIcon) componentDescriptor;
             if (descriptorWithIcon.getIconData() == null || descriptorWithIcon.getIconData().length == 0) {
                 // If no data from server, use generic icon. (Then it will be possible to overlay it)
-                ClassLoader classLoader = componentDescriptor.getComponentClass().getClassLoader();
+                final ClassLoader classLoader = componentDescriptor.getComponentClass().getClassLoader();
                 final String imagePath = getDescriptorImagePath(componentDescriptor, classLoader, true);
                 if (imagePath == null) {
                     return null;
@@ -352,10 +351,10 @@ public final class IconUtils {
             } else {
                 imageIcon = new ImageIcon(descriptorWithIcon.getIconData());
             }
-            BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
+            final BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
             bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
             imageIcon = new ImageIcon(bufferedImage);
-            if(componentDescriptor instanceof Allowable && !((Allowable) componentDescriptor).isAllowed()){
+            if (componentDescriptor instanceof Allowable && !((Allowable) componentDescriptor).isAllowed()) {
                 imageIcon = getDisabledIcon(imageIcon);
             }
             imageIcon = addRemoteOverlay(imageIcon);
@@ -367,12 +366,12 @@ public final class IconUtils {
         return imageIcon;
     }
 
-    public static ImageIcon addRemoteOverlay(ImageIcon imageIcon) {
-        BufferedImage bufferedImage;
-        int offset;
-        Image remoteIndicatorImage;
+    public static ImageIcon addRemoteOverlay(final ImageIcon imageIcon) {
+        final BufferedImage bufferedImage;
+        final int offset;
+        final Image remoteIndicatorImage;
         final int iconWidth = imageIcon.getIconWidth();
-        if(iconWidth >= ICON_SIZE_LARGE) {
+        if (iconWidth >= ICON_SIZE_LARGE) {
             offset = 8;
             remoteIndicatorImage = _imageManager.getImage(REMOTE_ICON_OVERLAY);
         } else {
@@ -381,12 +380,12 @@ public final class IconUtils {
         }
         bufferedImage = new BufferedImage(iconWidth + offset, iconWidth + offset, BufferedImage.TYPE_INT_ARGB);
         bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, offset, null);
-        bufferedImage.getGraphics().drawImage(remoteIndicatorImage, iconWidth - remoteIndicatorImage.getWidth(null) + offset, 0, null);
+        bufferedImage.getGraphics()
+                .drawImage(remoteIndicatorImage, iconWidth - remoteIndicatorImage.getWidth(null) + offset, 0, null);
         return new ImageIcon(bufferedImage);
     }
 
-
-    public static ImageIcon getTransparentIcon(int width) {
+    public static ImageIcon getTransparentIcon(final int width) {
         switch (width) {
         case ICON_SIZE_SMALL:
             return ICON_TRANSPARENT_SMALL;
@@ -399,44 +398,44 @@ public final class IconUtils {
         }
     }
 
-    private static ImageIcon createTransparentIcon(int width) {
+    private static ImageIcon createTransparentIcon(final int width) {
         final Image image = new BufferedImage(width, width, BufferedImage.TYPE_4BYTE_ABGR);
         return new ImageIcon(image);
     }
 
-    public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor) {
+    public static ImageIcon getDescriptorIcon(final ComponentDescriptor<?> descriptor) {
         return getDescriptorIcon(descriptor, ICON_SIZE_LARGE);
     }
 
-    public static ImageIcon getDatastoreIcon(Datastore datastore, int newWidth) {
+    public static ImageIcon getDatastoreIcon(final Datastore datastore, final int newWidth) {
         final String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath, newWidth);
     }
 
-    public static ImageIcon getDatastoreIcon(Datastore datastore) {
+    public static ImageIcon getDatastoreIcon(final Datastore datastore) {
         final String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath);
     }
 
-    public static ImageIcon getComponentSuperCategoryIcon(ComponentSuperCategory superCategory) {
+    public static ImageIcon getComponentSuperCategoryIcon(final ComponentSuperCategory superCategory) {
         return getComponentSuperCategoryIcon(superCategory, ICON_SIZE_LARGE);
     }
 
-    public static ImageIcon getComponentSuperCategoryIcon(ComponentSuperCategory superCategory, int newWidth) {
+    public static ImageIcon getComponentSuperCategoryIcon(final ComponentSuperCategory superCategory, final int newWidth) {
         final Class<? extends ComponentSuperCategory> superCategoryClass = superCategory.getClass();
         return getCategoryIcon(superCategoryClass, false, newWidth);
     }
 
-    public static ImageIcon getComponentCategoryIcon(ComponentCategory category) {
+    public static ImageIcon getComponentCategoryIcon(final ComponentCategory category) {
         return getComponentCategoryIcon(category, ICON_SIZE_LARGE);
     }
 
-    public static ImageIcon getComponentCategoryIcon(ComponentCategory category, int newWidth) {
+    public static ImageIcon getComponentCategoryIcon(final ComponentCategory category, final int newWidth) {
         final Class<? extends ComponentCategory> categoryClass = category.getClass();
         return getCategoryIcon(categoryClass, true, newWidth);
     }
 
-    private static ImageIcon getCategoryIcon(Class<?> cls, boolean decorateWithFolder, int newWidth) {
+    private static ImageIcon getCategoryIcon(final Class<?> cls, final boolean decorateWithFolder, final int newWidth) {
         final String bundledIconPath = getImagePathForClass(cls);
 
         final int totalSize = newWidth;
@@ -466,7 +465,7 @@ public final class IconUtils {
         return new ImageIcon(bufferedImage);
     }
 
-    public static Icon getDatastoreSpecificAnalysisJobIcon(Datastore datastore) {
+    public static Icon getDatastoreSpecificAnalysisJobIcon(final Datastore datastore) {
         final int decorationSize = ICON_SIZE_MEDIUM;
         final int totalWidth = ICON_SIZE_LARGE;
         final int totalHeight = ICON_SIZE_LARGE + 6;
@@ -488,12 +487,12 @@ public final class IconUtils {
         return new ImageIcon(bufferedImage);
     }
 
-    public static String getImagePathForClass(Class<?> cls) {
+    public static String getImagePathForClass(final Class<?> cls) {
         return getImagePathForClass(cls, cls.getClassLoader());
     }
 
-    public static String getImagePathForClass(Class<?> cls, ClassLoader classLoader) {
-        String iconPath = cls.getName().replaceAll("\\.", "/") + ".png";
+    public static String getImagePathForClass(final Class<?> cls, final ClassLoader classLoader) {
+        final String iconPath = cls.getName().replaceAll("\\.", "/") + ".png";
 
         final URL url = ResourceManager.get().getUrl(iconPath, classLoader);
 
@@ -504,8 +503,8 @@ public final class IconUtils {
         return iconPath;
     }
 
-    protected static String getDescriptorImagePath(ComponentDescriptor<?> descriptor, ClassLoader classLoader,
-            boolean allowGeneric) {
+    protected static String getDescriptorImagePath(final ComponentDescriptor<?> descriptor, final ClassLoader classLoader,
+            final boolean allowGeneric) {
         final Class<?> componentClass = descriptor.getComponentClass();
         final String bundledIconPath = getImagePathForClass(componentClass, classLoader);
 
@@ -540,33 +539,33 @@ public final class IconUtils {
         return FILE_FILE;
     }
 
-    public static Icon getColumnIcon(InputColumn<?> column, int iconSize) {
+    public static Icon getColumnIcon(final InputColumn<?> column, final int iconSize) {
         if (column.isPhysicalColumn()) {
             return getColumnIcon(column.getPhysicalColumn(), iconSize);
         }
         return _imageManager.getImageIcon(MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL);
     }
 
-    public static Icon getColumnIcon(Column column, int iconSize) {
+    public static Icon getColumnIcon(final Column column, final int iconSize) {
         if (column.isPrimaryKey()) {
             return _imageManager.getImageIcon(MODEL_COLUMN_KEY, iconSize);
         }
         return _imageManager.getImageIcon(MODEL_COLUMN, iconSize);
     }
 
-    protected static String getDatastoreImagePath(Datastore datastore, boolean considerOrderdbSpecialization) {
+    protected static String getDatastoreImagePath(final Datastore datastore, final boolean considerOrderdbSpecialization) {
         String imagePath = GENERIC_DATASTORE_IMAGEPATH;
         if (datastore == null) {
             return imagePath;
         } else if (datastore instanceof JdbcDatastore) {
-            JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
+            final JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
             if (considerOrderdbSpecialization
                     && "jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
                 imagePath = "images/datastore-types/orderdb.png";
             } else {
-                String driverClass = jdbcDatastore.getDriverClass();
+                final String driverClass = jdbcDatastore.getDriverClass();
                 if (!StringUtils.isNullOrEmpty(driverClass)) {
-                    DatabaseDriverDescriptor driver = DatabaseDriverCatalog
+                    final DatabaseDriverDescriptor driver = DatabaseDriverCatalog
                             .getDatabaseDriverByDriverClassName(driverClass);
                     if (driver != null) {
                         imagePath = driver.getIconImagePath();
@@ -609,42 +608,16 @@ public final class IconUtils {
             imagePath = COMPOSITE_IMAGEPATH;
         } else if (datastore instanceof DataHubDatastore) {
             imagePath = DATAHUB_IMAGEPATH;
-        } else if (datastore instanceof Neo4jDatastore){
+        } else if (datastore instanceof Neo4jDatastore) {
             imagePath = NEO4J_IMAGEPATH;
         }
-        
+
         return imagePath;
     }
 
-    public static ImageIcon getDisabledIcon(ImageIcon inputIcon) {
-        DisabledFilter filter = new DisabledFilter();
-        ImageProducer prod = new FilteredImageSource(inputIcon.getImage().getSource(), filter);
+    public static ImageIcon getDisabledIcon(final ImageIcon inputIcon) {
+        final DisabledFilter filter = new DisabledFilter();
+        final ImageProducer prod = new FilteredImageSource(inputIcon.getImage().getSource(), filter);
         return new ImageIcon(Toolkit.getDefaultToolkit().createImage(prod));
-    }
-
-    private static class DisabledFilter extends RGBImageFilter {
-        @Override
-        public int filterRGB(final int x, final int y, final int rgb) {
-
-            if ((rgb >> 24) == 0x00) { // is transparent
-                return rgb;
-            }
-
-            final int red = new Color(rgb).getRed();
-            final int green = new Color(rgb).getGreen();
-            final int blue = new Color(rgb).getBlue();
-
-            final int max = Math.max(Math.max(red, green), blue);
-            final int min = Math.min(Math.min(red, green), blue);
-            final int gray = brighter((max + min) / 2, 40);
-
-            return (rgb & 0xff000000) | (gray << 16) | (gray << 8) | gray;
-        }
-
-        private int brighter(int rgb, int percent) {
-            double q = 255 * percent * 0.01;
-            double k = (255 - q) / 255;
-            return (int) (k * rgb + q);
-        }
     }
 }

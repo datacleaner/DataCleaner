@@ -53,23 +53,23 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
     private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
     @Inject
-    public HBaseDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
-            @Nullable HBaseDatastore originalDatastore, UserPreferences userPreferences) {
+    public HBaseDatastoreDialog(final WindowContext windowContext, final MutableDatastoreCatalog catalog,
+            @Nullable final HBaseDatastore originalDatastore, final UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
         _hostnameTextField = WidgetFactory.createTextField();
         _portTextField = WidgetFactory.createTextField();
         _portTextField.setDocument(new NumberDocument(false));
-        
+
         _hostnameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
         _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
@@ -87,7 +87,7 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
             _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, tableDefs);
         }
     }
-    
+
     @Override
     protected boolean validateForm() {
         final String datastoreName = _datastoreNameTextField.getText();
@@ -95,30 +95,30 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
             setStatusError("Please enter a datastore name");
             return false;
         }
-        
+
         final String hostname = _hostnameTextField.getText();
         if (StringUtils.isNullOrEmpty(hostname)) {
             setStatusError("Please enter hostname");
             return false;
         }
-        
+
         final String port = _portTextField.getText();
         if (StringUtils.isNullOrEmpty(port)) {
             setStatusError("Please enter port number");
             return false;
         } else {
             try {
-                int portInt = Integer.parseInt(port);
+                final int portInt = Integer.parseInt(port);
                 if (portInt <= 0) {
                     setStatusError("Please enter a valid (positive port number)");
                     return false;
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 setStatusError("Please enter a valid port number");
                 return false;
             }
         }
-        
+
         setStatusValid();
         return true;
     }
@@ -155,10 +155,10 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
     protected String getDatastoreIconPath() {
         return IconUtils.HBASE_IMAGEPATH;
     }
-    
+
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
-        List<Entry<String, JComponent>> result = super.getFormElements();
+        final List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
         result.add(new ImmutableEntry<String, JComponent>("Schema model", _tableDefinitionWidget));

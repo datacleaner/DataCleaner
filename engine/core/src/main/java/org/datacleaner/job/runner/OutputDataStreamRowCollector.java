@@ -45,8 +45,8 @@ public class OutputDataStreamRowCollector implements OutputRowCollector {
     private final ConsumeRowHandler _consumeRowHandler;
     private final RowProcessingPublisher _publisher;
 
-    public OutputDataStreamRowCollector(final RowProcessingPublisher publisher, List<SelectItem> selectItems,
-            ConsumeRowHandler consumeRowHandler) {
+    public OutputDataStreamRowCollector(final RowProcessingPublisher publisher, final List<SelectItem> selectItems,
+            final ConsumeRowHandler consumeRowHandler) {
         _publisher = publisher;
         _dataSetHeader = new CachingDataSetHeader(selectItems);
         _consumeRowHandler = consumeRowHandler;
@@ -54,13 +54,13 @@ public class OutputDataStreamRowCollector implements OutputRowCollector {
     }
 
     @Override
-    public void putValues(Object... values) {
+    public void putValues(final Object... values) {
         final DefaultRow row = new DefaultRow(_dataSetHeader, values);
         putRow(row);
     }
 
     @Override
-    public void putRow(Row row) {
+    public void putRow(final Row row) {
         final ErrorAware errorAware = _publisher.getErrorAware();
         if (errorAware.isCancelled() || errorAware.isErrornous()) {
             throw new PreviousErrorsExistException();

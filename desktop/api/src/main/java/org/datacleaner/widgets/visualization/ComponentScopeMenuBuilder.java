@@ -51,17 +51,17 @@ public class ComponentScopeMenuBuilder {
     private final ComponentBuilder _componentBuilder;
     private final AnalysisJobBuilder _rootJobBuilder;
 
-    public ComponentScopeMenuBuilder(ComponentBuilder componentBuilder) {
+    public ComponentScopeMenuBuilder(final ComponentBuilder componentBuilder) {
         _componentBuilder = componentBuilder;
         _rootJobBuilder = _componentBuilder.getAnalysisJobBuilder().getRootJobBuilder();
     }
 
-    public List<ComponentBuilder> getComponentBuildersWithOutputDataStreams(AnalysisJobBuilder jobBuilder) {
-        List<ComponentBuilder> descendants = new ArrayList<>();
-        for (ComponentBuilder child : jobBuilder.getComponentBuilders()) {
+    public List<ComponentBuilder> getComponentBuildersWithOutputDataStreams(final AnalysisJobBuilder jobBuilder) {
+        final List<ComponentBuilder> descendants = new ArrayList<>();
+        for (final ComponentBuilder child : jobBuilder.getComponentBuilders()) {
             if (child != _componentBuilder && child.getOutputDataStreams().size() > 0) {
                 descendants.add(child);
-                for (OutputDataStream outputDataStream : child.getOutputDataStreams()) {
+                for (final OutputDataStream outputDataStream : child.getOutputDataStreams()) {
                     descendants.addAll(getComponentBuildersWithOutputDataStreams(child
                             .getOutputDataStreamJobBuilder(outputDataStream)));
                 }
@@ -79,20 +79,21 @@ public class ComponentScopeMenuBuilder {
      *            the {@link AnalysisJobBuilder} to find the publisher for.
      * @return
      */
-    public ComponentBuilder findComponentBuilder(AnalysisJobBuilder analysisJobBuilder) {
+    public ComponentBuilder findComponentBuilder(final AnalysisJobBuilder analysisJobBuilder) {
         if (analysisJobBuilder == _rootJobBuilder) {
             return null;
         }
-        for (ComponentBuilder osComponenBuilder : getComponentBuildersWithOutputDataStreams(_rootJobBuilder)) {
-            for (OutputDataStream outputDataStream : osComponenBuilder.getOutputDataStreams()) {
-                AnalysisJobBuilder osJobBuilder = osComponenBuilder.getOutputDataStreamJobBuilder(outputDataStream);
+        for (final ComponentBuilder osComponenBuilder : getComponentBuildersWithOutputDataStreams(_rootJobBuilder)) {
+            for (final OutputDataStream outputDataStream : osComponenBuilder.getOutputDataStreams()) {
+                final AnalysisJobBuilder osJobBuilder = osComponenBuilder.getOutputDataStreamJobBuilder(outputDataStream);
                 if (osJobBuilder == analysisJobBuilder) {
                     return osComponenBuilder;
                 }
             }
         }
 
-        throw new IllegalArgumentException("No component publishing to " + LabelUtils.getScopeLabel(analysisJobBuilder));
+        throw new IllegalArgumentException(
+                "No component publishing to " + LabelUtils.getScopeLabel(analysisJobBuilder));
     }
 
     public List<JMenuItem> createMenuItems() {
@@ -101,7 +102,7 @@ public class ComponentScopeMenuBuilder {
         rootMenuItem.setToolTipText("Use the default scope for this component");
         rootMenuItem.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 onScopeChangeStart();
                 _rootJobBuilder.moveComponent(_componentBuilder);
                 _componentBuilder.setComponentRequirement(null);
@@ -134,7 +135,7 @@ public class ComponentScopeMenuBuilder {
                 scopeMenuItem.addActionListener(new ActionListener() {
 
                     @Override
-                    public void actionPerformed(ActionEvent e) {
+                    public void actionPerformed(final ActionEvent e) {
                         onScopeChangeStart();
                         osJobBuilder.moveComponent(_componentBuilder);
                         _componentBuilder.setComponentRequirement(null);

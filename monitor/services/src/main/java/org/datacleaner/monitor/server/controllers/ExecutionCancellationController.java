@@ -84,7 +84,7 @@ public class ExecutionCancellationController {
         return response;
     }
 
-    private String toString(Object obj) {
+    private String toString(final Object obj) {
         if (obj == null) {
             return null;
         }

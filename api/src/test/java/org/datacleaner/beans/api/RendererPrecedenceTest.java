@@ -19,13 +19,13 @@
  */
 package org.datacleaner.beans.api;
 
-import org.datacleaner.api.RendererPrecedence;
-
 import junit.framework.TestCase;
+
+import org.datacleaner.api.RendererPrecedence;
 
 public class RendererPrecedenceTest extends TestCase {
 
-	public void testEnumAccess() throws Exception {
-		assertEquals("HIGH", RendererPrecedence.HIGH.name());
-	}
+    public void testEnumAccess() throws Exception {
+        assertEquals("HIGH", RendererPrecedence.HIGH.name());
+    }
 }

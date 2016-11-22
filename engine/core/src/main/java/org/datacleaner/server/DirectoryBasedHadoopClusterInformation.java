@@ -36,7 +36,7 @@ public class DirectoryBasedHadoopClusterInformation extends AbstractServerInform
     private static final long serialVersionUID = 1L;
     private final String[] _directories;
 
-    public DirectoryBasedHadoopClusterInformation(final String name, final String description, String... paths) {
+    public DirectoryBasedHadoopClusterInformation(final String name, final String description, final String... paths) {
         super(name, description);
         _directories = paths;
     }

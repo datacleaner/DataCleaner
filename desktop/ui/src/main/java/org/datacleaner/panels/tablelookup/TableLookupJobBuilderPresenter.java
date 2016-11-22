@@ -51,7 +51,7 @@ import org.datacleaner.widgets.properties.SingleTableNamePropertyWidget;
 /**
  * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link TableLookupTransformer}.
- * 
+ *
  * @author Kasper Sørensen
  */
 class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
@@ -69,9 +69,9 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
     private final ConfiguredPropertyDescriptor _cacheLookupsProperty;
     private final ConfiguredPropertyDescriptor _joinSemanticProperty;
 
-    public TableLookupJobBuilderPresenter(TransformerComponentBuilder<TableLookupTransformer> transformerJobBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration, DCModule dcModule) {
+    public TableLookupJobBuilderPresenter(final TransformerComponentBuilder<TableLookupTransformer> transformerJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration, final DCModule dcModule) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
         _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
@@ -105,8 +105,9 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
         _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
         // the output columns (String[]) property
-        final TableLookupOutputColumnsPropertyWidget outputColumnsPropertyWidget = new TableLookupOutputColumnsPropertyWidget(
-                transformerJobBuilder, _outputColumnsProperty);
+        final TableLookupOutputColumnsPropertyWidget outputColumnsPropertyWidget =
+                new TableLookupOutputColumnsPropertyWidget(
+                        transformerJobBuilder, _outputColumnsProperty);
         _overriddenPropertyWidgets.put(_outputColumnsProperty, outputColumnsPropertyWidget);
 
         // the InputColumn<?>[] property
@@ -128,7 +129,7 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
         tableNamePropertyWidget.addComboListener(new Listener<Table>() {
             @Override
-            public void onItemSelected(Table item) {
+            public void onItemSelected(final Table item) {
                 // update the column combo boxes when the table is selected
                 inputColumnsPropertyWidget.setTable(item);
                 outputColumnsPropertyWidget.setTable(item);
@@ -148,10 +149,10 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
         final ConfiguredPropertyTaskPane inputMappingTaskPane = new ConfiguredPropertyTaskPane("Input mapping",
                 "images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
-                        _inputColumnArrayProperty, _columnNameArrayProperty));
+                _inputColumnArrayProperty, _columnNameArrayProperty));
         final ConfiguredPropertyTaskPane outputMappingTaskPane = new ConfiguredPropertyTaskPane("Output mapping",
                 IconUtils.MENU_OPTIONS, Arrays.asList(_outputColumnsProperty, _joinSemanticProperty,
-                        _cacheLookupsProperty));
+                _cacheLookupsProperty));
         propertyTaskPanes.add(inputMappingTaskPane);
         propertyTaskPanes.add(outputMappingTaskPane);
 
@@ -159,8 +160,8 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
             return _overriddenPropertyWidgets.get(propertyDescriptor);
         }

@@ -30,7 +30,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import junit.framework.TestCase;
 
@@ -88,18 +87,19 @@ public class JaxbJobReaderTest extends TestCase {
             "org.datacleaner", true);
     private final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(
             TestHelper.createSampleDatabaseDatastore("my database"));
-    
+
     private final DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl().withDatastoreCatalog(
             datastoreCatalog).withEnvironment(
             new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
-    
+
     // see #1196 - Synonym lookup changes has broken old jobs
     public void testReadJobWhereOutputColumnsHasBeenAddedToComponent() throws Exception {
         SynonymCatalog synonymCatalog = new SimpleSynonymCatalog("Job titles");
         Collection<SynonymCatalog> synonyms = Collections.singletonList(synonymCatalog);
-        ReferenceDataCatalog referenceDataCatalog = new ReferenceDataCatalogImpl(Collections.emptyList(), synonyms, Collections.emptyList());
+        ReferenceDataCatalog referenceDataCatalog =
+                new ReferenceDataCatalogImpl(Collections.emptyList(), synonyms, Collections.emptyList());
         DataCleanerConfigurationImpl conf = this.conf.withReferenceDataCatalog(referenceDataCatalog);
-        
+
         JobReader<InputStream> reader = new JaxbJobReader(conf);
         AnalysisJob job = reader.read(new FileInputStream(
                 new File("src/test/resources/example-job-job-title-analytics.analysis.xml")));
@@ -299,9 +299,9 @@ public class JaxbJobReaderTest extends TestCase {
                 "[TransformedInputColumn[id=trans-0001-0002,name=username], TransformedInputColumn[id=trans-0001-0003,name=domain]]",
                 builder.getTransformerComponentBuilders().get(0).getOutputColumns().toString());
         assertEquals("[TransformedInputColumn[id=trans-0001-0002,name=username], "
-                + "TransformedInputColumn[id=trans-0001-0003,name=domain], "
-                + "MetaModelInputColumn[PUBLIC.EMPLOYEES.FIRSTNAME], "
-                + "MetaModelInputColumn[PUBLIC.EMPLOYEES.LASTNAME]]",
+                        + "TransformedInputColumn[id=trans-0001-0003,name=domain], "
+                        + "MetaModelInputColumn[PUBLIC.EMPLOYEES.FIRSTNAME], "
+                        + "MetaModelInputColumn[PUBLIC.EMPLOYEES.LASTNAME]]",
                 Arrays.toString(builder.getAnalyzerComponentBuilders().get(0).toAnalyzerJob().getInput()));
 
         List<AnalyzerResult> results = new AnalysisRunnerImpl(conf).run(builder.toAnalysisJob()).getResults();
@@ -394,7 +394,7 @@ public class JaxbJobReaderTest extends TestCase {
         DateMaskMatcherTransformer dateMaskMatcherTransformer1 = (DateMaskMatcherTransformer) tjbs.get(0)
                 .getComponentInstance();
         assertEquals("[yyyy-MM-dd]", Arrays.toString(dateMaskMatcherTransformer1.getDateMasks()));
-        
+
         DateMaskMatcherTransformer dateMaskMatcherTransformer2 = (DateMaskMatcherTransformer) tjbs.get(1)
                 .getComponentInstance();
         assertEquals("[yy-dd-MM]", Arrays.toString(dateMaskMatcherTransformer2.getDateMasks()));
@@ -415,7 +415,7 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals(1, jobBuilder.getAnalyzerComponentBuilders().size());
         assertEquals(0, jobBuilder.getTransformerComponentBuilders().size());
     }
-    
+
     public void testReadAndExecuteOutputDataStreams() throws Throwable {
         JobReader<InputStream> reader = new JaxbJobReader(conf);
         AnalysisJob job = reader.read(new FileInputStream(
@@ -424,7 +424,7 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals(1, job.getAnalyzerJobs().size());
         final AnalyzerJob analyzerJob = job.getAnalyzerJobs().get(0);
         assertEquals("Completeness analyzer", analyzerJob.getDescriptor().getDisplayName());
-        
+
         assertEquals(2, analyzerJob.getOutputDataStreamJobs().length);
         OutputDataStreamJob completeOutputDataStreamJob = analyzerJob.getOutputDataStreamJobs()[0];
         assertEquals("Complete rows", completeOutputDataStreamJob.getOutputDataStream().getName());
@@ -433,7 +433,7 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals("String analyzer", completeStringAnalyzer.getDescriptor().getDisplayName());
         assertEquals(1, completeStringAnalyzer.getInput().length);
         assertEquals("Concat of FIRSTNAME,LASTNAME", completeStringAnalyzer.getInput()[0].getName());
-        
+
         final AnalyzerJob completeNumberAnalyzer = completeOutputDataStreamJob.getJob().getAnalyzerJobs().get(1);
         assertEquals("Number analyzer", completeNumberAnalyzer.getDescriptor().getDisplayName());
         assertEquals(1, completeNumberAnalyzer.getInput().length);
@@ -495,7 +495,7 @@ public class JaxbJobReaderTest extends TestCase {
                 "src/test/resources/version_4_5_3_plain_search_replace.analysis.xml"));
         assertTrue(jobBuilder.isConfigured());
     }
-    
+
     public void testCoalesceJobWithTranformerColumns() throws Exception {
         final JaxbJobReader reader = new JaxbJobReader(conf);
         final AnalysisJobBuilder jobBuilder = reader.create(new File(
@@ -600,7 +600,7 @@ public class JaxbJobReaderTest extends TestCase {
 
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(
                 new DatastoreCatalogImpl(datastore)).withEnvironment(new DataCleanerEnvironmentImpl()
-                        .withDescriptorProvider(descriptorProvider));
+                .withDescriptorProvider(descriptorProvider));
 
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
 

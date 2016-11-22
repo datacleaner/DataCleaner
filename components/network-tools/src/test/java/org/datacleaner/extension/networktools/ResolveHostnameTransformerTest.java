@@ -43,19 +43,19 @@ public class ResolveHostnameTransformerTest {
         assertEquals("127.0.0.1", t.transform(new MockInputRow().put(col, "localhost"))[0]);
 
         assertEquals("127.0.0.1", t.transform(new MockInputRow().put(col, "127.0.0.1"))[0]);
-        
+
         assertEquals(null, t.transform(new MockInputRow().put(col, ""))[0]);
-        
+
         assertEquals(null, t.transform(new MockInputRow().put(col, null))[0]);
-        
+
         assertEquals(null, t.transform(new MockInputRow().put(col,
                 "lmdslfsm flskmf lskmfls kmslf kdmlfsk mflsk fmsl kfdmsl"))[0]);
     }
-    
+
     @Test
     public void testTransformInternet() throws Exception {
         Assume.assumeTrue(TestHelper.isInternetConnected());
-        
+
         assertEquals("94.142.215.39", t.transform(new MockInputRow().put(col, "eobjects.org"))[0]);
     }
 

@@ -28,7 +28,7 @@ import org.datacleaner.repository.file.FileRepositoryFolder;
 /**
  * Implementation of {@link DataCleanerHomeFolder} for the DataCleaner monitor
  * webapp.
- * 
+ *
  * This implementation provides a central place to have a fallback strategy in
  * cases where the repository is not file based, so that {@link #toFile()} will
  * return a useable directory.
@@ -37,7 +37,7 @@ public class TenantHomeFolder implements DataCleanerHomeFolder {
 
     private final RepositoryFolder _tenantRootFolder;
 
-    public TenantHomeFolder(RepositoryFolder tenantRootFolder) {
+    public TenantHomeFolder(final RepositoryFolder tenantRootFolder) {
         _tenantRootFolder = tenantRootFolder;
     }
 

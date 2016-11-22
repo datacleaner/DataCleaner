@@ -52,7 +52,7 @@ public class FuseStreamsComponentBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerComponentBuilder<FuseStreamsComponent> tjb) {
+    public RendererPrecedence getPrecedence(final TransformerComponentBuilder<FuseStreamsComponent> tjb) {
         if (tjb.getDescriptor().getComponentClass() == FuseStreamsComponent.class) {
             return RendererPrecedence.HIGH;
         }
@@ -60,7 +60,7 @@ public class FuseStreamsComponentBuilderPresenterRenderer implements
     }
 
     @Override
-    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<FuseStreamsComponent> tjb) {
+    public TransformerComponentBuilderPresenter render(final TransformerComponentBuilder<FuseStreamsComponent> tjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
                 PropertyWidgetFactory.class);
 

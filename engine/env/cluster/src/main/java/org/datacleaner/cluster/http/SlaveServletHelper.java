@@ -60,20 +60,20 @@ public class SlaveServletHelper {
     private final ConcurrentMap<String, AnalysisResultFuture> _runningJobs;
 
     /**
-     * 
+     *
      * @param configuration
      * @deprecated Use
      *             {@link #SlaveServletHelper(DataCleanerConfiguration, Map)}
      *             instead.
      */
     @Deprecated
-    public SlaveServletHelper(DataCleanerConfiguration configuration) {
+    public SlaveServletHelper(final DataCleanerConfiguration configuration) {
         this(configuration, new ConcurrentHashMap<String, AnalysisResultFuture>());
     }
 
     /**
      * Creates a {@link SlaveServletHelper}.
-     * 
+     *
      * @param configuration
      * @param runningJobsMap
      *            a map to be used for internal book-keeping of running jobs.
@@ -81,28 +81,28 @@ public class SlaveServletHelper {
      *            {@link SlaveServletHelper}s can share the same running jobs
      *            state.
      */
-    public SlaveServletHelper(DataCleanerConfiguration configuration,
-            ConcurrentMap<String, AnalysisResultFuture> runningJobsMap) {
+    public SlaveServletHelper(final DataCleanerConfiguration configuration,
+            final ConcurrentMap<String, AnalysisResultFuture> runningJobsMap) {
         this(configuration, null, runningJobsMap);
     }
 
     /**
-     * 
+     *
      * @param configuration
      * @param jobInterceptor
-     * 
+     *
      * @deprecated use
      *             {@link #SlaveServletHelper(DataCleanerConfiguration, SlaveJobInterceptor, ConcurrentMap)}
      *             instead
      */
     @Deprecated
-    public SlaveServletHelper(DataCleanerConfiguration configuration, SlaveJobInterceptor jobInterceptor) {
+    public SlaveServletHelper(final DataCleanerConfiguration configuration, final SlaveJobInterceptor jobInterceptor) {
         this(configuration, jobInterceptor, new ConcurrentHashMap<String, AnalysisResultFuture>());
     }
 
     /**
      * Creates a {@link SlaveServletHelper}.
-     * 
+     *
      * @param configuration
      *            the slave's {@link DataCleanerConfiguration}.
      * @param jobInterceptor
@@ -113,8 +113,8 @@ public class SlaveServletHelper {
      *            {@link SlaveServletHelper}s can share the same running jobs
      *            state.
      */
-    public SlaveServletHelper(DataCleanerConfiguration configuration, SlaveJobInterceptor jobInterceptor,
-            ConcurrentMap<String, AnalysisResultFuture> runningJobsMap) {
+    public SlaveServletHelper(final DataCleanerConfiguration configuration, final SlaveJobInterceptor jobInterceptor,
+            final ConcurrentMap<String, AnalysisResultFuture> runningJobsMap) {
         if (configuration == null) {
             throw new IllegalArgumentException("DataCleanerConfiguration cannot be null");
         }
@@ -122,19 +122,19 @@ public class SlaveServletHelper {
         _jobInterceptor = jobInterceptor;
         _runningJobs = runningJobsMap;
     }
-    
+
     /**
      * Completely handles a HTTP request and response. This method is
      * functionally equivalent of calling these methods in sequence:
-     * 
+     *
      * {@link #readJob(HttpServletRequest)}
-     * 
+     *
      * {@link #runJob(AnalysisJob, String)}
-     * 
+     *
      * {@link #serializeResult(AnalysisResultFuture, String)}
-     * 
+     *
      * {@link #sendResponse(HttpServletResponse, Serializable)}
-     * 
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -146,21 +146,22 @@ public class SlaveServletHelper {
     /**
      * Completely handles a HTTP request and response. This method is
      * functionally equivalent of calling these methods in sequence:
-     * 
+     *
      * {@link #readJob(HttpServletRequest)}
-     * 
+     *
      * {@link #runJob(AnalysisJob, String, AnalysisListener...)
-     * 
+     *
      * {@link #serializeResult(AnalysisResultFuture, String)}
-     * 
+     *
      * {@link #sendResponse(HttpServletResponse, Serializable)}
-     * 
+     *
      * @param request
      * @param response
      * @param analysisListeners
      * @throws IOException
      */
-    public void handleRequest(final HttpServletRequest request, final HttpServletResponse response, final AnalysisListener ... analysisListeners) throws IOException {
+    public void handleRequest(final HttpServletRequest request, final HttpServletResponse response,
+            final AnalysisListener... analysisListeners) throws IOException {
         final String jobId = request.getParameter(HttpClusterManager.HTTP_PARAM_SLAVE_JOB_ID);
         final String action = request.getParameter(HttpClusterManager.HTTP_PARAM_ACTION);
 
@@ -176,7 +177,7 @@ public class SlaveServletHelper {
             final AnalysisJob job;
             try {
                 job = readJob(request);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 logger.error("Failed to read job definition from HTTP request", e);
                 throw e;
             }
@@ -185,14 +186,14 @@ public class SlaveServletHelper {
             try {
                 final AnalysisResultFuture resultFuture = runJob(job, jobId, analysisListeners);
                 resultObject = serializeResult(resultFuture, jobId);
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 logger.error("Unexpected error occurred while running slave job", e);
                 throw e;
             }
 
             try {
                 sendResponse(response, resultObject);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 logger.error("Failed to send job result through HTTP response", e);
                 throw e;
             }
@@ -204,18 +205,18 @@ public class SlaveServletHelper {
     }
 
     /**
-     * 
+     *
      * @param resultFuture
      * @return
      * @deprecated use {@link #serializeResult(AnalysisResultFuture, String)}
      *             instead.
      */
     @Deprecated
-    public Serializable serializeResult(AnalysisResultFuture resultFuture) {
+    public Serializable serializeResult(final AnalysisResultFuture resultFuture) {
         return serializeResult(resultFuture, null);
     }
 
-    public Serializable serializeResult(AnalysisResultFuture resultFuture, String slaveJobId) {
+    public Serializable serializeResult(final AnalysisResultFuture resultFuture, final String slaveJobId) {
         try {
             // wait for result to be ready
             resultFuture.await();
@@ -235,7 +236,7 @@ public class SlaveServletHelper {
         }
     }
 
-    public AnalysisJob readJob(HttpServletRequest request) throws IOException {
+    public AnalysisJob readJob(final HttpServletRequest request) throws IOException {
         final JaxbJobReader reader = new JaxbJobReader(_configuration);
         final String jobDefinition = request.getParameter(HttpClusterManager.HTTP_PARAM_JOB_DEF);
 
@@ -261,37 +262,37 @@ public class SlaveServletHelper {
 
     /**
      * Runs a slave job
-     * 
+     *
      * @param job
      * @return
      * @deprecated use {@link #runJob(AnalysisJob, String)} instead
      */
     @Deprecated
-    public AnalysisResultFuture runJob(AnalysisJob job) {
+    public AnalysisResultFuture runJob(final AnalysisJob job) {
         return runJob(job, null);
     }
 
     /**
      * Runs a slave job
-     * 
+     *
      * @param job
      * @param slaveJobId
      *            a unique ID for the slave job.
      * @return
      */
-    public AnalysisResultFuture runJob(AnalysisJob job, String slaveJobId) {
+    public AnalysisResultFuture runJob(final AnalysisJob job, final String slaveJobId) {
         return runJob(job, slaveJobId, new AnalysisListener[0]);
     }
 
     /**
      * Runs a slave job
-     * 
+     *
      * @param job
      * @param slaveJobId
      * @param analysisListeners
      * @return
      */
-    public AnalysisResultFuture runJob(AnalysisJob job, String slaveJobId, AnalysisListener... analysisListeners) {
+    public AnalysisResultFuture runJob(final AnalysisJob job, final String slaveJobId, final AnalysisListener... analysisListeners) {
         final AnalysisRunner runner = new SlaveAnalysisRunner(_configuration, analysisListeners);
         final AnalysisResultFuture resultFuture = runner.run(job);
         if (slaveJobId != null) {
@@ -302,11 +303,11 @@ public class SlaveServletHelper {
 
     /**
      * Cancels a slave job, referred by it's id.
-     * 
+     *
      * @param slaveJobId
      * @return whether or not the job was (found and) cancelled.
      */
-    public boolean cancelJob(String slaveJobId) {
+    public boolean cancelJob(final String slaveJobId) {
         final AnalysisResultFuture resultFuture = _runningJobs.remove(slaveJobId);
         if (resultFuture != null) {
             resultFuture.cancel();
@@ -315,8 +316,8 @@ public class SlaveServletHelper {
         return false;
     }
 
-    public void sendResponse(HttpServletResponse response, Serializable object) throws IOException {
-        ServletOutputStream outputStream = response.getOutputStream();
+    public void sendResponse(final HttpServletResponse response, final Serializable object) throws IOException {
+        final ServletOutputStream outputStream = response.getOutputStream();
         try {
             SerializationUtils.serialize(object, outputStream);
         } finally {

@@ -41,8 +41,9 @@ class EqualsFilterComponentBuilderPresenter extends FilterComponentBuilderPanel 
 
     private static final long serialVersionUID = 1L;
 
-    public EqualsFilterComponentBuilderPresenter(FilterComponentBuilder<?, ?> filterJobBuilder, WindowContext windowContext,
-            PropertyWidgetFactory propertyWidgetFactory) {
+    public EqualsFilterComponentBuilderPresenter(final FilterComponentBuilder<?, ?> filterJobBuilder,
+            final WindowContext windowContext,
+            final PropertyWidgetFactory propertyWidgetFactory) {
         super(filterJobBuilder, windowContext, propertyWidgetFactory);
     }
 

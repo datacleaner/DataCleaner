@@ -25,10 +25,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import junit.framework.TestCase;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import junit.framework.TestCase;
 
 public class UsageAwareCloseableTest extends TestCase {
 

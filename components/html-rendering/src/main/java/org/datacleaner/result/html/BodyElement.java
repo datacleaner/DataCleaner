@@ -25,5 +25,5 @@ package org.datacleaner.result.html;
  */
 public interface BodyElement {
 
-    public String toHtml(HtmlRenderingContext context);
+    String toHtml(HtmlRenderingContext context);
 }

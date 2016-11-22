@@ -52,28 +52,24 @@ import org.jdesktop.swingx.JXTextField;
 public final class SimpleStringPatternDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
-
+    private static final int NUM_TEST_FIELDS = 6;
+    private static final ImageManager imageManager = ImageManager.get();
+    private static final Icon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL);
+    private static final Icon ICON_SUCCESS = imageManager.getImageIcon(IconUtils.STATUS_VALID,
+            IconUtils.ICON_SIZE_SMALL);
+    final JButton _saveButton;
     private final MutableReferenceDataCatalog _catalog;
     private final JXTextField _expressionField;
     private final JXTextField _expressionNameField;
-
     private List<JTextField> _inputFields;
     private String _expressionString;
     private String _expressionNameString;
     private List<JLabel> _statusLabels;
     private JLabel _errorLabel;
-    private static final int NUM_TEST_FIELDS = 6;
     private JButton _resetButton;
-    final JButton _saveButton;
-    private static final ImageManager imageManager = ImageManager.get();
     private SimpleStringPattern _simpleStringPattern;
 
-    private static final Icon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL);
-
-    private static final Icon ICON_SUCCESS = imageManager.getImageIcon(IconUtils.STATUS_VALID,
-            IconUtils.ICON_SIZE_SMALL);
-
-    public SimpleStringPatternDialog(MutableReferenceDataCatalog catalog, WindowContext windowContext) {
+    public SimpleStringPatternDialog(final MutableReferenceDataCatalog catalog, final WindowContext windowContext) {
         super(windowContext, ImageManager.get().getImage(IconUtils.STRING_PATTERN_SIMPLE_IMAGEPATH));
         _catalog = catalog;
         _expressionNameField = WidgetFactory.createTextField("String pattern name");
@@ -82,13 +78,13 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         _saveButton = WidgetFactory.createPrimaryButton("Save Pattern", IconUtils.ACTION_SAVE_BRIGHT);
     }
 
-    public SimpleStringPatternDialog(SimpleStringPattern stringPattern, MutableReferenceDataCatalog catalog,
-            WindowContext windowContext) {
+    public SimpleStringPatternDialog(final SimpleStringPattern stringPattern, final MutableReferenceDataCatalog catalog,
+            final WindowContext windowContext) {
         this(stringPattern.getName(), stringPattern.getExpression(), catalog, windowContext);
     }
 
-    public SimpleStringPatternDialog(String expressionName, String expression, MutableReferenceDataCatalog catalog,
-            WindowContext windowContext) {
+    public SimpleStringPatternDialog(final String expressionName, final String expression, final MutableReferenceDataCatalog catalog,
+            final WindowContext windowContext) {
         this(catalog, windowContext);
         _expressionString = expression;
         _expressionNameString = expressionName;
@@ -118,22 +114,22 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("Expression:"), formPanel, 0, row);
 
         _expressionField.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
+            public void changedUpdate(final DocumentEvent e) {
                 checkInputFields();
             }
 
-            public void insertUpdate(DocumentEvent e) {
+            public void insertUpdate(final DocumentEvent e) {
                 checkInputFields();
             }
 
-            public void removeUpdate(DocumentEvent e) {
+            public void removeUpdate(final DocumentEvent e) {
                 checkInputFields();
             }
         });
         WidgetUtils.addToGridBag(_expressionField, formPanel, 1, row, 1.0, 0.0);
 
         _resetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
+            public void actionPerformed(final ActionEvent event) {
                 _expressionField.setText(_expressionString);
             }
         });
@@ -143,15 +139,15 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 
         _saveButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                String expressionName = _expressionNameField.getText();
+            public void actionPerformed(final ActionEvent e) {
+                final String expressionName = _expressionNameField.getText();
                 if (StringUtils.isNullOrEmpty(expressionName)) {
                     JOptionPane.showMessageDialog(SimpleStringPatternDialog.this,
                             "Please fill out the name of the string expression");
                     return;
                 }
 
-                String expression = _expressionField.getText();
+                final String expression = _expressionField.getText();
                 if (StringUtils.isNullOrEmpty(expression)) {
                     JOptionPane.showMessageDialog(SimpleStringPatternDialog.this,
                             "Please fill out the string expression");
@@ -178,7 +174,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(_errorLabel, testitPanel, 0, row);
 
         row++;
-        JLabel testInputLabel = DCLabel.bright("You can test your expression here");
+        final JLabel testInputLabel = DCLabel.bright("You can test your expression here");
         testInputLabel.setIcon(imageManager.getImageIcon("images/actions/test-pattern.png"));
         testInputLabel.setFont(WidgetUtils.FONT_HEADER2);
         WidgetUtils.addToGridBag(testInputLabel, testitPanel, 0, row);
@@ -187,24 +183,24 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         _statusLabels = new ArrayList<JLabel>(NUM_TEST_FIELDS);
         for (int i = 0; i < NUM_TEST_FIELDS; i++) {
             final int index = i;
-            JTextField inputField = WidgetFactory.createTextField("Test Input");
+            final JTextField inputField = WidgetFactory.createTextField("Test Input");
             inputField.getDocument().addDocumentListener(new DocumentListener() {
-                public void changedUpdate(DocumentEvent e) {
+                public void changedUpdate(final DocumentEvent e) {
                     checkInputField(index);
                 }
 
-                public void insertUpdate(DocumentEvent e) {
+                public void insertUpdate(final DocumentEvent e) {
                     checkInputField(index);
                 }
 
-                public void removeUpdate(DocumentEvent e) {
+                public void removeUpdate(final DocumentEvent e) {
                     checkInputField(index);
                 }
             });
             // inputField.setPreferredSize(d);
             WidgetUtils.addToGridBag(inputField, testitPanel, 0, 4 + i);
 
-            JLabel statusLabel = new JLabel();
+            final JLabel statusLabel = new JLabel();
             WidgetUtils.addToGridBag(statusLabel, testitPanel, 1, 4 + i);
 
             _inputFields.add(inputField);
@@ -243,13 +239,14 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 
     }
 
-    private void checkInputField(int index) {
-        String text = _inputFields.get(index).getText();
-        JLabel label = _statusLabels.get(index);
+    private void checkInputField(final int index) {
+        final String text = _inputFields.get(index).getText();
+        final JLabel label = _statusLabels.get(index);
         if ("".equals(text)) {
             label.setIcon(null);
         } else {
-            final SimpleStringPattern simpleStringPattern = new SimpleStringPattern(_expressionNameField.getText(), _expressionField.getText());
+            final SimpleStringPattern simpleStringPattern =
+                    new SimpleStringPattern(_expressionNameField.getText(), _expressionField.getText());
             if (simpleStringPattern.matches(text)) {
                 label.setIcon(ICON_SUCCESS);
             } else {

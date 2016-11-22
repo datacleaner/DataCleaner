@@ -39,12 +39,12 @@ public class JobModificationEventRenameResultsListener implements ApplicationLis
     private final ResultDao _resultDao;
 
     @Autowired
-    public JobModificationEventRenameResultsListener(ResultDao resultDao) {
+    public JobModificationEventRenameResultsListener(final ResultDao resultDao) {
         _resultDao = resultDao;
     }
 
     @Override
-    public void onApplicationEvent(JobModificationEvent event) {
+    public void onApplicationEvent(final JobModificationEvent event) {
         final String oldJobName = event.getOldJobName();
         final String newJobName = event.getNewJobName();
         if (oldJobName.equals(newJobName)) {
@@ -57,7 +57,7 @@ public class JobModificationEventRenameResultsListener implements ApplicationLis
                 oldJobName));
 
         final JobIdentifier newJob = new JobIdentifier(newJobName);
-        for (RepositoryFile repositoryFile : oldResultFiles) {
+        for (final RepositoryFile repositoryFile : oldResultFiles) {
             _resultDao.updateResult(tenantIdentifier, repositoryFile, newJob, null);
         }
     }

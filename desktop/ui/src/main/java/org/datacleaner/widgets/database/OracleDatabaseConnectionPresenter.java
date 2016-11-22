@@ -35,15 +35,15 @@ import org.jdesktop.swingx.JXTextField;
 
 /**
  * {@link DatabaseConnectionPresenter} for Oracle database connections.
- * 
+ *
  * Some special formatting conventions used in the URL:
- * 
+ *
  * DATABASE = Service name
- * 
+ *
  * PARAM1 = SID
- * 
+ *
  * PARAM2 = Server name
- * 
+ *
  * PARAM3 = Instance name
  */
 public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
@@ -67,13 +67,13 @@ public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnec
 
         final ActionListener radioActionListener = new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 updateTextFieldsAfterRadioButtonChange();
             }
         };
-        
+
         updateTextFieldsAfterRadioButtonChange();
-        
+
         _radioServiceName.addActionListener(radioActionListener);
         _radioSid.addActionListener(radioActionListener);
     }
@@ -91,8 +91,8 @@ public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnec
     }
 
     @Override
-    protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
-            String param3, String param4) {
+    protected String getJdbcUrl(final String hostname, final int port, final String database, final String param1, final String param2,
+            final String param3, final String param4) {
         if (_radioSid.isSelected()) {
             return replaceParameters(URL_SID_BASED, hostname, port, database, param1, param2, param3);
         } else if (_radioServiceName.isSelected()) {
@@ -103,8 +103,8 @@ public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnec
         return replaceParameters(URL_FALLBACK, hostname, port, database, param1, param2, param3);
     }
 
-    private String replaceParameters(String url, String hostname, int port, String database, String param1,
-            String param2, String param3) {
+    private String replaceParameters(String url, final String hostname, final int port, final String database, final String param1,
+            final String param2, final String param3) {
         url = url.replace("HOSTNAME", hostname);
         url = url.replace("PORT", Integer.toString(port));
         url = url.replace("DATABASE", database);
@@ -113,15 +113,15 @@ public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnec
     }
 
     @Override
-    public boolean initialize(JdbcDatastore datastore) {
+    public boolean initialize(final JdbcDatastore datastore) {
         final boolean initialize = super.initialize(datastore);
         updateTextFieldsAfterRadioButtonChange();
         return initialize;
     }
 
     @Override
-    protected boolean initializeFromMatch(JdbcDatastore datastore, NamedPattern<UrlPart> namedPattern,
-            NamedPatternMatch<UrlPart> match) {
+    protected boolean initializeFromMatch(final JdbcDatastore datastore, final NamedPattern<UrlPart> namedPattern,
+            final NamedPatternMatch<UrlPart> match) {
         final String pattern = namedPattern.toString();
         switch (pattern) {
         case URL_SID_BASED:
@@ -138,7 +138,7 @@ public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnec
     }
 
     @Override
-    protected void layoutGridBagBelowCredentials(DCPanel panel, int row) {
+    protected void layoutGridBagBelowCredentials(final DCPanel panel, int row) {
 
         row++;
         WidgetUtils.addToGridBag(_radioServiceName, panel, 0, row);
@@ -147,7 +147,7 @@ public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnec
     }
 
     @Override
-    protected int layoutGridBagParams(DCPanel panel, int row) {
+    protected int layoutGridBagParams(final DCPanel panel, int row) {
         row++;
         WidgetUtils.addToGridBag(_radioSid, panel, 0, row);
         return super.layoutGridBagParams(panel, row);

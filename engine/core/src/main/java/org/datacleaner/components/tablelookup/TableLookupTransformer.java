@@ -82,13 +82,7 @@ import com.google.common.cache.Cache;
 @Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasAnalyzerResult<CategorizationResult> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TableLookupTransformer.class);
-
-    private static final String PROPERTY_NAME_DATASTORE = "Datastore";
-    private static final String PROPERTY_NAME_SCHEMA_NAME = "Schema name";
-    private static final String PROPERTY_NAME_TABLE_NAME = "Table name";
-
-    public static enum JoinSemantic implements HasName {
+    public enum JoinSemantic implements HasName {
         @Alias("LEFT")
         LEFT_JOIN_MAX_ONE("Left join (max 1 record)"),
 
@@ -100,7 +94,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
 
         private final String _name;
 
-        private JoinSemantic(String name) {
+        JoinSemantic(final String name) {
             _name = name;
         }
 
@@ -115,73 +109,63 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
             return this == LEFT_JOIN_MAX_ONE;
         }
     }
-
+    private static final Logger logger = LoggerFactory.getLogger(TableLookupTransformer.class);
+    private static final String PROPERTY_NAME_DATASTORE = "Datastore";
+    private static final String PROPERTY_NAME_SCHEMA_NAME = "Schema name";
+    private static final String PROPERTY_NAME_TABLE_NAME = "Table name";
+    private final Cache<List<Object>, Object[]> cache = CollectionUtils2.<List<Object>, Object[]> createCache(10000,
+            5 * 60);
     @Inject
     @Configured(value = PROPERTY_NAME_DATASTORE)
     Datastore datastore;
-
     @Inject
     @Configured(required = false)
     InputColumn<?>[] conditionValues;
-
     @Inject
     @Configured(required = false)
     @ColumnProperty
     @MappedProperty(PROPERTY_NAME_TABLE_NAME)
     String[] conditionColumns;
-
     @Inject
     @Configured
     @ColumnProperty
     @MappedProperty(PROPERTY_NAME_TABLE_NAME)
     String[] outputColumns;
-
     @Inject
     @Configured(value = PROPERTY_NAME_SCHEMA_NAME)
     @Alias("Schema")
     @SchemaProperty
     @MappedProperty(PROPERTY_NAME_DATASTORE)
     String schemaName;
-
     @Inject
     @Configured(value = PROPERTY_NAME_TABLE_NAME)
     @Alias("Table")
     @TableProperty
     @MappedProperty(PROPERTY_NAME_SCHEMA_NAME)
     String tableName;
-
     @Inject
     @Configured
     @Description("Use a client-side cache to avoid looking up multiple times with same inputs.")
     boolean cacheLookups = true;
-
     @Inject
     @Configured
     @Description("Which kind of semantic to apply to the lookup, compared to a SQL JOIN.")
     JoinSemantic joinSemantic = JoinSemantic.LEFT_JOIN_MAX_ONE;
-
     @Inject
     @Provided
     OutputRowCollector outputRowCollector;
-
     @Inject
     @Provided
     RowAnnotationFactory _annotationFactory;
-
     @Inject
     @Provided
     RowAnnotation _matches;
-
     @Inject
     @Provided
     RowAnnotation _misses;
-
     @Inject
     @Provided
     RowAnnotation _cached;
-
-    private final Cache<List<Object>, Object[]> cache = CollectionUtils2.<List<Object>, Object[]> createCache(10000,
-            5 * 60);
     private Column[] queryOutputColumns;
     private Column[] queryConditionColumns;
     private DatastoreConnection datastoreConnection;
@@ -196,7 +180,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
     /**
      * Constructor for direct usage within e.g. other components where we always
      * expect to do LEFT JOIN (max one record) semantic lookups.
-     * 
+     *
      * @param datastore
      * @param schemaName
      * @param tableName
@@ -206,8 +190,8 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
      * @param joinSemantic
      * @param cacheLookups
      */
-    public TableLookupTransformer(Datastore datastore, String schemaName, String tableName, String[] conditionColumns,
-            InputColumn<?>[] conditionValues, String[] outputColumns, boolean cacheLookups) {
+    public TableLookupTransformer(final Datastore datastore, final String schemaName, final String tableName, final String[] conditionColumns,
+            final InputColumn<?>[] conditionValues, final String[] outputColumns, final boolean cacheLookups) {
         this.datastore = datastore;
         this.schemaName = schemaName;
         this.tableName = tableName;
@@ -251,12 +235,12 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
 
     /**
      * Gets the output columns of the lookup query
-     * 
+     *
      * @param checkNames
      *            whether to check/validate/adjust the names of these columns
      * @return
      */
-    private Column[] getQueryOutputColumns(boolean checkNames) {
+    private Column[] getQueryOutputColumns(final boolean checkNames) {
         if (queryOutputColumns == null) {
             try (final DatastoreConnection con = datastore.openConnection()) {
                 queryOutputColumns = con.getSchemaNavigator().convertToColumns(schemaName, tableName, outputColumns);
@@ -272,7 +256,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
 
     /**
      * Checks the validity of the current (cached) output columns array.
-     * 
+     *
      * @return true if the current columns are valid
      */
     private boolean isQueryOutputColumnsUpdated() {
@@ -280,8 +264,8 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
             return false;
         }
         for (int i = 0; i < queryOutputColumns.length; i++) {
-            Column outputColumn = queryOutputColumns[i];
-            String expectedName = outputColumns[i];
+            final Column outputColumn = queryOutputColumns[i];
+            final String expectedName = outputColumns[i];
             if (!expectedName.equals(outputColumn.getName())) {
                 return false;
             }
@@ -322,7 +306,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
 
             lookupQuery = datastoreConnection.getDataContext().compileQuery(query);
 
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             logger.error("Error occurred while compiling lookup query", e);
             throw e;
         }
@@ -354,11 +338,11 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
 
     @Override
     public OutputColumns getOutputColumns() {
-        Column[] queryOutputColumns = getQueryOutputColumns(true);
-        String[] names = new String[queryOutputColumns.length];
-        Class<?>[] types = new Class[queryOutputColumns.length];
+        final Column[] queryOutputColumns = getQueryOutputColumns(true);
+        final String[] names = new String[queryOutputColumns.length];
+        final Class<?>[] types = new Class[queryOutputColumns.length];
         for (int i = 0; i < queryOutputColumns.length; i++) {
-            Column column = queryOutputColumns[i];
+            final Column column = queryOutputColumns[i];
             if (column == null) {
                 throw new IllegalArgumentException("Could not find column: " + outputColumns[i]);
             }
@@ -369,15 +353,15 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
     }
 
     @Override
-    public Object[] transform(InputRow inputRow) {
+    public Object[] transform(final InputRow inputRow) {
         final List<Object> queryInput;
 
         if (isCarthesianProductMode()) {
             queryInput = Collections.emptyList();
         } else {
             queryInput = new ArrayList<Object>(conditionValues.length);
-            for (InputColumn<?> inputColumn : conditionValues) {
-                Object value = inputRow.getValue(inputColumn);
+            for (final InputColumn<?> inputColumn : conditionValues) {
+                final Object value = inputRow.getValue(inputColumn);
                 queryInput.add(value);
             }
         }
@@ -406,7 +390,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
         return result;
     }
 
-    private Object[] performQuery(InputRow row, List<Object> queryInput) {
+    private Object[] performQuery(final InputRow row, final List<Object> queryInput) {
         try {
             final Column[] queryConditionColumns = getQueryConditionColumns();
 
@@ -419,13 +403,13 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
                     .executeQuery(lookupQuery, parameterValues)) {
                 return handleDataSet(row, dataSet);
             }
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             logger.error("Error occurred while looking up based on conditions: " + queryInput, e);
             throw e;
         }
     }
 
-    private Object[] handleDataSet(InputRow row, DataSet dataSet) {
+    private Object[] handleDataSet(final InputRow row, final DataSet dataSet) {
         if (!dataSet.next()) {
 
             logger.info("Result of lookup: None!");

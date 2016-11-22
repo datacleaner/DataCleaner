@@ -35,85 +35,85 @@ import org.jdesktop.swingx.JXTaskPaneContainer;
  */
 public class DCTaskPaneContainer extends JXTaskPaneContainer {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public DCTaskPaneContainer() {
-		super();
-		setOpaque(false);
-		setBackgroundPainter(null);
-	}
+    public DCTaskPaneContainer() {
+        super();
+        setOpaque(false);
+        setBackgroundPainter(null);
+    }
 
-	public void add(JXTaskPane taskPane) {
-		DCPanel panel = createTaskPanePanel(taskPane);
-		super.add(panel);
-	}
+    public void add(final JXTaskPane taskPane) {
+        final DCPanel panel = createTaskPanePanel(taskPane);
+        super.add(panel);
+    }
 
-	public void add(JXTaskPane taskPane, int index) {
-		DCPanel panel = createTaskPanePanel(taskPane);
-		super.add(panel, index);
-	}
+    public void add(final JXTaskPane taskPane, final int index) {
+        final DCPanel panel = createTaskPanePanel(taskPane);
+        super.add(panel, index);
+    }
 
-	private DCPanel createTaskPanePanel(JXTaskPane taskPane) {
-		final DCPanel panel = new DCPanel();
-		panel.setBorder(WidgetUtils.BORDER_SHADOW);
-		panel.setLayout(new BorderLayout());
-		panel.add(taskPane, BorderLayout.CENTER);
+    private DCPanel createTaskPanePanel(final JXTaskPane taskPane) {
+        final DCPanel panel = new DCPanel();
+        panel.setBorder(WidgetUtils.BORDER_SHADOW);
+        panel.setLayout(new BorderLayout());
+        panel.add(taskPane, BorderLayout.CENTER);
 
-		taskPane.addComponentListener(new ComponentAdapter() {
-		    @Override
-		    public void componentHidden(ComponentEvent e) {
-		        panel.setVisible(false);
-		    }
-		    
-		    @Override
-		    public void componentShown(ComponentEvent e) {
-		        panel.setVisible(true);
-		    }
-		});
-		
-		return panel;
-	}
+        taskPane.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentHidden(final ComponentEvent e) {
+                panel.setVisible(false);
+            }
 
-	@Override
-	public Component add(Component comp) {
-		throw new UnsupportedOperationException();
-	}
+            @Override
+            public void componentShown(final ComponentEvent e) {
+                panel.setVisible(true);
+            }
+        });
 
-	@Override
-	public Component add(Component comp, int index) {
-		throw new UnsupportedOperationException();
-	}
+        return panel;
+    }
 
-	@Override
-	public void add(Component comp, Object constraints) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Component add(final Component comp) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void add(Component comp, Object constraints, int index) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Component add(final Component comp, final int index) {
+        throw new UnsupportedOperationException();
+    }
 
-	public JXTaskPane[] getTaskPanes() {
-		Component[] components = getComponents();
-		JXTaskPane[] result = new JXTaskPane[components.length];
-		for (int i = 0; i < result.length; i++) {
-			DCPanel panel = (DCPanel) components[i];
-			result[i] = (JXTaskPane) panel.getComponent(0);
-		}
-		return result;
-	}
-	
-	public void remove(JXTaskPane group) {
-		Component[] components = getComponents();
-		for (Component component : components) {
-			if (component instanceof DCPanel) {
-				Component innerComponent = ((DCPanel) component).getComponent(0);
-				if (innerComponent.equals(group)) {
-					super.remove(component);
-					return;
-				}
-			}
-		}
-	}
+    @Override
+    public void add(final Component comp, final Object constraints) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void add(final Component comp, final Object constraints, final int index) {
+        throw new UnsupportedOperationException();
+    }
+
+    public JXTaskPane[] getTaskPanes() {
+        final Component[] components = getComponents();
+        final JXTaskPane[] result = new JXTaskPane[components.length];
+        for (int i = 0; i < result.length; i++) {
+            final DCPanel panel = (DCPanel) components[i];
+            result[i] = (JXTaskPane) panel.getComponent(0);
+        }
+        return result;
+    }
+
+    public void remove(final JXTaskPane group) {
+        final Component[] components = getComponents();
+        for (final Component component : components) {
+            if (component instanceof DCPanel) {
+                final Component innerComponent = ((DCPanel) component).getComponent(0);
+                if (innerComponent.equals(group)) {
+                    super.remove(component);
+                    return;
+                }
+            }
+        }
+    }
 }

@@ -42,13 +42,13 @@ final class ResultDescriptorImpl implements ResultDescriptor {
     private final Class<? extends AnalyzerResult> _resultClass;
     private final Set<MetricDescriptor> _metrics;
 
-    public ResultDescriptorImpl(Class<? extends AnalyzerResult> resultClass) {
+    public ResultDescriptorImpl(final Class<? extends AnalyzerResult> resultClass) {
         _resultClass = resultClass;
 
-        Method[] metricMethods = ReflectionUtils.getMethods(resultClass, Metric.class);
+        final Method[] metricMethods = ReflectionUtils.getMethods(resultClass, Metric.class);
         _metrics = new TreeSet<MetricDescriptor>();
-        for (Method method : metricMethods) {
-            MetricDescriptor metric = new MetricDescriptorImpl(resultClass, method);
+        for (final Method method : metricMethods) {
+            final MetricDescriptor metric = new MetricDescriptorImpl(resultClass, method);
             _metrics.add(metric);
         }
     }
@@ -59,19 +59,19 @@ final class ResultDescriptorImpl implements ResultDescriptor {
     }
 
     @Override
-    public MetricDescriptor getResultMetric(String name) {
+    public MetricDescriptor getResultMetric(final String name) {
         if (name == null) {
             return null;
         }
 
-        for (MetricDescriptor metric : _metrics) {
+        for (final MetricDescriptor metric : _metrics) {
             if (name.equals(metric.getName())) {
                 return metric;
             }
         }
 
         // second try - case insensitive
-        for (MetricDescriptor metric : _metrics) {
+        for (final MetricDescriptor metric : _metrics) {
             if (name.equalsIgnoreCase(metric.getName())) {
                 return metric;
             }

@@ -32,28 +32,28 @@ import org.datacleaner.server.HadoopClusterInformation;
 
 public class HdfsUtils {
 
-    public static Configuration getHadoopConfiguration(URI uri) {
+    public static Configuration getHadoopConfiguration(final URI uri) {
         final Configuration conf = getHadoopConfigurationWithTimeout(null);
         conf.set("fs.defaultFS", uri.toString());
         return conf;
     }
 
-    public static FileSystem getFileSystemFromUri(URI uri) {
+    public static FileSystem getFileSystemFromUri(final URI uri) {
         try {
-            URI baseUri = UriBuilder.fromUri(uri).replacePath("/").build();
+            final URI baseUri = UriBuilder.fromUri(uri).replacePath("/").build();
             return FileSystem.newInstance(getHadoopConfiguration(baseUri));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static FileSystem getFileSystemFromPath(Path path){
+    public static FileSystem getFileSystemFromPath(final Path path) {
         return getFileSystemFromUri(path.toUri());
     }
 
     public static Configuration getHadoopConfigurationWithTimeout(final HadoopClusterInformation clusterInformation) {
         Configuration configuration = null;
-        
+
         if (clusterInformation == null) {
             configuration = new Configuration();
         } else {

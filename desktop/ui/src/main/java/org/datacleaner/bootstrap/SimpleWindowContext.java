@@ -37,11 +37,11 @@ public class SimpleWindowContext implements WindowContext {
     private final List<DCWindow> _windows = new ArrayList<DCWindow>();
 
     @Override
-    public void addExitActionListener(ExitActionListener exitActionListener) {
+    public void addExitActionListener(final ExitActionListener exitActionListener) {
     }
 
     @Override
-    public void removeExitActionListener(ExitActionListener exitActionListener) {
+    public void removeExitActionListener(final ExitActionListener exitActionListener) {
     }
 
     @Override
@@ -50,19 +50,19 @@ public class SimpleWindowContext implements WindowContext {
     }
 
     @Override
-    public void onDispose(DCWindow window) {
+    public void onDispose(final DCWindow window) {
         _windows.remove(window);
     }
 
     @Override
-    public void onShow(DCWindow window) {
+    public void onShow(final DCWindow window) {
         _windows.add(window);
     }
 
     @Override
-    public final int getWindowCount(Class<? extends DCWindow> windowClass) {
+    public final int getWindowCount(final Class<? extends DCWindow> windowClass) {
         int count = 0;
-        for (DCWindow window : _windows) {
+        for (final DCWindow window : _windows) {
             if (ReflectionUtils.is(window.getClass(), windowClass)) {
                 count++;
             }
@@ -71,11 +71,11 @@ public class SimpleWindowContext implements WindowContext {
     }
 
     @Override
-    public void addWindowListener(ActionListener listener) {
+    public void addWindowListener(final ActionListener listener) {
     }
 
     @Override
-    public void removeWindowListener(ActionListener listener) {
+    public void removeWindowListener(final ActionListener listener) {
     }
 
     @Override

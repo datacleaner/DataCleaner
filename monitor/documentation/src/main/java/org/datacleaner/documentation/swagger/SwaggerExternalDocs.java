@@ -30,7 +30,7 @@ public class SwaggerExternalDocs {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -38,7 +38,7 @@ public class SwaggerExternalDocs {
         return url;
     }
 
-    public void setUrl(String url) {
+    public void setUrl(final String url) {
         this.url = url;
     }
 }

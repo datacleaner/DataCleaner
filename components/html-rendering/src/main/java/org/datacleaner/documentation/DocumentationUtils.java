@@ -29,7 +29,7 @@ public class DocumentationUtils {
     /**
      * Formats a string (typically a component {@link Description}) into an
      * appropriate set of HTML paragraphs ('p' tag).
-     * 
+     *
      * @param str
      * @return
      */

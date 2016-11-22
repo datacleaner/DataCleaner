@@ -31,7 +31,7 @@ import org.datacleaner.api.InputRow;
 @Named("Even/odd record filter")
 public class EvenOddFilter implements Filter<EvenOddFilter.Category> {
 
-    public static enum Category {
+    public enum Category {
         EVEN, ODD
     }
 

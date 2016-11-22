@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
+import org.datacleaner.util.StringUtils;
 
 /**
  * Page for entering SugarCRM credentials
@@ -35,7 +35,7 @@ final class SugarCrmDatastoreCredentialsPage extends AbstractFreemarkerWizardPag
 
     private final SugarCrmDatastoreWizardSession _session;
 
-    public SugarCrmDatastoreCredentialsPage(SugarCrmDatastoreWizardSession session) {
+    public SugarCrmDatastoreCredentialsPage(final SugarCrmDatastoreWizardSession session) {
         _session = session;
     }
 
@@ -45,11 +45,11 @@ final class SugarCrmDatastoreCredentialsPage extends AbstractFreemarkerWizardPag
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        String username = formParameters.get("sugarcrm_username").get(0);
-        String password = formParameters.get("sugarcrm_password").get(0);
-        
+        final String username = formParameters.get("sugarcrm_username").get(0);
+        final String password = formParameters.get("sugarcrm_password").get(0);
+
         if (StringUtils.isNullOrEmpty(username)) {
             throw new DCUserInputException("Please provide a valid username.");
         }
@@ -62,7 +62,7 @@ final class SugarCrmDatastoreCredentialsPage extends AbstractFreemarkerWizardPag
         return new DatastoreNameAndDescriptionWizardPage(_session.getWizardContext(), getPageIndex() + 1, "SugarCRM",
                 "Connects to the web services of SugarCRM") {
             @Override
-            protected WizardPageController nextPageController(String name, String description) {
+            protected WizardPageController nextPageController(final String name, final String description) {
                 _session.setName(name);
                 _session.setDescription(description);
                 return null;

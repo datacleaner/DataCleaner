@@ -39,8 +39,8 @@ final class ExecutionIdentifierCell extends AbstractCell<ExecutionIdentifier> {
     private final DateTimeFormat _format = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT);
 
     @Override
-    public void render(com.google.gwt.cell.client.Cell.Context context, ExecutionIdentifier executionIdentifier,
-            SafeHtmlBuilder sb) {
+    public void render(final com.google.gwt.cell.client.Cell.Context context, final ExecutionIdentifier executionIdentifier,
+            final SafeHtmlBuilder sb) {
         sb.appendHtmlConstant("<div class=\"ExecutionIdentifier\">");
 
         final Date beginDate = executionIdentifier.getJobBeginDate();

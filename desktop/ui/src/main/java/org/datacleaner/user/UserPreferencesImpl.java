@@ -66,19 +66,15 @@ import com.google.common.base.Strings;
  */
 public class UserPreferencesImpl implements UserPreferences, Serializable {
 
-    private static final long serialVersionUID = 6L;
-
     public static final String DEFAULT_FILENAME = "userpreferences.dat";
-
+    private static final long serialVersionUID = 6L;
     private static final Logger logger = LoggerFactory.getLogger(UserPreferencesImpl.class);
-
+    private final List<Dictionary> userDictionaries = new ArrayList<>();
+    private final List<StringPattern> userStringPatterns = new ArrayList<>();
     private transient FileObject _userPreferencesFile;
-
     private List<UserDatabaseDriver> databaseDrivers = new ArrayList<>();
     private List<ExtensionPackage> extensionPackages = new ArrayList<>();
     private List<Datastore> userDatastores = new ArrayList<>();
-    private final List<Dictionary> userDictionaries = new ArrayList<>();
-    private final List<StringPattern> userStringPatterns = new ArrayList<>();
     private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<>();
     private Map<String, String> additionalProperties = new HashMap<>();
 
@@ -102,17 +98,17 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     /**
      * Creates a new {@link UserPreferencesImpl} object which refers to a file,
      * but does NOT load the file contents.
-     * 
+     *
      * @param userPreferencesFile
      */
-    public UserPreferencesImpl(FileObject userPreferencesFile) {
+    public UserPreferencesImpl(final FileObject userPreferencesFile) {
         _userPreferencesFile = userPreferencesFile;
     }
 
     /**
      * Loads a user preferences file and initializes a
      * {@link UserPreferencesImpl} object using it.
-     * 
+     *
      * @param userPreferencesFile
      * @param loadDatabaseDrivers
      * @return
@@ -123,7 +119,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
                 logger.info("User preferences file does not exist");
                 return new UserPreferencesImpl(userPreferencesFile);
             }
-        } catch (FileSystemException e1) {
+        } catch (final FileSystemException e1) {
             logger.debug("Could not determine if file exists: {}", userPreferencesFile);
         }
 
@@ -131,14 +127,14 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         try {
             inputStream = new ChangeAwareObjectInputStream(userPreferencesFile.getContent().getInputStream());
             inputStream.addRenamedClass("org.datacleaner.user.UserPreferences", UserPreferencesImpl.class);
-            UserPreferencesImpl result = (UserPreferencesImpl) inputStream.readObject();
+            final UserPreferencesImpl result = (UserPreferencesImpl) inputStream.readObject();
 
             if (loadDatabaseDrivers) {
-                List<UserDatabaseDriver> installedDatabaseDrivers = result.getDatabaseDrivers();
-                for (UserDatabaseDriver userDatabaseDriver : installedDatabaseDrivers) {
+                final List<UserDatabaseDriver> installedDatabaseDrivers = result.getDatabaseDrivers();
+                for (final UserDatabaseDriver userDatabaseDriver : installedDatabaseDrivers) {
                     try {
                         userDatabaseDriver.loadDriver();
-                    } catch (IllegalStateException e) {
+                    } catch (final IllegalStateException e) {
                         logger.error("Could not load database driver", e);
                     }
                 }
@@ -147,10 +143,10 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             result._userPreferencesFile = userPreferencesFile;
             result.refreshProxySettings();
             return result;
-        } catch (InvalidClassException e) {
+        } catch (final InvalidClassException e) {
             logger.warn("User preferences file version does not match application version: {}", e.getMessage());
             return new UserPreferencesImpl(userPreferencesFile);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Could not read user preferences file", e);
             return new UserPreferencesImpl(userPreferencesFile);
         } finally {
@@ -169,11 +165,11 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
         ObjectOutputStream outputStream = null;
         try {
-            OutputStream fileOutputStream = _userPreferencesFile.getContent().getOutputStream();
+            final OutputStream fileOutputStream = _userPreferencesFile.getContent().getOutputStream();
             outputStream = new ObjectOutputStream(fileOutputStream);
             outputStream.writeObject(this);
             outputStream.flush();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Unexpected error while saving user preferences", e);
             throw new IllegalStateException(e);
         } finally {
@@ -190,7 +186,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setOpenDatastoreDirectory(File openFileDir) {
+    public void setOpenDatastoreDirectory(final File openFileDir) {
         this.openDatastoreDirectory = openFileDir;
     }
 
@@ -203,7 +199,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setConfiguredFileDirectory(File openPropertyFileDirectory) {
+    public void setConfiguredFileDirectory(final File openPropertyFileDirectory) {
         this.configuredFileDirectory = openPropertyFileDirectory;
     }
 
@@ -216,7 +212,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setAnalysisJobDirectory(File saveFileDirectory) {
+    public void setAnalysisJobDirectory(final File saveFileDirectory) {
         this.analysisJobDirectory = saveFileDirectory;
     }
 
@@ -228,9 +224,14 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         return saveDatastoreDirectory;
     }
 
-    private File getRelativeDirectory(String name) {
-        File dataCleanerHome = VFSUtils.toFile(DataCleanerHome.get());
-        File directory = new File(dataCleanerHome, name);
+    @Override
+    public void setSaveDatastoreDirectory(final File saveDatastoreDirectory) {
+        this.saveDatastoreDirectory = saveDatastoreDirectory;
+    }
+
+    private File getRelativeDirectory(final String name) {
+        final File dataCleanerHome = VFSUtils.toFile(DataCleanerHome.get());
+        final File directory = new File(dataCleanerHome, name);
         if (!directory.exists()) {
             directory.mkdir();
         }
@@ -238,12 +239,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setSaveDatastoreDirectory(File saveDatastoreDirectory) {
-        this.saveDatastoreDirectory = saveDatastoreDirectory;
-    }
-
-    @Override
-    public void addRecentJobFile(FileObject fileObject) {
+    public void addRecentJobFile(final FileObject fileObject) {
         final File file = VFSUtils.toFile(fileObject);
         if (file != null) {
             if (recentJobFiles.contains(file)) {
@@ -260,17 +256,17 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             final File dcHome = VFSUtils.toFile(DataCleanerHome.get());
 
             final List<String> demoJobPaths = DataCleanerHome.getAllInitialFiles();
-            for (String demoJobPath : demoJobPaths) {
+            for (final String demoJobPath : demoJobPaths) {
                 recentJobFiles.add(new File(dcHome, demoJobPath));
             }
         }
 
-        List<FileObject> fileObjectList = CollectionUtils.map(recentJobFiles, new Func<File, FileObject>() {
+        final List<FileObject> fileObjectList = CollectionUtils.map(recentJobFiles, new Func<File, FileObject>() {
             @Override
-            public FileObject eval(File file) {
+            public FileObject eval(final File file) {
                 try {
                     return VFSUtils.getFileSystemManager().toFileObject(file);
-                } catch (FileSystemException e) {
+                } catch (final FileSystemException e) {
                     throw new IllegalStateException(e);
                 }
             }
@@ -318,7 +314,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setProxyEnabled(boolean proxyEnabled) {
+    public void setProxyEnabled(final boolean proxyEnabled) {
         this.proxyEnabled = proxyEnabled;
         refreshProxySettings();
     }
@@ -329,7 +325,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setProxyHostname(String proxyHostname) {
+    public void setProxyHostname(final String proxyHostname) {
         this.proxyHostname = proxyHostname;
         refreshProxySettings();
     }
@@ -340,7 +336,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setProxyPort(int proxyPort) {
+    public void setProxyPort(final int proxyPort) {
         this.proxyPort = proxyPort;
         refreshProxySettings();
     }
@@ -351,7 +347,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setProxyUsername(String proxyUsername) {
+    public void setProxyUsername(final String proxyUsername) {
         this.proxyUsername = proxyUsername;
         refreshProxySettings();
     }
@@ -362,7 +358,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setProxyPassword(String proxyPassword) {
+    public void setProxyPassword(final String proxyPassword) {
         this.proxyPassword = proxyPassword;
         refreshProxySettings();
     }
@@ -373,7 +369,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled) {
+    public void setProxyAuthenticationEnabled(final boolean proxyAuthenticationEnabled) {
         this.proxyAuthenticationEnabled = proxyAuthenticationEnabled;
         refreshProxySettings();
     }
@@ -388,10 +384,10 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
         System.setProperty("http.proxy.setByDataCleaner", "true");
 
-        String proxyHost = getProxyHostname();
-        int proxyPort = getProxyPort();
-        String username = getProxyUsername();
-        String password = getProxyPassword();
+        final String proxyHost = getProxyHostname();
+        final int proxyPort = getProxyPort();
+        final String username = getProxyUsername();
+        final String password = getProxyPassword();
 
         if (isProxyEnabled() && proxyHost != null) {
             logger.debug("Setting proxy host={}, port={}", proxyHost, proxyPort);
@@ -438,12 +434,12 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setExtensionPackages(List<ExtensionPackage> extensionPackages) {
+    public void setExtensionPackages(final List<ExtensionPackage> extensionPackages) {
         this.extensionPackages = extensionPackages;
     }
 
     @Override
-    public void removeExtensionPackage(ExtensionPackage extensionPackage) {
+    public void removeExtensionPackage(final ExtensionPackage extensionPackage) {
         if (extensionPackages == null) {
             extensionPackages = new ArrayList<ExtensionPackage>();
         }
@@ -451,7 +447,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void addExtensionPackage(ExtensionPackage extensionPackage) {
+    public void addExtensionPackage(final ExtensionPackage extensionPackage) {
         if (extensionPackages == null) {
             extensionPackages = new ArrayList<ExtensionPackage>();
         }
@@ -464,11 +460,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             additionalProperties = new HashMap<String, String>();
         }
         return additionalProperties;
-    }
-
-    @Override
-    public void setMonitorConnection(MonitorConnection connection) {
-        this.monitorConnection = connection;
     }
 
     @Override
@@ -491,6 +482,11 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
+    public void setMonitorConnection(final MonitorConnection connection) {
+        this.monitorConnection = connection;
+    }
+
+    @Override
     public File getSaveDownloadedFilesDirectory() {
         if (saveDownloadedFilesDirectory == null) {
             saveDownloadedFilesDirectory = VFSUtils.toFile(DataCleanerHome.get());
@@ -499,7 +495,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setSaveDownloadedFilesDirectory(File directory) {
+    public void setSaveDownloadedFilesDirectory(final File directory) {
         this.saveDownloadedFilesDirectory = directory;
     }
 
@@ -512,7 +508,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void setExtensionsDirectory(File directory) {
+    public void setExtensionsDirectory(final File directory) {
         this.extensionsDirectory = directory;
     }
 
@@ -521,8 +517,8 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         final HttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         final RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
-        
-        
+
+
         if (isProxyEnabled()) {
             // set up HTTP proxy
             final String proxyHostname = getProxyHostname();
@@ -552,23 +548,26 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
                     String workstation = System.getProperty("datacleaner.proxy.workstation");
                     if (Strings.isNullOrEmpty(workstation)) {
-                        String computername = InetAddress.getLocalHost().getHostName();
+                        final String computername = InetAddress.getLocalHost().getHostName();
                         workstation = computername;
                     }
 
-                    NTCredentials ntCredentials = new NTCredentials(ntUsername, getProxyPassword(), workstation,
+                    final NTCredentials ntCredentials = new NTCredentials(ntUsername, getProxyPassword(), workstation,
                             ntDomain);
-                    AuthScope ntAuthScope = new AuthScope(proxyHostname, proxyPort, AuthScope.ANY_REALM, "ntlm");
+                    final AuthScope ntAuthScope = new AuthScope(proxyHostname, proxyPort, AuthScope.ANY_REALM, "ntlm");
                     credentialsProvider.setCredentials(ntAuthScope, ntCredentials);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // ignore proxy creation and return http client without it
                 logger.error("Unexpected error occurred while initializing HTTP proxy", e);
             }
         }
-        
+
         final RequestConfig requestConfig = requestConfigBuilder.build();
-        final CloseableHttpClient httpClient = HttpClients.custom().useSystemProperties().setConnectionManager(connectionManager).setDefaultCredentialsProvider(credentialsProvider).setDefaultRequestConfig(requestConfig).build();
+        final CloseableHttpClient httpClient =
+                HttpClients.custom().useSystemProperties().setConnectionManager(connectionManager)
+                        .setDefaultCredentialsProvider(credentialsProvider).setDefaultRequestConfig(requestConfig)
+                        .build();
         return httpClient;
     }
 }

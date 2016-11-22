@@ -59,7 +59,8 @@ import com.google.common.base.Strings;
  * Abstract {@link SwingWorker} and {@link ActionListener} for publishing a file
  * to the DataCleaner monitor webapp.
  */
-public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map<?, ?>, Task> implements ActionListener {
+public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map<?, ?>, Task>
+        implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(PublishFileToMonitorActionListener.class);
 
@@ -68,10 +69,21 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
 
     private FileTransferProgressWindow _progressWindow;
 
-    public PublishFileToMonitorActionListener(WindowContext windowContext, UserPreferences userPreferences) {
+    public PublishFileToMonitorActionListener(final WindowContext windowContext, final UserPreferences userPreferences) {
         super();
         _windowContext = windowContext;
         _userPreferences = userPreferences;
+    }
+
+    /**
+     * Simple replacement function that replaces white spaces with "+" symbols,
+     * making a filename retreivable by URL.
+     *
+     * @param str
+     * @return
+     */
+    protected static String encodeSpaces(final String str) {
+        return str.replaceAll(" ", "\\+");
     }
 
     protected abstract String getTransferredFilename();
@@ -87,7 +99,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
     }
 
     @Override
-    public final void actionPerformed(ActionEvent e) {
+    public final void actionPerformed(final ActionEvent e) {
         final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
         if (monitorConnection == null) {
             final MonitorConnectionDialog dialog = new MonitorConnectionDialog(_windowContext, _userPreferences);
@@ -103,7 +115,8 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
                 return;
             }
 
-            _progressWindow = new FileTransferProgressWindow(_windowContext, null, new String[] { transferredFilename });
+            _progressWindow =
+                    new FileTransferProgressWindow(_windowContext, null, new String[] { transferredFilename });
             _progressWindow.open();
 
             // start the swing worker
@@ -114,7 +127,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
     /**
      * Optionally overrideable method invoked before doing the publishing
      * action.
-     * 
+     *
      * @return true if the publishing may continue.
      */
     protected boolean doBeforeAction() {
@@ -159,10 +172,10 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
             }
 
             @Override
-            public void writeTo(OutputStream out) throws IOException {
+            public void writeTo(final OutputStream out) throws IOException {
                 long progress = 0;
                 try (final InputStream in = getTransferStream()) {
-                    byte[] tmp = new byte[4096];
+                    final byte[] tmp = new byte[4096];
                     int length;
                     while ((length = in.read(tmp)) != -1) {
                         out.write(tmp, 0, length);
@@ -197,7 +210,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
             final HttpResponse response;
             try {
                 response = monitorHttpClient.execute(request);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException(e);
             }
             final StatusLine statusLine = response.getStatusLine();
@@ -219,7 +232,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
                     final Map<?, ?> responseMap = objectMapper.readValue(contentString, Map.class);
 
                     return responseMap;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.warn("Received non-JSON response:\n{}", contentString);
                     logger.error("Failed to parse response as JSON", e);
                     return null;
@@ -235,11 +248,11 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
     }
 
     @Override
-    protected void process(List<Task> chunks) {
-        for (Task task : chunks) {
+    protected void process(final List<Task> chunks) {
+        for (final Task task : chunks) {
             try {
                 task.execute();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 WidgetUtils.showErrorMessage("Error processing transfer chunk: " + task, e);
             }
         }
@@ -251,7 +264,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
 
         try {
             responseMap = get();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             WidgetUtils.showErrorMessage("Error transfering file(s)!", e);
             return;
         }
@@ -265,16 +278,5 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
                     + "/repository" + encodeSpaces(repositoryPath));
             openBrowserAction.actionPerformed(null);
         }
-    }
-
-    /**
-     * Simple replacement function that replaces white spaces with "+" symbols,
-     * making a filename retreivable by URL.
-     * 
-     * @param str
-     * @return
-     */
-    protected static String encodeSpaces(String str) {
-        return str.replaceAll(" ", "\\+");
     }
 }

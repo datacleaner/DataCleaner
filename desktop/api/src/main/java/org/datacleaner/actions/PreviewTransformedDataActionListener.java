@@ -60,38 +60,35 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         public final AnalyzerComponentBuilder<?> rowCollectorAnalyzer;
         public final TransformerComponentBuilder<?> previewedTransformer;
 
-        public PreviewJob(AnalysisJobBuilder analysisJobBuilder, AnalyzerComponentBuilder<?> rowCollectorAnalyzer,
-                TransformerComponentBuilder<?> previewedTransformer) {
+        public PreviewJob(final AnalysisJobBuilder analysisJobBuilder, final AnalyzerComponentBuilder<?> rowCollectorAnalyzer,
+                final TransformerComponentBuilder<?> previewedTransformer) {
             this.analysisJobBuilder = analysisJobBuilder;
             this.rowCollectorAnalyzer = rowCollectorAnalyzer;
             this.previewedTransformer = previewedTransformer;
         }
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(PreviewTransformedDataActionListener.class);
-
     public static final int DEFAULT_PREVIEW_ROWS = 200;
-
+    private static final Logger logger = LoggerFactory.getLogger(PreviewTransformedDataActionListener.class);
     private final TransformerComponentBuilderPresenter _transformerJobBuilderPresenter;
     private final TransformerComponentBuilder<?> _transformerJobBuilder;
     private final WindowContext _windowContext;
     private final int _previewRows;
     private DataSetWindow _latestWindow;
 
-    public PreviewTransformedDataActionListener(WindowContext windowContext,
-            TransformerComponentBuilder<?> transformerJobBuilder) {
+    public PreviewTransformedDataActionListener(final WindowContext windowContext,
+            final TransformerComponentBuilder<?> transformerJobBuilder) {
         this(windowContext, null, transformerJobBuilder);
     }
 
-    public PreviewTransformedDataActionListener(WindowContext windowContext,
-            TransformerComponentBuilderPresenter transformerJobBuilderPresenter,
-            TransformerComponentBuilder<?> transformerJobBuilder) {
+    public PreviewTransformedDataActionListener(final WindowContext windowContext,
+            final TransformerComponentBuilderPresenter transformerJobBuilderPresenter,
+            final TransformerComponentBuilder<?> transformerJobBuilder) {
         this(windowContext, transformerJobBuilderPresenter, transformerJobBuilder, DEFAULT_PREVIEW_ROWS);
     }
 
-    public PreviewTransformedDataActionListener(WindowContext windowContext,
-            TransformerComponentBuilderPresenter transformerJobBuilderPresenter,
-            TransformerComponentBuilder<?> transformerJobBuilder, int previewRows) {
+    public PreviewTransformedDataActionListener(final WindowContext windowContext,
+            final TransformerComponentBuilderPresenter transformerJobBuilderPresenter,
+            final TransformerComponentBuilder<?> transformerJobBuilder, final int previewRows) {
         _windowContext = windowContext;
         _transformerJobBuilderPresenter = transformerJobBuilderPresenter;
         _transformerJobBuilder = transformerJobBuilder;
@@ -99,14 +96,14 @@ public final class PreviewTransformedDataActionListener implements ActionListene
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         // prevent multiple preview windows from the same preview button
-        DataSetWindow existingWindow = _latestWindow;
+        final DataSetWindow existingWindow = _latestWindow;
         if (existingWindow != null) {
             existingWindow.close();
             _latestWindow = null;
         }
-        DataSetWindow window = new DataSetWindow("Preview of transformed dataset", this, _windowContext);
+        final DataSetWindow window = new DataSetWindow("Preview of transformed dataset", this, _windowContext);
         window.open();
         _latestWindow = window;
     }
@@ -125,7 +122,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
                 jobBuilderIdentifier);
         final AnalysisJobBuilder ajb;
         try {
-            final AnalysisJobBuilder copyAnalysisJobBuilder = PreviewUtils.copy(originalAnalysisJobBuilder.getRootJobBuilder());
+            final AnalysisJobBuilder copyAnalysisJobBuilder =
+                    PreviewUtils.copy(originalAnalysisJobBuilder.getRootJobBuilder());
             ajb = PreviewUtils.findAnalysisJobBuilder(copyAnalysisJobBuilder, jobBuilderIdentifier);
         } finally {
             // remove the marker metadata
@@ -143,18 +141,18 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
         // represents if the transformer is already filtered (also may be transitively)
         final boolean alreadyFiltered;
-        
+
         // remove irrelevant source tables
         {
             final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
             sourceColumnFinder.addSources(ajb);
 
-            
+
             final List<Table> tables = ajb.getSourceTables();
             if (tables.size() > 1) {
                 final Table originatingTable = sourceColumnFinder.findOriginatingTable(tjb.getOutputColumns().get(0));
                 tables.remove(originatingTable);
-                for (Table otherTable : tables) {
+                for (final Table otherTable : tables) {
                     ajb.removeSourceTable(otherTable);
                 }
             }
@@ -213,10 +211,10 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         resultFuture.await();
 
         if (resultFuture.isErrornous()) {
-            List<Throwable> errors = resultFuture.getErrors();
-            Throwable firstError = errors.get(0);
+            final List<Throwable> errors = resultFuture.getErrors();
+            final Throwable firstError = errors.get(0);
             logger.error("Error occurred while running preview data job: {}", firstError.getMessage());
-            for (Throwable throwable : errors) {
+            for (final Throwable throwable : errors) {
                 logger.info("Preview data error", throwable);
             }
             if (firstError instanceof Exception) {
@@ -234,7 +232,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         final List<Object[]> rows = result.getList();
         final DefaultTableModel tableModel = new DefaultTableModel(columnNames, rows.size());
         int rowIndex = 0;
-        for (Object[] row : rows) {
+        for (final Object[] row : rows) {
             if (row != null) {
                 for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
                     tableModel.setValueAt(row[columnIndex], rowIndex, columnIndex);
@@ -246,7 +244,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         return tableModel;
     }
 
-    private TransformerComponentBuilder<?> findTransformerComponentBuilder(AnalysisJobBuilder ajb) {
+    private TransformerComponentBuilder<?> findTransformerComponentBuilder(final AnalysisJobBuilder ajb) {
         final AnalysisJobBuilder analysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
         final int transformerIndex = analysisJobBuilder.getTransformerComponentBuilders().indexOf(
                 _transformerJobBuilder);

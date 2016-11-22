@@ -46,7 +46,7 @@ public final class InjectorBuilder {
     private final Injector _parentInjector;
 
     @Inject
-    protected InjectorBuilder(DCModule parentModule, Injector injector) {
+    protected InjectorBuilder(final DCModule parentModule, final Injector injector) {
         _parentModule = parentModule;
         _parentInjector = injector;
         _adHocModule = new AdHocModule();
@@ -55,25 +55,25 @@ public final class InjectorBuilder {
         inherit(Datastore.class);
     }
 
-    public InjectorBuilder with(Class<?> bindingClass, Object providerOrInstance) {
+    public InjectorBuilder with(final Class<?> bindingClass, final Object providerOrInstance) {
         _adHocModule.bind(bindingClass, providerOrInstance);
         return this;
     }
 
-    public InjectorBuilder with(TypeLiteral<?> bindingTypeLiteral, Object providerOrInstance) {
+    public InjectorBuilder with(final TypeLiteral<?> bindingTypeLiteral, final Object providerOrInstance) {
         _adHocModule.bind(bindingTypeLiteral, providerOrInstance);
         return this;
     }
 
-    public InjectorBuilder inherit(Class<?> bindingClass) {
+    public InjectorBuilder inherit(final Class<?> bindingClass) {
         return inherit(Key.get(bindingClass));
     }
 
-    public InjectorBuilder inherit(Key<?> key) {
+    public InjectorBuilder inherit(final Key<?> key) {
         return inherit(key.getTypeLiteral());
     }
 
-    public InjectorBuilder inherit(TypeLiteral<?> typeLiteral) {
+    public InjectorBuilder inherit(final TypeLiteral<?> typeLiteral) {
         if (!_inheritedTypeLiterals.contains(typeLiteral)) {
             _inheritedTypeLiterals.add(typeLiteral);
         }
@@ -82,28 +82,28 @@ public final class InjectorBuilder {
 
     /**
      * Gets an instance of a particular type
-     * 
+     *
      * @param <E>
      * @param type
      * @return
      */
-    public <E> E getInstance(Class<E> type) {
+    public <E> E getInstance(final Class<E> type) {
         return createInjector().getInstance(type);
     }
 
     /**
      * Creates an {@link Injector} which in turn can be used to get instances of
      * various types.
-     * 
+     *
      * Note the the {@link #getInstance(Class)} method is preferred, if only a
      * single injection is to be made.
-     * 
+     *
      * @return a Guice injector
      */
     public Injector createInjector() {
-        for (TypeLiteral<?> typeLiteral : _inheritedTypeLiterals) {
-            Key<?> key = Key.get(typeLiteral);
-            Binding<?> binding = _parentInjector.getExistingBinding(key);
+        for (final TypeLiteral<?> typeLiteral : _inheritedTypeLiterals) {
+            final Key<?> key = Key.get(typeLiteral);
+            final Binding<?> binding = _parentInjector.getExistingBinding(key);
             if (binding != null) {
                 if (!_adHocModule.hasBindingFor(typeLiteral)) {
                     // Bind entry if not already bound in adhoc module!!!
@@ -112,7 +112,7 @@ public final class InjectorBuilder {
             }
         }
 
-        Module module = Modules.override(_parentModule).with(_adHocModule);
+        final Module module = Modules.override(_parentModule).with(_adHocModule);
         return Guice.createInjector(module);
     }
 }

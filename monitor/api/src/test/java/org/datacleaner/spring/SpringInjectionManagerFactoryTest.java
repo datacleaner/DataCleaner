@@ -23,11 +23,11 @@ import javax.inject.Inject;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.configuration.InjectionPoint;
 import org.datacleaner.lifecycle.MemberInjectionPoint;
-import org.apache.metamodel.schema.Table;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringInjectionManagerFactoryTest extends TestCase {
@@ -59,7 +59,7 @@ public class SpringInjectionManagerFactoryTest extends TestCase {
 
     public void testInjectSpringBean() throws Exception {
         try (ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext(
-                "example-spring-injection-manager-context.xml");) {
+                "example-spring-injection-manager-context.xml")) {
 
             InjectionManagerFactory injectionManagerFactory = appCtx.getBean(InjectionManagerFactory.class);
 

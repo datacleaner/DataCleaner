@@ -85,9 +85,9 @@ public class ValueMatchAnalyzer implements Analyzer<ValueMatchAnalyzerResult>, H
     public void init() {
         _totalCount = new AtomicInteger();
         _valueAnnotations = new ConcurrentHashMap<String, RowAnnotation>();
-        for (String value : expectedValues) {
+        for (final String value : expectedValues) {
             final RowAnnotation annotation = _rowAnnotationFactory.createAnnotation();
-            String lookupValue = getLookupValue(value);
+            final String lookupValue = getLookupValue(value);
             _valueAnnotations.put(lookupValue, annotation);
         }
     }
@@ -103,15 +103,15 @@ public class ValueMatchAnalyzer implements Analyzer<ValueMatchAnalyzerResult>, H
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         _totalCount.addAndGet(distinctCount);
-        Object value = row.getValue(column);
+        final Object value = row.getValue(column);
         if (value == null) {
             _rowAnnotationFactory.annotate(row, distinctCount, _nullAnnotation);
         } else {
             final String stringValue = value.toString();
             final String lookupValue = getLookupValue(stringValue);
-            RowAnnotation annotation = _valueAnnotations.get(lookupValue);
+            final RowAnnotation annotation = _valueAnnotations.get(lookupValue);
             if (annotation == null) {
                 _rowAnnotationFactory.annotate(row, distinctCount, _nonMatchingValuesAnnotation);
             } else {
@@ -125,7 +125,7 @@ public class ValueMatchAnalyzer implements Analyzer<ValueMatchAnalyzerResult>, H
         // build a map which doesn't contain "lookup values" but the real
         // values, linked/sorted in the original order.
         final Map<String, RowAnnotation> valueAnnotations = new LinkedHashMap<String, RowAnnotation>();
-        for (String value : expectedValues) {
+        for (final String value : expectedValues) {
             final String lookupValue = getLookupValue(value);
             final RowAnnotation annotation = _valueAnnotations.get(lookupValue);
             valueAnnotations.put(value, annotation);

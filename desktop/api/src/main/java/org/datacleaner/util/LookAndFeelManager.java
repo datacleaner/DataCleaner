@@ -53,9 +53,12 @@ public final class LookAndFeelManager {
     private static final LookAndFeelManager instance = new LookAndFeelManager();
     private static final ImageManager imageManager = ImageManager.get();
 
+    private LookAndFeelManager() {
+    }
+
     /**
      * Gets the singleton instance of LookAndFeelManager.
-     * 
+     *
      * @return
      */
     public static LookAndFeelManager get() {
@@ -64,9 +67,9 @@ public final class LookAndFeelManager {
 
     /**
      * Gets the singleton instance of LookAndFeelManager.
-     * 
+     *
      * @return
-     * 
+     *
      * @deprecated use {@link #get()} instead
      */
     @Deprecated
@@ -74,25 +77,22 @@ public final class LookAndFeelManager {
         return get();
     }
 
-    private LookAndFeelManager() {
-    }
-
     public void init() {
         try {
-            LookAndFeel laf = new PlasticXPLookAndFeel();
+            final LookAndFeel laf = new PlasticXPLookAndFeel();
             UIManager.setLookAndFeel(laf);
             logger.info("Look and feel set to: {}", UIManager.getLookAndFeel());
-        } catch (UnsupportedLookAndFeelException e) {
+        } catch (final UnsupportedLookAndFeelException e) {
             throw new IllegalStateException(e);
         }
 
         UIManager.put("ClassLoader", LookUtils.class.getClassLoader());
 
-        Set<Object> propertyKeys = UIManager.getLookAndFeelDefaults().keySet();
+        final Set<Object> propertyKeys = UIManager.getLookAndFeelDefaults().keySet();
 
-        for (Object propertyKey : propertyKeys) {
+        for (final Object propertyKey : propertyKeys) {
             if (propertyKey instanceof String) {
-                String str = (String) propertyKey;
+                final String str = (String) propertyKey;
 
                 if (str.endsWith(".font")) {
                     // set default font
@@ -107,7 +107,7 @@ public final class LookAndFeelManager {
         ToolTipManager.sharedInstance().setInitialDelay(500);
         PopupFactory.setSharedInstance(new DCPopupFactory());
 
-        EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
+        final EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
         UIManager.put("ScrollPane.border", emptyBorder);
 
         // OptionPane background and Panel background are linked because the
@@ -224,7 +224,7 @@ public final class LookAndFeelManager {
         UIManager.put("ScrollBar.thumbHighlight", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
         UIManager.put("ScrollBar.thumbShadow", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
         UIManager.put("ScrollBar.thumbDarkShadow", WidgetUtils.BG_COLOR_LESS_BRIGHT);
-        UIManager.put("ScrollBar.minimumThumbSize", new Dimension(30,30)); 
+        UIManager.put("ScrollBar.minimumThumbSize", new Dimension(30, 30));
         UIManager.put("ScrollBar.highlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBar.shadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBar.darkShadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
@@ -252,7 +252,7 @@ public final class LookAndFeelManager {
         UIManager.put("JXMonthView.daysOfTheWeekForeground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("JXMonthView.weekOfTheYearForeground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("JXMonthView.unselectableDayForeground", WidgetUtils.BG_COLOR_MEDIUM);
-        
+
         // sets the default font to use in Swing html elements
         GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(WidgetUtils.FONT_NORMAL);
 

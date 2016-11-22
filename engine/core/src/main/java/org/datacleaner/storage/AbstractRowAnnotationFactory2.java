@@ -25,7 +25,7 @@ import org.datacleaner.api.InputRow;
 
 /**
  * Abstract implementation of {@link RowAnnotationSampleContainer}.
- * 
+ *
  * This class is the successor of {@link AbstractRowAnnotationFactory} which was
  * found to be too wasteful in terms of memory usage. A new class was added to
  * allow deserialization of old DataCleaner results, yet this class fully
@@ -40,13 +40,13 @@ public abstract class AbstractRowAnnotationFactory2 implements RowAnnotationFact
     }
 
     @Override
-    public void resetAnnotation(RowAnnotation annotation) {
+    public void resetAnnotation(final RowAnnotation annotation) {
         final RowAnnotationImpl annotationImpl = (RowAnnotationImpl) annotation;
         annotationImpl.resetRowCount();
     }
 
     @Override
-    public void transferAnnotations(RowAnnotation from, RowAnnotation to) {
+    public void transferAnnotations(final RowAnnotation from, final RowAnnotation to) {
         final RowAnnotationImpl fromImpl = (RowAnnotationImpl) from;
         final RowAnnotationImpl toImpl = (RowAnnotationImpl) to;
 
@@ -55,20 +55,20 @@ public abstract class AbstractRowAnnotationFactory2 implements RowAnnotationFact
     }
 
     @Override
-    public void annotate(InputRow row, RowAnnotation annotation) {
+    public void annotate(final InputRow row, final RowAnnotation annotation) {
         final RowAnnotationImpl annotationImpl = (RowAnnotationImpl) annotation;
         annotationImpl.incrementRowCount(1);
     }
 
     @Override
-    public void annotate(InputRow row, int distinctCount, RowAnnotation annotation) {
+    public void annotate(final InputRow row, final int distinctCount, final RowAnnotation annotation) {
         for (int i = 0; i < distinctCount; i++) {
             annotate(row, annotation);
         }
     }
 
     @Override
-    public boolean hasSampleRows(RowAnnotation annotation) {
+    public boolean hasSampleRows(final RowAnnotation annotation) {
         final List<InputRow> sampleRows = getSampleRows(annotation);
         if (sampleRows == null || sampleRows.isEmpty()) {
             return false;

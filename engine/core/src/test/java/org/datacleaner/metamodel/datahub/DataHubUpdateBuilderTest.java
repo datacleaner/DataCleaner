@@ -128,7 +128,8 @@ public class DataHubUpdateBuilderTest {
     @Test
     public void shouldThrowForIllegalUpdateColumn() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Updates are not allowed on fields containing meta data, identified by the prefix \" _\".");
+        thrown.expectMessage(
+                "Updates are not allowed on fields containing meta data, identified by the prefix \" _\".");
         Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
         final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
                 OperatorType.EQUALS_TO, "123");
@@ -141,7 +142,8 @@ public class DataHubUpdateBuilderTest {
     @Test
     public void shouldThrowForNonExistingUpdateColumn() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("No such column in table: Column[name=nonsense,columnNumber=0,type=CHAR,nullable=null,nativeType=null,columnSize=null]");
+        thrown.expectMessage(
+                "No such column in table: Column[name=nonsense,columnNumber=0,type=CHAR,nullable=null,nativeType=null,columnSize=null]");
         Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
         final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
                 OperatorType.EQUALS_TO, "123");

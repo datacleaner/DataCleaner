@@ -29,32 +29,32 @@ import org.datacleaner.util.ApiStringUtils;
  */
 public abstract class AbstractComponentCategory implements ComponentCategory {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public String getName() {
-		String simpleName = getClass().getSimpleName();
-		if (simpleName.endsWith("Category")) {
-			simpleName = simpleName.substring(0, simpleName.length() - "Category".length());
-		}
-		return ApiStringUtils.explodeCamelCase(simpleName, false);
-	}
+    @Override
+    public String getName() {
+        String simpleName = getClass().getSimpleName();
+        if (simpleName.endsWith("Category")) {
+            simpleName = simpleName.substring(0, simpleName.length() - "Category".length());
+        }
+        return ApiStringUtils.explodeCamelCase(simpleName, false);
+    }
 
-	@Override
-	public final boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		return getClass().equals(obj.getClass());
-	}
+    @Override
+    public final boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        return getClass().equals(obj.getClass());
+    }
 
-	@Override
-	public final int hashCode() {
-		return getClass().hashCode();
-	}
-	
-	@Override
-	public final String toString() {
-		return getName();
-	}
+    @Override
+    public final int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public final String toString() {
+        return getName();
+    }
 }

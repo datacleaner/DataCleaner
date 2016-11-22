@@ -43,22 +43,22 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 
 public class AddAlertCommand implements Command {
- 
-	private ScheduleDefinition _schedule;
-	private SchedulingServiceAsync _service;
-	private DCPopupPanel _morePopup;
-	private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
-	
-	public AddAlertCommand(ScheduleDefinition schedule,SchedulingServiceAsync service, DCPopupPanel morePopup) {
-		_schedule = schedule;
-		_service = service;
-		_morePopup = morePopup;
-	}
-	
-	@Override
-	public void execute() {
-		_morePopup.hide();
-		final JobIdentifier job = _schedule.getJob();
+
+    private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
+    private ScheduleDefinition _schedule;
+    private SchedulingServiceAsync _service;
+    private DCPopupPanel _morePopup;
+
+    public AddAlertCommand(final ScheduleDefinition schedule, final SchedulingServiceAsync service, final DCPopupPanel morePopup) {
+        _schedule = schedule;
+        _service = service;
+        _morePopup = morePopup;
+    }
+
+    @Override
+    public void execute() {
+        _morePopup.hide();
+        final JobIdentifier job = _schedule.getJob();
         final TenantIdentifier tenant = _schedule.getTenant();
 
         descriptorService.getJobMetrics(tenant, job, new DCAsyncCallback<JobMetrics>() {
@@ -69,10 +69,10 @@ public class AddAlertCommand implements Command {
                 final DCPopupPanel popup = new DCPopupPanel("Create alert: Define metric to monitor");
                 final Button nextButton = DCButtons.primaryButton("glyphicon-menu-right", "Next");
                 final CancelPopupButton cancelButton = new CancelPopupButton(popup);
-                
+
                 nextButton.addClickHandler(new ClickHandler() {
                     @Override
-                    public void onClick(ClickEvent event) {
+                    public void onClick(final ClickEvent event) {
                         final MetricIdentifier metric = defineMetricPanel.getMetric();
 
                         final AlertDefinition alert = new AlertDefinition();
@@ -80,19 +80,19 @@ public class AddAlertCommand implements Command {
                         final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(tenant, job, alert,
                                 jobMetrics);
 
-                        final Button saveButton =  DCButtons.primaryButton("glyphicon-save", "Save");
+                        final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
                         saveButton.addClickHandler(new ClickHandler() {
                             @Override
-                            public void onClick(ClickEvent event) {
+                            public void onClick(final ClickEvent event) {
                                 popup.setHeader("Create alert: Select alerting criteria");
-                                AlertDefinition alert = customizeAlertPanel.updateAlert();
+                                final AlertDefinition alert = customizeAlertPanel.updateAlert();
                                 _schedule.getAlerts().add(alert);
                                 _service.updateSchedule(tenant, _schedule, new DCAsyncCallback<ScheduleDefinition>() {
                                     @Override
-                                    public void onSuccess(ScheduleDefinition result) {
+                                    public void onSuccess(final ScheduleDefinition result) {
                                         GWT.log("Succesfully added alert in schedule: " + result);
                                         Window.Location.reload();
-                                        
+
                                     }
                                 });
                             }
@@ -105,7 +105,7 @@ public class AddAlertCommand implements Command {
                         popup.center();
                     }
                 });
-                
+
                 popup.setWidget(defineMetricPanel);
                 popup.addButton(nextButton);
                 popup.addButton(cancelButton);
@@ -114,6 +114,6 @@ public class AddAlertCommand implements Command {
             }
         });
 
-	}
+    }
 
 }

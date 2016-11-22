@@ -30,6 +30,6 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
  */
 public interface SlaveJobInterceptor {
 
-    public void intercept(AnalysisJobBuilder jobBuilder, DataCleanerConfiguration configuration);
+    void intercept(AnalysisJobBuilder jobBuilder, DataCleanerConfiguration configuration);
 
 }

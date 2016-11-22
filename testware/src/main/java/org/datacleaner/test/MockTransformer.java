@@ -44,20 +44,20 @@ public class MockTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow inputRow) {
-        Object value = inputRow.getValue(input);
+    public String[] transform(final InputRow inputRow) {
+        final Object value = inputRow.getValue(input);
 
         componentContext.publishMessage(new MockTransformerMessage("Mocking: " + value, input));
 
         return new String[] { "mocked: " + value };
     }
 
-    public void setInput(InputColumn<?> input) {
-        this.input = input;
-    }
-
     public InputColumn<?> getInput() {
         return input;
     }
-    
+
+    public void setInput(final InputColumn<?> input) {
+        this.input = input;
+    }
+
 }

@@ -19,11 +19,7 @@
  */
 package org.datacleaner.test.full.scenarios;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -61,8 +57,8 @@ public class JobWithOutputDataStreamsTest {
     private DataCleanerEnvironment environment = TestEnvironment.getEnvironment();
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
             .withEnvironment(environment);
-    
-    @Test(timeout=30*1000)
+
+    @Test(timeout = 30 * 1000)
     public void testSimpleBuildAndExecuteScenario() throws Throwable {
         final AnalysisJob job;
         try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
@@ -150,7 +146,8 @@ public class JobWithOutputDataStreamsTest {
 
         final byte[] serialized = SerializationUtils.serialize(new SimpleAnalysisResult(resultFuture.getResultMap()));
 
-        final SimpleAnalysisResult deSerializedResult = (SimpleAnalysisResult) SerializationUtils.deserialize(serialized);
+        final SimpleAnalysisResult deSerializedResult =
+                (SimpleAnalysisResult) SerializationUtils.deserialize(serialized);
 
         // the first result should be trivial - it was also there before issue
         // #224

@@ -19,13 +19,13 @@
  */
 package org.datacleaner.widgets;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
 import org.datacleaner.Version;
 import org.datacleaner.panels.RightInformationPanel;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class CommunityEditionStatusLabelTest {
     CommunityEditionStatusLabel _label;

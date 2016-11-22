@@ -33,19 +33,19 @@ public class JsonParserFunction implements Function<String, Object[]> {
     private final JsonDatastore _jsonDatastore;
     private Column[] _columns;
 
-    public JsonParserFunction(JsonDatastore jsonDatastore) {
+    public JsonParserFunction(final JsonDatastore jsonDatastore) {
         _jsonDatastore = jsonDatastore;
     }
 
     @Override
-    public Object[] call(String line) throws Exception {
+    public Object[] call(final String line) throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode readTree = mapper.readTree(line);
         final Object[] values = getValues(readTree);
         return values;
     }
 
-    private Object[] getValues(JsonNode readTree) {
+    private Object[] getValues(final JsonNode readTree) {
         final Column[] columns = getColumns();
         final Object[] list = new Object[columns.length];
         for (int i = 0; i < columns.length; i++) {

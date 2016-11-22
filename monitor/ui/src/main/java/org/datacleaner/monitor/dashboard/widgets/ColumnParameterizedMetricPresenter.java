@@ -43,8 +43,8 @@ public class ColumnParameterizedMetricPresenter implements MetricPresenter {
     private final FlowPanel _panel;
     private final List<MetricIdentifier> _selectedMetrics;
 
-    public ColumnParameterizedMetricPresenter(MetricIdentifier metricIdentifier, List<MetricIdentifier> activeMetrics,
-            MetricGroup metricGroup) {
+    public ColumnParameterizedMetricPresenter(final MetricIdentifier metricIdentifier, final List<MetricIdentifier> activeMetrics,
+            final MetricGroup metricGroup) {
         _metricIdentifier = metricIdentifier;
         _activeMetrics = activeMetrics;
         _metricGroup = metricGroup;
@@ -55,11 +55,11 @@ public class ColumnParameterizedMetricPresenter implements MetricPresenter {
         _panel.add(new Label(_metricIdentifier.getMetricDescriptorName() + ":"));
 
         final List<String> columnNames = _metricGroup.getColumnNames();
-        for (String columnName : columnNames) {
+        for (final String columnName : columnNames) {
             // create a copy of the metric for each column name
-            MetricIdentifier clone = _metricIdentifier.copy();
+            final MetricIdentifier clone = _metricIdentifier.copy();
             clone.setParamColumnName(columnName);
-            Widget widget = createMetricWidget(clone);
+            final Widget widget = createMetricWidget(clone);
             _panel.add(widget);
         }
     }
@@ -72,12 +72,12 @@ public class ColumnParameterizedMetricPresenter implements MetricPresenter {
         } else {
             metricToReturn = activeMetric;
         }
-        
+
         final CheckBox checkBox = new CheckBox();
         checkBox.setTitle(metric.getDisplayName());
         checkBox.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 if (checkBox.getValue().booleanValue()) {
                     _selectedMetrics.add(metricToReturn);
                 } else {
@@ -85,7 +85,7 @@ public class ColumnParameterizedMetricPresenter implements MetricPresenter {
                 }
             }
         });
-        
+
         if (activeMetric == null) {
             checkBox.setValue(false);
         } else {
@@ -95,8 +95,8 @@ public class ColumnParameterizedMetricPresenter implements MetricPresenter {
         return checkBox;
     }
 
-    private MetricIdentifier isActiveMetric(MetricIdentifier metric) {
-        for (MetricIdentifier activeMetric : _activeMetrics) {
+    private MetricIdentifier isActiveMetric(final MetricIdentifier metric) {
+        for (final MetricIdentifier activeMetric : _activeMetrics) {
             if (activeMetric.equalsIgnoreCustomizedDetails(metric)) {
                 return activeMetric;
             }

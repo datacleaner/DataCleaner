@@ -26,12 +26,12 @@ import org.datacleaner.job.AnalysisJob;
  * Defines the context information related to the distributed execution of a partial job.
  */
 public interface DistributedJobContext {
-    
-    public DataCleanerConfiguration getMasterConfiguration();
 
-    public AnalysisJob getMasterJob();
-    
-    public int getJobDivisionCount();
-    
-    public int getJobDivisionIndex();
+    DataCleanerConfiguration getMasterConfiguration();
+
+    AnalysisJob getMasterJob();
+
+    int getJobDivisionCount();
+
+    int getJobDivisionIndex();
 }

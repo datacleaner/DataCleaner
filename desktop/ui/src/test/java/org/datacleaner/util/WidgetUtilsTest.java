@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 public class WidgetUtilsTest extends TestCase {
 
     public void testLoadFonts() throws Exception {
-    	// One space on Windows, no spaces on Mac, ? spaces on Linux
+        // One space on Windows, no spaces on Mac, ? spaces on Linux
         assertTrue(WidgetUtils.FONT_HEADER1.getName().matches("Muli( *)Light"));
     }
 }

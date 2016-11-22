@@ -39,8 +39,8 @@ public class CreateExcelSpreadsheetAnalyzerSwingRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> ajb) {
-        Class<CreateExcelSpreadsheetAnalyzer> componentClass = ajb.getDescriptor().getComponentClass();
+    public RendererPrecedence getPrecedence(final AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> ajb) {
+        final Class<CreateExcelSpreadsheetAnalyzer> componentClass = ajb.getDescriptor().getComponentClass();
         if (componentClass == CreateExcelSpreadsheetAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -48,7 +48,7 @@ public class CreateExcelSpreadsheetAnalyzerSwingRenderer implements
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> ajb) {
+    public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> ajb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
                 PropertyWidgetFactory.class);
         return new CustomHeaderColumnNamesAnalyzerJobPanel(ajb, propertyWidgetFactory);

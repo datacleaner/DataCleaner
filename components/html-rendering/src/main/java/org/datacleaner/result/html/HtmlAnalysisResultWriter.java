@@ -66,29 +66,30 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
         this(true);
     }
 
-    public HtmlAnalysisResultWriter(boolean tabs) {
+    public HtmlAnalysisResultWriter(final boolean tabs) {
         this(tabs, new TruePredicate<Entry<ComponentJob, AnalyzerResult>>());
     }
 
-    public HtmlAnalysisResultWriter(boolean tabs, Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate) {
+    public HtmlAnalysisResultWriter(final boolean tabs,
+            final Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate) {
         this(tabs, jobInclusionPredicate, true);
     }
 
-    public HtmlAnalysisResultWriter(boolean tabs, Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate,
-            boolean headers) {
+    public HtmlAnalysisResultWriter(final boolean tabs, final Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate,
+            final boolean headers) {
         _tabs = tabs;
         _jobInclusionPredicate = jobInclusionPredicate;
         _headers = headers;
     }
 
     @Override
-    public void write(AnalysisResult result, DataCleanerConfiguration configuration, Ref<Writer> writerRef,
-            Ref<OutputStream> outputStreamRef) throws IOException {
+    public void write(final AnalysisResult result, final DataCleanerConfiguration configuration, final Ref<Writer> writerRef,
+            final Ref<OutputStream> outputStreamRef) throws IOException {
         final Writer writer = writerRef.get();
         write(result, configuration, writer);
     }
 
-    public void write(AnalysisResult result, DataCleanerConfiguration configuration, Writer writer)
+    public void write(final AnalysisResult result, final DataCleanerConfiguration configuration, final Writer writer)
             throws IOException {
         final HtmlRenderingContext context = new DefaultHtmlRenderingContext();
 
@@ -98,7 +99,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
                 new ComponentJobComparator());
         resultMap.putAll(result.getResultMap());
 
-        for (Entry<ComponentJob, AnalyzerResult> entry : resultMap.entrySet()) {
+        for (final Entry<ComponentJob, AnalyzerResult> entry : resultMap.entrySet()) {
             final ComponentJob componentJob = entry.getKey();
             final AnalyzerResult analyzerResult = entry.getValue();
 
@@ -115,7 +116,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
                     final HtmlFragment htmlFragment = renderer.render(analyzerResult);
                     htmlFragment.initialize(localContext);
                     htmlFragments.put(componentJob, htmlFragment);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.error("Error while rendering analyzer result: " + analyzerResult, e);
                     writeRenderingError(writer, componentJob, analyzerResult, e);
                 }
@@ -131,16 +132,16 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
         writeHtmlEnd(writer, context);
     }
 
-    private void writeMaterializationError(Writer writer, ComponentJob componentJob, Exception e) throws IOException {
+    private void writeMaterializationError(final Writer writer, final ComponentJob componentJob, final Exception e) throws IOException {
         writeGenericError(writer, componentJob, null, e);
     }
 
-    private void writeRenderingError(Writer writer, ComponentJob componentJob, AnalyzerResult analyzerResult,
-            Exception e) throws IOException {
+    private void writeRenderingError(final Writer writer, final ComponentJob componentJob, final AnalyzerResult analyzerResult,
+            final Exception e) throws IOException {
         writeGenericError(writer, componentJob, analyzerResult, e);
     }
 
-    private void writeGenericError(Writer writer, ComponentJob componentJob, AnalyzerResult analyzerResult, Exception e)
+    private void writeGenericError(final Writer writer, final ComponentJob componentJob, final AnalyzerResult analyzerResult, final Exception e)
             throws IOException {
         writer.write("<div class=\"error\">");
         writer.write("<p>Component job: " + LabelUtils.getLabel(componentJob) + "</p>");
@@ -148,23 +149,23 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
             writer.write("<p>Analyzer result: " + analyzerResult + "</p>");
         }
         writer.write("<pre>");
-        PrintWriter printWriter = new PrintWriter(writer);
+        final PrintWriter printWriter = new PrintWriter(writer);
         e.printStackTrace(printWriter);
         writer.write("</pre>");
         writer.write("</div>");
     }
 
-    protected void writeHtmlBegin(Writer writer, HtmlRenderingContext context) throws IOException {
+    protected void writeHtmlBegin(final Writer writer, final HtmlRenderingContext context) throws IOException {
         writer.write("<!DOCTYPE html>\n");
         writer.write("<html>\n");
     }
 
-    protected void writeHtmlEnd(Writer writer, HtmlRenderingContext context) throws IOException {
+    protected void writeHtmlEnd(final Writer writer, final HtmlRenderingContext context) throws IOException {
         writer.write("</html>");
     }
 
     protected void writeHead(final Writer writer, final Map<ComponentJob, HtmlFragment> htmlFragments,
-            HtmlRenderingContext context) throws IOException {
+            final HtmlRenderingContext context) throws IOException {
         final Set<HeadElement> allHeadElements = new HashSet<HeadElement>();
 
         writeHeadBegin(writer);
@@ -176,10 +177,10 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
             allHeadElements.add(baseHeadElement);
         }
 
-        for (Entry<ComponentJob, HtmlFragment> entry : htmlFragments.entrySet()) {
+        for (final Entry<ComponentJob, HtmlFragment> entry : htmlFragments.entrySet()) {
             final HtmlFragment htmlFragment = entry.getValue();
             final List<HeadElement> headElements = htmlFragment.getHeadElements();
-            for (HeadElement headElement : headElements) {
+            for (final HeadElement headElement : headElements) {
                 if (!allHeadElements.contains(headElement)) {
                     final ComponentJob componentJob = entry.getKey();
                     writeHeadElement(writer, componentJob, headElement, context);
@@ -195,24 +196,24 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
         return new BaseHeadElement();
     }
 
-    protected void writeHeadBegin(Writer writer) throws IOException {
+    protected void writeHeadBegin(final Writer writer) throws IOException {
         writer.write("<head>\n");
         writer.write("  <title>Analysis result</title>");
     }
 
-    protected void writeHeadEnd(Writer writer) throws IOException {
+    protected void writeHeadEnd(final Writer writer) throws IOException {
         writer.write("</head>");
     }
 
-    protected void writeHeadElement(Writer writer, ComponentJob componentJob, HeadElement headElement,
-            HtmlRenderingContext context) throws IOException {
+    protected void writeHeadElement(final Writer writer, final ComponentJob componentJob, final HeadElement headElement,
+            final HtmlRenderingContext context) throws IOException {
         final HtmlRenderingContext localContext = new ComponentHtmlRenderingContext(context, componentJob);
 
         writer.write("  ");
         try {
-            String html = headElement.toHtml(localContext);
+            final String html = headElement.toHtml(localContext);
             writer.write(html);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             writeMaterializationError(writer, componentJob, e);
         }
         writer.write('\n');
@@ -231,14 +232,15 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
             {
                 writer.write("<ul class=\"analysisResultToc\">");
                 ComponentDescriptor<?> lastDescriptor = null;
-                for (Entry<ComponentJob, HtmlFragment> entry : htmlFragmentSet) {
+                for (final Entry<ComponentJob, HtmlFragment> entry : htmlFragmentSet) {
                     final ComponentJob componentJob = entry.getKey();
                     final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
                     if (!descriptor.equals(lastDescriptor)) {
-                        final ComponentDocumentationWrapper wrapper = new ComponentDocumentationWrapper(descriptor); 
+                        final ComponentDocumentationWrapper wrapper = new ComponentDocumentationWrapper(descriptor);
                         final String iconSrc = wrapper.getIconSrc(IconUtils.ICON_SIZE_MEDIUM);
                         final String styleName = toStyleName(descriptor.getDisplayName());
-                        writer.write("<li style=\"background-image: url(" + iconSrc + ")\"><a href=\"#analysisResultDescriptorGroup_"
+                        writer.write("<li style=\"background-image: url(" + iconSrc
+                                + ")\"><a href=\"#analysisResultDescriptorGroup_"
                                 + styleName + "\">");
                         writer.write(context.escapeHtml(descriptor.getDisplayName()));
                         writer.write("</a></li>");
@@ -256,7 +258,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
         {
             boolean descriptorGroupBegin = false;
             ComponentDescriptor<?> lastDescriptor = null;
-            for (Entry<ComponentJob, HtmlFragment> entry : htmlFragmentSet) {
+            for (final Entry<ComponentJob, HtmlFragment> entry : htmlFragmentSet) {
                 final ComponentJob componentJob = entry.getKey();
                 final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
                 final HtmlFragment htmlFragment = entry.getValue();
@@ -286,17 +288,17 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
         writeBodyEnd(writer, context);
     }
 
-    protected void writeBodyBegin(Writer writer, HtmlRenderingContext context) throws IOException {
+    protected void writeBodyBegin(final Writer writer, final HtmlRenderingContext context) throws IOException {
         writer.write("<body>\n");
         writer.write("<div class=\"analysisResultContainer\">\n");
     }
 
-    protected void writeBodyEnd(Writer writer, HtmlRenderingContext context) throws IOException {
+    protected void writeBodyEnd(final Writer writer, final HtmlRenderingContext context) throws IOException {
         writer.write("</div>\n");
         writer.write("</body>");
     }
 
-    protected void writeBodyHtmlFragment(Writer writer, ComponentJob componentJob, HtmlFragment htmlFragment,
+    protected void writeBodyHtmlFragment(final Writer writer, final ComponentJob componentJob, final HtmlFragment htmlFragment,
             final HtmlRenderingContext context) throws IOException {
         final String displayName = componentJob.getDescriptor().getDisplayName();
         final String styleName = toStyleName(displayName);
@@ -308,7 +310,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
         writer.write("<div class=\"analyzerResultContent\">\n");
 
         final List<BodyElement> bodyElements = htmlFragment.getBodyElements();
-        for (BodyElement bodyElement : bodyElements) {
+        for (final BodyElement bodyElement : bodyElements) {
             writeBodyElement(writer, componentJob, htmlFragment, bodyElement, context);
         }
 
@@ -317,29 +319,29 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
         writer.write("</div>\n");
     }
 
-    protected void writeHeader(Writer writer, ComponentJob componentJob, HtmlRenderingContext context,
-            HtmlFragment htmlFragment) throws IOException {
+    protected void writeHeader(final Writer writer, final ComponentJob componentJob, final HtmlRenderingContext context,
+            final HtmlFragment htmlFragment) throws IOException {
         final String label = LabelUtils.getLabel(componentJob);
         writer.write("<div class=\"analyzerResultHeader\">");
         writer.write("<h2>" + context.escapeHtml(label) + "</h2>");
         writer.write("</div>");
     }
 
-    protected String toStyleName(String displayName) {
+    protected String toStyleName(final String displayName) {
         final String camelCase = StringUtils.toCamelCase(displayName);
         final String cleaned = camelCase.replaceAll("/", "_").replaceAll("&", "_");
         return cleaned;
     }
 
-    protected void writeBodyElement(Writer writer, ComponentJob componentJob, HtmlFragment htmlFragment,
-            BodyElement bodyElement, final HtmlRenderingContext context) throws IOException {
+    protected void writeBodyElement(final Writer writer, final ComponentJob componentJob, final HtmlFragment htmlFragment,
+            final BodyElement bodyElement, final HtmlRenderingContext context) throws IOException {
         final HtmlRenderingContext localContext = new ComponentHtmlRenderingContext(context, componentJob);
 
         writer.write("  ");
         try {
-            String html = bodyElement.toHtml(localContext);
+            final String html = bodyElement.toHtml(localContext);
             writer.write(html);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             writeMaterializationError(writer, componentJob, e);
         }
         writer.write('\n');

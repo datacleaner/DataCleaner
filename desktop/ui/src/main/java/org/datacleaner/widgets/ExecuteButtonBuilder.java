@@ -49,7 +49,7 @@ public class ExecuteButtonBuilder {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final AnalysisJobBuilderWindow _window;
 
-    public ExecuteButtonBuilder(AnalysisJobBuilderWindow window) {
+    public ExecuteButtonBuilder(final AnalysisJobBuilderWindow window) {
         _window = window;
         _analysisJobBuilder = window.getAnalysisJobBuilder();
 
@@ -59,7 +59,7 @@ public class ExecuteButtonBuilder {
 
         _mainButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 execute(_analysisJobBuilder);
             }
         });
@@ -71,12 +71,12 @@ public class ExecuteButtonBuilder {
 
                 final Action<AnalysisJobBuilder> executeAction = new Action<AnalysisJobBuilder>() {
                     @Override
-                    public void run(AnalysisJobBuilder jobBuilder) throws Exception {
+                    public void run(final AnalysisJobBuilder jobBuilder) throws Exception {
                         execute(jobBuilder);
                     }
                 };
                 final List<ExecutionMenuItem> menuItems = ExecuteButtonOptions.getMenuItems();
-                for (ExecutionMenuItem item : menuItems) {
+                for (final ExecutionMenuItem item : menuItems) {
                     if (item instanceof ExecuteButtonOptions.Separator) {
                         menu.addSeparator();
                     } else {
@@ -98,12 +98,12 @@ public class ExecuteButtonBuilder {
         });
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         _mainButton.setEnabled(enabled);
         _alternativesButton.setEnabled(enabled);
     }
 
-    public void addComponentsToToolbar(JToolBar toolBar) {
+    public void addComponentsToToolbar(final JToolBar toolBar) {
         toolBar.add(_mainButton);
         toolBar.add(DCLabel.bright("|"));
         toolBar.add(_alternativesButton);
@@ -115,7 +115,7 @@ public class ExecuteButtonBuilder {
             if (analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders().isEmpty()) {
                 // Present choices to user to write file somewhere,
                 // and then run a copy of the job based on that.
-                ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
+                final ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
                         dcModule, _window.getWindowContext(), analysisJobBuilder, _window.getUserPreferences());
                 executeJobWithoutAnalyzersPanel.open();
                 return;

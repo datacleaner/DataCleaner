@@ -43,7 +43,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of an analyzer
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -57,7 +57,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of an component with video link
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -71,7 +71,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of a pretty simple filter
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -85,7 +85,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of a pretty simple transformer
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -99,7 +99,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of an advanced transformer
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -113,7 +113,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of an analyzer with mapped properties and enums
-     * 
+     *
      * @throws Exception
      */
     @Test

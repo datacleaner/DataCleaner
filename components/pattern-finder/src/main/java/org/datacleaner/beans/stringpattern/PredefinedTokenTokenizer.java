@@ -29,74 +29,74 @@ import java.util.regex.Pattern;
 
 public class PredefinedTokenTokenizer implements Tokenizer {
 
-	private List<PredefinedTokenDefinition> _predefinedTokenDefitions;
+    private List<PredefinedTokenDefinition> _predefinedTokenDefitions;
 
-	public PredefinedTokenTokenizer(PredefinedTokenDefinition... predefinedTokenDefinitions) {
-		_predefinedTokenDefitions = new LinkedList<PredefinedTokenDefinition>();
-		for (PredefinedTokenDefinition predefinedToken : predefinedTokenDefinitions) {
-			_predefinedTokenDefitions.add(predefinedToken);
-		}
-	}
+    public PredefinedTokenTokenizer(final PredefinedTokenDefinition... predefinedTokenDefinitions) {
+        _predefinedTokenDefitions = new LinkedList<PredefinedTokenDefinition>();
+        for (final PredefinedTokenDefinition predefinedToken : predefinedTokenDefinitions) {
+            _predefinedTokenDefitions.add(predefinedToken);
+        }
+    }
 
-	public PredefinedTokenTokenizer(List<PredefinedTokenDefinition> predefinedTokenDefinitions) {
-		_predefinedTokenDefitions = predefinedTokenDefinitions;
-	}
+    public PredefinedTokenTokenizer(final List<PredefinedTokenDefinition> predefinedTokenDefinitions) {
+        _predefinedTokenDefitions = predefinedTokenDefinitions;
+    }
 
-	/**
-	 * Will only return either tokens with type PREDEFINED or UNDEFINED
-	 */
-	@Override
-	public List<Token> tokenize(String s) {
-		List<Token> result = new ArrayList<Token>();
-		result.add(new UndefinedToken(s));
+    protected static List<Token> tokenizeInternal(String string, final PredefinedTokenDefinition predefinedTokenDefinition,
+            final Pattern pattern) {
+        final LinkedList<Token> result = new LinkedList<Token>();
+        result.add(new UndefinedToken(string));
 
-		for (PredefinedTokenDefinition predefinedTokenDefinition : _predefinedTokenDefitions) {
-			Set<Pattern> patterns = predefinedTokenDefinition.getTokenRegexPatterns();
-			for (Pattern pattern : patterns) {
-				for (ListIterator<Token> it = result.listIterator(); it.hasNext();) {
-					Token token = it.next();
-					if (token instanceof UndefinedToken) {
-						List<Token> replacementTokens = tokenizeInternal(token.getString(), predefinedTokenDefinition,
-								pattern);
-						if (replacementTokens.size() > 1) {
-							it.remove();
-							for (Token newToken : replacementTokens) {
-								it.add(newToken);
-							}
-						}
-					}
-				}
-			}
-		}
+        for (Matcher matcher = pattern.matcher(string); matcher.find(); matcher = pattern.matcher(string)) {
 
-		return result;
-	}
+            final int start = matcher.start();
+            final int end = matcher.end();
 
-	protected static List<Token> tokenizeInternal(String string, PredefinedTokenDefinition predefinedTokenDefinition,
-			Pattern pattern) {
-		LinkedList<Token> result = new LinkedList<Token>();
-		result.add(new UndefinedToken(string));
+            result.removeLast();
 
-		for (Matcher matcher = pattern.matcher(string); matcher.find(); matcher = pattern.matcher(string)) {
+            if (start > 0) {
+                result.add(new UndefinedToken(string.substring(0, start)));
+            }
+            result.add(new PredefinedToken(predefinedTokenDefinition, string.substring(start, end)));
 
-			int start = matcher.start();
-			int end = matcher.end();
+            if (end == string.length()) {
+                break;
+            }
 
-			result.removeLast();
+            string = string.substring(end);
+            result.add(new UndefinedToken(string));
+        }
 
-			if (start > 0) {
-				result.add(new UndefinedToken(string.substring(0, start)));
-			}
-			result.add(new PredefinedToken(predefinedTokenDefinition, string.substring(start, end)));
+        return result;
+    }
 
-			if (end == string.length()) {
-				break;
-			}
+    /**
+     * Will only return either tokens with type PREDEFINED or UNDEFINED
+     */
+    @Override
+    public List<Token> tokenize(final String s) {
+        final List<Token> result = new ArrayList<Token>();
+        result.add(new UndefinedToken(s));
 
-			string = string.substring(end);
-			result.add(new UndefinedToken(string));
-		}
+        for (final PredefinedTokenDefinition predefinedTokenDefinition : _predefinedTokenDefitions) {
+            final Set<Pattern> patterns = predefinedTokenDefinition.getTokenRegexPatterns();
+            for (final Pattern pattern : patterns) {
+                for (final ListIterator<Token> it = result.listIterator(); it.hasNext(); ) {
+                    final Token token = it.next();
+                    if (token instanceof UndefinedToken) {
+                        final List<Token> replacementTokens = tokenizeInternal(token.getString(), predefinedTokenDefinition,
+                                pattern);
+                        if (replacementTokens.size() > 1) {
+                            it.remove();
+                            for (final Token newToken : replacementTokens) {
+                                it.add(newToken);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

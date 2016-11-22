@@ -25,6 +25,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.HasName;
+import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.SchemaFactory;
@@ -33,9 +36,6 @@ import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.MongoDbDatastoreDialog;
 import org.datacleaner.windows.TableDefinitionDialog;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.HasName;
-import org.apache.metamodel.util.SimpleTableDef;
 
 /**
  * A widget used for selecting whether to automatically discover or to manually
@@ -44,96 +44,94 @@ import org.apache.metamodel.util.SimpleTableDef;
  */
 public class TableDefinitionOptionSelectionPanel extends DCPanel {
 
-	private static final long serialVersionUID = 1L;
+    public enum TableDefinitionOption implements HasName {
+        AUTOMATIC, MANUAL;
 
-	public static enum TableDefinitionOption implements HasName {
-		AUTOMATIC, MANUAL;
+        @Override
+        public String getName() {
+            if (this == AUTOMATIC) {
+                return "Automatic discovery";
+            }
+            return "Manual definition";
+        }
+    }
+    private static final long serialVersionUID = 1L;
+    private final DCComboBox<TableDefinitionOption> _comboBox;
+    private final JButton _configureButton;
+    private final DCLabel _label;
+    private final WindowContext _windowContext;
+    private final Action<SimpleTableDef[]> _saveAction;
+    private SimpleTableDef[] _tableDefs;
 
-		@Override
-		public String getName() {
-			if (this == AUTOMATIC) {
-				return "Automatic discovery";
-			}
-			return "Manual definition";
-		}
-	}
+    public TableDefinitionOptionSelectionPanel(final WindowContext windowContext, final SchemaFactory schemaFactory,
+            final SimpleTableDef[] tableDefs) {
+        super();
+        _windowContext = windowContext;
+        _tableDefs = tableDefs;
+        _label = DCLabel.bright("Loading...");
 
-	private final DCComboBox<TableDefinitionOption> _comboBox;
-	private final JButton _configureButton;
-	private final DCLabel _label;
-	private final WindowContext _windowContext;
-	private final Action<SimpleTableDef[]> _saveAction;
-	private SimpleTableDef[] _tableDefs;
+        _saveAction = new Action<SimpleTableDef[]>() {
+            @Override
+            public void run(final SimpleTableDef[] tableDefs) throws Exception {
+                setTableDefs(tableDefs);
+            }
+        };
 
-	public TableDefinitionOptionSelectionPanel(WindowContext windowContext, final SchemaFactory schemaFactory,
-			SimpleTableDef[] tableDefs) {
-		super();
-		_windowContext = windowContext;
-		_tableDefs = tableDefs;
-		_label = DCLabel.bright("Loading...");
+        _comboBox = new DCComboBox<TableDefinitionOption>(TableDefinitionOption.values());
+        _comboBox.setRenderer(new EnumComboBoxListRenderer());
+        _configureButton = WidgetFactory.createSmallButton("images/menu/options.png");
+        _configureButton.setText("Define");
 
-		_saveAction = new Action<SimpleTableDef[]>() {
-			@Override
-			public void run(SimpleTableDef[] tableDefs) throws Exception {
-				setTableDefs(tableDefs);
-			}
-		};
+        _configureButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final TableDefinitionDialog dialog = new TableDefinitionDialog(_windowContext, schemaFactory, _tableDefs,
+                        _saveAction);
+                dialog.setVisible(true);
+            }
+        });
+        if (tableDefs != null && tableDefs.length > 0) {
+            _comboBox.setSelectedItem(TableDefinitionOption.MANUAL);
+        } else {
+            _comboBox.setSelectedItem(TableDefinitionOption.AUTOMATIC);
+        }
+        _comboBox.addListener(new Listener<TableDefinitionOptionSelectionPanel.TableDefinitionOption>() {
+            @Override
+            public void onItemSelected(final TableDefinitionOption item) {
+                updateComponents();
+            }
+        });
+        updateComponents();
 
-		_comboBox = new DCComboBox<TableDefinitionOption>(TableDefinitionOption.values());
-		_comboBox.setRenderer(new EnumComboBoxListRenderer());
-		_configureButton = WidgetFactory.createSmallButton("images/menu/options.png");
-		_configureButton.setText("Define");
+        setLayout(new BorderLayout(4, 0));
+        add(_comboBox, BorderLayout.CENTER);
+        add(_configureButton, BorderLayout.EAST);
+        add(_label, BorderLayout.SOUTH);
+    }
 
-		_configureButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				TableDefinitionDialog dialog = new TableDefinitionDialog(_windowContext, schemaFactory, _tableDefs,
-						_saveAction);
-				dialog.setVisible(true);
-			}
-		});
-		if (tableDefs != null && tableDefs.length > 0) {
-			_comboBox.setSelectedItem(TableDefinitionOption.MANUAL);
-		} else {
-			_comboBox.setSelectedItem(TableDefinitionOption.AUTOMATIC);
-		}
-		_comboBox.addListener(new Listener<TableDefinitionOptionSelectionPanel.TableDefinitionOption>() {
-			@Override
-			public void onItemSelected(TableDefinitionOption item) {
-				updateComponents();
-			}
-		});
-		updateComponents();
+    private void updateComponents() {
+        if (_comboBox.getSelectedItem() == TableDefinitionOption.AUTOMATIC) {
+            _configureButton.setEnabled(false);
+            _label.setText("(Tables will be automatically discovered)");
+        } else {
+            _configureButton.setEnabled(true);
+            if (_tableDefs == null || _tableDefs.length == 0) {
+                _label.setText("(no tables defined)");
+            } else {
+                _label.setText("(" + _tableDefs.length + " tables defined)");
+            }
+        }
+    }
 
-		setLayout(new BorderLayout(4, 0));
-		add(_comboBox, BorderLayout.CENTER);
-		add(_configureButton, BorderLayout.EAST);
-		add(_label, BorderLayout.SOUTH);
-	}
+    public SimpleTableDef[] getTableDefs() {
+        if (_comboBox.getSelectedItem() == TableDefinitionOption.AUTOMATIC) {
+            return null;
+        }
+        return _tableDefs;
+    }
 
-	private void updateComponents() {
-		if (_comboBox.getSelectedItem() == TableDefinitionOption.AUTOMATIC) {
-			_configureButton.setEnabled(false);
-			_label.setText("(Tables will be automatically discovered)");
-		} else {
-			_configureButton.setEnabled(true);
-			if (_tableDefs == null || _tableDefs.length == 0) {
-				_label.setText("(no tables defined)");
-			} else {
-				_label.setText("(" + _tableDefs.length + " tables defined)");
-			}
-		}
-	}
-
-	public SimpleTableDef[] getTableDefs() {
-		if (_comboBox.getSelectedItem() == TableDefinitionOption.AUTOMATIC) {
-			return null;
-		}
-		return _tableDefs;
-	}
-
-	public void setTableDefs(SimpleTableDef[] tableDefs) {
-		_tableDefs = (tableDefs == null ? new SimpleTableDef[0] : tableDefs);
-		updateComponents();
-	}
+    public void setTableDefs(final SimpleTableDef[] tableDefs) {
+        _tableDefs = (tableDefs == null ? new SimpleTableDef[0] : tableDefs);
+        updateComponents();
+    }
 }

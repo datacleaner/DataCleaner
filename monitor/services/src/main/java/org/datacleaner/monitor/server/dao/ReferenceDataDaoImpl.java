@@ -41,8 +41,6 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.util.xml.XmlUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
@@ -58,7 +56,7 @@ import org.xml.sax.InputSource;
 public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
     @Override
-    public String updateReferenceDataSubSection(TenantContext tenantContext, Element updatedReferenceDataSubSection) {
+    public String updateReferenceDataSubSection(final TenantContext tenantContext, final Element updatedReferenceDataSubSection) {
         final Document configurationFileDocument = getConfigurationFileDocument(tenantContext);
         final Element referenceDataCatalogElement = getReferenceDataElement(configurationFileDocument);
         removeOldElementIfExists(referenceDataCatalogElement.getChildNodes(), updatedReferenceDataSubSection);
@@ -68,9 +66,9 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
         return "";
     }
-    
-    
-    private void removeOldElementIfExists(NodeList referenceDataNodes, Element updatedReferenceDataSubSection) {
+
+
+    private void removeOldElementIfExists(final NodeList referenceDataNodes, final Element updatedReferenceDataSubSection) {
         Node oldNode = null;
 
         for (int i = 0; i < referenceDataNodes.getLength(); i++) {
@@ -83,8 +81,8 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
             oldNode.getParentNode().removeChild(oldNode);
         }
     }
-    
-    private void writeConfiguration(TenantContext tenantContext, Document configurationFileDocument) {
+
+    private void writeConfiguration(final TenantContext tenantContext, final Document configurationFileDocument) {
         final Transformer transformer = getTransformer();
         final Source source = new DOMSource(configurationFileDocument);
 
@@ -96,7 +94,7 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
         tenantContext.onConfigurationChanged();
     }
 
-    private Element getReferenceDataElement(Document configurationFileDocument) {
+    private Element getReferenceDataElement(final Document configurationFileDocument) {
         final Element configurationFileDocumentElement = configurationFileDocument.getDocumentElement();
         final Element referenceDataCatalogElement = DomUtils.getChildElementByTagName(configurationFileDocumentElement,
                 "reference-data-catalog");
@@ -108,11 +106,11 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
         return referenceDataCatalogElement;
     }
 
-    private Document getConfigurationFileDocument(TenantContext tenantContext) {
+    private Document getConfigurationFileDocument(final TenantContext tenantContext) {
         return tenantContext.getConfigurationFile().readFile(in -> {
             try {
                 return getDocumentBuilder().parse(in);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Could not parse configuration file", e);
             }
         });
@@ -127,14 +125,14 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
     }
 
     @Override
-    public Element parseReferenceDataElement(Reader reader) {
+    public Element parseReferenceDataElement(final Reader reader) {
         final DocumentBuilder documentBuilder = getDocumentBuilder();
         final InputSource inputSource = new InputSource(reader);
 
         try {
             final Document referenceDataDocument = documentBuilder.parse(inputSource);
             return referenceDataDocument.getDocumentElement();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -176,7 +174,7 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
         boolean found = false;
         final List<Object> referenceDataList = getReferenceDataListByType(configuration, referenceData);
 
-        for (Iterator<Object> it = referenceDataList.iterator(); it.hasNext(); ) {
+        for (final Iterator<Object> it = referenceDataList.iterator(); it.hasNext(); ) {
             final String candidateName = WriteUpdatedConfigurationFileAction.getComparableName(it.next());
 
             if (referenceData.getName().equals(candidateName)) {
@@ -195,7 +193,7 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
         });
     }
 
-    private List<Object> getReferenceDataListByType(Configuration configuration, ReferenceData referenceData) {
+    private List<Object> getReferenceDataListByType(final Configuration configuration, final ReferenceData referenceData) {
         if (referenceData instanceof Dictionary) {
             return configuration.getReferenceDataCatalog().getDictionaries()
                     .getTextFileDictionaryOrValueListDictionaryOrDatastoreDictionary();

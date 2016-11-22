@@ -39,8 +39,8 @@ public class CreateStagingTableAnalyzerSwingRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<CreateStagingTableAnalyzer> ajb) {
-        Class<CreateStagingTableAnalyzer> componentClass = ajb.getDescriptor().getComponentClass();
+    public RendererPrecedence getPrecedence(final AnalyzerComponentBuilder<CreateStagingTableAnalyzer> ajb) {
+        final Class<CreateStagingTableAnalyzer> componentClass = ajb.getDescriptor().getComponentClass();
         if (componentClass == CreateStagingTableAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -48,7 +48,7 @@ public class CreateStagingTableAnalyzerSwingRenderer implements
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<CreateStagingTableAnalyzer> ajb) {
+    public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<CreateStagingTableAnalyzer> ajb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
                 PropertyWidgetFactory.class);
         return new CustomHeaderColumnNamesAnalyzerJobPanel(ajb, propertyWidgetFactory);

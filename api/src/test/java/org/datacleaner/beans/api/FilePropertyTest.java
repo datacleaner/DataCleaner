@@ -19,14 +19,14 @@
  */
 package org.datacleaner.beans.api;
 
-import org.datacleaner.api.FileProperty;
-
 import junit.framework.TestCase;
+
+import org.datacleaner.api.FileProperty;
 
 public class FilePropertyTest extends TestCase {
 
-	public void testEnumAccess() throws Exception {
-		assertEquals("OPEN", FileProperty.FileAccessMode.OPEN.name());
-		assertEquals("SAVE", FileProperty.FileAccessMode.SAVE.name());
-	}
+    public void testEnumAccess() throws Exception {
+        assertEquals("OPEN", FileProperty.FileAccessMode.OPEN.name());
+        assertEquals("SAVE", FileProperty.FileAccessMode.SAVE.name());
+    }
 }

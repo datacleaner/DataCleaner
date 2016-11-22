@@ -33,26 +33,26 @@ public interface ComponentBuilderPresenter {
 
     /**
      * Gets the {@link ComponentBuilder} that is being presented
-     * 
+     *
      * @return
      */
-    public ComponentBuilder getComponentBuilder();
+    ComponentBuilder getComponentBuilder();
 
     /**
      * Creates the {@link JComponent} that is the visual representation of the
      * job builder.
-     * 
+     *
      * @return a {@link JComponent} that can be used to present the
      *         configuration of the job builder.
      */
-    public JComponent createJComponent();
+    JComponent createJComponent();
 
     /**
      * Invoked before execution, the presenter should make sure all configured
      * properties are set on the job builder.
-     * 
+     *
      * @throws UnconfiguredConfiguredPropertyException
      *             in case one or more properties have not been configured
      */
-    public void applyPropertyValues() throws UnconfiguredConfiguredPropertyException;
+    void applyPropertyValues() throws UnconfiguredConfiguredPropertyException;
 }

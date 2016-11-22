@@ -39,10 +39,7 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public class JsonSchemasResponseParser {
 
-    private static final Set<String> datastoreTypes = new HashSet<>(Arrays.asList(new String[] {
-            "GoldenRecordDatastore", "SourceRecordSourceFormatDatastore", "SourceRecordGoldenFormatDatastore" }));
-
-    private static enum DatastoreObject {
+    private enum DatastoreObject {
         DATASTORE {
             @Override
             public DatastoreObject previous() {
@@ -53,8 +50,10 @@ public class JsonSchemasResponseParser {
             @Override
             public DatastoreObject next() {
                 return null; // see below for options for this line
-            };
+            }
+
         };
+
         public DatastoreObject next() {
             // No bounds checking required here, because the last instance
             // overrides
@@ -68,7 +67,8 @@ public class JsonSchemasResponseParser {
 
         }
     }
-
+    private static final Set<String> datastoreTypes = new HashSet<>(Arrays.asList(new String[] {
+            "GoldenRecordDatastore", "SourceRecordSourceFormatDatastore", "SourceRecordGoldenFormatDatastore" }));
     private DatastoreObject _currentObject;
     private String _currentFieldname;
     private DataHubSchema _currentSchema;
@@ -79,11 +79,11 @@ public class JsonSchemasResponseParser {
     private String _currentDataStoreName;
     private List<String> _dataStoreNames = new ArrayList<String>();
 
-    public DataHubSchema parseJsonSchema(InputStream is) throws JsonParseException, IOException {
+    public DataHubSchema parseJsonSchema(final InputStream is) throws JsonParseException, IOException {
         _currentObject = DatastoreObject.DATASTORE;
         _currentFieldname = "";
-        JsonFactory factory = new JsonFactory();
-        JsonParser parser = factory.createParser(is);
+        final JsonFactory factory = new JsonFactory();
+        final JsonParser parser = factory.createParser(is);
         JsonToken token = parser.nextToken();
         while (token != null) {
             switch (parser.getCurrentToken()) {
@@ -154,7 +154,7 @@ public class JsonSchemasResponseParser {
         }
     }
 
-    private void handleValue(String fieldName, String fieldValue) {
+    private void handleValue(final String fieldName, final String fieldValue) {
         switch (_currentObject) {
         case SCHEMA:
             handleSchemaField(fieldName, fieldValue);
@@ -169,7 +169,7 @@ public class JsonSchemasResponseParser {
         }
     }
 
-    private void handleBooleanValue(String fieldName, boolean fieldValue) {
+    private void handleBooleanValue(final String fieldName, final boolean fieldValue) {
         switch (_currentObject) {
         case COLUMN:
             handleBooleanColumnField(fieldName, fieldValue);
@@ -178,7 +178,7 @@ public class JsonSchemasResponseParser {
         }
     }
 
-    private void handleBooleanColumnField(String fieldName, boolean fieldValue) {
+    private void handleBooleanColumnField(final String fieldName, final boolean fieldValue) {
         if (fieldName.equals("primaryKey")) {
             _currentColumn.setPrimaryKey(fieldValue);
         } else if (fieldName.equals("indexed")) {
@@ -191,13 +191,13 @@ public class JsonSchemasResponseParser {
 
     }
 
-    private void handleIntegerValue(String fieldName, int fieldValue) {
+    private void handleIntegerValue(final String fieldName, final int fieldValue) {
         if (fieldName.equals("number")) {
             _currentColumn.setColumnNumber(fieldValue);
         }
     }
 
-    private void handleColumnField(String fieldName, String fieldValue) {
+    private void handleColumnField(final String fieldName, final String fieldValue) {
         if (fieldName.equals("name")) {
             _currentColumn.setName(fieldValue);
         } else if (fieldName.equals("quote")) {
@@ -215,20 +215,20 @@ public class JsonSchemasResponseParser {
         }
     }
 
-    private void handleTableField(String fieldName, String fieldValue) {
+    private void handleTableField(final String fieldName, final String fieldValue) {
         if (fieldName.equals("name")) {
             _currentTable.setName(fieldValue);
         }
 
     }
 
-    private void handleSchemaField(String fieldName, String fieldValue) {
+    private void handleSchemaField(final String fieldName, final String fieldValue) {
         if (fieldName.equals("name")) {
             _currentSchema.setName(fieldValue);
         }
     }
 
-    private void handleDataStoreValue(String value) {
+    private void handleDataStoreValue(final String value) {
         if (_currentFieldname.equals("name")) {
             _currentDataStoreName = value;
         } else if (_currentFieldname.equals("type") && datastoreTypes.contains(value)) {
@@ -236,9 +236,9 @@ public class JsonSchemasResponseParser {
         }
     }
 
-    public List<String> parseDataStoreArray(InputStream inputStream) throws IOException {
-        JsonFactory factory = new JsonFactory();
-        JsonParser parser = factory.createParser(inputStream);
+    public List<String> parseDataStoreArray(final InputStream inputStream) throws IOException {
+        final JsonFactory factory = new JsonFactory();
+        final JsonParser parser = factory.createParser(inputStream);
         JsonToken token = parser.nextToken();
         while (token != null) {
             switch (parser.getCurrentToken()) {

@@ -66,7 +66,8 @@ public class DatastoreDescriptors {
             IconUtils.SAS_IMAGEPATH, true);
 
     private static final DatastoreDescriptor DBASE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("DBase database",
-            "DBase database file (.dbf)", DbaseDatastore.class, DbaseDatastoreDialog.class, IconUtils.DBASE_IMAGEPATH, true);
+            "DBase database file (.dbf)", DbaseDatastore.class, DbaseDatastoreDialog.class, IconUtils.DBASE_IMAGEPATH,
+            true);
 
     private static final DatastoreDescriptor FIXEDWIDTH_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "Fixed width file",
@@ -104,7 +105,7 @@ public class DatastoreDescriptors {
     private static final DatastoreDescriptor ELASTICSEARCH_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "ElasticSearch index", "Connect to an ElasticSearch index", ElasticSearchDatastore.class,
             ElasticSearchDatastoreDialog.class, IconUtils.ELASTICSEARCH_IMAGEPATH, true);
-    
+
     private static final DatastoreDescriptor NEO4J_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "Neo4j graph database", "Connect to a Neo4j graph database", Neo4jDatastore.class,
             Neo4jDatastoreDialog.class, IconUtils.NEO4J_IMAGEPATH, true);
@@ -148,7 +149,7 @@ public class DatastoreDescriptors {
 
     private DatabaseDriverCatalog _databaseDriverCatalog;
 
-    public DatastoreDescriptors(DatabaseDriverCatalog databaseDriverCatalog) {
+    public DatastoreDescriptors(final DatabaseDriverCatalog databaseDriverCatalog) {
         _databaseDriverCatalog = databaseDriverCatalog;
     }
 
@@ -156,42 +157,42 @@ public class DatastoreDescriptors {
      * Returns the descriptors of datastore types available in DataCleaner.
      */
     public List<DatastoreDescriptor> getAvailableDatastoreDescriptors() {
-        List<DatastoreDescriptor> availableDatabaseDescriptors = new ArrayList<>();
+        final List<DatastoreDescriptor> availableDatabaseDescriptors = new ArrayList<>();
 
-        List<DatastoreDescriptor> manualDatastoreDescriptors = getManualDatastoreDescriptors();
+        final List<DatastoreDescriptor> manualDatastoreDescriptors = getManualDatastoreDescriptors();
         availableDatabaseDescriptors.addAll(manualDatastoreDescriptors);
 
-        List<DatastoreDescriptor> driverBasedDatastoreDescriptors = getDriverBasedDatastoreDescriptors();
+        final List<DatastoreDescriptor> driverBasedDatastoreDescriptors = getDriverBasedDatastoreDescriptors();
         availableDatabaseDescriptors.addAll(driverBasedDatastoreDescriptors);
 
-        Set<String> alreadyAddedDatabaseNames = new HashSet<>();
-        for (DatastoreDescriptor datastoreDescriptor : driverBasedDatastoreDescriptors) {
+        final Set<String> alreadyAddedDatabaseNames = new HashSet<>();
+        for (final DatastoreDescriptor datastoreDescriptor : driverBasedDatastoreDescriptors) {
             alreadyAddedDatabaseNames.add(datastoreDescriptor.getName());
         }
 
-        List<DatastoreDescriptor> otherDatastoreDescriptors = getOtherDatastoreDescriptors(alreadyAddedDatabaseNames);
+        final List<DatastoreDescriptor> otherDatastoreDescriptors = getOtherDatastoreDescriptors(alreadyAddedDatabaseNames);
         availableDatabaseDescriptors.addAll(otherDatastoreDescriptors);
 
         return availableDatabaseDescriptors;
     }
-    
+
     /**
      * Returns the descriptors of cloud-based datastore types available in DataCleaner.
      */
     public List<DatastoreDescriptor> getAvailableCloudBasedDatastoreDescriptors() {
-        List<DatastoreDescriptor> availableCloudBasedDatabaseDescriptors = new ArrayList<>();
+        final List<DatastoreDescriptor> availableCloudBasedDatabaseDescriptors = new ArrayList<>();
 
         availableCloudBasedDatabaseDescriptors.add(SALESFORCE_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(SUGARCRM_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(DATAHUB_DATASTORE_DESCRIPTOR);
         return availableCloudBasedDatabaseDescriptors;
     }
-    
+
     /**
      * Returns the descriptors of database-based datastore types available in DataCleaner.
      */
     public List<DatastoreDescriptor> getAvailableDatabaseBasedDatastoreDescriptors() {
-        List<DatastoreDescriptor> availableCloudBasedDatabaseDescriptors = new ArrayList<>();
+        final List<DatastoreDescriptor> availableCloudBasedDatabaseDescriptors = new ArrayList<>();
 
         availableCloudBasedDatabaseDescriptors.add(POSTGRESQL_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(SQLSERVER_DATASTORE_DESCRIPTOR);
@@ -201,13 +202,13 @@ public class DatastoreDescriptors {
         availableCloudBasedDatabaseDescriptors.add(CASSANDRA_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(MONGODB_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(COUCHDB_DATASTORE_DESCRIPTOR);
-        availableCloudBasedDatabaseDescriptors.add(NEO4J_DATASTORE_DESCRIPTOR); 
-       
+        availableCloudBasedDatabaseDescriptors.add(NEO4J_DATASTORE_DESCRIPTOR);
+
         return availableCloudBasedDatabaseDescriptors;
     }
 
     private List<DatastoreDescriptor> getManualDatastoreDescriptors() {
-        List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
+        final List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
 
         datastoreDescriptors.add(CSV_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(EXCEL_DATASTORE_DESCRIPTOR);
@@ -231,7 +232,7 @@ public class DatastoreDescriptors {
     }
 
     private List<DatastoreDescriptor> getDriverBasedDatastoreDescriptors() {
-        List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
+        final List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
 
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
             datastoreDescriptors.add(HIVE_DATASTORE_DESCRIPTOR);
@@ -256,15 +257,15 @@ public class DatastoreDescriptors {
         return datastoreDescriptors;
     }
 
-    private List<DatastoreDescriptor> getOtherDatastoreDescriptors(Set<String> alreadyAddedDatabaseNames) {
-        List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
+    private List<DatastoreDescriptor> getOtherDatastoreDescriptors(final Set<String> alreadyAddedDatabaseNames) {
+        final List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
 
         final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog
                 .getInstalledWorkingDatabaseDrivers();
-        for (DatabaseDriverDescriptor databaseDriver : databaseDrivers) {
+        for (final DatabaseDriverDescriptor databaseDriver : databaseDrivers) {
             final String databaseName = databaseDriver.getDisplayName();
             if (!alreadyAddedDatabaseNames.contains(databaseName)) {
-                DatastoreDescriptor jdbcDatastoreDescriptor = new DatastoreDescriptorImpl(databaseName, "Connect to "
+                final DatastoreDescriptor jdbcDatastoreDescriptor = new DatastoreDescriptorImpl(databaseName, "Connect to "
                         + databaseName, JdbcDatastore.class, JdbcDatastoreDialog.class,
                         databaseDriver.getIconImagePath(), false);
                 datastoreDescriptors.add(jdbcDatastoreDescriptor);

@@ -22,6 +22,8 @@ package org.datacleaner.monitor.server.listeners;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.events.ResultModificationEvent;
@@ -33,8 +35,6 @@ import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,12 +49,12 @@ public class ResultModificationEventExecutionLogListener implements ApplicationL
     private final TenantContextFactory _contextFactory;
 
     @Autowired
-    public ResultModificationEventExecutionLogListener(TenantContextFactory contextFactory) {
+    public ResultModificationEventExecutionLogListener(final TenantContextFactory contextFactory) {
         _contextFactory = contextFactory;
     }
 
     @Override
-    public void onApplicationEvent(ResultModificationEvent event) {
+    public void onApplicationEvent(final ResultModificationEvent event) {
         final String tenant = event.getTenant();
         final TenantContext context = _contextFactory.getContext(tenant);
 
@@ -78,7 +78,7 @@ public class ResultModificationEventExecutionLogListener implements ApplicationL
 
         final ExecutionLog executionLog = oldFile.readFile(new Func<InputStream, ExecutionLog>() {
             @Override
-            public ExecutionLog eval(InputStream in) {
+            public ExecutionLog eval(final InputStream in) {
                 final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
                 return reader.read(in, jobIdentifier, new TenantIdentifier(tenant));
             }
@@ -91,7 +91,7 @@ public class ResultModificationEventExecutionLogListener implements ApplicationL
         final RepositoryFile newFile = resultFolder.getFile(newFilename);
         final Action<OutputStream> writeAction = new Action<OutputStream>() {
             @Override
-            public void run(OutputStream out) throws Exception {
+            public void run(final OutputStream out) throws Exception {
                 writer.write(executionLog, out);
             }
         };

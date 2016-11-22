@@ -30,7 +30,7 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
     private final String _iconPath;
     private final boolean _promoted;
 
-    public DatastoreDescriptorImpl(final String name, String description,
+    public DatastoreDescriptorImpl(final String name, final String description,
             final Class<? extends Datastore> datastoreClass,
             final Class<? extends AbstractDatastoreDialog<? extends Datastore>> datastoreDialogClass,
             final String iconPath, final boolean promoted) {
@@ -82,8 +82,8 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
 
     @Override
     public boolean isUpdatable() {
-        Class<?>[] interfaces = _datastoreClass.getInterfaces();
-        for (Class<?> implementedInterface : interfaces) {
+        final Class<?>[] interfaces = _datastoreClass.getInterfaces();
+        for (final Class<?> implementedInterface : interfaces) {
             if (implementedInterface.equals(UpdateableDatastore.class)) {
                 return true;
             }
@@ -92,12 +92,12 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
     }
 
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (that != null) {
             if (that instanceof DatastoreDescriptor) {
-                DatastoreDescriptor thatDescriptor = (DatastoreDescriptor) that;
-                boolean nameEquals = this.getName().equals(thatDescriptor.getName());
-                boolean datastoreClassEquals = this.getDatastoreClass().equals(thatDescriptor.getDatastoreClass());
+                final DatastoreDescriptor thatDescriptor = (DatastoreDescriptor) that;
+                final boolean nameEquals = this.getName().equals(thatDescriptor.getName());
+                final boolean datastoreClassEquals = this.getDatastoreClass().equals(thatDescriptor.getDatastoreClass());
 
                 if (nameEquals && datastoreClassEquals) {
                     return true;

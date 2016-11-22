@@ -31,51 +31,51 @@ public class ComponentBuilderTransformerChangeListener implements TransformerCha
     private final ComponentBuilder _componentBuilder;
     private final ConfiguredPropertyDescriptor _propertyDescriptor;
 
-    public ComponentBuilderTransformerChangeListener(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    public ComponentBuilderTransformerChangeListener(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         _componentBuilder = componentBuilder;
         _propertyDescriptor = propertyDescriptor;
     }
 
     @Override
-    public void onAdd(TransformerComponentBuilder<?> builder) {
+    public void onAdd(final TransformerComponentBuilder<?> builder) {
         // Do nothing.
     }
 
     @Override
-    public void onConfigurationChanged(TransformerComponentBuilder<?> builder) {
+    public void onConfigurationChanged(final TransformerComponentBuilder<?> builder) {
         synchronizeInputColumns(builder);
     }
 
     @Override
-    public void onRequirementChanged(TransformerComponentBuilder<?> builder) {
+    public void onRequirementChanged(final TransformerComponentBuilder<?> builder) {
         // Do nothing.
     }
 
     @Override
-    public void onRemove(TransformerComponentBuilder<?> componentBuilder) {
+    public void onRemove(final TransformerComponentBuilder<?> componentBuilder) {
         synchronizeInputColumns(componentBuilder);
     }
 
     @Override
-    public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
-            List<MutableInputColumn<?>> outputColumns) {
+    public void onOutputChanged(final TransformerComponentBuilder<?> transformerJobBuilder,
+            final List<MutableInputColumn<?>> outputColumns) {
         synchronizeInputColumns(transformerJobBuilder);
     }
 
-    private void synchronizeInputColumns(TransformerComponentBuilder<?> changedBuilder) {
+    private void synchronizeInputColumns(final TransformerComponentBuilder<?> changedBuilder) {
         if (!changedBuilder.equals(_componentBuilder)) {
             final List<InputColumn<?>> availableColumns = _componentBuilder.getAnalysisJobBuilder()
                     .getAvailableInputColumns(_componentBuilder, _propertyDescriptor.getTypeArgument(0));
 
-            for (ConfiguredPropertyDescriptor propertyDescriptor : _componentBuilder.getDescriptor()
+            for (final ConfiguredPropertyDescriptor propertyDescriptor : _componentBuilder.getDescriptor()
                     .getConfiguredPropertiesForInput()) {
                 final Object configuredProperty = _componentBuilder.getConfiguredProperty(propertyDescriptor);
 
                 if (configuredProperty != null) {
                     if (ReflectionUtils.isInputColumn(configuredProperty.getClass())) {
                         if (ReflectionUtils.isArray(configuredProperty)) {
-                            for (InputColumn<?> column : (InputColumn<?>[]) configuredProperty) {
+                            for (final InputColumn<?> column : (InputColumn<?>[]) configuredProperty) {
                                 if (!availableColumns.contains(column)) {
                                     _componentBuilder.removeInputColumn(column, propertyDescriptor);
                                 }
@@ -93,7 +93,7 @@ public class ComponentBuilderTransformerChangeListener implements TransformerCha
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         return (super.equals(object) || (object != null && object instanceof ComponentBuilderTransformerChangeListener
                 && ((ComponentBuilderTransformerChangeListener) object)._componentBuilder == _componentBuilder
                 && ((ComponentBuilderTransformerChangeListener) object)._propertyDescriptor == _propertyDescriptor));

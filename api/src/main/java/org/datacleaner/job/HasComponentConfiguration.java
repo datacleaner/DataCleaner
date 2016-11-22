@@ -24,5 +24,5 @@ package org.datacleaner.job;
  */
 public interface HasComponentConfiguration {
 
-    public ComponentConfiguration getConfiguration();
+    ComponentConfiguration getConfiguration();
 }

@@ -32,7 +32,7 @@ import org.datacleaner.monitor.shared.model.MetricIdentifier;
 /**
  * Defines a {@link JobEngine} whose jobs and results expose metrics that can be
  * monitored in the timelines of DataCleaner monitor.
- * 
+ *
  * @param <T>
  *            the job context type
  */
@@ -40,39 +40,40 @@ public interface MetricJobEngine<T extends MetricJobContext> extends JobEngine<T
 
     /**
      * Gets/calculates metric values for a particular list of metrics
-     * 
+     *
      * @param job
      * @param result
      * @param metricIdentifiers
      * @return
      */
-    public MetricValues getMetricValues(MetricJobContext job, ResultContext result, List<MetricIdentifier> metricIdentifiers);
+    MetricValues getMetricValues(MetricJobContext job, ResultContext result,
+            List<MetricIdentifier> metricIdentifiers);
 
     /**
      * Gets suggestions for a string-parameterized metric. This method will only
      * be invoked if results of the jobs expose {@link ParameterizableMetric}
      * metric methods.
-     * 
+     *
      * @see {@link Metric}
      * @see {@link ParameterizableMetric}
-     * 
+     *
      * @param job
      * @param result
      * @param metricIdentifier
      * @return
      */
-    public Collection<String> getMetricParameterSuggestions(MetricJobContext job, ResultContext result,
+    Collection<String> getMetricParameterSuggestions(MetricJobContext job, ResultContext result,
             MetricIdentifier metricIdentifier);
 
     /**
      * Gets the available column values for a column-parameterized metric. This
      * method will only be invoked if results of the jobs expose metric methods
      * which take {@link InputColumn} as a parameter.
-     * 
+     *
      * @see {@link Metric}
-     * 
+     *
      * @param job
      * @return
      */
-    public Collection<InputColumn<?>> getMetricParameterColumns(MetricJobContext job, ComponentJob component);
+    Collection<InputColumn<?>> getMetricParameterColumns(MetricJobContext job, ComponentJob component);
 }

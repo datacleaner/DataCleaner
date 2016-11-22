@@ -21,101 +21,101 @@ package org.datacleaner.beans.transform;
 
 import junit.framework.TestCase;
 
-import org.easymock.EasyMock;
+import org.apache.metamodel.schema.MutableColumn;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.beans.transform.TokenizerTransformer.TokenTarget;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputRow;
-import org.apache.metamodel.schema.MutableColumn;
+import org.easymock.EasyMock;
 
 public class TokenizerTransformerTest extends TestCase {
 
-	public void testGetOutputColumns() throws Exception {
-		InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
+    public void testGetOutputColumns() throws Exception {
+        InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
 
-		@SuppressWarnings("unchecked")
-		InputColumn<String> castColumn = (InputColumn<String>) col;
-		TokenizerTransformer transformer = new TokenizerTransformer(castColumn, 2);
+        @SuppressWarnings("unchecked")
+        InputColumn<String> castColumn = (InputColumn<String>) col;
+        TokenizerTransformer transformer = new TokenizerTransformer(castColumn, 2);
 
-		OutputColumns oc = transformer.getOutputColumns();
+        OutputColumns oc = transformer.getOutputColumns();
 
-		assertEquals(2, oc.getColumnCount());
-		assertEquals("name (token 1)", oc.getColumnName(0));
-		assertEquals("name (token 2)", oc.getColumnName(1));
+        assertEquals(2, oc.getColumnCount());
+        assertEquals("name (token 1)", oc.getColumnName(0));
+        assertEquals("name (token 2)", oc.getColumnName(1));
 
-		transformer = new TokenizerTransformer(castColumn, 1);
-		assertEquals("OutputColumns[name (token 1)]", transformer.getOutputColumns().toString());
+        transformer = new TokenizerTransformer(castColumn, 1);
+        assertEquals("OutputColumns[name (token 1)]", transformer.getOutputColumns().toString());
 
-		transformer = new TokenizerTransformer(castColumn, 0);
-		try {
-			transformer.getOutputColumns();
-			fail("Exception expected");
-		} catch (IllegalArgumentException e) {
-			assertEquals("Column names length must be 1 or greater", e.getMessage());
-		}
-	}
+        transformer = new TokenizerTransformer(castColumn, 0);
+        try {
+            transformer.getOutputColumns();
+            fail("Exception expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Column names length must be 1 or greater", e.getMessage());
+        }
+    }
 
-	public void testTransformToColumns() throws Exception {
-		InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
+    public void testTransformToColumns() throws Exception {
+        InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
 
-		@SuppressWarnings("unchecked")
-		TokenizerTransformer transformer = new TokenizerTransformer((InputColumn<String>) col, 2);
+        @SuppressWarnings("unchecked")
+        TokenizerTransformer transformer = new TokenizerTransformer((InputColumn<String>) col, 2);
 
-		assertEquals(2, transformer.getOutputColumns().getColumnCount());
+        assertEquals(2, transformer.getOutputColumns().getColumnCount());
 
-		MockInputRow row = new MockInputRow();
-		row.put(col, "Kasper Sorensen");
-		String[] values = transformer.transform(row);
-		assertEquals(2, values.length);
-		assertEquals("Kasper", values[0]);
-		assertEquals("Sorensen", values[1]);
+        MockInputRow row = new MockInputRow();
+        row.put(col, "Kasper Sorensen");
+        String[] values = transformer.transform(row);
+        assertEquals(2, values.length);
+        assertEquals("Kasper", values[0]);
+        assertEquals("Sorensen", values[1]);
 
-		row = new MockInputRow();
-		row.put(col, "Kasper ");
-		values = transformer.transform(row);
-		assertEquals(2, values.length);
-		assertEquals("Kasper", values[0]);
-		assertNull(values[1]);
-	}
+        row = new MockInputRow();
+        row.put(col, "Kasper ");
+        values = transformer.transform(row);
+        assertEquals(2, values.length);
+        assertEquals("Kasper", values[0]);
+        assertNull(values[1]);
+    }
 
-	public void testTransformNull() throws Exception {
-		InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
+    public void testTransformNull() throws Exception {
+        InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
 
-		@SuppressWarnings("unchecked")
-		TokenizerTransformer transformer = new TokenizerTransformer((InputColumn<String>) col, 2);
+        @SuppressWarnings("unchecked")
+        TokenizerTransformer transformer = new TokenizerTransformer((InputColumn<String>) col, 2);
 
-		assertEquals(2, transformer.getOutputColumns().getColumnCount());
+        assertEquals(2, transformer.getOutputColumns().getColumnCount());
 
-		MockInputRow row = new MockInputRow();
-		row.put(col, null);
-		String[] values = transformer.transform(row);
-		assertEquals(2, values.length);
-		assertEquals(null, values[0]);
-		assertEquals(null, values[1]);
-	}
+        MockInputRow row = new MockInputRow();
+        row.put(col, null);
+        String[] values = transformer.transform(row);
+        assertEquals(2, values.length);
+        assertEquals(null, values[0]);
+        assertEquals(null, values[1]);
+    }
 
-	public void testTransformToRows() throws Exception {
-		InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
+    public void testTransformToRows() throws Exception {
+        InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
 
-		@SuppressWarnings("unchecked")
-		TokenizerTransformer transformer = new TokenizerTransformer((InputColumn<String>) col, 1);
-		transformer.tokenTarget = TokenTarget.ROWS;
-		OutputRowCollector collectorMock = EasyMock.createMock(OutputRowCollector.class);
-		transformer.outputRowCollector = collectorMock;
+        @SuppressWarnings("unchecked")
+        TokenizerTransformer transformer = new TokenizerTransformer((InputColumn<String>) col, 1);
+        transformer.tokenTarget = TokenTarget.ROWS;
+        OutputRowCollector collectorMock = EasyMock.createMock(OutputRowCollector.class);
+        transformer.outputRowCollector = collectorMock;
 
-		assertEquals(1, transformer.getOutputColumns().getColumnCount());
-		assertEquals("name (token)", transformer.getOutputColumns().getColumnName(0));
-		
-		collectorMock.putValues("Hello");
-		collectorMock.putValues("world");
+        assertEquals(1, transformer.getOutputColumns().getColumnCount());
+        assertEquals("name (token)", transformer.getOutputColumns().getColumnName(0));
 
-		EasyMock.replay(collectorMock);
+        collectorMock.putValues("Hello");
+        collectorMock.putValues("world");
 
-		String[] result = transformer.transform(new MockInputRow().put(col, "Hello world"));
-		assertNull(result);
+        EasyMock.replay(collectorMock);
 
-		EasyMock.verify(collectorMock);
-	}
+        String[] result = transformer.transform(new MockInputRow().put(col, "Hello world"));
+        assertNull(result);
+
+        EasyMock.verify(collectorMock);
+    }
 }

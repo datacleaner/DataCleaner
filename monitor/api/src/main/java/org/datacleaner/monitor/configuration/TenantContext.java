@@ -39,136 +39,136 @@ public interface TenantContext {
 
     /**
      * Gets the ID of the tenant.
-     * 
+     *
      * @return
      */
-    public String getTenantId();
+    String getTenantId();
 
     /**
      * Gets a list of all jobs owned/managed by the tenant.
-     * 
+     *
      * @return
      */
-    public List<JobIdentifier> getJobs();
+    List<JobIdentifier> getJobs();
 
     /**
      * Gets a particular job by it's name.
-     * 
+     *
      * @param jobName
      * @return
      */
-    public JobContext getJob(String jobName);
+    JobContext getJob(String jobName);
 
     /**
      * Gets a particular job by it's {@link JobIdentifier}.
-     * 
+     *
      * @param jobIdentifier
      * @return
      */
-    public JobContext getJob(JobIdentifier jobIdentifier);
+    JobContext getJob(JobIdentifier jobIdentifier);
 
     /**
      * Gets the latest result of a particular job.
-     * 
+     *
      * @param job
      * @return
      */
-    public ResultContext getLatestResult(JobContext job);
+    ResultContext getLatestResult(JobContext job);
 
     /**
      * Gets a particular result by it's result filename
-     * 
+     *
      * @param resultFileName
      * @return
      */
-    public ResultContext getResult(String resultFileName);
+    ResultContext getResult(String resultFileName);
 
     /**
      * Gets the root folder of this tenant.
-     * 
+     *
      * @return
      */
-    public RepositoryFolder getTenantRootFolder();
+    RepositoryFolder getTenantRootFolder();
 
     /**
      * Gets the folder used for storing jobs by this tenant.
-     * 
+     *
      * @return
      */
-    public RepositoryFolder getJobFolder();
+    RepositoryFolder getJobFolder();
 
     /**
      * Gets the folder used for storing results by this tenant.
-     * 
+     *
      * @return
      */
-    public RepositoryFolder getResultFolder();
+    RepositoryFolder getResultFolder();
 
     /**
      * Gets the folder used for storing timeline definitions by this tenant.
-     * 
+     *
      * @return
      */
-    public RepositoryFolder getTimelineFolder();
+    RepositoryFolder getTimelineFolder();
 
     /**
      * Gets the configuration file (conf.xml) used by this tenant. Usually it is
      * preferable to get the configuration object itself instead, see
      * {@link #getConfiguration()}.
-     * 
+     *
      * @return
      */
-    public RepositoryFile getConfigurationFile();
+    RepositoryFile getConfigurationFile();
 
     /**
      * Gets a list of datastores owned/controlled by the tenant.
-     * 
+     *
      * @return
      */
-    public List<DatastoreIdentifier> getDatastores();
+    List<DatastoreIdentifier> getDatastores();
 
     /**
      * Gets a datastore by it's identifier, basically a shortcut for
      * {@link DatastoreCatalog#getDatastore(String)}.
-     * 
+     *
      * @param datastoreIdentifier
      * @return
      */
-    public Datastore getDatastore(DatastoreIdentifier datastoreIdentifier);
+    Datastore getDatastore(DatastoreIdentifier datastoreIdentifier);
 
     /**
      * Gets/loads the {@link DataCleanerConfiguration} for this tenant.
-     * 
+     *
      * @return
      */
-    public DataCleanerConfiguration getConfiguration();
+    DataCleanerConfiguration getConfiguration();
 
     /**
      * Gets/loads the {@link DataCleanerConfiguration} for this tenant and
      * replaces the properties in the overrideProperties in it.
-     * 
+     *
      * @return
      */
-    public DataCleanerConfiguration getConfiguration(Map<String, String> overrideProperties);
+    DataCleanerConfiguration getConfiguration(Map<String, String> overrideProperties);
 
     /**
      * Determines if a particular job exists or not.
-     * 
+     *
      * @param jobName
      * @return
      */
-    public boolean containsJob(String jobName);
+    boolean containsJob(String jobName);
 
     /**
      * Notification method callable by external components if a circumstance in
      * the configuration changes.
      */
-    public void onConfigurationChanged();
+    void onConfigurationChanged();
 
 
     /**
      * It returns the components' storage.
      * @return
      */
-    public ComponentStore getComponentStore();
+    ComponentStore getComponentStore();
 }

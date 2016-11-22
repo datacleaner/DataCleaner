@@ -32,30 +32,31 @@ import org.datacleaner.descriptors.FilterDescriptor;
 
 public class ImmutableFilterJobTest extends TestCase {
 
-	public void testGetOutcomes() throws Exception {
-		FilterDescriptor<?, ?> descriptor = Descriptors.ofFilterUnbound(MaxRowsFilter.class);
-		ComponentConfiguration configuration = new ImmutableComponentConfiguration(new HashMap<ConfiguredPropertyDescriptor, Object>());
+    public void testGetOutcomes() throws Exception {
+        FilterDescriptor<?, ?> descriptor = Descriptors.ofFilterUnbound(MaxRowsFilter.class);
+        ComponentConfiguration configuration =
+                new ImmutableComponentConfiguration(new HashMap<ConfiguredPropertyDescriptor, Object>());
 
-		ImmutableFilterJob job = new ImmutableFilterJob("foo", descriptor, configuration, null, null, null);
-		assertEquals("foo", job.getName());
-		assertEquals(null, job.getComponentRequirement());
+        ImmutableFilterJob job = new ImmutableFilterJob("foo", descriptor, configuration, null, null, null);
+        assertEquals("foo", job.getName());
+        assertEquals(null, job.getComponentRequirement());
 
-		List<FilterOutcome> outcomes1 = new ArrayList<>( job.getFilterOutcomes());
-		assertEquals(2, outcomes1.size());
-		assertEquals("FilterOutcome[category=VALID]", outcomes1.get(0).toString());
-		assertEquals("FilterOutcome[category=INVALID]", outcomes1.get(1).toString());
+        List<FilterOutcome> outcomes1 = new ArrayList<>(job.getFilterOutcomes());
+        assertEquals(2, outcomes1.size());
+        assertEquals("FilterOutcome[category=VALID]", outcomes1.get(0).toString());
+        assertEquals("FilterOutcome[category=INVALID]", outcomes1.get(1).toString());
 
-		List<FilterOutcome> outcomes2 = new ArrayList<>(  job.getFilterOutcomes());
-		assertEquals(2, outcomes2.size());
-		assertEquals("FilterOutcome[category=VALID]", outcomes2.get(0).toString());
-		assertEquals("FilterOutcome[category=INVALID]", outcomes2.get(1).toString());
+        List<FilterOutcome> outcomes2 = new ArrayList<>(job.getFilterOutcomes());
+        assertEquals(2, outcomes2.size());
+        assertEquals("FilterOutcome[category=VALID]", outcomes2.get(0).toString());
+        assertEquals("FilterOutcome[category=INVALID]", outcomes2.get(1).toString());
 
-		// the arrays are not the same, but their contents are equal
-		assertNotSame(outcomes1, outcomes2);
+        // the arrays are not the same, but their contents are equal
+        assertNotSame(outcomes1, outcomes2);
 
-		assertNotSame(outcomes1.get(0), outcomes2.get(0));
-		assertEquals(outcomes1.get(0), outcomes2.get(0));
-		assertNotSame(outcomes1.get(1), outcomes2.get(1));
-		assertEquals(outcomes1.get(1), outcomes2.get(1));
-	}
+        assertNotSame(outcomes1.get(0), outcomes2.get(0));
+        assertEquals(outcomes1.get(0), outcomes2.get(0));
+        assertNotSame(outcomes1.get(1), outcomes2.get(1));
+        assertEquals(outcomes1.get(1), outcomes2.get(1));
+    }
 }

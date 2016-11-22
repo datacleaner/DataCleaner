@@ -24,11 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardContext;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,7 @@ public abstract class CsvDatastoreUploadOrExistingFileWizardPage extends Abstrac
 
     private final WizardContext _wizardContext;
 
-    public CsvDatastoreUploadOrExistingFileWizardPage(WizardContext wizardContext) {
+    public CsvDatastoreUploadOrExistingFileWizardPage(final WizardContext wizardContext) {
         _wizardContext = wizardContext;
     }
 
@@ -64,7 +64,7 @@ public abstract class CsvDatastoreUploadOrExistingFileWizardPage extends Abstrac
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final List<String> sources = formParameters.get("source");
         if (sources == null || sources.isEmpty()) {
@@ -84,7 +84,7 @@ public abstract class CsvDatastoreUploadOrExistingFileWizardPage extends Abstrac
     /**
      * Invoked when the user continues to the next page, after selecting to use
      * a file that already exist on the server.
-     * 
+     *
      * @return
      */
     protected abstract WizardPageController nextPageControllerExisting();
@@ -92,7 +92,7 @@ public abstract class CsvDatastoreUploadOrExistingFileWizardPage extends Abstrac
     /**
      * Invoked when the user continues to the next page, after selecting to
      * upload a file to the server.
-     * 
+     *
      * @param filename
      *            the name of the file
      * @param tempFile
@@ -101,7 +101,7 @@ public abstract class CsvDatastoreUploadOrExistingFileWizardPage extends Abstrac
      */
     protected abstract WizardPageController nextPageControllerUpload(String filename, File tempFile);
 
-    private WizardPageController nextPageControllerUpload(Map<String, List<String>> formParameters) {
+    private WizardPageController nextPageControllerUpload(final Map<String, List<String>> formParameters) {
         final List<String> csvFileUploads = formParameters.get("csv_file_upload");
         if (csvFileUploads == null || csvFileUploads.isEmpty()) {
             throw new DCUserInputException("Please upload a file before clicking 'Next'!");
@@ -120,12 +120,12 @@ public abstract class CsvDatastoreUploadOrExistingFileWizardPage extends Abstrac
         return nextPageControllerUpload(filename, tempFile);
     }
 
-    private Map<String, String> parseJson(String fileJsonString) {
+    private Map<String, String> parseJson(final String fileJsonString) {
         try {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings("unchecked") final
             Map<String, String> map = new ObjectMapper().readValue(fileJsonString, Map.class);
             return map;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Could not parse form result as JSON: {}", fileJsonString);
             if (fileJsonString.indexOf('\n') != -1) {
                 // it's a multi-line response, probably showing an exception or

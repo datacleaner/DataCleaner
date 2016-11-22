@@ -29,16 +29,16 @@ import org.apache.metamodel.schema.MutableColumn;
 
 public class MetaModelInputRowTest extends TestCase {
 
-	public void testContainsInputColumn() throws Exception {
-		SelectItem[] items = new SelectItem[] { new SelectItem(new MutableColumn("foo")),
-				new SelectItem(new MutableColumn("bar")) };
-		Object[] values = new Object[] { "baz", null };
+    public void testContainsInputColumn() throws Exception {
+        SelectItem[] items = new SelectItem[] { new SelectItem(new MutableColumn("foo")),
+                new SelectItem(new MutableColumn("bar")) };
+        Object[] values = new Object[] { "baz", null };
 
-		DataSetHeader header = new SimpleDataSetHeader(items);
+        DataSetHeader header = new SimpleDataSetHeader(items);
         MetaModelInputRow row = new MetaModelInputRow(1, new DefaultRow(header, values));
 
-		assertTrue(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("foo"))));
-		assertTrue(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("bar"))));
-		assertFalse(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("baz"))));
-	}
+        assertTrue(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("foo"))));
+        assertTrue(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("bar"))));
+        assertFalse(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("baz"))));
+    }
 }

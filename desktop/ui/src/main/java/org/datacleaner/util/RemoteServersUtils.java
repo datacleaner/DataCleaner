@@ -48,7 +48,7 @@ public class RemoteServersUtils {
      * @param password
      */
     public static void addRemoteServer(
-            DataCleanerEnvironment env, String serverName, String serverUrl, String userName, String password) {
+            final DataCleanerEnvironment env, final String serverName, String serverUrl, final String userName, final String password) {
         if (RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName)) {
             serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
         }
@@ -73,17 +73,18 @@ public class RemoteServersUtils {
      * @param userName
      * @param password
      */
-    public static void updateRemoteServerCredentials(DataCleanerEnvironment env, String serverName, String userName, String password){
+    public static void updateRemoteServerCredentials(final DataCleanerEnvironment env, final String serverName, final String userName,
+            final String password) {
         getMutableServerConfig(env).updateServerCredentials(serverName, userName, password);
         env.getDescriptorProvider().refresh();
     }
 
-    public static void checkServerWithCredentials(String url, String username, String password) throws Exception{
+    public static void checkServerWithCredentials(final String url, final String username, final String password) throws Exception {
         new ComponentRESTClient(url, username, password, Version.getVersion());
     }
 
     public static String getDataCloudTermsAndConditions() throws IOException {
-        InputStream in = new URL(RemoteDescriptorProvider.DATACLOUD_TERMS_PURE_URL).openStream();
+        final InputStream in = new URL(RemoteDescriptorProvider.DATACLOUD_TERMS_PURE_URL).openStream();
         try {
             return IOUtils.toString(in);
         } finally {
@@ -91,11 +92,12 @@ public class RemoteServersUtils {
         }
     }
 
-    private static MutableRemoteServerConfigurationImpl getMutableServerConfig(DataCleanerEnvironment env) {
-        RemoteServerConfiguration remServerConfig = env.getRemoteServerConfiguration();
-        if(! (remServerConfig instanceof MutableRemoteServerConfigurationImpl)) {
-            throw new UnsupportedOperationException("Remote server config is not instance of class " + MutableRemoteServerConfigurationImpl.class);
+    private static MutableRemoteServerConfigurationImpl getMutableServerConfig(final DataCleanerEnvironment env) {
+        final RemoteServerConfiguration remServerConfig = env.getRemoteServerConfiguration();
+        if (!(remServerConfig instanceof MutableRemoteServerConfigurationImpl)) {
+            throw new UnsupportedOperationException(
+                    "Remote server config is not instance of class " + MutableRemoteServerConfigurationImpl.class);
         }
-        return (MutableRemoteServerConfigurationImpl)remServerConfig;
+        return (MutableRemoteServerConfigurationImpl) remServerConfig;
     }
 }

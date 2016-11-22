@@ -37,7 +37,7 @@ public class TableBodyElement implements BodyElement {
 
     /**
      * Constructs a table body element.
-     * 
+     *
      * @param tableModel
      *            the table model to render
      * @param tableClassName
@@ -45,7 +45,7 @@ public class TableBodyElement implements BodyElement {
      * @param highlightedColumns
      *            an optional array of column indexes that should be highlighted
      */
-    public TableBodyElement(TableModel tableModel, String tableClassName, int[] highlightedColumns) {
+    public TableBodyElement(final TableModel tableModel, final String tableClassName, final int[] highlightedColumns) {
         _tableModel = tableModel;
         _tableClassName = tableClassName;
         _highlightedColumns = highlightedColumns;
@@ -64,7 +64,7 @@ public class TableBodyElement implements BodyElement {
     }
 
     @Override
-    public String toHtml(HtmlRenderingContext context) {
+    public String toHtml(final HtmlRenderingContext context) {
         final int columnCount = _tableModel.getColumnCount();
 
         final StringBuilder sb = new StringBuilder();
@@ -80,7 +80,7 @@ public class TableBodyElement implements BodyElement {
 
         sb.append("<tr class=\"" + (rowNumber % 2 == 0 ? "even" : "odd") + "\">");
         for (int col = 0; col < columnCount; col++) {
-            String columnName = _tableModel.getColumnName(col);
+            final String columnName = _tableModel.getColumnName(col);
             sb.append("<th>");
             sb.append(getHeaderValue(context, col, columnName));
             sb.append("</th>");
@@ -113,26 +113,26 @@ public class TableBodyElement implements BodyElement {
     /**
      * Overrideable method for defining the literal HTML table header of a
      * particular column.
-     * 
+     *
      * @param context
      * @param col
      * @param columnName
      * @return
      */
-    protected String getHeaderValue(HtmlRenderingContext context, int col, String columnName) {
+    protected String getHeaderValue(final HtmlRenderingContext context, final int col, final String columnName) {
         return context.escapeHtml(columnName);
     }
 
     /**
      * Overrideable method for setting the class of a cell (the <td>element) in
      * the table
-     * 
+     *
      * @param context
      * @param row
      * @param col
      * @return
      */
-    protected String getCellClass(HtmlRenderingContext context, int row, int col) {
+    protected String getCellClass(final HtmlRenderingContext context, final int row, final int col) {
         if (ArrayUtils.indexOf(_highlightedColumns, col) == -1) {
             return null;
         }
@@ -141,16 +141,16 @@ public class TableBodyElement implements BodyElement {
 
     /**
      * Overrideable method for defining a cell's literal HTML value in the table
-     * 
+     *
      * @param context
      * @param row
      * @param col
      * @param value
      * @return
      */
-    protected String getCellValue(HtmlRenderingContext context, int row, int col, Object value) {
-        String stringValue = LabelUtils.getValueLabel(value);
-        String result = context.escapeHtml(stringValue);
+    protected String getCellValue(final HtmlRenderingContext context, final int row, final int col, final Object value) {
+        final String stringValue = LabelUtils.getValueLabel(value);
+        final String result = context.escapeHtml(stringValue);
         return result;
     }
 }

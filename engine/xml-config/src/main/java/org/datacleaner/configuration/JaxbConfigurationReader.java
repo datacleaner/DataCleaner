@@ -161,42 +161,90 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         try {
             _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class
                     .getClassLoader());
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new IllegalStateException(e);
         }
     }
 
+    /**
+     * Checks if a string is a valid name of a component.
+     *
+     * @param name
+     *            the name to be validated
+     * @param type
+     *            the type of component (used for error messages)
+     * @param previousEntries
+     *            the previous entries of that component type (for uniqueness
+     *            check)
+     * @throws IllegalStateException
+     *             if the name is invalid
+     */
+    private static void checkName(final String name, final Class<?> type, final Map<String, ?> previousEntries)
+            throws IllegalStateException {
+        if (StringUtils.isNullOrEmpty(name)) {
+            throw new IllegalStateException(type.getSimpleName() + " name cannot be null");
+        }
+        if (previousEntries.containsKey(name)) {
+            throw new IllegalStateException(type.getSimpleName() + " name is not unique: " + name);
+        }
+    }
+
+    /**
+     * Checks if a string is a valid name of a component.
+     *
+     * @param name
+     *            the name to be validated
+     * @param type
+     *            the type of component (used for error messages)
+     * @param previousEntries
+     *            the previous entries of that component type (for uniqueness
+     *            check)
+     * @throws IllegalStateException
+     *             if the name is invalid
+     */
+    private static void checkName(final String name, final Class<?> type, final List<? extends ReferenceData> previousEntries)
+            throws IllegalStateException {
+        if (StringUtils.isNullOrEmpty(name)) {
+            throw new IllegalStateException(type.getSimpleName() + " name cannot be null");
+        }
+        for (final ReferenceData referenceData : previousEntries) {
+            if (name.equals(referenceData.getName())) {
+                throw new IllegalStateException(type.getSimpleName() + " name is not unique: " + name);
+            }
+        }
+    }
+
     @Override
-    public DataCleanerConfiguration read(InputStream input) {
+    public DataCleanerConfiguration read(final InputStream input) {
         return create(input);
     }
 
-    public DataCleanerConfiguration create(FileObject file) {
+    public DataCleanerConfiguration create(final FileObject file) {
         InputStream inputStream = null;
         try {
             inputStream = file.getContent().getInputStream();
             return create(inputStream);
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new IllegalArgumentException(e);
         } finally {
             FileHelper.safeClose(inputStream);
         }
     }
 
-    public DataCleanerConfiguration create(File file) {
+    public DataCleanerConfiguration create(final File file) {
         InputStream inputStream = null;
         try {
             inputStream = new BufferedInputStream(new FileInputStream(file));
             return create(inputStream);
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             throw new IllegalArgumentException(e);
         } finally {
             FileHelper.safeClose(inputStream);
         }
     }
 
-    public DataCleanerConfiguration create(InputStream inputStream) {
-        Configuration configuration = unmarshall(inputStream);
+    public DataCleanerConfiguration create(final InputStream inputStream) {
+        final Configuration configuration = unmarshall(inputStream);
         return create(configuration);
     }
 
@@ -207,13 +255,13 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
      * @param inputStream input data to be unmarshalled
      * @return configuration based on input data
      */
-    public Configuration unmarshall(InputStream inputStream) {
+    public Configuration unmarshall(final InputStream inputStream) {
         try {
             final Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
             unmarshaller.setEventHandler(new JaxbValidationEventHandler());
 
             return (Configuration) unmarshaller.unmarshal(inputStream);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -225,18 +273,18 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
      * @param configuration configuration to be marshalled
      * @param outputStream target for the marshalled data
      */
-    public void marshall(Configuration configuration, OutputStream outputStream) {
+    public void marshall(final Configuration configuration, final OutputStream outputStream) {
         try {
             final Marshaller marshaller = _jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.setEventHandler(new JaxbValidationEventHandler());
             marshaller.marshal(configuration, outputStream);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public DataCleanerConfiguration create(Configuration jaxbConfiguration) {
+    public DataCleanerConfiguration create(final Configuration jaxbConfiguration) {
         final ConfigurationMetadataType metadata = jaxbConfiguration.getConfigurationMetadata();
         if (metadata != null) {
             logger.info("Configuration name: {}", metadata.getConfigurationName());
@@ -298,8 +346,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 serverInformationCatalog);
     }
 
-    private void updateDescriptorProviderIfSpecified(Configuration configuration,
-            TemporaryMutableDataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+    private void updateDescriptorProviderIfSpecified(final Configuration configuration,
+            final TemporaryMutableDataCleanerEnvironment environment, final DataCleanerConfiguration temporaryConfiguration) {
         final List<DescriptorProvider> providers = new ArrayList<>();
 
         DescriptorProvidersType providersElement = configuration.getDescriptorProviders();
@@ -321,11 +369,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
 
         // now go through providers specification and create them
-        List<RemoteServerData> remoteServerDataList = readAllRemoteServers(providersElement);
+        final List<RemoteServerData> remoteServerDataList = readAllRemoteServers(providersElement);
         environment.setRemoteServerConfiguration(
                 new RemoteServerConfigurationImpl(remoteServerDataList, environment.getTaskRunner()));
 
-        for (Object provider : providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
+        for (final Object provider : providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
             createDescriptorProvider(provider, environment,
                     temporaryConfiguration, providers);
         }
@@ -333,7 +381,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         if (providers.isEmpty()) {
             if (!(environment.getDescriptorProvider() instanceof CompositeDescriptorProvider)) {
-                CompositeDescriptorProvider compositeDescriptorProvider = new CompositeDescriptorProvider();
+                final CompositeDescriptorProvider compositeDescriptorProvider = new CompositeDescriptorProvider();
                 compositeDescriptorProvider.addDelegate(environment.getDescriptorProvider());
                 environment.setDescriptorProvider(compositeDescriptorProvider);
             }
@@ -343,7 +391,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         // check if there are only remote descriptor providers - add then also
         // the default descriptor provider
         boolean foundNonRemote = false;
-        for (DescriptorProvider provider : providers) {
+        for (final DescriptorProvider provider : providers) {
             if (!(provider instanceof RemoteDescriptorProvider)) {
                 foundNonRemote = true;
                 break;
@@ -354,14 +402,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             providers.add(0, environment.getDescriptorProvider());
         }
 
-        CompositeDescriptorProvider descriptorProvider = new CompositeDescriptorProvider();
+        final CompositeDescriptorProvider descriptorProvider = new CompositeDescriptorProvider();
         descriptorProvider.addDelegates(providers);
         environment.setDescriptorProvider(descriptorProvider);
     }
 
-    private void createDescriptorProvider(Object providerElement,
-            DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration,
-            List<DescriptorProvider> providerList) {
+    private void createDescriptorProvider(final Object providerElement,
+            final DataCleanerEnvironment environment, final DataCleanerConfiguration temporaryConfiguration,
+            final List<DescriptorProvider> providerList) {
         if (providerElement instanceof CustomElementType) {
             providerList.add(createCustomElement(((CustomElementType) providerElement), DescriptorProvider.class,
                     temporaryConfiguration, true));
@@ -376,20 +424,20 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
     }
 
-    private void createRemoteDescriptorProviders(DataCleanerEnvironment environment,
-            List<DescriptorProvider> providerList, List<RemoteServerData> remoteServerDataList) {
-        for (RemoteServerData remoteServerData : remoteServerDataList) {
+    private void createRemoteDescriptorProviders(final DataCleanerEnvironment environment,
+            final List<DescriptorProvider> providerList, final List<RemoteServerData> remoteServerDataList) {
+        for (final RemoteServerData remoteServerData : remoteServerDataList) {
             providerList.add(new RemoteDescriptorProviderImpl(remoteServerData,
                     environment.getRemoteServerConfiguration()));
         }
     }
 
-    private List<RemoteServerData> readAllRemoteServers(DescriptorProvidersType providersElement) {
-        List<RemoteServerData> remoteServerDataList = new ArrayList<>();
-        for (Object provider : providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
+    private List<RemoteServerData> readAllRemoteServers(final DescriptorProvidersType providersElement) {
+        final List<RemoteServerData> remoteServerDataList = new ArrayList<>();
+        for (final Object provider : providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
             if (provider instanceof RemoteComponentsType) {
                 int i = 0;
-                for (RemoteComponentServerType server : ((RemoteComponentsType) provider).getServer()) {
+                for (final RemoteComponentServerType server : ((RemoteComponentsType) provider).getServer()) {
                     i++;
                     final String serverName = (server.getName() == null
                             ? ("server" + i) : server.getName());
@@ -398,7 +446,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                             .equals(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME)) {
                         serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
                     }
-                    RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(serverUrl, serverName,
+                    final RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(serverUrl, serverName,
                             server.getUsername(), SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
                     remoteServerDataList.add(remoteServerData);
                 }
@@ -408,22 +456,22 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     private ClasspathScanDescriptorProvider createClasspathScanDescriptorProvider(
-            final ClasspathScannerType classpathScannerElement, DataCleanerEnvironment environment) {
+            final ClasspathScannerType classpathScannerElement, final DataCleanerEnvironment environment) {
         final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<>();
 
-        for (String excludedRenderingFormat : classpathScannerElement.getExcludedRenderingFormat()) {
+        for (final String excludedRenderingFormat : classpathScannerElement.getExcludedRenderingFormat()) {
             try {
-                @SuppressWarnings("unchecked")
+                @SuppressWarnings("unchecked") final
                 Class<? extends RenderingFormat<?>> cls = (Class<? extends RenderingFormat<?>>) _interceptor.loadClass(
                         excludedRenderingFormat);
                 excludedRenderingFormats.add(cls);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 logger.error("Could not find excluded rendering format class: " + excludedRenderingFormat, e);
             }
         }
         final ClasspathScanDescriptorProvider classpathScanner = new ClasspathScanDescriptorProvider(environment
                 .getTaskRunner(), excludedRenderingFormats);
-        for (Package pkg : classpathScannerElement.getPackage()) {
+        for (final Package pkg : classpathScannerElement.getPackage()) {
             String packageName = pkg.getValue();
             if (packageName != null) {
                 packageName = packageName.trim();
@@ -437,9 +485,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return classpathScanner;
     }
 
-
-    private void updateStorageProviderIfSpecified(Configuration configuration,
-            TemporaryMutableDataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+    private void updateStorageProviderIfSpecified(final Configuration configuration,
+            final TemporaryMutableDataCleanerEnvironment environment, final DataCleanerConfiguration temporaryConfiguration) {
         final StorageProviderType storageProviderType = configuration.getStorageProvider();
 
         if (storageProviderType == null) {
@@ -451,8 +498,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         environment.setStorageProvider(storageProvider);
     }
 
-    private StorageProvider createStorageProvider(StorageProviderType storageProviderType,
-            DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+    private StorageProvider createStorageProvider(final StorageProviderType storageProviderType,
+            final DataCleanerEnvironment environment, final DataCleanerConfiguration temporaryConfiguration) {
 
         final CombinedStorageProviderType combinedStorageProvider = storageProviderType.getCombined();
         if (combinedStorageProvider != null) {
@@ -494,12 +541,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     @Deprecated
-    private String createFilename(String filename) {
+    private String createFilename(final String filename) {
         return _interceptor.createFilename(filename);
     }
 
-    private ReferenceDataCatalog createReferenceDataCatalog(ReferenceDataCatalogType referenceDataCatalog,
-            DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+    private ReferenceDataCatalog createReferenceDataCatalog(final ReferenceDataCatalogType referenceDataCatalog,
+            final DataCleanerEnvironment environment, final DataCleanerConfiguration temporaryConfiguration) {
         final List<Dictionary> dictionaryList = new ArrayList<>();
         final List<SynonymCatalog> synonymCatalogList = new ArrayList<>();
 
@@ -509,7 +556,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
             final Dictionaries dictionaries = referenceDataCatalog.getDictionaries();
             if (dictionaries != null) {
-                for (Object dictionaryType : dictionaries
+                for (final Object dictionaryType : dictionaries
                         .getTextFileDictionaryOrValueListDictionaryOrDatastoreDictionary()) {
                     if (dictionaryType instanceof DatastoreDictionaryType) {
                         final DatastoreDictionaryType ddt = (DatastoreDictionaryType) dictionaryType;
@@ -578,7 +625,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
             final SynonymCatalogs synonymCatalogs = referenceDataCatalog.getSynonymCatalogs();
             if (synonymCatalogs != null) {
-                for (Object synonymCatalogType : synonymCatalogs
+                for (final Object synonymCatalogType : synonymCatalogs
                         .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrCustomSynonymCatalog()) {
                     if (synonymCatalogType instanceof TextFileSynonymCatalogType) {
                         final TextFileSynonymCatalogType tfsct = (TextFileSynonymCatalogType) synonymCatalogType;
@@ -641,7 +688,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
             final StringPatterns stringPatternTypes = referenceDataCatalog.getStringPatterns();
             if (stringPatternTypes != null) {
-                for (Object obj : stringPatternTypes.getRegexPatternOrRegexSwapPatternOrSimplePattern()) {
+                for (final Object obj : stringPatternTypes.getRegexPatternOrRegexSwapPatternOrSimplePattern()) {
                     if (obj instanceof RegexPatternType) {
                         final RegexPatternType regexPatternType = (RegexPatternType) obj;
 
@@ -665,13 +712,13 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
                         final String categories = getStringVariable("categories", regexSwapPatternType.getCategories());
                         final List<Category> categoryList = new ArrayList<>();
-                        
-                        for (String categoryName : categories.split(",")) {
+
+                        for (final String categoryName : categories.split(",")) {
                             categoryList.add(new Category(categoryName, "", ""));
                         }
-                                
+
                         addVariablePath(name);
-                        Regex regex = new Regex(
+                        final Regex regex = new Regex(
                                 getStringVariable("name", regexSwapPatternType.getName()),
                                 getStringVariable("description", regexSwapPatternType.getDescription()),
                                 getStringVariable("expression", regexSwapPatternType.getExpression()),
@@ -709,8 +756,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new ReferenceDataCatalogImpl(dictionaryList, synonymCatalogList, stringPatterns);
     }
 
-    private DatastoreCatalog createDatastoreCatalog(DatastoreCatalogType datastoreCatalogType,
-            DataCleanerConfigurationImpl temporaryConfiguration, DataCleanerEnvironment environment) {
+    private DatastoreCatalog createDatastoreCatalog(final DatastoreCatalogType datastoreCatalogType,
+            final DataCleanerConfigurationImpl temporaryConfiguration, final DataCleanerEnvironment environment) {
         if (datastoreCatalogType == null) {
             return temporaryConfiguration.getDatastoreCatalog();
         }
@@ -720,7 +767,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         // read all single, non-custom datastores
         final List<AbstractDatastoreType> datastoreTypes = datastoreCatalogType
                 .getJdbcDatastoreOrAccessDatastoreOrCsvDatastore();
-        for (AbstractDatastoreType datastoreType : datastoreTypes) {
+        for (final AbstractDatastoreType datastoreType : datastoreTypes) {
             final String name = datastoreType.getName();
             checkName(name, Datastore.class, datastores);
             addVariablePath(name);
@@ -782,9 +829,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         // create custom datastores
         final List<CustomElementType> customDatastores = datastoreCatalogType.getCustomDatastore();
-        for (CustomElementType customElementType : customDatastores) {
-            Datastore ds = createCustomElement(customElementType, Datastore.class, temporaryConfiguration, true);
-            String name = ds.getName();
+        for (final CustomElementType customElementType : customDatastores) {
+            final Datastore ds = createCustomElement(customElementType, Datastore.class, temporaryConfiguration, true);
+            final String name = ds.getName();
             checkName(name, Datastore.class, datastores);
             datastores.put(name, ds);
         }
@@ -792,14 +839,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         // create composite datastores as the last step
         final List<CompositeDatastoreType> compositeDatastores = CollectionUtils2.filterOnClass(datastoreTypes,
                 CompositeDatastoreType.class);
-        for (CompositeDatastoreType compositeDatastoreType : compositeDatastores) {
-            String name = compositeDatastoreType.getName();
+        for (final CompositeDatastoreType compositeDatastoreType : compositeDatastores) {
+            final String name = compositeDatastoreType.getName();
             checkName(name, Datastore.class, datastores);
 
-            List<String> datastoreNames = compositeDatastoreType.getDatastoreName();
-            List<Datastore> childDatastores = new ArrayList<>(datastoreNames.size());
-            for (String datastoreName : datastoreNames) {
-                Datastore datastore = datastores.get(datastoreName);
+            final List<String> datastoreNames = compositeDatastoreType.getDatastoreName();
+            final List<Datastore> childDatastores = new ArrayList<>(datastoreNames.size());
+            for (final String datastoreName : datastoreNames) {
+                final Datastore datastore = datastores.get(datastoreName);
                 if (datastore == null) {
                     throw new IllegalStateException("No such datastore: " + datastoreName
                             + " (found in composite datastore: " + name + ")");
@@ -807,7 +854,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 childDatastores.add(datastore);
             }
 
-            CompositeDatastore ds = new CompositeDatastore(name, childDatastores);
+            final CompositeDatastore ds = new CompositeDatastore(name, childDatastores);
             ds.setDescription(compositeDatastoreType.getDescription());
             datastores.put(name, ds);
         }
@@ -826,7 +873,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         final List<HadoopClusterType> hadoopClusterTypes = serversType.getHadoopClusters().getHadoopCluster();
 
-        for (HadoopClusterType hadoopClusterType : hadoopClusterTypes) {
+        for (final HadoopClusterType hadoopClusterType : hadoopClusterTypes) {
             final String name = hadoopClusterType.getName();
             checkName(name, ServerInformation.class, servers);
             final String description = hadoopClusterType.getDescription();
@@ -840,7 +887,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             servers.put(HadoopResource.DEFAULT_CLUSTERREFERENCE,
                     new EnvironmentBasedHadoopClusterInformation(
                             HadoopResource.DEFAULT_CLUSTERREFERENCE, null));
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             logger.info("No Hadoop environment variables, skipping default server");
         }
 
@@ -867,7 +914,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return serverInformation;
     }
 
-    private Datastore createDatastore(String name, Neo4JDatastoreType datastoreType) {
+    private Datastore createDatastore(final String name, final Neo4JDatastoreType datastoreType) {
         final String hostname = getStringVariable("hostname", datastoreType.getHostname());
         Integer port = getIntegerVariable("port", datastoreType.getPort());
         if (port == null) {
@@ -878,7 +925,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new Neo4jDatastore(name, hostname, port, username, password);
     }
 
-    private Datastore createDatastore(String name, CassandraDatastoreType datastoreType) {
+    private Datastore createDatastore(final String name, final CassandraDatastoreType datastoreType) {
 
         final String hostname = getStringVariable("hostname", datastoreType.getHostname());
         Integer port = getIntegerVariable("port", datastoreType.getPort());
@@ -927,7 +974,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new CassandraDatastore(name, hostname, port, keySpace, username, password, ssl, tableDefs);
     }
 
-    private Datastore createDatastore(String name, ElasticSearchDatastoreType datastoreType) {
+    private Datastore createDatastore(final String name, final ElasticSearchDatastoreType datastoreType) {
         final String clusterName = getStringVariable("clusterName", datastoreType.getClusterName());
         final String hostname = getStringVariable("hostname", datastoreType.getHostname());
         final String username = getStringVariable("username", datastoreType.getUsername());
@@ -988,14 +1035,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 username, password, ssl, keystorePath, keystorePassword);
     }
 
-    private Datastore createDatastore(String name, JsonDatastoreType datastoreType,
-            DataCleanerConfiguration configuration) {
+    private Datastore createDatastore(final String name, final JsonDatastoreType datastoreType,
+            final DataCleanerConfiguration configuration) {
         final String filename = getStringVariable("filename", datastoreType.getFilename());
         final Resource resource = _interceptor.createResource(filename, configuration);
         return new JsonDatastore(name, resource);
     }
 
-    private Datastore createDatastore(String name, HbaseDatastoreType datastoreType) {
+    private Datastore createDatastore(final String name, final HbaseDatastoreType datastoreType) {
         final String zookeeperHostname = getStringVariable("zookeeperHostname", datastoreType.getZookeeperHostname());
         final int zookeeperPort = getIntegerVariable("zookeeperPort", datastoreType.getZookeeperPort());
         final List<org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef> tableDefList = datastoreType
@@ -1039,43 +1086,43 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new HBaseDatastore(name, zookeeperHostname, zookeeperPort, tableDefs);
     }
 
-    private Datastore createDatastore(String name, SalesforceDatastoreType datastoreType) {
-        String username = getStringVariable("username", datastoreType.getUsername());
-        String password = getPasswordVariable("password", datastoreType.getPassword());
-        String securityToken = getStringVariable("securityToken", datastoreType.getSecurityToken());
-        String endpointUrl = getStringVariable("endpointUrl", datastoreType.getEndpointUrl());
+    private Datastore createDatastore(final String name, final SalesforceDatastoreType datastoreType) {
+        final String username = getStringVariable("username", datastoreType.getUsername());
+        final String password = getPasswordVariable("password", datastoreType.getPassword());
+        final String securityToken = getStringVariable("securityToken", datastoreType.getSecurityToken());
+        final String endpointUrl = getStringVariable("endpointUrl", datastoreType.getEndpointUrl());
         return new SalesforceDatastore(name, username, password, securityToken, endpointUrl);
     }
 
-    private Datastore createDatastore(String name, SugarCrmDatastoreType datastoreType) {
-        String baseUrl = getStringVariable("baseUrl", datastoreType.getBaseUrl());
-        String username = getStringVariable("username", datastoreType.getUsername());
-        String password = getPasswordVariable("password", datastoreType.getPassword());
+    private Datastore createDatastore(final String name, final SugarCrmDatastoreType datastoreType) {
+        final String baseUrl = getStringVariable("baseUrl", datastoreType.getBaseUrl());
+        final String username = getStringVariable("username", datastoreType.getUsername());
+        final String password = getPasswordVariable("password", datastoreType.getPassword());
         return new SugarCrmDatastore(name, baseUrl, username, password);
     }
 
-    private Datastore createDatastore(String name, DatahubDatastoreType datastoreType) {
-        String host = getStringVariable("host", datastoreType.getHost());
-        Integer port = getIntegerVariable("port", datastoreType.getPort());
-        String username = getStringVariable("username", datastoreType.getUsername());
-        String password = getPasswordVariable("password", datastoreType.getPassword());
-        boolean https = getBooleanVariable("https", datastoreType.isHttps(), true);
-        boolean acceptUnverifiedSslPeers = getBooleanVariable("acceptunverifiedsslpeers", datastoreType
+    private Datastore createDatastore(final String name, final DatahubDatastoreType datastoreType) {
+        final String host = getStringVariable("host", datastoreType.getHost());
+        final Integer port = getIntegerVariable("port", datastoreType.getPort());
+        final String username = getStringVariable("username", datastoreType.getUsername());
+        final String password = getPasswordVariable("password", datastoreType.getPassword());
+        final boolean https = getBooleanVariable("https", datastoreType.isHttps(), true);
+        final boolean acceptUnverifiedSslPeers = getBooleanVariable("acceptunverifiedsslpeers", datastoreType
                 .isAcceptunverifiedsslpeers(), false);
-        DatahubsecuritymodeEnum jaxbDatahubsecuritymode = datastoreType.getDatahubsecuritymode();
-        DataHubSecurityMode dataHubSecurityMode = DataHubSecurityMode.valueOf(jaxbDatahubsecuritymode.value());
+        final DatahubsecuritymodeEnum jaxbDatahubsecuritymode = datastoreType.getDatahubsecuritymode();
+        final DataHubSecurityMode dataHubSecurityMode = DataHubSecurityMode.valueOf(jaxbDatahubsecuritymode.value());
         return new DataHubDatastore(name, host, port, username, password, https, acceptUnverifiedSslPeers,
                 dataHubSecurityMode);
     }
 
-    private Datastore createDatastore(String name, MongodbDatastoreType mongodbDatastoreType) {
-        String hostname = getStringVariable("hostname", mongodbDatastoreType.getHostname());
-        Integer port = getIntegerVariable("port", mongodbDatastoreType.getPort());
-        String databaseName = getStringVariable("databaseName", mongodbDatastoreType.getDatabaseName());
-        String username = getStringVariable("username", mongodbDatastoreType.getUsername());
-        String password = getPasswordVariable("password", mongodbDatastoreType.getPassword());
+    private Datastore createDatastore(final String name, final MongodbDatastoreType mongodbDatastoreType) {
+        final String hostname = getStringVariable("hostname", mongodbDatastoreType.getHostname());
+        final Integer port = getIntegerVariable("port", mongodbDatastoreType.getPort());
+        final String databaseName = getStringVariable("databaseName", mongodbDatastoreType.getDatabaseName());
+        final String username = getStringVariable("username", mongodbDatastoreType.getUsername());
+        final String password = getPasswordVariable("password", mongodbDatastoreType.getPassword());
 
-        List<org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef> tableDefList = mongodbDatastoreType
+        final List<org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef> tableDefList = mongodbDatastoreType
                 .getTableDef();
         final SimpleTableDef[] tableDefs;
         if (tableDefList.isEmpty()) {
@@ -1110,7 +1157,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new MongoDbDatastore(name, hostname, port, databaseName, username, password, tableDefs);
     }
 
-    private Datastore createDatastore(String name, CouchdbDatastoreType couchdbDatastoreType) {
+    private Datastore createDatastore(final String name, final CouchdbDatastoreType couchdbDatastoreType) {
         final String hostname = getStringVariable("hostname", couchdbDatastoreType.getHostname());
         final Integer port = getIntegerVariable("port", couchdbDatastoreType.getPort());
         final String username = getStringVariable("username", couchdbDatastoreType.getUsername());
@@ -1125,15 +1172,15 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } else {
             tableDefs = new SimpleTableDef[tableDefList.size()];
             for (int i = 0; i < tableDefs.length; i++) {
-                org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef tableDef = tableDefList.get(i);
-                String databaseName = tableDef.getDatabase();
-                List<org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef.Field> fieldList = tableDef
+                final org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef tableDef = tableDefList.get(i);
+                final String databaseName = tableDef.getDatabase();
+                final List<org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef.Field> fieldList = tableDef
                         .getField();
-                String[] propertyNames = new String[fieldList.size()];
-                ColumnType[] columnTypes = new ColumnType[fieldList.size()];
+                final String[] propertyNames = new String[fieldList.size()];
+                final ColumnType[] columnTypes = new ColumnType[fieldList.size()];
                 for (int j = 0; j < columnTypes.length; j++) {
-                    String propertyName = fieldList.get(j).getName();
-                    String propertyTypeName = fieldList.get(j).getType();
+                    final String propertyName = fieldList.get(j).getName();
+                    final String propertyTypeName = fieldList.get(j).getType();
                     final ColumnType propertyType;
                     if (StringUtils.isNullOrEmpty(propertyTypeName)) {
                         propertyType = ColumnType.STRING;
@@ -1151,26 +1198,26 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new CouchDbDatastore(name, hostname, port, username, password, sslEnabled, tableDefs);
     }
 
-    private Datastore createDatastore(String name, PojoDatastoreType pojoDatastore,
-            DataCleanerConfigurationImpl temporaryConfiguration) {
+    private Datastore createDatastore(final String name, final PojoDatastoreType pojoDatastore,
+            final DataCleanerConfigurationImpl temporaryConfiguration) {
         final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor(temporaryConfiguration);
         return adaptor.read(pojoDatastore);
     }
 
-    private Datastore createDatastore(String name, OpenOfficeDatabaseDatastoreType odbDatastoreType) {
+    private Datastore createDatastore(final String name, final OpenOfficeDatabaseDatastoreType odbDatastoreType) {
         final String filenamePath = getStringVariable("filename", odbDatastoreType.getFilename());
         final String filename = createFilename(filenamePath);
         return new OdbDatastore(name, filename);
     }
 
-    private Datastore createDatastore(String name, DbaseDatastoreType dbaseDatastoreType) {
+    private Datastore createDatastore(final String name, final DbaseDatastoreType dbaseDatastoreType) {
         final String filenamePath = getStringVariable("filename", dbaseDatastoreType.getFilename());
         final String filename = createFilename(filenamePath);
         return new DbaseDatastore(name, filename);
     }
 
-    private Datastore createDatastore(String name, ExcelDatastoreType excelDatastoreType,
-            DataCleanerConfiguration configuration) {
+    private Datastore createDatastore(final String name, final ExcelDatastoreType excelDatastoreType,
+            final DataCleanerConfiguration configuration) {
         final String filename = getStringVariable("filename", excelDatastoreType.getFilename());
         final Resource resource = _interceptor.createResource(filename, configuration);
 
@@ -1181,7 +1228,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new ExcelDatastore(name, resource, filename, customColumnNames);
     }
 
-    private Datastore createDatastore(String name, XmlDatastoreType xmlDatastoreType) {
+    private Datastore createDatastore(final String name, final XmlDatastoreType xmlDatastoreType) {
         final String filenamePath = getStringVariable("filename", xmlDatastoreType.getFilename());
         final String filename = createFilename(filenamePath);
         final List<TableDef> tableDefList = xmlDatastoreType.getTableDef();
@@ -1200,20 +1247,21 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new XmlDatastore(name, filename, tableDefs);
     }
 
-    private Datastore createDatastore(String name, AccessDatastoreType accessDatastoreType) {
+    private Datastore createDatastore(final String name, final AccessDatastoreType accessDatastoreType) {
         final String filenamePath = getStringVariable("filename", accessDatastoreType.getFilename());
         final String filename = createFilename(filenamePath);
         return new AccessDatastore(name, filename);
     }
 
-    private Datastore createDatastore(String name, SasDatastoreType sasDatastoreType) {
+    private Datastore createDatastore(final String name, final SasDatastoreType sasDatastoreType) {
         final String directoryPath = getStringVariable("directory", sasDatastoreType.getDirectory());
         final File directory = new File(directoryPath);
         return new SasDatastore(name, directory);
     }
 
-    private Datastore createDatastore(String name, FixedWidthDatastoreType fixedWidthDatastore, DataCleanerConfiguration configuration) {
-        final String filename = getStringVariable("filename", fixedWidthDatastore.getFilename());   
+    private Datastore createDatastore(final String name, final FixedWidthDatastoreType fixedWidthDatastore,
+            final DataCleanerConfiguration configuration) {
+        final String filename = getStringVariable("filename", fixedWidthDatastore.getFilename());
         final Resource resource = _interceptor.createResource(filename, configuration);
         String encoding = getStringVariable("encoding", fixedWidthDatastore.getEncoding());
         if (!StringUtils.isNullOrEmpty(encoding)) {
@@ -1222,7 +1270,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         final boolean failOnInconsistencies = getBooleanVariable("failOnInconsistencies", fixedWidthDatastore
                 .isFailOnInconsistencies(), true);
-        final boolean skipEbcdicHeader = getBooleanVariable("skipEbcdicHeader", fixedWidthDatastore.isSkipEbcdicHeader(), false);
+        final boolean skipEbcdicHeader =
+                getBooleanVariable("skipEbcdicHeader", fixedWidthDatastore.isSkipEbcdicHeader(), false);
         final boolean eolPresent =
                 getBooleanVariable("eolPresent", fixedWidthDatastore.isEolPresent(), true);
 
@@ -1237,7 +1286,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final Integer fixedValueWidth = getIntegerVariable("fixedValueWidth", widthSpecification.getFixedValueWidth());
         if (fixedValueWidth == null) {
             final List<Integer> valueWidthsBoxed = widthSpecification.getValueWidth();
-            int[] valueWidths = new int[valueWidthsBoxed.size()];
+            final int[] valueWidths = new int[valueWidthsBoxed.size()];
             for (int i = 0; i < valueWidths.length; i++) {
                 valueWidths[i] = valueWidthsBoxed.get(i).intValue();
             }
@@ -1246,8 +1295,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             if (fixedWidthDatastore.getCustomColumnNames() != null) {
                 customColumnNames = fixedWidthDatastore.getCustomColumnNames().getColumnName();
             }
- 
-            ds = new FixedWidthDatastore(name, resource, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader,
+
+            ds = new FixedWidthDatastore(name, resource, filename, encoding, valueWidths, failOnInconsistencies,
+                    skipEbcdicHeader,
                     eolPresent, headerLineNumber, customColumnNames);
         } else {
             ds = new FixedWidthDatastore(name, resource, filename, encoding, fixedValueWidth, failOnInconsistencies,
@@ -1256,8 +1306,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return ds;
     }
 
-    private Datastore createDatastore(String name, JdbcDatastoreType jdbcDatastoreType) {
-        JdbcDatastore ds;
+    private Datastore createDatastore(final String name, final JdbcDatastoreType jdbcDatastoreType) {
+        final JdbcDatastore ds;
 
         final TableTypes jaxbTableTypes = jdbcDatastoreType.getTableTypes();
         final TableType[] tableTypes;
@@ -1280,7 +1330,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             final String driver = getStringVariable("driver", jdbcDatastoreType.getDriver());
             final String username = getStringVariable("username", jdbcDatastoreType.getUsername());
             final String password = getPasswordVariable("password", jdbcDatastoreType.getPassword());
-            boolean multipleConnections = getBooleanVariable("multipleConnections", jdbcDatastoreType
+            final boolean multipleConnections = getBooleanVariable("multipleConnections", jdbcDatastoreType
                     .isMultipleConnections(), true);
 
             ds = new JdbcDatastore(name, url, driver, username, password, multipleConnections, tableTypes, catalogName);
@@ -1290,8 +1340,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return ds;
     }
 
-    private Datastore createDatastore(String name, CsvDatastoreType csvDatastoreType,
-            DataCleanerConfiguration configuration) {
+    private Datastore createDatastore(final String name, final CsvDatastoreType csvDatastoreType,
+            final DataCleanerConfiguration configuration) {
         final String filename = getStringVariable("filename", csvDatastoreType.getFilename());
         final Resource resource = _interceptor.createResource(filename, configuration);
 
@@ -1332,7 +1382,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 failOnInconsistencies, multilineValues, headerLineNumber, customColumnNames);
     }
 
-    private char getChar(String charString, char ifNull, char ifBlank) {
+    private char getChar(final String charString, final char ifNull, final char ifBlank) {
         if (charString == null) {
             return ifNull;
         }
@@ -1371,7 +1421,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         _variablePathBuilder.pollLast();
     }
 
-    private String getStringVariable(String key, String valueIfNull) {
+    private String getStringVariable(final String key, final String valueIfNull) {
         final StringBuilder sb = new StringBuilder();
         for (final String keyElement : _variablePathBuilder) {
             if (sb.length() > 0) {
@@ -1391,7 +1441,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return value;
     }
 
-    private String getPasswordVariable(String key, String valueIfNull) {
+    private String getPasswordVariable(final String key, final String valueIfNull) {
         final String possiblyEncodedPassword = getStringVariable(key, valueIfNull);
 
         if (possiblyEncodedPassword == null) {
@@ -1405,26 +1455,26 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return possiblyEncodedPassword;
     }
 
-    public Integer getIntegerVariable(String key, Integer valueIfNull) {
-        String value = getStringVariable(key, null);
+    public Integer getIntegerVariable(final String key, final Integer valueIfNull) {
+        final String value = getStringVariable(key, null);
         if (value == null) {
             return valueIfNull;
         }
         return Integer.parseInt(value);
     }
 
-    public Long getLongVariable(String key, Long valueIfNull) {
-        String value = getStringVariable(key, null);
-        
+    public Long getLongVariable(final String key, final Long valueIfNull) {
+        final String value = getStringVariable(key, null);
+
         if (value == null) {
             return valueIfNull;
         }
-        
+
         return Long.parseLong(value);
     }
 
-    private boolean getBooleanVariable(String key, Boolean valueIfNull, boolean valueIfNull2) {
-        String value = getStringVariable(key, null);
+    private boolean getBooleanVariable(final String key, final Boolean valueIfNull, final boolean valueIfNull2) {
+        final String value = getStringVariable(key, null);
         if (StringUtils.isNullOrEmpty(value)) {
             if (valueIfNull == null) {
                 return valueIfNull2;
@@ -1434,56 +1484,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return Boolean.parseBoolean(value);
     }
 
-    /**
-     * Checks if a string is a valid name of a component.
-     *
-     * @param name
-     *            the name to be validated
-     * @param type
-     *            the type of component (used for error messages)
-     * @param previousEntries
-     *            the previous entries of that component type (for uniqueness
-     *            check)
-     * @throws IllegalStateException
-     *             if the name is invalid
-     */
-    private static void checkName(final String name, Class<?> type, final Map<String, ?> previousEntries)
-            throws IllegalStateException {
-        if (StringUtils.isNullOrEmpty(name)) {
-            throw new IllegalStateException(type.getSimpleName() + " name cannot be null");
-        }
-        if (previousEntries.containsKey(name)) {
-            throw new IllegalStateException(type.getSimpleName() + " name is not unique: " + name);
-        }
-    }
-
-    /**
-     * Checks if a string is a valid name of a component.
-     *
-     * @param name
-     *            the name to be validated
-     * @param type
-     *            the type of component (used for error messages)
-     * @param previousEntries
-     *            the previous entries of that component type (for uniqueness
-     *            check)
-     * @throws IllegalStateException
-     *             if the name is invalid
-     */
-    private static void checkName(String name, Class<?> type, List<? extends ReferenceData> previousEntries)
-            throws IllegalStateException {
-        if (StringUtils.isNullOrEmpty(name)) {
-            throw new IllegalStateException(type.getSimpleName() + " name cannot be null");
-        }
-        for (ReferenceData referenceData : previousEntries) {
-            if (name.equals(referenceData.getName())) {
-                throw new IllegalStateException(type.getSimpleName() + " name is not unique: " + name);
-            }
-        }
-    }
-
-    private void updateTaskRunnerIfSpecified(Configuration configuration,
-            TemporaryMutableDataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+    private void updateTaskRunnerIfSpecified(final Configuration configuration,
+            final TemporaryMutableDataCleanerEnvironment environment, final DataCleanerConfiguration temporaryConfiguration) {
         final SinglethreadedTaskrunnerType singlethreadedTaskrunner = configuration.getSinglethreadedTaskrunner();
         final MultithreadedTaskrunnerType multithreadedTaskrunner = configuration.getMultithreadedTaskrunner();
         final CustomElementType customTaskrunner = configuration.getCustomTaskrunner();
@@ -1492,7 +1494,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             final TaskRunner taskRunner = new SingleThreadedTaskRunner();
             environment.setTaskRunner(taskRunner);
         } else if (multithreadedTaskrunner != null) {
-            Short maxThreads = multithreadedTaskrunner.getMaxThreads();
+            final Short maxThreads = multithreadedTaskrunner.getMaxThreads();
             final TaskRunner taskRunner;
             if (maxThreads != null) {
                 taskRunner = new MultiThreadedTaskRunner(maxThreads.intValue());
@@ -1524,22 +1526,22 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
      *            task runners support this.
      * @return the custom component
      */
-    private <E> E createCustomElement(CustomElementType customElementType, Class<E> expectedClazz,
-            DataCleanerConfiguration configuration, boolean initialize) {
+    private <E> E createCustomElement(final CustomElementType customElementType, final Class<E> expectedClazz,
+            final DataCleanerConfiguration configuration, final boolean initialize) {
         final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
                 .getInjectionManager(configuration);
         return createCustomElementInternal(customElementType, expectedClazz, injectionManager, initialize);
     }
 
-    private <E> E createCustomElementInternal(CustomElementType customElementType, Class<E> expectedClazz,
-            InjectionManager injectionManager, boolean initialize) {
-        Class<?> foundClass;
-        String className = customElementType.getClassName();
+    private <E> E createCustomElementInternal(final CustomElementType customElementType, final Class<E> expectedClazz,
+            final InjectionManager injectionManager, final boolean initialize) {
+        final Class<?> foundClass;
+        final String className = customElementType.getClassName();
 
         assert className != null;
         try {
             foundClass = _interceptor.loadClass(className);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Failed to load class: {}", className);
             throw new IllegalStateException(e);
         }
@@ -1547,25 +1549,25 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             throw new IllegalStateException(className + " is not a valid " + expectedClazz);
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked") final
         E result = ReflectionUtils.newInstance((Class<E>) foundClass);
 
-        ComponentDescriptor<?> descriptor = Descriptors.ofComponent(foundClass);
+        final ComponentDescriptor<?> descriptor = Descriptors.ofComponent(foundClass);
 
-        StringConverter stringConverter = new StringConverter(injectionManager);
+        final StringConverter stringConverter = new StringConverter(injectionManager);
 
-        List<Property> propertyTypes = customElementType.getProperty();
+        final List<Property> propertyTypes = customElementType.getProperty();
         if (propertyTypes != null) {
-            for (Property property : propertyTypes) {
-                String propertyName = property.getName();
-                String propertyValue = property.getValue();
+            for (final Property property : propertyTypes) {
+                final String propertyName = property.getName();
+                final String propertyValue = property.getValue();
 
-                ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty(propertyName);
+                final ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty(propertyName);
                 if (configuredProperty == null) {
                     logger.warn("Missing configured property name: {}", propertyName);
                     if (logger.isInfoEnabled()) {
-                        Set<ConfiguredPropertyDescriptor> configuredProperties = descriptor.getConfiguredProperties();
-                        for (ConfiguredPropertyDescriptor configuredPropertyDescriptor : configuredProperties) {
+                        final Set<ConfiguredPropertyDescriptor> configuredProperties = descriptor.getConfiguredProperties();
+                        for (final ConfiguredPropertyDescriptor configuredPropertyDescriptor : configuredProperties) {
                             logger.info("Available configured property name: {}, {}", configuredPropertyDescriptor
                                     .getName(), configuredPropertyDescriptor.getType());
                         }
@@ -1574,7 +1576,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                             + propertyName);
                 }
 
-                Object configuredValue = stringConverter.deserialize(propertyValue, configuredProperty.getType(),
+                final Object configuredValue = stringConverter.deserialize(propertyValue, configuredProperty.getType(),
                         configuredProperty.createCustomConverter());
 
                 configuredProperty.setValue(result, configuredValue);

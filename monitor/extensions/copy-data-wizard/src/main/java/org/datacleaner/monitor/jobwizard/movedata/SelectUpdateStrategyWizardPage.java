@@ -57,9 +57,9 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
     private final List<ColumnMapping> _columnMappings;
     private final DataCleanerJobWizardSession _session;
 
-    public SelectUpdateStrategyWizardPage(DataCleanerJobWizardSession session, AnalysisJobBuilder jobBuilder,
-            Datastore targetDatastore, Table targetTable, AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert,
-            List<ColumnMapping> columnMappings) {
+    public SelectUpdateStrategyWizardPage(final DataCleanerJobWizardSession session, final AnalysisJobBuilder jobBuilder,
+            final Datastore targetDatastore, final Table targetTable, final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert,
+            final List<ColumnMapping> columnMappings) {
         _session = session;
         _analysisJobBuilder = jobBuilder;
         _targetDatastore = targetDatastore;
@@ -99,10 +99,10 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
 
-        String updateStrategy = formParameters.get("update_strategy").get(0);
+        final String updateStrategy = formParameters.get("update_strategy").get(0);
 
         if ("truncate".equals(updateStrategy)) {
             setUpdateStrategyTruncate();
@@ -126,7 +126,7 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
         return new JobNameWizardPage(wizardContext, getPageIndex() + 1, "Copy data") {
 
             @Override
-            protected WizardPageController nextPageController(String name) {
+            protected WizardPageController nextPageController(final String name) {
                 _session.setJobName(name);
                 return null;
             }
@@ -137,9 +137,10 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
         _insert.setConfiguredProperty("Truncate table", true);
     }
 
-    private void setUpdateStrategyPrimaryKeyLookup(ColumnMapping primaryKeyColumnMapping) {
+    private void setUpdateStrategyPrimaryKeyLookup(final ColumnMapping primaryKeyColumnMapping) {
         final TransformerComponentBuilder<TableLookupTransformer> tableLookup = buildLookup(primaryKeyColumnMapping);
-        final AnalyzerComponentBuilder<UpdateTableAnalyzer> update = buildUpdate(primaryKeyColumnMapping, _columnMappings);
+        final AnalyzerComponentBuilder<UpdateTableAnalyzer> update =
+                buildUpdate(primaryKeyColumnMapping, _columnMappings);
 
         // bind UPDATE and INSERT to outcome of a null check on the looked
         // up fields
@@ -175,7 +176,7 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
             values = new InputColumn[mappings.size() - 1];
             columnNames = new String[mappings.size() - 1];
             int i = 0;
-            for (ColumnMapping mapping : mappings) {
+            for (final ColumnMapping mapping : mappings) {
                 if (!primaryKeyColumnMapping.equals(mapping)) {
                     values[i] = _analysisJobBuilder
                             .getSourceColumnByName(mapping.getSourceColumn().getQualifiedLabel());
@@ -200,7 +201,8 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
         return update;
     }
 
-    private TransformerComponentBuilder<TableLookupTransformer> buildLookup(final ColumnMapping primaryKeyColumnMapping) {
+    private TransformerComponentBuilder<TableLookupTransformer> buildLookup(
+            final ColumnMapping primaryKeyColumnMapping) {
         final InputColumn<?>[] conditionValues = new InputColumn[1];
         final String[] conditionColumns = new String[1];
         conditionValues[0] = _analysisJobBuilder.getSourceColumnByName(primaryKeyColumnMapping.getSourceColumn()

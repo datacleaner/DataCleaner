@@ -29,7 +29,7 @@ import org.datacleaner.api.OutputDataStream;
  */
 public interface OutputDataStreamJob extends Serializable {
 
-    public OutputDataStream getOutputDataStream();
+    OutputDataStream getOutputDataStream();
 
-    public AnalysisJob getJob();
+    AnalysisJob getJob();
 }

@@ -75,9 +75,9 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
     private volatile boolean _nameAutomaticallySet = true;
 
     @Inject
-    protected DatastoreDictionaryDialog(@Nullable DatastoreDictionary dictionary,
-            MutableReferenceDataCatalog referenceDataCatalog, DatastoreCatalog datastoreCatalog,
-            WindowContext windowContext, InjectorBuilder injectorBuilder) {
+    protected DatastoreDictionaryDialog(@Nullable final DatastoreDictionary dictionary,
+            final MutableReferenceDataCatalog referenceDataCatalog, final DatastoreCatalog datastoreCatalog,
+            final WindowContext windowContext, final InjectorBuilder injectorBuilder) {
         super(windowContext, ImageManager.get().getImage(IconUtils.DICTIONARY_DATASTORE_IMAGEPATH));
         _originalDictionary = dictionary;
         _referenceDataCatalog = referenceDataCatalog;
@@ -87,13 +87,13 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
         _nameTextField = WidgetFactory.createTextField("Dictionary name");
         _nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent e) {
+            protected void onChange(final DocumentEvent e) {
                 _nameAutomaticallySet = false;
             }
         });
         _columnTextField = WidgetFactory.createTextField("Column name");
 
-        String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
+        final String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
 
         _datastoreComboBox = new JComboBox<String>(comboBoxModel);
         _datastoreComboBox.setEditable(false);
@@ -108,28 +108,28 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
         _treePanel.setLayout(new BorderLayout());
         _datastoreComboBox.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                String datastoreName = (String) _datastoreComboBox.getSelectedItem();
+            public void actionPerformed(final ActionEvent e) {
+                final String datastoreName = (String) _datastoreComboBox.getSelectedItem();
                 if (datastoreName != null) {
-                    Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
+                    final Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
                     if (datastore != null) {
                         _treePanel.removeAll();
 
-                        Injector injectorWithDatastore = _injectorBuilder.with(Datastore.class, datastore).with(
+                        final Injector injectorWithDatastore = _injectorBuilder.with(Datastore.class, datastore).with(
                                 AnalyzerComponentBuilder.class, null).createInjector();
 
                         final SchemaTree schemaTree = injectorWithDatastore.getInstance(SchemaTree.class);
                         schemaTree.setIncludeLibraryNode(false);
                         schemaTree.addMouseListener(new MouseAdapter() {
-                            public void mouseClicked(MouseEvent e) {
-                                TreePath path = schemaTree.getSelectionPath();
+                            public void mouseClicked(final MouseEvent e) {
+                                final TreePath path = schemaTree.getSelectionPath();
                                 if (path == null) {
                                     return;
                                 }
 
-                                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                                final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                                 if (node.getUserObject() instanceof Column) {
-                                    Column column = (Column) node.getUserObject();
+                                    final Column column = (Column) node.getUserObject();
 
                                     if (_nameAutomaticallySet || StringUtils.isNullOrEmpty(_nameTextField.getText())) {
                                         _nameTextField.setText(column.getName());
@@ -138,7 +138,8 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
 
                                     _columnTextField.setText(column.getQualifiedLabel());
                                 }
-                            };
+                            }
+
                         });
                         _treePanel.add(WidgetUtils.scrolleable(schemaTree), BorderLayout.CENTER);
                         _treePanel.updateUI();
@@ -189,21 +190,21 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
                 IconUtils.ACTION_SAVE_BRIGHT);
         createDictionaryButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                String name = _nameTextField.getText();
+            public void actionPerformed(final ActionEvent e) {
+                final String name = _nameTextField.getText();
                 if (StringUtils.isNullOrEmpty(name)) {
                     JOptionPane.showMessageDialog(DatastoreDictionaryDialog.this,
                             "Please fill out the name of the dictionary");
                     return;
                 }
 
-                String datastoreName = (String) _datastoreComboBox.getSelectedItem();
+                final String datastoreName = (String) _datastoreComboBox.getSelectedItem();
                 if (StringUtils.isNullOrEmpty(datastoreName)) {
                     JOptionPane.showMessageDialog(DatastoreDictionaryDialog.this, "Please select a datastore");
                     return;
                 }
 
-                String columnPath = _columnTextField.getText();
+                final String columnPath = _columnTextField.getText();
                 if (StringUtils.isNullOrEmpty(columnPath)) {
                     JOptionPane.showMessageDialog(DatastoreDictionaryDialog.this, "Please select a lookup column");
                     return;

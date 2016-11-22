@@ -32,7 +32,7 @@ public class HasNameComparator implements Comparator<HasName>, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public int compare(HasName o1, HasName o2) {
+    public int compare(final HasName o1, final HasName o2) {
         return o1.getName().compareTo(o2.getName());
     }
 

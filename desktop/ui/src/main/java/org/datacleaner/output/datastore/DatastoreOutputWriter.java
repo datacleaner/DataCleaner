@@ -50,13 +50,13 @@ final class DatastoreOutputWriter implements OutputWriter {
     private final PreparedStatement _insertStatement;
     private final DatastoreCreationDelegate _datastoreCreationDelegate;
 
-    public DatastoreOutputWriter(String datastoreName, String tableName, File directory, InputColumn<?>[] columns,
-            DatastoreCreationDelegate datastoreCreationDelegate) {
+    public DatastoreOutputWriter(final String datastoreName, final String tableName, final File directory, final InputColumn<?>[] columns,
+            final DatastoreCreationDelegate datastoreCreationDelegate) {
         this(datastoreName, tableName, directory, columns, datastoreCreationDelegate, true);
     }
 
-    public DatastoreOutputWriter(String datastoreName, String tableName, File directory, InputColumn<?>[] columns,
-            DatastoreCreationDelegate datastoreCreationDelegate, boolean truncateExisting) {
+    public DatastoreOutputWriter(final String datastoreName, String tableName, final File directory, final InputColumn<?>[] columns,
+            final DatastoreCreationDelegate datastoreCreationDelegate, final boolean truncateExisting) {
         _datastoreName = datastoreName;
         _jdbcUrl = DatastoreOutputUtils.getJdbcUrl(directory, _datastoreName);
         _columns = columns;
@@ -64,13 +64,13 @@ final class DatastoreOutputWriter implements OutputWriter {
 
         try {
             Class.forName(DRIVER_CLASS_NAME);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }
 
         try {
             _connection = DriverManager.getConnection(_jdbcUrl, "SA", "");
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
 
@@ -86,7 +86,7 @@ final class DatastoreOutputWriter implements OutputWriter {
             if (truncateExisting) {
                 _tableName = tableName;
 
-                for (String existingTableName : tableNames) {
+                for (final String existingTableName : tableNames) {
                     if (_tableName.equalsIgnoreCase(existingTableName)) {
                         dc.executeUpdate(new DropTable(schema, existingTableName));
                     }
@@ -99,7 +99,7 @@ final class DatastoreOutputWriter implements OutputWriter {
                     tableNumber++;
                     proposalName = tableName + '_' + tableNumber;
                     accepted = true;
-                    for (String existingTableName : tableNames) {
+                    for (final String existingTableName : tableNames) {
                         if (existingTableName.equalsIgnoreCase(proposalName)) {
                             accepted = false;
                             break;
@@ -110,7 +110,7 @@ final class DatastoreOutputWriter implements OutputWriter {
             }
 
             // create a CREATE TABLE statement and execute it
-            CreateTable createTable = new CreateTable(schema, _tableName);
+            final CreateTable createTable = new CreateTable(schema, _tableName);
 
             for (int i = 0; i < columns.length; i++) {
                 final InputColumn<?> column = columns[i];
@@ -142,12 +142,12 @@ final class DatastoreOutputWriter implements OutputWriter {
 
         try {
             _insertStatement = _connection.prepareStatement(insertStatementBuilder.toString());
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public static String getSqlType(Class<?> valueType) {
+    public static String getSqlType(final Class<?> valueType) {
         if (String.class == valueType) {
             return "VARCHAR";
         }
@@ -190,6 +190,12 @@ final class DatastoreOutputWriter implements OutputWriter {
         throw new UnsupportedOperationException("Unsupported value type: " + valueType);
     }
 
+    public static boolean isDirectlyInsertableType(final InputColumn<?> column) {
+        final Class<?> dataType = column.getDataType();
+        return ReflectionUtils.isNumber(dataType) || ReflectionUtils.isDate(dataType)
+                || ReflectionUtils.isBoolean(dataType);
+    }
+
     @Override
     public OutputRow createRow() {
 
@@ -204,13 +210,13 @@ final class DatastoreOutputWriter implements OutputWriter {
     public void close() {
         try {
             _insertStatement.close();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // do nothing
         }
 
         DatastoreOutputWriterFactory.release(this);
 
-        Datastore datastore = new JdbcDatastore(_datastoreName, _jdbcUrl, DRIVER_CLASS_NAME, "SA", "", true);
+        final Datastore datastore = new JdbcDatastore(_datastoreName, _jdbcUrl, DRIVER_CLASS_NAME, "SA", "", true);
         _datastoreCreationDelegate.createDatastore(datastore);
     }
 
@@ -220,11 +226,5 @@ final class DatastoreOutputWriter implements OutputWriter {
 
     public Connection getConnection() {
         return _connection;
-    }
-
-    public static boolean isDirectlyInsertableType(InputColumn<?> column) {
-        final Class<?> dataType = column.getDataType();
-        return ReflectionUtils.isNumber(dataType) || ReflectionUtils.isDate(dataType)
-                || ReflectionUtils.isBoolean(dataType);
     }
 }

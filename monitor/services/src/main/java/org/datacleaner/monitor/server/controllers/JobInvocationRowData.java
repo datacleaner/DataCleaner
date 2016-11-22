@@ -35,7 +35,7 @@ public class JobInvocationRowData implements Serializable {
     public JobInvocationRowData() {
     }
 
-    public JobInvocationRowData(Object[] values) {
+    public JobInvocationRowData(final Object[] values) {
         this.values = values;
     }
 
@@ -43,7 +43,7 @@ public class JobInvocationRowData implements Serializable {
         return values;
     }
 
-    public void setValues(Object[] values) {
+    public void setValues(final Object[] values) {
         this.values = values;
     }
 

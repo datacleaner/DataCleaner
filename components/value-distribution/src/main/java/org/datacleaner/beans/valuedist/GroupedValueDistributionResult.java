@@ -29,15 +29,15 @@ import org.datacleaner.result.ValueFrequency;
 
 /**
  * Represents the result of the {@link ValueDistributionAnalyzer}.
- * 
+ *
  * A value distribution result has two basic forms: Grouped or ungrouped. To
  * find out which type a particular instance has, use the
  * {@link #isGroupingEnabled()} method.
- * 
+ *
  * Ungrouped results only contain a single/global value distribution. A grouped
  * result contain multiple value distributions, based on groups.
- * 
- * 
+ *
+ *
  */
 public class GroupedValueDistributionResult extends ValueDistributionAnalyzerResult implements
         GroupedValueCountingAnalyzerResult {
@@ -48,8 +48,8 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
     private final InputColumn<String> _groupColumn;
     private final Collection<? extends ValueCountingAnalyzerResult> _result;
 
-    public GroupedValueDistributionResult(InputColumn<?> column, InputColumn<String> groupColumn,
-            Collection<? extends ValueCountingAnalyzerResult> groupedResult) {
+    public GroupedValueDistributionResult(final InputColumn<?> column, final InputColumn<String> groupColumn,
+            final Collection<? extends ValueCountingAnalyzerResult> groupedResult) {
         _column = column;
         _groupColumn = groupColumn;
         _result = groupedResult;
@@ -100,7 +100,7 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
     }
 
     @Override
-    public Integer getCount(String value) {
+    public Integer getCount(final String value) {
         if (_result.size() == 1) {
             return getSingleValueDistributionResult().getCount(value);
         } else {
@@ -146,10 +146,10 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("Value distribution for column: ");
         sb.append(_column.getName());
-        for (ValueCountingAnalyzerResult groupResult : getGroupResults()) {
+        for (final ValueCountingAnalyzerResult groupResult : getGroupResults()) {
             if (getGroupDiscriminatorName() != null) {
                 sb.append("\n");
                 sb.append("\nGroup: ");
@@ -167,7 +167,7 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
     }
 
     @Override
-    public AnnotatedRowsResult getAnnotatedRowsForValue(String value) {
+    public AnnotatedRowsResult getAnnotatedRowsForValue(final String value) {
         if (_result.size() == 1) {
             return getSingleValueDistributionResult().getAnnotatedRowsForValue(value);
         } else {
@@ -206,7 +206,7 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
     }
 
     @Override
-    public boolean hasAnnotatedRows(String value) {
+    public boolean hasAnnotatedRows(final String value) {
         if (_result.size() == 1) {
             return getSingleValueDistributionResult().hasAnnotatedRows(value);
         } else {

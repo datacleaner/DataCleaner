@@ -59,11 +59,11 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
     private final Integer _minPartitions;
 
-    public SparkAnalysisRunner(JavaSparkContext sparkContext, SparkJobContext sparkJobContext) {
+    public SparkAnalysisRunner(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext) {
         this(sparkContext, sparkJobContext, null);
     }
 
-    public SparkAnalysisRunner(JavaSparkContext sparkContext, SparkJobContext sparkJobContext, Integer minPartitions) {
+    public SparkAnalysisRunner(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext, final Integer minPartitions) {
         _sparkContext = sparkContext;
         _sparkJobContext = sparkJobContext;
         if (minPartitions != null) {
@@ -81,7 +81,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
     }
 
     @Override
-    public AnalysisResultFuture run(AnalysisJob job) {
+    public AnalysisResultFuture run(final AnalysisJob job) {
         return run();
     }
 
@@ -102,11 +102,12 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final JavaRDD<Tuple2<String, NamedAnalyzerResult>> processedTuplesRdd = inputRowsRDD
                     .mapPartitionsWithIndex(new RowProcessingFunction(_sparkJobContext), preservePartitions);
-            
+
             if (_sparkJobContext.isResultEnabled()) {
                 final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = processedTuplesRdd
-                        .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>(), preservePartitions);
-                
+                        .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>(),
+                                preservePartitions);
+
                 namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(
                         _sparkJobContext));
             } else {
@@ -119,13 +120,13 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             final JavaRDD<InputRow> coalescedInputRowsRDD = inputRowsRDD.coalesce(1);
             namedAnalyzerResultsRDD = coalescedInputRowsRDD.mapPartitionsToPair(new RowProcessingFunction(
                     _sparkJobContext));
-            
+
             if (!_sparkJobContext.isResultEnabled()) {
                 // call count() to block and wait for RDD to be fully processed
                 namedAnalyzerResultsRDD.count();
             }
         }
-        
+
         if (!_sparkJobContext.isResultEnabled()) {
             final List<Tuple2<String, AnalyzerResult>> results = Collections.emptyList();
             return new SparkAnalysisResultFuture(results, _sparkJobContext);
@@ -139,7 +140,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         final List<Tuple2<String, AnalyzerResult>> results = finalAnalyzerResultsRDD.collect();
 
         logger.info("Finished! Number of AnalyzerResult objects: {}", results.size());
-        for (Tuple2<String, AnalyzerResult> analyzerResultTuple : results) {
+        for (final Tuple2<String, AnalyzerResult> analyzerResultTuple : results) {
             final String key = analyzerResultTuple._1;
             final AnalyzerResult result = analyzerResultTuple._2;
             logger.info("AnalyzerResult (" + key + "):\n\n" + result + "\n");
@@ -149,7 +150,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         return new SparkAnalysisResultFuture(results, _sparkJobContext);
     }
 
-    private JavaRDD<InputRow> openSourceDatastore(Datastore datastore) {
+    private JavaRDD<InputRow> openSourceDatastore(final Datastore datastore) {
         if (datastore instanceof CsvDatastore) {
             final CsvDatastore csvDatastore = (CsvDatastore) datastore;
             final Resource resource = csvDatastore.getResource();

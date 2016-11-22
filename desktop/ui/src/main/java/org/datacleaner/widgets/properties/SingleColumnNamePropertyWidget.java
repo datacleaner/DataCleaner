@@ -41,8 +41,8 @@ public final class SingleColumnNamePropertyWidget extends AbstractPropertyWidget
     private final MutableRef<Table> _tableRef;
 
     @Inject
-    public SingleColumnNamePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder) {
+    public SingleColumnNamePropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
 
         _tableRef = new MutableRef<Table>();
@@ -55,12 +55,12 @@ public final class SingleColumnNamePropertyWidget extends AbstractPropertyWidget
 
         _comboBox = new SourceColumnComboBox();
 
-        String currentValue = getCurrentValue();
+        final String currentValue = getCurrentValue();
         setValue(currentValue);
 
         addComboListener(new Listener<Column>() {
             @Override
-            public void onItemSelected(Column item) {
+            public void onItemSelected(final Column item) {
                 fireValueChanged();
             }
         });
@@ -70,10 +70,10 @@ public final class SingleColumnNamePropertyWidget extends AbstractPropertyWidget
     /**
      * Sets the table to use as a source for the available columns in the
      * combobox.
-     * 
+     *
      * @param table
      */
-    public void setTable(Table table) {
+    public void setTable(final Table table) {
         if (table != _tableRef.get()) {
             _tableRef.set(table);
 
@@ -85,13 +85,13 @@ public final class SingleColumnNamePropertyWidget extends AbstractPropertyWidget
         }
     }
 
-    public void addComboListener(Listener<Column> listener) {
+    public void addComboListener(final Listener<Column> listener) {
         _comboBox.addColumnSelectedListener(listener);
     }
 
     @Override
     public String getValue() {
-        Column column = _comboBox.getSelectedItem();
+        final Column column = _comboBox.getSelectedItem();
         if (column == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public final class SingleColumnNamePropertyWidget extends AbstractPropertyWidget
     }
 
     @Override
-    protected void setValue(String value) {
+    protected void setValue(final String value) {
         if (value == null) {
             _comboBox.setSelectedItem(null);
             return;
@@ -112,7 +112,7 @@ public final class SingleColumnNamePropertyWidget extends AbstractPropertyWidget
         }
 
         _comboBox.setSelectedItem(value);
-        
+
         fireValueChanged(value);
     }
 

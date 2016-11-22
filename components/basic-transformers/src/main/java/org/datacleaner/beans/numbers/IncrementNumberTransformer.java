@@ -55,7 +55,7 @@ public class IncrementNumberTransformer implements Transformer {
     }
 
     @Override
-    public Number[] transform(InputRow row) {
+    public Number[] transform(final InputRow row) {
         Number number = row.getValue(_number);
         if (number != null) {
             if (number instanceof Integer || number instanceof Short || number instanceof Byte) {

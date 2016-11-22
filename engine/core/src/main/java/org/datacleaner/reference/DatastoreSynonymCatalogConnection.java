@@ -32,8 +32,8 @@ final class DatastoreSynonymCatalogConnection implements SynonymCatalogConnectio
     private final DatastoreConnection _datastoreConnection;
     private final DatastoreSynonymCatalog _synonymCatalog;
 
-    public DatastoreSynonymCatalogConnection(DatastoreSynonymCatalog synonymCatalog,
-            DatastoreConnection datastoreConnection) {
+    public DatastoreSynonymCatalogConnection(final DatastoreSynonymCatalog synonymCatalog,
+            final DatastoreConnection datastoreConnection) {
         _synonymCatalog = synonymCatalog;
         _datastoreConnection = datastoreConnection;
     }
@@ -45,7 +45,7 @@ final class DatastoreSynonymCatalogConnection implements SynonymCatalogConnectio
     }
 
     @Override
-    public String getMasterTerm(String term) {
+    public String getMasterTerm(final String term) {
         final DataContext dataContext = _datastoreConnection.getDataContext();
 
         final Column masterTermColumn = _synonymCatalog.getMasterTermColumn(_datastoreConnection);

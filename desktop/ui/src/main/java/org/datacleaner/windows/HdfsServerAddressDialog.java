@@ -86,7 +86,7 @@ public class HdfsServerAddressDialog extends JComponent {
         _cancelButton = new JButton("Cancel");
 
         setLayout(new VerticalLayout(2));
-        DCPanel propertiesPanel = new DCPanel();
+        final DCPanel propertiesPanel = new DCPanel();
         propertiesPanel.setLayout(new GridBagLayout());
         WidgetUtils.addToGridBag(DCLabel.dark("Hostname: "), propertiesPanel, 0, 0);
         WidgetUtils.addToGridBag(_hostnameField, propertiesPanel, 1, 0, 1, 1, GridBagConstraints.WEST,
@@ -101,7 +101,7 @@ public class HdfsServerAddressDialog extends JComponent {
                 WidgetUtils.DEFAULT_PADDING));
     }
 
-    public static URI showHdfsNameNodeDialog(JComponent parent, URI oldUri) {
+    public static URI showHdfsNameNodeDialog(final JComponent parent, final URI oldUri) {
         String host = null;
         int port = -1;
 
@@ -121,7 +121,7 @@ public class HdfsServerAddressDialog extends JComponent {
                             .setHost(serverChoiceDialog._hostnameField.getText())
                             .setPort(Integer.parseInt(serverChoiceDialog._portField.getText())).setPath("/").build();
 
-                    FileSystem tempFS = HdfsUtils.getFileSystemFromUri(uri);
+                    final FileSystem tempFS = HdfsUtils.getFileSystemFromUri(uri);
                     tempFS.listStatus(new Path(uri));
 
                     // Let's update the URI
@@ -131,7 +131,7 @@ public class HdfsServerAddressDialog extends JComponent {
                 } catch (URISyntaxException | NumberFormatException e) {
                     JOptionPane.showMessageDialog(serverChoiceDialog, "This server address is wrong",
                             "Wrong server address", JOptionPane.ERROR_MESSAGE);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     // _fileSystem.makeQualified will throw illegal argument is
                     // it cannot connect.
                     JOptionPane.showMessageDialog(serverChoiceDialog, "This server address is not available",

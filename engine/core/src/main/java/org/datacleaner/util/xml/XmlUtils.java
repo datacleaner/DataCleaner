@@ -42,18 +42,18 @@ public class XmlUtils {
 
     private XmlUtils() {
     }
-    
-    public static void writeDocument(Node docOrNode, OutputStream out) {
+
+    public static void writeDocument(final Node docOrNode, final OutputStream out) {
         writeDocument(docOrNode, out, true);
     }
 
-    public static void writeDocument(Node docOrNode, OutputStream out, boolean includeXmlDeclaration) {
+    public static void writeDocument(final Node docOrNode, final OutputStream out, final boolean includeXmlDeclaration) {
         final Transformer transformer = createTransformer(includeXmlDeclaration);
         try {
             final Source source = new DOMSource(docOrNode);
             final Result outputTarget = new StreamResult(out);
             transformer.transform(source, outputTarget);
-        } catch (TransformerException e) {
+        } catch (final TransformerException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -62,7 +62,7 @@ public class XmlUtils {
         return createTransformer(true);
     }
 
-    public static Transformer createTransformer(boolean includeXmlDeclaration) {
+    public static Transformer createTransformer(final boolean includeXmlDeclaration) {
         try {
             final TransformerFactory transformerFactory = TransformerFactory.newInstance();
             final Transformer transformer = transformerFactory.newTransformer();
@@ -72,18 +72,18 @@ public class XmlUtils {
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             }
             return transformer;
-        } catch (TransformerConfigurationException e) {
+        } catch (final TransformerConfigurationException e) {
             // should never happen
             throw new IllegalStateException(e);
         }
     }
 
-    public static Document parseDocument(InputStream in) {
+    public static Document parseDocument(final InputStream in) {
         try {
             final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             return documentBuilder.parse(in);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
 
@@ -97,12 +97,12 @@ public class XmlUtils {
         try {
             final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             return documentBuilderFactory.newDocumentBuilder();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public static String writeDocumentToString(Node node, boolean includeXmlDeclaration) {
+    public static String writeDocumentToString(final Node node, final boolean includeXmlDeclaration) {
         final Transformer transformer = createTransformer(includeXmlDeclaration);
 
         final StringWriter sw = new StringWriter();
@@ -110,7 +110,7 @@ public class XmlUtils {
         final DOMSource source = new DOMSource(node);
         try {
             transformer.transform(source, result);
-        } catch (TransformerException e) {
+        } catch (final TransformerException e) {
             throw new IllegalStateException(e);
         }
         final String xmlString = sw.toString();

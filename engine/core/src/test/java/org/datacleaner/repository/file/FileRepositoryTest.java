@@ -23,12 +23,12 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.RepositoryNode;
-
-import junit.framework.TestCase;
 
 public class FileRepositoryTest extends TestCase {
 
@@ -63,11 +63,11 @@ public class FileRepositoryTest extends TestCase {
     public void testCreateFileWithoutContents() throws Exception {
         File rootFile = new File("target/example_repo");
         rootFile.mkdirs();
-        
+
         if (new File(rootFile, "foo.bar").exists()) {
             new File(rootFile, "foo.bar").delete();
         }
-        
+
         Repository repository = new FileRepository(rootFile);
         RepositoryFile file = repository.createFile("foo.bar", null);
         assertEquals("/foo.bar", file.getQualifiedPath());

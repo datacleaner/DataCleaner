@@ -32,7 +32,7 @@ final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> ex
 
     private static final long serialVersionUID = 1L;
 
-    protected AnnotationBasedAnalyzerComponentDescriptor(Class<A> analyzerClass) throws DescriptorException {
+    protected AnnotationBasedAnalyzerComponentDescriptor(final Class<A> analyzerClass) throws DescriptorException {
         super(analyzerClass, true);
 
         if (!ReflectionUtils.is(analyzerClass, Analyzer.class)) {
@@ -44,8 +44,8 @@ final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> ex
 
     @Override
     @SuppressWarnings("deprecation")
-    protected String getDisplayNameIfNotNamed(Class<?> cls) {
-        org.eobjects.analyzer.beans.api.AnalyzerBean annotation = ReflectionUtils.getAnnotation(cls,
+    protected String getDisplayNameIfNotNamed(final Class<?> cls) {
+        final org.eobjects.analyzer.beans.api.AnalyzerBean annotation = ReflectionUtils.getAnnotation(cls,
                 org.eobjects.analyzer.beans.api.AnalyzerBean.class);
         if (annotation == null) {
             return null;
@@ -75,7 +75,7 @@ final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> ex
 
         return super.getResultReducerClass();
     }
-    
+
     @Override
     protected boolean isDistributableByDefault() {
         return getResultReducerClass() != null;

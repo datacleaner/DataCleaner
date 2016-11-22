@@ -41,9 +41,13 @@ public final class ResourceManager {
 
     private static ResourceManager instance = new ResourceManager();
 
+    private ResourceManager() {
+        // only a single instance
+    }
+
     /**
      * Gets the singleton instance of {@link ResourceManager}.
-     * 
+     *
      * @return
      */
     public static ResourceManager get() {
@@ -52,7 +56,7 @@ public final class ResourceManager {
 
     /**
      * Gets the singleton instance of {@link ResourceManager}.
-     * 
+     *
      * @return
      * @deprecated use {@link #get()} instead
      */
@@ -61,16 +65,13 @@ public final class ResourceManager {
         return get();
     }
 
-    private ResourceManager() {
-        // only a single instance
-    }
-
-    public List<URL> getUrls(String path, ClassLoader... classLoaders) {
+    public List<URL> getUrls(final String path, ClassLoader... classLoaders) {
         if (classLoaders == null || classLoaders.length == 0) {
             if (ClassLoaderUtils.getParentClassLoader().equals(getClass().getClassLoader())) {
                 classLoaders = new ClassLoader[] { ClassLoaderUtils.getParentClassLoader() };
             } else {
-                classLoaders = new ClassLoader[] { ClassLoaderUtils.getParentClassLoader(), getClass().getClassLoader() };
+                classLoaders =
+                        new ClassLoader[] { ClassLoaderUtils.getParentClassLoader(), getClass().getClassLoader() };
             }
         } else {
             if (logger.isDebugEnabled()) {
@@ -78,17 +79,17 @@ public final class ResourceManager {
             }
         }
 
-        List<URL> result = new LinkedList<URL>();
-        URL url = getClass().getResource(path);
+        final List<URL> result = new LinkedList<URL>();
+        final URL url = getClass().getResource(path);
         if (url != null) {
             result.add(url);
         }
 
         try {
-            for (ClassLoader classLoader : classLoaders) {
-                Enumeration<URL> resources = classLoader.getResources(path);
+            for (final ClassLoader classLoader : classLoaders) {
+                final Enumeration<URL> resources = classLoader.getResources(path);
                 while (resources.hasMoreElements()) {
-                    URL element = resources.nextElement();
+                    final URL element = resources.nextElement();
                     if (element == null) {
                         logger.warn("ClassLoader {} returned a null URL resource for path '{}'", classLoader, path);
                     } else {
@@ -96,16 +97,16 @@ public final class ResourceManager {
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.error("IOException when investigating classloader resources", e);
         }
 
         // when running in eclipse this file-based hack is nescesary
-        File file = new File("src/main/resources/" + path);
+        final File file = new File("src/main/resources/" + path);
         if (file.exists()) {
             try {
                 result.add(file.toURI().toURL());
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 logger.error("IOException when adding File-based resource to URLs", e);
             }
         }
@@ -113,8 +114,8 @@ public final class ResourceManager {
         return result;
     }
 
-    public URL getUrl(String path, ClassLoader... classLoaders) {
-        List<URL> urls = getUrls(path, classLoaders);
+    public URL getUrl(final String path, final ClassLoader... classLoaders) {
+        final List<URL> urls = getUrls(path, classLoaders);
         if (urls.isEmpty()) {
             return null;
         }

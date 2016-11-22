@@ -24,7 +24,7 @@ import java.lang.annotation.Annotation;
 /**
  * Represents an {@link InjectionPoint} that is not tied to a field, parameter
  * or other member or property.
- * 
+ *
  * @param <E>
  */
 public class SimpleInjectionPoint<E> implements InjectionPoint<E> {
@@ -32,26 +32,26 @@ public class SimpleInjectionPoint<E> implements InjectionPoint<E> {
     private final Class<E> _class;
 
     /**
-     * Factory method to produce an {@link InjectionPoint} that describes the
-     * specified class.
-     * 
-     * @param cls
-     * @return
-     */
-    public static final <E> InjectionPoint<E> of(Class<E> cls) {
-        return new SimpleInjectionPoint<E>(cls);
-    }
-
-    /**
      * Constructs a {@link SimpleInjectionPoint} for requesting a specific class
-     * 
+     *
      * @param cls
      */
-    public SimpleInjectionPoint(Class<E> cls) {
+    public SimpleInjectionPoint(final Class<E> cls) {
         if (cls == null) {
             throw new IllegalArgumentException("Injection class cannot be null");
         }
         _class = cls;
+    }
+
+    /**
+     * Factory method to produce an {@link InjectionPoint} that describes the
+     * specified class.
+     *
+     * @param cls
+     * @return
+     */
+    public static final <E> InjectionPoint<E> of(final Class<E> cls) {
+        return new SimpleInjectionPoint<E>(cls);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class SimpleInjectionPoint<E> implements InjectionPoint<E> {
     }
 
     @Override
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+    public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
         return null;
     }
 
@@ -85,7 +85,7 @@ public class SimpleInjectionPoint<E> implements InjectionPoint<E> {
     }
 
     @Override
-    public Class<?> getGenericTypeArgument(int i) throws IndexOutOfBoundsException {
+    public Class<?> getGenericTypeArgument(final int i) throws IndexOutOfBoundsException {
         throw new IndexOutOfBoundsException("This injection point has no generic type arguments, requested index no. "
                 + i);
     }

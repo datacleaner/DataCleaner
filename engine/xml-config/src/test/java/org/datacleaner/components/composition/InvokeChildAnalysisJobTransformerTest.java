@@ -76,7 +76,7 @@ public class InvokeChildAnalysisJobTransformerTest {
             transformer.addInputColumns(ajb.getSourceColumns());
 
             assertTrue(transformer.isConfigured());
-            
+
             assertEquals(2, transformer.getOutputColumns().size());
             assertEquals("country (standardized)", transformer.getOutputColumns().get(0).getName());
             assertEquals("fullname", transformer.getOutputColumns().get(1).getName());
@@ -99,15 +99,15 @@ public class InvokeChildAnalysisJobTransformerTest {
         final List<InputRow> list = result.getValues();
 
         assertEquals(214, list.size());
-        
+
         final InputColumn<?>[] outputColumns = job.getTransformerJobs().get(0).getOutput();
-        
+
         int rowNum = 0;
         assertEquals("[FR, null]", list.get(rowNum).getValues(outputColumns).toString());
-        
+
         rowNum++;
         assertEquals("[US, Sue King]", list.get(rowNum).getValues(outputColumns).toString());
-        
+
         rowNum++;
         assertEquals("[AU, null]", list.get(rowNum).getValues(outputColumns).toString());
     }

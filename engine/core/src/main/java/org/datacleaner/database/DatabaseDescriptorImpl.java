@@ -35,8 +35,8 @@ public final class DatabaseDescriptorImpl extends BaseObject implements Database
     private final String[] _downloadUrls;
     private final String[] _connectionUrlTemplates;
 
-    public DatabaseDescriptorImpl(String displayName, String iconImagePath, String driverClassName,
-            String[] downloadUrls, String[] connectionUrlTemplates) {
+    public DatabaseDescriptorImpl(final String displayName, final String iconImagePath, final String driverClassName,
+            final String[] downloadUrls, final String[] connectionUrlTemplates) {
         _displayName = displayName;
         _iconImagePath = iconImagePath;
         _driverClassName = driverClassName;
@@ -70,7 +70,7 @@ public final class DatabaseDescriptorImpl extends BaseObject implements Database
     }
 
     @Override
-    public int compareTo(DatabaseDriverDescriptor o) {
+    public int compareTo(final DatabaseDriverDescriptor o) {
         if (this.equals(o)) {
             return 0;
         }
@@ -85,7 +85,7 @@ public final class DatabaseDescriptorImpl extends BaseObject implements Database
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         identifiers.add(_displayName);
         identifiers.add(_iconImagePath);
         identifiers.add(_driverClassName);

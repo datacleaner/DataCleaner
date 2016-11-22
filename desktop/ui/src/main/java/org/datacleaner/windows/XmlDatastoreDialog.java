@@ -21,8 +21,8 @@ package org.datacleaner.windows;
 
 import javax.inject.Inject;
 
-import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
@@ -32,39 +32,40 @@ import org.datacleaner.widgets.AbstractResourceTextField;
 
 public final class XmlDatastoreDialog extends AbstractFileBasedDatastoreDialog<XmlDatastore> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	protected XmlDatastoreDialog(@Nullable XmlDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowContext windowContext, UserPreferences userPreferences) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
-	}
+    @Inject
+    protected XmlDatastoreDialog(@Nullable final XmlDatastore originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog,
+            final WindowContext windowContext, final UserPreferences userPreferences) {
+        super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
+    }
 
-	@Override
-	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
-		filenameField.addChoosableFileFilter(FileFilters.XML);
-		filenameField.addChoosableFileFilter(FileFilters.ALL);
-		filenameField.setSelectedFileFilter(FileFilters.XML);
-	}
+    @Override
+    protected void setFileFilters(final AbstractResourceTextField<?> filenameField) {
+        filenameField.addChoosableFileFilter(FileFilters.XML);
+        filenameField.addChoosableFileFilter(FileFilters.ALL);
+        filenameField.setSelectedFileFilter(FileFilters.XML);
+    }
 
-	@Override
-	protected String getBannerTitle() {
-		return "XML file";
-	}
+    @Override
+    protected String getBannerTitle() {
+        return "XML file";
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return "XML file | Datastore";
-	}
+    @Override
+    public String getWindowTitle() {
+        return "XML file | Datastore";
+    }
 
-	@Override
-	protected XmlDatastore createDatastore(String name, String filename) {
-		return new XmlDatastore(name, filename);
-	}
+    @Override
+    protected XmlDatastore createDatastore(final String name, final String filename) {
+        return new XmlDatastore(name, filename);
+    }
 
-	@Override
-	protected String getDatastoreIconPath() {
-		return IconUtils.XML_IMAGEPATH;
-	}
+    @Override
+    protected String getDatastoreIconPath() {
+        return IconUtils.XML_IMAGEPATH;
+    }
 
 }

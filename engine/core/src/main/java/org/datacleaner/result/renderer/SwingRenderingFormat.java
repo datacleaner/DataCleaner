@@ -25,8 +25,8 @@ import org.datacleaner.api.RenderingFormat;
 
 public class SwingRenderingFormat implements RenderingFormat<JComponent> {
 
-	@Override
-	public Class<JComponent> getOutputClass() {
-		return JComponent.class;
-	}
+    @Override
+    public Class<JComponent> getOutputClass() {
+        return JComponent.class;
+    }
 }

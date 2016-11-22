@@ -21,18 +21,18 @@ package org.datacleaner.descriptors;
 
 public interface ProvidedPropertyDescriptor extends PropertyDescriptor {
 
-	public boolean isList();
+    boolean isList();
 
-	public boolean isMap();
+    boolean isMap();
 
-	public boolean isSet();
-	
-	public boolean isCollectionFactory();
-	
-	public boolean isRowAnnotationFactory();
+    boolean isSet();
 
-	public boolean isDataContext();
+    boolean isCollectionFactory();
 
-	public boolean isSchemaNavigator();
+    boolean isRowAnnotationFactory();
+
+    boolean isDataContext();
+
+    boolean isSchemaNavigator();
 
 }

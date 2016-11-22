@@ -47,8 +47,8 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
 
     private int _stepsBeforeWizardPages;
 
-    public DatastoreWizardController(WizardPanel wizardPanel, TenantIdentifier tenant,
-            WizardIdentifier wizardIdentifier, WizardServiceAsync wizardService) {
+    public DatastoreWizardController(final WizardPanel wizardPanel, final TenantIdentifier tenant,
+            final WizardIdentifier wizardIdentifier, final WizardServiceAsync wizardService) {
         super(wizardPanel, tenant, wizardIdentifier, wizardService);
 
         _stepsBeforeWizardPages = 0;
@@ -72,7 +72,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
         getWizardPanel().setHeader("Register datastore: " + wizardIdentifier.getDisplayName());
         setLoading();
 
-        WizardServiceAsync wizardService = getWizardService();
+        final WizardServiceAsync wizardService = getWizardService();
         wizardService.startDatastoreWizard(getTenant(), wizardIdentifier, getLocaleName(), createNextPageCallback());
     }
 
@@ -83,7 +83,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
         getWizardService().getDatastoreWizardIdentifiers(getTenant(), getLocaleName(),
                 new DCAsyncCallback<List<WizardIdentifier>>() {
                     @Override
-                    public void onSuccess(List<WizardIdentifier> wizards) {
+                    public void onSuccess(final List<WizardIdentifier> wizards) {
                         showWizardSelection(wizards);
                     }
                 });
@@ -103,7 +103,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
                 final RadioButton radio = new RadioButton("wizardIdentifier", wizard.getDisplayName());
                 radio.addClickHandler(new ClickHandler() {
                     @Override
-                    public void onClick(ClickEvent event) {
+                    public void onClick(final ClickEvent event) {
                         setSteps(wizard.getExpectedPageCount() + getStepsBeforeWizardPages());
                         setProgress(0);
                     }
@@ -115,7 +115,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
 
         setNextClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 for (int i = 0; i < radios.size(); i++) {
                     final RadioButton radio = radios.get(i);
                     if (radio.getValue().booleanValue()) {
@@ -144,7 +144,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
         final Button button = DCButtons.primaryButton(null, "Close");
         button.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 // full page refresh.
                 closeWizardAfterFinishing(datastoreName, "datastores");
             }
@@ -154,7 +154,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
         jobWizardAnchor.addStyleName("BuildJob");
         jobWizardAnchor.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 final String htmlDivId = getWizardPanel().getCustomHtmlDivId();
                 closeWizardAfterFinishing(datastoreName, null);
 
@@ -166,7 +166,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
         queryAnchor.addStyleName("QueryDatastore");
         queryAnchor.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 final String url = Urls.createRelativeUrl("query?ds=" + encodedDatastoreName);
                 Window.open(url, "_blank", "location=no,width=770,height=400,toolbar=no,menubar=no");
             }

@@ -37,12 +37,12 @@ public class JaxbPentahoJobTypeAdaptor extends AbstractJaxbAdaptor<PentahoJobTyp
     }
 
     @Override
-    public PentahoJobType unmarshal(InputStream in) {
+    public PentahoJobType unmarshal(final InputStream in) {
         return super.unmarshal(in);
     }
 
     @Override
-    public void marshal(JAXBElement<PentahoJobType> obj, OutputStream outputStream) {
+    public void marshal(final JAXBElement<PentahoJobType> obj, final OutputStream outputStream) {
         super.marshal(obj, outputStream);
     }
 }

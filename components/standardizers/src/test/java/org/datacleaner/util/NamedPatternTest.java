@@ -22,10 +22,10 @@ package org.datacleaner.util;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer.EmailPart;
-
-import junit.framework.TestCase;
 
 public class NamedPatternTest extends TestCase {
 

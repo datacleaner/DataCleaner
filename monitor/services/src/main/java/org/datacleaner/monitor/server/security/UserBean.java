@@ -47,14 +47,14 @@ public class UserBean implements User, Serializable {
     private final Set<String> _roles;
     private String _username;
     private String _tenant;
-    
+
     /**
-     * 
+     *
      * @param tenantResolver
      * @deprecated use {@link #UserBean()} instead
      */
     @Deprecated
-    public UserBean(TenantResolver tenantResolver) {
+    public UserBean(final TenantResolver tenantResolver) {
         this();
     }
 
@@ -92,7 +92,7 @@ public class UserBean implements User, Serializable {
             }
 
             final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            for (GrantedAuthority authority : authorities) {
+            for (final GrantedAuthority authority : authorities) {
                 _roles.add(authority.getAuthority());
             }
         }
@@ -107,7 +107,7 @@ public class UserBean implements User, Serializable {
     }
 
     @Override
-    public boolean hasRole(String role) {
+    public boolean hasRole(final String role) {
         if (_roles.isEmpty()) {
             updateUser();
         }
@@ -146,7 +146,7 @@ public class UserBean implements User, Serializable {
     public boolean isLoggedIn() {
         return isAuthenticated();
     }
-    
+
     @Override
     public boolean isAuthenticated() {
         return getUsername() != null;

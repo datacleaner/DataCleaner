@@ -47,18 +47,17 @@ import org.datacleaner.job.OutputDataStreamJob;
 public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>> extends
         AbstractComponentBuilder<FilterDescriptor<F, C>, F, FilterComponentBuilder<F, C>> implements HasFilterOutcomes {
 
+    private final List<FilterChangeListener> _localChangeListeners;
     // We keep a cached version of the resulting filter job because of
     // references coming from other objects, particular LazyFilterOutcome.
     private FilterJob _cachedJob;
     private EnumMap<C, FilterOutcome> _outcomes;
 
-    private final List<FilterChangeListener> _localChangeListeners;
-
-    public FilterComponentBuilder(AnalysisJobBuilder analysisJobBuilder, FilterDescriptor<F, C> descriptor) {
+    public FilterComponentBuilder(final AnalysisJobBuilder analysisJobBuilder, final FilterDescriptor<F, C> descriptor) {
         super(analysisJobBuilder, descriptor, FilterComponentBuilder.class);
         _outcomes = new EnumMap<C, FilterOutcome>(descriptor.getOutcomeCategoryEnum());
-        EnumSet<C> categories = descriptor.getOutcomeCategories();
-        for (C category : categories) {
+        final EnumSet<C> categories = descriptor.getOutcomeCategories();
+        for (final C category : categories) {
             _outcomes.put(category, new LazyFilterOutcome(this, category));
         }
 
@@ -69,7 +68,7 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
         return toFilterJob(true);
     }
 
-    public FilterJob toFilterJob(AnalysisJobImmutabilizer immutabilizer) {
+    public FilterJob toFilterJob(final AnalysisJobImmutabilizer immutabilizer) {
         return toFilterJob(true, immutabilizer);
     }
 
@@ -101,13 +100,13 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
 
     /**
      * Builds a temporary list of all listeners, both global and local
-     * 
+     *
      * @return
      */
     private List<FilterChangeListener> getAllListeners() {
-        @SuppressWarnings("deprecation")
+        @SuppressWarnings("deprecation") final
         List<FilterChangeListener> globalChangeListeners = getAnalysisJobBuilder().getFilterChangeListeners();
-        List<FilterChangeListener> list = new ArrayList<FilterChangeListener>(globalChangeListeners.size()
+        final List<FilterChangeListener> list = new ArrayList<FilterChangeListener>(globalChangeListeners.size()
                 + _localChangeListeners.size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);
@@ -123,8 +122,8 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
     @Override
     public void onConfigurationChanged() {
         super.onConfigurationChanged();
-        List<FilterChangeListener> listeners = getAllListeners();
-        for (FilterChangeListener listener : listeners) {
+        final List<FilterChangeListener> listeners = getAllListeners();
+        for (final FilterChangeListener listener : listeners) {
             listener.onConfigurationChanged(this);
         }
     }
@@ -148,11 +147,11 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
      * @deprecated use {@link #getFilterOutcome(Enum)} instead
      */
     @Deprecated
-    public FilterOutcome getOutcome(C category) {
+    public FilterOutcome getOutcome(final C category) {
         return getFilterOutcome(category);
     }
 
-    public FilterOutcome getFilterOutcome(C category) {
+    public FilterOutcome getFilterOutcome(final C category) {
         final FilterOutcome outcome = _outcomes.get(category);
         if (outcome == null) {
             throw new IllegalArgumentException(category + " is not a valid category for " + this);
@@ -164,14 +163,14 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
      * @deprecated use {@link #getFilterOutcome(Object)} instead
      */
     @Deprecated
-    public FilterOutcome getOutcome(Object category) {
+    public FilterOutcome getOutcome(final Object category) {
         return getFilterOutcome(category);
     }
 
     public FilterOutcome getFilterOutcome(Object category) {
         if (category instanceof String) {
             final EnumSet<?> categories = getDescriptor().getOutcomeCategories();
-            for (Enum<?> c : categories) {
+            for (final Enum<?> c : categories) {
                 if (c.name().equals(category)) {
                     category = c;
                     break;
@@ -187,28 +186,28 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
 
     @Override
     protected void onRemovedInternal() {
-        List<FilterChangeListener> listeners = getAllListeners();
-        for (FilterChangeListener listener : listeners) {
+        final List<FilterChangeListener> listeners = getAllListeners();
+        for (final FilterChangeListener listener : listeners) {
             listener.onRemove(this);
         }
     }
 
     /**
      * Adds a change listener to this component
-     * 
+     *
      * @param listener
      */
-    public void addChangeListener(FilterChangeListener listener) {
+    public void addChangeListener(final FilterChangeListener listener) {
         _localChangeListeners.add(listener);
     }
 
     /**
      * Removes a change listener from this component
-     * 
+     *
      * @param listener
      * @return whether or not the listener was found and removed.
      */
-    public boolean removeChangeListener(FilterChangeListener listener) {
+    public boolean removeChangeListener(final FilterChangeListener listener) {
         return _localChangeListeners.remove(listener);
     }
 }

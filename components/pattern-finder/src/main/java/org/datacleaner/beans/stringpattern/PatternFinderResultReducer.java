@@ -44,7 +44,7 @@ import org.datacleaner.result.CrosstabNavigator;
 public class PatternFinderResultReducer implements AnalyzerResultReducer<PatternFinderResult> {
 
     @Override
-    public PatternFinderResult reduce(Collection<? extends PatternFinderResult> results) {
+    public PatternFinderResult reduce(final Collection<? extends PatternFinderResult> results) {
         final PatternFinderResult firstResult = results.iterator().next();
         final InputColumn<String> column = firstResult.getColumn();
         final TokenizerConfiguration tokenizerConfiguration = firstResult.getTokenizerConfiguration();
@@ -52,8 +52,8 @@ public class PatternFinderResultReducer implements AnalyzerResultReducer<Pattern
             // a single list of patterns
 
             final List<Crosstab<?>> crosstabs = new ArrayList<Crosstab<?>>(results.size());
-            for (PatternFinderResult result : results) {
-                Crosstab<?> crosstab = result.getSingleCrosstab();
+            for (final PatternFinderResult result : results) {
+                final Crosstab<?> crosstab = result.getSingleCrosstab();
                 crosstabs.add(crosstab);
             }
 
@@ -64,9 +64,9 @@ public class PatternFinderResultReducer implements AnalyzerResultReducer<Pattern
             // groups of lists of patterns
 
             final Map<String, List<Crosstab<?>>> groupedCrosstabs = new HashMap<String, List<Crosstab<?>>>();
-            for (PatternFinderResult result : results) {
+            for (final PatternFinderResult result : results) {
                 final Set<Entry<String, Crosstab<?>>> entries = result.getGroupedCrosstabs().entrySet();
-                for (Entry<String, Crosstab<?>> entry : entries) {
+                for (final Entry<String, Crosstab<?>> entry : entries) {
                     final String group = entry.getKey();
                     List<Crosstab<?>> crosstabsInGroup = groupedCrosstabs.get(group);
                     if (crosstabsInGroup == null) {
@@ -79,7 +79,7 @@ public class PatternFinderResultReducer implements AnalyzerResultReducer<Pattern
 
             final Map<String, Crosstab<?>> crosstabs = new TreeMap<String, Crosstab<?>>();
             final Set<Entry<String, List<Crosstab<?>>>> entries = groupedCrosstabs.entrySet();
-            for (Entry<String, List<Crosstab<?>>> entry : entries) {
+            for (final Entry<String, List<Crosstab<?>>> entry : entries) {
                 final String group = entry.getKey();
                 final List<Crosstab<?>> crosstabInGroup = entry.getValue();
                 final Crosstab<?> crosstab = reduce(crosstabInGroup, tokenizerConfiguration);
@@ -92,19 +92,19 @@ public class PatternFinderResultReducer implements AnalyzerResultReducer<Pattern
         }
     }
 
-    private Crosstab<?> reduce(List<Crosstab<?>> crosstabs, TokenizerConfiguration tokenizerConfiguration) {
+    private Crosstab<?> reduce(final List<Crosstab<?>> crosstabs, final TokenizerConfiguration tokenizerConfiguration) {
         if (crosstabs.size() == 1) {
             return crosstabs.get(0);
         }
 
         final ReversePatternFinder patternFinder = new ReversePatternFinder(tokenizerConfiguration);
 
-        for (Crosstab<?> crosstab : crosstabs) {
+        for (final Crosstab<?> crosstab : crosstabs) {
             final CrosstabDimension patternDimension = crosstab
                     .getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
             final List<String> patterns = patternDimension.getCategories();
 
-            for (String pattern : patterns) {
+            for (final String pattern : patterns) {
                 final CrosstabNavigator<?> navigator = crosstab.where(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN,
                         pattern);
                 final Number matchCount = (Number) navigator.where(PatternFinderAnalyzer.DIMENSION_NAME_MEASURES,
@@ -121,7 +121,7 @@ public class PatternFinderResultReducer implements AnalyzerResultReducer<Pattern
         // matches are at the top
         final Set<Entry<TokenPattern, AtomicInteger>> sortedEntrySet = new TreeSet<Entry<TokenPattern, AtomicInteger>>(
                 new Comparator<Entry<TokenPattern, AtomicInteger>>() {
-                    public int compare(Entry<TokenPattern, AtomicInteger> o1, Entry<TokenPattern, AtomicInteger> o2) {
+                    public int compare(final Entry<TokenPattern, AtomicInteger> o1, final Entry<TokenPattern, AtomicInteger> o2) {
                         int result = o2.getValue().get() - o1.getValue().get();
                         if (result == 0) {
                             result = o1.getKey().toSymbolicString().compareTo(o2.getKey().toSymbolicString());
@@ -132,7 +132,7 @@ public class PatternFinderResultReducer implements AnalyzerResultReducer<Pattern
         sortedEntrySet.addAll(entries);
 
         final Crosstab<Serializable> crosstab = PatternFinderAnalyzer.createCrosstab();
-        for (Entry<TokenPattern, AtomicInteger> entry : sortedEntrySet) {
+        for (final Entry<TokenPattern, AtomicInteger> entry : sortedEntrySet) {
 
             final CrosstabNavigator<Serializable> nav = crosstab.navigate();
             final TokenPattern pattern = entry.getKey();
@@ -141,7 +141,7 @@ public class PatternFinderResultReducer implements AnalyzerResultReducer<Pattern
             nav.where(PatternFinderAnalyzer.DIMENSION_NAME_MEASURES, PatternFinderAnalyzer.MEASURE_MATCH_COUNT);
             final AtomicInteger count = entry.getValue();
             nav.put(count, true);
-            
+
             nav.where(PatternFinderAnalyzer.DIMENSION_NAME_MEASURES, PatternFinderAnalyzer.MEASURE_SAMPLE);
             final String sample = patternFinder.getSample(pattern);
             nav.put(sample, true);

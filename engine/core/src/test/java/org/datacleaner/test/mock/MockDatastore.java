@@ -25,36 +25,36 @@ import org.datacleaner.connection.PerformanceCharacteristics;
 
 public class MockDatastore implements Datastore, PerformanceCharacteristics {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public String getName() {
-		return "MockDatastore";
-	}
+    @Override
+    public String getName() {
+        return "MockDatastore";
+    }
 
-	@Override
-	public String getDescription() {
-		return null;
-	}
+    @Override
+    public String getDescription() {
+        return null;
+    }
 
-	@Override
-	public void setDescription(String description) {
-	}
+    @Override
+    public void setDescription(String description) {
+    }
 
-	@Override
-	public DatastoreConnection openConnection() {
-		return new MockDatastoreConnection();
-	}
+    @Override
+    public DatastoreConnection openConnection() {
+        return new MockDatastoreConnection();
+    }
 
-	@Override
-	public PerformanceCharacteristics getPerformanceCharacteristics() {
-		return this;
-	}
+    @Override
+    public PerformanceCharacteristics getPerformanceCharacteristics() {
+        return this;
+    }
 
-	@Override
-	public boolean isQueryOptimizationPreferred() {
-		return true;
-	}
+    @Override
+    public boolean isQueryOptimizationPreferred() {
+        return true;
+    }
 
     @Override
     public boolean isNaturalRecordOrderConsistent() {

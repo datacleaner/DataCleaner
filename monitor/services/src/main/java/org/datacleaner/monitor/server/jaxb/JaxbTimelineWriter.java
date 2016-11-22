@@ -53,16 +53,16 @@ public class JaxbTimelineWriter extends AbstractJaxbAdaptor<Timeline> implements
     }
 
     @Override
-    public void write(TimelineDefinition timelineDefinition, OutputStream outputStream) {
-        Timeline timeline = createTimeline(timelineDefinition);
+    public void write(final TimelineDefinition timelineDefinition, final OutputStream outputStream) {
+        final Timeline timeline = createTimeline(timelineDefinition);
 
         marshal(timeline, outputStream);
     }
 
-    private Timeline createTimeline(TimelineDefinition timelineDefinition) {
+    private Timeline createTimeline(final TimelineDefinition timelineDefinition) {
         final MetricsType metricsType = new MetricsType();
         final List<MetricIdentifier> metrics = timelineDefinition.getMetrics();
-        for (MetricIdentifier metric : metrics) {
+        for (final MetricIdentifier metric : metrics) {
             final MetricType metricType = new JaxbMetricAdaptor().serialize(metric);
 
             metricsType.getMetric().add(metricType);
@@ -80,7 +80,7 @@ public class JaxbTimelineWriter extends AbstractJaxbAdaptor<Timeline> implements
         return timeline;
     }
 
-    private ChartOptionsType createChartOptionsType(ChartOptions chartOptions) {
+    private ChartOptionsType createChartOptionsType(final ChartOptions chartOptions) {
         if (chartOptions == null) {
             return null;
         }
@@ -94,7 +94,7 @@ public class JaxbTimelineWriter extends AbstractJaxbAdaptor<Timeline> implements
         return chartOptionsType;
     }
 
-    private HorizontalAxis createHorizontalAxis(HorizontalAxisOption axis) {
+    private HorizontalAxis createHorizontalAxis(final HorizontalAxisOption axis) {
         if (axis == null) {
             return null;
         }
@@ -120,7 +120,7 @@ public class JaxbTimelineWriter extends AbstractJaxbAdaptor<Timeline> implements
         return horizontalAxis;
     }
 
-    private VerticalAxis createVerticalAxis(VerticalAxisOption axis) {
+    private VerticalAxis createVerticalAxis(final VerticalAxisOption axis) {
         if (axis == null) {
             return null;
         }

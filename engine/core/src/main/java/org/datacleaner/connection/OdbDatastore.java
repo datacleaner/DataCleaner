@@ -24,47 +24,47 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import org.datacleaner.util.ReadObjectBuilder;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
+import org.datacleaner.util.ReadObjectBuilder;
 
 /**
  * Datastore implementation for OpenOffice database files (.odb).
  */
 public final class OdbDatastore extends UsageAwareDatastore<DataContext> implements FileDatastore {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final String _filename;
+    private final String _filename;
 
-	public OdbDatastore(String name, String filename) {
-		super(name);
-		_filename = filename;
-	}
+    public OdbDatastore(final String name, final String filename) {
+        super(name);
+        _filename = filename;
+    }
 
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		ReadObjectBuilder.create(this, OdbDatastore.class).readObject(stream);
-	}
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, OdbDatastore.class).readObject(stream);
+    }
 
-	@Override
-	public String getFilename() {
-		return _filename;
-	}
+    @Override
+    public String getFilename() {
+        return _filename;
+    }
 
-	@Override
-	protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
-		DataContext dc = DataContextFactory.createOpenOfficeDataContext(new File(_filename));
-		return new DatastoreConnectionImpl<DataContext>(dc, this);
-	}
+    @Override
+    protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
+        final DataContext dc = DataContextFactory.createOpenOfficeDataContext(new File(_filename));
+        return new DatastoreConnectionImpl<DataContext>(dc, this);
+    }
 
-	@Override
-	public PerformanceCharacteristics getPerformanceCharacteristics() {
-		return new PerformanceCharacteristicsImpl(true, false);
-	}
+    @Override
+    public PerformanceCharacteristics getPerformanceCharacteristics() {
+        return new PerformanceCharacteristicsImpl(true, false);
+    }
 
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		super.decorateIdentity(identifiers);
-		identifiers.add(_filename);
-	}
+    @Override
+    protected void decorateIdentity(final List<Object> identifiers) {
+        super.decorateIdentity(identifiers);
+        identifiers.add(_filename);
+    }
 }

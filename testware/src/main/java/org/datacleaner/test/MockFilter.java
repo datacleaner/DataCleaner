@@ -32,7 +32,7 @@ import org.datacleaner.api.InputRow;
 @Named("Mock filter")
 public class MockFilter implements Filter<MockFilter.Category> {
 
-    public static enum Category {
+    public enum Category {
         VALID, INVALID
     }
 
@@ -47,7 +47,7 @@ public class MockFilter implements Filter<MockFilter.Category> {
     InputColumn<?> input;
 
     @Override
-    public MockFilter.Category categorize(InputRow inputRow) {
+    public MockFilter.Category categorize(final InputRow inputRow) {
         return someEnum;
     }
 
@@ -55,23 +55,23 @@ public class MockFilter implements Filter<MockFilter.Category> {
         return someEnum;
     }
 
+    public void setSomeEnum(final Category someEnum) {
+        this.someEnum = someEnum;
+    }
+
     public File getSomeFile() {
         return someFile;
     }
 
-    public void setInput(InputColumn<?> input) {
-        this.input = input;
-    }
-
-    public void setSomeEnum(Category someEnum) {
-        this.someEnum = someEnum;
-    }
-
-    public void setSomeFile(File someFile) {
+    public void setSomeFile(final File someFile) {
         this.someFile = someFile;
     }
 
     public InputColumn<?> getInput() {
         return input;
+    }
+
+    public void setInput(final InputColumn<?> input) {
+        this.input = input;
     }
 }

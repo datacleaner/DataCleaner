@@ -19,24 +19,24 @@
  */
 package org.datacleaner.monitor.server.job;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.monitor.job.JobEngine;
 import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.job.MetricJobContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import junit.framework.TestCase;
-
 public class DefaultJobEngineManagerTest extends TestCase {
 
     private ApplicationContext applicationContext;
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
         if (applicationContext == null) {
-            applicationContext  = new ClassPathXmlApplicationContext("context/application-context.xml");
+            applicationContext = new ClassPathXmlApplicationContext("context/application-context.xml");
         }
     }
 
@@ -47,14 +47,14 @@ public class DefaultJobEngineManagerTest extends TestCase {
         assertTrue(manager instanceof DefaultJobEngineManager);
 
         JobEngine<?> engine;
-        
+
         engine = manager.getJobEngine(DataCleanerJobContext.class);
         assertEquals(DataCleanerJobEngine.class, engine.getClass());
-        
+
         engine = manager.getJobEngine(CustomJobContext.class);
         assertEquals(CustomJobEngine.class, engine.getClass());
     }
-    
+
     public void testGetJobEngineHierarchy() throws Exception {
         JobEngineManager manager = applicationContext.getBean(JobEngineManager.class);
 
@@ -62,7 +62,7 @@ public class DefaultJobEngineManagerTest extends TestCase {
         assertTrue(manager instanceof DefaultJobEngineManager);
 
         JobEngine<?> engine;
-        
+
         engine = manager.getJobEngine(DataCleanerJobContextImpl.class);
         assertNotNull(engine);
         assertEquals(DataCleanerJobEngine.class, engine.getClass());

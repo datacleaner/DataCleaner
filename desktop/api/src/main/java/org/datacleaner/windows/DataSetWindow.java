@@ -72,11 +72,11 @@ public class DataSetWindow extends AbstractWindow {
     private JButton _previousPageButton;
     private JButton _nextPageButton;
 
-    public DataSetWindow(final Query query, final DataContext dataContext, WindowContext windowContext) {
+    public DataSetWindow(final Query query, final DataContext dataContext, final WindowContext windowContext) {
         this(query, dataContext, -1, windowContext);
     }
 
-    public DataSetWindow(final Query query, final DataContext dataContext, int pageSize, WindowContext windowContext) {
+    public DataSetWindow(final Query query, final DataContext dataContext, final int pageSize, final WindowContext windowContext) {
         super(windowContext);
         _table = new DCTable();
         _query = query;
@@ -157,7 +157,7 @@ public class DataSetWindow extends AbstractWindow {
                 final TableModel tableModel = _tableModelCallable.call();
                 touchTableModel(tableModel);
                 return tableModel;
-            };
+            }
 
             protected void done() {
                 try {
@@ -177,17 +177,19 @@ public class DataSetWindow extends AbstractWindow {
                     e = ErrorUtils.unwrapForPresentation(e);
                     logger.error("Unexpected error occurred while building DataSetWindow contents", e);
                     DataSetWindow.this.dispose();
-                    
+
                     final String exceptionMessage = e.getMessage();
                     if (Strings.isNullOrEmpty(exceptionMessage)) {
                         WidgetUtils.showErrorMessage("Unexpected error",
                                 "An unexpected error occurred while building data set.\n\nSee logs for details.");
                     } else {
                         WidgetUtils.showErrorMessage("Unexpected error",
-                                "An unexpected error occurred while building data set:\n" + exceptionMessage + "\n\nSee logs for details.");
+                                "An unexpected error occurred while building data set:\n" + exceptionMessage
+                                        + "\n\nSee logs for details.");
                     }
                 }
-            };
+            }
+
         }.execute();
 
     }
@@ -198,10 +200,10 @@ public class DataSetWindow extends AbstractWindow {
      * that errors during {@link TableModel#getValueAt(int, int)} will not
      * affect the user at rendering time. If errors occur, we encounter them
      * early by invoking this method
-     * 
+     *
      * @param tableModel
      */
-    private void touchTableModel(TableModel tableModel) {
+    private void touchTableModel(final TableModel tableModel) {
         for (int row = 0; row < tableModel.getRowCount(); row++) {
             for (int col = 0; col < tableModel.getColumnCount(); col++) {
                 tableModel.getValueAt(row, col);
@@ -222,7 +224,7 @@ public class DataSetWindow extends AbstractWindow {
 
         _previousPageButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 int newFirstRow = getFirstRow() - maxRows;
                 if (newFirstRow <= 0) {
                     newFirstRow = 1;
@@ -234,8 +236,8 @@ public class DataSetWindow extends AbstractWindow {
 
         _nextPageButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                int newFirstRow = getFirstRow() + maxRows;
+            public void actionPerformed(final ActionEvent e) {
+                final int newFirstRow = getFirstRow() + maxRows;
                 _query.setFirstRow(newFirstRow);
                 updateTable();
             }
@@ -274,7 +276,7 @@ public class DataSetWindow extends AbstractWindow {
 
     @Override
     public Dimension getPreferredSize() {
-        Dimension preferredSize = super.getPreferredSize();
+        final Dimension preferredSize = super.getPreferredSize();
         if (preferredSize.width < 300) {
             preferredSize.width = 300;
         }

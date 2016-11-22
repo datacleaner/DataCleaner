@@ -49,13 +49,19 @@ public class ComponentConfiguration {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-        ComponentConfiguration that = (ComponentConfiguration) o;
+        final ComponentConfiguration that = (ComponentConfiguration) o;
 
-        if (!properties.equals(that.properties)) return false;
+        if (!properties.equals(that.properties)) {
+            return false;
+        }
         return columns.equals(that.columns);
 
     }

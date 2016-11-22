@@ -31,7 +31,7 @@ public class TableIdentifier implements Serializable, HasName {
     private String _name;
     private SchemaIdentifier _schema;
 
-    public TableIdentifier(SchemaIdentifier schema, String name) {
+    public TableIdentifier(final SchemaIdentifier schema, final String name) {
         _name = name;
         _schema = schema;
     }
@@ -44,7 +44,7 @@ public class TableIdentifier implements Serializable, HasName {
         return _schema;
     }
 
-    public void setSchema(SchemaIdentifier schema) {
+    public void setSchema(final SchemaIdentifier schema) {
         _schema = schema;
     }
 
@@ -53,7 +53,7 @@ public class TableIdentifier implements Serializable, HasName {
         return _name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         _name = name;
     }
 }

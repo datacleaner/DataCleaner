@@ -40,15 +40,15 @@ public abstract class DataCleanerJobWizardSession extends AbstractJobWizardSessi
 
     private String _jobName;
 
-    public DataCleanerJobWizardSession(JobWizardContext context) {
+    public DataCleanerJobWizardSession(final JobWizardContext context) {
         super(context);
     }
-    
+
     public String getJobName() {
         return _jobName;
     }
-    
-    public void setJobName(String jobName) {
+
+    public void setJobName(final String jobName) {
         _jobName = jobName;
     }
 
@@ -62,7 +62,7 @@ public abstract class DataCleanerJobWizardSession extends AbstractJobWizardSessi
         }
         jobFolder.createFile(jobName + FileFilters.ANALYSIS_XML.getExtension(), new Action<OutputStream>() {
             @Override
-            public void run(OutputStream out) throws Exception {
+            public void run(final OutputStream out) throws Exception {
 
                 final AnalysisJobBuilder jobBuilder = createJob();
                 final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
@@ -79,7 +79,7 @@ public abstract class DataCleanerJobWizardSession extends AbstractJobWizardSessi
      * Creates the final analysis job as prescribed by the wizard. This method
      * will be invoked when no more pages are available and the wizard has
      * ended.
-     * 
+     *
      * @return
      */
     public abstract AnalysisJobBuilder createJob();

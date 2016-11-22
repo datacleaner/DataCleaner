@@ -38,29 +38,64 @@ public class CliArguments {
             "/help", "/usage" };
 
     private static final String[] VERSION_TOKENS = new String[] { "-version", "--version", "/version" };
+    @Option(name = "-conf", aliases = { "-configuration",
+            "--configuration-file" }, metaVar = "PATH", usage = "Path to an XML file describing the configuration of DataCleaner")
+    private String configurationFile;
+    @Option(name = "-job", aliases = {
+            "--job-file" }, metaVar = "PATH", usage = "Path to an analysis job XML file to execute")
+    private String jobFile;
+    @Option(name = "-properties", aliases = {
+            "--properties-file" }, metaVar = "PATH", usage = "Path to a custom properties file")
+    private String propertiesFile;
+    @Option(name = "-list", usage = "Used to print a list of various elements available in the configuration")
+    private CliListType listType;
+    @Option(name = "-ds", aliases = { "-datastore",
+            "--datastore-name" }, usage = "Name of datastore when printing a list of schemas, tables or columns. Overrides datastore used when used with -job")
+    private String datastoreName;
+    @Option(name = "-s", aliases = { "-schema",
+            "--schema-name" }, usage = "Name of schema when printing a list of tables or columns")
+    private String schemaName;
+    @Option(name = "-t", aliases = { "-table",
+            "--table-name" }, usage = "Name of table when printing a list of columns")
+    private String tableName;
+    @Option(name = "-ot", aliases = { "--output-type" }, usage = "How to represent the result of the job")
+    private CliOutputType outputType;
+    @Option(name = "-runtype", aliases = { "--runtype" }, usage = "How/where to run the job")
+    private CliRunType runType;
+    @Option(name = "-of", aliases = {
+            "--output-file" }, metaVar = "PATH", usage = "Path to file in which to save the result of the job", required = false)
+    private String outputFile;
+    @Option(name = "-v", aliases = { "-var", "--variable" }, multiValued = true)
+    private Map<String, String> variableOverrides;
+    private boolean usageMode;
+    private boolean versionMode;
+
+    private CliArguments() {
+        // instantiation only allowed by factory (parse(...)) method.
+    }
 
     /**
      * Parses the CLI arguments and creates a CliArguments instance
-     * 
+     *
      * @param args
      *            the arguments as a string array
      * @return
      * @throws CmdLineException
      */
-    public static CliArguments parse(String[] args) {
-        CliArguments arguments = new CliArguments();
+    public static CliArguments parse(final String[] args) {
+        final CliArguments arguments = new CliArguments();
         if (args != null) {
-            CmdLineParser parser = new CmdLineParser(arguments);
+            final CmdLineParser parser = new CmdLineParser(arguments);
             try {
                 parser.parseArgument(args);
-            } catch (CmdLineException e) {
+            } catch (final CmdLineException e) {
                 // ignore
             }
 
             arguments.usageMode = false;
             arguments.versionMode = false;
 
-            for (String arg : args) {
+            for (final String arg : args) {
                 for (int i = 0; i < USAGE_TOKENS.length; i++) {
                     final String usageToken = USAGE_TOKENS[i];
                     if (usageToken.equalsIgnoreCase(arg)) {
@@ -84,17 +119,17 @@ public class CliArguments {
 
     /**
      * Prints the usage information for the CLI
-     * 
+     *
      * @param out
      */
-    public static void printUsage(PrintWriter out) {
-        CliArguments arguments = new CliArguments();
-        CmdLineParser parser = new CmdLineParser(arguments);
+    public static void printUsage(final PrintWriter out) {
+        final CliArguments arguments = new CliArguments();
+        final CmdLineParser parser = new CmdLineParser(arguments);
         parser.setUsageWidth(120);
         parser.printUsage(out, null);
     }
 
-    public static void printVersion(PrintWriter out) {
+    public static void printVersion(final PrintWriter out) {
         final String distributionVersion = Version.getDistributionVersion();
         if (!Strings.isNullOrEmpty(distributionVersion)) {
             out.println("DataCleaner " + Version.getEdition() + " " + distributionVersion);
@@ -108,46 +143,6 @@ public class CliArguments {
         if (!Strings.isNullOrEmpty(licenseKey)) {
             out.println("License no. " + licenseKey);
         }
-    }
-
-    @Option(name = "-conf", aliases = { "-configuration", "--configuration-file" }, metaVar = "PATH", usage = "Path to an XML file describing the configuration of DataCleaner")
-    private String configurationFile;
-
-    @Option(name = "-job", aliases = { "--job-file" }, metaVar = "PATH", usage = "Path to an analysis job XML file to execute")
-    private String jobFile;
-
-    @Option(name = "-properties", aliases = { "--properties-file" }, metaVar = "PATH", usage = "Path to a custom properties file")
-    private String propertiesFile;
-
-    @Option(name = "-list", usage = "Used to print a list of various elements available in the configuration")
-    private CliListType listType;
-
-    @Option(name = "-ds", aliases = { "-datastore", "--datastore-name" }, usage = "Name of datastore when printing a list of schemas, tables or columns. Overrides datastore used when used with -job")
-    private String datastoreName;
-
-    @Option(name = "-s", aliases = { "-schema", "--schema-name" }, usage = "Name of schema when printing a list of tables or columns")
-    private String schemaName;
-
-    @Option(name = "-t", aliases = { "-table", "--table-name" }, usage = "Name of table when printing a list of columns")
-    private String tableName;
-
-    @Option(name = "-ot", aliases = { "--output-type" }, usage = "How to represent the result of the job")
-    private CliOutputType outputType;
-
-    @Option(name = "-runtype", aliases = { "--runtype" }, usage = "How/where to run the job")
-    private CliRunType runType;
-
-    @Option(name = "-of", aliases = { "--output-file" }, metaVar = "PATH", usage = "Path to file in which to save the result of the job", required = false)
-    private String outputFile;
-
-    @Option(name = "-v", aliases = { "-var", "--variable" }, multiValued = true)
-    private Map<String, String> variableOverrides;
-
-    private boolean usageMode;
-    private boolean versionMode;
-
-    private CliArguments() {
-        // instantiation only allowed by factory (parse(...)) method.
     }
 
     public String getConfigurationFile() {
@@ -189,7 +184,7 @@ public class CliArguments {
     public boolean isVersionMode() {
         return versionMode;
     }
-    
+
     public String getPropertiesFile() {
         return propertiesFile;
     }
@@ -202,7 +197,7 @@ public class CliArguments {
     }
 
     public CliRunType getRunType() {
-        if (runType == null){
+        if (runType == null) {
             return CliRunType.LOCAL;
         }
         return runType;
@@ -211,7 +206,7 @@ public class CliArguments {
     /**
      * Gets whether the arguments have been sufficiently set to execute a CLI
      * task.
-     * 
+     *
      * @return true if the CLI arguments have been sufficiently set.
      */
     public boolean isSet() {

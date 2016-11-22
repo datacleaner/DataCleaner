@@ -25,52 +25,52 @@ import javax.swing.SwingUtilities;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.panels.result.ProgressInformationPanel;
 import org.apache.metamodel.MetaModelException;
+import org.datacleaner.panels.result.ProgressInformationPanel;
 
 public class ProgressInformationPanelTest extends TestCase {
 
-	private SQLException sql1;
-	private SQLException sql2;
-	private MetaModelException outerException;
+    private SQLException sql1;
+    private SQLException sql2;
+    private MetaModelException outerException;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		sql1 = new SQLException("sql1");
-		sql2 = new SQLException("sql2");
-		outerException = new MetaModelException("mm", sql1);
-		sql1.setNextException(sql2);
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        sql1 = new SQLException("sql1");
+        sql2 = new SQLException("sql2");
+        outerException = new MetaModelException("mm", sql1);
+        sql1.setNextException(sql2);
+    }
 
-	public void testPrintNextSQLExceptions() throws Exception {
-		ProgressInformationPanel panel = new ProgressInformationPanel(true);
-		panel.addUserLog("damn, something rotten happened!", outerException, true);
+    public void testPrintNextSQLExceptions() throws Exception {
+        ProgressInformationPanel panel = new ProgressInformationPanel(true);
+        panel.addUserLog("damn, something rotten happened!", outerException, true);
 
-		// wait for swing dispatch
-		SwingUtilities.invokeAndWait(new Thread());
-		String text = panel.getTextAreaText();
-		
-		assertTrue(text.indexOf("ERROR: damn, something rotten happened!") != -1);
-		assertTrue(text.indexOf("org.apache.metamodel.MetaModelException: mm") != -1);
-		assertTrue(text.indexOf("Caused by: java.sql.SQLException: sql1") != -1);
-		assertTrue(text.indexOf("Next exception: java.sql.SQLException: sql2") != -1);
-	}
+        // wait for swing dispatch
+        SwingUtilities.invokeAndWait(new Thread());
+        String text = panel.getTextAreaText();
 
-	public void testPrintSingleException() throws Exception {
-		ProgressInformationPanel panel = new ProgressInformationPanel(true);
-		panel.addUserLog("damn, something rotten happened!", sql2, true);
+        assertTrue(text.indexOf("ERROR: damn, something rotten happened!") != -1);
+        assertTrue(text.indexOf("org.apache.metamodel.MetaModelException: mm") != -1);
+        assertTrue(text.indexOf("Caused by: java.sql.SQLException: sql1") != -1);
+        assertTrue(text.indexOf("Next exception: java.sql.SQLException: sql2") != -1);
+    }
 
-		// wait for swing dispatch
-		SwingUtilities.invokeAndWait(new Thread());
-		String text = panel.getTextAreaText();
-		
-		System.out.println(text);
-		
+    public void testPrintSingleException() throws Exception {
+        ProgressInformationPanel panel = new ProgressInformationPanel(true);
+        panel.addUserLog("damn, something rotten happened!", sql2, true);
 
-		assertTrue(text.indexOf("ERROR: damn, something rotten happened!") != -1);
-		assertFalse(text.indexOf("org.apache.metamodel.MetaModelException: mm") != -1);
-		assertFalse(text.indexOf("Caused by: java.sql.SQLException: sql1") != -1);
-		assertTrue(text.indexOf("java.sql.SQLException: sql2") != -1);
-	}
+        // wait for swing dispatch
+        SwingUtilities.invokeAndWait(new Thread());
+        String text = panel.getTextAreaText();
+
+        System.out.println(text);
+
+
+        assertTrue(text.indexOf("ERROR: damn, something rotten happened!") != -1);
+        assertFalse(text.indexOf("org.apache.metamodel.MetaModelException: mm") != -1);
+        assertFalse(text.indexOf("Caused by: java.sql.SQLException: sql1") != -1);
+        assertTrue(text.indexOf("java.sql.SQLException: sql2") != -1);
+    }
 }

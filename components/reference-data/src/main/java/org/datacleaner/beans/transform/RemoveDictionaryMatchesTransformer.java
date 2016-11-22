@@ -57,7 +57,8 @@ import com.google.common.base.Strings;
 
 @Named("Remove dictionary matches")
 @Description("Removes any part of a string that is matched against a dictionary. Use it to standardize or prepare values, for instance by removing adjectives that make comparison of similar terms difficult.")
-@ExternalDocumentation({ @DocumentationLink(title = "Segmenting customers on messy data", url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0") })
+@ExternalDocumentation({
+        @DocumentationLink(title = "Segmenting customers on messy data", url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0") })
 @Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class RemoveDictionaryMatchesTransformer implements Transformer {
     public enum RemovedMatchesType implements HasName {
@@ -65,7 +66,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
 
         private final String _name;
 
-        RemovedMatchesType(String name) {
+        RemovedMatchesType(final String name) {
             _name = name;
         }
 
@@ -102,8 +103,8 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     public RemoveDictionaryMatchesTransformer() {
     }
 
-    public RemoveDictionaryMatchesTransformer(InputColumn<String> column, Dictionary dictionary,
-            DataCleanerConfiguration configuration) {
+    public RemoveDictionaryMatchesTransformer(final InputColumn<String> column, final Dictionary dictionary,
+            final DataCleanerConfiguration configuration) {
         this();
         _column = column;
         _dictionary = dictionary;
@@ -138,7 +139,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     public void init() {
         _dictionaryConnection = _dictionary.openConnection(_configuration);
         multiWordDictionaryPatterns = new LinkedHashMap<>();
-        
+
         final Iterator<String> allValues = _dictionaryConnection.getLengthSortedValues();
         while (allValues.hasNext()) {
             final String value = allValues.next();
@@ -163,7 +164,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     }
 
     @Override
-    public Object[] transform(InputRow inputRow) {
+    public Object[] transform(final InputRow inputRow) {
         final String value = inputRow.getValue(_column);
         return transform(value);
     }
@@ -171,7 +172,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     public Object[] transform(String value) {
         final List<String> removedParts = new ArrayList<>(2);
         if (!Strings.isNullOrEmpty(value)) {
-            for (Entry<String, Pattern> entry : multiWordDictionaryPatterns.entrySet()) {
+            for (final Entry<String, Pattern> entry : multiWordDictionaryPatterns.entrySet()) {
                 final Pattern pattern = entry.getValue();
                 final Matcher matcher;
                 if (_dictionary.isCaseSensitive()) {
@@ -179,13 +180,13 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
                 } else {
                     matcher = pattern.matcher(value.toLowerCase());
                 }
-                while(matcher.find()){
+                while (matcher.find()) {
                     final int start;
                     final int end;
                     if (matcher.start() > 0 && value.charAt(matcher.start() - 1) == ' ') {
                         start = matcher.start() - 1;
                         end = matcher.end();
-                    } else if ( matcher.end() < value.length() && value.charAt(matcher.end()) == ' ') {
+                    } else if (matcher.end() < value.length() && value.charAt(matcher.end()) == ' ') {
                         start = matcher.start();
                         end = matcher.end() + 1;
                     } else {
@@ -197,12 +198,12 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
                     removedParts.add(entry.getKey());
                 }
             }
-            
+
             // do word-by-word dictionary lookups
             final StringBuilder sb = new StringBuilder();
             final List<String> tokens = StringUtils.splitOnWordBoundaries(value, true);
-            for (String token : tokens) {
-                if (StringUtils.isSingleWord(token))  {
+            for (final String token : tokens) {
+                if (StringUtils.isSingleWord(token)) {
                     if (_dictionaryConnection.containsValue(token)) {
                         removedParts.add(token);
                     } else {

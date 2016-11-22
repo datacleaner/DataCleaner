@@ -24,11 +24,11 @@ import org.datacleaner.descriptors.AnalyzerDescriptor;
 
 /**
  * {@link ComponentJob} subinterface for {@link Analyzer}s.
- * 
+ *
  * @see Analyzer
  */
 public interface AnalyzerJob extends ComponentJob {
 
     @Override
-    public AnalyzerDescriptor<?> getDescriptor();
+    AnalyzerDescriptor<?> getDescriptor();
 }

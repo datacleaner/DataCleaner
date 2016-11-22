@@ -34,17 +34,17 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface DatastoreServiceAsync {
 
-    public void getAvailableDatastores(TenantIdentifier tenant, AsyncCallback<List<DatastoreIdentifier>> callback);
+    void getAvailableDatastores(TenantIdentifier tenant, AsyncCallback<List<DatastoreIdentifier>> callback);
 
-    public void getDefaultSchema(TenantIdentifier tenant, DatastoreIdentifier datastore,
+    void getDefaultSchema(TenantIdentifier tenant, DatastoreIdentifier datastore,
             AsyncCallback<SchemaIdentifier> callback);
 
-    public void getSchemas(TenantIdentifier tenant, DatastoreIdentifier datastore,
+    void getSchemas(TenantIdentifier tenant, DatastoreIdentifier datastore,
             AsyncCallback<List<SchemaIdentifier>> callback);
 
-    public void getTables(TenantIdentifier tenant, SchemaIdentifier schema,
+    void getTables(TenantIdentifier tenant, SchemaIdentifier schema,
             AsyncCallback<List<TableIdentifier>> callback);
 
-    public void getColumns(TenantIdentifier tenant, TableIdentifier table,
+    void getColumns(TenantIdentifier tenant, TableIdentifier table,
             AsyncCallback<List<ColumnIdentifier>> callback);
 }

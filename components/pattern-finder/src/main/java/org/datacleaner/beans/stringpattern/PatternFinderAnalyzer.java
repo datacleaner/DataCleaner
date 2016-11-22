@@ -61,8 +61,6 @@ import org.slf4j.LoggerFactory;
 @Concurrent(true)
 public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
 
-    private static final Logger logger = LoggerFactory.getLogger(PatternFinderAnalyzer.class);
-
     public static final String PROPERTY_COLUMN = "Column";
     public static final String PROPERTY_GROUP_COLUMN = "Group column";
     public static final String PROPERTY_DISCRIMINATE_TEXT_CASE = "Discriminate text case";
@@ -70,12 +68,11 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
     public static final String PROPERTY_DISCRIMINATE_DECIMALS = "Discriminate decimals";
     public static final String PROPERTY_ENABLE_MIXED_TOKENS = "Enable mixed tokens";
     public static final String PROPERTY_IGNORE_REPEATED_SPACES = "Ignore repeated spaces";
-
     public static final String MEASURE_SAMPLE = "Sample";
     public static final String MEASURE_MATCH_COUNT = "Match count";
     public static final String DIMENSION_NAME_MEASURES = "Measures";
     public static final String DIMENSION_NAME_PATTERN = "Pattern";
-
+    private static final Logger logger = LoggerFactory.getLogger(PatternFinderAnalyzer.class);
     @Configured(order = 1, value = PROPERTY_COLUMN)
     @ColumnProperty(escalateToMultipleJobs = true)
     InputColumn<String> column;
@@ -126,12 +123,20 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
 
     @Configured(required = false, order = 14)
     Character minusSign = DecimalFormatSymbols.getInstance().getMinusSign();
-
+    @Provided
+    RowAnnotationFactory _rowAnnotationFactory;
     private Map<String, DefaultPatternFinder> _patternFinders;
     private TokenizerConfiguration _configuration;
 
-    @Provided
-    RowAnnotationFactory _rowAnnotationFactory;
+    public static Crosstab<Serializable> createCrosstab() {
+        final CrosstabDimension measuresDimension = new CrosstabDimension(DIMENSION_NAME_MEASURES);
+        measuresDimension.addCategory(MEASURE_MATCH_COUNT);
+        measuresDimension.addCategory(MEASURE_SAMPLE);
+        final CrosstabDimension patternDimension = new CrosstabDimension(DIMENSION_NAME_PATTERN);
+        final Crosstab<Serializable> crosstab = new Crosstab<Serializable>(Serializable.class, measuresDimension,
+                patternDimension);
+        return crosstab;
+    }
 
     @Initialize
     public void init() {
@@ -158,8 +163,8 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
         }
 
         if (predefinedTokenName != null && predefinedTokenPatterns != null) {
-            Set<String> tokenRegexes = new HashSet<String>();
-            for (String predefinedTokenPattern : predefinedTokenPatterns) {
+            final Set<String> tokenRegexes = new HashSet<String>();
+            for (final String predefinedTokenPattern : predefinedTokenPatterns) {
                 tokenRegexes.add(predefinedTokenPattern);
             }
             _configuration.getPredefinedTokens().add(new PredefinedTokenDefinition(predefinedTokenName, tokenRegexes));
@@ -169,7 +174,7 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         final String group;
         if (groupColumn == null) {
             group = null;
@@ -181,12 +186,12 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
         run(group, value, row, distinctCount);
     }
 
-    private void run(String group, String value, InputRow row, int distinctCount) {
-        DefaultPatternFinder patternFinder = getPatternFinderForGroup(group);
+    private void run(final String group, final String value, final InputRow row, final int distinctCount) {
+        final DefaultPatternFinder patternFinder = getPatternFinderForGroup(group);
         patternFinder.run(row, value, distinctCount);
     }
 
-    private DefaultPatternFinder getPatternFinderForGroup(String group) {
+    private DefaultPatternFinder getPatternFinderForGroup(final String group) {
         DefaultPatternFinder patternFinder = _patternFinders.get(group);
         if (patternFinder == null) {
             synchronized (this) {
@@ -203,13 +208,13 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
     @Override
     public PatternFinderResult getResult() {
         if (groupColumn == null) {
-            Crosstab<?> crosstab = createCrosstab(getPatternFinderForGroup(null));
+            final Crosstab<?> crosstab = createCrosstab(getPatternFinderForGroup(null));
             return new PatternFinderResult(column, crosstab, _configuration);
         } else {
             final Map<String, Crosstab<?>> crosstabs = new TreeMap<String, Crosstab<?>>(NullTolerableComparator.get(
                     String.class));
             final Set<Entry<String, DefaultPatternFinder>> patternFinderEntries = _patternFinders.entrySet();
-            for (Entry<String, DefaultPatternFinder> entry : patternFinderEntries) {
+            for (final Entry<String, DefaultPatternFinder> entry : patternFinderEntries) {
                 final DefaultPatternFinder patternFinder = entry.getValue();
                 final Crosstab<Serializable> crosstab = createCrosstab(patternFinder);
                 crosstabs.put(entry.getKey(), crosstab);
@@ -221,17 +226,7 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
         }
     }
 
-    public static Crosstab<Serializable> createCrosstab() {
-        CrosstabDimension measuresDimension = new CrosstabDimension(DIMENSION_NAME_MEASURES);
-        measuresDimension.addCategory(MEASURE_MATCH_COUNT);
-        measuresDimension.addCategory(MEASURE_SAMPLE);
-        CrosstabDimension patternDimension = new CrosstabDimension(DIMENSION_NAME_PATTERN);
-        Crosstab<Serializable> crosstab = new Crosstab<Serializable>(Serializable.class, measuresDimension,
-                patternDimension);
-        return crosstab;
-    }
-
-    private Crosstab<Serializable> createCrosstab(DefaultPatternFinder patternFinder) {
+    private Crosstab<Serializable> createCrosstab(final DefaultPatternFinder patternFinder) {
         final Crosstab<Serializable> crosstab = createCrosstab();
 
         final Set<Entry<TokenPattern, RowAnnotation>> entrySet = patternFinder.getAnnotations().entrySet();
@@ -240,7 +235,7 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
         // matches are at the top
         final Set<Entry<TokenPattern, RowAnnotation>> sortedEntrySet = new TreeSet<Entry<TokenPattern, RowAnnotation>>(
                 new Comparator<Entry<TokenPattern, RowAnnotation>>() {
-                    public int compare(Entry<TokenPattern, RowAnnotation> o1, Entry<TokenPattern, RowAnnotation> o2) {
+                    public int compare(final Entry<TokenPattern, RowAnnotation> o1, final Entry<TokenPattern, RowAnnotation> o2) {
                         int result = o2.getValue().getRowCount() - o1.getValue().getRowCount();
                         if (result == 0) {
                             result = o1.getKey().toSymbolicString().compareTo(o2.getKey().toSymbolicString());
@@ -250,14 +245,14 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
                 });
         sortedEntrySet.addAll(entrySet);
 
-        for (Entry<TokenPattern, RowAnnotation> entry : sortedEntrySet) {
+        for (final Entry<TokenPattern, RowAnnotation> entry : sortedEntrySet) {
             final TokenPattern pattern = entry.getKey();
             final CrosstabNavigator<Serializable> nav = crosstab.navigate();
             nav.where(DIMENSION_NAME_PATTERN, pattern.toSymbolicString());
 
             nav.where(DIMENSION_NAME_MEASURES, MEASURE_MATCH_COUNT);
-            RowAnnotation annotation = entry.getValue();
-            int size = annotation.getRowCount();
+            final RowAnnotation annotation = entry.getValue();
+            final int size = annotation.getRowCount();
             nav.put(size, true);
             nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(annotation, _rowAnnotationFactory, column));
 
@@ -268,63 +263,63 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
     }
 
     // setter methods for unittesting purposes
-    public void setRowAnnotationFactory(RowAnnotationFactory rowAnnotationFactory) {
+    public void setRowAnnotationFactory(final RowAnnotationFactory rowAnnotationFactory) {
         _rowAnnotationFactory = rowAnnotationFactory;
     }
 
-    public void setColumn(InputColumn<String> column) {
+    public void setColumn(final InputColumn<String> column) {
         this.column = column;
     }
 
-    public void setPredefinedTokenName(String predefinedTokenName) {
+    public void setPredefinedTokenName(final String predefinedTokenName) {
         this.predefinedTokenName = predefinedTokenName;
     }
 
-    public void setPredefinedTokenPatterns(String[] predefinedTokenPatterns) {
+    public void setPredefinedTokenPatterns(final String[] predefinedTokenPatterns) {
         this.predefinedTokenPatterns = predefinedTokenPatterns;
     }
 
-    public void setDiscriminateTextCase(boolean discriminateTextCase) {
+    public void setDiscriminateTextCase(final boolean discriminateTextCase) {
         this.discriminateTextCase = discriminateTextCase;
     }
 
-    public void setDiscriminateNegativeNumbers(boolean discriminateNegativeNumbers) {
+    public void setDiscriminateNegativeNumbers(final boolean discriminateNegativeNumbers) {
         this.discriminateNegativeNumbers = discriminateNegativeNumbers;
     }
 
-    public void setDiscriminateDecimals(boolean discriminateDecimals) {
+    public void setDiscriminateDecimals(final boolean discriminateDecimals) {
         this.discriminateDecimals = discriminateDecimals;
     }
 
-    public void setEnableMixedTokens(boolean enableMixedTokens) {
+    public void setEnableMixedTokens(final boolean enableMixedTokens) {
         this.enableMixedTokens = enableMixedTokens;
     }
 
-    public void setUpperCaseExpandable(boolean upperCaseExpandable) {
+    public void setUpperCaseExpandable(final boolean upperCaseExpandable) {
         this.upperCaseExpandable = upperCaseExpandable;
     }
 
-    public void setLowerCaseExpandable(boolean lowerCaseExpandable) {
+    public void setLowerCaseExpandable(final boolean lowerCaseExpandable) {
         this.lowerCaseExpandable = lowerCaseExpandable;
     }
 
-    public void setDecimalSeparator(Character decimalSeparator) {
+    public void setDecimalSeparator(final Character decimalSeparator) {
         this.decimalSeparator = decimalSeparator;
     }
 
-    public void setIgnoreRepeatedSpaces(boolean ignoreRepeatedSpaces) {
+    public void setIgnoreRepeatedSpaces(final boolean ignoreRepeatedSpaces) {
         this.ignoreRepeatedSpaces = ignoreRepeatedSpaces;
     }
 
-    public void setMinusSign(Character minusSign) {
+    public void setMinusSign(final Character minusSign) {
         this.minusSign = minusSign;
     }
 
-    public void setThousandsSeparator(Character thousandsSeparator) {
+    public void setThousandsSeparator(final Character thousandsSeparator) {
         this.thousandsSeparator = thousandsSeparator;
     }
 
-    public void setGroupColumn(InputColumn<String> groupColumn) {
+    public void setGroupColumn(final InputColumn<String> groupColumn) {
         this.groupColumn = groupColumn;
     }
 }

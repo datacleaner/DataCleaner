@@ -28,7 +28,7 @@ import org.datacleaner.job.jaxb.JobMetadataType;
 public class EmptyJaxbJobMetadataFactory implements JaxbJobMetadataFactory {
 
     @Override
-    public JobMetadataType create(AnalysisJob analysisJob) throws Exception {
+    public JobMetadataType create(final AnalysisJob analysisJob) throws Exception {
         return new JobMetadataType();
     }
 

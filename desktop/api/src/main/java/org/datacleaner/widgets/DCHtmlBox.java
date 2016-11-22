@@ -40,7 +40,7 @@ public class DCHtmlBox extends JEditorPane {
     private static final String HTML_END_TAG = "</html>";
     private static final String CONTENT_TYPE_HTML = "text/html";
 
-    public DCHtmlBox(String text) {
+    public DCHtmlBox(final String text) {
         super();
 
         setEditorKit(JEditorPane.createEditorKitForContentType(CONTENT_TYPE_HTML));
@@ -48,11 +48,11 @@ public class DCHtmlBox extends JEditorPane {
         putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         setFont(WidgetUtils.FONT_NORMAL);
         addHyperlinkListener(new HyperlinkListener() {
-            public void hyperlinkUpdate(HyperlinkEvent hyperlinkEvent) {
+            public void hyperlinkUpdate(final HyperlinkEvent hyperlinkEvent) {
                 if (hyperlinkEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     try {
                         (new OpenBrowserAction(hyperlinkEvent.getURL())).actionPerformed(null);
-                    } catch (URISyntaxException e1) {
+                    } catch (final URISyntaxException e1) {
                         logger.warn("Link can not be opened. " + e1.getMessage());
                     }
                 }
@@ -72,7 +72,7 @@ public class DCHtmlBox extends JEditorPane {
         super.setText(HTML_START_TAG + getTableHtml(text) + HTML_END_TAG);
     }
 
-    private String getTableHtml(String content) {
+    private String getTableHtml(final String content) {
         return "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td>" + content + "</td></tr></table>";
     }
 }

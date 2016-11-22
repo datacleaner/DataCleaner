@@ -81,8 +81,9 @@ public class JobModificationControllerTest extends TestCase {
         final JobModificationPayload input = new JobModificationPayload();
         input.setName("renamed_job");
 
-        HttpServletResponse response = new MockHttpServletResponse(); 
-        final Map<String, String> result = jobModificationController.modifyJob("tenant1", "product_profiling", input, response);
+        HttpServletResponse response = new MockHttpServletResponse();
+        final Map<String, String> result =
+                jobModificationController.modifyJob("tenant1", "product_profiling", input, response);
         assertEquals("{new_job_name=renamed_job, old_job_name=product_profiling, "
                 + "repository_url=/tenant1/jobs/renamed_job.analysis.xml}", result.toString());
 

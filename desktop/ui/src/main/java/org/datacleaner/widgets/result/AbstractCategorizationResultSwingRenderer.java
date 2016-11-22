@@ -86,13 +86,13 @@ public abstract class AbstractCategorizationResultSwingRenderer<R extends Catego
         return row + 1;
     }
 
-    protected void addExtraValue(Object extraData, int row, DefaultTableModel model, String desc, int count,
-            AnnotatedRowsResult sampleResult) {
+    protected void addExtraValue(final Object extraData, final int row, final DefaultTableModel model, final String desc, final int count,
+            final AnnotatedRowsResult sampleResult) {
         // Do nothing by default
     }
 
     private void drillToGroup(final String title, final AnnotatedRowsResult sampleResult) {
-        List<AnalyzerResult> results = Arrays.<AnalyzerResult> asList(sampleResult);
+        final List<AnalyzerResult> results = Arrays.<AnalyzerResult> asList(sampleResult);
         final DetailsResultWindow window = new DetailsResultWindow(title, results, windowContext, rendererFactory);
         window.open();
     }
@@ -106,7 +106,7 @@ public abstract class AbstractCategorizationResultSwingRenderer<R extends Catego
                 analyzerResult.getCategoryNames().size());
         int row = 0;
         final Collection<String> categoryNames = analyzerResult.getCategoryNames();
-        for (String categoryName : categoryNames) {
+        for (final String categoryName : categoryNames) {
             final AnnotatedRowsResult sample = analyzerResult.getCategoryRowSample(categoryName);
             final Number count = analyzerResult.getCategoryCount(categoryName);
             row = addValue(extraData, row, model, categoryName, count.intValue(), sample);

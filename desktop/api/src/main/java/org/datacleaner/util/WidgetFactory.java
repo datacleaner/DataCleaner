@@ -56,7 +56,6 @@ import javax.swing.plaf.metal.MetalButtonUI;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.widgets.PopupButton;
-import com.google.common.base.Strings;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXFormattedTextField;
@@ -69,6 +68,8 @@ import org.jdesktop.swingx.plaf.metal.MetalStatusBarUI;
 import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * Factory class for various commonly used widgets in DataCleaner. Typically the
@@ -84,15 +85,15 @@ public final class WidgetFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(WidgetFactory.class);
 
-    public static JMenu createMenu(String text, char mnemonic) {
-        JMenu menu = new JMenu();
+    public static JMenu createMenu(final String text, final char mnemonic) {
+        final JMenu menu = new JMenu();
         menu.setText(text);
         menu.setMnemonic(mnemonic);
         return menu;
     }
 
-    public static JMenuItem createMenuItem(String text, Icon icon) {
-        JMenuItem menu = new JMenuItem();
+    public static JMenuItem createMenuItem(final String text, final Icon icon) {
+        final JMenuItem menu = new JMenuItem();
         menu.setText(text);
         if (icon != null) {
             menu.setIcon(icon);
@@ -100,7 +101,7 @@ public final class WidgetFactory {
         return menu;
     }
 
-    public static JMenuItem createMenuItem(String text, String iconPath) {
+    public static JMenuItem createMenuItem(final String text, final String iconPath) {
         Icon icon = null;
         if (iconPath != null) {
             icon = ImageManager.get().getImageIcon(iconPath, IconUtils.ICON_SIZE_MENU_ITEM);
@@ -108,7 +109,7 @@ public final class WidgetFactory {
         return createMenuItem(text, icon);
     }
 
-    private static Icon getButtonIcon(String imagePath) {
+    private static Icon getButtonIcon(final String imagePath) {
         if (Strings.isNullOrEmpty(imagePath)) {
             return null;
         }
@@ -116,29 +117,30 @@ public final class WidgetFactory {
         return icon;
     }
 
-    public static PopupButton createDarkPopupButton(String text, String imagePath) {
-        PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
+    public static PopupButton createDarkPopupButton(final String text, final String imagePath) {
+        final PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
         b.setFocusPainted(false);
         WidgetUtils.setDarkButtonStyle(b);
         return b;
     }
 
-    public static PopupButton createDefaultPopupButton(String text, String imagePath) {
-        PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
+    public static PopupButton createDefaultPopupButton(final String text, final String imagePath) {
+        final PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
         b.setFocusPainted(false);
         WidgetUtils.setDefaultButtonStyle(b);
         return b;
     }
-    
-    public static PopupButton createPrimaryPopupButton(String text, String imagePath) {
-        PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
+
+    public static PopupButton createPrimaryPopupButton(final String text, final String imagePath) {
+        final PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
         b.setFocusPainted(false);
         WidgetUtils.setPrimaryButtonStyle(b);
         return b;
     }
 
     public static PopupButton createSmallPopupButton(final String text, final String imagePath) {
-        final PopupButton b = new PopupButton(text, ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL));
+        final PopupButton b =
+                new PopupButton(text, ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL));
 
         b.setFont(WidgetUtils.FONT_SMALL);
         b.setMargin(new Insets(0, 0, 0, 0));
@@ -152,7 +154,7 @@ public final class WidgetFactory {
         return b;
     }
 
-    private static JButton createBasicButton(String text, Icon icon) {
+    private static JButton createBasicButton(final String text, final Icon icon) {
         final JButton b = new JButton();
         if (text != null) {
             b.setText(text);
@@ -164,84 +166,84 @@ public final class WidgetFactory {
         return b;
     }
 
-    public static JButton createPrimaryButton(String text, String imagePath) {
+    public static JButton createPrimaryButton(final String text, final String imagePath) {
         return createPrimaryButton(text, getButtonIcon(imagePath));
     }
 
-    public static JButton createPrimaryButton(String text, Icon icon) {
+    public static JButton createPrimaryButton(final String text, final Icon icon) {
         final JButton b = createBasicButton(text, icon);
         WidgetUtils.setPrimaryButtonStyle(b);
         return b;
     }
 
-    public static JButton createDefaultButton(String text) {
+    public static JButton createDefaultButton(final String text) {
         return createDefaultButton(text, (Icon) null);
     }
 
-    public static JButton createDefaultButton(String text, String imagePath) {
+    public static JButton createDefaultButton(final String text, final String imagePath) {
         return createDefaultButton(text, getButtonIcon(imagePath));
     }
 
-    public static JButton createDefaultButton(String text, Icon icon) {
+    public static JButton createDefaultButton(final String text, final Icon icon) {
         final JButton b = createBasicButton(text, icon);
         WidgetUtils.setDefaultButtonStyle(b);
         return b;
     }
 
-    public static JButton createDarkButton(String text, String imagePath) {
+    public static JButton createDarkButton(final String text, final String imagePath) {
         return createDarkButton(text, getButtonIcon(imagePath));
     }
 
-    public static JButton createDarkButton(String text, Icon icon) {
+    public static JButton createDarkButton(final String text, final Icon icon) {
         final JButton b = createBasicButton(text, icon);
         WidgetUtils.setDarkButtonStyle(b);
         return b;
     }
 
     /**
-     * 
+     *
      * @param text
      * @return
-     * 
+     *
      * @deprecated use
      */
     @Deprecated
-    public static JButton createButton(String text) {
+    public static JButton createButton(final String text) {
         return createButton(text, (Icon) null);
     }
 
     /**
-     * 
+     *
      * @param text
      * @param imagePath
      * @return
-     * 
+     *
      * @deprecated use {@link #createDarkButton(String, String)},
      *             {@link #createPrimaryButton(String, String)},
      *             {@link #createDefaultButton(String, String)} or
      *             {@link #createSmallButton(String)} instead.
      */
     @Deprecated
-    public static JButton createButton(String text, String imagePath) {
+    public static JButton createButton(final String text, final String imagePath) {
         return createDarkButton(text, imagePath);
     }
 
     /**
-     * 
+     *
      * @param text
      * @param icon
      * @return
-     * 
+     *
      * @deprecated use {@link #createDarkButton(String, Icon)},
      *             {@link #createPrimaryButton(String, Icon)} or
      *             {@link #createSmallButton(Icon)} instead.
      */
     @Deprecated
-    public static JButton createButton(String text, Icon icon) {
+    public static JButton createButton(final String text, final Icon icon) {
         return createDarkButton(text, icon);
     }
 
-    public static JXStatusBar createStatusBar(JComponent comp) {
+    public static JXStatusBar createStatusBar(final JComponent comp) {
         final JXStatusBar statusBar = new JXStatusBar();
         statusBar.setUI(new MetalStatusBarUI());
         statusBar.putClientProperty(BasicStatusBarUI.AUTO_ADD_SEPARATOR, false);
@@ -255,7 +257,7 @@ public final class WidgetFactory {
     }
 
     public static JToolBar createToolBar() {
-        JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
+        final JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
         toolBar.setOpaque(false);
         toolBar.setBorder(null);
         toolBar.setRollover(true);
@@ -267,8 +269,8 @@ public final class WidgetFactory {
     public static Component createToolBarSeparator() {
         return Box.createHorizontalGlue();
     }
-    
-    public static JButton createToolbarButton(String text, String iconPath) {
+
+    public static JButton createToolbarButton(final String text, final String iconPath) {
         final ImageIcon icon;
         if (iconPath == null) {
             icon = null;
@@ -278,12 +280,12 @@ public final class WidgetFactory {
         final JButton button = new JButton(text, icon);
         button.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent e) {
+            public void mouseEntered(final MouseEvent e) {
                 button.setForeground(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
             }
 
             @Override
-            public void mouseExited(MouseEvent e) {
+            public void mouseExited(final MouseEvent e) {
                 button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
             }
         });
@@ -292,21 +294,21 @@ public final class WidgetFactory {
         return button;
     }
 
-    public static JButton createSmallButton(String imagePath) {
+    public static JButton createSmallButton(final String imagePath) {
         return createSmallButton(null, imagePath);
     }
 
-    public static JButton createSmallButton(String text, String imagePath) {
-        Icon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
+    public static JButton createSmallButton(final String text, final String imagePath) {
+        final Icon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
         return createSmallButton(text, icon);
     }
 
-    public static JButton createSmallButton(Icon icon) {
+    public static JButton createSmallButton(final Icon icon) {
         return createSmallButton(null, icon);
     }
 
-    public static JButton createSmallButton(String text, Icon icon) {
-        JButton b = new JButton(icon);
+    public static JButton createSmallButton(final String text, final Icon icon) {
+        final JButton b = new JButton(icon);
         if (text != null) {
             b.setText(text);
             b.setFont(WidgetUtils.FONT_SMALL);
@@ -324,11 +326,11 @@ public final class WidgetFactory {
     }
 
     public static DCTaskPaneContainer createTaskPaneContainer() {
-        DCTaskPaneContainer taskPaneContainer = new DCTaskPaneContainer();
+        final DCTaskPaneContainer taskPaneContainer = new DCTaskPaneContainer();
         return taskPaneContainer;
     }
 
-    public static JXTaskPane createTaskPane(String title, String imagePath) {
+    public static JXTaskPane createTaskPane(final String title, final String imagePath) {
         final ImageIcon icon;
         if (Strings.isNullOrEmpty(imagePath)) {
             icon = null;
@@ -338,9 +340,9 @@ public final class WidgetFactory {
         return createTaskPane(title, icon);
     }
 
-    public static JXTaskPane createTaskPane(String title, Icon icon) {
-        JXTaskPane taskPane = new JXTaskPane();
-        Container cp = taskPane.getContentPane();
+    public static JXTaskPane createTaskPane(final String title, final Icon icon) {
+        final JXTaskPane taskPane = new JXTaskPane();
+        final Container cp = taskPane.getContentPane();
         ((JComponent) cp).setBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK));
         taskPane.setFocusable(false);
         taskPane.setTitle(title);
@@ -354,12 +356,12 @@ public final class WidgetFactory {
         return createTextField(null);
     }
 
-    public static JXTextField createTextField(String promptText) {
+    public static JXTextField createTextField(final String promptText) {
         return createTextField(promptText, TEXT_FIELD_COLUMNS);
     }
 
-    public static JXTextField createTextField(String promptText, int columns) {
-        JXTextField tf = new JXTextField(promptText);
+    public static JXTextField createTextField(final String promptText, final int columns) {
+        final JXTextField tf = new JXTextField(promptText);
         tf.setColumns(columns);
         if (promptText != null) {
             tf.setFocusBehavior(FocusBehavior.SHOW_PROMPT);
@@ -368,8 +370,9 @@ public final class WidgetFactory {
         return tf;
     }
 
-    public static JXFormattedTextField createFormattedTextField(String promptText, final int columns, final Format format) {
-        JXFormattedTextField tf = new JXFormattedTextField(promptText);
+    public static JXFormattedTextField createFormattedTextField(final String promptText, final int columns,
+            final Format format) {
+        final JXFormattedTextField tf = new JXFormattedTextField(promptText);
         // Stupid JXFormattedTextField will not pass along a formatter to the constructor.
         tf.setFormatterFactory(new JFormattedTextField.AbstractFormatterFactory() {
             private JFormattedTextField.AbstractFormatter _formatter;
@@ -408,15 +411,16 @@ public final class WidgetFactory {
         }
         return tf;
     }
-    public static JXTextArea createTextArea(String promptText) {
-        JXTextArea ta = new JXTextArea(promptText);
+
+    public static JXTextArea createTextArea(final String promptText) {
+        final JXTextArea ta = new JXTextArea(promptText);
         ta.setColumns(17);
         ta.setRows(6);
         ta.setBorder(new CompoundBorder(WidgetUtils.BORDER_THIN, new EmptyBorder(2, 2, 2, 2)));
         return ta;
     }
 
-    public static JButton createImageButton(ImageIcon icon) {
+    public static JButton createImageButton(final ImageIcon icon) {
         final JButton button = new JButton(icon);
         button.setMargin(new Insets(0, 0, 0, 0));
         button.setBorder(null);
@@ -424,19 +428,19 @@ public final class WidgetFactory {
         return button;
     }
 
-    public static JXCollapsiblePane createCollapsiblePane(Direction direction) {
-        JXCollapsiblePane collapsiblePane = new JXCollapsiblePane(direction);
+    public static JXCollapsiblePane createCollapsiblePane(final Direction direction) {
+        final JXCollapsiblePane collapsiblePane = new JXCollapsiblePane(direction);
         collapsiblePane.setOpaque(false);
 
         // hack to make it non-opaque!
         try {
-            Field field = JXCollapsiblePane.class.getDeclaredField("wrapper");
+            final Field field = JXCollapsiblePane.class.getDeclaredField("wrapper");
             field.setAccessible(true);
-            JViewport viewPort = (JViewport) field.get(collapsiblePane);
+            final JViewport viewPort = (JViewport) field.get(collapsiblePane);
             viewPort.setOpaque(false);
-            JComponent component = (JComponent) viewPort.getView();
+            final JComponent component = (JComponent) viewPort.getView();
             component.setOpaque(false);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.info("Failed to make JXCollapsiblePane non-opaque", e);
         }
         return collapsiblePane;
@@ -446,29 +450,31 @@ public final class WidgetFactory {
         return createPasswordField(TEXT_FIELD_COLUMNS);
     }
 
-    public static JPasswordField createPasswordField(int columns) {
-        JPasswordField field = new JPasswordField(columns);
+    public static JPasswordField createPasswordField(final int columns) {
+        final JPasswordField field = new JPasswordField(columns);
         field.setFont(new Font("LucidaSans", Font.PLAIN, 12));
         return field;
     }
 
-    public static JDialog createModalDialog(final Component component, final Window parentWindow, final String title, boolean resizable) {
+    public static JDialog createModalDialog(final Component component, final Window parentWindow, final String title,
+            final boolean resizable) {
         final JDialog dialog;
         if (parentWindow instanceof Frame) {
             dialog = new JDialog((Frame) parentWindow, title, true);
         } else if (parentWindow instanceof Dialog) {
             dialog = new JDialog((Dialog) parentWindow, title, true);
         } else {
-            throw new UnsupportedOperationException("Cannot create dialog for a component without a frame or dialog parent");
+            throw new UnsupportedOperationException(
+                    "Cannot create dialog for a component without a frame or dialog parent");
         }
 
-        Container contentPane = dialog.getContentPane();
+        final Container contentPane = dialog.getContentPane();
 
         contentPane.setLayout(new BorderLayout());
         contentPane.add(component, BorderLayout.CENTER);
         dialog.setResizable(resizable);
         if (JDialog.isDefaultLookAndFeelDecorated()) {
-            boolean supportsWindowDecorations =
+            final boolean supportsWindowDecorations =
                     UIManager.getLookAndFeel().getSupportsWindowDecorations();
             if (supportsWindowDecorations) {
                 dialog.setUndecorated(true);
@@ -479,7 +485,8 @@ public final class WidgetFactory {
         return dialog;
     }
 
-    public static JDialog createModalDialog(final Component component, final Component parentComponent, final String title, boolean resizable) {
+    public static JDialog createModalDialog(final Component component, final Component parentComponent,
+            final String title, final boolean resizable) {
         Component windowComponent = parentComponent;
         while (!(windowComponent instanceof Window) && windowComponent != null) {
             windowComponent = windowComponent.getParent();
@@ -487,8 +494,8 @@ public final class WidgetFactory {
 
         return createModalDialog(component, (Window) windowComponent, title, resizable);
     }
-    
-    public static Integer showMaxRowsDialog(int defaultValue) {
+
+    public static Integer showMaxRowsDialog(final int defaultValue) {
         final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?",
                 defaultValue);
         if (Strings.isNullOrEmpty(maxRowsString)) {

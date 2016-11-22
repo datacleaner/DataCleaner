@@ -30,11 +30,11 @@ import java.util.Set;
  * StorageProvider that actually doesn't store data on disk, but only in memory.
  * This implementation is prone to out of memory errors, but is on the other
  * hand very quick for small jobs.
- * 
- * 
+ *
+ *
  */
 public final class InMemoryStorageProvider implements StorageProvider {
-    
+
     public static final int DEFAULT_MAX_SAMPLE_SETS = 1000;
     public static final int DEFAULT_MAX_SAMPLE_RECORDS = 150;
 
@@ -45,27 +45,27 @@ public final class InMemoryStorageProvider implements StorageProvider {
         this(DEFAULT_MAX_SAMPLE_SETS, DEFAULT_MAX_SAMPLE_RECORDS);
     }
 
-    public InMemoryStorageProvider(int maxSampleRecords) {
+    public InMemoryStorageProvider(final int maxSampleRecords) {
         this(Math.min(10, DEFAULT_MAX_SAMPLE_SETS * DEFAULT_MAX_SAMPLE_RECORDS / maxSampleRecords), maxSampleRecords);
     }
 
-    public InMemoryStorageProvider(int maxSampleSets, int maxSampleRecords) {
+    public InMemoryStorageProvider(final int maxSampleSets, final int maxSampleRecords) {
         _maxSampleSets = Math.max(0, maxSampleSets);
         _maxSampleRecords = Math.max(0, maxSampleRecords);
     }
 
     @Override
-    public <E> List<E> createList(Class<E> valueType) throws IllegalStateException {
+    public <E> List<E> createList(final Class<E> valueType) throws IllegalStateException {
         return new ArrayList<E>();
     }
 
     @Override
-    public <K, V> Map<K, V> createMap(Class<K> keyType, Class<V> valueType) throws IllegalStateException {
+    public <K, V> Map<K, V> createMap(final Class<K> keyType, final Class<V> valueType) throws IllegalStateException {
         return new HashMap<K, V>();
     }
 
     @Override
-    public <E> Set<E> createSet(Class<E> valueType) throws IllegalStateException {
+    public <E> Set<E> createSet(final Class<E> valueType) throws IllegalStateException {
         return new HashSet<E>();
     }
 

@@ -33,31 +33,31 @@ public class DatastoreCatalogImpl implements DatastoreCatalog {
 
     private final Collection<Datastore> _datastores;
 
-    public DatastoreCatalogImpl(Collection<Datastore> datastores) {
+    public DatastoreCatalogImpl(final Collection<Datastore> datastores) {
         if (datastores == null) {
             throw new IllegalArgumentException("datastores cannot be null");
         }
         _datastores = datastores;
     }
 
-    public DatastoreCatalogImpl(Datastore... datastores) {
+    public DatastoreCatalogImpl(final Datastore... datastores) {
         _datastores = new ArrayList<>();
-        for (Datastore datastore : datastores) {
+        for (final Datastore datastore : datastores) {
             _datastores.add(datastore);
         }
     }
 
     @Override
     public String[] getDatastoreNames() {
-        List<String> names = CollectionUtils.map(_datastores, new HasNameMapper());
+        final List<String> names = CollectionUtils.map(_datastores, new HasNameMapper());
         Collections.sort(names);
         return names.toArray(new String[names.size()]);
     }
 
     @Override
-    public Datastore getDatastore(String name) {
+    public Datastore getDatastore(final String name) {
         if (name != null) {
-            for (Datastore ds : _datastores) {
+            for (final Datastore ds : _datastores) {
                 if (name.equals(ds.getName())) {
                     return ds;
                 }

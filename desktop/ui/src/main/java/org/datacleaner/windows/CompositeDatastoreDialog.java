@@ -63,26 +63,21 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
     private final JLabel _statusLabel;
     private final DCPanel _outerPanel = new DCPanel();
 
-    @Override
-    protected String getBannerTitle() {
-        return "Composite datastore";
-    }
-
     @Inject
-    public CompositeDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
-            UserPreferences userPreferences) {
+    public CompositeDatastoreDialog(final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
         this(null, mutableDatastoreCatalog, windowContext, userPreferences);
     }
 
-    public CompositeDatastoreDialog(CompositeDatastore originalDatastore,
-            MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
-            UserPreferences userPreferences) {
+    public CompositeDatastoreDialog(final CompositeDatastore originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
         _statusLabel = DCLabel.bright("");
         _datastoreNameField = WidgetFactory.createTextField("Datastore name");
         _datastoreNameField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 updateStatusLabel();
             }
         });
@@ -101,7 +96,7 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
                 checkBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
                 checkBox.addListener(new DCCheckBox.Listener<Datastore>() {
                     @Override
-                    public void onItemSelected(Datastore item, boolean selected) {
+                    public void onItemSelected(final Datastore item, final boolean selected) {
                         updateStatusLabel();
                     }
                 });
@@ -113,12 +108,12 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
             _datastoreNameField.setText(originalDatastore.getName());
             _datastoreNameField.setEnabled(false);
 
-            List<? extends Datastore> containedDatastores = originalDatastore.getDatastores();
-            Set<String> containedDatastoreNames = new HashSet<String>();
-            for (Datastore datastore : containedDatastores) {
+            final List<? extends Datastore> containedDatastores = originalDatastore.getDatastores();
+            final Set<String> containedDatastoreNames = new HashSet<String>();
+            for (final Datastore datastore : containedDatastores) {
                 containedDatastoreNames.add(datastore.getName());
             }
-            for (JCheckBox checkBox : _checkBoxes) {
+            for (final JCheckBox checkBox : _checkBoxes) {
                 if (containedDatastoreNames.contains(checkBox.getText())) {
                     checkBox.setSelected(true);
                 }
@@ -128,15 +123,20 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
         updateStatusLabel();
     }
 
+    @Override
+    protected String getBannerTitle() {
+        return "Composite datastore";
+    }
+
     public void updateStatusLabel() {
         int selected = 0;
-        for (JCheckBox checkBox : _checkBoxes) {
+        for (final JCheckBox checkBox : _checkBoxes) {
             if (checkBox.isSelected()) {
                 selected++;
             }
         }
 
-        boolean nameFilledOut = !StringUtils.isNullOrEmpty(_datastoreNameField.getText());
+        final boolean nameFilledOut = !StringUtils.isNullOrEmpty(_datastoreNameField.getText());
 
         if (selected < 2) {
             _statusLabel.setText("Please select at least 2 contained datastores");
@@ -171,7 +171,7 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
         final DCPanel checkBoxPanel = new DCPanel().setTitledBorder("Contained datastores");
         checkBoxPanel.setLayout(new VerticalLayout(4));
 
-        for (JCheckBox checkBox : _checkBoxes) {
+        for (final JCheckBox checkBox : _checkBoxes) {
             checkBoxPanel.add(checkBox);
         }
 
@@ -206,10 +206,10 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
     protected CompositeDatastore createDatastore() {
         final List<Datastore> datastores = new ArrayList<Datastore>();
 
-        for (DCCheckBox<Datastore> checkBox : _checkBoxes) {
+        for (final DCCheckBox<Datastore> checkBox : _checkBoxes) {
             if (checkBox.isSelected()) {
-                String datastoreName = checkBox.getText();
-                Datastore datastore = checkBox.getValue();
+                final String datastoreName = checkBox.getText();
+                final Datastore datastore = checkBox.getValue();
                 if (datastore == null) {
                     throw new IllegalStateException("No such datastore: " + datastoreName);
                 }

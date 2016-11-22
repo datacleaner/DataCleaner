@@ -31,16 +31,16 @@ import javax.swing.PopupFactory;
  */
 public class DCPopupFactory extends PopupFactory {
 
-	@Override
-	public Popup getPopup(Component owner, Component contents, int x, int y) throws IllegalArgumentException {
-		if (contents instanceof DCToolTip) {
-			DCToolTip toolTip = (DCToolTip) contents;
-			JComponent tooltipComponent = toolTip.getTooltipComponent();
+    @Override
+    public Popup getPopup(final Component owner, final Component contents, int x, final int y) throws IllegalArgumentException {
+        if (contents instanceof DCToolTip) {
+            final DCToolTip toolTip = (DCToolTip) contents;
+            final JComponent tooltipComponent = toolTip.getTooltipComponent();
 
-			x = MouseInfo.getPointerInfo().getLocation().x;
+            x = MouseInfo.getPointerInfo().getLocation().x;
 
-			return super.getPopup(owner, tooltipComponent, x, y);
-		}
-		return super.getPopup(owner, contents, x, y);
-	}
+            return super.getPopup(owner, tooltipComponent, x, y);
+        }
+        return super.getPopup(owner, contents, x, y);
+    }
 }

@@ -31,29 +31,29 @@ import org.datacleaner.monitor.wizard.WizardPanelFactory;
 import com.google.gwt.core.client.GWT;
 
 public final class JavaScriptCallbacks {
-	
-	/**
-	 * This method (if present on the host page), should return the name of the property 
-	 * which should be used to group the jobs on the scheduling page. All those jobs
-	 * which have this name as a key in their <property> tag (in the <job-metadata> tag present
-	 * in the job metadata), will be shown grouped by the corresponding value present in 
-	 * this <property> tag.
-	 * 
-	 * @return
-	 */
+
+    /**
+     * This method (if present on the host page), should return the name of the property
+     * which should be used to group the jobs on the scheduling page. All those jobs
+     * which have this name as a key in their <property> tag (in the <job-metadata> tag present
+     * in the job metadata), will be shown grouped by the corresponding value present in
+     * this <property> tag.
+     *
+     * @return
+     */
     public static native String getJobGroupingCategory() /*-{
-                                                          if ($wnd.datacleaner && $wnd.datacleaner.getJobGroupingCategory) {
-                                                              var v = $wnd.datacleaner.getJobGroupingCategory();
-                                                              if ((typeof v) == 'string') {
-                                                                  return v;
-                                                              }
-                                                          }
-                                                          return null;
-                                                          }-*/;
+        if ($wnd.datacleaner && $wnd.datacleaner.getJobGroupingCategory) {
+            var v = $wnd.datacleaner.getJobGroupingCategory();
+            if ((typeof v) == 'string') {
+                return v;
+            }
+        }
+        return null;
+    }-*/;
 
     /**
      * Called when the user navigates in a wizard to the next step.
-     * 
+     *
      * @param wizardDisplayName
      * @param stepIndex
      *            the index of the new active step
@@ -63,115 +63,115 @@ public final class JavaScriptCallbacks {
      * @return
      */
     public static native boolean onWizardProgress(String wizardDisplayName, int stepIndex, int steps) /*-{
-                                                                                                      if ($wnd.datacleaner && $wnd.datacleaner.onWizardProgress) {
-                                                                                                          var v = $wnd.datacleaner.onWizardProgress(wizardDisplayName, stepIndex, steps);
-                                                                                                          if ((typeof v) == 'boolean') {
-                                                                                                              return v;
-                                                                                                          }
-                                                                                                          return true;
-                                                                                                      }
-                                                                                                      return false;
-                                                                                                      }-*/;
+        if ($wnd.datacleaner && $wnd.datacleaner.onWizardProgress) {
+            var v = $wnd.datacleaner.onWizardProgress(wizardDisplayName, stepIndex, steps);
+            if ((typeof v) == 'boolean') {
+                return v;
+            }
+            return true;
+        }
+        return false;
+    }-*/;
 
     /**
      * Called when the wizard is finished and the last screen is shown.
-     * 
+     *
      * @param wizardDisplayName
      * @param resultEntityName
-     * 
+     *
      * @return whether or not a callback was invoked
      */
     public static native boolean onWizardFinished(String wizardDisplayName, String resultEntityName) /*-{
-                                                                                                     if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
-                                                                                                         var v = $wnd.datacleaner.onWizardFinished(wizardDisplayName, resultEntityName);
-                                                                                                         if ((typeof v) == 'boolean') {
-                                                                                                             return v;
-                                                                                                         }
-                                                                                                         return true;
-                                                                                                     }
-                                                                                                     return false;
-                                                                                                     }-*/;
+        if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
+            var v = $wnd.datacleaner.onWizardFinished(wizardDisplayName, resultEntityName);
+            if ((typeof v) == 'boolean') {
+                return v;
+            }
+            return true;
+        }
+        return false;
+    }-*/;
 
     /**
      * Called when a wizard is finished and the user clicks a button to close
      * it.
-     * 
+     *
      * @param wizardDisplayName
      *            the name of the wizard that finished
      * @param wizardResultName
      *            the name of the job or datastore that was built using a wizard
-     * 
+     *
      * @return whether or not a callback was invoked
      */
     public static native boolean onWizardPanelClosing(String wizardDisplayName, String wizardResultName) /*-{
-                                                                                                         if ($wnd.datacleaner && $wnd.datacleaner.onWizardPanelClosing) {
-                                                                                                             var v = $wnd.datacleaner.onWizardPanelClosing(wizardDisplayName, wizardResultName);
-                                                                                                             if ((typeof v) == 'boolean') {
-                                                                                                                 return v;
-                                                                                                             }
-                                                                                                             return true;
-                                                                                                         }
-                                                                                                         return false;
-                                                                                                         }-*/;
+        if ($wnd.datacleaner && $wnd.datacleaner.onWizardPanelClosing) {
+            var v = $wnd.datacleaner.onWizardPanelClosing(wizardDisplayName, wizardResultName);
+            if ((typeof v) == 'boolean') {
+                return v;
+            }
+            return true;
+        }
+        return false;
+    }-*/;
 
     /**
      * Called when a wizard is closed/cancelled before finishing it.
-     * 
+     *
      * @param wizardDisplayName
      *            the name of the wizard that was cancelled
-     * 
+     *
      * @return whether or not a callback was invoked
      */
     public static native boolean onWizardCancelled(String wizardDisplayName) /*-{
-                                                                             
-                                                                             if ($wnd.datacleaner && $wnd.datacleaner.onWizardCancelled) {
-                                                    						 	var v = $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
-                                                                                if ((typeof v) == 'boolean') {
-                                                                                	return v;
-                                                                                }
-                                                                                return true;
-                                                                             }
-                                                                             return false;
-                                                                             }-*/;
+
+        if ($wnd.datacleaner && $wnd.datacleaner.onWizardCancelled) {
+            var v = $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
+            if ((typeof v) == 'boolean') {
+                return v;
+            }
+            return true;
+        }
+        return false;
+    }-*/;
 
     /**
      * Called when the user clicks a button to close the execution status panel.
-     * 
+     *
      * @return whether or not a callback was invoked
      */
     public static native boolean onExecutionStatusPanelClosing() /*-{
-                                                                     
-                                                                     if ($wnd.datacleaner && $wnd.datacleaner.onExecutionStatusPanelClosing) {
-                                                                         var v = $wnd.datacleaner.onExecutionStatusPanelClosing();
-                                                                         if ((typeof v) == 'boolean') {
-                                                                             return v;
-                                                                         }
-                                                                         return true;
-                                                                     }
-                                                                     return false;
-                                                                     
-                                                                 }-*/;
-    
+
+        if ($wnd.datacleaner && $wnd.datacleaner.onExecutionStatusPanelClosing) {
+            var v = $wnd.datacleaner.onExecutionStatusPanelClosing();
+            if ((typeof v) == 'boolean') {
+                return v;
+            }
+            return true;
+        }
+        return false;
+
+    }-*/;
+
     /**
      * Called when the DataCleaner API has been initialized
-     * 
+     *
      * @return
      */
     public static native boolean onApiInitialized() /*-{
-                                                    if ($wnd.datacleaner && $wnd.datacleaner.onApiInitialized) {
-                                                        var v = $wnd.datacleaner.onApiInitialized();
-                                                        if ((typeof v) == 'boolean') {
-                                                           return v;
-                                                        }
-                                                        return true;
-                                                    }
-                                                    return false;
-                                                    }-*/;
+        if ($wnd.datacleaner && $wnd.datacleaner.onApiInitialized) {
+            var v = $wnd.datacleaner.onApiInitialized();
+            if ((typeof v) == 'boolean') {
+                return v;
+            }
+            return true;
+        }
+        return false;
+    }-*/;
 
     /**
      * Native method to call Javascript onError function, in case onError method
      * is not found on the page this method returns false.
-     * 
+     *
      * @param message
      * @param userFeedback
      *            a boolean that is true if the error relates to the user's
@@ -180,15 +180,15 @@ public final class JavaScriptCallbacks {
      * @return boolean
      */
     public static native boolean onError(String message, boolean userFeedback)/*-{
-                                                                              if ($wnd.datacleaner && (typeof $wnd.datacleaner.onError == 'function')){
-                                                                                  var v = $wnd.datacleaner.onError(message, userFeedback);
-                                                                                  if ((typeof v) == 'boolean') {
-                                                                                      return v;
-                                                                                  }
-                                                                                  return true;
-                                                                              }
-                                                                              return false;
-                                                                              }-*/;
+        if ($wnd.datacleaner && (typeof $wnd.datacleaner.onError == 'function')) {
+            var v = $wnd.datacleaner.onError(message, userFeedback);
+            if ((typeof v) == 'boolean') {
+                return v;
+            }
+            return true;
+        }
+        return false;
+    }-*/;
 
     /**
      * Exposes the DataCleaner wizard JS API.
@@ -202,49 +202,51 @@ public final class JavaScriptCallbacks {
 
     /**
      * Exports a JS method:
-     * 
+     *
      * startJobWizard(datastoreName, wizardName, htmlDivId)
      */
     public static native void exportStartJobWizard() /*-{
-                                                     if (!$wnd.datacleaner) {
-                                                           $wnd.datacleaner = {};
-                                                     }
-                                                     $wnd.datacleaner.startJobWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startJobWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);   
-                                                     }-*/;
+        if (!$wnd.datacleaner) {
+            $wnd.datacleaner = {};
+        }
+        $wnd.datacleaner.startJobWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startJobWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
+    }-*/;
 
     /**
      * Exports a JS method:
-     * 
+     *
      * startJobWizard(wizardName, htmlDivId)
      */
     public static native void exportStartDatastoreWizard() /*-{
-                                                           if (!$wnd.datacleaner) {
-                                                               $wnd.datacleaner = {};
-                                                           }
-                                                           $wnd.datacleaner.startDatastoreWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startDatastoreWizard(Ljava/lang/String;Ljava/lang/String;);   
-                                                           }-*/;
-    
+        if (!$wnd.datacleaner) {
+            $wnd.datacleaner = {};
+        }
+        $wnd.datacleaner.startDatastoreWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startDatastoreWizard(Ljava/lang/String;Ljava/lang/String;);
+    }-*/;
+
     /**
      * Exports a JS method:
      *
      * startReferenceDataWizard(referenceDataType, wizardName, htmlDivId)
      */
     public static native void exportStartReferenceDataWizard() /*-{
-                                                           if (!$wnd.datacleaner) {
-                                                               $wnd.datacleaner = {};
-                                                           }
-                                                           $wnd.datacleaner.startReferenceDataWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startReferenceDataWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
-                                                           }-*/;
-    
+        if (!$wnd.datacleaner) {
+            $wnd.datacleaner = {};
+        }
+        $wnd.datacleaner.startReferenceDataWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startReferenceDataWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
+    }-*/;
+
     /**
      * Starts a job wizard based on parameters given from a native JS call.
-     * 
+     *
      * @param datastoreName
      * @param wizardDisplayName
      * @param htmlDivId
      */
-    public static void startJobWizard(final String datastoreName, final String wizardDisplayName, final String htmlDivId) {
-        GWT.log("JavaScriptCallbacks.startJobWizard(" + datastoreName + "," + wizardDisplayName + "," + htmlDivId + ")");
+    public static void startJobWizard(final String datastoreName, final String wizardDisplayName,
+            final String htmlDivId) {
+        GWT.log("JavaScriptCallbacks.startJobWizard(" + datastoreName + "," + wizardDisplayName + "," + htmlDivId
+                + ")");
 
         final ClientConfig clientConfig = new DictionaryClientConfig();
 
@@ -273,7 +275,7 @@ public final class JavaScriptCallbacks {
     /**
      * Starts a datastore wizard based on parameters given from a native JS
      * call.
-     * 
+     *
      * @param wizardDisplayName
      * @param htmlDivId
      */
@@ -296,7 +298,7 @@ public final class JavaScriptCallbacks {
         controller.startWizard();
     }
 
-    private static WizardIdentifier getWizardIdentifier(String wizardDisplayName) {
+    private static WizardIdentifier getWizardIdentifier(final String wizardDisplayName) {
         if (wizardDisplayName == null || "".equals(wizardDisplayName.trim())) {
             return null;
         } else {
@@ -325,7 +327,7 @@ public final class JavaScriptCallbacks {
         final WizardPanel wizardPanel = WizardPanelFactory.createWizardPanel(htmlDivId);
         final WizardServiceAsync wizardService = GWT.create(WizardService.class);
         final TenantIdentifier tenant = clientConfig.getTenant();
-        final ReferenceDataWizardController controller = new ReferenceDataWizardController(referenceDataType, 
+        final ReferenceDataWizardController controller = new ReferenceDataWizardController(referenceDataType,
                 wizardPanel, tenant, wizardIdentifier, wizardService);
         GWT.log("Starting reference data wizard '" + wizardDisplayName + "'. HtmlDivId=" + htmlDivId);
         controller.startWizard();

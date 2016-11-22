@@ -65,43 +65,33 @@ public class CustomizeSchedulePanel extends Composite {
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     private final ScheduleDefinition _schedule;
-
-    @UiField
-    RadioButton periodicTriggerRadio;
-
-    @UiField(provided = true)
-    SuggestBox periodicTriggerExpressionTextBox;
-
-    @UiField
-    RadioButton dependentTriggerRadio;
-
-    @UiField
-    ListBox dependentTriggerJobListBox;
-
-    @UiField
-    RadioButton manualTriggerRadio;
-
-    @UiField
-    RadioButton oneTimeTriggerRadio;
-
-    @UiField
-    DateBox dateBox;
-    
-    @UiField
-    CheckBox runOnHadoop; 
-    
-    @UiField
-    RadioButton hotFolderTriggerRadio;
-
-    @UiField
-    TextBox hotFolderTriggerLocation;
-    
     private final SchedulingServiceAsync _service;
     private final TenantIdentifier _tenant;
+    @UiField
+    RadioButton periodicTriggerRadio;
+    @UiField(provided = true)
+    SuggestBox periodicTriggerExpressionTextBox;
+    @UiField
+    RadioButton dependentTriggerRadio;
+    @UiField
+    ListBox dependentTriggerJobListBox;
+    @UiField
+    RadioButton manualTriggerRadio;
+    @UiField
+    RadioButton oneTimeTriggerRadio;
+    @UiField
+    DateBox dateBox;
+    @UiField
+    CheckBox runOnHadoop;
+    @UiField
+    RadioButton hotFolderTriggerRadio;
+    @UiField
+    TextBox hotFolderTriggerLocation;
     private Date serverDate;
     private String serverDateAsString;
 
-    public CustomizeSchedulePanel(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
+    public CustomizeSchedulePanel(final SchedulingServiceAsync service, final TenantIdentifier tenant,
+            final ScheduleDefinition schedule) {
         super();
 
         _service = service;
@@ -110,13 +100,13 @@ public class CustomizeSchedulePanel extends Composite {
         _service.getServerDate(new DCAsyncCallback<String>() {
 
             @Override
-            public void onSuccess(String result) {
+            public void onSuccess(final String result) {
                 serverDateAsString = result;
                 serverDate = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss").parse(serverDateAsString);
             }
         });
 
-        MultiWordSuggestOracle suggestions = new MultiWordSuggestOracle();
+        final MultiWordSuggestOracle suggestions = new MultiWordSuggestOracle();
         suggestions.add("@yearly");
         suggestions.add("@monthly");
         suggestions.add("@weekly");
@@ -126,9 +116,9 @@ public class CustomizeSchedulePanel extends Composite {
         periodicTriggerExpressionTextBox = new SuggestBox(suggestions);
         periodicTriggerExpressionTextBox.getValueBox().addFocusHandler(new FocusHandler() {
             @Override
-            public void onFocus(FocusEvent event) {
+            public void onFocus(final FocusEvent event) {
                 periodicTriggerRadio.setValue(true);
-                Element elementById = DOM.getElementById("periodicErrorMessage");
+                final Element elementById = DOM.getElementById("periodicErrorMessage");
                 if (periodicTriggerExpressionTextBox.getText().equals("")) {
                     elementById.setInnerHTML("Specify cron expression for periodic scheduling");
                 } else {
@@ -145,9 +135,9 @@ public class CustomizeSchedulePanel extends Composite {
         dateBox.getTextBox().addClickHandler(new ClickHandler() {
 
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 oneTimeTriggerRadio.setValue(true);
-                Element elementByIdForDate = DOM.getElementById("serverDate");
+                final Element elementByIdForDate = DOM.getElementById("serverDate");
                 elementByIdForDate.setInnerHTML("Server Time : " + serverDateAsString);
             }
         });
@@ -155,18 +145,16 @@ public class CustomizeSchedulePanel extends Composite {
         dateBox.getTextBox().addChangeHandler(new ChangeHandler() {
 
             @Override
-            public void onChange(ChangeEvent event) {
-                Element elementById = DOM.getElementById("errorMessage");
+            public void onChange(final ChangeEvent event) {
+                final Element elementById = DOM.getElementById("errorMessage");
                 if (dateBox.getValue() == null) {
                     elementById.setInnerHTML("Select date for one time schedule");
-                }
-                else {
-                    Date scheduleDate = dateBox.getValue();
+                } else {
+                    final Date scheduleDate = dateBox.getValue();
                     elementById.setInnerHTML("");
                     if (scheduleDate.before(serverDate)) {
                         elementById.setInnerHTML("Past date can not be selected for one time schedule");
-                    }
-                    else {
+                    } else {
                         elementById.setInnerHTML("");
                     }
                 }
@@ -176,9 +164,9 @@ public class CustomizeSchedulePanel extends Composite {
         oneTimeTriggerRadio.addClickHandler(new ClickHandler() {
 
             @Override
-            public void onClick(ClickEvent event) {
-                Element elementById = DOM.getElementById("errorMessage");
-                Element elementByIdForDate = DOM.getElementById("serverDate");
+            public void onClick(final ClickEvent event) {
+                final Element elementById = DOM.getElementById("errorMessage");
+                final Element elementByIdForDate = DOM.getElementById("serverDate");
                 elementByIdForDate.setInnerHTML("Server Time : " + serverDateAsString);
                 if (dateBox.getValue() == null) {
                     elementById.setInnerHTML("Select date for one time schedule");
@@ -189,14 +177,13 @@ public class CustomizeSchedulePanel extends Composite {
         dateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
 
             @Override
-            public void onValueChange(ValueChangeEvent<Date> event) {
-                Date scheduleDate = dateBox.getValue();
-                Element elementById = DOM.getElementById("errorMessage");
+            public void onValueChange(final ValueChangeEvent<Date> event) {
+                final Date scheduleDate = dateBox.getValue();
+                final Element elementById = DOM.getElementById("errorMessage");
                 elementById.setInnerHTML("");
                 if (scheduleDate.before(serverDate)) {
                     elementById.setInnerHTML("Past date can not be selected for one time schedule");
-                }
-                else {
+                } else {
                     elementById.setInnerHTML("");
                 }
             }
@@ -213,8 +200,7 @@ public class CustomizeSchedulePanel extends Composite {
         } else if (expressionForOneTime != null) {
             oneTimeTriggerRadio.setValue(true);
             dateBox.getTextBox().setValue(expressionForOneTime);
-        }
-        else if (scheduleAfterJob != null) {
+        } else if (scheduleAfterJob != null) {
             dependentTriggerRadio.setValue(true);
             dependentTriggerJobListBox.addItem(scheduleAfterJob.getName());
             dependentTriggerJobListBox.setSelectedIndex(0);
@@ -225,26 +211,26 @@ public class CustomizeSchedulePanel extends Composite {
             manualTriggerRadio.setValue(true);
         }
 
-        
+
         final Boolean runOnHadoopSetting = _schedule.isRunOnHadoop();
-        if (runOnHadoopSetting != null){
+        if (runOnHadoopSetting != null) {
             runOnHadoop.setValue(runOnHadoopSetting.booleanValue());
-        }else{
+        } else {
             runOnHadoop.setValue(false);
         }
-     
+
         dependentTriggerJobListBox.addFocusHandler(new FocusHandler() {
 
             @Override
-            public void onFocus(FocusEvent event) {
+            public void onFocus(final FocusEvent event) {
                 dependentTriggerRadio.setValue(true);
             }
         });
 
         _service.getDependentJobCandidates(_tenant, _schedule, new DCAsyncCallback<List<JobIdentifier>>() {
             @Override
-            public void onSuccess(List<JobIdentifier> result) {
-                for (JobIdentifier jobIdentifier : result) {
+            public void onSuccess(final List<JobIdentifier> result) {
+                for (final JobIdentifier jobIdentifier : result) {
                     final String jobName = jobIdentifier.getName();
                     if (scheduleAfterJob != null && jobName.equals(scheduleAfterJob.getName())) {
                         // already added
@@ -256,9 +242,9 @@ public class CustomizeSchedulePanel extends Composite {
         });
 
         hotFolderTriggerLocation.addFocusHandler(new FocusHandler() {
-            
+
             @Override
-            public void onFocus(FocusEvent arg0) {
+            public void onFocus(final FocusEvent arg0) {
                 hotFolderTriggerRadio.setValue(true);
             }
         });
@@ -280,9 +266,8 @@ public class CustomizeSchedulePanel extends Composite {
         if (oneTimeTriggerRadio.getValue()) {
             if (dateBox.getValue() == null) {
                 throw new DCUserInputException("Please select a date for one time scheduling");
-            }
-            else {
-                Date scheduleDate = dateBox.getValue();
+            } else {
+                final Date scheduleDate = dateBox.getValue();
                 if (scheduleDate.before(serverDate)) {
                     throw new DCUserInputException("Past date cannot be selected.Please select a date in future");
                 } else {
@@ -296,7 +281,7 @@ public class CustomizeSchedulePanel extends Composite {
             final String dependentJobName = dependentTriggerJobListBox.getValue(index);
             _schedule.setDependentJob(new JobIdentifier(dependentJobName));
         }
-        
+
         if (hotFolderTriggerRadio.getValue()) {
             if (hotFolderTriggerLocation.getValue() == null) {
                 throw new DCUserInputException("Please specify a file or folder as hot folder location");
@@ -304,9 +289,9 @@ public class CustomizeSchedulePanel extends Composite {
                 _schedule.setHotFolder(hotFolderTriggerLocation.getValue());
             }
         }
-    
-         _schedule.setRunOnHadoop(runOnHadoop.getValue());
-        
+
+        _schedule.setRunOnHadoop(runOnHadoop.getValue());
+
         return _schedule;
     }
 }

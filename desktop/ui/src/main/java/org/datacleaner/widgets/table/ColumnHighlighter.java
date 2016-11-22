@@ -36,37 +36,37 @@ import org.jdesktop.swingx.decorator.Highlighter;
  */
 public final class ColumnHighlighter implements Highlighter {
 
-	private static final Color BACKGROUND_COLOR = WidgetUtils.BG_COLOR_LESS_DARK;
-	private static final Color FOREGROUND_COLOR = WidgetUtils.BG_COLOR_BRIGHTEST;
-	private ColorHighlighter _colorHighlighter;
-	private ColumnHighlightPredicate _evaluatedColumnsPredicate;
+    private static final Color BACKGROUND_COLOR = WidgetUtils.BG_COLOR_LESS_DARK;
+    private static final Color FOREGROUND_COLOR = WidgetUtils.BG_COLOR_BRIGHTEST;
+    private ColorHighlighter _colorHighlighter;
+    private ColumnHighlightPredicate _evaluatedColumnsPredicate;
 
-	public ColumnHighlighter(int[] columnIndexes) {
-		_evaluatedColumnsPredicate = new HighlightPredicate.ColumnHighlightPredicate(columnIndexes);
-		_colorHighlighter = new ColorHighlighter(_evaluatedColumnsPredicate, BACKGROUND_COLOR, FOREGROUND_COLOR);
-	}
+    public ColumnHighlighter(final int[] columnIndexes) {
+        _evaluatedColumnsPredicate = new HighlightPredicate.ColumnHighlightPredicate(columnIndexes);
+        _colorHighlighter = new ColorHighlighter(_evaluatedColumnsPredicate, BACKGROUND_COLOR, FOREGROUND_COLOR);
+    }
 
-	public ColumnHighlighter(int index) {
-		this(new int[] { index });
-	}
+    public ColumnHighlighter(final int index) {
+        this(new int[] { index });
+    }
 
-	public void addChangeListener(ChangeListener arg0) {
-		_colorHighlighter.addChangeListener(arg0);
-	}
+    public void addChangeListener(final ChangeListener arg0) {
+        _colorHighlighter.addChangeListener(arg0);
+    }
 
-	public ChangeListener[] getChangeListeners() {
-		return _colorHighlighter.getChangeListeners();
-	}
+    public ChangeListener[] getChangeListeners() {
+        return _colorHighlighter.getChangeListeners();
+    }
 
-	public Component highlight(Component component, ComponentAdapter adapter) {
-		if (_evaluatedColumnsPredicate.isHighlighted(component, adapter)) {
-			Component highlight = _colorHighlighter.highlight(component, adapter);
-			return highlight;
-		}
-		return component;
-	}
+    public Component highlight(final Component component, final ComponentAdapter adapter) {
+        if (_evaluatedColumnsPredicate.isHighlighted(component, adapter)) {
+            final Component highlight = _colorHighlighter.highlight(component, adapter);
+            return highlight;
+        }
+        return component;
+    }
 
-	public void removeChangeListener(ChangeListener listener) {
-		_colorHighlighter.removeChangeListener(listener);
-	}
+    public void removeChangeListener(final ChangeListener listener) {
+        _colorHighlighter.removeChangeListener(listener);
+    }
 }

@@ -38,7 +38,7 @@ public class MapEntryStringStringPanel extends DCPanel {
     private final JXTextField _keyField;
     private final JXTextField _valueField;
 
-    public MapEntryStringStringPanel(String key, String value) {
+    public MapEntryStringStringPanel(final String key, final String value) {
         super();
         _keyField = WidgetFactory.createTextField("Key");
         _valueField = WidgetFactory.createTextField("Value");
@@ -60,15 +60,15 @@ public class MapEntryStringStringPanel extends DCPanel {
         return _keyField.getText();
     }
 
-    public String getEntryValue() {
-        return _valueField.getText();
-    }
-
     public void setEntryKey(String key) {
         if (key == null) {
             key = "";
         }
         _keyField.setText(key);
+    }
+
+    public String getEntryValue() {
+        return _valueField.getText();
     }
 
     public void setEntryValue(String value) {
@@ -78,17 +78,17 @@ public class MapEntryStringStringPanel extends DCPanel {
         _valueField.setText(value);
     }
 
-    public void addDocumentListener(DocumentListener listener) {
+    public void addDocumentListener(final DocumentListener listener) {
         _keyField.getDocument().addDocumentListener(listener);
         _valueField.getDocument().addDocumentListener(listener);
     }
 
-    public void setEntry(Entry<String, String> entry) {
-        setEntryKey(entry.getKey());
-        setEntryValue(entry.getValue());
-    }
-
     public Entry<String, String> getEntry() {
         return new ImmutableEntry<>(getEntryKey(), getEntryValue());
+    }
+
+    public void setEntry(final Entry<String, String> entry) {
+        setEntryKey(entry.getKey());
+        setEntryValue(entry.getValue());
     }
 }

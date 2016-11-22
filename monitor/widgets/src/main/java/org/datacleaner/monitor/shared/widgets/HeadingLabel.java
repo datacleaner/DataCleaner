@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.Label;
  */
 public class HeadingLabel extends Label {
 
-    public HeadingLabel(String text) {
+    public HeadingLabel(final String text) {
         super(text);
         addStyleName("HeadingLabel");
     }

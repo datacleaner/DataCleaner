@@ -54,43 +54,43 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
 
     /**
      * Constructs a {@link TenantContextFactoryImpl}.
-     * 
+     *
      * @param repository
      * @deprecated use
      *             {@link #TenantContextFactoryImpl(Repository, DataCleanerEnvironment, JobEngineManager)}
      *             instead.
      */
     @Deprecated
-    public TenantContextFactoryImpl(Repository repository) {
+    public TenantContextFactoryImpl(final Repository repository) {
         this(repository, new DataCleanerEnvironmentImpl(), null);
     }
 
     /**
-     * 
+     *
      * @param repository
      * @param injectionManagerFactory
      * @param jobEngineManager
-     * 
+     *
      * @deprecated use
      *             {@link #TenantContextFactoryImpl(Repository, DataCleanerEnvironment, JobEngineManager)}
      *             instead
      */
     @Deprecated
-    public TenantContextFactoryImpl(Repository repository, InjectionManagerFactory injectionManagerFactory,
-            JobEngineManager jobEngineManager) {
+    public TenantContextFactoryImpl(final Repository repository, final InjectionManagerFactory injectionManagerFactory,
+            final JobEngineManager jobEngineManager) {
         this(repository, new DataCleanerEnvironmentImpl(), jobEngineManager);
     }
 
     /**
      * Constructs a {@link TenantContextFactoryImpl}.
-     * 
+     *
      * @param repository
      * @param environment
      * @param jobEngineManager
      */
     @Autowired
-    public TenantContextFactoryImpl(Repository repository, DataCleanerEnvironment environment,
-            JobEngineManager jobEngineManager) {
+    public TenantContextFactoryImpl(final Repository repository, final DataCleanerEnvironment environment,
+            final JobEngineManager jobEngineManager) {
         _repository = repository;
         _environment = environment;
         _jobEngineManager = jobEngineManager;
@@ -98,10 +98,10 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     }
 
     private LoadingCache<String, TenantContext> buildTenantContextCache() {
-        LoadingCache<String, TenantContext> cache = CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.SECONDS)
+        final LoadingCache<String, TenantContext> cache = CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.SECONDS)
                 .build(new CacheLoader<String, TenantContext>() {
                     @Override
-                    public TenantContext load(String tenantId) throws Exception {
+                    public TenantContext load(final String tenantId) throws Exception {
                         logger.info("Initializing tenant context: {}", tenantId);
                         final TenantContext context = new TenantContextImpl(tenantId, _repository, _environment,
                                 _jobEngineManager);
@@ -111,7 +111,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
         return cache;
     }
 
-    public TenantContext getContext(TenantIdentifier tenant) {
+    public TenantContext getContext(final TenantIdentifier tenant) {
         if (tenant == null) {
             throw new IllegalArgumentException("Tenant cannot be null");
         }
@@ -127,8 +127,8 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
 
         try {
             return _contexts.get(tenantId);
-        } catch (ExecutionException e) {
-            Throwable cause = e.getCause();
+        } catch (final ExecutionException e) {
+            final Throwable cause = e.getCause();
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
@@ -145,7 +145,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
         String standardizedTenantId = tenantId.trim().toLowerCase();
 
         for (int i = 0; i < ILLEGAL_TENANT_ID_CHARACTERS.length; i++) {
-            char c = ILLEGAL_TENANT_ID_CHARACTERS[i];
+            final char c = ILLEGAL_TENANT_ID_CHARACTERS[i];
             standardizedTenantId = org.apache.commons.lang.StringUtils.remove(standardizedTenantId, c);
         }
 

@@ -22,10 +22,10 @@ package org.datacleaner.beans.api;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.NoAnalyzerResultReducer;
-
-import junit.framework.TestCase;
 
 public class NoAnalyzerResultReducerTest extends TestCase {
 

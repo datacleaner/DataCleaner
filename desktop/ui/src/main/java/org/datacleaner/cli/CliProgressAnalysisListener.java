@@ -33,13 +33,13 @@ final class CliProgressAnalysisListener extends AnalysisListenerAdaptor {
     private final Map<Table, ProgressCounter> rowCounts = new HashMap<Table, ProgressCounter>();
 
     @Override
-    public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
+    public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
         final Table table = metrics.getTable();
         rowCounts.put(table, new ProgressCounter());
     }
 
     @Override
-    public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, int currentRow) {
+    public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final int currentRow) {
         final Table table = metrics.getTable();
         final ProgressCounter progressCounter = rowCounts.get(table);
         if (progressCounter != null) {

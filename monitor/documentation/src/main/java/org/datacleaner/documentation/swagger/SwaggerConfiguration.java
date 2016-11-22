@@ -48,7 +48,7 @@ public class SwaggerConfiguration {
         return swagger;
     }
 
-    public void setSwagger(String swagger) {
+    public void setSwagger(final String swagger) {
         this.swagger = swagger;
     }
 
@@ -56,7 +56,7 @@ public class SwaggerConfiguration {
         return info;
     }
 
-    public void setInfo(SwaggerInfo info) {
+    public void setInfo(final SwaggerInfo info) {
         this.info = info;
     }
 
@@ -64,7 +64,7 @@ public class SwaggerConfiguration {
         return host;
     }
 
-    public void setHost(String host) {
+    public void setHost(final String host) {
         this.host = host;
     }
 
@@ -72,7 +72,7 @@ public class SwaggerConfiguration {
         return basePath;
     }
 
-    public void setBasePath(String basePath) {
+    public void setBasePath(final String basePath) {
         this.basePath = basePath;
     }
 
@@ -80,7 +80,7 @@ public class SwaggerConfiguration {
         return schemes;
     }
 
-    public void setSchemes(String[] schemes) {
+    public void setSchemes(final String[] schemes) {
         this.schemes = schemes;
     }
 
@@ -88,7 +88,7 @@ public class SwaggerConfiguration {
         return tags;
     }
 
-    public void setTags(List<SwaggerTag> tags) {
+    public void setTags(final List<SwaggerTag> tags) {
         this.tags = tags;
     }
 
@@ -96,7 +96,7 @@ public class SwaggerConfiguration {
         return paths;
     }
 
-    public void setPaths(Map<String, Map<String, SwaggerMethod>> paths) {
+    public void setPaths(final Map<String, Map<String, SwaggerMethod>> paths) {
         this.paths = paths;
     }
 
@@ -104,7 +104,7 @@ public class SwaggerConfiguration {
         return securityDefinitions;
     }
 
-    public void addSecurityDefinition(String key, Map<String, Object> securityDef) {
+    public void addSecurityDefinition(final String key, final Map<String, Object> securityDef) {
         securityDefinitions.put(key, securityDef);
     }
 
@@ -112,7 +112,7 @@ public class SwaggerConfiguration {
         return definitions;
     }
 
-    public void addDefinition(String typeName, SwaggerSchema schema) {
+    public void addDefinition(final String typeName, final SwaggerSchema schema) {
         definitions.put(typeName, schema);
     }
 
@@ -120,7 +120,7 @@ public class SwaggerConfiguration {
         return externalDocs;
     }
 
-    public void setExternalDocs(SwaggerExternalDocs externalDocs) {
+    public void setExternalDocs(final SwaggerExternalDocs externalDocs) {
         this.externalDocs = externalDocs;
     }
 }

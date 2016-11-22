@@ -41,7 +41,9 @@ public class JobTestHelper {
 
     public static void testJob(final File repository, final String jobName, final Map<String, String[]> expectedResultSets,
             final String... extraCLIArgs) throws Exception {
-        final InputStream resultInputStream = new ByteArrayInputStream(runJob(repository, jobName, extraCLIArgs).getBytes());
+        final String jobResult = runJob(repository, jobName, extraCLIArgs);
+
+        final InputStream resultInputStream = new ByteArrayInputStream(jobResult.getBytes());
         final InputStreamReader resultInputStreamReader = new InputStreamReader(resultInputStream);
         final BufferedReader resultReader = new BufferedReader(resultInputStreamReader);
 
@@ -71,7 +73,7 @@ public class JobTestHelper {
                 }
             }
 
-            assertEquals(0, expectedResultSets.size());
+            assertEquals("CLI result:" + System.lineSeparator() + jobResult, 0, expectedResultSets.size());
         } finally {
             resultReader.close();
             resultInputStreamReader.close();

@@ -53,7 +53,8 @@ public class AnalysisRunnerImpl implements AnalysisRunner {
      * @param configuration
      * @param sharedAnalysisListeners
      */
-    public AnalysisRunnerImpl(final DataCleanerConfiguration configuration, final AnalysisListener... sharedAnalysisListeners) {
+    public AnalysisRunnerImpl(final DataCleanerConfiguration configuration,
+            final AnalysisListener... sharedAnalysisListeners) {
         if (configuration == null) {
             throw new IllegalArgumentException("configuration cannot be null");
         }
@@ -63,7 +64,7 @@ public class AnalysisRunnerImpl implements AnalysisRunner {
 
     @Override
     public AnalysisResultFuture run(final AnalysisJob job) {
-        final Queue<JobAndResult> resultQueue = new LinkedBlockingQueue<JobAndResult>();
+        final Queue<JobAndResult> resultQueue = new LinkedBlockingQueue<>();
 
         // This analysis listener will keep track of all collected errors
         final ErrorAwareAnalysisListener errorListener = new ErrorAwareAnalysisListener();

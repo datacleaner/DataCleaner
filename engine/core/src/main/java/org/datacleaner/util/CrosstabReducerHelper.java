@@ -80,8 +80,8 @@ public class CrosstabReducerHelper {
             final CrosstabDimension columnDimension, final CrosstabDimension measureDimension) {
         if (partialCrosstab != null) {
 
-            final CrosstabNavigator<Number> mainNavigator = new CrosstabNavigator<Number>(mainCrosstab);
-            final CrosstabNavigator<Number> nav = new CrosstabNavigator<Number>(partialCrosstab);
+            final CrosstabNavigator<Number> mainNavigator = new CrosstabNavigator<>(mainCrosstab);
+            final CrosstabNavigator<Number> nav = new CrosstabNavigator<>(partialCrosstab);
 
             for (final String columnCategory : columnDimension.getCategories()) {
                 // just navigate through the dimensions because is the column
@@ -139,8 +139,8 @@ public class CrosstabReducerHelper {
         return new BigDecimal(n1.doubleValue()).subtract(new BigDecimal(n2.doubleValue()));
     }
 
-    private static boolean isIntegerType(final Number n) {
-        return (n instanceof Byte || n instanceof Short || n instanceof Integer || n instanceof Long
-                || n instanceof BigInteger);
+    private static boolean isIntegerType(final Number num) {
+        return (num instanceof Byte || num instanceof Short || num instanceof Integer || num instanceof Long
+                || num instanceof BigInteger);
     }
 }

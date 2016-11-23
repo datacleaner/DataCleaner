@@ -221,7 +221,8 @@ public class HadoopJobExecutionUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> List<T> getProperties(final ComponentJob component, final ConfiguredPropertyDescriptor descriptor) {
+    private static <T> List<T> getProperties(final ComponentJob component,
+            final ConfiguredPropertyDescriptor descriptor) {
         if (descriptor.isArray()) {
             return Arrays.asList(((T[]) component.getConfiguration().getProperty(descriptor)));
         } else {

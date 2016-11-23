@@ -35,7 +35,8 @@ public final class RowConsumerTaskListener implements TaskListener {
     private final AnalysisJob _analysisJob;
     private final TaskRunner _taskRunner;
 
-    public RowConsumerTaskListener(final AnalysisJob analysisJob, final AnalysisListener analysisListener, final TaskRunner taskRunner) {
+    public RowConsumerTaskListener(final AnalysisJob analysisJob, final AnalysisListener analysisListener,
+            final TaskRunner taskRunner) {
         _analysisListener = analysisListener;
         _analysisJob = analysisJob;
         _taskRunner = taskRunner;

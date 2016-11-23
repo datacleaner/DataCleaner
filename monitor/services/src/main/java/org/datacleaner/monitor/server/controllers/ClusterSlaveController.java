@@ -52,7 +52,7 @@ public class ClusterSlaveController {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterSlaveController.class);
     private final ConcurrentMap<String, AnalysisResultFuture> _runningJobsMap =
-            new ConcurrentHashMap<String, AnalysisResultFuture>();
+            new ConcurrentHashMap<>();
     @Autowired
     TenantContextFactory _tenantContextFactory;
     @Autowired(required = false)

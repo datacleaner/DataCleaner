@@ -47,7 +47,7 @@ public class WriteBuffer {
             throw new IllegalArgumentException("Buffer size must be a positive integer");
         }
         _batchNumber = new AtomicInteger();
-        _buffer = new ArrayBlockingQueue<Object[]>(bufferSize);
+        _buffer = new ArrayBlockingQueue<>(bufferSize);
         _flushAction = flushAction;
     }
 
@@ -69,7 +69,7 @@ public class WriteBuffer {
 
         logger.info("Flushing {} rows in write buffer", flushSize);
 
-        final List<Object[]> copy = new ArrayList<Object[]>(flushSize);
+        final List<Object[]> copy = new ArrayList<>(flushSize);
         _buffer.drainTo(copy, flushSize);
 
         if (copy.isEmpty()) {

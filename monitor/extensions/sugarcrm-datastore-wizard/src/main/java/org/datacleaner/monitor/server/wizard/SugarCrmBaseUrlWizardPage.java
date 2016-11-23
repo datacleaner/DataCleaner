@@ -65,7 +65,7 @@ public abstract class SugarCrmBaseUrlWizardPage extends AbstractFreemarkerWizard
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("baseUrl", _baseUrl);
         return map;
     }

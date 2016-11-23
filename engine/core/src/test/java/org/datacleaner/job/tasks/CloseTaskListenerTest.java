@@ -104,7 +104,7 @@ public class CloseTaskListenerTest {
      */
     private AnalysisResultFuture runAnalysisJob(Class<? extends MockOutputDataStreamAnalyzer> analyserClass) {
         final AnalysisJob job;
-        try (final AnalysisJobBuilder ajb1 = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder ajb1 = new AnalysisJobBuilder(configuration)) {
             ajb1.setDatastore(datastore);
 
             ajb1.addSourceColumns("customers.city");

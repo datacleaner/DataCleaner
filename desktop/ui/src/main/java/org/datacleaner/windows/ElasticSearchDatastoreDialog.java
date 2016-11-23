@@ -350,7 +350,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     @Override
     public Schema createSchema() {
         final ElasticSearchDatastore datastore = createDatastore();
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getDefaultSchema();
             return schema;
         }

@@ -67,6 +67,7 @@ public class JsonSchemasResponseParser {
 
         }
     }
+
     private static final Set<String> datastoreTypes = new HashSet<>(Arrays.asList(new String[] {
             "GoldenRecordDatastore", "SourceRecordSourceFormatDatastore", "SourceRecordGoldenFormatDatastore" }));
     private DatastoreObject _currentObject;
@@ -77,7 +78,7 @@ public class JsonSchemasResponseParser {
     private DataHubSchema _resultSchema;
 
     private String _currentDataStoreName;
-    private List<String> _dataStoreNames = new ArrayList<String>();
+    private List<String> _dataStoreNames = new ArrayList<>();
 
     public DataHubSchema parseJsonSchema(final InputStream is) throws JsonParseException, IOException {
         _currentObject = DatastoreObject.DATASTORE;
@@ -113,6 +114,7 @@ public class JsonSchemasResponseParser {
                 break;
             case VALUE_NUMBER_INT:
                 handleIntegerValue(_currentFieldname, parser.getIntValue());
+                break;
             default:
                 break;
             }
@@ -144,6 +146,9 @@ public class JsonSchemasResponseParser {
         switch (_currentObject) {
         case SCHEMA:
             _currentSchema = new DataHubSchema();
+
+            // TODO: Is this on purpose?
+            // fallthru
         case TABLE:
             _currentTable = new MutableTable();
             break;

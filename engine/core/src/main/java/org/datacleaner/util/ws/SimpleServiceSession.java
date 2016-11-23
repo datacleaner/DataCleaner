@@ -45,13 +45,13 @@ public class SimpleServiceSession<R> implements ServiceSession<R> {
         _activeRequestsCount.incrementAndGet();
         try {
             final R result = callable.call();
-            return new ServiceResult<R>(result);
+            return new ServiceResult<>(result);
         } catch (Throwable e) {
             if (e instanceof WebServiceException && e.getCause() != null) {
                 logger.info("Exception thrown was a WebServiceException. Handling cause exception instead.", e);
                 e = e.getCause();
             }
-            return new ServiceResult<R>(e);
+            return new ServiceResult<>(e);
         } finally {
             _activeRequestsCount.decrementAndGet();
         }

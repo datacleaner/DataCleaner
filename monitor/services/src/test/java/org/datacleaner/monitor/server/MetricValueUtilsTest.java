@@ -98,7 +98,7 @@ public class MetricValueUtilsTest extends EasyMockSupport {
         final MetricParameters parameters = new MetricParameters();
 
         final AnalyzerResultFuture<MyResultClass> analyzerResultFuture = new AnalyzerResultFutureImpl<>("my result",
-                new ImmutableRef<MyResultClass>(analyzerResult));
+                new ImmutableRef<>(analyzerResult));
 
         EasyMock.expect(metricIdentifier.isFormulaBased()).andReturn(false).atLeastOnce();
 
@@ -143,7 +143,7 @@ public class MetricValueUtilsTest extends EasyMockSupport {
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
 
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore(datastore);
 
             ajb.addSourceColumns("customers.contactfirstname");

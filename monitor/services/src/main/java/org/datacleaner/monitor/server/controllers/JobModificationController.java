@@ -134,7 +134,7 @@ public class JobModificationController {
 
         _eventPublisher.publishEvent(new JobModificationEvent(this, tenant, oldJob.getName(), newJob.getName()));
 
-        final Map<String, String> response = new TreeMap<String, String>();
+        final Map<String, String> response = new TreeMap<>();
         response.put("old_job_name", oldJob.getName());
         response.put("new_job_name", newJob.getName());
         response.put("repository_url", "/" + tenant + "/jobs/" + newFilename);

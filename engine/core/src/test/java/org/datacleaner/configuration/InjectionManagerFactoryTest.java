@@ -93,7 +93,7 @@ public class InjectionManagerFactoryTest extends TestCase {
                 TestHelper.createSampleDatabaseDatastore("orderdb")).withEnvironment(
                 new DataCleanerEnvironmentImpl().withInjectionManagerFactory(injectionManagerFactory));
 
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
 
             ajb.setDatastore("orderdb");
             ajb.addSourceColumns("PUBLIC.EMPLOYEES.EMPLOYEENUMBER");

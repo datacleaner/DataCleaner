@@ -92,7 +92,7 @@ public class JaxbPojoDatastoreAdaptor {
         final String name = pojoDatastore.getName();
         final String schemaName = (pojoDatastore.getSchemaName() == null ? name : pojoDatastore.getSchemaName());
 
-        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<TableDataProvider<?>>();
+        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<>();
         final List<PojoTableType> tables = pojoDatastore.getTable();
         for (final PojoTableType table : tables) {
             final String tableName = table.getName();
@@ -110,7 +110,7 @@ public class JaxbPojoDatastoreAdaptor {
 
             final SimpleTableDef tableDef = new SimpleTableDef(tableName, columnNames, columnTypes);
 
-            final Collection<Object[]> arrays = new ArrayList<Object[]>();
+            final Collection<Object[]> arrays = new ArrayList<>();
             final Rows rowsType = table.getRows();
             if (rowsType != null) {
                 final List<Rows.Row> rows = rowsType.getRow();
@@ -238,7 +238,7 @@ public class JaxbPojoDatastoreAdaptor {
     }
 
     private List<Object> getNodeList(final List<Node> childNodes) {
-        final List<Object> list = new ArrayList<Object>();
+        final List<Object> list = new ArrayList<>();
         for (final Node childNode : childNodes) {
             final Object value = getNodeValue(childNode, null);
             list.add(value);
@@ -247,7 +247,7 @@ public class JaxbPojoDatastoreAdaptor {
     }
 
     private List<Node> getChildNodes(final Node node) {
-        final List<Node> list = new ArrayList<Node>();
+        final List<Node> list = new ArrayList<>();
         final NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             final Node child = childNodes.item(i);
@@ -266,7 +266,7 @@ public class JaxbPojoDatastoreAdaptor {
     }
 
     private Map<String, Object> getNodeMap(final List<Node> entryNodes) {
-        final Map<String, Object> map = new LinkedHashMap<String, Object>();
+        final Map<String, Object> map = new LinkedHashMap<>();
         for (final Node entryNode : entryNodes) {
             final String entryNodeName = entryNode.getNodeName();
             if (!"e".equals(entryNodeName)) {
@@ -303,7 +303,8 @@ public class JaxbPojoDatastoreAdaptor {
         return XmlUtils.writeDocumentToString(node, false);
     }
 
-    private org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row createPojoRow(final Row row, final Document document) {
+    private org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row createPojoRow(final Row row,
+            final Document document) {
         final org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row rowType =
                 new org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row();
         final Object[] values = row.getValues();
@@ -315,7 +316,8 @@ public class JaxbPojoDatastoreAdaptor {
         return rowType;
     }
 
-    private void createPojoValue(Object value, final Element elem, final Document document, final boolean explicitType) {
+    private void createPojoValue(Object value, final Element elem, final Document document,
+            final boolean explicitType) {
         if (value == null) {
             // return an empty element
             return;
@@ -400,7 +402,7 @@ public class JaxbPojoDatastoreAdaptor {
 
             final Document document = XmlUtils.createDocument();
             final Rows rowsType = new Rows();
-            try (final DataSet ds = dataContext.executeQuery(q)) {
+            try (DataSet ds = dataContext.executeQuery(q)) {
                 while (ds.next()) {
                     final Row row = ds.getRow();
                     rowsType.getRow().add(createPojoRow(row, document));
@@ -444,7 +446,7 @@ public class JaxbPojoDatastoreAdaptor {
         datastoreType.setName(datastore.getName());
         datastoreType.setDescription(datastore.getDescription());
 
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final DataContext dataContext = con.getDataContext();
 
             final Schema schema;

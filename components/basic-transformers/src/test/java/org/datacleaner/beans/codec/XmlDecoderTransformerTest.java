@@ -33,7 +33,7 @@ public class XmlDecoderTransformerTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        column = new MockInputColumn<String>("mock", String.class);
+        column = new MockInputColumn<>("mock", String.class);
         transformer = new XmlDecoderTransformer(column);
     }
 

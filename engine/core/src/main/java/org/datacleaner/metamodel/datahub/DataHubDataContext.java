@@ -61,6 +61,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         public String username;
         public String tenant;
     }
+
     private static final String JSON_CONTENT_TYPE = ContentType.APPLICATION_JSON.getMimeType();
     private final String _tenantName;
     private DataHubRepoConnection _repoConnection;
@@ -75,7 +76,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     }
 
     private Map<String, DataHubSchema> getDatahubSchemas() {
-        final Map<String, DataHubSchema> schemas = new HashMap<String, DataHubSchema>();
+        final Map<String, DataHubSchema> schemas = new HashMap<>();
         for (final String datastoreName : getDataStoreNames()) {
             final String uri = _repoConnection.getSchemaUrl(_tenantName, datastoreName);
             final HttpGet request = new HttpGet(uri);
@@ -95,7 +96,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
 
     @Override
     public void executeUpdate(final UpdateScript script) {
-        try (final DataHubUpdateCallback callback = new DataHubUpdateCallback(this)) {
+        try (DataHubUpdateCallback callback = new DataHubUpdateCallback(this)) {
             script.run(callback);
         } catch (final RuntimeException e) {
             throw e;
@@ -158,7 +159,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         final HttpPut request = new HttpPut(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        request.setEntity(new StringEntity(JsonUpdateDataBuilder.<List<UpdateData>> buildJsonArray(pendingUpdates),
+        request.setEntity(new StringEntity(JsonUpdateDataBuilder.buildJsonArray(pendingUpdates),
                 ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
@@ -175,7 +176,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
         request.setEntity(
-                new StringEntity(JsonUpdateDataBuilder.<List<String>> buildJsonArray(pendingGoldenRecordDeletes),
+                new StringEntity(JsonUpdateDataBuilder.buildJsonArray(pendingGoldenRecordDeletes),
                         ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
@@ -192,7 +193,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
         request.setEntity(new StringEntity(
-                JsonUpdateDataBuilder.<List<SourceRecordIdentifier>> buildJsonArray(pendingSourceDeletes),
+                JsonUpdateDataBuilder.buildJsonArray(pendingSourceDeletes),
                 ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
@@ -200,7 +201,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     private String retrieveTenantName() {
         final String getUserInfoUrl = _repoConnection.getUserInfoUrl();
         final HttpGet request = new HttpGet(getUserInfoUrl);
-        try (final MonitorHttpClient monitorHttpClient = _repoConnection.getHttpClient()) {
+        try (MonitorHttpClient monitorHttpClient = _repoConnection.getHttpClient()) {
             final HttpResponse response = monitorHttpClient.execute(request);
 
             final StatusLine statusLine = response.getStatusLine();

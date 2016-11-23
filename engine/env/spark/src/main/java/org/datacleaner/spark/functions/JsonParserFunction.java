@@ -58,7 +58,7 @@ public class JsonParserFunction implements Function<String, Object[]> {
 
     public Column[] getColumns() {
         if (_columns == null) {
-            try (final DatastoreConnection openConnection = _jsonDatastore.openConnection()) {
+            try (DatastoreConnection openConnection = _jsonDatastore.openConnection()) {
                 _columns = openConnection.getDataContext().getDefaultSchema().getTable(0).getColumns();
             }
         }

@@ -130,7 +130,7 @@ public class FileUploadServlet extends HttpServlet {
         servletFileUpload.setFileSizeMax(FILE_SIZE_MAX);
         servletFileUpload.setSizeMax(REQUEST_SIZE_MAX);
 
-        final List<Object> resultFileElements = new ArrayList<Object>();
+        final List<Object> resultFileElements = new ArrayList<>();
         final HttpSession session = req.getSession();
 
         try {
@@ -149,7 +149,7 @@ public class FileUploadServlet extends HttpServlet {
 
                     session.setAttribute(sessionKey, file);
 
-                    final Map<String, String> resultItem = new LinkedHashMap<String, String>();
+                    final Map<String, String> resultItem = new LinkedHashMap<>();
                     resultItem.put("field_name", item.getFieldName());
                     resultItem.put("file_name", filename);
                     resultItem.put("content_type", item.getContentType());
@@ -173,7 +173,7 @@ public class FileUploadServlet extends HttpServlet {
             resp.setContentType(contentType);
         }
 
-        final Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        final Map<String, Object> resultMap = new LinkedHashMap<>();
         resultMap.put("status", "success");
         resultMap.put("files", resultFileElements);
 

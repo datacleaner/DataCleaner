@@ -77,7 +77,7 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
     public Collection<ValueFrequency> getReducedValueFrequencies(final int preferredMaximum) {
         final Collection<ValueFrequency> original = getValueCounts();
 
-        final Collection<ValueFrequency> result = new TreeSet<ValueFrequency>(original);
+        final Collection<ValueFrequency> result = new TreeSet<>(original);
 
         if (original.size() <= preferredMaximum) {
             // check if any composite value freq's can be exploded

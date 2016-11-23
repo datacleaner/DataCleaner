@@ -179,8 +179,8 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         testInputLabel.setFont(WidgetUtils.FONT_HEADER2);
         WidgetUtils.addToGridBag(testInputLabel, testitPanel, 0, row);
 
-        _inputFields = new ArrayList<JTextField>(NUM_TEST_FIELDS);
-        _statusLabels = new ArrayList<JLabel>(NUM_TEST_FIELDS);
+        _inputFields = new ArrayList<>(NUM_TEST_FIELDS);
+        _statusLabels = new ArrayList<>(NUM_TEST_FIELDS);
         for (int i = 0; i < NUM_TEST_FIELDS; i++) {
             final int index = i;
             final JTextField inputField = WidgetFactory.createTextField("Test Input");

@@ -31,7 +31,7 @@ final class TestDatastoreConnection implements UpdateableDatastoreConnection {
     private final UpdateableDataContext _dataContext;
     private final Datastore _datastore;
 
-    public TestDatastoreConnection(final TestDatastore datastore) throws Exception {
+    TestDatastoreConnection(final TestDatastore datastore) throws Exception {
         _datastore = datastore;
         _dataContext = DataContextFactory.createJdbcDataContext(datastore.getDataSource());
     }

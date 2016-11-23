@@ -56,7 +56,7 @@ public class AnalyzerResultFutureTest extends TestCase {
         final NumberResult result1 = new NumberResult(42);
 
         final AnalyzerResultFuture<NumberResult> future = new AnalyzerResultFutureImpl<>("foo",
-                new ImmutableRef<NumberResult>(result1));
+                new ImmutableRef<>(result1));
 
         final NumberResult result2 = future.get();
 
@@ -160,7 +160,7 @@ public class AnalyzerResultFutureTest extends TestCase {
         final NumberResult result1 = new NumberResult(42);
 
         final AnalyzerResultFuture<NumberResult> future = new AnalyzerResultFutureImpl<>("foo",
-                new ImmutableRef<NumberResult>(result1));
+                new ImmutableRef<>(result1));
 
         future.addListener(new Listener<NumberResult>() {
             @Override

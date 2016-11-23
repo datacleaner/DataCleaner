@@ -108,7 +108,7 @@ public class FailedAnalysisResultFuture implements AnalysisResultFuture {
 
     @Override
     public List<Throwable> getErrors() {
-        final List<Throwable> list = new ArrayList<Throwable>(1);
+        final List<Throwable> list = new ArrayList<>(1);
         list.add(_error);
         return list;
     }

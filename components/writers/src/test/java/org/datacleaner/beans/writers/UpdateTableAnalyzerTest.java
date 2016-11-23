@@ -81,8 +81,8 @@ public class UpdateTableAnalyzerTest extends TestCase {
         updateTableAnalyzer.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         updateTableAnalyzer.errorLogFile = new File("src/test/resources/invalid-error-handling-file.csv");
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
+        InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
 
         updateTableAnalyzer.values = new InputColumn[] { col1, col2 };
 
@@ -95,9 +95,9 @@ public class UpdateTableAnalyzerTest extends TestCase {
     }
 
     public void testVanillaScenario() throws Exception {
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
-        InputColumn<Object> col3 = new MockInputColumn<Object>("in3", Object.class);
+        InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
+        InputColumn<Object> col3 = new MockInputColumn<>("in3", Object.class);
 
         final UpdateTableAnalyzer updateTableAnalyzer = new UpdateTableAnalyzer();
         updateTableAnalyzer.datastore = jdbcDatastore;
@@ -153,8 +153,8 @@ public class UpdateTableAnalyzerTest extends TestCase {
         updateTableAnalyzer.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         updateTableAnalyzer._componentContext = EasyMock.createMock(ComponentContext.class);
 
-        InputColumn<Object> inputId = new MockInputColumn<Object>("id", Object.class);
-        InputColumn<Object> inputNewName = new MockInputColumn<Object>("new_name", Object.class);
+        InputColumn<Object> inputId = new MockInputColumn<>("id", Object.class);
+        InputColumn<Object> inputNewName = new MockInputColumn<>("new_name", Object.class);
         updateTableAnalyzer.values = new InputColumn[] { inputNewName };
         updateTableAnalyzer.conditionValues = new InputColumn[] { inputId };
 

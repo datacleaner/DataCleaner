@@ -38,7 +38,7 @@ public class ChangeAwareObjectInputStreamTest extends TestCase {
         final ClassLoader classLoader = new URLClassLoader(urls);
 
         final Object obj;
-        try (final ChangeAwareObjectInputStream ois = new ChangeAwareObjectInputStream(new FileInputStream(
+        try (ChangeAwareObjectInputStream ois = new ChangeAwareObjectInputStream(new FileInputStream(
                 SERIALIZED_OBJECT_FILE))) {
             ois.addClassLoader(classLoader);
 

@@ -116,7 +116,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         _configuration = p._configuration;
         _windowContext = p._windowContext;
         if (analysisJobBuilder == null) {
-            _analysisJobBuilderRef = new MutableRef<AnalysisJobBuilder>();
+            _analysisJobBuilderRef = new MutableRef<>();
         } else {
             _analysisJobBuilderRef = ImmutableRef.of(analysisJobBuilder);
         }
@@ -144,7 +144,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         _userPreferencesRef = createUserPreferencesRef(dataCleanerHome);
         _undecoratedConfigurationRef = new DataCleanerConfigurationReader(dataCleanerHome, configurationFile,
                 _userPreferencesRef);
-        _analysisJobBuilderRef = new MutableRef<AnalysisJobBuilder>();
+        _analysisJobBuilderRef = new MutableRef<>();
         _configuration = null;
         _windowContext = null;
     }
@@ -157,15 +157,15 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         }
     }
 
-    private final Ref<UserPreferences> createUserPreferencesRef(final FileObject dataCleanerHome) {
+    private Ref<UserPreferences> createUserPreferencesRef(final FileObject dataCleanerHome) {
         try {
             if ("true".equalsIgnoreCase(System.getProperty(SystemProperties.SANDBOX))) {
-                return new ImmutableRef<UserPreferences>(new UserPreferencesImpl(null));
+                return new ImmutableRef<>(new UserPreferencesImpl(null));
             }
             if (dataCleanerHome == null || !dataCleanerHome.exists()) {
                 logger.info(
                         "DataCleaner home was not set or does not exist. Non-persistent user preferences will be applied.");
-                return new ImmutableRef<UserPreferences>(new UserPreferencesImpl(null));
+                return new ImmutableRef<>(new UserPreferencesImpl(null));
             }
 
             final FileObject userPreferencesFile = dataCleanerHome.resolveFile(UserPreferencesImpl.DEFAULT_FILENAME);

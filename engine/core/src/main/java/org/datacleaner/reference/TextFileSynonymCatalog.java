@@ -59,11 +59,13 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
     private final boolean _caseSensitive;
     private final String _encoding;
 
-    public TextFileSynonymCatalog(final String name, final File file, final boolean caseSensitive, final String encoding) {
+    public TextFileSynonymCatalog(final String name, final File file, final boolean caseSensitive,
+            final String encoding) {
         this(name, file.getPath(), caseSensitive, encoding);
     }
 
-    public TextFileSynonymCatalog(final String name, final String filename, final boolean caseSensitive, final String encoding) {
+    public TextFileSynonymCatalog(final String name, final String filename, final boolean caseSensitive,
+            final String encoding) {
         super(name);
         _filename = filename;
         _caseSensitive = caseSensitive;

@@ -33,7 +33,7 @@ public class MutableSynonym implements Synonym {
 
     public MutableSynonym(final String masterTerm) {
         _masterTerm = masterTerm;
-        _synonyms = new HashSet<String>();
+        _synonyms = new HashSet<>();
     }
 
     public void addSynonym(final String synonym) {

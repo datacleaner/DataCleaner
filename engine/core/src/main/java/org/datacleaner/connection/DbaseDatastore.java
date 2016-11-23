@@ -53,7 +53,7 @@ public final class DbaseDatastore extends UsageAwareDatastore<DataContext> imple
     @Override
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
         final DataContext dc = new DbaseDataContext(_filename);
-        return new DatastoreConnectionImpl<DataContext>(dc, this);
+        return new DatastoreConnectionImpl<>(dc, this);
     }
 
     @Override

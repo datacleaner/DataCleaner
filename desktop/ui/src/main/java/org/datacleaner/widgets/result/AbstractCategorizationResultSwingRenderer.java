@@ -92,7 +92,7 @@ public abstract class AbstractCategorizationResultSwingRenderer<R extends Catego
     }
 
     private void drillToGroup(final String title, final AnnotatedRowsResult sampleResult) {
-        final List<AnalyzerResult> results = Arrays.<AnalyzerResult> asList(sampleResult);
+        final List<AnalyzerResult> results = Arrays.asList(sampleResult);
         final DetailsResultWindow window = new DetailsResultWindow(title, results, windowContext, rendererFactory);
         window.open();
     }

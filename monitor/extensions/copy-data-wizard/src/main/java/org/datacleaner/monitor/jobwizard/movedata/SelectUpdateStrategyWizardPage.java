@@ -80,7 +80,7 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final List<String> columnNames = new ArrayList<String>();
+        final List<String> columnNames = new ArrayList<>();
         for (final ColumnMapping columnMapping : _columnMappings) {
             final Column sourceColumn = columnMapping.getSourceColumn();
             final String columnName = sourceColumn.getName();
@@ -92,7 +92,7 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
             }
         }
 
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("columnNames", columnNames);
 
         return map;

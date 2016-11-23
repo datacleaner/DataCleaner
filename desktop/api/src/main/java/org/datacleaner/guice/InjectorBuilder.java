@@ -50,7 +50,7 @@ public final class InjectorBuilder {
         _parentModule = parentModule;
         _parentInjector = injector;
         _adHocModule = new AdHocModule();
-        _inheritedTypeLiterals = new ArrayList<TypeLiteral<?>>();
+        _inheritedTypeLiterals = new ArrayList<>();
         inherit(AnalysisJobBuilderWindow.class);
         inherit(Datastore.class);
     }

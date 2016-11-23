@@ -52,7 +52,8 @@ public final class RendererFactory {
         private final RendererPrecedence precedence;
         private final int hierarchyDistance;
 
-        public RendererSelection(final Renderer<?, ?> renderer, final RendererPrecedence precedence, final int hierarchyDistance) {
+        public RendererSelection(final Renderer<?, ?> renderer, final RendererPrecedence precedence,
+                final int hierarchyDistance) {
             this.renderer = renderer;
             this.precedence = precedence;
             this.hierarchyDistance = hierarchyDistance;
@@ -70,6 +71,7 @@ public final class RendererFactory {
             return hierarchyDistance;
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(RendererFactory.class);
     private final DescriptorProvider _descriptorProvider;
     private final RendererInitializer _rendererInitializer;
@@ -85,7 +87,8 @@ public final class RendererFactory {
         this(configuration, defaultRendererInitializer(configuration));
     }
 
-    public RendererFactory(final DataCleanerConfiguration configuration, final RendererInitializer rendererInitializer) {
+    public RendererFactory(final DataCleanerConfiguration configuration,
+            final RendererInitializer rendererInitializer) {
         this(configuration.getEnvironment().getDescriptorProvider(), rendererInitializer);
     }
 
@@ -176,7 +179,8 @@ public final class RendererFactory {
      * @return a {@link RendererSelection} object if the renderer is a match, or
      *         null if not.
      */
-    private RendererSelection isRendererMatch(final RendererBeanDescriptor<?> rendererDescriptor, final Renderable renderable,
+    private RendererSelection isRendererMatch(final RendererBeanDescriptor<?> rendererDescriptor,
+            final Renderable renderable,
             final RendererSelection bestMatch) {
         final Class<? extends Renderable> renderableType = rendererDescriptor.getRenderableType();
         final Class<? extends Renderable> renderableClass = renderable.getClass();
@@ -209,7 +213,8 @@ public final class RendererFactory {
         return null;
     }
 
-    private RendererSelection isRendererCapable(final RendererBeanDescriptor<?> rendererDescriptor, final Renderable renderable,
+    private RendererSelection isRendererCapable(final RendererBeanDescriptor<?> rendererDescriptor,
+            final Renderable renderable,
             final RendererSelection bestMatch) {
         final Renderer<Renderable, ?> renderer = instantiate(rendererDescriptor);
 

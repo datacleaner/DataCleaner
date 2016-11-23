@@ -67,7 +67,8 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
         this(propertiesResource, new DataCleanerEnvironmentImpl());
     }
 
-    public DefaultConfigurationReaderInterceptor(final Resource propertiesResource, final DataCleanerEnvironment baseEnvironment) {
+    public DefaultConfigurationReaderInterceptor(final Resource propertiesResource,
+            final DataCleanerEnvironment baseEnvironment) {
         if (propertiesResource == null || !propertiesResource.isExists()) {
             _propertyOverrides = Collections.emptyMap();
         } else {

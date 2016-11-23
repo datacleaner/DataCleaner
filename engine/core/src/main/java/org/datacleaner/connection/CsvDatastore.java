@@ -73,49 +73,60 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
                 FileHelper.DEFAULT_ENCODING);
     }
 
-    public CsvDatastore(final String name, final String filename, final Character quoteChar, final Character separatorChar, final String encoding) {
+    public CsvDatastore(final String name, final String filename, final Character quoteChar,
+            final Character separatorChar, final String encoding) {
         this(name, filename, quoteChar, separatorChar, encoding, true);
     }
 
-    public CsvDatastore(final String name, final String filename, final Character quoteChar, final Character separatorChar, final String encoding,
+    public CsvDatastore(final String name, final String filename, final Character quoteChar,
+            final Character separatorChar, final String encoding,
             final boolean failOnInconsistencies) {
         this(name, filename, quoteChar, separatorChar, encoding, failOnInconsistencies,
                 CsvConfiguration.DEFAULT_COLUMN_NAME_LINE);
     }
 
-    public CsvDatastore(final String name, final String filename, final Character quoteChar, final Character separatorChar, final String encoding,
+    public CsvDatastore(final String name, final String filename, final Character quoteChar,
+            final Character separatorChar, final String encoding,
             final boolean failOnInconsistencies, final int headerLineNumber) {
         this(name, null, filename, quoteChar, separatorChar, CsvConfiguration.DEFAULT_ESCAPE_CHAR, encoding,
                 failOnInconsistencies, headerLineNumber);
     }
 
-    public CsvDatastore(final String name, final Resource resource, final CsvConfiguration c) {
-        this(name, resource, resource.getName(), c.getQuoteChar(), c.getSeparatorChar(), c.getEscapeChar(), c
-                .getEncoding(), c.isFailOnInconsistentRowLength(), c.isMultilineValues(), c.getColumnNameLineNumber());
+    public CsvDatastore(final String name, final Resource resource, final CsvConfiguration csvConfiguration) {
+        this(name, resource, resource.getName(), csvConfiguration.getQuoteChar(), csvConfiguration.getSeparatorChar(),
+                csvConfiguration.getEscapeChar(), csvConfiguration.getEncoding(),
+                csvConfiguration.isFailOnInconsistentRowLength(), csvConfiguration.isMultilineValues(),
+                csvConfiguration.getColumnNameLineNumber());
     }
 
-    public CsvDatastore(final String name, final Resource resource, final String filename, final Character quoteChar, final Character separatorChar,
-            final Character escapeChar, final String encoding, final boolean failOnInconsistencies, final int headerLineNumber) {
+    public CsvDatastore(final String name, final Resource resource, final String filename, final Character quoteChar,
+            final Character separatorChar,
+            final Character escapeChar, final String encoding, final boolean failOnInconsistencies,
+            final int headerLineNumber) {
         this(name, resource, filename, quoteChar, separatorChar, escapeChar, encoding, failOnInconsistencies, true,
                 headerLineNumber);
     }
 
-    public CsvDatastore(final String name, final Resource resource, final String filename, final Character quoteChar, final Character separatorChar,
-            final Character escapeChar, final String encoding, final boolean failOnInconsistencies, final boolean multilineValues,
+    public CsvDatastore(final String name, final Resource resource, final String filename, final Character quoteChar,
+            final Character separatorChar,
+            final Character escapeChar, final String encoding, final boolean failOnInconsistencies,
+            final boolean multilineValues,
             final int headerLineNumber) {
         this(name, resource, filename, quoteChar, separatorChar, escapeChar, encoding, failOnInconsistencies,
                 multilineValues, headerLineNumber, null);
     }
 
-    public CsvDatastore(final String name, Resource resource, final String filename, final Character quoteChar, final Character separatorChar,
-            final Character escapeChar, final String encoding, final boolean failOnInconsistencies, final boolean multilineValues,
+    public CsvDatastore(final String name, Resource resource, final String filename, final Character quoteChar,
+            final Character separatorChar,
+            final Character escapeChar, final String encoding, final boolean failOnInconsistencies,
+            final boolean multilineValues,
             int headerLineNumber, final List<String> customColumnNames) {
         super(name);
         _filename = filename;
         if (resource == null) {
             resource = new FileResource(filename);
         }
-        _resourceRef = new SerializableRef<Resource>(resource);
+        _resourceRef = new SerializableRef<>(resource);
         _quoteChar = quoteChar;
         _separatorChar = separatorChar;
         _escapeChar = escapeChar;
@@ -178,7 +189,7 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
             dataContext = new CsvDataContext(resource, getCsvConfiguration());
         }
 
-        return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dataContext, this);
+        return new UpdateableDatastoreConnectionImpl<>(dataContext, this);
     }
 
     public CsvConfiguration getCsvConfiguration() {

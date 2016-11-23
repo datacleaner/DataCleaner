@@ -144,7 +144,8 @@ public class CrosstabTextRenderer extends AbstractRenderer<CrosstabResult, Strin
         }
 
         @Override
-        public void emptyHeader(final CrosstabDimension verticalDimension, final CrosstabDimension horizontalDimension) {
+        public void emptyHeader(final CrosstabDimension verticalDimension,
+                final CrosstabDimension horizontalDimension) {
             final int dimensionWidth = getWidth(verticalDimension);
 
             for (int i = 0; i < dimensionWidth; i++) {

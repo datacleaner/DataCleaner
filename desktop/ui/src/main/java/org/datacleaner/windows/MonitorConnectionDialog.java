@@ -98,7 +98,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         _urlLabel.setForeground(WidgetUtils.BG_COLOR_LESS_BRIGHT);
         _urlLabel.setBorder(new EmptyBorder(0, 0, 25, 0));
 
-        _httpsCheckBox = new DCCheckBox<Void>("Use HTTPS?", false);
+        _httpsCheckBox = new DCCheckBox<>("Use HTTPS?", false);
         if (monitorConnection != null && monitorConnection.isHttps()) {
             _httpsCheckBox.setSelected(true);
         }
@@ -168,7 +168,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         _usernameTextField = WidgetFactory.createTextField("Username");
         _passwordTextField = WidgetFactory.createPasswordField();
 
-        _authenticationCheckBox = new DCCheckBox<Void>("Use authentication?", true);
+        _authenticationCheckBox = new DCCheckBox<>("Use authentication?", true);
         _authenticationCheckBox.setBorderPainted(false);
         _authenticationCheckBox.setOpaque(false);
         _authenticationCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -289,7 +289,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
                 final MonitorConnection connection = createMonitorConnection();
                 final String pingUrl = connection.getRepositoryUrl() + "/ping";
                 final HttpGet request = new HttpGet(pingUrl);
-                try (final MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
+                try (MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
                     final HttpResponse response = monitorHttpClient.execute(request);
 
                     final StatusLine statusLine = response.getStatusLine();

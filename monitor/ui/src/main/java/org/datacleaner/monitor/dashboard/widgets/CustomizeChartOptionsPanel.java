@@ -115,7 +115,7 @@ public class CustomizeChartOptionsPanel extends FlowPanel {
     }
 
     private CellWidget<Date> createDatePickerWidget(final Date date) {
-        final CellWidget<Date> cellWidget = new CellWidget<Date>(createDatePickerCell(), date);
+        final CellWidget<Date> cellWidget = new CellWidget<>(createDatePickerCell(), date);
         cellWidget.addStyleName("DateSelectionWidget");
         return cellWidget;
     }

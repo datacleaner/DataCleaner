@@ -34,8 +34,8 @@ import org.datacleaner.output.OutputWriter;
 
 public final class CsvOutputWriterFactory {
 
-    private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
-    private static final Map<String, CsvOutputWriter> outputWritersPerPath = new HashMap<String, CsvOutputWriter>();
+    private static final Map<String, AtomicInteger> counters = new HashMap<>();
+    private static final Map<String, CsvOutputWriter> outputWritersPerPath = new HashMap<>();
 
     /**
      * Creates a CSV output writer with default configuration
@@ -65,7 +65,8 @@ public final class CsvOutputWriterFactory {
      * @param columns
      * @return
      */
-    public static OutputWriter getWriter(final String filename, final String[] headers, final char separatorChar, final char quoteChar,
+    public static OutputWriter getWriter(final String filename, final String[] headers, final char separatorChar,
+            final char quoteChar,
             final char escapeChar, final boolean includeHeader, final InputColumn<?>... columns) {
         return getWriter(new FileResource(filename), headers, FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar,
                 escapeChar, includeHeader, columns);
@@ -105,7 +106,8 @@ public final class CsvOutputWriterFactory {
         return outputWriter;
     }
 
-    private static CsvConfiguration getConfiguration(final String encoding, final char separatorChar, final char quoteChar,
+    private static CsvConfiguration getConfiguration(final String encoding, final char separatorChar,
+            final char quoteChar,
             final char escapeChar, final boolean includeHeader) {
         final int headerLine;
         if (includeHeader) {

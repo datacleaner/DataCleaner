@@ -76,7 +76,7 @@ public final class TransformedInputRow extends AbstractLegacyAwareInputRow {
         } else {
             _id = rowId.longValue();
         }
-        _values = new LinkedHashMap<InputColumn<?>, Object>();
+        _values = new LinkedHashMap<>();
     }
 
     public TransformedInputRow(final InputRow delegate, final long rowId) {
@@ -85,7 +85,7 @@ public final class TransformedInputRow extends AbstractLegacyAwareInputRow {
         }
         _delegate = delegate;
         _id = rowId;
-        _values = new LinkedHashMap<InputColumn<?>, Object>();
+        _values = new LinkedHashMap<>();
     }
 
     /**

@@ -76,8 +76,10 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
      * @param taskRunner
      * @param storageProvider
      */
-    public AnalyzerBeansConfigurationImpl(final DatastoreCatalog datastoreCatalog, final ReferenceDataCatalog referenceDataCatalog,
-            final DescriptorProvider descriptorProvider, final TaskRunner taskRunner, final StorageProvider storageProvider) {
+    public AnalyzerBeansConfigurationImpl(final DatastoreCatalog datastoreCatalog,
+            final ReferenceDataCatalog referenceDataCatalog,
+            final DescriptorProvider descriptorProvider, final TaskRunner taskRunner,
+            final StorageProvider storageProvider) {
         this(datastoreCatalog, referenceDataCatalog, descriptorProvider, taskRunner, storageProvider, null,
                 defaultHomeFolder());
     }
@@ -92,8 +94,10 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
      * @param storageProvider
      * @param injectionManagerFactory
      */
-    public AnalyzerBeansConfigurationImpl(final DatastoreCatalog datastoreCatalog, final ReferenceDataCatalog referenceDataCatalog,
-            final DescriptorProvider descriptorProvider, final TaskRunner taskRunner, final StorageProvider storageProvider,
+    public AnalyzerBeansConfigurationImpl(final DatastoreCatalog datastoreCatalog,
+            final ReferenceDataCatalog referenceDataCatalog,
+            final DescriptorProvider descriptorProvider, final TaskRunner taskRunner,
+            final StorageProvider storageProvider,
             final InjectionManagerFactory injectionManagerFactory, final DataCleanerHomeFolder homeFolder) {
         if (datastoreCatalog == null) {
             throw new IllegalArgumentException("datastoreCatalog cannot be null");

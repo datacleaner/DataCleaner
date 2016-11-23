@@ -191,6 +191,7 @@ public class ComponentList {
             this.defaultValue = defaultValue;
         }
     }
+
     private List<ComponentInfo> components = new ArrayList<>();
 
     public void add(final ComponentInfo componentInfo) {

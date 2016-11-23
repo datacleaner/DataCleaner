@@ -41,10 +41,10 @@ public final class FilterOutcomesImpl implements FilterOutcomes {
 
     public FilterOutcomesImpl(final Collection<? extends FilterOutcome> availableOutcomes) {
         if (availableOutcomes == null) {
-            _outcomes = new HashSet<FilterOutcome>();
+            _outcomes = new HashSet<>();
         } else {
             // always take a copy of the collection argument
-            _outcomes = new HashSet<FilterOutcome>(availableOutcomes);
+            _outcomes = new HashSet<>(availableOutcomes);
         }
     }
 

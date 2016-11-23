@@ -96,7 +96,7 @@ public abstract class UsageAwareDatastore<E extends DataContext> extends BaseObj
     /**
      * {@inheritDoc}
      */
-    private final synchronized UsageAwareDatastoreConnection<E> getDatastoreConnection() {
+    private synchronized UsageAwareDatastoreConnection<E> getDatastoreConnection() {
         if (_datastoreConnection != null) {
             return _datastoreConnection;
         }
@@ -115,7 +115,7 @@ public abstract class UsageAwareDatastore<E extends DataContext> extends BaseObj
         if (datastoreConnection == null) {
             throw new IllegalStateException("createDatastoreConnection() returned null");
         }
-        _datastoreConnectionRef = new WeakReference<UsageAwareDatastoreConnection<E>>(datastoreConnection);
+        _datastoreConnectionRef = new WeakReference<>(datastoreConnection);
 
         return datastoreConnection;
     }

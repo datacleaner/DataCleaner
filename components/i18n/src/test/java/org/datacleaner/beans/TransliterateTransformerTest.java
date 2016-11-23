@@ -32,7 +32,7 @@ public class TransliterateTransformerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         t = new TransliterateTransformer();
-        t.column = new MockInputColumn<String>("foo", String.class);
+        t.column = new MockInputColumn<>("foo", String.class);
     }
 
     public void testGetOutputColumns() throws Exception {

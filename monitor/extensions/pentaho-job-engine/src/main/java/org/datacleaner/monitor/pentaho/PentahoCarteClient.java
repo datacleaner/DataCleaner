@@ -90,7 +90,7 @@ public final class PentahoCarteClient implements Closeable {
             final HttpResponse response = execute(request);
             final int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == 200) {
-                final List<PentahoTransformation> result = new ArrayList<PentahoTransformation>();
+                final List<PentahoTransformation> result = new ArrayList<>();
                 final Document doc = parse(response.getEntity());
                 final Element serverstatusElement = doc.getDocumentElement();
                 final Element transstatuslistElement = DomUtils.getChildElementByTagName(serverstatusElement,

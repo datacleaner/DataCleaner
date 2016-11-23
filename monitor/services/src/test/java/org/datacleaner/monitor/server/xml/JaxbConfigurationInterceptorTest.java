@@ -116,7 +116,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         final TenantContext tenantContext = _contextFactory.getContext("tenant1");
         final Datastore ds = tenantContext.getConfiguration().getDatastoreCatalog().getDatastore("orderdb");
 
-        try (final DatastoreConnection con = ds.openConnection()) {
+        try (DatastoreConnection con = ds.openConnection()) {
             JobContext job = tenantContext.getJob("Move employees to customers");
             String actual = generationConf(job, null);
 

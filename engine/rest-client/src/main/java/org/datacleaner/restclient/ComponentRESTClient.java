@@ -34,7 +34,8 @@ public class ComponentRESTClient {
     private final String url;
     private String tenantName;
 
-    public ComponentRESTClient(final String url, final String username, final String password, final String dataCleanerVersion) {
+    public ComponentRESTClient(final String url, final String username, final String password,
+            final String dataCleanerVersion) {
         this.url = url;
         restClient = new RESTClientImpl(username, password, dataCleanerVersion);
         getUserTenantName();
@@ -67,12 +68,14 @@ public class ComponentRESTClient {
     public OutputColumns getOutputColumns(String componentName, final CreateInput config) {
         componentName = urlify(componentName);
         final String configuration = Serializator.stringCreateInput(config);
-        final String response = call(RESTClient.HttpMethod.POST, getURL(componentName + "/_outputColumns"), configuration);
+        final String response =
+                call(RESTClient.HttpMethod.POST, getURL(componentName + "/_outputColumns"), configuration);
 
         return Serializator.outputColumnsOutput(response);
     }
 
-    public ProcessStatelessOutput processStateless(String componentName, final ProcessStatelessInput processStatelessInput) {
+    public ProcessStatelessOutput processStateless(String componentName,
+            final ProcessStatelessInput processStatelessInput) {
         componentName = urlify(componentName);
         final String configurationAndData = Serializator.stringProcessStatelessInput(processStatelessInput);
         final String response = call(RESTClient.HttpMethod.PUT, getURL(componentName), configurationAndData);
@@ -123,7 +126,8 @@ public class ComponentRESTClient {
 
     public DataCloudUser getDataCloudUserInfo() {
         final String userTenantName = getUserTenantName();
-        final String response = call(RESTClient.HttpMethod.GET, url + "/repository/" + userTenantName + "/userinfo", null);
+        final String response =
+                call(RESTClient.HttpMethod.GET, url + "/repository/" + userTenantName + "/userinfo", null);
         return Serializator.processDataCloudUser(response);
     }
 

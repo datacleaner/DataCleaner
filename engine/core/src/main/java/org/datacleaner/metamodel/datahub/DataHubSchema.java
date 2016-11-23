@@ -44,7 +44,7 @@ public class DataHubSchema extends AbstractSchema {
 
     public DataHubSchema() {
         _name = EMPTY;
-        _tables = new ArrayList<Table>();
+        _tables = new ArrayList<>();
 
     }
 

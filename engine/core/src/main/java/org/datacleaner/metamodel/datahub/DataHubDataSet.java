@@ -161,7 +161,7 @@ public class DataHubDataSet extends AbstractDataSet {
     }
 
     /**
-     * Changes all occurences of <table-name>.<column-name> with just <column-name>
+     * Changes all occurences of &lt;table-name&gt;.&lt;column-name&gt; with just &lt;column-name&gt;
      *
      * @param query The original query
      * @param table The table from the query.

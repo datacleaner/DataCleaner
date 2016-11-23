@@ -48,12 +48,14 @@ public class AnalysisListenerAdaptor implements AnalysisListener {
     }
 
     @Override
-    public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row, final int currentRow) {
+    public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
+            final int currentRow) {
         rowProcessingProgress(job, metrics, currentRow);
     }
 
     @Override
-    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob, final ComponentMessage message) {
+    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob,
+            final ComponentMessage message) {
         // do nothing
     }
 
@@ -68,7 +70,8 @@ public class AnalysisListenerAdaptor implements AnalysisListener {
      *             instead.
      */
     @Deprecated
-    protected void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final int currentRow) {
+    protected void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics,
+            final int currentRow) {
     }
 
     @Override
@@ -84,7 +87,8 @@ public class AnalysisListenerAdaptor implements AnalysisListener {
     }
 
     @Override
-    public void errorInComponent(final AnalysisJob job, final ComponentJob componentJob, final InputRow row, final Throwable throwable) {
+    public void errorInComponent(final AnalysisJob job, final ComponentJob componentJob, final InputRow row,
+            final Throwable throwable) {
         if (componentJob instanceof AnalyzerJob) {
             errorInAnalyzer(job, (AnalyzerJob) componentJob, row, throwable);
         } else if (componentJob instanceof TransformerJob) {
@@ -106,7 +110,8 @@ public class AnalysisListenerAdaptor implements AnalysisListener {
      *             instead
      */
     @Deprecated
-    protected void errorInFilter(final AnalysisJob job, final FilterJob filterJob, final InputRow row, final Throwable throwable) {
+    protected void errorInFilter(final AnalysisJob job, final FilterJob filterJob, final InputRow row,
+            final Throwable throwable) {
     }
 
     /**
@@ -137,7 +142,8 @@ public class AnalysisListenerAdaptor implements AnalysisListener {
      *             instead
      */
     @Deprecated
-    protected void errorInAnalyzer(final AnalysisJob job, final AnalyzerJob analyzerJob, final InputRow row, final Throwable throwable) {
+    protected void errorInAnalyzer(final AnalysisJob job, final AnalyzerJob analyzerJob, final InputRow row,
+            final Throwable throwable) {
     }
 
     @Override

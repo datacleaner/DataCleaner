@@ -29,7 +29,8 @@ final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer>
 
     private static final long serialVersionUID = 1L;
 
-    protected AnnotationBasedTransformerComponentDescriptor(final Class<T> transformerClass) throws DescriptorException {
+    protected AnnotationBasedTransformerComponentDescriptor(final Class<T> transformerClass)
+            throws DescriptorException {
         super(transformerClass, false);
 
         if (!ReflectionUtils.is(transformerClass, Transformer.class)) {

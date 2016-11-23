@@ -104,11 +104,11 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
     /**
      * Creates a copy of another {@link DataCleanerEnvironment}
      *
-     * @param e
+     * @param environment
      */
-    public DataCleanerEnvironmentImpl(final DataCleanerEnvironment e) {
-        this(e.getTaskRunner(), e.getDescriptorProvider(), e.getStorageProvider(), e.getInjectionManagerFactory(),
-                e.getRemoteServerConfiguration());
+    public DataCleanerEnvironmentImpl(final DataCleanerEnvironment environment) {
+        this(environment.getTaskRunner(), environment.getDescriptorProvider(), environment.getStorageProvider(),
+                environment.getInjectionManagerFactory(), environment.getRemoteServerConfiguration());
     }
 
     public static InjectionManagerFactory defaultInjectionManagerFactory() {
@@ -146,7 +146,8 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
                 getInjectionManagerFactory(), getRemoteServerConfiguration());
     }
 
-    public DataCleanerEnvironmentImpl withInjectionManagerFactory(final InjectionManagerFactory injectionManagerFactory) {
+    public DataCleanerEnvironmentImpl withInjectionManagerFactory(
+            final InjectionManagerFactory injectionManagerFactory) {
         return new DataCleanerEnvironmentImpl(getTaskRunner(), getDescriptorProvider(), getStorageProvider(),
                 injectionManagerFactory, getRemoteServerConfiguration());
     }

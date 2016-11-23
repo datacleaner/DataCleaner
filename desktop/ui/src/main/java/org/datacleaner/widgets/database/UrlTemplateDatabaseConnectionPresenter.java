@@ -82,9 +82,9 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
         if (urlTemplates == null || urlTemplates.length == 0) {
             throw new IllegalArgumentException("URL templates cannot be null or empty");
         }
-        _urlTemplates = new ArrayList<NamedPattern<UrlPart>>(urlTemplates.length);
+        _urlTemplates = new ArrayList<>(urlTemplates.length);
         for (final String urlTemplate : urlTemplates) {
-            final NamedPattern<UrlPart> template = new NamedPattern<UrlPart>(urlTemplate, UrlPart.class);
+            final NamedPattern<UrlPart> template = new NamedPattern<>(urlTemplate, UrlPart.class);
             _urlTemplates.add(template);
         }
         _hostnameTextField = createTextField("Hostname");

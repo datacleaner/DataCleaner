@@ -104,7 +104,7 @@ public class JobInvocationController {
         final String schemaName = getSchemaName(tablePath);
         final String tableName = getTableName(tablePath);
 
-        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<TableDataProvider<?>>(1);
+        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<>(1);
         final List<String> columnNames = getColumnNames(analysisJobContext.getSourceColumnPaths(), tablePath);
 
         final List<JobInvocationRowData> inputRows = input.getRows();

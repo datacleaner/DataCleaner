@@ -66,7 +66,7 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
         super(windowContext, imageManager.getImage(AbstractDatastoreDialog.DEFAULT_BANNER_IMAGE));
         _statusLabel = DCLabel.bright("Please specify columns' names");
         _columnNames = defaultColumnNames;
-        _columnNamesTextFields = new LinkedHashMap<String, JXTextField>();
+        _columnNamesTextFields = new LinkedHashMap<>();
         for (int i = 0; i < defaultColumnNames.size(); i++) {
             final String columnName = defaultColumnNames.get(i);
             final JXTextField textField = WidgetFactory.createTextField(columnName);
@@ -189,7 +189,7 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
 
     private List<String> getNewColumnNames() {
         final List<String> newColumnNames = new LinkedList<>();
-        final List<JXTextField> values = new ArrayList<JXTextField>(_columnNamesTextFields.values());
+        final List<JXTextField> values = new ArrayList<>(_columnNamesTextFields.values());
         for (int i = 0; i < values.size(); i++) {
             final JXTextField jxTextField = values.get(i);
             final String text;

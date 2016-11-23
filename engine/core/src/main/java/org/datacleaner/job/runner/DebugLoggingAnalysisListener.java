@@ -60,7 +60,8 @@ public class DebugLoggingAnalysisListener extends AnalysisListenerAdaptor {
     }
 
     @Override
-    public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row, final int currentRow) {
+    public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
+            final int currentRow) {
         logger.debug("rowProcessingProgress({}, {}, {}, {})",
                 new Object[] { job, metrics.getTable(), row, currentRow });
     }
@@ -81,7 +82,8 @@ public class DebugLoggingAnalysisListener extends AnalysisListenerAdaptor {
     }
 
     @Override
-    public void errorInComponent(final AnalysisJob job, final ComponentJob componentJob, final InputRow row, final Throwable throwable) {
+    public void errorInComponent(final AnalysisJob job, final ComponentJob componentJob, final InputRow row,
+            final Throwable throwable) {
         logger.debug("errorInComponent(" + job + "," + componentJob + "," + row + ")", throwable);
     }
 

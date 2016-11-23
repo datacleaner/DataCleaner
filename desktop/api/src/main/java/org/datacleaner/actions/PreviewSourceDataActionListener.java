@@ -66,7 +66,7 @@ public class PreviewSourceDataActionListener implements ActionListener {
     public void actionPerformed(final ActionEvent e) {
         Column[] columns = _columns;
         if (columns == null) {
-            final List<Column> cols = new ArrayList<Column>();
+            final List<Column> cols = new ArrayList<>();
             for (final InputColumn<?> col : _inputColumns) {
                 if (col.isPhysicalColumn()) {
                     cols.add(col.getPhysicalColumn());
@@ -79,7 +79,7 @@ public class PreviewSourceDataActionListener implements ActionListener {
             throw new IllegalStateException("No columns found - could not determine which columns to query");
         }
 
-        try (final DatastoreConnection con = _datastore.openConnection()) {
+        try (DatastoreConnection con = _datastore.openConnection()) {
             final DataContext dc = con.getDataContext();
             final Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
 

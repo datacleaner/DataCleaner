@@ -91,11 +91,11 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
 
     public SimpleComponentDescriptor(final Class<B> beanClass, final boolean initialize) {
         super(beanClass);
-        _configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>();
-        _providedProperties = new TreeSet<ProvidedPropertyDescriptor>();
-        _validateMethods = new HashSet<ValidateMethodDescriptor>();
-        _initializeMethods = new HashSet<InitializeMethodDescriptor>();
-        _closeMethods = new HashSet<CloseMethodDescriptor>();
+        _configuredProperties = new TreeSet<>();
+        _providedProperties = new TreeSet<>();
+        _validateMethods = new HashSet<>();
+        _initializeMethods = new HashSet<>();
+        _closeMethods = new HashSet<>();
         if (initialize) {
             visitClass();
         }
@@ -127,7 +127,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     @Override
     public Set<Annotation> getAnnotations() {
         final Annotation[] annotations = getComponentClass().getAnnotations();
-        return new HashSet<Annotation>(Arrays.asList(annotations));
+        return new HashSet<>(Arrays.asList(annotations));
     }
 
     @Override
@@ -141,7 +141,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
             return Collections.emptySet();
         }
 
-        final Set<ComponentCategory> result = new HashSet<ComponentCategory>();
+        final Set<ComponentCategory> result = new HashSet<>();
         for (final Class<? extends ComponentCategory> categoryClass : value) {
             if (categoryClass != ComponentCategory.class) {
                 final ComponentCategory category = ReflectionUtils.newInstance(categoryClass);
@@ -287,7 +287,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
 
     @Override
     public final Set<ProvidedPropertyDescriptor> getProvidedPropertiesByType(final Class<?> cls) {
-        final Set<ProvidedPropertyDescriptor> result = new HashSet<ProvidedPropertyDescriptor>();
+        final Set<ProvidedPropertyDescriptor> result = new HashSet<>();
         for (final ProvidedPropertyDescriptor descriptor : _providedProperties) {
             if (ReflectionUtils.is(descriptor.getType(), cls)) {
                 result.add(descriptor);
@@ -316,7 +316,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     @Override
     public final Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByAnnotation(
             final Class<? extends Annotation> annotationClass) {
-        final Set<ConfiguredPropertyDescriptor> set = new TreeSet<ConfiguredPropertyDescriptor>();
+        final Set<ConfiguredPropertyDescriptor> set = new TreeSet<>();
         for (final ConfiguredPropertyDescriptor configuredDescriptor : _configuredProperties) {
             final Annotation annotation = configuredDescriptor.getAnnotation(annotationClass);
             if (annotation != null) {
@@ -327,8 +327,9 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     }
 
     @Override
-    public final Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByType(final Class<?> type, final boolean includeArrays) {
-        final Set<ConfiguredPropertyDescriptor> set = new TreeSet<ConfiguredPropertyDescriptor>();
+    public final Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByType(final Class<?> type,
+            final boolean includeArrays) {
+        final Set<ConfiguredPropertyDescriptor> set = new TreeSet<>();
         for (final ConfiguredPropertyDescriptor configuredDescriptor : _configuredProperties) {
             final boolean include;
             if (includeArrays) {
@@ -407,7 +408,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
 
     @Override
     public final Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput(final boolean includeOptional) {
-        final Set<ConfiguredPropertyDescriptor> descriptors = new TreeSet<ConfiguredPropertyDescriptor>(
+        final Set<ConfiguredPropertyDescriptor> descriptors = new TreeSet<>(
                 _configuredProperties);
         for (final Iterator<ConfiguredPropertyDescriptor> it = descriptors.iterator(); it.hasNext(); ) {
             final ConfiguredPropertyDescriptor propertyDescriptor = it.next();

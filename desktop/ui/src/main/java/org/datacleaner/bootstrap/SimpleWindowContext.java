@@ -34,7 +34,7 @@ import org.datacleaner.windows.DCWindow;
  */
 public class SimpleWindowContext implements WindowContext {
 
-    private final List<DCWindow> _windows = new ArrayList<DCWindow>();
+    private final List<DCWindow> _windows = new ArrayList<>();
 
     @Override
     public void addExitActionListener(final ExitActionListener exitActionListener) {

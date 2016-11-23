@@ -47,7 +47,7 @@ public class SaxExecutionIdentifierReader extends DefaultHandler {
     private static class StopParsingException extends SAXException {
         private static final long serialVersionUID = 1L;
     }
-    private static final Set<String> ELEMENT_NAMES = new HashSet<String>(Arrays.asList("result-id", "execution-status",
+    private static final Set<String> ELEMENT_NAMES = new HashSet<>(Arrays.asList("result-id", "execution-status",
             "trigger-type", "job-begin-date"));
     private final String _name;
     private final Map<String, String> _valueMap;
@@ -61,7 +61,7 @@ public class SaxExecutionIdentifierReader extends DefaultHandler {
 
     private SaxExecutionIdentifierReader(final String name) {
         _name = name;
-        _valueMap = new HashMap<String, String>();
+        _valueMap = new HashMap<>();
         _valueBuilder = new StringBuilder();
 
         _readChars = false;

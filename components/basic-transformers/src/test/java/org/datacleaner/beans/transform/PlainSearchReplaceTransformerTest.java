@@ -38,7 +38,7 @@ public class PlainSearchReplaceTransformerTest {
         PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<String, String>();
+        t.replacements = new LinkedHashMap<>();
         t.replacements.put("foo", "hello");
         t.validate();
 
@@ -51,7 +51,7 @@ public class PlainSearchReplaceTransformerTest {
         PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<String, String>();
+        t.replacements = new LinkedHashMap<>();
         t.replacements.put("foo", "hello");
         t.replacements.put("bar", "world");
         t.validate();
@@ -67,7 +67,7 @@ public class PlainSearchReplaceTransformerTest {
         PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = true;
-        t.replacements = new LinkedHashMap<String, String>();
+        t.replacements = new LinkedHashMap<>();
         t.replacements.put("foo", "hello");
         t.replacements.put("bar", "world");
         t.validate();
@@ -82,7 +82,7 @@ public class PlainSearchReplaceTransformerTest {
         PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<String, String>();
+        t.replacements = new LinkedHashMap<>();
         t.replacements.put("foo", "bar bar bar");
         t.replacements.put("bar", "world");
         t.validate();
@@ -96,7 +96,7 @@ public class PlainSearchReplaceTransformerTest {
         PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<String, String>();
+        t.replacements = new LinkedHashMap<>();
         t.replacements.put("foo", "");
         t.validate();
 
@@ -108,7 +108,7 @@ public class PlainSearchReplaceTransformerTest {
         PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<String, String>();
+        t.replacements = new LinkedHashMap<>();
         t.replacements.put("", "foo");
         t.validate();
     }
@@ -118,7 +118,7 @@ public class PlainSearchReplaceTransformerTest {
         PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<String, String>();
+        t.replacements = new LinkedHashMap<>();
         t.replacements.put("foo", "foo bar foo");
         t.validate();
     }

@@ -30,7 +30,7 @@ import org.datacleaner.storage.RowAnnotationImpl;
 
 public class ValueDistributionResultSwingRendererGroupDelegateTest extends TestCase {
 
-    private InputColumn<String> column = new MockInputColumn<String>("col", String.class);
+    private InputColumn<String> column = new MockInputColumn<>("col", String.class);
 
     public void testVanilla() throws Exception {
         ValueCountListImpl topValueCount = ValueCountListImpl.createFullList();

@@ -50,7 +50,7 @@ public class Descriptors {
      * @return
      */
     public static <C> ComponentDescriptor<C> ofComponent(final Class<C> componentClass) {
-        return new SimpleComponentDescriptor<C>(componentClass, true);
+        return new SimpleComponentDescriptor<>(componentClass, true);
     }
 
     /**
@@ -61,7 +61,7 @@ public class Descriptors {
      * @return
      */
     public static <A extends Analyzer<?>> AnalyzerDescriptor<A> ofAnalyzer(final Class<A> analyzerClass) {
-        return new AnnotationBasedAnalyzerComponentDescriptor<A>(analyzerClass);
+        return new AnnotationBasedAnalyzerComponentDescriptor<>(analyzerClass);
     }
 
     /**
@@ -73,7 +73,7 @@ public class Descriptors {
      * @return
      */
     public static <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> ofFilter(final Class<F> filterClass) {
-        return new AnnotationBasedFilterComponentDescriptor<F, C>(filterClass);
+        return new AnnotationBasedFilterComponentDescriptor<>(filterClass);
     }
 
     /**
@@ -103,7 +103,7 @@ public class Descriptors {
      * @return
      */
     public static <T extends Transformer> TransformerDescriptor<T> ofTransformer(final Class<T> transformerClass) {
-        return new AnnotationBasedTransformerComponentDescriptor<T>(transformerClass);
+        return new AnnotationBasedTransformerComponentDescriptor<>(transformerClass);
     }
 
     /**
@@ -114,7 +114,7 @@ public class Descriptors {
      * @return
      */
     public static <R extends Renderer<?, ?>> RendererBeanDescriptor<R> ofRenderer(final Class<R> rendererClass) {
-        return new AnnotationBasedRendererBeanDescriptor<R>(rendererClass);
+        return new AnnotationBasedRendererBeanDescriptor<>(rendererClass);
     }
 
     /**

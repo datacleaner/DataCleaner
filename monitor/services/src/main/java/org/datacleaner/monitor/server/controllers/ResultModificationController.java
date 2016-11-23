@@ -68,7 +68,7 @@ public class ResultModificationController {
 
         resultName = resultName.replaceAll("\\+", " ");
 
-        final Map<String, String> response = new TreeMap<String, String>();
+        final Map<String, String> response = new TreeMap<>();
 
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
 

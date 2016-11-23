@@ -95,7 +95,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         lastNameInputColumn = ajb.getSourceColumnByName("lastname");
         stringAnalyzerBuilder.addInputColumn(lastNameInputColumn);
 
-        consumers = new ArrayList<RowProcessingConsumer>();
+        consumers = new ArrayList<>();
 
         baseQuery = con.getDataContext().query().from("EMPLOYEES").select("LASTNAME").toQuery();
     }

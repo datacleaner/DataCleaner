@@ -61,7 +61,7 @@ public class DefineMetricPanel extends FlowPanel {
 
         _tenant = tenant;
         _jobMetrics = jobMetrics;
-        _selectMetricPanels = new ArrayList<SelectMetricPanel>();
+        _selectMetricPanels = new ArrayList<>();
 
         _formulaAddMetricButton = DCButtons.defaultButton("glyphicon-plus", null);
         _formulaAddMetricButton.addStyleName("AddMetricButton");
@@ -217,7 +217,7 @@ public class DefineMetricPanel extends FlowPanel {
     public MetricIdentifier getMetric() throws DCUserInputException {
         if (_formulaCheckBox.getValue()) {
             final String formula = _formulaTextBox.getValue();
-            final List<MetricIdentifier> children = new ArrayList<MetricIdentifier>();
+            final List<MetricIdentifier> children = new ArrayList<>();
             for (final SelectMetricPanel panel : _selectMetricPanels) {
                 final MetricIdentifier childMetric = panel.getMetric();
                 validateFormulaChildMetric(childMetric);

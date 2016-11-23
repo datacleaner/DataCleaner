@@ -42,7 +42,7 @@ public final class ImmutableTransformerJob extends ImmutableComponentJob impleme
             final ComponentRequirement componentRequirement, final Map<String, String> metadataProperties,
             final OutputDataStreamJob[] outputDataStreamJobs) {
         super(name, descriptor, componentConfiguration, componentRequirement, metadataProperties, outputDataStreamJobs);
-        _output = Collections.unmodifiableList(new ArrayList<MutableInputColumn<?>>(output));
+        _output = Collections.unmodifiableList(new ArrayList<>(output));
     }
 
     /**
@@ -55,8 +55,8 @@ public final class ImmutableTransformerJob extends ImmutableComponentJob impleme
      * @param metadataProperties
      *
      * @deprecated use
-     *             {@link #ImmutableTransformerJob(String, TransformerDescriptor, ComponentConfiguration, Collection, ComponentRequirement, Map, OutputDataStreamJob[])}
-     *             instead
+     *             {@link #ImmutableTransformerJob(String, TransformerDescriptor, ComponentConfiguration,
+     *             Collection, ComponentRequirement, Map, OutputDataStreamJob[])} instead
      */
     @Deprecated
     public ImmutableTransformerJob(final String name, final TransformerDescriptor<?> descriptor,

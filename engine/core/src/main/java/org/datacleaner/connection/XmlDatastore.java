@@ -72,7 +72,7 @@ public class XmlDatastore extends UsageAwareDatastore<DataContext> implements Fi
         } else {
             dataContext = new XmlSaxDataContext(file, _tableDefs);
         }
-        return new DatastoreConnectionImpl<DataContext>(dataContext, this);
+        return new DatastoreConnectionImpl<>(dataContext, this);
     }
 
     @Override

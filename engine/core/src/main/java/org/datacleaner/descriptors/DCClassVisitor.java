@@ -55,7 +55,7 @@ final class DCClassVisitor extends ClassVisitor {
     private Class<?> _beanClazz;
     private String _name;
 
-    public DCClassVisitor(final ClassLoader classLoader,
+    DCClassVisitor(final ClassLoader classLoader,
             final Predicate<Class<? extends RenderingFormat<?>>> renderingFormatPredicate) {
         super(API_VERSION);
         _classLoader = classLoader;
@@ -63,7 +63,8 @@ final class DCClassVisitor extends ClassVisitor {
     }
 
     @Override
-    public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
+    public void visit(final int version, final int access, final String name, final String signature,
+            final String superName, final String[] interfaces) {
         _name = name;
     }
 
@@ -195,7 +196,8 @@ final class DCClassVisitor extends ClassVisitor {
     }
 
     @Override
-    public FieldVisitor visitField(final int arg0, final String arg1, final String arg2, final String arg3, final Object arg4) {
+    public FieldVisitor visitField(final int arg0, final String arg1, final String arg2, final String arg3,
+            final Object arg4) {
         return null;
     }
 
@@ -204,7 +206,8 @@ final class DCClassVisitor extends ClassVisitor {
     }
 
     @Override
-    public MethodVisitor visitMethod(final int arg0, final String arg1, final String arg2, final String arg3, final String[] arg4) {
+    public MethodVisitor visitMethod(final int arg0, final String arg1, final String arg2, final String arg3,
+            final String[] arg4) {
         return null;
     }
 

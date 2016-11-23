@@ -78,7 +78,7 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
             final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
             final DataCleanerConfiguration configuration, final DCModule dcModule) {
         super(analyzerJobBuilder, propertyWidgetFactory);
-        _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
+        _overriddenPropertyWidgets = new HashMap<>();
 
         final AnalyzerDescriptor<UpdateTableAnalyzer> descriptor = analyzerJobBuilder.getDescriptor();
         assert descriptor.getComponentClass() == UpdateTableAnalyzer.class;
@@ -195,7 +195,7 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
                 IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,
                 _additionalErrorLogValuesProperty), false);
 
-        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
+        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<>();
         propertyTaskPanes.add(taskPane1);
         propertyTaskPanes.add(taskPane2);
         propertyTaskPanes.add(taskPane3);

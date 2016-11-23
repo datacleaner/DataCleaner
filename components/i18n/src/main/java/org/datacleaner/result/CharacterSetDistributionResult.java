@@ -46,7 +46,7 @@ public class CharacterSetDistributionResult extends CrosstabResult {
             final Crosstab<Number> crosstab) {
         super(crosstab);
         _columns = columns;
-        _unicodeSetNames = new TreeSet<String>();
+        _unicodeSetNames = new TreeSet<>();
         for (final String unicodeSetName : unicodeSetNames) {
             _unicodeSetNames.add(unicodeSetName);
         }
@@ -56,7 +56,7 @@ public class CharacterSetDistributionResult extends CrosstabResult {
             final Crosstab<Number> crosstab) {
         super(crosstab);
         _columns = columns;
-        _unicodeSetNames = new TreeSet<String>(unicodeSetNames);
+        _unicodeSetNames = new TreeSet<>(unicodeSetNames);
     }
 
     /**

@@ -48,9 +48,10 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
         this(name, resource, filename, null);
     }
 
-    public ExcelDatastore(final String name, final Resource resource, final String filename, final List<String> customColumnNames) {
+    public ExcelDatastore(final String name, final Resource resource, final String filename,
+            final List<String> customColumnNames) {
         super(name);
-        _resourceRef = new SerializableRef<Resource>(resource);
+        _resourceRef = new SerializableRef<>(resource);
         _filename = filename;
         _customColumnNames = customColumnNames;
     }
@@ -88,7 +89,7 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
             dc = new ExcelDataContext(resource, excelConfiguration);
         }
 
-        return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dc, this);
+        return new UpdateableDatastoreConnectionImpl<>(dc, this);
     }
 
     private ExcelConfiguration getExcelConfiguration() {

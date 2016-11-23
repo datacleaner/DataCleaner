@@ -36,7 +36,7 @@ public class SasDatastoreTest extends TestCase {
     // of MetaModel and SassyReader are not synced.
     public void testConnectAndExplore() throws Exception {
         final SasDatastore ds = new SasDatastore("my sas ds", new File("src/test/resources/sas"));
-        try (final DatastoreConnection con = ds.openConnection()) {
+        try (DatastoreConnection con = ds.openConnection()) {
             Schema schema = con.getSchemaNavigator().getDefaultSchema();
             assertEquals("[dummy1, dummy2, pizza]", Arrays.toString(schema.getTableNames()));
 

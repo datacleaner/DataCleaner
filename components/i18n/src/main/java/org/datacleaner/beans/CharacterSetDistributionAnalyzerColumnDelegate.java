@@ -52,7 +52,7 @@ final class CharacterSetDistributionAnalyzerColumnDelegate {
             final Map<String, UnicodeSet> unicodeSets) {
         _annotationFactory = annotationFactory;
         _unicodeSets = unicodeSets;
-        _annotations = new HashMap<String, RowAnnotation>();
+        _annotations = new HashMap<>();
         for (final String name : unicodeSets.keySet()) {
             _annotations.put(name, _annotationFactory.createAnnotation());
         }
@@ -63,7 +63,7 @@ final class CharacterSetDistributionAnalyzerColumnDelegate {
     }
 
     public synchronized void run(final String value, final InputRow row, final int distinctCount) {
-        final List<Entry<String, UnicodeSet>> unicodeSetsRemaining = new ArrayList<Entry<String, UnicodeSet>>(
+        final List<Entry<String, UnicodeSet>> unicodeSetsRemaining = new ArrayList<>(
                 _unicodeSets.entrySet());
         final CharIterator charIterator = new CharIterator(value);
         while (charIterator.hasNext()) {

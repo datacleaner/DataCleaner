@@ -73,7 +73,7 @@ public final class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<S
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         final List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Tables", _tableCountLabel));
+        result.add(new ImmutableEntry<>("Tables", _tableCountLabel));
         return result;
     }
 

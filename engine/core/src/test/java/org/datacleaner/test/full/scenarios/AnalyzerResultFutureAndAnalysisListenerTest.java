@@ -72,7 +72,7 @@ public class AnalyzerResultFutureAndAnalysisListenerTest extends TestCase {
         final AnalysisJob job;
 
         // build job
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore(datastore);
             ajb.addSourceColumns("CUSTOMERS.CUSTOMERNAME", "CUSTOMERS.PHONE");
 

@@ -56,7 +56,7 @@ public class DCTableCellRenderer implements TableCellRenderer {
     public DCTableCellRenderer(final DCTable table) {
         super();
         _table = table;
-        _alignmentOverrides = new HashMap<Integer, Alignment>();
+        _alignmentOverrides = new HashMap<>();
         _delegate = new DefaultTableCellRenderer();
     }
 

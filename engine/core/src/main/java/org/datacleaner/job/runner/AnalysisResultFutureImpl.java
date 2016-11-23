@@ -43,7 +43,8 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
     private final StatusAwareTaskListener _jobTaskListener;
     private volatile boolean _done;
 
-    public AnalysisResultFutureImpl(final Queue<JobAndResult> resultQueue, final StatusAwareTaskListener jobCompletionListener,
+    public AnalysisResultFutureImpl(final Queue<JobAndResult> resultQueue,
+            final StatusAwareTaskListener jobCompletionListener,
             final ErrorAware errorAware) {
         _resultQueue = resultQueue;
         _jobTaskListener = jobCompletionListener;
@@ -101,8 +102,8 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
         if (isErrornous()) {
             throw new AnalysisJobFailedException(getErrors());
         }
-        final ArrayList<JobAndResult> resultQueueCopy = new ArrayList<JobAndResult>(_resultQueue);
-        final ArrayList<AnalyzerResult> result = new ArrayList<AnalyzerResult>(resultQueueCopy.size());
+        final ArrayList<JobAndResult> resultQueueCopy = new ArrayList<>(_resultQueue);
+        final ArrayList<AnalyzerResult> result = new ArrayList<>(resultQueueCopy.size());
         for (final JobAndResult jobResult : resultQueueCopy) {
             result.add(jobResult.getResult());
         }
@@ -115,7 +116,7 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
         if (isErrornous()) {
             throw new AnalysisJobFailedException(getErrors());
         }
-        final ArrayList<JobAndResult> resultQueueCopy = new ArrayList<JobAndResult>(_resultQueue);
+        final ArrayList<JobAndResult> resultQueueCopy = new ArrayList<>(_resultQueue);
         for (final JobAndResult jobResult : resultQueueCopy) {
             if (jobResult.getJob().equals(componentJob)) {
                 return jobResult.getResult();
@@ -130,8 +131,8 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
         if (isErrornous()) {
             throw new AnalysisJobFailedException(getErrors());
         }
-        final ArrayList<JobAndResult> resultQueueCopy = new ArrayList<JobAndResult>(_resultQueue);
-        final Map<ComponentJob, AnalyzerResult> result = new HashMap<ComponentJob, AnalyzerResult>();
+        final ArrayList<JobAndResult> resultQueueCopy = new ArrayList<>(_resultQueue);
+        final Map<ComponentJob, AnalyzerResult> result = new HashMap<>();
         for (final JobAndResult jobResult : resultQueueCopy) {
             final ComponentJob job = jobResult.getJob();
             final AnalyzerResult analyzerResult = jobResult.getResult();

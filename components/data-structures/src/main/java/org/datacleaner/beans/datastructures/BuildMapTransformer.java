@@ -122,9 +122,9 @@ public class BuildMapTransformer implements Transformer {
 
         final Map<String, Object> map;
         if (retainKeyOrder) {
-            map = new LinkedHashMap<String, Object>(existingMap);
+            map = new LinkedHashMap<>(existingMap);
         } else {
-            map = new HashMap<String, Object>(existingMap);
+            map = new HashMap<>(existingMap);
         }
 
         for (int i = 0; i < keys.length; i++) {

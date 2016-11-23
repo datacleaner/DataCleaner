@@ -214,7 +214,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
      */
     public MetricIdentifier copy() {
         if (isFormulaBased()) {
-            final List<MetricIdentifier> children = new ArrayList<MetricIdentifier>();
+            final List<MetricIdentifier> children = new ArrayList<>();
             for (final MetricIdentifier child : getChildren()) {
                 final MetricIdentifier childCopy = child.copy();
                 children.add(childCopy);

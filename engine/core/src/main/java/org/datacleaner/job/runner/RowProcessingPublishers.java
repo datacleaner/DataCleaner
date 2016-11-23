@@ -68,6 +68,7 @@ public final class RowProcessingPublishers {
             _componentCreated = componentCreated;
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(RowProcessingPublishers.class);
     private final AnalysisJob _analysisJob;
     private final AnalysisListener _analysisListener;
@@ -91,7 +92,8 @@ public final class RowProcessingPublishers {
      *             instead.
      */
     @Deprecated
-    public RowProcessingPublishers(final AnalysisJob analysisJob, final AnalysisListener analysisListener, final TaskRunner taskRunner,
+    public RowProcessingPublishers(final AnalysisJob analysisJob, final AnalysisListener analysisListener,
+            final TaskRunner taskRunner,
             final LifeCycleHelper lifeCycleHelper, final SourceColumnFinder sourceColumnFinder) {
         this(analysisJob, analysisListener, (ErrorAware) analysisListener, taskRunner, lifeCycleHelper);
     }
@@ -105,7 +107,8 @@ public final class RowProcessingPublishers {
      * @param taskRunner
      * @param lifeCycleHelper
      */
-    public RowProcessingPublishers(final AnalysisJob analysisJob, final AnalysisListener analysisListener, final ErrorAware errorAware,
+    public RowProcessingPublishers(final AnalysisJob analysisJob, final AnalysisListener analysisListener,
+            final ErrorAware errorAware,
             final TaskRunner taskRunner, final LifeCycleHelper lifeCycleHelper) {
         _analysisJob = analysisJob;
         _analysisListener = analysisListener;
@@ -124,7 +127,7 @@ public final class RowProcessingPublishers {
     }
 
     public static Collection<ComponentJob> getAllComponents(final AnalysisJob job) {
-        return CollectionUtils.<ComponentJob> concat(false, job.getFilterJobs(), job.getTransformerJobs(),
+        return CollectionUtils.concat(false, job.getFilterJobs(), job.getTransformerJobs(),
                 job.getAnalyzerJobs());
     }
 
@@ -176,7 +179,7 @@ public final class RowProcessingPublishers {
     }
 
     public Column[] getPhysicalColumns(final SourceColumnFinder sourceColumnFinder, final ComponentJob componentJob) {
-        final Set<Column> physicalColumns = new HashSet<Column>();
+        final Set<Column> physicalColumns = new HashSet<>();
 
         final InputColumn<?>[] inputColumns = componentJob.getInput();
         for (final InputColumn<?> inputColumn : inputColumns) {
@@ -206,7 +209,7 @@ public final class RowProcessingPublishers {
         if (physicalColumns.length == 0) {
             // if not dependent on any specific tables, make component available
             // for all tables
-            final Set<Table> allTables = new HashSet<Table>();
+            final Set<Table> allTables = new HashSet<>();
             final Collection<InputColumn<?>> allSourceColumns = _analysisJob.getSourceColumns();
             for (final InputColumn<?> inputColumn : allSourceColumns) {
                 allTables.add(inputColumn.getPhysicalColumn().getTable());
@@ -320,7 +323,7 @@ public final class RowProcessingPublishers {
         if (table == null || inputColumns == null || inputColumns.length == 0) {
             return new InputColumn<?>[0];
         }
-        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> result = new ArrayList<>();
         for (final InputColumn<?> inputColumn : inputColumns) {
             final Set<Column> sourcePhysicalColumns = sourceColumnFinder.findOriginatingColumns(inputColumn);
             for (final Column physicalColumn : sourcePhysicalColumns) {

@@ -90,7 +90,7 @@ public class JavaScriptTransformerTest extends TestCase {
     public void testAddNumberTypes() throws Exception {
         JavaScriptTransformer t = new JavaScriptTransformer();
         t.setSourceCode("function eval() {return values[0] + 2;}; eval();");
-        InputColumn<Number> col = new MockInputColumn<Number>("my number",
+        InputColumn<Number> col = new MockInputColumn<>("my number",
                 Number.class);
         t.setColumns(new InputColumn[] { col });
 
@@ -105,7 +105,7 @@ public class JavaScriptTransformerTest extends TestCase {
     public void testSimpleScriptParseIntExecution() throws Exception {
         JavaScriptTransformer t = new JavaScriptTransformer();
         t.setSourceCode("function eval() {return parseInt(values[0], 10)}; eval();");
-        InputColumn<String> col = new MockInputColumn<String>("my number",
+        InputColumn<String> col = new MockInputColumn<>("my number",
                 String.class);
         t.setColumns(new InputColumn[] { col });
 

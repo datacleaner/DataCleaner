@@ -111,7 +111,7 @@ public class SimpleJobEngineManager implements JobEngineManager {
         }
 
         // build meaningful error message
-        final List<String> types = new ArrayList<String>();
+        final List<String> types = new ArrayList<>();
         for (final JobEngine<?> engine : jobEngines) {
             types.add(engine.getClass().getName());
         }

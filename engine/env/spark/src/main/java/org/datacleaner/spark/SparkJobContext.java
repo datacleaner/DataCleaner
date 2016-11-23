@@ -218,7 +218,7 @@ public class SparkJobContext implements Serializable {
     }
 
     private ComponentJob getComponentByKey(final AnalysisJob job, final String queriedKey) {
-        final List<ComponentJob> componentJobs = CollectionUtils.<ComponentJob> concat(false, job.getTransformerJobs(),
+        final List<ComponentJob> componentJobs = CollectionUtils.concat(false, job.getTransformerJobs(),
                 job.getTransformerJobs(), job.getAnalyzerJobs());
         for (final ComponentJob componentJob : componentJobs) {
             final String componentKey = getComponentKey(componentJob);

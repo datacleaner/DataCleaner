@@ -108,12 +108,12 @@ public class ComponentHandlerTest {
         expect(transformerDescriptor.getConfiguredProperties()).andReturn(getConfiguredPropertiesMock()).anyTimes();
         expect(transformerDescriptor.getDisplayName()).andReturn("descriptor display name").anyTimes();
         expect(transformerDescriptor.getProvidedProperties()).andReturn(
-                Collections.<ProvidedPropertyDescriptor> emptySet()).anyTimes();
-        expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.<ValidateMethodDescriptor> emptySet())
+                Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.emptySet())
                 .anyTimes();
         expect(transformerDescriptor.getInitializeMethods()).andReturn(
-                Collections.<InitializeMethodDescriptor> emptySet()).anyTimes();
-        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.<CloseMethodDescriptor> emptySet())
+                Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.emptySet())
                 .anyTimes();
         expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
         replay(transformerDescriptor);

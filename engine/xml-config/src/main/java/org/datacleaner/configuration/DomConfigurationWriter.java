@@ -1105,7 +1105,8 @@ public class DomConfigurationWriter {
     }
 
 
-    public void addRemoteServer(final String serverName, final String url, final String username, final String password) {
+    public void addRemoteServer(final String serverName, final String url, final String username,
+            final String password) {
         final Element descriptorProviderElement =
                 getOrCreateChildElementByTagName(getDocumentElement(), "descriptor-providers");
         final Element remoteComponentsElement =

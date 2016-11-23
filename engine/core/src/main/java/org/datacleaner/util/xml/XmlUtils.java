@@ -47,7 +47,8 @@ public class XmlUtils {
         writeDocument(docOrNode, out, true);
     }
 
-    public static void writeDocument(final Node docOrNode, final OutputStream out, final boolean includeXmlDeclaration) {
+    public static void writeDocument(final Node docOrNode, final OutputStream out,
+            final boolean includeXmlDeclaration) {
         final Transformer transformer = createTransformer(includeXmlDeclaration);
         try {
             final Source source = new DOMSource(docOrNode);

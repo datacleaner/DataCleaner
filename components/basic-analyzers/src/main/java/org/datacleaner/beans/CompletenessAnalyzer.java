@@ -70,11 +70,11 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
             _predicate = predicate;
         }
 
-        private static final boolean isNotNullOrEmpty(final Object value) {
+        private static boolean isNotNullOrEmpty(final Object value) {
             return !isNullOrEmpty(value);
         }
 
-        private static final boolean isNullOrEmpty(final Object value) {
+        private static boolean isNullOrEmpty(final Object value) {
             if (value instanceof String) {
                 return Strings.isNullOrEmpty((String) value);
             }

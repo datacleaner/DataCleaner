@@ -85,8 +85,8 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
 
     public SortMergeWriter(final int bufferSize, final Comparator<? super R> comparator) {
         _bufferSize = bufferSize;
-        _tempFiles = new ArrayList<File>();
-        _buffer = new TreeMap<R, Integer>(comparator);
+        _tempFiles = new ArrayList<>();
+        _buffer = new TreeMap<>(comparator);
         _comparator = comparator;
         _nullCount = new AtomicInteger();
     }
@@ -228,7 +228,7 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
 
             tempFileObjectInputStreams = createTempFileObjectInputStreams();
 
-            final List<Entry<R, Integer>> rowCandidates = new ArrayList<Entry<R, Integer>>(_tempFiles.size());
+            final List<Entry<R, Integer>> rowCandidates = new ArrayList<>(_tempFiles.size());
             for (int i = 0; i < _tempFiles.size(); i++) {
                 rowCandidates.add(null);
             }
@@ -257,7 +257,7 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
                 }
 
                 // set count to 0 (the next loop will increment it)
-                currentRow = new ImmutableEntry<R, Integer>(currentRow.getKey(), 0);
+                currentRow = new ImmutableEntry<>(currentRow.getKey(), 0);
 
                 for (int i = 0; i < rowCandidates.size(); i++) {
                     final Entry<R, Integer> rowCandidate = rowCandidates.get(i);
@@ -265,7 +265,7 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
                         if (_comparator.compare(rowCandidate.getKey(), currentRow.getKey()) == 0) {
                             // sum up a new count
                             final int newCount = currentRow.getValue().intValue() + rowCandidate.getValue().intValue();
-                            currentRow = new ImmutableEntry<R, Integer>(currentRow.getKey(), newCount);
+                            currentRow = new ImmutableEntry<>(currentRow.getKey(), newCount);
                             rowCandidates.set(i, null);
                         }
                     }
@@ -293,7 +293,8 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
         }
     }
 
-    private void readNextRows(final List<Entry<R, Integer>> nextRows, final ObjectInputStream[] tempFileObjectInputStreams)
+    private void readNextRows(final List<Entry<R, Integer>> nextRows,
+            final ObjectInputStream[] tempFileObjectInputStreams)
             throws Exception {
         for (int i = 0; i < tempFileObjectInputStreams.length; i++) {
             if (tempFileObjectInputStreams[i] != null) {
@@ -304,7 +305,7 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
                         final R row = (R) tempFileObjectInputStreams[i].readObject();
                         final int count = tempFileObjectInputStreams[i].readInt();
 
-                        final Entry<R, Integer> entry = new ImmutableEntry<R, Integer>(row, count);
+                        final Entry<R, Integer> entry = new ImmutableEntry<>(row, count);
                         nextRows.set(i, entry);
                     } catch (final EOFException e) {
                         FileHelper.safeClose(tempFileObjectInputStreams[i]);

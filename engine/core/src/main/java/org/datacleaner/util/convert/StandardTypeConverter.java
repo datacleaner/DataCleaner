@@ -89,12 +89,13 @@ public class StandardTypeConverter implements Converter<Object> {
         this(null, null);
     }
 
-    public StandardTypeConverter(final DataCleanerConfiguration configuration, final Converter<Object> parentConverter) {
+    public StandardTypeConverter(final DataCleanerConfiguration configuration,
+            final Converter<Object> parentConverter) {
         _configuration = configuration;
         _parentConverter = parentConverter;
     }
 
-    private static final Date toDate(final String str) {
+    private static Date toDate(final String str) {
         try {
             return new SimpleDateFormat(dateFormatString).parse(str);
         } catch (final ParseException e) {

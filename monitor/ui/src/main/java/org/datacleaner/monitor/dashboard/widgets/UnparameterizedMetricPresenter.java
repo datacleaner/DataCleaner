@@ -63,7 +63,7 @@ public class UnparameterizedMetricPresenter implements MetricPresenter {
 
     @Override
     public List<MetricIdentifier> getSelectedMetrics() {
-        final List<MetricIdentifier> metrics = new ArrayList<MetricIdentifier>();
+        final List<MetricIdentifier> metrics = new ArrayList<>();
         if (_checkBox.getValue().booleanValue()) {
             metrics.add(_metricToReturn);
         }

@@ -40,7 +40,7 @@ public class PredefinedTokenDefinition implements Serializable {
 
     public PredefinedTokenDefinition(final String name, final String... tokenRegexes) {
         _name = name;
-        _tokenRegexes = new LinkedHashSet<String>();
+        _tokenRegexes = new LinkedHashSet<>();
         for (final String string : tokenRegexes) {
             _tokenRegexes.add(string);
         }
@@ -56,7 +56,7 @@ public class PredefinedTokenDefinition implements Serializable {
 
     public Set<Pattern> getTokenRegexPatterns() {
         if (_tokenRegexPatterns == null) {
-            _tokenRegexPatterns = new LinkedHashSet<Pattern>();
+            _tokenRegexPatterns = new LinkedHashSet<>();
             for (final String tokenRegex : _tokenRegexes) {
                 final Pattern pattern = Pattern.compile(tokenRegex);
                 _tokenRegexPatterns.add(pattern);

@@ -40,7 +40,7 @@ public class StringPatternMatcherTransformerTest extends TestCase {
 
         t._configuration = new DataCleanerConfigurationImpl();
         t.setStringPatterns(stringPatterns);
-        t.setColumn(new MockInputColumn<Object>("Greeting", Object.class));
+        t.setColumn(new MockInputColumn<>("Greeting", Object.class));
 
 
         assertEquals(3, t.getOutputColumns().getColumnCount());

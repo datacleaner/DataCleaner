@@ -33,7 +33,7 @@ public class SimpleAnalysisResultTest extends TestCase {
     public void testConstructAndGet() throws Exception {
         ComponentJob mock = EasyMock.createMock(ComponentJob.class);
         AnalyzerResult result = new NumberResult(42);
-        Map<ComponentJob, AnalyzerResult> results = new HashMap<ComponentJob, AnalyzerResult>();
+        Map<ComponentJob, AnalyzerResult> results = new HashMap<>();
         results.put(mock, result);
 
         SimpleAnalysisResult analysisResult = new SimpleAnalysisResult(results);

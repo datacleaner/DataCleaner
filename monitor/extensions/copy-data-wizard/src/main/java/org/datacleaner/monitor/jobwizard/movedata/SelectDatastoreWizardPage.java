@@ -75,7 +75,7 @@ class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
     @Override
     protected Map<String, Object> getFormModel() {
         final String[] datastoreNames = _session.getDatastoreNames();
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("datastoreNames", datastoreNames);
         return map;
     }

@@ -26,12 +26,12 @@ import junit.framework.TestCase;
 public class CrosstabTest extends TestCase {
 
     public void testCastValueClass() throws Exception {
-        Crosstab<String> c1 = new Crosstab<String>(String.class, "foo", "bar");
+        Crosstab<String> c1 = new Crosstab<>(String.class, "foo", "bar");
         c1.where("foo", "a").where("bar", "b").put("yes", true);
 
         Crosstab<Serializable> c2 = c1.castValueClass(Serializable.class);
         try {
-            c2.where("foo", "a").where("bar", "b").put(3l);
+            c2.where("foo", "a").where("bar", "b").put(3L);
             fail("Excepted exception");
         } catch (IllegalArgumentException e) {
             assertEquals(
@@ -51,7 +51,7 @@ public class CrosstabTest extends TestCase {
     }
 
     public void testGetAndSafeGet() throws Exception {
-        Crosstab<String> c1 = new Crosstab<String>(String.class, "foo", "bar");
+        Crosstab<String> c1 = new Crosstab<>(String.class, "foo", "bar");
         CrosstabNavigator<String> nav = c1.where("foo", "a").where("bar", "b");
         nav.put("yes", true);
 

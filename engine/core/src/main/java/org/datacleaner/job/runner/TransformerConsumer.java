@@ -46,7 +46,8 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
     private final Set<ProvidedPropertyDescriptor> _outputRowCollectorProperties;
     private RowIdGenerator _idGenerator;
 
-    public TransformerConsumer(final Transformer transformer, final TransformerJob transformerJob, final InputColumn<?>[] inputColumns,
+    public TransformerConsumer(final Transformer transformer, final TransformerJob transformerJob,
+            final InputColumn<?>[] inputColumns,
             final RowProcessingPublisher publisher) {
         super(publisher, transformerJob, transformerJob);
         _transformer = transformer;
@@ -177,7 +178,8 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
         return _idGenerator.nextVirtualRowId();
     }
 
-    private void addValuesToRow(final TransformedInputRow resultRow, final InputColumn<?>[] outputColumns, final Object[] values) {
+    private void addValuesToRow(final TransformedInputRow resultRow, final InputColumn<?>[] outputColumns,
+            final Object[] values) {
         assert outputColumns.length == values.length;
 
         // add output values to row.

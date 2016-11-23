@@ -153,7 +153,7 @@ public final class MetaModelInputRow extends AbstractLegacyAwareInputRow {
 
     @Override
     public List<InputColumn<?>> getInputColumns() {
-        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> result = new ArrayList<>();
         final SelectItem[] selectItems = _row.getSelectItems();
         for (final SelectItem selectItem : selectItems) {
             if (selectItem.getColumn() != null && selectItem.getAggregateFunction() == null) {

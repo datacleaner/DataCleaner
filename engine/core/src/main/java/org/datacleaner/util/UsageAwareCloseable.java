@@ -64,7 +64,7 @@ public abstract class UsageAwareCloseable implements Closeable {
         _closed = new AtomicBoolean(false);
 
         if (logger.isDebugEnabled()) {
-            _closeEvents = new ArrayList<CloseEvent>(2);
+            _closeEvents = new ArrayList<>(2);
             logger.debug("{} instantiated by:", this.getClass().getSimpleName());
             logNearestStack();
         } else {

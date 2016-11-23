@@ -68,6 +68,6 @@ public class ComponentStoreTest {
     }
 
     private ComponentStoreHolder createHolder(String instanceId) {
-        return new ComponentStoreHolder(10l, null, instanceId, componentName);
+        return new ComponentStoreHolder(10L, null, instanceId, componentName);
     }
 }

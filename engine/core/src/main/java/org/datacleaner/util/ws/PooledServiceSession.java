@@ -54,7 +54,8 @@ public class PooledServiceSession<R> extends RetryServiceSession<R> {
      * @param maxRetries
      * @param sleepTimeBetweenRetries
      */
-    public PooledServiceSession(final GenericObjectPool<Integer> pool, final int maxRetries, final int[] sleepTimeBetweenRetries) {
+    public PooledServiceSession(final GenericObjectPool<Integer> pool, final int maxRetries,
+            final int[] sleepTimeBetweenRetries) {
         super(maxRetries, sleepTimeBetweenRetries);
         _connectionPool = pool;
     }
@@ -90,7 +91,8 @@ public class PooledServiceSession<R> extends RetryServiceSession<R> {
      * @return
      */
     public static GenericObjectPool<Integer> createConnectionPool(final int maxConnections) {
-        final GenericObjectPool<Integer> connectionPool = new GenericObjectPool<Integer>(new ConnectionPoolObjectFactory());
+        final GenericObjectPool<Integer> connectionPool =
+                new GenericObjectPool<>(new ConnectionPoolObjectFactory());
         connectionPool.setMaxActive(maxConnections);
         connectionPool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
         return connectionPool;

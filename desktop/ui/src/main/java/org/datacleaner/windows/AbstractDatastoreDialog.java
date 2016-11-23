@@ -269,7 +269,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
 
     protected List<Entry<String, JComponent>> getFormElements() {
         final ArrayList<Entry<String, JComponent>> res = new ArrayList<>();
-        res.add(new ImmutableEntry<String, JComponent>("Datastore name", _datastoreNameTextField));
+        res.add(new ImmutableEntry<>("Datastore name", _datastoreNameTextField));
         return res;
     }
 

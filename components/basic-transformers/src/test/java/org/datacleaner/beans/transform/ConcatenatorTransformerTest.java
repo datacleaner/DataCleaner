@@ -28,8 +28,8 @@ import org.datacleaner.data.MockInputRow;
 public class ConcatenatorTransformerTest extends TestCase {
 
     public void testConcat() throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<String>("str", String.class);
-        InputColumn<Boolean> col2 = new MockInputColumn<Boolean>("bool", Boolean.class);
+        InputColumn<String> col1 = new MockInputColumn<>("str", String.class);
+        InputColumn<Boolean> col2 = new MockInputColumn<>("bool", Boolean.class);
 
         ConcatenatorTransformer t = new ConcatenatorTransformer(" + ", new InputColumn[] { col1, col2 });
 

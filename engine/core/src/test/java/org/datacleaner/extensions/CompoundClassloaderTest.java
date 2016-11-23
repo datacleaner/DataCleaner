@@ -49,7 +49,7 @@ public class CompoundClassloaderTest {
         final File[] classFiles = new File[] { new File("target/test-classes") };
         final ClassLoader c2 = ClassLoaderUtils.createClassLoader(classFiles, globalParent);
 
-        final Collection<ClassLoader> loaders = new ArrayList<ClassLoader>();
+        final Collection<ClassLoader> loaders = new ArrayList<>();
         loaders.add(c1);
         loaders.add(c2);
         final CompoundClassLoader loader = new CompoundClassLoader(loaders);

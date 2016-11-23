@@ -46,7 +46,7 @@ public class MultipleChainsOfOutputDataStreamsTest extends TestCase {
 
     public void testSimpleBuildAndExecuteScenario() throws Throwable {
         final AnalysisJob job;
-        try (final AnalysisJobBuilder ajb1 = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder ajb1 = new AnalysisJobBuilder(configuration)) {
             ajb1.setDatastore(datastore);
 
             ajb1.addSourceColumns("customers.city");

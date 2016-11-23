@@ -41,7 +41,8 @@ public class HBaseDatastore extends UsageAwareDatastore<HBaseDataContext> {
         this(name, zookeeperHostname, zookeeperPort, null);
     }
 
-    public HBaseDatastore(final String name, final String zookeeperHostname, final int zookeeperPort, final SimpleTableDef[] tableDefs) {
+    public HBaseDatastore(final String name, final String zookeeperHostname, final int zookeeperPort,
+            final SimpleTableDef[] tableDefs) {
         super(name);
         _zookeeperHostname = zookeeperHostname;
         _zookeeperPort = zookeeperPort;
@@ -63,7 +64,7 @@ public class HBaseDatastore extends UsageAwareDatastore<HBaseDataContext> {
         final HBaseConfiguration hBaseConfiguration = new HBaseConfiguration("HBase", _zookeeperHostname,
                 _zookeeperPort, _tableDefs, ColumnType.STRING);
         final HBaseDataContext hBaseDataContext = new HBaseDataContext(hBaseConfiguration);
-        final DatastoreConnectionImpl<HBaseDataContext> connection = new DatastoreConnectionImpl<HBaseDataContext>(
+        final DatastoreConnectionImpl<HBaseDataContext> connection = new DatastoreConnectionImpl<>(
                 hBaseDataContext, this);
         return connection;
     }

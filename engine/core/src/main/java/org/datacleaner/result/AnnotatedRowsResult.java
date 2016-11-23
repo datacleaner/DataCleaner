@@ -67,7 +67,7 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
 
     public AnnotatedRowsResult(final RowAnnotation annotation, final RowAnnotationFactory annotationFactory,
             final InputColumn<?>... highlightedColumns) {
-        _annotationFactoryRef = new SerializableRef<RowAnnotationFactory>(annotationFactory);
+        _annotationFactoryRef = new SerializableRef<>(annotationFactory);
         _annotation = annotation;
         _highlightedColumns = highlightedColumns;
     }
@@ -112,7 +112,7 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
                     }
                 });
             } else {
-                _inputColumns = new ArrayList<InputColumn<?>>(0);
+                _inputColumns = new ArrayList<>(0);
             }
         }
         return _inputColumns;
@@ -163,7 +163,7 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
                 "Count in dataset" }, valueCounts.size());
 
         // sort the set
-        final TreeSet<Entry<Object, Integer>> set = new TreeSet<Entry<Object, Integer>>(
+        final TreeSet<Entry<Object, Integer>> set = new TreeSet<>(
                 new Comparator<Entry<Object, Integer>>() {
                     @Override
                     public int compare(final Entry<Object, Integer> o1, final Entry<Object, Integer> o2) {
@@ -186,7 +186,8 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
         return tableModel;
     }
 
-    private Map<Object, Integer> getValueCounts(final RowAnnotationFactory annotationFactory, final RowAnnotation annotation,
+    private Map<Object, Integer> getValueCounts(final RowAnnotationFactory annotationFactory,
+            final RowAnnotation annotation,
             final InputColumn<?> inputColumn) {
         final List<InputRow> rows = annotationFactory.getSampleRows(annotation);
 
@@ -194,7 +195,7 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
             return Collections.emptyMap();
         }
 
-        final HashMap<Object, Integer> map = new HashMap<Object, Integer>();
+        final HashMap<Object, Integer> map = new HashMap<>();
         for (final InputRow row : rows) {
             final Object value = row.getValue(inputColumn);
             Integer count = map.get(value);

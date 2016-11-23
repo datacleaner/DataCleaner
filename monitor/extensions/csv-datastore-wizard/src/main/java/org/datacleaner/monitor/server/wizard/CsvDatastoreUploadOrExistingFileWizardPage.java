@@ -60,7 +60,7 @@ public abstract class CsvDatastoreUploadOrExistingFileWizardPage extends Abstrac
 
     @Override
     protected Map<String, Object> getFormModel() {
-        return new HashMap<String, Object>();
+        return new HashMap<>();
     }
 
     @Override

@@ -78,14 +78,14 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
      * Table mapping primitive type names to corresponding class objects. As
      * defined in {@link ObjectInputStream}.
      */
-    private static final Map<String, Class<?>> PRIMITIVE_CLASSES = new HashMap<String, Class<?>>(8, 1.0F);
+    private static final Map<String, Class<?>> PRIMITIVE_CLASSES = new HashMap<>(8, 1.0F);
 
     /**
      * Since the change from eobjects.org MetaModel to Apache MetaModel, a lot
      * of interfaces (especially those that extend {@link HasName}) have
      * transparently changed their serialization IDs.
      */
-    private static final Set<String> INTERFACES_WITH_SERIAL_ID_CHANGES = new HashSet<String>();
+    private static final Set<String> INTERFACES_WITH_SERIAL_ID_CHANGES = new HashSet<>();
     private static final Comparator<String> packageNameComparator = new Comparator<String>() {
         @Override
         public int compare(final String o1, final String o2) {
@@ -128,9 +128,9 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
 
     public ChangeAwareObjectInputStream(final InputStream in) throws IOException {
         super(in);
-        renamedPackages = new TreeMap<String, String>(packageNameComparator);
-        renamedClasses = new HashMap<String, String>();
-        additionalClassLoaders = new ArrayList<ClassLoader>();
+        renamedPackages = new TreeMap<>(packageNameComparator);
+        renamedClasses = new HashMap<>();
+        additionalClassLoaders = new ArrayList<>();
 
         // add analyzerbeans' own renamed classes
         addRenamedClass("org.datacleaner.reference.TextBasedDictionary", TextFileDictionary.class);
@@ -303,7 +303,8 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         return resolveClass(className, true);
     }
 
-    private Class<?> resolveClass(final String classNameParameter, final boolean checkRenames) throws ClassNotFoundException {
+    private Class<?> resolveClass(final String classNameParameter, final boolean checkRenames)
+            throws ClassNotFoundException {
         logger.debug("Resolving class '{}'", classNameParameter);
 
         final String className;
@@ -322,7 +323,7 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
             }
 
             logger.info("Class '{}' was not resolved in main class loader.", className);
-            final List<Exception> exceptions = new ArrayList<Exception>(additionalClassLoaders.size());
+            final List<Exception> exceptions = new ArrayList<>(additionalClassLoaders.size());
             for (final ClassLoader classLoader : additionalClassLoaders) {
                 try {
                     return Class.forName(className, true, classLoader);

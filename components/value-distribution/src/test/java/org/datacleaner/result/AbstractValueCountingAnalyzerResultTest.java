@@ -31,7 +31,7 @@ public class AbstractValueCountingAnalyzerResultTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        list = new ArrayList<ValueFrequency>();
+        list = new ArrayList<>();
         list.add(new SingleValueFrequency("foo", 10));
         list.add(new SingleValueFrequency("bar", 10));
         list.add(new SingleValueFrequency("baz", 10));

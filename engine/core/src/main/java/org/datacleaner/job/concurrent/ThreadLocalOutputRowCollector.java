@@ -44,7 +44,7 @@ public class ThreadLocalOutputRowCollector extends AbstractOutputRowCollector {
     private final ThreadLocal<Listener> _listener;
 
     public ThreadLocalOutputRowCollector() {
-        _listener = new ThreadLocal<Listener>();
+        _listener = new ThreadLocal<>();
     }
 
     public void setListener(final Listener listener) {

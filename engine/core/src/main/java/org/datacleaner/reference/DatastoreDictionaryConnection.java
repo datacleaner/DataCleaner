@@ -31,7 +31,8 @@ final class DatastoreDictionaryConnection implements DictionaryConnection {
     private final DatastoreConnection _datastoreConnection;
     private final DatastoreDictionary _dictionary;
 
-    public DatastoreDictionaryConnection(final DatastoreDictionary dictionary, final DatastoreConnection datastoreConnection) {
+    public DatastoreDictionaryConnection(final DatastoreDictionary dictionary,
+            final DatastoreConnection datastoreConnection) {
         _dictionary = dictionary;
         _datastoreConnection = datastoreConnection;
     }

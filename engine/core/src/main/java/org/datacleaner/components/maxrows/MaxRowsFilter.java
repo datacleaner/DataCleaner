@@ -47,6 +47,7 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
     public enum Category {
         VALID, INVALID
     }
+
     public static final String PROPERTY_APPLY_ORDERING = "Apply ordering";
     private final AtomicInteger counter = new AtomicInteger();
     @Configured

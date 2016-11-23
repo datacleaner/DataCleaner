@@ -33,7 +33,8 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @since 9. 7. 2015
  */
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE)
 public class ComponentConfiguration {
     @JsonProperty
     private Map<String, JsonNode> properties = new HashMap<>();

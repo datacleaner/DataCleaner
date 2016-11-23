@@ -75,11 +75,11 @@ public class CharIterator implements ListIterator<Character> {
         return new CharIterator(chars);
     }
 
-    public boolean is(final Character c) {
-        if (c == null) {
+    public boolean is(final Character character) {
+        if (character == null) {
             return false;
         }
-        return c.charValue() == current();
+        return character.charValue() == current();
     }
 
     public boolean isLetter() {

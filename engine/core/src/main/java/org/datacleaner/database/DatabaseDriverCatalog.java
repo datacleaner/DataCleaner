@@ -67,7 +67,9 @@ public class DatabaseDriverCatalog implements Serializable {
     private static final List<DatabaseDriverDescriptor> _databaseDrivers;
 
     static {
-        _databaseDrivers = new ArrayList<DatabaseDriverDescriptor>();
+        // @formatter:off
+        // @checkstyle:off
+        _databaseDrivers = new ArrayList<>();
         add(DATABASE_NAME_MYSQL, "images/datastore-types/databases/mysql.png", "com.mysql.jdbc.Driver",
                 "http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.18/mysql-connector-java-5.1.18.jar",
                 "jdbc:mysql://<hostname>:3306/<database>?defaultFetchSize=" + Integer.MIN_VALUE
@@ -141,6 +143,8 @@ public class DatabaseDriverCatalog implements Serializable {
                 "org.apache.hive.jdbc.HiveDriver",
                 "http://repo1.maven.org/maven2/org/apache/hive/hive-jdbc/1.2.1/hive-jdbc-1.2.1.jar",
                 "jdbc:hive2://<hostname>:10000/<database>");
+        // @checkstyle:on
+        // @formatter:on
 
         Collections.sort(_databaseDrivers);
     }
@@ -152,13 +156,15 @@ public class DatabaseDriverCatalog implements Serializable {
         _userPreferences = userPreferences;
     }
 
-    private static void add(final String databaseName, final String iconImagePath, final String driverClassName, final String[] downloadUrls,
+    private static void add(final String databaseName, final String iconImagePath, final String driverClassName,
+            final String[] downloadUrls,
             final String[] urlTemplates) {
         _databaseDrivers.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, downloadUrls,
                 urlTemplates));
     }
 
-    private static void add(final String databaseName, final String iconImagePath, final String driverClassName, final String downloadUrl,
+    private static void add(final String databaseName, final String iconImagePath, final String driverClassName,
+            final String downloadUrl,
             final String... urlTemplates) {
         final String[] urls;
         if (downloadUrl == null) {

@@ -60,7 +60,7 @@ public abstract class ExcelDatastoreUploadOrExistingFileWizardPage extends Abstr
 
     @Override
     protected Map<String, Object> getFormModel() {
-        return new HashMap<String, Object>();
+        return new HashMap<>();
     }
 
     @Override

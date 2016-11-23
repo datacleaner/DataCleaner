@@ -47,15 +47,16 @@ public class CategorizationResult implements AnalyzerResult {
 
     public CategorizationResult(final RowAnnotationFactory annotationFactory,
             final Collection<Entry<String, RowAnnotation>> categories) {
-        _annotationFactoryRef = new SerializableRef<RowAnnotationFactory>(annotationFactory);
+        _annotationFactoryRef = new SerializableRef<>(annotationFactory);
         _categories = new LinkedHashMap<>();
         for (final Entry<String, RowAnnotation> entry : categories) {
             _categories.put(entry.getKey(), entry.getValue());
         }
     }
 
-    public CategorizationResult(final RowAnnotationFactory annotationFactory, final Map<String, RowAnnotation> categories) {
-        _annotationFactoryRef = new SerializableRef<RowAnnotationFactory>(annotationFactory);
+    public CategorizationResult(final RowAnnotationFactory annotationFactory,
+            final Map<String, RowAnnotation> categories) {
+        _annotationFactoryRef = new SerializableRef<>(annotationFactory);
         _categories = categories;
     }
 

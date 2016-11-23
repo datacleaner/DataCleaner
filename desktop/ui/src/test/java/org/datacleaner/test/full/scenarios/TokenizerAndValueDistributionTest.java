@@ -119,7 +119,7 @@ public class TokenizerAndValueDistributionTest extends TestCase {
 
         for (final AnalyzerResult analyzerResult : results) {
             final ValueDistributionAnalyzerResult result = (ValueDistributionAnalyzerResult) analyzerResult;
-            final Collection<String> uniqueValues = new TreeSet<String>(result.getUniqueValues());
+            final Collection<String> uniqueValues = new TreeSet<>(result.getUniqueValues());
             if ("first word".equals(result.getName())) {
                 assertEquals("[[Sales->19], [VP->2], [<unique>->2]]", result.getValueCounts().toString());
                 assertEquals(0, result.getNullCount());

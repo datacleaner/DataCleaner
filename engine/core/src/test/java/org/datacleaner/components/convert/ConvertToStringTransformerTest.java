@@ -33,7 +33,7 @@ public class ConvertToStringTransformerTest extends TestCase {
 
     public void testBasicScenario() throws Exception {
         ConvertToStringTransformer t = new ConvertToStringTransformer();
-        InputColumn<Object> col = new MockInputColumn<Object>("foo");
+        InputColumn<Object> col = new MockInputColumn<>("foo");
         t.setInput(new InputColumn[] { col });
         t.setNullReplacement("!null!");
 

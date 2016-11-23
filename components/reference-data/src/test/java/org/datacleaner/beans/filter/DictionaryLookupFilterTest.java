@@ -31,7 +31,7 @@ import org.datacleaner.reference.SimpleDictionary;
 public class DictionaryLookupFilterTest extends TestCase {
 
     public void testSimpleLookups() throws Exception {
-        InputColumn<String> column = new MockInputColumn<String>("col", String.class);
+        InputColumn<String> column = new MockInputColumn<>("col", String.class);
         Dictionary dictionary = new SimpleDictionary("my dictionary", "foo", "bar", "baz");
 
         DictionaryFilter filter = new DictionaryFilter(column, dictionary, new DataCleanerConfigurationImpl());

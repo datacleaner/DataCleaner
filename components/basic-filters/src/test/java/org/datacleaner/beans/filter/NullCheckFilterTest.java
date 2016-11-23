@@ -59,9 +59,9 @@ public class NullCheckFilterTest extends TestCase {
     }
 
     public void testCategorize() throws Exception {
-        InputColumn<Integer> col1 = new MockInputColumn<Integer>("col1", Integer.class);
-        InputColumn<Boolean> col2 = new MockInputColumn<Boolean>("col2", Boolean.class);
-        InputColumn<String> col3 = new MockInputColumn<String>("col3", String.class);
+        InputColumn<Integer> col1 = new MockInputColumn<>("col1", Integer.class);
+        InputColumn<Boolean> col2 = new MockInputColumn<>("col2", Boolean.class);
+        InputColumn<String> col3 = new MockInputColumn<>("col3", String.class);
         InputColumn<?>[] columns = new InputColumn[] { col1, col2, col3 };
 
         NullCheckFilter filter = new NullCheckFilter(columns, true);
@@ -82,9 +82,9 @@ public class NullCheckFilterTest extends TestCase {
     }
 
     public void testCategorizeAllFieldsMode() throws Exception {
-        InputColumn<Integer> col1 = new MockInputColumn<Integer>("col1", Integer.class);
-        InputColumn<Boolean> col2 = new MockInputColumn<Boolean>("col2", Boolean.class);
-        InputColumn<String> col3 = new MockInputColumn<String>("col3", String.class);
+        InputColumn<Integer> col1 = new MockInputColumn<>("col1", Integer.class);
+        InputColumn<Boolean> col2 = new MockInputColumn<>("col2", Boolean.class);
+        InputColumn<String> col3 = new MockInputColumn<>("col3", String.class);
         InputColumn<?>[] columns = new InputColumn[] { col1, col2, col3 };
 
         NullCheckFilter filter = new NullCheckFilter(columns, true, EvaluationMode.ALL_FIELDS);

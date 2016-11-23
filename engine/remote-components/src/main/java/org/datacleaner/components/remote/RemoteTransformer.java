@@ -195,7 +195,8 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         return columns;
     }
 
-    private void convertOutputRows(final JsonNode rowSets, final BatchSink<Collection<Object[]>> sink, final int sinkSize) {
+    private void convertOutputRows(final JsonNode rowSets, final BatchSink<Collection<Object[]>> sink,
+            final int sinkSize) {
         final OutputColumns outCols = getOutputColumns();
         if (rowSets == null || rowSets.size() < 1) {
             throw new RuntimeException("Expected exactly 1 row in response");
@@ -270,10 +271,8 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         for (int i = 0; i < size; i++) {
             final InputRow inputRow = source.getInput(i);
             final Object[] values = new Object[cols.size()];
-            int j = 0;
-            for (final InputColumn<?> col : cols) {
-                values[j] = inputRow.getValue(col);
-                j++;
+            for (int j = 0; j < cols.size(); j++) {
+                values[j] = inputRow.getValue(cols.get(j));
             }
             rows[i] = values;
         }

@@ -65,7 +65,7 @@ public class SimpleDescriptorProviderTest extends TestCase {
 
     public void testSetClassNamesNoDiscover() throws Exception {
         final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider(true);
-        final List<String> classNames = new ArrayList<String>();
+        final List<String> classNames = new ArrayList<>();
 
         // add the same classname twice
         classNames.add(AnalyzerMock.class.getName());

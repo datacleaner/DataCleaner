@@ -26,7 +26,7 @@ import org.datacleaner.result.Crosstab;
 public class CrosstabRendererTest extends TestCase {
 
     public void testEmptyDimension() throws Exception {
-        Crosstab<Integer> crosstab = new Crosstab<Integer>(Integer.class, "foo", "bar");
+        Crosstab<Integer> crosstab = new Crosstab<>(Integer.class, "foo", "bar");
 
         CrosstabTextRenderer renderer = new CrosstabTextRenderer();
         String result = renderer.render(crosstab);

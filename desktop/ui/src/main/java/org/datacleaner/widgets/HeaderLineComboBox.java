@@ -39,7 +39,7 @@ public class HeaderLineComboBox extends DCComboBox<Integer> {
         final JTextComponent headerLineNumberText = (JTextComponent) getEditor().getEditorComponent();
         headerLineNumberText.setDocument(new NumberDocument());
         setEditable(true);
-        setModel(new DefaultComboBoxModel<Integer>(new Integer[] { 0, 1 }));
+        setModel(new DefaultComboBoxModel<>(new Integer[] { 0, 1 }));
         setSelectedItem(1);
         setRenderer(new DCListCellRenderer() {
 

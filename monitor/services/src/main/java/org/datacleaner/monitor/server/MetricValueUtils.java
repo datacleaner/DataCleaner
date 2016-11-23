@@ -112,7 +112,7 @@ public class MetricValueUtils {
 
     private ComponentJob getComponentJobFuzzy(final Collection<ComponentJob> componentJobs, final ComponentJob componentJob,
             final MetricIdentifier metricIdentifier) {
-        List<ComponentJob> candidates = new ArrayList<ComponentJob>(componentJobs);
+        List<ComponentJob> candidates = new ArrayList<>(componentJobs);
 
         final String analyzerJobName;
         final String componentJobDescriptorName;
@@ -450,7 +450,7 @@ public class MetricValueUtils {
     }
 
     public List<String> getInputColumnNames(final AnalyzerJob analyzerJob) {
-        final List<String> columnNames = new ArrayList<String>();
+        final List<String> columnNames = new ArrayList<>();
         final Set<ConfiguredPropertyDescriptor> inputProperties = analyzerJob.getDescriptor()
                 .getConfiguredPropertiesForInput(false);
         for (final ConfiguredPropertyDescriptor inputProperty : inputProperties) {
@@ -496,7 +496,7 @@ public class MetricValueUtils {
         final String label = LabelUtils.getLabel(componentJob);
         final InputColumn<?> identifyingInputColumn = AnalyzerJobHelper.getIdentifyingInputColumn(componentJob);
 
-        final List<MetricIdentifier> metricIdentifiers = new ArrayList<MetricIdentifier>();
+        final List<MetricIdentifier> metricIdentifiers = new ArrayList<>();
 
         // Represents any of the column parameterized metrics. We assume that
         // the column-set is the same for all metrics, since they originate from

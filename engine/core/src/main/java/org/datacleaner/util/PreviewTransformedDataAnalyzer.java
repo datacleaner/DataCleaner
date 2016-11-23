@@ -47,7 +47,7 @@ public class PreviewTransformedDataAnalyzer implements Analyzer<PreviewTransform
     @Configured
     InputColumn<?>[] columns;
 
-    private BlockingQueue<Object[]> rows = new LinkedBlockingQueue<Object[]>();
+    private BlockingQueue<Object[]> rows = new LinkedBlockingQueue<>();
 
     @Override
     public void run(final InputRow row, final int distinctCount) {
@@ -56,7 +56,7 @@ public class PreviewTransformedDataAnalyzer implements Analyzer<PreviewTransform
     }
 
     public List<Object[]> getList() {
-        return new ArrayList<Object[]>(rows);
+        return new ArrayList<>(rows);
     }
 
     public InputColumn<?>[] getColumns() {

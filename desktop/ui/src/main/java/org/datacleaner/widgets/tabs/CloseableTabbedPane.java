@@ -55,11 +55,11 @@ public final class CloseableTabbedPane extends JTabbedPane {
     public static final Color COLOR_FOREGROUND = WidgetUtils.BG_COLOR_LESS_DARK;
     private static final long serialVersionUID = -411551524171347329L;
     private static Logger _logger = LoggerFactory.getLogger(CloseableTabbedPane.class);
-    private final List<TabCloseListener> _closeListeners = new LinkedList<TabCloseListener>();
-    private final List<Integer> _unclosables = new LinkedList<Integer>();
-    private final List<Integer> _separators = new LinkedList<Integer>();
-    private final Map<Integer, ActionListener> _doubleClickActionListeners = new HashMap<Integer, ActionListener>();
-    private final Map<Integer, ActionListener> _rightClickActionListeners = new HashMap<Integer, ActionListener>();
+    private final List<TabCloseListener> _closeListeners = new LinkedList<>();
+    private final List<Integer> _unclosables = new LinkedList<>();
+    private final List<Integer> _separators = new LinkedList<>();
+    private final Map<Integer, ActionListener> _doubleClickActionListeners = new HashMap<>();
+    private final Map<Integer, ActionListener> _rightClickActionListeners = new HashMap<>();
 
     /**
      * Create a tabbed pane using defaults
@@ -123,7 +123,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
     @SuppressWarnings("unchecked")
     public <E extends Component> List<E> getTabsOfClass(final Class<E> clazz) {
-        final List<E> list = new ArrayList<E>();
+        final List<E> list = new ArrayList<>();
         final Component[] components = getComponents();
         for (Component component : components) {
             if (component instanceof JScrollPane) {
@@ -189,7 +189,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
         // move all right click listeners for tabs above this index down
         {
-            final Set<Integer> keySet = new TreeSet<Integer>(Collections.reverseOrder());
+            final Set<Integer> keySet = new TreeSet<>(Collections.reverseOrder());
             keySet.addAll(_rightClickActionListeners.keySet());
             for (final Integer key : keySet) {
                 final int curIndex = key.intValue();
@@ -203,7 +203,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
         // move all double click listeners for tabs above this index down
         {
-            final Set<Integer> keySet = new TreeSet<Integer>(Collections.reverseOrder());
+            final Set<Integer> keySet = new TreeSet<>(Collections.reverseOrder());
             keySet.addAll(_doubleClickActionListeners.keySet());
             for (final Integer key : keySet) {
                 final int curIndex = key.intValue();

@@ -174,7 +174,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
             @Override
             public void writeTo(final OutputStream out) throws IOException {
                 long progress = 0;
-                try (final InputStream in = getTransferStream()) {
+                try (InputStream in = getTransferStream()) {
                     final byte[] tmp = new byte[4096];
                     int length;
                     while ((length = in.read(tmp)) != -1) {
@@ -206,7 +206,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
                 .addPart("file", uploadFilePart).build();
         request.setEntity(entity);
 
-        try (final MonitorHttpClient monitorHttpClient = monitorConnection.getHttpClient()) {
+        try (MonitorHttpClient monitorHttpClient = monitorConnection.getHttpClient()) {
             final HttpResponse response;
             try {
                 response = monitorHttpClient.execute(request);

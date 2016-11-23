@@ -87,7 +87,7 @@ public class DefaultResultContext implements ResultContext {
         if (deserializedObject instanceof AnalyzerResult) {
             final AnalyzerResult analyzerResult = (AnalyzerResult) deserializedObject;
             final Date creationDate = new Date(_repositoryFile.getLastModified());
-            final Map<ComponentJob, AnalyzerResult> results = new HashMap<ComponentJob, AnalyzerResult>(1);
+            final Map<ComponentJob, AnalyzerResult> results = new HashMap<>(1);
             final JobContext job = getJob();
 
             @SuppressWarnings({ "rawtypes", "unchecked" })

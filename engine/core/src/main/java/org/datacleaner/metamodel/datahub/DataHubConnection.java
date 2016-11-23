@@ -33,12 +33,11 @@ import org.datacleaner.util.http.MonitorHttpClient;
 /**
  * Describes the connection information needed to connect to the DataHub.
  */
-
+@SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class DataHubConnection {
 
     public static final String CAS_PATH = "/cas";
     public static final String DEFAULT_SCHEMA = "MDM";
-
 
     private final String _hostname;
     private final int _port;
@@ -51,7 +50,8 @@ public class DataHubConnection {
     private boolean _acceptUnverifiedSslPeers;
 
     public DataHubConnection(final String hostname, final Integer port, final String username, final String password,
-            final boolean useHTTPS, final boolean acceptUnverifiedSslPeers, final DataHubSecurityMode dataHubSecurityMode) {
+            final boolean useHTTPS, final boolean acceptUnverifiedSslPeers,
+            final DataHubSecurityMode dataHubSecurityMode) {
 
         _hostname = hostname;
         _port = port;

@@ -53,8 +53,8 @@ public abstract class ComponentsRestClientUtils {
         return escapedName.replace("_@_", "/");
     }
 
-    public static JsonNode createInputColumnSpecification(final String name, final Class<?> columnType, final String columnTypeName,
-            final JsonNodeFactory nodeFac) {
+    public static JsonNode createInputColumnSpecification(final String name, final Class<?> columnType,
+            final String columnTypeName, final JsonNodeFactory nodeFac) {
         final ObjectNode colSpec = new ObjectNode(nodeFac);
         colSpec.set("name", new TextNode(name));
         colSpec.set("type", new TextNode(columnTypeName));
@@ -84,8 +84,8 @@ public abstract class ComponentsRestClientUtils {
 
     /** Copy&paste from org.springframework.web.util.UriUtils.encodePathSegment(...) (We don't want the Spring dependency) */
     private static boolean isSubDelimiter(final int c) {
-        return '!' == c || '$' == c || '&' == c || '\'' == c || '(' == c || ')' == c || '*' == c || '+' == c ||
-                ',' == c || ';' == c || '=' == c;
+        return '!' == c || '$' == c || '&' == c || '\'' == c || '(' == c || ')' == c || '*' == c || '+' == c || ',' == c
+                || ';' == c || '=' == c;
     }
 
     /** Copy&paste from org.springframework.web.util.UriUtils.encodePathSegment(...) (We don't want the Spring dependency) */

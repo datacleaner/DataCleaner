@@ -35,9 +35,9 @@ public class CollectionFactoryImplTest extends TestCase {
     public void testFactoryMethods() throws Exception {
         StorageProvider storageProvider = EasyMock.createMock(StorageProvider.class);
 
-        List<String> list1 = new ArrayList<String>();
-        Set<String> set1 = new HashSet<String>();
-        Map<Integer, String> map1 = new HashMap<Integer, String>();
+        List<String> list1 = new ArrayList<>();
+        Set<String> set1 = new HashSet<>();
+        Map<Integer, String> map1 = new HashMap<>();
 
         EasyMock.expect(storageProvider.createList(String.class)).andReturn(list1);
         EasyMock.expect(storageProvider.createSet(String.class)).andReturn(set1);

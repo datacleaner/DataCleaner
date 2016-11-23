@@ -37,8 +37,8 @@ import org.datacleaner.output.OutputWriter;
 
 public final class ExcelOutputWriterFactory {
 
-    private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
-    private static final Map<String, UpdateableDataContext> dataContexts = new HashMap<String, UpdateableDataContext>();
+    private static final Map<String, AtomicInteger> counters = new HashMap<>();
+    private static final Map<String, UpdateableDataContext> dataContexts = new HashMap<>();
 
     public static OutputWriter getWriter(final String filename, final String sheetName, String[] columnNames,
             final InputColumn<?>... columns) {
@@ -84,7 +84,7 @@ public final class ExcelOutputWriterFactory {
         final Schema schema = dataContext.getDefaultSchema();
         Table table = schema.getTableByName(sheetName);
         if (table == null) {
-            final MutableRef<Table> tableRef = new MutableRef<Table>();
+            final MutableRef<Table> tableRef = new MutableRef<>();
             dataContext.executeUpdate(new UpdateScript() {
                 @Override
                 public void run(final UpdateCallback callback) {

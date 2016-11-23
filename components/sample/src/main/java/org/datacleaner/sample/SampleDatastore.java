@@ -51,7 +51,7 @@ public class SampleDatastore extends UsageAwareDatastore<DataContext> {
     @Override
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
         final DataContext dataContext = new SampleDataContext();
-        return new DatastoreConnectionImpl<DataContext>(dataContext, this);
+        return new DatastoreConnectionImpl<>(dataContext, this);
     }
 
 }

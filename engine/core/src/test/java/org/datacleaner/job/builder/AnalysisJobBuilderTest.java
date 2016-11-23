@@ -32,7 +32,6 @@ import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;
-import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockFilter;
 import org.datacleaner.test.MockFilter.Category;
@@ -243,7 +242,7 @@ public class AnalysisJobBuilderTest extends TestCase {
         transformerChangeListener.onAdd(anyObject(TransformerComponentBuilder.class));
         transformerChangeListener.onRemove(anyObject(TransformerComponentBuilder.class));
         transformerChangeListener.onOutputChanged(anyObject(TransformerComponentBuilder.class),
-                EasyMock.<List<MutableInputColumn<?>>> anyObject());
+                EasyMock.anyObject());
         expectLastCall().times(2); // Both configuration and removal will
         // trigger this
         transformerChangeListener.onConfigurationChanged(anyObject(TransformerComponentBuilder.class));

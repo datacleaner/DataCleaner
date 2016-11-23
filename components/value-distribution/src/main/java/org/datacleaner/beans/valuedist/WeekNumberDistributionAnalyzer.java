@@ -67,13 +67,13 @@ public class WeekNumberDistributionAnalyzer implements Analyzer<CrosstabResult> 
     Weekday firstDayOfWeek = Weekday.getByCalendarConstant(Calendar.getInstance().getFirstDayOfWeek());
 
     public WeekNumberDistributionAnalyzer() {
-        distributionMap = new HashMap<InputColumn<Date>, ConcurrentMap<Integer, AtomicInteger>>();
+        distributionMap = new HashMap<>();
     }
 
     @Initialize
     public void init() {
         for (final InputColumn<Date> col : dateColumns) {
-            final ConcurrentMap<Integer, AtomicInteger> countMap = new ConcurrentHashMap<Integer, AtomicInteger>();
+            final ConcurrentMap<Integer, AtomicInteger> countMap = new ConcurrentHashMap<>();
             distributionMap.put(col, countMap);
         }
     }
@@ -102,7 +102,7 @@ public class WeekNumberDistributionAnalyzer implements Analyzer<CrosstabResult> 
         final CrosstabDimension columnDimension = new CrosstabDimension("Column");
         final CrosstabDimension weekNumberDimension = new CrosstabDimension("Week number");
 
-        final SortedSet<Integer> weekNumbers = new TreeSet<Integer>();
+        final SortedSet<Integer> weekNumbers = new TreeSet<>();
         for (final InputColumn<Date> col : dateColumns) {
             final Map<Integer, AtomicInteger> countMap = distributionMap.get(col);
             final Set<Integer> weekNumbersOfColumn = countMap.keySet();
@@ -113,7 +113,7 @@ public class WeekNumberDistributionAnalyzer implements Analyzer<CrosstabResult> 
             weekNumberDimension.addCategory(weekNumber + "");
         }
 
-        final Crosstab<Integer> crosstab = new Crosstab<Integer>(Integer.class, columnDimension, weekNumberDimension);
+        final Crosstab<Integer> crosstab = new Crosstab<>(Integer.class, columnDimension, weekNumberDimension);
         for (final InputColumn<Date> col : dateColumns) {
             columnDimension.addCategory(col.getName());
             final CrosstabNavigator<Integer> nav = crosstab.where(columnDimension, col.getName());

@@ -206,7 +206,7 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
         try {
             final SchemaNavigator schemaNavigator = con.getSchemaNavigator();
 
-            final List<String> columnsNotFound = new ArrayList<String>();
+            final List<String> columnsNotFound = new ArrayList<>();
 
             _targetColumns = schemaNavigator.convertToColumns(schemaName, tableName, columnNames);
             for (int i = 0; i < _targetColumns.length; i++) {
@@ -514,7 +514,7 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
         final List<Table> tables = analysisJobBuilder.getSourceTables();
         if (tables.size() == 1) {
             final List<MetaModelInputColumn> sourceColumns = analysisJobBuilder.getSourceColumnsOfTable(tables.get(0));
-            final List<InputColumn<?>> primaryKeys = new ArrayList<InputColumn<?>>();
+            final List<InputColumn<?>> primaryKeys = new ArrayList<>();
             for (final MetaModelInputColumn inputColumn : sourceColumns) {
                 if (inputColumn.getPhysicalColumn().isPrimaryKey()) {
                     primaryKeys.add(inputColumn);

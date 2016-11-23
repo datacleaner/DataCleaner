@@ -202,7 +202,7 @@ public class FuseStreamsComponentIntegrationTest {
 
     @Test
     public void testAssumptionsAboutOrderdb() throws Exception {
-        try (final DatastoreConnection connection = datastore.openConnection()) {
+        try (DatastoreConnection connection = datastore.openConnection()) {
             final DataContext dataContext = connection.getDataContext();
 
             final Row countCustomers = MetaModelHelper.executeSingleRowQuery(dataContext,

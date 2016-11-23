@@ -32,8 +32,8 @@ public class BooleanAnalyzerTest extends TestCase {
     public void testSimpleScenario() throws Exception {
         @SuppressWarnings("unchecked")
         final InputColumn<Boolean>[] c = new InputColumn[2];
-        c[0] = new MockInputColumn<Boolean>("b1", Boolean.class);
-        c[1] = new MockInputColumn<Boolean>("b2", Boolean.class);
+        c[0] = new MockInputColumn<>("b1", Boolean.class);
+        c[1] = new MockInputColumn<>("b2", Boolean.class);
 
         final BooleanAnalyzer ba = new BooleanAnalyzer(c);
         ba.init();
@@ -65,8 +65,8 @@ public class BooleanAnalyzerTest extends TestCase {
     public void testGetMetrics() throws Exception {
         @SuppressWarnings("unchecked")
         final InputColumn<Boolean>[] c = new InputColumn[2];
-        c[0] = new MockInputColumn<Boolean>("b1", Boolean.class);
-        c[1] = new MockInputColumn<Boolean>("b2", Boolean.class);
+        c[0] = new MockInputColumn<>("b1", Boolean.class);
+        c[1] = new MockInputColumn<>("b2", Boolean.class);
 
         final BooleanAnalyzer ba = new BooleanAnalyzer(c);
         ba.init();

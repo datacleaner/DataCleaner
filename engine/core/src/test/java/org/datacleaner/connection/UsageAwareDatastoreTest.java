@@ -30,7 +30,7 @@ import org.apache.commons.lang.SerializationUtils;
 public class UsageAwareDatastoreTest extends TestCase {
 
     public void testSerializationAndDeserializationOfAllDatastoreTypes() throws Exception {
-        List<UsageAwareDatastore<?>> datastores = new ArrayList<UsageAwareDatastore<?>>();
+        List<UsageAwareDatastore<?>> datastores = new ArrayList<>();
         datastores.add(new AccessDatastore("access", "bar.mdb"));
         datastores.add(new CsvDatastore("csv", "bar.csv"));
         datastores.add(new DbaseDatastore("dbase", "bar.dbf"));

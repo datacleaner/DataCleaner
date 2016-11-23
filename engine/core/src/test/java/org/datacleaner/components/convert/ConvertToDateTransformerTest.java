@@ -54,7 +54,7 @@ public class ConvertToDateTransformerTest extends TestCase {
         ConvertToDateTransformer transformer = new ConvertToDateTransformer();
         transformer.timeZone = TEST_TIMEZONE;
         transformer.dateMasks = new String[] { "ddMMyyyy" };
-        InputColumn<?> col = new MockInputColumn<Object>("datestr");
+        InputColumn<?> col = new MockInputColumn<>("datestr");
         transformer.input = new InputColumn[] { col };
         transformer.init();
 
@@ -83,7 +83,7 @@ public class ConvertToDateTransformerTest extends TestCase {
         assertEquals("1971-01-01", format(transformer.transformValue(cal)));
         assertEquals("1971-01-01", format(transformer.transformValue(cal.getTime())));
 
-        assertEquals("1970-04-03", format(transformer.convertFromNumber(8000000000l)));
+        assertEquals("1970-04-03", format(transformer.convertFromNumber(8000000000L)));
         assertEquals("1997-05-19", format(transformer.convertFromNumber(10000)));
         assertEquals("1997-05-19", format(transformer.convertFromNumber(19970519)));
         assertEquals("1997-05-19", format(transformer.convertFromNumber(970519)));

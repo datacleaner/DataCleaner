@@ -54,7 +54,8 @@ public class InfoLoggingAnalysisListener extends AnalysisListenerAdaptor {
     }
 
     @Override
-    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob, final ComponentMessage message) {
+    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob,
+            final ComponentMessage message) {
         if (message instanceof ExecutionLogMessage) {
             logger.info(((ExecutionLogMessage) message).getMessage() + " (" + LabelUtils.getLabel(componentJob) + ")");
         }

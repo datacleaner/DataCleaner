@@ -35,7 +35,7 @@ public class NoAnalyzerResultReducerTest extends TestCase {
         NoAnalyzerResultReducer reducer = (NoAnalyzerResultReducer) constructor.newInstance();
 
         try {
-            reducer.reduce(new ArrayList<AnalyzerResult>());
+            reducer.reduce(new ArrayList<>());
             fail("Exception expected");
         } catch (UnsupportedOperationException e) {
         }

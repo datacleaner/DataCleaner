@@ -108,6 +108,7 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
             logger.error("Error in Remote server status task.", throwable);
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(RemoteServerConfigurationImpl.class);
     private static final int TEST_CONNECTION_TIMEOUT = 15 * 1000; // [ms]
     private static final long ERROR_DELAY_MIN = 1;
@@ -118,7 +119,8 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
     private ScheduledTaskRunner scheduledTaskRunner;
     private List<RemoteServerStateListener> listeners = Collections.synchronizedList(new ArrayList<>());
 
-    public RemoteServerConfigurationImpl(final RemoteServerConfiguration remoteServerConfiguration, final TaskRunner taskRunner) {
+    public RemoteServerConfigurationImpl(final RemoteServerConfiguration remoteServerConfiguration,
+            final TaskRunner taskRunner) {
         if (remoteServerConfiguration instanceof RemoteServerConfigurationImpl) {
             final RemoteServerConfigurationImpl remoteServerConfigurationImpl =
                     (RemoteServerConfigurationImpl) remoteServerConfiguration;

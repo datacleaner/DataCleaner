@@ -80,7 +80,7 @@ public class ResultMetricsController {
         final JaxbMetricAdaptor adaptor = new JaxbMetricAdaptor();
 
         final MetricsType metricsType = adaptor.read(request.getInputStream());
-        final List<MetricIdentifier> metricList = new ArrayList<MetricIdentifier>();
+        final List<MetricIdentifier> metricList = new ArrayList<>();
         for (final MetricType metricType : metricsType.getMetric()) {
             final MetricIdentifier metric = adaptor.deserialize(metricType);
             metricList.add(metric);
@@ -93,7 +93,7 @@ public class ResultMetricsController {
 
         response.setContentType("application/xml");
 
-        try (final PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             out.write("<result>");
 
             out.write("\n  <metric-date>");
@@ -130,7 +130,7 @@ public class ResultMetricsController {
 
         final TenantContext context = _contextFactory.getContext(tenant);
 
-        final List<MetricIdentifier> result = new ArrayList<MetricIdentifier>();
+        final List<MetricIdentifier> result = new ArrayList<>();
 
         final ResultContext resultContext = context.getResult(resultName);
         final JobContext job = resultContext.getJob();
@@ -164,14 +164,14 @@ public class ResultMetricsController {
 
         final MetricValues metricValues = getMetricValues(resultName, tenant, metricList);
 
-        final Map<String, Object> result = new HashMap<String, Object>();
+        final Map<String, Object> result = new HashMap<>();
         result.put("metricDate", metricValues.getMetricDate());
 
-        final List<Map<String, Object>> metricValuesMaps = new ArrayList<Map<String, Object>>();
+        final List<Map<String, Object>> metricValuesMaps = new ArrayList<>();
         for (int i = 0; i < metricList.size(); i++) {
             final String displayName = metricList.get(i).getDisplayName();
             final Number value = metricValues.getValues().get(i);
-            final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            final LinkedHashMap<String, Object> map = new LinkedHashMap<>();
             map.put("displayName", displayName);
             map.put("value", value);
             metricValuesMaps.add(map);

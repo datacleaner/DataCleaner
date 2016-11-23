@@ -48,7 +48,7 @@ public final class SourceColumnMapping {
     }
 
     public SourceColumnMapping(final String... originalColumnPaths) {
-        _map = new TreeMap<String, Column>();
+        _map = new TreeMap<>();
         for (final String path : originalColumnPaths) {
             _map.put(path, null);
         }
@@ -73,7 +73,7 @@ public final class SourceColumnMapping {
      */
     public void autoMap(final Datastore datastore) {
         setDatastore(datastore);
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final SchemaNavigator schemaNavigator = con.getSchemaNavigator();
             for (final Entry<String, Column> entry : _map.entrySet()) {
                 if (entry.getValue() == null) {
@@ -110,7 +110,7 @@ public final class SourceColumnMapping {
     }
 
     public Set<String> getUnmappedPaths() {
-        final Set<String> result = new TreeSet<String>();
+        final Set<String> result = new TreeSet<>();
         for (final Entry<String, Column> entry : _map.entrySet()) {
             if (entry.getValue() == null) {
                 result.add(entry.getKey());

@@ -61,11 +61,11 @@ public class DatastoresFolderController {
         final DatastoreCatalog datastoreCatalog = context.getConfiguration().getDatastoreCatalog();
         final String[] names = datastoreCatalog.getDatastoreNames();
 
-        final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        final List<Map<String, String>> result = new ArrayList<>();
 
         for (final String name : names) {
             final Datastore datastore = datastoreCatalog.getDatastore(name);
-            final Map<String, String> map = new LinkedHashMap<String, String>();
+            final Map<String, String> map = new LinkedHashMap<>();
             map.put("name", name);
             map.put("description", datastore.getDescription());
             map.put("type", datastore.getClass().getSimpleName());

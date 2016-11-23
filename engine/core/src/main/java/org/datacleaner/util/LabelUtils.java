@@ -99,7 +99,8 @@ public final class LabelUtils {
      *
      * @return
      */
-    public static String getLabel(final ComponentJob job, final boolean includeDescriptorName, boolean includeInputColumnNames,
+    public static String getLabel(final ComponentJob job, final boolean includeDescriptorName,
+            boolean includeInputColumnNames,
             final boolean includeRequirements) {
         final String jobName = job.getName();
         final StringBuilder label = new StringBuilder();

@@ -51,18 +51,18 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
         void onItemSelected(E item);
     }
     private static final long serialVersionUID = 1L;
-    private final List<Listener<E>> _listeners = new ArrayList<Listener<E>>();
+    private final List<Listener<E>> _listeners = new ArrayList<>();
 
     public DCComboBox() {
-        this(new DefaultComboBoxModel<E>());
+        this(new DefaultComboBoxModel<>());
     }
 
     public DCComboBox(final Collection<E> items) {
-        this(new DefaultComboBoxModel<E>(new Vector<E>(items)));
+        this(new DefaultComboBoxModel<>(new Vector<>(items)));
     }
 
     public DCComboBox(final E[] items) {
-        this(new DefaultComboBoxModel<E>(items));
+        this(new DefaultComboBoxModel<>(items));
     }
 
     public DCComboBox(final ComboBoxModel<E> model) {
@@ -168,7 +168,7 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
         LookAndFeelManager.get().init();
         final JPanel comboPanel = new JPanel();
         comboPanel.setLayout(new BorderLayout());
-        comboPanel.add(new DCComboBox<String>(new String[] { "a", "b", "c" }), BorderLayout.NORTH);
+        comboPanel.add(new DCComboBox<>(new String[] { "a", "b", "c" }), BorderLayout.NORTH);
 
         final JFrame frame = new JFrame("test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

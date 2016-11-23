@@ -62,7 +62,7 @@ public class ComboButton extends JPanel {
      */
     public ComboButton() {
         super(new HorizontalLayout(0));
-        _buttons = new ArrayList<AbstractButton>(2);
+        _buttons = new ArrayList<>(2);
         _commonToggleButtonActionListener = new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {

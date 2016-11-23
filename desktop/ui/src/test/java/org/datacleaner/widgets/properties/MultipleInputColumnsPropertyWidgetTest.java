@@ -213,7 +213,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 
             assertEquals("foo,bar,baz,\"Hello #{name}\"", getAvailableCheckBoxValues(widget));
 
-            ArrayList<InputColumn<?>> reorderedValue = new ArrayList<InputColumn<?>>(Arrays.asList(value));
+            ArrayList<InputColumn<?>> reorderedValue = new ArrayList<>(Arrays.asList(value));
             reorderedValue.add(1, reorderedValue.remove(3));
 
             new ReorderColumnsActionListener(widget).saveReorderedValue(reorderedValue);

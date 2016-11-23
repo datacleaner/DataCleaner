@@ -46,7 +46,7 @@ final class ResultDescriptorImpl implements ResultDescriptor {
         _resultClass = resultClass;
 
         final Method[] metricMethods = ReflectionUtils.getMethods(resultClass, Metric.class);
-        _metrics = new TreeSet<MetricDescriptor>();
+        _metrics = new TreeSet<>();
         for (final Method method : metricMethods) {
             final MetricDescriptor metric = new MetricDescriptorImpl(resultClass, method);
             _metrics.add(metric);

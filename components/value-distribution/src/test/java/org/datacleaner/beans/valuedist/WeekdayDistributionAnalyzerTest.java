@@ -47,9 +47,9 @@ public class WeekdayDistributionAnalyzerTest extends TestCase {
 
         @SuppressWarnings("unchecked")
         InputColumn<Date>[] dateColumns = new InputColumn[3];
-        dateColumns[0] = new MockInputColumn<Date>("Order date", Date.class);
-        dateColumns[1] = new MockInputColumn<Date>("Shipment date", Date.class);
-        dateColumns[2] = new MockInputColumn<Date>("Delivery date", Date.class);
+        dateColumns[0] = new MockInputColumn<>("Order date", Date.class);
+        dateColumns[1] = new MockInputColumn<>("Shipment date", Date.class);
+        dateColumns[2] = new MockInputColumn<>("Delivery date", Date.class);
 
         analyzer.setDateColumns(dateColumns);
         analyzer.init();
@@ -82,7 +82,7 @@ public class WeekdayDistributionAnalyzerTest extends TestCase {
 
     private Date d(int year, int month, int date) {
         Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(0l);
+        c.setTimeInMillis(0L);
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month - 1);
         c.set(Calendar.DAY_OF_MONTH, date);

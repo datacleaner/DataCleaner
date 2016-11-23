@@ -71,7 +71,7 @@ public class DatastoreServiceImpl implements DatastoreService {
             return null;
         }
 
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getDefaultSchema();
             return new SchemaIdentifier(datastoreId, schema.getName());
         } catch (final Exception e) {
@@ -89,7 +89,7 @@ public class DatastoreServiceImpl implements DatastoreService {
             return null;
         }
 
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final String[] schemaNames = con.getDataContext().getSchemaNames();
             final List<SchemaIdentifier> schemaIdentifiers = CollectionUtils.map(schemaNames,
                     new Func<String, SchemaIdentifier>() {
@@ -112,7 +112,7 @@ public class DatastoreServiceImpl implements DatastoreService {
         if (datastore == null) {
             return null;
         }
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getSchemaByName(schemaId.getName());
             final String[] tableNames = schema.getTableNames();
             final List<TableIdentifier> tableIdentifiers = CollectionUtils.map(tableNames,
@@ -136,7 +136,7 @@ public class DatastoreServiceImpl implements DatastoreService {
         if (datastore == null) {
             return null;
         }
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getSchemaByName(schemaId.getName());
             final Table table = schema.getTableByName(tableId.getName());
             final String[] columnNames = table.getColumnNames();

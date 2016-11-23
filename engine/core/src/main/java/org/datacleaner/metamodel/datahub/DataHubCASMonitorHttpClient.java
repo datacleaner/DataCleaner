@@ -28,12 +28,15 @@ import org.datacleaner.util.http.CASMonitorHttpClient;
  * to drive security on the DataHub REST services.
  *
  */
+@SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class DataHubCASMonitorHttpClient extends CASMonitorHttpClient {
 
     private static final String CDI_TICKET_HEADER = "CDI-ticket";
     private static final String CDI_SERVICE_URL_HEADER = "CDI-serviceUrl";
     private static final String CDI_USERID = "CDI-userId";
-    public DataHubCASMonitorHttpClient(final CloseableHttpClient client, final String casServerUrl, final String username,
+
+    public DataHubCASMonitorHttpClient(final CloseableHttpClient client, final String casServerUrl,
+            final String username,
             final String password,
             final String monitorBaseUrl) {
         super(client, casServerUrl, username, password, monitorBaseUrl);

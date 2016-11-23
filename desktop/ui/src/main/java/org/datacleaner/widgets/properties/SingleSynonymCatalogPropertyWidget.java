@@ -55,7 +55,7 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
         _referenceDataCatalog = referenceDataCatalog;
         _referenceDataDialogProvider = referenceDataDialogProvider;
 
-        _comboBox = new DCComboBox<SynonymCatalog>();
+        _comboBox = new DCComboBox<>();
         _comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
         _comboBox.setEditable(false);
 

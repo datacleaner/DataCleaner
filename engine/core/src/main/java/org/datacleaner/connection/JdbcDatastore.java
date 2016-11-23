@@ -67,8 +67,10 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
     private final TableType[] _tableTypes;
     private final String _catalogName;
 
-    private JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username, final String password,
-            final String datasourceJndiUrl, final boolean multipleConnections, final TableType[] tableTypes, final String catalogName) {
+    private JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username,
+            final String password,
+            final String datasourceJndiUrl, final boolean multipleConnections, final TableType[] tableTypes,
+            final String catalogName) {
         super(name);
         _jdbcUrl = jdbcUrl;
         _driverClass = driverClass;
@@ -84,12 +86,14 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
         this(name, jdbcUrl, driverClass, null, null, true);
     }
 
-    public JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username, final String password,
+    public JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username,
+            final String password,
             final boolean multipleConnections, final TableType[] tableTypes, final String catalogName) {
         this(name, jdbcUrl, driverClass, username, password, null, multipleConnections, tableTypes, catalogName);
     }
 
-    public JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username, final String password,
+    public JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username,
+            final String password,
             final boolean multipleConnections) {
         this(name, jdbcUrl, driverClass, username, password, multipleConnections, null, null);
     }
@@ -98,7 +102,8 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
         this(name, datasourceJndiUrl, (TableType[]) null, null);
     }
 
-    public JdbcDatastore(final String name, final String datasourceJndiUrl, final TableType[] tableTypes, final String catalogName) {
+    public JdbcDatastore(final String name, final String datasourceJndiUrl, final TableType[] tableTypes,
+            final String catalogName) {
         this(name, null, null, null, null, datasourceJndiUrl, false, tableTypes, catalogName);
     }
 
@@ -112,7 +117,7 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
      */
     public JdbcDatastore(final String name, final UpdateableDataContext dc) {
         this(name, null, null, null, null, null, false, null, null);
-        setDataContextProvider(new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dc, this));
+        setDataContextProvider(new UpdateableDatastoreConnectionImpl<>(dc, this));
     }
 
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
@@ -273,7 +278,7 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
                 }
                 final UpdateableDataContext dataContext =
                         new JdbcDataContext(connection, getTableTypes(), _catalogName);
-                return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dataContext, this);
+                return new UpdateableDatastoreConnectionImpl<>(dataContext, this);
             }
         } else {
             try {

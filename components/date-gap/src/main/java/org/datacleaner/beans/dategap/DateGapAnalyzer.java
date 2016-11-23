@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class DateGapAnalyzer implements Analyzer<DateGapAnalyzerResult> {
 
     private static final Logger logger = LoggerFactory.getLogger(DateGapAnalyzer.class);
-    private final Map<String, TimeLine> timelines = new HashMap<String, TimeLine>();
+    private final Map<String, TimeLine> timelines = new HashMap<>();
     @Configured(order = 1)
     InputColumn<Date> fromColumn;
     @Configured(order = 2)
@@ -105,9 +105,9 @@ public class DateGapAnalyzer implements Analyzer<DateGapAnalyzerResult> {
         if (singleDateOverlaps != null) {
             includeSingleTimeInstanceIntervals = singleDateOverlaps.booleanValue();
         }
-        final Map<String, TimeInterval> completeIntervals = new HashMap<String, TimeInterval>();
-        final Map<String, SortedSet<TimeInterval>> gaps = new HashMap<String, SortedSet<TimeInterval>>();
-        final Map<String, SortedSet<TimeInterval>> overlaps = new HashMap<String, SortedSet<TimeInterval>>();
+        final Map<String, TimeInterval> completeIntervals = new HashMap<>();
+        final Map<String, SortedSet<TimeInterval>> gaps = new HashMap<>();
+        final Map<String, SortedSet<TimeInterval>> overlaps = new HashMap<>();
         final Set<String> groupNames = timelines.keySet();
         for (final String name : groupNames) {
             final TimeLine timeline = timelines.get(name);

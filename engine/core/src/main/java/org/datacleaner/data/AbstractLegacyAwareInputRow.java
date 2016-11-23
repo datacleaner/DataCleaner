@@ -70,7 +70,7 @@ abstract class AbstractLegacyAwareInputRow extends AbstractInputRow {
         if (legacyRowNumberField != null) {
             rowNumber = readFields.get(getFieldNameForOldId(), -1);
         } else {
-            rowNumber = readFields.get(getFieldNameForNewId(), -1l);
+            rowNumber = readFields.get(getFieldNameForNewId(), -1L);
         }
 
         setField(getFieldNameForNewId(), rowNumber);

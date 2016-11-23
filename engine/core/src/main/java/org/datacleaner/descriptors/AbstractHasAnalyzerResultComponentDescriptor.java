@@ -41,7 +41,7 @@ abstract class AbstractHasAnalyzerResultComponentDescriptor<B extends HasAnalyze
 
     private final ResultDescriptor _resultDescriptor;
 
-    public AbstractHasAnalyzerResultComponentDescriptor(final Class<B> beanClass, final boolean requireInputColumns) {
+    AbstractHasAnalyzerResultComponentDescriptor(final Class<B> beanClass, final boolean requireInputColumns) {
         super(beanClass, requireInputColumns);
 
         final Class<?> typeParameter = ReflectionUtils

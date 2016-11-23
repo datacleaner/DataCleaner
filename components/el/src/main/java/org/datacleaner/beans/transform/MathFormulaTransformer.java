@@ -67,11 +67,11 @@ public class MathFormulaTransformer implements Transformer {
     public void init() {
         _factory = new ExpressionFactoryImpl();
 
-        _columnAliases = new HashMap<String, List<String>>();
+        _columnAliases = new HashMap<>();
         int i = 1;
         for (final InputColumn<Number> inputColumn : _input) {
             final String name = inputColumn.getName();
-            final List<String> list = new ArrayList<String>(3);
+            final List<String> list = new ArrayList<>(3);
             final String variableName1 = StringUtils.replaceWhitespaces(name.toLowerCase(), "_");
             final String variableName2 = StringUtils.replaceWhitespaces(name.toLowerCase(), "");
             list.add(variableName1);

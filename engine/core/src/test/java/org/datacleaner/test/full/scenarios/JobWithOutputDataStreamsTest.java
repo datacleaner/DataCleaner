@@ -61,7 +61,7 @@ public class JobWithOutputDataStreamsTest {
     @Test(timeout = 30 * 1000)
     public void testSimpleBuildAndExecuteScenario() throws Throwable {
         final AnalysisJob job;
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore(datastore);
 
             ajb.addSourceColumns("customers.contactfirstname");

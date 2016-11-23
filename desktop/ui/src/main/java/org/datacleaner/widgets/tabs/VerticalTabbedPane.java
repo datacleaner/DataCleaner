@@ -61,7 +61,7 @@ public class VerticalTabbedPane extends DCPanel {
     private final List<VerticalTab<?>> _tabs;
     private final DCPanel _leftPanel;
     private JComponent _currentContent;
-    private List<Listener> changeListeners = new ArrayList<Listener>();
+    private List<Listener> changeListeners = new ArrayList<>();
 
     public VerticalTabbedPane() {
         super();
@@ -186,7 +186,7 @@ public class VerticalTabbedPane extends DCPanel {
             }
         });
         _leftPanel.add(button);
-        final VerticalTab<C> tab = new VerticalTab<C>(button, component);
+        final VerticalTab<C> tab = new VerticalTab<>(button, component);
         _tabs.add(tab);
 
         if (index == 0) {

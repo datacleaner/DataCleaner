@@ -120,7 +120,7 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
 
         final AtomicInteger creations = new AtomicInteger();
         final AtomicInteger reuses = new AtomicInteger();
-        final MutableRef<TestConnection> conRef = new MutableRef<TestConnection>();
+        final MutableRef<TestConnection> conRef = new MutableRef<>();
 
         for (int i = 0; i < threads.length; i++) {
             threads[i] = new Thread() {

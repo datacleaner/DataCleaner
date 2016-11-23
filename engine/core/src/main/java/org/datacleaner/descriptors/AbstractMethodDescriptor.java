@@ -43,7 +43,7 @@ class AbstractMethodDescriptor extends BaseObject implements Serializable {
     private final ComponentDescriptor<?> _componentDescriptor;
     private final String _name;
 
-    public AbstractMethodDescriptor(final Method method, final ComponentDescriptor<?> componentDescriptor) {
+    AbstractMethodDescriptor(final Method method, final ComponentDescriptor<?> componentDescriptor) {
         if (method.getReturnType() != void.class) {
             throw new DescriptorException("Method can only be void");
         }
@@ -99,7 +99,7 @@ class AbstractMethodDescriptor extends BaseObject implements Serializable {
 
     public final Set<Annotation> getAnnotations() {
         final Annotation[] annotations = getMethod().getAnnotations();
-        return new HashSet<Annotation>(Arrays.asList(annotations));
+        return new HashSet<>(Arrays.asList(annotations));
     }
 
     public final <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {

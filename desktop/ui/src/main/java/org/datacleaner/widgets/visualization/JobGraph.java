@@ -109,7 +109,7 @@ public final class JobGraph {
 
     public JobGraph(final WindowContext windowContext, final UserPreferences userPreferences,
             final AnalysisJobBuilder analysisJobBuilder, final RendererFactory presenterRendererFactory, final UsageLogger usageLogger) {
-        _highlighedVertexes = new HashSet<Object>();
+        _highlighedVertexes = new HashSet<>();
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
         _windowContext = windowContext;
@@ -166,7 +166,7 @@ public final class JobGraph {
         final JobGraphLayoutTransformer layoutTransformer = new JobGraphLayoutTransformer(_analysisJobBuilder, graph);
         final Dimension preferredSize = layoutTransformer.getPreferredSize();
 
-        final StaticLayout<Object, JobGraphLink> layout = new StaticLayout<Object, JobGraphLink>(graph,
+        final StaticLayout<Object, JobGraphLink> layout = new StaticLayout<>(graph,
                 layoutTransformer, preferredSize);
 
         final Collection<Object> vertices = graph.getVertices();
@@ -180,7 +180,7 @@ public final class JobGraph {
         }
 
         final VisualizationViewer<Object, JobGraphLink> visualizationViewer =
-                new VisualizationViewer<Object, JobGraphLink>(
+                new VisualizationViewer<>(
                         layout, preferredSize);
         visualizationViewer.setTransferHandler(new TransferHandler() {
 

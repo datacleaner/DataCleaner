@@ -97,7 +97,7 @@ public class SimpleTableDefPanel extends DCPanel {
         if (columnType == null) {
             columnType = ColumnType.VARCHAR;
         }
-        final DCComboBox<ColumnType> typeComboBox = new DCComboBox<ColumnType>(getAvailableColumnTypes());
+        final DCComboBox<ColumnType> typeComboBox = new DCComboBox<>(getAvailableColumnTypes());
         typeComboBox.setRenderer(new EnumComboBoxListRenderer());
         typeComboBox.setSelectedItem(columnType);
 

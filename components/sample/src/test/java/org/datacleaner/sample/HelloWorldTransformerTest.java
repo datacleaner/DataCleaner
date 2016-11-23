@@ -37,7 +37,7 @@ import org.datacleaner.data.MockInputRow;
 public class HelloWorldTransformerTest extends TestCase {
 
     public void testSingleGreeting() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<String>("Name", String.class);
+        MockInputColumn<String> col = new MockInputColumn<>("Name", String.class);
 
         HelloWorldTransformer transformer = new HelloWorldTransformer();
         transformer.nameColumn = col;
@@ -51,7 +51,7 @@ public class HelloWorldTransformerTest extends TestCase {
     }
 
     public void testRandomGreeting() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<String>("Name", String.class);
+        MockInputColumn<String> col = new MockInputColumn<>("Name", String.class);
 
         HelloWorldTransformer transformer = new HelloWorldTransformer();
         transformer.nameColumn = col;

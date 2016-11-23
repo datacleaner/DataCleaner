@@ -40,7 +40,8 @@ public class HadoopResource extends HdfsResource {
         _clusterReferenceName = clusterReferenceName;
     }
 
-    public HadoopResource(final Resource resource, final Configuration configuration, final String clusterReferenceName) {
+    public HadoopResource(final Resource resource, final Configuration configuration,
+            final String clusterReferenceName) {
         super(resource.getQualifiedPath());
         _configuration = configuration;
         _clusterReferenceName = clusterReferenceName;

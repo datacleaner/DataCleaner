@@ -49,6 +49,7 @@ public class SecurityUtils {
      *
      * @return
      */
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public static SSLConnectionSocketFactory createUnsafeSSLConnectionSocketFactory() {
         try {
             final SSLContextBuilder builder = new SSLContextBuilder();

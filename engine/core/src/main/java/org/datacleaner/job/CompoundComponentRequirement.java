@@ -45,7 +45,8 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         Collections.addAll(_outcomes, outcomes);
     }
 
-    public CompoundComponentRequirement(final ComponentRequirement existingRequirement, final FilterOutcome filterOutcome) {
+    public CompoundComponentRequirement(final ComponentRequirement existingRequirement,
+            final FilterOutcome filterOutcome) {
         _outcomes = new LinkedHashSet<>();
         _outcomes.addAll(existingRequirement.getProcessingDependencies());
         _outcomes.add(filterOutcome);

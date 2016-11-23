@@ -58,7 +58,7 @@ public class WizardServiceImplTest extends TestCase {
         super.setUp();
         final Repository repository = new FileRepository("src/test/resources/example_repo");
 
-        final Map<String, JobWizard> wizardMap = new TreeMap<String, JobWizard>();
+        final Map<String, JobWizard> wizardMap = new TreeMap<>();
         wizardMap.put("quick", new MockAnalysisWizard());
 
         applicationContextMock = EasyMock.createMock(ApplicationContext.class);
@@ -83,7 +83,7 @@ public class WizardServiceImplTest extends TestCase {
     }
 
     public void testScenario() throws Exception {
-        assertEquals(0l, wizardDao.getOpenSessionCount());
+        assertEquals(0L, wizardDao.getOpenSessionCount());
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
@@ -108,7 +108,7 @@ public class WizardServiceImplTest extends TestCase {
         // first page is the select table page.
         wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, selectedDatastore, "en");
 
-        assertEquals(1l, wizardDao.getOpenSessionCount());
+        assertEquals(1L, wizardDao.getOpenSessionCount());
         assertNotNull(wizardPage);
         assertEquals(0, wizardPage.getPageIndex().intValue());
         assertNotNull(wizardPage.getFormInnerHtml());
@@ -116,19 +116,19 @@ public class WizardServiceImplTest extends TestCase {
         final WizardSessionIdentifier wizardSession = wizardPage.getSessionIdentifier();
         assertNotNull(wizardSession.getSessionId());
 
-        formParameters = new HashMap<String, List<String>>();
+        formParameters = new HashMap<>();
         formParameters.put("tableName", Arrays.asList("PUBLIC.CUSTOMERS"));
 
         // submit first page
         wizardPage = service.nextPage(tenant, wizardSession, formParameters);
 
         // second page is select columns page.
-        assertEquals(1l, wizardDao.getOpenSessionCount());
+        assertEquals(1L, wizardDao.getOpenSessionCount());
         assertNotNull(wizardPage);
         assertEquals(1, wizardPage.getPageIndex().intValue());
         assertNotNull(wizardPage.getFormInnerHtml());
 
-        formParameters = new HashMap<String, List<String>>();
+        formParameters = new HashMap<>();
         formParameters.put("columns", Arrays.asList("CUSTOMERNUMBER", "CUSTOMERNAME"));
 
         // submit second page
@@ -142,7 +142,7 @@ public class WizardServiceImplTest extends TestCase {
         assertEquals(2, wizardPage.getPageIndex().intValue());
 
         // now we submit a name for the job
-        formParameters = new HashMap<String, List<String>>();
+        formParameters = new HashMap<>();
         formParameters.put("name", Arrays.asList(jobName));
         wizardPage = service.nextPage(tenant, wizardSession, formParameters);
 

@@ -51,7 +51,7 @@ final class BuildMapJobBuilderPresenter extends TransformerComponentBuilderPanel
             final DataCleanerConfiguration configuration) {
         super(tjb, windowContext, propertyWidgetFactory, configuration);
 
-        _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
+        _overriddenPropertyWidgets = new HashMap<>();
 
         final TransformerDescriptor<BuildMapTransformer> descriptor = tjb.getDescriptor();
         final ConfiguredPropertyDescriptor valuesProperty = descriptor.getConfiguredProperty("Values");

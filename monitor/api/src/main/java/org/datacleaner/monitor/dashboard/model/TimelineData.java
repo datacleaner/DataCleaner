@@ -35,7 +35,7 @@ public class TimelineData implements Serializable {
 
     public List<TimelineDataRow> getRows() {
         if (_rows == null) {
-            _rows = new ArrayList<TimelineDataRow>();
+            _rows = new ArrayList<>();
         }
         return _rows;
     }

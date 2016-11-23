@@ -70,7 +70,7 @@ abstract class PentahoCarteConfigurationPage extends AbstractFreemarkerWizardPag
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("hostname", "localhost");
         map.put("port", "8081");
         map.put("username", "cluster");

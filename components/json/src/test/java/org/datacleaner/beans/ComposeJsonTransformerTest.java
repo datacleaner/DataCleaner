@@ -35,7 +35,7 @@ public class ComposeJsonTransformerTest {
 
     @Test
     public void testCreateSimpleJsonOfDataTypes() throws Exception {
-        InputColumn<Object> col = new MockInputColumn<Object>("obj", Object.class);
+        InputColumn<Object> col = new MockInputColumn<>("obj", Object.class);
         ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
         jsonTransformer.init();
 
@@ -53,11 +53,11 @@ public class ComposeJsonTransformerTest {
 
     @Test
     public void testSimpleMapToJson() {
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", "shekhar");
         map.put("country", "India");
 
-        InputColumn<Map<?, ?>> col = new MockInputColumn<Map<?, ?>>("map");
+        InputColumn<Map<?, ?>> col = new MockInputColumn<>("map");
         ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
         jsonTransformer.init();
         assertEquals(1, jsonTransformer.getOutputColumns().getColumnCount());
@@ -69,11 +69,11 @@ public class ComposeJsonTransformerTest {
 
     @Test
     public void testSimpleList() throws Exception {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("hello");
         list.add("world");
 
-        InputColumn<List<?>> col = new MockInputColumn<List<?>>("list");
+        InputColumn<List<?>> col = new MockInputColumn<>("list");
 
         ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
         jsonTransformer.init();
@@ -86,17 +86,17 @@ public class ComposeJsonTransformerTest {
 
     @Test
     public void testComplexCollectionColumnsToJson() throws Exception {
-        Map<String, String> namesMap = new LinkedHashMap<String, String>();
+        Map<String, String> namesMap = new LinkedHashMap<>();
         namesMap.put("GivenName", "Ankit");
         namesMap.put("FamilyName", "Kumar");
-        List<Map<String, String>> addresses = new ArrayList<Map<String, String>>();
-        Map<String, String> addressMap1 = new LinkedHashMap<String, String>();
+        List<Map<String, String>> addresses = new ArrayList<>();
+        Map<String, String> addressMap1 = new LinkedHashMap<>();
         addressMap1.put("Street", "Utrechtseweg");
         addressMap1.put("HouseNumber", "310");
         addressMap1.put("City", "Arnhem");
         addressMap1.put("Postcode", "6812AR");
         addressMap1.put("Country", "Netherlands");
-        Map<String, String> addressMap2 = new LinkedHashMap<String, String>();
+        Map<String, String> addressMap2 = new LinkedHashMap<>();
         addressMap2.put("Street", "Silversteyn");
         addressMap2.put("HouseNumber", "893");
         addressMap2.put("City", "Arnhem");
@@ -105,12 +105,12 @@ public class ComposeJsonTransformerTest {
         addresses.add(addressMap1);
         addresses.add(addressMap2);
 
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", namesMap);
         map.put("addresses", addresses);
         map.put("country", "India");
 
-        InputColumn<Map<?, ?>> col = new MockInputColumn<Map<?, ?>>("name");
+        InputColumn<Map<?, ?>> col = new MockInputColumn<>("name");
         ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
         jsonTransformer.init();
         assertEquals(1, jsonTransformer.getOutputColumns().getColumnCount());

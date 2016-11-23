@@ -400,13 +400,13 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         final List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Character encoding", _encodingComboBox));
-        result.add(new ImmutableEntry<String, JComponent>("Separator", _separatorCharField));
-        result.add(new ImmutableEntry<String, JComponent>("Quote char", _quoteCharField));
-        result.add(new ImmutableEntry<String, JComponent>("Escape char", _escapeCharField));
-        result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
-        result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
-        result.add(new ImmutableEntry<String, JComponent>("", _multilineValuesCheckBox));
+        result.add(new ImmutableEntry<>("Character encoding", _encodingComboBox));
+        result.add(new ImmutableEntry<>("Separator", _separatorCharField));
+        result.add(new ImmutableEntry<>("Quote char", _quoteCharField));
+        result.add(new ImmutableEntry<>("Escape char", _escapeCharField));
+        result.add(new ImmutableEntry<>("Header line", _headerLineComboBox));
+        result.add(new ImmutableEntry<>("", _failOnInconsistenciesCheckBox));
+        result.add(new ImmutableEntry<>("", _multilineValuesCheckBox));
         //TODO: Uncomment the line about columns names panel after the release of metamodel 4.5.5
         //result.add(new ImmutableEntry<>("Column Names", _addColumnNamesPanel));
         return result;

@@ -70,7 +70,7 @@ public class TenantInjectionManager implements InjectionManager {
     }
 
     private ResourceConverter createResourceConverter() {
-        final List<ResourceTypeHandler<?>> handlers = new ArrayList<ResourceTypeHandler<?>>();
+        final List<ResourceTypeHandler<?>> handlers = new ArrayList<>();
         handlers.add(new FileResourceTypeHandler(getRelativeParentDirectory()));
         handlers.add(new UrlResourceTypeHandler());
         handlers.add(new ClasspathResourceTypeHandler());

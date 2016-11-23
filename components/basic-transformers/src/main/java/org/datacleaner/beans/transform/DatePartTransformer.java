@@ -111,7 +111,7 @@ public class DatePartTransformer implements Transformer {
     @Initialize
     public void init() {
         // build indexed week days for reuse in transformation
-        _indexedWeekDays = new ArrayList<WeekDay>(7);
+        _indexedWeekDays = new ArrayList<>(7);
         WeekDay nextWeekDay = firstDayOfWeek;
         for (int i = 0; i < 7; i++) {
             _indexedWeekDays.add(nextWeekDay);
@@ -121,7 +121,7 @@ public class DatePartTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        final List<String> columnNames = new ArrayList<String>();
+        final List<String> columnNames = new ArrayList<>();
         final String columnName = column.getName();
 
         if (year) {
@@ -173,7 +173,7 @@ public class DatePartTransformer implements Transformer {
             cal.setTime(date);
         }
 
-        final List<Number> result = new ArrayList<Number>();
+        final List<Number> result = new ArrayList<>();
 
         if (year) {
             result.add(getYear(cal));

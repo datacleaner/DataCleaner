@@ -126,7 +126,7 @@ public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements
 
     public List<MetricIdentifier> createMetrics(final Timeline timeline) {
         final List<MetricType> metricTypes = timeline.getMetrics().getMetric();
-        final List<MetricIdentifier> metrics = new ArrayList<MetricIdentifier>(metricTypes.size());
+        final List<MetricIdentifier> metrics = new ArrayList<>(metricTypes.size());
         for (final MetricType metricType : metricTypes) {
             final MetricIdentifier metricIdentifier = new JaxbMetricAdaptor().deserialize(metricType);
 

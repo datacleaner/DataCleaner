@@ -40,10 +40,10 @@ public class ImmutableBeanConfigurationTest extends TestCase {
         ConfiguredPropertyDescriptor propertyDescriptor = componentDescriptor.getConfiguredProperty("Conf");
         assertNotNull(propertyDescriptor);
 
-        Map<ConfiguredPropertyDescriptor, Object> properties1 = new HashMap<ConfiguredPropertyDescriptor, Object>();
+        Map<ConfiguredPropertyDescriptor, Object> properties1 = new HashMap<>();
         properties1.put(propertyDescriptor, new String[] { "hello", "world" });
 
-        Map<ConfiguredPropertyDescriptor, Object> properties2 = new HashMap<ConfiguredPropertyDescriptor, Object>();
+        Map<ConfiguredPropertyDescriptor, Object> properties2 = new HashMap<>();
         properties2.put(propertyDescriptor, new String[] { "hello", "world" });
 
         ImmutableComponentConfiguration conf1 = new ImmutableComponentConfiguration(properties1);

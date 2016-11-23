@@ -58,7 +58,7 @@ public class SourceColumnFinderTest extends TestCase {
 
         AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         analysisJobBuilder.addTransformer(MockConvertToMonthObjectTransformer.class)
-                .addInputColumn(new MockInputColumn<String>("month", String.class));
+                .addInputColumn(new MockInputColumn<>("month", String.class));
         columnFinder.addSources(analysisJobBuilder);
         List<InputColumn<?>> findInputColumns = columnFinder.findInputColumns(Month.class);
         assertEquals(1, findInputColumns.size());
@@ -67,9 +67,9 @@ public class SourceColumnFinderTest extends TestCase {
     // see issue #706
     public void testFindOriginatingTableFromMaxRowsFilter() throws Exception {
         final TableDataProvider<?> tableProvider1 = new ArrayTableDataProvider(
-                new SimpleTableDef("table1", new String[] { "id", "foo" }), new ArrayList<Object[]>());
+                new SimpleTableDef("table1", new String[] { "id", "foo" }), new ArrayList<>());
         final TableDataProvider<?> tableProvider2 = new ArrayTableDataProvider(
-                new SimpleTableDef("table2", new String[] { "id", "bar" }), new ArrayList<Object[]>());
+                new SimpleTableDef("table2", new String[] { "id", "bar" }), new ArrayList<>());
 
         final Datastore ds = new PojoDatastore("my datastore", tableProvider1, tableProvider2);
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(ds);

@@ -49,7 +49,7 @@ public class CsvConfigurationWizardPageTest extends TestCase {
             }
         };
 
-        final Map<String, List<String>> parameters = new HashMap<String, List<String>>();
+        final Map<String, List<String>> parameters = new HashMap<>();
         parameters.put("separator", Arrays.asList(";|;"));
         parameters.put("escape", Arrays.asList(""));
         parameters.put("quote", Arrays.asList("\""));

@@ -105,7 +105,7 @@ public class JobCopyController {
 
         _eventPublisher.publishEvent(new JobCopyEvent(this, tenant, sourceJob, newJob));
 
-        final Map<String, String> response = new TreeMap<String, String>();
+        final Map<String, String> response = new TreeMap<>();
         response.put("source_job", sourceJob.getName());
         response.put("target_job", newJob.getName());
         response.put("repository_url", "/" + tenant + "/jobs/" + newJobFile.getName());

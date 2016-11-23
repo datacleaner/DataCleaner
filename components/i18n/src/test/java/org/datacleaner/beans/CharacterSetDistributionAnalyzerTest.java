@@ -68,8 +68,8 @@ public class CharacterSetDistributionAnalyzerTest extends TestCase {
 
     public void testSimpleScenario() throws Exception {
         CharacterSetDistributionAnalyzer analyzer = new CharacterSetDistributionAnalyzer();
-        InputColumn<String> col1 = new MockInputColumn<String>("foo", String.class);
-        InputColumn<String> col2 = new MockInputColumn<String>("bar", String.class);
+        InputColumn<String> col1 = new MockInputColumn<>("foo", String.class);
+        InputColumn<String> col2 = new MockInputColumn<>("bar", String.class);
 
         @SuppressWarnings("unchecked")
         InputColumn<String>[] cols = new InputColumn[] { col1, col2 };

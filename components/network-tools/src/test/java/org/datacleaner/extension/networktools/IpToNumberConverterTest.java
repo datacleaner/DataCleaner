@@ -28,7 +28,7 @@ public class IpToNumberConverterTest extends TestCase {
 
     public void testConvertToNumber() throws Exception {
         IpToNumberConverter trans = new IpToNumberConverter();
-        trans.ipColumn = new MockInputColumn<String>("my ip", String.class);
+        trans.ipColumn = new MockInputColumn<>("my ip", String.class);
 
         Number[] result;
 
@@ -49,22 +49,22 @@ public class IpToNumberConverterTest extends TestCase {
         result = trans.transform(new MockInputRow().put(trans.ipColumn,
                 "127.0.0.1"));
         assertEquals(1, result.length);
-        assertEquals(2130706433l, result[0].longValue());
+        assertEquals(2130706433L, result[0].longValue());
 
         result = trans.transform(new MockInputRow().put(trans.ipColumn,
                 "255.255.255.255"));
         assertEquals(1, result.length);
-        assertEquals(4294967295l, result[0].longValue());
+        assertEquals(4294967295L, result[0].longValue());
 
         result = trans.transform(new MockInputRow().put(trans.ipColumn,
                 "168.102.10.36"));
         assertEquals(1, result.length);
-        assertEquals(2825259556l, result[0].longValue());
+        assertEquals(2825259556L, result[0].longValue());
 
         result = trans.transform(new MockInputRow().put(trans.ipColumn,
                 "192.168.199.1"));
         assertEquals(1, result.length);
-        assertEquals(3232286465l, result[0].longValue());
+        assertEquals(3232286465L, result[0].longValue());
 
         // backwards check
         assertEquals("192.168.199.1", new NumberToIpConverter().transform(result[0]));

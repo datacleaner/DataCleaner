@@ -66,7 +66,7 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
     }
 
     public StringParameterizedMetricSuggestOracle(final TenantIdentifier tenant, final JobIdentifier job, final MetricIdentifier metric) {
-        _suggestions = new ArrayList<String>();
+        _suggestions = new ArrayList<>();
         setMetric(tenant, job, metric);
     }
 
@@ -97,7 +97,7 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
     }
 
     private void requestSuggestions(final String query, final Request request, final Callback callback) {
-        final List<Suggestion> suggestions = new ArrayList<Suggestion>();
+        final List<Suggestion> suggestions = new ArrayList<>();
 
         // TODO: Activate when "supportsInClause" is working properly
 

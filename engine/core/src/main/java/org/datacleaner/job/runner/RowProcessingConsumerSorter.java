@@ -49,9 +49,9 @@ class RowProcessingConsumerSorter {
     }
 
     public List<RowProcessingConsumer> createProcessOrderedConsumerList() {
-        final List<RowProcessingConsumer> orderedConsumers = new ArrayList<RowProcessingConsumer>();
-        final Collection<RowProcessingConsumer> remainingConsumers = new LinkedList<RowProcessingConsumer>(_consumers);
-        final Set<InputColumn<?>> availableVirtualColumns = new HashSet<InputColumn<?>>();
+        final List<RowProcessingConsumer> orderedConsumers = new ArrayList<>();
+        final Collection<RowProcessingConsumer> remainingConsumers = new LinkedList<>(_consumers);
+        final Set<InputColumn<?>> availableVirtualColumns = new HashSet<>();
         final FilterOutcomes availableOutcomes = new FilterOutcomesImpl();
 
         while (!remainingConsumers.isEmpty()) {

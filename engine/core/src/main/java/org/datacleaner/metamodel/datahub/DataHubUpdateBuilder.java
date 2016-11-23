@@ -49,7 +49,7 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
         final Object[] values = getValues();
         final Column[] columns = getColumns();
         final boolean[] explicitNulls = getExplicitNulls();
-        final Map<String, Object> fields = new HashMap<String, Object>();
+        final Map<String, Object> fields = new HashMap<>();
         for (int i = 0; i < columns.length; i++) {
             final Object value = values[i];
             if (value != null || explicitNulls[i]) {

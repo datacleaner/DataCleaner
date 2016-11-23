@@ -39,7 +39,7 @@ public class CompoundClassLoader extends ClassLoader {
      *            The class loaders that will be searched.
      */
     public CompoundClassLoader(final Collection<ClassLoader> loaders) {
-        this.loaders = new ArrayList<ClassLoader>(loaders);
+        this.loaders = new ArrayList<>(loaders);
     }
 
     @Override

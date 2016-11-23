@@ -96,7 +96,7 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
             if (_storage.size() >= _maxSampleSets) {
                 return null;
             }
-            rowCollection = new ArrayList<InputRow>(defaultSize);
+            rowCollection = new ArrayList<>(defaultSize);
             final List<InputRow> existingCollection = _storage.putIfAbsent(annotation, rowCollection);
             if (existingCollection != null) {
                 rowCollection = existingCollection;

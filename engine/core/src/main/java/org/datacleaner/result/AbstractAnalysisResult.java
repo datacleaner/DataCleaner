@@ -40,7 +40,7 @@ public abstract class AbstractAnalysisResult implements AnalysisResult {
     @SuppressWarnings("unchecked")
     @Override
     public <R extends AnalyzerResult> List<? extends R> getResults(final Class<R> resultClass) {
-        final List<R> list = new ArrayList<R>();
+        final List<R> list = new ArrayList<>();
 
         final List<AnalyzerResult> results = getResults();
         for (final AnalyzerResult analyzerResult : results) {

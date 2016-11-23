@@ -20,6 +20,13 @@
 
 	<property name="severity" value="warning"/>
 
+	<module name="SuppressionCommentFilter">
+		<property name="offCommentFormat" value="@checkstyle\:off" />
+		<property name="onCommentFormat" value="@checkstyle\:on" />
+	</module>
+
+	<module name="SuppressWarningsFilter" />
+
 	<property name="fileExtensions" value="java, properties, xml"/>
 	<!-- Checks for whitespace                               -->
 	<!-- See http://checkstyle.sf.net/config_whitespace.html -->
@@ -28,6 +35,8 @@
 	</module>
 
 	<module name="TreeWalker">
+		<module name="SuppressWarningsHolder"/>
+		<module name="FileContentsHolder"/>
 		<module name="OuterTypeFilename"/>
 		<module name="IllegalTokenText">
 			<property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
@@ -41,7 +50,7 @@
 			<property name="allowNonPrintableEscapes" value="true"/>
 		</module>
 		<module name="LineLength">
-			<property name="max" value="120"/>
+			<property name="max" value="130"/>
 			<property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
 		</module>
 		<module name="OneTopLevelClass"/>
@@ -58,7 +67,7 @@
 		<module name="RightCurly">
 			<property name="option" value="alone"/>
 			<property name="tokens"
-					  value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO, STATIC_INIT, INSTANCE_INIT"/>
+					  value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, STATIC_INIT, INSTANCE_INIT"/>
 		</module>
 		<module name="WhitespaceAround">
 			<property name="allowEmptyConstructors" value="true"/>
@@ -100,7 +109,8 @@
 					 value="Member name ''{0}'' must match pattern ''{1}''."/>
 		</module>
 		<module name="ParameterName">
-			<property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9]*$"/>
+			<!-- TODO: See how much work it would be to limit 1-char parameter names -->
+			<property name="format" value="^(a|c|e|o|r|[a-z][a-z0-9][a-zA-Z0-9]*)$"/>
 			<property name="ignoreOverridden" value="true"/>
 			<message key="name.invalidPattern"
 					 value="Parameter name ''{0}'' must match pattern ''{1}''."/>
@@ -111,7 +121,8 @@
 		</module>
 		<module name="LocalVariableName">
 			<property name="tokens" value="VARIABLE_DEF"/>
-			<property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9]*$"/>
+			<!-- A lot of these are pretty nasty. TODO: Slowly start removing the single-letter vars -->
+			<property name="format" value="^(b|c|d|i|n|o|t|[a-z][a-z0-9][a-zA-Z0-9]*)$"/>
 			<property name="allowOneCharVarInForLoop" value="true"/>
 			<message key="name.invalidPattern"
 					 value="Local variable name ''{0}'' must match pattern ''{1}''."/>
@@ -131,7 +142,6 @@
 			<message key="name.invalidPattern"
 					 value="Interface type name ''{0}'' must match pattern ''{1}''."/>
 		</module>
-		<module name="NoFinalizer"/>
 		<module name="GenericWhitespace">
 			<message key="ws.followed"
 					 value="GenericWhitespace ''{0}'' is followed by whitespace."/>
@@ -149,10 +159,6 @@
 			<property name="throwsIndent" value="4"/>
 			<property name="lineWrappingIndentation" value="8"/>
 			<property name="arrayInitIndent" value="2"/>
-		</module>
-		<module name="AbbreviationAsWordInName">
-			<property name="ignoreFinal" value="false"/>
-			<property name="allowedAbbreviationLength" value="1"/>
 		</module>
 		<module name="VariableDeclarationUsageDistance"/>
 		<module name="CustomImportOrder">
@@ -176,7 +182,6 @@
 			<property name="tokens" value="VARIABLE_DEF"/>
 			<property name="allowSamelineMultipleAnnotations" value="true"/>
 		</module>
-		<module name="JavadocTagContinuationIndentation"/>
 		<module name="AtclauseOrder">
 			<property name="tagOrder" value="@param, @return, @throws, @deprecated"/>
 			<property name="target" value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
@@ -194,7 +199,9 @@
 		</module>
 		<module name="CommentsIndentation"/>
 
-		<module name="RedundantModifier"/>
+		<module name="RedundantModifier">
+			<property name="tokens" value=" METHOD_DEF, VARIABLE_DEF, ANNOTATION_FIELD_DEF, INTERFACE_DEF, CLASS_DEF, ENUM_DEF, RESOURCE"/>
+		</module>
 
 		<module name="FinalLocalVariable"/>
 
@@ -207,6 +214,10 @@
 		</module>
 
 		<!-- Configured, but ignore for now. TODO: Make these viable checks by fixing our code  -->
+
+		<module name="NoFinalizer">
+			<property name="severity" value="ignore"/>
+		</module>
 
 		<module name="SummaryJavadoc">
 			<property name="severity" value="ignore"/>
@@ -223,6 +234,18 @@
 			<property name="minLineCount" value="2"/>
 			<property name="allowedAnnotations" value="Override, Test"/>
 			<property name="allowThrowsTagsForSubclasses" value="true"/>
+		</module>
+
+		<module name="AbbreviationAsWordInName">
+			<property name="severity" value="ignore"/>
+			<property name="ignoreFinal" value="false"/>
+			<property name="allowedAbbreviationLength" value="1"/>
+			<property name="allowedAbbreviations" value="DC"/>
+		</module>
+
+
+		<module name="JavadocTagContinuationIndentation">
+			<property name="severity" value="ignore"/>
 		</module>
 
 		<module name="OverloadMethodsDeclarationOrder">

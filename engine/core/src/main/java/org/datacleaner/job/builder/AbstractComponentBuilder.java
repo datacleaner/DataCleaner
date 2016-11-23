@@ -91,7 +91,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     private static final Logger logger = LoggerFactory.getLogger(AbstractComponentBuilder.class);
 
     private final List<ComponentRemovalListener<ComponentBuilder>> _removalListeners;
-    private final List<OutputDataStream> _outputDataStreams = new ArrayList<OutputDataStream>();
+    private final List<OutputDataStream> _outputDataStreams = new ArrayList<>();
     private final Map<OutputDataStream, AnalysisJobBuilder> _outputDataStreamJobs = new HashMap<>();
     private final D _descriptor;
     private final E _configurableBean;
@@ -101,7 +101,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     private ComponentRequirement _componentRequirement;
     private String _name;
 
-    public AbstractComponentBuilder(final AnalysisJobBuilder analysisJobBuilder, final D descriptor, final Class<?> builderClass) {
+    public AbstractComponentBuilder(final AnalysisJobBuilder analysisJobBuilder, final D descriptor,
+            final Class<?> builderClass) {
         if (analysisJobBuilder == null) {
             throw new IllegalArgumentException("analysisJobBuilder cannot be null");
         }
@@ -260,7 +261,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         }
 
         try {
-            final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(_analysisJobBuilder.getConfiguration(), null, false);
+            final LifeCycleHelper lifeCycleHelper =
+                    new LifeCycleHelper(_analysisJobBuilder.getConfiguration(), null, false);
             lifeCycleHelper.validate(getDescriptor(), getComponentInstance());
         } catch (final RuntimeException e) {
             if (throwException) {
@@ -447,46 +449,50 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     private void synchronizeDependentProperties(final ConfiguredPropertyDescriptor property,
             final Object newValue, final Object currentValue) {
         if (currentValue != null) {
-            getDescriptor().getConfiguredPropertiesByAnnotation(MappedProperty.class).stream().filter(
-                    dependentProperty -> property.getName().equals(dependentProperty.getAnnotation(MappedProperty.class)
-                            .value())).forEach(dependentProperty -> {
-                // In case the new value no longer contains everything in the original value,
-                // the values in the dependent property referring to the removed values need
-                // to be removed too.
-                final Object dependentValue = dependentProperty.getValue(_configurableBean);
+            getDescriptor().getConfiguredPropertiesByAnnotation(MappedProperty.class).stream()
+                    .filter(dependentProperty -> property.getName()
+                            .equals(dependentProperty.getAnnotation(MappedProperty.class).value()))
+                    .forEach(dependentProperty -> doSynchronizeProperties(newValue, currentValue, dependentProperty));
+        }
+    }
 
-                if (dependentValue != null) {
-                    // First build a list containing value and references tuples.
-                    final Map<String, Object> originalMappings = new HashMap<>();
+    private void doSynchronizeProperties(final Object newValue, final Object currentValue,
+            final ConfiguredPropertyDescriptor property) {
+        // In case the new value no longer contains everything in the original value,
+        // the values in the dependent property referring to the removed values need
+        // to be removed too.
+        final Object dependentValue = property.getValue(_configurableBean);
 
-                    final List<Object> synchronizedDependents = new ArrayList<>();
+        if (dependentValue != null) {
+            // First build a list containing value and references tuples.
+            final Map<String, Object> originalMappings = new HashMap<>();
 
-                    if (currentValue.getClass().isArray()) {
-                        for (int i = 0; i < Array.getLength(currentValue); i++) {
-                            originalMappings.put(getKey(Array.get(currentValue, i)), Array.get(
-                                    dependentValue, i));
-                        }
+            final List<Object> synchronizedDependents = new ArrayList<>();
 
-                        for (int i = 0; i < Array.getLength(newValue); i++) {
-                            synchronizedDependents.add(originalMappings.get(getKey(Array.get(newValue,
-                                    i))));
-                        }
-
-                        dependentProperty.setValue(_configurableBean, getArray(dependentProperty
-                                .getBaseType(), synchronizedDependents));
-                    } else {
-                        if (newValue == null) {
-                            dependentProperty.setValue(_configurableBean, null);
-                        }
-                    }
+            if (currentValue.getClass().isArray()) {
+                for (int i = 0; i < Array.getLength(currentValue); i++) {
+                    originalMappings.put(getKey(Array.get(currentValue, i)), Array.get(
+                            dependentValue, i));
                 }
-            });
+
+                for (int i = 0; i < Array.getLength(newValue); i++) {
+                    synchronizedDependents.add(originalMappings.get(getKey(Array.get(newValue,
+                            i))));
+                }
+
+                property.setValue(_configurableBean, getArray(property
+                        .getBaseType(), synchronizedDependents));
+            } else {
+                if (newValue == null) {
+                    property.setValue(_configurableBean, null);
+                }
+            }
         }
     }
 
     @Override
     public Map<ConfiguredPropertyDescriptor, Object> getConfiguredProperties() {
-        final Map<ConfiguredPropertyDescriptor, Object> map = new HashMap<ConfiguredPropertyDescriptor, Object>();
+        final Map<ConfiguredPropertyDescriptor, Object> map = new HashMap<>();
         final Set<ConfiguredPropertyDescriptor> configuredProperties = getDescriptor().getConfiguredProperties();
         for (final ConfiguredPropertyDescriptor propertyDescriptor : configuredProperties) {
             final Object value = getConfiguredProperty(propertyDescriptor);
@@ -537,7 +543,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
      */
     @Override
     public void clearInputColumns() {
-        final Set<ConfiguredPropertyDescriptor> configuredProperties = getDescriptor().getConfiguredPropertiesForInput();
+        final Set<ConfiguredPropertyDescriptor> configuredProperties =
+                getDescriptor().getConfiguredPropertiesForInput();
         for (final ConfiguredPropertyDescriptor configuredProperty : configuredProperties) {
             if (configuredProperty.isArray()) {
                 setConfiguredProperty(configuredProperty, new InputColumn[0]);
@@ -686,7 +693,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     }
 
     @Override
-    public B removeInputColumn(final InputColumn<?> inputColumn, final ConfiguredPropertyDescriptor propertyDescriptor) {
+    public B removeInputColumn(final InputColumn<?> inputColumn,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         Object inputColumns = getConfiguredProperty(propertyDescriptor);
         if (inputColumns != null) {
             if (inputColumns == inputColumn) {
@@ -791,7 +799,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     }
 
     public List<InputColumn<?>> getInputColumns() {
-        final List<InputColumn<?>> result = new LinkedList<InputColumn<?>>();
+        final List<InputColumn<?>> result = new LinkedList<>();
         final Set<ConfiguredPropertyDescriptor> configuredPropertiesForInput = getDescriptor()
                 .getConfiguredPropertiesForInput();
         for (final ConfiguredPropertyDescriptor configuredProperty : configuredPropertiesForInput) {
@@ -998,8 +1006,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
     private void updateStream(final MutableTable existingTable, final AnalysisJobBuilder jobBuilder,
             final OutputDataStream newStream) {
-        final List<Column> newColumnList = new ArrayList<Column>();
-        final List<Column> addedColumns = new ArrayList<Column>();
+        final List<Column> newColumnList = new ArrayList<>();
+        final List<Column> addedColumns = new ArrayList<>();
 
         final Table newTable = newStream.getTable();
 

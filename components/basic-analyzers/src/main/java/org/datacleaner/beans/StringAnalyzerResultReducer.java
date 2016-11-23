@@ -37,13 +37,13 @@ import org.datacleaner.util.AverageBuilder;
  */
 public class StringAnalyzerResultReducer extends AbstractCrosstabResultReducer<StringAnalyzerResult> {
 
-    private static final Set<String> AVG_MEASURES = new HashSet<String>(Arrays.asList(StringAnalyzer.MEASURE_AVG_CHARS,
+    private static final Set<String> AVG_MEASURES = new HashSet<>(Arrays.asList(StringAnalyzer.MEASURE_AVG_CHARS,
             StringAnalyzer.MEASURE_AVG_WHITE_SPACES));
 
-    private static final Set<String> MIN_MEASURES = new HashSet<String>(Arrays.asList(StringAnalyzer.MEASURE_MIN_CHARS,
+    private static final Set<String> MIN_MEASURES = new HashSet<>(Arrays.asList(StringAnalyzer.MEASURE_MIN_CHARS,
             StringAnalyzer.MEASURE_MIN_WHITE_SPACES, StringAnalyzer.MEASURE_MIN_WORDS));
 
-    private static final Set<String> MAX_MEASURES = new HashSet<String>(Arrays.asList(StringAnalyzer.MEASURE_MAX_CHARS,
+    private static final Set<String> MAX_MEASURES = new HashSet<>(Arrays.asList(StringAnalyzer.MEASURE_MAX_CHARS,
             StringAnalyzer.MEASURE_MAX_WHITE_SPACES, StringAnalyzer.MEASURE_MAX_WORDS));
 
     @Override

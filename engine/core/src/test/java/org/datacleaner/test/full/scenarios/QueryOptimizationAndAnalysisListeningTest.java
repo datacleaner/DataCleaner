@@ -46,7 +46,7 @@ import org.datacleaner.test.TestHelper;
 public class QueryOptimizationAndAnalysisListeningTest extends TestCase {
 
     public void testScenario() throws Exception {
-        final List<Integer> rowNumbers = new ArrayList<Integer>();
+        final List<Integer> rowNumbers = new ArrayList<>();
         final AtomicInteger expectedRows = new AtomicInteger(-1);
 
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
@@ -67,7 +67,7 @@ public class QueryOptimizationAndAnalysisListeningTest extends TestCase {
         };
 
         final AnalysisJob job;
-        try (final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
             jobBuilder.setDatastore("orderdb");
             jobBuilder.addSourceColumns("customers.contactfirstname", "customers.contactlastname");
 

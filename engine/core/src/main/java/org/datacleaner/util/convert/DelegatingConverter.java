@@ -56,7 +56,7 @@ public class DelegatingConverter implements Converter<Object> {
     }
 
     public DelegatingConverter(final Collection<Converter<?>> converters) {
-        _converters = new ArrayList<Converter<? extends Object>>();
+        _converters = new ArrayList<>();
         _nullConverter = new NullConverter();
         _arrayConverter = new ArrayConverter(this);
         _mapStringToStringConverter = new MapStringToStringConverter();
@@ -184,7 +184,7 @@ public class DelegatingConverter implements Converter<Object> {
                     // this.
                     value = this;
                 } else {
-                    final InjectionPoint<Object> injectionPoint = new MemberInjectionPoint<Object>(field, converter);
+                    final InjectionPoint<Object> injectionPoint = new MemberInjectionPoint<>(field, converter);
                     value = injectionManager.getInstance(injectionPoint);
                 }
                 field.setAccessible(true);

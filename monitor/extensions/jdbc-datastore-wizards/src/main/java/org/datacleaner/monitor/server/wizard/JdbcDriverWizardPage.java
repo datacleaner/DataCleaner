@@ -81,7 +81,7 @@ final class JdbcDriverWizardPage extends AbstractFreemarkerWizardPage {
 
     @Override
     protected Map<String, Object> getFormModel() {
-        return new HashMap<String, Object>();
+        return new HashMap<>();
     }
 
 }

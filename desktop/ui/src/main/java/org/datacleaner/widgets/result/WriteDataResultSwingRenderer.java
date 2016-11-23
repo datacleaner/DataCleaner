@@ -212,7 +212,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
             previewButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(final ActionEvent e) {
-                    try (final DatastoreConnection con = datastore.openConnection()) {
+                    try (DatastoreConnection con = datastore.openConnection()) {
                         con.getSchemaNavigator().refreshSchemas();
                         final Table previewTable = result.getPreviewTable(datastore);
                         if (previewTable == null) {

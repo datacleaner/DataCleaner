@@ -53,7 +53,7 @@ public class ImageServlet extends HttpServlet {
     public ImageServlet() {
         super();
         _resourceManager = ResourceManager.get();
-        _fallbackImages = new ConcurrentHashMap<String, String>();
+        _fallbackImages = new ConcurrentHashMap<>();
         _fallbackImages.put("datastore", "org/eobjects/datacleaner/monitor/resources/datastore.png");
         _fallbackImages.put("job", "org/eobjects/datacleaner/monitor/resources/job.png");
     }

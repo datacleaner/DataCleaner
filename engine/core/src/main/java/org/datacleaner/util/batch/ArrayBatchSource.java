@@ -44,7 +44,7 @@ final class ArrayBatchSource<I> implements BatchSource<I> {
     @Override
     public List<I> toList() {
         final int size = size();
-        final List<I> list = new ArrayList<I>(size);
+        final List<I> list = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             list.add(getInput(i));
         }

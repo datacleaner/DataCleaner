@@ -29,7 +29,7 @@ public class ValueCountListImpl implements ValueCountList {
 
     private final boolean _retainHighest;
     private final int _maxSize;
-    private final LinkedList<ValueFrequency> _values = new LinkedList<ValueFrequency>();
+    private final LinkedList<ValueFrequency> _values = new LinkedList<>();
 
     private ValueCountListImpl(final int maxSize, final boolean retainHighest) {
         _maxSize = maxSize;

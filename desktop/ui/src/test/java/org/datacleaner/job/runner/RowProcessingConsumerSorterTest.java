@@ -61,7 +61,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
 
     public void testCreateProcessOrderedConsumerListNoConsumers() throws Exception {
         List<RowProcessingConsumer> consumerList = new RowProcessingConsumerSorter(
-                new ArrayList<RowProcessingConsumer>()).createProcessOrderedConsumerList();
+                new ArrayList<>()).createProcessOrderedConsumerList();
         assertTrue(consumerList.isEmpty());
     }
 
@@ -198,11 +198,11 @@ public class RowProcessingConsumerSorterTest extends TestCase {
 
         assertEquals(5, consumers.size());
 
-        List<TransformerJob> transformerJobs = new ArrayList<TransformerJob>(analysisJob.getTransformerJobs());
-        List<AnalyzerJob> analyzerJobs = new ArrayList<AnalyzerJob>(analysisJob.getAnalyzerJobs());
+        List<TransformerJob> transformerJobs = new ArrayList<>(analysisJob.getTransformerJobs());
+        List<AnalyzerJob> analyzerJobs = new ArrayList<>(analysisJob.getAnalyzerJobs());
 
         // create a list that represents the expected dependent sequence
-        Queue<ComponentJob> jobDependencies = new LinkedList<ComponentJob>();
+        Queue<ComponentJob> jobDependencies = new LinkedList<>();
         jobDependencies.add(transformerJobs.get(0));
         jobDependencies.add(transformerJobs.get(1));
         jobDependencies.add(transformerJobs.get(2));
@@ -232,7 +232,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
     }
 
     private List<RowProcessingConsumer> getConsumers(AnalysisJob analysisJob) {
-        List<RowProcessingConsumer> consumers = new ArrayList<RowProcessingConsumer>();
+        List<RowProcessingConsumer> consumers = new ArrayList<>();
         final ErrorAwareAnalysisListener errorListener = new ErrorAwareAnalysisListener();
         RowProcessingPublishers publishers = new RowProcessingPublishers(analysisJob, null, errorListener, null, null);
         Table table = analysisJob.getSourceColumns().get(0)

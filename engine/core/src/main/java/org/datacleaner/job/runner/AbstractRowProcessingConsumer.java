@@ -65,7 +65,8 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     private final AtomicInteger _publishersInitializedCount;
     private final AtomicInteger _publishersClosedCount;
 
-    protected AbstractRowProcessingConsumer(final RowProcessingPublisher publisher, final HasComponentRequirement outcomeSinkJob,
+    protected AbstractRowProcessingConsumer(final RowProcessingPublisher publisher,
+            final HasComponentRequirement outcomeSinkJob,
             final InputColumnSinkJob inputColumnSinkJob) {
         this(publisher.getAnalysisJob(), publisher.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob, publisher
                 .getSourceColumnFinder());
@@ -91,9 +92,10 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         _publishersClosedCount = new AtomicInteger(0);
     }
 
-    private static Set<HasComponentRequirement> buildSourceJobsOfInputColumns(final InputColumnSinkJob inputColumnSinkJob,
+    private static Set<HasComponentRequirement> buildSourceJobsOfInputColumns(
+            final InputColumnSinkJob inputColumnSinkJob,
             final SourceColumnFinder sourceColumnFinder) {
-        final Set<HasComponentRequirement> result = new HashSet<HasComponentRequirement>();
+        final Set<HasComponentRequirement> result = new HashSet<>();
 
         final Set<Object> sourceJobsOfInputColumns = sourceColumnFinder.findAllSourceJobs(inputColumnSinkJob);
         for (final Iterator<Object> it = sourceJobsOfInputColumns.iterator(); it.hasNext(); ) {
@@ -156,7 +158,8 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     }
 
     @Override
-    public final void consume(final InputRow row, final int distinctCount, final FilterOutcomes outcomes, final RowProcessingChain chain) {
+    public final void consume(final InputRow row, final int distinctCount, final FilterOutcomes outcomes,
+            final RowProcessingChain chain) {
         try {
             consumeInternal(row, distinctCount, outcomes, chain);
         } catch (final RuntimeException e) {

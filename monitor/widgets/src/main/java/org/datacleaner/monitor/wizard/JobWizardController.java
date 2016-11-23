@@ -212,10 +212,10 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
         final FlowPanel outerPanel = new FlowPanel();
         outerPanel.setStyleName("InitialSelectionOuterPanel");
-        final List<RadioButton> datastoreRadios = new ArrayList<RadioButton>();
+        final List<RadioButton> datastoreRadios = new ArrayList<>();
         showDatastoreSelection(outerPanel, datastoreRadios);
 
-        final List<RadioButton> wizardRadios = new ArrayList<RadioButton>();
+        final List<RadioButton> wizardRadios = new ArrayList<>();
         showNonDatastoreConsumingWizardSelection(outerPanel, wizardRadios);
 
         setNextClickHandler(new ClickHandler() {
@@ -345,7 +345,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
         panel.add(new Label("Please select the type of job to build:"));
 
-        final List<RadioButton> radios = new ArrayList<RadioButton>(wizards.size());
+        final List<RadioButton> radios = new ArrayList<>(wizards.size());
 
         if (wizards == null || wizards.isEmpty()) {
             panel.add(new Label("(no job wizards available)"));

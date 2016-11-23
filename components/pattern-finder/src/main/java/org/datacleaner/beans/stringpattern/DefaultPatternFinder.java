@@ -48,7 +48,7 @@ public final class DefaultPatternFinder extends PatternFinder<InputRow> {
         if (annotationFactory == null) {
             throw new IllegalArgumentException("RowAnnotationFactory cannot be null");
         }
-        _annotations = new ConcurrentHashMap<TokenPattern, RowAnnotation>();
+        _annotations = new ConcurrentHashMap<>();
         _annotationFactory = annotationFactory;
     }
 
@@ -61,7 +61,7 @@ public final class DefaultPatternFinder extends PatternFinder<InputRow> {
      */
     public DefaultPatternFinder(final TokenizerConfiguration configuration, final int inMemoryRowThreshold) {
         super(configuration);
-        _annotations = new ConcurrentHashMap<TokenPattern, RowAnnotation>();
+        _annotations = new ConcurrentHashMap<>();
         _annotationFactory = RowAnnotations.getInMemoryFactory(100, inMemoryRowThreshold);
     }
 

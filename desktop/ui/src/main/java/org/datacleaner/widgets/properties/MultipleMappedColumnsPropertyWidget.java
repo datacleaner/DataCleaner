@@ -113,7 +113,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
         _comboBoxDecorations = new IdentityHashMap<>();
         _mappedColumnsProperty = mappedColumnsProperty;
 
-        _tableRef = new MutableRef<Table>();
+        _tableRef = new MutableRef<>();
         _mappedColumnNamesPropertyWidget = new MappedColumnNamesPropertyWidget(componentBuilder, mappedColumnsProperty);
 
         final InputColumn<?>[] currentValue = getCurrentValue();
@@ -288,7 +288,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 
     public String[] getMappedColumnNames() {
         final List<InputColumn<?>> selectedInputColumns = getSelectedInputColumns();
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         for (final InputColumn<?> inputColumn : selectedInputColumns) {
             final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
             if (comboBox == null) {

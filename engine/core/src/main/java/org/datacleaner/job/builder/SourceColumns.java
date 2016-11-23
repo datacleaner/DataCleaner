@@ -27,7 +27,7 @@ import org.datacleaner.job.InputColumnSourceJob;
 
 public final class SourceColumns implements InputColumnSourceJob {
 
-    private final Collection<InputColumn<?>> _sourceColumns = new ArrayList<InputColumn<?>>();
+    private final Collection<InputColumn<?>> _sourceColumns = new ArrayList<>();
 
     public SourceColumns(final Collection<? extends InputColumn<?>> sourceColumns) {
         _sourceColumns.addAll(sourceColumns);

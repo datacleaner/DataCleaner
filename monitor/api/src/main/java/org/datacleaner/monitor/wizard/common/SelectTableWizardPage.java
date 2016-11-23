@@ -82,10 +82,10 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("promptText", getPromptText());
         map.put("selectedTableName", _selectedTableName);
-        try (final DatastoreConnection con = _datastore.openConnection()) {
+        try (DatastoreConnection con = _datastore.openConnection()) {
             final Schema[] schemas = con.getSchemaNavigator().getSchemas();
             final List<Schema> schemaList = CollectionUtils.filter(schemas, new Predicate<Schema>() {
                 @Override
@@ -106,7 +106,7 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
     @Override
     public WizardPageController nextPageController(final Map<String, List<String>> formParameters) {
         _selectedTableName = getString(formParameters, "tableName");
-        try (final DatastoreConnection con = _datastore.openConnection()) {
+        try (DatastoreConnection con = _datastore.openConnection()) {
             final Table selectedTable = con.getSchemaNavigator().convertToTable(_selectedTableName);
             return nextPageController(selectedTable);
         }

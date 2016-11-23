@@ -232,7 +232,8 @@ public final class ReflectionUtils {
         return 0;
     }
 
-    public static Class<?> getTypeParameter(final Class<?> clazz, final Class<?> genericInterface, final int parameterIndex) {
+    public static Class<?> getTypeParameter(final Class<?> clazz, final Class<?> genericInterface,
+            final int parameterIndex) {
         final Type baseType = GenericTypeReflector.getExactSuperType(clazz, genericInterface);
         final ParameterizedType pBaseType = (ParameterizedType) baseType;
         final Type typeParameterForBaseInterface = pBaseType.getActualTypeArguments()[parameterIndex];
@@ -295,7 +296,8 @@ public final class ReflectionUtils {
         throw new UnsupportedOperationException("Parameter type not supported: " + someType);
     }
 
-    public static int getHierarchyDistance(final Class<?> subtype, final Class<?> supertype) throws IllegalArgumentException {
+    public static int getHierarchyDistance(final Class<?> subtype, final Class<?> supertype)
+            throws IllegalArgumentException {
         assert subtype != null;
         assert supertype != null;
 
@@ -368,15 +370,15 @@ public final class ReflectionUtils {
         return bestCandidate;
     }
 
-    public static boolean isArray(final Object o) {
-        if (o == null) {
+    public static boolean isArray(final Object obj) {
+        if (obj == null) {
             return false;
         }
-        return o.getClass().isArray();
+        return obj.getClass().isArray();
     }
 
     public static Method[] getMethods(final Class<?> clazz, final Class<? extends Annotation> withAnnotation) {
-        final List<Method> result = new ArrayList<Method>();
+        final List<Method> result = new ArrayList<>();
 
         final Method[] methods = getMethods(clazz);
         for (final Method method : methods) {
@@ -389,7 +391,7 @@ public final class ReflectionUtils {
     }
 
     public static Field[] getAllFields(final Class<?> clazz, final Class<? extends Annotation> withAnnotation) {
-        final List<Field> result = new ArrayList<Field>();
+        final List<Field> result = new ArrayList<>();
 
         final Field[] fields = getAllFields(clazz);
         for (final Field field : fields) {
@@ -570,7 +572,8 @@ public final class ReflectionUtils {
         }
     }
 
-    public static <A extends Annotation> A getAnnotation(final AnnotatedElement element, final Class<A> annotationClass) {
+    public static <A extends Annotation> A getAnnotation(final AnnotatedElement element,
+            final Class<A> annotationClass) {
         synchronized (ANNOTATION_REFLECTION_LOCK) {
             final A annotation = element.getAnnotation(annotationClass);
             if (annotation == null && element instanceof Method) {
@@ -605,7 +608,8 @@ public final class ReflectionUtils {
         }
     }
 
-    public static boolean isAnnotationPresent(final Enum<?> enumConstant, final Class<? extends Annotation> annotationClass) {
+    public static boolean isAnnotationPresent(final Enum<?> enumConstant,
+            final Class<? extends Annotation> annotationClass) {
         try {
             final Field field = enumConstant.getClass().getDeclaredField(enumConstant.name());
             return isAnnotationPresent(field, annotationClass);
@@ -614,7 +618,8 @@ public final class ReflectionUtils {
         }
     }
 
-    public static boolean isAnnotationPresent(final AnnotatedElement element, final Class<? extends Annotation> annotationClass) {
+    public static boolean isAnnotationPresent(final AnnotatedElement element,
+            final Class<? extends Annotation> annotationClass) {
         return getAnnotation(element, annotationClass) != null;
     }
 }

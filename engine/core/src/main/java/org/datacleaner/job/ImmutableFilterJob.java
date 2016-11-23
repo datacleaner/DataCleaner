@@ -49,8 +49,8 @@ public final class ImmutableFilterJob extends ImmutableComponentJob implements F
      * @param metadataProperties
      *
      * @deprecated use
-     *             {@link #ImmutableFilterJob(String, FilterDescriptor, ComponentConfiguration, ComponentRequirement, Map, OutputDataStreamJob[])}
-     *             instead
+     *             {@link #ImmutableFilterJob(String, FilterDescriptor, ComponentConfiguration,
+     *             ComponentRequirement, Map, OutputDataStreamJob[])} instead
      */
     @Deprecated
     public ImmutableFilterJob(final String name, final FilterDescriptor<?, ?> descriptor,

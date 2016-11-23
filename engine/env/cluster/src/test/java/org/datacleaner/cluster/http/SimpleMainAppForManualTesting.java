@@ -56,7 +56,7 @@ public class SimpleMainAppForManualTesting {
         httpClientContext.setCredentialsProvider(credentialsProvider);
 
         // register endpoints
-        final List<String> slaveEndpoints = new ArrayList<String>();
+        final List<String> slaveEndpoints = new ArrayList<>();
         slaveEndpoints.add("http://localhost:8080/DataCleaner-monitor/repository/demo/cluster_slave_endpoint");
         slaveEndpoints.add("http://localhost:9090/DataCleaner-monitor/repository/demo/cluster_slave_endpoint");
 

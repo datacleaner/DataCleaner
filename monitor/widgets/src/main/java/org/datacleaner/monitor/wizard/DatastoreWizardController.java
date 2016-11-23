@@ -94,7 +94,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
 
         panel.add(new Label("Please select the type of datastore to register:"));
 
-        final List<RadioButton> radios = new ArrayList<RadioButton>(wizards.size());
+        final List<RadioButton> radios = new ArrayList<>(wizards.size());
 
         if (wizards == null || wizards.isEmpty()) {
             panel.add(new Label("(no datastore wizards available)"));

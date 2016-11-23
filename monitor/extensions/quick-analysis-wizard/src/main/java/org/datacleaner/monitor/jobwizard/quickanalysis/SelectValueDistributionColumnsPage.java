@@ -45,7 +45,7 @@ public abstract class SelectValueDistributionColumnsPage extends
 
     public SelectValueDistributionColumnsPage(final int pageIndex, final Table table) {
         _pageIndex = pageIndex;
-        _availableColumns = new LinkedHashMap<String, Column>();
+        _availableColumns = new LinkedHashMap<>();
         for (final Column column : table.getColumns()) {
             final ColumnType type = column.getType();
             if (type == null || type.isLiteral() || type.isBoolean() || type.isNumber()) {
@@ -89,7 +89,7 @@ public abstract class SelectValueDistributionColumnsPage extends
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("columns", _availableColumns.values());
         return map;
     }

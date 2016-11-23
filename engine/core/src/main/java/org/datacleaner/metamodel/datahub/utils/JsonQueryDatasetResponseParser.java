@@ -36,14 +36,11 @@ public class JsonQueryDatasetResponseParser {
     private String _currentFieldName;
     private int _arrayCount;
 
-    // String result =
-    // "{\"table\":{\"header\":[\"CUSTOMERNUMBER\",\"CUSTOMERNAME\",\"CONTACTLASTNAME\",\"CONTACTFIRSTNAME\",\"PHONE\",\"ADDRESSLINE1\",\"ADDRESSLINE2\",\"CITY\",\"STATE\",\"POSTALCODE\",\"COUNTRY\",\"SALESREPEMPLOYEENUMBER\",\"CREDITLIMIT\"],\"rows\":[]}}";
-
     public List<Object[]> parseQueryResult(final InputStream inputStream) throws JsonParseException, IOException {
         _parsingRows = false;
         _parsingRow = false;
         _arrayCount = 0;
-        final List<Object[]> queryResult = new ArrayList<Object[]>();
+        final List<Object[]> queryResult = new ArrayList<>();
         final JsonFactory factory = new JsonFactory();
         final JsonParser parser = factory.createParser(inputStream);
         JsonToken token = parser.nextToken();
@@ -55,7 +52,7 @@ public class JsonQueryDatasetResponseParser {
             case START_ARRAY:
                 if (_parsingRows) {
                     _parsingRow = true;
-                    _currentRow = new ArrayList<Object>();
+                    _currentRow = new ArrayList<>();
                 } else if ("rows".equals(_currentFieldName)) {
                     _parsingRows = true;
                 } else if (_parsingRows) {

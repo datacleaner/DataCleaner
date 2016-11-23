@@ -74,7 +74,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
             final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
             final DataCleanerConfiguration configuration, final DCModule dcModule) {
         super(analyzerJobBuilder, propertyWidgetFactory);
-        _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
+        _overriddenPropertyWidgets = new HashMap<>();
 
         final AnalyzerDescriptor<InsertIntoTableAnalyzer> descriptor = analyzerJobBuilder.getDescriptor();
         assert descriptor.getComponentClass() == InsertIntoTableAnalyzer.class;
@@ -150,7 +150,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
                 IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,
                 _additionalErrorLogValuesProperty), false);
 
-        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
+        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<>();
         propertyTaskPanes.add(taskPane);
         propertyTaskPanes.add(errorHandlingPane);
         return propertyTaskPanes;

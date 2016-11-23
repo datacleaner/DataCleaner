@@ -61,7 +61,7 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
         _stream = stream;
         _sourceColumnFinder = new SourceColumnFinder();
         _sourceColumnFinder.addSources(stream.getAnalysisJob());
-        _consumers = new ArrayList<RowProcessingConsumer>();
+        _consumers = new ArrayList<>();
         _success = new AtomicBoolean(true);
     }
 
@@ -176,7 +176,8 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
         return consumeRowHandler;
     }
 
-    protected final Task createCollectResultTask(final RowProcessingConsumer consumer, final Queue<JobAndResult> resultQueue) {
+    protected final Task createCollectResultTask(final RowProcessingConsumer consumer,
+            final Queue<JobAndResult> resultQueue) {
         final Object component = consumer.getComponent();
         if (component instanceof HasAnalyzerResult) {
             final HasAnalyzerResult<?> hasAnalyzerResult = (HasAnalyzerResult<?>) component;
@@ -187,7 +188,8 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
         return null;
     }
 
-    protected final TaskRunnable createCloseTask(final RowProcessingConsumer consumer, final TaskListener closeTaskListener) {
+    protected final TaskRunnable createCloseTask(final RowProcessingConsumer consumer,
+            final TaskListener closeTaskListener) {
         final LifeCycleHelper lifeCycleHelper = _publishers.getConsumerSpecificLifeCycleHelper(consumer);
         final CloseTaskListener taskListener = new CloseTaskListener(lifeCycleHelper, this, consumer, _success,
                 closeTaskListener, _publishers.getAnalysisListener(), _stream.getAnalysisJob());
@@ -215,7 +217,8 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
     }
 
     @Override
-    public final boolean runRowProcessing(final Queue<JobAndResult> resultQueue, final TaskListener finishedTaskListener) {
+    public final boolean runRowProcessing(final Queue<JobAndResult> resultQueue,
+            final TaskListener finishedTaskListener) {
         if (!isReadyForRowProcessing()) {
             return false;
         }

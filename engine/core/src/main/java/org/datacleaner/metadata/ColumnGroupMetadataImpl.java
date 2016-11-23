@@ -34,7 +34,8 @@ public final class ColumnGroupMetadataImpl extends AbstractHasMetadataAnnotation
     private final String _columnGroupName;
     private final ImmutableList<ColumnMetadata> _columnMetadata;
 
-    public ColumnGroupMetadataImpl(final String columnGroupName, final Collection<? extends ColumnMetadata> columnMetadata,
+    public ColumnGroupMetadataImpl(final String columnGroupName,
+            final Collection<? extends ColumnMetadata> columnMetadata,
             final Collection<? extends MetadataAnnotation> annotations) {
         super(annotations);
         _columnGroupName = columnGroupName;

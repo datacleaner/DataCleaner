@@ -50,22 +50,25 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
                 defaultServerInformationCatalog());
     }
 
-    public DataCleanerConfigurationImpl(final DataCleanerEnvironment environment, final DataCleanerHomeFolder homeFolder) {
+    public DataCleanerConfigurationImpl(final DataCleanerEnvironment environment,
+            final DataCleanerHomeFolder homeFolder) {
         this(environment, homeFolder, defaultDatastoreCatalog(), defaultReferenceDataCatalog(),
                 defaultServerInformationCatalog());
     }
 
-    public DataCleanerConfigurationImpl(final DataCleanerConfiguration c) {
-        this(c.getEnvironment(), c.getHomeFolder(), c.getDatastoreCatalog(), c.getReferenceDataCatalog(),
-                defaultServerInformationCatalog());
+    public DataCleanerConfigurationImpl(final DataCleanerConfiguration configuration) {
+        this(configuration.getEnvironment(), configuration.getHomeFolder(), configuration.getDatastoreCatalog(),
+                configuration.getReferenceDataCatalog(), defaultServerInformationCatalog());
     }
 
-    public DataCleanerConfigurationImpl(final DataCleanerEnvironment environment, final DataCleanerHomeFolder homeFolder,
+    public DataCleanerConfigurationImpl(final DataCleanerEnvironment environment,
+            final DataCleanerHomeFolder homeFolder,
             final DatastoreCatalog datastoreCatalog, final ReferenceDataCatalog referenceDataCatalog) {
         this(environment, homeFolder, datastoreCatalog, referenceDataCatalog, defaultServerInformationCatalog());
     }
 
-    public DataCleanerConfigurationImpl(final DataCleanerEnvironment environment, final DataCleanerHomeFolder homeFolder,
+    public DataCleanerConfigurationImpl(final DataCleanerEnvironment environment,
+            final DataCleanerHomeFolder homeFolder,
             final DatastoreCatalog datastoreCatalog, final ReferenceDataCatalog referenceDataCatalog,
             final ServerInformationCatalog serverInformationCatalog) {
         if (environment == null) {

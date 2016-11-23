@@ -43,7 +43,8 @@ public class CouchDbDatastore extends UsageAwareDatastore<CouchDbDataContext> im
     private final boolean _sslEnabled;
     private final SimpleTableDef[] _tableDefs;
 
-    public CouchDbDatastore(final String name, final String hostname, final Integer port, final String username, final String password,
+    public CouchDbDatastore(final String name, final String hostname, final Integer port, final String username,
+            final String password,
             final boolean sslEnabled, final SimpleTableDef[] tableDefs) {
         super(name);
         _hostname = hostname;
@@ -88,7 +89,7 @@ public class CouchDbDatastore extends UsageAwareDatastore<CouchDbDataContext> im
         } else {
             dataContext = new CouchDbDataContext(httpClient);
         }
-        return new UpdateableDatastoreConnectionImpl<CouchDbDataContext>(dataContext, this);
+        return new UpdateableDatastoreConnectionImpl<>(dataContext, this);
     }
 
     public String getHostname() {

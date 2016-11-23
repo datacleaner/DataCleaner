@@ -71,7 +71,7 @@ public final class UsageLogger {
                 final long deploymentId = getDeploymentId(additionalProperties);
                 final long sessionId = getSessionId();
 
-                final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                final List<NameValuePair> nameValuePairs = new ArrayList<>();
                 final HttpPost req = new HttpPost("https://datacleaner.org/ws/user_action");
                 nameValuePairs.add(new BasicNameValuePair("username", NOT_LOGGED_IN_USERNAME));
                 nameValuePairs.add(new BasicNameValuePair("deployment", "" + deploymentId));
@@ -187,7 +187,7 @@ public final class UsageLogger {
         try {
             return Long.parseLong(deploymentId);
         } catch (final NumberFormatException e) {
-            return -1l;
+            return -1L;
         }
     }
 }

@@ -68,7 +68,7 @@ public final class CollectionUtils2 {
 
     @SuppressWarnings("unchecked")
     public static <E> List<E> filterOnClass(final Collection<?> superTypeList, final Class<E> subType) {
-        final List<E> result = new ArrayList<E>();
+        final List<E> result = new ArrayList<>();
         for (final Object object : superTypeList) {
             if (object != null) {
                 if (ReflectionUtils.is(object.getClass(), subType)) {

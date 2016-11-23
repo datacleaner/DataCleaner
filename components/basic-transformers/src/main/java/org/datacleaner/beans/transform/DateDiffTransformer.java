@@ -63,7 +63,7 @@ public class DateDiffTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        final List<String> columnNames = new ArrayList<String>();
+        final List<String> columnNames = new ArrayList<>();
         final String from = fromColumn.getName();
         final String to = toColumn.getName();
         if (days) {
@@ -97,7 +97,7 @@ public class DateDiffTransformer implements Transformer {
         final long toTime = to == null ? 0 : to.getTime();
         final long diff = toTime - fromTime;
 
-        final List<Number> numbers = new ArrayList<Number>();
+        final List<Number> numbers = new ArrayList<>();
         if (days) {
             numbers.add(diff / DateUtils.MILLISECONDS_PER_DAY);
         }

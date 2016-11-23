@@ -64,7 +64,7 @@ public class SampleDataContext extends QueryPostprocessDataContext {
         final SelectItem[] selectItems = MetaModelHelper.createSelectItems(columns);
         final SimpleDataSetHeader header = new SimpleDataSetHeader(tableSelectItems);
 
-        final List<Row> rows = new ArrayList<Row>();
+        final List<Row> rows = new ArrayList<>();
 
         rows.add(new DefaultRow(header, new Object[] { 1, "hello" }).getSubSelection(selectItems));
         rows.add(new DefaultRow(header, new Object[] { 2, "there" }).getSubSelection(selectItems));

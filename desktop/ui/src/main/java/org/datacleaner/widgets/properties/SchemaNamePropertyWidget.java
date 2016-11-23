@@ -47,7 +47,7 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
     public SchemaNamePropertyWidget(final ComponentBuilder componentBuilder,
             final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
-        _comboBox = new DCComboBox<Schema>();
+        _comboBox = new DCComboBox<>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
         _comboBox.setEditable(false);
         addComboListener(new Listener<Schema>() {
@@ -57,7 +57,7 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
             }
         });
         add(_comboBox);
-        _datastoreRef = new MutableRef<Datastore>();
+        _datastoreRef = new MutableRef<>();
 
         setValue(getCurrentValue());
     }
@@ -70,12 +70,12 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
         final String previousValue = getValue();
         _datastoreRef.set(datastore);
         if (datastore == null) {
-            _comboBox.setModel(new DefaultComboBoxModel<Schema>(new Schema[1]));
+            _comboBox.setModel(new DefaultComboBoxModel<>(new Schema[1]));
         } else {
-            try (final DatastoreConnection con = datastore.openConnection()) {
+            try (DatastoreConnection con = datastore.openConnection()) {
                 Schema[] schemas = con.getSchemaNavigator().getSchemas();
                 schemas = CollectionUtils.array(new Schema[1], schemas);
-                _comboBox.setModel(new DefaultComboBoxModel<Schema>(schemas));
+                _comboBox.setModel(new DefaultComboBoxModel<>(schemas));
                 Schema newValue = null;
                 if (previousValue != null) {
                     newValue = con.getSchemaNavigator().getSchemaByName(previousValue);

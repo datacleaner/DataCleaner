@@ -61,10 +61,10 @@ import org.datacleaner.api.Transformer;
  */
 public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
 
-    private List<AnalyzerDescriptor<?>> _analyzerBeanDescriptors = new ArrayList<AnalyzerDescriptor<?>>();
-    private List<TransformerDescriptor<?>> _transformerBeanDescriptors = new ArrayList<TransformerDescriptor<?>>();
-    private List<RendererBeanDescriptor<?>> _rendererBeanDescriptors = new ArrayList<RendererBeanDescriptor<?>>();
-    private List<FilterDescriptor<?, ?>> _filterBeanDescriptors = new ArrayList<FilterDescriptor<?, ?>>();
+    private List<AnalyzerDescriptor<?>> _analyzerBeanDescriptors = new ArrayList<>();
+    private List<TransformerDescriptor<?>> _transformerBeanDescriptors = new ArrayList<>();
+    private List<RendererBeanDescriptor<?>> _rendererBeanDescriptors = new ArrayList<>();
+    private List<FilterDescriptor<?, ?>> _filterBeanDescriptors = new ArrayList<>();
 
     public SimpleDescriptorProvider() {
         this(true);

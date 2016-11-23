@@ -33,7 +33,7 @@ public class ParseJsonTransformerTest {
 
     @Test
     public void testExtractJsonValuesTransformerWithoutAnyValidation() {
-        InputColumn<String> col1 = new MockInputColumn<String>("jsonDocument",
+        InputColumn<String> col1 = new MockInputColumn<>("jsonDocument",
                 String.class);
         ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
         transformer.init();
@@ -50,7 +50,7 @@ public class ParseJsonTransformerTest {
 
     @Test
     public void testExtractJsonNumbersAndBooleans() {
-        InputColumn<String> col1 = new MockInputColumn<String>("jsonDocument",
+        InputColumn<String> col1 = new MockInputColumn<>("jsonDocument",
                 String.class);
         ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
         transformer.init();
@@ -71,7 +71,7 @@ public class ParseJsonTransformerTest {
     @Test
     public void shouldReturnEmptyMapWhenNoJsonDocumentExistForColumn()
             throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<String>("jsonDocument",
+        InputColumn<String> col1 = new MockInputColumn<>("jsonDocument",
                 String.class);
         ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
         transformer.init();
@@ -83,7 +83,7 @@ public class ParseJsonTransformerTest {
 
     @Test
     public void shouldExtractNestedDocumentsAsCollections() throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<String>("jsonDocument",
+        InputColumn<String> col1 = new MockInputColumn<>("jsonDocument",
                 String.class);
         ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
         transformer.init();

@@ -141,9 +141,9 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
         CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
-        final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
+        final InputColumn<String> testColumn = new MockInputColumn<>("TestColumn");
         // Point of focus: MockInputColumn is of type Input, so it should be sorted as numbers
-        final InputColumn<Integer> idColumn = new MockInputColumn<Integer>("IdToSort", Integer.class);
+        final InputColumn<Integer> idColumn = new MockInputColumn<>("IdToSort", Integer.class);
 
         generatedFile = new File(filename);
         analyzer.file = generatedFile;
@@ -205,9 +205,9 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
         CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
-        final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
+        final InputColumn<String> testColumn = new MockInputColumn<>("TestColumn");
         // Point of focus: MockInputColumn is of type String, so it should be sorted alphabetically
-        final InputColumn<String> idColumn = new MockInputColumn<String>("IdToSort", String.class);
+        final InputColumn<String> idColumn = new MockInputColumn<>("IdToSort", String.class);
 
         generatedFile = new File(filename);
         analyzer.file = generatedFile;
@@ -269,8 +269,8 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
         CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
-        final InputColumn<String> sortColumn = new MockInputColumn<String>("SortColumn");
-        final InputColumn<String> someColumn = new MockInputColumn<String>("SomeColumn", String.class);
+        final InputColumn<String> sortColumn = new MockInputColumn<>("SortColumn");
+        final InputColumn<String> someColumn = new MockInputColumn<>("SomeColumn", String.class);
 
         generatedFile = new File(filename);
         analyzer.file = generatedFile;
@@ -329,8 +329,8 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
         CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
-        final InputColumn<String> stringColumn = new MockInputColumn<String>("StringColumn");
-        final InputColumn<Integer> integerColumn = new MockInputColumn<Integer>("IntegerColumn");
+        final InputColumn<String> stringColumn = new MockInputColumn<>("StringColumn");
+        final InputColumn<Integer> integerColumn = new MockInputColumn<>("IntegerColumn");
 
         generatedFile = new File(filename);
         analyzer.file = generatedFile;

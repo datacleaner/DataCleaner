@@ -56,7 +56,7 @@ public class MockFutureAnalyzer implements Analyzer<AnalyzerResultFuture<Analyze
 
     @Override
     public AnalyzerResultFuture<AnalyzerResult> getResult() {
-        return new AnalyzerResultFutureImpl<AnalyzerResult>("MockAnalyzerResultFuture", new LazyRef<AnalyzerResult>() {
+        return new AnalyzerResultFutureImpl<>("MockAnalyzerResultFuture", new LazyRef<AnalyzerResult>() {
 
             @Override
             protected AnalyzerResult fetch() throws Throwable {

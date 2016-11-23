@@ -44,8 +44,8 @@ public class AbstractComponentBuilderTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         final List<TableDataProvider<?>> tableDataProviders = Arrays
-                .<TableDataProvider<?>> asList(new ArrayTableDataProvider(new SimpleTableDef("my table", new String[] {
-                        "col1", "col2" }), Collections.<Object[]> emptyList()));
+                .asList(new ArrayTableDataProvider(new SimpleTableDef("my table", new String[] {
+                        "col1", "col2" }), Collections.emptyList()));
         dummyDatastore = new PojoDatastore("my ds", tableDataProviders);
         configuration = new DataCleanerConfigurationImpl().withDatastores(dummyDatastore);
     }

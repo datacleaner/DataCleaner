@@ -69,7 +69,7 @@ public class DescriptorServiceImpl implements DescriptorService {
                 return ((MetricJobContext) jobContext).getJobMetrics();
             }
 
-            final List<MetricGroup> list = new ArrayList<MetricGroup>(0);
+            final List<MetricGroup> list = new ArrayList<>(0);
             return new JobMetrics(jobIdentifier, list);
         } catch (final NoSuchComponentException e) {
             logger.warn("Encountered exception while get Job metrics", e);
@@ -81,18 +81,18 @@ public class DescriptorServiceImpl implements DescriptorService {
     public Collection<String> getMetricParameterSuggestions(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
             final MetricIdentifier metric) {
         if (metric == null || metric.isFormulaBased()) {
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
 
         final String analyzerDescriptorName = metric.getAnalyzerDescriptorName();
         final String metricDescriptorName = metric.getMetricDescriptorName();
         if (StringUtils.isNullOrEmpty(analyzerDescriptorName) || StringUtils.isNullOrEmpty(metricDescriptorName)) {
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
 
         final ResultContext result = _resultDao.getLatestResult(tenant, jobIdentifier);
         if (result == null) {
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
         final MetricJobContext job = (MetricJobContext) result.getJob();
         final MetricJobEngine<?> jobEngine = job.getJobEngine();

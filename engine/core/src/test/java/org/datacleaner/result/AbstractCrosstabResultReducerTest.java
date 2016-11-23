@@ -29,13 +29,13 @@ import junit.framework.TestCase;
 public class AbstractCrosstabResultReducerTest extends TestCase {
 
     public void testReduceCrosstabs() throws Exception {
-        final Crosstab<Number> crosstab1 = new Crosstab<Number>(Number.class, "Measure", "Column");
+        final Crosstab<Number> crosstab1 = new Crosstab<>(Number.class, "Measure", "Column");
         crosstab1.where("Column", "col1").where("Measure", "Null count").put(3, true);
         crosstab1.where("Column", "col2").where("Measure", "Null count").put(2, true);
         crosstab1.where("Column", "col1").where("Measure", "Valid count").put(10, true);
         crosstab1.where("Column", "col2").where("Measure", "Valid count").put(11, true);
 
-        final Crosstab<Number> crosstab2 = new Crosstab<Number>(Number.class, "Measure", "Column");
+        final Crosstab<Number> crosstab2 = new Crosstab<>(Number.class, "Measure", "Column");
         crosstab2.where("Column", "col1").where("Measure", "Null count").put(5, true);
         crosstab2.where("Column", "col2").where("Measure", "Null count").put(2, true);
         crosstab2.where("Column", "col1").where("Measure", "Valid count").put(20, true);

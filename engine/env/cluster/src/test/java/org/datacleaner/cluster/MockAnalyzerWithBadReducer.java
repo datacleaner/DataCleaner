@@ -40,9 +40,9 @@ public class MockAnalyzerWithBadReducer implements Analyzer<ListResult<String>> 
 
     @Override
     public ListResult<String> getResult() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("foobar");
-        return new ListResult<String>(list);
+        return new ListResult<>(list);
     }
 
     @Override

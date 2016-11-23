@@ -199,8 +199,8 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         final List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Salesforce username", _usernameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Salesforce password", _passwordTextField));
+        result.add(new ImmutableEntry<>("Salesforce username", _usernameTextField));
+        result.add(new ImmutableEntry<>("Salesforce password", _passwordTextField));
 
         final DCPanel securityTokenPanel = new DCPanel(Color.WHITE);
         final FlowLayout layout = (FlowLayout) securityTokenPanel.getLayout();
@@ -213,9 +213,9 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
         securityTokenPanel.add(_securityTokenTextField);
         securityTokenPanel.add(securityTokenHelpIcon);
 
-        result.add(new ImmutableEntry<String, JComponent>("Salesforce security token", securityTokenPanel));
+        result.add(new ImmutableEntry<>("Salesforce security token", securityTokenPanel));
 
-        result.add(new ImmutableEntry<String, JComponent>("Endpoint", _endpointUrlComboBox));
+        result.add(new ImmutableEntry<>("Endpoint", _endpointUrlComboBox));
         return result;
     }
 

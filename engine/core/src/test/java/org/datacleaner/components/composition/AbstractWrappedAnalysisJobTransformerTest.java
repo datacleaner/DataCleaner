@@ -74,7 +74,7 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
 
         @Override
         protected Map<InputColumn<?>, InputColumn<?>> getInputColumnConversion(AnalysisJob wrappedAnalysisJob) {
-            final Map<InputColumn<?>, InputColumn<?>> map = new HashMap<InputColumn<?>, InputColumn<?>>();
+            final Map<InputColumn<?>, InputColumn<?>> map = new HashMap<>();
             final Iterator<InputColumn<?>> sourceColumns = wrappedAnalysisJob.getSourceColumns().iterator();
             int i = 0;
             while (i < input.length && sourceColumns.hasNext()) {
@@ -86,6 +86,7 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
         }
 
     }
+
     private DataCleanerConfiguration _configuration;
 
     @Override
@@ -94,11 +95,11 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
 
         // define the datastore that the wrapped job will refer to
         TableDataProvider<?> origTableDataProvider = new ArrayTableDataProvider(new SimpleTableDef("table",
-                new String[] { "foo", "bar", "baz" }), new ArrayList<Object[]>(0));
+                new String[] { "foo", "bar", "baz" }), new ArrayList<>(0));
         Datastore origInput = new PojoDatastore("orig_input", origTableDataProvider);
 
         // define the datastore that our actual job refers to
-        ArrayList<Object[]> rows = new ArrayList<Object[]>();
+        ArrayList<Object[]> rows = new ArrayList<>();
         TableDataProvider<?> actualTableDataProvider = new ArrayTableDataProvider(new SimpleTableDef("table",
                 new String[] { "name" }), rows);
         rows.add(new Object[] { "Tomasz" });

@@ -35,13 +35,13 @@ public class EqualsFilterTest extends TestCase {
     private Datastore datastore = TestHelper.createSampleDatabaseDatastore("ds");
 
     public void testCompareToEnum() throws Exception {
-        EqualsFilter f = new EqualsFilter(new String[] { "EQUALS" }, new MockInputColumn<String>("col", String.class));
+        EqualsFilter f = new EqualsFilter(new String[] { "EQUALS" }, new MockInputColumn<>("col", String.class));
         assertEquals(EqualsFilter.Category.EQUALS, f.filter(EqualsFilter.Category.EQUALS));
         assertEquals(EqualsFilter.Category.NOT_EQUALS, f.filter(EqualsFilter.Category.NOT_EQUALS));
     }
 
     public void testSingleString() throws Exception {
-        EqualsFilter f = new EqualsFilter(new String[] { "hello" }, new MockInputColumn<String>("col", String.class));
+        EqualsFilter f = new EqualsFilter(new String[] { "hello" }, new MockInputColumn<>("col", String.class));
         assertEquals(EqualsFilter.Category.EQUALS, f.filter("hello"));
         assertEquals(EqualsFilter.Category.NOT_EQUALS, f.filter("Hello"));
         assertEquals(EqualsFilter.Category.NOT_EQUALS, f.filter(""));
@@ -49,7 +49,7 @@ public class EqualsFilterTest extends TestCase {
     }
 
     public void testSingleNumber() throws Exception {
-        EqualsFilter f = new EqualsFilter(new String[] { "1234" }, new MockInputColumn<Number>("col", Number.class));
+        EqualsFilter f = new EqualsFilter(new String[] { "1234" }, new MockInputColumn<>("col", Number.class));
         assertEquals(EqualsFilter.Category.EQUALS, f.filter(1234));
         assertEquals(EqualsFilter.Category.EQUALS, f.filter(1234.0));
         assertEquals(EqualsFilter.Category.NOT_EQUALS, f.filter(2));
@@ -58,7 +58,7 @@ public class EqualsFilterTest extends TestCase {
 
     public void testMultipleStrings() throws Exception {
         EqualsFilter f = new EqualsFilter(new String[] { "hello", "Hello", "World" },
-                new MockInputColumn<String>("col", String.class));
+                new MockInputColumn<>("col", String.class));
         assertEquals(EqualsFilter.Category.EQUALS, f.filter("hello"));
         assertEquals(EqualsFilter.Category.EQUALS, f.filter("Hello"));
         assertEquals(EqualsFilter.Category.NOT_EQUALS, f.filter(""));
@@ -68,7 +68,7 @@ public class EqualsFilterTest extends TestCase {
 
     public void testCompareValueColumnNumbers() throws Exception {
         EqualsFilter f = new EqualsFilter(new MockInputColumn<Object>("col1", Number.class),
-                new MockInputColumn<Object>("col2", Object.class));
+                new MockInputColumn<>("col2", Object.class));
 
         assertEquals(EqualsFilter.Category.EQUALS, f.filter(1234, 1234));
         assertEquals(EqualsFilter.Category.EQUALS, f.filter(1234.0, 1234));
@@ -81,7 +81,7 @@ public class EqualsFilterTest extends TestCase {
 
     public void testCompareValueColumnStrings() throws Exception {
         EqualsFilter f = new EqualsFilter(new MockInputColumn<Object>("col1", String.class),
-                new MockInputColumn<Object>("col2", Object.class));
+                new MockInputColumn<>("col2", Object.class));
 
         assertEquals(EqualsFilter.Category.EQUALS, f.filter("foo", "foo"));
         assertEquals(EqualsFilter.Category.NOT_EQUALS, f.filter("foo", "bar"));

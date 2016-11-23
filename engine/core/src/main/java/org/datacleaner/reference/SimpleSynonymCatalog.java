@@ -121,7 +121,8 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         final Adaptor adaptor = new Adaptor() {
             @Override
-            public void deserialize(final ObjectInputStream.GetField getField, final Serializable serializable) throws Exception {
+            public void deserialize(final ObjectInputStream.GetField getField, final Serializable serializable)
+                    throws Exception {
                 final boolean caseSensitive = getField.get("_caseSensitive", true);
                 final Field field = SimpleSynonymCatalog.class.getDeclaredField("_caseSensitive");
                 field.setAccessible(true);

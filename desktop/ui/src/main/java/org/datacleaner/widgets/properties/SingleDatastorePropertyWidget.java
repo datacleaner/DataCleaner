@@ -84,7 +84,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         _datastoreClass = propertyDescriptor.getBaseType();
 
         final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
-        final List<Datastore> list = new ArrayList<Datastore>();
+        final List<Datastore> list = new ArrayList<>();
 
         if (!propertyDescriptor.isRequired()) {
             list.add(null);
@@ -98,7 +98,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
                 list.add(datastore);
             }
         }
-        _comboBox = new DCComboBox<Datastore>(list);
+        _comboBox = new DCComboBox<>(list);
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
 
         addComboListener(new Listener<Datastore>() {

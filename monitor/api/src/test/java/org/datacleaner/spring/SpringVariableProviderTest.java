@@ -38,7 +38,7 @@ public class SpringVariableProviderTest extends TestCase {
 
         SpringVariableProvider provider = new SpringVariableProvider();
         StandardEnvironment standardEnvironment = new StandardEnvironment();
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", "fooooo");
         map.put("bar", "baaaar");
         PropertySource<?> propertySource = new MapPropertySource("foo", map);
@@ -47,7 +47,7 @@ public class SpringVariableProviderTest extends TestCase {
 
         JobContext job = EasyMock.createMock(JobContext.class);
 
-        Map<String, String> inputVariables = new HashMap<String, String>();
+        Map<String, String> inputVariables = new HashMap<>();
         inputVariables.put("foobar", "1");
         inputVariables.put("${foo}", "hello");
         inputVariables.put("#{DataCleaner.foo}", "hello");

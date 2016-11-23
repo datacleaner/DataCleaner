@@ -29,7 +29,7 @@ class PropertyWidgetMapping {
     private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _mapping;
 
     public PropertyWidgetMapping() {
-        _mapping = new IdentityHashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>(3);
+        _mapping = new IdentityHashMap<>(3);
     }
 
     public void putMapping(final ConfiguredPropertyDescriptor property, final PropertyWidget<?> propertyWidget) {

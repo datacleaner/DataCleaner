@@ -85,7 +85,7 @@ public class TimelineDaoImpl implements TimelineDao {
     @Override
     public Map<TimelineIdentifier, TimelineDefinition> getTimelinesForJob(final TenantIdentifier tenant, final JobIdentifier job) {
         final Map<TimelineIdentifier, TimelineDefinition> result =
-                new HashMap<TimelineIdentifier, TimelineDefinition>();
+                new HashMap<>();
         if (job == null) {
             return result;
         }
@@ -105,7 +105,7 @@ public class TimelineDaoImpl implements TimelineDao {
     @Override
     public List<TimelineIdentifier> getTimelinesForTenant(final TenantIdentifier tenant) {
         final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
-        final List<TimelineIdentifier> result = new ArrayList<TimelineIdentifier>();
+        final List<TimelineIdentifier> result = new ArrayList<>();
 
         final List<RepositoryFolder> folders = timelinesFolder.getFolders();
         for (final RepositoryFolder repositoryFolder : folders) {

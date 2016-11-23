@@ -109,12 +109,13 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
             return this == LEFT_JOIN_MAX_ONE;
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(TableLookupTransformer.class);
     private static final String PROPERTY_NAME_DATASTORE = "Datastore";
     private static final String PROPERTY_NAME_SCHEMA_NAME = "Schema name";
     private static final String PROPERTY_NAME_TABLE_NAME = "Table name";
-    private final Cache<List<Object>, Object[]> cache = CollectionUtils2.<List<Object>, Object[]> createCache(10000,
-            5 * 60);
+    private final Cache<List<Object>, Object[]> cache = CollectionUtils2.createCache(10000, 5 * 60);
+
     @Inject
     @Configured(value = PROPERTY_NAME_DATASTORE)
     Datastore datastore;
@@ -190,8 +191,9 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
      * @param joinSemantic
      * @param cacheLookups
      */
-    public TableLookupTransformer(final Datastore datastore, final String schemaName, final String tableName, final String[] conditionColumns,
-            final InputColumn<?>[] conditionValues, final String[] outputColumns, final boolean cacheLookups) {
+    public TableLookupTransformer(final Datastore datastore, final String schemaName, final String tableName,
+            final String[] conditionColumns, final InputColumn<?>[] conditionValues, final String[] outputColumns,
+            final boolean cacheLookups) {
         this.datastore = datastore;
         this.schemaName = schemaName;
         this.tableName = tableName;
@@ -224,7 +226,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
             if (isCarthesianProductMode()) {
                 queryConditionColumns = new Column[0];
             } else {
-                try (final DatastoreConnection con = datastore.openConnection()) {
+                try (DatastoreConnection con = datastore.openConnection()) {
                     queryConditionColumns = con.getSchemaNavigator().convertToColumns(schemaName, tableName,
                             conditionColumns);
                 }
@@ -242,7 +244,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
      */
     private Column[] getQueryOutputColumns(final boolean checkNames) {
         if (queryOutputColumns == null) {
-            try (final DatastoreConnection con = datastore.openConnection()) {
+            try (DatastoreConnection con = datastore.openConnection()) {
                 queryOutputColumns = con.getSchemaNavigator().convertToColumns(schemaName, tableName, outputColumns);
             }
         } else if (checkNames) {
@@ -324,7 +326,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
             return;
         }
         final Column[] queryConditionColumns = getQueryConditionColumns();
-        final List<String> columnsNotFound = new ArrayList<String>();
+        final List<String> columnsNotFound = new ArrayList<>();
         for (int i = 0; i < queryConditionColumns.length; i++) {
             if (queryConditionColumns[i] == null) {
                 columnsNotFound.add(conditionColumns[i]);
@@ -359,7 +361,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
         if (isCarthesianProductMode()) {
             queryInput = Collections.emptyList();
         } else {
-            queryInput = new ArrayList<Object>(conditionValues.length);
+            queryInput = new ArrayList<>(conditionValues.length);
             for (final InputColumn<?> inputColumn : conditionValues) {
                 final Object value = inputRow.getValue(inputColumn);
                 queryInput.add(value);
@@ -399,7 +401,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
                 parameterValues[i] = queryInput.get(i);
             }
 
-            try (final DataSet dataSet = datastoreConnection.getDataContext()
+            try (DataSet dataSet = datastoreConnection.getDataContext()
                     .executeQuery(lookupQuery, parameterValues)) {
                 return handleDataSet(row, dataSet);
             }

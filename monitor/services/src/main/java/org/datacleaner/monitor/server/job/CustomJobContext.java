@@ -100,7 +100,7 @@ public class CustomJobContext implements XmlJobContext {
 
     @Override
     public Map<String, String> getVariables() {
-        final Map<String, String> variables = new LinkedHashMap<String, String>();
+        final Map<String, String> variables = new LinkedHashMap<>();
         final ComponentDescriptor<?> descriptor = getDescriptor();
         final ComponentConfiguration beanConfiguration = getComponentConfiguration(null);
         final Set<ConfiguredPropertyDescriptor> properties = descriptor.getConfiguredProperties();
@@ -171,7 +171,7 @@ public class CustomJobContext implements XmlJobContext {
     public ComponentConfiguration getComponentConfiguration(final CustomJob customJavaJob) {
         final ComponentDescriptor<?> descriptor = getDescriptor();
         final Map<ConfiguredPropertyDescriptor, Object> propertyMap =
-                new HashMap<ConfiguredPropertyDescriptor, Object>();
+                new HashMap<>();
         final PropertiesType propertiesType = getCustomJavaComponentJob().getProperties();
         final StringConverter stringConverter = new StringConverter(_injectionManager);
 

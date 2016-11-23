@@ -551,7 +551,7 @@ public enum Country implements HasName, HasAliases {
 
     // build reusable matching map for find(...) method
     static {
-        matchingMap = new HashMap<String, Country>();
+        matchingMap = new HashMap<>();
         final Country[] values = values();
 
         // first add aliases (separately, they take second priority)

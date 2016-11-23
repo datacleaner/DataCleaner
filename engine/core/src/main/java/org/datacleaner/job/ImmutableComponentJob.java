@@ -105,7 +105,7 @@ public class ImmutableComponentJob extends BaseObject implements ComponentJob {
 
     @Override
     public final InputColumn<?>[] getInput() {
-        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> result = new ArrayList<>();
         final Set<ConfiguredPropertyDescriptor> propertiesForInput = _descriptor.getConfiguredPropertiesForInput();
         for (final ConfiguredPropertyDescriptor propertyDescriptor : propertiesForInput) {
             final Object property = _beanConfiguration.getProperty(propertyDescriptor);

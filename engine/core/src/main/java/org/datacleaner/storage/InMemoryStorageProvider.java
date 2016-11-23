@@ -56,17 +56,17 @@ public final class InMemoryStorageProvider implements StorageProvider {
 
     @Override
     public <E> List<E> createList(final Class<E> valueType) throws IllegalStateException {
-        return new ArrayList<E>();
+        return new ArrayList<>();
     }
 
     @Override
     public <K, V> Map<K, V> createMap(final Class<K> keyType, final Class<V> valueType) throws IllegalStateException {
-        return new HashMap<K, V>();
+        return new HashMap<>();
     }
 
     @Override
     public <E> Set<E> createSet(final Class<E> valueType) throws IllegalStateException {
-        return new HashSet<E>();
+        return new HashSet<>();
     }
 
     @Override

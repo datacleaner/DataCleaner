@@ -76,9 +76,9 @@ public final class DefaultMetricValues implements MetricValues {
     @Override
     public List<Number> getValues() {
         final int metricCount = _metricIdentifiers.size();
-        final List<ComponentJob> componentJobs = new ArrayList<ComponentJob>(metricCount);
-        final List<MetricDescriptor> metricDescriptors = new ArrayList<MetricDescriptor>(metricCount);
-        final List<MetricParameters> metricParameters = new ArrayList<MetricParameters>(metricCount);
+        final List<ComponentJob> componentJobs = new ArrayList<>(metricCount);
+        final List<MetricDescriptor> metricDescriptors = new ArrayList<>(metricCount);
+        final List<MetricParameters> metricParameters = new ArrayList<>(metricCount);
         final MetricValueUtils metricValueUtils = new MetricValueUtils();
 
         for (final MetricIdentifier metricIdentifier : _metricIdentifiers) {
@@ -97,7 +97,7 @@ public final class DefaultMetricValues implements MetricValues {
             metricParameters.add(parameter);
         }
 
-        final List<Number> metricValuesList = new ArrayList<Number>(metricCount);
+        final List<Number> metricValuesList = new ArrayList<>(metricCount);
         for (int i = 0; i < metricCount; i++) {
             final MetricIdentifier metricIdentifier = _metricIdentifiers.get(i);
             final ComponentJob job = componentJobs.get(i);

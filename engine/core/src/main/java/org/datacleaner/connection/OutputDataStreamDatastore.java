@@ -44,7 +44,7 @@ public class OutputDataStreamDatastore extends UsageAwareDatastore<DataContext> 
     @Override
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
         final DataContext dataContext = new OutputDataStreamDataContext(_outputDataStream);
-        return new DatastoreConnectionImpl<DataContext>(dataContext, this);
+        return new DatastoreConnectionImpl<>(dataContext, this);
     }
 
 }

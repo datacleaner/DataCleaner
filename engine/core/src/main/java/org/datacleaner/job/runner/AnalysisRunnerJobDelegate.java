@@ -74,7 +74,8 @@ final class AnalysisRunnerJobDelegate {
      *            typically be true, on slave nodes in a cluster, this will
      *            typically be false.
      */
-    public AnalysisRunnerJobDelegate(final AnalysisJob job, final DataCleanerConfiguration configuration, final TaskRunner taskRunner,
+    public AnalysisRunnerJobDelegate(final AnalysisJob job, final DataCleanerConfiguration configuration,
+            final TaskRunner taskRunner,
             final AnalysisListener analysisListener, final Queue<JobAndResult> resultQueue, final ErrorAware errorAware,
             final boolean includeNonDistributedTasks) {
         _job = job;
@@ -150,13 +151,12 @@ final class AnalysisRunnerJobDelegate {
 
     private void dispatchWhenReady(final Collection<RowProcessingPublisher> rowProcessingPublishers,
             final TaskListener rowProcessorPublishersDoneCompletionListener) {
-        final LinkedList<RowProcessingPublisher> remainingRowProcessingPublishers = new LinkedList<>(
-                rowProcessingPublishers);
+        final LinkedList<RowProcessingPublisher> remainingPublishers = new LinkedList<>(rowProcessingPublishers);
 
-        while (!remainingRowProcessingPublishers.isEmpty()) {
+        while (!remainingPublishers.isEmpty()) {
             boolean progressThisIteration = false;
 
-            for (final Iterator<RowProcessingPublisher> it = remainingRowProcessingPublishers.iterator(); it.hasNext(); ) {
+            for (final Iterator<RowProcessingPublisher> it = remainingPublishers.iterator(); it.hasNext(); ) {
                 final RowProcessingPublisher rowProcessingPublisher = it.next();
                 final boolean started = rowProcessingPublisher.runRowProcessing(_resultQueue,
                         rowProcessorPublishersDoneCompletionListener);

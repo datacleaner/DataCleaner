@@ -172,7 +172,7 @@ public final class DescriptorMenuBuilder {
     }
 
     private void initialize(final JComponent outerMenu) {
-        final Map<ComponentCategory, DescriptorMenu> descriptorMenus = new HashMap<ComponentCategory, DescriptorMenu>();
+        final Map<ComponentCategory, DescriptorMenu> descriptorMenus = new HashMap<>();
 
         final MenuCallback callback = new MenuCallback() {
             @Override

@@ -57,13 +57,15 @@ public class MonitorConnection implements Serializable {
 
     private transient boolean _acceptUnverifiedSslPeers = false;
 
-    public MonitorConnection(final UserPreferences userPreferences, final String hostname, final int port, final String contextPath,
+    public MonitorConnection(final UserPreferences userPreferences, final String hostname, final int port,
+            final String contextPath,
             final boolean isHttps, final String tenantId, final String username, final char[] password) {
         this(userPreferences, hostname, port, contextPath, isHttps, tenantId, username, SecurityUtils
                 .encodePassword(password));
     }
 
-    public MonitorConnection(final UserPreferences userPreferences, final String hostname, final int port, final String contextPath,
+    public MonitorConnection(final UserPreferences userPreferences, final String hostname, final int port,
+            final String contextPath,
             final boolean isHttps, final String tenantId, final String username, final String encodedPassword) {
         _userPreferences = userPreferences;
         _hostname = hostname;
@@ -162,6 +164,8 @@ public class MonitorConnection implements Serializable {
         return !StringUtils.isNullOrEmpty(_username);
     }
 
+
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public boolean matchesURI(final String uriString) {
         if (uriString == null) {
             return false;
@@ -181,6 +185,7 @@ public class MonitorConnection implements Serializable {
      * @param uri
      * @return
      */
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public boolean matchesURI(final URI uri) {
         if (uri == null) {
             return false;

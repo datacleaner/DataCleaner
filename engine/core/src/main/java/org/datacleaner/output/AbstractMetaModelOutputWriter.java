@@ -58,13 +58,14 @@ public abstract class AbstractMetaModelOutputWriter implements OutputWriter {
      *            buffer will be used, meaning that the complete dataset will be
      *            held in memory.
      */
-    public AbstractMetaModelOutputWriter(final UpdateableDataContext dataContext, final InputColumn<?>[] columns, final int bufferSize) {
+    public AbstractMetaModelOutputWriter(final UpdateableDataContext dataContext, final InputColumn<?>[] columns,
+            final int bufferSize) {
         _dataContext = dataContext;
         _columns = columns;
         if (bufferSize > 0) {
-            _buffer = new ArrayBlockingQueue<Object[]>(bufferSize);
+            _buffer = new ArrayBlockingQueue<>(bufferSize);
         } else {
-            _buffer = new ConcurrentLinkedQueue<Object[]>();
+            _buffer = new ConcurrentLinkedQueue<>();
         }
     }
 
@@ -79,7 +80,7 @@ public abstract class AbstractMetaModelOutputWriter implements OutputWriter {
         }
     }
 
-    private final synchronized void flushBuffer() {
+    private synchronized void flushBuffer() {
         if (!_buffer.isEmpty()) {
             logger.info("Flushing {} rows in write buffer", _buffer.size());
             _dataContext.executeUpdate(new UpdateScript() {

@@ -113,7 +113,7 @@ public class ArrayConverter implements Converter<Object> {
         final String innerString = str.substring(1, str.length() - 1);
         logger.debug("innerString: {}", innerString);
 
-        final List<Object> objects = new ArrayList<Object>();
+        final List<Object> objects = new ArrayList<>();
         int offset = 0;
         while (offset < innerString.length()) {
             logger.debug("offset: {}", offset);
@@ -140,25 +140,25 @@ public class ArrayConverter implements Converter<Object> {
                 }
             } else {
 
-                String s = innerString.substring(bracketBeginIndex);
+                String substring = innerString.substring(bracketBeginIndex);
                 int nextBracket = 0;
                 int depth = 1;
-                logger.debug("substring with nested array: {}", s);
+                logger.debug("substring with nested array: {}", substring);
 
                 while (depth > 0) {
                     final int searchOffset = nextBracket + 1;
-                    final int nextEndBracket = s.indexOf(']', searchOffset);
+                    final int nextEndBracket = substring.indexOf(']', searchOffset);
                     if (nextEndBracket == -1) {
                         throw new IllegalStateException("No ending bracket in array string: "
-                                + s.substring(searchOffset));
+                                + substring.substring(searchOffset));
                     }
-                    int nextBeginBracket = s.indexOf('[', searchOffset);
+                    int nextBeginBracket = substring.indexOf('[', searchOffset);
                     if (nextBeginBracket == -1) {
-                        nextBeginBracket = s.length();
+                        nextBeginBracket = substring.length();
                     }
 
                     nextBracket = Math.min(nextEndBracket, nextBeginBracket);
-                    final char c = s.charAt(nextBracket);
+                    final char c = substring.charAt(nextBracket);
                     logger.debug("nextBracket: {} ({})", nextBracket, c);
 
                     if (c == '[') {
@@ -170,18 +170,18 @@ public class ArrayConverter implements Converter<Object> {
                     }
                     logger.debug("depth: {}", depth);
                     if (depth == 0) {
-                        s = s.substring(0, nextBracket + 1);
-                        logger.debug("identified array: {}", s);
+                        substring = substring.substring(0, nextBracket + 1);
+                        logger.debug("identified array: {}", substring);
                     }
                 }
 
-                logger.debug("recursing to nested array: {}", s);
+                logger.debug("recursing to nested array: {}", substring);
 
-                logger.debug("inner array string: " + s);
-                final Object item = _parentConvert.fromString(componentType, s);
+                logger.debug("inner array string: " + substring);
+                final Object item = _parentConvert.fromString(componentType, substring);
                 objects.add(item);
 
-                offset = bracketBeginIndex + s.length();
+                offset = bracketBeginIndex + substring.length();
             }
         }
 

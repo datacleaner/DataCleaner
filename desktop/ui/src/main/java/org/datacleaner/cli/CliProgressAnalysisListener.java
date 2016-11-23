@@ -30,7 +30,7 @@ import org.datacleaner.util.ProgressCounter;
 
 final class CliProgressAnalysisListener extends AnalysisListenerAdaptor {
 
-    private final Map<Table, ProgressCounter> rowCounts = new HashMap<Table, ProgressCounter>();
+    private final Map<Table, ProgressCounter> rowCounts = new HashMap<>();
 
     @Override
     public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {

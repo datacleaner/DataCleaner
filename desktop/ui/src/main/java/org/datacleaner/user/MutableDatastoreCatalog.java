@@ -39,7 +39,7 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
     private static final long serialVersionUID = 1L;
 
     private final DomConfigurationWriter _configurationWriter;
-    private final List<DatastoreChangeListener> _listeners = new LinkedList<DatastoreChangeListener>();
+    private final List<DatastoreChangeListener> _listeners = new LinkedList<>();
     private final UserPreferences _userPreferences;
 
     public MutableDatastoreCatalog(final DatastoreCatalog immutableDelegate,

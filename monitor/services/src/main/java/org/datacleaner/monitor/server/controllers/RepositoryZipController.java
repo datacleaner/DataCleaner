@@ -98,7 +98,7 @@ public class RepositoryZipController {
         }
 
         logger.info("Uploading ZIP file for tenant repository: {}", tenant);
-        try (final InputStream inputStream = file.getInputStream()) {
+        try (InputStream inputStream = file.getInputStream()) {
             final ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             if (isValidRepository(zipInputStream)) {
                 final File oldRepositoryZipFile = createZipfolder(rootFolder);

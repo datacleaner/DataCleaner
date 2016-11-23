@@ -141,7 +141,8 @@ public class CsvConfigurationDetection {
         return suggestCsvConfiguration(sample, encoding, columnNames);
     }
 
-    private CsvConfiguration suggestCsvConfiguration(final byte[] sample, final String encoding, final List<String> columnNames)
+    private CsvConfiguration suggestCsvConfiguration(final byte[] sample, final String encoding,
+            final List<String> columnNames)
             throws IllegalStateException {
 
         final char[] sampleChars = readSampleBuffer(sample, encoding);
@@ -239,7 +240,7 @@ public class CsvConfigurationDetection {
             if (_columnNames == null) {
                 _columnNames = Arrays.asList(testDataContext.getDefaultSchema().getTable(0).getColumnNames());
             }
-            try (final DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute()) {
+            try (DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute()) {
                 while (dataSet.next()) {
                     final Row row = dataSet.getRow();
                     final Object[] values = row.getValues();

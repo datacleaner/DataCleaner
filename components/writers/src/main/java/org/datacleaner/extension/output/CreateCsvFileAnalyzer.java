@@ -169,7 +169,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
 
     @Override
     public OutputWriter createOutputWriter() {
-        final List<String> headers = new ArrayList<String>();
+        final List<String> headers = new ArrayList<>();
         for (int i = 0; i < columns.length; i++) {
             final String columnName = getColumnHeader(i);
             headers.add(columnName);
@@ -252,7 +252,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
 
                 @Override
                 protected void writeHeader(final Writer writer) throws IOException {
-                    final List<String> headers = new ArrayList<String>(Arrays.asList(table.getColumnNames()));
+                    final List<String> headers = new ArrayList<>(Arrays.asList(table.getColumnNames()));
                     if (!_isColumnToBeSortedOnPresentInInput) {
                         headers.remove(columnToBeSortedOn.getName());
                     }
@@ -265,7 +265,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
                 @Override
                 protected void writeRow(final Writer writer, final Row row, final int count) throws IOException {
                     for (int i = 0; i < count; i++) {
-                        final List<Object> valuesList = new ArrayList<Object>(Arrays.asList(row.getValues()));
+                        final List<Object> valuesList = new ArrayList<>(Arrays.asList(row.getValues()));
                         if (!_isColumnToBeSortedOnPresentInInput) {
                             valuesList.remove(_indexOfColumnToBeSortedOn);
                         }

@@ -68,6 +68,6 @@ public class CliArgumentsTest extends TestCase {
         CliArguments args;
         args = CliArguments.parse("-job myjob.xml -conf conf.xml -var foo=bar -v bar=c:\\foo\bar\baz.csv".split(" "));
         assertEquals("{bar=c:\\foo\bar\baz.csv, foo=bar}",
-                new TreeMap<String, String>(args.getVariableOverrides()).toString());
+                new TreeMap<>(args.getVariableOverrides()).toString());
     }
 }

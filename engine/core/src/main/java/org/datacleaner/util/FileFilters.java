@@ -63,6 +63,7 @@ public final class FileFilters {
             "Analysis timeline (.analysis.timeline.xml)", ".analysis.timeline.xml");
     public static final ExtensionFilter ANALYSIS_EXECUTION_LOG_XML = new ExtensionFilter(
             "Analysis job execution log (.analysis.execution.log.xml)", ".analysis.execution.log.xml");
+
     private FileFilters() {
         // prevent instantiation
     }

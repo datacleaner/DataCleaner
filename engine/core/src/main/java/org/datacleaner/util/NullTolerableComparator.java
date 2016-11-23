@@ -36,7 +36,7 @@ public class NullTolerableComparator<E extends Comparable<? super E>> implements
     private static final long serialVersionUID = 1L;
 
     public static <E extends Comparable<? super E>> Comparator<E> get(final Class<E> clazz) {
-        return new NullTolerableComparator<E>();
+        return new NullTolerableComparator<>();
     }
 
     @Override

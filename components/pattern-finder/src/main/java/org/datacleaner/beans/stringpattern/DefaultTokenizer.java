@@ -61,7 +61,7 @@ public class DefaultTokenizer implements Serializable, Tokenizer {
 
     protected static List<SimpleToken> preliminaryTokenize(final String string,
             final TokenizerConfiguration configuration) {
-        final LinkedList<SimpleToken> result = new LinkedList<SimpleToken>();
+        final LinkedList<SimpleToken> result = new LinkedList<>();
         SimpleToken lastToken = null;
 
         final CharIterator ci = new CharIterator(string);
@@ -228,7 +228,7 @@ public class DefaultTokenizer implements Serializable, Tokenizer {
                 }
             }
         } else {
-            tokens = new ArrayList<Token>();
+            tokens = new ArrayList<>();
             tokens.addAll(tokenizeInternal(string));
         }
 

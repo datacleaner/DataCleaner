@@ -74,7 +74,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     private final ConfiguredPropertyDescriptor _escalatingInputProperty;
     private final List<AnalyzerChangeListener> _localChangeListeners;
 
-    public AnalyzerComponentBuilder(final AnalysisJobBuilder analysisJobBuilder, final AnalyzerDescriptor<A> descriptor) {
+    public AnalyzerComponentBuilder(final AnalysisJobBuilder analysisJobBuilder,
+            final AnalyzerDescriptor<A> descriptor) {
         super(analysisJobBuilder, descriptor, AnalyzerComponentBuilder.class);
 
         final Set<ConfiguredPropertyDescriptor> requiredInputProperties = descriptor.getConfiguredPropertiesForInput(
@@ -84,14 +85,14 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             final ColumnProperty columnProperty = _escalatingInputProperty.getAnnotation(ColumnProperty.class);
             _multipleJobsSupported = columnProperty != null && !_escalatingInputProperty.isArray() && columnProperty
                     .escalateToMultipleJobs();
-            _escalatingInputColumns = new ArrayList<InputColumn<?>>();
+            _escalatingInputColumns = new ArrayList<>();
         } else {
             _multipleJobsSupported = false;
             _escalatingInputProperty = null;
             _escalatingInputColumns = Collections.emptyList();
         }
 
-        _localChangeListeners = new ArrayList<AnalyzerChangeListener>(0);
+        _localChangeListeners = new ArrayList<>(0);
     }
 
     /**
@@ -161,8 +162,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             throw new IllegalStateException("No input column(s) configured");
         }
 
-        final List<InputColumn<?>> tableLessColumns = new ArrayList<InputColumn<?>>();
-        final Map<Table, List<InputColumn<?>>> originatingTables = new LinkedHashMap<Table, List<InputColumn<?>>>();
+        final List<InputColumn<?>> tableLessColumns = new ArrayList<>();
+        final Map<Table, List<InputColumn<?>>> originatingTables = new LinkedHashMap<>();
         for (final InputColumn<?> inputColumn : inputColumns) {
             final Table table = getAnalysisJobBuilder().getOriginatingTable(inputColumn);
             if (table == null) {
@@ -172,7 +173,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             } else {
                 List<InputColumn<?>> list = originatingTables.get(table);
                 if (list == null) {
-                    list = new ArrayList<InputColumn<?>>();
+                    list = new ArrayList<>();
                 }
                 list.add(inputColumn);
                 originatingTables.put(table, list);
@@ -185,7 +186,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                 logger.info("Only a single source table is available, so the source of analyzer '{}' is inferred",
                         this);
                 final Table table = sourceTables.get(0);
-                originatingTables.put(table, new ArrayList<InputColumn<?>>());
+                originatingTables.put(table, new ArrayList<>());
             } else {
                 throw new IllegalStateException("Could not determine source for analyzer '" + this + "'");
             }
@@ -205,7 +206,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             entry.getValue().addAll(tableLessColumns);
         }
 
-        final List<AnalyzerJob> jobs = new ArrayList<AnalyzerJob>();
+        final List<AnalyzerJob> jobs = new ArrayList<>();
         final Set<Entry<Table, List<InputColumn<?>>>> entrySet = originatingTables.entrySet();
         int partitionIndex = 0;
         for (final Entry<Table, List<InputColumn<?>>> entry : entrySet) {

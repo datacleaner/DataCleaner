@@ -37,7 +37,7 @@ public class UniqueKeyCheckAnalyzerTest extends TestCase {
     public void testSimpleScenario() throws Exception {
         final int bufferSizeInTest = 20;
 
-        final MockInputColumn<String> col = new MockInputColumn<String>("foo");
+        final MockInputColumn<String> col = new MockInputColumn<>("foo");
         final UniqueKeyCheckAnalyzer analyzer = new UniqueKeyCheckAnalyzer(bufferSizeInTest);
         analyzer.column = col;
 

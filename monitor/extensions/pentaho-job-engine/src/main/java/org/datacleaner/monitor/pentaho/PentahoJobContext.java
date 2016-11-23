@@ -120,7 +120,7 @@ public class PentahoJobContext implements XmlJobContext, MetricJobContext {
         final MetricValueUtils utils = new MetricValueUtils();
 
         final MetricGroup metricGroup = utils.getMetricGroup(this, componentJob, metricDescriptors);
-        final List<MetricGroup> metricGroups = new ArrayList<MetricGroup>();
+        final List<MetricGroup> metricGroups = new ArrayList<>();
         metricGroups.add(metricGroup);
 
         final JobMetrics metrics = new JobMetrics();

@@ -57,7 +57,8 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
         this(name, datastoreName, qualifiedColumnName, true);
     }
 
-    public DatastoreDictionary(final String name, final String datastoreName, final String qualifiedColumnName, final boolean loadIntoMemory) {
+    public DatastoreDictionary(final String name, final String datastoreName, final String qualifiedColumnName,
+            final boolean loadIntoMemory) {
         super(name);
         _datastoreName = datastoreName;
         _qualifiedColumnName = qualifiedColumnName;
@@ -90,7 +91,7 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
 
         final Set<String> values = new HashSet<>();
 
-        try (final DataSet dataSet = dataContext.executeQuery(query)) {
+        try (DataSet dataSet = dataContext.executeQuery(query)) {
             while (dataSet.next()) {
                 final Object value = dataSet.getRow().getValue(0);
                 if (value != null) {

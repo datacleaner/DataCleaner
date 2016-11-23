@@ -70,7 +70,7 @@ public class AnalyzerJobPartitioningTest extends TestCase {
         List<AnalyzerResult> results = resultFuture.getResults();
 
         int vdResults = 0;
-        List<CrosstabResult> saResults = new ArrayList<CrosstabResult>();
+        List<CrosstabResult> saResults = new ArrayList<>();
 
         for (AnalyzerResult analyzerResult : results) {
             if (analyzerResult instanceof ValueDistributionAnalyzerResult) {

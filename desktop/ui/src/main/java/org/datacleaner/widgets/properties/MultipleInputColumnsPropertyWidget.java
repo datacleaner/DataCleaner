@@ -510,7 +510,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
                 for (final DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
                     cb.setSelected(false);
                 }
-                onValuesBatchSelected(Collections.<InputColumn<?>> emptyList());
+                onValuesBatchSelected(Collections.emptyList());
             }
         });
     }

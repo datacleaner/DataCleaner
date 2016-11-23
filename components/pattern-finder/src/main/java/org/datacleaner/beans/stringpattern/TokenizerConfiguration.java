@@ -43,7 +43,7 @@ public class TokenizerConfiguration implements Serializable {
     private Character _decimalSeparator;
     private Character _minusSign;
 
-    private List<PredefinedTokenDefinition> _predefinedTokens = new LinkedList<PredefinedTokenDefinition>();
+    private List<PredefinedTokenDefinition> _predefinedTokens = new LinkedList<>();
 
     public TokenizerConfiguration() {
         this(true);
@@ -63,7 +63,7 @@ public class TokenizerConfiguration implements Serializable {
         }
 
         // set default values;
-        _discriminateTokenLength = new EnumMap<TokenType, Boolean>(TokenType.class);
+        _discriminateTokenLength = new EnumMap<>(TokenType.class);
         _discriminateTokenLength.put(TokenType.TEXT, false);
         _discriminateTokenLength.put(TokenType.NUMBER, false);
         _discriminateTokenLength.put(TokenType.MIXED, false);

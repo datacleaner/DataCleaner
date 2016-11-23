@@ -77,10 +77,10 @@ public class DatePartDistributionResultReducer extends AbstractCrosstabResultRed
 
 
     protected Set<String> createMeasureDimensionCategorySet() {
-        return new TreeSet<String>();
+        return new TreeSet<>();
     }
 
     protected Set<String> createColumnDimensionCategorySet() {
-        return new TreeSet<String>();
+        return new TreeSet<>();
     }
 }

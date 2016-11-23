@@ -194,7 +194,7 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
     public Crosstab<?> getCrosstab() {
         // create the crosstab dynamically based on the document, it's more
         // flexible
-        final Crosstab<Serializable> crosstab = new Crosstab<Serializable>(Serializable.class, "Step", "Measure");
+        final Crosstab<Serializable> crosstab = new Crosstab<>(Serializable.class, "Step", "Measure");
 
         for (final Element stepstatusElement : getStepStatusElements()) {
             final String stepName = DomUtils.getChildElementValueByTagName(stepstatusElement, "stepname");

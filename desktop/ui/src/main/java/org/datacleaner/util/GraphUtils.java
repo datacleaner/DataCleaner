@@ -67,8 +67,8 @@ public class GraphUtils {
             }
         });
         renderContext.setVertexLabelRenderer(new DefaultVertexLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM));
-        renderContext.setEdgeFontTransformer(GraphUtils.<E> createFontTransformer());
-        renderContext.setVertexFontTransformer(GraphUtils.<V> createFontTransformer());
+        renderContext.setEdgeFontTransformer(GraphUtils.createFontTransformer());
+        renderContext.setVertexFontTransformer(GraphUtils.createFontTransformer());
 
         final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<Object, Integer>() {
             @Override

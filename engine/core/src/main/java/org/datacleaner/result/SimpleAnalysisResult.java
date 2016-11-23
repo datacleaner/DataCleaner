@@ -43,7 +43,7 @@ public class SimpleAnalysisResult extends AbstractAnalysisResult implements Seri
     private final Date _creationDate;
 
     public SimpleAnalysisResult() {
-        this(new HashMap<ComponentJob, AnalyzerResult>());
+        this(new HashMap<>());
     }
 
     public SimpleAnalysisResult(final AnalysisResult result) {
@@ -61,7 +61,7 @@ public class SimpleAnalysisResult extends AbstractAnalysisResult implements Seri
 
     @Override
     public List<AnalyzerResult> getResults() {
-        return new ArrayList<AnalyzerResult>(_results.values());
+        return new ArrayList<>(_results.values());
     }
 
     @Override

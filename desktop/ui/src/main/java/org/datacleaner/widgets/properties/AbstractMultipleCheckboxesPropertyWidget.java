@@ -84,10 +84,10 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
             final ConfiguredPropertyDescriptor propertyDescriptor, final Class<E> itemClass) {
         super(componentBuilder, propertyDescriptor);
         _itemClass = itemClass;
-        _checkBoxes = new LinkedHashMap<String, DCCheckBox<E>>();
+        _checkBoxes = new LinkedHashMap<>();
         setLayout(new VerticalLayout(2));
 
-        _notAvailableCheckBox = new DCCheckBox<E>(getNotAvailableText(), false);
+        _notAvailableCheckBox = new DCCheckBox<>(getNotAvailableText(), false);
         _notAvailableCheckBox.setOpaque(false);
         _notAvailableCheckBox.setEnabled(false);
 
@@ -157,7 +157,7 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
             checkBox.setSelected(checked);
             return checkBox;
         }
-        checkBox = new DCCheckBox<E>(name, checked);
+        checkBox = new DCCheckBox<>(name, checked);
         checkBox.setValue(item);
         checkBox.setOpaque(false);
         checkBox.addListener(CHANGE_LISTENER);
@@ -224,7 +224,7 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
 
     @Override
     public E[] getValue() {
-        final List<E> result = new ArrayList<E>();
+        final List<E> result = new ArrayList<>();
         final Collection<DCCheckBox<E>> checkBoxes = _checkBoxes.values();
         for (final DCCheckBox<E> cb : checkBoxes) {
             if (cb.isSelected()) {

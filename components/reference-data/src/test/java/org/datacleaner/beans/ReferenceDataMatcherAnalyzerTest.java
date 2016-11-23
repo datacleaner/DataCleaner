@@ -36,8 +36,8 @@ import org.datacleaner.result.renderer.CrosstabTextRenderer;
 
 public class ReferenceDataMatcherAnalyzerTest extends TestCase {
 
-    private final MockInputColumn<String> column2 = new MockInputColumn<String>("PERSON", String.class);
-    private final MockInputColumn<String> column1 = new MockInputColumn<String>("GREETING", String.class);
+    private final MockInputColumn<String> column2 = new MockInputColumn<>("PERSON", String.class);
+    private final MockInputColumn<String> column1 = new MockInputColumn<>("GREETING", String.class);
     private final Dictionary dict1 = new SimpleDictionary("Greetings", "Hi", "Hello", "Howdy");
     private final Dictionary dict2 = new SimpleDictionary("Male names", "John", "Joe");
     private final Dictionary dict3 = new SimpleDictionary("Female names", "Barbara", "Jane");

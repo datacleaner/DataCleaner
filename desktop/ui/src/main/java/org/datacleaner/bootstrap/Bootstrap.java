@@ -232,7 +232,7 @@ public final class Bootstrap {
                 // this part has to be done after displaying the window (a lot
                 // of initialization goes on there)
                 final AnalysisJobBuilder analysisJobBuilder = analysisJobBuilderWindow.getAnalysisJobBuilder();
-                try (final DatastoreConnection con = singleDatastore.openConnection()) {
+                try (DatastoreConnection con = singleDatastore.openConnection()) {
                     final InjectorBuilder injectorBuilder = injector.getInstance(InjectorBuilder.class);
                     _options.initializeSingleDatastoreJob(analysisJobBuilder, con.getDataContext(), injectorBuilder);
                 }
@@ -276,7 +276,7 @@ public final class Bootstrap {
         // run in CLI mode
 
         int exitCode = 0;
-        try (final CliRunner runner = new CliRunner(arguments)) {
+        try (CliRunner runner = new CliRunner(arguments)) {
             runner.run(configuration);
         } catch (final Throwable e) {
             logger.error("Error occurred while running DataCleaner command line mode", e);

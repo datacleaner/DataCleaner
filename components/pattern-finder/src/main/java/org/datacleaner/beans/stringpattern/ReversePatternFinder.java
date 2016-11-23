@@ -32,8 +32,8 @@ public class ReversePatternFinder extends PatternFinder<String> {
 
     public ReversePatternFinder(final TokenizerConfiguration configuration) {
         super(new ReverseTokenizer(configuration), configuration);
-        _patternCounts = new HashMap<TokenPattern, AtomicInteger>();
-        _patternSamples = new HashMap<TokenPattern, String>();
+        _patternCounts = new HashMap<>();
+        _patternSamples = new HashMap<>();
     }
 
     @Override

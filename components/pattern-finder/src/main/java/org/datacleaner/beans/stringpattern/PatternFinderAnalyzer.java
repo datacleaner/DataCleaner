@@ -133,7 +133,7 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
         measuresDimension.addCategory(MEASURE_MATCH_COUNT);
         measuresDimension.addCategory(MEASURE_SAMPLE);
         final CrosstabDimension patternDimension = new CrosstabDimension(DIMENSION_NAME_PATTERN);
-        final Crosstab<Serializable> crosstab = new Crosstab<Serializable>(Serializable.class, measuresDimension,
+        final Crosstab<Serializable> crosstab = new Crosstab<>(Serializable.class, measuresDimension,
                 patternDimension);
         return crosstab;
     }
@@ -163,14 +163,14 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
         }
 
         if (predefinedTokenName != null && predefinedTokenPatterns != null) {
-            final Set<String> tokenRegexes = new HashSet<String>();
+            final Set<String> tokenRegexes = new HashSet<>();
             for (final String predefinedTokenPattern : predefinedTokenPatterns) {
                 tokenRegexes.add(predefinedTokenPattern);
             }
             _configuration.getPredefinedTokens().add(new PredefinedTokenDefinition(predefinedTokenName, tokenRegexes));
         }
 
-        _patternFinders = new HashMap<String, DefaultPatternFinder>();
+        _patternFinders = new HashMap<>();
     }
 
     @Override
@@ -211,7 +211,7 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
             final Crosstab<?> crosstab = createCrosstab(getPatternFinderForGroup(null));
             return new PatternFinderResult(column, crosstab, _configuration);
         } else {
-            final Map<String, Crosstab<?>> crosstabs = new TreeMap<String, Crosstab<?>>(NullTolerableComparator.get(
+            final Map<String, Crosstab<?>> crosstabs = new TreeMap<>(NullTolerableComparator.get(
                     String.class));
             final Set<Entry<String, DefaultPatternFinder>> patternFinderEntries = _patternFinders.entrySet();
             for (final Entry<String, DefaultPatternFinder> entry : patternFinderEntries) {
@@ -233,9 +233,10 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
 
         // sort the entries so that the ones with the highest amount of
         // matches are at the top
-        final Set<Entry<TokenPattern, RowAnnotation>> sortedEntrySet = new TreeSet<Entry<TokenPattern, RowAnnotation>>(
+        final Set<Entry<TokenPattern, RowAnnotation>> sortedEntrySet = new TreeSet<>(
                 new Comparator<Entry<TokenPattern, RowAnnotation>>() {
-                    public int compare(final Entry<TokenPattern, RowAnnotation> o1, final Entry<TokenPattern, RowAnnotation> o2) {
+                    public int compare(final Entry<TokenPattern, RowAnnotation> o1,
+                            final Entry<TokenPattern, RowAnnotation> o2) {
                         int result = o2.getValue().getRowCount() - o1.getValue().getRowCount();
                         if (result == 0) {
                             result = o1.getKey().toSymbolicString().compareTo(o2.getKey().toSymbolicString());

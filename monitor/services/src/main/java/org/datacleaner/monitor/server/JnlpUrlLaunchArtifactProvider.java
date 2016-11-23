@@ -60,7 +60,7 @@ public class JnlpUrlLaunchArtifactProvider implements LaunchArtifactProvider {
         final int length = jarElements.getLength();
         assert length > 0;
 
-        final List<String> result = new ArrayList<String>(length);
+        final List<String> result = new ArrayList<>(length);
 
         for (int i = 0; i < length; i++) {
             final Element jarElement = (Element) jarElements.item(i);

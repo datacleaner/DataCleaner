@@ -67,7 +67,7 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
                         openMode);
 
         if (extensions != null && extensions.length > 0) {
-            final List<FileFilter> filters = new ArrayList<FileFilter>(extensions.length);
+            final List<FileFilter> filters = new ArrayList<>(extensions.length);
             for (final String extension : extensions) {
                 final String extensionWithDot;
                 if (extension.startsWith(".")) {

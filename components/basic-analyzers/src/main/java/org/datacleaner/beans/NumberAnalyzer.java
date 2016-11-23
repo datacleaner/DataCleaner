@@ -93,7 +93,7 @@ public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {
     @Provided
     RowAnnotationFactory _annotationFactory;
     private Map<InputColumn<? extends Number>, NumberAnalyzerColumnDelegate> _columnDelegates =
-            new HashMap<InputColumn<? extends Number>, NumberAnalyzerColumnDelegate>();
+            new HashMap<>();
 
     public NumberAnalyzer() {
     }
@@ -151,7 +151,7 @@ public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {
             columnDimension.addCategory(column.getName());
         }
 
-        final Crosstab<Number> crosstab = new Crosstab<Number>(Number.class, columnDimension, measureDimension);
+        final Crosstab<Number> crosstab = new Crosstab<>(Number.class, columnDimension, measureDimension);
         for (final InputColumn<? extends Number> column : _columns) {
             final CrosstabNavigator<Number> nav = crosstab.navigate().where(columnDimension, column.getName());
             final NumberAnalyzerColumnDelegate delegate = _columnDelegates.get(column);

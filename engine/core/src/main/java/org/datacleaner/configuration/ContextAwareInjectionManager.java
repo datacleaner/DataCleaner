@@ -37,7 +37,8 @@ public class ContextAwareInjectionManager implements InjectionManager {
     private final AnalysisListener _listener;
     private final AnalysisJob _job;
 
-    public ContextAwareInjectionManager(final InjectionManager delegate, final AnalysisJob job, final ComponentJob componentJob,
+    public ContextAwareInjectionManager(final InjectionManager delegate, final AnalysisJob job,
+            final ComponentJob componentJob,
             final AnalysisListener listener) {
         _delegate = delegate;
         _job = job;

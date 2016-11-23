@@ -117,7 +117,7 @@ public class JobFileController {
             jobFile.writeFile(writeCallback);
         }
 
-        final Map<String, String> result = new HashMap<String, String>();
+        final Map<String, String> result = new HashMap<>();
         result.put("status", "Success");
         result.put("file_type", jobFile.getType().toString());
         result.put("filename", jobFile.getName());

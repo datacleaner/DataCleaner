@@ -65,7 +65,7 @@ public class AnalysisJobBuilderTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        Collection<Datastore> datastores = new LinkedList<Datastore>();
+        Collection<Datastore> datastores = new LinkedList<>();
 
         datastore = TestHelper.createSampleDatabaseDatastore("my db");
         datastores.add(datastore);
@@ -155,7 +155,7 @@ public class AnalysisJobBuilderTest extends TestCase {
                 analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
 
         List<InputColumn<?>> stringInputColumns = analysisJobBuilder.getAvailableInputColumns(String.class);
-        Set<String> columnNames = new TreeSet<String>();
+        Set<String> columnNames = new TreeSet<>();
         for (InputColumn<?> inputColumn : stringInputColumns) {
             columnNames.add(inputColumn.getName());
         }
@@ -182,7 +182,7 @@ public class AnalysisJobBuilderTest extends TestCase {
         assertEquals(3, sourceColumns.size());
 
         try {
-            sourceColumns.add(new MockInputColumn<Boolean>("bla", Boolean.class));
+            sourceColumns.add(new MockInputColumn<>("bla", Boolean.class));
             fail("Exception expected");
         } catch (UnsupportedOperationException e) {
             // do nothing

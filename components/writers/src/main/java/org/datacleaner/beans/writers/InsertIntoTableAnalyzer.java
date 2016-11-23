@@ -211,7 +211,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             final SchemaNavigator schemaNavigator = con.getSchemaNavigator();
 
             _targetColumns = schemaNavigator.convertToColumns(schemaName, tableName, columnNames);
-            final List<String> columnsNotFound = new ArrayList<String>();
+            final List<String> columnsNotFound = new ArrayList<>();
             for (int i = 0; i < _targetColumns.length; i++) {
                 if (_targetColumns[i] == null) {
                     columnsNotFound.add(columnNames[i]);

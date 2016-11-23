@@ -116,10 +116,10 @@ public class PropertyWidgetFactoryTest extends TestCase {
         performAssertions(propertyWidgetFactory, "Int array property", MultipleNumberPropertyWidget.class, new int[2],
                 new int[] { 2, 3 });
 
-        performAssertions(propertyWidgetFactory, "Number property", SingleNumberPropertyWidget.class, null, 2l);
+        performAssertions(propertyWidgetFactory, "Number property", SingleNumberPropertyWidget.class, null, 2L);
 
         performAssertions(propertyWidgetFactory, "Number array property", MultipleNumberPropertyWidget.class,
-                new Number[] { null, null }, new Number[] { 2l, 3l });
+                new Number[] { null, null }, new Number[] { 2L, 3L });
 
         performAssertions(propertyWidgetFactory, "Double property", SingleNumberPropertyWidget.class, 0d, 2d);
 
@@ -164,12 +164,12 @@ public class PropertyWidgetFactoryTest extends TestCase {
         // Pattern.compile("foo"), Pattern.compile("bar") });
 
         performAssertions(propertyWidgetFactory, "Input column property",
-                SingleInputColumnComboBoxPropertyWidget.class, null, new MockInputColumn<String>("foo", String.class));
+                SingleInputColumnComboBoxPropertyWidget.class, null, new MockInputColumn<>("foo", String.class));
 
         performAssertions(propertyWidgetFactory, "Input column array property",
                 MultipleInputColumnsPropertyWidget.class, new InputColumn[0], new InputColumn[] {
-                        new MockInputColumn<String>("foo", String.class),
-                        new MockInputColumn<String>("bar", String.class) });
+                        new MockInputColumn<>("foo", String.class),
+                        new MockInputColumn<>("bar", String.class) });
 
         performAssertions(propertyWidgetFactory, "Dictionary property", SingleDictionaryPropertyWidget.class, null,
                 new SimpleDictionary("foo", "foobar"));

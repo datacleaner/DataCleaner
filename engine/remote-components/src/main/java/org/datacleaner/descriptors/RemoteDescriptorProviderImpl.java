@@ -130,6 +130,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
             }
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(RemoteDescriptorProviderImpl.class);
     private final RemoteServerData remoteServerData;
     private final RemoteServerConfiguration remoteServerConfiguration;
@@ -187,7 +188,8 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         return ClassUtils.getClass(getClass().getClassLoader(), name, false);
     }
 
-    private Map<Class<? extends Annotation>, Annotation> initAnnotations(final String componentName, final String propertyName,
+    private Map<Class<? extends Annotation>, Annotation> initAnnotations(final String componentName,
+            final String propertyName,
             final JsonNode annotationsInfo) {
         final Map<Class<? extends Annotation>, Annotation> annotations = new HashMap<>();
         if (annotationsInfo == null) {
@@ -203,14 +205,15 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
 
                 final Map<String, Object> annotationValues = new HashMap<>();
                 final JsonNode annProperties = annotationEntry.getValue();
-                for (final Iterator<Map.Entry<String, JsonNode>> annPropIter = annProperties.fields();
-                     annPropIter.hasNext(); ) {
+                final Iterator<Map.Entry<String, JsonNode>> annPropIter = annProperties.fields();
+                for (; annPropIter.hasNext(); ) {
                     final Map.Entry<String, JsonNode> annPropEntry = annPropIter.next();
                     final String propName = annPropEntry.getKey();
                     final JsonNode propValueNode = annPropEntry.getValue();
                     final Method propMethod = anClass.getDeclaredMethod(propName, new Class[0]);
                     final Class<?> propClass = propMethod.getReturnType();
-                    final Object propValue = Serializator.getJacksonObjectMapper().treeToValue(propValueNode, propClass);
+                    final Object propValue =
+                            Serializator.getJacksonObjectMapper().treeToValue(propValueNode, propClass);
                     annotationValues.put(propName, propValue);
                 }
 

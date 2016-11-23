@@ -79,10 +79,10 @@ public class NameStandardizerTransformer implements Transformer {
             stringPatterns = new String[0];
         }
 
-        namedPatterns = new ArrayList<NamedPattern<NamePart>>();
+        namedPatterns = new ArrayList<>();
 
         for (final String stringPattern : stringPatterns) {
-            namedPatterns.add(new NamedPattern<NamePart>(stringPattern, NamePart.class));
+            namedPatterns.add(new NamedPattern<>(stringPattern, NamePart.class));
         }
     }
 

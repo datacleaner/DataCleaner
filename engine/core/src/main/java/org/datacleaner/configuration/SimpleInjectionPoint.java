@@ -51,7 +51,7 @@ public class SimpleInjectionPoint<E> implements InjectionPoint<E> {
      * @return
      */
     public static final <E> InjectionPoint<E> of(final Class<E> cls) {
-        return new SimpleInjectionPoint<E>(cls);
+        return new SimpleInjectionPoint<>(cls);
     }
 
     @Override

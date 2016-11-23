@@ -36,7 +36,7 @@ public class PatternFinderResultReducerTest extends TestCase {
     final PatternFinderResultReducer reducer = new PatternFinderResultReducer();
 
     public void testBasicScenario() throws Exception {
-        List<PatternFinderResult> results = new ArrayList<PatternFinderResult>();
+        List<PatternFinderResult> results = new ArrayList<>();
         results.add(createResult1());
         results.add(createResult2());
         results.add(createResult3());
@@ -76,7 +76,7 @@ public class PatternFinderResultReducerTest extends TestCase {
     }
 
     private PatternFinderResult createResult1() throws Exception {
-        final MockInputColumn<String> col = new MockInputColumn<String>("column");
+        final MockInputColumn<String> col = new MockInputColumn<>("column");
         return createResult(col, new Action<PatternFinderAnalyzer>() {
 
             @Override
@@ -92,7 +92,7 @@ public class PatternFinderResultReducerTest extends TestCase {
     }
 
     private PatternFinderResult createResult2() throws Exception {
-        final MockInputColumn<String> col = new MockInputColumn<String>("column");
+        final MockInputColumn<String> col = new MockInputColumn<>("column");
         return createResult(col, new Action<PatternFinderAnalyzer>() {
             @Override
             public void run(PatternFinderAnalyzer analyzer) throws Exception {
@@ -103,7 +103,7 @@ public class PatternFinderResultReducerTest extends TestCase {
     }
 
     private PatternFinderResult createResult3() throws Exception {
-        final MockInputColumn<String> col = new MockInputColumn<String>("column");
+        final MockInputColumn<String> col = new MockInputColumn<>("column");
         return createResult(col, new Action<PatternFinderAnalyzer>() {
             @Override
             public void run(PatternFinderAnalyzer analyzer) throws Exception {

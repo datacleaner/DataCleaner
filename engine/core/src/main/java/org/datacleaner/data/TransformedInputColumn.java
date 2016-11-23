@@ -60,7 +60,7 @@ public class TransformedInputColumn<E> implements MutableInputColumn<E>, Seriali
         _name = name;
         _initialName = name;
         _id = id;
-        _listeners = new HashSet<Listener>();
+        _listeners = new HashSet<>();
         _hidden = false;
     }
 

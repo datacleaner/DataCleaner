@@ -57,7 +57,7 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
             final ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
 
-        _comboBoxDecorations = new IdentityHashMap<JComponent, DCComboBox<Class<?>>>();
+        _comboBoxDecorations = new IdentityHashMap<>();
 
         _outerPanel = new DCPanel();
         _outerPanel.setLayout(new VerticalLayout(2));
@@ -172,7 +172,7 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
     @Override
     public Class<?>[] getValue() {
         final Component[] components = _outerPanel.getComponents();
-        final List<Class<?>> result = new ArrayList<Class<?>>();
+        final List<Class<?>> result = new ArrayList<>();
         for (int i = 0; i < components.length; i++) {
             final Component decoration = components[i];
             final DCComboBox<Class<?>> comboBox = _comboBoxDecorations.get(decoration);

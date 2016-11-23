@@ -63,6 +63,7 @@ public final class MultiThreadedTaskRunner implements ScheduledTaskRunner {
             return true;
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(MultiThreadedTaskRunner.class);
     private final ThreadFactory _threadFactory;
     private final ExecutorService _executorService;
@@ -143,7 +144,8 @@ public final class MultiThreadedTaskRunner implements ScheduledTaskRunner {
     }
 
     @Override
-    public void runScheduled(final TaskRunnable taskRunnable, final long initialDelay, final long delay, final TimeUnit unit) {
+    public void runScheduled(final TaskRunnable taskRunnable, final long initialDelay, final long delay,
+            final TimeUnit unit) {
         logger.debug("Schedule task ({}), delay {} {}", taskRunnable, delay, unit);
         _executorScheduledService.scheduleWithFixedDelay(taskRunnable, initialDelay, delay, unit);
     }

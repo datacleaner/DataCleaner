@@ -83,9 +83,9 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
     @Description("A custom identifier for this captured state. If omitted, the name of the 'Last modified column' will be used.")
     String captureStateIdentifier;
 
-    private long _lastModifiedThresholdMillis = -1l;
+    private long _lastModifiedThresholdMillis = -1L;
     private int _lastModifiedThresholdNanos = 0;
-    private long _greatestEncounteredMillis = -1l;
+    private long _greatestEncounteredMillis = -1L;
     private int _greatestEncounteredNanos = 0;
 
     @Initialize
@@ -117,7 +117,7 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
     public Query optimizeQuery(final Query q, final ValidationCategory category) {
         assert category == ValidationCategory.VALID;
 
-        if (_lastModifiedThresholdMillis != -1l) {
+        if (_lastModifiedThresholdMillis != -1L) {
             final Column column = lastModifiedColumn.getPhysicalColumn();
             if (column.getType().isTimeBased()) {
                 q.where(column, OperatorType.GREATER_THAN, createQueryOperand());
@@ -205,7 +205,7 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
         final int rowNanos;
 
         if (lastModified == null) {
-            rowMillis = -1l;
+            rowMillis = -1L;
             rowNanos = 0;
         } else if (lastModified instanceof Timestamp) {
             final Timestamp ts = (Timestamp) lastModified;
@@ -214,7 +214,7 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
         } else if (lastModified instanceof String) {
             final Date date = ConvertToDateTransformer.getInternalInstance().transformValue(lastModified);
             if (date == null) {
-                rowMillis = -1l;
+                rowMillis = -1L;
             } else {
                 rowMillis = date.getTime();
             }
@@ -222,16 +222,16 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
         } else {
             final Number lastModifiedAsNumber = convertToNumber(lastModified);
             if (lastModifiedAsNumber == null) {
-                rowMillis = -1l;
+                rowMillis = -1L;
             } else {
                 rowMillis = lastModifiedAsNumber.longValue();
             }
             rowNanos = 0;
         }
 
-        if (rowMillis != -1l) {
+        if (rowMillis != -1L) {
             synchronized (this) {
-                if (_greatestEncounteredMillis == -1l || _greatestEncounteredMillis < rowMillis) {
+                if (_greatestEncounteredMillis == -1L || _greatestEncounteredMillis < rowMillis) {
                     _greatestEncounteredMillis = rowMillis;
                     _greatestEncounteredNanos = rowNanos;
                 } else if (_greatestEncounteredMillis == rowMillis && _greatestEncounteredNanos < rowNanos) {
@@ -241,11 +241,11 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
             }
         }
 
-        if (_lastModifiedThresholdMillis == -1l) {
+        if (_lastModifiedThresholdMillis == -1L) {
             return ValidationCategory.VALID;
         }
 
-        if (rowMillis == -1l) {
+        if (rowMillis == -1L) {
             logger.info("Value of {} was not comparable, returning INVALID category: {}", lastModifiedColumn.getName(),
                     inputRow);
             return ValidationCategory.INVALID;

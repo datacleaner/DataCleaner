@@ -43,8 +43,8 @@ public class AnalyzerComponentBuilderTest extends TestCase {
 
     public void testNoOriginatingTableBecauseOfMockColumns() throws Exception {
         AnalyzerComponentBuilder<StringAnalyzer> jobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
-        jobBuilder.addInputColumn(new MockInputColumn<String>("foo", String.class));
-        jobBuilder.addInputColumn(new MockInputColumn<String>("bar", String.class));
+        jobBuilder.addInputColumn(new MockInputColumn<>("foo", String.class));
+        jobBuilder.addInputColumn(new MockInputColumn<>("bar", String.class));
 
         try {
             jobBuilder.toAnalyzerJob();

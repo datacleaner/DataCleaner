@@ -28,14 +28,14 @@ public class TimeLineTest extends TestCase {
     public void testGetFirstAndLast() throws Exception {
         TimeLine timeline = new TimeLine();
 
-        timeline.addInterval(new TimeInterval(500l, 600l));
-        timeline.addInterval(new TimeInterval(600l, 700l));
-        timeline.addInterval(new TimeInterval(100l, 200l));
-        timeline.addInterval(new TimeInterval(700l, 800l));
-        timeline.addInterval(new TimeInterval(200l, 300l));
+        timeline.addInterval(new TimeInterval(500L, 600L));
+        timeline.addInterval(new TimeInterval(600L, 700L));
+        timeline.addInterval(new TimeInterval(100L, 200L));
+        timeline.addInterval(new TimeInterval(700L, 800L));
+        timeline.addInterval(new TimeInterval(200L, 300L));
 
-        assertEquals(100l, timeline.getFrom().getTime());
-        assertEquals(800l, timeline.getTo().getTime());
+        assertEquals(100L, timeline.getFrom().getTime());
+        assertEquals(800L, timeline.getTo().getTime());
     }
 
     public void testGetFlattenedIntervals() throws Exception {
@@ -45,12 +45,12 @@ public class TimeLineTest extends TestCase {
         result = timeline.getFlattenedIntervals();
         assertEquals("[]", result.toString());
 
-        timeline.addInterval(new TimeInterval(500l, 600l));
-        timeline.addInterval(new TimeInterval(600l, 700l));
-        timeline.addInterval(new TimeInterval(100l, 200l));
-        timeline.addInterval(new TimeInterval(700l, 800l));
-        timeline.addInterval(new TimeInterval(200l, 300l));
-        timeline.addInterval(new TimeInterval(250l, 280l));
+        timeline.addInterval(new TimeInterval(500L, 600L));
+        timeline.addInterval(new TimeInterval(600L, 700L));
+        timeline.addInterval(new TimeInterval(100L, 200L));
+        timeline.addInterval(new TimeInterval(700L, 800L));
+        timeline.addInterval(new TimeInterval(200L, 300L));
+        timeline.addInterval(new TimeInterval(250L, 280L));
 
         result = timeline.getFlattenedIntervals();
         assertEquals("[TimeInterval[100->300], TimeInterval[500->800]]",
@@ -59,8 +59,8 @@ public class TimeLineTest extends TestCase {
 
     public void testGetOverlappingIntervals() throws Exception {
         TimeLine timeline = new TimeLine();
-        timeline.addInterval(new TimeInterval(500l, 600l));
-        timeline.addInterval(new TimeInterval(600l, 700l));
+        timeline.addInterval(new TimeInterval(500L, 600L));
+        timeline.addInterval(new TimeInterval(600L, 700L));
         assertEquals(0, timeline.getOverlappingIntervals(false).size());
 
         SortedSet<TimeInterval> overlappingIntervals = timeline
@@ -69,15 +69,15 @@ public class TimeLineTest extends TestCase {
         assertEquals("[TimeInterval[600->600]]",
                 overlappingIntervals.toString());
 
-        timeline.addInterval(new TimeInterval(600l, 650l));
+        timeline.addInterval(new TimeInterval(600L, 650L));
 
         overlappingIntervals = timeline.getOverlappingIntervals(true);
         assertEquals(1, overlappingIntervals.size());
         assertEquals("[TimeInterval[600->650]]",
                 overlappingIntervals.toString());
 
-        timeline.addInterval(new TimeInterval(900l, 950l));
-        timeline.addInterval(new TimeInterval(920l, 1000l));
+        timeline.addInterval(new TimeInterval(900L, 950L));
+        timeline.addInterval(new TimeInterval(920L, 1000L));
 
         overlappingIntervals = timeline.getOverlappingIntervals(true);
         assertEquals(2, overlappingIntervals.size());

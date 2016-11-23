@@ -52,13 +52,13 @@ public class OutputWriterScenarioHelper {
     private final MockInputColumn<Object> col5;
 
     public OutputWriterScenarioHelper() {
-        col1 = new MockInputColumn<String>("str", String.class);
-        col2 = new MockInputColumn<Integer>("my int", Integer.class);
-        col3 = new MockInputColumn<Date>("my date", Date.class);
-        col4 = new MockInputColumn<Float>("my float", Float.class);
-        col5 = new MockInputColumn<Object>("my object", Object.class);
+        col1 = new MockInputColumn<>("str", String.class);
+        col2 = new MockInputColumn<>("my int", Integer.class);
+        col3 = new MockInputColumn<>("my date", Date.class);
+        col4 = new MockInputColumn<>("my float", Float.class);
+        col5 = new MockInputColumn<>("my object", Object.class);
 
-        columns = new ArrayList<InputColumn<?>>();
+        columns = new ArrayList<>();
         columns.add(col1);
         columns.add(col2);
         columns.add(col3);

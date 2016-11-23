@@ -239,7 +239,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
             return Collections.emptyMap();
         }
 
-        final Map<String, String> metadataProperties = new HashMap<String, String>();
+        final Map<String, String> metadataProperties = new HashMap<>();
         final List<org.datacleaner.job.jaxb.MetadataProperties.Property> property = properties.getProperty();
 
         for (int i = 0; i < property.size(); i++) {
@@ -252,7 +252,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
     }
 
     public Map<String, String> getVariables(final JobType job) {
-        final Map<String, String> result = new HashMap<String, String>();
+        final Map<String, String> result = new HashMap<>();
 
         final VariablesType variablesType = job.getSource().getVariables();
         if (variablesType != null) {
@@ -273,7 +273,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         final ColumnsType columnsType = job.getSource().getColumns();
         if (columnsType != null) {
             final List<ColumnType> columns = columnsType.getColumn();
-            paths = new ArrayList<String>(columns.size());
+            paths = new ArrayList<>(columns.size());
             for (final ColumnType columnType : columns) {
                 final String path = columnType.getPath();
                 paths.add(path);
@@ -290,7 +290,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         final ColumnsType columnsType = job.getSource().getColumns();
         if (columnsType != null) {
             final List<ColumnType> columns = columnsType.getColumn();
-            types = new ArrayList<org.apache.metamodel.schema.ColumnType>(columns.size());
+            types = new ArrayList<>(columns.size());
             for (final ColumnType columnType : columns) {
                 final String typeName = columnType.getType();
                 if (StringUtils.isNullOrEmpty(typeName)) {
@@ -427,7 +427,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
         }
     }
 
-    private AnalysisJobBuilder create(final JobType job, SourceColumnMapping sourceColumnMapping, final JobMetadataType metadata,
+    private AnalysisJobBuilder create(final JobType job, SourceColumnMapping sourceColumnMapping,
+            final JobMetadataType metadata,
             final Map<String, String> variables, final AnalysisJobBuilder analysisJobBuilder) {
 
         final Datastore datastore;
@@ -561,7 +562,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
     }
 
     private void wireRequirements(final Map<ComponentType, ComponentBuilder> componentBuilders) {
-        final Map<String, FilterOutcome> outcomeMapping = new HashMap<String, FilterOutcome>();
+        final Map<String, FilterOutcome> outcomeMapping = new HashMap<>();
 
         // iterate initialize collect all outcomes by their IDs
         for (final ComponentType componentType : componentBuilders.keySet()) {
@@ -639,7 +640,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         // iterate again to set up column dependencies (one at a time -
         // whichever is possible based on the configuration of the column
         // sources (transformers))
-        final List<ComponentType> unconfiguredComponentKeys = new LinkedList<ComponentType>(componentBuilders.keySet());
+        final List<ComponentType> unconfiguredComponentKeys = new LinkedList<>(componentBuilders.keySet());
         while (!unconfiguredComponentKeys.isEmpty()) {
             boolean progress = false;
             for (final Iterator<ComponentType> it = unconfiguredComponentKeys.iterator(); it.hasNext(); ) {
@@ -783,7 +784,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
      */
     private Map<String, InputColumn<?>> readSourceColumns(final SourceColumnMapping sourceColumnMapping,
             final AnalysisJobBuilder analysisJobBuilder, final SourceType source) {
-        final Map<String, InputColumn<?>> inputColumns = new HashMap<String, InputColumn<?>>();
+        final Map<String, InputColumn<?>> inputColumns = new HashMap<>();
         final ColumnsType columnsType = source.getColumns();
         if (columnsType != null) {
             final List<ColumnType> columns = columnsType.getColumn();
@@ -908,7 +909,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
         }
     }
 
-    private void registerInputColumn(final Map<String, InputColumn<?>> inputColumns, final String id, final InputColumn<?> inputColumn) {
+    private void registerInputColumn(final Map<String, InputColumn<?>> inputColumns, final String id,
+            final InputColumn<?> inputColumn) {
         if (StringUtils.isNullOrEmpty(id)) {
             throw new IllegalStateException("Column id cannot be null");
         }

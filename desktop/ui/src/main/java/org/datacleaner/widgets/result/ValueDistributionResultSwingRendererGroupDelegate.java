@@ -119,7 +119,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         _table.setRowHeight(22);
 
         // create a map of predefined color mappings
-        _valueColorMap = new HashMap<String, Color>();
+        _valueColorMap = new HashMap<>();
         _valueColorMap.put(LabelUtils.BLANK_LABEL.toUpperCase(), WidgetUtils.BG_COLOR_BRIGHTEST);
         _valueColorMap.put(LabelUtils.UNIQUE_LABEL.toUpperCase(), WidgetUtils.BG_COLOR_BRIGHT);
         _valueColorMap.put(LabelUtils.NULL_LABEL.toUpperCase(), WidgetUtils.BG_COLOR_DARKEST);
@@ -201,7 +201,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         final JFreeChart chart = ChartFactory.createBarChart(title, "Value", "Count", _dataset,
                 PlotOrientation.HORIZONTAL, true, true, false);
 
-        final List<Title> titles = new ArrayList<Title>();
+        final List<Title> titles = new ArrayList<>();
         titles.add(new ShortTextTitle("Total count: " + totalCount));
         if (distinctCount != null) {
             titles.add(new ShortTextTitle("Distinct count: " + distinctCount));
@@ -366,7 +366,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
                 @Override
                 public void actionPerformed(final ActionEvent action) {
                     final String title = "Detailed results for [" + value + "]";
-                    final List<AnalyzerResult> results = new ArrayList<AnalyzerResult>();
+                    final List<AnalyzerResult> results = new ArrayList<>();
                     final AnnotatedRowsResult annotatedRows;
                     if (isNullValue) {
                         annotatedRows = result.getAnnotatedRowsForNull();

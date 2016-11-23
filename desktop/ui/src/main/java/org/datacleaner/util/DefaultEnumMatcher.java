@@ -53,7 +53,7 @@ public class DefaultEnumMatcher implements EnumMatcher<EnumerationValue> {
     }
 
     public DefaultEnumMatcher(final EnumerationProvider enumProvider) {
-        _exactMatchesMap = new HashMap<String, EnumerationValue>();
+        _exactMatchesMap = new HashMap<>();
 
         final EnumerationValue[] enumConstants = enumProvider.values();
         for (final EnumerationValue e : enumConstants) {

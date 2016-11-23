@@ -55,7 +55,7 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
     }
 
     public void testNoPatterns() throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<String>("email username", String.class);
+        InputColumn<String> col1 = new MockInputColumn<>("email username", String.class);
 
         PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);
@@ -75,7 +75,7 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
     }
 
     public void testSinglePatterns() throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<String>("email username", String.class);
+        InputColumn<String> col1 = new MockInputColumn<>("email username", String.class);
 
         PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);
@@ -102,8 +102,8 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
     }
 
     public void testMultiplePatterns() throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<String>("email username", String.class);
-        InputColumn<String> col2 = new MockInputColumn<String>("email domain", String.class);
+        InputColumn<String> col1 = new MockInputColumn<>("email username", String.class);
+        InputColumn<String> col2 = new MockInputColumn<>("email domain", String.class);
 
         PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);

@@ -137,7 +137,7 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
             }
         } else {
             // if NULL all filter items will be OR'ed.
-            final List<FilterItem> filterItems = new ArrayList<FilterItem>();
+            final List<FilterItem> filterItems = new ArrayList<>();
             for (final InputColumn<?> col : columns) {
                 final Column column = col.getPhysicalColumn();
                 if (column == null) {

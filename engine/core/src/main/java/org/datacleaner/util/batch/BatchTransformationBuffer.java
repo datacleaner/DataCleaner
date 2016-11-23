@@ -70,7 +70,7 @@ public class BatchTransformationBuffer<I, O> {
         _transformation = transformation;
         _flushInterval = flushIntervalMillis;
         _maxBatchSize = maxBatchSize;
-        _queue = new ArrayBlockingQueue<BatchEntry<I, O>>(maxBatchSize);
+        _queue = new ArrayBlockingQueue<>(maxBatchSize);
         _batchNo = new AtomicInteger();
         _threadPool = Executors.newScheduledThreadPool(1);
     }
@@ -117,7 +117,7 @@ public class BatchTransformationBuffer<I, O> {
             }
         }
 
-        final List<BatchEntry<?, O>> entries = new ArrayList<BatchEntry<?, O>>(_maxBatchSize);
+        final List<BatchEntry<?, O>> entries = new ArrayList<>(_maxBatchSize);
 
         final int batchSize = _queue.drainTo(entries);
 
@@ -137,8 +137,8 @@ public class BatchTransformationBuffer<I, O> {
             input[i] = entries.get(i).getInput();
         }
 
-        final BatchSource<I> source = new ArrayBatchSource<I>(input);
-        final BatchEntryBatchSink<O> sink = new BatchEntryBatchSink<O>(entries);
+        final BatchSource<I> source = new ArrayBatchSource<>(input);
+        final BatchEntryBatchSink<O> sink = new BatchEntryBatchSink<>(entries);
 
         _transformation.map(source, sink);
 
@@ -151,7 +151,7 @@ public class BatchTransformationBuffer<I, O> {
     }
 
     public O transform(final I input) {
-        final BatchEntry<I, O> entry = new BatchEntry<I, O>(input);
+        final BatchEntry<I, O> entry = new BatchEntry<>(input);
 
         while (!_queue.offer(entry)) {
             flushBuffer();

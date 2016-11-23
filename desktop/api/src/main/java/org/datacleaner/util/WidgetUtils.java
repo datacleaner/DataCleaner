@@ -107,7 +107,7 @@ public final class WidgetUtils {
     public static final Font FONT_FONTAWESOME;
 
     static {
-        fonts = new HashMap<String, Font>();
+        fonts = new HashMap<>();
 
         final Font[] fontArray = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         for (final Font font : fontArray) {

@@ -68,7 +68,8 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
     private final IdGenerator _idGenerator;
     private final List<TransformerChangeListener> _localChangeListeners;
 
-    public TransformerComponentBuilder(final AnalysisJobBuilder analysisJobBuilder, final TransformerDescriptor<T> descriptor,
+    public TransformerComponentBuilder(final AnalysisJobBuilder analysisJobBuilder,
+            final TransformerDescriptor<T> descriptor,
             final IdGenerator idGenerator) {
         super(analysisJobBuilder, descriptor, TransformerComponentBuilder.class);
         _id = "trans-" + idGenerator.nextId();
@@ -252,8 +253,9 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         @SuppressWarnings("deprecation") final
         List<TransformerChangeListener> globalChangeListeners = getAnalysisJobBuilder().getTransformerChangeListeners();
 
-        final List<TransformerChangeListener> list = new ArrayList<>(globalChangeListeners.size() + _localChangeListeners
-                .size());
+        final List<TransformerChangeListener> list =
+                new ArrayList<>(globalChangeListeners.size() + _localChangeListeners
+                        .size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);
         return list;
@@ -324,7 +326,7 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
     protected void onRemovedInternal() {
         final List<TransformerChangeListener> listeners = getAllListeners();
         for (final TransformerChangeListener listener : listeners) {
-            listener.onOutputChanged(this, new LinkedList<MutableInputColumn<?>>());
+            listener.onOutputChanged(this, new LinkedList<>());
             listener.onRemove(this);
         }
     }

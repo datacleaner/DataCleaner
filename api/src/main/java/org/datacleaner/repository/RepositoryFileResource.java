@@ -56,7 +56,7 @@ public class RepositoryFileResource extends AbstractResource implements Serializ
         if (file == null) {
             logger.warn("Repository node did not exist: {}", qualifiedPath);
         }
-        _fileRef = new SerializableRef<RepositoryFile>(file);
+        _fileRef = new SerializableRef<>(file);
     }
 
     /**
@@ -66,7 +66,7 @@ public class RepositoryFileResource extends AbstractResource implements Serializ
      * @param file
      */
     public RepositoryFileResource(final RepositoryFile file) {
-        _fileRef = new SerializableRef<RepositoryFile>(file);
+        _fileRef = new SerializableRef<>(file);
         _qualifiedPath = file.getQualifiedPath();
     }
 

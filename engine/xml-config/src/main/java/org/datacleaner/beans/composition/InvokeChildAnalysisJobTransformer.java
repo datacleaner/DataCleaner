@@ -77,7 +77,7 @@ public class InvokeChildAnalysisJobTransformer extends AbstractWrappedAnalysisJo
                     + " columns, but transformer input only defines " + input.length);
         }
 
-        final Map<InputColumn<?>, InputColumn<?>> result = new LinkedHashMap<InputColumn<?>, InputColumn<?>>();
+        final Map<InputColumn<?>, InputColumn<?>> result = new LinkedHashMap<>();
         int i = 0;
         final Iterator<InputColumn<?>> it = sourceColumns.iterator();
         while (it.hasNext()) {

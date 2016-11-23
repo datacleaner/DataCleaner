@@ -75,9 +75,9 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
     };
 
     private final Map<InputColumn<Boolean>, BooleanAnalyzerColumnDelegate> _columnDelegates =
-            new HashMap<InputColumn<Boolean>, BooleanAnalyzerColumnDelegate>();
+            new HashMap<>();
     private final Map<ValueCombination<Boolean>, RowAnnotation> _valueCombinations =
-            new HashMap<ValueCombination<Boolean>, RowAnnotation>();
+            new HashMap<>();
 
     @Configured
     InputColumn<Boolean>[] _columns;
@@ -113,7 +113,7 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
 
         // collect all combinations of booleans
         if (_columns.length > 1) {
-            final ValueCombination<Boolean> valueCombination = new ValueCombination<Boolean>(values);
+            final ValueCombination<Boolean> valueCombination = new ValueCombination<>(values);
             RowAnnotation annotation = _valueCombinations.get(valueCombination);
             if (annotation == null) {
                 annotation = _annotationFactory.createAnnotation();
@@ -136,7 +136,7 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
             columnDimension.addCategory(column.getName());
         }
 
-        final Crosstab<Number> crosstab = new Crosstab<Number>(Number.class, columnDimension, measureDimension);
+        final Crosstab<Number> crosstab = new Crosstab<>(Number.class, columnDimension, measureDimension);
         for (final InputColumn<Boolean> column : _columns) {
             final CrosstabNavigator<Number> nav = crosstab.navigate().where(columnDimension, column.getName());
             final BooleanAnalyzerColumnDelegate delegate = _columnDelegates.get(column);
@@ -173,10 +173,10 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
             }
             columnDimension.addCategory(VALUE_COMBINATION_COLUMN_FREQUENCY);
 
-            valueCombinationCrosstab = new Crosstab<Number>(Number.class, columnDimension, measureDimension);
+            valueCombinationCrosstab = new Crosstab<>(Number.class, columnDimension, measureDimension);
 
             final SortedSet<Entry<ValueCombination<Boolean>, RowAnnotation>> entries =
-                    new TreeSet<Map.Entry<ValueCombination<Boolean>, RowAnnotation>>(
+                    new TreeSet<>(
                             frequentValueCombinationComparator);
             entries.addAll(_valueCombinations.entrySet());
 

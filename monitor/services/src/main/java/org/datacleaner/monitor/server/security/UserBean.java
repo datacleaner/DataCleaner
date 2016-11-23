@@ -59,7 +59,7 @@ public class UserBean implements User, Serializable {
     }
 
     public UserBean() {
-        _roles = new HashSet<String>();
+        _roles = new HashSet<>();
     }
 
     public void updateUser() {
@@ -139,7 +139,7 @@ public class UserBean implements User, Serializable {
         if (_roles.isEmpty()) {
             updateUser();
         }
-        return new ArrayList<String>(_roles);
+        return new ArrayList<>(_roles);
     }
 
     @Override

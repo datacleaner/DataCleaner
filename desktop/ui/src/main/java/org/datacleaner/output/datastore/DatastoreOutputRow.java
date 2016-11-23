@@ -43,7 +43,7 @@ final class DatastoreOutputRow implements OutputRow {
     public DatastoreOutputRow(final PreparedStatement insertStatement, final InputColumn<?>[] columns) {
         _insertStatement = insertStatement;
         _columns = columns;
-        _parameters = new HashMap<Integer, Object>();
+        _parameters = new HashMap<>();
     }
 
     @Override

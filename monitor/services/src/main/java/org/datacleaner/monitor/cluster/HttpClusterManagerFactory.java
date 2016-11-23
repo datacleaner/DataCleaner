@@ -60,7 +60,7 @@ public class HttpClusterManagerFactory implements ClusterManagerFactory {
         }
 
         // use the server list
-        final List<String> finalEndpoints = new ArrayList<String>();
+        final List<String> finalEndpoints = new ArrayList<>();
         for (String endpoint : slaveServerUrls) {
             if (!endpoint.endsWith("/")) {
                 endpoint = endpoint + "/";

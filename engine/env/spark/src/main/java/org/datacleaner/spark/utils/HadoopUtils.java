@@ -30,7 +30,8 @@ import org.apache.metamodel.util.FileHelper;
 import com.google.common.base.Strings;
 
 public class HadoopUtils {
-    private static void addResourceIfExists(final Configuration conf, final File hadoopConfigurationDirectory, final String filename) {
+    private static void addResourceIfExists(final Configuration conf, final File hadoopConfigurationDirectory,
+            final String filename) {
         final File file = new File(hadoopConfigurationDirectory, filename);
         if (file.exists()) {
             final InputStream inputStream = FileHelper.getInputStream(file);

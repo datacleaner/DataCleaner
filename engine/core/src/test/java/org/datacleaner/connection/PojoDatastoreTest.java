@@ -36,12 +36,12 @@ public class PojoDatastoreTest extends TestCase {
 
     public void testSimpleInteractions() throws Exception {
         final SimpleTableDef tableDef = new SimpleTableDef("foo", new String[] { "col1", "col2" });
-        final Collection<Map<String, ?>> maps = new ArrayList<Map<String, ?>>();
+        final Collection<Map<String, ?>> maps = new ArrayList<>();
 
         final TableDataProvider<?> tableDataProvider = new MapTableDataProvider(tableDef, maps);
-        maps.add(new HashMap<String, Object>());
+        maps.add(new HashMap<>());
 
-        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<TableDataProvider<?>>();
+        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<>();
         tableDataProviders.add(tableDataProvider);
 
         final PojoDatastore ds = new PojoDatastore("foobar", tableDataProviders);

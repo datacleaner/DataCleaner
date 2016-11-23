@@ -134,7 +134,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
         if (!overwriteSheetIfExists && file.exists()) {
             final Datastore datastore = new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
-            try (final DatastoreConnection connection = datastore.openConnection()) {
+            try (DatastoreConnection connection = datastore.openConnection()) {
                 final String[] tableNames = connection.getDataContext().getDefaultSchema().getTableNames();
                 for (int i = 0; i < tableNames.length; i++) {
                     if (tableNames[i].equals(sheetName)) {
@@ -181,7 +181,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         if (file.exists()) {
             final ExcelDatastore datastore = new ExcelDatastore(file.getName(), new FileResource(file),
                     file.getAbsolutePath());
-            try (final UpdateableDatastoreConnection connection = datastore.openConnection()) {
+            try (UpdateableDatastoreConnection connection = datastore.openConnection()) {
                 final DataContext dataContext = connection.getDataContext();
                 final String[] tableNames = dataContext.getDefaultSchema().getTableNames();
                 for (int i = 0; i < tableNames.length; i++) {
@@ -206,7 +206,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     }
 
     private OutputWriter createTemporaryCsvWriter() {
-        final List<String> headers = new ArrayList<String>();
+        final List<String> headers = new ArrayList<>();
         for (int i = 0; i < columns.length; i++) {
             final String columnName = getColumnHeader(i);
             headers.add(columnName);
@@ -284,7 +284,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
                     @Override
                     protected void writeHeader(final ExcelDataContextWriter writer) throws IOException {
-                        final List<String> headers = new ArrayList<String>(Arrays.asList(table.getColumnNames()));
+                        final List<String> headers = new ArrayList<>(Arrays.asList(table.getColumnNames()));
                         if (!isColumnToBeSortedOnPresentInInput) {
                             headers.remove(columnToBeSortedOn.getName());
                         }
@@ -294,7 +294,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
                     @Override
                     protected void writeRow(final ExcelDataContextWriter writer, final Row row, final int count) throws IOException {
                         for (int i = 0; i < count; i++) {
-                            final List<Object> valuesList = new ArrayList<Object>(Arrays.asList(row.getValues()));
+                            final List<Object> valuesList = new ArrayList<>(Arrays.asList(row.getValues()));
                             if (!isColumnToBeSortedOnPresentInInput) {
                                 valuesList.remove(indexOfColumnToBeSortedOn);
                             }

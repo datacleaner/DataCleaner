@@ -138,7 +138,7 @@ public class WizardDaoImpl implements WizardDao {
 
         final WizardState state = new WizardState();
         state.session = session;
-        state.pages = new ArrayDeque<WizardPageController>();
+        state.pages = new ArrayDeque<>();
         state.pages.add(firstPage);
 
         _wizardStateCache.put(sessionId, state);

@@ -58,7 +58,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
             final ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
 
-        _textFieldDecorations = new IdentityHashMap<JComponent, JXTextField>();
+        _textFieldDecorations = new IdentityHashMap<>();
 
         _textFieldPanel = new DCPanel();
         _textFieldPanel.setLayout(new VerticalLayout(2));
@@ -173,7 +173,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
     @Override
     public String[] getValue() {
         final Component[] components = _textFieldPanel.getComponents();
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         for (int i = 0; i < components.length; i++) {
             final Component decoration = components[i];
             final JXTextField textField = _textFieldDecorations.get(decoration);

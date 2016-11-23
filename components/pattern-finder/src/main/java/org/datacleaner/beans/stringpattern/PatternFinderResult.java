@@ -59,7 +59,7 @@ public class PatternFinderResult implements AnalyzerResult {
             final TokenizerConfiguration tokenizerConfiguration) {
         _column = column;
         _groupColumn = null;
-        _crosstabs = new HashMap<String, Crosstab<?>>();
+        _crosstabs = new HashMap<>();
         _crosstabs.put(null, crosstab);
         _tokenizerConfiguration = tokenizerConfiguration;
     }

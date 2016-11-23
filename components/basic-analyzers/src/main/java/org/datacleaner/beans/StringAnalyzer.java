@@ -81,7 +81,7 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
     private static final Logger logger = LoggerFactory.getLogger(StringAnalyzer.class);
 
     private final Map<InputColumn<String>, StringAnalyzerColumnDelegate> _columnDelegates =
-            new HashMap<InputColumn<String>, StringAnalyzerColumnDelegate>();
+            new HashMap<>();
 
     @Configured
     InputColumn<String>[] _columns;
@@ -144,7 +144,7 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
 
         final CrosstabDimension columnDimension = new CrosstabDimension(DIMENSION_COLUMN);
 
-        final Crosstab<Number> crosstab = new Crosstab<Number>(Number.class, columnDimension, measureDimension);
+        final Crosstab<Number> crosstab = new Crosstab<>(Number.class, columnDimension, measureDimension);
 
         for (final InputColumn<String> column : _columns) {
             final String columnName = column.getName();

@@ -31,14 +31,14 @@ public class ELInputColumnTest extends TestCase {
     public void testSimpleExpression() throws Exception {
         ELInputColumn elCol = new ELInputColumn("Hello #{foo}");
 
-        MockInputColumn<String> fooCol = new MockInputColumn<String>("foo", String.class);
+        MockInputColumn<String> fooCol = new MockInputColumn<>("foo", String.class);
         assertEquals("Hello World", elCol.evaluate(new MockInputRow().put(fooCol, "World")));
     }
 
     public void testVariableWithWhitespace() throws Exception {
         ELInputColumn elCol = new ELInputColumn("Hello #{foo_bar}");
 
-        MockInputColumn<String> fooCol = new MockInputColumn<String>("foo bar", String.class);
+        MockInputColumn<String> fooCol = new MockInputColumn<>("foo bar", String.class);
         assertEquals("Hello World", elCol.evaluate(new MockInputRow().put(fooCol, "World")));
     }
 }

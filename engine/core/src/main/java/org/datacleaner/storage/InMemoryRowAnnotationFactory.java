@@ -46,11 +46,11 @@ public class InMemoryRowAnnotationFactory extends AbstractRowAnnotationFactory {
 
     // contains annotations, mapped to row-ids
     private final Map<RowAnnotation, Set<Integer>> _annotatedRows =
-            new ConcurrentHashMap<RowAnnotation, Set<Integer>>();
+            new ConcurrentHashMap<>();
 
     // contains row id's mapped to rows mapped to distinct counts
     private final Map<Integer, Map.Entry<InputRow, Integer>> _distinctCounts =
-            new ConcurrentHashMap<Integer, Map.Entry<InputRow, Integer>>();
+            new ConcurrentHashMap<>();
 
     public InMemoryRowAnnotationFactory() {
         this(1000);
@@ -102,7 +102,7 @@ public class InMemoryRowAnnotationFactory extends AbstractRowAnnotationFactory {
 
     @Override
     protected void storeRowValues(final int rowId, final InputRow row) {
-        _distinctCounts.put(rowId, new ImmutableEntry<InputRow, Integer>(row, 1));
+        _distinctCounts.put(rowId, new ImmutableEntry<>(row, 1));
     }
 
     @Override
@@ -119,7 +119,7 @@ public class InMemoryRowAnnotationFactory extends AbstractRowAnnotationFactory {
         if (rowIds == null) {
             return Collections.emptyList();
         }
-        final List<InputRow> rows = new ArrayList<InputRow>(rowIds.size());
+        final List<InputRow> rows = new ArrayList<>(rowIds.size());
         for (final Integer rowId : rowIds) {
             final InputRow row = _distinctCounts.get(rowId).getKey();
             rows.add(row);

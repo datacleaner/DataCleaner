@@ -58,7 +58,7 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
     public KeysAndTypesPropertyWidget(final ConfiguredPropertyDescriptor keysProperty,
             final ConfiguredPropertyDescriptor typesProperty, final ComponentBuilder componentBuilder) {
         super(keysProperty, componentBuilder);
-        _comboBoxes = new ArrayList<DCComboBox<Class<?>>>();
+        _comboBoxes = new ArrayList<>();
         _typesProperty = typesProperty;
         _typesPropertyWidget = new MinimalPropertyWidget<Class[]>(getComponentBuilder(), _typesProperty) {
 
@@ -70,7 +70,7 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
             @Override
             public Class[] getValue() {
                 final String[] keys = KeysAndTypesPropertyWidget.this.getValue();
-                final List<Class<?>> result = new ArrayList<Class<?>>();
+                final List<Class<?>> result = new ArrayList<>();
                 for (int i = 0; i < keys.length; i++) {
                     if (!StringUtils.isNullOrEmpty(keys[i])) {
                         final DCComboBox<Class<?>> comboBox = _comboBoxes.get(i);

@@ -66,7 +66,8 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
     private final DataCleanerConfiguration _configuration;
     private final CompositeAnalysisListener _analysisListener;
 
-    public DistributedAnalysisRunner(final DataCleanerConfiguration configuration, final ClusterManager clusterManager) {
+    public DistributedAnalysisRunner(final DataCleanerConfiguration configuration,
+            final ClusterManager clusterManager) {
         this(configuration, clusterManager, new AnalysisListener[0]);
     }
 
@@ -204,7 +205,7 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
 
     public List<AnalysisResultFuture> dispatchJobs(final AnalysisJob job, final int chunks, final int rowsPerChunk,
             final RowProcessingPublisher publisher) {
-        final List<AnalysisResultFuture> results = new ArrayList<AnalysisResultFuture>();
+        final List<AnalysisResultFuture> results = new ArrayList<>();
         for (int i = 0; i < chunks; i++) {
             final int firstRow = (i * rowsPerChunk) + 1;
             final int maxRows;
@@ -242,10 +243,11 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
      * @param maxRows
      * @return
      */
-    private AnalysisJob buildSlaveJob(final AnalysisJob job, final int slaveJobIndex, final int firstRow, final int maxRows) {
+    private AnalysisJob buildSlaveJob(final AnalysisJob job, final int slaveJobIndex, final int firstRow,
+            final int maxRows) {
         logger.info("Building slave job {} with firstRow={} and maxRow={}", slaveJobIndex + 1, firstRow, maxRows);
 
-        try (final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(_configuration, job)) {
+        try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(_configuration, job)) {
 
             final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilder
                     .addFilter(MaxRowsFilter.class);
@@ -326,7 +328,8 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
         return sourceColumn;
     }
 
-    private RowProcessingPublishers getRowProcessingPublishers(final AnalysisJob job, final LifeCycleHelper lifeCycleHelper) {
+    private RowProcessingPublishers getRowProcessingPublishers(final AnalysisJob job,
+            final LifeCycleHelper lifeCycleHelper) {
         final SingleThreadedTaskRunner taskRunner = new SingleThreadedTaskRunner();
 
         final ErrorAwareAnalysisListener errorAwareAnalysisListener = new ErrorAwareAnalysisListener();

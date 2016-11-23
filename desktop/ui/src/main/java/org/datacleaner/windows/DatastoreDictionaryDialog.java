@@ -95,7 +95,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
 
         final String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
 
-        _datastoreComboBox = new JComboBox<String>(comboBoxModel);
+        _datastoreComboBox = new JComboBox<>(comboBoxModel);
         _datastoreComboBox.setEditable(false);
 
         _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);

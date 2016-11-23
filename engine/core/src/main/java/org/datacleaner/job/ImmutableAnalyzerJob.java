@@ -45,8 +45,8 @@ public final class ImmutableAnalyzerJob extends ImmutableComponentJob implements
      * @param metadataProperties
      *
      * @deprecated use
-     *             {@link #ImmutableAnalyzerJob(String, AnalyzerDescriptor, ComponentConfiguration, ComponentRequirement, Map, OutputDataStreamJob[])}
-     *             instead
+     *             {@link #ImmutableAnalyzerJob(String, AnalyzerDescriptor, ComponentConfiguration,
+     *             ComponentRequirement, Map, OutputDataStreamJob[])} instead
      */
     @Deprecated
     public ImmutableAnalyzerJob(final String name, final AnalyzerDescriptor<?> descriptor,

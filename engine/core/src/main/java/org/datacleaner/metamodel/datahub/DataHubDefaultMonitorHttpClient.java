@@ -34,7 +34,9 @@ public class DataHubDefaultMonitorHttpClient extends HttpBasicMonitorHttpClient 
     private static final String CDI_SERVICE_URL_HEADER = "CDI-serviceUrl";
     private static final String CDI_USERID = "CDI-userId";
     private final String _userName;
-    public DataHubDefaultMonitorHttpClient(final CloseableHttpClient client, final String host, final int port, final String username,
+
+    public DataHubDefaultMonitorHttpClient(final CloseableHttpClient client, final String host, final int port,
+            final String username,
             final String password) {
         super(client, host, port, username, password);
         this._userName = username;

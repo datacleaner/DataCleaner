@@ -36,7 +36,7 @@ public final class TokenPatternImpl implements TokenPattern {
         if (tokens == null) {
             throw new IllegalArgumentException("tokens cannot be null");
         }
-        _symbols = new ArrayList<TokenPatternSymbol>(tokens.size());
+        _symbols = new ArrayList<>(tokens.size());
         for (final Token token : tokens) {
             _symbols.add(new TokenPatternSymbolImpl(token, configuration));
         }

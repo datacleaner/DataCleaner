@@ -51,18 +51,18 @@ import org.datacleaner.reference.SynonymCatalog;
 public class DictionaryMatcherTransformerTest extends TestCase {
 
     public void testParseAndAssignDictionaries() throws Throwable {
-        Collection<Dictionary> dictionaries = new ArrayList<Dictionary>();
+        Collection<Dictionary> dictionaries = new ArrayList<>();
         dictionaries.add(new SimpleDictionary("eobjects.org products", "MetaModel", "DataCleaner", "AnalyzerBeans"));
         dictionaries.add(new SimpleDictionary("apache products", "commons-lang", "commons-math", "commons-codec",
                 "commons-logging"));
         dictionaries.add(new SimpleDictionary("logging products", "commons-logging", "log4j", "slf4j",
                 "java.util.Logging"));
 
-        Collection<SynonymCatalog> synonymCatalogs = new ArrayList<SynonymCatalog>();
+        Collection<SynonymCatalog> synonymCatalogs = new ArrayList<>();
         synonymCatalogs.add(new SimpleSynonymCatalog("translated terms", new SimpleSynonym("hello", "howdy", "hi", "yo",
                 "hey"), new SimpleSynonym("goodbye", "bye", "see you", "hey")));
 
-        Collection<StringPattern> stringPatterns = new ArrayList<StringPattern>();
+        Collection<StringPattern> stringPatterns = new ArrayList<>();
 
         ReferenceDataCatalogImpl ref = new ReferenceDataCatalogImpl(dictionaries, synonymCatalogs, stringPatterns);
 

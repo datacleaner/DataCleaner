@@ -93,7 +93,7 @@ public class ConfigurationFileControllerTest extends EasyMockSupport {
         messageConverter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON));
         ContentNegotiationManager contentNegotiationManager = new ContentNegotiationManager();
         RequestResponseBodyMethodProcessor returnValueHandler = new RequestResponseBodyMethodProcessor(
-                Arrays.<HttpMessageConverter<?>> asList(messageConverter), contentNegotiationManager);
+                Arrays.asList(messageConverter), contentNegotiationManager);
 
         InputStream inputStream = FileHelper
                 .getInputStream(new File("src/test/resources/example_repo/tenant1/conf.xml"));

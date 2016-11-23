@@ -125,7 +125,7 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
     @Override
     public char[] getValue() {
         final Component[] components = _textFieldPanel.getComponents();
-        final List<Character> list = new ArrayList<Character>();
+        final List<Character> list = new ArrayList<>();
         for (int i = 0; i < components.length; i++) {
             final DCPanel panel = (DCPanel) components[i];
             final JTextComponent textComponent = (JTextComponent) panel.getComponent(0);

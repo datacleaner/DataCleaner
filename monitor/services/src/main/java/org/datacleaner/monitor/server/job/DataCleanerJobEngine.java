@@ -108,7 +108,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         _clusterManagerFactory = clusterManagerFactory;
         _descriptorProvider = descriptorProvider;
         _applicationContext = applicationContext;
-        _runningJobs = new ConcurrentHashMap<String, AnalysisResultFuture>();
+        _runningJobs = new ConcurrentHashMap<>();
     }
 
     /**
@@ -470,7 +470,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         if (suggestions instanceof ArrayList) {
             return suggestions;
         }
-        return new ArrayList<String>(suggestions);
+        return new ArrayList<>(suggestions);
     }
 
     @Override

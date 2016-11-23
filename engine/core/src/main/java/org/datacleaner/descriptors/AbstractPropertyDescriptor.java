@@ -104,7 +104,7 @@ public abstract class AbstractPropertyDescriptor implements PropertyDescriptor {
     @Override
     public Set<Annotation> getAnnotations() {
         final Annotation[] annotations = getField().getAnnotations();
-        return new HashSet<Annotation>(Arrays.asList(annotations));
+        return new HashSet<>(Arrays.asList(annotations));
     }
 
     @Override

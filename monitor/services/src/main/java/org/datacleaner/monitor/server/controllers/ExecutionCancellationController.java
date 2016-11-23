@@ -76,7 +76,7 @@ public class ExecutionCancellationController {
 
         executionLog = _schedulingService.getExecution(tenantIdentifier, new ExecutionIdentifier(resultName));
 
-        final Map<String, String> response = new TreeMap<String, String>();
+        final Map<String, String> response = new TreeMap<>();
         response.put("cancelled", cancelled + "");
         response.put("status", toString(executionLog.getExecutionStatus()));
         logger.debug("Response payload: {}", response);

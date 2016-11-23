@@ -83,11 +83,11 @@ public class JobHistoryPanel extends Composite {
 
         executionLogPanelTarget = new SimplePanel();
         executionLogPanelTarget.setStyleName("ExecutionLogPanelTarget");
-        executionList = new CellList<ExecutionIdentifier>(new ExecutionIdentifierCell());
+        executionList = new CellList<>(new ExecutionIdentifierCell());
         executionList.setEmptyListWidget(new Label("(none)"));
 
         final SingleSelectionModel<ExecutionIdentifier> selectionModel =
-                new SingleSelectionModel<ExecutionIdentifier>();
+                new SingleSelectionModel<>();
         selectionModel.addSelectionChangeHandler(new Handler() {
             @Override
             public void onSelectionChange(final SelectionChangeEvent event) {
@@ -114,7 +114,7 @@ public class JobHistoryPanel extends Composite {
                     // build a map of active executions, to be polled for
                     // updates
                     final Map<Integer, ExecutionIdentifier> activeExecutions =
-                            new HashMap<Integer, ExecutionIdentifier>();
+                            new HashMap<>();
                     for (int i = 0; i < executions.size(); i++) {
                         final ExecutionIdentifier execution = executions.get(i);
                         if (!execution.isFinished()) {
@@ -146,7 +146,7 @@ public class JobHistoryPanel extends Composite {
                                 if (executionLog == null) {
                                     return;
                                 }
-                                final List<ExecutionIdentifier> list = new ArrayList<ExecutionIdentifier>(1);
+                                final List<ExecutionIdentifier> list = new ArrayList<>(1);
                                 list.add(executionLog);
                                 executionList.setRowData(index, list);
                             }

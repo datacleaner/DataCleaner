@@ -52,8 +52,8 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
             final DistributedAnalysisResultReducer reducer) {
         _results = results;
         _reducer = reducer;
-        _resultMap = new HashMap<ComponentJob, AnalyzerResult>();
-        _reductionErrors = new ArrayList<AnalysisResultReductionException>();
+        _resultMap = new HashMap<>();
+        _reductionErrors = new ArrayList<>();
         _cancelled = false;
     }
 
@@ -168,7 +168,7 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
         }
 
         final Collection<AnalyzerResult> values = _resultMap.values();
-        return new ArrayList<AnalyzerResult>(values);
+        return new ArrayList<>(values);
     }
 
     @Override
@@ -183,7 +183,7 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
 
     @Override
     public List<Throwable> getErrors() {
-        final List<Throwable> errors = new ArrayList<Throwable>();
+        final List<Throwable> errors = new ArrayList<>();
         for (final AnalysisResultFuture result : _results) {
             final List<Throwable> slaveErrors = result.getErrors();
             if (slaveErrors != null) {

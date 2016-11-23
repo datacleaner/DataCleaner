@@ -86,7 +86,8 @@ public final class RowProcessingFunction implements
     }
 
     @Override
-    public Iterable<Tuple2<String, NamedAnalyzerResult>> call(final Iterator<InputRow> inputRowIterator) throws Exception {
+    public Iterable<Tuple2<String, NamedAnalyzerResult>> call(final Iterator<InputRow> inputRowIterator)
+            throws Exception {
         logger.info("call(Iterator) invoked");
 
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
@@ -258,7 +259,8 @@ public final class RowProcessingFunction implements
                 .getConsumers());
 
         // await any future results
-        for (final ListIterator<Tuple2<String, NamedAnalyzerResult>> it = analyzerResults.listIterator(); it.hasNext(); ) {
+        for (final ListIterator<Tuple2<String, NamedAnalyzerResult>> it = analyzerResults.listIterator();
+             it.hasNext(); ) {
             final Tuple2<String, NamedAnalyzerResult> tuple = it.next();
             final NamedAnalyzerResult namedAnalyzerResult = tuple._2;
             final AnalyzerResult analyzerResult = namedAnalyzerResult.getAnalyzerResult();

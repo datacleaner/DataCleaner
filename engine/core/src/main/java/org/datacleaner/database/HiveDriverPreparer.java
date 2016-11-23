@@ -23,6 +23,7 @@ import java.io.OutputStream;
 
 public class HiveDriverPreparer implements DriverPreparer {
     public static final OutputStream DEV_NULL = new OutputStream() {
+        @Override
         public void write(final int b) {
         }
     };

@@ -35,7 +35,7 @@ import org.datacleaner.test.MockOutputRowCollector;
 public class RegexParserTransformerTest extends TestCase {
 
     public void testTransform() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<String>("foobar", String.class);
+        MockInputColumn<String> col = new MockInputColumn<>("foobar", String.class);
 
         RegexParserTransformer t = new RegexParserTransformer();
         t.column = col;
@@ -55,7 +55,7 @@ public class RegexParserTransformerTest extends TestCase {
     }
 
     public void testExpressionForDimensions() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<String>("foobar", String.class);
+        MockInputColumn<String> col = new MockInputColumn<>("foobar", String.class);
 
         RegexParserTransformer t = new RegexParserTransformer();
         t.column = col;
@@ -70,7 +70,7 @@ public class RegexParserTransformerTest extends TestCase {
 
     public void testFindAllMultiMatch() throws Exception {
         final MockOutputRowCollector outputRowCollector = new MockOutputRowCollector();
-        final MockInputColumn<String> col = new MockInputColumn<String>("foobar", String.class);
+        final MockInputColumn<String> col = new MockInputColumn<>("foobar", String.class);
 
         final RegexParserTransformer t = new RegexParserTransformer();
         t.column = col;
@@ -90,7 +90,7 @@ public class RegexParserTransformerTest extends TestCase {
 
     public void testFindAllNoMatch() throws Exception {
         final MockOutputRowCollector outputRowCollector = new MockOutputRowCollector();
-        final MockInputColumn<String> col = new MockInputColumn<String>("foobar", String.class);
+        final MockInputColumn<String> col = new MockInputColumn<>("foobar", String.class);
 
         final RegexParserTransformer t = new RegexParserTransformer();
         t.column = col;

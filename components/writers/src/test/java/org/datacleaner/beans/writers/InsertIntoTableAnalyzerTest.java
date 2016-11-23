@@ -106,8 +106,8 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         insertIntoTable.errorLogFile = new File("src/test/resources/invalid-error-handling-file.csv");
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
+        InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
 
         insertIntoTable.values = new InputColumn[] { col1, col2 };
 
@@ -132,8 +132,8 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         insertIntoTable.errorLogFile = file;
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
+        InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
 
         insertIntoTable.values = new InputColumn[] { col1, col2 };
 
@@ -161,13 +161,13 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.errorLogFile = null;
         insertIntoTable._componentContext = EasyMock.createMock(ComponentContext.class);
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
-        InputColumn<Object> col3 = new MockInputColumn<Object>("in3", Object.class);
+        InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
+        InputColumn<Object> col3 = new MockInputColumn<>("in3", Object.class);
 
         // the name of this additional column will clash with one of the
         // target column names.
-        InputColumn<Object> col4 = new MockInputColumn<Object>("foo", Object.class);
+        InputColumn<Object> col4 = new MockInputColumn<>("foo", Object.class);
 
         insertIntoTable.values = new InputColumn[] { col1, col2 };
         insertIntoTable.additionalErrorLogValues = new InputColumn[] { col3, col4 };
@@ -211,8 +211,8 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         insertIntoTable._componentContext = EasyMock.createMock(ComponentContext.class);
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
+        InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
 
         insertIntoTable.values = new InputColumn[] { col1, col2 };
 

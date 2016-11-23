@@ -43,7 +43,7 @@ public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<
             enumConstants = CollectionUtils.array(new Enum<?>[] { null }, enumConstants);
         }
 
-        _comboBox = new DCComboBox<Enum<?>>(enumConstants);
+        _comboBox = new DCComboBox<>(enumConstants);
         _comboBox.setRenderer(new EnumComboBoxListRenderer());
 
         final Enum<?> currentValue = getCurrentValue();

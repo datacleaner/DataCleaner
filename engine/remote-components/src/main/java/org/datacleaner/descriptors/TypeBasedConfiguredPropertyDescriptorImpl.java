@@ -43,7 +43,8 @@ public class TypeBasedConfiguredPropertyDescriptorImpl extends RemoteConfiguredP
 
     private final Class<?> type;
 
-    public TypeBasedConfiguredPropertyDescriptorImpl(final String name, final String description, final Class<?> type, final boolean required,
+    public TypeBasedConfiguredPropertyDescriptorImpl(final String name, final String description, final Class<?> type,
+            final boolean required,
             final ComponentDescriptor<?> component, final Map<Class<? extends Annotation>, Annotation> annotations,
             final JsonNode defaultValue) {
         super(name, description, required, component, annotations, defaultValue);

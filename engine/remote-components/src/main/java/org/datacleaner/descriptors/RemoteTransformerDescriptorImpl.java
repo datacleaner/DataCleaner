@@ -48,8 +48,10 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
     private final Boolean isEnabled;
     private final RemoteDescriptorProvider remoteDescriptorProvider;
 
-    public RemoteTransformerDescriptorImpl(final RemoteDescriptorProvider remoteDescriptorProvider, final String displayName,
-            final Map<Class<? extends Annotation>, Annotation> annotations, final byte[] iconData, final Boolean isEnabled) {
+    public RemoteTransformerDescriptorImpl(final RemoteDescriptorProvider remoteDescriptorProvider,
+            final String displayName,
+            final Map<Class<? extends Annotation>, Annotation> annotations, final byte[] iconData,
+            final Boolean isEnabled) {
         super(RemoteTransformer.class, true);
         this.remoteDescriptorProvider = remoteDescriptorProvider;
         this.remoteDisplayName = displayName;
@@ -79,7 +81,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
 
     @Override
     public final Set<Annotation> getAnnotations() {
-        return new HashSet<Annotation>(annotations.values());
+        return new HashSet<>(annotations.values());
     }
 
 

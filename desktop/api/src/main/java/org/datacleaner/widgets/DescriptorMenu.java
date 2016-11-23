@@ -42,7 +42,7 @@ public class DescriptorMenu extends JMenu implements Comparable<DescriptorMenu> 
     public DescriptorMenu(final ComponentCategory componentCategory) {
         super(componentCategory.getName());
         _componentCategory = componentCategory;
-        _componentClasses = new HashSet<Class<?>>();
+        _componentClasses = new HashSet<>();
     }
 
     @Override

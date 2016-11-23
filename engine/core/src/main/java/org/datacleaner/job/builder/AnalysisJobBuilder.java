@@ -127,9 +127,11 @@ public final class AnalysisJobBuilder implements Closeable {
      */
     private AnalysisJobBuilder(final DataCleanerConfiguration configuration, final Datastore datastore,
             final DatastoreConnection datastoreConnection, final MutableAnalysisJobMetadata metadata,
-            final List<MetaModelInputColumn> sourceColumns, final ComponentRequirement defaultRequirement, final IdGenerator idGenerator,
+            final List<MetaModelInputColumn> sourceColumns, final ComponentRequirement defaultRequirement,
+            final IdGenerator idGenerator,
             final List<TransformerComponentBuilder<?>> transformerJobBuilders,
-            final List<FilterComponentBuilder<?, ?>> filterJobBuilders, final List<AnalyzerComponentBuilder<?>> analyzerJobBuilders,
+            final List<FilterComponentBuilder<?, ?>> filterJobBuilders,
+            final List<AnalyzerComponentBuilder<?>> analyzerJobBuilders,
             final AnalysisJobBuilder parentBuilder) {
         _configuration = configuration;
         _datastore = datastore;
@@ -373,12 +375,15 @@ public final class AnalysisJobBuilder implements Closeable {
         return Collections.unmodifiableList(_transformerComponentBuilders);
     }
 
-    public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(final TransformerDescriptor<T> descriptor) {
+    public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(
+            final TransformerDescriptor<T> descriptor) {
         return addTransformer(descriptor, null, null, null);
     }
 
-    public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(final TransformerDescriptor<T> descriptor,
-            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties, final ComponentRequirement requirement,
+    public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(
+            final TransformerDescriptor<T> descriptor,
+            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties,
+            final ComponentRequirement requirement,
             final Map<String, String> metadataProperties) {
         final TransformerComponentBuilder<T> transformer = new TransformerComponentBuilder<>(this, descriptor,
                 _transformedColumnIdGenerator);
@@ -386,7 +391,8 @@ public final class AnalysisJobBuilder implements Closeable {
         return addTransformer(transformer);
     }
 
-    public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(final TransformerComponentBuilder<T> tjb) {
+    public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(
+            final TransformerComponentBuilder<T> tjb) {
         if (tjb.getComponentRequirement() == null) {
             tjb.setComponentRequirement(_defaultRequirement);
         }
@@ -416,7 +422,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public ComponentBuilder addComponent(final ComponentDescriptor<?> descriptor,
-            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties, final ComponentRequirement requirement,
+            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties,
+            final ComponentRequirement requirement,
             final Map<String, String> metadataProperties) {
         final ComponentBuilder builder;
         if (descriptor instanceof FilterDescriptor) {
@@ -457,7 +464,8 @@ public final class AnalysisJobBuilder implements Closeable {
             // make a copy since some of the listeners may add additional
             // listeners
             // which will otherwise cause ConcurrentModificationExceptions
-            final List<AnalysisJobChangeListener> listeners = new ArrayList<>(_parentBuilder.getAnalysisJobChangeListeners());
+            final List<AnalysisJobChangeListener> listeners =
+                    new ArrayList<>(_parentBuilder.getAnalysisJobChangeListeners());
             for (final AnalysisJobChangeListener analysisJobChangeListener : listeners) {
                 try {
                     analysisJobChangeListener.onActivation(this);
@@ -473,7 +481,8 @@ public final class AnalysisJobBuilder implements Closeable {
             // make a copy since some of the listeners may add additional
             // listeners
             // which will otherwise cause ConcurrentModificationExceptions
-            final List<AnalysisJobChangeListener> listeners = new ArrayList<>(_parentBuilder.getAnalysisJobChangeListeners());
+            final List<AnalysisJobChangeListener> listeners =
+                    new ArrayList<>(_parentBuilder.getAnalysisJobChangeListeners());
             for (final AnalysisJobChangeListener analysisJobChangeListener : listeners) {
                 try {
                     analysisJobChangeListener.onDeactivation(this);
@@ -571,7 +580,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public <F extends Filter<C>, C extends Enum<C>> FilterComponentBuilder<F, C> addFilter(
-            final FilterDescriptor<F, C> descriptor, final Map<ConfiguredPropertyDescriptor, Object> configuredProperties,
+            final FilterDescriptor<F, C> descriptor,
+            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties,
             final ComponentRequirement requirement, final Map<String, String> metadataProperties) {
         final FilterComponentBuilder<F, C> filter = new FilterComponentBuilder<>(this, descriptor);
         initializeComponentBuilder(filter, configuredProperties, requirement, metadataProperties);
@@ -579,7 +589,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     private void initializeComponentBuilder(final ComponentBuilder component,
-            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties, final ComponentRequirement requirement,
+            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties,
+            final ComponentRequirement requirement,
             final Map<String, String> metadataProperties) {
         if (configuredProperties != null) {
             component.setConfiguredProperties(configuredProperties);
@@ -657,7 +668,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public <A extends Analyzer<?>> AnalyzerComponentBuilder<A> addAnalyzer(final AnalyzerDescriptor<A> descriptor,
-            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties, final ComponentRequirement requirement,
+            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties,
+            final ComponentRequirement requirement,
             final Map<String, String> metadataProperties) {
         final AnalyzerComponentBuilder<A> analyzerJobBuilder = new AnalyzerComponentBuilder<>(this, descriptor);
         initializeComponentBuilder(analyzerJobBuilder, configuredProperties, requirement, metadataProperties);

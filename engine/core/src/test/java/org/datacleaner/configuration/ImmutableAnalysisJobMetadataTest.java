@@ -45,10 +45,10 @@ public class ImmutableAnalysisJobMetadataTest extends TestCase {
         String datastoreName = "ds";
         List<String> sourceColumnPaths = Arrays.asList("foo", "bar");
         List<ColumnType> sourceColumnTypes = Arrays.asList(ColumnType.VARCHAR, ColumnType.BINARY);
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, String> variables = new HashMap<>();
         variables.put("foo", "bar");
 
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<>();
         properties.put("abc", "def");
 
         AnalysisJobMetadata metadata = new ImmutableAnalysisJobMetadata(jobName, jobVersion, jobDescription, author,

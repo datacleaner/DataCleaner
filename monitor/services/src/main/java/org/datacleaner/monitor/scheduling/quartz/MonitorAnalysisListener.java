@@ -58,8 +58,8 @@ public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements 
 
     public MonitorAnalysisListener(final ExecutionLog execution, final ExecutionLogger executionLogger) {
         _executionLogger = executionLogger;
-        _results = new ConcurrentHashMap<ComponentJob, AnalyzerResult>();
-        _progressCounters = new ConcurrentHashMap<Table, ProgressCounter>();
+        _results = new ConcurrentHashMap<>();
+        _progressCounters = new ConcurrentHashMap<>();
     }
 
     @Override

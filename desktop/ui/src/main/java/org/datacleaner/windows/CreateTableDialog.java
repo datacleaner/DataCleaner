@@ -77,9 +77,9 @@ public class CreateTableDialog extends AbstractDialog {
 
         _datastore = datastore;
         _schema = schema;
-        _listeners = new ArrayList<CreateTableDialog.Listener>(1);
+        _listeners = new ArrayList<>(1);
 
-        _columnDefinitionPanels = new ArrayList<CreateTableColumnDefintionPanel>();
+        _columnDefinitionPanels = new ArrayList<>();
 
         _columnsListPanel = new DCPanel();
         _columnsListPanel.setBorder(WidgetUtils.BORDER_EMPTY);

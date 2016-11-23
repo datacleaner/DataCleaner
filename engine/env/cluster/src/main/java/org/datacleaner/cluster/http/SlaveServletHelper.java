@@ -68,7 +68,7 @@ public class SlaveServletHelper {
      */
     @Deprecated
     public SlaveServletHelper(final DataCleanerConfiguration configuration) {
-        this(configuration, new ConcurrentHashMap<String, AnalysisResultFuture>());
+        this(configuration, new ConcurrentHashMap<>());
     }
 
     /**
@@ -97,7 +97,7 @@ public class SlaveServletHelper {
      */
     @Deprecated
     public SlaveServletHelper(final DataCleanerConfiguration configuration, final SlaveJobInterceptor jobInterceptor) {
-        this(configuration, jobInterceptor, new ConcurrentHashMap<String, AnalysisResultFuture>());
+        this(configuration, jobInterceptor, new ConcurrentHashMap<>());
     }
 
     /**
@@ -225,7 +225,7 @@ public class SlaveServletHelper {
             if (resultFuture.isSuccessful()) {
                 resultObject = new SimpleAnalysisResult(resultFuture.getResultMap());
             } else {
-                resultObject = new ArrayList<Throwable>(resultFuture.getErrors());
+                resultObject = new ArrayList<>(resultFuture.getErrors());
             }
 
             return resultObject;
@@ -292,7 +292,8 @@ public class SlaveServletHelper {
      * @param analysisListeners
      * @return
      */
-    public AnalysisResultFuture runJob(final AnalysisJob job, final String slaveJobId, final AnalysisListener... analysisListeners) {
+    public AnalysisResultFuture runJob(final AnalysisJob job, final String slaveJobId,
+            final AnalysisListener... analysisListeners) {
         final AnalysisRunner runner = new SlaveAnalysisRunner(_configuration, analysisListeners);
         final AnalysisResultFuture resultFuture = runner.run(job);
         if (slaveJobId != null) {

@@ -79,7 +79,8 @@ public class InjectionManagerImplTest extends TestCase {
             return new AnnotatedRowsResult(rowAnnotation, rowAnnotationFactory, col);
         }
     }
-    private static final MutableRef<List<String>> listRef = new MutableRef<List<String>>();
+
+    private static final MutableRef<List<String>> listRef = new MutableRef<>();
 
     public void testInjectCustomClass() throws Exception {
         assertNull(listRef.get());
@@ -90,7 +91,7 @@ public class InjectionManagerImplTest extends TestCase {
         final DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl().withDatastores(TestHelper
                 .createSampleDatabaseDatastore("orderdb"));
 
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
 
             ajb.setDatastore("orderdb");
             ajb.addSourceColumns("PUBLIC.EMPLOYEES.EMPLOYEENUMBER");

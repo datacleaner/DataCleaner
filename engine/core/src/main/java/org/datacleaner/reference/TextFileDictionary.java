@@ -59,7 +59,8 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
         this(name, filename, encoding, true);
     }
 
-    public TextFileDictionary(final String name, final String filename, final String encoding, final boolean caseSensitive) {
+    public TextFileDictionary(final String name, final String filename, final String encoding,
+            final boolean caseSensitive) {
         super(name);
         _filename = filename;
         _encoding = encoding;

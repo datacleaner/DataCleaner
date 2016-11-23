@@ -92,7 +92,7 @@ public abstract class DatastoreNameAndDescriptionWizardPage extends AbstractFree
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("name", _suggestedName);
         map.put("description", _suggestedDescription);
         return map;

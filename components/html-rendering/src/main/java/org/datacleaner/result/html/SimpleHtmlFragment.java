@@ -32,8 +32,8 @@ public class SimpleHtmlFragment implements HtmlFragment {
     private final List<BodyElement> _bodyElements;
 
     public SimpleHtmlFragment() {
-        _headElements = new ArrayList<HeadElement>();
-        _bodyElements = new ArrayList<BodyElement>();
+        _headElements = new ArrayList<>();
+        _bodyElements = new ArrayList<>();
     }
 
     @Override

@@ -97,7 +97,7 @@ public class TransformerComponentBuilderTest extends TestCase {
     private String getSortedOutputColumns(TransformerComponentBuilder<?> tjb1, TransformerComponentBuilder<?> tjb2) {
         List<MutableInputColumn<?>> cols1 = tjb1.getOutputColumns();
         List<MutableInputColumn<?>> cols2 = tjb2.getOutputColumns();
-        List<InputColumn<?>> list = new ArrayList<InputColumn<?>>();
+        List<InputColumn<?>> list = new ArrayList<>();
         list.addAll(cols1);
         list.addAll(cols2);
 
@@ -218,7 +218,7 @@ public class TransformerComponentBuilderTest extends TestCase {
         // not yet configured
         assertEquals(0, tjb.getOutputColumns().size());
 
-        tjb.addInputColumn(new MockInputColumn<String>("email", String.class));
+        tjb.addInputColumn(new MockInputColumn<>("email", String.class));
 
         assertEquals(2, tjb.getOutputColumns().size());
     }
@@ -229,12 +229,12 @@ public class TransformerComponentBuilderTest extends TestCase {
         TransformerDescriptor<ConvertToNumberTransformer> descriptor = Descriptors
                 .ofTransformer(ConvertToNumberTransformer.class);
         TransformerComponentBuilder<ConvertToNumberTransformer> builder =
-                new TransformerComponentBuilder<ConvertToNumberTransformer>(
+                new TransformerComponentBuilder<>(
                         new AnalysisJobBuilder(null), descriptor, IdGenerator);
         assertFalse(builder.isConfigured());
 
         ConvertToNumberTransformer configurableBean = builder.getComponentInstance();
-        InputColumn<String> input = new MockInputColumn<String>("foo", String.class);
+        InputColumn<String> input = new MockInputColumn<>("foo", String.class);
         configurableBean.setInput(input);
 
         assertTrue(builder.isConfigured(true));
@@ -249,12 +249,12 @@ public class TransformerComponentBuilderTest extends TestCase {
 
         TransformerDescriptor<TransformerMock> descriptor = Descriptors.ofTransformer(TransformerMock.class);
 
-        TransformerComponentBuilder<TransformerMock> builder = new TransformerComponentBuilder<TransformerMock>(
+        TransformerComponentBuilder<TransformerMock> builder = new TransformerComponentBuilder<>(
                 new AnalysisJobBuilder(new DataCleanerConfigurationImpl()), descriptor, IdGenerator);
 
-        MockInputColumn<String> colA = new MockInputColumn<String>("A", String.class);
-        MockInputColumn<String> colB = new MockInputColumn<String>("B", String.class);
-        MockInputColumn<String> colC = new MockInputColumn<String>("C", String.class);
+        MockInputColumn<String> colA = new MockInputColumn<>("A", String.class);
+        MockInputColumn<String> colB = new MockInputColumn<>("B", String.class);
+        MockInputColumn<String> colC = new MockInputColumn<>("C", String.class);
         builder.addInputColumn(colA);
         builder.addInputColumn(colB);
         builder.addInputColumn(colC);

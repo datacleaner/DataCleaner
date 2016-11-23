@@ -81,7 +81,7 @@ public class TypeConverterTest {
 
         result = TypeConverter.convertType("33", numberColumn);
         assertTrue(result instanceof Number);
-        assertEquals(33l, result);
+        assertEquals(33L, result);
 
         result = TypeConverter.convertType("33.3", numberColumn);
         assertTrue(result instanceof Number);

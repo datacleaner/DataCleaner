@@ -39,7 +39,7 @@ public final class DatastoreOutputWriterFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputWriterFactory.class);
 
-    private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
+    private static final Map<String, AtomicInteger> counters = new HashMap<>();
 
     public static OutputWriter getWriter(final File directory, final DatastoreCreationDelegate creationDelegate,
             final String datastoreName, final String tableName, final InputColumn<?>... columns) {
@@ -89,7 +89,7 @@ public final class DatastoreOutputWriterFactory {
             if (count == 0) {
                 counters.remove(writer.getJdbcUrl());
 
-                try (final Connection connection = writer.getConnection()) {
+                try (Connection connection = writer.getConnection()) {
 
                     Statement st = null;
                     try {

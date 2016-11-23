@@ -51,7 +51,7 @@ public class DCCheckBox<E> extends JCheckBox implements MouseListener, ItemListe
     private static final Border HOVER_BORDER = new LineBorder(WidgetUtils.BG_COLOR_LESS_BRIGHT, 1);
     private static final Border REGULAR_BORDER = new EmptyBorder(1, 1, 1, 1);
 
-    private final List<Listener<E>> _listeners = new ArrayList<Listener<E>>();
+    private final List<Listener<E>> _listeners = new ArrayList<>();
     private E _value;
     private volatile Border _previousBorder;
 

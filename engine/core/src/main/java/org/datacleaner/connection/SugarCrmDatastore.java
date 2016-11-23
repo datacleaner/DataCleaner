@@ -48,7 +48,7 @@ public class SugarCrmDatastore extends UsageAwareDatastore<SugarCrmDataContext> 
     protected UsageAwareDatastoreConnection<SugarCrmDataContext> createDatastoreConnection() {
         final SugarCrmDataContext dataContext =
                 new SugarCrmDataContext(_baseUrl, _username, _password, "AnalyzerBeans");
-        return new DatastoreConnectionImpl<SugarCrmDataContext>(dataContext, this, dataContext);
+        return new DatastoreConnectionImpl<>(dataContext, this, dataContext);
 
     }
 

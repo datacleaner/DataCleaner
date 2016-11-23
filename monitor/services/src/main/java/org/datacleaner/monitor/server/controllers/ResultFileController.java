@@ -110,7 +110,7 @@ public class ResultFileController {
             }
         });
 
-        final Map<String, String> result = new HashMap<String, String>();
+        final Map<String, String> result = new HashMap<>();
         result.put("status", "Success");
         result.put("file_type", resultFile.getType().toString());
         result.put("filename", resultFile.getName());
@@ -170,7 +170,7 @@ public class ResultFileController {
         final boolean headers;
         final Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate;
         if (org.datacleaner.util.StringUtils.isNullOrEmpty(componentParamName)) {
-            jobInclusionPredicate = new TruePredicate<Entry<ComponentJob, AnalyzerResult>>();
+            jobInclusionPredicate = new TruePredicate<>();
             headers = true;
         } else {
             jobInclusionPredicate = createInclusionPredicate(componentParamName, componentIndexParam);

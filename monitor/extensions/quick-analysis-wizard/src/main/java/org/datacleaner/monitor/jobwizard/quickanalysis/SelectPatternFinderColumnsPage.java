@@ -44,7 +44,7 @@ public abstract class SelectPatternFinderColumnsPage extends
 
     public SelectPatternFinderColumnsPage(final int pageIndex, final Table table) {
         _pageIndex = pageIndex;
-        _availableColumns = new LinkedHashMap<String, Column>();
+        _availableColumns = new LinkedHashMap<>();
         for (final Column column : table.getLiteralColumns()) {
             _availableColumns.put(column.getName(), column);
         }
@@ -85,7 +85,7 @@ public abstract class SelectPatternFinderColumnsPage extends
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("columns", _availableColumns.values());
         return map;
     }

@@ -110,7 +110,8 @@ public class Version {
         return determineVersionFromMavenProperties("org.eobjects.datacleaner", "DataCleaner-api", UNKNOWN_VERSION);
     }
 
-    private static String determineVersionFromMavenProperties(final String groupId, final String artifactId, final String valueIfNull) {
+    private static String determineVersionFromMavenProperties(final String groupId, final String artifactId,
+            final String valueIfNull) {
         final Properties properties = new Properties();
         final String resourcePath = "/META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties";
         final InputStream inputStream = Version.class.getResourceAsStream(resourcePath);

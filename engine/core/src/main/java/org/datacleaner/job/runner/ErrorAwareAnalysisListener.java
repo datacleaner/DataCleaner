@@ -43,7 +43,7 @@ public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor im
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorAwareAnalysisListener.class);
 
-    private final List<Throwable> _errors = new LinkedList<Throwable>();
+    private final List<Throwable> _errors = new LinkedList<>();
     private final AtomicBoolean _cancelled = new AtomicBoolean(false);
 
     protected void handleError(final AnalysisJob job, final Throwable throwable) {
@@ -81,7 +81,7 @@ public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor im
         // create a copy to avoid mutations or concurrent modifications
         final List<Throwable> result;
         synchronized (_errors) {
-            result = new ArrayList<Throwable>(_errors);
+            result = new ArrayList<>(_errors);
         }
         return result;
     }
@@ -94,19 +94,22 @@ public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor im
     }
 
     @Override
-    public void errorInFilter(final AnalysisJob job, final FilterJob filterJob, final InputRow row, final Throwable throwable) {
+    public void errorInFilter(final AnalysisJob job, final FilterJob filterJob, final InputRow row,
+            final Throwable throwable) {
         logger.warn("errorInFilter({},{},{},{})", new Object[] { job, filterJob, row, throwable });
         handleError(job, throwable);
     }
 
     @Override
-    public void errorInTransformer(final AnalysisJob job, final TransformerJob transformerJob, final InputRow row, final Throwable throwable) {
+    public void errorInTransformer(final AnalysisJob job, final TransformerJob transformerJob, final InputRow row,
+            final Throwable throwable) {
         logger.warn("errorInTransformer({},{},{},{})", new Object[] { job, transformerJob, row, throwable });
         handleError(job, throwable);
     }
 
     @Override
-    public void errorInAnalyzer(final AnalysisJob job, final AnalyzerJob analyzerJob, final InputRow row, final Throwable throwable) {
+    public void errorInAnalyzer(final AnalysisJob job, final AnalyzerJob analyzerJob, final InputRow row,
+            final Throwable throwable) {
         logger.warn("errorInAnalyzer({},{},{},{})", new Object[] { job, analyzerJob, row, throwable });
         handleError(job, throwable);
     }

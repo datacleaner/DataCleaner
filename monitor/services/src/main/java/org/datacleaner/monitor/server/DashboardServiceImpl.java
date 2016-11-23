@@ -84,7 +84,7 @@ public class DashboardServiceImpl implements DashboardService {
         final JobIdentifier jobIdentifier = timeline.getJobIdentifier();
         final HorizontalAxisOption horizontalAxisOption = timeline.getChartOptions().getHorizontalAxisOption();
 
-        final List<TimelineDataRow> rows = new ArrayList<TimelineDataRow>();
+        final List<TimelineDataRow> rows = new ArrayList<>();
         for (final RepositoryFile resultFile : resultFiles) {
             final MetricValues metricValues;
             try {
@@ -127,7 +127,7 @@ public class DashboardServiceImpl implements DashboardService {
     public List<DashboardGroup> getDashboardGroups(final TenantIdentifier tenant) {
         final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
         final List<RepositoryFolder> folders = timelinesFolder.getFolders();
-        final List<DashboardGroup> groups = new ArrayList<DashboardGroup>();
+        final List<DashboardGroup> groups = new ArrayList<>();
         for (final RepositoryFolder folder : folders) {
             final DashboardGroup group = new DashboardGroup(folder.getName());
 
@@ -138,7 +138,7 @@ public class DashboardServiceImpl implements DashboardService {
                 descriptionFile.readFile(new Action<InputStream>() {
                     @Override
                     public void run(final InputStream in) throws Exception {
-                        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+                        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
                             final StringBuilder sb = new StringBuilder();
                             boolean first = false;
                             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
@@ -174,7 +174,7 @@ public class DashboardServiceImpl implements DashboardService {
             files = groupFolder.getFiles();
         }
 
-        final List<TimelineIdentifier> result = new ArrayList<TimelineIdentifier>();
+        final List<TimelineIdentifier> result = new ArrayList<>();
         for (final RepositoryFile file : files) {
             if (file.getType() == Type.TIMELINE_SPEC) {
                 final String timelineName = file.getName().substring(0,

@@ -132,7 +132,7 @@ public class ConfigurationFactory {
         logger.info("Creating shared descriptor provider with packages: {}", _scannedPackages);
 
         final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats =
-                new HashSet<Class<? extends RenderingFormat<?>>>();
+                new HashSet<>();
         excludedRenderingFormats.add(SwingRenderingFormat.class);
         excludedRenderingFormats.add(TextRenderingFormat.class);
         excludedRenderingFormats.add(ComponentBuilderPresenterRenderingFormat.class);

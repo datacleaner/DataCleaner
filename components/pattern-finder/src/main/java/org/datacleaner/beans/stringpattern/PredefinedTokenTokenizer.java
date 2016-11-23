@@ -32,7 +32,7 @@ public class PredefinedTokenTokenizer implements Tokenizer {
     private List<PredefinedTokenDefinition> _predefinedTokenDefitions;
 
     public PredefinedTokenTokenizer(final PredefinedTokenDefinition... predefinedTokenDefinitions) {
-        _predefinedTokenDefitions = new LinkedList<PredefinedTokenDefinition>();
+        _predefinedTokenDefitions = new LinkedList<>();
         for (final PredefinedTokenDefinition predefinedToken : predefinedTokenDefinitions) {
             _predefinedTokenDefitions.add(predefinedToken);
         }
@@ -44,7 +44,7 @@ public class PredefinedTokenTokenizer implements Tokenizer {
 
     protected static List<Token> tokenizeInternal(String string, final PredefinedTokenDefinition predefinedTokenDefinition,
             final Pattern pattern) {
-        final LinkedList<Token> result = new LinkedList<Token>();
+        final LinkedList<Token> result = new LinkedList<>();
         result.add(new UndefinedToken(string));
 
         for (Matcher matcher = pattern.matcher(string); matcher.find(); matcher = pattern.matcher(string)) {
@@ -75,7 +75,7 @@ public class PredefinedTokenTokenizer implements Tokenizer {
      */
     @Override
     public List<Token> tokenize(final String s) {
-        final List<Token> result = new ArrayList<Token>();
+        final List<Token> result = new ArrayList<>();
         result.add(new UndefinedToken(s));
 
         for (final PredefinedTokenDefinition predefinedTokenDefinition : _predefinedTokenDefitions) {

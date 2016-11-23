@@ -93,8 +93,8 @@ public class CreateCsvFileAnalyzerTest {
     public void testSortNumerical() throws Exception {
         analyzer = new CreateCsvFileAnalyzer();
 
-        final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
-        final InputColumn<Integer> idColumn = new MockInputColumn<Integer>("IdToSort", Integer.class);
+        final InputColumn<String> testColumn = new MockInputColumn<>("TestColumn");
+        final InputColumn<Integer> idColumn = new MockInputColumn<>("IdToSort", Integer.class);
 
         analyzer.file = new FileResource("target/csvtest-sortnumerical.csv");
         analyzer.initTempFile();
@@ -150,8 +150,8 @@ public class CreateCsvFileAnalyzerTest {
     public void testSortLexicographic() throws Exception {
         CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
 
-        final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
-        final InputColumn<String> idColumn = new MockInputColumn<String>("IdToSort", String.class);
+        final InputColumn<String> testColumn = new MockInputColumn<>("TestColumn");
+        final InputColumn<String> idColumn = new MockInputColumn<>("IdToSort", String.class);
 
         analyzer.file = new FileResource("target/csvtest-sortnumerical.csv");
         analyzer.initTempFile();
@@ -207,8 +207,8 @@ public class CreateCsvFileAnalyzerTest {
     public void testSortLexicographicCaseSensitivity() throws Exception {
         CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
 
-        final InputColumn<String> sortColumn = new MockInputColumn<String>("SortColumn");
-        final InputColumn<String> someColumn = new MockInputColumn<String>("SomeColumn", String.class);
+        final InputColumn<String> sortColumn = new MockInputColumn<>("SortColumn");
+        final InputColumn<String> someColumn = new MockInputColumn<>("SomeColumn", String.class);
 
         analyzer.file = new FileResource("target/csvtest-sortlexicographiccasesensitivity.csv");
         analyzer.initTempFile();
@@ -259,8 +259,8 @@ public class CreateCsvFileAnalyzerTest {
     public void testCustomColumnHeaders() throws Exception {
         CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
 
-        final InputColumn<String> stringColumn = new MockInputColumn<String>("StringColumn");
-        final InputColumn<Integer> integerColumn = new MockInputColumn<Integer>("IntegerColumn");
+        final InputColumn<String> stringColumn = new MockInputColumn<>("StringColumn");
+        final InputColumn<Integer> integerColumn = new MockInputColumn<>("IntegerColumn");
 
         analyzer.file = new FileResource("target/csvtest-customcolumnheaders.csv");
         analyzer.initTempFile();

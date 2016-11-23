@@ -50,8 +50,8 @@ public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {
 
     @Override
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
-        final List<DataContext> dataContexts = new ArrayList<DataContext>(_datastores.size());
-        final List<Closeable> closeables = new ArrayList<Closeable>(_datastores.size());
+        final List<DataContext> dataContexts = new ArrayList<>(_datastores.size());
+        final List<Closeable> closeables = new ArrayList<>(_datastores.size());
         for (final Datastore datastore : _datastores) {
             final DatastoreConnection con = datastore.openConnection();
             final DataContext dc = con.getDataContext();
@@ -59,7 +59,7 @@ public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {
             dataContexts.add(dc);
         }
         final Closeable[] closeablesArray = closeables.toArray(new Closeable[closeables.size()]);
-        return new DatastoreConnectionImpl<DataContext>(DataContextFactory.createCompositeDataContext(dataContexts),
+        return new DatastoreConnectionImpl<>(DataContextFactory.createCompositeDataContext(dataContexts),
                 this, closeablesArray);
     }
 

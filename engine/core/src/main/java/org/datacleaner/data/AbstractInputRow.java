@@ -51,9 +51,9 @@ public abstract class AbstractInputRow implements InputRow {
     @Override
     public List<Object> getValues(final List<InputColumn<?>> columns) {
         if (columns == null) {
-            return new ArrayList<Object>(0);
+            return new ArrayList<>(0);
         }
-        final List<Object> result = new ArrayList<Object>(columns.size());
+        final List<Object> result = new ArrayList<>(columns.size());
         for (final InputColumn<?> inputColumn : columns) {
             final Object value = getValue(inputColumn);
             result.add(value);
@@ -64,7 +64,7 @@ public abstract class AbstractInputRow implements InputRow {
     @Override
     public List<Object> getValues(final InputColumn<?>... columns) {
         if (columns == null) {
-            return new ArrayList<Object>(0);
+            return new ArrayList<>(0);
         }
         return getValues(Arrays.asList(columns));
     }

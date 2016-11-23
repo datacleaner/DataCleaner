@@ -42,8 +42,8 @@ public class PropertyWidgetCollection {
 
     public PropertyWidgetCollection(final ComponentBuilder componentBuilder) {
         _componentBuilder = componentBuilder;
-        _widgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
-        _propertyWidgetMappings = new IdentityHashMap<ConfiguredPropertyDescriptor, PropertyWidgetMapping>();
+        _widgets = new HashMap<>();
+        _propertyWidgetMappings = new IdentityHashMap<>();
 
         logger.debug("id={} - init", System.identityHashCode(this));
     }

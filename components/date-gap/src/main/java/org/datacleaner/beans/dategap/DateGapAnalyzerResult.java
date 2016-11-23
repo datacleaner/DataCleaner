@@ -50,10 +50,10 @@ public class DateGapAnalyzerResult implements AnalyzerResult {
         _toColumnName = toColumnName;
         _groupColumnName = groupColumnName;
 
-        _completeDurations = (completeIntervals == null ? Collections.<String, TimeInterval> emptyMap()
+        _completeDurations = (completeIntervals == null ? Collections.emptyMap()
                 : completeIntervals);
-        _gaps = (gaps == null ? Collections.<String, SortedSet<TimeInterval>> emptyMap() : gaps);
-        _overlaps = (overlaps == null ? Collections.<String, SortedSet<TimeInterval>> emptyMap() : overlaps);
+        _gaps = (gaps == null ? Collections.emptyMap() : gaps);
+        _overlaps = (overlaps == null ? Collections.emptyMap() : overlaps);
     }
 
     /**

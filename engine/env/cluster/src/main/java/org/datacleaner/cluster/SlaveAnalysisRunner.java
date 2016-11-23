@@ -43,7 +43,8 @@ public class SlaveAnalysisRunner extends AnalysisRunnerImpl {
         super(configuration);
     }
 
-    public SlaveAnalysisRunner(final DataCleanerConfiguration configuration, final AnalysisListener... sharedAnalysisListeners) {
+    public SlaveAnalysisRunner(final DataCleanerConfiguration configuration,
+            final AnalysisListener... sharedAnalysisListeners) {
         super(configuration, sharedAnalysisListeners);
     }
 

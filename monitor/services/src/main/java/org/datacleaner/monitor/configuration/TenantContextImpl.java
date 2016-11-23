@@ -112,7 +112,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
 
     @Override
     public List<JobIdentifier> getJobs() {
-        final List<JobIdentifier> jobs = new ArrayList<JobIdentifier>();
+        final List<JobIdentifier> jobs = new ArrayList<>();
 
         final Collection<JobEngine<?>> jobEngines = _jobEngineManager.getJobEngines();
         for (final JobEngine<?> jobEngine : jobEngines) {

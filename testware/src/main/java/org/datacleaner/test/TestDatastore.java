@@ -32,7 +32,7 @@ final class TestDatastore implements UpdateableDatastore, PerformanceCharacteris
     private final DataSource _dataSource;
     private String _description;
 
-    public TestDatastore(final String name, final DataSource dataSource) {
+    TestDatastore(final String name, final DataSource dataSource) {
         _name = name;
         _dataSource = dataSource;
     }

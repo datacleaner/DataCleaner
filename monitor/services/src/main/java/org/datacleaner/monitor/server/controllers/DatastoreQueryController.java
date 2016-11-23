@@ -124,12 +124,12 @@ public class DatastoreQueryController {
         logger.info("Serving query result of datastore {} to user: {}. Query: {}",
                 new Object[] { datastoreName, username, query });
 
-        try (final DatastoreConnection con = ds.openConnection()) {
+        try (DatastoreConnection con = ds.openConnection()) {
             final DataContext dataContext = con.getDataContext();
             final Query pagedQuery = dataContext.parseQuery(query);
             pagedQuery.setFirstRow(firstRow);
             pagedQuery.setMaxRows(maxRows);
-            try (final DataSet dataSet = dataContext.executeQuery(pagedQuery)) {
+            try (DataSet dataSet = dataContext.executeQuery(pagedQuery)) {
                 return getJsonResult(dataSet);
             }
         }
@@ -156,9 +156,9 @@ public class DatastoreQueryController {
         logger.info("Serving query result of datastore {} to user: {}. Query: {}",
                 new Object[] { datastoreName, username, query });
 
-        try (final DatastoreConnection con = ds.openConnection()) {
+        try (DatastoreConnection con = ds.openConnection()) {
             final DataContext dataContext = con.getDataContext();
-            try (final DataSet dataSet = dataContext.executeQuery(query)) {
+            try (DataSet dataSet = dataContext.executeQuery(query)) {
                 return getJsonResult(dataSet);
             }
         }
@@ -225,9 +225,9 @@ public class DatastoreQueryController {
         logger.info("Serving query result of datastore {} to user: {}. Query: {}",
                 new Object[] { datastoreName, username, query });
 
-        try (final DatastoreConnection con = ds.openConnection()) {
+        try (DatastoreConnection con = ds.openConnection()) {
             final DataContext dataContext = con.getDataContext();
-            try (final DataSet dataSet = dataContext.executeQuery(query)) {
+            try (DataSet dataSet = dataContext.executeQuery(query)) {
 
                 final Writer writer = response.getWriter();
                 writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

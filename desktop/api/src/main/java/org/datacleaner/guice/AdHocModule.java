@@ -47,7 +47,7 @@ final class AdHocModule implements Module {
     private final Map<TypeLiteral<?>, Object> _bindings;
 
     public AdHocModule() {
-        _bindings = new HashMap<TypeLiteral<?>, Object>();
+        _bindings = new HashMap<>();
     }
 
     public <E> void bind(final Class<?> bindingClass, final Object providerOrInstance) {

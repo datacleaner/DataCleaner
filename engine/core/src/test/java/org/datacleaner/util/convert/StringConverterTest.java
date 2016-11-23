@@ -43,7 +43,6 @@ import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
 import org.datacleaner.reference.SimpleDictionary;
 import org.datacleaner.reference.SimpleSynonymCatalog;
-import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.util.Percentage;
 import org.datacleaner.util.ReflectionUtils;
@@ -71,10 +70,11 @@ public class StringConverterTest extends TestCase {
             return myString;
         }
     }
+
     private final Dictionary dictionary = new SimpleDictionary("my dict");
     private final SynonymCatalog synonymCatalog = new SimpleSynonymCatalog("my synonyms");
     private final ReferenceDataCatalogImpl referenceDataCatalog = new ReferenceDataCatalogImpl(
-            Arrays.asList(dictionary), Arrays.asList(synonymCatalog), new ArrayList<StringPattern>());
+            Arrays.asList(dictionary), Arrays.asList(synonymCatalog), new ArrayList<>());
     private StringConverter stringConverter;
 
     @Override
@@ -117,7 +117,7 @@ public class StringConverterTest extends TestCase {
         runTests("hello, [world]", "hello&#44; &#91;world&#93;");
         runTests("hello", "hello");
         runTests(1337, "1337");
-        runTests(12l, "12");
+        runTests(12L, "12");
         runTests('a', "a");
         runTests(true, "true");
         runTests(false, "false");
@@ -279,7 +279,7 @@ public class StringConverterTest extends TestCase {
 
         Long[] result = stringConverter.deserialize("123", Long[].class);
         assertEquals(1, result.length);
-        assertEquals(123l, result[0].longValue());
+        assertEquals(123L, result[0].longValue());
     }
 
     public void testDoubleSidedArray() throws Exception {
@@ -315,7 +315,7 @@ public class StringConverterTest extends TestCase {
     }
 
     public void testSerializeList() throws Exception {
-        ArrayList<Object> o = new ArrayList<Object>();
+        ArrayList<Object> o = new ArrayList<>();
         o.add("foo");
         o.add("bar");
         o.add(Arrays.asList("baz", "foobar"));

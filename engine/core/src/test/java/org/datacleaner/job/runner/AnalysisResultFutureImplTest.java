@@ -35,7 +35,7 @@ import org.easymock.EasyMock;
 public class AnalysisResultFutureImplTest extends TestCase {
 
     public void testIsSuccessful() throws Exception {
-        Queue<JobAndResult> resultQueue = new LinkedList<JobAndResult>();
+        Queue<JobAndResult> resultQueue = new LinkedList<>();
         StatusAwareTaskListener jobCompletionListener = EasyMock.createMock(StatusAwareTaskListener.class);
         ErrorAware errorAware = EasyMock.createMock(ErrorAware.class);
 
@@ -59,7 +59,7 @@ public class AnalysisResultFutureImplTest extends TestCase {
         AnalyzerJob analyzerJob2 = EasyMock.createMock(AnalyzerJob.class);
         AnalyzerJob analyzerJob3 = EasyMock.createMock(AnalyzerJob.class);
 
-        Queue<JobAndResult> resultQueue = new LinkedList<JobAndResult>();
+        Queue<JobAndResult> resultQueue = new LinkedList<>();
 
         resultQueue.add(new JobAndResult(analyzerJob1, new NumberResult(1)));
         resultQueue.add(new JobAndResult(analyzerJob2, new NumberResult(2)));
@@ -90,7 +90,7 @@ public class AnalysisResultFutureImplTest extends TestCase {
     }
 
     public void testCancel() throws Exception {
-        Queue<JobAndResult> resultQueue = new LinkedList<JobAndResult>();
+        Queue<JobAndResult> resultQueue = new LinkedList<>();
         StatusAwareTaskListener jobCompletionListener = EasyMock.createMock(StatusAwareTaskListener.class);
         ErrorAware errorAware = EasyMock.createMock(ErrorAware.class);
 

@@ -38,8 +38,8 @@ public class AnnotatedRowResultTest extends TestCase {
     public void testSerializeAndDeserialize() throws Exception {
         RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
         RowAnnotation annotation = annotationFactory.createAnnotation();
-        InputColumn<String> col1 = new MockInputColumn<String>("foo", String.class);
-        InputColumn<String> col2 = new MockInputColumn<String>("bar", String.class);
+        InputColumn<String> col1 = new MockInputColumn<>("foo", String.class);
+        InputColumn<String> col2 = new MockInputColumn<>("bar", String.class);
 
         annotationFactory.annotate(new MockInputRow().put(col1, "1").put(col2, "2"), 1, annotation);
         annotationFactory.annotate(new MockInputRow().put(col1, "3").put(col2, "4"), 1, annotation);

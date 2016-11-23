@@ -36,7 +36,7 @@ public class MockMonthConsumingAnalyzer implements Analyzer<ListResult<InputRow>
     @Configured
     InputColumn<Month> cols;
 
-    private List<InputRow> rows = new ArrayList<InputRow>();
+    private List<InputRow> rows = new ArrayList<>();
 
     @Override
     public void run(InputRow row, int distinctCount) {
@@ -45,6 +45,6 @@ public class MockMonthConsumingAnalyzer implements Analyzer<ListResult<InputRow>
 
     @Override
     public ListResult<InputRow> getResult() {
-        return new ListResult<InputRow>(rows);
+        return new ListResult<>(rows);
     }
 }

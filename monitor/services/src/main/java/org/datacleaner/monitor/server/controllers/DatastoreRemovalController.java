@@ -59,7 +59,7 @@ public class DatastoreRemovalController {
 
         datastoreName = datastoreName.replaceAll("\\+", " ");
 
-        final Map<String, String> response = new TreeMap<String, String>();
+        final Map<String, String> response = new TreeMap<>();
         response.put("datastore", datastoreName);
         response.put("action", "remove");
 

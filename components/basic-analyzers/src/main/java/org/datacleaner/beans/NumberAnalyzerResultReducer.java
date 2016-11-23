@@ -52,7 +52,7 @@ public class NumberAnalyzerResultReducer extends AbstractCrosstabResultReducer<N
 
     private static final Logger logger = LoggerFactory.getLogger(NumberAnalyzerResultReducer.class);
 
-    private static final Set<String> SUM_MEASURES = new HashSet<String>(Arrays.asList(NumberAnalyzer.MEASURE_SUM,
+    private static final Set<String> SUM_MEASURES = new HashSet<>(Arrays.asList(NumberAnalyzer.MEASURE_SUM,
             NumberAnalyzer.MEASURE_ROW_COUNT, NumberAnalyzer.MEASURE_NULL_COUNT));
 
     @Override
@@ -81,7 +81,7 @@ public class NumberAnalyzerResultReducer extends AbstractCrosstabResultReducer<N
     }
 
     private StatisticalSummary getSummary(final String column, final Collection<? extends NumberAnalyzerResult> results) {
-        final List<SummaryStatistics> statistics = new ArrayList<SummaryStatistics>(results.size());
+        final List<SummaryStatistics> statistics = new ArrayList<>(results.size());
         for (final NumberAnalyzerResult analyzerResult : results) {
             final SummaryStatistics stats = buildStatistics(column, analyzerResult);
             statistics.add(stats);
@@ -94,7 +94,7 @@ public class NumberAnalyzerResultReducer extends AbstractCrosstabResultReducer<N
         final SummaryStatistics stats = new SummaryStatistics() {
             private static final long serialVersionUID = 1L;
 
-            private final InputColumn<Number> col = new MockInputColumn<Number>(column);
+            private final InputColumn<Number> col = new MockInputColumn<>(column);
 
             @Override
             public long getN() {

@@ -86,8 +86,8 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
         final Ref<Map<AlertDefinition, Number>> activeAlerts = new LazyRef<Map<AlertDefinition, Number>>() {
             @Override
             protected Map<AlertDefinition, Number> fetch() {
-                final Map<AlertDefinition, Number> result = new TreeMap<AlertDefinition, Number>();
-                final List<MetricIdentifier> metricIdentifiers = new ArrayList<MetricIdentifier>();
+                final Map<AlertDefinition, Number> result = new TreeMap<>();
+                final List<MetricIdentifier> metricIdentifiers = new ArrayList<>();
                 final List<AlertDefinition> allAlerts = execution.getSchedule().getAlerts();
                 if (allAlerts.isEmpty()) {
                     // no alerts at all

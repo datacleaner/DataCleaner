@@ -39,7 +39,7 @@ import org.datacleaner.result.NumberResult;
 @Named("Row-processing mock")
 public class AnalyzerMock implements Analyzer<NumberResult> {
 
-    private static List<AnalyzerMock> instances = new LinkedList<AnalyzerMock>();
+    private static List<AnalyzerMock> instances = new LinkedList<>();
     @Configured
     InputColumn<?>[] columns;
     @Configured

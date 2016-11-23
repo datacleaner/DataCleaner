@@ -175,15 +175,15 @@ public class ComponentCacheMapImplTest {
                 createNiceMock(TransformerDescriptor.class);
         expect(transformerDescriptor.getDisplayName()).andReturn(componentName).anyTimes();
         expect(transformerDescriptor.getProvidedProperties()).andReturn(
-                Collections.<ProvidedPropertyDescriptor> emptySet()).anyTimes();
-        expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.<ValidateMethodDescriptor> emptySet())
+                Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.emptySet())
                 .anyTimes();
         expect(transformerDescriptor.getInitializeMethods()).andReturn(
-                Collections.<InitializeMethodDescriptor> emptySet()).anyTimes();
-        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.<CloseMethodDescriptor> emptySet())
+                Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.emptySet())
                 .anyTimes();
         expect(transformerDescriptor.getConfiguredProperties()).andReturn(
-                Collections.<ConfiguredPropertyDescriptor> emptySet()).anyTimes();
+                Collections.emptySet()).anyTimes();
         expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
         replay(transformerDescriptor);
 

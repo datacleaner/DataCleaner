@@ -37,7 +37,7 @@ public class PatternFinderAnalyzerTest extends TestCase {
 
     public void testSingleToken() throws Exception {
         PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
-        MockInputColumn<String> column = new MockInputColumn<String>("title", String.class);
+        MockInputColumn<String> column = new MockInputColumn<>("title", String.class);
 
         pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         pf.setColumn(column);
@@ -52,7 +52,7 @@ public class PatternFinderAnalyzerTest extends TestCase {
 
     public void testEmployeeTitles() throws Exception {
         PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
-        MockInputColumn<String> column = new MockInputColumn<String>("title", String.class);
+        MockInputColumn<String> column = new MockInputColumn<>("title", String.class);
 
         pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         pf.setColumn(column);
@@ -96,7 +96,7 @@ public class PatternFinderAnalyzerTest extends TestCase {
 
     public void testEmailAddresses() throws Exception {
         PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
-        MockInputColumn<String> column = new MockInputColumn<String>("title", String.class);
+        MockInputColumn<String> column = new MockInputColumn<>("title", String.class);
 
         pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         pf.setColumn(column);
@@ -123,8 +123,8 @@ public class PatternFinderAnalyzerTest extends TestCase {
 
     public void testGroupEmailByDomain() throws Exception {
         PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
-        MockInputColumn<String> col1 = new MockInputColumn<String>("username", String.class);
-        MockInputColumn<String> col2 = new MockInputColumn<String>("domain", String.class);
+        MockInputColumn<String> col1 = new MockInputColumn<>("username", String.class);
+        MockInputColumn<String> col2 = new MockInputColumn<>("domain", String.class);
 
         pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         pf.setColumn(col1);

@@ -37,7 +37,8 @@ public class HttpBasicMonitorHttpClient implements MonitorHttpClient {
     private final CloseableHttpClient _httpClient;
     private final HttpClientContext _context;
 
-    public HttpBasicMonitorHttpClient(final CloseableHttpClient httpClient, final String hostname, final int port, final String username,
+    public HttpBasicMonitorHttpClient(final CloseableHttpClient httpClient, final String hostname, final int port,
+            final String username,
             final String password) {
         _httpClient = httpClient;
 

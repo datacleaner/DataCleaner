@@ -44,7 +44,7 @@ public class ForeignKeyAnnotationAdaptor implements MetadataAnnotationAdaptor<Fo
 
     @Override
     public MetadataAnnotation convertToAnnotation(final ForeignKey object) {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         map.put("ForeignDatastoreName", object.getForeignDatastoreName());
         map.put("ForeignSchemaName", object.getForeignSchemaName());
         map.put("ForeignTableName", object.getForeignTableName());

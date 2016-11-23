@@ -109,7 +109,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
             buttonToolBar.add(WidgetFactory.createToolBarSeparator());
 
             if (highlightedColumns.length == 1 && inputColumns.size() > 1) {
-                final DCComboBox<String> comboBox = new DCComboBox<String>(VIEWS);
+                final DCComboBox<String> comboBox = new DCComboBox<>(VIEWS);
                 comboBox.addListener(new Listener<String>() {
                     @Override
                     public void onItemSelected(final String item) {

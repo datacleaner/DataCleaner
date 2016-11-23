@@ -49,7 +49,7 @@ public final class Main {
      * @return
      */
     protected static Map<String, String> initializeSystemProperties(final String[] args) {
-        final Map<String, String> result = new HashMap<String, String>();
+        final Map<String, String> result = new HashMap<>();
         final Pattern pattern = Pattern.compile("-D(.+)=(.+)");
         for (final String arg : args) {
             final Matcher matcher = pattern.matcher(arg);

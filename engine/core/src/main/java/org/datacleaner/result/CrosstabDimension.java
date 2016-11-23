@@ -30,7 +30,7 @@ public class CrosstabDimension implements Serializable, Iterable<String> {
 
     private static final long serialVersionUID = 1L;
 
-    private List<String> categories = new ArrayList<String>();
+    private List<String> categories = new ArrayList<>();
     private String name;
 
     public CrosstabDimension(final String name) {

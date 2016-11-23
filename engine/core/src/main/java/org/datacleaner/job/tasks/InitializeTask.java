@@ -50,7 +50,8 @@ public final class InitializeTask implements Task {
 
     private static void executeInternal(final RowProcessingConsumer consumer, final RowProcessingPublisher publisher,
             final LifeCycleHelper lifeCycleHelper) {
-        // we synchronize to avoid a race condition where initialization is on-going in one stream and therefore skipped in the other
+        // we synchronize to avoid a race condition where initialization
+        // is on-going in one stream and therefore skipped in the other
         synchronized (consumer) {
             final int publisherCount = consumer.onPublisherInitialized(publisher);
 
@@ -67,7 +68,8 @@ public final class InitializeTask implements Task {
                 for (final ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
                     activeOutputDataStream.initialize();
                     final RowProcessingPublisher outputDataStreamPublisher = activeOutputDataStream.getPublisher();
-                    for (final RowProcessingConsumer outputDataStreamConsumer : outputDataStreamPublisher.getConsumers()) {
+                    for (final RowProcessingConsumer outputDataStreamConsumer : outputDataStreamPublisher
+                            .getConsumers()) {
                         final LifeCycleHelper outputDataStreamLifeCycleHelper =
                                 outputDataStreamPublisher.getPublishers()
                                         .getConsumerSpecificLifeCycleHelper(consumer);

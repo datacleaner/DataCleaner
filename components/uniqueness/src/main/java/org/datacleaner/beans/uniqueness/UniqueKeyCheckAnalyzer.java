@@ -143,10 +143,10 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
 
         final AtomicInteger nonUniques = new AtomicInteger();
 
-        final Map<String, Integer> samples = new LinkedHashMap<String, Integer>();
+        final Map<String, Integer> samples = new LinkedHashMap<>();
 
         final CsvDataContext dataContext = new CsvDataContext(file, CSV_CONFIGURATION);
-        try (final DataSet dataSet = dataContext.query().from(dataContext.getDefaultSchema().getTable(0))
+        try (DataSet dataSet = dataContext.query().from(dataContext.getDefaultSchema().getTable(0))
                 .select("text", "count").execute()) {
             int i = 0;
             while (dataSet.next()) {

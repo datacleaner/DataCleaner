@@ -54,13 +54,13 @@ public class ResultsFolderController {
 
         final RepositoryFolder resultsFolder = context.getResultFolder();
 
-        final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        final List<Map<String, String>> result = new ArrayList<>();
 
         {
             final List<RepositoryFile> files = resultsFolder.getFiles(null,
                     FileFilters.ANALYSIS_RESULT_SER.getExtension());
             for (final RepositoryFile file : files) {
-                final Map<String, String> map = new HashMap<String, String>();
+                final Map<String, String> map = new HashMap<>();
                 map.put("filename", file.getName());
                 map.put("repository_path", file.getQualifiedPath());
                 result.add(map);

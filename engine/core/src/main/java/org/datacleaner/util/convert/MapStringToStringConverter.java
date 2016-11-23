@@ -31,9 +31,9 @@ import org.datacleaner.api.Converter;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 
-import com.google.common.base.Splitter;
-
 import au.com.bytecode.opencsv.CSVParser;
+
+import com.google.common.base.Splitter;
 
 /**
  * A {@link Converter} for maps.

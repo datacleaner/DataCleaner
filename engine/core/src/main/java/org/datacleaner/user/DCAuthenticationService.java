@@ -43,7 +43,7 @@ public class DCAuthenticationService implements AuthenticationService {
     @Override
     public boolean auth(final String username, final char[] password) {
 
-        final Map<String, String> params = new HashMap<String, String>();
+        final Map<String, String> params = new HashMap<>();
         params.put("username", username);
         try {
             final String salt = _httpXmlUtils.getUrlContent("https://datacleaner.org/ws/get_salt", params);

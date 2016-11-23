@@ -49,7 +49,7 @@ public final class AnalysisJobImmutabilizer {
 
     public AnalysisJobImmutabilizer() {
         _outcomes = new HashMap<>();
-        _componentJobs = new IdentityHashMap<ComponentBuilder, ComponentJob>();
+        _componentJobs = new IdentityHashMap<>();
     }
 
     public OutputDataStreamJob[] load(final OutputDataStreamJob[] outputDataStreamJobs, final boolean validate) {

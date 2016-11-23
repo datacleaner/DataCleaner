@@ -111,7 +111,7 @@ final class BooleanAnalyzerCombinationMetric implements ParameterizableMetric {
             return Collections.emptyList();
         }
 
-        final List<String> suggestions = new ArrayList<String>();
+        final List<String> suggestions = new ArrayList<>();
         suggestions.add(BooleanAnalyzer.MEASURE_MOST_FREQUENT);
         suggestions.add(BooleanAnalyzer.MEASURE_LEAST_FREQUENT);
 

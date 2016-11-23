@@ -47,7 +47,7 @@ public class SpringInjectionManagerFactoryTest extends TestCase {
             InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(null, null);
 
             assertNull(uninjectableBean);
-            InjectionPoint<Table> injectionPoint = new MemberInjectionPoint<Table>(getClass().getDeclaredField(
+            InjectionPoint<Table> injectionPoint = new MemberInjectionPoint<>(getClass().getDeclaredField(
                     "uninjectableBean"), this);
             assertNotNull(injectionManager);
 
@@ -66,7 +66,7 @@ public class SpringInjectionManagerFactoryTest extends TestCase {
             InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(null, null);
 
             assertNull(injectedBean);
-            InjectionPoint<HelloBean> injectionPoint = new MemberInjectionPoint<HelloBean>(getClass().getDeclaredField(
+            InjectionPoint<HelloBean> injectionPoint = new MemberInjectionPoint<>(getClass().getDeclaredField(
                     "injectedBean"), this);
             assertNotNull(injectionManager);
 

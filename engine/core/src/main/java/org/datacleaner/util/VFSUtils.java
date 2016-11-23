@@ -33,6 +33,7 @@ import org.apache.commons.vfs2.provider.local.LocalFile;
 /**
  * Convenience methods for commons VFS.
  */
+@SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class VFSUtils {
 
     /**

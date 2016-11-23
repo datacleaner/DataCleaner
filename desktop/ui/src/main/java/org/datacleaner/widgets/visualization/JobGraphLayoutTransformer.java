@@ -65,8 +65,8 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
             return prerequisiteCount2 - prerequisiteCount1;
         }
     };
-    private final Map<Object, Point> _points = new IdentityHashMap<Object, Point>();
-    private final Map<Integer, Integer> _yCount = new HashMap<Integer, Integer>();
+    private final Map<Object, Point> _points = new IdentityHashMap<>();
+    private final Map<Integer, Integer> _yCount = new HashMap<>();
     private volatile boolean _transformed;
 
     public JobGraphLayoutTransformer(final AnalysisJobBuilder analysisJobBuilder, final DirectedGraph<Object, JobGraphLink> graph) {
@@ -123,7 +123,7 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
     }
 
     private List<Object> getEndpointVertices() {
-        final List<Object> result = new ArrayList<Object>();
+        final List<Object> result = new ArrayList<>();
         for (final Object vertex : _graph.getVertices()) {
             final Collection<JobGraphLink> outEdges = _graph.getOutEdges(vertex);
             if (outEdges == null || outEdges.isEmpty()) {
@@ -228,7 +228,7 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
         if (edges == null || edges.isEmpty()) {
             return Collections.emptyList();
         }
-        final List<Object> result = new ArrayList<Object>();
+        final List<Object> result = new ArrayList<>();
         for (final JobGraphLink edge : edges) {
             result.add(edge.getFrom());
         }

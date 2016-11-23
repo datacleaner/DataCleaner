@@ -203,7 +203,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
         final String resultFilename = _execution.getResultId() + FileFilters.ANALYSIS_RESULT_SER.getExtension();
 
         if (result instanceof AnalysisResult) {
-            final RepositoryFile file = _resultFolder.createFile(resultFilename, new NoopAction<OutputStream>());
+            final RepositoryFile file = _resultFolder.createFile(resultFilename, new NoopAction<>());
             final Resource resource = new RepositoryFileResource(file);
             final AnalysisResultSaveHandler analysisResultSaveHandler =
                     new AnalysisResultSaveHandler((AnalysisResult) result, resource);

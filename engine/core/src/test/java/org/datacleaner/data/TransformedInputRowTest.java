@@ -69,9 +69,9 @@ public class TransformedInputRowTest extends TestCase {
     }
 
     public void testGetValue() throws Exception {
-        InputColumn<String> inputColumn1 = new MockInputColumn<String>("foo", String.class);
-        InputColumn<String> inputColumn2 = new MockInputColumn<String>("bar", String.class);
-        InputColumn<String> inputColumn3 = new MockInputColumn<String>("bar", String.class);
+        InputColumn<String> inputColumn1 = new MockInputColumn<>("foo", String.class);
+        InputColumn<String> inputColumn2 = new MockInputColumn<>("bar", String.class);
+        InputColumn<String> inputColumn3 = new MockInputColumn<>("bar", String.class);
 
         TransformedInputRow row1 = new TransformedInputRow(new MockInputRow(), 1);
         row1.addValue(inputColumn1, "f");

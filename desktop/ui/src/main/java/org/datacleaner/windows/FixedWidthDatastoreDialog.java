@@ -219,7 +219,7 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
         final int bufferSize = getBufferSize();
         byte[] bytes = new byte[bufferSize];
 
-        try (final InputStream fileInputStream = resource.read()) {
+        try (InputStream fileInputStream = resource.read()) {
             final int startPosition = getStartPosition();
             fileInputStream.skip(startPosition);
             final int bytesRead = fileInputStream.read(bytes, 0, bufferSize);

@@ -57,7 +57,7 @@ public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDi
 
     private static final Map<String, UnicodeSet> UNICODE_SETS = createUnicodeSets();
     private final Map<InputColumn<String>, CharacterSetDistributionAnalyzerColumnDelegate> _columnDelegates =
-            new HashMap<InputColumn<String>, CharacterSetDistributionAnalyzerColumnDelegate>();
+            new HashMap<>();
     @Inject
     @Configured
     InputColumn<String>[] _columns;
@@ -78,7 +78,7 @@ public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDi
      * @return
      */
     protected static Map<String, UnicodeSet> createUnicodeSets() {
-        final Map<String, UnicodeSet> unicodeSets = new TreeMap<String, UnicodeSet>();
+        final Map<String, UnicodeSet> unicodeSets = new TreeMap<>();
         unicodeSets.put("Latin, ASCII", new UnicodeSet("[:ASCII:]"));
         unicodeSets.put("Latin, non-ASCII", subUnicodeSet("[:Latin:]", "[:ASCII:]"));
         unicodeSets.put("Arabic", new UnicodeSet("[:Script=Arabic:]"));
@@ -144,7 +144,7 @@ public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDi
 
         final CrosstabDimension columnDimension = new CrosstabDimension("Column");
 
-        final Crosstab<Number> crosstab = new Crosstab<Number>(Number.class, columnDimension, measureDimension);
+        final Crosstab<Number> crosstab = new Crosstab<>(Number.class, columnDimension, measureDimension);
 
         for (final InputColumn<String> column : _columns) {
             final String columnName = column.getName();

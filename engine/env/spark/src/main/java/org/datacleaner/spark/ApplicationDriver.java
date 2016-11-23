@@ -68,7 +68,8 @@ public class ApplicationDriver {
         this(uri, jarDirectoryPath, determineSparkHome());
     }
 
-    public ApplicationDriver(final URI defaultFs, final String jarDirectoryPath, final String sparkHome) throws IOException {
+    public ApplicationDriver(final URI defaultFs, final String jarDirectoryPath, final String sparkHome)
+            throws IOException {
         _defaultFs = defaultFs;
         _fileSystem = (DistributedFileSystem) FileSystem.newInstance(_defaultFs, new Configuration());
         _jarDirectoryPath = jarDirectoryPath;
@@ -131,7 +132,7 @@ public class ApplicationDriver {
     private void startLogger(final InputStream stream) {
         new Thread() {
             public void run() {
-                try (final BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
                     String line = br.readLine();
                     while (line != null) {
                         logger.info(line);
@@ -149,14 +150,16 @@ public class ApplicationDriver {
         return new HdfsResource(_defaultFs.resolve(hdfsPath).toString());
     }
 
-    public SparkLauncher createSparkLauncher(final File hadoopConfDir, final URI configurationHdfsUri, final URI jobHdfsUri,
+    public SparkLauncher createSparkLauncher(final File hadoopConfDir, final URI configurationHdfsUri,
+            final URI jobHdfsUri,
             final URI resultHdfsUri)
             throws Exception {
         return createSparkLauncher(hadoopConfDir, configurationHdfsUri.toString(), jobHdfsUri.toString(),
                 resultHdfsUri == null ? null : resultHdfsUri.toString());
     }
 
-    public SparkLauncher createSparkLauncher(final File hadoopConfDir, final String configurationHdfsPath, final String jobHdfsPath,
+    public SparkLauncher createSparkLauncher(final File hadoopConfDir, final String configurationHdfsPath,
+            final String jobHdfsPath,
             final String resultHdfsPath)
             throws Exception {
         // mimic env. variables
@@ -252,12 +255,13 @@ public class ApplicationDriver {
         return hadoopConfDir;
     }
 
-    private void createTemporaryHadoopConfFile(final File hadoopConfDir, final String filename, final String templateName)
+    private void createTemporaryHadoopConfFile(final File hadoopConfDir, final String filename,
+            final String templateName)
             throws IOException {
         final File coreSiteFile = new File(hadoopConfDir, filename);
-        try (final InputStream inputStream = getClass().getResourceAsStream(templateName)) {
+        try (InputStream inputStream = getClass().getResourceAsStream(templateName)) {
             final BufferedReader reader = FileHelper.getBufferedReader(inputStream, FileHelper.UTF_8_ENCODING);
-            try (final Writer writer = FileHelper.getWriter(coreSiteFile)) {
+            try (Writer writer = FileHelper.getWriter(coreSiteFile)) {
                 String line = reader.readLine();
                 while (line != null) {
                     line = StringUtils.replaceAll(line, "${HDFS_HOSTNAME}", _defaultFs.getHost());

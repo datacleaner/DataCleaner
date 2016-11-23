@@ -92,6 +92,7 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
         }
 
     }
+
     private static final AtomicBoolean closed = new AtomicBoolean();
 
     public void testScenario() throws Exception {

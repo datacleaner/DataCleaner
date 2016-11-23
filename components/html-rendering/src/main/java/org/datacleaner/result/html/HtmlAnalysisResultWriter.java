@@ -67,7 +67,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
     }
 
     public HtmlAnalysisResultWriter(final boolean tabs) {
-        this(tabs, new TruePredicate<Entry<ComponentJob, AnalyzerResult>>());
+        this(tabs, new TruePredicate<>());
     }
 
     public HtmlAnalysisResultWriter(final boolean tabs,
@@ -94,8 +94,8 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
         final HtmlRenderingContext context = new DefaultHtmlRenderingContext();
 
         final RendererFactory rendererFactory = new RendererFactory(configuration);
-        final Map<ComponentJob, HtmlFragment> htmlFragments = new LinkedHashMap<ComponentJob, HtmlFragment>();
-        final Map<ComponentJob, AnalyzerResult> resultMap = new TreeMap<ComponentJob, AnalyzerResult>(
+        final Map<ComponentJob, HtmlFragment> htmlFragments = new LinkedHashMap<>();
+        final Map<ComponentJob, AnalyzerResult> resultMap = new TreeMap<>(
                 new ComponentJobComparator());
         resultMap.putAll(result.getResultMap());
 
@@ -166,7 +166,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
 
     protected void writeHead(final Writer writer, final Map<ComponentJob, HtmlFragment> htmlFragments,
             final HtmlRenderingContext context) throws IOException {
-        final Set<HeadElement> allHeadElements = new HashSet<HeadElement>();
+        final Set<HeadElement> allHeadElements = new HashSet<>();
 
         writeHeadBegin(writer);
 

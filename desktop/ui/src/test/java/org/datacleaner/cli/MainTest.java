@@ -258,7 +258,7 @@ public class MainTest extends TestCase {
                     elementCounter.incrementAndGet();
                 }
             });
-            final List<Exception> warningsAndErrors = new ArrayList<Exception>();
+            final List<Exception> warningsAndErrors = new ArrayList<>();
             htmlParser.setErrorHandler(new ErrorHandler() {
                 @Override
                 public void warning(SAXParseException exception) throws SAXException {

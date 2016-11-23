@@ -61,7 +61,7 @@ public class SlaveServlet extends HttpServlet {
         super();
         _configuration = configuration;
         _analysisListener = analysisListener;
-        _runningJobs = new ConcurrentHashMap<String, AnalysisResultFuture>();
+        _runningJobs = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -84,7 +84,8 @@ public class SlaveServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
+            throws ServletException, IOException {
         final SlaveServletHelper helper = new SlaveServletHelper(_configuration, _runningJobs);
         if (_analysisListener == null) {
             helper.handleRequest(req, resp);

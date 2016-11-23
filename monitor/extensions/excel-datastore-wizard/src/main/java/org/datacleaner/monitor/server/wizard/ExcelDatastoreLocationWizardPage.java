@@ -60,7 +60,7 @@ public abstract class ExcelDatastoreLocationWizardPage extends AbstractFreemarke
     protected Map<String, Object> getFormModel() {
         final String absolutePrefix = File.listRoots()[0].getAbsolutePath() + "data" + File.separatorChar;
 
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("filename", _filename);
         map.put("absolutePrefix", absolutePrefix);
 

@@ -61,7 +61,7 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
             add(_checkBox);
         } else {
             _checkBox = null;
-            _comboBox = new DCComboBox<String>(new String[] { "true", "false", LabelUtils.NULL_LABEL });
+            _comboBox = new DCComboBox<>(new String[] { "true", "false", LabelUtils.NULL_LABEL });
 
             if (currentValue == null) {
                 _comboBox.setSelectedItem(LabelUtils.NULL_LABEL);

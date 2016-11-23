@@ -38,6 +38,7 @@ public class OutputColumns {
         @JsonProperty
         public JsonSchema schema;
     }
+
     @JsonProperty
     List<OutputColumn> columns = new ArrayList<>();
 

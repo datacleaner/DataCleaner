@@ -48,7 +48,7 @@ public class ColumnParameterizedMetricPresenter implements MetricPresenter {
         _metricIdentifier = metricIdentifier;
         _activeMetrics = activeMetrics;
         _metricGroup = metricGroup;
-        _selectedMetrics = new ArrayList<MetricIdentifier>();
+        _selectedMetrics = new ArrayList<>();
         _panel = new FlowPanel();
         _panel.addStyleName("ColumnParameterizedMetricsPresenter");
 

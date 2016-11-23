@@ -138,7 +138,7 @@ public class DataHubRepoConnection {
 
     /**
      * Returns the base URL of the DataCleaner monitor, e.g.
-     * <code>http://<base-url>/repository</code>.
+     * <code>http://&lt;base-url&gt;/repository</code>.
      *
      * @return
      */

@@ -46,22 +46,26 @@ public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext>
         this(name, hostname, port, databaseName, null, (char[]) null);
     }
 
-    public MongoDbDatastore(final String name, final String hostname, final Integer port, final String databaseName, final String username,
+    public MongoDbDatastore(final String name, final String hostname, final Integer port, final String databaseName,
+            final String username,
             final String password) {
         this(name, hostname, port, databaseName, username, password == null ? null : password.toCharArray());
     }
 
-    public MongoDbDatastore(final String name, final String hostname, final Integer port, final String databaseName, final String username,
+    public MongoDbDatastore(final String name, final String hostname, final Integer port, final String databaseName,
+            final String username,
             final char[] password) {
         this(name, hostname, port, databaseName, username, password, null);
     }
 
-    public MongoDbDatastore(final String name, final String hostname, final Integer port, final String databaseName, final String username,
+    public MongoDbDatastore(final String name, final String hostname, final Integer port, final String databaseName,
+            final String username,
             final String password, final SimpleTableDef[] tableDefs) {
         this(name, hostname, port, databaseName, username, password == null ? null : password.toCharArray(), tableDefs);
     }
 
-    public MongoDbDatastore(final String name, String hostname, Integer port, final String databaseName, final String username,
+    public MongoDbDatastore(final String name, String hostname, Integer port, final String databaseName,
+            final String username,
             final char[] password, final SimpleTableDef[] tableDefs) {
         super(name);
         if (StringUtils.isNullOrEmpty(databaseName)) {
@@ -99,7 +103,7 @@ public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext>
                 dataContext = DataContextFactory.createMongoDbDataContext(_hostname, _port, _databaseName, _hostname,
                         _password, _tableDefs);
             }
-            return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dataContext, this);
+            return new UpdateableDatastoreConnectionImpl<>(dataContext, this);
         } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;

@@ -62,7 +62,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
         _tenantIdentifier = tenantIdentifier;
         _timelineDefinition = timelineDefinition;
         _formulaMetricsPanel = null;
-        _metricPresenters = new ArrayList<MetricPresenter>();
+        _metricPresenters = new ArrayList<>();
 
         addStyleName("CustomizeMetricsPanel");
         add(new LoadingIndicator());
@@ -230,7 +230,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
     }
 
     public List<MetricIdentifier> getSelectedMetrics() {
-        final List<MetricIdentifier> metrics = new ArrayList<MetricIdentifier>();
+        final List<MetricIdentifier> metrics = new ArrayList<>();
 
         // add single metrics
         for (final MetricPresenter metricPresenter : _metricPresenters) {

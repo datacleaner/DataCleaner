@@ -40,7 +40,7 @@ public class JobInvocationPayload implements Serializable {
 
     public List<JobInvocationRowData> getRows() {
         if (rows == null) {
-            rows = new ArrayList<JobInvocationRowData>();
+            rows = new ArrayList<>();
         }
         return rows;
     }

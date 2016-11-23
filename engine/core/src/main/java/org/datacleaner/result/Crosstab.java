@@ -39,9 +39,9 @@ public final class Crosstab<E extends Serializable> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final List<CrosstabDimension> dimensions;
-    private final Map<String, E> values = new HashMap<String, E>();
+    private final Map<String, E> values = new HashMap<>();
     private final Class<E> valueClass;
-    private final Map<String, Ref<ResultProducer>> resultProducers = new HashMap<String, Ref<ResultProducer>>();
+    private final Map<String, Ref<ResultProducer>> resultProducers = new HashMap<>();
 
     public Crosstab(final Class<E> valueClass, final CrosstabDimension... dimensions) {
         this.valueClass = valueClass;
@@ -50,12 +50,12 @@ public final class Crosstab<E extends Serializable> implements Serializable {
 
     public Crosstab(final Class<E> valueClass, final Collection<CrosstabDimension> dimensions) {
         this.valueClass = valueClass;
-        this.dimensions = new ArrayList<CrosstabDimension>(dimensions);
+        this.dimensions = new ArrayList<>(dimensions);
     }
 
     public Crosstab(final Class<E> valueClass, final String... dimensionNames) {
         this.valueClass = valueClass;
-        dimensions = new ArrayList<CrosstabDimension>();
+        dimensions = new ArrayList<>();
         for (final String name : dimensionNames) {
             dimensions.add(new CrosstabDimension(name));
         }
@@ -107,7 +107,7 @@ public final class Crosstab<E extends Serializable> implements Serializable {
     }
 
     public CrosstabNavigator<E> navigate() {
-        return new CrosstabNavigator<E>(this);
+        return new CrosstabNavigator<>(this);
     }
 
     protected E getValue(final String[] categories) throws IllegalArgumentException, NullPointerException {
@@ -123,7 +123,8 @@ public final class Crosstab<E extends Serializable> implements Serializable {
         return navigate().where(dimension, isCategory);
     }
 
-    protected void putValue(final E value, final String[] categories) throws IllegalArgumentException, NullPointerException {
+    protected void putValue(final E value, final String[] categories)
+            throws IllegalArgumentException, NullPointerException {
         if (value != null) {
             if (!ReflectionUtils.is(value.getClass(), valueClass)) {
                 throw new IllegalArgumentException("Cannot put value [" + value + "] of type [" + value.getClass()
@@ -171,8 +172,8 @@ public final class Crosstab<E extends Serializable> implements Serializable {
         throw new IllegalArgumentException("No such dimension: " + dimensionName);
     }
 
-    public CrosstabDimension getDimension(final int i) {
-        return dimensions.get(i);
+    public CrosstabDimension getDimension(final int index) {
+        return dimensions.get(index);
     }
 
     public CrosstabDimension getDimension(final String dimensionName) {
@@ -186,7 +187,7 @@ public final class Crosstab<E extends Serializable> implements Serializable {
         if (resultProducer == null) {
             resultProducers.remove(key);
         } else {
-            final Ref<ResultProducer> resultProducerRef = new SerializableRef<ResultProducer>(resultProducer);
+            final Ref<ResultProducer> resultProducerRef = new SerializableRef<>(resultProducer);
             resultProducers.put(key, resultProducerRef);
         }
     }
@@ -217,7 +218,7 @@ public final class Crosstab<E extends Serializable> implements Serializable {
     public String toString(int maxEntries) {
         final StringBuilder sb = new StringBuilder("Crosstab:");
 
-        final Set<String> keySet = new TreeSet<String>(values.keySet());
+        final Set<String> keySet = new TreeSet<>(values.keySet());
         for (final String key : keySet) {
             if (maxEntries == 0) {
                 break;

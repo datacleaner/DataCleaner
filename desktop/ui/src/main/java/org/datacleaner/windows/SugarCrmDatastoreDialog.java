@@ -162,10 +162,10 @@ public class SugarCrmDatastoreDialog extends AbstractDatastoreDialog<SugarCrmDat
         baseUrlPanel.add(_baseUrlTextField);
         baseUrlPanel.add(baseUrlHelpIcon);
 
-        result.add(new ImmutableEntry<String, JComponent>("Salesforce security token", baseUrlPanel));
+        result.add(new ImmutableEntry<>("Salesforce security token", baseUrlPanel));
 
-        result.add(new ImmutableEntry<String, JComponent>("Salesforce username", _usernameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Salesforce password", _passwordTextField));
+        result.add(new ImmutableEntry<>("Salesforce username", _usernameTextField));
+        result.add(new ImmutableEntry<>("Salesforce password", _passwordTextField));
         return result;
     }
 

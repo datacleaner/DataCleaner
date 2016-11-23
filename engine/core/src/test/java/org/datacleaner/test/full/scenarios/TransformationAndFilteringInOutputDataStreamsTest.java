@@ -68,7 +68,7 @@ public class TransformationAndFilteringInOutputDataStreamsTest {
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(ds);
 
         final AnalysisJob job;
-        try (final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
             jobBuilder.setDatastore(ds);
             jobBuilder.addSourceColumns("customers.country");
 

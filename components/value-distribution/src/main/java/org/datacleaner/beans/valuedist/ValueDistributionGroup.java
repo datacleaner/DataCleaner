@@ -64,7 +64,7 @@ class ValueDistributionGroup {
         _recordAnnotations = recordAnnotations;
         _inputColumns = inputColumns;
         _totalCount = new AtomicInteger();
-        _annotationMap = new HashMap<String, RowAnnotation>();
+        _annotationMap = new HashMap<>();
         if (recordAnnotations) {
             _nullValueAnnotation = _annotationFactory.createAnnotation();
         } else {
@@ -107,7 +107,7 @@ class ValueDistributionGroup {
 
         final List<String> uniqueValues;
         if (recordUniqueValues) {
-            uniqueValues = new ArrayList<String>();
+            uniqueValues = new ArrayList<>();
         } else {
             uniqueValues = null;
         }

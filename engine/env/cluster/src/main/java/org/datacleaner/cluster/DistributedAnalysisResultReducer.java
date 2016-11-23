@@ -117,7 +117,7 @@ final class DistributedAnalysisResultReducer {
 
         final Collection<AnalyzerJob> analyzerJobs = _masterJob.getAnalyzerJobs();
         for (final AnalyzerJob masterAnalyzerJob : analyzerJobs) {
-            final Collection<AnalyzerResult> slaveResults = new ArrayList<AnalyzerResult>();
+            final Collection<AnalyzerResult> slaveResults = new ArrayList<>();
             logger.info("Reducing {} slave results for component: {}", results.size(), masterAnalyzerJob);
             for (final AnalysisResultFuture result : results) {
 
@@ -149,7 +149,8 @@ final class DistributedAnalysisResultReducer {
      */
     @SuppressWarnings("unchecked")
     private void reduce(final AnalyzerJob analyzerJob, final Collection<AnalyzerResult> slaveResults,
-            final Map<ComponentJob, AnalyzerResult> resultMap, final List<AnalysisResultReductionException> reductionErrors) {
+            final Map<ComponentJob, AnalyzerResult> resultMap,
+            final List<AnalysisResultReductionException> reductionErrors) {
 
         if (slaveResults.size() == 1) {
             // special case where these was only 1 slave job

@@ -165,13 +165,16 @@ public class InjectionManagerImpl implements InjectionManager {
             return _job.getDatastore();
         } else if (baseType == DatastoreConnection.class && _job != null) {
             throw new UnsupportedOperationException(
-                    "DatastoreConnections cannot be injected as of AnalyzerBeans 0.16. Inject a Datastore and manage a connection instead.");
+                    "DatastoreConnections cannot be injected as of AnalyzerBeans 0.16. "
+                            + "Inject a Datastore and manage a connection instead.");
         } else if (baseType == DataContext.class && _job != null) {
             throw new UnsupportedOperationException(
-                    "DataContext cannot be injected as of AnalyzerBeans 0.16. Inject a Datastore and manage a connection instead.");
+                    "DataContext cannot be injected as of AnalyzerBeans 0.16. "
+                            + "Inject a Datastore and manage a connection instead.");
         } else if (baseType == SchemaNavigator.class && _job != null) {
             throw new UnsupportedOperationException(
-                    "SchemaNavigator cannot be injected as of AnalyzerBeans 0.16. Inject a Datastore and manage a connection instead.");
+                    "SchemaNavigator cannot be injected as of AnalyzerBeans 0.16. "
+                            + "Inject a Datastore and manage a connection instead.");
         } else {
             // only inject persistent lists, sets, maps into @Provided fields.
             if (injectionPoint.getAnnotation(Provided.class) != null && injectionPoint.isGenericType()) {
@@ -184,7 +187,8 @@ public class InjectionManagerImpl implements InjectionManager {
                     return set;
                 } else if (baseType == Map.class) {
                     final Class<?> clazz2 = (Class<?>) injectionPoint.getGenericTypeArgument(1);
-                    final Map<?, ?> map = getConfiguration().getEnvironment().getStorageProvider().createMap(clazz1, clazz2);
+                    final Map<?, ?> map =
+                            getConfiguration().getEnvironment().getStorageProvider().createMap(clazz1, clazz2);
                     return map;
                 }
             }

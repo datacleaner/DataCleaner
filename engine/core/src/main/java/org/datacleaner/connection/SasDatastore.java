@@ -45,7 +45,7 @@ public class SasDatastore extends UsageAwareDatastore<DataContext> implements Fi
     @Override
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
         final DataContext dataContext = new SasDataContext(_directory);
-        return new DatastoreConnectionImpl<DataContext>(dataContext, this);
+        return new DatastoreConnectionImpl<>(dataContext, this);
     }
 
     @Override

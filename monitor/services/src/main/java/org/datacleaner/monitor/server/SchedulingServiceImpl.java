@@ -379,7 +379,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final List<JobIdentifier> jobs = context.getJobs();
-        final List<ScheduleDefinition> schedules = new ArrayList<ScheduleDefinition>(jobs.size());
+        final List<ScheduleDefinition> schedules = new ArrayList<>(jobs.size());
         for (final JobIdentifier job : jobs) {
             try {
                 final ScheduleDefinition schedule;
@@ -418,7 +418,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final Map<String, String> immutableJobMetadataProperties = jobContext.getMetadataProperties();
         // Convert Immutable map to mutable map as it will be transferred to a
         // GWT object on the front end .
-        final Map<String, String> jobMetadataProperties = new HashMap<String, String>(immutableJobMetadataProperties);
+        final Map<String, String> jobMetadataProperties = new HashMap<>(immutableJobMetadataProperties);
 
         final String groupName = jobContext.getGroupName();
 
@@ -803,7 +803,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throws DCSecurityException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final List<JobIdentifier> jobs = tenantContext.getJobs();
-        final List<JobIdentifier> result = new ArrayList<JobIdentifier>();
+        final List<JobIdentifier> result = new ArrayList<>();
         for (final JobIdentifier job : jobs) {
             final String jobName = job.getName();
             if (!jobName.equals(schedule.getJob().getName())) {

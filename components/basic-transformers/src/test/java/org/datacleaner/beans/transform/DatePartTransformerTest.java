@@ -36,7 +36,7 @@ public class DatePartTransformerTest extends TestCase {
 
     public void testTransformDefaultDateConfiguration() throws Exception {
         DatePartTransformer transformer = new DatePartTransformer();
-        MockInputColumn<Date> column = new MockInputColumn<Date>("my date", Date.class);
+        MockInputColumn<Date> column = new MockInputColumn<>("my date", Date.class);
         transformer.column = column;
 
         OutputColumns outputColumns = transformer.getOutputColumns();
@@ -55,7 +55,7 @@ public class DatePartTransformerTest extends TestCase {
 
     public void testMondayIs1AndSundayIs7() throws Exception {
         DatePartTransformer transformer = new DatePartTransformer();
-        MockInputColumn<Date> column = new MockInputColumn<Date>("my date", Date.class);
+        MockInputColumn<Date> column = new MockInputColumn<>("my date", Date.class);
         transformer.column = column;
         transformer.year = false;
         transformer.month = false;
@@ -91,7 +91,7 @@ public class DatePartTransformerTest extends TestCase {
 
     public void testNullDate() throws Exception {
         DatePartTransformer transformer = new DatePartTransformer();
-        MockInputColumn<Date> column = new MockInputColumn<Date>("my date", Date.class);
+        MockInputColumn<Date> column = new MockInputColumn<>("my date", Date.class);
         transformer.column = column;
 
         Number[] result = transformer.transform(new MockInputRow().put(column, null));
@@ -103,7 +103,7 @@ public class DatePartTransformerTest extends TestCase {
 
     public void testTransformTime() throws Exception {
         DatePartTransformer transformer = new DatePartTransformer();
-        MockInputColumn<Date> column = new MockInputColumn<Date>("my time", Date.class);
+        MockInputColumn<Date> column = new MockInputColumn<>("my time", Date.class);
         transformer.column = column;
         transformer.year = false;
         transformer.month = false;

@@ -210,7 +210,7 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
         // Berkeley StoredLists are non-functional!
         // return new StoredList<E>(createDatabase(), valueBinding, true);
 
-        return new BerkeleyDbList<E>(map);
+        return new BerkeleyDbList<>(map);
     }
 
     @Override
@@ -220,7 +220,7 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
             final Database database = createDatabase();
             final StoredKeySet set = new StoredKeySet(database,
                     createBinding(valueType), true);
-            return new BerkeleyDbSet<E>(getEnvironment(), database, set);
+            return new BerkeleyDbSet<>(getEnvironment(), database, set);
         } catch (final DatabaseException e) {
             throw new IllegalStateException(e);
         }
@@ -235,7 +235,7 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
             final Database database = createDatabase();
             final StoredMap map = new StoredMap(database, keyBinding,
                     valueBinding, true);
-            return new BerkeleyDbMap<K, V>(getEnvironment(), database, map);
+            return new BerkeleyDbMap<>(getEnvironment(), database, map);
         } catch (final DatabaseException e) {
             throw new IllegalStateException(e);
         }

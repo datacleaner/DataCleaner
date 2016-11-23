@@ -80,6 +80,7 @@ public class ResourceConverter implements Converter<Resource> {
             return scheme;
         }
     }
+
     /**
      * Represents the default "default scheme", for representations that does
      * not have a scheme in the path. This default scheme is "file".
@@ -102,6 +103,7 @@ public class ResourceConverter implements Converter<Resource> {
     public ResourceConverter(final DataCleanerConfiguration configuration, final String defaultScheme) {
         this(configuration, createDefaultHandlers(configuration), defaultScheme);
     }
+
     public ResourceConverter(final DataCleanerConfiguration configuration,
             final Collection<? extends ResourceTypeHandler<?>> handlers) {
         this(configuration, handlers, getConfiguredDefaultScheme());

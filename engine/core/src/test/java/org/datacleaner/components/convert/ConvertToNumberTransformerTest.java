@@ -31,16 +31,16 @@ public class ConvertToNumberTransformerTest extends TestCase {
 
         Number res = trans.transform("1000");
         assertEquals(Long.class, res.getClass());
-        assertEquals(1000l, res);
+        assertEquals(1000L, res);
     }
 
     public void testTransformValueJavaSymbols() throws Exception {
         assertEquals(2000.01, ConvertToNumberTransformer.transformValue("2000.01"));
-        assertEquals(2000l, ConvertToNumberTransformer.transformValue("2000.0"));
-        assertEquals(-2000l, ConvertToNumberTransformer.transformValue("-2,000.0"));
-        assertEquals(987654321l, ConvertToNumberTransformer.transformValue("987654321"));
+        assertEquals(2000L, ConvertToNumberTransformer.transformValue("2000.0"));
+        assertEquals(-2000L, ConvertToNumberTransformer.transformValue("-2,000.0"));
+        assertEquals(987654321L, ConvertToNumberTransformer.transformValue("987654321"));
 
-        assertEquals(2000l, ConvertToNumberTransformer.transformValue("+ 2 000"));
+        assertEquals(2000L, ConvertToNumberTransformer.transformValue("+ 2 000"));
     }
 
     public void testTransformUntrimmed() throws Exception {

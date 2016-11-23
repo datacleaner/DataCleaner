@@ -93,7 +93,7 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
                         + "AnnotationBasedRendererBeanDescriptor[org.datacleaner.result.renderer.MetricBasedResultTextRenderer], "
                         + "AnnotationBasedRendererBeanDescriptor[org.datacleaner.result.renderer.ToStringFutureTextRenderer], "
                         + "AnnotationBasedRendererBeanDescriptor[org.datacleaner.result.renderer.ToStringTextRenderer]]",
-                new TreeSet<RendererBeanDescriptor<?>>(rendererComponentDescriptors).toString());
+                new TreeSet<>(rendererComponentDescriptors).toString());
     }
 
     public void testScanJarFilesOnClasspath() throws Exception {

@@ -79,7 +79,7 @@ public final class ResourceManager {
             }
         }
 
-        final List<URL> result = new LinkedList<URL>();
+        final List<URL> result = new LinkedList<>();
         final URL url = getClass().getResource(path);
         if (url != null) {
             result.add(url);

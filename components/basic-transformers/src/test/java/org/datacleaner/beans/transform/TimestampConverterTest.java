@@ -45,7 +45,7 @@ public class TimestampConverterTest extends TestCase {
 
     public void testTransform() throws Exception {
         TimestampConverter trans = new TimestampConverter();
-        MockInputColumn<Object> col = new MockInputColumn<Object>(
+        MockInputColumn<Object> col = new MockInputColumn<>(
                 "my timestamps", Object.class);
         trans.timestampColumn = col;
 

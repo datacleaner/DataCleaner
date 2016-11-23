@@ -176,8 +176,8 @@ public class ValueDistributionAnalyzerTest {
 
     @Test
     public void testGroupedRun() {
-        ValueDistributionAnalyzer vd = new ValueDistributionAnalyzer(new MockInputColumn<String>("foo", String.class),
-                new MockInputColumn<String>("bar", String.class), true);
+        ValueDistributionAnalyzer vd = new ValueDistributionAnalyzer(new MockInputColumn<>("foo", String.class),
+                new MockInputColumn<>("bar", String.class), true);
 
         vd.runInternal(new MockInputRow(), "Copenhagen N", "2200", 3);
         vd.runInternal(new MockInputRow(), "Copenhagen E", "2100", 2);

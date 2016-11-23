@@ -47,7 +47,7 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
     private final Class<? extends AnalyzerResult> _resultClass;
     private final String _methodName;
 
-    public MetricDescriptorImpl(final Class<? extends AnalyzerResult> resultClass, final Method method) {
+    MetricDescriptorImpl(final Class<? extends AnalyzerResult> resultClass, final Method method) {
         _resultClass = resultClass;
         _method = method;
         _method.setAccessible(true);
@@ -182,7 +182,7 @@ final class MetricDescriptorImpl extends AbstractMetricDescriptor implements Met
     @Override
     public Set<Annotation> getAnnotations() {
         final Annotation[] annotations = getMethod().getAnnotations();
-        return new HashSet<Annotation>(Arrays.asList(annotations));
+        return new HashSet<>(Arrays.asList(annotations));
     }
 
     @Override

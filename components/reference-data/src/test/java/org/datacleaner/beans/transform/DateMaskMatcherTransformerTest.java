@@ -30,7 +30,7 @@ import org.datacleaner.data.MockInputRow;
 public class DateMaskMatcherTransformerTest extends TestCase {
 
     public void testSimpleScenario() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<String>("foo", String.class);
+        MockInputColumn<String> col = new MockInputColumn<>("foo", String.class);
         DateMaskMatcherTransformer t = new DateMaskMatcherTransformer(col);
 
         t.setDateMasks(new String[] { "yyyy-MM-dd", "yyyy-dd-MM" });

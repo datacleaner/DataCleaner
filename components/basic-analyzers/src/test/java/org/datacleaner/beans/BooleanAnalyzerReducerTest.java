@@ -130,7 +130,7 @@ public class BooleanAnalyzerReducerTest {
 
         }
 
-        final List<BooleanAnalyzerResult> partialResults = new ArrayList<BooleanAnalyzerResult>();
+        final List<BooleanAnalyzerResult> partialResults = new ArrayList<>();
         partialResults.add(partialResult1);
         partialResults.add(partialResult2);
         partialResults.add(partialResult3);

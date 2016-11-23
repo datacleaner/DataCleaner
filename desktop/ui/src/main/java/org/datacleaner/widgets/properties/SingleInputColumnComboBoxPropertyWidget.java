@@ -56,7 +56,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     public SingleInputColumnComboBoxPropertyWidget(
             final ComponentBuilder componentBuilder, final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
-        _comboBox = new DCComboBox<InputColumn<?>>();
+        _comboBox = new DCComboBox<>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
         _comboBox.addListener(new Listener<InputColumn<?>>() {
             @Override
@@ -88,7 +88,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
         }
 
         if (!getPropertyDescriptor().isRequired()) {
-            _inputColumns = new ArrayList<InputColumn<?>>(_inputColumns);
+            _inputColumns = new ArrayList<>(_inputColumns);
             _inputColumns.add(0, null);
         }
 
@@ -103,7 +103,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
             }
         }
 
-        _comboBox.setModel(new DefaultComboBoxModel<InputColumn<?>>(new Vector<InputColumn<?>>(_inputColumns)));
+        _comboBox.setModel(new DefaultComboBoxModel<>(new Vector<>(_inputColumns)));
         _comboBox.setSelectedItem(currentValue);
     }
 

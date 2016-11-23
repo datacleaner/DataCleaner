@@ -66,11 +66,11 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
         //It needs to be modal. Otherwise there will be null for selected Configuration
         setModal(true);
         // It's important to keep the order of the elements.
-        _mappedServers = new LinkedHashMap<String, String>();
+        _mappedServers = new LinkedHashMap<>();
 
         final String[] serverNames = getMappedServers(serverInformationCatalog, _mappedServers);
         _selectedConfiguration = null;
-        _serverList = new JList<String>(serverNames);
+        _serverList = new JList<>(serverNames);
         _serverList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         _serverList.setLayoutOrientation(JList.VERTICAL);
         _serverList.setSelectedIndex(serverNames.length - 1);

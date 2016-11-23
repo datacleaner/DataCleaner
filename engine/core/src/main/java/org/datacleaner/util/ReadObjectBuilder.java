@@ -72,24 +72,28 @@ public final class ReadObjectBuilder<E extends Serializable> {
     public interface Adaptor {
         void deserialize(GetField getField, Serializable serializable) throws Exception;
     }
+
     private static final Logger logger = LoggerFactory.getLogger(ReadObjectBuilder.class);
     private final E _serializable;
     private final Class<? super E> _clazz;
+
     private ReadObjectBuilder(final E serializable, final Class<? super E> clazz) {
         _serializable = serializable;
         _clazz = clazz;
     }
 
-    public static <E extends Serializable> ReadObjectBuilder<E> create(final E serializable, final Class<? super E> clazz) {
+    public static <E extends Serializable> ReadObjectBuilder<E> create(final E serializable,
+            final Class<? super E> clazz) {
         logger.debug("Creating ReadObjectBuilder for new object of {}", clazz);
-        return new ReadObjectBuilder<E>(serializable, clazz);
+        return new ReadObjectBuilder<>(serializable, clazz);
     }
 
     public void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         readObject(stream, null);
     }
 
-    public void readObject(final ObjectInputStream stream, final Adaptor adaptor) throws IOException, ClassNotFoundException {
+    public void readObject(final ObjectInputStream stream, final Adaptor adaptor)
+            throws IOException, ClassNotFoundException {
         try {
             final GetField getField = stream.readFields();
 
@@ -144,7 +148,7 @@ public final class ReadObjectBuilder<E extends Serializable> {
                     final int value = getField.get(fieldName, 0);
                     field.setInt(_serializable, value);
                 } else if (fieldType == long.class) {
-                    final long value = getField.get(fieldName, 0l);
+                    final long value = getField.get(fieldName, 0L);
                     field.setLong(_serializable, value);
                 } else if (fieldType == float.class) {
                     final float value = getField.get(fieldName, 0f);

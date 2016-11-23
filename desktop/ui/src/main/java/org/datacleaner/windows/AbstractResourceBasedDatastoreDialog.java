@@ -209,7 +209,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
 
     protected List<Entry<String, JComponent>> getFormElements() {
         final List<Entry<String, JComponent>> res = super.getFormElements();
-        res.add(new ImmutableEntry<String, JComponent>("Source", _resourceSelector));
+        res.add(new ImmutableEntry<>("Source", _resourceSelector));
         return res;
     }
 
@@ -268,7 +268,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
         _previewTable.setModel(dummyTableModel);
     }
 
-    private final DataSet getPreviewData(final Resource resource) {
+    private DataSet getPreviewData(final Resource resource) {
         if (!isPreviewDataAvailable()) {
             logger.info("Not displaying preview table because isPreviewDataAvailable() returned false");
             return null;

@@ -188,7 +188,7 @@ public class CompletenessAnalyzerTest extends TestCase {
                 .withEnvironment(environment);
 
         final AnalysisJob job;
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore(datastore);
             ajb.addSourceColumns("A");
             ajb.addSourceColumns("B");
@@ -295,7 +295,7 @@ public class CompletenessAnalyzerTest extends TestCase {
                 .withEnvironment(environment);
 
         final AnalysisJob job;
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore(datastore);
             ajb.addSourceColumns("A");
             ajb.addSourceColumns("B");

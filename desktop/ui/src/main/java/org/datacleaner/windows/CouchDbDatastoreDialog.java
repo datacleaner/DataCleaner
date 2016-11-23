@@ -182,7 +182,7 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
     @Override
     public Schema createSchema() {
         final CouchDbDatastore datastore = createDatastore();
-        try (final UpdateableDatastoreConnection con = datastore.openConnection()) {
+        try (UpdateableDatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getDefaultSchema();
             return schema;
         }
@@ -196,12 +196,12 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         final List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Connect via SSL", _sslCheckBox));
-        result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Password", _passwordField));
-        result.add(new ImmutableEntry<String, JComponent>("Schema model", _tableDefinitionWidget));
+        result.add(new ImmutableEntry<>("Hostname", _hostnameTextField));
+        result.add(new ImmutableEntry<>("Port", _portTextField));
+        result.add(new ImmutableEntry<>("Connect via SSL", _sslCheckBox));
+        result.add(new ImmutableEntry<>("Username", _usernameTextField));
+        result.add(new ImmutableEntry<>("Password", _passwordField));
+        result.add(new ImmutableEntry<>("Schema model", _tableDefinitionWidget));
         return result;
     }
 }

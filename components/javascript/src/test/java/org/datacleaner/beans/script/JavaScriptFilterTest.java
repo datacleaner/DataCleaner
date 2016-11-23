@@ -30,7 +30,7 @@ public class JavaScriptFilterTest extends TestCase {
     public void testNotNullFilteringString() throws Exception {
         JavaScriptFilter filter = new JavaScriptFilter();
         filter.setSourceCode("my_col != null;");
-        InputColumn<String> myCol = new MockInputColumn<String>("my_col", String.class);
+        InputColumn<String> myCol = new MockInputColumn<>("my_col", String.class);
         filter.setColumns(new InputColumn[] { myCol });
         filter.init();
 
@@ -43,7 +43,7 @@ public class JavaScriptFilterTest extends TestCase {
     public void testNotNullFilteringNumber() throws Exception {
         JavaScriptFilter filter = new JavaScriptFilter();
         filter.setSourceCode("my_col != null;");
-        InputColumn<Number> myCol = new MockInputColumn<Number>("my_col", Number.class);
+        InputColumn<Number> myCol = new MockInputColumn<>("my_col", Number.class);
         filter.setColumns(new InputColumn[] { myCol });
         filter.init();
 

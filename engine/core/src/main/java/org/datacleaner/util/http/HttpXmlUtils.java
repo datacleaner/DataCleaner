@@ -68,7 +68,8 @@ public final class HttpXmlUtils {
         _httpClient = httpClient;
     }
 
-    public static Element getRootNode(final HttpClient httpClient, final String url) throws InvalidHttpResponseException {
+    public static Element getRootNode(final HttpClient httpClient, final String url)
+            throws InvalidHttpResponseException {
         logger.info("getRootNode({})", url);
         try {
             final HttpGet method = new HttpGet(url);
@@ -90,7 +91,7 @@ public final class HttpXmlUtils {
     }
 
     public static List<Node> getChildNodesByName(final Node parentNode, final String childNodeName) {
-        final List<Node> result = new ArrayList<Node>();
+        final List<Node> result = new ArrayList<>();
         if (childNodeName != null) {
             final NodeList childNodes = parentNode.getChildNodes();
             for (int i = 0; i < childNodes.getLength(); i++) {
@@ -126,7 +127,7 @@ public final class HttpXmlUtils {
         }
         logger.info("getUrlContent({},{})", url, params);
         final HttpPost method = new HttpPost(url);
-        final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        final List<NameValuePair> nameValuePairs = new ArrayList<>();
         for (final Entry<String, String> entry : params.entrySet()) {
             nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }

@@ -30,13 +30,13 @@ public class PatternFinderResultTest extends TestCase {
     public void testGetMatchCountMetric() throws Exception {
         String dimPattern = PatternFinderAnalyzer.DIMENSION_NAME_PATTERN;
         String dimMeasure = PatternFinderAnalyzer.DIMENSION_NAME_MEASURES;
-        Crosstab<Number> crosstab = new Crosstab<Number>(Number.class, dimPattern, dimMeasure);
+        Crosstab<Number> crosstab = new Crosstab<>(Number.class, dimPattern, dimMeasure);
         crosstab.where(dimPattern, "aaaa").where(dimMeasure, PatternFinderAnalyzer.MEASURE_MATCH_COUNT).put(3, true);
         crosstab.where(dimPattern, "Aaaaa").where(dimMeasure, PatternFinderAnalyzer.MEASURE_MATCH_COUNT).put(2, true);
         crosstab.where(dimPattern, "9999").where(dimMeasure, PatternFinderAnalyzer.MEASURE_MATCH_COUNT).put(1, true);
 
         TokenizerConfiguration tokenizerConfiguration = new TokenizerConfiguration();
-        PatternFinderResult patternFinderResult = new PatternFinderResult(new MockInputColumn<String>("foo"), crosstab,
+        PatternFinderResult patternFinderResult = new PatternFinderResult(new MockInputColumn<>("foo"), crosstab,
                 tokenizerConfiguration);
 
         ParameterizableMetric matchCount = patternFinderResult.getMatchCount();

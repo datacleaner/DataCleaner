@@ -43,9 +43,9 @@ public class AnnotatedRowsResultSwingRendererTest extends TestCase {
         RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
         RowAnnotation annotation = annotationFactory.createAnnotation();
 
-        MockInputColumn<String> colFoo = new MockInputColumn<String>("foo", String.class);
-        MockInputColumn<String> colBar = new MockInputColumn<String>("bar", String.class);
-        MockInputColumn<String> colBaz = new MockInputColumn<String>("baz", String.class);
+        MockInputColumn<String> colFoo = new MockInputColumn<>("foo", String.class);
+        MockInputColumn<String> colBar = new MockInputColumn<>("bar", String.class);
+        MockInputColumn<String> colBaz = new MockInputColumn<>("baz", String.class);
 
         MockInputRow row1 = new MockInputRow().put(colFoo, "1").put(colBar, "2").put(colBaz, "3");
         annotationFactory.annotate(row1, 1, annotation);

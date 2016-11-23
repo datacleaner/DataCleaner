@@ -68,7 +68,7 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("sourceColumns", _sourceTable.getColumns());
         map.put("targetColumns", _targetTable.getColumns());
         return map;
@@ -76,7 +76,7 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
 
     @Override
     public WizardPageController nextPageController(final Map<String, List<String>> formParameters) {
-        final List<ColumnMapping> mappings = new ArrayList<ColumnMapping>();
+        final List<ColumnMapping> mappings = new ArrayList<>();
 
         final Column[] sourceColumns = _sourceTable.getColumns();
         for (int i = 0; i < sourceColumns.length; i++) {

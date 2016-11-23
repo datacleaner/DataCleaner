@@ -48,10 +48,10 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
     private static final Logger logger = LoggerFactory.getLogger(DCWindowContext.class);
 
     private static final List<WeakReference<DCWindowContext>> _allWindowContexts =
-            new ArrayList<WeakReference<DCWindowContext>>();
+            new ArrayList<>();
 
-    private final List<ActionListener> _windowListeners = new ArrayList<ActionListener>();
-    private final List<ExitActionListener> _exitActionListeners = new ArrayList<ExitActionListener>();
+    private final List<ActionListener> _windowListeners = new ArrayList<>();
+    private final List<ExitActionListener> _exitActionListeners = new ArrayList<>();
     private final DataCleanerConfiguration _configuration;
     private final UserPreferences _userPreferences;
     private boolean _exiting;
@@ -63,7 +63,7 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
         _configuration = configuration;
         _userPreferences = userPreferences;
         _usageLogger = usageLogger;
-        _allWindowContexts.add(new WeakReference<DCWindowContext>(this));
+        _allWindowContexts.add(new WeakReference<>(this));
         _exiting = false;
     }
 
@@ -158,7 +158,7 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
             actionListener.exit(0);
         }
 
-        final List<DCWindow> windowsCopy = new ArrayList<DCWindow>(getWindows());
+        final List<DCWindow> windowsCopy = new ArrayList<>(getWindows());
         for (final DCWindow window : windowsCopy) {
             window.close();
         }

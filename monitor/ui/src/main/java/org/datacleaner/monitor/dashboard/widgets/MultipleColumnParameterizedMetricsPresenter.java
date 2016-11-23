@@ -41,7 +41,7 @@ public class MultipleColumnParameterizedMetricsPresenter implements MetricPresen
 
     public MultipleColumnParameterizedMetricsPresenter(final MetricGroup metricGroup) {
         _metricGroup = metricGroup;
-        _children = new ArrayList<ColumnParameterizedMetricPresenter>();
+        _children = new ArrayList<>();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class MultipleColumnParameterizedMetricsPresenter implements MetricPresen
 
     @Override
     public List<MetricIdentifier> getSelectedMetrics() {
-        final List<MetricIdentifier> result = new ArrayList<MetricIdentifier>();
+        final List<MetricIdentifier> result = new ArrayList<>();
         for (final ColumnParameterizedMetricPresenter child : _children) {
             result.addAll(child.getSelectedMetrics());
         }

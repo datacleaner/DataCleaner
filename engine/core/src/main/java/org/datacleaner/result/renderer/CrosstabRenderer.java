@@ -54,8 +54,8 @@ public class CrosstabRenderer {
             throw new IllegalArgumentException("Crosstab cannot be null");
         }
         this.crosstab = crosstab;
-        this.horizontalDimensions = new ArrayList<CrosstabDimension>();
-        this.verticalDimensions = new ArrayList<CrosstabDimension>();
+        this.horizontalDimensions = new ArrayList<>();
+        this.verticalDimensions = new ArrayList<>();
     }
 
     public void autoAssignDimensions() {
@@ -63,7 +63,7 @@ public class CrosstabRenderer {
         // out horizontally
 
         final List<CrosstabDimension> dimensions = crosstab.getDimensions();
-        final List<CrosstabDimension> autoAssignDimensions = new LinkedList<CrosstabDimension>();
+        final List<CrosstabDimension> autoAssignDimensions = new LinkedList<>();
 
         for (final CrosstabDimension dimension : dimensions) {
             // boolean hasCategories = dimension.getCategoryCount() > 0;
@@ -203,7 +203,8 @@ public class CrosstabRenderer {
         return callback.getResult();
     }
 
-    private void navigateOnAxis(final List<CrosstabDimension> dimensionsOnAxis, final int cellIndex, final int cellCount,
+    private void navigateOnAxis(final List<CrosstabDimension> dimensionsOnAxis, final int cellIndex,
+            final int cellCount,
             final CrosstabNavigator<?> navigator) {
         int colspan = cellCount;
         int category = 0;

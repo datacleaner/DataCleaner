@@ -57,7 +57,7 @@ public class ValueMatchAnalyzerResult extends AbstractValueCountingAnalyzerResul
             final Map<String, RowAnnotation> valueAnnotations, final RowAnnotation nullAnnotation,
             final RowAnnotation nonMatchingValuesAnnotation, final int totalCount) {
         _column = column;
-        _rowAnnotationFactoryRef = new SerializableRef<RowAnnotationFactory>(rowAnnotationFactory);
+        _rowAnnotationFactoryRef = new SerializableRef<>(rowAnnotationFactory);
         _valueAnnotations = valueAnnotations;
         _nullAnnotation = nullAnnotation;
         _nonMatchingValuesAnnotation = nonMatchingValuesAnnotation;
@@ -130,7 +130,7 @@ public class ValueMatchAnalyzerResult extends AbstractValueCountingAnalyzerResul
 
     @Override
     public Collection<ValueFrequency> getValueCounts() {
-        final Set<ValueFrequency> result = new TreeSet<ValueFrequency>();
+        final Set<ValueFrequency> result = new TreeSet<>();
         for (final Entry<String, RowAnnotation> entry : _valueAnnotations.entrySet()) {
             result.add(new SingleValueFrequency(entry.getKey(), entry.getValue().getRowCount()));
         }

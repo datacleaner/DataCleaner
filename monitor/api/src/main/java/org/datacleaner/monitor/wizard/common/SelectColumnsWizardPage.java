@@ -46,7 +46,7 @@ public abstract class SelectColumnsWizardPage extends
 
     public SelectColumnsWizardPage(final Integer pageIndex, final Column[] availableColumns) {
         _pageIndex = pageIndex;
-        _availableColumns = new LinkedHashMap<String, Column>();
+        _availableColumns = new LinkedHashMap<>();
         for (final Column column : availableColumns) {
             _availableColumns.put(column.getName(), column);
         }
@@ -90,7 +90,7 @@ public abstract class SelectColumnsWizardPage extends
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("headerHtml", getHeaderHtml());
         map.put("columns", _availableColumns.values());
         map.put("footerHtml", getFooterHtml());

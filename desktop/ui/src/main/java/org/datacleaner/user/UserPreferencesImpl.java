@@ -277,7 +277,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public List<Datastore> getUserDatastores() {
         if (userDatastores == null) {
-            userDatastores = new ArrayList<Datastore>();
+            userDatastores = new ArrayList<>();
         }
         return userDatastores;
     }
@@ -290,7 +290,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public List<SynonymCatalog> getUserSynonymCatalogs() {
         if (userSynonymCatalogs == null) {
-            userSynonymCatalogs = new ArrayList<SynonymCatalog>();
+            userSynonymCatalogs = new ArrayList<>();
         }
         return userSynonymCatalogs;
     }
@@ -298,7 +298,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public List<UserDatabaseDriver> getDatabaseDrivers() {
         if (databaseDrivers == null) {
-            databaseDrivers = new ArrayList<UserDatabaseDriver>();
+            databaseDrivers = new ArrayList<>();
         }
         return databaseDrivers;
     }
@@ -428,7 +428,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public List<ExtensionPackage> getExtensionPackages() {
         if (extensionPackages == null) {
-            extensionPackages = new ArrayList<ExtensionPackage>();
+            extensionPackages = new ArrayList<>();
         }
         return extensionPackages;
     }
@@ -441,7 +441,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public void removeExtensionPackage(final ExtensionPackage extensionPackage) {
         if (extensionPackages == null) {
-            extensionPackages = new ArrayList<ExtensionPackage>();
+            extensionPackages = new ArrayList<>();
         }
         extensionPackages.remove(extensionPackage);
     }
@@ -449,7 +449,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public void addExtensionPackage(final ExtensionPackage extensionPackage) {
         if (extensionPackages == null) {
-            extensionPackages = new ArrayList<ExtensionPackage>();
+            extensionPackages = new ArrayList<>();
         }
         extensionPackages.add(extensionPackage);
     }
@@ -457,7 +457,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public Map<String, String> getAdditionalProperties() {
         if (additionalProperties == null) {
-            additionalProperties = new HashMap<String, String>();
+            additionalProperties = new HashMap<>();
         }
         return additionalProperties;
     }

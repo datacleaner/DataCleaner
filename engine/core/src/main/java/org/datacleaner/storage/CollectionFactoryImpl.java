@@ -34,7 +34,7 @@ import java.util.Set;
 public final class CollectionFactoryImpl implements CollectionFactory {
 
     private final StorageProvider _storageProvider;
-    private final List<Object> _collections = new ArrayList<Object>();
+    private final List<Object> _collections = new ArrayList<>();
 
     public CollectionFactoryImpl(final StorageProvider storageProvider) {
         super();

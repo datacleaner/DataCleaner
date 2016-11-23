@@ -36,11 +36,13 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
     private final String _securityToken;
     private final String _endpointUrl;
 
-    public SalesforceDatastore(final String name, final String username, final String password, final String securityToken) {
+    public SalesforceDatastore(final String name, final String username, final String password,
+            final String securityToken) {
         this(name, username, password, securityToken, null);
     }
 
-    public SalesforceDatastore(final String name, final String username, final String password, final String securityToken,
+    public SalesforceDatastore(final String name, final String username, final String password,
+            final String securityToken,
             final String endpointUrl) {
         super(name);
         _username = username;
@@ -106,7 +108,7 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
         } else {
             dataContext = new SalesforceDataContext(_endpointUrl, _username, _password, _securityToken);
         }
-        return new UpdateableDatastoreConnectionImpl<SalesforceDataContext>(dataContext, this);
+        return new UpdateableDatastoreConnectionImpl<>(dataContext, this);
     }
 
     @Override

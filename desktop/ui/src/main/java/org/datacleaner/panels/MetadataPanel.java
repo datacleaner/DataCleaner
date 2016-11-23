@@ -121,7 +121,7 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
             _authorTextField.setText(Strings.nullToEmpty(metadata.getAuthor()));
         }
 
-        final SortedSet<InputColumn<?>> sourceColumns = new TreeSet<InputColumn<?>>(
+        final SortedSet<InputColumn<?>> sourceColumns = new TreeSet<>(
                 _analysisJobBuilder.getSourceColumns());
 
         final Icon validIcon = ImageManager.get().getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);

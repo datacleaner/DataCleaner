@@ -52,6 +52,7 @@ import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.JaxbPojoDatastoreAdaptor;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
 import org.datacleaner.configuration.jaxb.ClasspathScannerType;
+import org.datacleaner.configuration.jaxb.ClasspathScannerType.Package;
 import org.datacleaner.configuration.jaxb.Configuration;
 import org.datacleaner.configuration.jaxb.ConfigurationMetadataType;
 import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
@@ -195,7 +196,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
         // Create a map of all used datastores and the columns which are
         // being accessed within them.
-        final Map<String, MutableSchema> datastoreUsage = new LinkedHashMap<String, MutableSchema>();
+        final Map<String, MutableSchema> datastoreUsage = new LinkedHashMap<>();
 
         if (job != null && StringUtils.isNullOrEmpty(datastoreName)) {
             datastoreName = job.getSourceDatastoreName();
@@ -214,7 +215,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
             if (datastore == null) {
                 throw new IllegalArgumentException("Datastore '" + datastoreName + "' does not exist");
             }
-            try (final DatastoreConnection con = datastore.openConnection()) {
+            try (DatastoreConnection con = datastore.openConnection()) {
                 final MutableSchema usageSchema = new MutableSchema();
                 final Schema schema;
                 if (job == null) {
@@ -290,10 +291,10 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                     }
                 };
 
-                try (final DatastoreConnection connection = datastore.openConnection()) {
+                try (DatastoreConnection connection = datastore.openConnection()) {
                     final DataContext dataContext = connection.getDataContext();
                     final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor(configuration);
-                    final Collection<PojoTableType> pojoTables = new ArrayList<PojoTableType>();
+                    final Collection<PojoTableType> pojoTables = new ArrayList<>();
 
                     Table[] usageTables = schema.getTables();
                     if (usageTables == null || usageTables.length == 0) {

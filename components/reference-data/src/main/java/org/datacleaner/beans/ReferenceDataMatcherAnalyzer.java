@@ -100,7 +100,7 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
         _dictionaryMatchers = new DictionaryMatcherTransformer[columns.length];
         _stringPatternMatchers = new StringPatternMatcherTransformer[columns.length];
 
-        _matchColumns = new ArrayList<InputColumn<Boolean>>();
+        _matchColumns = new ArrayList<>();
 
         OutputColumns outputColumns;
         for (int i = 0; i < columns.length; i++) {
@@ -180,7 +180,7 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
         final int count = outputColumns.getColumnCount();
         for (int i = 0; i < count; i++) {
             final String columnName = outputColumns.getColumnName(i);
-            final InputColumn<Boolean> col = new MockInputColumn<Boolean>(columnName, Boolean.class);
+            final InputColumn<Boolean> col = new MockInputColumn<>(columnName, Boolean.class);
             _matchColumns.add(col);
         }
     }

@@ -88,6 +88,7 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
             return type.isAssignableFrom(EnumerationValue.class) && isEnum();
         }
     }
+
     private static final long serialVersionUID = 1L;
     private final JsonSchema schema;
     private final boolean isInputColumn;
@@ -95,7 +96,8 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
     private Class<?> baseType;
     private EnumerationValue[] enumValues;
 
-    public JsonSchemaConfiguredPropertyDescriptorImpl(final String name, final JsonSchema schema, final boolean isInputColumn,
+    public JsonSchemaConfiguredPropertyDescriptorImpl(final String name, final JsonSchema schema,
+            final boolean isInputColumn,
             final String description, final boolean required, final ComponentDescriptor<?> component,
             final Map<Class<? extends Annotation>, Annotation> annotations, final JsonNode defaultValue) {
         super(name, description, required, component, annotations, defaultValue);

@@ -38,15 +38,16 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
     private final Collection<StringPattern> _stringPatterns;
 
     public ReferenceDataCatalogImpl() {
-        this(new ArrayList<Dictionary>(), new ArrayList<SynonymCatalog>(), new ArrayList<StringPattern>());
+        this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
-    public ReferenceDataCatalogImpl(final Collection<Dictionary> dictionaries, final Collection<SynonymCatalog> synonymCatalogs,
+    public ReferenceDataCatalogImpl(final Collection<Dictionary> dictionaries,
+            final Collection<SynonymCatalog> synonymCatalogs,
             final Collection<StringPattern> stringPatterns) {
         if (dictionaries == null) {
             throw new IllegalArgumentException("dictionaries cannot be null");
         }
-        final Set<String> uniqueNames = new HashSet<String>();
+        final Set<String> uniqueNames = new HashSet<>();
         for (final Dictionary dictionary : dictionaries) {
             final String name = dictionary.getName();
             if (uniqueNames.contains(name)) {

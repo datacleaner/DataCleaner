@@ -84,13 +84,13 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
         _filesPanel = new DCPanel();
         _filesPanel.setLayout(new VerticalLayout(4));
 
-        final Set<String> classNames = new TreeSet<String>();
+        final Set<String> classNames = new TreeSet<>();
         classNames.add("");
         final List<DatabaseDriverDescriptor> drivers = _databaseDriverCatalog.getDatabaseDrivers();
         for (final DatabaseDriverDescriptor dd : drivers) {
             classNames.add(dd.getDriverClassName());
         }
-        _driverClassNameComboBox = new DCComboBox<String>(classNames);
+        _driverClassNameComboBox = new DCComboBox<>(classNames);
         _driverClassNameComboBox.setEditable(true);
         _driverClassNameComboBox.addListener(new Listener<String>() {
             @Override
@@ -122,7 +122,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
     }
 
     private File[] getDriverFiles() {
-        final List<File> files = new ArrayList<File>();
+        final List<File> files = new ArrayList<>();
         for (final AbstractResourceTextField<?> filenameTextField : _filenameTextFields) {
             final String filename = filenameTextField.getFilename();
             if (!StringUtils.isNullOrEmpty(filename)) {

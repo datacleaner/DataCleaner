@@ -59,13 +59,13 @@ public class MonthDistributionAnalyzer implements Analyzer<CrosstabResult> {
     InputColumn<Date>[] dateColumns;
 
     public MonthDistributionAnalyzer() {
-        distributionMap = new HashMap<InputColumn<Date>, ConcurrentMap<Integer, AtomicInteger>>();
+        distributionMap = new HashMap<>();
     }
 
     @Initialize
     public void init() {
         for (final InputColumn<Date> col : dateColumns) {
-            final ConcurrentMap<Integer, AtomicInteger> countMap = new ConcurrentHashMap<Integer, AtomicInteger>();
+            final ConcurrentMap<Integer, AtomicInteger> countMap = new ConcurrentHashMap<>();
             distributionMap.put(col, countMap);
         }
     }
@@ -98,7 +98,7 @@ public class MonthDistributionAnalyzer implements Analyzer<CrosstabResult> {
             monthDimension.addCategory(monthName);
         }
 
-        final Crosstab<Integer> crosstab = new Crosstab<Integer>(Integer.class, columnDimension, monthDimension);
+        final Crosstab<Integer> crosstab = new Crosstab<>(Integer.class, columnDimension, monthDimension);
         for (final InputColumn<Date> col : dateColumns) {
             columnDimension.addCategory(col.getName());
             final CrosstabNavigator<Integer> nav = crosstab.where(columnDimension, col.getName());

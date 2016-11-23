@@ -53,7 +53,8 @@ public class CloseTaskListener implements TaskListener {
 
     public CloseTaskListener(final LifeCycleHelper lifeCycleHelper, final RowProcessingPublisher publisher,
             final RowProcessingConsumer consumer, final AtomicBoolean success,
-            final TaskListener nextTaskListener, final AnalysisListener analysisListener, final AnalysisJob analysisJob) {
+            final TaskListener nextTaskListener, final AnalysisListener analysisListener,
+            final AnalysisJob analysisJob) {
         _lifeCycleHelper = lifeCycleHelper;
         _publisher = publisher;
         _consumer = consumer;

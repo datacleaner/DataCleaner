@@ -110,7 +110,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
      */
     public void executeUpdate(final UpdateData updateData) {
         if (_pendingUpdates == null) {
-            _pendingUpdates = new ArrayList<UpdateData>();
+            _pendingUpdates = new ArrayList<>();
         }
         _pendingUpdates.add(updateData);
 
@@ -129,7 +129,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
      */
     public void executeDeleteGoldenRecord(final String grId) {
         if (_pendingGoldenRecordDeletes == null) {
-            _pendingGoldenRecordDeletes = new ArrayList<String>();
+            _pendingGoldenRecordDeletes = new ArrayList<>();
         }
         _pendingGoldenRecordDeletes.add(grId);
 
@@ -151,7 +151,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
      */
     public void executeDeleteSourceRecord(final String source, final String id, final String recordType) {
         if (_pendingSourceDeletes == null) {
-            _pendingSourceDeletes = new ArrayList<SourceRecordIdentifier>();
+            _pendingSourceDeletes = new ArrayList<>();
         }
         _pendingSourceDeletes.add(new SourceRecordIdentifier(source, id, null, recordType));
 

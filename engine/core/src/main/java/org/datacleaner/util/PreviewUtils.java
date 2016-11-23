@@ -93,7 +93,8 @@ public class PreviewUtils {
         return new AnalysisJobBuilder(original.getConfiguration(), analysisJob);
     }
 
-    public static void sanitizeIrrelevantComponents(final AnalysisJobBuilder ajb, final TransformerComponentBuilder<?> tjb) {
+    public static void sanitizeIrrelevantComponents(final AnalysisJobBuilder ajb,
+            final TransformerComponentBuilder<?> tjb) {
         final List<AnalysisJobBuilder> relevantAnalysisJobBuilders = createRelevantAnalysisJobBuildersList(ajb);
 
         for (final AnalysisJobBuilder relevantAnalysisJobBuilder : relevantAnalysisJobBuilders) {

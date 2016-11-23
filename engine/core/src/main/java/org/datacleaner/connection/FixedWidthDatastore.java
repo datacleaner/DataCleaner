@@ -57,15 +57,18 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     private final List<String> _customColumnNames;
     private final SerializableRef<Resource> _resourceRef;
 
-    public FixedWidthDatastore(final String name, final String filename, final String encoding, final int fixedValueWidth) {
+    public FixedWidthDatastore(final String name, final String filename, final String encoding,
+            final int fixedValueWidth) {
         this(name, filename, encoding, fixedValueWidth, true, false, true);
     }
 
-    public FixedWidthDatastore(final String name, final String filename, final String encoding, final int[] valueWidths) {
+    public FixedWidthDatastore(final String name, final String filename, final String encoding,
+            final int[] valueWidths) {
         this(name, filename, encoding, valueWidths, true, false, true);
     }
 
-    public FixedWidthDatastore(final String name, final String filename, final String encoding, final int fixedValueWidth,
+    public FixedWidthDatastore(final String name, final String filename, final String encoding,
+            final int fixedValueWidth,
             final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent) {
         this(name, filename, encoding, fixedValueWidth, failOnInconsistencies, skipEbcdicHeader, eolPresent,
                 FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE);
@@ -77,20 +80,24 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
                 FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE);
     }
 
-    public FixedWidthDatastore(final String name, final String filename, final String encoding, final int fixedValueWidth,
-            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent, final int headerLineNumber) {
+    public FixedWidthDatastore(final String name, final String filename, final String encoding,
+            final int fixedValueWidth,
+            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent,
+            final int headerLineNumber) {
         this(name, null, filename, encoding, fixedValueWidth, failOnInconsistencies, skipEbcdicHeader, eolPresent,
                 headerLineNumber);
     }
 
-    public FixedWidthDatastore(final String name, Resource resource, final String filename, final String encoding, final int fixedValueWidth,
-            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent, final int headerLineNumber) {
+    public FixedWidthDatastore(final String name, Resource resource, final String filename, final String encoding,
+            final int fixedValueWidth,
+            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent,
+            final int headerLineNumber) {
         super(name);
         _filename = filename;
         if (resource == null) {
             resource = new FileResource(filename);
         }
-        _resourceRef = new SerializableRef<Resource>(resource);
+        _resourceRef = new SerializableRef<>(resource);
         _encoding = encoding;
         _fixedValueWidth = fixedValueWidth;
         _valueWidths = new int[0];
@@ -102,27 +109,31 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     }
 
     public FixedWidthDatastore(final String name, final String filename, final String encoding, final int[] valueWidths,
-            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent, final int headerLineNumber) {
+            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent,
+            final int headerLineNumber) {
         this(name, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
                 headerLineNumber, null);
     }
 
     public FixedWidthDatastore(final String name, final String filename, final String encoding, final int[] valueWidths,
-            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent, final int headerLineNumber,
+            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent,
+            final int headerLineNumber,
             final List<String> customColumnNames) {
         this(name, null, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
                 headerLineNumber, null);
     }
 
-    public FixedWidthDatastore(final String name, Resource resource, final String filename, final String encoding, final int[] valueWidths,
-            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent, final int headerLineNumber,
+    public FixedWidthDatastore(final String name, Resource resource, final String filename, final String encoding,
+            final int[] valueWidths,
+            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent,
+            final int headerLineNumber,
             final List<String> customColumnNames) {
         super(name);
         _filename = filename;
         if (resource == null) {
             resource = new FileResource(filename);
         }
-        _resourceRef = new SerializableRef<Resource>(resource);
+        _resourceRef = new SerializableRef<>(resource);
         _encoding = encoding;
         _fixedValueWidth = -1;
         _valueWidths = valueWidths;
@@ -136,12 +147,13 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         final ReadObjectBuilder.Adaptor adaptor = new ReadObjectBuilder.Adaptor() {
             @Override
-            public void deserialize(final ObjectInputStream.GetField getField, final Serializable serializable) throws Exception {
+            public void deserialize(final ObjectInputStream.GetField getField, final Serializable serializable)
+                    throws Exception {
                 final String filename = (String) getField.get("_filename", "");
                 final Field field = FixedWidthDatastore.class.getDeclaredField("_resourceRef");
                 field.setAccessible(true);
                 final FileResource fileResource = new FileResource(filename);
-                final SerializableRef<Resource> resourceRef = new SerializableRef<Resource>(fileResource);
+                final SerializableRef<Resource> resourceRef = new SerializableRef<>(fileResource);
                 field.set(serializable, resourceRef);
             }
         };

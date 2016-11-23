@@ -89,7 +89,7 @@ public class AboutDialog extends AbstractDialog {
     }
 
     public static List<LicensedProject> getLicensedProjects() {
-        final List<LicensedProject> result = new ArrayList<AboutDialog.LicensedProject>();
+        final List<LicensedProject> result = new ArrayList<>();
         final URL url = resourceManager.getUrl("licenses/dependency-licenses.csv");
         if (url == null) {
             throw new IllegalStateException("Could not find dependencies file");
@@ -211,7 +211,7 @@ public class AboutDialog extends AbstractDialog {
             }
         });
 
-        final JComboBox<Object> librariesComboBox = new JComboBox<Object>();
+        final JComboBox<Object> librariesComboBox = new JComboBox<>();
         final JButton visitProjectButton = WidgetFactory.createSmallButton(IconUtils.WEBSITE);
 
         librariesComboBox.setRenderer(new DCListCellRenderer() {

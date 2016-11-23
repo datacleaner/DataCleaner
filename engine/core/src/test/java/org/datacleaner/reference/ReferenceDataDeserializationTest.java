@@ -39,7 +39,7 @@ public class ReferenceDataDeserializationTest extends TestCase {
     public void testDeserializeSimpleDictionary() throws Exception {
         SimpleDictionary obj = deserialize("src/test/resources/serialized_ref_data/dc_4_dictionary_simple.dat");
         assertEquals("simple dictionary", obj.getName());
-        assertEquals("[bar, baz, foo]", new TreeSet<String>(obj.getValueSet()).toString());
+        assertEquals("[bar, baz, foo]", new TreeSet<>(obj.getValueSet()).toString());
         assertTrue(obj.isCaseSensitive());
     }
 
@@ -63,7 +63,7 @@ public class ReferenceDataDeserializationTest extends TestCase {
                 deserialize("src/test/resources/serialized_ref_data/dc_4_synonym_catalog_simple.dat");
         assertEquals("simple synonym catalog", obj.getName());
         assertEquals("{DK=DK, DNK=DK, Danmark=DK, Denmark=DK}",
-                new TreeMap<String, String>(obj.getSynonymMap()).toString());
+                new TreeMap<>(obj.getSynonymMap()).toString());
         assertTrue(obj.isCaseSensitive());
     }
 
@@ -88,7 +88,7 @@ public class ReferenceDataDeserializationTest extends TestCase {
     @SuppressWarnings("unchecked")
     private <T> T deserialize(String path) throws Exception {
         try (FileInputStream in = new FileInputStream(new File(path))) {
-            try (final ChangeAwareObjectInputStream objectInputStream = new ChangeAwareObjectInputStream(in)) {
+            try (ChangeAwareObjectInputStream objectInputStream = new ChangeAwareObjectInputStream(in)) {
                 return (T) objectInputStream.readObject();
             }
         }

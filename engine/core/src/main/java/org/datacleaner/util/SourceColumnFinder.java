@@ -61,10 +61,10 @@ public class SourceColumnFinder {
     private static final Logger logger = LoggerFactory.getLogger(SourceColumnFinder.class);
     private final Map<InputColumn<?>, Set<Column>> originatingColumnsOfInputColumnCache = new HashMap<>();
     private final Map<Object, Set<Column>> originatingColumnsOfSourceCache = new HashMap<>();
-    private Set<InputColumnSinkJob> _inputColumnSinks = new HashSet<InputColumnSinkJob>();
-    private Set<InputColumnSourceJob> _inputColumnSources = new LinkedHashSet<InputColumnSourceJob>();
-    private Set<HasFilterOutcomes> _outcomeSources = new HashSet<HasFilterOutcomes>();
-    private Set<HasComponentRequirement> _outcomeSinks = new HashSet<HasComponentRequirement>();
+    private Set<InputColumnSinkJob> _inputColumnSinks = new HashSet<>();
+    private Set<InputColumnSourceJob> _inputColumnSources = new LinkedHashSet<>();
+    private Set<HasFilterOutcomes> _outcomeSources = new HashSet<>();
+    private Set<HasComponentRequirement> _outcomeSinks = new HashSet<>();
 
     private void addSources(final Object... sources) {
         for (final Object source : sources) {
@@ -102,7 +102,7 @@ public class SourceColumnFinder {
     }
 
     public List<InputColumn<?>> findInputColumns(final Class<?> dataType) {
-        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> result = new ArrayList<>();
         for (final InputColumnSourceJob source : _inputColumnSources) {
             final InputColumn<?>[] outputColumns = source.getOutput();
             for (final InputColumn<?> col : outputColumns) {
@@ -132,7 +132,7 @@ public class SourceColumnFinder {
      * @return a list of jobs/components that are a source of this job.
      */
     public Set<Object> findAllSourceJobs(final Object job) {
-        final Set<Object> result = new HashSet<Object>();
+        final Set<Object> result = new HashSet<>();
         findAllSourceJobs(job, result);
         return result;
     }
@@ -209,7 +209,7 @@ public class SourceColumnFinder {
     }
 
     public Table findOriginatingTable(final FilterOutcome requirement) {
-        return findOriginatingTable(requirement, new HashSet<Object>());
+        return findOriginatingTable(requirement, new HashSet<>());
     }
 
     private Table findOriginatingTable(final FilterOutcome requirement, final Set<Object> resolvedSet) {
@@ -222,7 +222,7 @@ public class SourceColumnFinder {
     }
 
     public Table findOriginatingTable(final InputColumn<?> inputColumn) {
-        return findOriginatingTable(inputColumn, new HashSet<Object>());
+        return findOriginatingTable(inputColumn, new HashSet<>());
     }
 
     private Table findOriginatingTable(final InputColumn<?> inputColumn, final Set<Object> resolvedSet) {
@@ -249,7 +249,7 @@ public class SourceColumnFinder {
     }
 
     private Table findOriginatingTableOfSource(final Object source, final Set<Object> resolvedSet) {
-        final Set<Table> result = new TreeSet<Table>();
+        final Set<Table> result = new TreeSet<>();
         if (source instanceof InputColumnSinkJob) {
             final InputColumn<?>[] input = ((InputColumnSinkJob) source).getInput();
             if (input != null) {

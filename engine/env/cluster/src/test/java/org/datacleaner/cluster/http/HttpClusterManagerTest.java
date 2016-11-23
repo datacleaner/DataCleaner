@@ -45,7 +45,7 @@ public class HttpClusterManagerTest extends TestCase {
         server2 = createServer(8883, false);
         server3 = createServer(8884, true);
 
-        final List<String> slaveEndpoints = new ArrayList<String>();
+        final List<String> slaveEndpoints = new ArrayList<>();
         slaveEndpoints.add("http://localhost:8882/slave_endpoint");
         slaveEndpoints.add("http://localhost:8883/slave_endpoint");
         slaveEndpoints.add("http://localhost:8884/slave_endpoint");

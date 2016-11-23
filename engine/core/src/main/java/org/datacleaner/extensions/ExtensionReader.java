@@ -56,7 +56,7 @@ public class ExtensionReader {
 
     public List<ExtensionPackage> getInternalExtensions() {
         final List<URL> extensionDescriptorUrls = resourceManager.getUrls("datacleaner-extension.xml");
-        final List<ExtensionPackage> result = new ArrayList<ExtensionPackage>();
+        final List<ExtensionPackage> result = new ArrayList<>();
         for (final URL url : extensionDescriptorUrls) {
             final ExtensionPackage extension = getInternalExtension(url);
             if (extension != null) {
@@ -160,7 +160,8 @@ public class ExtensionReader {
         return readExtension(null, inputStream, files);
     }
 
-    private ExtensionPackage readExtension(String name, final InputStream inputStream, final File[] files) throws Exception {
+    private ExtensionPackage readExtension(String name, final InputStream inputStream, final File[] files)
+            throws Exception {
         final DocumentBuilder documentBuilder = XmlUtils.createDocumentBuilder();
         final Document document = documentBuilder.parse(inputStream);
         final Element documentElement = document.getDocumentElement();
@@ -208,7 +209,7 @@ public class ExtensionReader {
      */
     public String autoDetectPackageName(final File file) {
         try {
-            final Set<String> packageNames = new HashSet<String>();
+            final Set<String> packageNames = new HashSet<>();
             try (JarFile jarFile = new JarFile(file)) {
                 final Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {

@@ -35,6 +35,6 @@ public class MonthDistributionResultReducer extends DatePartDistributionResultRe
     @Override
     protected Set<String> createMeasureDimensionCategorySet() {
         // months are already sorted in the existing results
-        return new LinkedHashSet<String>();
+        return new LinkedHashSet<>();
     }
 }

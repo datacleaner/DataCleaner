@@ -100,7 +100,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
             final DatabaseDriverCatalog databaseDriverCatalog, final UserPreferences userPreferences) {
         super(analysisJobBuilderWindow);
 
-        _datastorePanels = new ArrayList<DatastorePanel>();
+        _datastorePanels = new ArrayList<>();
         _datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
         _glassPane = glassPane;
         _optionsDialogProvider = optionsDialogProvider;
@@ -262,7 +262,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         panel1.setLayout(new FlowLayout(alignment, 10, 10));
 
         // set of databases that are displayed directly on panel
-        final Set<String> promotedDatabaseNames = new HashSet<String>();
+        final Set<String> promotedDatabaseNames = new HashSet<>();
 
         final int panel1ItemsCount = 11;
 

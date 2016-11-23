@@ -84,7 +84,7 @@ public class ValueMatchAnalyzer implements Analyzer<ValueMatchAnalyzerResult>, H
     @Initialize
     public void init() {
         _totalCount = new AtomicInteger();
-        _valueAnnotations = new ConcurrentHashMap<String, RowAnnotation>();
+        _valueAnnotations = new ConcurrentHashMap<>();
         for (final String value : expectedValues) {
             final RowAnnotation annotation = _rowAnnotationFactory.createAnnotation();
             final String lookupValue = getLookupValue(value);
@@ -124,7 +124,7 @@ public class ValueMatchAnalyzer implements Analyzer<ValueMatchAnalyzerResult>, H
     public ValueMatchAnalyzerResult getResult() {
         // build a map which doesn't contain "lookup values" but the real
         // values, linked/sorted in the original order.
-        final Map<String, RowAnnotation> valueAnnotations = new LinkedHashMap<String, RowAnnotation>();
+        final Map<String, RowAnnotation> valueAnnotations = new LinkedHashMap<>();
         for (final String value : expectedValues) {
             final String lookupValue = getLookupValue(value);
             final RowAnnotation annotation = _valueAnnotations.get(lookupValue);

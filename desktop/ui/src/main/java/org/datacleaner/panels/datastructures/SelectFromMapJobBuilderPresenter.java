@@ -49,7 +49,7 @@ final class SelectFromMapJobBuilderPresenter extends TransformerComponentBuilder
             final DataCleanerConfiguration configuration) {
         super(tjb, windowContext, propertyWidgetFactory, configuration);
 
-        _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
+        _overriddenPropertyWidgets = new HashMap<>();
 
         final TransformerDescriptor<SelectFromMapTransformer> descriptor = tjb.getDescriptor();
         final ConfiguredPropertyDescriptor keysProperty = descriptor.getConfiguredProperty("Keys");

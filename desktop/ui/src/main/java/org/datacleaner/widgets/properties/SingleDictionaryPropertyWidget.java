@@ -56,7 +56,7 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
         _referenceDataCatalog = referenceDataCatalog;
         _referenceDataDialogProvider = referenceDataDialogProvider;
 
-        _comboBox = new DCComboBox<Dictionary>();
+        _comboBox = new DCComboBox<>();
         _comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
         _comboBox.setEditable(false);
 

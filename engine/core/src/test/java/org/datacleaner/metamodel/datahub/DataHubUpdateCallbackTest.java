@@ -45,7 +45,7 @@ public class DataHubUpdateCallbackTest {
 
     @Before
     public void init() {
-        Map<String, Object> fields = new HashMap<String, Object>();
+        Map<String, Object> fields = new HashMap<>();
         fields.put("field1", "value1");
         fields.put("field2", "value2");
         updateData = new UpdateData("20", fields);

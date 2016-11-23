@@ -46,7 +46,7 @@ public class NamedPatternTest extends TestCase {
     }
 
     public void testToString() throws Exception {
-        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<ExamplePatternGroup>("FOO-(W00P)",
+        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<>("FOO-(W00P)",
                 ExamplePatternGroup.class);
         assertEquals("FOO-(W00P)", namedPattern.toString());
     }
@@ -61,7 +61,7 @@ public class NamedPatternTest extends TestCase {
     }
 
     public void testSimpleMatching() throws Exception {
-        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<ExamplePatternGroup>("FOO-BARRR",
+        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<>("FOO-BARRR",
                 ExamplePatternGroup.class);
 
         NamedPatternMatch<ExamplePatternGroup> match = namedPattern.match("hello-world");
@@ -71,7 +71,7 @@ public class NamedPatternTest extends TestCase {
     }
 
     public void testFillWords() throws Exception {
-        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<ExamplePatternGroup>("FOO there BARRR",
+        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<>("FOO there BARRR",
                 ExamplePatternGroup.class);
 
         NamedPatternMatch<ExamplePatternGroup> match = namedPattern.match("hello there world");
@@ -81,7 +81,7 @@ public class NamedPatternTest extends TestCase {
     }
 
     public void testOnlyMatchFully() throws Exception {
-        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<ExamplePatternGroup>("FOO BARRR",
+        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<>("FOO BARRR",
                 ExamplePatternGroup.class);
         assertNotNull(namedPattern.match("hello there"));
         assertNull(namedPattern.match("hello there world"));
@@ -89,13 +89,13 @@ public class NamedPatternTest extends TestCase {
     }
 
     public void testDelims() throws Exception {
-        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<ExamplePatternGroup>("FOO BARRR",
+        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<>("FOO BARRR",
                 ExamplePatternGroup.class);
         assertNull(namedPattern.match("Sørensen, Kasper"));
     }
 
     public void testGetUsedGroups() throws Exception {
-        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<ExamplePatternGroup>("FOO BARRR",
+        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<>("FOO BARRR",
                 ExamplePatternGroup.class);
         Set<ExamplePatternGroup> usedGroups = namedPattern.getUsedGroups();
         assertEquals(2, usedGroups.size());
@@ -105,7 +105,7 @@ public class NamedPatternTest extends TestCase {
     }
 
     public void testScandnavianChars() throws Exception {
-        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<ExamplePatternGroup>("FOO BARRR",
+        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<>("FOO BARRR",
                 ExamplePatternGroup.class);
         NamedPatternMatch<ExamplePatternGroup> match = namedPattern.match("Sørensen Kasper");
         assertNotNull(match);
@@ -118,7 +118,7 @@ public class NamedPatternTest extends TestCase {
     }
 
     public void testDiacritics() throws Exception {
-        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<ExamplePatternGroup>("FOO BARRR",
+        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<>("FOO BARRR",
                 ExamplePatternGroup.class);
         assertNotNull(namedPattern.match("ö ä"));
         assertNotNull(namedPattern.match("â á"));
@@ -126,7 +126,7 @@ public class NamedPatternTest extends TestCase {
     }
 
     public void testParanthesis() throws Exception {
-        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<ExamplePatternGroup>("FOO-(W00P)",
+        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<>("FOO-(W00P)",
                 ExamplePatternGroup.class);
 
         NamedPatternMatch<ExamplePatternGroup> match = namedPattern.match("hello-world");

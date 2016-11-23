@@ -90,7 +90,7 @@ public class ConfigurationFileController {
                 FileHelper.safeClose(inputStream);
             }
 
-            final Map<String, String> result = new HashMap<String, String>();
+            final Map<String, String> result = new HashMap<>();
             result.put("status", "Success");
             result.put("file_type", configurationFile.getType().toString());
             result.put("filename", configurationFile.getName());
@@ -126,7 +126,7 @@ public class ConfigurationFileController {
         final HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_XML);
         header.setContentLength(documentBody.length);
-        return new HttpEntity<byte[]>(documentBody, header);
+        return new HttpEntity<>(documentBody, header);
 
     }
 }

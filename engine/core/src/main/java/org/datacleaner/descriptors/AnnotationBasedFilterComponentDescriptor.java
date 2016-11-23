@@ -80,7 +80,7 @@ final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C exte
     @Override
     public Set<String> getOutcomeCategoryNames() {
         final EnumSet<C> enumSet = getOutcomeCategories();
-        final Set<String> result = new HashSet<String>();
+        final Set<String> result = new HashSet<>();
         for (final Enum<C> category : enumSet) {
             result.add(category.name());
         }

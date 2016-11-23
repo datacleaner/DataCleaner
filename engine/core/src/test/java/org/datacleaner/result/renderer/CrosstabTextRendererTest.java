@@ -35,14 +35,14 @@ public class CrosstabTextRendererTest extends TestCase {
         genderDimension.addCategory("Female");
         CrosstabDimension regionDimension = new CrosstabDimension("Region");
 
-        Crosstab<Integer> c = new Crosstab<Integer>(Integer.class, genderDimension, regionDimension);
+        Crosstab<Integer> c = new Crosstab<>(Integer.class, genderDimension, regionDimension);
 
         String s = new CrosstabTextRenderer().render(new CrosstabResult(c));
         assertEquals("   Male Female \n", s);
     }
 
     public void testSimpleCrosstab() throws Exception {
-        Crosstab<Integer> c = new Crosstab<Integer>(Integer.class, "Gender", "Region");
+        Crosstab<Integer> c = new Crosstab<>(Integer.class, "Gender", "Region");
         c.where("Gender", "Male").where("Region", "EU").put(1, true);
         c.where("Gender", "Male").where("Region", "USA").put(2, true);
         c.where("Gender", "Female").where("Region", "EU").put(3, true);
@@ -53,7 +53,7 @@ public class CrosstabTextRendererTest extends TestCase {
     }
 
     public void testOneDimension() throws Exception {
-        Crosstab<Integer> c = new Crosstab<Integer>(Integer.class, "Region");
+        Crosstab<Integer> c = new Crosstab<>(Integer.class, "Region");
         c.where("Region", "EU").put(1, true);
         c.where("Region", "USA").put(2, true);
         c.where("Region", "Asia").put(3, true);
@@ -69,7 +69,7 @@ public class CrosstabTextRendererTest extends TestCase {
         // USA), Age-group (children, teenagers and adult)
         // and Gender (male and female)
 
-        Crosstab<Integer> c = new Crosstab<Integer>(Integer.class, "Region", "Age-group", "Gender", "Native");
+        Crosstab<Integer> c = new Crosstab<>(Integer.class, "Region", "Age-group", "Gender", "Native");
         String[] genderValues = { "Male", "Female" };
         String[] regionValues = { "EU", "USA" };
         String[] ageGroupValues = { "Child", "Teenager", "Adult" };

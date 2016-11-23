@@ -98,6 +98,7 @@ public class AnalysisRunnerImplTest extends TestCase {
             MY_BOOL3.set(true);
         }
     }
+
     private static final AtomicBoolean MY_BOOL1 = new AtomicBoolean(false);
     private static final AtomicBoolean MY_BOOL2 = new AtomicBoolean(false);
     private static final AtomicBoolean MY_BOOL3 = new AtomicBoolean(false);
@@ -108,7 +109,7 @@ public class AnalysisRunnerImplTest extends TestCase {
     public void testCreateResultFromNonAnalyzer() throws Throwable {
         final AnalysisJob job;
 
-        try (final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
             jobBuilder.setDatastore(datastore);
             jobBuilder.addSourceColumns("name");
 
@@ -137,7 +138,7 @@ public class AnalysisRunnerImplTest extends TestCase {
 
     public void testCloseMethodOnFailure() throws Exception {
 
-        try (final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
             jobBuilder.setDatastore(datastore);
             jobBuilder.addSourceColumns("name");
 

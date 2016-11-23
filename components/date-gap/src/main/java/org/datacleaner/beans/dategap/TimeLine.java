@@ -36,7 +36,7 @@ public class TimeLine implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private NavigableSet<TimeInterval> intervals = new TreeSet<TimeInterval>();
+    private NavigableSet<TimeInterval> intervals = new TreeSet<>();
 
     public TimeLine() {
     }
@@ -64,7 +64,7 @@ public class TimeLine implements Serializable {
     }
 
     private SortedSet<TimeInterval> getFlattenedIntervals(final SortedSet<TimeInterval> intervals) {
-        final SortedSet<TimeInterval> result = new TreeSet<TimeInterval>();
+        final SortedSet<TimeInterval> result = new TreeSet<>();
         for (TimeInterval interval : intervals) {
             for (final Iterator<TimeInterval> it = result.iterator(); it.hasNext(); ) {
                 final TimeInterval ti = it.next();
@@ -92,7 +92,7 @@ public class TimeLine implements Serializable {
      * @return
      */
     public SortedSet<TimeInterval> getOverlappingIntervals(final boolean includeSingleTimeInstanceIntervals) {
-        SortedSet<TimeInterval> result = new TreeSet<TimeInterval>();
+        SortedSet<TimeInterval> result = new TreeSet<>();
         for (final TimeInterval interval1 : intervals) {
             for (final TimeInterval interval2 : intervals) {
                 if (interval1 != interval2) {
@@ -126,7 +126,7 @@ public class TimeLine implements Serializable {
      */
     public SortedSet<TimeInterval> getTimeGapIntervals() {
         final SortedSet<TimeInterval> flattenedIntervals = getFlattenedIntervals();
-        final SortedSet<TimeInterval> gaps = new TreeSet<TimeInterval>();
+        final SortedSet<TimeInterval> gaps = new TreeSet<>();
 
         TimeInterval previous = null;
         for (final TimeInterval timeInterval : flattenedIntervals) {

@@ -145,7 +145,7 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
     @Override
     public Schema createSchema() {
         final HBaseDatastore datastore = createDatastore();
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getDefaultSchema();
             return schema;
         }
@@ -159,9 +159,9 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         final List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Schema model", _tableDefinitionWidget));
+        result.add(new ImmutableEntry<>("Hostname", _hostnameTextField));
+        result.add(new ImmutableEntry<>("Port", _portTextField));
+        result.add(new ImmutableEntry<>("Schema model", _tableDefinitionWidget));
         return result;
     }
 }

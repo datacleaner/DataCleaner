@@ -48,7 +48,8 @@ public class CassandraDatastore extends UsageAwareDatastore<CassandraDataContext
         this(name, hostname, port, keyspace, null, null, false, null);
     }
 
-    public CassandraDatastore(final String name, final String hostname, final int port, final String keyspace, final String username,
+    public CassandraDatastore(final String name, final String hostname, final int port, final String keyspace,
+            final String username,
             final String password, final boolean ssl, final SimpleTableDef[] tableDefs) {
         super(name);
         _hostname = hostname;
@@ -84,7 +85,7 @@ public class CassandraDatastore extends UsageAwareDatastore<CassandraDataContext
         } else {
             dataContext = new CassandraDataContext(cluster, _keyspace, _tableDefs);
         }
-        return new DatastoreConnectionImpl<CassandraDataContext>(dataContext, this);
+        return new DatastoreConnectionImpl<>(dataContext, this);
     }
 
     public String getHostname() {

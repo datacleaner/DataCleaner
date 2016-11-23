@@ -59,7 +59,7 @@ public class FilterRequirementMergingTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         SimpleTableDef tableDef = new SimpleTableDef("table", new String[] { "col1" });
-        List<Object[]> rowData = new ArrayList<Object[]>();
+        List<Object[]> rowData = new ArrayList<>();
         rowData.add(new Object[] { "foo" });
         rowData.add(new Object[] { "bar" });
         rowData.add(new Object[] { "baz" });

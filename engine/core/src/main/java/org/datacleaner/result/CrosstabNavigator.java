@@ -63,7 +63,8 @@ public class CrosstabNavigator<E extends Serializable> implements Cloneable {
      * @throws NullPointerException
      *             if some of the specified categories are null
      */
-    public void put(final E value, final boolean createCategories) throws IllegalArgumentException, NullPointerException {
+    public void put(final E value, final boolean createCategories)
+            throws IllegalArgumentException, NullPointerException {
         if (createCategories) {
             for (int i = 0; i < categories.length; i++) {
                 final String category = categories[i];

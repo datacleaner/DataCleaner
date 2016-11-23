@@ -145,7 +145,7 @@ public abstract class PatternFinder<R> {
     }
 
     public Collection<TokenPattern> getPatterns() {
-        final Set<TokenPattern> result = new HashSet<TokenPattern>();
+        final Set<TokenPattern> result = new HashSet<>();
         final Collection<Collection<TokenPattern>> values = _patterns.values();
         for (final Collection<TokenPattern> set : values) {
             result.addAll(set);

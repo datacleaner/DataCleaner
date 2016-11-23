@@ -54,7 +54,7 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
         _buttonPanel = new DCPanel();
         _sourceComboBoxPanel.setBorder(new EmptyBorder(0, 4, 0, 0));
         _sourceComboBoxPanel.setLayout(new VerticalLayout(2));
-        _sourceColumnComboBoxes = new ArrayList<SourceColumnComboBox>();
+        _sourceColumnComboBoxes = new ArrayList<>();
 
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
@@ -126,7 +126,7 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
     }
 
     private String[] convertToStringArry(final List<Column> columns) {
-        final List<String> columnNamesAsString = new ArrayList<String>();
+        final List<String> columnNamesAsString = new ArrayList<>();
         for (final Column column : columns) {
             columnNamesAsString.add(column.getQualifiedLabel());
         }
@@ -137,7 +137,7 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
      * Returns the columns selected as Column[].
      */
     public List<Column> getColumns() {
-        final List<Column> columns = new ArrayList<Column>();
+        final List<Column> columns = new ArrayList<>();
         final Component[] components = _sourceComboBoxPanel.getComponents();
         for (final Component component : components) {
             if (component instanceof SourceColumnComboBox) {

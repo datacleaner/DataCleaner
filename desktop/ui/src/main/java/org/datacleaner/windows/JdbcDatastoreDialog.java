@@ -119,7 +119,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
                 _connectionPresenters[0].getWidget());
         _tabbedPane.setUnclosableTab(0);
 
-        _multipleConnectionsCheckBox = new DCCheckBox<Object>("Allow multiple concurrent connections", true);
+        _multipleConnectionsCheckBox = new DCCheckBox<>("Allow multiple concurrent connections", true);
         _multipleConnectionsCheckBox
                 .setToolTipText(
                         "Indicates whether multiple connections (aka. connection pooling) may be created or not. "
@@ -141,7 +141,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
         comboBoxModel[comboBoxModel.length - 2] = new JSeparator(JSeparator.HORIZONTAL);
         comboBoxModel[comboBoxModel.length - 1] = MANAGE_DATABASE_DRIVERS;
 
-        _databaseDriverComboBox = new DCComboBox<Object>(comboBoxModel);
+        _databaseDriverComboBox = new DCComboBox<>(comboBoxModel);
         _databaseDriverComboBox.setRenderer(new DCListCellRenderer() {
 
             private static final long serialVersionUID = 1L;
@@ -377,7 +377,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
             public void actionPerformed(final ActionEvent event) {
                 final JdbcDatastore datastore = createDatastore();
 
-                final List<Connection> connections = new ArrayList<Connection>();
+                final List<Connection> connections = new ArrayList<>();
 
                 try {
                     if (datastore.isMultipleConnections()) {

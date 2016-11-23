@@ -46,7 +46,8 @@ public class JaxbJobMetadataFactoryImpl implements JaxbJobMetadataFactory {
         this(null, null, null, null);
     }
 
-    public JaxbJobMetadataFactoryImpl(final String author, final String jobName, final String jobDescription, final String jobVersion) {
+    public JaxbJobMetadataFactoryImpl(final String author, final String jobName, final String jobDescription,
+            final String jobVersion) {
         _author = author;
         _jobName = jobName;
         _jobDescription = jobDescription;

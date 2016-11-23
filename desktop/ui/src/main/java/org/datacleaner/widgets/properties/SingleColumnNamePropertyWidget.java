@@ -45,7 +45,7 @@ public final class SingleColumnNamePropertyWidget extends AbstractPropertyWidget
             final ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
 
-        _tableRef = new MutableRef<Table>();
+        _tableRef = new MutableRef<>();
 
         Enum<?>[] enumConstants = (Enum<?>[]) propertyDescriptor.getType().getEnumConstants();
 

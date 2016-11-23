@@ -59,8 +59,8 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
         }
 
         // Create the dimensions
-        final List<CrosstabDimension> columnStatisticCrosstabDimensions = new ArrayList<CrosstabDimension>();
-        final List<CrosstabDimension> columnValueCombinationCrosstabDimensions = new ArrayList<CrosstabDimension>();
+        final List<CrosstabDimension> columnStatisticCrosstabDimensions = new ArrayList<>();
+        final List<CrosstabDimension> columnValueCombinationCrosstabDimensions = new ArrayList<>();
         for (final BooleanAnalyzerResult partialResult : partialResults) {
             final Crosstab<Number> partialColumnStatisticsCrosstab = partialResult.getColumnStatisticsCrosstab();
             final Crosstab<Number> partialValueCombinationCrosstab = partialResult.getValueCombinationCrosstab();
@@ -69,12 +69,12 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
             createDimensionsValueCombinationCrosstab(columnValueCombinationCrosstabDimensions,
                     partialValueCombinationCrosstab);
         }
-        final Crosstab<Number> newResultColumnStatistics = new Crosstab<Number>(Number.class,
+        final Crosstab<Number> newResultColumnStatistics = new Crosstab<>(Number.class,
                 columnStatisticCrosstabDimensions);
-        final Crosstab<Number> newResultColumnValueCombination = new Crosstab<Number>(Number.class,
+        final Crosstab<Number> newResultColumnValueCombination = new Crosstab<>(Number.class,
                 columnValueCombinationCrosstabDimensions);
 
-        final Map<ValueCombination<Number>, Number> valueCombinations = new HashMap<ValueCombination<Number>, Number>();
+        final Map<ValueCombination<Number>, Number> valueCombinations = new HashMap<>();
 
         // add the partial results
         for (final BooleanAnalyzerResult partialResult : partialResults) {
@@ -113,11 +113,11 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
         if (CrosstabReducerHelper.findDimension(valueCombinationCrosstab, BooleanAnalyzer.DIMENSION_MEASURE)) {
 
             final SortedSet<Entry<ValueCombination<Number>, Number>> entries =
-                    new TreeSet<Map.Entry<ValueCombination<Number>, Number>>(
+                    new TreeSet<>(
                             frequentValueCombinationComparator);
             entries.addAll(valueCombinations.entrySet());
 
-            final CrosstabNavigator<Number> nav = new CrosstabNavigator<Number>(valueCombinationCrosstab);
+            final CrosstabNavigator<Number> nav = new CrosstabNavigator<>(valueCombinationCrosstab);
             final CrosstabDimension measureDimension = valueCombinationCrosstab
                     .getDimension(BooleanAnalyzer.DIMENSION_MEASURE);
             final CrosstabDimension columnDimension = valueCombinationCrosstab
@@ -166,7 +166,7 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
     public void addValueCombinationsCrosstabDimension(final Map<ValueCombination<Number>, Number> valueCombMapList,
             final Crosstab<Number> partialCrosstab) {
 
-        final CrosstabNavigator<Number> nav = new CrosstabNavigator<Number>(partialCrosstab);
+        final CrosstabNavigator<Number> nav = new CrosstabNavigator<>(partialCrosstab);
         final CrosstabDimension columnDimension = partialCrosstab.getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
         final CrosstabDimension measureDimension = partialCrosstab.getDimension(BooleanAnalyzer.DIMENSION_MEASURE);
 
@@ -188,7 +188,7 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
                     BooleanAnalyzer.VALUE_COMBINATION_COLUMN_FREQUENCY);
             final Number frequency = where.safeGet(null);
             final Number frequencyVal = frequency != null ? frequency : 0;
-            final ValueCombination<Number> valComb = new ValueCombination<Number>(values);
+            final ValueCombination<Number> valComb = new ValueCombination<>(values);
             final Number combination = valueCombMapList.get(valComb);
             if (combination == null) {
                 valueCombMapList.put(valComb, frequencyVal);

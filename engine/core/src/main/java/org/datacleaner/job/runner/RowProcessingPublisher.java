@@ -44,7 +44,7 @@ public interface RowProcessingPublisher {
 
     Query getQuery();
 
-    void registerConsumer(final RowProcessingConsumer consumer);
+    void registerConsumer(RowProcessingConsumer consumer);
 
     RowProcessingConsumer getConsumer(ComponentJob componentJob);
 

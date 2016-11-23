@@ -34,10 +34,10 @@ import org.datacleaner.job.AbstractOutputRowCollector;
 public class JavaScriptAdvancedTransformerTest extends TestCase {
 
     public void testCompileScript() throws Exception {
-        final InputColumn<String> col1 = new MockInputColumn<String>("col1");
-        final InputColumn<String> col2 = new MockInputColumn<String>("col2");
+        final InputColumn<String> col1 = new MockInputColumn<>("col1");
+        final InputColumn<String> col2 = new MockInputColumn<>("col2");
 
-        final List<String> output = new ArrayList<String>();
+        final List<String> output = new ArrayList<>();
         final OutputRowCollector collector = new AbstractOutputRowCollector() {
             @Override
             public void putValues(Object... arg0) {

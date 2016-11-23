@@ -76,7 +76,7 @@ public class PentahoJobEngineTest extends TestCase {
 
         assertEquals("[MockInputColumn[name=A], MockInputColumn[name=dummy]]", columns.toString());
 
-        List<MetricIdentifier> metricIdentifiers = new ArrayList<MetricIdentifier>();
+        List<MetricIdentifier> metricIdentifiers = new ArrayList<>();
         MetricIdentifier copy1 = metric.copy();
         copy1.setParamColumnName("dummy");
         metricIdentifiers.add(copy1);

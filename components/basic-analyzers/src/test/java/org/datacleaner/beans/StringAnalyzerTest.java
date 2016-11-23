@@ -43,8 +43,8 @@ public class StringAnalyzerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        c1 = new MockInputColumn<String>("greetings", String.class);
-        c2 = new MockInputColumn<String>("greeters", String.class);
+        c1 = new MockInputColumn<>("greetings", String.class);
+        c2 = new MockInputColumn<>("greeters", String.class);
         stringAnalyzer = new StringAnalyzer(c1, c2);
     }
 

@@ -42,7 +42,7 @@ public class StringPatternMatchFilterTest extends TestCase {
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(new DataCleanerConfigurationImpl(), null, true);
 
         final StringPattern stringPattern = new RegexStringPattern("very simple email pattern", ".+@.+", true);
-        final MockInputColumn<String> column = new MockInputColumn<String>("my col", String.class);
+        final MockInputColumn<String> column = new MockInputColumn<>("my col", String.class);
         StringPatternFilter filter = new StringPatternFilter(column, new StringPattern[] { stringPattern },
                 MatchFilterCriteria.ANY, configuration);
 
@@ -67,7 +67,7 @@ public class StringPatternMatchFilterTest extends TestCase {
     public void testFilterMultiplePatterns() throws Exception {
         StringPattern stringPattern1 = new RegexStringPattern("very simple email pattern", ".+@.+", true);
         StringPattern stringPattern2 = new RegexStringPattern("something with 'kas'", ".*kas.*", true);
-        MockInputColumn<String> column = new MockInputColumn<String>("my col", String.class);
+        MockInputColumn<String> column = new MockInputColumn<>("my col", String.class);
         StringPatternFilter filter = new StringPatternFilter(column, new StringPattern[] { stringPattern1,
                 stringPattern2 }, MatchFilterCriteria.ANY, configuration);
         filter.init();

@@ -55,7 +55,7 @@ public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<St
         _referenceDataCatalog = referenceDataCatalog;
         _referenceDataDialogProvider = referenceDataDialogProvider;
 
-        _comboBox = new DCComboBox<StringPattern>();
+        _comboBox = new DCComboBox<>();
         _comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
         _comboBox.setEditable(false);
 

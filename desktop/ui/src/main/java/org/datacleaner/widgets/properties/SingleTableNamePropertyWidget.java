@@ -89,10 +89,10 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
             final ConfiguredPropertyDescriptor propertyDescriptor, final WindowContext windowContext) {
         super(componentBuilder, propertyDescriptor);
 
-        _schemaRef = new MutableRef<Schema>();
-        _datastoreRef = new MutableRef<Datastore>();
+        _schemaRef = new MutableRef<>();
+        _datastoreRef = new MutableRef<>();
 
-        _comboBox = new DCComboBox<Table>();
+        _comboBox = new DCComboBox<>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
         _comboBox.setEditable(false);
         addComboListener(new Listener<Table>() {
@@ -181,11 +181,11 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         _datastoreRef.set(datastore);
 
         if (schema == null) {
-            _comboBox.setModel(new DefaultComboBoxModel<Table>(new Table[1]));
+            _comboBox.setModel(new DefaultComboBoxModel<>(new Table[1]));
         } else {
             Table[] tables = schema.getTables();
             tables = CollectionUtils.array(new Table[1], tables);
-            _comboBox.setModel(new DefaultComboBoxModel<Table>(tables));
+            _comboBox.setModel(new DefaultComboBoxModel<>(tables));
 
             if (previousValue == null) {
                 if (schema.getTableCount() == 1) {

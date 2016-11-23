@@ -32,7 +32,7 @@ public class ServiceSessionTest extends TestCase {
         final int poolSize = 5;
         final int executionTimeMillis = 200;
 
-        final ServiceSession<Boolean> session = new PooledServiceSession<Boolean>(poolSize);
+        final ServiceSession<Boolean> session = new PooledServiceSession<>(poolSize);
         final List<Long> executionTimes = Collections.synchronizedList(new ArrayList<Long>());
         final Thread[] threads = new Thread[poolSize + 1];
         for (int i = 0; i < threads.length; i++) {

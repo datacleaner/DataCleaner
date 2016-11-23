@@ -42,7 +42,8 @@ public class SparkAnalysisResultFuture extends AbstractAnalysisResult implements
     private final List<Tuple2<String, AnalyzerResult>> _results;
     private final SparkJobContext _sparkJobContext;
 
-    public SparkAnalysisResultFuture(final List<Tuple2<String, AnalyzerResult>> results, final SparkJobContext sparkJobContext) {
+    public SparkAnalysisResultFuture(final List<Tuple2<String, AnalyzerResult>> results,
+            final SparkJobContext sparkJobContext) {
         _creationDate = new Date();
         _results = results;
         _sparkJobContext = sparkJobContext;

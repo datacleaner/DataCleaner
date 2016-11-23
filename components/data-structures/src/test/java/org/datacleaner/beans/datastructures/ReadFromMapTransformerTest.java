@@ -35,9 +35,9 @@ import org.datacleaner.job.AbstractOutputRowCollector;
 public class ReadFromMapTransformerTest extends TestCase {
 
     public void testTransform() throws Exception {
-        final List<Object[]> result = new ArrayList<Object[]>();
+        final List<Object[]> result = new ArrayList<>();
         final ReadFromMapTransformer trans = new ReadFromMapTransformer();
-        final InputColumn<Map<String, ?>> col = new MockInputColumn<Map<String, ?>>("foo");
+        final InputColumn<Map<String, ?>> col = new MockInputColumn<>("foo");
         trans.mapColumn = col;
         trans.valueType = Integer.class;
         trans.verifyTypes = true;
@@ -48,7 +48,7 @@ public class ReadFromMapTransformerTest extends TestCase {
             }
         };
 
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put("foo", 1);
         map.put("bar", 2);
         map.put("baz", 3);

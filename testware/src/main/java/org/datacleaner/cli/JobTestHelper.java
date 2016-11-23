@@ -98,9 +98,9 @@ public class JobTestHelper {
         new Thread(() -> {
             try {
                 final InputStream is = process.getInputStream();
-                int c;
-                while ((c = is.read()) != -1) {
-                    result.append((char) c);
+                int character;
+                while ((character = is.read()) != -1) {
+                    result.append((char) character);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

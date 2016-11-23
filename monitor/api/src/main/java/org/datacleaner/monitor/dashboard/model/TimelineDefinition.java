@@ -58,7 +58,7 @@ public class TimelineDefinition implements Serializable {
 
     public List<MetricIdentifier> getMetrics() {
         if (_metrics == null) {
-            return new ArrayList<MetricIdentifier>(0);
+            return new ArrayList<>(0);
         }
         return _metrics;
     }

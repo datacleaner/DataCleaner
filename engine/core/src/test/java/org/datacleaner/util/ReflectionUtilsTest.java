@@ -43,6 +43,7 @@ public class ReflectionUtilsTest extends TestCase {
             super(null, null);
         }
     }
+
     public InputColumn<String> stringInputColumn;
     @SuppressWarnings("rawtypes")
     public InputColumn rawInputColumn;

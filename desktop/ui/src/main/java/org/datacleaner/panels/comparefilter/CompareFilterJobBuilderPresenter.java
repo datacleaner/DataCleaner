@@ -49,11 +49,11 @@ class CompareFilterComponentBuilderPresenter extends FilterComponentBuilderPanel
     @Override
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
         final FilterDescriptor<?, ?> descriptor = getComponentBuilder().getDescriptor();
-        final List<ConfiguredPropertyDescriptor> configuredProperties = new ArrayList<ConfiguredPropertyDescriptor>(
-                new TreeSet<ConfiguredPropertyDescriptor>(descriptor.getConfiguredProperties()));
+        final List<ConfiguredPropertyDescriptor> configuredProperties = new ArrayList<>(
+                new TreeSet<>(descriptor.getConfiguredProperties()));
 
         // create a single task pane
-        final List<ConfiguredPropertyTaskPane> result = new ArrayList<ConfiguredPropertyTaskPane>();
+        final List<ConfiguredPropertyTaskPane> result = new ArrayList<>();
         result.add(new ConfiguredPropertyTaskPane("Required properties", IconUtils.MODEL_COLUMN, configuredProperties));
 
         return result;

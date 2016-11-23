@@ -23,7 +23,6 @@ import java.util.LinkedList;
 
 import junit.framework.TestCase;
 
-import org.apache.metamodel.data.Row;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -53,7 +52,7 @@ public class RendererFactoryTest extends TestCase {
         r = rendererFactory.getRenderer(new CrosstabResult(null), TextRenderingFormat.class);
         assertEquals(CrosstabTextRenderer.class, r.getClass());
 
-        r = rendererFactory.getRenderer(new DataSetResult(new LinkedList<Row>()), TextRenderingFormat.class);
+        r = rendererFactory.getRenderer(new DataSetResult(new LinkedList<>()), TextRenderingFormat.class);
         assertEquals(MetricBasedResultTextRenderer.class, r.getClass());
     }
 

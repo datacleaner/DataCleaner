@@ -78,7 +78,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         _nameTextField = WidgetFactory.createTextField("Synonym catalog name");
         final String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
 
-        _datastoreComboBox = new JComboBox<String>(comboBoxModel);
+        _datastoreComboBox = new JComboBox<>(comboBoxModel);
         _masterTermColumnComboBox = new SourceColumnComboBox();
         _synonymColumnsPanel = new MultiSourceColumnComboBoxPanel();
         _datastoreComboBox.setEditable(false);
@@ -119,7 +119,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
             final Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
             if (datastore != null) {
-                try (final DatastoreConnection datastoreConnection = datastore.openConnection()) {
+                try (DatastoreConnection datastoreConnection = datastore.openConnection()) {
                     final SchemaNavigator sn = datastoreConnection.getSchemaNavigator();
 
                     final Column masterTermColumn = sn.convertToColumn(synonymCatalog.getMasterTermColumnPath());

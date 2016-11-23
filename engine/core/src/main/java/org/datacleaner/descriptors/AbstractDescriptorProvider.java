@@ -154,7 +154,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
     @Override
     public final Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptorsForRenderingFormat(
             final Class<? extends RenderingFormat<?>> renderingFormat) {
-        final List<RendererBeanDescriptor<?>> result = new ArrayList<RendererBeanDescriptor<?>>();
+        final List<RendererBeanDescriptor<?>> result = new ArrayList<>();
         final Collection<RendererBeanDescriptor<?>> descriptors = getRendererBeanDescriptors();
         for (final RendererBeanDescriptor<?> descriptor : descriptors) {
             final Class<? extends RenderingFormat<?>> descriptorsRenderingFormat = descriptor.getRenderingFormat();

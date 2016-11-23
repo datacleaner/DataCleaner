@@ -28,7 +28,7 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
- * This class simply wraps a JDBC driver. It is nescesary to wrap them since
+ * This class simply wraps a JDBC driver. It is necessary to wrap them since
  * DriverManager will only accept Driver instances that have the same
  * ClassLoader as the DriverManager it self and sometimes we use dynamic class
  * loading for the drivers.
@@ -41,6 +41,7 @@ public final class DriverWrapper implements Driver {
         _driver = driver;
     }
 
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public boolean acceptsURL(final String url) throws SQLException {
         return _driver.acceptsURL(url);
     }

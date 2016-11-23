@@ -138,7 +138,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         return panel;
     }
 
-    private final void init() {
+    private void init() {
         final ComponentBuilder componentBuilder = getComponentBuilder();
         addInformationPanelAboutDisable();
         final List<ConfiguredPropertyTaskPane> propertyTaskPanes = createPropertyTaskPanes();
@@ -183,12 +183,12 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     }
 
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-        final Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(
+        final Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<>(
                 _descriptor.getConfiguredProperties());
 
-        final List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<ConfiguredPropertyDescriptor>();
-        final List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<ConfiguredPropertyDescriptor>();
-        final List<ConfiguredPropertyDescriptor> optionalProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+        final List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<>();
+        final List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<>();
+        final List<ConfiguredPropertyDescriptor> optionalProperties = new ArrayList<>();
 
         for (final ConfiguredPropertyDescriptor propertyDescriptor : configuredProperties) {
             final HiddenProperty hiddenProperty = propertyDescriptor.getAnnotation(HiddenProperty.class);
@@ -204,7 +204,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
             }
         }
 
-        final List<ConfiguredPropertyTaskPane> result = new ArrayList<ConfiguredPropertyTaskPane>();
+        final List<ConfiguredPropertyTaskPane> result = new ArrayList<>();
         result.add(new ConfiguredPropertyTaskPane("Input columns", IconUtils.MODEL_COLUMN, inputProperties));
         result.add(new ConfiguredPropertyTaskPane("Required properties", IconUtils.MENU_OPTIONS, requiredProperties));
         result.add(new ConfiguredPropertyTaskPane("Optional properties (" + optionalProperties.size() + ")",

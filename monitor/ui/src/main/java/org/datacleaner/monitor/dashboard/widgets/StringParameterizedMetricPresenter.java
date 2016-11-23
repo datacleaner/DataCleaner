@@ -90,7 +90,7 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
         _jobIdentifier = jobIdentifier;
         _metricIdentifier = metricIdentifier;
         _activeMetrics = activeMetrics;
-        _metricPanels = new ArrayList<MetricPanel>();
+        _metricPanels = new ArrayList<>();
         _panel = new FlowPanel();
         _panel.addStyleName("StringParameterizedMetricsPresenter");
 
@@ -139,7 +139,7 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
 
     @Override
     public List<MetricIdentifier> getSelectedMetrics() {
-        final List<MetricIdentifier> result = new ArrayList<MetricIdentifier>();
+        final List<MetricIdentifier> result = new ArrayList<>();
         for (final MetricPanel panel : _metricPanels) {
             if (panel.isSelected()) {
                 final MetricIdentifier metricIdentifier = panel.createMetricIdentifier();

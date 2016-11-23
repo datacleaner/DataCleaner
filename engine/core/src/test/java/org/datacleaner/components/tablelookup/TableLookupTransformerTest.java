@@ -46,7 +46,7 @@ public class TableLookupTransformerTest extends TestCase {
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
         trans.conditionColumns = new String[] { "email" };
-        InputColumn<String> col1 = new MockInputColumn<String>("my email col", String.class);
+        InputColumn<String> col1 = new MockInputColumn<>("my email col", String.class);
         trans.conditionValues = new InputColumn[] { col1 };
 
         OutputColumns outputColumns = trans.getOutputColumns();
@@ -101,7 +101,7 @@ public class TableLookupTransformerTest extends TestCase {
     }
 
     public void testInnerJoinMinOneRecordSemantics() throws Exception {
-        final List<Object[]> result = new ArrayList<Object[]>();
+        final List<Object[]> result = new ArrayList<>();
 
         final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
@@ -114,7 +114,7 @@ public class TableLookupTransformerTest extends TestCase {
         };
         trans.joinSemantic = JoinSemantic.LEFT_JOIN;
         trans.conditionColumns = new String[] { "email" };
-        InputColumn<String> col1 = new MockInputColumn<String>("my email col", String.class);
+        InputColumn<String> col1 = new MockInputColumn<>("my email col", String.class);
         trans.conditionValues = new InputColumn[] { col1 };
 
         OutputColumns outputColumns = trans.getOutputColumns();
@@ -136,7 +136,7 @@ public class TableLookupTransformerTest extends TestCase {
     }
 
     public void testInnerJoinSemantics() throws Exception {
-        final List<Object[]> result = new ArrayList<Object[]>();
+        final List<Object[]> result = new ArrayList<>();
 
         final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
@@ -149,7 +149,7 @@ public class TableLookupTransformerTest extends TestCase {
         };
         trans.joinSemantic = JoinSemantic.INNER_JOIN;
         trans.conditionColumns = new String[] { "email" };
-        InputColumn<String> col1 = new MockInputColumn<String>("my email col", String.class);
+        InputColumn<String> col1 = new MockInputColumn<>("my email col", String.class);
         trans.conditionValues = new InputColumn[] { col1 };
 
         OutputColumns outputColumns = trans.getOutputColumns();
@@ -171,7 +171,7 @@ public class TableLookupTransformerTest extends TestCase {
     }
 
     public void testCarthesianJoin() throws Exception {
-        final List<Object[]> result = new ArrayList<Object[]>();
+        final List<Object[]> result = new ArrayList<>();
 
         final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
@@ -183,7 +183,7 @@ public class TableLookupTransformerTest extends TestCase {
             }
         };
         trans.joinSemantic = JoinSemantic.INNER_JOIN;
-        InputColumn<String> col1 = new MockInputColumn<String>("my email col", String.class);
+        InputColumn<String> col1 = new MockInputColumn<>("my email col", String.class);
 
         OutputColumns outputColumns = trans.getOutputColumns();
         assertEquals("OutputColumns[name (lookup)]", outputColumns.toString());

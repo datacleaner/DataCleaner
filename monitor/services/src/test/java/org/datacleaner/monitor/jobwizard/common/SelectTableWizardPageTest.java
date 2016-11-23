@@ -38,11 +38,11 @@ import org.easymock.EasyMock;
 public class SelectTableWizardPageTest extends TestCase {
 
     public void testGetFormInnerHtml() throws Exception {
-        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<TableDataProvider<?>>();
+        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<>();
         final SimpleTableDef tableDef1 = new SimpleTableDef("tab", new String[] { "col1", "col2", "col3" });
         final SimpleTableDef tableDef2 = new SimpleTableDef("le", new String[] { "col1", "col2", "col3" });
-        tableDataProviders.add(new ArrayTableDataProvider(tableDef1, new ArrayList<Object[]>()));
-        tableDataProviders.add(new ArrayTableDataProvider(tableDef2, new ArrayList<Object[]>()));
+        tableDataProviders.add(new ArrayTableDataProvider(tableDef1, new ArrayList<>()));
+        tableDataProviders.add(new ArrayTableDataProvider(tableDef2, new ArrayList<>()));
         final Datastore datastore = new PojoDatastore("my_pojo_ds", tableDataProviders);
 
         final JobWizardContext context = EasyMock.createMock(JobWizardContext.class);

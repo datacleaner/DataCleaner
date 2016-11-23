@@ -28,7 +28,7 @@ public class NumberToIpConverterTest extends TestCase {
 
     public void testConvertToNumber() throws Exception {
         NumberToIpConverter trans = new NumberToIpConverter();
-        trans.ipColumn = new MockInputColumn<Number>("my ip number",
+        trans.ipColumn = new MockInputColumn<>("my ip number",
                 Number.class);
 
         String[] result;
@@ -42,17 +42,17 @@ public class NumberToIpConverterTest extends TestCase {
         assertNull(result[0]);
 
         result = trans.transform(new MockInputRow().put(trans.ipColumn,
-                2130706433l));
+                2130706433L));
         assertEquals(1, result.length);
         assertEquals("127.0.0.1", result[0]);
 
         result = trans.transform(new MockInputRow().put(trans.ipColumn,
-                4294967295l));
+                4294967295L));
         assertEquals(1, result.length);
         assertEquals("255.255.255.255", result[0]);
 
         result = trans.transform(new MockInputRow().put(trans.ipColumn,
-                2825259556l));
+                2825259556L));
         assertEquals(1, result.length);
         assertEquals("168.102.10.36", result[0]);
     }

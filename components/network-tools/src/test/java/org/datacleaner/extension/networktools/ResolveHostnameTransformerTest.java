@@ -31,7 +31,7 @@ import org.junit.Test;
 public class ResolveHostnameTransformerTest {
 
     private final ResolveHostnameTransformer t = new ResolveHostnameTransformer();
-    private final MockInputColumn<String> col = new MockInputColumn<String>("host", String.class);
+    private final MockInputColumn<String> col = new MockInputColumn<>("host", String.class);
 
     @Before
     public void setUp() {

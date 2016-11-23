@@ -153,7 +153,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
                 final DataHubRepoConnection connection = createConnection();
                 final String getTenantInfoUrl = connection.getUserInfoUrl();
                 final HttpGet request = new HttpGet(getTenantInfoUrl);
-                try (final MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
+                try (MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
                     final HttpResponse response = monitorHttpClient.execute(request);
 
                     final StatusLine statusLine = response.getStatusLine();
@@ -311,15 +311,15 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         final List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("DataHub hostname", _hostTextField));
-        result.add(new ImmutableEntry<String, JComponent>("DataHub port", _portTextField));
-        result.add(new ImmutableEntry<String, JComponent>("", _httpsCheckBox));
-        result.add(new ImmutableEntry<String, JComponent>("", _acceptUnverifiedSslPeersCheckBox));
-        result.add(new ImmutableEntry<String, JComponent>("Security mode", _securityModeSelector));
-        result.add(new ImmutableEntry<String, JComponent>("DataHub username", _usernameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("DataHub password", _passwordTextField));
-        result.add(new ImmutableEntry<String, JComponent>(null, _urlLabel));
-        result.add(new ImmutableEntry<String, JComponent>(null, _testButton));
+        result.add(new ImmutableEntry<>("DataHub hostname", _hostTextField));
+        result.add(new ImmutableEntry<>("DataHub port", _portTextField));
+        result.add(new ImmutableEntry<>("", _httpsCheckBox));
+        result.add(new ImmutableEntry<>("", _acceptUnverifiedSslPeersCheckBox));
+        result.add(new ImmutableEntry<>("Security mode", _securityModeSelector));
+        result.add(new ImmutableEntry<>("DataHub username", _usernameTextField));
+        result.add(new ImmutableEntry<>("DataHub password", _passwordTextField));
+        result.add(new ImmutableEntry<>(null, _urlLabel));
+        result.add(new ImmutableEntry<>(null, _testButton));
         return result;
     }
 

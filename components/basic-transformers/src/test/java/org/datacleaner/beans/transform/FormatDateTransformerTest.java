@@ -31,7 +31,7 @@ import org.joda.time.LocalDate;
 public class FormatDateTransformerTest extends TestCase {
 
     public void testScenario() throws Exception {
-        final MockInputColumn<Date> col = new MockInputColumn<Date>("my date");
+        final MockInputColumn<Date> col = new MockInputColumn<>("my date");
 
         final FormatDateTransformer transformer = new FormatDateTransformer();
         transformer.dateColumn = col;

@@ -129,7 +129,7 @@ public class ComponentDocumentationBuilder {
             {
                 final Set<ConfiguredPropertyDescriptor> configuredProperties = componentWrapper
                         .getComponentDescriptor().getConfiguredProperties();
-                final List<ConfiguredPropertyDescriptor> properties = new ArrayList<ConfiguredPropertyDescriptor>(
+                final List<ConfiguredPropertyDescriptor> properties = new ArrayList<>(
                         configuredProperties);
                 final List<ConfiguredPropertyDocumentationWrapper> propertyList = new ArrayList<>();
                 for (final ConfiguredPropertyDescriptor property : properties) {

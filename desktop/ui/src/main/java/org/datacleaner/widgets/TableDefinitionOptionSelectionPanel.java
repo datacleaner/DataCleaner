@@ -77,7 +77,7 @@ public class TableDefinitionOptionSelectionPanel extends DCPanel {
             }
         };
 
-        _comboBox = new DCComboBox<TableDefinitionOption>(TableDefinitionOption.values());
+        _comboBox = new DCComboBox<>(TableDefinitionOption.values());
         _comboBox.setRenderer(new EnumComboBoxListRenderer());
         _configureButton = WidgetFactory.createSmallButton("images/menu/options.png");
         _configureButton.setText("Define");

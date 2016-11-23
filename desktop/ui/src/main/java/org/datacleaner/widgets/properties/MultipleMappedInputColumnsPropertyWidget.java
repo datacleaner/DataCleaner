@@ -104,7 +104,7 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
     public MultipleMappedInputColumnsPropertyWidget(final ComponentBuilder componentBuilder,
             final ConfiguredPropertyDescriptor inputColumnsProperty, final ConfiguredPropertyDescriptor mappedColumnsProperty) {
         super(componentBuilder, inputColumnsProperty);
-        _mappedInputColumnComboBoxes = new WeakHashMap<InputColumn<?>, DCComboBox<InputColumn<?>>>();
+        _mappedInputColumnComboBoxes = new WeakHashMap<>();
         _mappedInputColumnsProperty = mappedColumnsProperty;
 
         _mappedInputColumnsPropertyWidget = new MappedInputColumnsPropertyWidget(componentBuilder,
@@ -160,8 +160,8 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
 
         final Collection<DCComboBox<InputColumn<?>>> comboBoxes = _mappedInputColumnComboBoxes.values();
         for (final DCComboBox<InputColumn<?>> comboBox : comboBoxes) {
-            comboBox.setModel(new DefaultComboBoxModel<InputColumn<?>>(
-                    new Vector<InputColumn<?>>(availableInputColumns)));
+            comboBox.setModel(new DefaultComboBoxModel<>(
+                    new Vector<>(availableInputColumns)));
         }
     }
 
@@ -174,7 +174,7 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
         final List<InputColumn<?>> availableInputColumns = getAnalysisJobBuilder().getAvailableInputColumns(
                 getComponentBuilder(), Object.class);
 
-        final DCComboBox<InputColumn<?>> comboBox = new DCComboBox<InputColumn<?>>(availableInputColumns);
+        final DCComboBox<InputColumn<?>> comboBox = new DCComboBox<>(availableInputColumns);
         if (mappedColumn != null) {
             comboBox.setSelectedItem(mappedColumn);
         }
@@ -261,7 +261,7 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
     @Override
     public InputColumn<?>[] getValue() {
         final InputColumn<?>[] checkedInputColumns = super.getValue();
-        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> result = new ArrayList<>();
         for (final InputColumn<?> inputColumn : checkedInputColumns) {
             // exclude input columns that have not been mapped yet
             final DCComboBox<InputColumn<?>> comboBox = _mappedInputColumnComboBoxes.get(inputColumn);
@@ -277,7 +277,7 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
     public InputColumn<?>[] getMappedInputColumns() {
         final List<InputColumn<?>> inputColumns = MultipleMappedInputColumnsPropertyWidget.this
                 .getSelectedInputColumns();
-        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> result = new ArrayList<>();
         for (final InputColumn<?> inputColumn : inputColumns) {
             final DCComboBox<InputColumn<?>> comboBox = _mappedInputColumnComboBoxes.get(inputColumn);
             if (comboBox == null) {

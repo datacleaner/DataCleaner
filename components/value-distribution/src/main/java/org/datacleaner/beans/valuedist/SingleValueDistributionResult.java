@@ -70,7 +70,7 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
         _distinctCount = distinctCount;
         _nullValueAnnotation = nullValueAnnotation;
         _annotations = annotations;
-        _annotationFactoryRef = new SerializableRef<RowAnnotationFactory>(annotationFactory);
+        _annotationFactoryRef = new SerializableRef<>(annotationFactory);
         _highlightedColumns = highlightedColumns;
         _nullCount = 0;
     }
@@ -265,7 +265,7 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
 
     @Override
     public Collection<ValueFrequency> getValueCounts() {
-        final Collection<ValueFrequency> result = new TreeSet<ValueFrequency>();
+        final Collection<ValueFrequency> result = new TreeSet<>();
         if (_topValues != null) {
             result.addAll(_topValues.getValueCounts());
         }

@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
  * This client requires that CAS is installed with the RESTful API, which is
  * described in detail here: https://wiki.jasig.org/display/CASUM/RESTful+API
  */
+@SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class CASMonitorHttpClient implements MonitorHttpClient {
 
     private static final Logger logger = LoggerFactory.getLogger(CASMonitorHttpClient.class);
@@ -77,7 +78,8 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
     private String _requestedService;
     private String _casRestServiceUrl;
 
-    public CASMonitorHttpClient(final CloseableHttpClient client, final String casServerUrl, final String username, final String password,
+    public CASMonitorHttpClient(final CloseableHttpClient client, final String casServerUrl, final String username,
+            final String password,
             final String monitorBaseUrl) {
         _httpClient = client;
         _casServerUrl = casServerUrl;
@@ -175,7 +177,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
     protected String getTicket(final String requestedService, final String casServiceUrl,
             final String ticketGrantingTicket, final HttpContext context) throws IOException, Exception {
         final HttpPost post = new HttpPost(casServiceUrl + "/" + ticketGrantingTicket);
-        final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+        final List<NameValuePair> parameters = new ArrayList<>();
         parameters.add(new BasicNameValuePair("service", requestedService));
         final HttpEntity entity = new UrlEncodedFormEntity(parameters, charset);
         post.setEntity(entity);
@@ -201,8 +203,8 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         if (statusCode == 302) {
             final String reason = statusLine.getReasonPhrase();
             throwError(
-                    "Unexpected HTTP status code from CAS service: 302. This indicates that the RESTful API for CAS is not installed. Reason: "
-                            + reason);
+                    "Unexpected HTTP status code from CAS service: 302. This indicates that "
+                            + "the RESTful API for CAS is not installed. Reason: " + reason);
         }
 
         if (statusCode != 201) {

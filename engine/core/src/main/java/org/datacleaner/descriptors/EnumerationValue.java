@@ -149,12 +149,14 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
     }
 
     @Override
-    public void serialize(final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonProcessingException {
+    public void serialize(final JsonGenerator jgen, final SerializerProvider provider)
+            throws IOException, JsonProcessingException {
         jgen.writeString(value);
     }
 
     @Override
-    public void serializeWithType(final JsonGenerator jgen, final SerializerProvider provider, final TypeSerializer typeSer)
+    public void serializeWithType(final JsonGenerator jgen, final SerializerProvider provider,
+            final TypeSerializer typeSer)
             throws IOException, JsonProcessingException {
         jgen.writeString(value);
     }

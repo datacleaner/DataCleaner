@@ -73,7 +73,7 @@ public final class ColumnListTable extends DCPanel {
     private final Table _table;
     private final DCTable _columnTable;
 
-    private final SortedMap<InputColumn<?>, JComponent> _columns = new TreeMap<InputColumn<?>, JComponent>();
+    private final SortedMap<InputColumn<?>, JComponent> _columns = new TreeMap<>();
     private final WindowContext _windowContext;
     private final boolean _addShadowBorder;
 
@@ -280,7 +280,7 @@ public final class ColumnListTable extends DCPanel {
     }
 
     public void setColumns(final List<? extends InputColumn<?>> columns) {
-        final List<InputColumn<?>> copyOfOldList = new ArrayList<InputColumn<?>>(_columns.keySet());
+        final List<InputColumn<?>> copyOfOldList = new ArrayList<>(_columns.keySet());
         for (final InputColumn<?> column : copyOfOldList) {
             removeColumn(column, false);
         }

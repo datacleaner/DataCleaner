@@ -78,7 +78,7 @@ public class JobDeletionController {
 
         _eventPublisher.publishEvent(new JobDeletionEvent(this, tenant, jobName));
 
-        final Map<String, String> response = new TreeMap<String, String>();
+        final Map<String, String> response = new TreeMap<>();
         response.put("job", jobName);
         response.put("action", "delete");
         logger.debug("Response payload: {}", response);

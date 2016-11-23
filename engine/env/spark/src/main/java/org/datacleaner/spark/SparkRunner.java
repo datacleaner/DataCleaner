@@ -64,7 +64,8 @@ public class SparkRunner {
     private final String _jobFilePath;
     private final String _resultFilePath;
 
-    public SparkRunner(final String configurationFilePath, final String jobFilePath, final String resultFilePath) throws IOException {
+    public SparkRunner(final String configurationFilePath, final String jobFilePath, final String resultFilePath)
+            throws IOException {
         _configurationFilePath = configurationFilePath;
         _jobFilePath = jobFilePath;
         _resultFilePath = resultFilePath;

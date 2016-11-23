@@ -42,8 +42,8 @@ public class JsonDatastore extends UsageAwareDatastore<JsonDataContext> implemen
 
     public JsonDatastore(final String name, final Resource resource, final SchemaBuilder schemaBuilder) {
         super(name);
-        _resourceRef = new SerializableRef<Resource>(resource);
-        _schemaBuilderRef = new SerializableRef<SchemaBuilder>(schemaBuilder);
+        _resourceRef = new SerializableRef<>(resource);
+        _schemaBuilderRef = new SerializableRef<>(schemaBuilder);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class JsonDatastore extends UsageAwareDatastore<JsonDataContext> implemen
         } else {
             dataContext = new JsonDataContext(resource, schemaBuilder);
         }
-        return new DatastoreConnectionImpl<JsonDataContext>(dataContext, this);
+        return new DatastoreConnectionImpl<>(dataContext, this);
     }
 
     public SchemaBuilder getSchemaBuilder() {

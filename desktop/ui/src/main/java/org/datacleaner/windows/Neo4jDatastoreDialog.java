@@ -177,7 +177,7 @@ public class Neo4jDatastoreDialog extends AbstractDatastoreDialog<Neo4jDatastore
     @Override
     public Schema createSchema() {
         final Neo4jDatastore datastore = createDatastore();
-        try (final DatastoreConnection connection = datastore.openConnection()) {
+        try (DatastoreConnection connection = datastore.openConnection()) {
             final Schema defaultSchema = connection.getDataContext().getDefaultSchema();
             return defaultSchema;
         }
@@ -191,10 +191,10 @@ public class Neo4jDatastoreDialog extends AbstractDatastoreDialog<Neo4jDatastore
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         final List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Password", _passwordTextField));
+        result.add(new ImmutableEntry<>("Hostname", _hostnameTextField));
+        result.add(new ImmutableEntry<>("Port", _portTextField));
+        result.add(new ImmutableEntry<>("Username", _usernameTextField));
+        result.add(new ImmutableEntry<>("Password", _passwordTextField));
         return result;
     }
 

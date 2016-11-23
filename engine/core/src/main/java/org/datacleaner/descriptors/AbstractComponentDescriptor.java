@@ -39,7 +39,7 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
     private final boolean _requireInputColumns;
     private final String _displayName;
 
-    public AbstractComponentDescriptor(final Class<B> componentClass, final boolean requireInputColumns) {
+    AbstractComponentDescriptor(final Class<B> componentClass, final boolean requireInputColumns) {
         super(componentClass);
         _requireInputColumns = requireInputColumns;
         _displayName = determineDisplayName();

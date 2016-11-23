@@ -70,8 +70,8 @@ import org.slf4j.LoggerFactory;
  *
  * Classes with the {@link Named} annotation will be picked by the classpath
  * scanner. Furthermore the legacy annotations {@link org.eobjects.analyzer.beans.api.AnalyzerBean},
- * {@link org.eobjects.analyzer.beans.api.TransformerBean} and {@link org.eobjects.analyzer.beans.api.FilterBean} are currently being checked
- * for.
+ * {@link org.eobjects.analyzer.beans.api.TransformerBean} and {@link org.eobjects.analyzer.beans.api.FilterBean}
+ * are currently being checked for.
  *
  * <li>{@link RendererBean}</li>
  *
@@ -82,13 +82,13 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     private static final Logger logger = LoggerFactory.getLogger(ClasspathScanDescriptorProvider.class);
 
     private final Map<String, AnalyzerDescriptor<?>> _analyzerBeanDescriptors =
-            new HashMap<String, AnalyzerDescriptor<?>>();
+            new HashMap<>();
     private final Map<String, FilterDescriptor<?, ?>> _filterBeanDescriptors =
-            new HashMap<String, FilterDescriptor<?, ?>>();
+            new HashMap<>();
     private final Map<String, TransformerDescriptor<?>> _transformerBeanDescriptors =
-            new HashMap<String, TransformerDescriptor<?>>();
+            new HashMap<>();
     private final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors =
-            new HashMap<String, RendererBeanDescriptor<?>>();
+            new HashMap<>();
     private final TaskRunner _taskRunner;
     private final Predicate<Class<? extends RenderingFormat<?>>> _renderingFormatPredicate;
     private final AtomicInteger _tasksPending;
@@ -109,7 +109,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      * @param taskRunner
      */
     public ClasspathScanDescriptorProvider(final TaskRunner taskRunner) {
-        this(taskRunner, new TruePredicate<Class<? extends RenderingFormat<?>>>());
+        this(taskRunner, new TruePredicate<>());
     }
 
     /**
@@ -186,9 +186,9 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     private static Predicate<Class<? extends RenderingFormat<?>>> createRenderingFormatPredicate(
             final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats) {
         if (excludedRenderingFormats == null || excludedRenderingFormats.isEmpty()) {
-            return new TruePredicate<Class<? extends RenderingFormat<?>>>();
+            return new TruePredicate<>();
         }
-        return new ExclusionPredicate<Class<? extends RenderingFormat<?>>>(excludedRenderingFormats);
+        return new ExclusionPredicate<>(excludedRenderingFormats);
     }
 
     /**
@@ -476,7 +476,8 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         }
     }
 
-    private void scanEntry(final JarEntry entry, final String packagePath, final boolean recursive, final ClassLoader classLoader,
+    private void scanEntry(final JarEntry entry, final String packagePath, final boolean recursive,
+            final ClassLoader classLoader,
             final boolean strictClassLoader, final Ref<InputStream> entryInputStream) throws IOException {
         final String entryName = entry.getName();
         if (isClassInPackage(entryName, packagePath, recursive)) {
@@ -505,7 +506,8 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         }
     }
 
-    private void scanDirectory(final File dir, final boolean recursive, final ClassLoader classLoader, final boolean strictClassLoader) {
+    private void scanDirectory(final File dir, final boolean recursive, final ClassLoader classLoader,
+            final boolean strictClassLoader) {
         if (!dir.exists()) {
             throw new IllegalArgumentException("Directory '" + dir + "' does not exist");
         }
@@ -558,8 +560,8 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      * @throws IOException
      *
      * @{@link deprecated} use
-     *         {@link #scanInputStreamOfClassFile(InputStream, ClassLoader, boolean)}
-     *         instead.
+     *     {@link #scanInputStreamOfClassFile(InputStream, ClassLoader, boolean)}
+     *     instead.
      */
     @Deprecated
     protected void scanInputStream(final InputStream inputStream, final ClassLoader classLoader,

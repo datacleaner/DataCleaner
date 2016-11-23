@@ -70,7 +70,7 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
         _isDashboardEditor = clientConfig.isDashboardEditor();
         _displayDefaultGroup = clientConfig.isDefaultDashboardGroupDisplayed();
         _displayInfomercial = clientConfig.isInformercialDisplayed();
-        _anchors = new HashMap<String, Anchor>();
+        _anchors = new HashMap<>();
         _anchorPanel = new FlowPanel();
         _anchorPanel.setStyleName("AnchorPanel");
 

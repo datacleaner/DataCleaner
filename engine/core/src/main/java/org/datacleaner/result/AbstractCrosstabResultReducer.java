@@ -147,8 +147,8 @@ public abstract class AbstractCrosstabResultReducer<R extends CrosstabResult> im
 
                 final String[] categories = new String[] { category1, category2 };
 
-                final List<ResultProducer> slaveResultProducers = new ArrayList<ResultProducer>();
-                final List<Object> slaveValues = new ArrayList<Object>(results.size());
+                final List<ResultProducer> slaveResultProducers = new ArrayList<>();
+                final List<Object> slaveValues = new ArrayList<>(results.size());
                 for (final R result : results) {
                     final Crosstab<?> slaveCrosstab = result.getCrosstab();
                     try {
@@ -206,7 +206,8 @@ public abstract class AbstractCrosstabResultReducer<R extends CrosstabResult> im
         return masterCrosstab;
     }
 
-    protected ResultProducer reduceResultProducers(final List<ResultProducer> slaveResultProducers, final String category1,
+    protected ResultProducer reduceResultProducers(final List<ResultProducer> slaveResultProducers,
+            final String category1,
             final String category2, final Class<?> valueClass, final Serializable masterValue) {
         for (final ResultProducer resultProducer : slaveResultProducers) {
             final AnalyzerResult result = resultProducer.getResult();
@@ -224,5 +225,5 @@ public abstract class AbstractCrosstabResultReducer<R extends CrosstabResult> im
     protected abstract Serializable reduceValues(List<Object> slaveValues, String category1, String category2,
             Collection<? extends R> results, Class<?> valueClass);
 
-    protected abstract R buildResult(final Crosstab<?> crosstab, final Collection<? extends R> results);
+    protected abstract R buildResult(Crosstab<?> crosstab, Collection<? extends R> results);
 }

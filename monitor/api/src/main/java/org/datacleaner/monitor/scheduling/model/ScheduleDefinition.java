@@ -116,7 +116,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
 
     public List<AlertDefinition> getAlerts() {
         if (_alerts == null) {
-            _alerts = new ArrayList<AlertDefinition>();
+            _alerts = new ArrayList<>();
         }
         return _alerts;
     }

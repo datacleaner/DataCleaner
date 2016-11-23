@@ -36,7 +36,7 @@ public class RoundNumberTransformerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         transformer = new RoundNumberTransformer();
-        col = new MockInputColumn<Number>("number");
+        col = new MockInputColumn<>("number");
         transformer._number = col;
     }
 

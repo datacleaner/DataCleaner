@@ -73,7 +73,7 @@ public class ChangeRequirementMenuBuilder {
         logger.info("Current requirement: {}", currentComponentRequirement);
 
         final Collection<FilterOutcome> currentFilterOutcomes = currentComponentRequirement == null ? Collections
-                .<FilterOutcome> emptyList() : currentComponentRequirement.getProcessingDependencies();
+                .emptyList() : currentComponentRequirement.getProcessingDependencies();
 
         final List<JMenuItem> popup = new ArrayList<>();
         final JMenuItem noFilterMenuItem = new JMenuItem(NO_REQUIREMENT_TEXT);
@@ -161,7 +161,7 @@ public class ChangeRequirementMenuBuilder {
     private List<FilterComponentBuilder<?, ?>> getFilterJobBuilders() {
         final List<FilterComponentBuilder<?, ?>> fjbs;
         if (_componentBuilder instanceof FilterComponentBuilder<?, ?>) {
-            fjbs = new LinkedList<FilterComponentBuilder<?, ?>>(_componentBuilder.getAnalysisJobBuilder()
+            fjbs = new LinkedList<>(_componentBuilder.getAnalysisJobBuilder()
                     .getFilterComponentBuilders());
             fjbs.remove(_componentBuilder);
         } else {

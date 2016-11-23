@@ -89,7 +89,7 @@ public class QueryWindow extends AbstractWindow {
                 final String queryString = _queryTextArea.getText();
                 logger.debug("Query being parsed: {}", queryString);
 
-                try (final DatastoreConnection con = _datastore.openConnection()) {
+                try (DatastoreConnection con = _datastore.openConnection()) {
                     final DataContext dataContext = con.getDataContext();
                     final Query q = dataContext.parseQuery(queryString);
                     logger.info("Parsed query: {}", q);

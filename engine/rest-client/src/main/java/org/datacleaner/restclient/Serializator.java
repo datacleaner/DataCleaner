@@ -58,6 +58,7 @@ public class Serializator {
     @JsonDeserialize(using = ComponentScopeServiceTypeDeserializer.class)
     interface ComponentScopeServiceTypeMixin {
     }
+
     @JsonDeserialize(using = ComponentScopeEntityTypeDeserializer.class)
     interface ComponentScopeEntityTypeMixin {
     }
@@ -72,7 +73,8 @@ public class Serializator {
         }
 
         @Override
-        public void serialize(final InputColumn value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
+        public void serialize(final InputColumn value, final JsonGenerator gen, final SerializerProvider serializers)
+                throws IOException {
             gen.writeString(value.getName());
         }
     }
@@ -115,7 +117,8 @@ public class Serializator {
         }
 
         @Override
-        public void serialize(final Enum value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
+        public void serialize(final Enum value, final JsonGenerator gen, final SerializerProvider serializers)
+                throws IOException {
             gen.writeString(value.name());
         }
 
@@ -125,7 +128,7 @@ public class Serializator {
             final JsonStringFormatVisitor stringVisitor = visitor.expectStringFormat(typeHint);
             if (typeHint != null && stringVisitor != null) {
                 if (typeHint.isEnumType()) {
-                    final Set<String> enums = new LinkedHashSet<String>();
+                    final Set<String> enums = new LinkedHashSet<>();
                     for (final Object value : typeHint.getRawClass().getEnumConstants()) {
                         enums.add(enumValueToSchemaString((Enum) value));
                     }
@@ -181,6 +184,7 @@ public class Serializator {
             return null;
         }
     }
+
     public static final String ENUM_ALIAS_SEPARATOR = "::";
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -272,7 +276,8 @@ public class Serializator {
         }
     }
 
-    public static String enumValueToSchemaString(final String enumValue, final String enumName, final String[] aliases) {
+    public static String enumValueToSchemaString(final String enumValue, final String enumName,
+            final String[] aliases) {
         final StringBuilder serialized = new StringBuilder();
         serialized.append(enumValue);
         serialized.append(ENUM_ALIAS_SEPARATOR);

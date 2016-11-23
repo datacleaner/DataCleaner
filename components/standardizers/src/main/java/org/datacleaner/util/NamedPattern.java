@@ -68,12 +68,12 @@ public class NamedPattern<E extends Enum<E>> {
 
         this.groupEnum = groupEnum;
 
-        groupIndexes = new EnumMap<E, Integer>(groupEnum);
+        groupIndexes = new EnumMap<>(groupEnum);
 
         final E[] availableGroupNames = groupEnum.getEnumConstants();
 
-        final List<E> usedGroupNames = new ArrayList<E>();
-        final List<Integer> groupNameStringIndexOfs = new ArrayList<Integer>();
+        final List<E> usedGroupNames = new ArrayList<>();
+        final List<Integer> groupNameStringIndexOfs = new ArrayList<>();
 
         for (int i = 0; i < availableGroupNames.length; i++) {
             final E group = availableGroupNames[i];
@@ -151,7 +151,7 @@ public class NamedPattern<E extends Enum<E>> {
             final int end = matcher.end();
 
             if (start == 0 && end == string.length()) {
-                final Map<E, String> resultMap = new EnumMap<E, String>(groupEnum);
+                final Map<E, String> resultMap = new EnumMap<>(groupEnum);
                 final Set<Entry<E, Integer>> entries = groupIndexes.entrySet();
                 for (final Entry<E, Integer> entry : entries) {
                     final E group = entry.getKey();
@@ -159,7 +159,7 @@ public class NamedPattern<E extends Enum<E>> {
                     final String result = matcher.group(groupIndex);
                     resultMap.put(group, result);
                 }
-                return new NamedPatternMatch<E>(resultMap);
+                return new NamedPatternMatch<>(resultMap);
             }
         }
 

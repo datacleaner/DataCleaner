@@ -113,7 +113,8 @@ public final class StringConverter {
         return SIMPLE_INSTANCE;
     }
 
-    private static InjectionManager getInjectionManager(final DataCleanerConfiguration configuration, final AnalysisJob job) {
+    private static InjectionManager getInjectionManager(final DataCleanerConfiguration configuration,
+            final AnalysisJob job) {
         final InjectionManagerFactory injectionManagerFactory = configuration.getEnvironment()
                 .getInjectionManagerFactory();
         if (job == null) {
@@ -135,40 +136,40 @@ public final class StringConverter {
     /**
      * Serializes a Java object to a String representation.
      *
-     * @param o
+     * @param obj
      *            the object to serialize
      * @return a String representation of the Java object
      */
-    public final String serialize(final Object o) {
-        return serialize(o, new ArrayList<Converter<?>>(0));
+    public String serialize(final Object obj) {
+        return serialize(obj, new ArrayList<>(0));
     }
 
     /**
      * @deprecated by {@link #serialize(Object, Converter)}
      */
-    public final String serialize(final Object o, final Class<? extends Converter<?>> converterClass) {
+    public String serialize(final Object obj, final Class<? extends Converter<?>> converterClass) {
         final Converter<?> converter = converterClass == null ? null : createConverter(converterClass);
-        return serialize(o, converter);
+        return serialize(obj, converter);
     }
 
-    public final String serialize(final Object o, final Converter<?> converter) {
-        final Collection<Converter<?>> col = new ArrayList<Converter<?>>();
+    public String serialize(final Object obj, final Converter<?> converter) {
+        final Collection<Converter<?>> col = new ArrayList<>();
         if (converter != null) {
             col.add(converter);
         }
-        return serialize(o, col);
+        return serialize(obj, col);
     }
 
     /**
      * Serializes a Java object to a String representation.
      *
-     * @param o
+     * @param obj
      *            the object to serialize
      * @param converters
      *            an optional collection of custom converter classes
      * @return a String representation of the Java object
      */
-    public final String serialize(final Object o, final Collection<Converter<?>> converters) {
+    public String serialize(final Object obj, final Collection<Converter<?>> converters) {
         final DelegatingConverter delegatingConverter = new DelegatingConverter();
 
         if (converters != null) {
@@ -183,7 +184,7 @@ public final class StringConverter {
 
         delegatingConverter.initializeAll(_injectionManager);
 
-        return delegatingConverter.toString(o);
+        return delegatingConverter.toString(obj);
     }
 
     private ResourceConverter getResourceConverter() {
@@ -220,22 +221,23 @@ public final class StringConverter {
      *            the requested type
      * @return a Java object matching the String representation
      */
-    public final <E> E deserialize(final String str, final Class<E> type) {
-        return deserialize(str, type, new ArrayList<Converter<?>>(0));
+    public <E> E deserialize(final String str, final Class<E> type) {
+        return deserialize(str, type, new ArrayList<>(0));
     }
 
     /**
      * @deprecated by {@link #deserialize(String, Class, Converter)}
      */
-    public final <E> E deserialize(final String str, final Class<E> type, final Class<? extends Converter<?>> converterClass) {
+    public <E> E deserialize(final String str, final Class<E> type,
+            final Class<? extends Converter<?>> converterClass) {
         if (converterClass == null) {
             return deserialize(str, type);
         }
         return deserialize(str, type, createConverter(converterClass));
     }
 
-    public final <E> E deserialize(final String str, final Class<E> type, final Converter<?> converter) {
-        final Collection<Converter<?>> col = new ArrayList<Converter<?>>();
+    public <E> E deserialize(final String str, final Class<E> type, final Converter<?> converter) {
+        final Collection<Converter<?>> col = new ArrayList<>();
         if (converter != null) {
             col.add(converter);
         }
@@ -254,7 +256,7 @@ public final class StringConverter {
      *            deserializing
      * @return a Java object matching the String representation
      */
-    public final <E> E deserialize(final String str, final Class<E> type, final Collection<Converter<?>> converters) {
+    public <E> E deserialize(final String str, final Class<E> type, final Collection<Converter<?>> converters) {
         logger.debug("deserialize(\"{}\", {})", str, type);
 
         if (converters == null || converters.isEmpty()) {

@@ -180,7 +180,7 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
         }
 
         final EnumerationValue[] enumConstants = getEnumConstants(inputColumn, _mappedEnumsProperty);
-        final DCComboBox<EnumerationValue> comboBox = new DCComboBox<EnumerationValue>(enumConstants);
+        final DCComboBox<EnumerationValue> comboBox = new DCComboBox<>(enumConstants);
         comboBox.setRenderer(getComboBoxRenderer(inputColumn, _mappedEnumComboBoxes, enumConstants));
         _mappedEnumComboBoxes.put(inputColumn, comboBox);
         if (mappedEnum != null) {
@@ -294,7 +294,7 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
     private EnumerationValue[] getMappedEnums() {
 
         final InputColumn<?>[] inputColumns = MultipleMappedEnumsPropertyWidget.this.getValue();
-        final List<EnumerationValue> result = new ArrayList<EnumerationValue>();
+        final List<EnumerationValue> result = new ArrayList<>();
         for (final InputColumn<?> inputColumn : inputColumns) {
             final DCComboBox<EnumerationValue> comboBox = _mappedEnumComboBoxes.get(inputColumn);
             if (comboBox == null || !comboBox.isVisible()) {

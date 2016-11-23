@@ -46,7 +46,7 @@ public final class ExtensionPackage implements Serializable, HasName {
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionPackage.class);
 
-    private static Collection<ClassLoader> _allExtensionClassLoaders = new ArrayList<ClassLoader>();
+    private static Collection<ClassLoader> _allExtensionClassLoaders = new ArrayList<>();
     private final File[] _files;
     private final String _name;
     private final String _scanPackage;
@@ -67,7 +67,7 @@ public final class ExtensionPackage implements Serializable, HasName {
         _scanPackage = scanPackage;
         _scanRecursive = scanRecursive;
         _files = files;
-        _additionalProperties = new HashMap<String, String>();
+        _additionalProperties = new HashMap<>();
     }
 
     /**
@@ -180,10 +180,9 @@ public final class ExtensionPackage implements Serializable, HasName {
 
             _loaded = true;
 
-            logger.info(
-                    "Succesfully loaded extension '{}' containing {} analyzers, {} transformers, {} filters, {} renderers",
-                    new Object[] { getName(), getLoadedAnalyzers(), getLoadedTransformers(), getLoadedFilters(),
-                            getLoadedRenderers() });
+            logger.info("Succesfully loaded extension '{}' containing {} analyzers, {} transformers, {} filters,"
+                            + " {} renderers",
+                    getName(), getLoadedAnalyzers(), getLoadedTransformers(), getLoadedFilters(), getLoadedRenderers());
         }
         return this;
     }

@@ -73,7 +73,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
         _filenameField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), openFileDialog);
 
         if (_extensions != null && _extensions.length > 0) {
-            final List<FileFilter> filters = new ArrayList<FileFilter>(_extensions.length);
+            final List<FileFilter> filters = new ArrayList<>(_extensions.length);
             for (final String extension : _extensions) {
                 final FileFilter filter = new ExtensionFilter(extension.toUpperCase() + " file", "." + extension);
                 filters.add(filter);

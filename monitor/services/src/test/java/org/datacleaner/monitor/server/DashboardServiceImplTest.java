@@ -144,7 +144,7 @@ public class DashboardServiceImplTest extends TestCase {
             final List<TimelineDataRow> rows = timelineData.getRows();
             assertEquals(6, rows.size());
             List<Number> actualMetricValues = rows.get(0).getMetricValues();
-            List<Number> expectedMetricValues = new ArrayList<Number>();
+            List<Number> expectedMetricValues = new ArrayList<>();
             expectedMetricValues.add(5);
             expectedMetricValues.add(0);
             assertEquals(expectedMetricValues, actualMetricValues);

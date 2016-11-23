@@ -132,7 +132,7 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
         final String dumpInstallKey = "org.datacleaner.extension.dumpinstall";
         final File extensionsDirectory = userPreferences.getExtensionsDirectory();
 
-        final Set<String> extensionFilenames = new HashSet<String>();
+        final Set<String> extensionFilenames = new HashSet<>();
         final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
         for (final Iterator<ExtensionPackage> it = extensionPackages.iterator(); it.hasNext(); ) {
             final ExtensionPackage extensionPackage = (ExtensionPackage) it.next();

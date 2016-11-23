@@ -202,7 +202,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
      * @throws IllegalStateException
      *             if the name is invalid
      */
-    private static void checkName(final String name, final Class<?> type, final List<? extends ReferenceData> previousEntries)
+    private static void checkName(final String name, final Class<?> type,
+            final List<? extends ReferenceData> previousEntries)
             throws IllegalStateException {
         if (StringUtils.isNullOrEmpty(name)) {
             throw new IllegalStateException(type.getSimpleName() + " name cannot be null");
@@ -347,7 +348,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     private void updateDescriptorProviderIfSpecified(final Configuration configuration,
-            final TemporaryMutableDataCleanerEnvironment environment, final DataCleanerConfiguration temporaryConfiguration) {
+            final TemporaryMutableDataCleanerEnvironment environment,
+            final DataCleanerConfiguration temporaryConfiguration) {
         final List<DescriptorProvider> providers = new ArrayList<>();
 
         DescriptorProvidersType providersElement = configuration.getDescriptorProviders();
@@ -486,7 +488,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     private void updateStorageProviderIfSpecified(final Configuration configuration,
-            final TemporaryMutableDataCleanerEnvironment environment, final DataCleanerConfiguration temporaryConfiguration) {
+            final TemporaryMutableDataCleanerEnvironment environment,
+            final DataCleanerConfiguration temporaryConfiguration) {
         final StorageProviderType storageProviderType = configuration.getStorageProvider();
 
         if (storageProviderType == null) {
@@ -1485,7 +1488,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     private void updateTaskRunnerIfSpecified(final Configuration configuration,
-            final TemporaryMutableDataCleanerEnvironment environment, final DataCleanerConfiguration temporaryConfiguration) {
+            final TemporaryMutableDataCleanerEnvironment environment,
+            final DataCleanerConfiguration temporaryConfiguration) {
         final SinglethreadedTaskrunnerType singlethreadedTaskrunner = configuration.getSinglethreadedTaskrunner();
         final MultithreadedTaskrunnerType multithreadedTaskrunner = configuration.getMultithreadedTaskrunner();
         final CustomElementType customTaskrunner = configuration.getCustomTaskrunner();
@@ -1566,7 +1570,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 if (configuredProperty == null) {
                     logger.warn("Missing configured property name: {}", propertyName);
                     if (logger.isInfoEnabled()) {
-                        final Set<ConfiguredPropertyDescriptor> configuredProperties = descriptor.getConfiguredProperties();
+                        final Set<ConfiguredPropertyDescriptor> configuredProperties =
+                                descriptor.getConfiguredProperties();
                         for (final ConfiguredPropertyDescriptor configuredPropertyDescriptor : configuredProperties) {
                             logger.info("Available configured property name: {}, {}", configuredPropertyDescriptor
                                     .getName(), configuredPropertyDescriptor.getType());

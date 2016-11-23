@@ -67,7 +67,8 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
     }
 
     @Override
-    protected boolean processRowsInternal(final AnalysisListener listener, final RowProcessingMetrics rowProcessingMetrics) {
+    protected boolean processRowsInternal(final AnalysisListener listener,
+            final RowProcessingMetrics rowProcessingMetrics) {
         final Collection<ActiveOutputDataStream> activeOutputDataStreams = _parentConsumer.getActiveOutputDataStreams();
         for (final ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
             try {

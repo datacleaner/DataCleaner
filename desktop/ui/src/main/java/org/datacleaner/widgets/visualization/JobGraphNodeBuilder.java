@@ -71,7 +71,7 @@ class JobGraphNodeBuilder {
 
     public DirectedGraph<Object, JobGraphLink> buildGraph() {
 
-        final DirectedGraph<Object, JobGraphLink> graph = new DirectedSparseGraph<Object, JobGraphLink>();
+        final DirectedGraph<Object, JobGraphLink> graph = new DirectedSparseGraph<>();
         final List<Table> sourceTables = _analysisJobBuilder.getSourceTables();
 
         buildGraphInternal(graph, _analysisJobBuilder, sourceTables);
@@ -192,7 +192,7 @@ class JobGraphNodeBuilder {
 
     private boolean isEdgeShortcutFor(final DirectedGraph<Object, JobGraphLink> graph, final JobGraphLink potentialShortcut,
             final JobGraphLink otherEdge) {
-        return isEdgeShortcutFor(graph, potentialShortcut, otherEdge, new HashSet<JobGraphLink>());
+        return isEdgeShortcutFor(graph, potentialShortcut, otherEdge, new HashSet<>());
     }
 
     private boolean isEdgeShortcutFor(final DirectedGraph<Object, JobGraphLink> graph, final JobGraphLink potentialShortcut,

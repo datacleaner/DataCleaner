@@ -47,7 +47,7 @@ public class LatestNumberOfDaysHAxisOption implements HorizontalAxisOption {
 
     @Override
     public Date getBeginDate() {
-        final long latestNumberOfMillis = _latestNumberOfDays * 1000l * 60 * 60 * 24;
+        final long latestNumberOfMillis = _latestNumberOfDays * 1000L * 60 * 60 * 24;
 
         final Date now = new Date();
         final long time = now.getTime() - latestNumberOfMillis;

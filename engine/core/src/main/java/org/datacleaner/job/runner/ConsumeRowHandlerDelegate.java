@@ -41,7 +41,7 @@ final class ConsumeRowHandlerDelegate implements RowProcessingChain {
 
     public ConsumeRowHandlerDelegate(final List<RowProcessingConsumer> consumers, final InputRow row,
             final int consumerIndex, final FilterOutcomes outcomes) {
-        this(consumers, row, consumerIndex, outcomes, new ArrayList<InputRow>(1), new ArrayList<FilterOutcomes>(1));
+        this(consumers, row, consumerIndex, outcomes, new ArrayList<>(1), new ArrayList<>(1));
     }
 
     private ConsumeRowHandlerDelegate(final List<RowProcessingConsumer> consumers, final InputRow row,

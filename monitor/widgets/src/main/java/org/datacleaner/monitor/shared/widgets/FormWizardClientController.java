@@ -80,7 +80,7 @@ public final class FormWizardClientController implements WizardClientController 
 
     @Override
     public void requestNextPage(final AsyncCallback<WizardPage> callback) {
-        final Map<String, List<String>> formParameters = new HashMap<String, List<String>>();
+        final Map<String, List<String>> formParameters = new HashMap<>();
 
         final FormElement formElement = FormElement.as(_form);
 
@@ -114,7 +114,7 @@ public final class FormWizardClientController implements WizardClientController 
             if (included) {
                 List<String> valueList = formParameters.get(name);
                 if (valueList == null) {
-                    valueList = new ArrayList<String>();
+                    valueList = new ArrayList<>();
                     formParameters.put(name, valueList);
                 }
                 valueList.add(value);

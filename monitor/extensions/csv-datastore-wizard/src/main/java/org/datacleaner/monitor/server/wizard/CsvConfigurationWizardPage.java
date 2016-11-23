@@ -58,7 +58,7 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
 
     protected Map<String, Object> getFormModel() {
         final CsvConfiguration detectedConfiguration = autoDetectConfiguration(_resource);
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("separator", detectedConfiguration.getSeparatorChar());
         map.put("quote", detectedConfiguration.getQuoteChar());
         map.put("escape", detectedConfiguration.getEscapeChar());

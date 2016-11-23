@@ -35,8 +35,8 @@ import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 /**
  * The type of {@link OutputRowCollector} used for {@link OutputDataStreamJob}
  * execution. This instance will eventually be passed into the
- * {@link HasOutputDataStreams#initializeOutputDataStream(org.datacleaner.api.OutputDataStream, org.apache.metamodel.query.Query, OutputRowCollector)}
- * method.
+ * {@link HasOutputDataStreams#initializeOutputDataStream(org.datacleaner.api.OutputDataStream,
+ * org.apache.metamodel.query.Query, OutputRowCollector)} method.
  */
 public class OutputDataStreamRowCollector implements OutputRowCollector {
 

@@ -44,15 +44,15 @@ public final class StringUtils {
         return str == null || str.trim().isEmpty();
     }
 
-    public static boolean isDiacritic(final char c) {
-        if (Character.isLetter(c)) {
-            return !isLatin(c);
+    public static boolean isDiacritic(final char character) {
+        if (Character.isLetter(character)) {
+            return !isLatin(character);
         }
         return false;
     }
 
-    public static boolean isLatin(final char c) {
-        return c >= 'A' && c <= 'z';
+    public static boolean isLatin(final char character) {
+        return character >= 'A' && character <= 'z';
     }
 
     public static String leftTrim(final String str) {
@@ -75,9 +75,9 @@ public final class StringUtils {
         return WHITESPACE_PATTERN.matcher(inString).replaceAll(with);
     }
 
-    public static int indexOf(final char c, final char[] chars) {
+    public static int indexOf(final char character, final char[] chars) {
         for (int i = 0; i < chars.length; i++) {
-            if (c == chars[i]) {
+            if (character == chars[i]) {
                 return i;
             }
         }
@@ -115,6 +115,7 @@ public final class StringUtils {
         final Iterator<String> it = iterable.iterator();
         String commonToken = it.next();
         while (it.hasNext()) {
+            // TODO: This never worked?
             if (commonToken == "") {
                 return null;
             }
@@ -151,17 +152,17 @@ public final class StringUtils {
      * run-through of the string, and it will use regexes instead of exact
      * searching.
      *
-     * @param v
+     * @param str
      * @param searchToken
      * @param replacement
      * @return
      */
-    public static String replaceAll(String v, final String searchToken, final String replacement) {
-        if (v == null) {
-            return v;
+    public static String replaceAll(String str, final String searchToken, final String replacement) {
+        if (str == null) {
+            return str;
         }
-        v = v.replace(searchToken, replacement);
-        return v;
+        str = str.replace(searchToken, replacement);
+        return str;
     }
 
     /**

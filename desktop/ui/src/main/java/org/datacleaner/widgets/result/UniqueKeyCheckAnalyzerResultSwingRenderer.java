@@ -60,7 +60,7 @@ public class UniqueKeyCheckAnalyzerResultSwingRenderer
         final DefaultKeyedValues keyedValues = new DefaultKeyedValues();
         keyedValues.addValue("Unique keys", result.getUniqueCount());
 
-        final List<Title> subTitles = new ArrayList<Title>();
+        final List<Title> subTitles = new ArrayList<>();
         subTitles.add(new ShortTextTitle("Row count: " + result.getRowCount()));
         subTitles.add(new ShortTextTitle("Unique key count: " + result.getUniqueCount()));
 

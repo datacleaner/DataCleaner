@@ -106,7 +106,7 @@ public class JaxbJobWriterTest extends TestCase {
                 .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
         final AnalysisJob builtJob;
-        try (final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(conf)) {
+        try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(conf)) {
             jobBuilder.setDatastore(ds);
             final Table table = jobBuilder.getDatastoreConnection().getDataContext().getDefaultSchema().getTable(0);
             assertEquals("[foo, bar, baz, A]", Arrays.toString(table.getColumnNames()));
@@ -254,10 +254,10 @@ public class JaxbJobWriterTest extends TestCase {
 
         EasyMock.expect(ds.getName()).andReturn("myds");
 
-        EasyMock.expect(job.getSourceColumns()).andReturn(new ArrayList<InputColumn<?>>());
-        EasyMock.expect(job.getTransformerJobs()).andReturn(new ArrayList<TransformerJob>());
-        EasyMock.expect(job.getFilterJobs()).andReturn(new ArrayList<FilterJob>());
-        EasyMock.expect(job.getAnalyzerJobs()).andReturn(new ArrayList<AnalyzerJob>());
+        EasyMock.expect(job.getSourceColumns()).andReturn(new ArrayList<>());
+        EasyMock.expect(job.getTransformerJobs()).andReturn(new ArrayList<>());
+        EasyMock.expect(job.getFilterJobs()).andReturn(new ArrayList<>());
+        EasyMock.expect(job.getAnalyzerJobs()).andReturn(new ArrayList<>());
 
         EasyMock.replay(job, ds);
 

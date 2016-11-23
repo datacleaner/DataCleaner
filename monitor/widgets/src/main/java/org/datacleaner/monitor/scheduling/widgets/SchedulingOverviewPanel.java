@@ -74,7 +74,7 @@ public class SchedulingOverviewPanel extends Composite {
                     final FlowPanel panel = new FlowPanel();
                     panel.add(createHeaderPanel());
                     panel.addStyleName("SchedulingOverviewPanel");
-                    final Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<String, ScheduleGroupPanel>();
+                    final Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<>();
                     for (final ScheduleDefinition scheduleDefinition : result) {
                         addSchedule(scheduleDefinition, jobGroupingCategory, panel, scheduleGroupPanels);
                     }
@@ -86,7 +86,7 @@ public class SchedulingOverviewPanel extends Composite {
                     jobCategories = sortJobCategories(jobCategories);
 
                     for (final String jobCategory : jobCategories) {
-                        final Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<String, ScheduleGroupPanel>();
+                        final Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<>();
                         final FlowPanel panel = new FlowPanel();
                         panel.add(createHeaderPanel());
                         panel.addStyleName("SchedulingOverviewPanel");
@@ -117,7 +117,7 @@ public class SchedulingOverviewPanel extends Composite {
             private Map<String, List<ScheduleDefinition>> createCategoryAndGroupMapForJobs(
                     final List<ScheduleDefinition> result) {
                 final Map<String, List<ScheduleDefinition>> categoryAndGroupMap =
-                        new TreeMap<String, List<ScheduleDefinition>>();
+                        new TreeMap<>();
 
                 for (final ScheduleDefinition scheduleDefinition : result) {
                     final Map<String, String> jobMetadataProperties = scheduleDefinition.getJobMetadataProperties();
@@ -140,7 +140,7 @@ public class SchedulingOverviewPanel extends Composite {
                     listOfJobWithSameCategory = categoryAndGroupMap.get(categoryName);
 
                     if (listOfJobWithSameCategory == null) {
-                        listOfJobWithSameCategory = new ArrayList<ScheduleDefinition>();
+                        listOfJobWithSameCategory = new ArrayList<>();
 
                         categoryAndGroupMap.put(categoryName, listOfJobWithSameCategory);
                     }

@@ -91,7 +91,8 @@ public class HttpClusterManager implements ClusterManager {
      * @param slaveEndpoints
      *            the endpoint URLs of the slaves
      */
-    public HttpClusterManager(final HttpClient httpClient, final HttpClientContext context, final List<String> slaveEndpoints) {
+    public HttpClusterManager(final HttpClient httpClient, final HttpClientContext context,
+            final List<String> slaveEndpoints) {
         _httpClient = httpClient;
         _httpClientContext = context;
         _slaveEndpoints = slaveEndpoints;
@@ -103,7 +104,8 @@ public class HttpClusterManager implements ClusterManager {
     }
 
     @Override
-    public AnalysisResultFuture dispatchJob(final AnalysisJob job, final DistributedJobContext context) throws Exception {
+    public AnalysisResultFuture dispatchJob(final AnalysisJob job, final DistributedJobContext context)
+            throws Exception {
         // determine endpoint url
         final int index = context.getJobDivisionIndex();
         final String slaveEndpoint = _slaveEndpoints.get(index);
@@ -115,7 +117,7 @@ public class HttpClusterManager implements ClusterManager {
         final byte[] bytes = baos.toByteArray();
 
         // send the request in another thread
-        final List<Throwable> errors = new LinkedList<Throwable>();
+        final List<Throwable> errors = new LinkedList<>();
 
         final String slaveJobUuid = UUID.randomUUID().toString();
 
@@ -143,7 +145,7 @@ public class HttpClusterManager implements ClusterManager {
                 // send the HTTP request
                 final HttpPost request = new HttpPost(slaveEndpoint);
 
-                final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+                final List<NameValuePair> parameters = new ArrayList<>();
                 parameters.add(new BasicNameValuePair(HTTP_PARAM_SLAVE_JOB_ID, slaveJobId));
                 parameters.add(new BasicNameValuePair(HTTP_PARAM_ACTION, ACTION_RUN));
                 parameters.add(new BasicNameValuePair(HTTP_PARAM_JOB_DEF, new String(bytes)));

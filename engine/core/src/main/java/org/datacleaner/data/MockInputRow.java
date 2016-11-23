@@ -59,7 +59,7 @@ public class MockInputRow extends AbstractLegacyAwareInputRow {
     }
 
     public MockInputRow(final long id) {
-        this(id, new LinkedHashMap<InputColumn<?>, Object>());
+        this(id, new LinkedHashMap<>());
     }
 
     public MockInputRow(final InputColumn<?>[] columns, final Object[] values) {
@@ -99,7 +99,7 @@ public class MockInputRow extends AbstractLegacyAwareInputRow {
 
     @Override
     public List<InputColumn<?>> getInputColumns() {
-        return new ArrayList<InputColumn<?>>(_values.keySet());
+        return new ArrayList<>(_values.keySet());
     }
 
     @Override

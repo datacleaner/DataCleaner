@@ -72,7 +72,7 @@ final class SalesforceDatastoreCredentialsPage extends AbstractFreemarkerWizardP
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<>();
         model.put("sfdc_username", _username);
         model.put("sfdc_password", _password);
         return model;

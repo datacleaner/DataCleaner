@@ -43,7 +43,7 @@ public class DataSetResult implements TableModelResult, AnalyzerResult {
     }
 
     public DataSetResult(final DataSet ds) {
-        _rows = new ArrayList<Row>();
+        _rows = new ArrayList<>();
         while (ds.next()) {
             _rows.add(ds.getRow());
         }

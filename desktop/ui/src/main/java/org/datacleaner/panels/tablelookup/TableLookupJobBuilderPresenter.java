@@ -73,7 +73,7 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
             final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
             final DataCleanerConfiguration configuration, final DCModule dcModule) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
-        _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
+        _overriddenPropertyWidgets = new HashMap<>();
 
         final TransformerDescriptor<?> descriptor = transformerJobBuilder.getDescriptor();
         assert descriptor.getComponentClass() == TableLookupTransformer.class;
@@ -145,7 +145,7 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
     @Override
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
+        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<>();
 
         final ConfiguredPropertyTaskPane inputMappingTaskPane = new ConfiguredPropertyTaskPane("Input mapping",
                 "images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,

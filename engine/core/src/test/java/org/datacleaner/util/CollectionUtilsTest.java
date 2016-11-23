@@ -44,7 +44,7 @@ public class CollectionUtilsTest extends TestCase {
     }
 
     public void testFilterOnClass() throws Exception {
-        Collection<Object> superTypeList = new ArrayList<Object>();
+        Collection<Object> superTypeList = new ArrayList<>();
         superTypeList.add(123);
         superTypeList.add("foo");
         superTypeList.add(123);
@@ -54,7 +54,7 @@ public class CollectionUtilsTest extends TestCase {
     }
 
     public void testSorted() throws Exception {
-        ArrayList<String> list1 = new ArrayList<String>();
+        ArrayList<String> list1 = new ArrayList<>();
         list1.add("4");
         list1.add("1");
         list1.add("3");

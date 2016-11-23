@@ -74,7 +74,7 @@ public class DatastoreSchemaController {
         }
 
         final String username = getUsername();
-        try (final DatastoreConnection connection = datastore.openConnection()) {
+        try (DatastoreConnection connection = datastore.openConnection()) {
             final DataContext dataContext = connection.getDataContext();
 
             logger.info("Serving schemas in datastore {} to user: {}.", new Object[] { datastoreName, username });

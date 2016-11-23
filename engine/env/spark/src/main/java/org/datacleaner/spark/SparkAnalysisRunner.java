@@ -63,7 +63,8 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         this(sparkContext, sparkJobContext, null);
     }
 
-    public SparkAnalysisRunner(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext, final Integer minPartitions) {
+    public SparkAnalysisRunner(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext,
+            final Integer minPartitions) {
         _sparkContext = sparkContext;
         _sparkJobContext = sparkJobContext;
         if (minPartitions != null) {
@@ -105,7 +106,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             if (_sparkJobContext.isResultEnabled()) {
                 final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = processedTuplesRdd
-                        .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>(),
+                        .mapPartitionsToPair(new TuplesToTuplesFunction<>(),
                                 preservePartitions);
 
                 namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(

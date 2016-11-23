@@ -109,7 +109,7 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
             _datastoreNameField.setEnabled(false);
 
             final List<? extends Datastore> containedDatastores = originalDatastore.getDatastores();
-            final Set<String> containedDatastoreNames = new HashSet<String>();
+            final Set<String> containedDatastoreNames = new HashSet<>();
             for (final Datastore datastore : containedDatastores) {
                 containedDatastoreNames.add(datastore.getName());
             }
@@ -204,7 +204,7 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
 
     @Override
     protected CompositeDatastore createDatastore() {
-        final List<Datastore> datastores = new ArrayList<Datastore>();
+        final List<Datastore> datastores = new ArrayList<>();
 
         for (final DCCheckBox<Datastore> checkBox : _checkBoxes) {
             if (checkBox.isSelected()) {

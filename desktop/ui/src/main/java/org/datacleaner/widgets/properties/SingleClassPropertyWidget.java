@@ -61,7 +61,7 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
     }
 
     public static DCComboBox<Class<?>> createClassComboBox(final boolean required) {
-        final Collection<Class<?>> items = new ArrayList<Class<?>>();
+        final Collection<Class<?>> items = new ArrayList<>();
 
         if (!required) {
             items.add(null);
@@ -74,7 +74,7 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
         items.add(Map.class);
         items.add(Object.class);
 
-        final DCComboBox<Class<?>> comboBox = new DCComboBox<Class<?>>(items);
+        final DCComboBox<Class<?>> comboBox = new DCComboBox<>(items);
         comboBox.setRenderer(new DCListCellRenderer() {
 
             private static final long serialVersionUID = 1L;

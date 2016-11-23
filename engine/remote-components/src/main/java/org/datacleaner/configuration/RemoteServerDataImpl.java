@@ -29,7 +29,8 @@ public class RemoteServerDataImpl implements RemoteServerData {
     private String username;
     private String password;
 
-    public RemoteServerDataImpl(final String url, final String serverName, final String username, final String password) {
+    public RemoteServerDataImpl(final String url, final String serverName, final String username,
+            final String password) {
         this.url = url == null ? null : url.replaceAll("/+$", "");
         this.serverName = serverName == null ? null : serverName;
         this.username = username;

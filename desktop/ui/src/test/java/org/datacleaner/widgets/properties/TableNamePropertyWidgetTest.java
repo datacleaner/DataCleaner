@@ -62,9 +62,9 @@ public class TableNamePropertyWidgetTest extends TestCase {
 
         final List<TableDataProvider<?>> tables = new ArrayList<>();
         tables.add(new ArrayTableDataProvider(new SimpleTableDef("foo", new String[] { "col1", "col2" }),
-                new ArrayList<Object[]>()));
+                new ArrayList<>()));
         tables.add(new ArrayTableDataProvider(new SimpleTableDef("bar", new String[] { "col3", "col4" }),
-                new ArrayList<Object[]>()));
+                new ArrayList<>()));
 
         final PojoDatastore ds = new PojoDatastore("myds", tables);
 

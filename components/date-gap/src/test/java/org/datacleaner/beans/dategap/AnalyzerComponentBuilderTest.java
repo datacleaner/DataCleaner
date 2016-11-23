@@ -39,7 +39,7 @@ public class AnalyzerComponentBuilderTest extends TestCase {
     public void testAddUnnamedColumnToMultiColumnAnalyzer() throws Exception {
         AnalyzerComponentBuilder<DateGapAnalyzer> analyzer = ajb.addAnalyzer(DateGapAnalyzer.class);
         try {
-            analyzer.addInputColumn(new MockInputColumn<String>("foo", String.class));
+            analyzer.addInputColumn(new MockInputColumn<>("foo", String.class));
             fail("Exception expected");
         } catch (Exception e) {
             assertEquals(

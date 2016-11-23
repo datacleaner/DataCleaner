@@ -166,7 +166,7 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
     @Override
     public Schema createSchema() {
         final CassandraDatastore datastore = createDatastore();
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getDefaultSchema();
             return schema;
         }
@@ -180,9 +180,9 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         final List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Keyspace name", _keyspaceTextField));
+        result.add(new ImmutableEntry<>("Hostname", _hostnameTextField));
+        result.add(new ImmutableEntry<>("Port", _portTextField));
+        result.add(new ImmutableEntry<>("Keyspace name", _keyspaceTextField));
         return result;
     }
 }

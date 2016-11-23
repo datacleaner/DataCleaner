@@ -40,7 +40,7 @@ public class MockAnalyzer implements Analyzer<ListResult<InputRow>> {
     @Configured
     InputColumn<?>[] cols;
 
-    private BlockingQueue<InputRow> rows = new LinkedBlockingQueue<InputRow>();
+    private BlockingQueue<InputRow> rows = new LinkedBlockingQueue<>();
 
     @Override
     public void run(final InputRow row, final int distinctCount) {
@@ -49,9 +49,9 @@ public class MockAnalyzer implements Analyzer<ListResult<InputRow>> {
 
     @Override
     public ListResult<InputRow> getResult() {
-        final List<InputRow> rowsList = new ArrayList<InputRow>(rows.size());
+        final List<InputRow> rowsList = new ArrayList<>(rows.size());
         rows.drainTo(rowsList);
-        return new ListResult<InputRow>(rowsList);
+        return new ListResult<>(rowsList);
     }
 
     public InputColumn<?>[] getCols() {

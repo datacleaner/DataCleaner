@@ -25,7 +25,8 @@ public class UpdateableDatastoreConnectionImpl<E extends UpdateableDataContext> 
         implements
         UpdateableDatastoreConnection {
 
-    public UpdateableDatastoreConnectionImpl(final E dataContext, final Datastore datastore, final AutoCloseable... closeables) {
+    public UpdateableDatastoreConnectionImpl(final E dataContext, final Datastore datastore,
+            final AutoCloseable... closeables) {
         super(dataContext, datastore, closeables);
     }
 

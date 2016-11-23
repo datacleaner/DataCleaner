@@ -72,7 +72,8 @@ final class FilterConsumer extends AbstractRowProcessingConsumer implements RowP
     }
 
     @Override
-    public void consumeInternal(final InputRow row, final int distinctCount, final FilterOutcomes outcomes, final RowProcessingChain chain) {
+    public void consumeInternal(final InputRow row, final int distinctCount, final FilterOutcomes outcomes,
+            final RowProcessingChain chain) {
         final Enum<?> category = _filter.categorize(row);
         final FilterOutcome outcome = new ImmutableFilterOutcome(_filterJob, category);
         outcomes.add(outcome);

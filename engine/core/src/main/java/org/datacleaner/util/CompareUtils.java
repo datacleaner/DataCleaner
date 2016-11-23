@@ -38,7 +38,7 @@ public final class CompareUtils {
      *             if obj1's Comparable type is not compatible with the argument
      *             obj2.
      */
-    public static final int compareUnbound(final Comparable<?> obj1, final Object obj2) throws ClassCastException {
+    public static int compareUnbound(final Comparable<?> obj1, final Object obj2) throws ClassCastException {
         if (obj1 == obj2) {
             return 0;
         }
@@ -63,7 +63,7 @@ public final class CompareUtils {
      * @return a negative integer, zero, or a positive integer as the first
      *         argument is less than, equal to, or greater than the second.
      */
-    public static final <E> int compare(final Comparable<E> obj1, final E obj2) {
+    public static <E> int compare(final Comparable<E> obj1, final E obj2) {
         if (obj1 == obj2) {
             return 0;
         }

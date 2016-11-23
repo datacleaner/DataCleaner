@@ -56,6 +56,7 @@ public class ConsumeRowHandler {
         public Collection<? extends FilterOutcome> alwaysSatisfiedOutcomes;
         public Table table;
     }
+
     private static final Logger logger = LoggerFactory.getLogger(ConsumeRowHandler.class);
     private final List<RowProcessingConsumer> _consumers;
     private final Collection<? extends FilterOutcome> _alwaysSatisfiedOutcomes;
@@ -112,7 +113,7 @@ public class ConsumeRowHandler {
      * @return
      */
     public List<InputColumn<?>> getOutputColumns() {
-        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> result = new ArrayList<>();
         for (final RowProcessingConsumer consumer : _consumers) {
             final InputColumn<?>[] outputColumns = consumer.getOutputColumns();
             for (final InputColumn<?> outputColumn : outputColumns) {
@@ -181,17 +182,18 @@ public class ConsumeRowHandler {
         } else {
             final Collection<RowProcessingPublisher> publishers = rowProcessingPublishers.getRowProcessingPublishers();
             publisher = publishers.iterator().next();
-            for (final RowProcessingPublisher aPublisher : publishers) {
-                if (aPublisher != publisher) {
-                    if (aPublisher.getStream().isSourceTable()) {
+            for (final RowProcessingPublisher thisPublisher : publishers) {
+                if (thisPublisher != publisher) {
+                    if (thisPublisher.getStream().isSourceTable()) {
                         throw new IllegalArgumentException(
-                                "Job consumes multiple source tables, but ConsumeRowHandler can only handle a single table's components. Please specify a Table constructor argument.");
+                                "Job consumes multiple source tables, but ConsumeRowHandler can only handle a single "
+                                        + "table's components. Please specify a Table constructor argument.");
                     }
                 }
             }
         }
 
-        final AtomicReference<Throwable> errorReference = new AtomicReference<Throwable>();
+        final AtomicReference<Throwable> errorReference = new AtomicReference<>();
 
         publisher.initializeConsumers(new TaskListener() {
             @Override
@@ -214,7 +216,7 @@ public class ConsumeRowHandler {
         final Throwable throwable = errorReference.get();
         if (throwable != null) {
             if (throwable instanceof RuntimeException) {
-
+                logger.warn("A consumer failed", throwable);
             }
         }
 
@@ -229,7 +231,7 @@ public class ConsumeRowHandler {
     }
 
     private List<RowProcessingConsumer> removeAnalyzers(final List<RowProcessingConsumer> consumers) {
-        final List<RowProcessingConsumer> result = new ArrayList<RowProcessingConsumer>();
+        final List<RowProcessingConsumer> result = new ArrayList<>();
         for (final RowProcessingConsumer rowProcessingConsumer : consumers) {
             final Object component = rowProcessingConsumer.getComponent();
             if (!(component instanceof Analyzer<?>)) {

@@ -57,11 +57,11 @@ public class JaxbPojoDatastoreAdaptorTest extends TestCase {
 
         SimpleTableDef tableDef = new SimpleTableDef("bar", new String[] { "id", "name", "details", "bytes" },
                 new ColumnType[] { ColumnType.INTEGER, ColumnType.VARCHAR, ColumnType.MAP, ColumnType.BINARY });
-        Collection<Object[]> arrays = new ArrayList<Object[]>();
+        Collection<Object[]> arrays = new ArrayList<>();
         arrays.add(new Object[] { 1, "Kasper Sørensen", map1, new byte[] { (byte) -40, (byte) -2 } });
         arrays.add(new Object[] { 2, "Ankit Kumar", map2, new byte[] { (byte) 1, (byte) 3, (byte) 3, (byte) 7 } });
         TableDataProvider<?> tableProvider = new ArrayTableDataProvider(tableDef, arrays);
-        List<TableDataProvider<?>> tableProviders = new ArrayList<TableDataProvider<?>>();
+        List<TableDataProvider<?>> tableProviders = new ArrayList<>();
         tableProviders.add(tableProvider);
 
         PojoDatastore datastore;

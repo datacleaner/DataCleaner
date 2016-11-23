@@ -97,7 +97,7 @@ public class JaxbMetricAdaptor extends AbstractJaxbAdaptor<MetricsType> {
             return metricIdentifier;
         } else {
             final List<MetricType> childMetrics = childrenTypes.getMetric();
-            final List<MetricIdentifier> children = new ArrayList<MetricIdentifier>(childMetrics.size());
+            final List<MetricIdentifier> children = new ArrayList<>(childMetrics.size());
             for (final MetricType childMetricType : childMetrics) {
                 final MetricIdentifier childMetric = deserialize(childMetricType);
                 children.add(childMetric);

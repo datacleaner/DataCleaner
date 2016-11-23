@@ -35,7 +35,7 @@ public class BatchTransformationBufferTest extends TestCase {
             }
         };
 
-        final BatchTransformationBuffer<Integer, String> buffer = new BatchTransformationBuffer<Integer, String>(
+        final BatchTransformationBuffer<Integer, String> buffer = new BatchTransformationBuffer<>(
                 batchTransformation);
         buffer.start();
         try {
@@ -81,7 +81,7 @@ public class BatchTransformationBufferTest extends TestCase {
             }
         };
 
-        final BatchTransformationBuffer<Integer, String> buffer = new BatchTransformationBuffer<Integer, String>(
+        final BatchTransformationBuffer<Integer, String> buffer = new BatchTransformationBuffer<>(
                 batchTransformation, maxBatchSize, flushInterval);
         buffer.start();
         try {

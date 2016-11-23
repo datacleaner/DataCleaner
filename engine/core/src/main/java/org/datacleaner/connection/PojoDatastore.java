@@ -50,7 +50,8 @@ public class PojoDatastore implements UpdateableDatastore, Serializable {
         this(name, schemaName, Arrays.asList(tableDataProviders));
     }
 
-    public PojoDatastore(final String datastoreName, final String schemaName, final List<TableDataProvider<?>> tableDataProviders) {
+    public PojoDatastore(final String datastoreName, final String schemaName,
+            final List<TableDataProvider<?>> tableDataProviders) {
         _datastoreName = datastoreName;
         _dataContext = new PojoDataContext(schemaName, tableDataProviders);
     }

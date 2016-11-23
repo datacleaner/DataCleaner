@@ -73,7 +73,7 @@ final class AnalysisJobBuilderImportHelper {
 
         // map that translates original component jobs to their builder objects
         final Map<ComponentJob, ComponentBuilder> componentBuilders =
-                new IdentityHashMap<ComponentJob, ComponentBuilder>();
+                new IdentityHashMap<>();
         addComponentBuilders(job.getFilterJobs(), componentBuilders);
         addComponentBuilders(job.getTransformerJobs(), componentBuilders);
         addComponentBuilders(job.getAnalyzerJobs(), componentBuilders);

@@ -103,8 +103,8 @@ public class DeleteFromTableAnalyzerTest {
         deleteFromTable.errorLogFile = new File("src/test/resources/invalid-error-handling-file.csv");
         deleteFromTable.conditionColumnNames = new String[] { "col1", "col2" };
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
+        InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
         deleteFromTable.conditionValues = new InputColumn[] { col1, col2 };
 
         deleteFromTable.validate();
@@ -122,7 +122,7 @@ public class DeleteFromTableAnalyzerTest {
         deleteFromTable.errorLogFile = file;
         deleteFromTable.conditionColumnNames = new String[] { INTEGER_COLUMN_NAME };
 
-        InputColumn<Object> inputColumn = new MockInputColumn<Object>(INTEGER_COLUMN_NAME, Object.class);
+        InputColumn<Object> inputColumn = new MockInputColumn<>(INTEGER_COLUMN_NAME, Object.class);
         deleteFromTable.conditionValues = new InputColumn[] { inputColumn };
 
         deleteFromTable.validate();
@@ -149,8 +149,8 @@ public class DeleteFromTableAnalyzerTest {
         deleteFromTable.errorLogFile = null;
         deleteFromTable._componentContext = EasyMock.createMock(ComponentContext.class);
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>(VARCHAR_COLUMN_NAME, Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
+        InputColumn<Object> col1 = new MockInputColumn<>(VARCHAR_COLUMN_NAME, Object.class);
+        InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
 
         deleteFromTable.conditionValues = new InputColumn[] { col1, col2 };
 

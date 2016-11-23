@@ -37,9 +37,9 @@ public class NumberAnalyzerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        col1 = new MockInputColumn<Float>("foo", Float.class);
-        col2 = new MockInputColumn<Long>("bar", Long.class);
-        col3 = new MockInputColumn<Byte>("w00p", Byte.class);
+        col1 = new MockInputColumn<>("foo", Float.class);
+        col2 = new MockInputColumn<>("bar", Long.class);
+        col3 = new MockInputColumn<>("w00p", Byte.class);
 
         numberAnalyzer = new NumberAnalyzer(col1, col2, col3);
     }
@@ -63,11 +63,11 @@ public class NumberAnalyzerTest extends TestCase {
     }
 
     public void testOnlyeOneColumnNonNull() throws Exception {
-        numberAnalyzer.run(new MockInputRow().put(col2, 1l), 1);
-        numberAnalyzer.run(new MockInputRow().put(col2, 2l), 1);
-        numberAnalyzer.run(new MockInputRow().put(col2, 3l), 1);
-        numberAnalyzer.run(new MockInputRow().put(col2, 4l), 1);
-        numberAnalyzer.run(new MockInputRow().put(col2, 5l), 1);
+        numberAnalyzer.run(new MockInputRow().put(col2, 1L), 1);
+        numberAnalyzer.run(new MockInputRow().put(col2, 2L), 1);
+        numberAnalyzer.run(new MockInputRow().put(col2, 3L), 1);
+        numberAnalyzer.run(new MockInputRow().put(col2, 4L), 1);
+        numberAnalyzer.run(new MockInputRow().put(col2, 5L), 1);
 
         CrosstabResult result = numberAnalyzer.getResult();
         String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
@@ -87,8 +87,8 @@ public class NumberAnalyzerTest extends TestCase {
     }
 
     public void testSimpleRun() throws Exception {
-        numberAnalyzer.run(new MockInputRow().put(col1, 123.4f).put(col2, 1234l).put(col3, (byte) 12), 1);
-        numberAnalyzer.run(new MockInputRow().put(col1, 567.8f).put(col2, 5678l).put(col3, (byte) 34), 1);
+        numberAnalyzer.run(new MockInputRow().put(col1, 123.4f).put(col2, 1234L).put(col3, (byte) 12), 1);
+        numberAnalyzer.run(new MockInputRow().put(col1, 567.8f).put(col2, 5678L).put(col3, (byte) 34), 1);
 
         CrosstabResult result = numberAnalyzer.getResult();
         String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");

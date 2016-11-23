@@ -60,9 +60,9 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
     public TableLookupOutputColumnsPropertyWidget(final ComponentBuilder componentBuilder,
             final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
-        _comboBoxes = new ArrayList<SourceColumnComboBox>();
+        _comboBoxes = new ArrayList<>();
 
-        _tableRef = new MutableRef<Table>();
+        _tableRef = new MutableRef<>();
 
         _comboBoxPanel = new DCPanel();
         _comboBoxPanel.setLayout(new VerticalLayout(2));
@@ -147,7 +147,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 
     @Override
     public String[] getValue() {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         for (final SourceColumnComboBox comboBox : _comboBoxes) {
             final Column column = comboBox.getSelectedItem();
             if (column != null) {

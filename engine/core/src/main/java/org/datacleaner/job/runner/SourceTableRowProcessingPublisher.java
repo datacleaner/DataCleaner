@@ -56,7 +56,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
 
     private static final Logger logger = LoggerFactory.getLogger(SourceTableRowProcessingPublisher.class);
 
-    private final Set<Column> _physicalColumns = new LinkedHashSet<Column>();
+    private final Set<Column> _physicalColumns = new LinkedHashSet<>();
     private final LazyRef<RowProcessingQueryOptimizer> _queryOptimizerRef;
 
     /**
@@ -67,7 +67,8 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
      * @param publishers
      * @param stream
      */
-    public SourceTableRowProcessingPublisher(final RowProcessingPublishers publishers, final RowProcessingStream stream) {
+    public SourceTableRowProcessingPublisher(final RowProcessingPublishers publishers,
+            final RowProcessingStream stream) {
         super(publishers, stream);
 
         _queryOptimizerRef = createQueryOptimizerRef();
@@ -76,7 +77,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
                 SystemProperties.QUERY_SELECTCLAUSE_OPTIMIZE, false);
         if (!aggressiveOptimizeSelectClause) {
             final Collection<InputColumn<?>> sourceColumns = stream.getAnalysisJob().getSourceColumns();
-            final List<Column> columns = new ArrayList<Column>();
+            final List<Column> columns = new ArrayList<>();
             for (final InputColumn<?> sourceColumn : sourceColumns) {
                 final Column column = sourceColumn.getPhysicalColumn();
                 if (column != null && getTable().equals(column.getTable())) {
@@ -132,7 +133,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
             @Override
             protected RowProcessingQueryOptimizer fetch() {
                 final Datastore datastore = getAnalysisJob().getDatastore();
-                try (final DatastoreConnection con = datastore.openConnection()) {
+                try (DatastoreConnection con = datastore.openConnection()) {
                     final DataContext dataContext = con.getDataContext();
 
                     final Column[] columnArray = _physicalColumns.toArray(new Column[_physicalColumns.size()]);
@@ -204,7 +205,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
 
         final Datastore datastore = getAnalysisJob().getDatastore();
 
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final DataContext dataContext = con.getDataContext();
 
             if (logger.isDebugEnabled()) {
@@ -223,7 +224,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
             // tasks to execute
             int numTasks = 0;
 
-            try (final DataSet dataSet = dataContext.executeQuery(finalQuery)) {
+            try (DataSet dataSet = dataContext.executeQuery(finalQuery)) {
                 while (dataSet.next()) {
                     if (taskListener.isErrornous()) {
                         break;

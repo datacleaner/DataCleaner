@@ -32,7 +32,7 @@ public abstract class BatchTransformer implements Transformer, BatchTransformati
     private final BatchTransformationBuffer<InputRow, Object[]> _batchTransformationBuffer;
 
     public BatchTransformer() {
-        _batchTransformationBuffer = new BatchTransformationBuffer<InputRow, Object[]>(this, getMaxBatchSize(),
+        _batchTransformationBuffer = new BatchTransformationBuffer<>(this, getMaxBatchSize(),
                 getFlushIntervalMillis());
     }
 

@@ -79,7 +79,7 @@ public class DateAndTimeAnalyzer implements Analyzer<DateAndTimeAnalyzerResult> 
     @Provided
     RowAnnotationFactory _annotationFactory;
     private Map<InputColumn<Date>, DateAndTimeAnalyzerColumnDelegate> _delegates =
-            new HashMap<InputColumn<Date>, DateAndTimeAnalyzerColumnDelegate>();
+            new HashMap<>();
 
     @Initialize
     public void init() {
@@ -123,7 +123,7 @@ public class DateAndTimeAnalyzer implements Analyzer<DateAndTimeAnalyzerResult> 
             columnDimension.addCategory(column.getName());
         }
 
-        final Crosstab<Serializable> crosstab = new Crosstab<Serializable>(Serializable.class, columnDimension,
+        final Crosstab<Serializable> crosstab = new Crosstab<>(Serializable.class, columnDimension,
                 measureDimension);
         final CrosstabNavigator<Serializable> nav = crosstab.navigate();
         for (final InputColumn<Date> column : _columns) {

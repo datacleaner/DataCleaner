@@ -96,7 +96,8 @@ public class RESTClientImpl implements RESTClient {
      * @return
      */
     @Override
-    public String getResponse(final HttpMethod httpMethod, final String url, final String requestBody) throws RESTClientException {
+    public String getResponse(final HttpMethod httpMethod, final String url, final String requestBody)
+            throws RESTClientException {
         final WebResource webResource = client.resource(url);
         final WebResource.Builder builder = webResource
                 .accept(MediaType.APPLICATION_JSON)

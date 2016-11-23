@@ -154,7 +154,7 @@ public class DCTable extends JXTable implements MouseListener {
 
     protected List<JMenuItem> getCopyMenuItems() {
         final Icon icon = ImageManager.get().getImageIcon(IconUtils.ACTION_COPY, IconUtils.ICON_SIZE_MENU_ITEM);
-        final List<JMenuItem> result = new ArrayList<JMenuItem>();
+        final List<JMenuItem> result = new ArrayList<>();
 
         // JMenuItem for "Copy selected cells to clipboard"
         final JMenuItem copySelectedItem = new JMenuItem("Copy selected cells to clipboard", icon);

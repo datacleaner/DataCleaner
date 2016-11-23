@@ -48,7 +48,7 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
 
     /**
      * Determines if the underlying component is fully configured or not. This
-     * is equivalent to invoking {@link #isConfigured(boolean))} with a 'false'
+     * is equivalent to invoking {@link #isConfigured(boolean)} with a 'false'
      * argument.
      *
      * @return
@@ -226,7 +226,7 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      * Updates the {@link AnalysisJobBuilder} that this component belongs to.
      *
      * @param analysisJobBuilder
-     *            the new {@link }AnalysisJobBuilder}
+     *            the new {@link AnalysisJobBuilder}
      */
     void setAnalysisJobBuilder(AnalysisJobBuilder analysisJobBuilder);
 

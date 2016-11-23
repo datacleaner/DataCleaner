@@ -65,7 +65,7 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Displa
         if (!inputProperties.isEmpty()) {
             final ConfiguredPropertyDescriptor property = inputProperties.iterator().next();
 
-            final List<InputColumn<?>> inputColumnsToAdd = new ArrayList<InputColumn<?>>();
+            final List<InputColumn<?>> inputColumnsToAdd = new ArrayList<>();
             inputColumnsToAdd.addAll(_transformerJobBuilder.getInputColumns());
             final List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
             for (final MutableInputColumn<?> outputColumn : outputColumns) {

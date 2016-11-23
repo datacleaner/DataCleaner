@@ -97,7 +97,8 @@ public final class CompositeAnalysisListener implements AnalysisListener {
     }
 
     @Override
-    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob, final ComponentMessage message) {
+    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob,
+            final ComponentMessage message) {
         for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.onComponentMessage(job, componentJob, message);
@@ -130,7 +131,8 @@ public final class CompositeAnalysisListener implements AnalysisListener {
     }
 
     @Override
-    public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row, final int currentRow) {
+    public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
+            final int currentRow) {
         for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.rowProcessingProgress(job, metrics, row, currentRow);
@@ -174,7 +176,8 @@ public final class CompositeAnalysisListener implements AnalysisListener {
     }
 
     @Override
-    public void errorInComponent(final AnalysisJob job, final ComponentJob componentJob, final InputRow row, final Throwable throwable) {
+    public void errorInComponent(final AnalysisJob job, final ComponentJob componentJob, final InputRow row,
+            final Throwable throwable) {
         for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.errorInComponent(job, componentJob, row, throwable);

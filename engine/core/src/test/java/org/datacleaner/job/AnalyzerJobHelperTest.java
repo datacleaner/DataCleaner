@@ -57,7 +57,7 @@ public class AnalyzerJobHelperTest extends TestCase {
         // create a copy
         final AnalysisJob job2;
         final Datastore datastore2 = new CsvDatastore("ds", "src/test/resources/employees.csv");
-        try (final AnalysisJobBuilder ajb2 = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
+        try (AnalysisJobBuilder ajb2 = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
 
             ajb2.setDatastore(datastore2);
             ajb2.addSourceColumns("name", "email");
@@ -82,7 +82,7 @@ public class AnalyzerJobHelperTest extends TestCase {
     public void testGetAnalyzerJobFromChildScope() {
         final Datastore datastore = new CsvDatastore("ds", "src/test/resources/employees.csv");
         final AnalysisJob aj;
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
             ajb.setDatastore(datastore);
             ajb.addSourceColumns("name", "email");
 

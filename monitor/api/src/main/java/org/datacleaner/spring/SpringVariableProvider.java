@@ -45,7 +45,7 @@ public class SpringVariableProvider implements VariableProvider {
 
     @Override
     public Map<String, String> provideValues(final JobContext job, final ExecutionLog execution) {
-        final Map<String, String> result = new HashMap<String, String>();
+        final Map<String, String> result = new HashMap<>();
 
         final Map<String, String> variables = job.getVariables();
         final Set<Entry<String, String>> entries = variables.entrySet();

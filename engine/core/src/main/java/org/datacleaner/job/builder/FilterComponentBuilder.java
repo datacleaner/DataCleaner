@@ -53,15 +53,16 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
     private FilterJob _cachedJob;
     private EnumMap<C, FilterOutcome> _outcomes;
 
-    public FilterComponentBuilder(final AnalysisJobBuilder analysisJobBuilder, final FilterDescriptor<F, C> descriptor) {
+    public FilterComponentBuilder(final AnalysisJobBuilder analysisJobBuilder,
+            final FilterDescriptor<F, C> descriptor) {
         super(analysisJobBuilder, descriptor, FilterComponentBuilder.class);
-        _outcomes = new EnumMap<C, FilterOutcome>(descriptor.getOutcomeCategoryEnum());
+        _outcomes = new EnumMap<>(descriptor.getOutcomeCategoryEnum());
         final EnumSet<C> categories = descriptor.getOutcomeCategories();
         for (final C category : categories) {
             _outcomes.put(category, new LazyFilterOutcome(this, category));
         }
 
-        _localChangeListeners = new ArrayList<FilterChangeListener>(0);
+        _localChangeListeners = new ArrayList<>(0);
     }
 
     public FilterJob toFilterJob() {
@@ -106,7 +107,7 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
     private List<FilterChangeListener> getAllListeners() {
         @SuppressWarnings("deprecation") final
         List<FilterChangeListener> globalChangeListeners = getAnalysisJobBuilder().getFilterChangeListeners();
-        final List<FilterChangeListener> list = new ArrayList<FilterChangeListener>(globalChangeListeners.size()
+        final List<FilterChangeListener> list = new ArrayList<>(globalChangeListeners.size()
                 + _localChangeListeners.size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);

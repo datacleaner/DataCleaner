@@ -51,10 +51,10 @@ public class QuickAnalysisBuilder {
     }
 
     public void configureAnalysisJobBuilder(final AnalysisJobBuilder ajb) {
-        final List<InputColumn<?>> booleanColumns = new ArrayList<InputColumn<?>>();
-        final List<InputColumn<?>> stringColumns = new ArrayList<InputColumn<?>>();
-        final List<InputColumn<?>> numberColumns = new ArrayList<InputColumn<?>>();
-        final List<InputColumn<?>> dateTimeColumns = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> booleanColumns = new ArrayList<>();
+        final List<InputColumn<?>> stringColumns = new ArrayList<>();
+        final List<InputColumn<?>> numberColumns = new ArrayList<>();
+        final List<InputColumn<?>> dateTimeColumns = new ArrayList<>();
 
         for (final InputColumn<?> inputColumn : ajb.getSourceColumns()) {
             final Class<?> dataType = inputColumn.getDataType();

@@ -77,12 +77,12 @@ public class CreateTableColumnDefintionPanel extends DCPanel {
         _parentDialog = parentDialog;
         _nameTextField = WidgetFactory.createTextField("Column name");
         _nameTextField.setText(name);
-        _columnTypeComboBox = new DCComboBox<ColumnType>(AVAILABLE_COLUMN_TYPES);
+        _columnTypeComboBox = new DCComboBox<>(AVAILABLE_COLUMN_TYPES);
         _columnTypeComboBox.setSelectedItem(columnType);
         _sizeTextField = WidgetFactory.createTextField("Size", 4);
         _sizeTextField.setDocument(new NumberDocument(false, false));
-        _primaryKeyCheckBox = new DCCheckBox<Boolean>("Primary key?", primaryKey);
-        final DCCheckBox<Boolean> notNullCheckBox = new DCCheckBox<Boolean>("Not null?", false);
+        _primaryKeyCheckBox = new DCCheckBox<>("Primary key?", primaryKey);
+        final DCCheckBox<Boolean> notNullCheckBox = new DCCheckBox<>("Not null?", false);
         notNullCheckBox.addListener(new Listener<Boolean>() {
             @Override
             public void onItemSelected(final Boolean item, final boolean selected) {

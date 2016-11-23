@@ -44,7 +44,7 @@ public class ProvidedPropertyDescriptorImplTest extends TestCase {
 
     public void testDiscovery() throws Exception {
         SimpleComponentDescriptor<ProvidedPropertyDescriptorImplTest> desc =
-                new SimpleComponentDescriptor<ProvidedPropertyDescriptorImplTest>(
+                new SimpleComponentDescriptor<>(
                         ProvidedPropertyDescriptorImplTest.class, true);
 
         Set<ProvidedPropertyDescriptor> properties = desc.getProvidedProperties();

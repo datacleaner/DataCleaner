@@ -96,7 +96,7 @@ public class BuildListTransformer implements Transformer {
             existingList = Collections.emptyList();
         }
 
-        final List<Object> list = new ArrayList<Object>(existingList);
+        final List<Object> list = new ArrayList<>(existingList);
 
         for (final InputColumn<?> column : values) {
             final Object value = row.getValue(column);

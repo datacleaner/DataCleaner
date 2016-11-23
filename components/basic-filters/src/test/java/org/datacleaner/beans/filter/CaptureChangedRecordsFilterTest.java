@@ -40,7 +40,7 @@ public class CaptureChangedRecordsFilterTest extends TestCase {
         File file = new File("target/test_capture_changed_records_filter.properties");
         file.delete();
 
-        MockInputColumn<Object> column = new MockInputColumn<Object>("Foo LastModified");
+        MockInputColumn<Object> column = new MockInputColumn<>("Foo LastModified");
 
         CaptureChangedRecordsFilter filter = new CaptureChangedRecordsFilter();
 
@@ -121,7 +121,7 @@ public class CaptureChangedRecordsFilterTest extends TestCase {
         File file = new File("target/test_capture_changed_records_filter.properties");
         file.delete();
 
-        MockInputColumn<Object> column = new MockInputColumn<Object>("Foo LastId");
+        MockInputColumn<Object> column = new MockInputColumn<>("Foo LastId");
 
         CaptureChangedRecordsFilter filter = new CaptureChangedRecordsFilter();
 
@@ -198,7 +198,7 @@ public class CaptureChangedRecordsFilterTest extends TestCase {
                 .getTime());
         ts2.setNanos(999999999);
 
-        final MockInputColumn<Object> column = new MockInputColumn<Object>("Foo LastId", Timestamp.class);
+        final MockInputColumn<Object> column = new MockInputColumn<>("Foo LastId", Timestamp.class);
 
         final CaptureChangedRecordsFilter filter = new CaptureChangedRecordsFilter();
         final InMemoryResource resource = new InMemoryResource("foo.txt");

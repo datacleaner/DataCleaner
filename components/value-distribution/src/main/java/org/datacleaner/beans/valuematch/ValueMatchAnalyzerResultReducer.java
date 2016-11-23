@@ -51,7 +51,7 @@ public class ValueMatchAnalyzerResultReducer implements AnalyzerResultReducer<Va
         final InputColumn<?> column = firstResult.getColumn();
         final RowAnnotation nullAnnotation = _rowAnnotationFactory.createAnnotation();
         final RowAnnotation unexpectedValuesAnnotation = _rowAnnotationFactory.createAnnotation();
-        final Map<String, RowAnnotation> valueAnnotations = new HashMap<String, RowAnnotation>();
+        final Map<String, RowAnnotation> valueAnnotations = new HashMap<>();
 
         int totalCount = 0;
 

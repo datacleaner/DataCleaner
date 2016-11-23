@@ -47,7 +47,7 @@ public class ListResult<E> implements AnalyzerResult {
         if (values instanceof List) {
             _values = (List<E>) values;
         } else {
-            _values = new ArrayList<E>(values);
+            _values = new ArrayList<>(values);
         }
     }
 

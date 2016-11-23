@@ -66,7 +66,7 @@ public final class DatastoreSynonymCatalog extends AbstractReferenceData impleme
     }
 
     protected static String[] getSynonyms(final Row row, final Column[] columns) {
-        final List<String> synonyms = new ArrayList<String>();
+        final List<String> synonyms = new ArrayList<>();
         for (final Column synonymColumn : columns) {
             final Object value = row.getValue(synonymColumn);
             if (value != null) {

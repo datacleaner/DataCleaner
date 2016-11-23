@@ -36,9 +36,9 @@ public class MathFormulaTransformerTest extends TestCase {
     @Override
     @SuppressWarnings("unchecked")
     protected void setUp() throws Exception {
-        foo = new MockInputColumn<Number>("foo");
-        bar = new MockInputColumn<Number>("BAR");
-        baz = new MockInputColumn<Number>("baz");
+        foo = new MockInputColumn<>("foo");
+        bar = new MockInputColumn<>("BAR");
+        baz = new MockInputColumn<>("baz");
 
         trans = new MathFormulaTransformer();
         trans._input = new InputColumn[] { foo, bar, baz };

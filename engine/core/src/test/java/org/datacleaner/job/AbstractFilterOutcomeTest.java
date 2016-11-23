@@ -38,7 +38,7 @@ public class AbstractFilterOutcomeTest extends TestCase {
         FilterOutcome fo1;
         FilterOutcome fo2;
 
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
             FilterComponentBuilder<MockFilter, Category> filterJobBuilder = ajb.addFilter(MockFilter.class);
             filterJobBuilder.addInputColumn(new MockInputColumn<String>("foo"));
             filterJobBuilder.getComponentInstance().setSomeEnum(Category.INVALID);

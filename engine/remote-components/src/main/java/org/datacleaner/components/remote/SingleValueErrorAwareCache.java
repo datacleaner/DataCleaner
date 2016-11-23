@@ -42,7 +42,10 @@ public abstract class SingleValueErrorAwareCache<K, V> {
     /** The actual value retrieval procedure */
     protected abstract V fetch(K key) throws Exception;
 
-    /** Returns the cached value/exception. If nothing cached, calls {@link #fetch}, caches the value/exception and returns/throws it. */
+    /**
+     * Returns the cached value/exception. If nothing cached, calls {@link #fetch},
+     * caches the value/exception and returns/throws it.
+     */
     public V getCachedValue(final K key) throws Exception {
         if (cachedValueKey != null) {
             if (key.equals(cachedValueKey)) {

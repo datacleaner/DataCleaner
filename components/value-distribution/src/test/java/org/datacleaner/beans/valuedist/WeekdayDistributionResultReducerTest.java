@@ -38,8 +38,8 @@ public class WeekdayDistributionResultReducerTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testReduce() throws Exception {
-        final InputColumn<Date> col1 = new MockInputColumn<Date>("from");
-        final InputColumn<Date> col2 = new MockInputColumn<Date>("to");
+        final InputColumn<Date> col1 = new MockInputColumn<>("from");
+        final InputColumn<Date> col2 = new MockInputColumn<>("to");
 
         WeekdayDistributionAnalyzer analyzer;
 

@@ -64,8 +64,8 @@ public class CountryStandardizationResultHtmlRenderer implements Renderer<Countr
             sb.append(StringEscapeUtils.escapeHtml(category));
             sb.append("</td>");
             final DrillToDetailsBodyElement countryFrangment =
-                    new DrillToDetailsBodyElement(createElementId(_elementCounter),
-                            _rendererFactory, categoryRowSample);
+                    new DrillToDetailsBodyElement(createElementId(_elementCounter), _rendererFactory,
+                            categoryRowSample);
             final String javaScriptInvocation = countryFrangment.toJavaScriptInvocation();
             htmlFragment.addBodyElement(countryFrangment);
             final String link = "<a class=\"drillToDetailsLink\" onclick=\"" + javaScriptInvocation + " \" href=\"#\">"

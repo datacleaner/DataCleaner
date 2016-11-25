@@ -178,8 +178,7 @@ public class Neo4jDatastoreDialog extends AbstractDatastoreDialog<Neo4jDatastore
     public Schema createSchema() {
         final Neo4jDatastore datastore = createDatastore();
         try (DatastoreConnection connection = datastore.openConnection()) {
-            final Schema defaultSchema = connection.getDataContext().getDefaultSchema();
-            return defaultSchema;
+            return connection.getDataContext().getDefaultSchema();
         }
     }
 

@@ -43,8 +43,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface SchedulingService extends RemoteService {
 
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
-    List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, boolean loadProperties)
-            throws DCSecurityException;
+    List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, boolean loadProperties) throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition)
@@ -57,8 +56,8 @@ public interface SchedulingService extends RemoteService {
     ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
-            Map<String, String> overrideProperties) throws DCSecurityException;
+    ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job, Map<String, String> overrideProperties)
+            throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     boolean cancelExecution(TenantIdentifier tenant, ExecutionLog execution) throws DCSecurityException;
@@ -67,8 +66,7 @@ public interface SchedulingService extends RemoteService {
     ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
-    ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier)
-            throws DCSecurityException;
+    ScheduleDefinition getSchedule(TenantIdentifier tenant, JobIdentifier jobIdentifier) throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     String getServerDate();

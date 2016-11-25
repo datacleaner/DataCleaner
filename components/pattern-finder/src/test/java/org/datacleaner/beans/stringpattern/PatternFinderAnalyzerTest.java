@@ -19,25 +19,26 @@
  */
 package org.datacleaner.beans.stringpattern;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.storage.RowAnnotations;
 
+import junit.framework.TestCase;
+
 public class PatternFinderAnalyzerTest extends TestCase {
 
     public void testDescriptor() throws Exception {
         // simply test that the analyzer is valid
-        AnalyzerDescriptor<PatternFinderAnalyzer> descriptor = Descriptors.ofAnalyzer(PatternFinderAnalyzer.class);
+        final AnalyzerDescriptor<PatternFinderAnalyzer> descriptor =
+                Descriptors.ofAnalyzer(PatternFinderAnalyzer.class);
         assertEquals("Pattern finder", descriptor.getDisplayName());
     }
 
     public void testSingleToken() throws Exception {
-        PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
-        MockInputColumn<String> column = new MockInputColumn<>("title", String.class);
+        final PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
+        final MockInputColumn<String> column = new MockInputColumn<>("title", String.class);
 
         pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         pf.setColumn(column);
@@ -46,13 +47,13 @@ public class PatternFinderAnalyzerTest extends TestCase {
 
         pf.run(new MockInputRow().put(column, "blabla"), 1);
 
-        assertEquals("Crosstab:\nMatch count,aaaaaa: 1\nSample,aaaaaa: blabla", pf.getResult().getSingleCrosstab()
-                .toString());
+        assertEquals("Crosstab:\nMatch count,aaaaaa: 1\nSample,aaaaaa: blabla",
+                pf.getResult().getSingleCrosstab().toString());
     }
 
     public void testEmployeeTitles() throws Exception {
-        PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
-        MockInputColumn<String> column = new MockInputColumn<>("title", String.class);
+        final PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
+        final MockInputColumn<String> column = new MockInputColumn<>("title", String.class);
 
         pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         pf.setColumn(column);
@@ -95,8 +96,8 @@ public class PatternFinderAnalyzerTest extends TestCase {
     }
 
     public void testEmailAddresses() throws Exception {
-        PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
-        MockInputColumn<String> column = new MockInputColumn<>("title", String.class);
+        final PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
+        final MockInputColumn<String> column = new MockInputColumn<>("title", String.class);
 
         pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         pf.setColumn(column);
@@ -112,7 +113,7 @@ public class PatternFinderAnalyzerTest extends TestCase {
         pf.run(new MockInputRow().put(column, null), 1);
         pf.run(new MockInputRow().put(column, null), 1);
 
-        String[] resultLines = new PatternFinderResultTextRenderer().render(pf.getResult()).split("\n");
+        final String[] resultLines = new PatternFinderResultTextRenderer().render(pf.getResult()).split("\n");
         assertEquals(5, resultLines.length);
         assertEquals("                             Match count Sample      ", resultLines[0]);
         assertEquals("<blank>                                3 <blank>     ", resultLines[1]);
@@ -122,9 +123,9 @@ public class PatternFinderAnalyzerTest extends TestCase {
     }
 
     public void testGroupEmailByDomain() throws Exception {
-        PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
-        MockInputColumn<String> col1 = new MockInputColumn<>("username", String.class);
-        MockInputColumn<String> col2 = new MockInputColumn<>("domain", String.class);
+        final PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
+        final MockInputColumn<String> col1 = new MockInputColumn<>("username", String.class);
+        final MockInputColumn<String> col2 = new MockInputColumn<>("domain", String.class);
 
         pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         pf.setColumn(col1);

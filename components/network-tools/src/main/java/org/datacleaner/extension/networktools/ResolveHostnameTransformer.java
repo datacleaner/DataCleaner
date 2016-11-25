@@ -40,8 +40,7 @@ import org.slf4j.LoggerFactory;
 @Description("Resolves the IP of a hostname")
 public class ResolveHostnameTransformer implements Transformer {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(ResolveHostnameTransformer.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResolveHostnameTransformer.class);
 
     @Configured
     InputColumn<String> hostnameColumn;
@@ -60,8 +59,8 @@ public class ResolveHostnameTransformer implements Transformer {
                 final InetAddress addr = InetAddress.getByName(hostname);
                 final byte[] ip = addr.getAddress();
                 assert ip.length == 4;
-                result = toUnsigned(ip[0]) + "." + toUnsigned(ip[1]) + "."
-                        + toUnsigned(ip[2]) + "." + toUnsigned(ip[3]);
+                result =
+                        toUnsigned(ip[0]) + "." + toUnsigned(ip[1]) + "." + toUnsigned(ip[2]) + "." + toUnsigned(ip[3]);
             } catch (final UnknownHostException e) {
                 logger.error("Unknown host: " + hostname, e);
             } catch (final Exception e) {

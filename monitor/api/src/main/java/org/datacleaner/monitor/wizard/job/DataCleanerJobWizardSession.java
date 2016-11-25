@@ -19,9 +19,6 @@
  */
 package org.datacleaner.monitor.wizard.job;
 
-import java.io.OutputStream;
-
-import org.apache.metamodel.util.Action;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobWriter;
@@ -60,17 +57,14 @@ public abstract class DataCleanerJobWizardSession extends AbstractJobWizardSessi
         if (StringUtils.isNullOrEmpty(jobName)) {
             throw new DCUserInputException("No job name provided");
         }
-        jobFolder.createFile(jobName + FileFilters.ANALYSIS_XML.getExtension(), new Action<OutputStream>() {
-            @Override
-            public void run(final OutputStream out) throws Exception {
+        jobFolder.createFile(jobName + FileFilters.ANALYSIS_XML.getExtension(), out -> {
 
-                final AnalysisJobBuilder jobBuilder = createJob();
-                final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
+            final AnalysisJobBuilder jobBuilder = createJob();
+            final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
 
-                final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
-                final JaxbJobWriter writer = new JaxbJobWriter(configuration);
-                writer.write(analysisJob, out);
-            }
+            final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
+            final JaxbJobWriter writer = new JaxbJobWriter(configuration);
+            writer.write(analysisJob, out);
         });
         return jobName;
     }

@@ -74,6 +74,7 @@ public class JobGraphBindingsManager {
         public void removePropertyChangeListener(final PropertyChangeListener listener) {
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(JobGraphBindingsManager.class);
     private static final int INPUT_MAP_CONDITION = WHEN_IN_FOCUSED_WINDOW;
     private static final String KEY_DELETE = "DELETE";
@@ -85,7 +86,8 @@ public class JobGraphBindingsManager {
     private final JobGraphActions _actions;
     private final JComponent _component;
 
-    public JobGraphBindingsManager(final JobGraphContext graphContext, final JobGraphActions actions, final JComponent component) {
+    public JobGraphBindingsManager(final JobGraphContext graphContext, final JobGraphActions actions,
+            final JComponent component) {
         _graphContext = graphContext;
         _actions = actions;
         _component = component;

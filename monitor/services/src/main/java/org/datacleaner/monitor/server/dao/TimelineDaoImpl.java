@@ -19,13 +19,11 @@
  */
 package org.datacleaner.monitor.server.dao;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
@@ -83,9 +81,9 @@ public class TimelineDaoImpl implements TimelineDao {
     }
 
     @Override
-    public Map<TimelineIdentifier, TimelineDefinition> getTimelinesForJob(final TenantIdentifier tenant, final JobIdentifier job) {
-        final Map<TimelineIdentifier, TimelineDefinition> result =
-                new HashMap<>();
+    public Map<TimelineIdentifier, TimelineDefinition> getTimelinesForJob(final TenantIdentifier tenant,
+            final JobIdentifier job) {
+        final Map<TimelineIdentifier, TimelineDefinition> result = new HashMap<>();
         if (job == null) {
             return result;
         }
@@ -123,8 +121,8 @@ public class TimelineDaoImpl implements TimelineDao {
         final List<RepositoryFile> files = repositoryFolder.getFiles(null, extension);
         for (final RepositoryFile file : files) {
             final String timelineName = file.getName().substring(0, file.getName().length() - extension.length());
-            final TimelineIdentifier timelineIdentifier = new TimelineIdentifier(timelineName, file.getQualifiedPath(),
-                    group);
+            final TimelineIdentifier timelineIdentifier =
+                    new TimelineIdentifier(timelineName, file.getQualifiedPath(), group);
             result.add(timelineIdentifier);
         }
     }
@@ -147,21 +145,14 @@ public class TimelineDaoImpl implements TimelineDao {
         final RepositoryFile timelineNode = (RepositoryFile) _repository.getRepositoryNode(path);
 
         if (timelineNode == null) {
-            throw new IllegalArgumentException("No such timeline: " + timeline.getName() + " (in group: "
-                    + timeline.getGroup() + ")");
+            throw new IllegalArgumentException(
+                    "No such timeline: " + timeline.getName() + " (in group: " + timeline.getGroup() + ")");
         }
 
-        final TimelineDefinition timelineDefinition = timelineNode
-                .readFile(new Func<InputStream, TimelineDefinition>() {
-                    @Override
-                    public TimelineDefinition eval(final InputStream in) {
-                        final TimelineReader reader = new JaxbTimelineReader();
-                        final TimelineDefinition timelineDefinition = reader.read(in);
-                        return timelineDefinition;
-                    }
-                });
-
-        return timelineDefinition;
+        return timelineNode.readFile(in -> {
+            final TimelineReader reader = new JaxbTimelineReader();
+            return reader.read(in);
+        });
     }
 
 }

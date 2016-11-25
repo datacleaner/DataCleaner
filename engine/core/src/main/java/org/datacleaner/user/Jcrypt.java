@@ -211,13 +211,13 @@ public class Jcrypt {
     // @checkstyle:off
     // @formatter:on
 
-    private static int byteToUnsigned(byte b) {
-        int value = (int) b;
+    private static int byteToUnsigned(final byte b) {
+        final int value = (int) b;
 
         return (value >= 0 ? value : value + 256);
     }
 
-    private static int fourBytesToInt(byte b[], int offset) {
+    private static int fourBytesToInt(final byte[] b, int offset) {
         int value;
 
         value = byteToUnsigned(b[offset++]);
@@ -228,15 +228,15 @@ public class Jcrypt {
         return (value);
     }
 
-    private static void intToFourBytes(int iValue, byte b[], int offset) {
+    private static void intToFourBytes(final int iValue, final byte[] b, int offset) {
         b[offset++] = (byte) ((iValue) & 0xff);
         b[offset++] = (byte) ((iValue >>> 8) & 0xff);
         b[offset++] = (byte) ((iValue >>> 16) & 0xff);
         b[offset++] = (byte) ((iValue >>> 24) & 0xff);
     }
 
-    private static void PERM_OP(int a, int b, int n, int m, int results[]) {
-        int t;
+    private static void PERM_OP(int a, int b, final int n, final int m, final int[] results) {
+        final int t;
 
         t = ((a >>> n) ^ b) & m;
         a ^= t << n;
@@ -246,8 +246,8 @@ public class Jcrypt {
         results[1] = b;
     }
 
-    private static int HPERM_OP(int a, int n, int m) {
-        int t;
+    private static int HPERM_OP(int a, final int n, final int m) {
+        final int t;
 
         t = ((a << (16 - n)) ^ a) & m;
         a = a ^ t ^ (t >>> (16 - n));
@@ -255,13 +255,13 @@ public class Jcrypt {
         return (a);
     }
 
-    private static int[] des_set_key(byte key[]) {
-        int schedule[] = new int[ITERATIONS * 2];
+    private static int[] des_set_key(final byte[] key) {
+        final int[] schedule = new int[ITERATIONS * 2];
 
         int c = fourBytesToInt(key, 0);
         int d = fourBytesToInt(key, 4);
 
-        int results[] = new int[2];
+        final int[] results = new int[2];
 
         PERM_OP(d, c, 4, 0x0f0f0f0f, results);
         d = results[0];
@@ -300,9 +300,8 @@ public class Jcrypt {
             c &= 0x0fffffff;
             d &= 0x0fffffff;
 
-            s = SKB[0][(c) & 0x3f] | SKB[1][((c >>> 6) & 0x03) | ((c >>> 7) & 0x3c)]
-                    | SKB[2][((c >>> 13) & 0x0f) | ((c >>> 14) & 0x30)]
-                    | SKB[3][((c >>> 20) & 0x01) | ((c >>> 21) & 0x06) | ((c >>> 22) & 0x38)];
+            s = SKB[0][(c) & 0x3f] | SKB[1][((c >>> 6) & 0x03) | ((c >>> 7) & 0x3c)] | SKB[2][((c >>> 13) & 0x0f) | (
+                    (c >>> 14) & 0x30)] | SKB[3][((c >>> 20) & 0x01) | ((c >>> 21) & 0x06) | ((c >>> 22) & 0x38)];
 
             t = SKB[4][(d) & 0x3f] | SKB[5][((d >>> 7) & 0x03) | ((d >>> 8) & 0x3c)] | SKB[6][(d >>> 15) & 0x3f]
                     | SKB[7][((d >>> 21) & 0x0f) | ((d >>> 22) & 0x30)];
@@ -316,7 +315,7 @@ public class Jcrypt {
         return schedule;
     }
 
-    private static int D_ENCRYPT(int L, int R, int S, int E0, int E1, int s[]) {
+    private static int D_ENCRYPT(int L, final int R, final int S, final int E0, final int E1, final int[] s) {
         int t, u, v;
 
         v = R ^ (R >>> 16);
@@ -326,14 +325,14 @@ public class Jcrypt {
         t = (v ^ (v << 16)) ^ R ^ s[S + 1];
         t = (t >>> 4) | (t << 28);
 
-        L ^= SPTRANS[1][(t) & 0x3f] | SPTRANS[3][(t >>> 8) & 0x3f] | SPTRANS[5][(t >>> 16) & 0x3f]
-                | SPTRANS[7][(t >>> 24) & 0x3f] | SPTRANS[0][(u) & 0x3f] | SPTRANS[2][(u >>> 8) & 0x3f]
-                | SPTRANS[4][(u >>> 16) & 0x3f] | SPTRANS[6][(u >>> 24) & 0x3f];
+        L ^= SPTRANS[1][(t) & 0x3f] | SPTRANS[3][(t >>> 8) & 0x3f] | SPTRANS[5][(t >>> 16) & 0x3f] | SPTRANS[7][
+                (t >>> 24) & 0x3f] | SPTRANS[0][(u) & 0x3f] | SPTRANS[2][(u >>> 8) & 0x3f] | SPTRANS[4][(u >>> 16)
+                & 0x3f] | SPTRANS[6][(u >>> 24) & 0x3f];
 
         return (L);
     }
 
-    private static int[] body(int schedule[], int Eswap0, int Eswap1) {
+    private static int[] body(final int[] schedule, final int Eswap0, final int Eswap1) {
         int left = 0;
         int right = 0;
         int t = 0;
@@ -356,7 +355,7 @@ public class Jcrypt {
 //        left &= 0xffffffff;
 //        right &= 0xffffffff;
 
-        int results[] = new int[2];
+        final int[] results = new int[2];
 
         PERM_OP(right, left, 1, 0x55555555, results);
         right = results[0];
@@ -378,7 +377,7 @@ public class Jcrypt {
         right = results[0];
         left = results[1];
 
-        int out[] = new int[2];
+        final int[] out = new int[2];
 
         out[0] = left;
         out[1] = right;
@@ -386,39 +385,39 @@ public class Jcrypt {
         return (out);
     }
 
-    public static final String crypt(final String salt, String original) {
-        StringBuilder sb = new StringBuilder(salt);
+    public static final String crypt(final String salt, final String original) {
+        final StringBuilder sb = new StringBuilder(salt);
         while (sb.length() < 2) {
             sb.append("A");
         }
 
-        StringBuffer buffer = new StringBuffer("             ");
+        final StringBuffer buffer = new StringBuffer("             ");
 
-        char charZero = sb.charAt(0);
-        char charOne = sb.charAt(1);
+        final char charZero = sb.charAt(0);
+        final char charOne = sb.charAt(1);
 
         buffer.setCharAt(0, charZero);
         buffer.setCharAt(1, charOne);
 
-        int Eswap0 = CON_SALT[(int) charZero];
-        int Eswap1 = CON_SALT[(int) charOne] << 4;
+        final int Eswap0 = CON_SALT[(int) charZero];
+        final int Eswap1 = CON_SALT[(int) charOne] << 4;
 
-        byte key[] = new byte[8];
+        final byte[] key = new byte[8];
 
         for (int i = 0; i < key.length; i++) {
             key[i] = (byte) 0;
         }
 
         for (int i = 0; i < key.length && i < original.length(); i++) {
-            int iChar = (int) original.charAt(i);
+            final int iChar = (int) original.charAt(i);
 
             key[i] = (byte) (iChar << 1);
         }
 
-        int schedule[] = des_set_key(key);
-        int out[] = body(schedule, Eswap0, Eswap1);
+        final int[] schedule = des_set_key(key);
+        final int[] out = body(schedule, Eswap0, Eswap1);
 
-        byte b[] = new byte[9];
+        final byte[] b = new byte[9];
 
         intToFourBytes(out[0], b, 0);
         intToFourBytes(out[1], b, 4);

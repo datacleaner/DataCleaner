@@ -95,8 +95,7 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
     public InputStream readFile() {
         try {
             final FileInputStream in = new FileInputStream(_file);
-            final BufferedInputStream bin = new BufferedInputStream(in);
-            return bin;
+            return new BufferedInputStream(in);
         } catch (final FileNotFoundException e) {
             throw new IllegalStateException(e);
         }
@@ -146,8 +145,7 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
             }
 
             try {
-                final E result = readCallback.eval(inputStream);
-                return result;
+                return readCallback.eval(inputStream);
             } catch (final Exception e) {
                 if (e instanceof RuntimeException) {
                     throw (RuntimeException) e;

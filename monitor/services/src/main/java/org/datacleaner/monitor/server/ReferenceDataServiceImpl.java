@@ -62,22 +62,22 @@ public class ReferenceDataServiceImpl implements ReferenceDataService, Applicati
     public boolean removeItem(final TenantIdentifier tenant, final ReferenceDataItem.Type type, final String name) {
         final ReferenceDataDao dao = new ReferenceDataDaoImpl();
 
-        if (type.equals(ReferenceDataItem.Type.DICTIONARY) &&
-                getReferenceDataCatalog(tenant).containsDictionary(name)) {
+        if (type.equals(ReferenceDataItem.Type.DICTIONARY) && getReferenceDataCatalog(tenant)
+                .containsDictionary(name)) {
             dao.removeDictionary(_contextFactory.getContext(tenant),
                     getReferenceDataCatalog(tenant).getDictionary(name));
             return true;
         }
 
-        if (type.equals(ReferenceDataItem.Type.SYNONYM_CATALOG) &&
-                getReferenceDataCatalog(tenant).containsSynonymCatalog(name)) {
+        if (type.equals(ReferenceDataItem.Type.SYNONYM_CATALOG) && getReferenceDataCatalog(tenant)
+                .containsSynonymCatalog(name)) {
             dao.removeSynonymCatalog(_contextFactory.getContext(tenant),
                     getReferenceDataCatalog(tenant).getSynonymCatalog(name));
             return true;
         }
 
-        if (type.equals(ReferenceDataItem.Type.STRING_PATTERN) &&
-                getReferenceDataCatalog(tenant).containsStringPattern(name)) {
+        if (type.equals(ReferenceDataItem.Type.STRING_PATTERN) && getReferenceDataCatalog(tenant)
+                .containsStringPattern(name)) {
             dao.removeStringPattern(_contextFactory.getContext(tenant),
                     getReferenceDataCatalog(tenant).getStringPattern(name));
             return true;

@@ -109,8 +109,8 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
 
         failIfJobIsUnsupported(job);
 
-        final InjectionManager injectionManager = _configuration.getEnvironment().getInjectionManagerFactory()
-                .getInjectionManager(_configuration, job);
+        final InjectionManager injectionManager =
+                _configuration.getEnvironment().getInjectionManagerFactory().getInjectionManager(_configuration, job);
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, true);
         final RowProcessingPublishers publishers = getRowProcessingPublishers(job, lifeCycleHelper);
         final RowProcessingPublisher publisher = getRowProcessingPublisher(publishers);
@@ -165,8 +165,8 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
                         expectedRows, chunks, rowsPerChunk);
 
                 final List<AnalysisResultFuture> results = dispatchJobs(job, chunks, rowsPerChunk, publisher);
-                final DistributedAnalysisResultReducer reducer = new DistributedAnalysisResultReducer(job,
-                        lifeCycleHelper, publisher, _analysisListener);
+                final DistributedAnalysisResultReducer reducer =
+                        new DistributedAnalysisResultReducer(job, lifeCycleHelper, publisher, _analysisListener);
                 resultFuture = new DistributedAnalysisResultFuture(results, reducer);
             }
 
@@ -192,13 +192,10 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
      */
     private void awaitAndInformListener(final AnalysisJob job, final AnalysisJobMetrics analysisJobMetrics,
             final RowProcessingMetrics rowProcessingMetrics, final AnalysisResultFuture resultFuture) {
-        SharedExecutorService.get().execute(new Runnable() {
-            @Override
-            public void run() {
-                resultFuture.await();
-                if (resultFuture.isSuccessful()) {
-                    _analysisListener.jobSuccess(job, analysisJobMetrics);
-                }
+        SharedExecutorService.get().execute(() -> {
+            resultFuture.await();
+            if (resultFuture.isSuccessful()) {
+                _analysisListener.jobSuccess(job, analysisJobMetrics);
             }
         });
     }
@@ -249,13 +246,13 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
 
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(_configuration, job)) {
 
-            final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilder
-                    .addFilter(MaxRowsFilter.class);
+            final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter =
+                    jobBuilder.addFilter(MaxRowsFilter.class);
             maxRowsFilter.getComponentInstance().setFirstRow(firstRow);
             maxRowsFilter.getComponentInstance().setMaxRows(maxRows);
 
-            final boolean naturalRecordOrderConsistent = jobBuilder.getDatastore().getPerformanceCharacteristics()
-                    .isNaturalRecordOrderConsistent();
+            final boolean naturalRecordOrderConsistent =
+                    jobBuilder.getDatastore().getPerformanceCharacteristics().isNaturalRecordOrderConsistent();
             if (!naturalRecordOrderConsistent) {
                 final InputColumn<?> orderColumn = findOrderByColumn(jobBuilder);
                 maxRowsFilter.getComponentInstance().setOrderColumn(orderColumn);
@@ -311,8 +308,8 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
                 name = StringUtils.replaceAll(name, "_", "");
                 name = StringUtils.replaceAll(name, "-", "");
                 name = name.toLowerCase();
-                if ("id".equals(name) || (tableName + "id").equals(name) || (tableName + "number").equals(name)
-                        || (tableName + "key").equals(name)) {
+                if ("id".equals(name) || (tableName + "id").equals(name) || (tableName + "number").equals(name) || (
+                        tableName + "key").equals(name)) {
                     logger.info("Using existing source column for ORDER BY clause on slave jobs: {}", sourceColumn);
                     return sourceColumn;
                 }
@@ -333,10 +330,9 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
         final SingleThreadedTaskRunner taskRunner = new SingleThreadedTaskRunner();
 
         final ErrorAwareAnalysisListener errorAwareAnalysisListener = new ErrorAwareAnalysisListener();
-        final RowProcessingPublishers publishers = new RowProcessingPublishers(job, errorAwareAnalysisListener,
-                errorAwareAnalysisListener, taskRunner, lifeCycleHelper);
 
-        return publishers;
+        return new RowProcessingPublishers(job, errorAwareAnalysisListener, errorAwareAnalysisListener, taskRunner,
+                lifeCycleHelper);
     }
 
     private RowProcessingPublisher getRowProcessingPublisher(final RowProcessingPublishers publishers) {
@@ -348,18 +344,14 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
 
         final RowProcessingStream stream = streams[0];
 
-        final RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(stream);
-        return publisher;
+        return publishers.getRowProcessingPublisher(stream);
     }
 
     private void failIfJobIsUnsupported(final AnalysisJob job) throws UnsupportedOperationException {
-        final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(_configuration, job);
-        try {
+        try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(_configuration, job)) {
             if (!jobBuilder.isDistributable()) {
                 throw new UnsupportedOperationException("Job is not distributable!");
             }
-        } finally {
-            jobBuilder.close();
         }
     }
 }

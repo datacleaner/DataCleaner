@@ -25,34 +25,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.util.DateUtils;
 import org.apache.metamodel.util.Month;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.ImmutableAnalysisJobMetadata;
 
+import junit.framework.TestCase;
+
 public class ImmutableAnalysisJobMetadataTest extends TestCase {
 
     public void testGetters() throws Exception {
-        String jobName = "name";
-        String jobVersion = "version";
-        String jobDescription = "desc";
-        String author = "auth";
-        Date createdDate = DateUtils.get(2013, Month.JULY, 23);
-        Date updatedDate = DateUtils.get(2013, Month.JULY, 24);
-        String datastoreName = "ds";
-        List<String> sourceColumnPaths = Arrays.asList("foo", "bar");
-        List<ColumnType> sourceColumnTypes = Arrays.asList(ColumnType.VARCHAR, ColumnType.BINARY);
-        Map<String, String> variables = new HashMap<>();
+        final String jobName = "name";
+        final String jobVersion = "version";
+        final String jobDescription = "desc";
+        final String author = "auth";
+        final Date createdDate = DateUtils.get(2013, Month.JULY, 23);
+        final Date updatedDate = DateUtils.get(2013, Month.JULY, 24);
+        final String datastoreName = "ds";
+        final List<String> sourceColumnPaths = Arrays.asList("foo", "bar");
+        final List<ColumnType> sourceColumnTypes = Arrays.asList(ColumnType.VARCHAR, ColumnType.BINARY);
+        final Map<String, String> variables = new HashMap<>();
         variables.put("foo", "bar");
 
-        Map<String, String> properties = new HashMap<>();
+        final Map<String, String> properties = new HashMap<>();
         properties.put("abc", "def");
 
-        AnalysisJobMetadata metadata = new ImmutableAnalysisJobMetadata(jobName, jobVersion, jobDescription, author,
-                createdDate, updatedDate, datastoreName, sourceColumnPaths, sourceColumnTypes, variables, properties);
+        final AnalysisJobMetadata metadata =
+                new ImmutableAnalysisJobMetadata(jobName, jobVersion, jobDescription, author, createdDate, updatedDate,
+                        datastoreName, sourceColumnPaths, sourceColumnTypes, variables, properties);
 
         assertEquals(jobName, metadata.getJobName());
         assertEquals(jobDescription, metadata.getJobDescription());
@@ -66,8 +67,9 @@ public class ImmutableAnalysisJobMetadataTest extends TestCase {
         assertEquals(variables, metadata.getVariables());
         assertEquals(properties, metadata.getProperties());
 
-        AnalysisJobMetadata metadata2 = new ImmutableAnalysisJobMetadata(jobName, jobVersion, jobDescription, author,
-                createdDate, updatedDate, datastoreName, sourceColumnPaths, sourceColumnTypes, variables, properties);
+        final AnalysisJobMetadata metadata2 =
+                new ImmutableAnalysisJobMetadata(jobName, jobVersion, jobDescription, author, createdDate, updatedDate,
+                        datastoreName, sourceColumnPaths, sourceColumnTypes, variables, properties);
 
         assertEquals(metadata, metadata2);
     }

@@ -98,8 +98,8 @@ public class CustomColumnNamesWidget {
     }
 
     public List<JTextField> getColumnNameFields() {
-        return Stream.of(_innerPanel.getComponents()).map(component -> (JTextField) component).collect(Collectors
-                .toList());
+        return Stream.of(_innerPanel.getComponents()).map(component -> (JTextField) component)
+                .collect(Collectors.toList());
     }
 
     public List<JButton> getButtons() {

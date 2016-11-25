@@ -27,8 +27,8 @@ import junit.framework.TestCase;
 public class BerkeleyDbMapTest extends TestCase {
 
     public void testNull() throws Exception {
-        BerkeleyDbStorageProvider sp = new BerkeleyDbStorageProvider(new File("target"));
-        Map<Integer, String> map = sp.createMap(Integer.class, String.class);
+        final BerkeleyDbStorageProvider sp = new BerkeleyDbStorageProvider(new File("target"));
+        final Map<Integer, String> map = sp.createMap(Integer.class, String.class);
 
         assertNull(map.get(1));
 

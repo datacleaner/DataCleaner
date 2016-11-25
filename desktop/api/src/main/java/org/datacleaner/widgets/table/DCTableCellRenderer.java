@@ -61,8 +61,8 @@ public class DCTableCellRenderer implements TableCellRenderer {
     }
 
     @Override
-    public Component getTableCellRendererComponent(final JTable table, Object value, final boolean isSelected, final boolean hasFocus,
-            final int row, final int column) {
+    public Component getTableCellRendererComponent(final JTable table, Object value, final boolean isSelected,
+            final boolean hasFocus, final int row, final int column) {
         logger.debug("getTableCellRendererComponent({},{})", row, column);
 
         if (value != null && value.getClass().isArray()) {

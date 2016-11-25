@@ -36,8 +36,7 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
     private final DataHubSecurityMode _securityMode;
 
     public DataHubDatastore(final String name, final String host, final Integer port, final String username,
-            final String password,
-            final boolean https, final boolean acceptUnverifiedSslPeers,
+            final String password, final boolean https, final boolean acceptUnverifiedSslPeers,
             final DataHubSecurityMode dataHubSecurityMode) {
         super(name);
         _host = host;
@@ -91,17 +90,17 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
 
     @Override
     protected UsageAwareDatastoreConnection<DataHubDataContext> createDatastoreConnection() {
-        final DataHubConnection connection = new DataHubConnection(_host, _port, _username, _password,
-                _https, _acceptUnverifiedSslPeers, _securityMode);
+        final DataHubConnection connection =
+                new DataHubConnection(_host, _port, _username, _password, _https, _acceptUnverifiedSslPeers,
+                        _securityMode);
         final DataHubDataContext dataContext = new DataHubDataContext(connection);
         return new UpdateableDatastoreConnectionImpl<>(dataContext, this);
     }
 
     @Override
     public String toString() {
-        return "DataHubDatastore[host= " + _host + ", port=" + _port + ", username=" + _username
-                + ", https=" + _https + ", acceptUnverifiedSslPeers=" + _acceptUnverifiedSslPeers
-                + ", securityMode=" + _securityMode + "]";
+        return "DataHubDatastore[host= " + _host + ", port=" + _port + ", username=" + _username + ", https=" + _https
+                + ", acceptUnverifiedSslPeers=" + _acceptUnverifiedSslPeers + ", securityMode=" + _securityMode + "]";
     }
 
 }

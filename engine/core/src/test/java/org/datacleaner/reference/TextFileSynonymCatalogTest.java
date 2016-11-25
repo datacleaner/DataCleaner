@@ -25,18 +25,18 @@ import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+
+import junit.framework.TestCase;
 
 public class TextFileSynonymCatalogTest extends TestCase {
 
     private final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl();
 
     public void testCountrySynonymsCaseSensitive() throws Exception {
-        SynonymCatalog cat = new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", true,
-                "UTF-8");
+        final SynonymCatalog cat =
+                new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", true, "UTF-8");
 
         try (SynonymCatalogConnection scConnection = cat.openConnection(configuration)) {
 
@@ -53,8 +53,8 @@ public class TextFileSynonymCatalogTest extends TestCase {
 
 
     public void testCountrySynonymsCaseInsensitive() throws Exception {
-        SynonymCatalog cat = new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", false,
-                "UTF-8");
+        final SynonymCatalog cat =
+                new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", false, "UTF-8");
 
         try (SynonymCatalogConnection scConnection = cat.openConnection(configuration)) {
 
@@ -70,12 +70,12 @@ public class TextFileSynonymCatalogTest extends TestCase {
     }
 
     public void testSerializationAndDeserialization() throws Exception {
-        SynonymCatalog cat = new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", true,
-                "UTF-8");
+        SynonymCatalog cat =
+                new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", true, "UTF-8");
         try (SynonymCatalogConnection scConnection = cat.openConnection(configuration)) {
             assertEquals("DNK", scConnection.getMasterTerm("Denmark"));
 
-            byte[] bytes;
+            final byte[] bytes;
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
                  ObjectOutputStream os = new ObjectOutputStream(baos)) {
                 os.writeObject(cat);
@@ -86,8 +86,8 @@ public class TextFileSynonymCatalogTest extends TestCase {
             assertEquals("DNK", scConnection.getMasterTerm("Denmark"));
             cat = null;
 
-            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-            ObjectInputStream is = new ObjectInputStream(bais);
+            final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+            final ObjectInputStream is = new ObjectInputStream(bais);
             cat = (SynonymCatalog) is.readObject();
 
             assertEquals("DNK", scConnection.getMasterTerm("Denmark"));
@@ -95,9 +95,9 @@ public class TextFileSynonymCatalogTest extends TestCase {
     }
 
     public void testModificationsClearCache() throws Exception {
-        File file = new File("target/TextBasedSynonymCatalogTest-modification.txt");
+        final File file = new File("target/TextBasedSynonymCatalogTest-modification.txt");
         FileHelper.writeStringAsFile(file, "foo,fooo,fo\nbar,baar,br", "UTF-8");
-        SynonymCatalog cat = new TextFileSynonymCatalog("sc", file, true, "UTF-8");
+        final SynonymCatalog cat = new TextFileSynonymCatalog("sc", file, true, "UTF-8");
 
         try (SynonymCatalogConnection scConnection = cat.openConnection(configuration)) {
             assertEquals("foo", scConnection.getMasterTerm("fooo"));

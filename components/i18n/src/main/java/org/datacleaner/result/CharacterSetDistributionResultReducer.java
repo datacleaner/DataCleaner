@@ -28,8 +28,8 @@ import org.datacleaner.api.InputColumn;
 /**
  * Result reducer for {@link CharacterSetDistributionResult}s
  */
-public class CharacterSetDistributionResultReducer extends
-        AbstractCrosstabResultReducer<CharacterSetDistributionResult> {
+public class CharacterSetDistributionResultReducer
+        extends AbstractCrosstabResultReducer<CharacterSetDistributionResult> {
 
     @Override
     protected Serializable reduceValues(final List<Object> slaveValues, final String category1, final String category2,

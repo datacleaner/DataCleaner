@@ -19,8 +19,6 @@
  */
 package org.datacleaner.widgets.result;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.valuedist.SingleValueDistributionResult;
 import org.datacleaner.data.MockInputColumn;
@@ -28,19 +26,21 @@ import org.datacleaner.result.SingleValueFrequency;
 import org.datacleaner.result.ValueCountListImpl;
 import org.datacleaner.storage.RowAnnotationImpl;
 
+import junit.framework.TestCase;
+
 public class ValueDistributionResultSwingRendererGroupDelegateTest extends TestCase {
 
     private InputColumn<String> column = new MockInputColumn<>("col", String.class);
 
     public void testVanilla() throws Exception {
-        ValueCountListImpl topValueCount = ValueCountListImpl.createFullList();
+        final ValueCountListImpl topValueCount = ValueCountListImpl.createFullList();
         for (int i = 0; i < 40; i++) {
             // 40 values with unique counts
             topValueCount.register(new SingleValueFrequency("v" + i, i + 1));
         }
 
-        ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate(
-                "foo", 50, null, null);
+        final ValueDistributionResultSwingRendererGroupDelegate r =
+                new ValueDistributionResultSwingRendererGroupDelegate("foo", 50, null, null);
         r.renderGroupResult(new SingleValueDistributionResult(column.getName(), topValueCount, 0, 0, 0, null,
                 new RowAnnotationImpl(), null, null));
 

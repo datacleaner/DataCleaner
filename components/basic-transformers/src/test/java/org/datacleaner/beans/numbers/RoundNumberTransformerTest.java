@@ -21,11 +21,11 @@ package org.datacleaner.beans.numbers;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+
+import junit.framework.TestCase;
 
 public class RoundNumberTransformerTest extends TestCase {
 

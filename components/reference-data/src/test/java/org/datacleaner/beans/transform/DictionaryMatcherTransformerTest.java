@@ -24,8 +24,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
@@ -48,63 +46,66 @@ import org.datacleaner.reference.SimpleSynonymCatalog;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 
+import junit.framework.TestCase;
+
 public class DictionaryMatcherTransformerTest extends TestCase {
 
     public void testParseAndAssignDictionaries() throws Throwable {
-        Collection<Dictionary> dictionaries = new ArrayList<>();
+        final Collection<Dictionary> dictionaries = new ArrayList<>();
         dictionaries.add(new SimpleDictionary("eobjects.org products", "MetaModel", "DataCleaner", "AnalyzerBeans"));
         dictionaries.add(new SimpleDictionary("apache products", "commons-lang", "commons-math", "commons-codec",
                 "commons-logging"));
         dictionaries.add(new SimpleDictionary("logging products", "commons-logging", "log4j", "slf4j",
                 "java.util.Logging"));
 
-        Collection<SynonymCatalog> synonymCatalogs = new ArrayList<>();
-        synonymCatalogs.add(new SimpleSynonymCatalog("translated terms", new SimpleSynonym("hello", "howdy", "hi", "yo",
-                "hey"), new SimpleSynonym("goodbye", "bye", "see you", "hey")));
+        final Collection<SynonymCatalog> synonymCatalogs = new ArrayList<>();
+        synonymCatalogs.add(new SimpleSynonymCatalog("translated terms",
+                new SimpleSynonym("hello", "howdy", "hi", "yo", "hey"),
+                new SimpleSynonym("goodbye", "bye", "see you", "hey")));
 
-        Collection<StringPattern> stringPatterns = new ArrayList<>();
+        final Collection<StringPattern> stringPatterns = new ArrayList<>();
 
-        ReferenceDataCatalogImpl ref = new ReferenceDataCatalogImpl(dictionaries, synonymCatalogs, stringPatterns);
+        final ReferenceDataCatalogImpl ref =
+                new ReferenceDataCatalogImpl(dictionaries, synonymCatalogs, stringPatterns);
 
-        Datastore datastore = new CsvDatastore("my database", "src/test/resources/projects.csv");
-        DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl();
-        AnalysisJobBuilder job = new AnalysisJobBuilder(conf);
+        final Datastore datastore = new CsvDatastore("my database", "src/test/resources/projects.csv");
+        final DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl();
+        final AnalysisJobBuilder job = new AnalysisJobBuilder(conf);
         job.setDatastore(datastore);
         job.addSourceColumns("product", "version");
-        TransformerComponentBuilder<DictionaryMatcherTransformer> tjb1 =
+        final TransformerComponentBuilder<DictionaryMatcherTransformer> tjb1 =
                 job.addTransformer(DictionaryMatcherTransformer.class);
-        tjb1.setConfiguredProperty(
-                "Dictionaries",
+        tjb1.setConfiguredProperty("Dictionaries",
                 new Dictionary[] { ref.getDictionary("eobjects.org products"), ref.getDictionary("apache products"),
                         ref.getDictionary("logging products") });
         tjb1.addInputColumn(job.getSourceColumnByName("product"));
-        List<MutableInputColumn<?>> outputColumns = tjb1.getOutputColumns();
+        final List<MutableInputColumn<?>> outputColumns = tjb1.getOutputColumns();
         assertEquals(3, outputColumns.size());
         outputColumns.get(0).setName("eobjects match");
         outputColumns.get(1).setName("apache match");
         outputColumns.get(2).setName("logging match");
 
-        TransformerComponentBuilder<ConvertToNumberTransformer> tjb2 =
+        final TransformerComponentBuilder<ConvertToNumberTransformer> tjb2 =
                 job.addTransformer(ConvertToNumberTransformer.class);
         tjb2.addInputColumn(outputColumns.get(2));
         tjb2.getOutputColumns().get(0).setName("logging match -> number");
 
-        AnalyzerComponentBuilder<ValueDistributionAnalyzer> ajb = job
-                .addAnalyzer(ValueDistributionAnalyzer.class);
+        final AnalyzerComponentBuilder<ValueDistributionAnalyzer> ajb =
+                job.addAnalyzer(ValueDistributionAnalyzer.class);
         ajb.addInputColumns(tjb1.getOutputColumns());
         ajb.addInputColumns(tjb2.getOutputColumns());
 
         assertTrue(job.isConfigured());
 
-        AnalysisJob analysisJob = job.toAnalysisJob();
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(conf).run(analysisJob);
+        final AnalysisJob analysisJob = job.toAnalysisJob();
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(conf).run(analysisJob);
 
         if (!resultFuture.isSuccessful()) {
             job.close();
             throw resultFuture.getErrors().get(0);
         }
 
-        List<AnalyzerResult> results = resultFuture.getResults();
+        final List<AnalyzerResult> results = resultFuture.getResults();
 
         assertEquals(4, results.size());
         ValueDistributionAnalyzerResult res = (ValueDistributionAnalyzerResult) results.get(0);
@@ -131,10 +132,10 @@ public class DictionaryMatcherTransformerTest extends TestCase {
     }
 
     public void testTransform() throws Exception {
-        Dictionary[] dictionaries = new Dictionary[] {
-                new SimpleDictionary("danish male names", "kasper", "kim", "asbjørn"),
-                new SimpleDictionary("danish female names", "trine", "kim", "lene") };
-        DictionaryMatcherTransformer transformer =
+        final Dictionary[] dictionaries =
+                new Dictionary[] { new SimpleDictionary("danish male names", "kasper", "kim", "asbjørn"),
+                        new SimpleDictionary("danish female names", "trine", "kim", "lene") };
+        final DictionaryMatcherTransformer transformer =
                 new DictionaryMatcherTransformer(null, dictionaries, new DataCleanerConfigurationImpl());
         transformer.init();
         assertEquals("[true, false]", Arrays.toString(transformer.transform("kasper")));

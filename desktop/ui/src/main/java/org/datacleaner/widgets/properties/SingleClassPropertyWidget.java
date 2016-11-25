@@ -32,7 +32,6 @@ import javax.swing.JList;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCListCellRenderer;
 
 public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> {
@@ -50,12 +49,7 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
             _comboBox.setSelectedItem(currentValue);
         }
 
-        _comboBox.addListener(new Listener<Class<?>>() {
-            @Override
-            public void onItemSelected(final Class<?> item) {
-                fireValueChanged(item);
-            }
-        });
+        _comboBox.addListener(this::fireValueChanged);
 
         add(_comboBox);
     }
@@ -80,8 +74,8 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Component getListCellRendererComponent(final JList<?> list, Object value, final int index, final boolean isSelected,
-                    final boolean cellHasFocus) {
+            public Component getListCellRendererComponent(final JList<?> list, Object value, final int index,
+                    final boolean isSelected, final boolean cellHasFocus) {
                 if (value instanceof Class) {
                     // render eg. java.lang.String as just "String"
                     value = ((Class<?>) value).getSimpleName();

@@ -19,8 +19,6 @@
  */
 package org.datacleaner.widgets.result;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 
@@ -56,7 +54,6 @@ import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCFileChooser;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.PopupButton;
@@ -110,14 +107,11 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 
             if (highlightedColumns.length == 1 && inputColumns.size() > 1) {
                 final DCComboBox<String> comboBox = new DCComboBox<>(VIEWS);
-                comboBox.addListener(new Listener<String>() {
-                    @Override
-                    public void onItemSelected(final String item) {
-                        if (item == VIEWS[0]) {
-                            applyDetailedView();
-                        } else {
-                            applyDistinctValuesView();
-                        }
+                comboBox.addListener(item -> {
+                    if (item == VIEWS[0]) {
+                        applyDetailedView();
+                    } else {
+                        applyDistinctValuesView();
                     }
                 });
                 comboBox.setSelectedItem(VIEWS[0]);
@@ -173,45 +167,39 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
         }
 
         public PopupButton createSaveToFileButton(final List<InputColumn<?>> inputColumns) {
-            final PopupButton saveToFileButton = WidgetFactory.createDefaultPopupButton("Save dataset",
-                    IconUtils.ACTION_SAVE_DARK);
+            final PopupButton saveToFileButton =
+                    WidgetFactory.createDefaultPopupButton("Save dataset", IconUtils.ACTION_SAVE_DARK);
             final JPopupMenu menu = saveToFileButton.getMenu();
 
-            final JMenuItem saveAsDatastoreItem = WidgetFactory.createMenuItem("As datastore",
-                    IconUtils.GENERIC_DATASTORE_IMAGEPATH);
-            saveAsDatastoreItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final String datastoreName = JOptionPane.showInputDialog("Datastore name");
-                    final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegateImpl(
-                            (MutableDatastoreCatalog) _datastoreCatalog);
+            final JMenuItem saveAsDatastoreItem =
+                    WidgetFactory.createMenuItem("As datastore", IconUtils.GENERIC_DATASTORE_IMAGEPATH);
+            saveAsDatastoreItem.addActionListener(e -> {
+                final String datastoreName = JOptionPane.showInputDialog("Datastore name");
+                final DatastoreCreationDelegate creationDelegate =
+                        new DatastoreCreationDelegateImpl((MutableDatastoreCatalog) _datastoreCatalog);
 
-                    final OutputWriter writer = DatastoreOutputWriterFactory.getWriter(
-                            _userPreferences.getSaveDatastoreDirectory(), creationDelegate, datastoreName, "DATASET",
-                            inputColumns.toArray(new InputColumn[0]));
-                    performWrite(writer);
-                }
+                final OutputWriter writer = DatastoreOutputWriterFactory
+                        .getWriter(_userPreferences.getSaveDatastoreDirectory(), creationDelegate, datastoreName,
+                                "DATASET", inputColumns.toArray(new InputColumn[0]));
+                performWrite(writer);
             });
 
             final JMenuItem saveAsCsvItem = WidgetFactory.createMenuItem("As CSV file", IconUtils.CSV_IMAGEPATH);
-            saveAsCsvItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
-                    fileChooser.addChoosableFileFilter(FileFilters.CSV);
-                    if (fileChooser.showSaveDialog(saveToFileButton) == JFileChooser.APPROVE_OPTION) {
-                        File selectedFile = fileChooser.getSelectedFile();
-                        if (selectedFile.getName().indexOf('.') == -1) {
-                            selectedFile = new File(selectedFile.getPath() + ".csv");
-                        }
-
-                        final OutputWriter writer = CsvOutputWriterFactory.getWriter(selectedFile.getAbsolutePath(),
-                                inputColumns);
-                        performWrite(writer);
-
-                        final File dir = selectedFile.getParentFile();
-                        _userPreferences.setAnalysisJobDirectory(dir);
+            saveAsCsvItem.addActionListener(e -> {
+                final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
+                fileChooser.addChoosableFileFilter(FileFilters.CSV);
+                if (fileChooser.showSaveDialog(saveToFileButton) == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    if (selectedFile.getName().indexOf('.') == -1) {
+                        selectedFile = new File(selectedFile.getPath() + ".csv");
                     }
+
+                    final OutputWriter writer =
+                            CsvOutputWriterFactory.getWriter(selectedFile.getAbsolutePath(), inputColumns);
+                    performWrite(writer);
+
+                    final File dir = selectedFile.getParentFile();
+                    _userPreferences.setAnalysisJobDirectory(dir);
                 }
             });
 
@@ -249,8 +237,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 
     @Override
     public AnnotatedRowResultPanel render(final AnnotatedRowsResult result) {
-        final AnnotatedRowResultPanel panel = new AnnotatedRowResultPanel(result, userPreferences, datastoreCatalog);
-        return panel;
+        return new AnnotatedRowResultPanel(result, userPreferences, datastoreCatalog);
     }
 
 }

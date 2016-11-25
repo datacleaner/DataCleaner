@@ -52,8 +52,8 @@ public class SelectMetricPanel extends FlowPanel {
     private final ListBox _columnParameterSelectionBox;
     private final StringParameterizedMetricTextBox _queryParameterTextBox;
 
-    public SelectMetricPanel(final TenantIdentifier tenant, final JobMetrics jobMetrics, final MetricIdentifier existingMetric,
-            final boolean displayNameVisible) {
+    public SelectMetricPanel(final TenantIdentifier tenant, final JobMetrics jobMetrics,
+            final MetricIdentifier existingMetric, final boolean displayNameVisible) {
         super();
         addStyleName("SelectMetricPanel");
         _tenant = tenant;
@@ -82,8 +82,8 @@ public class SelectMetricPanel extends FlowPanel {
         _columnParameterSelectionBox.setVisible(false);
         add(_columnParameterSelectionBox);
 
-        _queryParameterTextBox = new StringParameterizedMetricTextBox(_tenant, _jobMetrics.getJob(), existingMetric,
-                "", null);
+        _queryParameterTextBox =
+                new StringParameterizedMetricTextBox(_tenant, _jobMetrics.getJob(), existingMetric, "", null);
         _queryParameterTextBox.setVisible(false);
         add(_queryParameterTextBox);
 
@@ -230,8 +230,8 @@ public class SelectMetricPanel extends FlowPanel {
         }
 
         if (copy.isParameterizedByColumnName()) {
-            final String columnName = _columnParameterSelectionBox.getItemText(_columnParameterSelectionBox
-                    .getSelectedIndex());
+            final String columnName =
+                    _columnParameterSelectionBox.getItemText(_columnParameterSelectionBox.getSelectedIndex());
             copy.setParamColumnName(columnName);
         } else if (copy.isParameterizedByQueryString()) {
             copy.setParamQueryString(_queryParameterTextBox.getText());

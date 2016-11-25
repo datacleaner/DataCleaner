@@ -179,8 +179,7 @@ public class ResourceConverter implements Converter<Resource> {
         if (handler == null) {
             throw new IllegalStateException("No handler found for scheme of resource: " + serializedForm);
         }
-        final Resource resource = handler.parsePath(structure.getPath());
-        return resource;
+        return handler.parsePath(structure.getPath());
     }
 
     @Override

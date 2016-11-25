@@ -80,8 +80,7 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
         // create a single analyzer for picking up records
 
         final AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class);
-        final Map<ConfiguredPropertyDescriptor, Object> properties =
-                new HashMap<>();
+        final Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<>();
 
         final List<InputColumn<?>> columns = new ArrayList<>();
         final Collection<TransformerJob> transformerJobs = getTransformerJobs();

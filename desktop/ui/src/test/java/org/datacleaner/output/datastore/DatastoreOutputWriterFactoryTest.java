@@ -23,8 +23,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
@@ -34,6 +32,8 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.output.OutputWriter;
 import org.datacleaner.output.OutputWriterScenarioHelper;
+
+import junit.framework.TestCase;
 
 public class DatastoreOutputWriterFactoryTest extends TestCase {
 
@@ -47,8 +47,8 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         if (OUTPUT_DIR.exists()) {
-            File[] files = OUTPUT_DIR.listFiles();
-            for (File file : files) {
+            final File[] files = OUTPUT_DIR.listFiles();
+            for (final File file : files) {
                 file.delete();
             }
         }
@@ -62,7 +62,7 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
         final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegate() {
 
             @Override
-            public synchronized void createDatastore(Datastore datastore) {
+            public synchronized void createDatastore(final Datastore datastore) {
                 if (_datastore != null) {
                     assertEquals(_datastore, datastore);
                 }
@@ -74,16 +74,16 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
         final InputColumn<?>[] columns = scenarioHelper.getColumns().toArray(new InputColumn[0]);
 
         // creating 9 similar writers that all write at the same time
-        Thread[] threads = new Thread[9];
+        final Thread[] threads = new Thread[9];
         for (int i = 0; i < threads.length; i++) {
             threads[i] = new Thread() {
                 @Override
                 public void run() {
                     try {
-                        OutputWriter writer = DatastoreOutputWriterFactory.getWriter(OUTPUT_DIR, creationDelegate,
-                                "ds", "tab", false, columns);
+                        final OutputWriter writer = DatastoreOutputWriterFactory
+                                .getWriter(OUTPUT_DIR, creationDelegate, "ds", "tab", false, columns);
                         scenarioHelper.writeExampleData(writer);
-                    } catch (RuntimeException e) {
+                    } catch (final RuntimeException e) {
                         _exception = e;
                     }
                 }
@@ -104,9 +104,9 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
 
         assertNotNull(_datastore);
         try (DatastoreConnection connection = _datastore.openConnection()) {
-            DataContext dc = connection.getDataContext();
+            final DataContext dc = connection.getDataContext();
             dc.refreshSchemas();
-            String[] tableNames = dc.getDefaultSchema().getTableNames();
+            final String[] tableNames = dc.getDefaultSchema().getTableNames();
             Arrays.sort(tableNames);
 
             assertEquals("[TAB_1, TAB_2, TAB_3, TAB_4, TAB_5, TAB_6, TAB_7, TAB_8, TAB_9]",
@@ -117,26 +117,23 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
     public void testFullScenario() throws Exception {
         final OutputWriterScenarioHelper scenarioHelper = new OutputWriterScenarioHelper();
 
-        DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegate() {
+        final DatastoreCreationDelegate creationDelegate = datastore -> {
+            _datastoreCreated = true;
+            assertEquals("my datastore", datastore.getName());
 
-            @Override
-            public void createDatastore(Datastore datastore) {
-                _datastoreCreated = true;
-                assertEquals("my datastore", datastore.getName());
+            try (DatastoreConnection con = datastore.openConnection()) {
+                final DataContext dc = con.getDataContext();
 
-                try (DatastoreConnection con = datastore.openConnection()) {
-                    DataContext dc = con.getDataContext();
+                final Table table = dc.getDefaultSchema().getTables()[0];
+                final Query q = dc.query().from(table).select(table.getColumns()).toQuery();
+                final DataSet dataSet = dc.executeQuery(q);
 
-                    Table table = dc.getDefaultSchema().getTables()[0];
-                    Query q = dc.query().from(table).select(table.getColumns()).toQuery();
-                    DataSet dataSet = dc.executeQuery(q);
-
-                    scenarioHelper.performAssertions(dataSet, true);
-                }
+                scenarioHelper.performAssertions(dataSet, true);
             }
         };
-        OutputWriter writer = DatastoreOutputWriterFactory.getWriter(OUTPUT_DIR, creationDelegate, "my datastore",
-                "my dataset", scenarioHelper.getColumns().toArray(new InputColumn[0]));
+        final OutputWriter writer = DatastoreOutputWriterFactory
+                .getWriter(OUTPUT_DIR, creationDelegate, "my datastore", "my dataset",
+                        scenarioHelper.getColumns().toArray(new InputColumn[0]));
 
         scenarioHelper.writeExampleData(writer);
 

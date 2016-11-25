@@ -227,8 +227,8 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
                 queryConditionColumns = new Column[0];
             } else {
                 try (DatastoreConnection con = datastore.openConnection()) {
-                    queryConditionColumns = con.getSchemaNavigator().convertToColumns(schemaName, tableName,
-                            conditionColumns);
+                    queryConditionColumns =
+                            con.getSchemaNavigator().convertToColumns(schemaName, tableName, conditionColumns);
                 }
             }
         }
@@ -315,8 +315,8 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
     }
 
     private boolean isCarthesianProductMode() {
-        return (conditionColumns == null || conditionColumns.length == 0)
-                && (conditionValues == null || conditionValues.length == 0);
+        return (conditionColumns == null || conditionColumns.length == 0) && (conditionValues == null
+                || conditionValues.length == 0);
     }
 
     @Validate
@@ -401,8 +401,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
                 parameterValues[i] = queryInput.get(i);
             }
 
-            try (DataSet dataSet = datastoreConnection.getDataContext()
-                    .executeQuery(lookupQuery, parameterValues)) {
+            try (DataSet dataSet = datastoreConnection.getDataContext().executeQuery(lookupQuery, parameterValues)) {
                 return handleDataSet(row, dataSet);
             }
         } catch (final RuntimeException e) {

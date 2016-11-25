@@ -50,10 +50,11 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor {
 
     private static final TaskRunner TASK_RUNNER = new MultiThreadedTaskRunner();
-    private static final DescriptorProvider DESCRIPTOR_PROVIDER = new ClasspathScanDescriptorProvider(TASK_RUNNER)
-            .scanPackage("org.datacleaner", true).scanPackage("com.hi", true).scanPackage("com.neopost", true);
-    private static final DataCleanerEnvironment BASE_ENVIRONMENT = new DataCleanerEnvironmentImpl()
-            .withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER);
+    private static final DescriptorProvider DESCRIPTOR_PROVIDER =
+            new ClasspathScanDescriptorProvider(TASK_RUNNER).scanPackage("org.datacleaner", true)
+                    .scanPackage("com.hi", true).scanPackage("com.neopost", true);
+    private static final DataCleanerEnvironment BASE_ENVIRONMENT =
+            new DataCleanerEnvironmentImpl().withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER);
 
     private final Repository _homeRepository;
 

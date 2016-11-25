@@ -19,12 +19,12 @@
  */
 package org.datacleaner.beans;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
+
+import junit.framework.TestCase;
 
 public class NumberAnalyzerTest extends TestCase {
 
@@ -45,8 +45,8 @@ public class NumberAnalyzerTest extends TestCase {
     }
 
     public void testNoRows() throws Exception {
-        CrosstabResult result = numberAnalyzer.getResult();
-        String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
+        final CrosstabResult result = numberAnalyzer.getResult();
+        final String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
         assertEquals(12, resultLines.length);
         assertEquals("                      foo    bar   w00p ", resultLines[0]);
         assertEquals("Row count               0      0      0 ", resultLines[1]);
@@ -69,8 +69,8 @@ public class NumberAnalyzerTest extends TestCase {
         numberAnalyzer.run(new MockInputRow().put(col2, 4L), 1);
         numberAnalyzer.run(new MockInputRow().put(col2, 5L), 1);
 
-        CrosstabResult result = numberAnalyzer.getResult();
-        String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
+        final CrosstabResult result = numberAnalyzer.getResult();
+        final String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
         assertEquals(12, resultLines.length);
         assertEquals("                      foo    bar   w00p ", resultLines[0]);
         assertEquals("Row count               5      5      5 ", resultLines[1]);
@@ -90,8 +90,8 @@ public class NumberAnalyzerTest extends TestCase {
         numberAnalyzer.run(new MockInputRow().put(col1, 123.4f).put(col2, 1234L).put(col3, (byte) 12), 1);
         numberAnalyzer.run(new MockInputRow().put(col1, 567.8f).put(col2, 5678L).put(col3, (byte) 34), 1);
 
-        CrosstabResult result = numberAnalyzer.getResult();
-        String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
+        final CrosstabResult result = numberAnalyzer.getResult();
+        final String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
         assertEquals(12, resultLines.length);
         assertEquals("                      foo    bar   w00p ", resultLines[0]);
         assertEquals("Row count               2      2      2 ", resultLines[1]);

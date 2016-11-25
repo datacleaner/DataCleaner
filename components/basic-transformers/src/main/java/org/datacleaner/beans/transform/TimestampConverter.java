@@ -40,9 +40,8 @@ import org.datacleaner.components.convert.ConvertToNumberTransformer;
 public class TimestampConverter implements Transformer {
 
     public enum Unit implements HasName {
-        DAYS("Days", 24 * 60 * 60 * 1000), HOURS("Hours", 60 * 60 * 1000), MINUTES("Minutes", 60 * 1000), SECONDS(
-                "Seconds",
-                1000), MILLIS("Milliseconds", 1);
+        DAYS("Days", 24 * 60 * 60 * 1000), HOURS("Hours", 60 * 60 * 1000), MINUTES("Minutes", 60 * 1000),
+        SECONDS("Seconds", 1000), MILLIS("Milliseconds", 1);
 
         private final String _name;
         private final int _millisPerUnit;

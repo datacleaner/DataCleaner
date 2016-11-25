@@ -73,9 +73,11 @@ public class ResultMetricsController {
     MetricValueProducer _metricValueProducer;
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics.xml", method = RequestMethod.POST, produces = "application/xml", consumes = "application/xml")
-    public void getMetricsXml(@PathVariable("tenant") final String tenant, @PathVariable("result") final String resultName,
-            final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics.xml", method = RequestMethod.POST,
+            produces = "application/xml", consumes = "application/xml")
+    public void getMetricsXml(@PathVariable("tenant") final String tenant,
+            @PathVariable("result") final String resultName, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
 
         final JaxbMetricAdaptor adaptor = new JaxbMetricAdaptor();
 
@@ -121,7 +123,8 @@ public class ResultMetricsController {
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.GET,
+            produces = "application/json")
     @ResponseBody
     public List<MetricIdentifier> getMetricsJson(@PathVariable("tenant") final String tenant,
             @PathVariable("result") String resultName) throws IOException {
@@ -152,7 +155,8 @@ public class ResultMetricsController {
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.POST,
+            produces = "application/json", consumes = "application/json")
     @ResponseBody
     public Map<String, ?> postMetricsJson(@PathVariable("tenant") final String tenant,
             @PathVariable("result") final String resultName, @RequestBody final MetricIdentifier[] metricIdentifiers)
@@ -180,7 +184,8 @@ public class ResultMetricsController {
         return result;
     }
 
-    public MetricValues getMetricValues(String resultName, final String tenant, final List<MetricIdentifier> metricList) {
+    public MetricValues getMetricValues(String resultName, final String tenant,
+            final List<MetricIdentifier> metricList) {
         resultName = resultName.replaceAll("\\+", " ");
 
         final TenantContext context = _contextFactory.getContext(tenant);
@@ -191,9 +196,8 @@ public class ResultMetricsController {
         final JobIdentifier jobIdentifier = new JobIdentifier(job.getName());
         final RepositoryFile resultFile = resultContext.getResultFile();
 
-        final MetricValues metricValues = _metricValueProducer.getMetricValues(metricList, resultFile,
-                new TenantIdentifier(tenant), jobIdentifier);
-        return metricValues;
+        return _metricValueProducer
+                .getMetricValues(metricList, resultFile, new TenantIdentifier(tenant), jobIdentifier);
     }
 
 }

@@ -19,25 +19,25 @@
  */
 package org.datacleaner.components.convert;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.data.MockInputColumn;
+
+import junit.framework.TestCase;
 
 public class ConvertToBooleanTransformerTest extends TestCase {
 
     public void testGetOutputColumns() throws Exception {
-        ConvertToBooleanTransformer t = new ConvertToBooleanTransformer();
+        final ConvertToBooleanTransformer t = new ConvertToBooleanTransformer();
         t.setInput(new MockInputColumn<>("my col", String.class));
-        OutputColumns outputColumns = t.getOutputColumns();
+        final OutputColumns outputColumns = t.getOutputColumns();
 
         assertEquals(1, outputColumns.getColumnCount());
         assertEquals("my col (as boolean)", outputColumns.getColumnName(0));
     }
 
     public void testTransform() throws Exception {
-        String[] f = ConvertToBooleanTransformer.DEFAULT_FALSE_TOKENS;
-        String[] t = ConvertToBooleanTransformer.DEFAULT_TRUE_TOKENS;
+        final String[] f = ConvertToBooleanTransformer.DEFAULT_FALSE_TOKENS;
+        final String[] t = ConvertToBooleanTransformer.DEFAULT_TRUE_TOKENS;
 
         assertNull(ConvertToBooleanTransformer.transformValue(null, t, f));
 

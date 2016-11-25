@@ -21,8 +21,6 @@ package org.datacleaner.monitor.scheduling.quartz;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.FileUtils;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContext;
@@ -51,42 +49,42 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.google.common.io.Files;
 
+import junit.framework.TestCase;
+
 public class ExecuteJobTest extends TestCase {
 
     public void testAssumptionsAboutDisallowConcurrentExecution() throws Exception {
-        final JobDetail jobDetail = JobBuilder.newJob(ExecuteJob.class).withIdentity("job1", "tenant2").storeDurably()
-                .build();
+        final JobDetail jobDetail =
+                JobBuilder.newJob(ExecuteJob.class).withIdentity("job1", "tenant2").storeDurably().build();
         assertTrue(jobDetail.isConcurrentExectionDisallowed());
     }
 
     public void testFileNotFound() throws Exception {
         final Repository repo = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repo,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final TenantContextFactory tenantContextFactory =
+                new TenantContextFactoryImpl(repo, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
 
-        TenantContext tenantContext = tenantContextFactory.getContext("tenant3");
-        JobIdentifier job = new JobIdentifier("some_csv_profiling");
-        TenantIdentifier tenantIdentifier = new TenantIdentifier("tenant3");
-        ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, "SomeCSV");
-        ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
+        final TenantContext tenantContext = tenantContextFactory.getContext("tenant3");
+        final JobIdentifier job = new JobIdentifier("some_csv_profiling");
+        final TenantIdentifier tenantIdentifier = new TenantIdentifier("tenant3");
+        final ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, "SomeCSV");
+        final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
-        String executionId = new ExecuteJob().executeJob(tenantContext, execution, null, new MockJobEngineManager());
+        final String executionId =
+                new ExecuteJob().executeJob(tenantContext, execution, null, new MockJobEngineManager());
 
         assertNotNull(executionId);
         try {
-            SchedulingService schedulingService = new SchedulingServiceImpl(repo, tenantContextFactory);
+            final SchedulingService schedulingService = new SchedulingServiceImpl(repo, tenantContextFactory);
 
-            ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
-            String logOutput = log.getLogOutput();
-            assertTrue(
-                    logOutput,
-                    logOutput.indexOf("Resource does not exist: FileResource["
-                            + new File("src/test/resources/example_repo/tenant3/foo/bar.csv").getPath()
-                            + "] (ResourceException)") != -1);
+            final ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
+            final String logOutput = log.getLogOutput();
+            assertTrue(logOutput, logOutput.indexOf("Resource does not exist: FileResource[" + new File(
+                    "src/test/resources/example_repo/tenant3/foo/bar.csv").getPath() + "] (ResourceException)") != -1);
             assertTrue(logOutput, logOutput.indexOf("org.apache.metamodel.util.ResourceException: ") != -1);
         } finally {
-            RepositoryNode logNode = repo.getRepositoryNode("/tenant3/results/" + executionId
-                    + ".analysis.execution.log.xml");
+            final RepositoryNode logNode =
+                    repo.getRepositoryNode("/tenant3/results/" + executionId + ".analysis.execution.log.xml");
             assertNotNull(logNode);
 
             // cleanup
@@ -96,29 +94,30 @@ public class ExecuteJobTest extends TestCase {
 
     public void testInvalidDatastoreInJob() throws Exception {
         final Repository repo = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repo,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final TenantContextFactory tenantContextFactory =
+                new TenantContextFactoryImpl(repo, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
 
-        TenantContext tenantContext = tenantContextFactory.getContext("tenant3");
-        JobIdentifier job = new JobIdentifier("product_profiling");
-        TenantIdentifier tenantIdentifier = new TenantIdentifier("tenant3");
-        ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, "orderdb");
-        ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
+        final TenantContext tenantContext = tenantContextFactory.getContext("tenant3");
+        final JobIdentifier job = new JobIdentifier("product_profiling");
+        final TenantIdentifier tenantIdentifier = new TenantIdentifier("tenant3");
+        final ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, "orderdb");
+        final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
-        String executionId = new ExecuteJob().executeJob(tenantContext, execution, null, new MockJobEngineManager());
+        final String executionId =
+                new ExecuteJob().executeJob(tenantContext, execution, null, new MockJobEngineManager());
         assertNotNull(executionId);
         try {
-            SchedulingService schedulingService = new SchedulingServiceImpl(repo, tenantContextFactory);
+            final SchedulingService schedulingService = new SchedulingServiceImpl(repo, tenantContextFactory);
 
-            ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
-            String logOutput = log.getLogOutput();
+            final ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
+            final String logOutput = log.getLogOutput();
             assertTrue(logOutput, logOutput.indexOf("- No such datastore: orderdb (NoSuchDatastoreException)") != -1);
             assertTrue(logOutput,
                     logOutput.indexOf("org.datacleaner.job.NoSuchDatastoreException: No such datastore: orderdb")
                             != -1);
         } finally {
-            RepositoryNode logNode = repo.getRepositoryNode("/tenant3/results/" + executionId
-                    + ".analysis.execution.log.xml");
+            final RepositoryNode logNode =
+                    repo.getRepositoryNode("/tenant3/results/" + executionId + ".analysis.execution.log.xml");
             assertNotNull(logNode);
 
             // cleanup
@@ -136,8 +135,8 @@ public class ExecuteJobTest extends TestCase {
         FileUtils.copyDirectory(new File("src/test/resources/example_hadoop_repo"), targetDir);
 
         final Repository repository = new FileRepository(targetDir);
-        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                "context/application-context.xml");
+        final ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("context/application-context.xml");
 
         final TenantContextFactory tenantContextFactory =
                 new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
@@ -170,8 +169,8 @@ public class ExecuteJobTest extends TestCase {
             assertEquals("SUCCESS", log.getExecutionStatus().toString());
 
         } finally {
-            final RepositoryNode logNode = repository.getRepositoryNode("/tenant/results/" + executionId
-                    + ".analysis.execution.log.xml");
+            final RepositoryNode logNode =
+                    repository.getRepositoryNode("/tenant/results/" + executionId + ".analysis.execution.log.xml");
             assertNotNull(logNode);
 
             // cleanup

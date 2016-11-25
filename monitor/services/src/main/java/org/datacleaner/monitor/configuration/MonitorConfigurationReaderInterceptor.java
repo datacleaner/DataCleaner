@@ -43,8 +43,9 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
     // defines the basis of the configuration for all tenants - shared task
     // runner (thread pool) and shared descriptor provider (classpath scanning
     // only done once)
-    private static final DataCleanerEnvironmentImpl BASE_ENVIRONMENT = new DataCleanerEnvironmentImpl().withTaskRunner(
-            new SharedTaskRunner()).withDescriptorProvider(new SharedDescriptorProvider());
+    private static final DataCleanerEnvironmentImpl BASE_ENVIRONMENT =
+            new DataCleanerEnvironmentImpl().withTaskRunner(new SharedTaskRunner())
+                    .withDescriptorProvider(new SharedDescriptorProvider());
 
     private final TenantContext _tenantContext;
     private final Repository _repository;
@@ -77,7 +78,8 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
         this(repository, tenantContext, environment.getInjectionManagerFactory());
     }
 
-    public static DataCleanerEnvironmentImpl createBaseEnvironment(final InjectionManagerFactory injectionManagerFactory) {
+    public static DataCleanerEnvironmentImpl createBaseEnvironment(
+            final InjectionManagerFactory injectionManagerFactory) {
         return BASE_ENVIRONMENT.withInjectionManagerFactory(injectionManagerFactory);
     }
 

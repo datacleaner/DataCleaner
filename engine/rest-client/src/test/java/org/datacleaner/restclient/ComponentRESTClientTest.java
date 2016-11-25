@@ -49,10 +49,10 @@ public class ComponentRESTClientTest {
     @Test
     public void testGetAllComponents() throws Exception {
         try {
-            ComponentList componentList = componentRESTClient.getAllComponents(false);
+            final ComponentList componentList = componentRESTClient.getAllComponents(false);
             logger.info(componentList.toString());
             Assert.assertTrue(componentList != null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -60,10 +60,11 @@ public class ComponentRESTClientTest {
     @Test
     public void testGetComponentInfo() throws Exception {
         try {
-            ComponentList.ComponentInfo componentInfo = componentRESTClient.getComponentInfo(COMPONENT_NAME, false);
+            final ComponentList.ComponentInfo componentInfo =
+                    componentRESTClient.getComponentInfo(COMPONENT_NAME, false);
             logger.info(componentInfo.toString());
             Assert.assertTrue(componentInfo != null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -71,14 +72,14 @@ public class ComponentRESTClientTest {
     @Test
     public void testProcessStateless() throws Exception {
         try {
-            ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
+            final ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
             processStatelessInput.configuration = getConfiguration();
             processStatelessInput.data = getInputData();
-            ProcessStatelessOutput processStatelessOutput =
+            final ProcessStatelessOutput processStatelessOutput =
                     componentRESTClient.processStateless(COMPONENT_NAME, processStatelessInput);
             logger.info(processStatelessOutput.toString());
             Assert.assertTrue(processStatelessOutput != null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -86,13 +87,12 @@ public class ComponentRESTClientTest {
     @Test
     public void testCreateComponent() throws Exception {
         try {
-            String timeout = "60000";
-            CreateInput createInput = getCreateInput();
-            String response = componentRESTClient.createComponent(COMPONENT_NAME,
-                    timeout, createInput);
+            final String timeout = "60000";
+            final CreateInput createInput = getCreateInput();
+            final String response = componentRESTClient.createComponent(COMPONENT_NAME, timeout, createInput);
             logger.info(response);
             Assert.assertFalse(response.isEmpty());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -100,11 +100,11 @@ public class ComponentRESTClientTest {
     @Test
     public void testProcessComponent() throws Exception {
         try {
-            ProcessInput processInput = getProcessInput();
-            ProcessOutput processOutput = componentRESTClient.processComponent(INSTANCE_ID, processInput);
+            final ProcessInput processInput = getProcessInput();
+            final ProcessOutput processOutput = componentRESTClient.processComponent(INSTANCE_ID, processInput);
             logger.info(processOutput.toString());
             Assert.assertTrue(processOutput != null);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -112,12 +112,12 @@ public class ComponentRESTClientTest {
     @Test
     public void testGetFinalResult() throws Exception {
         try {
-            ProcessResult processResult = componentRESTClient.getFinalResult(INSTANCE_ID);
+            final ProcessResult processResult = componentRESTClient.getFinalResult(INSTANCE_ID);
 
             if (processResult != null) {
                 logger.info(processResult.toString());
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -126,34 +126,34 @@ public class ComponentRESTClientTest {
     public void testDeleteComponent() throws Exception {
         try {
             componentRESTClient.deleteComponent(INSTANCE_ID);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Assert.assertTrue(
                     e.getMessage().contains("Connection refused") || e.getMessage().contains("HTTP error code: 404"));
         }
     }
 
     private CreateInput getCreateInput() {
-        CreateInput createInput = new CreateInput();
+        final CreateInput createInput = new CreateInput();
         createInput.configuration = getConfiguration();
 
         return createInput;
     }
 
     private ProcessInput getProcessInput() {
-        ProcessInput processInput = new ProcessInput();
+        final ProcessInput processInput = new ProcessInput();
         processInput.data = getInputData();
 
         return processInput;
     }
 
     private ComponentConfiguration getConfiguration() {
-        ComponentConfiguration componentConfiguration = new ComponentConfiguration();
-        JsonNode column1 = getJsonNode("c1");
-        JsonNode column2 = getJsonNode("c2");
+        final ComponentConfiguration componentConfiguration = new ComponentConfiguration();
+        final JsonNode column1 = getJsonNode("c1");
+        final JsonNode column2 = getJsonNode("c2");
         componentConfiguration.getColumns().add(column1);
         componentConfiguration.getColumns().add(column2);
 
-        Map<String, JsonNode> properties = new HashMap<>();
+        final Map<String, JsonNode> properties = new HashMap<>();
         properties.put("Separator", getJsonNode("x"));
         componentConfiguration.getProperties().putAll(properties);
 
@@ -162,27 +162,26 @@ public class ComponentRESTClientTest {
 
     private JsonNode getInputData() {
         try {
-            List<String> inputData = new ArrayList<>();
+            final List<String> inputData = new ArrayList<>();
             inputData.add("c1-value");
             inputData.add("c2-value");
-            List<Object> list = new ArrayList<>();
+            final List<Object> list = new ArrayList<>();
             list.add(inputData);
-            String serialization = objectMapper.writeValueAsString(list);
+            final String serialization = objectMapper.writeValueAsString(list);
 
             return getJsonNode(serialization);
-        } catch (JsonProcessingException e) {
+        } catch (final JsonProcessingException e) {
             logger.error(e.getMessage());
 
             return null;
         }
     }
 
-    private JsonNode getJsonNode(String value) {
+    private JsonNode getJsonNode(final String value) {
         try {
-            JsonNode jsonNode = objectMapper.convertValue(value, JsonNode.class);
 
-            return jsonNode;
-        } catch (IllegalArgumentException e) {
+            return objectMapper.convertValue(value, JsonNode.class);
+        } catch (final IllegalArgumentException e) {
             logger.error(e.getMessage());
 
             return null;

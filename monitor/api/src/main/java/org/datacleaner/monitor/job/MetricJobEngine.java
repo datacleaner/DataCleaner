@@ -46,8 +46,7 @@ public interface MetricJobEngine<T extends MetricJobContext> extends JobEngine<T
      * @param metricIdentifiers
      * @return
      */
-    MetricValues getMetricValues(MetricJobContext job, ResultContext result,
-            List<MetricIdentifier> metricIdentifiers);
+    MetricValues getMetricValues(MetricJobContext job, ResultContext result, List<MetricIdentifier> metricIdentifiers);
 
     /**
      * Gets suggestions for a string-parameterized metric. This method will only

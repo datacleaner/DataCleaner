@@ -19,8 +19,6 @@
  */
 package org.datacleaner.beans.transform;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.MutableColumn;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputColumns;
@@ -30,16 +28,17 @@ import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.easymock.EasyMock;
 
+import junit.framework.TestCase;
+
 public class TokenizerTransformerTest extends TestCase {
 
     public void testGetOutputColumns() throws Exception {
-        InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
+        final InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
 
-        @SuppressWarnings("unchecked")
-        InputColumn<String> castColumn = (InputColumn<String>) col;
+        @SuppressWarnings("unchecked") final InputColumn<String> castColumn = (InputColumn<String>) col;
         TokenizerTransformer transformer = new TokenizerTransformer(castColumn, 2);
 
-        OutputColumns oc = transformer.getOutputColumns();
+        final OutputColumns oc = transformer.getOutputColumns();
 
         assertEquals(2, oc.getColumnCount());
         assertEquals("name (token 1)", oc.getColumnName(0));
@@ -52,16 +51,16 @@ public class TokenizerTransformerTest extends TestCase {
         try {
             transformer.getOutputColumns();
             fail("Exception expected");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals("Column names length must be 1 or greater", e.getMessage());
         }
     }
 
     public void testTransformToColumns() throws Exception {
-        InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
+        final InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
 
-        @SuppressWarnings("unchecked")
-        TokenizerTransformer transformer = new TokenizerTransformer((InputColumn<String>) col, 2);
+        @SuppressWarnings("unchecked") final TokenizerTransformer transformer =
+                new TokenizerTransformer((InputColumn<String>) col, 2);
 
         assertEquals(2, transformer.getOutputColumns().getColumnCount());
 
@@ -81,28 +80,28 @@ public class TokenizerTransformerTest extends TestCase {
     }
 
     public void testTransformNull() throws Exception {
-        InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
+        final InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
 
-        @SuppressWarnings("unchecked")
-        TokenizerTransformer transformer = new TokenizerTransformer((InputColumn<String>) col, 2);
+        @SuppressWarnings("unchecked") final TokenizerTransformer transformer =
+                new TokenizerTransformer((InputColumn<String>) col, 2);
 
         assertEquals(2, transformer.getOutputColumns().getColumnCount());
 
-        MockInputRow row = new MockInputRow();
+        final MockInputRow row = new MockInputRow();
         row.put(col, null);
-        String[] values = transformer.transform(row);
+        final String[] values = transformer.transform(row);
         assertEquals(2, values.length);
         assertEquals(null, values[0]);
         assertEquals(null, values[1]);
     }
 
     public void testTransformToRows() throws Exception {
-        InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
+        final InputColumn<?> col = new MetaModelInputColumn(new MutableColumn("name"));
 
-        @SuppressWarnings("unchecked")
-        TokenizerTransformer transformer = new TokenizerTransformer((InputColumn<String>) col, 1);
+        @SuppressWarnings("unchecked") final TokenizerTransformer transformer =
+                new TokenizerTransformer((InputColumn<String>) col, 1);
         transformer.tokenTarget = TokenTarget.ROWS;
-        OutputRowCollector collectorMock = EasyMock.createMock(OutputRowCollector.class);
+        final OutputRowCollector collectorMock = EasyMock.createMock(OutputRowCollector.class);
         transformer.outputRowCollector = collectorMock;
 
         assertEquals(1, transformer.getOutputColumns().getColumnCount());
@@ -113,7 +112,7 @@ public class TokenizerTransformerTest extends TestCase {
 
         EasyMock.replay(collectorMock);
 
-        String[] result = transformer.transform(new MockInputRow().put(col, "Hello world"));
+        final String[] result = transformer.transform(new MockInputRow().put(col, "Hello world"));
         assertNull(result);
 
         EasyMock.verify(collectorMock);

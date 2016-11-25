@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
@@ -65,8 +63,9 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
     private volatile boolean _nameAutomaticallySet = true;
 
     @Inject
-    protected TextFileDictionaryDialog(@Nullable final TextFileDictionary dictionary, final MutableReferenceDataCatalog catalog,
-            final WindowContext windowContext, final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
+    protected TextFileDictionaryDialog(@Nullable final TextFileDictionary dictionary,
+            final MutableReferenceDataCatalog catalog, final WindowContext windowContext,
+            final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
         super(windowContext, ImageManager.get().getImage(IconUtils.DICTIONARY_TEXTFILE_IMAGEPATH));
         _originalDictionary = dictionary;
         _catalog = catalog;
@@ -143,40 +142,37 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 
         row++;
         final JButton saveButton = WidgetFactory.createPrimaryButton("Save dictionary", IconUtils.ACTION_SAVE_BRIGHT);
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final String name = _nameTextField.getText();
-                if (StringUtils.isNullOrEmpty(name)) {
-                    JOptionPane.showMessageDialog(TextFileDictionaryDialog.this,
-                            "Please fill out the name of the dictionary");
-                    return;
-                }
-
-                final String path = _resourceSelector.getResourcePath();
-                if (StringUtils.isNullOrEmpty(path)) {
-                    JOptionPane.showMessageDialog(TextFileDictionaryDialog.this,
-                            "Please fill out the path or select a file using the 'Browse' button");
-                    return;
-                }
-
-                final String encoding = (String) _encodingComboBox.getSelectedItem();
-                if (StringUtils.isNullOrEmpty(encoding)) {
-                    JOptionPane.showMessageDialog(TextFileDictionaryDialog.this, "Please select a character encoding");
-                    return;
-                }
-
-                final boolean caseSensitive = _caseSensitiveCheckBox.isSelected();
-
-                final TextFileDictionary dict = new TextFileDictionary(name, path, encoding, caseSensitive);
-
-                if (_originalDictionary != null) {
-                    _catalog.changeDictionary(_originalDictionary, dict);
-                } else {
-                    _catalog.addDictionary(dict);
-                }
-                TextFileDictionaryDialog.this.dispose();
+        saveButton.addActionListener(e -> {
+            final String name1 = _nameTextField.getText();
+            if (StringUtils.isNullOrEmpty(name1)) {
+                JOptionPane
+                        .showMessageDialog(TextFileDictionaryDialog.this, "Please fill out the name of the dictionary");
+                return;
             }
+
+            final String path = _resourceSelector.getResourcePath();
+            if (StringUtils.isNullOrEmpty(path)) {
+                JOptionPane.showMessageDialog(TextFileDictionaryDialog.this,
+                        "Please fill out the path or select a file using the 'Browse' button");
+                return;
+            }
+
+            final String encoding = (String) _encodingComboBox.getSelectedItem();
+            if (StringUtils.isNullOrEmpty(encoding)) {
+                JOptionPane.showMessageDialog(TextFileDictionaryDialog.this, "Please select a character encoding");
+                return;
+            }
+
+            final boolean caseSensitive = _caseSensitiveCheckBox.isSelected();
+
+            final TextFileDictionary dict = new TextFileDictionary(name1, path, encoding, caseSensitive);
+
+            if (_originalDictionary != null) {
+                _catalog.changeDictionary(_originalDictionary, dict);
+            } else {
+                _catalog.addDictionary(dict);
+            }
+            TextFileDictionaryDialog.this.dispose();
         });
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, saveButton);

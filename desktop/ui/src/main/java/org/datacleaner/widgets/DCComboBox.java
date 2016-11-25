@@ -50,6 +50,7 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
     public interface Listener<E> {
         void onItemSelected(E item);
     }
+
     private static final long serialVersionUID = 1L;
     private final List<Listener<E>> _listeners = new ArrayList<>();
 
@@ -83,8 +84,7 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
             return;
         }
 
-        @SuppressWarnings("unchecked") final
-        E item = (E) newItem;
+        @SuppressWarnings("unchecked") final E item = (E) newItem;
 
         // super.setSelectedItem(...) will notify all listeners (through of the
         // item listener)
@@ -104,8 +104,8 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
      */
     @Deprecated
     @Override
-    public void addItemListener(final ItemListener aListener) {
-        super.addItemListener(aListener);
+    public void addItemListener(final ItemListener newListener) {
+        super.addItemListener(newListener);
     }
 
     /**
@@ -113,16 +113,15 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
      */
     @Deprecated
     @Override
-    public void addActionListener(final ActionListener l) {
-        super.addActionListener(l);
+    public void addActionListener(final ActionListener listener) {
+        super.addActionListener(listener);
     }
 
     @Override
     public void itemStateChanged(final ItemEvent e) {
         final int stateChange = e.getStateChange();
         if (stateChange == ItemEvent.SELECTED) {
-            @SuppressWarnings("unchecked")
-            final E newItem = (E) e.getItem();
+            @SuppressWarnings("unchecked") final E newItem = (E) e.getItem();
             notifyListeners(newItem);
         } else if (stateChange == ItemEvent.DESELECTED && getSelectedItem() == null) {
             // special case of selecting a "null" value. Even though "null" can

@@ -20,7 +20,6 @@
 package org.datacleaner.regexswap;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -33,7 +32,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
-import javax.swing.JTree;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -125,47 +123,43 @@ public class RegexSwapDialog extends AbstractDialog {
 
         _categoryTree = new JXTree(rootNode);
         _categoryTree.setOpaque(false);
-        _categoryTree.setCellRenderer(new TreeCellRenderer() {
+        _categoryTree.setCellRenderer((tree, value, selected, expanded, leaf, row, hasFocus) -> {
+            Icon icon = null;
 
-            @Override
-            public Component getTreeCellRendererComponent(final JTree tree, final Object value, final boolean selected, final boolean expanded,
-                    final boolean leaf, final int row, final boolean hasFocus) {
-                Icon icon = null;
+            final JComponent result;
+            final Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
+            if (userObject instanceof Category) {
+                // Used to render categories
+                final Category category = (Category) userObject;
+                result = (JComponent) _treeRendererDelegate
+                        .getTreeCellRendererComponent(tree, category.getName(), selected, expanded, leaf, row,
+                                hasFocus);
+                result.setToolTipText(category.getDescription());
+                icon = imageManager.getImageIcon(IconUtils.FILE_SEARCH, IconUtils.ICON_SIZE_SMALL);
+            } else if (userObject instanceof JLabel) {
+                result = (JLabel) userObject;
+            } else {
+                // Default renderer
+                result = (JComponent) _treeRendererDelegate
+                        .getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
-                final JComponent result;
-                final Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
-                if (userObject instanceof Category) {
-                    // Used to render categories
-                    final Category category = (Category) userObject;
-                    result = (JComponent) _treeRendererDelegate.getTreeCellRendererComponent(tree, category.getName(),
-                            selected, expanded, leaf, row, hasFocus);
-                    result.setToolTipText(category.getDescription());
-                    icon = imageManager.getImageIcon(IconUtils.FILE_SEARCH, IconUtils.ICON_SIZE_SMALL);
-                } else if (userObject instanceof JLabel) {
-                    result = (JLabel) userObject;
-                } else {
-                    // Default renderer
-                    result = (JComponent) _treeRendererDelegate.getTreeCellRendererComponent(tree, value, selected,
-                            expanded, leaf, row, hasFocus);
-
-                    if ("Categories".equals(userObject)) {
-                        icon = imageManager.getImageIcon(IconUtils.FILE_FOLDER, IconUtils.ICON_SIZE_SMALL);
-                    }
+                if ("Categories".equals(userObject)) {
+                    icon = imageManager.getImageIcon(IconUtils.FILE_FOLDER, IconUtils.ICON_SIZE_SMALL);
                 }
-
-                final boolean opaque = hasFocus || selected;
-
-                result.setOpaque(opaque);
-                if (result instanceof WrappingIconPanel) {
-                    final WrappingIconPanel wip = (WrappingIconPanel) result;
-                    wip.getComponent().setOpaque(opaque);
-
-                    if (icon != null) {
-                        wip.setIcon(icon);
-                    }
-                }
-                return result;
             }
+
+            final boolean opaque = hasFocus || selected;
+
+            result.setOpaque(opaque);
+            if (result instanceof WrappingIconPanel) {
+                final WrappingIconPanel wip = (WrappingIconPanel) result;
+                wip.getComponent().setOpaque(opaque);
+
+                if (icon != null) {
+                    wip.setIcon(icon);
+                }
+            }
+            return result;
         });
 
         _categoryTree.addMouseListener(new MouseAdapter() {

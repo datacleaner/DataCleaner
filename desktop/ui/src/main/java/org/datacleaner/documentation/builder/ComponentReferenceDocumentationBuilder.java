@@ -56,29 +56,22 @@ public class ComponentReferenceDocumentationBuilder {
 
     public boolean writeDocumentationToRepositoryFolder(final RepositoryFolder folder) {
         boolean success = true;
-        final RepositoryFile indexFile = createOrUpdateFile(folder, "index.html", new Action<OutputStream>() {
-            @Override
-            public void run(final OutputStream out) throws Exception {
-                final IndexDocumentationBuilder index = new IndexDocumentationBuilder(_descriptorProvider);
-                index.write(out);
-            }
+        final RepositoryFile indexFile = createOrUpdateFile(folder, "index.html", out -> {
+            final IndexDocumentationBuilder index = new IndexDocumentationBuilder(_descriptorProvider);
+            index.write(out);
         });
         logger.info("Wrote: {}", indexFile);
 
         final ComponentDocumentationBuilder componentDocumentationBuilder = new ComponentDocumentationBuilder(true);
-        final Collection<? extends ComponentDescriptor<?>> componentDescriptors = _descriptorProvider
-                .getComponentDescriptors();
+        final Collection<? extends ComponentDescriptor<?>> componentDescriptors =
+                _descriptorProvider.getComponentDescriptors();
         for (final ComponentDescriptor<?> componentDescriptor : componentDescriptors) {
             try {
-                final ComponentDocumentationWrapper componentWrapper = new ComponentDocumentationWrapper(
-                        componentDescriptor);
+                final ComponentDocumentationWrapper componentWrapper =
+                        new ComponentDocumentationWrapper(componentDescriptor);
                 final String filename = componentWrapper.getHref();
-                final RepositoryFile file = createOrUpdateFile(folder, filename, new Action<OutputStream>() {
-                    @Override
-                    public void run(final OutputStream out) throws Exception {
-                        componentDocumentationBuilder.write(componentWrapper, out);
-                    }
-                });
+                final RepositoryFile file = createOrUpdateFile(folder, filename,
+                        out -> componentDocumentationBuilder.write(componentWrapper, out));
                 logger.info("Wrote: {}", file);
             } catch (final Exception e) {
                 // don't crash the whole run if something goes wrong

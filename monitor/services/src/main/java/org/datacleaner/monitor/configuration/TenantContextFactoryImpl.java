@@ -42,8 +42,8 @@ import com.google.common.cache.LoadingCache;
  */
 public class TenantContextFactoryImpl implements TenantContextFactory {
 
-    private static final char[] ILLEGAL_TENANT_ID_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*',
-            '\\', '<', '>', '|', '\"', ':' };
+    private static final char[] ILLEGAL_TENANT_ID_CHARACTERS =
+            { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
 
     private static final Logger logger = LoggerFactory.getLogger(TenantContextFactoryImpl.class);
 
@@ -98,17 +98,14 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     }
 
     private LoadingCache<String, TenantContext> buildTenantContextCache() {
-        final LoadingCache<String, TenantContext> cache = CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.SECONDS)
+        return CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.SECONDS)
                 .build(new CacheLoader<String, TenantContext>() {
                     @Override
                     public TenantContext load(final String tenantId) throws Exception {
                         logger.info("Initializing tenant context: {}", tenantId);
-                        final TenantContext context = new TenantContextImpl(tenantId, _repository, _environment,
-                                _jobEngineManager);
-                        return context;
+                        return new TenantContextImpl(tenantId, _repository, _environment, _jobEngineManager);
                     }
                 });
-        return cache;
     }
 
     public TenantContext getContext(final TenantIdentifier tenant) {

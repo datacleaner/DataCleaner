@@ -19,7 +19,6 @@
  */
 package org.datacleaner.monitor.server.job;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,9 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -94,8 +91,7 @@ public class CustomJobContext implements XmlJobContext {
 
     @Override
     public String getGroupName() {
-        final String groupName = getCustomJavaComponentJob().getGroupName();
-        return groupName;
+        return getCustomJavaComponentJob().getGroupName();
     }
 
     @Override
@@ -133,8 +129,7 @@ public class CustomJobContext implements XmlJobContext {
         final String className = getCustomJavaComponentJob().getClassName();
         try {
             final Class<?> customJavaClass = Class.forName(className, true, getClass().getClassLoader());
-            final ComponentDescriptor<?> descriptor = Descriptors.ofComponent(customJavaClass);
-            return descriptor;
+            return Descriptors.ofComponent(customJavaClass);
         } catch (final Exception e) {
             throw new NoSuchComponentException(CustomJob.class, className);
         }
@@ -144,34 +139,26 @@ public class CustomJobContext implements XmlJobContext {
         // there's a 2 second read cache time - enough to only need to read once
         // for executing a job under normal circumstances
         if (_cachedReadTime == -1 || System.currentTimeMillis() - _cachedReadTime > 2000) {
-            _cachedCustomJavaJob = _file
-                    .readFile(new Func<InputStream, CustomJavaComponentJob>() {
-                        @Override
-                        public CustomJavaComponentJob eval(final InputStream in) {
-                            final JaxbCustomJavaComponentJobAdaptor adaptor = new JaxbCustomJavaComponentJobAdaptor();
-                            final CustomJavaComponentJob result = adaptor.unmarshal(in);
-                            _cachedReadTime = System.currentTimeMillis();
-                            return result;
-                        }
-                    });
+            _cachedCustomJavaJob = _file.readFile(in -> {
+                final JaxbCustomJavaComponentJobAdaptor adaptor = new JaxbCustomJavaComponentJobAdaptor();
+                final CustomJavaComponentJob result = adaptor.unmarshal(in);
+                _cachedReadTime = System.currentTimeMillis();
+                return result;
+            });
         }
         return _cachedCustomJavaJob;
     }
 
     @Override
     public void toXml(final OutputStream out) {
-        _file.readFile(new Action<InputStream>() {
-            @Override
-            public void run(final InputStream in) throws Exception {
-                FileHelper.copy(in, out);
-            }
+        _file.readFile(in -> {
+            FileHelper.copy(in, out);
         });
     }
 
     public ComponentConfiguration getComponentConfiguration(final CustomJob customJavaJob) {
         final ComponentDescriptor<?> descriptor = getDescriptor();
-        final Map<ConfiguredPropertyDescriptor, Object> propertyMap =
-                new HashMap<>();
+        final Map<ConfiguredPropertyDescriptor, Object> propertyMap = new HashMap<>();
         final PropertiesType propertiesType = getCustomJavaComponentJob().getProperties();
         final StringConverter stringConverter = new StringConverter(_injectionManager);
 
@@ -197,12 +184,14 @@ public class CustomJobContext implements XmlJobContext {
         return new ImmutableComponentConfiguration(propertyMap);
     }
 
-    private void setProperty(final ComponentDescriptor<?> descriptor, final Map<ConfiguredPropertyDescriptor, Object> propertyMap,
-            final String name, final String valueString, final StringConverter stringConverter) {
+    private void setProperty(final ComponentDescriptor<?> descriptor,
+            final Map<ConfiguredPropertyDescriptor, Object> propertyMap, final String name, final String valueString,
+            final StringConverter stringConverter) {
         final ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty(name);
         if (configuredProperty == null) {
-            throw new ComponentConfigurationException("No such configured property in class '"
-                    + getDescriptor().getComponentClass().getName() + "': " + name);
+            throw new ComponentConfigurationException(
+                    "No such configured property in class '" + getDescriptor().getComponentClass().getName() + "': "
+                            + name);
         }
         final Converter<?> customConverter = configuredProperty.createCustomConverter();
         final Object value = stringConverter.deserialize(valueString, configuredProperty.getType(), customConverter);

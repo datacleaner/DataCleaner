@@ -21,8 +21,6 @@ package org.datacleaner.storage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectInputStream.GetField;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -68,15 +66,12 @@ public final class RowAnnotationImpl implements RowAnnotation {
             throw new IllegalStateException("Could not create counter while deserializing.", e);
         }
         final ReadObjectBuilder<RowAnnotationImpl> builder = ReadObjectBuilder.create(this, RowAnnotationImpl.class);
-        final ReadObjectBuilder.Adaptor adaptor = new ReadObjectBuilder.Adaptor() {
-            @Override
-            public void deserialize(final GetField getField, final Serializable serializable) throws IOException {
-                try {
-                    final int count = getField.get("_rowCount", 0);
-                    _counter.set(count);
-                } catch (final IllegalArgumentException e) {
-                    // happens for newer versions of the object type.
-                }
+        final ReadObjectBuilder.Adaptor adaptor = (getField, serializable) -> {
+            try {
+                final int count = getField.get("_rowCount", 0);
+                _counter.set(count);
+            } catch (final IllegalArgumentException e) {
+                // happens for newer versions of the object type.
             }
         };
         builder.readObject(stream, adaptor);

@@ -53,8 +53,8 @@ import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.ResourceTypePresenter;
 import org.jdesktop.swingx.JXTextField;
 
-public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore> implements
-        SchemaFactory {
+public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore>
+        implements SchemaFactory {
 
     private static final long serialVersionUID = 1L;
 
@@ -338,8 +338,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         final boolean ssl = _sslCheckBox.isSelected();
         final String keystorePath = _keystorePathField.getFilename();
         final String keystorePassword = new String(_keystorePasswordField.getPassword());
-        if (StringUtils.isNullOrEmpty(username) && StringUtils.isNullOrEmpty(password) && StringUtils.isNullOrEmpty(
-                keystorePath) && StringUtils.isNullOrEmpty(keystorePassword)) {
+        if (StringUtils.isNullOrEmpty(username) && StringUtils.isNullOrEmpty(password) && StringUtils
+                .isNullOrEmpty(keystorePath) && StringUtils.isNullOrEmpty(keystorePassword)) {
             return new ElasticSearchDatastore(name, selectedClientType, hostname, port, clusterName, indexName);
         } else {
             return new ElasticSearchDatastore(name, selectedClientType, hostname, port, clusterName, indexName,
@@ -351,8 +351,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     public Schema createSchema() {
         final ElasticSearchDatastore datastore = createDatastore();
         try (DatastoreConnection con = datastore.openConnection()) {
-            final Schema schema = con.getDataContext().getDefaultSchema();
-            return schema;
+            return con.getDataContext().getDefaultSchema();
         }
     }
 

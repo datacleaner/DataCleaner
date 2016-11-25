@@ -25,23 +25,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.test.MockOutputRowCollector;
 
+import junit.framework.TestCase;
+
 public class RegexParserTransformerTest extends TestCase {
 
     public void testTransform() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<>("foobar", String.class);
+        final MockInputColumn<String> col = new MockInputColumn<>("foobar", String.class);
 
-        RegexParserTransformer t = new RegexParserTransformer();
+        final RegexParserTransformer t = new RegexParserTransformer();
         t.column = col;
         t.pattern = Pattern.compile("(a+)(b+)|(c+)");
 
-        OutputColumns outputColumns = t.getOutputColumns();
+        final OutputColumns outputColumns = t.getOutputColumns();
         assertEquals(4, outputColumns.getColumnCount());
         assertEquals("foobar (matched part)", outputColumns.getColumnName(0));
         assertEquals("foobar (group 1)", outputColumns.getColumnName(1));
@@ -55,9 +55,9 @@ public class RegexParserTransformerTest extends TestCase {
     }
 
     public void testExpressionForDimensions() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<>("foobar", String.class);
+        final MockInputColumn<String> col = new MockInputColumn<>("foobar", String.class);
 
-        RegexParserTransformer t = new RegexParserTransformer();
+        final RegexParserTransformer t = new RegexParserTransformer();
         t.column = col;
         t.pattern = Pattern.compile("(\\d+\\,?\\d+?)(x|X)([0-9]+\\,?\\d+?)");
         t.mode = RegexParserTransformer.Mode.FIND_FIRST;

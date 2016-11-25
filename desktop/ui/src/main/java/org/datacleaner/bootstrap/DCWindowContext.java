@@ -47,8 +47,7 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
 
     private static final Logger logger = LoggerFactory.getLogger(DCWindowContext.class);
 
-    private static final List<WeakReference<DCWindowContext>> _allWindowContexts =
-            new ArrayList<>();
+    private static final List<WeakReference<DCWindowContext>> _allWindowContexts = new ArrayList<>();
 
     private final List<ActionListener> _windowListeners = new ArrayList<>();
     private final List<ExitActionListener> _exitActionListeners = new ArrayList<>();
@@ -128,8 +127,9 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
 
     @Override
     public boolean showExitDialog() {
-        final int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit DataCleaner?", "Exit",
-                JOptionPane.OK_CANCEL_OPTION);
+        final int confirmation = JOptionPane
+                .showConfirmDialog(null, "Are you sure you want to exit DataCleaner?", "Exit",
+                        JOptionPane.OK_CANCEL_OPTION);
 
         if (confirmation == JOptionPane.OK_OPTION) {
             return true;

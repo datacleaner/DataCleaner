@@ -38,8 +38,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * {@link DeleteFromTableAnalyzer}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class DeleteFromTableAnalyzerPresenterRenderer implements
-        Renderer<AnalyzerComponentBuilder<DeleteFromTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
+public class DeleteFromTableAnalyzerPresenterRenderer
+        implements Renderer<AnalyzerComponentBuilder<DeleteFromTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -60,8 +60,8 @@ public class DeleteFromTableAnalyzerPresenterRenderer implements
 
     @Override
     public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<DeleteFromTableAnalyzer> ajb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
-                PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
 
         return new DeleteFromTableAnalyzerPresenter(ajb, windowContext, propertyWidgetFactory, configuration, dcModule);
     }

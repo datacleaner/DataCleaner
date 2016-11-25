@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -43,6 +41,8 @@ import org.datacleaner.job.runner.RowProcessingMetrics;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 
+import junit.framework.TestCase;
+
 public class QueryOptimizationAndAnalysisListeningTest extends TestCase {
 
     public void testScenario() throws Exception {
@@ -50,18 +50,18 @@ public class QueryOptimizationAndAnalysisListeningTest extends TestCase {
         final AtomicInteger expectedRows = new AtomicInteger(-1);
 
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
-                .withDatastores(datastore);
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
         final AnalysisListener analysisListener = new AnalysisListenerAdaptor() {
             @Override
-            public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
+            public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
                 expectedRows.set(-2);
                 final int expected = metrics.getExpectedRows();
                 expectedRows.set(expected);
             }
 
             @Override
-            public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, int currentRow) {
+            public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics,
+                    final int currentRow) {
                 rowNumbers.add(currentRow);
             }
         };
@@ -83,7 +83,7 @@ public class QueryOptimizationAndAnalysisListeningTest extends TestCase {
         }
 
         final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, analysisListener);
-        AnalysisResultFuture resultFuture = runner.run(job);
+        final AnalysisResultFuture resultFuture = runner.run(job);
 
         // task runner is single-threaded, so we expect it to be immediately
         // finished

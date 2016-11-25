@@ -28,21 +28,21 @@ public class SimpleStringPatternReferenceDataWizardSessionTest {
 
     @Test
     public void testFirstPageController() throws Exception {
-        SimpleStringPatternReferenceDataWizardSession session =
+        final SimpleStringPatternReferenceDataWizardSession session =
                 new SimpleStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNotNull(session.firstPageController());
     }
 
     @Test
     public void testGetPageCount() throws Exception {
-        SimpleStringPatternReferenceDataWizardSession session =
+        final SimpleStringPatternReferenceDataWizardSession session =
                 new SimpleStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertEquals(new Integer(1), session.getPageCount());
     }
 
     @Test
     public void testGetName() throws Exception {
-        SimpleStringPatternReferenceDataWizardSession session =
+        final SimpleStringPatternReferenceDataWizardSession session =
                 new SimpleStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getName());
         session.setName("name-value");
@@ -51,7 +51,7 @@ public class SimpleStringPatternReferenceDataWizardSessionTest {
 
     @Test
     public void testGetExpression() throws Exception {
-        SimpleStringPatternReferenceDataWizardSession session =
+        final SimpleStringPatternReferenceDataWizardSession session =
                 new SimpleStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getExpression());
         session.setExpression("expression-value");

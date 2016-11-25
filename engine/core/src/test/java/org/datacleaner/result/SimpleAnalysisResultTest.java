@@ -22,21 +22,21 @@ package org.datacleaner.result;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.easymock.EasyMock;
 
+import junit.framework.TestCase;
+
 public class SimpleAnalysisResultTest extends TestCase {
 
     public void testConstructAndGet() throws Exception {
-        ComponentJob mock = EasyMock.createMock(ComponentJob.class);
-        AnalyzerResult result = new NumberResult(42);
-        Map<ComponentJob, AnalyzerResult> results = new HashMap<>();
+        final ComponentJob mock = EasyMock.createMock(ComponentJob.class);
+        final AnalyzerResult result = new NumberResult(42);
+        final Map<ComponentJob, AnalyzerResult> results = new HashMap<>();
         results.put(mock, result);
 
-        SimpleAnalysisResult analysisResult = new SimpleAnalysisResult(results);
+        final SimpleAnalysisResult analysisResult = new SimpleAnalysisResult(results);
 
         assertNotNull(analysisResult.getCreationDate());
         assertSame(result, analysisResult.getResult(mock));

@@ -204,8 +204,7 @@ public class CrosstabRenderer {
     }
 
     private void navigateOnAxis(final List<CrosstabDimension> dimensionsOnAxis, final int cellIndex,
-            final int cellCount,
-            final CrosstabNavigator<?> navigator) {
+            final int cellCount, final CrosstabNavigator<?> navigator) {
         int colspan = cellCount;
         int category = 0;
         int localIndex = cellIndex;

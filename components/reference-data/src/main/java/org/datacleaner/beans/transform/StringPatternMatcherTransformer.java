@@ -39,7 +39,8 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.StringPatternConnection;
 
 @Named("String pattern matcher")
-@Description("Matches string values against a set of string patterns, producing a corresponding set of output columns specifying whether or not the values matched those string patterns")
+@Description("Matches string values against a set of string patterns, producing a corresponding set "
+        + "of output columns specifying whether or not the values matched those string patterns")
 @Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class StringPatternMatcherTransformer implements Transformer {
 
@@ -103,8 +104,7 @@ public class StringPatternMatcherTransformer implements Transformer {
     @Override
     public Object[] transform(final InputRow inputRow) {
         final Object value = inputRow.getValue(_column);
-        final Object[] result = doMatching(value);
-        return result;
+        return doMatching(value);
     }
 
     public Object[] doMatching(final Object value) {

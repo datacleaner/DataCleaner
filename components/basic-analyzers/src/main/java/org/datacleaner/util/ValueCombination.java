@@ -84,16 +84,15 @@ public class ValueCombination<E> extends BaseObject implements Comparable<ValueC
                 }
             } else if (value1 instanceof Comparable) {
                 try {
-                    @SuppressWarnings("unchecked") final
-                    int result = ((Comparable<E>) value1).compareTo(value2);
+                    @SuppressWarnings("unchecked") final int result = ((Comparable<E>) value1).compareTo(value2);
                     if (result != 0) {
                         return result;
                     }
                 } catch (final Exception e) {
                     // do nothing - the typecase to Comparable<E> was
                     // invalid
-                    logger.warn("Could not compare {} and {}, comparable threw exception: {}", new Object[] { value1,
-                            value2, e.getMessage() });
+                    logger.warn("Could not compare {} and {}, comparable threw exception: {}",
+                            new Object[] { value1, value2, e.getMessage() });
                     logger.debug("Comparable threw exception", e);
                 }
             } else {

@@ -23,30 +23,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.FilterDescriptor;
 
+import junit.framework.TestCase;
+
 public class ImmutableFilterJobTest extends TestCase {
 
     public void testGetOutcomes() throws Exception {
-        FilterDescriptor<?, ?> descriptor = Descriptors.ofFilterUnbound(MaxRowsFilter.class);
-        ComponentConfiguration configuration =
+        final FilterDescriptor<?, ?> descriptor = Descriptors.ofFilterUnbound(MaxRowsFilter.class);
+        final ComponentConfiguration configuration =
                 new ImmutableComponentConfiguration(new HashMap<ConfiguredPropertyDescriptor, Object>());
 
-        ImmutableFilterJob job = new ImmutableFilterJob("foo", descriptor, configuration, null, null, null);
+        final ImmutableFilterJob job = new ImmutableFilterJob("foo", descriptor, configuration, null, null, null);
         assertEquals("foo", job.getName());
         assertEquals(null, job.getComponentRequirement());
 
-        List<FilterOutcome> outcomes1 = new ArrayList<>(job.getFilterOutcomes());
+        final List<FilterOutcome> outcomes1 = new ArrayList<>(job.getFilterOutcomes());
         assertEquals(2, outcomes1.size());
         assertEquals("FilterOutcome[category=VALID]", outcomes1.get(0).toString());
         assertEquals("FilterOutcome[category=INVALID]", outcomes1.get(1).toString());
 
-        List<FilterOutcome> outcomes2 = new ArrayList<>(job.getFilterOutcomes());
+        final List<FilterOutcome> outcomes2 = new ArrayList<>(job.getFilterOutcomes());
         assertEquals(2, outcomes2.size());
         assertEquals("FilterOutcome[category=VALID]", outcomes2.get(0).toString());
         assertEquals("FilterOutcome[category=INVALID]", outcomes2.get(1).toString());

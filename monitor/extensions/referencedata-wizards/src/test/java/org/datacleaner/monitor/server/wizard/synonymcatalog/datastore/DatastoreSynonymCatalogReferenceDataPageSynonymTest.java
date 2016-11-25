@@ -28,14 +28,14 @@ public class DatastoreSynonymCatalogReferenceDataPageSynonymTest {
 
     @Test
     public void testGetPageIndex() throws Exception {
-        DatastoreSynonymCatalogReferenceDataPageSynonym page =
+        final DatastoreSynonymCatalogReferenceDataPageSynonym page =
                 new DatastoreSynonymCatalogReferenceDataPageSynonym(null);
         assertEquals(new Integer(4), page.getPageIndex());
     }
 
     @Test
     public void testGetTemplateFilename() throws Exception {
-        DatastoreSynonymCatalogReferenceDataPageSynonym page =
+        final DatastoreSynonymCatalogReferenceDataPageSynonym page =
                 new DatastoreSynonymCatalogReferenceDataPageSynonym(null);
         assertNotEquals("", page.getTemplateFilename());
     }

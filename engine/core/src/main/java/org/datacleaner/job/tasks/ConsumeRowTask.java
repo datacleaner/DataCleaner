@@ -38,8 +38,7 @@ public final class ConsumeRowTask implements Task {
     private final int _rowNumber;
 
     public ConsumeRowTask(final ConsumeRowHandler consumeRowHandler, final RowProcessingMetrics rowProcessingMetrics,
-            final InputRow row,
-            final AnalysisListener analysisListener, final int rowNumber) {
+            final InputRow row, final AnalysisListener analysisListener, final int rowNumber) {
         _consumeRowHandler = consumeRowHandler;
         _rowProcessingMetrics = rowProcessingMetrics;
         _row = row;

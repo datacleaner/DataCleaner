@@ -53,20 +53,15 @@ public class JobServicesIT {
 
     @Test(timeout = 5 * ONE_MINUTE)
     public void testJobs() throws URISyntaxException, InterruptedException {
-        final String[] jobNames = {
-                "Sample custom job",
-                "Copy employees to customer table",
-                "Customer completeness",
-                "Customer profiling",
-                "product_profiling",
-        };
+        final String[] jobNames = { "Sample custom job", "Copy employees to customer table", "Customer completeness",
+                "Customer profiling", "product_profiling", };
 
-        for (String name : jobNames) {
+        for (final String name : jobNames) {
             testJob(name);
         }
     }
 
-    public void testJob(String jobName) throws URISyntaxException, InterruptedException {
+    public void testJob(final String jobName) throws URISyntaxException, InterruptedException {
         final String resultPath = "/logs/" + post(JOBS_PATH + jobName + ".trigger").then().extract().path("resultId");
 
         while (get(resultPath).then().extract().path("execution-log.execution-status").equals("PENDING")) {

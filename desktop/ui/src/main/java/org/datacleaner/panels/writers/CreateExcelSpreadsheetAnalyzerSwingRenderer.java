@@ -48,9 +48,10 @@ public class CreateExcelSpreadsheetAnalyzerSwingRenderer implements
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> ajb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
-                PropertyWidgetFactory.class);
+    public AnalyzerComponentBuilderPresenter render(
+            final AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> ajb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
         return new CustomHeaderColumnNamesAnalyzerJobPanel(ajb, propertyWidgetFactory);
     }
 

@@ -45,12 +45,10 @@ public class InMemoryRowAnnotationFactory extends AbstractRowAnnotationFactory {
     private static final long serialVersionUID = 1L;
 
     // contains annotations, mapped to row-ids
-    private final Map<RowAnnotation, Set<Integer>> _annotatedRows =
-            new ConcurrentHashMap<>();
+    private final Map<RowAnnotation, Set<Integer>> _annotatedRows = new ConcurrentHashMap<>();
 
     // contains row id's mapped to rows mapped to distinct counts
-    private final Map<Integer, Map.Entry<InputRow, Integer>> _distinctCounts =
-            new ConcurrentHashMap<>();
+    private final Map<Integer, Map.Entry<InputRow, Integer>> _distinctCounts = new ConcurrentHashMap<>();
 
     public InMemoryRowAnnotationFactory() {
         this(1000);

@@ -55,6 +55,7 @@ public class ChartOptions implements Serializable {
 
         boolean isLogarithmicScale();
     }
+
     private static final long serialVersionUID = 1L;
     private HorizontalAxisOption _horizontalAxisOption;
     private VerticalAxisOption _verticalAxisOption;
@@ -63,8 +64,8 @@ public class ChartOptions implements Serializable {
         this(new DefaultHAxisOption(), new DefaultVAxisOption());
     }
 
-    public ChartOptions(final Date begin, final Date end, final Integer height, final Integer minimumValue, final Integer maximumValue,
-            final boolean logarithmicScale) {
+    public ChartOptions(final Date begin, final Date end, final Integer height, final Integer minimumValue,
+            final Integer maximumValue, final boolean logarithmicScale) {
         this(new DefaultHAxisOption(begin, end),
                 new DefaultVAxisOption(height, minimumValue, maximumValue, logarithmicScale));
     }

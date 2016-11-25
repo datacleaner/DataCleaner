@@ -69,8 +69,9 @@ public final class SchemaNavigator {
         }
 
         if (schema == null) {
-            throw new IllegalArgumentException("Schema " + schemaName + " not found. Available schema names are: "
-                    + Arrays.toString(dataContext.getSchemaNames()));
+            throw new IllegalArgumentException(
+                    "Schema " + schemaName + " not found. Available schema names are: " + Arrays
+                            .toString(dataContext.getSchemaNames()));
         }
 
         final Table table;
@@ -79,16 +80,16 @@ public final class SchemaNavigator {
                 table = schema.getTables()[0];
             } else {
                 throw new IllegalArgumentException(
-                        "No table name specified, and multiple options exist. Available table names are: "
-                                + Arrays.toString(schema.getTableNames()));
+                        "No table name specified, and multiple options exist. Available table names are: " + Arrays
+                                .toString(schema.getTableNames()));
             }
         } else {
             table = schema.getTableByName(tableName);
         }
 
         if (table == null) {
-            throw new IllegalArgumentException("Table not found. Available table names are: "
-                    + Arrays.toString(schema.getTableNames()));
+            throw new IllegalArgumentException(
+                    "Table not found. Available table names are: " + Arrays.toString(schema.getTableNames()));
         }
 
         return table;

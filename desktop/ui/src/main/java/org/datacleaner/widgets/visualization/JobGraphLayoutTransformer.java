@@ -57,19 +57,17 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
     private static final int Y_OFFSET = 40;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final DirectedGraph<Object, JobGraphLink> _graph;
-    private final Comparator<Object> longestTrailComparator = new Comparator<Object>() {
-        @Override
-        public int compare(final Object o1, final Object o2) {
-            final int prerequisiteCount1 = getAccumulatedPrerequisiteCount(o1);
-            final int prerequisiteCount2 = getAccumulatedPrerequisiteCount(o2);
-            return prerequisiteCount2 - prerequisiteCount1;
-        }
+    private final Comparator<Object> longestTrailComparator = (o1, o2) -> {
+        final int prerequisiteCount1 = getAccumulatedPrerequisiteCount(o1);
+        final int prerequisiteCount2 = getAccumulatedPrerequisiteCount(o2);
+        return prerequisiteCount2 - prerequisiteCount1;
     };
     private final Map<Object, Point> _points = new IdentityHashMap<>();
     private final Map<Integer, Integer> _yCount = new HashMap<>();
     private volatile boolean _transformed;
 
-    public JobGraphLayoutTransformer(final AnalysisJobBuilder analysisJobBuilder, final DirectedGraph<Object, JobGraphLink> graph) {
+    public JobGraphLayoutTransformer(final AnalysisJobBuilder analysisJobBuilder,
+            final DirectedGraph<Object, JobGraphLink> graph) {
         _analysisJobBuilder = analysisJobBuilder;
         _graph = graph;
         createPoints();
@@ -88,20 +86,19 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
         final int maxPrerequisiteCount = getAccumulatedPrerequisiteCount(vertices.get(0));
         logger.trace("Maximum prerequisite count: {}", maxPrerequisiteCount);
 
-        final int x = maxPrerequisiteCount;
         for (final Object vertex : vertices) {
-            final Point point = createPoint(vertex, x, true);
+            final Point point = createPoint(vertex, maxPrerequisiteCount, true);
             if (point != null) {
                 _points.put(vertex, point);
             }
         }
         for (final Object vertex : vertices) {
             if (!_points.containsKey(vertex)) {
-                final Point point = createPoint(vertex, x, false);
+                final Point point = createPoint(vertex, maxPrerequisiteCount, false);
                 _points.put(vertex, point);
             }
 
-            createPrerequisitePoints(vertex, x);
+            createPrerequisitePoints(vertex, maxPrerequisiteCount);
         }
     }
 

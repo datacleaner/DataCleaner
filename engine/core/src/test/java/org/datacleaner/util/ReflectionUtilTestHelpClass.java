@@ -22,6 +22,7 @@ package org.datacleaner.util;
 import org.junit.Ignore;
 
 @Ignore
+@SuppressWarnings("checkstyle:MemberName")
 public class ReflectionUtilTestHelpClass {
 
     public static class ClassA {

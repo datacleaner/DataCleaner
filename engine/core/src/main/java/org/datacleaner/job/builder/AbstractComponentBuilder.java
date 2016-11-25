@@ -248,8 +248,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     }
 
     @Override
-    public final boolean isConfigured(final boolean throwException) throws ComponentValidationException,
-            UnconfiguredConfiguredPropertyException {
+    public final boolean isConfigured(final boolean throwException)
+            throws ComponentValidationException, UnconfiguredConfiguredPropertyException {
         for (final ConfiguredPropertyDescriptor configuredProperty : _descriptor.getConfiguredProperties()) {
             if (!isConfigured(configuredProperty, throwException)) {
                 if (throwException) {
@@ -350,10 +350,11 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     protected void registerListenerIfLinkedToTransformer(final ConfiguredPropertyDescriptor configuredProperty,
             final Object value) {
         // Register change listener on all transformers providing values used for the input column.
-        getTransformedInputColumns(value).forEach(transformedInputColumn -> getAnalysisJobBuilder()
-                .getTransformerComponentBuilders().stream().filter(transformer -> (isProvidingColumn(
-                        transformedInputColumn, transformer))).forEach(transformer -> transformer.addChangeListener(
-                        new ComponentBuilderTransformerChangeListener(this, configuredProperty))));
+        getTransformedInputColumns(value).forEach(
+                transformedInputColumn -> getAnalysisJobBuilder().getTransformerComponentBuilders().stream()
+                        .filter(transformer -> (isProvidingColumn(transformedInputColumn, transformer))).forEach(
+                                transformer -> transformer.addChangeListener(
+                                        new ComponentBuilderTransformerChangeListener(this, configuredProperty))));
     }
 
     protected boolean isProvidingColumn(final TransformedInputColumn<?> transformedInputColumn,
@@ -416,8 +417,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                     for (int i = 0; i < length; i++) {
                         final Object valuePart = Array.get(value, i);
                         if (valuePart == null) {
-                            logger.warn("Element no. {} in array (size {}) is null! Value passed to {}", new Object[] {
-                                    i, length, configuredProperty });
+                            logger.warn("Element no. {} in array (size {}) is null! Value passed to {}",
+                                    new Object[] { i, length, configuredProperty });
                         } else {
                             if (!ReflectionUtils.is(valuePart.getClass(), configuredProperty.getBaseType())) {
                                 correctType = false;
@@ -435,8 +436,9 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                 }
             }
             if (!correctType) {
-                throw new IllegalArgumentException("Invalid value type: " + value.getClass().getName() + ", expected: "
-                        + configuredProperty.getBaseType().getName());
+                throw new IllegalArgumentException(
+                        "Invalid value type: " + value.getClass().getName() + ", expected: " + configuredProperty
+                                .getBaseType().getName());
             }
         }
 
@@ -446,8 +448,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         return true;
     }
 
-    private void synchronizeDependentProperties(final ConfiguredPropertyDescriptor property,
-            final Object newValue, final Object currentValue) {
+    private void synchronizeDependentProperties(final ConfiguredPropertyDescriptor property, final Object newValue,
+            final Object currentValue) {
         if (currentValue != null) {
             getDescriptor().getConfiguredPropertiesByAnnotation(MappedProperty.class).stream()
                     .filter(dependentProperty -> property.getName()
@@ -471,17 +473,14 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
             if (currentValue.getClass().isArray()) {
                 for (int i = 0; i < Array.getLength(currentValue); i++) {
-                    originalMappings.put(getKey(Array.get(currentValue, i)), Array.get(
-                            dependentValue, i));
+                    originalMappings.put(getKey(Array.get(currentValue, i)), Array.get(dependentValue, i));
                 }
 
                 for (int i = 0; i < Array.getLength(newValue); i++) {
-                    synchronizedDependents.add(originalMappings.get(getKey(Array.get(newValue,
-                            i))));
+                    synchronizedDependents.add(originalMappings.get(getKey(Array.get(newValue, i))));
                 }
 
-                property.setValue(_configurableBean, getArray(property
-                        .getBaseType(), synchronizedDependents));
+                property.setValue(_configurableBean, getArray(property.getBaseType(), synchronizedDependents));
             } else {
                 if (newValue == null) {
                     property.setValue(_configurableBean, null);
@@ -569,8 +568,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
     @Override
     public ConfiguredPropertyDescriptor getDefaultConfiguredPropertyForInput() throws UnsupportedOperationException {
-        Collection<ConfiguredPropertyDescriptor> inputProperties = getDescriptor().getConfiguredPropertiesForInput(
-                false);
+        Collection<ConfiguredPropertyDescriptor> inputProperties =
+                getDescriptor().getConfiguredPropertiesForInput(false);
 
         if (inputProperties.isEmpty()) {
             // if there are no required input columns, try optional input
@@ -579,12 +578,11 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         }
 
         if (inputProperties.size() == 1) {
-            final ConfiguredPropertyDescriptor propertyDescriptor = inputProperties.iterator().next();
-            return propertyDescriptor;
+            return inputProperties.iterator().next();
         } else {
-            throw new UnsupportedOperationException("There are " + inputProperties.size()
-                    + " named input columns in \"" + getDescriptor().getDisplayName()
-                    + "\", please specify which one to configure");
+            throw new UnsupportedOperationException(
+                    "There are " + inputProperties.size() + " named input columns in \"" + getDescriptor()
+                            .getDisplayName() + "\", please specify which one to configure");
         }
     }
 
@@ -602,8 +600,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             // check input column type parameter compatibility
             final Class<?> actualDataType = inputColumn.getDataType();
             if (!ReflectionUtils.is(actualDataType, expectedDataType, false)) {
-                throw new IllegalArgumentException("Unsupported InputColumn type: " + actualDataType + ", expected: "
-                        + expectedDataType);
+                throw new IllegalArgumentException(
+                        "Unsupported InputColumn type: " + actualDataType + ", expected: " + expectedDataType);
             }
         }
 
@@ -636,8 +634,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             for (final InputColumn<?> inputColumn : inputColumns) {
                 final Class<?> actualDataType = inputColumn.getDataType();
                 if (!ReflectionUtils.is(actualDataType, expectedDataType, false)) {
-                    throw new IllegalArgumentException("Unsupported InputColumn type: " + actualDataType
-                            + ", expected: " + expectedDataType);
+                    throw new IllegalArgumentException(
+                            "Unsupported InputColumn type: " + actualDataType + ", expected: " + expectedDataType);
                 }
             }
         }
@@ -645,8 +643,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         Object newInputColumns = getConfiguredProperty(propertyDescriptor);
         if (newInputColumns == null) {
             if (propertyDescriptor.isArray()) {
-                final InputColumn<?>[] asArray = inputColumns.toArray(new InputColumn[inputColumns.size()]);
-                newInputColumns = asArray;
+                newInputColumns = inputColumns.toArray(new InputColumn[inputColumns.size()]);
             } else {
                 if (inputColumns == null || inputColumns.isEmpty()) {
                     newInputColumns = null;
@@ -746,8 +743,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         } else if (outcome instanceof FilterOutcome) {
             setComponentRequirement(new SimpleComponentRequirement((FilterOutcome) outcome));
         } else {
-            throw new IllegalArgumentException("Unsupported outcome type (use ComponentRequirement instead): "
-                    + outcome);
+            throw new IllegalArgumentException(
+                    "Unsupported outcome type (use ComponentRequirement instead): " + outcome);
         }
     }
 
@@ -783,8 +780,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             return false;
         }
         if (source instanceof HasComponentRequirement) {
-            final ComponentRequirement componentRequirement = ((HasComponentRequirement) source)
-                    .getComponentRequirement();
+            final ComponentRequirement componentRequirement =
+                    ((HasComponentRequirement) source).getComponentRequirement();
             if (componentRequirement != null) {
                 final Collection<FilterOutcome> requirements = componentRequirement.getProcessingDependencies();
                 for (final FilterOutcome transitiveRequirement : requirements) {
@@ -800,8 +797,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
     public List<InputColumn<?>> getInputColumns() {
         final List<InputColumn<?>> result = new LinkedList<>();
-        final Set<ConfiguredPropertyDescriptor> configuredPropertiesForInput = getDescriptor()
-                .getConfiguredPropertiesForInput();
+        final Set<ConfiguredPropertyDescriptor> configuredPropertiesForInput =
+                getDescriptor().getConfiguredPropertiesForInput();
         for (final ConfiguredPropertyDescriptor configuredProperty : configuredPropertiesForInput) {
             final Object inputColumns = getConfiguredProperty(configuredProperty);
             if (inputColumns != null) {
@@ -810,8 +807,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                     for (int i = 0; i < length; i++) {
                         final InputColumn<?> column = (InputColumn<?>) Array.get(inputColumns, i);
                         if (column == null) {
-                            logger.warn("Element no. {} in array (size {}) is null! Value read from {}", new Object[] {
-                                    i, length, configuredProperty });
+                            logger.warn("Element no. {} in array (size {}) is null! Value read from {}",
+                                    new Object[] { i, length, configuredProperty });
                         } else {
                             result.add(column);
                         }
@@ -876,8 +873,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         final D descriptor = getDescriptor();
 
         final DataCleanerConfiguration configuration = getAnalysisJobBuilder().getConfiguration();
-        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
-                .getInjectionManager(configuration);
+        final InjectionManager injectionManager =
+                configuration.getEnvironment().getInjectionManagerFactory().getInjectionManager(configuration);
 
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, false);
 
@@ -1071,8 +1068,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         final List<OutputDataStreamJob> result = new ArrayList<>();
         for (final OutputDataStream outputDataStream : outputDataStreams) {
             if (isOutputDataStreamConsumed(outputDataStream)) {
-                result.add(new LazyOutputDataStreamJob(outputDataStream,
-                        getOutputDataStreamJobBuilder(outputDataStream)));
+                result.add(
+                        new LazyOutputDataStreamJob(outputDataStream, getOutputDataStreamJobBuilder(outputDataStream)));
             }
         }
         return result.toArray(new OutputDataStreamJob[result.size()]);

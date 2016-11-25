@@ -87,8 +87,7 @@ public abstract class AbstractOutputWriterAnalyzer implements Analyzer<WriteData
     protected void writeRow(final InputRow row, final int distinctCount) {
         final OutputRow outputRow = outputWriter.createRow();
         for (final InputColumn<?> col : columns) {
-            @SuppressWarnings("unchecked") final
-            InputColumn<Object> objectCol = (InputColumn<Object>) col;
+            @SuppressWarnings("unchecked") final InputColumn<Object> objectCol = (InputColumn<Object>) col;
             outputRow.setValue(objectCol, row.getValue(col));
         }
         outputRow.write();

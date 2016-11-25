@@ -41,8 +41,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * @author Kasper Sørensen
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class UpdateTableJobBuilderPresenterRenderer implements
-        Renderer<AnalyzerComponentBuilder<UpdateTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
+public class UpdateTableJobBuilderPresenterRenderer
+        implements Renderer<AnalyzerComponentBuilder<UpdateTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -63,8 +63,8 @@ public class UpdateTableJobBuilderPresenterRenderer implements
 
     @Override
     public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<UpdateTableAnalyzer> ajb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
-                PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
 
         return new UpdateTableJobBuilderPresenter(ajb, windowContext, propertyWidgetFactory, configuration, dcModule);
     }

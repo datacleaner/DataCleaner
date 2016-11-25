@@ -72,8 +72,8 @@ import scala.Tuple2;
  * This class implements two interfaces because it has two (quite similar)
  * styles of usages in the {@link SparkAnalysisRunner}.
  */
-public final class RowProcessingFunction implements
-        Function2<Integer, Iterator<InputRow>, Iterator<Tuple2<String, NamedAnalyzerResult>>>,
+public final class RowProcessingFunction
+        implements Function2<Integer, Iterator<InputRow>, Iterator<Tuple2<String, NamedAnalyzerResult>>>,
         PairFlatMapFunction<Iterator<InputRow>, String, NamedAnalyzerResult> {
 
     private static final Logger logger = LoggerFactory.getLogger(RowProcessingFunction.class);
@@ -91,8 +91,8 @@ public final class RowProcessingFunction implements
         logger.info("call(Iterator) invoked");
 
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
-        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = executePartition(inputRowIterator,
-                analysisJob);
+        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults =
+                executePartition(inputRowIterator, analysisJob);
 
         logger.info("call(Iterator) finished, returning {} results", analyzerResults.size());
 
@@ -110,8 +110,8 @@ public final class RowProcessingFunction implements
 
         final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
 
-        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = executePartition(inputRowIterator,
-                analysisJob);
+        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults =
+                executePartition(inputRowIterator, analysisJob);
 
         logger.info("call({}, Iterator) finished, returning {} results", partitionNumber, analyzerResults.size());
 
@@ -132,8 +132,8 @@ public final class RowProcessingFunction implements
         // separate file.
         for (final ComponentBuilder cb : jobBuilder.getComponentBuilders()) {
             // find any datastore properties that point to HDFS files
-            final Set<ConfiguredPropertyDescriptor> targetDatastoreProperties = cb.getDescriptor()
-                    .getConfiguredPropertiesByType(UpdateableDatastore.class, false);
+            final Set<ConfiguredPropertyDescriptor> targetDatastoreProperties =
+                    cb.getDescriptor().getConfiguredPropertiesByType(UpdateableDatastore.class, false);
             for (final ConfiguredPropertyDescriptor targetDatastoreProperty : targetDatastoreProperties) {
                 final Object datastoreObject = cb.getConfiguredProperty(targetDatastoreProperty);
                 if (datastoreObject instanceof ResourceDatastore) {
@@ -141,8 +141,8 @@ public final class RowProcessingFunction implements
                     final Resource resource = resourceDatastore.getResource();
                     final Resource replacementResource = createReplacementResource(resource, partitionNumber);
                     if (replacementResource != null) {
-                        final ResourceDatastore replacementDatastore = createReplacementDatastore(cb, resourceDatastore,
-                                replacementResource);
+                        final ResourceDatastore replacementDatastore =
+                                createReplacementDatastore(cb, resourceDatastore, replacementResource);
                         if (replacementDatastore != null) {
                             cb.setConfiguredProperty(targetDatastoreProperty, replacementDatastore);
                         }
@@ -150,8 +150,8 @@ public final class RowProcessingFunction implements
                 }
             }
 
-            final Set<ConfiguredPropertyDescriptor> resourceProperties = cb.getDescriptor()
-                    .getConfiguredPropertiesByType(Resource.class, false);
+            final Set<ConfiguredPropertyDescriptor> resourceProperties =
+                    cb.getDescriptor().getConfiguredPropertiesByType(Resource.class, false);
             for (final ConfiguredPropertyDescriptor resourceProperty : resourceProperties) {
                 final Resource resource = (Resource) cb.getConfiguredProperty(resourceProperty);
                 final Resource replacementResource = createReplacementResource(resource, partitionNumber);
@@ -188,8 +188,7 @@ public final class RowProcessingFunction implements
         if (resource instanceof HdfsResource || resource instanceof HadoopResource) {
             final String path = resource.getQualifiedPath() + "/part-" + formattedPartitionNumber;
             final URI uri = URI.create(path);
-            final Resource replacementResource = HdfsHelper.createHelper().getResourceToUse(uri);
-            return replacementResource;
+            return HdfsHelper.createHelper().getResourceToUse(uri);
         }
         if (resource instanceof FileResource) {
             final File file = ((FileResource) resource).getFile();
@@ -201,9 +200,7 @@ public final class RowProcessingFunction implements
             if (!file.exists()) {
                 file.mkdirs();
             }
-            final FileResource fileResource = new FileResource(resource.getQualifiedPath() + "/part-"
-                    + formattedPartitionNumber);
-            return fileResource;
+            return new FileResource(resource.getQualifiedPath() + "/part-" + formattedPartitionNumber);
         }
         return null;
     }
@@ -227,8 +224,8 @@ public final class RowProcessingFunction implements
             return new JsonDatastore(name, replacementResource, ((JsonDatastore) datastore).getSchemaBuilder());
         }
 
-        logger.warn("Could not replace datastore '{}' because it is of an unsupported type: ", name, datastore
-                .getClass().getSimpleName());
+        logger.warn("Could not replace datastore '{}' because it is of an unsupported type: ", name,
+                datastore.getClass().getSimpleName());
         return datastore;
     }
 
@@ -255,8 +252,8 @@ public final class RowProcessingFunction implements
         logger.info("Row processing complete - continuing to fetching results");
 
         // collect results
-        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = getAnalyzerResults(consumeRowHandler
-                .getConsumers());
+        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults =
+                getAnalyzerResults(consumeRowHandler.getConsumers());
 
         // await any future results
         for (final ListIterator<Tuple2<String, NamedAnalyzerResult>> it = analyzerResults.listIterator();
@@ -266,8 +263,8 @@ public final class RowProcessingFunction implements
             final AnalyzerResult analyzerResult = namedAnalyzerResult.getAnalyzerResult();
             if (analyzerResult instanceof AnalyzerResultFuture) {
                 final AnalyzerResult awaitedResult = ((AnalyzerResultFuture<?>) analyzerResult).get();
-                final NamedAnalyzerResult awaitedResultTuple = new NamedAnalyzerResult(namedAnalyzerResult.getName(),
-                        awaitedResult);
+                final NamedAnalyzerResult awaitedResultTuple =
+                        new NamedAnalyzerResult(namedAnalyzerResult.getName(), awaitedResult);
                 it.set(new Tuple2<>(tuple._1, awaitedResultTuple));
             }
         }
@@ -296,10 +293,10 @@ public final class RowProcessingFunction implements
             }
 
             for (final ActiveOutputDataStream activeOutputDataStream : consumer.getActiveOutputDataStreams()) {
-                final List<RowProcessingConsumer> outputDataStreamConsumers = activeOutputDataStream.getPublisher()
-                        .getConsumers();
-                final List<Tuple2<String, NamedAnalyzerResult>> outputDataStreamsAnalyzerResults = getAnalyzerResults(
-                        outputDataStreamConsumers);
+                final List<RowProcessingConsumer> outputDataStreamConsumers =
+                        activeOutputDataStream.getPublisher().getConsumers();
+                final List<Tuple2<String, NamedAnalyzerResult>> outputDataStreamsAnalyzerResults =
+                        getAnalyzerResults(outputDataStreamConsumers);
                 analyzerResults.addAll(outputDataStreamsAnalyzerResults);
             }
         }

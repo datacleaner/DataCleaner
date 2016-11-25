@@ -37,8 +37,8 @@ public class JavaDensityAnalyzerResult implements IDensityAnalyzerResult {
     private final Map<Pair<Integer, Integer>, RowAnnotation> _annotations;
 
     public JavaDensityAnalyzerResult(final Map<Pair<Integer, Integer>, RowAnnotation> annotations,
-            final InputColumn<Number> variable1,
-            final InputColumn<Number> variable2, final RowAnnotationFactory rowAnnotationFactory) {
+            final InputColumn<Number> variable1, final InputColumn<Number> variable2,
+            final RowAnnotationFactory rowAnnotationFactory) {
         // Make sure that Scala wrapper is lost.
         _annotations = new HashMap<>();
         _annotations.putAll(annotations);

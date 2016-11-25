@@ -71,9 +71,8 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             if (minPartitions > 0) {
                 _minPartitions = minPartitions;
             } else {
-                logger.warn(
-                        "Minimum number of partitions needs to be a positive number, but specified: {}. Disregarding the value and inferring the number of partitions automatically",
-                        minPartitions);
+                logger.warn("Minimum number of partitions needs to be a positive number, but specified: {}. "
+                        + "Disregarding the value and inferring the number of partitions automatically", minPartitions);
                 _minPartitions = null;
             }
         } else {
@@ -105,12 +104,11 @@ public class SparkAnalysisRunner implements AnalysisRunner {
                     .mapPartitionsWithIndex(new RowProcessingFunction(_sparkJobContext), preservePartitions);
 
             if (_sparkJobContext.isResultEnabled()) {
-                final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = processedTuplesRdd
-                        .mapPartitionsToPair(new TuplesToTuplesFunction<>(),
-                                preservePartitions);
+                final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD =
+                        processedTuplesRdd.mapPartitionsToPair(new TuplesToTuplesFunction<>(), preservePartitions);
 
-                namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(
-                        _sparkJobContext));
+                namedAnalyzerResultsRDD =
+                        partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(_sparkJobContext));
             } else {
                 // call count() to block and wait for RDD to be fully processed
                 processedTuplesRdd.count();
@@ -119,8 +117,8 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         } else {
             logger.warn("Running the job in non-distributed mode");
             final JavaRDD<InputRow> coalescedInputRowsRDD = inputRowsRDD.coalesce(1);
-            namedAnalyzerResultsRDD = coalescedInputRowsRDD.mapPartitionsToPair(new RowProcessingFunction(
-                    _sparkJobContext));
+            namedAnalyzerResultsRDD =
+                    coalescedInputRowsRDD.mapPartitionsToPair(new RowProcessingFunction(_sparkJobContext));
 
             if (!_sparkJobContext.isResultEnabled()) {
                 // call count() to block and wait for RDD to be fully processed
@@ -134,8 +132,8 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         }
 
         assert namedAnalyzerResultsRDD != null;
-        final JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD = namedAnalyzerResultsRDD
-                .mapValues(new ExtractAnalyzerResultFunction());
+        final JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD =
+                namedAnalyzerResultsRDD.mapValues(new ExtractAnalyzerResultFunction());
 
         // log analyzer results
         final List<Tuple2<String, AnalyzerResult>> results = finalAnalyzerResultsRDD.collect();
@@ -171,13 +169,11 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();
 
             if (csvConfiguration.getColumnNameLineNumber() != CsvConfiguration.NO_COLUMN_NAME_LINE) {
-                zipWithIndex = zipWithIndex.filter(new SkipHeaderLineFunction(csvConfiguration
-                        .getColumnNameLineNumber()));
+                zipWithIndex =
+                        zipWithIndex.filter(new SkipHeaderLineFunction(csvConfiguration.getColumnNameLineNumber()));
             }
 
-            final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
-
-            return inputRowsRDD;
+            return zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
         } else if (datastore instanceof JsonDatastore) {
             final JsonDatastore jsonDatastore = (JsonDatastore) datastore;
             final String datastorePath = jsonDatastore.getResource().getQualifiedPath();
@@ -190,8 +186,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final JavaRDD<Object[]> parsedInput = rawInput.map(new JsonParserFunction(jsonDatastore));
             final JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();
-            final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
-            return inputRowsRDD;
+            return zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
         } else if (datastore instanceof FixedWidthDatastore) {
 
             final FixedWidthDatastore fixedWidthDatastore = (FixedWidthDatastore) datastore;
@@ -211,12 +206,11 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();
 
             if (fixedWidthConfiguration.getColumnNameLineNumber() != FixedWidthConfiguration.NO_COLUMN_NAME_LINE) {
-                zipWithIndex = zipWithIndex.filter(new SkipHeaderLineFunction(fixedWidthConfiguration
-                        .getColumnNameLineNumber()));
+                zipWithIndex = zipWithIndex
+                        .filter(new SkipHeaderLineFunction(fixedWidthConfiguration.getColumnNameLineNumber()));
             }
 
-            final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
-            return inputRowsRDD;
+            return zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
         }
 
         throw new UnsupportedOperationException("Unsupported datastore type or configuration: " + datastore);

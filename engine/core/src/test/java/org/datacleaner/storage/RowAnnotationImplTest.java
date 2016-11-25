@@ -22,32 +22,32 @@ package org.datacleaner.storage;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.SerializationUtils;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
+
+import junit.framework.TestCase;
 
 public class RowAnnotationImplTest extends TestCase {
 
     public void testDeserializeOlderVersion() throws Exception {
-        Object obj;
+        final Object obj;
         try (InputStream in = new FileInputStream("src/test/resources/old_row_annotation_impl.ser")) {
-            ChangeAwareObjectInputStream changeAware = new ChangeAwareObjectInputStream(in);
+            final ChangeAwareObjectInputStream changeAware = new ChangeAwareObjectInputStream(in);
             obj = changeAware.readObject();
             changeAware.close();
         }
 
         assertTrue(obj instanceof RowAnnotationImpl);
-        RowAnnotationImpl annotation = (RowAnnotationImpl) obj;
+        final RowAnnotationImpl annotation = (RowAnnotationImpl) obj;
         assertEquals(10, annotation.getRowCount());
     }
 
     public void testSerializeAndDeserializeCurrentVersion() throws Exception {
-        RowAnnotationImpl annotation1 = new RowAnnotationImpl();
+        final RowAnnotationImpl annotation1 = new RowAnnotationImpl();
         annotation1.incrementRowCount(20);
 
-        byte[] bytes = SerializationUtils.serialize(annotation1);
-        RowAnnotationImpl annotation2 = (RowAnnotationImpl) SerializationUtils.deserialize(bytes);
+        final byte[] bytes = SerializationUtils.serialize(annotation1);
+        final RowAnnotationImpl annotation2 = (RowAnnotationImpl) SerializationUtils.deserialize(bytes);
 
         assertEquals(20, annotation2.getRowCount());
     }

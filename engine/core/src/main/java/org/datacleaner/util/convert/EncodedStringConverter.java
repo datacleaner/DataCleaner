@@ -41,8 +41,8 @@ public class EncodedStringConverter implements Converter<String> {
 
     private static final String ALGORHITM = "PBEWithMD5AndDES";
 
-    private static final byte[] DEFAULT_SALT = { (byte) 0xde, (byte) 0x33, (byte) 0x12, (byte) 0x10, (byte) 0x33,
-            (byte) 0x10, (byte) 0x12, (byte) 0xde };
+    private static final byte[] DEFAULT_SALT =
+            { (byte) 0xde, (byte) 0x33, (byte) 0x12, (byte) 0x10, (byte) 0x33, (byte) 0x10, (byte) 0x12, (byte) 0xde };
     private static final char[] DEFAULT_SECRET = "cafelattebabemlobhat".toCharArray();
 
     private final byte[] _salt;

@@ -92,7 +92,7 @@ final class Packer extends GridBagLayout implements Cloneable {
      * Copy the passed component's contraints as the current constraints. This
      * is typically used to reuse constraints set on another component. Be
      * careful with this method as it does not protect you from cascading reuse
-     * issues. This method uses {@link GridbagLayout.getConstraints()} to get a
+     * issues. This method uses {@link GridBagLayout#getConstraints(Component)} to get a
      * copy of the constraints for <code>comp</code>.
      *
      * @param comp

@@ -55,15 +55,16 @@ public final class ExtensionSwapClient {
         this(DEFAULT_WEBSITE_HOSTNAME, windowContext, userPreferences, configuration);
     }
 
-    public ExtensionSwapClient(final String websiteHostname, final WindowContext windowContext, final UserPreferences userPreferences,
-            final DataCleanerConfiguration configuration) {
+    public ExtensionSwapClient(final String websiteHostname, final WindowContext windowContext,
+            final UserPreferences userPreferences, final DataCleanerConfiguration configuration) {
         _windowContext = windowContext;
         _baseUrl = "http://" + websiteHostname + "/ws/extension/";
         _userPreferences = userPreferences;
         _configuration = configuration;
     }
 
-    public ExtensionPackage registerExtensionPackage(final ExtensionSwapPackage extensionSwapPackage, final File jarFile) {
+    public ExtensionPackage registerExtensionPackage(final ExtensionSwapPackage extensionSwapPackage,
+            final File jarFile) {
         final ExtensionReader reader = new ExtensionReader();
         final ExtensionPackage extensionPackage = reader.readExternalExtension(new File[] { jarFile });
 
@@ -88,12 +89,9 @@ public final class ExtensionSwapClient {
     }
 
     public void registerExtensionPackage(final ExtensionSwapPackage extensionSwapPackage, final String username) {
-        downloadJarFile(extensionSwapPackage, username, new FileDownloadListener() {
-            @Override
-            public void onFilesDownloaded(final FileObject[] files) {
-                final File jarFile = VFSUtils.toFile(files[0]);
-                registerExtensionPackage(extensionSwapPackage, jarFile);
-            }
+        downloadJarFile(extensionSwapPackage, username, files -> {
+            final File jarFile = VFSUtils.toFile(files[0]);
+            registerExtensionPackage(extensionSwapPackage, jarFile);
         });
     }
 
@@ -107,8 +105,9 @@ public final class ExtensionSwapClient {
         final String filename = extensionSwapPackage.getId() + ".jar";
         final FileObject targetDirectory = VFSUtils.toFileObject(_userPreferences.getExtensionsDirectory());
         final WebServiceHttpClient httpClient = new SimpleWebServiceHttpClient(_userPreferences.createHttpClient());
-        final DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
-                targetDirectory, new String[] { filename }, listener, _windowContext, httpClient);
+        final DownloadFilesActionListener actionListener =
+                new DownloadFilesActionListener(new String[] { url }, targetDirectory, new String[] { filename },
+                        listener, _windowContext, httpClient);
         actionListener.actionPerformed(null);
     }
 

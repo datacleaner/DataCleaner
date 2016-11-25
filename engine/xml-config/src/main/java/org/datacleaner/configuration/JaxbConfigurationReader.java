@@ -159,8 +159,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         _interceptor = interceptor;
         _variablePathBuilder = new ArrayDeque<>(4);
         try {
-            _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class
-                    .getClassLoader());
+            _jaxbContext = JAXBContext
+                    .newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class.getClassLoader());
         } catch (final JAXBException e) {
             throw new IllegalStateException(e);
         }
@@ -203,8 +203,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
      *             if the name is invalid
      */
     private static void checkName(final String name, final Class<?> type,
-            final List<? extends ReferenceData> previousEntries)
-            throws IllegalStateException {
+            final List<? extends ReferenceData> previousEntries) throws IllegalStateException {
         if (StringUtils.isNullOrEmpty(name)) {
             throw new IllegalStateException(type.getSimpleName() + " name cannot be null");
         }
@@ -300,10 +299,10 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         // create temporary environment and configuration objects - they will be
         // passed along during building of the final ones.
-        final TemporaryMutableDataCleanerEnvironment temporaryEnvironment = new TemporaryMutableDataCleanerEnvironment(
-                _interceptor.createBaseEnvironment());
-        DataCleanerConfigurationImpl temporaryConfiguration = new DataCleanerConfigurationImpl(temporaryEnvironment,
-                homeFolder);
+        final TemporaryMutableDataCleanerEnvironment temporaryEnvironment =
+                new TemporaryMutableDataCleanerEnvironment(_interceptor.createBaseEnvironment());
+        DataCleanerConfigurationImpl temporaryConfiguration =
+                new DataCleanerConfigurationImpl(temporaryEnvironment, homeFolder);
 
         // update the temporary environment if overrides are specified in
         // configuration file.
@@ -336,8 +335,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final ReferenceDataCatalog referenceDataCatalog;
         {
             addVariablePath("referenceDataCatalog");
-            referenceDataCatalog = createReferenceDataCatalog(jaxbConfiguration.getReferenceDataCatalog(),
-                    temporaryEnvironment, temporaryConfiguration);
+            referenceDataCatalog =
+                    createReferenceDataCatalog(jaxbConfiguration.getReferenceDataCatalog(), temporaryEnvironment,
+                            temporaryConfiguration);
             removeVariablePath();
         }
 
@@ -376,8 +376,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 new RemoteServerConfigurationImpl(remoteServerDataList, environment.getTaskRunner()));
 
         for (final Object provider : providersElement.getCustomClassOrClasspathScannerOrRemoteComponents()) {
-            createDescriptorProvider(provider, environment,
-                    temporaryConfiguration, providers);
+            createDescriptorProvider(provider, environment, temporaryConfiguration, providers);
         }
         createRemoteDescriptorProviders(environment, providers, remoteServerDataList);
 
@@ -409,15 +408,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         environment.setDescriptorProvider(descriptorProvider);
     }
 
-    private void createDescriptorProvider(final Object providerElement,
-            final DataCleanerEnvironment environment, final DataCleanerConfiguration temporaryConfiguration,
-            final List<DescriptorProvider> providerList) {
+    private void createDescriptorProvider(final Object providerElement, final DataCleanerEnvironment environment,
+            final DataCleanerConfiguration temporaryConfiguration, final List<DescriptorProvider> providerList) {
         if (providerElement instanceof CustomElementType) {
             providerList.add(createCustomElement(((CustomElementType) providerElement), DescriptorProvider.class,
                     temporaryConfiguration, true));
         } else if (providerElement instanceof ClasspathScannerType) {
-            final DescriptorProvider classPathProvider = createClasspathScanDescriptorProvider(
-                    (ClasspathScannerType) providerElement, environment);
+            final DescriptorProvider classPathProvider =
+                    createClasspathScanDescriptorProvider((ClasspathScannerType) providerElement, environment);
             providerList.add(classPathProvider);
         } else if (providerElement instanceof RemoteComponentsType) {
             // nothing. Remote server providers will be created separately in createRemoteDescriptorProviders method
@@ -441,15 +439,15 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 int i = 0;
                 for (final RemoteComponentServerType server : ((RemoteComponentsType) provider).getServer()) {
                     i++;
-                    final String serverName = (server.getName() == null
-                            ? ("server" + i) : server.getName());
+                    final String serverName = (server.getName() == null ? ("server" + i) : server.getName());
                     String serverUrl = server.getUrl();
                     if (StringUtils.isNullOrEmpty(serverUrl) && serverName
                             .equals(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME)) {
                         serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
                     }
-                    final RemoteServerDataImpl remoteServerData = new RemoteServerDataImpl(serverUrl, serverName,
-                            server.getUsername(), SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
+                    final RemoteServerDataImpl remoteServerData =
+                            new RemoteServerDataImpl(serverUrl, serverName, server.getUsername(),
+                                    SecurityUtils.decodePasswordWithPrefix(server.getPassword()));
                     remoteServerDataList.add(remoteServerData);
                 }
             }
@@ -463,16 +461,15 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         for (final String excludedRenderingFormat : classpathScannerElement.getExcludedRenderingFormat()) {
             try {
-                @SuppressWarnings("unchecked") final
-                Class<? extends RenderingFormat<?>> cls = (Class<? extends RenderingFormat<?>>) _interceptor.loadClass(
-                        excludedRenderingFormat);
+                @SuppressWarnings("unchecked") final Class<? extends RenderingFormat<?>> cls =
+                        (Class<? extends RenderingFormat<?>>) _interceptor.loadClass(excludedRenderingFormat);
                 excludedRenderingFormats.add(cls);
             } catch (final ClassNotFoundException e) {
                 logger.error("Could not find excluded rendering format class: " + excludedRenderingFormat, e);
             }
         }
-        final ClasspathScanDescriptorProvider classpathScanner = new ClasspathScanDescriptorProvider(environment
-                .getTaskRunner(), excludedRenderingFormats);
+        final ClasspathScanDescriptorProvider classpathScanner =
+                new ClasspathScanDescriptorProvider(environment.getTaskRunner(), excludedRenderingFormats);
         for (final Package pkg : classpathScannerElement.getPackage()) {
             String packageName = pkg.getValue();
             if (packageName != null) {
@@ -496,8 +493,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             return;
         }
 
-        final StorageProvider storageProvider = createStorageProvider(storageProviderType, environment,
-                temporaryConfiguration);
+        final StorageProvider storageProvider =
+                createStorageProvider(storageProviderType, environment, temporaryConfiguration);
         environment.setStorageProvider(storageProvider);
     }
 
@@ -509,10 +506,10 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             final StorageProviderType collectionsStorage = combinedStorageProvider.getCollectionsStorage();
             final StorageProviderType rowAnnotationStorage = combinedStorageProvider.getRowAnnotationStorage();
 
-            final StorageProvider collectionsStorageProvider = createStorageProvider(collectionsStorage, environment,
-                    temporaryConfiguration);
-            final StorageProvider rowAnnotationStorageProvider = createStorageProvider(rowAnnotationStorage,
-                    environment, temporaryConfiguration);
+            final StorageProvider collectionsStorageProvider =
+                    createStorageProvider(collectionsStorage, environment, temporaryConfiguration);
+            final StorageProvider rowAnnotationStorageProvider =
+                    createStorageProvider(rowAnnotationStorage, environment, temporaryConfiguration);
 
             return new CombinedStorageProvider(collectionsStorageProvider, rowAnnotationStorageProvider);
         }
@@ -571,11 +568,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
                         final String dsName = getStringVariable("datastoreName", ddt.getDatastoreName());
                         final String columnPath = getStringVariable("columnPath", ddt.getColumnPath());
-                        final boolean loadIntoMemory = getBooleanVariable("loadIntoMemory", ddt.isLoadIntoMemory(),
-                                true);
+                        final boolean loadIntoMemory =
+                                getBooleanVariable("loadIntoMemory", ddt.isLoadIntoMemory(), true);
 
-                        final DatastoreDictionary dict = new DatastoreDictionary(name, dsName, columnPath,
-                                loadIntoMemory);
+                        final DatastoreDictionary dict =
+                                new DatastoreDictionary(name, dsName, columnPath, loadIntoMemory);
                         dict.setDescription(ddt.getDescription());
 
                         dictionaryList.add(dict);
@@ -616,8 +613,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                         dict.setDescription(vldt.getDescription());
                         dictionaryList.add(dict);
                     } else if (dictionaryType instanceof CustomElementType) {
-                        final Dictionary customDictionary = createCustomElement((CustomElementType) dictionaryType,
-                                Dictionary.class, temporaryConfiguration, false);
+                        final Dictionary customDictionary =
+                                createCustomElement((CustomElementType) dictionaryType, Dictionary.class,
+                                        temporaryConfiguration, false);
                         checkName(customDictionary.getName(), Dictionary.class, dictionaryList);
                         dictionaryList.add(customDictionary);
                     } else {
@@ -644,19 +642,19 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                         if (encoding == null) {
                             encoding = FileHelper.UTF_8_ENCODING;
                         }
-                        final boolean caseSensitive = getBooleanVariable("caseSensitive", tfsct.isCaseSensitive(),
-                                true);
-                        final TextFileSynonymCatalog sc = new TextFileSynonymCatalog(name, filename, caseSensitive,
-                                encoding);
+                        final boolean caseSensitive =
+                                getBooleanVariable("caseSensitive", tfsct.isCaseSensitive(), true);
+                        final TextFileSynonymCatalog sc =
+                                new TextFileSynonymCatalog(name, filename, caseSensitive, encoding);
                         sc.setDescription(tfsct.getDescription());
                         synonymCatalogList.add(sc);
 
                         removeVariablePath();
 
                     } else if (synonymCatalogType instanceof CustomElementType) {
-                        final SynonymCatalog customSynonymCatalog = createCustomElement(
-                                (CustomElementType) synonymCatalogType, SynonymCatalog.class, temporaryConfiguration,
-                                false);
+                        final SynonymCatalog customSynonymCatalog =
+                                createCustomElement((CustomElementType) synonymCatalogType, SynonymCatalog.class,
+                                        temporaryConfiguration, false);
                         checkName(customSynonymCatalog.getName(), SynonymCatalog.class, synonymCatalogList);
                         synonymCatalogList.add(customSynonymCatalog);
                     } else if (synonymCatalogType instanceof DatastoreSynonymCatalogType) {
@@ -668,17 +666,19 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
                         addVariablePath(name);
 
-                        final String dataStoreName = getStringVariable("datastoreName", datastoreSynonymCatalogType
-                                .getDatastoreName());
+                        final String dataStoreName =
+                                getStringVariable("datastoreName", datastoreSynonymCatalogType.getDatastoreName());
                         final String masterTermColumnPath = getStringVariable("masterTermColumnPath",
                                 datastoreSynonymCatalogType.getMasterTermColumnPath());
-                        final boolean loadIntoMemory = getBooleanVariable("loadIntoMemory", datastoreSynonymCatalogType
-                                .isLoadIntoMemory(), true);
+                        final boolean loadIntoMemory =
+                                getBooleanVariable("loadIntoMemory", datastoreSynonymCatalogType.isLoadIntoMemory(),
+                                        true);
 
-                        final String[] synonymColumnPaths = datastoreSynonymCatalogType.getSynonymColumnPath().toArray(
-                                new String[0]);
-                        final DatastoreSynonymCatalog sc = new DatastoreSynonymCatalog(name, dataStoreName,
-                                masterTermColumnPath, synonymColumnPaths, loadIntoMemory);
+                        final String[] synonymColumnPaths =
+                                datastoreSynonymCatalogType.getSynonymColumnPath().toArray(new String[0]);
+                        final DatastoreSynonymCatalog sc =
+                                new DatastoreSynonymCatalog(name, dataStoreName, masterTermColumnPath,
+                                        synonymColumnPaths, loadIntoMemory);
                         sc.setDescription(datastoreSynonymCatalogType.getDescription());
                         synonymCatalogList.add(sc);
 
@@ -701,8 +701,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                         addVariablePath(name);
 
                         final String expression = getStringVariable("expression", regexPatternType.getExpression());
-                        final boolean matchEntireString = getBooleanVariable("matchEntireString", regexPatternType
-                                .isMatchEntireString(), true);
+                        final boolean matchEntireString =
+                                getBooleanVariable("matchEntireString", regexPatternType.isMatchEntireString(), true);
                         final RegexStringPattern sp = new RegexStringPattern(name, expression, matchEntireString);
                         sp.setDescription(regexPatternType.getDescription());
                         stringPatterns.add(sp);
@@ -721,17 +721,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                         }
 
                         addVariablePath(name);
-                        final Regex regex = new Regex(
-                                getStringVariable("name", regexSwapPatternType.getName()),
+                        final Regex regex = new Regex(getStringVariable("name", regexSwapPatternType.getName()),
                                 getStringVariable("description", regexSwapPatternType.getDescription()),
                                 getStringVariable("expression", regexSwapPatternType.getExpression()),
                                 getStringVariable("author", regexSwapPatternType.getAuthor()),
                                 getLongVariable("timestamp", regexSwapPatternType.getTimestamp()),
                                 getIntegerVariable("positiveVotes", regexSwapPatternType.getPositiveVotes()),
                                 getIntegerVariable("negativeVotes", regexSwapPatternType.getNegativeVotes()),
-                                getStringVariable("detailsUrl", regexSwapPatternType.getDetailsUrl()),
-                                categoryList
-                        );
+                                getStringVariable("detailsUrl", regexSwapPatternType.getDetailsUrl()), categoryList);
                         final RegexSwapStringPattern sp = new RegexSwapStringPattern(regex);
                         stringPatterns.add(sp);
                         removeVariablePath();
@@ -768,8 +765,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final Map<String, Datastore> datastores = new HashMap<>();
 
         // read all single, non-custom datastores
-        final List<AbstractDatastoreType> datastoreTypes = datastoreCatalogType
-                .getJdbcDatastoreOrAccessDatastoreOrCsvDatastore();
+        final List<AbstractDatastoreType> datastoreTypes =
+                datastoreCatalogType.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore();
         for (final AbstractDatastoreType datastoreType : datastoreTypes) {
             final String name = datastoreType.getName();
             checkName(name, Datastore.class, datastores);
@@ -840,8 +837,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
 
         // create composite datastores as the last step
-        final List<CompositeDatastoreType> compositeDatastores = CollectionUtils2.filterOnClass(datastoreTypes,
-                CompositeDatastoreType.class);
+        final List<CompositeDatastoreType> compositeDatastores =
+                CollectionUtils2.filterOnClass(datastoreTypes, CompositeDatastoreType.class);
         for (final CompositeDatastoreType compositeDatastoreType : compositeDatastores) {
             final String name = compositeDatastoreType.getName();
             checkName(name, Datastore.class, datastores);
@@ -851,8 +848,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             for (final String datastoreName : datastoreNames) {
                 final Datastore datastore = datastores.get(datastoreName);
                 if (datastore == null) {
-                    throw new IllegalStateException("No such datastore: " + datastoreName
-                            + " (found in composite datastore: " + name + ")");
+                    throw new IllegalStateException(
+                            "No such datastore: " + datastoreName + " (found in composite datastore: " + name + ")");
                 }
                 childDatastores.add(datastore);
             }
@@ -888,8 +885,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         try {
             servers.put(HadoopResource.DEFAULT_CLUSTERREFERENCE,
-                    new EnvironmentBasedHadoopClusterInformation(
-                            HadoopResource.DEFAULT_CLUSTERREFERENCE, null));
+                    new EnvironmentBasedHadoopClusterInformation(HadoopResource.DEFAULT_CLUSTERREFERENCE, null));
         } catch (final IllegalStateException e) {
             logger.info("No Hadoop environment variables, skipping default server");
         }
@@ -940,8 +936,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final String password = getPasswordVariable("password", datastoreType.getPassword());
         final boolean ssl = getBooleanVariable("ssl", datastoreType.isSsl(), false);
 
-        final List<org.datacleaner.configuration.jaxb.CassandraDatastoreType.TableDef> tableDefList = datastoreType
-                .getTableDef();
+        final List<org.datacleaner.configuration.jaxb.CassandraDatastoreType.TableDef> tableDefList =
+                datastoreType.getTableDef();
         final SimpleTableDef[] tableDefs;
         if (tableDefList == null || tableDefList.isEmpty()) {
             tableDefs = null;
@@ -951,8 +947,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 final org.datacleaner.configuration.jaxb.CassandraDatastoreType.TableDef tableDef = tableDefList.get(i);
                 final String tableName = tableDef.getTableName();
                 final List<org.datacleaner.configuration.jaxb.CassandraDatastoreType.TableDef.Column> columnList =
-                        tableDef
-                                .getColumn();
+                        tableDef.getColumn();
 
                 final String[] columnNames = new String[columnList.size()];
                 final ColumnType[] columnTypes = new ColumnType[columnList.size()];
@@ -999,16 +994,16 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         if (port == null) {
             port = ElasticSearchDatastore.DEFAULT_PORT;
         }
-        final List<org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef> tableDefList = datastoreType
-                .getTableDef();
+        final List<org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef> tableDefList =
+                datastoreType.getTableDef();
         final SimpleTableDef[] tableDefs;
         if (tableDefList.isEmpty()) {
             tableDefs = null;
         } else {
             tableDefs = new SimpleTableDef[tableDefList.size()];
             for (int i = 0; i < tableDefs.length; i++) {
-                final org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef tableDef = tableDefList
-                        .get(i);
+                final org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef tableDef =
+                        tableDefList.get(i);
 
                 final String docType = tableDef.getDocumentType();
                 final List<Field> fieldList = tableDef.getField();
@@ -1034,8 +1029,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
 
         return new ElasticSearchDatastore(name, ClientType.valueOf(clientType), hostname, port, clusterName, indexName,
-                tableDefs,
-                username, password, ssl, keystorePath, keystorePassword);
+                tableDefs, username, password, ssl, keystorePath, keystorePassword);
     }
 
     private Datastore createDatastore(final String name, final JsonDatastoreType datastoreType,
@@ -1048,8 +1042,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     private Datastore createDatastore(final String name, final HbaseDatastoreType datastoreType) {
         final String zookeeperHostname = getStringVariable("zookeeperHostname", datastoreType.getZookeeperHostname());
         final int zookeeperPort = getIntegerVariable("zookeeperPort", datastoreType.getZookeeperPort());
-        final List<org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef> tableDefList = datastoreType
-                .getTableDef();
+        final List<org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef> tableDefList =
+                datastoreType.getTableDef();
 
         final SimpleTableDef[] tableDefs;
         if (tableDefList.isEmpty()) {
@@ -1059,8 +1053,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             for (int i = 0; i < tableDefs.length; i++) {
                 final org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef tableDef = tableDefList.get(i);
                 final String tableName = tableDef.getName();
-                final List<org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef.Column> columnList = tableDef
-                        .getColumn();
+                final List<org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef.Column> columnList =
+                        tableDef.getColumn();
                 final String[] columnNames = new String[columnList.size()];
                 final ColumnType[] columnTypes = new ColumnType[columnList.size()];
                 for (int j = 0; j < columnTypes.length; j++) {
@@ -1110,8 +1104,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final String username = getStringVariable("username", datastoreType.getUsername());
         final String password = getPasswordVariable("password", datastoreType.getPassword());
         final boolean https = getBooleanVariable("https", datastoreType.isHttps(), true);
-        final boolean acceptUnverifiedSslPeers = getBooleanVariable("acceptunverifiedsslpeers", datastoreType
-                .isAcceptunverifiedsslpeers(), false);
+        final boolean acceptUnverifiedSslPeers =
+                getBooleanVariable("acceptunverifiedsslpeers", datastoreType.isAcceptunverifiedsslpeers(), false);
         final DatahubsecuritymodeEnum jaxbDatahubsecuritymode = datastoreType.getDatahubsecuritymode();
         final DataHubSecurityMode dataHubSecurityMode = DataHubSecurityMode.valueOf(jaxbDatahubsecuritymode.value());
         return new DataHubDatastore(name, host, port, username, password, https, acceptUnverifiedSslPeers,
@@ -1125,8 +1119,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final String username = getStringVariable("username", mongodbDatastoreType.getUsername());
         final String password = getPasswordVariable("password", mongodbDatastoreType.getPassword());
 
-        final List<org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef> tableDefList = mongodbDatastoreType
-                .getTableDef();
+        final List<org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef> tableDefList =
+                mongodbDatastoreType.getTableDef();
         final SimpleTableDef[] tableDefs;
         if (tableDefList.isEmpty()) {
             tableDefs = null;
@@ -1136,8 +1130,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 final org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef tableDef = tableDefList.get(i);
                 final String collectionName = tableDef.getCollection();
                 final List<org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef.Property> propertyList =
-                        tableDef
-                                .getProperty();
+                        tableDef.getProperty();
                 final String[] propertyNames = new String[propertyList.size()];
                 final ColumnType[] columnTypes = new ColumnType[propertyList.size()];
                 for (int j = 0; j < columnTypes.length; j++) {
@@ -1167,8 +1160,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final String password = getPasswordVariable("password", couchdbDatastoreType.getPassword());
         final boolean sslEnabled = getBooleanVariable("ssl", couchdbDatastoreType.isSsl(), false);
 
-        final List<org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef> tableDefList = couchdbDatastoreType
-                .getTableDef();
+        final List<org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef> tableDefList =
+                couchdbDatastoreType.getTableDef();
         final SimpleTableDef[] tableDefs;
         if (tableDefList.isEmpty()) {
             tableDefs = null;
@@ -1177,8 +1170,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             for (int i = 0; i < tableDefs.length; i++) {
                 final org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef tableDef = tableDefList.get(i);
                 final String databaseName = tableDef.getDatabase();
-                final List<org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef.Field> fieldList = tableDef
-                        .getField();
+                final List<org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef.Field> fieldList =
+                        tableDef.getField();
                 final String[] propertyNames = new String[fieldList.size()];
                 final ColumnType[] columnTypes = new ColumnType[fieldList.size()];
                 for (int j = 0; j < columnTypes.length; j++) {
@@ -1271,12 +1264,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             encoding = FileHelper.UTF_8_ENCODING;
         }
 
-        final boolean failOnInconsistencies = getBooleanVariable("failOnInconsistencies", fixedWidthDatastore
-                .isFailOnInconsistencies(), true);
+        final boolean failOnInconsistencies =
+                getBooleanVariable("failOnInconsistencies", fixedWidthDatastore.isFailOnInconsistencies(), true);
         final boolean skipEbcdicHeader =
                 getBooleanVariable("skipEbcdicHeader", fixedWidthDatastore.isSkipEbcdicHeader(), false);
-        final boolean eolPresent =
-                getBooleanVariable("eolPresent", fixedWidthDatastore.isEolPresent(), true);
+        final boolean eolPresent = getBooleanVariable("eolPresent", fixedWidthDatastore.isEolPresent(), true);
 
         Integer headerLineNumber = getIntegerVariable("headerLineNumber", fixedWidthDatastore.getHeaderLineNumber());
         if (headerLineNumber == null) {
@@ -1300,8 +1292,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             }
 
             ds = new FixedWidthDatastore(name, resource, filename, encoding, valueWidths, failOnInconsistencies,
-                    skipEbcdicHeader,
-                    eolPresent, headerLineNumber, customColumnNames);
+                    skipEbcdicHeader, eolPresent, headerLineNumber, customColumnNames);
         } else {
             ds = new FixedWidthDatastore(name, resource, filename, encoding, fixedValueWidth, failOnInconsistencies,
                     skipEbcdicHeader, eolPresent, headerLineNumber);
@@ -1333,8 +1324,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             final String driver = getStringVariable("driver", jdbcDatastoreType.getDriver());
             final String username = getStringVariable("username", jdbcDatastoreType.getUsername());
             final String password = getPasswordVariable("password", jdbcDatastoreType.getPassword());
-            final boolean multipleConnections = getBooleanVariable("multipleConnections", jdbcDatastoreType
-                    .isMultipleConnections(), true);
+            final boolean multipleConnections =
+                    getBooleanVariable("multipleConnections", jdbcDatastoreType.isMultipleConnections(), true);
 
             ds = new JdbcDatastore(name, url, driver, username, password, multipleConnections, tableTypes, catalogName);
         } else {
@@ -1349,27 +1340,27 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final Resource resource = _interceptor.createResource(filename, configuration);
 
         final String quoteCharString = getStringVariable("quoteChar", csvDatastoreType.getQuoteChar());
-        final char quoteChar = getChar(quoteCharString, CsvConfiguration.DEFAULT_QUOTE_CHAR,
-                CsvConfiguration.NOT_A_CHAR);
+        final char quoteChar =
+                getChar(quoteCharString, CsvConfiguration.DEFAULT_QUOTE_CHAR, CsvConfiguration.NOT_A_CHAR);
 
         final String separatorCharString = getStringVariable("separatorChar", csvDatastoreType.getSeparatorChar());
-        final char separatorChar = getChar(separatorCharString, CsvConfiguration.DEFAULT_SEPARATOR_CHAR,
-                CsvConfiguration.NOT_A_CHAR);
+        final char separatorChar =
+                getChar(separatorCharString, CsvConfiguration.DEFAULT_SEPARATOR_CHAR, CsvConfiguration.NOT_A_CHAR);
 
         final String escapeCharString = getStringVariable("escapeChar", csvDatastoreType.getEscapeChar());
-        final char escapeChar = getChar(escapeCharString, CsvConfiguration.DEFAULT_ESCAPE_CHAR,
-                CsvConfiguration.NOT_A_CHAR);
+        final char escapeChar =
+                getChar(escapeCharString, CsvConfiguration.DEFAULT_ESCAPE_CHAR, CsvConfiguration.NOT_A_CHAR);
 
         String encoding = getStringVariable("encoding", csvDatastoreType.getEncoding());
         if (StringUtils.isNullOrEmpty(encoding)) {
             encoding = FileHelper.UTF_8_ENCODING;
         }
 
-        final boolean failOnInconsistencies = getBooleanVariable("failOnInconsistencies", csvDatastoreType
-                .isFailOnInconsistencies(), true);
+        final boolean failOnInconsistencies =
+                getBooleanVariable("failOnInconsistencies", csvDatastoreType.isFailOnInconsistencies(), true);
 
-        final boolean multilineValues = getBooleanVariable("multilineValues", csvDatastoreType.isMultilineValues(),
-                true);
+        final boolean multilineValues =
+                getBooleanVariable("multilineValues", csvDatastoreType.isMultilineValues(), true);
 
         Integer headerLineNumber = getIntegerVariable("headerLineNumber", csvDatastoreType.getHeaderLineNumber());
         if (headerLineNumber == null) {
@@ -1507,8 +1498,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             }
             environment.setTaskRunner(taskRunner);
         } else if (customTaskrunner != null) {
-            final TaskRunner taskRunner = createCustomElement(customTaskrunner, TaskRunner.class,
-                    temporaryConfiguration, true);
+            final TaskRunner taskRunner =
+                    createCustomElement(customTaskrunner, TaskRunner.class, temporaryConfiguration, true);
             environment.setTaskRunner(taskRunner);
         }
     }
@@ -1532,8 +1523,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
      */
     private <E> E createCustomElement(final CustomElementType customElementType, final Class<E> expectedClazz,
             final DataCleanerConfiguration configuration, final boolean initialize) {
-        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
-                .getInjectionManager(configuration);
+        final InjectionManager injectionManager =
+                configuration.getEnvironment().getInjectionManagerFactory().getInjectionManager(configuration);
         return createCustomElementInternal(customElementType, expectedClazz, injectionManager, initialize);
     }
 
@@ -1553,8 +1544,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             throw new IllegalStateException(className + " is not a valid " + expectedClazz);
         }
 
-        @SuppressWarnings("unchecked") final
-        E result = ReflectionUtils.newInstance((Class<E>) foundClass);
+        @SuppressWarnings("unchecked") final E result = ReflectionUtils.newInstance((Class<E>) foundClass);
 
         final ComponentDescriptor<?> descriptor = Descriptors.ofComponent(foundClass);
 
@@ -1573,12 +1563,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                         final Set<ConfiguredPropertyDescriptor> configuredProperties =
                                 descriptor.getConfiguredProperties();
                         for (final ConfiguredPropertyDescriptor configuredPropertyDescriptor : configuredProperties) {
-                            logger.info("Available configured property name: {}, {}", configuredPropertyDescriptor
-                                    .getName(), configuredPropertyDescriptor.getType());
+                            logger.info("Available configured property name: {}, {}",
+                                    configuredPropertyDescriptor.getName(), configuredPropertyDescriptor.getType());
                         }
                     }
-                    throw new IllegalStateException("No such property in " + foundClass.getName() + ": "
-                            + propertyName);
+                    throw new IllegalStateException(
+                            "No such property in " + foundClass.getName() + ": " + propertyName);
                 }
 
                 final Object configuredValue = stringConverter.deserialize(propertyValue, configuredProperty.getType(),

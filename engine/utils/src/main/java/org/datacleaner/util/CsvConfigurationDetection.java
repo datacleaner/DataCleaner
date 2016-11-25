@@ -142,8 +142,7 @@ public class CsvConfigurationDetection {
     }
 
     private CsvConfiguration suggestCsvConfiguration(final byte[] sample, final String encoding,
-            final List<String> columnNames)
-            throws IllegalStateException {
+            final List<String> columnNames) throws IllegalStateException {
 
         final char[] sampleChars = readSampleBuffer(sample, encoding);
 
@@ -231,11 +230,13 @@ public class CsvConfigurationDetection {
         }
         // detect if multi line values occur
         boolean multiline = false;
-        final CsvConfiguration multiLineConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
-                columnNamingStategy, encoding, separatorChar, quoteChar, escapeChar, false, true);
+        final CsvConfiguration multiLineConfiguration =
+                new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, columnNamingStategy, encoding,
+                        separatorChar, quoteChar, escapeChar, false, true);
         try {
-            final CsvDataContext testDataContext = new CsvDataContext(new InMemoryResource("foo.txt", sample,
-                    System.currentTimeMillis()), multiLineConfiguration);
+            final CsvDataContext testDataContext =
+                    new CsvDataContext(new InMemoryResource("foo.txt", sample, System.currentTimeMillis()),
+                            multiLineConfiguration);
             final Table table = testDataContext.getDefaultSchema().getTable(0);
             if (_columnNames == null) {
                 _columnNames = Arrays.asList(testDataContext.getDefaultSchema().getTable(0).getColumnNames());
@@ -261,8 +262,7 @@ public class CsvConfigurationDetection {
         }
 
         return new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, columnNamingStategy, encoding,
-                separatorChar, quoteChar,
-                escapeChar, false, multiline);
+                separatorChar, quoteChar, escapeChar, false, multiline);
     }
 
     private int indexOf(final char c, final char[] sampleChars) {

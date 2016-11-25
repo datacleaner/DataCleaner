@@ -28,21 +28,21 @@ public class SimpleDictionaryReferenceDataWizardSessionTest {
 
     @Test
     public void testFirstPageController() throws Exception {
-        SimpleDictionaryReferenceDataWizardSession session =
+        final SimpleDictionaryReferenceDataWizardSession session =
                 new SimpleDictionaryReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNotNull(session.firstPageController());
     }
 
     @Test
     public void testGetPageCount() throws Exception {
-        SimpleDictionaryReferenceDataWizardSession session =
+        final SimpleDictionaryReferenceDataWizardSession session =
                 new SimpleDictionaryReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertEquals(new Integer(1), session.getPageCount());
     }
 
     @Test
     public void testName() throws Exception {
-        SimpleDictionaryReferenceDataWizardSession session =
+        final SimpleDictionaryReferenceDataWizardSession session =
                 new SimpleDictionaryReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getName());
         session.setName("name-value");
@@ -51,7 +51,7 @@ public class SimpleDictionaryReferenceDataWizardSessionTest {
 
     @Test
     public void testValues() throws Exception {
-        SimpleDictionaryReferenceDataWizardSession session =
+        final SimpleDictionaryReferenceDataWizardSession session =
                 new SimpleDictionaryReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getValues());
         session.setValues("values-value");
@@ -60,7 +60,7 @@ public class SimpleDictionaryReferenceDataWizardSessionTest {
 
     @Test
     public void testCaseSensitive() throws Exception {
-        SimpleDictionaryReferenceDataWizardSession session =
+        final SimpleDictionaryReferenceDataWizardSession session =
                 new SimpleDictionaryReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getCaseSensitive());
         session.setCaseSensitive("case-sensitive-value");

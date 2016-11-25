@@ -66,8 +66,9 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
     private ScheduleDefinition _scheduleDefinitionForJob = null;
 
-    public JobWizardController(final WizardPanel wizardPanel, final TenantIdentifier tenant, final WizardIdentifier wizardIdentifier,
-            final DatastoreIdentifier datastoreIdentifier, final WizardServiceAsync wizardService) {
+    public JobWizardController(final WizardPanel wizardPanel, final TenantIdentifier tenant,
+            final WizardIdentifier wizardIdentifier, final DatastoreIdentifier datastoreIdentifier,
+            final WizardServiceAsync wizardService) {
         super(wizardPanel, tenant, wizardIdentifier, wizardService);
         _datastoreIdentifier = datastoreIdentifier;
 
@@ -160,8 +161,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         }
     }
 
-    private void populateContentPanel(final String jobName,
-            final Button closeButton, final FlowPanel contentPanel) {
+    private void populateContentPanel(final String jobName, final Button closeButton, final FlowPanel contentPanel) {
         if (jobName == null) {
             contentPanel.add(new Label("Job created! Wizard finished."));
         } else {
@@ -176,8 +176,8 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
     protected Anchor createSchedulingAnchor(final String jobName) {
         final Anchor anchor = new Anchor("Set up a job schedule");
         anchor.addStyleName("ScheduleJob");
-        ClickHandler clickHandler = new CustomizeScheduleClickHandler(null, schedulingService, getTenant(),
-                _scheduleDefinitionForJob);
+        ClickHandler clickHandler =
+                new CustomizeScheduleClickHandler(null, schedulingService, getTenant(), _scheduleDefinitionForJob);
         clickHandler = new RemoveWizardClickHandler(clickHandler, JobWizardController.this, jobName);
         anchor.addClickHandler(clickHandler);
         return anchor;
@@ -186,8 +186,8 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
     protected Anchor createTriggerAnchor(final String jobName) {
         final Anchor anchor = new Anchor("Run this job now");
         anchor.addStyleName("TriggerJob");
-        ClickHandler clickHandler = new TriggerJobClickHandler(schedulingService, getTenant(),
-                _scheduleDefinitionForJob);
+        ClickHandler clickHandler =
+                new TriggerJobClickHandler(schedulingService, getTenant(), _scheduleDefinitionForJob);
         clickHandler = new RemoveWizardClickHandler(clickHandler, JobWizardController.this, jobName);
         anchor.addClickHandler(clickHandler);
         return anchor;

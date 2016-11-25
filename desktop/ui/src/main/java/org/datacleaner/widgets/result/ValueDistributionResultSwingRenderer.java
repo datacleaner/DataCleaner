@@ -85,8 +85,8 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
             return renderGroupedResult(groupedResult);
         } else {
             final ValueDistributionResultSwingRendererGroupDelegate delegate =
-                    new ValueDistributionResultSwingRendererGroupDelegate(
-                            result.getName(), _rendererFactory, _windowContext);
+                    new ValueDistributionResultSwingRendererGroupDelegate(result.getName(), _rendererFactory,
+                            _windowContext);
             return delegate.renderGroupResult(result);
         }
     }
@@ -104,11 +104,10 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
                 @Override
                 protected JComponent fetch() {
                     final ValueDistributionResultSwingRendererGroupDelegate delegate =
-                            new ValueDistributionResultSwingRendererGroupDelegate(
-                                    res.getName(), _rendererFactory, _windowContext);
+                            new ValueDistributionResultSwingRendererGroupDelegate(res.getName(), _rendererFactory,
+                                    _windowContext);
                     final JComponent renderedResult = delegate.renderGroupResult(res);
-                    final DCPanel decoratedPanel = createDecoration(renderedResult);
-                    return decoratedPanel;
+                    return createDecoration(renderedResult);
                 }
             };
 
@@ -119,8 +118,9 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
             if (distinctValue == null) {
                 collapsiblePanel = new DCCollapsiblePanel(label, label, false, componentRef);
             } else {
-                final String collapsedLabel = label + ": " + LabelUtils.getLabel(distinctValue.getValue()) + "="
-                        + distinctValue.getCount() + "";
+                final String collapsedLabel =
+                        label + ": " + LabelUtils.getLabel(distinctValue.getValue()) + "=" + distinctValue.getCount()
+                                + "";
                 collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, label, true, componentRef);
             }
             panel.add(collapsiblePanel.toPanel());
@@ -201,12 +201,12 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
         ajb.setDatastore(ds);
         ajb.addSourceColumns(sn.convertToTable("PUBLIC.CUSTOMERS").getColumns());
 
-        final AnalyzerComponentBuilder<ValueDistributionAnalyzer> singleValueDist = ajb
-                .addAnalyzer(ValueDistributionAnalyzer.class);
+        final AnalyzerComponentBuilder<ValueDistributionAnalyzer> singleValueDist =
+                ajb.addAnalyzer(ValueDistributionAnalyzer.class);
         singleValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.ADDRESSLINE2"));
 
-        final AnalyzerComponentBuilder<ValueDistributionAnalyzer> groupedValueDist = ajb
-                .addAnalyzer(ValueDistributionAnalyzer.class);
+        final AnalyzerComponentBuilder<ValueDistributionAnalyzer> groupedValueDist =
+                ajb.addAnalyzer(ValueDistributionAnalyzer.class);
         groupedValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.CITY"));
         groupedValueDist.setConfiguredProperty("Group column", ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));
 

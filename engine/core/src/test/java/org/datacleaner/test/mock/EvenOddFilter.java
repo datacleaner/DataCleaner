@@ -41,8 +41,8 @@ public class EvenOddFilter implements Filter<EvenOddFilter.Category> {
     InputColumn<String> column;
 
     @Override
-    public EvenOddFilter.Category categorize(InputRow inputRow) {
-        int v = counter.incrementAndGet();
+    public EvenOddFilter.Category categorize(final InputRow inputRow) {
+        final int v = counter.incrementAndGet();
         if (v % 2 == 0) {
             return Category.EVEN;
         }

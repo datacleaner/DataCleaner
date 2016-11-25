@@ -51,8 +51,7 @@ public class MysqlDatastoreWizard implements DatastoreWizard {
     @Override
     public boolean isApplicableTo(final DatastoreWizardContext context) {
         final DatabaseDriverCatalog catalog = new DatabaseDriverCatalog(null);
-        final boolean installed = catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL);
-        return installed;
+        return catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL);
     }
 
 }

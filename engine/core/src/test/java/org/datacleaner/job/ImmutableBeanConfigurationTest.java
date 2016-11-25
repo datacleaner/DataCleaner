@@ -22,12 +22,12 @@ package org.datacleaner.job;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.Configured;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
+
+import junit.framework.TestCase;
 
 public class ImmutableBeanConfigurationTest extends TestCase {
 
@@ -35,19 +35,19 @@ public class ImmutableBeanConfigurationTest extends TestCase {
     String[] conf;
 
     public void testEqualsArrayValue() throws Exception {
-        ComponentDescriptor<? extends ImmutableBeanConfigurationTest> componentDescriptor = Descriptors
-                .ofComponent(getClass());
-        ConfiguredPropertyDescriptor propertyDescriptor = componentDescriptor.getConfiguredProperty("Conf");
+        final ComponentDescriptor<? extends ImmutableBeanConfigurationTest> componentDescriptor =
+                Descriptors.ofComponent(getClass());
+        final ConfiguredPropertyDescriptor propertyDescriptor = componentDescriptor.getConfiguredProperty("Conf");
         assertNotNull(propertyDescriptor);
 
-        Map<ConfiguredPropertyDescriptor, Object> properties1 = new HashMap<>();
+        final Map<ConfiguredPropertyDescriptor, Object> properties1 = new HashMap<>();
         properties1.put(propertyDescriptor, new String[] { "hello", "world" });
 
-        Map<ConfiguredPropertyDescriptor, Object> properties2 = new HashMap<>();
+        final Map<ConfiguredPropertyDescriptor, Object> properties2 = new HashMap<>();
         properties2.put(propertyDescriptor, new String[] { "hello", "world" });
 
-        ImmutableComponentConfiguration conf1 = new ImmutableComponentConfiguration(properties1);
-        ImmutableComponentConfiguration conf2 = new ImmutableComponentConfiguration(properties2);
+        final ImmutableComponentConfiguration conf1 = new ImmutableComponentConfiguration(properties1);
+        final ImmutableComponentConfiguration conf2 = new ImmutableComponentConfiguration(properties2);
         assertEquals(conf1.hashCode(), conf2.hashCode());
         assertEquals(conf1, conf2);
     }

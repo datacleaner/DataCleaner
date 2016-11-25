@@ -190,8 +190,8 @@ public class CustomizeChartOptionsPanel extends FlowPanel {
         final Integer minimumValue = _minimumValueBox.getNumberValue();
         final Integer maximumValue = _maximumValue.getNumberValue();
         final boolean logarithmicScale = _logScaleCheckBox.getValue();
-        final VerticalAxisOption verticalAxisOption = new DefaultVAxisOption(height, minimumValue, maximumValue,
-                logarithmicScale);
+        final VerticalAxisOption verticalAxisOption =
+                new DefaultVAxisOption(height, minimumValue, maximumValue, logarithmicScale);
 
         final ChartOptions chartOptions = new ChartOptions(horizontalAxisOption, verticalAxisOption);
         return chartOptions;

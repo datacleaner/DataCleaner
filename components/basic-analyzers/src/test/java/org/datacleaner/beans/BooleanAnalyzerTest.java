@@ -19,19 +19,18 @@
  */
 package org.datacleaner.beans;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.ParameterizableMetric;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 
+import junit.framework.TestCase;
+
 public class BooleanAnalyzerTest extends TestCase {
 
     public void testSimpleScenario() throws Exception {
-        @SuppressWarnings("unchecked")
-        final InputColumn<Boolean>[] c = new InputColumn[2];
+        @SuppressWarnings("unchecked") final InputColumn<Boolean>[] c = new InputColumn[2];
         c[0] = new MockInputColumn<>("b1", Boolean.class);
         c[1] = new MockInputColumn<>("b2", Boolean.class);
 
@@ -63,8 +62,7 @@ public class BooleanAnalyzerTest extends TestCase {
     }
 
     public void testGetMetrics() throws Exception {
-        @SuppressWarnings("unchecked")
-        final InputColumn<Boolean>[] c = new InputColumn[2];
+        @SuppressWarnings("unchecked") final InputColumn<Boolean>[] c = new InputColumn[2];
         c[0] = new MockInputColumn<>("b1", Boolean.class);
         c[1] = new MockInputColumn<>("b2", Boolean.class);
 

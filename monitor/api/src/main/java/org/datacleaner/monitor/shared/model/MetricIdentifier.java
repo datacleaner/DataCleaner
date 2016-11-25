@@ -48,9 +48,10 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
     private List<MetricIdentifier> _children;
 
     // full constructor that specifies every field in one go.
-    public MetricIdentifier(final String metricDisplayName, final String analyzerDescriptorName, final String analyzerName,
-            final String analyzerInputName, final String metricDescriptorName, final String paramQueryString, final String paramColumnName,
-            final boolean parameterizedByQueryString, final boolean parameterizedByColumnName) {
+    public MetricIdentifier(final String metricDisplayName, final String analyzerDescriptorName,
+            final String analyzerName, final String analyzerInputName, final String metricDescriptorName,
+            final String paramQueryString, final String paramColumnName, final boolean parameterizedByQueryString,
+            final boolean parameterizedByColumnName) {
         _metricDisplayName = metricDisplayName;
         _analyzerDescriptorName = analyzerDescriptorName;
         _analyzerName = analyzerName;
@@ -62,7 +63,8 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         _parameterizedByColumnName = parameterizedByColumnName;
     }
 
-    public MetricIdentifier(final String metricDisplayName, final String formula, final List<MetricIdentifier> children) {
+    public MetricIdentifier(final String metricDisplayName, final String formula,
+            final List<MetricIdentifier> children) {
         _metricDisplayName = metricDisplayName;
         _formula = formula;
         _children = children;
@@ -91,8 +93,9 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
             sb.append("]");
             return _formula + "_" + sb;
         }
-        final String ID = _analyzerDescriptorName + _analyzerInputName + _analyzerName + _metricDescriptorName
-                + _paramColumnName + _paramQueryString;
+        final String ID =
+                _analyzerDescriptorName + _analyzerInputName + _analyzerName + _metricDescriptorName + _paramColumnName
+                        + _paramQueryString;
         return ID.replaceAll("'", "");
     }
 
@@ -219,14 +222,12 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
                 final MetricIdentifier childCopy = child.copy();
                 children.add(childCopy);
             }
-            final MetricIdentifier metricIdentifier = new MetricIdentifier(_metricDisplayName, _formula, children);
-            return metricIdentifier;
+            return new MetricIdentifier(_metricDisplayName, _formula, children);
         }
 
-        final MetricIdentifier metricIdentifier = new MetricIdentifier(_metricDisplayName, _analyzerDescriptorName,
-                _analyzerName, _analyzerInputName, _metricDescriptorName, _paramQueryString, _paramColumnName,
-                _parameterizedByQueryString, _parameterizedByColumnName);
-        return metricIdentifier;
+        return new MetricIdentifier(_metricDisplayName, _analyzerDescriptorName, _analyzerName, _analyzerInputName,
+                _metricDescriptorName, _paramQueryString, _paramColumnName, _parameterizedByQueryString,
+                _parameterizedByColumnName);
     }
 
     public String getFormula() {
@@ -473,8 +474,10 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
             return "MetricIdentifier[formula=" + _formula + "]";
         }
         return "MetricIdentifier[analyzerInputName=" + _analyzerInputName + ",metricDescriptorName="
-                + _metricDescriptorName + (_paramColumnName != null ? ",paramColumnName=" + _paramColumnName : "")
-                + (_paramQueryString != null ? ",paramQueryString=" + _paramQueryString : "") + "]";
+                + _metricDescriptorName + (_paramColumnName != null ? ",paramColumnName=" + _paramColumnName : "") + (
+                _paramQueryString != null
+                        ? ",paramQueryString=" + _paramQueryString
+                        : "") + "]";
     }
 
     @Override

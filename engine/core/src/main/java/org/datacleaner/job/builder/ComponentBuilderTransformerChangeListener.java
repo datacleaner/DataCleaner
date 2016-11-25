@@ -82,8 +82,8 @@ public class ComponentBuilderTransformerChangeListener implements TransformerCha
                             }
                         } else {
                             if (!availableColumns.contains(configuredProperty)) {
-                                _componentBuilder.removeInputColumn((InputColumn<?>) configuredProperty,
-                                        propertyDescriptor);
+                                _componentBuilder
+                                        .removeInputColumn((InputColumn<?>) configuredProperty, propertyDescriptor);
                             }
                         }
                     }

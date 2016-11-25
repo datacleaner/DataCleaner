@@ -159,8 +159,8 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
                 int newMaxRows = Math.min(previousMaxRows.intValue(), maxRows);
                 if (previousFirstRow != null) {
                     final Integer newFirstRow = q.getFirstRow();
-                    final int maxWindowSizeFrombefore = previousFirstRow.intValue() + previousMaxRows.intValue()
-                            - newFirstRow;
+                    final int maxWindowSizeFrombefore =
+                            previousFirstRow.intValue() + previousMaxRows.intValue() - newFirstRow;
                     newMaxRows = Math.min(newMaxRows, maxWindowSizeFrombefore);
                 }
 

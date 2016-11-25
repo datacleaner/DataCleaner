@@ -47,10 +47,10 @@ public class AverageBuilderTest extends TestCase {
     }
 
     public void testAddValueWithCount() throws Exception {
-        assertEquals(4d, new AverageBuilder().addValue(2, 1).addValue(4, 2).addValue(6).addValue(3, 1).addValue(5)
-                .getAverage());
+        assertEquals(4d,
+                new AverageBuilder().addValue(2, 1).addValue(4, 2).addValue(6).addValue(3, 1).addValue(5).getAverage());
 
-        AverageBuilder builder = new AverageBuilder();
+        final AverageBuilder builder = new AverageBuilder();
         builder.addValue(400d, 500000);
         builder.addValue(300d, 500000);
 

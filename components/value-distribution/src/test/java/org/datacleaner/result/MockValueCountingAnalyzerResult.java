@@ -27,7 +27,7 @@ public class MockValueCountingAnalyzerResult extends AbstractValueCountingAnalyz
 
     private final Collection<ValueFrequency> _valueCounts;
 
-    public MockValueCountingAnalyzerResult(Collection<ValueFrequency> valueCounts) {
+    public MockValueCountingAnalyzerResult(final Collection<ValueFrequency> valueCounts) {
         _valueCounts = valueCounts;
     }
 
@@ -52,7 +52,7 @@ public class MockValueCountingAnalyzerResult extends AbstractValueCountingAnalyz
     }
 
     @Override
-    public Integer getCount(String value) {
+    public Integer getCount(final String value) {
         return null;
     }
 
@@ -72,12 +72,12 @@ public class MockValueCountingAnalyzerResult extends AbstractValueCountingAnalyz
     }
 
     @Override
-    public boolean hasAnnotatedRows(String value) {
+    public boolean hasAnnotatedRows(final String value) {
         return false;
     }
 
     @Override
-    public AnnotatedRowsResult getAnnotatedRowsForValue(String value) {
+    public AnnotatedRowsResult getAnnotatedRowsForValue(final String value) {
         return null;
     }
 

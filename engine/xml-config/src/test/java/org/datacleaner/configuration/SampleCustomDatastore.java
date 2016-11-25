@@ -52,7 +52,7 @@ public class SampleCustomDatastore implements Datastore {
 
     @Override
     public DatastoreConnection openConnection() {
-        DataContext dc = DataContextFactory.createXmlDataContext(xmlFile, false);
+        final DataContext dc = DataContextFactory.createXmlDataContext(xmlFile, false);
         return new DatastoreConnectionImpl<>(dc, this);
     }
 
@@ -67,7 +67,7 @@ public class SampleCustomDatastore implements Datastore {
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 }

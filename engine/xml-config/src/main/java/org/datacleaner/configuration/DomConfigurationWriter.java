@@ -78,7 +78,7 @@ import com.google.common.base.Strings;
  * conf.xml.
  *
  * Generally speaking, XML elements created by this class, and placed in a the
- * <datastore-catalog> and <reference-data-catalog> elements of conf.xml, will
+ * &lt;datastore-catalog&gt; and &lt;reference-data-catalog&gt; elements of conf.xml, will
  * be readable by {@link JaxbConfigurationReader}.
  */
 public class DomConfigurationWriter {
@@ -209,8 +209,8 @@ public class DomConfigurationWriter {
      */
     public boolean removeHadoopClusterServerInformation(final String serverName) {
         final Element serverInformationCatalogElement = getServerInformationCatalogElement();
-        final Element hadoopClustersElement = getOrCreateChildElementByTagName(serverInformationCatalogElement,
-                "hadoop-clusters");
+        final Element hadoopClustersElement =
+                getOrCreateChildElementByTagName(serverInformationCatalogElement, "hadoop-clusters");
         return removeChildElementByNameAttribute(serverName, hadoopClustersElement);
     }
 
@@ -872,8 +872,8 @@ public class DomConfigurationWriter {
             final Element customColumnNamesElement = getDocument().createElement("custom-column-names");
             ds.appendChild(customColumnNamesElement);
 
-            datastore.getCustomColumnNames().forEach(columnName -> appendElement(customColumnNamesElement,
-                    "column-name", columnName));
+            datastore.getCustomColumnNames()
+                    .forEach(columnName -> appendElement(customColumnNamesElement, "column-name", columnName));
         }
 
         return ds;
@@ -913,8 +913,8 @@ public class DomConfigurationWriter {
             final Element customColumnNamesElement = getDocument().createElement("custom-column-names");
             datastoreElement.appendChild(customColumnNamesElement);
 
-            datastore.getCustomColumnNames().forEach(columnName -> appendElement(customColumnNamesElement,
-                    "column-name", columnName));
+            datastore.getCustomColumnNames()
+                    .forEach(columnName -> appendElement(customColumnNamesElement, "column-name", columnName));
         }
 
         return datastoreElement;
@@ -955,8 +955,8 @@ public class DomConfigurationWriter {
     public Element getDatastoreCatalogElement() {
         final Element configurationFileDocumentElement = getDocumentElement();
 
-        final Element datastoreCatalogElement = getOrCreateChildElementByTagName(configurationFileDocumentElement,
-                "datastore-catalog");
+        final Element datastoreCatalogElement =
+                getOrCreateChildElementByTagName(configurationFileDocumentElement, "datastore-catalog");
         if (datastoreCatalogElement == null) {
             throw new IllegalStateException("Could not find <datastore-catalog> element in configuration file");
         }
@@ -989,8 +989,8 @@ public class DomConfigurationWriter {
     public Element getDictionariesElement() {
         final Element referenceDataCatalogElement = getReferenceDataCatalogElement();
 
-        final Element dictionariesElement = getOrCreateChildElementByTagName(referenceDataCatalogElement,
-                "dictionaries");
+        final Element dictionariesElement =
+                getOrCreateChildElementByTagName(referenceDataCatalogElement, "dictionaries");
         if (dictionariesElement == null) {
             throw new IllegalStateException("Could not find <dictionaries> element in configuration file");
         }
@@ -1005,8 +1005,8 @@ public class DomConfigurationWriter {
     public Element getSynonymCatalogsElement() {
         final Element referenceDataCatalogElement = getReferenceDataCatalogElement();
 
-        final Element synonymCatalogsElement = getOrCreateChildElementByTagName(referenceDataCatalogElement,
-                "synonym-catalogs");
+        final Element synonymCatalogsElement =
+                getOrCreateChildElementByTagName(referenceDataCatalogElement, "synonym-catalogs");
         if (synonymCatalogsElement == null) {
             throw new IllegalStateException("Could not find <synonym-catalogs> element in configuration file");
         }
@@ -1021,8 +1021,8 @@ public class DomConfigurationWriter {
     public Element getStringPatternsElement() {
         final Element referenceDataCatalogElement = getReferenceDataCatalogElement();
 
-        final Element stringPatternsElement = getOrCreateChildElementByTagName(referenceDataCatalogElement,
-                "string-patterns");
+        final Element stringPatternsElement =
+                getOrCreateChildElementByTagName(referenceDataCatalogElement, "string-patterns");
         if (stringPatternsElement == null) {
             throw new IllegalStateException("Could not find <string-patterns> element in configuration file");
         }
@@ -1032,8 +1032,8 @@ public class DomConfigurationWriter {
     private Element getReferenceDataCatalogElement() {
         final Element configurationFileDocumentElement = getDocumentElement();
 
-        final Element referenceDataCatalogElement = getOrCreateChildElementByTagName(configurationFileDocumentElement,
-                "reference-data-catalog");
+        final Element referenceDataCatalogElement =
+                getOrCreateChildElementByTagName(configurationFileDocumentElement, "reference-data-catalog");
         if (referenceDataCatalogElement == null) {
             throw new IllegalStateException("Could not find <reference-data-catalog> element in configuration file");
         }

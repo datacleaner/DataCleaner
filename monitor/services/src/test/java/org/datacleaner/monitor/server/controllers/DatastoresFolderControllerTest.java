@@ -20,12 +20,8 @@
 package org.datacleaner.monitor.server.controllers;
 
 import java.io.File;
-import java.io.InputStream;
-
-import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -37,38 +33,37 @@ import org.datacleaner.repository.file.FileRepository;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import junit.framework.TestCase;
+
 public class DatastoresFolderControllerTest extends TestCase {
 
     public void testSimpleScenario() throws Exception {
-        FileUtils.copyDirectory(new File("src/test/resources/example_repo/tenant3"), new File(
-                "target/repo_datastore_registration/dc"));
+        FileUtils.copyDirectory(new File("src/test/resources/example_repo/tenant3"),
+                new File("target/repo_datastore_registration/dc"));
 
         final FileRepository repository = new FileRepository("target/repo_datastore_registration");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final TenantContextFactory contextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
 
-        DatastoresFolderController controller = new DatastoresFolderController();
+        final DatastoresFolderController controller = new DatastoresFolderController();
         controller._contextFactory = contextFactory;
         controller._datastoreDao = new DatastoreDaoImpl();
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContent("<foo><bar>baz</bar></foo>".getBytes());
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
         controller.registerDatastore("dc", request, response);
 
-        RepositoryFile file = repository.getFolder("dc").getFile("conf.xml");
-        file.readFile(new Action<InputStream>() {
-            @Override
-            public void run(InputStream in) throws Exception {
-                String str = FileHelper.readInputStreamAsString(in, "UTF8");
-                String errorMsg = "generated: " + str;
-                assertTrue(errorMsg, str.indexOf("<foo>") != -1);
-                assertTrue(errorMsg, str.indexOf("baz") != -1);
-                assertTrue(errorMsg, str.indexOf("</bar>") != -1);
-                assertTrue(errorMsg, str.indexOf("<datastore-catalog>") != -1);
-                assertTrue(errorMsg, str.indexOf("<csv-datastore name=\"SomeCSV\">") != -1);
-            }
+        final RepositoryFile file = repository.getFolder("dc").getFile("conf.xml");
+        file.readFile(in -> {
+            final String str = FileHelper.readInputStreamAsString(in, "UTF8");
+            final String errorMsg = "generated: " + str;
+            assertTrue(errorMsg, str.indexOf("<foo>") != -1);
+            assertTrue(errorMsg, str.indexOf("baz") != -1);
+            assertTrue(errorMsg, str.indexOf("</bar>") != -1);
+            assertTrue(errorMsg, str.indexOf("<datastore-catalog>") != -1);
+            assertTrue(errorMsg, str.indexOf("<csv-datastore name=\"SomeCSV\">") != -1);
         });
     }
 }

@@ -21,14 +21,14 @@ package org.datacleaner.guice;
 
 import java.lang.reflect.Field;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.lifecycle.MemberInjectionPoint;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
+import junit.framework.TestCase;
 
 public class DCModuleTest extends TestCase {
 

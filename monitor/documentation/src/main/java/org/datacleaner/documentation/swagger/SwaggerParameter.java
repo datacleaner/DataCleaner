@@ -30,10 +30,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class SwaggerParameter {
     public enum In {
-        HEADER("header"),
-        PATH("path"),
-        QUERY("query"),
-        BODY("body"),;
+        HEADER("header"), PATH("path"), QUERY("query"), BODY("body"),;
 
         private String value = "";
 
@@ -47,10 +44,7 @@ public class SwaggerParameter {
     }
 
     public enum Type {
-        STRING("string"),
-        INTEGER("integer"),
-        BOOLEAN("boolean"),
-        OBJECT("object"),;
+        STRING("string"), INTEGER("integer"), BOOLEAN("boolean"), OBJECT("object"),;
 
         private String value = "";
 

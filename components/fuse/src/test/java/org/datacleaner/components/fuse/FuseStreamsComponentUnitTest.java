@@ -22,8 +22,6 @@ package org.datacleaner.components.fuse;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.api.InputColumn;
@@ -31,6 +29,8 @@ import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.test.MockOutputRowCollector;
+
+import junit.framework.TestCase;
 
 public class FuseStreamsComponentUnitTest extends TestCase {
 

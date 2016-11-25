@@ -47,8 +47,8 @@ public final class DefaultMetricValues implements MetricValues {
     private final AnalysisJob _analysisJob;
 
     public DefaultMetricValues(final MetricJobEngine<?> jobEngine, final MetricJobContext job,
-            final List<MetricIdentifier> metricIdentifiers,
-            final AnalysisResult analysisResult, final AnalysisJob analysisJob) {
+            final List<MetricIdentifier> metricIdentifiers, final AnalysisResult analysisResult,
+            final AnalysisJob analysisJob) {
         _jobEngine = jobEngine;
         _job = job;
         _metricIdentifiers = metricIdentifiers;
@@ -58,8 +58,7 @@ public final class DefaultMetricValues implements MetricValues {
     }
 
     public DefaultMetricValues(final MetricJobEngine<?> jobEngine, final MetricJobContext job,
-            final List<MetricIdentifier> metricIdentifiers,
-            final AnalysisResult analysisResult) {
+            final List<MetricIdentifier> metricIdentifiers, final AnalysisResult analysisResult) {
         _jobEngine = jobEngine;
         _job = job;
         _metricIdentifiers = metricIdentifiers;
@@ -87,13 +86,11 @@ public final class DefaultMetricValues implements MetricValues {
             componentJobs.add(analyzerJob);
 
             final MetricDescriptor metricDescriptor =
-                    metricValueUtils.getMetricDescriptor(metricIdentifier, _analysisJob,
-                            analyzerJob, _analysisResult);
+                    metricValueUtils.getMetricDescriptor(metricIdentifier, _analysisJob, analyzerJob, _analysisResult);
             metricDescriptors.add(metricDescriptor);
 
             final MetricParameters parameter =
-                    metricValueUtils.getParameters(_jobEngine, _job, metricIdentifier, metricDescriptor,
-                            analyzerJob);
+                    metricValueUtils.getParameters(_jobEngine, _job, metricIdentifier, metricDescriptor, analyzerJob);
             metricParameters.add(parameter);
         }
 
@@ -104,9 +101,9 @@ public final class DefaultMetricValues implements MetricValues {
             final MetricDescriptor metric = metricDescriptors.get(i);
             final MetricParameters parameters = metricParameters.get(i);
 
-            final Number metricValue =
-                    metricValueUtils.getMetricValue(_jobEngine, _job, metricIdentifier, metric, _analysisJob,
-                            job, _analysisResult, parameters);
+            final Number metricValue = metricValueUtils
+                    .getMetricValue(_jobEngine, _job, metricIdentifier, metric, _analysisJob, job, _analysisResult,
+                            parameters);
             metricValuesList.add(metricValue);
         }
 

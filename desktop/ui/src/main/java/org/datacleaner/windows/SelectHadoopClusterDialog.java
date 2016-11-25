@@ -22,8 +22,6 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -58,7 +56,8 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
     private String _selectedConfiguration;
 
 
-    public SelectHadoopClusterDialog(final WindowContext windowContext, final ServerInformationCatalog serverInformationCatalog,
+    public SelectHadoopClusterDialog(final WindowContext windowContext,
+            final ServerInformationCatalog serverInformationCatalog,
             final Provider<OptionsDialog> optionsDialogProvider) {
         super(windowContext, ImageManager.get().getImage(IconUtils.FILE_HDFS));
 
@@ -78,25 +77,17 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
 
 
         _okButton = WidgetFactory.createPrimaryButton("OK", IconUtils.ACTION_FORWARD);
-        _okButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final String selectedValue = _serverList.getSelectedValue();
-                _selectedConfiguration = _mappedServers.get(selectedValue);
-                dispose();
-            }
+        _okButton.addActionListener(e -> {
+            final String selectedValue = _serverList.getSelectedValue();
+            _selectedConfiguration = _mappedServers.get(selectedValue);
+            dispose();
         });
         _optionsButton = WidgetFactory.createDefaultButton("Options", IconUtils.MENU_OPTIONS);
-        _optionsButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                SelectHadoopClusterDialog.this.close();
-                final OptionsDialog optionsDialog = _optionsDialogProvider.get();
-                optionsDialog.selectHadoopClustersTab();
-                optionsDialog.open();
-            }
+        _optionsButton.addActionListener(e -> {
+            SelectHadoopClusterDialog.this.close();
+            final OptionsDialog optionsDialog = _optionsDialogProvider.get();
+            optionsDialog.selectHadoopClustersTab();
+            optionsDialog.open();
         });
     }
 

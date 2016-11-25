@@ -28,14 +28,14 @@ public class RegexSwapStringPatternReferenceDataPageCategoryTest {
 
     @Test
     public void testGetPageIndex() throws Exception {
-        RegexSwapStringPatternReferenceDataPageCategory page =
+        final RegexSwapStringPatternReferenceDataPageCategory page =
                 new RegexSwapStringPatternReferenceDataPageCategory(null);
         assertEquals(new Integer(0), page.getPageIndex());
     }
 
     @Test
     public void testGetTemplateFilename() throws Exception {
-        RegexSwapStringPatternReferenceDataPageCategory page =
+        final RegexSwapStringPatternReferenceDataPageCategory page =
                 new RegexSwapStringPatternReferenceDataPageCategory(null);
         assertNotEquals("", page.getTemplateFilename());
     }

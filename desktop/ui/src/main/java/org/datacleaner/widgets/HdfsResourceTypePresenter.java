@@ -67,7 +67,8 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HadoopRe
         _panel = DCPanel.flow(Alignment.LEFT, 2, 0, _pathTextField);
     }
 
-    private HadoopClusterInformation getDefaultEnvironmentCluster(final ServerInformationCatalog serverInformationCatalog) {
+    private HadoopClusterInformation getDefaultEnvironmentCluster(
+            final ServerInformationCatalog serverInformationCatalog) {
         if (serverInformationCatalog.containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
             return (HadoopClusterInformation) serverInformationCatalog
                     .getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);

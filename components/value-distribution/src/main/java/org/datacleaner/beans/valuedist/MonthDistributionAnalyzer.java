@@ -79,8 +79,8 @@ public class MonthDistributionAnalyzer implements Analyzer<CrosstabResult> {
                 c.setTime(value);
                 final int monthConstant = c.get(Calendar.MONTH);
                 final ConcurrentMap<Integer, AtomicInteger> countMap = distributionMap.get(col);
-                final AtomicInteger previousCount = countMap.putIfAbsent(monthConstant,
-                        new AtomicInteger(distinctCount));
+                final AtomicInteger previousCount =
+                        countMap.putIfAbsent(monthConstant, new AtomicInteger(distinctCount));
                 if (previousCount != null) {
                     previousCount.addAndGet(distinctCount);
                 }
@@ -119,8 +119,7 @@ public class MonthDistributionAnalyzer implements Analyzer<CrosstabResult> {
 
     private String toMonthName(final Month month) {
         final String upperCaseMonthName = month.toString();
-        final String monthName = upperCaseMonthName.charAt(0) + upperCaseMonthName.substring(1).toLowerCase();
-        return monthName;
+        return upperCaseMonthName.charAt(0) + upperCaseMonthName.substring(1).toLowerCase();
     }
 
     // used only for unittesting

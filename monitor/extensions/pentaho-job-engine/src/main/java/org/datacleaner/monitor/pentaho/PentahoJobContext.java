@@ -19,7 +19,6 @@
  */
 package org.datacleaner.monitor.pentaho;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,9 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.descriptors.PlaceholderComponentJob;
 import org.datacleaner.monitor.configuration.TenantContext;
@@ -51,7 +48,8 @@ public class PentahoJobContext implements XmlJobContext, MetricJobContext {
     private final PentahoJobEngine _engine;
     private final TenantContext _tenantContext;
 
-    public PentahoJobContext(final TenantContext tenantContext, final PentahoJobEngine engine, final RepositoryFile file) {
+    public PentahoJobContext(final TenantContext tenantContext, final PentahoJobEngine engine,
+            final RepositoryFile file) {
         _tenantContext = tenantContext;
         _engine = engine;
         _file = file;
@@ -85,14 +83,10 @@ public class PentahoJobContext implements XmlJobContext, MetricJobContext {
     }
 
     public PentahoJobType getPentahoJobType() {
-        final PentahoJobType pentahoJobType = _file.readFile(new Func<InputStream, PentahoJobType>() {
-            @Override
-            public PentahoJobType eval(final InputStream in) {
-                final JaxbPentahoJobTypeAdaptor adaptor = new JaxbPentahoJobTypeAdaptor();
-                return adaptor.unmarshal(in);
-            }
+        return _file.readFile(in -> {
+            final JaxbPentahoJobTypeAdaptor adaptor = new JaxbPentahoJobTypeAdaptor();
+            return adaptor.unmarshal(in);
         });
-        return pentahoJobType;
     }
 
     @Override
@@ -102,19 +96,15 @@ public class PentahoJobContext implements XmlJobContext, MetricJobContext {
 
     @Override
     public void toXml(final OutputStream out) {
-        _file.readFile(new Action<InputStream>() {
-            @Override
-            public void run(final InputStream in) throws Exception {
-                FileHelper.copy(in, out);
-            }
+        _file.readFile(in -> {
+            FileHelper.copy(in, out);
         });
     }
 
     @Override
     public JobMetrics getJobMetrics() {
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        final PlaceholderComponentJob<?> componentJob = new PlaceholderComponentJob(getName(), PentahoJobResult.class,
-                PentahoJobResult.class);
+        @SuppressWarnings({ "unchecked", "rawtypes" }) final PlaceholderComponentJob<?> componentJob =
+                new PlaceholderComponentJob(getName(), PentahoJobResult.class, PentahoJobResult.class);
         final Set<MetricDescriptor> metricDescriptors = componentJob.getResultMetrics();
 
         final MetricValueUtils utils = new MetricValueUtils();

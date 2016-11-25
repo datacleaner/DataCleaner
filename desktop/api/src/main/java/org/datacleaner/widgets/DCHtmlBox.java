@@ -23,7 +23,6 @@ import java.net.URISyntaxException;
 
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.action.OpenBrowserAction;
@@ -47,14 +46,12 @@ public class DCHtmlBox extends JEditorPane {
         setEditable(false);
         putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
         setFont(WidgetUtils.FONT_NORMAL);
-        addHyperlinkListener(new HyperlinkListener() {
-            public void hyperlinkUpdate(final HyperlinkEvent hyperlinkEvent) {
-                if (hyperlinkEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    try {
-                        (new OpenBrowserAction(hyperlinkEvent.getURL())).actionPerformed(null);
-                    } catch (final URISyntaxException e1) {
-                        logger.warn("Link can not be opened. " + e1.getMessage());
-                    }
+        addHyperlinkListener(hyperlinkEvent -> {
+            if (hyperlinkEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                try {
+                    (new OpenBrowserAction(hyperlinkEvent.getURL())).actionPerformed(null);
+                } catch (final URISyntaxException e) {
+                    logger.warn("Link can not be opened. " + e.getMessage());
                 }
             }
         });

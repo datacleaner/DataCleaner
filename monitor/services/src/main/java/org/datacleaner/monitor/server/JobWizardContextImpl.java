@@ -38,8 +38,8 @@ public final class JobWizardContextImpl implements JobWizardContext {
     private final JobWizard _jobWizard;
     private final Locale _locale;
 
-    public JobWizardContextImpl(final JobWizard jobWizard, final TenantContext tenantContext, final Datastore sourceDatastore,
-            final Func<String, Object> sessionFunc, final Locale locale) {
+    public JobWizardContextImpl(final JobWizard jobWizard, final TenantContext tenantContext,
+            final Datastore sourceDatastore, final Func<String, Object> sessionFunc, final Locale locale) {
         _jobWizard = jobWizard;
         _tenantContext = tenantContext;
         _sourceDatastore = sourceDatastore;

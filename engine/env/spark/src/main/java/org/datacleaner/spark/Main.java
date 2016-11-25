@@ -42,8 +42,8 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static void saveResult(final AnalysisResultFuture result, final Resource resultResource) {
-        final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler(result,
-                resultResource);
+        final AnalysisResultSaveHandler analysisResultSaveHandler =
+                new AnalysisResultSaveHandler(result, resultResource);
         try {
             analysisResultSaveHandler.saveOrThrow();
         } catch (final SerializationException e) {
@@ -52,8 +52,8 @@ public class Main {
             if (safeAnalysisResult == null) {
                 logger.error("Serialization of result failed without any safe result elements to persist");
             } else {
-                final Map<ComponentJob, AnalyzerResult> unsafeResultElements = analysisResultSaveHandler
-                        .getUnsafeResultElements();
+                final Map<ComponentJob, AnalyzerResult> unsafeResultElements =
+                        analysisResultSaveHandler.getUnsafeResultElements();
                 logger.error("Serialization of result failed with the following unsafe elements: {}",
                         unsafeResultElements);
                 logger.warn("Partial AnalysisResult will be persisted to filename '{}'",
@@ -87,8 +87,8 @@ public class Main {
             propertiesPath = null;
         }
 
-        final SparkJobContext sparkJobContext = new SparkJobContext(confXmlPath, analysisJobXmlPath, propertiesPath,
-                sparkContext);
+        final SparkJobContext sparkJobContext =
+                new SparkJobContext(confXmlPath, analysisJobXmlPath, propertiesPath, sparkContext);
 
         final ServiceLoader<SparkJobLifeCycleListener> listenerLoaders =
                 ServiceLoader.load(SparkJobLifeCycleListener.class);

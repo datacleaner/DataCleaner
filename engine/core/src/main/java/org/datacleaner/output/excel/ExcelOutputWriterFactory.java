@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.create.TableCreationBuilder;
 import org.apache.metamodel.excel.ExcelDataContext;
@@ -85,15 +83,12 @@ public final class ExcelOutputWriterFactory {
         Table table = schema.getTableByName(sheetName);
         if (table == null) {
             final MutableRef<Table> tableRef = new MutableRef<>();
-            dataContext.executeUpdate(new UpdateScript() {
-                @Override
-                public void run(final UpdateCallback callback) {
-                    final TableCreationBuilder tableBuilder = callback.createTable(schema, sheetName);
-                    for (final String columnName : columnNames) {
-                        tableBuilder.withColumn(columnName);
-                    }
-                    tableRef.set(tableBuilder.execute());
+            dataContext.executeUpdate(callback -> {
+                final TableCreationBuilder tableBuilder = callback.createTable(schema, sheetName);
+                for (final String columnName : columnNames) {
+                    tableBuilder.withColumn(columnName);
                 }
+                tableRef.set(tableBuilder.execute());
             });
             table = tableRef.get();
         }

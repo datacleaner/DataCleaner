@@ -58,7 +58,8 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
     }
 
     @Override
-    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(final TenantIdentifier tenant, final String locale) {
+    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(final TenantIdentifier tenant,
+            final String locale) {
         return _delegate.getNonDatastoreConsumingJobWizardIdentifiers(tenant, locale);
     }
 
@@ -91,8 +92,8 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
     }
 
     @Override
-    public WizardPage startDatastoreWizard(final TenantIdentifier tenant, final WizardIdentifier wizard, final String locale)
-            throws IllegalArgumentException {
+    public WizardPage startDatastoreWizard(final TenantIdentifier tenant, final WizardIdentifier wizard,
+            final String locale) throws IllegalArgumentException {
         return _delegate.startDatastoreWizard(tenant, wizard, locale);
     }
 
@@ -104,8 +105,7 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
 
     @Override
     public WizardPage startReferenceDataWizard(final TenantIdentifier tenant, final WizardIdentifier wizard,
-            final String locale)
-            throws IllegalArgumentException {
+            final String locale) throws IllegalArgumentException {
         return _delegate.startReferenceDataWizard(tenant, wizard, locale);
     }
 

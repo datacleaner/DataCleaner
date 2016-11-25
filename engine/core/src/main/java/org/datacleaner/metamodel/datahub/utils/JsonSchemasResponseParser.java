@@ -45,8 +45,7 @@ public class JsonSchemasResponseParser {
             public DatastoreObject previous() {
                 return null; // see below for options for this line
             }
-        },
-        SCHEMA, TABLE, COLUMN {
+        }, SCHEMA, TABLE, COLUMN {
             @Override
             public DatastoreObject next() {
                 return null; // see below for options for this line
@@ -68,8 +67,9 @@ public class JsonSchemasResponseParser {
         }
     }
 
-    private static final Set<String> datastoreTypes = new HashSet<>(Arrays.asList(new String[] {
-            "GoldenRecordDatastore", "SourceRecordSourceFormatDatastore", "SourceRecordGoldenFormatDatastore" }));
+    private static final Set<String> datastoreTypes = new HashSet<>(Arrays.asList(
+            new String[] { "GoldenRecordDatastore", "SourceRecordSourceFormatDatastore",
+                    "SourceRecordGoldenFormatDatastore" }));
     private DatastoreObject _currentObject;
     private String _currentFieldname;
     private DataHubSchema _currentSchema;

@@ -56,7 +56,7 @@ public class ProcessStatelessOutputTest {
         assertEquals(rows, processStatelessOutput.rows);
     }
 
-    private JsonNode getJsonNode(Object value) {
+    private JsonNode getJsonNode(final Object value) {
         return objectMapper.convertValue(value, JsonNode.class);
     }
 }

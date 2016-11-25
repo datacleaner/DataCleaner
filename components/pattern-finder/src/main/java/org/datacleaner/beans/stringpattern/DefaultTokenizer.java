@@ -191,12 +191,12 @@ public class DefaultTokenizer implements Serializable, Tokenizer {
         return type == TokenType.MIXED || type == TokenType.NUMBER || type == TokenType.TEXT;
     }
 
-    public List<Token> tokenize(final String string) {
-        if (string == null) {
+    public List<Token> tokenize(final String pattern) {
+        if (pattern == null) {
             return Arrays.asList(NullToken.INSTANCE);
         }
 
-        if ("".equals(string)) {
+        if ("".equals(pattern)) {
             return Arrays.asList(BlankToken.INSTANCE);
         }
 
@@ -205,7 +205,7 @@ public class DefaultTokenizer implements Serializable, Tokenizer {
         if (_predefinedTokens) {
             final List<PredefinedTokenDefinition> predefinedTokens = _configuration.getPredefinedTokens();
             final PredefinedTokenTokenizer tokenizer = new PredefinedTokenTokenizer(predefinedTokens);
-            tokens = tokenizer.tokenize(string);
+            tokens = tokenizer.tokenize(pattern);
             for (final ListIterator<Token> it = tokens.listIterator(); it.hasNext(); ) {
                 final Token token = it.next();
                 final TokenType tokenType = token.getType();
@@ -229,7 +229,7 @@ public class DefaultTokenizer implements Serializable, Tokenizer {
             }
         } else {
             tokens = new ArrayList<>();
-            tokens.addAll(tokenizeInternal(string));
+            tokens.addAll(tokenizeInternal(pattern));
         }
 
         return tokens;

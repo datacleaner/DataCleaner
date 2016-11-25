@@ -136,7 +136,8 @@ public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements 
     }
 
     @Override
-    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob, final ComponentMessage message) {
+    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob,
+            final ComponentMessage message) {
         if (message instanceof ExecutionLogMessage) {
             final String messageString = ((ExecutionLogMessage) message).getMessage();
             final String componentLabel = LabelUtils.getLabel(componentJob);
@@ -165,17 +166,20 @@ public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements 
     }
 
     @Override
-    public void errorInFilter(final AnalysisJob job, final FilterJob filterJob, final InputRow row, final Throwable throwable) {
+    public void errorInFilter(final AnalysisJob job, final FilterJob filterJob, final InputRow row,
+            final Throwable throwable) {
         jobFailed(filterJob, row, throwable);
     }
 
     @Override
-    public void errorInTransformer(final AnalysisJob job, final TransformerJob transformerJob, final InputRow row, final Throwable throwable) {
+    public void errorInTransformer(final AnalysisJob job, final TransformerJob transformerJob, final InputRow row,
+            final Throwable throwable) {
         jobFailed(transformerJob, row, throwable);
     }
 
     @Override
-    public void errorInAnalyzer(final AnalysisJob job, final AnalyzerJob analyzerJob, final InputRow row, final Throwable throwable) {
+    public void errorInAnalyzer(final AnalysisJob job, final AnalyzerJob analyzerJob, final InputRow row,
+            final Throwable throwable) {
         jobFailed(analyzerJob, row, throwable);
     }
 

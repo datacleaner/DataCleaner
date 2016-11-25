@@ -56,8 +56,8 @@ public final class DetailsResultWindow extends AbstractWindow {
     private final String _title;
     private final DCTaskPaneContainer _taskPaneContainer;
 
-    public DetailsResultWindow(final String title, final List<AnalyzerResult> results, final WindowContext windowContext,
-            final RendererFactory rendererFactory) {
+    public DetailsResultWindow(final String title, final List<AnalyzerResult> results,
+            final WindowContext windowContext, final RendererFactory rendererFactory) {
         super(windowContext);
         _title = title;
         _results = results;
@@ -90,8 +90,8 @@ public final class DetailsResultWindow extends AbstractWindow {
     protected JComponent getWindowContent() {
         if (!_results.isEmpty()) {
             for (final AnalyzerResult analyzerResult : _results) {
-                final Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(
-                        analyzerResult, SwingRenderingFormat.class);
+                final Renderer<? super AnalyzerResult, ? extends JComponent> renderer =
+                        _rendererFactory.getRenderer(analyzerResult, SwingRenderingFormat.class);
                 final JComponent component;
                 if (renderer == null) {
                     component = new JTextArea(analyzerResult.toString());
@@ -116,7 +116,8 @@ public final class DetailsResultWindow extends AbstractWindow {
     }
 
     public void addRenderedResult(final JComponent component) {
-        final ImageIcon icon = imageManager.getImageIcon(IconUtils.ACTION_DRILL_TO_DETAIL, IconUtils.ICON_SIZE_TASK_PANE);
+        final ImageIcon icon =
+                imageManager.getImageIcon(IconUtils.ACTION_DRILL_TO_DETAIL, IconUtils.ICON_SIZE_TASK_PANE);
         final JXTaskPane taskPane = WidgetFactory.createTaskPane("Detailed results", icon);
 
         final DCPanel taskPanePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);

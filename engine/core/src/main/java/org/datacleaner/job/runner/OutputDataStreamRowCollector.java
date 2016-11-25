@@ -25,8 +25,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.metamodel.data.CachingDataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.Row;
+import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
 import org.datacleaner.api.HasOutputDataStreams;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.job.OutputDataStreamJob;
@@ -35,8 +37,7 @@ import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 /**
  * The type of {@link OutputRowCollector} used for {@link OutputDataStreamJob}
  * execution. This instance will eventually be passed into the
- * {@link HasOutputDataStreams#initializeOutputDataStream(org.datacleaner.api.OutputDataStream,
- * org.apache.metamodel.query.Query, OutputRowCollector)} method.
+ * {@link HasOutputDataStreams#initializeOutputDataStream(OutputDataStream, Query, OutputRowCollector)}
  */
 public class OutputDataStreamRowCollector implements OutputRowCollector {
 
@@ -68,7 +69,8 @@ public class OutputDataStreamRowCollector implements OutputRowCollector {
         final int rowNumber = _rowCounter.incrementAndGet();
         final MetaModelInputRow inputRow = new MetaModelInputRow(rowNumber, row);
         _consumeRowHandler.consumeRow(inputRow);
-        _publisher.getAnalysisListener().rowProcessingProgress(_publisher.getAnalysisJob(),
-                _publisher.getRowProcessingMetrics(), inputRow, rowNumber);
+        _publisher.getAnalysisListener()
+                .rowProcessingProgress(_publisher.getAnalysisJob(), _publisher.getRowProcessingMetrics(), inputRow,
+                        rowNumber);
     }
 }

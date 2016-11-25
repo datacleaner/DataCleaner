@@ -71,8 +71,7 @@ final class RegexSwapStringPatternReferenceDataPageName extends AbstractFreemark
         final StringBuilder builder = new StringBuilder();
 
         for (final Regex regex : _session.getClient().getRegexes(createCategory())) {
-            final String option =
-                    String.format("<option value=\"%s\">%s</option>", regex.getName(), regex.getName());
+            final String option = String.format("<option value=\"%s\">%s</option>", regex.getName(), regex.getName());
             builder.append(option);
         }
 

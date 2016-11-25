@@ -87,8 +87,7 @@ final class DatastoreOutputRow implements OutputRow {
     public OutputRow setValues(final InputRow row) {
         for (final InputColumn<?> column : _columns) {
             final Object value = row.getValue(column);
-            @SuppressWarnings("unchecked") final
-            InputColumn<Object> objectColumn = (InputColumn<Object>) column;
+            @SuppressWarnings("unchecked") final InputColumn<Object> objectColumn = (InputColumn<Object>) column;
             setValue(objectColumn, value);
         }
         return this;

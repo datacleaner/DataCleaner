@@ -19,13 +19,13 @@
  */
 package org.datacleaner.monitor.server.job;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.monitor.job.JobEngine;
 import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.job.MetricJobContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import junit.framework.TestCase;
 
 public class DefaultJobEngineManagerTest extends TestCase {
 
@@ -41,7 +41,7 @@ public class DefaultJobEngineManagerTest extends TestCase {
     }
 
     public void testGetJobEngineVanilla() throws Exception {
-        JobEngineManager manager = applicationContext.getBean(JobEngineManager.class);
+        final JobEngineManager manager = applicationContext.getBean(JobEngineManager.class);
 
         // check that we're actually testing this implementation
         assertTrue(manager instanceof DefaultJobEngineManager);
@@ -56,7 +56,7 @@ public class DefaultJobEngineManagerTest extends TestCase {
     }
 
     public void testGetJobEngineHierarchy() throws Exception {
-        JobEngineManager manager = applicationContext.getBean(JobEngineManager.class);
+        final JobEngineManager manager = applicationContext.getBean(JobEngineManager.class);
 
         // check that we're actually testing this implementation
         assertTrue(manager instanceof DefaultJobEngineManager);

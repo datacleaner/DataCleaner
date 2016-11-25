@@ -21,22 +21,22 @@ package org.datacleaner.windows;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.windows.AboutDialog.LicensedProject;
+
+import junit.framework.TestCase;
 
 public class AboutDialogTest extends TestCase {
 
     public void testGetLicense() throws Exception {
-        String mit = AboutDialog.getLicense("mit");
+        final String mit = AboutDialog.getLicense("mit");
         assertNotNull(mit);
         assertTrue(mit.startsWith("Copyright (C)"));
         assertTrue(mit.endsWith(" OTHER DEALINGS IN\nTHE SOFTWARE."));
     }
 
     public void testGetLicensedProects() throws Exception {
-        List<LicensedProject> lp = AboutDialog.getLicensedProjects();
-        for (LicensedProject licensedProject : lp) {
+        final List<LicensedProject> lp = AboutDialog.getLicensedProjects();
+        for (final LicensedProject licensedProject : lp) {
             assertNotNull(licensedProject.name);
             assertNotNull(licensedProject.websiteUrl);
             assertNotNull(licensedProject.license);

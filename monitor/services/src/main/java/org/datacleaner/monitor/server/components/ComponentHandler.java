@@ -75,7 +75,6 @@ import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.concurrent.ThreadLocalOutputRowCollector;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.ComponentContextImpl;
-import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.monitor.configuration.RemoteComponentsConfiguration;
 import org.datacleaner.restclient.ComponentConfiguration;
@@ -211,6 +210,7 @@ public class ComponentHandler {
             return obj;
         }
     }
+
     public static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
     private final DataCleanerConfiguration _dcConfiguration;
@@ -227,8 +227,9 @@ public class ComponentHandler {
     private StringConverter _stringConverter;
     private RemoteComponentsConfiguration _remoteComponentsConfiguration;
 
-    public ComponentHandler(final DataCleanerConfiguration dcConfiguration, final ComponentDescriptor<?> componentDescriptor,
-            final ComponentConfiguration componentConfiguration, final RemoteComponentsConfiguration remoteComponentsConfiguration,
+    public ComponentHandler(final DataCleanerConfiguration dcConfiguration,
+            final ComponentDescriptor<?> componentDescriptor, final ComponentConfiguration componentConfiguration,
+            final RemoteComponentsConfiguration remoteComponentsConfiguration,
             final AnalysisListener analysisListener) {
         Objects.requireNonNull(componentConfiguration, "Component configuration cannot be null");
 
@@ -407,31 +408,28 @@ public class ComponentHandler {
 
             final Map<String, String> mdcCopy = MDC.getCopyOfContextMap();
 
-            taskRunner.run(new Task() {
-                @Override
-                public void execute() throws Exception {
+            taskRunner.run(() -> {
+                try {
+                    if (mdcCopy != null) {
+                        MDC.setContextMap(mdcCopy);
+                    }
+                    if (!errors.isEmpty()) {
+                        LOGGER.debug("Skipping row " + inputRow + " because of previous errors");
+                        return;
+                    }
                     try {
-                        if (mdcCopy != null) {
-                            MDC.setContextMap(mdcCopy);
-                        }
-                        if (!errors.isEmpty()) {
-                            LOGGER.debug("Skipping row " + inputRow + " because of previous errors");
-                            return;
-                        }
-                        try {
-                            SecurityContextHolder.setContext(securityContext);
-                            transform(inputRow, results);
-                        } catch (final Throwable t) {
-                            synchronized (errors) {
-                                errors.add(t);
-                            }
-                        } finally {
-                            SecurityContextHolder.clearContext();
+                        SecurityContextHolder.setContext(securityContext);
+                        transform(inputRow, results);
+                    } catch (final Throwable t) {
+                        synchronized (errors) {
+                            errors.add(t);
                         }
                     } finally {
-                        tasksPending.decrementAndGet();
-                        MDC.clear();
+                        SecurityContextHolder.clearContext();
                     }
+                } finally {
+                    tasksPending.decrementAndGet();
+                    MDC.clear();
                 }
             }, null);
             tasksPending.incrementAndGet();
@@ -469,8 +467,8 @@ public class ComponentHandler {
     private void transform(final InputRow inputRow, final Map<Long, List<Object[]>> results) {
         final ThreadLocalOutputListener outputListener = new ThreadLocalOutputListener();
 
-        final Set<ProvidedPropertyDescriptor> outputRowCollectorProperties = descriptor
-                .getProvidedPropertiesByType(OutputRowCollector.class);
+        final Set<ProvidedPropertyDescriptor> outputRowCollectorProperties =
+                descriptor.getProvidedPropertiesByType(OutputRowCollector.class);
         try {
             // register output values listener in the transformer row collectors.
             registerOutputListener(outputRowCollectorProperties, outputListener);
@@ -549,8 +547,8 @@ public class ComponentHandler {
             return convertValue(type, value);
         } catch (final Exception e) {
             throw new IllegalArgumentException(
-                    "Cannot convert property '" + propDesc.getName() + " value ' of type '" + type
-                            + "': " + value.toString(), e);
+                    "Cannot convert property '" + propDesc.getName() + " value ' of type '" + type + "': " + value
+                            .toString(), e);
         }
     }
 

@@ -28,23 +28,23 @@ import junit.framework.TestCase;
 public class PredefinedTokenTokenizerTest extends TestCase {
 
     public void testOverlappingPatterns() throws Exception {
-        PredefinedTokenDefinition pt = new PredefinedTokenDefinition("greeting", "hello .*", "hi .*");
+        final PredefinedTokenDefinition pt = new PredefinedTokenDefinition("greeting", "hello .*", "hi .*");
 
-        Set<Pattern> patterns = pt.getTokenRegexPatterns();
+        final Set<Pattern> patterns = pt.getTokenRegexPatterns();
         assertEquals(2, patterns.size());
-        for (Pattern pattern : patterns) {
+        for (final Pattern pattern : patterns) {
             // both patterns can find a match here
             assertTrue(pattern.matcher("hello hi there").find());
         }
 
-        List<Token> tokens = new PredefinedTokenTokenizer(pt).tokenize("hello hi there");
+        final List<Token> tokens = new PredefinedTokenTokenizer(pt).tokenize("hello hi there");
         assertEquals(2, tokens.size());
         assertEquals("UndefinedToken['hello ']", tokens.get(0).toString());
         assertEquals("Token['hi there' (PREDEFINED greeting)]", tokens.get(1).toString());
     }
 
     public void testTitulation() throws Exception {
-        PredefinedTokenDefinition pt = new PredefinedTokenDefinition("titulation", "(Mr|Ms)\\.");
+        final PredefinedTokenDefinition pt = new PredefinedTokenDefinition("titulation", "(Mr|Ms)\\.");
         List<Token> tokens;
 
         tokens = PredefinedTokenTokenizer
@@ -53,16 +53,15 @@ public class PredefinedTokenTokenizerTest extends TestCase {
         assertEquals("Token['Mr.' (PREDEFINED titulation)]", tokens.get(0).toString());
         assertEquals("UndefinedToken[' Kasper']", tokens.get(1).toString());
 
-        tokens =
-                PredefinedTokenTokenizer.tokenizeInternal("Dear Mr. Winfried", pt, pt.getTokenRegexPatterns().iterator()
-                        .next());
+        tokens = PredefinedTokenTokenizer
+                .tokenizeInternal("Dear Mr. Winfried", pt, pt.getTokenRegexPatterns().iterator().next());
         assertEquals(3, tokens.size());
         assertEquals("UndefinedToken['Dear ']", tokens.get(0).toString());
         assertEquals("Token['Mr.' (PREDEFINED titulation)]", tokens.get(1).toString());
         assertEquals("UndefinedToken[' Winfried']", tokens.get(2).toString());
 
-        tokens = PredefinedTokenTokenizer.tokenizeInternal("Dear Ms. Barbara", pt, pt.getTokenRegexPatterns().iterator()
-                .next());
+        tokens = PredefinedTokenTokenizer
+                .tokenizeInternal("Dear Ms. Barbara", pt, pt.getTokenRegexPatterns().iterator().next());
         assertEquals(3, tokens.size());
         assertEquals("UndefinedToken['Dear ']", tokens.get(0).toString());
         assertEquals("Token['Ms.' (PREDEFINED titulation)]", tokens.get(1).toString());
@@ -70,9 +69,9 @@ public class PredefinedTokenTokenizerTest extends TestCase {
     }
 
     public void testTokenizeInternal() throws Exception {
-        PredefinedTokenDefinition pt = new PredefinedTokenDefinition("greeting", "hello");
-        List<Token> tokens = PredefinedTokenTokenizer.tokenizeInternal("hello there hello world", pt, pt
-                .getTokenRegexPatterns().iterator().next());
+        final PredefinedTokenDefinition pt = new PredefinedTokenDefinition("greeting", "hello");
+        List<Token> tokens = PredefinedTokenTokenizer
+                .tokenizeInternal("hello there hello world", pt, pt.getTokenRegexPatterns().iterator().next());
         assertEquals(4, tokens.size());
 
         assertEquals("Token['hello' (PREDEFINED greeting)]", tokens.get(0).toString());
@@ -88,9 +87,9 @@ public class PredefinedTokenTokenizerTest extends TestCase {
     }
 
     public void testSimpleTokenSeparation() throws Exception {
-        PredefinedTokenDefinition pt = new PredefinedTokenDefinition("greeting", "hi", "hello", "howdy");
+        final PredefinedTokenDefinition pt = new PredefinedTokenDefinition("greeting", "hi", "hello", "howdy");
 
-        PredefinedTokenTokenizer tokenizer = new PredefinedTokenTokenizer(pt);
+        final PredefinedTokenTokenizer tokenizer = new PredefinedTokenTokenizer(pt);
 
         List<Token> tokens = tokenizer.tokenize("Well hello there world");
         assertEquals(3, tokens.size());

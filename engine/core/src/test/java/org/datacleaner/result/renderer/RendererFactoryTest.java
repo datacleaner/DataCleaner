@@ -21,8 +21,6 @@ package org.datacleaner.result.renderer;
 
 import java.util.LinkedList;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.Renderer;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -35,36 +33,37 @@ import org.datacleaner.test.mock.MockRenderers.ConditionalPrecedenceRenderer;
 import org.datacleaner.test.mock.MockRenderers.FooPrecedenceRenderer;
 import org.datacleaner.test.mock.MockRenderers.RenderableString;
 
+import junit.framework.TestCase;
+
 public class RendererFactoryTest extends TestCase {
 
     public void testGetRendererByHierarchyDistance() throws Exception {
-        ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
-                "org.datacleaner.result.renderer", true);
+        final ClasspathScanDescriptorProvider descriptorProvider =
+                new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.result.renderer", true);
 
-        @SuppressWarnings("deprecation")
-        RendererFactory rendererFactory = new RendererFactory(
+        @SuppressWarnings("deprecation") final RendererFactory rendererFactory = new RendererFactory(
                 new org.datacleaner.configuration.AnalyzerBeansConfigurationImpl().replace(descriptorProvider));
-        Renderer<?, ? extends CharSequence> r;
+        Renderer<?, ? extends CharSequence> renderer;
 
-        r = rendererFactory.getRenderer(new NumberResult(1), TextRenderingFormat.class);
-        assertEquals(ToStringTextRenderer.class, r.getClass());
+        renderer = rendererFactory.getRenderer(new NumberResult(1), TextRenderingFormat.class);
+        assertEquals(ToStringTextRenderer.class, renderer.getClass());
 
-        r = rendererFactory.getRenderer(new CrosstabResult(null), TextRenderingFormat.class);
-        assertEquals(CrosstabTextRenderer.class, r.getClass());
+        renderer = rendererFactory.getRenderer(new CrosstabResult(null), TextRenderingFormat.class);
+        assertEquals(CrosstabTextRenderer.class, renderer.getClass());
 
-        r = rendererFactory.getRenderer(new DataSetResult(new LinkedList<>()), TextRenderingFormat.class);
-        assertEquals(MetricBasedResultTextRenderer.class, r.getClass());
+        renderer = rendererFactory.getRenderer(new DataSetResult(new LinkedList<>()), TextRenderingFormat.class);
+        assertEquals(MetricBasedResultTextRenderer.class, renderer.getClass());
     }
 
     public void testGetRendererByPrecedence() throws Exception {
-        ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider();
+        final ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider();
         descriptorProvider.addRendererClass(FooPrecedenceRenderer.class);
         descriptorProvider.addRendererClass(BarPrecedenceRenderer.class);
 
-        DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl()
+        final DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl()
                 .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
-        RendererFactory factory = new RendererFactory(conf);
+        final RendererFactory factory = new RendererFactory(conf);
         assertEquals(FooPrecedenceRenderer.class,
                 factory.getRenderer(new RenderableString("foobar"), TextRenderingFormat.class).getClass());
         assertEquals(FooPrecedenceRenderer.class,

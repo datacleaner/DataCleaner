@@ -24,8 +24,6 @@ import java.util.Arrays;
 
 import javax.inject.Provider;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DomConfigurationWriter;
@@ -40,17 +38,20 @@ import org.datacleaner.user.UserPreferencesImpl;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.windows.ReferenceDataDialog;
 
+import junit.framework.TestCase;
+
 public class MultipleDictionariesPropertyWidgetTest extends TestCase {
 
     private DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
     private AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
     private AnalyzerComponentBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder =
             ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
-    private ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(
-            "Dictionary array property");
+    private ConfiguredPropertyDescriptor property =
+            analyzerJobBuilder.getDescriptor().getConfiguredProperty("Dictionary array property");
     private LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration, null, true);
-    private MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(configuration
-            .getReferenceDataCatalog(), new DomConfigurationWriter(), new UserPreferencesImpl(null), lifeCycleHelper);
+    private MutableReferenceDataCatalog referenceDataCatalog =
+            new MutableReferenceDataCatalog(configuration.getReferenceDataCatalog(), new DomConfigurationWriter(),
+                    new UserPreferencesImpl(null), lifeCycleHelper);
     private Provider<ReferenceDataDialog> referenceDataDialogProvider = null;
 
     public void testInitialSelection() throws Exception {
@@ -59,8 +60,9 @@ public class MultipleDictionariesPropertyWidgetTest extends TestCase {
         referenceDataCatalog.addDictionary(new SimpleDictionary("numbers", "1", "2", "3"));
         referenceDataCatalog.addDictionary(new SimpleDictionary("names", "Jane", "Joe"));
 
-        MultipleDictionariesPropertyWidget widget = new MultipleDictionariesPropertyWidget(analyzerJobBuilder, property,
-                referenceDataCatalog, referenceDataDialogProvider);
+        final MultipleDictionariesPropertyWidget widget =
+                new MultipleDictionariesPropertyWidget(analyzerJobBuilder, property, referenceDataCatalog,
+                        referenceDataDialogProvider);
         widget.initialize(new Dictionary[] { referenceDataCatalog.getDictionary("numbers") });
         widget.onPanelAdd();
 
@@ -81,8 +83,9 @@ public class MultipleDictionariesPropertyWidgetTest extends TestCase {
     public void testNoInitialSelection() throws Exception {
         assertEquals(Dictionary.class, property.getBaseType());
 
-        MultipleDictionariesPropertyWidget widget = new MultipleDictionariesPropertyWidget(analyzerJobBuilder, property,
-                referenceDataCatalog, referenceDataDialogProvider);
+        final MultipleDictionariesPropertyWidget widget =
+                new MultipleDictionariesPropertyWidget(analyzerJobBuilder, property, referenceDataCatalog,
+                        referenceDataDialogProvider);
 
         widget.initialize(null);
         widget.onPanelAdd();
@@ -102,13 +105,13 @@ public class MultipleDictionariesPropertyWidgetTest extends TestCase {
         assertEquals("[SimpleDictionary[name=names]]", Arrays.toString(widget.getValue()));
     }
 
-    private String getAvailableCheckboxValues(MultipleDictionariesPropertyWidget widget) {
-        StringBuilder sb = new StringBuilder();
-        Component[] components = widget.getWidget().getComponents();
-        for (Component component : components) {
+    private String getAvailableCheckboxValues(final MultipleDictionariesPropertyWidget widget) {
+        final StringBuilder sb = new StringBuilder();
+        final Component[] components = widget.getWidget().getComponents();
+        for (final Component component : components) {
             if (component instanceof DCCheckBox) {
-                @SuppressWarnings("unchecked")
-                DCCheckBox<Dictionary> checkBox = (DCCheckBox<Dictionary>) component;
+                @SuppressWarnings("unchecked") final DCCheckBox<Dictionary> checkBox =
+                        (DCCheckBox<Dictionary>) component;
                 final String name;
                 if (checkBox.getValue() == null) {
                     name = checkBox.getText();

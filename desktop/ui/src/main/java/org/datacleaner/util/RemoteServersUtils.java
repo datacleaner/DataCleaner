@@ -47,8 +47,8 @@ public class RemoteServersUtils {
      * @param userName
      * @param password
      */
-    public static void addRemoteServer(
-            final DataCleanerEnvironment env, final String serverName, String serverUrl, final String userName, final String password) {
+    public static void addRemoteServer(final DataCleanerEnvironment env, final String serverName, String serverUrl,
+            final String userName, final String password) {
         if (RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName)) {
             serverUrl = RemoteDescriptorProvider.DATACLOUD_URL;
         }
@@ -73,13 +73,14 @@ public class RemoteServersUtils {
      * @param userName
      * @param password
      */
-    public static void updateRemoteServerCredentials(final DataCleanerEnvironment env, final String serverName, final String userName,
-            final String password) {
+    public static void updateRemoteServerCredentials(final DataCleanerEnvironment env, final String serverName,
+            final String userName, final String password) {
         getMutableServerConfig(env).updateServerCredentials(serverName, userName, password);
         env.getDescriptorProvider().refresh();
     }
 
-    public static void checkServerWithCredentials(final String url, final String username, final String password) throws Exception {
+    public static void checkServerWithCredentials(final String url, final String username, final String password)
+            throws Exception {
         new ComponentRESTClient(url, username, password, Version.getVersion());
     }
 

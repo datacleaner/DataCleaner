@@ -62,14 +62,14 @@ public final class OutputDataStreamsViewer extends DCPanel {
             for (final Column column : outputDataStream.getTable().getColumns()) {
                 inputColumns.add(new MetaModelInputColumn(column));
             }
-            final JLabel tableNameLabel = new JLabel(outputDataStream.getName(), ImageManager.get().getImageIcon(
-                    IconUtils.OUTPUT_DATA_STREAM_PATH, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
+            final JLabel tableNameLabel = new JLabel(outputDataStream.getName(),
+                    ImageManager.get().getImageIcon(IconUtils.OUTPUT_DATA_STREAM_PATH, IconUtils.ICON_SIZE_SMALL),
+                    JLabel.LEFT);
             tableNameLabel.setOpaque(false);
             tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
             tableNameLabel.setBorder(new EmptyBorder(5, 5, 0, 5));
             final ColumnListTable columnListTable =
-                    new ColumnListTable(inputColumns, _componentBuilder.getAnalysisJobBuilder(),
-                            true, false, null);
+                    new ColumnListTable(inputColumns, _componentBuilder.getAnalysisJobBuilder(), true, false, null);
             columnListTable.setBorder(new EmptyBorder(0, 5, 5, 5));
 
             add(tableNameLabel);

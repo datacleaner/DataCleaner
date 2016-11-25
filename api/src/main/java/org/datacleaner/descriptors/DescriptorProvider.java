@@ -120,8 +120,7 @@ public interface DescriptorProvider {
      * @param filterClass
      * @return
      */
-    <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> getFilterDescriptorForClass(
-            Class<F> filterClass);
+    <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> getFilterDescriptorForClass(Class<F> filterClass);
 
     /**
      * Gets a {@link FilterDescriptor} by its display name (or secondly by
@@ -172,8 +171,7 @@ public interface DescriptorProvider {
      * @param rendererBeanClass
      * @return
      */
-    <R extends Renderer<?, ?>> RendererBeanDescriptor<R> getRendererBeanDescriptorForClass(
-            Class<R> rendererBeanClass);
+    <R extends Renderer<?, ?>> RendererBeanDescriptor<R> getRendererBeanDescriptorForClass(Class<R> rendererBeanClass);
 
     /**
      * Gets all {@link RendererBeanDescriptor}s for a specific

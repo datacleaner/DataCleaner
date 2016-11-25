@@ -74,8 +74,8 @@ import org.slf4j.LoggerFactory;
  * @param <D>
  *            the type of datastore
  */
-public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDatastore> extends
-        AbstractDatastoreDialog<D> {
+public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDatastore>
+        extends AbstractDatastoreDialog<D> {
 
     /**
      * Amount of bytes to read for autodetection of encoding, separator and
@@ -293,9 +293,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
             final Query q = dc.query().from(table).select(columns).toQuery();
             q.setMaxRows(PREVIEW_ROWS);
 
-            final DataSet dataSet = dc.executeQuery(q);
-
-            return dataSet;
+            return dc.executeQuery(q);
         }
     }
 
@@ -331,8 +329,8 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
                 GridBagConstraints.BOTH);
 
         if (isPreviewTableEnabled()) {
-            WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1,
-                    1.0, GridBagConstraints.BOTH);
+            WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1, 1.0,
+                    GridBagConstraints.BOTH);
         }
         WidgetUtils.addToGridBag(getButtonPanel(), centerPanel, 0, 2, 1, 1, GridBagConstraints.SOUTH, 4, 0, 0.1);
 
@@ -373,8 +371,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
     }
 
     protected D getPreviewDatastore(final Resource resource) {
-        final D datastore = createDatastore("Preview", resource);
-        return datastore;
+        return createDatastore("Preview", resource);
     }
 
     protected byte[] getSampleBuffer() {

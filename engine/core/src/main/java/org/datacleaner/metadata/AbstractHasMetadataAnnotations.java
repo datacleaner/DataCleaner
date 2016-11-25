@@ -73,8 +73,7 @@ abstract class AbstractHasMetadataAnnotations implements HasMetadataAnnotations 
             return null;
         }
 
-        final M result = annotationAdaptor.convertFromAnnotation(annotation);
-        return result;
+        return annotationAdaptor.convertFromAnnotation(annotation);
     }
 
     @Override

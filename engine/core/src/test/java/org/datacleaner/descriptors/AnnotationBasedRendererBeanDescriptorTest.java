@@ -19,8 +19,6 @@
  */
 package org.datacleaner.descriptors;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Renderable;
 import org.datacleaner.result.CrosstabResult;
@@ -32,6 +30,8 @@ import org.datacleaner.test.mock.MockRenderers.InvalidRenderer2;
 import org.datacleaner.test.mock.MockRenderers.InvalidRenderer3;
 import org.datacleaner.test.mock.MockRenderers.InvalidRenderer4;
 
+import junit.framework.TestCase;
+
 public class AnnotationBasedRendererBeanDescriptorTest extends TestCase {
 
     private RendererBeanDescriptor<ToStringTextRenderer> descriptor =
@@ -42,10 +42,10 @@ public class AnnotationBasedRendererBeanDescriptorTest extends TestCase {
     }
 
     public void testGetRenderableType() throws Exception {
-        Class<? extends Renderable> renderableType = descriptor.getRenderableType();
+        final Class<? extends Renderable> renderableType = descriptor.getRenderableType();
         assertEquals(AnalyzerResult.class, renderableType);
 
-        RendererBeanDescriptor<CrosstabTextRenderer> desc2 = Descriptors.ofRenderer(CrosstabTextRenderer.class);
+        final RendererBeanDescriptor<CrosstabTextRenderer> desc2 = Descriptors.ofRenderer(CrosstabTextRenderer.class);
         assertEquals(CrosstabResult.class, desc2.getRenderableType());
     }
 
@@ -61,7 +61,7 @@ public class AnnotationBasedRendererBeanDescriptorTest extends TestCase {
         try {
             Descriptors.ofRenderer(InvalidRenderer1.class);
             fail("Exception expected");
-        } catch (DescriptorException e) {
+        } catch (final DescriptorException e) {
             assertEquals("The renderer output type (class java.lang.Object) is not a valid instance or sub-class "
                     + "of format output type (interface java.lang.CharSequence)", e.getMessage());
         }
@@ -69,28 +69,25 @@ public class AnnotationBasedRendererBeanDescriptorTest extends TestCase {
         try {
             Descriptors.ofRenderer(InvalidRenderer2.class);
             fail("Exception expected");
-        } catch (DescriptorException e) {
-            assertEquals(
-                    "class org.datacleaner.test.mock.MockRenderers$InvalidRenderer2 doesn't implement the RendererBean annotation",
-                    e.getMessage());
+        } catch (final DescriptorException e) {
+            assertEquals("class org.datacleaner.test.mock.MockRenderers$InvalidRenderer2 doesn't implement "
+                    + "the RendererBean annotation", e.getMessage());
         }
 
         try {
             Descriptors.ofRenderer(InvalidRenderer3.class);
             fail("Exception expected");
-        } catch (DescriptorException e) {
-            assertEquals(
-                    "Component (interface org.datacleaner.test.mock.MockRenderers$InvalidRenderer3) is not a non-abstract class",
-                    e.getMessage());
+        } catch (final DescriptorException e) {
+            assertEquals("Component (interface org.datacleaner.test.mock.MockRenderers$InvalidRenderer3) "
+                    + "is not a non-abstract class", e.getMessage());
         }
 
         try {
             Descriptors.ofRenderer(InvalidRenderer4.class);
             fail("Exception expected");
-        } catch (DescriptorException e) {
-            assertEquals(
-                    "Rendering format (class org.datacleaner.test.mock.MockRenderers$InvalidRenderingFormat) is not a non-abstract class",
-                    e.getMessage());
+        } catch (final DescriptorException e) {
+            assertEquals("Rendering format (class org.datacleaner.test.mock.MockRenderers$InvalidRenderingFormat) "
+                    + "is not a non-abstract class", e.getMessage());
         }
     }
 }

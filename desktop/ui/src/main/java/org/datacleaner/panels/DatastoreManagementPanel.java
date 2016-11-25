@@ -22,7 +22,6 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -110,21 +109,18 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
         // initialize "Build job" button
         _analyzeButton = WidgetFactory.createPrimaryButton("Build job", IconUtils.MODEL_JOB);
-        _analyzeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                for (final DatastorePanel datastorePanel : _datastorePanels) {
-                    if (datastorePanel.isSelected()) {
-                        final Datastore datastore = datastorePanel.getDatastore();
+        _analyzeButton.addActionListener(e -> {
+            for (final DatastorePanel datastorePanel : _datastorePanels) {
+                if (datastorePanel.isSelected()) {
+                    final Datastore datastore = datastorePanel.getDatastore();
 
-                        // open the connection here, to make any connection
-                        // issues apparent early
-                        try (DatastoreConnection datastoreConnection = datastore.openConnection()) {
-                            datastoreConnection.getDataContext().getSchemaNames();
-                            getWindow().setDatastore(datastore);
-                        }
-                        return;
+                    // open the connection here, to make any connection
+                    // issues apparent early
+                    try (DatastoreConnection datastoreConnection = datastore.openConnection()) {
+                        datastoreConnection.getDataContext().getSchemaNames();
+                        getWindow().setDatastore(datastore);
                     }
+                    return;
                 }
             }
         });
@@ -219,8 +215,9 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
         for (int i = 0; i < datastoreNames.length; i++) {
             final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
-            final DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this, getWindow()
-                    .getWindowContext(), _userPreferences, _dcModule);
+            final DatastorePanel datastorePanel =
+                    new DatastorePanel(datastore, _datastoreCatalog, this, getWindow().getWindowContext(),
+                            _userPreferences, _dcModule);
             _datastorePanels.add(datastorePanel);
             _datastoreListPanel.add(datastorePanel);
 
@@ -267,13 +264,14 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         final int panel1ItemsCount = 11;
 
         final DatastoreDescriptors datastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog);
-        for (int i = 0; i < Math.min(datastoreDescriptors.getAvailableDatastoreDescriptors().size(),
-                panel1ItemsCount); i++) {
-            final DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
+        for (int i = 0; i < Math.min(datastoreDescriptors.getAvailableDatastoreDescriptors().size(), panel1ItemsCount);
+                i++) {
+            final DatastoreDescriptor datastoreDescriptor =
+                    datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
             if (datastoreDescriptor.isPromoted()) {
                 panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
-                        datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(), datastoreDescriptor
-                                .getDatastoreDialogClass(), DCPopupBubble.Position.BOTTOM));
+                        datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(),
+                        datastoreDescriptor.getDatastoreDialogClass(), DCPopupBubble.Position.BOTTOM));
                 promotedDatabaseNames.add(datastoreDescriptor.getName());
             }
         }
@@ -282,11 +280,12 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         panel2.setLayout(new FlowLayout(alignment, 10, 10));
 
         for (int i = panel1ItemsCount; i < datastoreDescriptors.getAvailableDatastoreDescriptors().size(); i++) {
-            final DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
+            final DatastoreDescriptor datastoreDescriptor =
+                    datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
             if (datastoreDescriptor.isPromoted()) {
                 panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
-                        datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(), datastoreDescriptor
-                                .getDatastoreDialogClass(), DCPopupBubble.Position.TOP));
+                        datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(),
+                        datastoreDescriptor.getDatastoreDialogClass(), DCPopupBubble.Position.TOP));
                 promotedDatabaseNames.add(datastoreDescriptor.getName());
             }
         }
@@ -305,8 +304,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
     private Component createMoreDatabasesButton(final List<DatastoreDescriptor> availableDatastoreDescriptors,
             final Set<String> promotedDatabases) {
-        final PopupButton moreDatastoreTypesButton = WidgetFactory.createDefaultPopupButton("More databases",
-                IconUtils.GENERIC_DATASTORE_IMAGEPATH);
+        final PopupButton moreDatastoreTypesButton =
+                WidgetFactory.createDefaultPopupButton("More databases", IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         moreDatastoreTypesButton.setMenuPosition(MenuPosition.TOP);
 
         final JPopupMenu moreDatastoreTypesMenu = moreDatastoreTypesButton.getMenu();
@@ -317,8 +316,9 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                 final String imagePath = datastoreDescriptor.getIconPath();
                 final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
                 final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(), icon);
-                menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(), datastoreDescriptor
-                        .getDatastoreClass(), datastoreDescriptor.getDatastoreDialogClass()));
+                menuItem.addActionListener(
+                        createActionListener(datastoreDescriptor.getName(), datastoreDescriptor.getDatastoreClass(),
+                                datastoreDescriptor.getDatastoreDialogClass()));
                 moreDatastoreTypesMenu.add(menuItem);
             }
         }
@@ -327,13 +327,10 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
         final JMenuItem databaseDriversMenuItem = WidgetFactory.createMenuItem("Manage database drivers...",
                 imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
-        databaseDriversMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final OptionsDialog dialog = _optionsDialogProvider.get();
-                dialog.selectDatabaseDriversTab();
-                dialog.setVisible(true);
-            }
+        databaseDriversMenuItem.addActionListener(e -> {
+            final OptionsDialog dialog = _optionsDialogProvider.get();
+            dialog.selectDatabaseDriversTab();
+            dialog.setVisible(true);
         });
 
         moreDatastoreTypesMenu.add(databaseDriversMenuItem);
@@ -346,8 +343,9 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         final ImageIcon icon = imageManager.getImageIcon(imagePath);
         final JButton button = WidgetFactory.createImageButton(icon);
 
-        final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, "<html><b>" + title + "</b><br/>" + description
-                + "</html>", 0, 0, icon, popupPosition);
+        final DCPopupBubble popupBubble =
+                new DCPopupBubble(_glassPane, "<html><b>" + title + "</b><br/>" + description + "</html>", 0, 0, icon,
+                        popupPosition);
         popupBubble.attachTo(button);
 
         button.addActionListener(createActionListener(title, datastoreClass, dialogClass));
@@ -356,18 +354,15 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
     private <D extends Datastore> ActionListener createActionListener(final String title, final Class<D> datastoreClass,
             final Class<? extends AbstractDialog> dialogClass) {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                final Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null)
-                        .createInjector();
-                final AbstractDialog dialog = injectorWithNullDatastore.getInstance(dialogClass);
-                if (dialog instanceof JdbcDatastoreDialog) {
-                    final JdbcDatastoreDialog jdbcDatastoreDialog = (JdbcDatastoreDialog) dialog;
-                    jdbcDatastoreDialog.setSelectedDatabase(title);
-                }
-                dialog.setVisible(true);
+        return event -> {
+            final Injector injectorWithNullDatastore =
+                    _dcModule.createInjectorBuilder().with(datastoreClass, null).createInjector();
+            final AbstractDialog dialog = injectorWithNullDatastore.getInstance(dialogClass);
+            if (dialog instanceof JdbcDatastoreDialog) {
+                final JdbcDatastoreDialog jdbcDatastoreDialog = (JdbcDatastoreDialog) dialog;
+                jdbcDatastoreDialog.setSelectedDatabase(title);
             }
+            dialog.setVisible(true);
         };
     }
 
@@ -385,22 +380,12 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
     @Override
     public void onAdd(final Datastore datastore) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                updateDatastores();
-            }
-        });
+        SwingUtilities.invokeLater(this::updateDatastores);
     }
 
     @Override
     public void onRemove(final Datastore datastore) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                updateDatastores();
-            }
-        });
+        SwingUtilities.invokeLater(this::updateDatastores);
     }
 
     private void selectFirstVisibleDatastore() {

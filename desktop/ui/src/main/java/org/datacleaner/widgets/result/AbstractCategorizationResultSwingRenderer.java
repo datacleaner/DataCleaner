@@ -20,8 +20,6 @@
 package org.datacleaner.widgets.result;
 
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -46,8 +44,8 @@ import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.windows.DetailsResultWindow;
 
-public abstract class AbstractCategorizationResultSwingRenderer<R extends CategorizationResult> extends
-        AbstractRenderer<R, JComponent> {
+public abstract class AbstractCategorizationResultSwingRenderer<R extends CategorizationResult>
+        extends AbstractRenderer<R, JComponent> {
     @Inject
     @Provided
     WindowContext windowContext;
@@ -67,13 +65,7 @@ public abstract class AbstractCategorizationResultSwingRenderer<R extends Catego
 
             final JLabel label = new JLabel(count + "");
             final JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_DRILL_TO_DETAIL);
-            button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    drillToGroup(desc, sampleResult);
-                }
-
-            });
+            button.addActionListener(e -> drillToGroup(desc, sampleResult));
 
             panel.add(label);
             panel.add(Box.createHorizontalStrut(4));
@@ -86,8 +78,8 @@ public abstract class AbstractCategorizationResultSwingRenderer<R extends Catego
         return row + 1;
     }
 
-    protected void addExtraValue(final Object extraData, final int row, final DefaultTableModel model, final String desc, final int count,
-            final AnnotatedRowsResult sampleResult) {
+    protected void addExtraValue(final Object extraData, final int row, final DefaultTableModel model,
+            final String desc, final int count, final AnnotatedRowsResult sampleResult) {
         // Do nothing by default
     }
 

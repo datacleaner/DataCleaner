@@ -23,11 +23,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.beans.transform.TimestampConverter.Unit;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+
+import junit.framework.TestCase;
 
 public class TimestampConverterTest extends TestCase {
 
@@ -44,12 +44,11 @@ public class TimestampConverterTest extends TestCase {
     }
 
     public void testTransform() throws Exception {
-        TimestampConverter trans = new TimestampConverter();
-        MockInputColumn<Object> col = new MockInputColumn<>(
-                "my timestamps", Object.class);
+        final TimestampConverter trans = new TimestampConverter();
+        final MockInputColumn<Object> col = new MockInputColumn<>("my timestamps", Object.class);
         trans.timestampColumn = col;
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         Date[] result;
         result = trans.transform(new MockInputRow().put(col, "1320244696"));

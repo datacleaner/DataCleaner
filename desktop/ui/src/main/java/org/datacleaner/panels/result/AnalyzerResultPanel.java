@@ -67,8 +67,8 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
     private final ComponentJob _componentJob;
     private final LoadingIcon _loadingIcon;
 
-    public AnalyzerResultPanel(final RendererFactory rendererFactory, final ProgressInformationPanel progressInformationPanel,
-            final ComponentJob componentJob) {
+    public AnalyzerResultPanel(final RendererFactory rendererFactory,
+            final ProgressInformationPanel progressInformationPanel, final ComponentJob componentJob) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _rendererFactory = rendererFactory;
         _progressInformationPanel = progressInformationPanel;
@@ -105,8 +105,8 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
 
             @Override
             protected JComponent doInBackground() throws Exception {
-                final Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(
-                        result, SwingRenderingFormat.class);
+                final Renderer<? super AnalyzerResult, ? extends JComponent> renderer =
+                        _rendererFactory.getRenderer(result, SwingRenderingFormat.class);
                 if (renderer == null) {
                     final String message = "No renderer found for result type " + result.getClass().getName();
                     logger.error(message);
@@ -132,8 +132,9 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
                 try {
                     component = get();
                     if (result instanceof AnalyzerResultFuture) {
-                        _progressInformationPanel.addUserLog(headerText + " is still in progress - see the '"
-                                + _componentJob.getDescriptor().getDisplayName() + "' tab");
+                        _progressInformationPanel.addUserLog(
+                                headerText + " is still in progress - see the '" + _componentJob.getDescriptor()
+                                        .getDisplayName() + "' tab");
                     } else {
                         _progressInformationPanel.addUserLog("Result rendered for " + headerText);
                     }

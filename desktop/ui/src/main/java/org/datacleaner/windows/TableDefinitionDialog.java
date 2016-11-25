@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -52,8 +50,8 @@ public class TableDefinitionDialog extends AbstractDialog {
     private final SimpleTableDefsPanel _tableDefsPanel;
     private final Action<SimpleTableDef[]> _saveAction;
 
-    public TableDefinitionDialog(final WindowContext windowContext, final SchemaFactory schemaFactory, final SimpleTableDef[] tableDefs,
-            final Action<SimpleTableDef[]> saveAction) {
+    public TableDefinitionDialog(final WindowContext windowContext, final SchemaFactory schemaFactory,
+            final SimpleTableDef[] tableDefs, final Action<SimpleTableDef[]> saveAction) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
 
         setBackgroundColor(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
@@ -93,28 +91,20 @@ public class TableDefinitionDialog extends AbstractDialog {
     }
 
     private DCPanel createButtonPanel() {
-        final JButton saveButton = WidgetFactory.createPrimaryButton("Save table definitions",
-                IconUtils.ACTION_SAVE_BRIGHT);
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                final SimpleTableDef[] tableDefs = _tableDefsPanel.getTableDefs();
-                try {
-                    _saveAction.run(tableDefs);
-                } catch (final Exception e) {
-                    WidgetUtils.showErrorMessage("Could not save table definitions", e);
-                }
-                TableDefinitionDialog.this.dispose();
+        final JButton saveButton =
+                WidgetFactory.createPrimaryButton("Save table definitions", IconUtils.ACTION_SAVE_BRIGHT);
+        saveButton.addActionListener(event -> {
+            final SimpleTableDef[] tableDefs = _tableDefsPanel.getTableDefs();
+            try {
+                _saveAction.run(tableDefs);
+            } catch (final Exception e) {
+                WidgetUtils.showErrorMessage("Could not save table definitions", e);
             }
+            TableDefinitionDialog.this.dispose();
         });
 
         final JButton cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                TableDefinitionDialog.this.dispose();
-            }
-        });
+        cancelButton.addActionListener(e -> TableDefinitionDialog.this.dispose());
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, saveButton, cancelButton);
         buttonPanel.setBorder(WidgetUtils.BORDER_EMPTY);

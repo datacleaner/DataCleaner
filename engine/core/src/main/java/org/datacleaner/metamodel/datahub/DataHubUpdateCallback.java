@@ -59,14 +59,14 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     }
 
     @Override
-    public TableCreationBuilder createTable(final Schema arg0, final String arg1) throws IllegalArgumentException,
-            IllegalStateException {
+    public TableCreationBuilder createTable(final Schema arg0, final String arg1)
+            throws IllegalArgumentException, IllegalStateException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public TableDropBuilder dropTable(final Table arg0) throws IllegalArgumentException, IllegalStateException,
-            UnsupportedOperationException {
+    public TableDropBuilder dropTable(final Table arg0)
+            throws IllegalArgumentException, IllegalStateException, UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
@@ -76,14 +76,14 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     }
 
     @Override
-    public RowInsertionBuilder insertInto(final Table arg0) throws IllegalArgumentException, IllegalStateException,
-            UnsupportedOperationException {
+    public RowInsertionBuilder insertInto(final Table arg0)
+            throws IllegalArgumentException, IllegalStateException, UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public RowDeletionBuilder deleteFrom(final Table table) throws IllegalArgumentException, IllegalStateException,
-            UnsupportedOperationException {
+    public RowDeletionBuilder deleteFrom(final Table table)
+            throws IllegalArgumentException, IllegalStateException, UnsupportedOperationException {
         return new DataHubDeleteBuilder(this, table);
     }
 
@@ -98,8 +98,8 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     }
 
     @Override
-    public RowUpdationBuilder update(final Table table) throws IllegalArgumentException, IllegalStateException,
-            UnsupportedOperationException {
+    public RowUpdationBuilder update(final Table table)
+            throws IllegalArgumentException, IllegalStateException, UnsupportedOperationException {
         return new DataHubUpdateBuilder(this, table);
     }
 

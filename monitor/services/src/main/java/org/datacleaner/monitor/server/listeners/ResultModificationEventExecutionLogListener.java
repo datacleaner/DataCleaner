@@ -19,11 +19,9 @@
  */
 package org.datacleaner.monitor.server.listeners;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.events.ResultModificationEvent;
@@ -76,12 +74,9 @@ public class ResultModificationEventExecutionLogListener implements ApplicationL
 
         final JobIdentifier jobIdentifier = JobIdentifier.fromResultId(resultId);
 
-        final ExecutionLog executionLog = oldFile.readFile(new Func<InputStream, ExecutionLog>() {
-            @Override
-            public ExecutionLog eval(final InputStream in) {
-                final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
-                return reader.read(in, jobIdentifier, new TenantIdentifier(tenant));
-            }
+        final ExecutionLog executionLog = oldFile.readFile(in -> {
+            final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
+            return reader.read(in, jobIdentifier, new TenantIdentifier(tenant));
         });
 
         executionLog.setResultId(resultId);
@@ -89,12 +84,7 @@ public class ResultModificationEventExecutionLogListener implements ApplicationL
 
         final JaxbExecutionLogWriter writer = new JaxbExecutionLogWriter();
         final RepositoryFile newFile = resultFolder.getFile(newFilename);
-        final Action<OutputStream> writeAction = new Action<OutputStream>() {
-            @Override
-            public void run(final OutputStream out) throws Exception {
-                writer.write(executionLog, out);
-            }
-        };
+        final Action<OutputStream> writeAction = out -> writer.write(executionLog, out);
         if (newFile == null) {
             resultFolder.createFile(newFilename, writeAction);
         } else {

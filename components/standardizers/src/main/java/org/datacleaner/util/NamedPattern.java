@@ -87,8 +87,9 @@ public class NamedPattern<E extends Enum<E>> {
         }
 
         if (usedGroupNames.isEmpty()) {
-            throw new IllegalArgumentException("None of the groups defined in " + groupEnum.getSimpleName()
-                    + " where found in the pattern: " + pattern);
+            throw new IllegalArgumentException(
+                    "None of the groups defined in " + groupEnum.getSimpleName() + " where found in the pattern: "
+                            + pattern);
         }
 
         Integer groupIndex = getIndexOfHighest(groupNameStringIndexOfs);

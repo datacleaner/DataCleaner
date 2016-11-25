@@ -24,8 +24,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
@@ -73,7 +71,8 @@ public class JobGraphLinkPainter {
         private final OutputDataStream _outputDataStream;
         private final AnalysisJobBuilder _analysisJobBuilder;
 
-        public VertexContext(final Object vertex, final AnalysisJobBuilder analysisJobBuilder, final OutputDataStream outputDataStream) {
+        public VertexContext(final Object vertex, final AnalysisJobBuilder analysisJobBuilder,
+                final OutputDataStream outputDataStream) {
             _vertex = vertex;
             _outputDataStream = outputDataStream;
             _analysisJobBuilder = analysisJobBuilder;
@@ -97,12 +96,12 @@ public class JobGraphLinkPainter {
      */
     class EdgePaintable implements VisualizationServer.Paintable {
 
-        public void paint(final Graphics g) {
+        public void paint(final Graphics graphics) {
             if (_edgeShape != null) {
-                final Color oldColor = g.getColor();
-                g.setColor(Color.black);
-                ((Graphics2D) g).draw(_edgeShape);
-                g.setColor(oldColor);
+                final Color oldColor = graphics.getColor();
+                graphics.setColor(Color.black);
+                ((Graphics2D) graphics).draw(_edgeShape);
+                graphics.setColor(oldColor);
             }
         }
 
@@ -116,12 +115,12 @@ public class JobGraphLinkPainter {
      */
     class ArrowPaintable implements VisualizationServer.Paintable {
 
-        public void paint(final Graphics g) {
+        public void paint(final Graphics graphics) {
             if (_arrowShape != null) {
-                final Color oldColor = g.getColor();
-                g.setColor(Color.black);
-                ((Graphics2D) g).fill(_arrowShape);
-                g.setColor(oldColor);
+                final Color oldColor = graphics.getColor();
+                graphics.setColor(Color.black);
+                ((Graphics2D) graphics).fill(_arrowShape);
+                graphics.setColor(oldColor);
             }
         }
 
@@ -129,6 +128,7 @@ public class JobGraphLinkPainter {
             return false;
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainter.class);
     private final JobGraphContext _graphContext;
     private final JobGraphActions _actions;
@@ -283,17 +283,17 @@ public class JobGraphLinkPainter {
 
                 try {
 
-                    final ConfiguredPropertyDescriptor inputProperty = componentBuilder
-                            .getDefaultConfiguredPropertyForInput();
+                    final ConfiguredPropertyDescriptor inputProperty =
+                            componentBuilder.getDefaultConfiguredPropertyForInput();
 
                     final ColumnProperty columnProperty = inputProperty.getAnnotation(ColumnProperty.class);
                     if (inputProperty.isArray() || (columnProperty != null && columnProperty
                             .escalateToMultipleJobs())) {
-                        componentBuilder.addInputColumns(getRelevantSourceColumns(sourceColumns, inputProperty),
-                                inputProperty);
+                        componentBuilder
+                                .addInputColumns(getRelevantSourceColumns(sourceColumns, inputProperty), inputProperty);
                     } else {
-                        final InputColumn<?> firstRelevantSourceColumn = getFirstRelevantSourceColumn(sourceColumns,
-                                inputProperty);
+                        final InputColumn<?> firstRelevantSourceColumn =
+                                getFirstRelevantSourceColumn(sourceColumns, inputProperty);
                         if (firstRelevantSourceColumn != null) {
                             componentBuilder.setConfiguredProperty(inputProperty, firstRelevantSourceColumn);
                         }
@@ -310,15 +310,12 @@ public class JobGraphLinkPainter {
             } else if (filterOutcomes != null && !filterOutcomes.isEmpty()) {
                 final JPopupMenu popup = new JPopupMenu();
                 for (final FilterOutcome filterOutcome : filterOutcomes) {
-                    final JMenuItem menuItem = WidgetFactory.createMenuItem(filterOutcome.getSimpleName(),
-                            IconUtils.FILTER_OUTCOME_PATH);
-                    menuItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(final ActionEvent e) {
-                            if (scopeUpdatePermitted(sourceAnalysisJobBuilder, componentBuilder)) {
-                                sourceAnalysisJobBuilder.moveComponent(componentBuilder);
-                                addOrSetFilterOutcomeAsRequirement(componentBuilder, filterOutcome);
-                            }
+                    final JMenuItem menuItem =
+                            WidgetFactory.createMenuItem(filterOutcome.getSimpleName(), IconUtils.FILTER_OUTCOME_PATH);
+                    menuItem.addActionListener(e -> {
+                        if (scopeUpdatePermitted(sourceAnalysisJobBuilder, componentBuilder)) {
+                            sourceAnalysisJobBuilder.moveComponent(componentBuilder);
+                            addOrSetFilterOutcomeAsRequirement(componentBuilder, filterOutcome);
                         }
                     });
                     popup.add(menuItem);
@@ -364,7 +361,8 @@ public class JobGraphLinkPainter {
         return true;
     }
 
-    protected void addOrSetFilterOutcomeAsRequirement(final ComponentBuilder componentBuilder, final FilterOutcome filterOutcome) {
+    protected void addOrSetFilterOutcomeAsRequirement(final ComponentBuilder componentBuilder,
+            final FilterOutcome filterOutcome) {
         final ComponentRequirement existingRequirement = componentBuilder.getComponentRequirement();
         if (existingRequirement == null) {
             // set a new requirement
@@ -373,8 +371,8 @@ public class JobGraphLinkPainter {
             return;
         }
 
-        final ComponentRequirement defaultRequirement = componentBuilder.getAnalysisJobBuilder()
-                .getDefaultRequirement();
+        final ComponentRequirement defaultRequirement =
+                componentBuilder.getAnalysisJobBuilder().getDefaultRequirement();
         if (existingRequirement.equals(defaultRequirement)) {
             // override the default requirement
             final ComponentRequirement requirement = new SimpleComponentRequirement(filterOutcome);
@@ -383,8 +381,8 @@ public class JobGraphLinkPainter {
         }
 
         // add outcome to a compound requirement
-        final CompoundComponentRequirement requirement = new CompoundComponentRequirement(existingRequirement,
-                filterOutcome);
+        final CompoundComponentRequirement requirement =
+                new CompoundComponentRequirement(existingRequirement, filterOutcome);
         componentBuilder.setComponentRequirement(requirement);
     }
 
@@ -403,8 +401,8 @@ public class JobGraphLinkPainter {
         return null;
     }
 
-    private Collection<? extends InputColumn<?>> getRelevantSourceColumns(final List<? extends InputColumn<?>> sourceColumns,
-            final ConfiguredPropertyDescriptor inputProperty) {
+    private Collection<? extends InputColumn<?>> getRelevantSourceColumns(
+            final List<? extends InputColumn<?>> sourceColumns, final ConfiguredPropertyDescriptor inputProperty) {
         assert inputProperty.isInputColumn();
 
         final List<InputColumn<?>> result = new ArrayList<>();

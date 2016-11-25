@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
@@ -51,6 +49,8 @@ import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.test.TestHelper;
 
+import junit.framework.TestCase;
+
 public class TokenizerAndValueDistributionTest extends TestCase {
 
     public void testScenario() throws Throwable {
@@ -76,8 +76,8 @@ public class TokenizerAndValueDistributionTest extends TestCase {
 
         analysisJobBuilder.addSourceColumns(jobTitleColumn);
 
-        final TransformerComponentBuilder<TokenizerTransformer> transformerJobBuilder = analysisJobBuilder
-                .addTransformer(TokenizerTransformer.class);
+        final TransformerComponentBuilder<TokenizerTransformer> transformerJobBuilder =
+                analysisJobBuilder.addTransformer(TokenizerTransformer.class);
         transformerJobBuilder.addInputColumn(analysisJobBuilder.getSourceColumns().get(0));
         transformerJobBuilder.setConfiguredProperty("Number of tokens", 4);
 
@@ -90,8 +90,8 @@ public class TokenizerAndValueDistributionTest extends TestCase {
         transformerOutput.get(3).setName("fourth words");
 
         for (final InputColumn<?> inputColumn : transformerOutput) {
-            final AnalyzerComponentBuilder<ValueDistributionAnalyzer> valueDistribuitionJobBuilder = analysisJobBuilder
-                    .addAnalyzer(ValueDistributionAnalyzer.class);
+            final AnalyzerComponentBuilder<ValueDistributionAnalyzer> valueDistribuitionJobBuilder =
+                    analysisJobBuilder.addAnalyzer(ValueDistributionAnalyzer.class);
             valueDistribuitionJobBuilder.addInputColumn(inputColumn);
             valueDistribuitionJobBuilder.setConfiguredProperty("Record unique values", true);
             valueDistribuitionJobBuilder.setConfiguredProperty("Top n most frequent values", null);
@@ -125,8 +125,8 @@ public class TokenizerAndValueDistributionTest extends TestCase {
                 assertEquals(0, result.getNullCount());
                 assertEquals(2, result.getUniqueCount().intValue());
             } else if ("second word".equals(result.getName())) {
-                assertEquals("[[Rep->17], [Manager->3], [<unique>->2], [<null>->1]]", result.getValueCounts()
-                        .toString());
+                assertEquals("[[Rep->17], [Manager->3], [<unique>->2], [<null>->1]]",
+                        result.getValueCounts().toString());
                 assertEquals(1, result.getNullCount());
                 assertEquals(2, result.getUniqueCount().intValue());
             } else if ("third words".equals(result.getName())) {

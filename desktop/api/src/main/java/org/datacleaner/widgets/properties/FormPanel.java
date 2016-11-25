@@ -70,7 +70,6 @@ public class FormPanel extends DCPanel {
         }
 
         final DCLabel mainLabel = DCLabel.dark(mainLabelText);
-//        mainLabel.setFont(WidgetUtils.FONT_SMALL);
         mainLabel.setFont(WidgetUtils.FONT_NORMAL);
         mainLabel.setBorder(new EmptyBorder(6, 0, 0, 0));
 

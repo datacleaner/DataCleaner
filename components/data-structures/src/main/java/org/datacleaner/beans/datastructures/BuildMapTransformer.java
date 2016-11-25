@@ -107,8 +107,7 @@ public class BuildMapTransformer implements Transformer {
                 sb.append(",");
             }
         }
-        final OutputColumns outputColumns = new OutputColumns(new String[] { sb.toString() }, new Class[] { Map.class });
-        return outputColumns;
+        return new OutputColumns(new String[] { sb.toString() }, new Class[] { Map.class });
     }
 
     @Override
@@ -137,8 +136,7 @@ public class BuildMapTransformer implements Transformer {
             }
         }
 
-        @SuppressWarnings("unchecked") final
-        Map<String, ?>[] result = new Map[] { map };
+        @SuppressWarnings("unchecked") final Map<String, ?>[] result = new Map[] { map };
 
         return result;
     }

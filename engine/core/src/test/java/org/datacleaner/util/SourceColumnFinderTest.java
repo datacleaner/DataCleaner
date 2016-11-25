@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
@@ -51,25 +49,29 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
 
+import junit.framework.TestCase;
+
 public class SourceColumnFinderTest extends TestCase {
 
     public void testFindInputColumns() throws Exception {
-        SourceColumnFinder columnFinder = new SourceColumnFinder();
+        final SourceColumnFinder columnFinder = new SourceColumnFinder();
 
-        AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
+        final AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         analysisJobBuilder.addTransformer(MockConvertToMonthObjectTransformer.class)
                 .addInputColumn(new MockInputColumn<>("month", String.class));
         columnFinder.addSources(analysisJobBuilder);
-        List<InputColumn<?>> findInputColumns = columnFinder.findInputColumns(Month.class);
+        final List<InputColumn<?>> findInputColumns = columnFinder.findInputColumns(Month.class);
         assertEquals(1, findInputColumns.size());
     }
 
     // see issue #706
     public void testFindOriginatingTableFromMaxRowsFilter() throws Exception {
-        final TableDataProvider<?> tableProvider1 = new ArrayTableDataProvider(
-                new SimpleTableDef("table1", new String[] { "id", "foo" }), new ArrayList<>());
-        final TableDataProvider<?> tableProvider2 = new ArrayTableDataProvider(
-                new SimpleTableDef("table2", new String[] { "id", "bar" }), new ArrayList<>());
+        final TableDataProvider<?> tableProvider1 =
+                new ArrayTableDataProvider(new SimpleTableDef("table1", new String[] { "id", "foo" }),
+                        new ArrayList<>());
+        final TableDataProvider<?> tableProvider2 =
+                new ArrayTableDataProvider(new SimpleTableDef("table2", new String[] { "id", "bar" }),
+                        new ArrayList<>());
 
         final Datastore ds = new PojoDatastore("my datastore", tableProvider1, tableProvider2);
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(ds);
@@ -83,8 +85,8 @@ public class SourceColumnFinderTest extends TestCase {
             final FilterComponentBuilder<MaxRowsFilter, Category> filter = jobBuilder.addFilter(MaxRowsFilter.class);
             filter.addInputColumn(jobBuilder.getSourceColumnByName("foo"));
 
-            final TransformerComponentBuilder<MockTransformer> transformer = jobBuilder
-                    .addTransformer(MockTransformer.class);
+            final TransformerComponentBuilder<MockTransformer> transformer =
+                    jobBuilder.addTransformer(MockTransformer.class);
             transformer.addInputColumn(jobBuilder.getSourceColumnByName("foo"));
             transformer.setRequirement(filter, MaxRowsFilter.Category.VALID);
 
@@ -97,8 +99,8 @@ public class SourceColumnFinderTest extends TestCase {
 
         final TransformerJob transformerJob = job.getTransformerJobs().get(0);
         final InputColumn<?> transformedColumn = transformerJob.getOutput()[0];
-        final FilterOutcome outcome = transformerJob.getComponentRequirement().getProcessingDependencies().iterator()
-                .next();
+        final FilterOutcome outcome =
+                transformerJob.getComponentRequirement().getProcessingDependencies().iterator().next();
 
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(job);

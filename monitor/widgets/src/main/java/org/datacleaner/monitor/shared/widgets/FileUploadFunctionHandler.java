@@ -83,8 +83,9 @@ public class FileUploadFunctionHandler {
                     final JSONArray jsonFiles = jsonResponse.isObject().get("files").isArray();
                     final JSONValue jsonFile = jsonFiles.get(0);
                     final String jsonFileStr = jsonFile.toString();
-                    parent.setInnerHTML("<p>File uploaded!</p><input type='hidden' name='" + inputName + "' value='"
-                            + jsonFileStr + "' />");
+                    parent.setInnerHTML(
+                            "<p>File uploaded!</p><input type='hidden' name='" + inputName + "' value='" + jsonFileStr
+                                    + "' />");
                     rootPanel.remove(form);
                 } catch (final Exception e) {
                     ErrorHandler.showErrorDialog("Unexpected error occurred",
@@ -129,6 +130,7 @@ public class FileUploadFunctionHandler {
      * Exports the "uploadFile(elementId)" method as a function in the native
      * javascript scope.
      */
+    @SuppressWarnings("checkstyle:LineLength")
     public static native void exportFileUploadFunction() /*-{
         $wnd.uploadFile = $entry(@org.datacleaner.monitor.shared.widgets.FileUploadFunctionHandler::uploadFile(Ljava/lang/String;));
     }-*/;

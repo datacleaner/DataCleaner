@@ -22,8 +22,6 @@ package org.datacleaner.test.full.scenarios;
 import java.util.Collection;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.metamodel.util.ObjectComparator;
 import org.datacleaner.api.AnalyzerResult;
@@ -51,6 +49,8 @@ import org.datacleaner.result.SimpleAnalysisResult;
 import org.datacleaner.test.TestHelper;
 import org.datacleaner.util.CollectionUtils2;
 
+import junit.framework.TestCase;
+
 public class AnalyzeDateGapsCompareSchemasAndSerializeResultsTest extends TestCase {
 
     @SuppressWarnings("unchecked")
@@ -58,65 +58,66 @@ public class AnalyzeDateGapsCompareSchemasAndSerializeResultsTest extends TestCa
         final DataCleanerConfiguration configuration;
         {
             // create configuration
-            SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
+            final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
             descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(DateGapAnalyzer.class));
             descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(MaxRowsFilter.class));
             descriptorProvider
                     .addTransformerBeanDescriptor(Descriptors.ofTransformer(ConvertToStringTransformer.class));
-            Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-            configuration = new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(
-                    new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+            final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+            configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
+                    .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
         }
 
-        AnalysisJob job;
+        final AnalysisJob job;
         {
             // create job
-            AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(configuration);
-            Datastore datastore = configuration.getDatastoreCatalog().getDatastore("orderdb");
+            final AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(configuration);
+            final Datastore datastore = configuration.getDatastoreCatalog().getDatastore("orderdb");
             analysisJobBuilder.setDatastore(datastore);
             analysisJobBuilder.addSourceColumns("PUBLIC.ORDERS.ORDERDATE", "PUBLIC.ORDERS.SHIPPEDDATE",
                     "PUBLIC.ORDERS.CUSTOMERNUMBER");
             assertEquals(3, analysisJobBuilder.getSourceColumns().size());
 
-            FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRows = analysisJobBuilder
-                    .addFilter(MaxRowsFilter.class);
+            final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRows =
+                    analysisJobBuilder.addFilter(MaxRowsFilter.class);
             maxRows.getComponentInstance().setMaxRows(5);
             analysisJobBuilder.setDefaultRequirement(maxRows.getFilterOutcome(MaxRowsFilter.Category.VALID));
 
-            TransformerComponentBuilder<ConvertToStringTransformer> convertToNumber = analysisJobBuilder
-                    .addTransformer(ConvertToStringTransformer.class);
+            final TransformerComponentBuilder<ConvertToStringTransformer> convertToNumber =
+                    analysisJobBuilder.addTransformer(ConvertToStringTransformer.class);
             convertToNumber.addInputColumn(analysisJobBuilder.getSourceColumnByName("customernumber"));
-            InputColumn<String> customer_no = (InputColumn<String>) convertToNumber.getOutputColumns().get(0);
+            final InputColumn<String> customer_no = (InputColumn<String>) convertToNumber.getOutputColumns().get(0);
 
-            AnalyzerComponentBuilder<DateGapAnalyzer> dateGap = analysisJobBuilder.addAnalyzer(DateGapAnalyzer.class);
+            final AnalyzerComponentBuilder<DateGapAnalyzer> dateGap =
+                    analysisJobBuilder.addAnalyzer(DateGapAnalyzer.class);
             dateGap.setName("date gap job");
             dateGap.getComponentInstance().setSingleDateOverlaps(true);
-            dateGap.getComponentInstance().setFromColumn(
-                    (InputColumn<Date>) analysisJobBuilder.getSourceColumnByName("orderdate"));
-            dateGap.getComponentInstance().setToColumn(
-                    (InputColumn<Date>) analysisJobBuilder.getSourceColumnByName("shippeddate"));
+            dateGap.getComponentInstance()
+                    .setFromColumn((InputColumn<Date>) analysisJobBuilder.getSourceColumnByName("orderdate"));
+            dateGap.getComponentInstance()
+                    .setToColumn((InputColumn<Date>) analysisJobBuilder.getSourceColumnByName("shippeddate"));
             dateGap.getComponentInstance().setGroupColumn(customer_no);
 
             job = analysisJobBuilder.toAnalysisJob();
             analysisJobBuilder.close();
         }
 
-        AnalysisResultFuture future = new AnalysisRunnerImpl(configuration).run(job);
+        final AnalysisResultFuture future = new AnalysisRunnerImpl(configuration).run(job);
         if (future.isErrornous()) {
             throw future.getErrors().get(0);
         }
         assertTrue(future.isSuccessful());
 
-        SimpleAnalysisResult result1 = new SimpleAnalysisResult(future.getResultMap());
-        byte[] bytes = SerializationUtils.serialize(result1);
-        SimpleAnalysisResult result2 = (SimpleAnalysisResult) SerializationUtils.deserialize(bytes);
+        final SimpleAnalysisResult result1 = new SimpleAnalysisResult(future.getResultMap());
+        final byte[] bytes = SerializationUtils.serialize(result1);
+        final SimpleAnalysisResult result2 = (SimpleAnalysisResult) SerializationUtils.deserialize(bytes);
 
         performResultAssertions(job, future);
         performResultAssertions(job, result1);
         performResultAssertions(job, result2);
     }
 
-    private void performResultAssertions(AnalysisJob job, AnalysisResult result) {
+    private void performResultAssertions(final AnalysisJob job, final AnalysisResult result) {
         assertEquals(1, result.getResults().size());
 
         Collection<ComponentJob> componentJobs = result.getResultMap().keySet();

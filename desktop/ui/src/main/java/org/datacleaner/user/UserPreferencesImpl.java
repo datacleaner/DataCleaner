@@ -45,7 +45,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.database.UserDatabaseDriver;
 import org.datacleaner.extensions.ExtensionPackage;
@@ -119,7 +118,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
                 logger.info("User preferences file does not exist");
                 return new UserPreferencesImpl(userPreferencesFile);
             }
-        } catch (final FileSystemException e1) {
+        } catch (final FileSystemException e) {
             logger.debug("Could not determine if file exists: {}", userPreferencesFile);
         }
 
@@ -261,17 +260,13 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             }
         }
 
-        final List<FileObject> fileObjectList = CollectionUtils.map(recentJobFiles, new Func<File, FileObject>() {
-            @Override
-            public FileObject eval(final File file) {
-                try {
-                    return VFSUtils.getFileSystemManager().toFileObject(file);
-                } catch (final FileSystemException e) {
-                    throw new IllegalStateException(e);
-                }
+        return CollectionUtils.map(recentJobFiles, file -> {
+            try {
+                return VFSUtils.getFileSystemManager().toFileObject(file);
+            } catch (final FileSystemException e) {
+                throw new IllegalStateException(e);
             }
         });
-        return fileObjectList;
     }
 
     @Override
@@ -473,9 +468,8 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
                 final boolean isHttps = "true".equals(System.getProperty(SystemProperties.MONITOR_HTTPS));
                 final String username = System.getProperty(SystemProperties.MONITOR_USERNAME);
                 final String encodedPassword = null;
-                final MonitorConnection con = new MonitorConnection(this, hostname, port, contextPath, isHttps, tenant,
-                        username, encodedPassword);
-                return con;
+                return new MonitorConnection(this, hostname, port, contextPath, isHttps, tenant, username,
+                        encodedPassword);
             }
         }
         return monitorConnection;
@@ -531,8 +525,8 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
                 if (isProxyAuthenticationEnabled()) {
                     final AuthScope authScope = new AuthScope(proxyHostname, proxyPort);
                     final String proxyUsername = getProxyUsername();
-                    final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(proxyUsername,
-                            getProxyPassword());
+                    final UsernamePasswordCredentials credentials =
+                            new UsernamePasswordCredentials(proxyUsername, getProxyPassword());
                     credentialsProvider.setCredentials(authScope, credentials);
 
                     final int backslashIndex = proxyUsername.lastIndexOf('\\');
@@ -548,12 +542,11 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
                     String workstation = System.getProperty("datacleaner.proxy.workstation");
                     if (Strings.isNullOrEmpty(workstation)) {
-                        final String computername = InetAddress.getLocalHost().getHostName();
-                        workstation = computername;
+                        workstation = InetAddress.getLocalHost().getHostName();
                     }
 
-                    final NTCredentials ntCredentials = new NTCredentials(ntUsername, getProxyPassword(), workstation,
-                            ntDomain);
+                    final NTCredentials ntCredentials =
+                            new NTCredentials(ntUsername, getProxyPassword(), workstation, ntDomain);
                     final AuthScope ntAuthScope = new AuthScope(proxyHostname, proxyPort, AuthScope.ANY_REALM, "ntlm");
                     credentialsProvider.setCredentials(ntAuthScope, ntCredentials);
                 }
@@ -564,10 +557,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         }
 
         final RequestConfig requestConfig = requestConfigBuilder.build();
-        final CloseableHttpClient httpClient =
-                HttpClients.custom().useSystemProperties().setConnectionManager(connectionManager)
-                        .setDefaultCredentialsProvider(credentialsProvider).setDefaultRequestConfig(requestConfig)
-                        .build();
-        return httpClient;
+        return HttpClients.custom().useSystemProperties().setConnectionManager(connectionManager)
+                .setDefaultCredentialsProvider(credentialsProvider).setDefaultRequestConfig(requestConfig).build();
     }
 }

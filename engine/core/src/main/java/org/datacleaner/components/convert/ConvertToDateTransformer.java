@@ -222,8 +222,8 @@ public class ConvertToDateTransformer implements Transformer {
         if (tryDateTimeFormatters) {
             for (int i = 0; i < _dateTimeFormatters.length; i++) {
                 final String dateMask = dateMasks[i];
-                final boolean isPotentialNumberDateMask = !dateMask.contains("-") && !dateMask.contains(".")
-                        && !dateMask.contains("/");
+                final boolean isPotentialNumberDateMask =
+                        !dateMask.contains("-") && !dateMask.contains(".") && !dateMask.contains("/");
                 if (isPotentialNumberDateMask) {
                     final DateTimeFormatter formatter = _dateTimeFormatters[i];
                     try {

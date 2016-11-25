@@ -44,8 +44,8 @@ final class DatastoreDictionaryReferenceDataPageDatastore extends DatastorePageD
             throws DCUserInputException {
         final String name = getString(formParameters, PROPERTY_NAME);
         final String datastore = getString(formParameters, PROPERTY_DATASTORE);
-        ReferenceDataHelper.checkUniqueDictionary(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog());
+        ReferenceDataHelper.checkUniqueDictionary(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
 
         _session.setName(name);
         _session.setDatastore(datastore);

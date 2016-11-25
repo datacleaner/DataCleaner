@@ -130,9 +130,8 @@ import org.slf4j.LoggerFactory;
  * {@link AnalysisJobBuilder} class.
  */
 @Singleton
-public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements
-        AnalysisJobBuilderWindow,
-        WindowListener {
+public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
+        implements AnalysisJobBuilderWindow, WindowListener {
 
     private class WindowAnalysisJobChangeListener implements AnalysisJobChangeListener {
         @Override
@@ -311,16 +310,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private MutableReferenceDataCatalog _mutableReferenceCatalog;
 
     @Inject
-    protected AnalysisJobBuilderWindowImpl(final DataCleanerConfiguration configuration, final WindowContext windowContext,
-            final SchemaTreePanel schemaTreePanel, final AnalysisJobBuilder analysisJobBuilder, final DCModule dcModule,
-            final UserPreferences userPreferences, @Nullable @JobFile final FileObject jobFilename,
+    protected AnalysisJobBuilderWindowImpl(final DataCleanerConfiguration configuration,
+            final WindowContext windowContext, final SchemaTreePanel schemaTreePanel,
+            final AnalysisJobBuilder analysisJobBuilder, final DCModule dcModule, final UserPreferences userPreferences,
+            @Nullable @JobFile final FileObject jobFilename,
             final Provider<NewAnalysisJobActionListener> newAnalysisJobActionListenerProvider,
             final Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
             final Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
             final Provider<ReferenceDataDialog> referenceDataDialogProvider, final UsageLogger usageLogger,
             final Provider<OptionsDialog> optionsDialogProvider,
             final Provider<MonitorConnectionDialog> monitorConnectionDialogProvider,
-            final OpenAnalysisJobActionListener openAnalysisJobActionListener, final DatabaseDriverCatalog databaseDriverCatalog,
+            final OpenAnalysisJobActionListener openAnalysisJobActionListener,
+            final DatabaseDriverCatalog databaseDriverCatalog,
             final MutableReferenceDataCatalog mutableReferenceCatalog) {
         super(windowContext);
         _jobFilename = jobFilename;
@@ -334,8 +335,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
         _mutableReferenceCatalog = mutableReferenceCatalog;
-        _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass(), DEFAULT_WINDOW_WIDTH,
-                DEFAULT_WINDOW_HEIGHT);
+        _windowSizePreference =
+                new WindowSizePreferences(_userPreferences, getClass(), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
         setMinimumSize(new Dimension(900, 550));
 
@@ -371,11 +372,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _saveButton = WidgetFactory.createToolbarButton("Save", IconUtils.ACTION_SAVE_BRIGHT);
         _saveAsButton = WidgetFactory.createToolbarButton("Save As...", IconUtils.ACTION_SAVE_BRIGHT);
 
-        _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(),
-                _dcModule);
+        _welcomePanel =
+                new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(), _dcModule);
 
-        _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
-                _optionsDialogProvider, _dcModule, databaseDriverCatalog, _userPreferences);
+        _datastoreManagementPanel =
+                new DatastoreManagementPanel(_configuration, this, _glassPane, _optionsDialogProvider, _dcModule,
+                        databaseDriverCatalog, _userPreferences);
         _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog,
                 (MutableDatastoreCatalog) configuration.getDatastoreCatalog(),
                 configuration.getServerInformationCatalog(), _userPreferences, windowContext);
@@ -547,12 +549,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 if (ex instanceof UnconfiguredConfiguredPropertyException) {
                     final UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException =
                             (UnconfiguredConfiguredPropertyException) ex;
-                    final ConfiguredPropertyDescriptor configuredProperty = unconfiguredConfiguredPropertyException
-                            .getConfiguredProperty();
-                    final ComponentBuilder componentBuilder = unconfiguredConfiguredPropertyException
-                            .getComponentBuilder();
-                    errorMessage = "Property '" + configuredProperty.getName() + "' in " + LabelUtils.getLabel(
-                            componentBuilder) + " is not set!";
+                    final ConfiguredPropertyDescriptor configuredProperty =
+                            unconfiguredConfiguredPropertyException.getConfiguredProperty();
+                    final ComponentBuilder componentBuilder =
+                            unconfiguredConfiguredPropertyException.getComponentBuilder();
+                    errorMessage = "Property '" + configuredProperty.getName() + "' in " + LabelUtils
+                            .getLabel(componentBuilder) + " is not set!";
                 } else if (ex instanceof ComponentValidationException) {
                     final ComponentValidationException componentValidationException = (ComponentValidationException) ex;
                     errorMessage = componentValidationException.getComponentDescriptor().getDisplayName()
@@ -624,9 +626,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             if (isJobUnsaved(getJobFile(), _analysisJobBuilder) && (_saveButton.isEnabled())) {
 
                 final Object[] buttons = { "Save changes", "Discard changes", "Cancel" };
-                final int unsavedChangesChoice = JOptionPane.showOptionDialog(this,
-                        "The job has unsaved changes. What would you like to do?", "Unsaved changes detected",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[1]);
+                final int unsavedChangesChoice = JOptionPane
+                        .showOptionDialog(this, "The job has unsaved changes. What would you like to do?",
+                                "Unsaved changes detected", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                                null, buttons, buttons[1]);
 
                 if (unsavedChangesChoice == 0) { // save changes
                     _saveButton.doClick();
@@ -688,15 +691,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
 
             final String lastSavedJob = FileHelper.readFileAsString(jobFile);
-            final String lastSavedJobNoMetadata = lastSavedJob.replaceAll("\n", "").replaceAll(
-                    "<job-metadata>.*</job-metadata>", "");
+            final String lastSavedJobNoMetadata =
+                    lastSavedJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
 
             final JaxbJobWriter writer = new JaxbJobWriter(_configuration);
             currentOutputStream = new ByteArrayOutputStream();
             writer.write(_analysisJobBuilder.toAnalysisJob(false), currentOutputStream);
             final String currentJob = new String(currentOutputStream.toByteArray());
-            final String currentJobNoMetadata = currentJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>",
-                    "");
+            final String currentJobNoMetadata =
+                    currentJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
 
             return !currentJobNoMetadata.equals(lastSavedJobNoMetadata);
         } catch (final FileSystemException e) {
@@ -767,8 +770,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             setDatastore(_datastore);
         }
 
-        final SaveAnalysisJobActionListener saveAnalysisJobActionListener = _saveAnalysisJobActionListenerProvider
-                .get();
+        final SaveAnalysisJobActionListener saveAnalysisJobActionListener =
+                _saveAnalysisJobActionListenerProvider.get();
         _saveButton.addActionListener(saveAnalysisJobActionListener);
         _saveAsButton.addActionListener(saveAnalysisJobActionListener);
         _saveAsButton.setActionCommand(SaveAnalysisJobActionListener.ACTION_COMMAND_SAVE_AS);
@@ -857,39 +860,39 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             optionsDialog.open();
         });
 
-        final JMenuItem monitorMenuItem = WidgetFactory.createMenuItem("DataCleaner monitor",
-                IconUtils.MENU_DQ_MONITOR);
+        final JMenuItem monitorMenuItem =
+                WidgetFactory.createMenuItem("DataCleaner monitor", IconUtils.MENU_DQ_MONITOR);
         monitorMenuItem.addActionListener(e -> {
             final MonitorConnectionDialog dialog = _monitorConnectionDialogProvider.get();
             dialog.open();
         });
 
-        final JMenuItem dictionariesMenuItem = WidgetFactory.createMenuItem("Dictionaries",
-                IconUtils.DICTIONARY_IMAGEPATH);
+        final JMenuItem dictionariesMenuItem =
+                WidgetFactory.createMenuItem("Dictionaries", IconUtils.DICTIONARY_IMAGEPATH);
         dictionariesMenuItem.addActionListener(e -> {
             final ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
             referenceDataDialog.selectDictionariesTab();
             referenceDataDialog.open();
         });
 
-        final JMenuItem synonymCatalogsMenuItem = WidgetFactory.createMenuItem("Synonyms",
-                IconUtils.SYNONYM_CATALOG_IMAGEPATH);
+        final JMenuItem synonymCatalogsMenuItem =
+                WidgetFactory.createMenuItem("Synonyms", IconUtils.SYNONYM_CATALOG_IMAGEPATH);
         synonymCatalogsMenuItem.addActionListener(e -> {
             final ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
             referenceDataDialog.selectSynonymsTab();
             referenceDataDialog.open();
         });
 
-        final JMenuItem stringPatternsMenuItem = WidgetFactory.createMenuItem("String patterns",
-                IconUtils.STRING_PATTERN_IMAGEPATH);
+        final JMenuItem stringPatternsMenuItem =
+                WidgetFactory.createMenuItem("String patterns", IconUtils.STRING_PATTERN_IMAGEPATH);
         stringPatternsMenuItem.addActionListener(e -> {
             final ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
             referenceDataDialog.selectStringPatternsTab();
             referenceDataDialog.open();
         });
 
-        final PopupButton popupButton = new PopupButton("More", imageManager.getImageIcon(
-                IconUtils.ACTION_SCROLLDOWN_BRIGHT));
+        final PopupButton popupButton =
+                new PopupButton("More", imageManager.getImageIcon(IconUtils.ACTION_SCROLLDOWN_BRIGHT));
         applyMenuPopupButttonStyling(popupButton);
 
         final JMenu windowsMenuItem = WidgetFactory.createMenu("Windows", 'w');
@@ -908,8 +911,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 } else {
                     titleText = title;
                 }
-                final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
-                        IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
+                final ImageIcon icon = new ImageIcon(windowIcon
+                        .getScaledInstance(IconUtils.ICON_SIZE_SMALL, IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
                 final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(titleText, icon);
                 switchToWindowItem.addActionListener(e1 -> window.toFront());
                 windowsMenuItem.add(switchToWindowItem);

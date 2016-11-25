@@ -27,8 +27,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Set;
 
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.schema.ColumnType;
@@ -67,15 +65,12 @@ public class DeleteFromTableAnalyzerTest {
         final UpdateableDatastoreConnection con = updateableDatastore.openConnection();
         final UpdateableDataContext dc = con.getUpdateableDataContext();
         if (dc.getDefaultSchema().getTableByName(TEST_TABLE_NAME) == null) {
-            dc.executeUpdate(new UpdateScript() {
-                @Override
-                public void run(UpdateCallback cb) {
-                    cb.createTable(dc.getDefaultSchema(), TEST_TABLE_NAME).withColumn(VARCHAR_COLUMN_NAME)
-                            .ofType(ColumnType.VARCHAR).withColumn(INTEGER_COLUMN_NAME).ofType(ColumnType.INTEGER)
-                            .execute();
-                    cb.insertInto(TEST_TABLE_NAME).value(VARCHAR_COLUMN_NAME, VARCHAR_COLUMN_VALUE)
-                            .value(INTEGER_COLUMN_NAME, INTEGER_COLUMN_VALUE).execute();
-                }
+            dc.executeUpdate(cb -> {
+                cb.createTable(dc.getDefaultSchema(), TEST_TABLE_NAME).withColumn(VARCHAR_COLUMN_NAME)
+                        .ofType(ColumnType.VARCHAR).withColumn(INTEGER_COLUMN_NAME).ofType(ColumnType.INTEGER)
+                        .execute();
+                cb.insertInto(TEST_TABLE_NAME).value(VARCHAR_COLUMN_NAME, VARCHAR_COLUMN_VALUE)
+                        .value(INTEGER_COLUMN_NAME, INTEGER_COLUMN_VALUE).execute();
             });
         }
         con.close();
@@ -83,10 +78,10 @@ public class DeleteFromTableAnalyzerTest {
 
     @Test
     public void shouldReturnTheCorrectMetricsFromDescriptor() throws Exception {
-        AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(DeleteFromTableAnalyzer.class);
-        Set<MetricDescriptor> metrics = descriptor.getResultMetrics();
+        final AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(DeleteFromTableAnalyzer.class);
+        final Set<MetricDescriptor> metrics = descriptor.getResultMetrics();
         assertThat(metrics.size(), is(3));
-        WriteDataResult result = new WriteDataResultImpl(10, 5, null, null, null);
+        final WriteDataResult result = new WriteDataResultImpl(10, 5, null, null, null);
         assertThat(descriptor.getResultMetric("Inserts").getValue(result, null).intValue(), is(10));
         assertThat(descriptor.getResultMetric("Updates").getValue(result, null).intValue(), is(5));
         assertThat(descriptor.getResultMetric("Errornous rows").getValue(result, null).intValue(), is(0));
@@ -103,8 +98,8 @@ public class DeleteFromTableAnalyzerTest {
         deleteFromTable.errorLogFile = new File("src/test/resources/invalid-error-handling-file.csv");
         deleteFromTable.conditionColumnNames = new String[] { "col1", "col2" };
 
-        InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
+        final InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        final InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
         deleteFromTable.conditionValues = new InputColumn[] { col1, col2 };
 
         deleteFromTable.validate();
@@ -122,7 +117,7 @@ public class DeleteFromTableAnalyzerTest {
         deleteFromTable.errorLogFile = file;
         deleteFromTable.conditionColumnNames = new String[] { INTEGER_COLUMN_NAME };
 
-        InputColumn<Object> inputColumn = new MockInputColumn<>(INTEGER_COLUMN_NAME, Object.class);
+        final InputColumn<Object> inputColumn = new MockInputColumn<>(INTEGER_COLUMN_NAME, Object.class);
         deleteFromTable.conditionValues = new InputColumn[] { inputColumn };
 
         deleteFromTable.validate();
@@ -130,7 +125,7 @@ public class DeleteFromTableAnalyzerTest {
 
         deleteFromTable.run(new MockInputRow().put(inputColumn, "blabla"), 1);
 
-        WriteDataResult result = deleteFromTable.getResult();
+        final WriteDataResult result = deleteFromTable.getResult();
         assertThat(result.getUpdatesCount(), is(0));
         assertThat(result.getErrorRowCount(), is(1));
         assertThat(FileHelper.readFileAsString(file).replaceAll("\n", "\\[newline\\]"),
@@ -149,8 +144,8 @@ public class DeleteFromTableAnalyzerTest {
         deleteFromTable.errorLogFile = null;
         deleteFromTable._componentContext = EasyMock.createMock(ComponentContext.class);
 
-        InputColumn<Object> col1 = new MockInputColumn<>(VARCHAR_COLUMN_NAME, Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
+        final InputColumn<Object> col1 = new MockInputColumn<>(VARCHAR_COLUMN_NAME, Object.class);
+        final InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
 
         deleteFromTable.conditionValues = new InputColumn[] { col1, col2 };
 
@@ -159,15 +154,15 @@ public class DeleteFromTableAnalyzerTest {
 
         deleteFromTable.run(new MockInputRow().put(col1, VARCHAR_COLUMN_VALUE), 1);
 
-        WriteDataResult result = deleteFromTable.getResult();
+        final WriteDataResult result = deleteFromTable.getResult();
         assertThat(result.getUpdatesCount(), is(1));
         assertThat(result.getErrorRowCount(), is(0));
-        FileDatastore errorDatastore = result.getErrorDatastore();
-        DatastoreConnection con = errorDatastore.openConnection();
-        Table table = con.getDataContext().getDefaultSchema().getTables()[0];
+        final FileDatastore errorDatastore = result.getErrorDatastore();
+        final DatastoreConnection con = errorDatastore.openConnection();
+        final Table table = con.getDataContext().getDefaultSchema().getTables()[0];
         assertThat(Arrays.toString(table.getColumnNames()), is(equalTo("[foo, bar, update_table_error_message]")));
 
-        DataSet ds = con.getDataContext().query().from(table).select(table.getColumns()).execute();
+        final DataSet ds = con.getDataContext().query().from(table).select(table.getColumns()).execute();
         assertThat(ds.next(), is(false));
         ds.close();
 

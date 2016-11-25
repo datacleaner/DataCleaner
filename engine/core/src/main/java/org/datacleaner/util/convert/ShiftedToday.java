@@ -71,11 +71,8 @@ public class ShiftedToday extends Date implements ExpressionDate {
                     String.format("Specified value ('%s') does not match allowed format (1d 2m 3y). ", _input));
         }
 
-        return new int[] {
-                Integer.parseInt(matcher.group(1)),
-                Integer.parseInt(matcher.group(2)),
-                Integer.parseInt(matcher.group(3))
-        };
+        return new int[] { Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)),
+                Integer.parseInt(matcher.group(3)) };
     }
 
     public String getInput() {

@@ -121,18 +121,18 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
                 protected JComponent fetch() {
                     logger.info("Rendering group result '{}'", groupName);
                     final JComponent renderedResult = delegateRenderer.render(new CrosstabResult(crosstab));
-                    final DCPanel decoratedPanel = createDecoration(renderedResult);
-                    return decoratedPanel;
+                    return createDecoration(renderedResult);
                 }
             };
 
-            final int patternCount = crosstab.getDimension(
-                    crosstab.getDimensionIndex(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN)).getCategoryCount();
-            final String expandedLabel = (patternCount == 1 ? "1 pattern" : patternCount + " patterns") + " in group '"
-                    + LabelUtils.getLabel(entry.getKey() + "'");
-            final String collapsedLabel = expandedLabel;
-            final DCCollapsiblePanel collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, expandedLabel,
-                    collapsed, componentRef);
+            final int patternCount =
+                    crosstab.getDimension(crosstab.getDimensionIndex(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN))
+                            .getCategoryCount();
+            final String expandedLabel =
+                    (patternCount == 1 ? "1 pattern" : patternCount + " patterns") + " in group '" + LabelUtils
+                            .getLabel(entry.getKey() + "'");
+            final DCCollapsiblePanel collapsiblePanel =
+                    new DCCollapsiblePanel(expandedLabel, expandedLabel, collapsed, componentRef);
             panel.add(collapsiblePanel.toPanel());
         }
         return panel;
@@ -173,13 +173,13 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
         ajb.addAnalyzer(PatternFinderAnalyzer.class).addInputColumns(ajb.getSourceColumns())
                 .setName("Ungrouped pattern finders");
 
-        final AnalyzerComponentBuilder<PatternFinderAnalyzer> groupedPatternFinder = ajb.addAnalyzer(
-                PatternFinderAnalyzer.class);
+        final AnalyzerComponentBuilder<PatternFinderAnalyzer> groupedPatternFinder =
+                ajb.addAnalyzer(PatternFinderAnalyzer.class);
         ajb.addSourceColumns("PUBLIC.OFFICES.CITY", "PUBLIC.OFFICES.TERRITORY");
         groupedPatternFinder.setName("Grouped PF");
         groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.CITY"));
-        groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.TERRITORY"), groupedPatternFinder
-                .getDescriptor().getConfiguredProperty("Group column"));
+        groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.TERRITORY"),
+                groupedPatternFinder.getDescriptor().getConfiguredProperty("Group column"));
 
         final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
         resultWindow.setVisible(true);

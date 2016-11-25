@@ -149,8 +149,8 @@ public class ArrayConverter implements Converter<Object> {
                     final int searchOffset = nextBracket + 1;
                     final int nextEndBracket = substring.indexOf(']', searchOffset);
                     if (nextEndBracket == -1) {
-                        throw new IllegalStateException("No ending bracket in array string: "
-                                + substring.substring(searchOffset));
+                        throw new IllegalStateException(
+                                "No ending bracket in array string: " + substring.substring(searchOffset));
                     }
                     int nextBeginBracket = substring.indexOf('[', searchOffset);
                     if (nextBeginBracket == -1) {

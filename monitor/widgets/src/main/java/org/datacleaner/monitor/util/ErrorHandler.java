@@ -115,7 +115,8 @@ public class ErrorHandler {
         showErrorDialog(headerMessage, details, additionalDetails);
     }
 
-    private static String buildOneLineMessage(final String headerMessage, final String additionalDetails, final Throwable t) {
+    private static String buildOneLineMessage(final String headerMessage, final String additionalDetails,
+            final Throwable t) {
         final StringBuilder oneLineMessage = new StringBuilder();
         if (headerMessage != null && !"".equals(headerMessage)) {
             oneLineMessage.append(headerMessage);
@@ -167,7 +168,8 @@ public class ErrorHandler {
      * @param details
      * @param additionalDetails
      */
-    public static void showErrorDialog(final String messageHeader, final String details, final String additionalDetails) {
+    public static void showErrorDialog(final String messageHeader, final String details,
+            final String additionalDetails) {
         final DialogBox dialogBox = getDialogBox();
 
         final FlowPanel panel = new FlowPanel();

@@ -116,8 +116,8 @@ public class UserBean implements User, Serializable {
             return true;
         }
 
-        if (SecurityRoles.VIEWER.equals(role) || SecurityRoles.SCHEDULE_EDITOR.equals(role)
-                || SecurityRoles.JOB_EDITOR.equals(role)) {
+        if (SecurityRoles.VIEWER.equals(role) || SecurityRoles.SCHEDULE_EDITOR.equals(role) || SecurityRoles.JOB_EDITOR
+                .equals(role)) {
             if (_roles.contains(SecurityRoles.ENGINEER)) {
                 // ENGINEER is a super-role of SCHEDULE_EDITOR and JOB_EDITOR
                 return true;

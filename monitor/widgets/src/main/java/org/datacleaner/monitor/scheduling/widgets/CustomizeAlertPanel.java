@@ -68,7 +68,8 @@ public class CustomizeAlertPanel extends Composite {
     @UiField
     FlowPanel severityPanel;
 
-    public CustomizeAlertPanel(final TenantIdentifier tenant, final JobIdentifier job, final AlertDefinition alert, final JobMetrics result) {
+    public CustomizeAlertPanel(final TenantIdentifier tenant, final JobIdentifier job, final AlertDefinition alert,
+            final JobMetrics result) {
         super();
 
         _alert = alert;

@@ -48,8 +48,8 @@ final class BooleanAnalyzerCombinationMetric implements ParameterizableMetric {
         if (_valueCombinationCrosstab == null) {
             return 0;
         }
-        final CrosstabDimension measureDimension = _valueCombinationCrosstab
-                .getDimension(BooleanAnalyzer.DIMENSION_MEASURE);
+        final CrosstabDimension measureDimension =
+                _valueCombinationCrosstab.getDimension(BooleanAnalyzer.DIMENSION_MEASURE);
         if (measureDimension.containsCategory(parameter)) {
             return _valueCombinationCrosstab.where(measureDimension, parameter)
                     .where(BooleanAnalyzer.DIMENSION_COLUMN, BooleanAnalyzer.VALUE_COMBINATION_COLUMN_FREQUENCY).get();
@@ -68,19 +68,19 @@ final class BooleanAnalyzerCombinationMetric implements ParameterizableMetric {
             bools[i] = ConvertToBooleanTransformer.transformValue(token);
         }
 
-        final List<String> columnCategories = _valueCombinationCrosstab.getDimension(BooleanAnalyzer.DIMENSION_COLUMN)
-                .getCategories();
+        final List<String> columnCategories =
+                _valueCombinationCrosstab.getDimension(BooleanAnalyzer.DIMENSION_COLUMN).getCategories();
         if (bools.length != columnCategories.size() - 1) {
             // the number of columns should match the number of booleans in the
             // parameter
             return 0;
         }
 
-        final List<String> measureCategories = _valueCombinationCrosstab
-                .getDimension(BooleanAnalyzer.DIMENSION_MEASURE).getCategories();
+        final List<String> measureCategories =
+                _valueCombinationCrosstab.getDimension(BooleanAnalyzer.DIMENSION_MEASURE).getCategories();
         for (final String category : measureCategories) {
-            final CrosstabNavigator<Number> nav = _valueCombinationCrosstab.where(BooleanAnalyzer.DIMENSION_MEASURE,
-                    category);
+            final CrosstabNavigator<Number> nav =
+                    _valueCombinationCrosstab.where(BooleanAnalyzer.DIMENSION_MEASURE, category);
             final boolean[] combination = new boolean[bools.length];
             int i = 0;
             for (final String column : columnCategories) {
@@ -96,9 +96,8 @@ final class BooleanAnalyzerCombinationMetric implements ParameterizableMetric {
             }
 
             if (Arrays.equals(combination, bools)) {
-                final Number number = nav.where(BooleanAnalyzer.DIMENSION_COLUMN,
-                        BooleanAnalyzer.VALUE_COMBINATION_COLUMN_FREQUENCY).get();
-                return number;
+                return nav.where(BooleanAnalyzer.DIMENSION_COLUMN, BooleanAnalyzer.VALUE_COMBINATION_COLUMN_FREQUENCY)
+                        .get();
             }
         }
 
@@ -116,14 +115,14 @@ final class BooleanAnalyzerCombinationMetric implements ParameterizableMetric {
         suggestions.add(BooleanAnalyzer.MEASURE_LEAST_FREQUENT);
 
         // create suggestions for each combination of true and false
-        final List<String> columnCategories = _valueCombinationCrosstab.getDimension(BooleanAnalyzer.DIMENSION_COLUMN)
-                .getCategories();
-        final List<String> measureCategories = _valueCombinationCrosstab
-                .getDimension(BooleanAnalyzer.DIMENSION_MEASURE).getCategories();
+        final List<String> columnCategories =
+                _valueCombinationCrosstab.getDimension(BooleanAnalyzer.DIMENSION_COLUMN).getCategories();
+        final List<String> measureCategories =
+                _valueCombinationCrosstab.getDimension(BooleanAnalyzer.DIMENSION_MEASURE).getCategories();
         for (final String category : measureCategories) {
             final StringBuilder sb = new StringBuilder();
-            final CrosstabNavigator<Number> nav = _valueCombinationCrosstab
-                    .where(BooleanAnalyzer.DIMENSION_MEASURE, category);
+            final CrosstabNavigator<Number> nav =
+                    _valueCombinationCrosstab.where(BooleanAnalyzer.DIMENSION_MEASURE, category);
             for (final String column : columnCategories) {
                 if (!BooleanAnalyzer.VALUE_COMBINATION_COLUMN_FREQUENCY.equals(column)) {
                     if (sb.length() != 0) {

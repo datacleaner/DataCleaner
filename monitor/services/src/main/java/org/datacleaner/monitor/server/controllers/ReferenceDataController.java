@@ -62,7 +62,8 @@ public class ReferenceDataController {
         return "redirect:/referencedata?upload_status=" + status;
     }
 
-    private void processUploadedFile(final String tenantId, final InputStream inStream) throws IOException, JAXBException {
+    private void processUploadedFile(final String tenantId, final InputStream inStream)
+            throws IOException, JAXBException {
         try {
             final TenantContext context = _contextFactory.getContext(tenantId);
             final RepositoryFile configurationFile = context.getConfigurationFile();

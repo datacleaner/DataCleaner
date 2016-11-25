@@ -24,8 +24,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -87,27 +85,19 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
 
         final String saveButtonText = originalDatastore == null ? "Register datastore" : "Save datastore";
         _saveButton = WidgetFactory.createPrimaryButton(saveButtonText, IconUtils.ACTION_SAVE_BRIGHT);
-        _saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final Datastore datastore = _savedDatastore = createDatastore();
+        _saveButton.addActionListener(e -> {
+            final Datastore datastore = _savedDatastore = createDatastore();
 
-                if (_originalDatastore != null) {
-                    _mutableDatastoreCatalog.removeDatastore(_originalDatastore);
-                }
-
-                _mutableDatastoreCatalog.addDatastore(datastore);
-                dispose();
+            if (_originalDatastore != null) {
+                _mutableDatastoreCatalog.removeDatastore(_originalDatastore);
             }
+
+            _mutableDatastoreCatalog.addDatastore(datastore);
+            dispose();
         });
 
         _cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
-        _cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                AbstractDatastoreDialog.this.close();
-            }
-        });
+        _cancelButton.addActionListener(e -> AbstractDatastoreDialog.this.close());
 
         if (!DEFAULT_BANNER_IMAGE.equals(getDatastoreIconPath())) {
             final Image image = imageManager.getImage(getDatastoreIconPath());

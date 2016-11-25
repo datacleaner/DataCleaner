@@ -110,8 +110,8 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
             _sslCheckBox.setSelected(originalDatastore.isSslEnabled());
             _usernameTextField.setText(originalDatastore.getUsername());
             _passwordField.setText(new String(originalDatastore.getPassword()));
-            _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this,
-                    originalDatastore.getTableDefs());
+            _tableDefinitionWidget =
+                    new TableDefinitionOptionSelectionPanel(windowContext, this, originalDatastore.getTableDefs());
         }
     }
 
@@ -183,8 +183,7 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
     public Schema createSchema() {
         final CouchDbDatastore datastore = createDatastore();
         try (UpdateableDatastoreConnection con = datastore.openConnection()) {
-            final Schema schema = con.getDataContext().getDefaultSchema();
-            return schema;
+            return con.getDataContext().getDefaultSchema();
         }
     }
 

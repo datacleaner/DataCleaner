@@ -24,8 +24,6 @@ import static org.datacleaner.descriptors.RemoteDescriptorProvider.DATACLOUD_URL
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -83,13 +81,9 @@ public class DataCloudOptionsPanel extends DCPanel {
 
         applyButton = WidgetFactory.createDefaultButton("Apply");
         applyButton.setEnabled(false);
-        applyButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final boolean isOk = updateDcConfiguration();
-                applyButton.setEnabled(!isOk);
-            }
+        applyButton.addActionListener(e -> {
+            final boolean isOk = updateDcConfiguration();
+            applyButton.setEnabled(!isOk);
         });
 
         emailAddressTextField = WidgetFactory.createTextField("Email address");
@@ -127,15 +121,15 @@ public class DataCloudOptionsPanel extends DCPanel {
         addField("Password", passwordTextField, applyButton);
 
         row++;
-        WidgetUtils.addToGridBag(invalidCredentialsLabel, this, 0, row, 3, 1, GridBagConstraints.LINE_START, padding,
-                0, weighty, GridBagConstraints.HORIZONTAL);
+        WidgetUtils.addToGridBag(invalidCredentialsLabel, this, 0, row, 3, 1, GridBagConstraints.LINE_START, padding, 0,
+                weighty, GridBagConstraints.HORIZONTAL);
     }
 
     private void addField(final String labelText, final JComponent... fields) {
         row++;
 
-        WidgetUtils.addToGridBag(new JLabel(labelText), this, 0, row, 1, 1, GridBagConstraints.LINE_START, padding,
-                0, weighty, GridBagConstraints.HORIZONTAL);
+        WidgetUtils.addToGridBag(new JLabel(labelText), this, 0, row, 1, 1, GridBagConstraints.LINE_START, padding, 0,
+                weighty, GridBagConstraints.HORIZONTAL);
         for (int i = 0; i < fields.length; i++) {
             WidgetUtils.addToGridBag(fields[i], this, 1 + i, row, 1, 1, GridBagConstraints.LINE_START, padding, weightx,
                     weighty, GridBagConstraints.HORIZONTAL);
@@ -143,11 +137,9 @@ public class DataCloudOptionsPanel extends DCPanel {
     }
 
     private Component getDescriptionComponent() {
-        final DCHtmlBox htmlBox = new DCHtmlBox("When registered at "
-                + "<a href=\"https://datacleaner.org\">datacleaner.org</a> you can get access to DataCloud. <br><br>"
-                + "DataCloud is an online service platform providing new functions to DataCleaner users and more. Sign in to the service using the form below.");
-
-        return htmlBox;
+        return new DCHtmlBox("When registered at <a href=\"https://datacleaner.org\">datacleaner.org</a> "
+                + "you can get access to DataCloud. <br><br>DataCloud is an online service platform providing new "
+                + "functions to DataCleaner users and more. Sign in to the service using the form below.");
     }
 
     /**

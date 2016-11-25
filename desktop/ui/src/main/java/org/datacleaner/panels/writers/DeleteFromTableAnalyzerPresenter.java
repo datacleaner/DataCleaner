@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.writers.DeleteFromTableAnalyzer;
 import org.datacleaner.beans.writers.UpdateTableAnalyzer;
@@ -41,7 +40,6 @@ import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
 import org.datacleaner.panels.ConfiguredPropertyTaskPane;
 import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.properties.MultipleMappedColumnsPropertyWidget;
 import org.datacleaner.widgets.properties.MultipleMappedPrefixedColumnsPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
@@ -93,19 +91,20 @@ class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
         // the Datastore property
         assert _datastoreProperty != null;
         assert _datastoreProperty.getType() == Datastore.class;
-        final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(
-                analyzerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog(), dcModule);
+        final SingleDatastorePropertyWidget datastorePropertyWidget =
+                new SingleDatastorePropertyWidget(analyzerJobBuilder, _datastoreProperty,
+                        configuration.getDatastoreCatalog(), dcModule);
         datastorePropertyWidget.setOnlyUpdatableDatastores(true);
         _overriddenPropertyWidgets.put(_datastoreProperty, datastorePropertyWidget);
 
         // The schema name (String) property
-        final SchemaNamePropertyWidget schemaNamePropertyWidget = new SchemaNamePropertyWidget(analyzerJobBuilder,
-                _schemaNameProperty);
+        final SchemaNamePropertyWidget schemaNamePropertyWidget =
+                new SchemaNamePropertyWidget(analyzerJobBuilder, _schemaNameProperty);
         _overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
 
         // The table name (String) property
-        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(
-                analyzerJobBuilder, _tableNameProperty, windowContext);
+        final SingleTableNamePropertyWidget tableNamePropertyWidget =
+                new SingleTableNamePropertyWidget(analyzerJobBuilder, _tableNameProperty, windowContext);
         _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
         _inputColumnPropertyWidgets = new MultipleMappedColumnsPropertyWidget[2];
@@ -116,8 +115,8 @@ class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
             assert _conditionInputColumnsProperty != null;
             assert _conditionInputColumnsProperty.getType() == InputColumn[].class;
             final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget =
-                    new MultipleMappedPrefixedColumnsPropertyWidget(
-                            analyzerJobBuilder, _conditionInputColumnsProperty, _conditionColumnNamesProperty, " = ");
+                    new MultipleMappedPrefixedColumnsPropertyWidget(analyzerJobBuilder, _conditionInputColumnsProperty,
+                            _conditionColumnNamesProperty, " = ");
 
             _overriddenPropertyWidgets.put(_conditionInputColumnsProperty, inputColumnsPropertyWidget);
 
@@ -134,14 +133,11 @@ class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
         datastorePropertyWidget.connectToSchemaNamePropertyWidget(schemaNamePropertyWidget);
         schemaNamePropertyWidget.connectToTableNamePropertyWidget(tableNamePropertyWidget);
 
-        tableNamePropertyWidget.addComboListener(new Listener<Table>() {
-            @Override
-            public void onItemSelected(final Table item) {
-                // update the column combo boxes when the table is selected
-                for (int i = 1; i < _inputColumnPropertyWidgets.length; i++) {
-                    final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = _inputColumnPropertyWidgets[i];
-                    inputColumnsPropertyWidget.setTable(item);
-                }
+        tableNamePropertyWidget.addComboListener(item -> {
+            // update the column combo boxes when the table is selected
+            for (int i = 1; i < _inputColumnPropertyWidgets.length; i++) {
+                final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = _inputColumnPropertyWidgets[i];
+                inputColumnsPropertyWidget.setTable(item);
             }
         });
 
@@ -158,15 +154,17 @@ class DeleteFromTableAnalyzerPresenter extends AnalyzerComponentBuilderPanel {
     @Override
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
         final ConfiguredPropertyTaskPane taskPane1 = new ConfiguredPropertyTaskPane("Table to delete from",
-                IconUtils.getImagePathForClass(UpdateTableAnalyzer.class), Arrays.asList(_datastoreProperty,
-                _schemaNameProperty, _tableNameProperty, _bufferSizeProperty));
+                IconUtils.getImagePathForClass(UpdateTableAnalyzer.class),
+                Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty, _bufferSizeProperty));
 
-        final ConfiguredPropertyTaskPane taskPane2 = new ConfiguredPropertyTaskPane("Delete condition",
-                "images/model/column.png", Arrays.asList(_conditionInputColumnsProperty));
+        final ConfiguredPropertyTaskPane taskPane2 =
+                new ConfiguredPropertyTaskPane("Delete condition", "images/model/column.png",
+                        Arrays.asList(_conditionInputColumnsProperty));
 
-        final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling",
-                IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,
-                _additionalErrorLogValuesProperty), false);
+        final ConfiguredPropertyTaskPane errorHandlingPane =
+                new ConfiguredPropertyTaskPane("Error handling", IconUtils.STATUS_WARNING,
+                        Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,
+                                _additionalErrorLogValuesProperty), false);
 
         final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<>();
         propertyTaskPanes.add(taskPane1);

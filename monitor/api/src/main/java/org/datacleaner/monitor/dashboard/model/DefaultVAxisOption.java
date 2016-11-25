@@ -28,7 +28,8 @@ public class DefaultVAxisOption implements ChartOptions.VerticalAxisOption {
     private Integer _maximumValue;
     private boolean _logarithmicScale;
 
-    public DefaultVAxisOption(final Integer height, final Integer minimumValue, final Integer maximumValue, final boolean logarithmicScale) {
+    public DefaultVAxisOption(final Integer height, final Integer minimumValue, final Integer maximumValue,
+            final boolean logarithmicScale) {
         _height = height;
         _minimumValue = minimumValue;
         _maximumValue = maximumValue;

@@ -20,7 +20,6 @@
 package org.datacleaner.widgets.result;
 
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import java.util.List;
@@ -59,8 +58,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> extends
-        AbstractRenderer<R, JComponent> {
+public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult>
+        extends AbstractRenderer<R, JComponent> {
 
     private final class RendererCallback implements CrosstabRendererCallback<TableModel> {
 
@@ -144,8 +143,9 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 
         @Override
         public void valueCell(final Object value, final ResultProducer drillToDetailResultProducer) {
-            AbstractCrosstabResultSwingRenderer.this.valueCell(value, drillToDetailResultProducer, _tableModel, _row,
-                    _col, headersIncluded, _alignment);
+            AbstractCrosstabResultSwingRenderer.this
+                    .valueCell(value, drillToDetailResultProducer, _tableModel, _row, _col, headersIncluded,
+                            _alignment);
             _col++;
         }
 
@@ -155,13 +155,15 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
         }
 
         @Override
-        public void emptyHeader(final CrosstabDimension verticalDimension, final CrosstabDimension horizontalDimension) {
+        public void emptyHeader(final CrosstabDimension verticalDimension,
+                final CrosstabDimension horizontalDimension) {
             if (_row >= 0) {
                 _tableModel.setValueAt("", _row, _col);
             }
             _col++;
         }
     }
+
     private static final String IMAGE_PATH_BAR_CHART = IconUtils.CHART_BAR;
     private static final String IMAGE_PATH_DRILL_TO_DETAIL = IconUtils.ACTION_DRILL_TO_DETAIL;
     @Inject
@@ -177,7 +179,8 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
      *
      * @param windowContext
      */
-    public AbstractCrosstabResultSwingRenderer(final WindowContext windowContext, final RendererFactory rendererFactory) {
+    public AbstractCrosstabResultSwingRenderer(final WindowContext windowContext,
+            final RendererFactory rendererFactory) {
         _windowContext = windowContext;
         _rendererFactory = rendererFactory;
     }
@@ -200,8 +203,8 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
         }
     }
 
-    public static DCPanel createActionableValuePanel(final Object value, final Alignment alignment, final ActionListener action,
-            final String iconImagePath) {
+    public static DCPanel createActionableValuePanel(final Object value, final Alignment alignment,
+            final ActionListener action, final String iconImagePath) {
         final JLabel label = new JLabel(getLabelText(value));
         final DCPanel panel = new DCPanel();
         panel.add(label);
@@ -289,24 +292,21 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 
     protected void addDefaultBarChart(final DCTable table, final DisplayChartCallback displayChartCallback,
             final int row, final String measureName) {
-        final ActionListener action = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        final ActionListener action = e -> {
+            final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-                final int columnCount = table.getColumnCount();
-                for (int j = 1; j < columnCount; j++) {
-                    final String textValue = table.getTextValueAt(row, j);
-                    final Number value = NumberUtils.createNumber(textValue);
-                    dataset.setValue(value, table.getColumnName(j), "");
-                }
-
-                final JFreeChart chart = ChartFactory.createBarChart("", "", measureName, dataset,
-                        PlotOrientation.VERTICAL, true, true, false);
-                ChartUtils.applyStyles(chart);
-                final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
-                displayChartCallback.displayChart(chartPanel);
+            final int columnCount = table.getColumnCount();
+            for (int j = 1; j < columnCount; j++) {
+                final String textValue = table.getTextValueAt(row, j);
+                final Number value = NumberUtils.createNumber(textValue);
+                dataset.setValue(value, table.getColumnName(j), "");
             }
+
+            final JFreeChart chart = ChartFactory
+                    .createBarChart("", "", measureName, dataset, PlotOrientation.VERTICAL, true, true, false);
+            ChartUtils.applyStyles(chart);
+            final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
+            displayChartCallback.displayChart(chartPanel);
         };
 
         final DCPanel panel = createActionableValuePanel(measureName, Alignment.LEFT, action, IMAGE_PATH_BAR_CHART);
@@ -334,20 +334,23 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
         return table;
     }
 
-    protected void horizontalHeaderCell(final String category, final TableModel tableModel, final int row, final int col) {
+    protected void horizontalHeaderCell(final String category, final TableModel tableModel, final int row,
+            final int col) {
         if (row >= 0) {
             tableModel.setValueAt(getLabelText(category), row, col);
         }
     }
 
-    protected void verticalHeaderCell(final String category, final TableModel tableModel, final int row, final int col) {
+    protected void verticalHeaderCell(final String category, final TableModel tableModel, final int row,
+            final int col) {
         if (row >= 0) {
             tableModel.setValueAt(getLabelText(category), row, col);
         }
     }
 
-    protected void valueCell(final Object value, final ResultProducer drillToDetailResultProducer, final TableModel tableModel,
-            final int row, final int col, final boolean headersIncluded, final Alignment alignment) {
+    protected void valueCell(final Object value, final ResultProducer drillToDetailResultProducer,
+            final TableModel tableModel, final int row, final int col, final boolean headersIncluded,
+            final Alignment alignment) {
         final Object resultValue;
 
         ActionListener action = null;
@@ -370,12 +373,7 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 
             sb.append(")]");
 
-            action = new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    _drillToDetailsCallback.drillToDetails(sb.toString(), drillToDetailResultProducer);
-                }
-            };
+            action = e -> _drillToDetailsCallback.drillToDetails(sb.toString(), drillToDetailResultProducer);
             resultValue = createActionableValuePanel(value, alignment, action, IMAGE_PATH_DRILL_TO_DETAIL);
         } else {
             resultValue = getLabelText(value);

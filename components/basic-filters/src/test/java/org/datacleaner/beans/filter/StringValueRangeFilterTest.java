@@ -22,16 +22,16 @@ package org.datacleaner.beans.filter;
 import java.util.Iterator;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.FilterDescriptor;
 
+import junit.framework.TestCase;
+
 public class StringValueRangeFilterTest extends TestCase {
 
     public void testCategorize() throws Exception {
-        StringValueRangeFilter f = new StringValueRangeFilter("AAA", "ccc");
+        final StringValueRangeFilter f = new StringValueRangeFilter("AAA", "ccc");
         f.validate();
 
         assertEquals(RangeFilterCategory.LOWER, f.categorize((String) null));
@@ -48,11 +48,11 @@ public class StringValueRangeFilterTest extends TestCase {
     }
 
     public void testOrderingOfProperties() throws Exception {
-        FilterDescriptor<StringValueRangeFilter, RangeFilterCategory> d = Descriptors
-                .ofFilter(StringValueRangeFilter.class);
-        Set<ConfiguredPropertyDescriptor> configuredProperties = d.getConfiguredProperties();
+        final FilterDescriptor<StringValueRangeFilter, RangeFilterCategory> d =
+                Descriptors.ofFilter(StringValueRangeFilter.class);
+        final Set<ConfiguredPropertyDescriptor> configuredProperties = d.getConfiguredProperties();
 
-        Iterator<ConfiguredPropertyDescriptor> it = configuredProperties.iterator();
+        final Iterator<ConfiguredPropertyDescriptor> it = configuredProperties.iterator();
         assertTrue(it.hasNext());
         assertEquals("Column", it.next().getName());
         assertTrue(it.hasNext());

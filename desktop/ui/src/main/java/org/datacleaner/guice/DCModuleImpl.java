@@ -19,14 +19,12 @@
  */
 package org.datacleaner.guice;
 
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.MutableRef;
@@ -142,8 +140,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
      */
     public DCModuleImpl(final FileObject dataCleanerHome, final FileObject configurationFile) {
         _userPreferencesRef = createUserPreferencesRef(dataCleanerHome);
-        _undecoratedConfigurationRef = new DataCleanerConfigurationReader(dataCleanerHome, configurationFile,
-                _userPreferencesRef);
+        _undecoratedConfigurationRef =
+                new DataCleanerConfigurationReader(dataCleanerHome, configurationFile, _userPreferencesRef);
         _analysisJobBuilderRef = new MutableRef<>();
         _configuration = null;
         _windowContext = null;
@@ -238,7 +236,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public final MutableReferenceDataCatalog getMutableReferenceDataCatalog(final ReferenceDataCatalog referenceDataCatalog) {
+    public final MutableReferenceDataCatalog getMutableReferenceDataCatalog(
+            final ReferenceDataCatalog referenceDataCatalog) {
         return (MutableReferenceDataCatalog) referenceDataCatalog;
     }
 
@@ -258,8 +257,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     public final org.datacleaner.configuration.AnalyzerBeansConfiguration getAnalyzerBeansConfiguration(
             @Undecorated final DataCleanerConfiguration undecoratedConfiguration, final UserPreferences userPreferences,
             final InjectionManagerFactory injectionManagerFactory) {
-        final DataCleanerConfiguration c = getDataCleanerConfiguration(undecoratedConfiguration, userPreferences,
-                injectionManagerFactory);
+        final DataCleanerConfiguration c =
+                getDataCleanerConfiguration(undecoratedConfiguration, userPreferences, injectionManagerFactory);
         final DatastoreCatalog datastoreCatalog = c.getDatastoreCatalog();
         final ReferenceDataCatalog referenceDataCatalog = c.getReferenceDataCatalog();
         final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
@@ -278,11 +277,12 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                 if (_configuration == null) {
                     // make the configuration mutable
                     final DomConfigurationWriter configurationWriter = createConfigurationWriter();
-                    final MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(
-                            c.getDatastoreCatalog(), configurationWriter, userPreferences);
-                    final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
-                            c.getReferenceDataCatalog(), configurationWriter, userPreferences, new LifeCycleHelper(
-                            injectionManagerFactory.getInjectionManager(c, null), true));
+                    final MutableDatastoreCatalog datastoreCatalog =
+                            new MutableDatastoreCatalog(c.getDatastoreCatalog(), configurationWriter, userPreferences);
+                    final MutableReferenceDataCatalog referenceDataCatalog =
+                            new MutableReferenceDataCatalog(c.getReferenceDataCatalog(), configurationWriter,
+                                    userPreferences,
+                                    new LifeCycleHelper(injectionManagerFactory.getInjectionManager(c, null), true));
                     final MutableServerInformationCatalog serverInformationCatalog =
                             new MutableServerInformationCatalog(c.getServerInformationCatalog(), configurationWriter);
                     final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
@@ -303,16 +303,17 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
                     RemoteServerConfiguration remoteServerConfiguration =
                             c.getEnvironment().getRemoteServerConfiguration();
-                    remoteServerConfiguration = new MutableRemoteServerConfigurationImpl(
-                            remoteServerConfiguration, taskRunner, configurationWriter);
+                    remoteServerConfiguration =
+                            new MutableRemoteServerConfigurationImpl(remoteServerConfiguration, taskRunner,
+                                    configurationWriter);
 
-                    final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl(taskRunner,
-                            descriptorProvider, storageProvider, injectionManagerFactory,
-                            remoteServerConfiguration);
+                    final DataCleanerEnvironment environment =
+                            new DataCleanerEnvironmentImpl(taskRunner, descriptorProvider, storageProvider,
+                                    injectionManagerFactory, remoteServerConfiguration);
 
-                    _configuration = new DataCleanerConfigurationImpl(environment,
-                            DataCleanerHome.getAsDataCleanerHomeFolder(), datastoreCatalog, referenceDataCatalog,
-                            serverInformationCatalog);
+                    _configuration =
+                            new DataCleanerConfigurationImpl(environment, DataCleanerHome.getAsDataCleanerHomeFolder(),
+                                    datastoreCatalog, referenceDataCatalog, serverInformationCatalog);
                 }
             }
         }
@@ -340,12 +341,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         return new DomConfigurationWriter(resource) {
             @Override
             protected void onDocumentChanged(final Document document) {
-                resource.write(new Action<OutputStream>() {
-                    @Override
-                    public void run(final OutputStream out) throws Exception {
-                        XmlUtils.writeDocument(document, out);
-                    }
-                });
+                resource.write(out -> XmlUtils.writeDocument(document, out));
 
             }
         };

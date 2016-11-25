@@ -56,10 +56,9 @@ public abstract class AbstractDatastoreWizardSession implements DatastoreWizardS
         final Element datastoreNode = createDatastoreElement(documentBuilder);
 
         final DatastoreDao datastoreDao = getDatastoreDao();
-        final String datastoreName = datastoreDao.addDatastore(tenantContext, datastoreNode);
 
 
-        return datastoreName;
+        return datastoreDao.addDatastore(tenantContext, datastoreNode);
     }
 
     protected DatastoreDao getDatastoreDao() {

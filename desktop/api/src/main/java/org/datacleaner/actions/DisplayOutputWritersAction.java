@@ -19,8 +19,6 @@
  */
 package org.datacleaner.actions;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -59,13 +57,10 @@ public class DisplayOutputWritersAction {
         final List<JMenuItem> result = new ArrayList<>();
         for (final ComponentDescriptor<?> descriptor : getDescriptors()) {
             final JMenuItem outputWriterMenuItem = new DescriptorMenuItem(_analysisJobBuilder, null, descriptor, false);
-            outputWriterMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final ComponentBuilder componentBuilder = _analysisJobBuilder.addComponent(descriptor);
+            outputWriterMenuItem.addActionListener(e -> {
+                final ComponentBuilder componentBuilder = _analysisJobBuilder.addComponent(descriptor);
 
-                    configure(_analysisJobBuilder, componentBuilder);
-                }
+                configure(_analysisJobBuilder, componentBuilder);
             });
             result.add(outputWriterMenuItem);
         }
@@ -78,8 +73,6 @@ public class DisplayOutputWritersAction {
     protected Collection<? extends ComponentDescriptor<?>> getDescriptors() {
         final DescriptorProvider descriptorProvider =
                 _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider();
-        final Collection<? extends ComponentDescriptor<?>> descriptors = descriptorProvider
-                .getComponentDescriptorsOfSuperCategory(new WriteSuperCategory());
-        return descriptors;
+        return descriptorProvider.getComponentDescriptorsOfSuperCategory(new WriteSuperCategory());
     }
 }

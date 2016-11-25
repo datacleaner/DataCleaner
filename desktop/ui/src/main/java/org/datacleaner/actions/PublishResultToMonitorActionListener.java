@@ -51,8 +51,9 @@ public class PublishResultToMonitorActionListener extends PublishFileToMonitorAc
     private byte[] _bytes;
     private String _resultFilename;
 
-    public PublishResultToMonitorActionListener(final WindowContext windowContext, final UserPreferences userPreferences,
-            final Ref<AnalysisResult> resultRef, @Nullable @JobFile final FileObject jobFilename) {
+    public PublishResultToMonitorActionListener(final WindowContext windowContext,
+            final UserPreferences userPreferences, final Ref<AnalysisResult> resultRef,
+            @Nullable @JobFile final FileObject jobFilename) {
         super(windowContext, userPreferences);
         _resultRef = resultRef;
         _jobFilename = jobFilename;

@@ -32,8 +32,8 @@ import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class CreateCsvFileAnalyzerSwingRenderer implements
-        Renderer<AnalyzerComponentBuilder<CreateCsvFileAnalyzer>, AnalyzerComponentBuilderPresenter> {
+public class CreateCsvFileAnalyzerSwingRenderer
+        implements Renderer<AnalyzerComponentBuilder<CreateCsvFileAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     DCModule dcModule;
@@ -49,8 +49,8 @@ public class CreateCsvFileAnalyzerSwingRenderer implements
 
     @Override
     public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<CreateCsvFileAnalyzer> ajb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
-                PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
         return new CustomHeaderColumnNamesAnalyzerJobPanel(ajb, propertyWidgetFactory);
     }
 

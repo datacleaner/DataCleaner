@@ -43,8 +43,9 @@ public class ReferenceDataWizardController extends AbstractWizardController<Wiza
     private final String _referenceDataType;
     private int _stepsBeforeWizardPages;
 
-    public ReferenceDataWizardController(final String referenceDataType, final WizardPanel wizardPanel, final TenantIdentifier tenant,
-            final WizardIdentifier wizardIdentifier, final WizardServiceAsync wizardService) {
+    public ReferenceDataWizardController(final String referenceDataType, final WizardPanel wizardPanel,
+            final TenantIdentifier tenant, final WizardIdentifier wizardIdentifier,
+            final WizardServiceAsync wizardService) {
         super(wizardPanel, tenant, wizardIdentifier, wizardService);
         _referenceDataType = referenceDataType;
         _stepsBeforeWizardPages = 0;

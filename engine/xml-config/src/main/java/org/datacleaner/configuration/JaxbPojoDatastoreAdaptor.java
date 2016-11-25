@@ -117,9 +117,10 @@ public class JaxbPojoDatastoreAdaptor {
                 for (final Rows.Row row : rows) {
                     final List<Object> values = row.getV();
                     if (values.size() != columnCount) {
-                        throw new IllegalStateException("Row value count is not equal to column count in datastore '"
-                                + name + "'. Expected " + columnCount + " values, found " + values.size() + " (table "
-                                + tableName + ", row no. " + arrays.size() + ")");
+                        throw new IllegalStateException(
+                                "Row value count is not equal to column count in datastore '" + name + "'. Expected "
+                                        + columnCount + " values, found " + values.size() + " (table " + tableName
+                                        + ", row no. " + arrays.size() + ")");
                     }
                     final Object[] array = new Object[columnCount];
                     for (int i = 0; i < array.length; i++) {
@@ -138,8 +139,7 @@ public class JaxbPojoDatastoreAdaptor {
             tableDataProviders.add(tableDataProvider);
         }
 
-        final PojoDatastore ds = new PojoDatastore(name, schemaName, tableDataProviders);
-        return ds;
+        return new PojoDatastore(name, schemaName, tableDataProviders);
     }
 
     private Object deserializeValue(final Object value, final Class<?> expectedClass) {
@@ -225,8 +225,7 @@ public class JaxbPojoDatastoreAdaptor {
                 final String className = attribute.getTextContent();
                 if (!StringUtils.isNullOrEmpty(className)) {
                     try {
-                        final Class<?> cls = Class.forName(className);
-                        return cls;
+                        return Class.forName(className);
                     } catch (final ClassNotFoundException e) {
                         logger.error("Could not load class: " + className + ". Falling back to String type.", e);
                     }
@@ -254,11 +253,13 @@ public class JaxbPojoDatastoreAdaptor {
             switch (child.getNodeType()) {
             case Node.ELEMENT_NODE:
                 list.add(child);
+                // fallthru
             case Node.TEXT_NODE:
                 final String text = child.getNodeValue();
                 if (!StringUtils.isNullOrEmpty(text)) {
                     list.add(child);
                 }
+                break;
             default: // ignore
             }
         }

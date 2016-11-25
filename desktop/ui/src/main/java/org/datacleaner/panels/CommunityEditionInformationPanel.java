@@ -52,22 +52,23 @@ public class CommunityEditionInformationPanel extends JPanel {
         header.setIcon(ImageManager.get().getImageIcon("images/editions/community.png"));
         add(header);
 
-        final DCLabel text1 = DCLabel
-                .darkMultiLine(
-                        "We are happy that you are trying out the community edition of DataCleaner. Please be aware that this product is not commercially supported and although there is an open source community to help you, we recommend getting the professional edition if you are employing DataCleaner in a commercial setting.");
+        final DCLabel text1 = DCLabel.darkMultiLine("We are happy that you are trying out the community edition of "
+                + "DataCleaner. Please be aware that this product is not commercially supported and although there is "
+                + "an open source community to help you, we recommend getting the professional edition "
+                + "if you are employing DataCleaner in a commercial setting.");
         add(text1);
 
-        final DCLabel text2 = DCLabel
-                .darkMultiLine(
-                        "With DataCleaner professional edition you also get additional goodies; such as national identifier checks, duplicate detection, DQ metric exports and more.");
+        final DCLabel text2 = DCLabel.darkMultiLine("With DataCleaner professional edition you also get additional "
+                + "goodies; such as national identifier checks, duplicate detection, DQ metric exports and more.");
         add(text2);
 
-        final JButton tryProfessionalButton = WidgetFactory.createDefaultButton("Try professional edition",
-                IconUtils.APPLICATION_ICON);
+        final JButton tryProfessionalButton =
+                WidgetFactory.createDefaultButton("Try professional edition", IconUtils.APPLICATION_ICON);
         tryProfessionalButton.addActionListener(new OpenBrowserAction("https://datacleaner.org/get_datacleaner"));
         add(DCPanel.around(tryProfessionalButton));
 
-        final JButton compareEditionsButton = WidgetFactory.createDefaultButton("Compare the editions", IconUtils.WEBSITE);
+        final JButton compareEditionsButton =
+                WidgetFactory.createDefaultButton("Compare the editions", IconUtils.WEBSITE);
         compareEditionsButton.addActionListener(new OpenBrowserAction("https://datacleaner.org/editions"));
         add(DCPanel.around(compareEditionsButton));
     }

@@ -23,10 +23,10 @@ import java.sql.SQLException;
 
 import javax.swing.SwingUtilities;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.MetaModelException;
 import org.datacleaner.panels.result.ProgressInformationPanel;
+
+import junit.framework.TestCase;
 
 public class ProgressInformationPanelTest extends TestCase {
 
@@ -44,12 +44,12 @@ public class ProgressInformationPanelTest extends TestCase {
     }
 
     public void testPrintNextSQLExceptions() throws Exception {
-        ProgressInformationPanel panel = new ProgressInformationPanel(true);
+        final ProgressInformationPanel panel = new ProgressInformationPanel(true);
         panel.addUserLog("damn, something rotten happened!", outerException, true);
 
         // wait for swing dispatch
         SwingUtilities.invokeAndWait(new Thread());
-        String text = panel.getTextAreaText();
+        final String text = panel.getTextAreaText();
 
         assertTrue(text.indexOf("ERROR: damn, something rotten happened!") != -1);
         assertTrue(text.indexOf("org.apache.metamodel.MetaModelException: mm") != -1);
@@ -58,12 +58,12 @@ public class ProgressInformationPanelTest extends TestCase {
     }
 
     public void testPrintSingleException() throws Exception {
-        ProgressInformationPanel panel = new ProgressInformationPanel(true);
+        final ProgressInformationPanel panel = new ProgressInformationPanel(true);
         panel.addUserLog("damn, something rotten happened!", sql2, true);
 
         // wait for swing dispatch
         SwingUtilities.invokeAndWait(new Thread());
-        String text = panel.getTextAreaText();
+        final String text = panel.getTextAreaText();
 
         System.out.println(text);
 

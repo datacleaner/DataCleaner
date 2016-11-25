@@ -55,11 +55,9 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  *            the type of {@link Transformer} being built
  */
-public final class TransformerComponentBuilder<T extends Transformer> extends
-        AbstractComponentBuilder<TransformerDescriptor<T>, T, TransformerComponentBuilder<T>> implements
-        InputColumnSourceJob,
-        InputColumnSinkJob,
-        HasComponentRequirement {
+public final class TransformerComponentBuilder<T extends Transformer>
+        extends AbstractComponentBuilder<TransformerDescriptor<T>, T, TransformerComponentBuilder<T>>
+        implements InputColumnSourceJob, InputColumnSinkJob, HasComponentRequirement {
 
     private static final Logger logger = LoggerFactory.getLogger(TransformerComponentBuilder.class);
     private final String _id;
@@ -69,8 +67,7 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
     private final List<TransformerChangeListener> _localChangeListeners;
 
     public TransformerComponentBuilder(final AnalysisJobBuilder analysisJobBuilder,
-            final TransformerDescriptor<T> descriptor,
-            final IdGenerator idGenerator) {
+            final TransformerDescriptor<T> descriptor, final IdGenerator idGenerator) {
         super(analysisJobBuilder, descriptor, TransformerComponentBuilder.class);
         _id = "trans-" + idGenerator.nextId();
         _idGenerator = idGenerator;
@@ -233,9 +230,9 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
         final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
 
-        return new ImmutableTransformerJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(
-                getConfiguredProperties()), getOutputColumns(), componentRequirement, getMetadataProperties(),
-                outputDataStreamJobs);
+        return new ImmutableTransformerJob(getName(), getDescriptor(),
+                new ImmutableComponentConfiguration(getConfiguredProperties()), getOutputColumns(),
+                componentRequirement, getMetadataProperties(), outputDataStreamJobs);
     }
 
     @Override
@@ -250,12 +247,11 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
      * @return a list of global and local listeners
      */
     private List<TransformerChangeListener> getAllListeners() {
-        @SuppressWarnings("deprecation") final
-        List<TransformerChangeListener> globalChangeListeners = getAnalysisJobBuilder().getTransformerChangeListeners();
+        @SuppressWarnings("deprecation") final List<TransformerChangeListener> globalChangeListeners =
+                getAnalysisJobBuilder().getTransformerChangeListeners();
 
         final List<TransformerChangeListener> list =
-                new ArrayList<>(globalChangeListeners.size() + _localChangeListeners
-                        .size());
+                new ArrayList<>(globalChangeListeners.size() + _localChangeListeners.size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);
         return list;

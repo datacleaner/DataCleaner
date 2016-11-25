@@ -86,8 +86,7 @@ public class PropertyWidgetCollection {
             _widgets.remove(propertyDescriptor);
         } else {
             _widgets.put(propertyDescriptor, widget);
-            @SuppressWarnings("unchecked") final
-            PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
+            @SuppressWarnings("unchecked") final PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
             final Object value = _componentBuilder.getConfiguredProperty(objectWidget.getPropertyDescriptor());
             objectWidget.initialize(value);
         }
@@ -119,8 +118,7 @@ public class PropertyWidgetCollection {
         }
 
         for (final PropertyWidget<?> widget : widgets) {
-            @SuppressWarnings("unchecked")
-            final PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
+            @SuppressWarnings("unchecked") final PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
             final ConfiguredPropertyDescriptor propertyDescriptor = objectWidget.getPropertyDescriptor();
             final Object value = _componentBuilder.getConfiguredProperty(propertyDescriptor);
             objectWidget.onValueTouched(value);

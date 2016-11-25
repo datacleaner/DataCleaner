@@ -110,8 +110,8 @@ public class JobsFolderController {
                 final Map<String, String> jobMetadataProperties = jobContext.getMetadataProperties();
                 if (jobMetadataProperties.containsKey(metadataProperty)) {
                     final String metadataPropertyResult = jobMetadataProperties.get(metadataProperty);
-                    if (metadataPropertyResult.toLowerCase().trim().equals(metadataPropertyValue.toLowerCase()
-                            .trim())) {
+                    if (metadataPropertyResult.toLowerCase().trim()
+                            .equals(metadataPropertyValue.toLowerCase().trim())) {
                         final Map<String, Object> jobDetails = new HashMap<>();
                         final RepositoryFile file = jobContext.getJobFile();
                         jobDetails.put("name", job.getName());
@@ -214,7 +214,8 @@ public class JobsFolderController {
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadAnalysisJobToFolderHtml(@PathVariable("tenant") final String tenant,
             @RequestParam("file") final MultipartFile file) {
         final Map<String, String> outcome = uploadAnalysisJobToFolderJson(tenant, file);
@@ -224,7 +225,8 @@ public class JobsFolderController {
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public Map<String, String> uploadAnalysisJobToFolderJson(@PathVariable("tenant") final String tenant,
             @RequestParam("file") final MultipartFile file) {

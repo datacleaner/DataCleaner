@@ -79,8 +79,8 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 
     @Inject
     public OpenAnalysisJobActionListener(final AnalysisJobBuilderWindow parentWindow,
-            final DataCleanerConfiguration configuration, final WindowContext windowContext, final DCModule parentModule,
-            final UserPreferences userPreferences) {
+            final DataCleanerConfiguration configuration, final WindowContext windowContext,
+            final DCModule parentModule, final UserPreferences userPreferences) {
         _parentWindow = parentWindow;
         _configuration = configuration;
         _windowContext = windowContext;
@@ -88,10 +88,12 @@ public class OpenAnalysisJobActionListener implements ActionListener {
         _userPreferences = userPreferences;
     }
 
-    public static Injector open(final FileObject file, final DataCleanerConfiguration configuration, final Injector injector) {
+    public static Injector open(final FileObject file, final DataCleanerConfiguration configuration,
+            final Injector injector) {
         final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
-        final OpenAnalysisJobActionListener openAnalysisJobActionListener = new OpenAnalysisJobActionListener(null,
-                configuration, null, injector.getInstance(DCModule.class), userPreferences);
+        final OpenAnalysisJobActionListener openAnalysisJobActionListener =
+                new OpenAnalysisJobActionListener(null, configuration, null, injector.getInstance(DCModule.class),
+                        userPreferences);
         return openAnalysisJobActionListener.openAnalysisJob(file);
     }
 
@@ -99,14 +101,15 @@ public class OpenAnalysisJobActionListener implements ActionListener {
     public void actionPerformed(final ActionEvent event) {
         final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
 
-        final OpenAnalysisJobFileChooserAccessory accessory = new OpenAnalysisJobFileChooserAccessory(_windowContext,
-                _configuration, fileChooser, Providers.of(this));
+        final OpenAnalysisJobFileChooserAccessory accessory =
+                new OpenAnalysisJobFileChooserAccessory(_windowContext, _configuration, fileChooser,
+                        Providers.of(this));
         fileChooser.setAccessory(accessory);
 
         fileChooser.addChoosableFileFilter(FileFilters.ANALYSIS_XML);
         fileChooser.addChoosableFileFilter(FileFilters.ANALYSIS_RESULT_SER);
-        fileChooser.setFileFilter(FileFilters.combined("DataCleaner analysis files", FileFilters.ANALYSIS_XML,
-                FileFilters.ANALYSIS_RESULT_SER));
+        fileChooser.setFileFilter(FileFilters
+                .combined("DataCleaner analysis files", FileFilters.ANALYSIS_XML, FileFilters.ANALYSIS_RESULT_SER));
         final int openFileResult = fileChooser.showOpenDialog(_parentWindow.toComponent());
 
         if (openFileResult == JFileChooser.APPROVE_OPTION) {
@@ -192,8 +195,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
         } catch (final NoSuchComponentException e) {
             final String message;
             if (Version.EDITION_COMMUNITY.equals(Version.getEdition())) {
-                message = "<html><p>Failed to open job because of a missing component:</p><pre>"
-                        + e.getMessage()
+                message = "<html><p>Failed to open job because of a missing component:</p><pre>" + e.getMessage()
                         + "</pre>"
                         + "<p>This may happen if the job requires a <a href=\"https://datacleaner.org/editions\">Commercial Edition of DataCleaner</a>, or an extension that you do not have installed.</p></html>";
             } else {
@@ -211,12 +213,13 @@ public class OpenAnalysisJobActionListener implements ActionListener {
             }
 
             final AnalysisJobMetadata metadata = reader.readMetadata(file);
-            final int result = JOptionPane.showConfirmDialog(null, e.getMessage()
-                            + "\n\nDo you wish to open this job as a template?", "Error: " + e.getMessage(),
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+            final int result = JOptionPane
+                    .showConfirmDialog(null, e.getMessage() + "\n\nDo you wish to open this job as a template?",
+                            "Error: " + e.getMessage(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
-                final OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_windowContext,
-                        _configuration, file, metadata, Providers.of(this));
+                final OpenAnalysisJobAsTemplateDialog dialog =
+                        new OpenAnalysisJobAsTemplateDialog(_windowContext, _configuration, file, metadata,
+                                Providers.of(this));
                 dialog.setVisible(true);
             }
             return null;
@@ -259,13 +262,11 @@ public class OpenAnalysisJobActionListener implements ActionListener {
             _userPreferences.addRecentJobFile(fileObject);
         }
 
-        final Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, ajb) {
+        return Guice.createInjector(new DCModuleImpl(_parentModule, ajb) {
             public FileObject getJobFilename() {
                 return fileObject;
             }
 
         });
-
-        return injector;
     }
 }

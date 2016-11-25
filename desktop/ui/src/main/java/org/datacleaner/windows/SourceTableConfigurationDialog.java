@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -52,8 +50,8 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final ColumnListTable _columnListTable;
 
-    public SourceTableConfigurationDialog(final WindowContext windowContext, final AnalysisJobBuilder analysisJobBuilder,
-            final Table table) {
+    public SourceTableConfigurationDialog(final WindowContext windowContext,
+            final AnalysisJobBuilder analysisJobBuilder, final Table table) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
 
         _table = table;
@@ -97,12 +95,7 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
         }
 
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                SourceTableConfigurationDialog.this.dispose();
-            }
-        });
+        closeButton.addActionListener(e -> SourceTableConfigurationDialog.this.dispose());
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());

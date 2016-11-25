@@ -21,8 +21,6 @@ package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,24 +58,18 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
         updateComponents(currentValue);
 
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addCharField();
-                fireValueChanged();
-            }
+        addButton.addActionListener(e -> {
+            addCharField();
+            fireValueChanged();
         });
 
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final int componentCount = _textFieldPanel.getComponentCount();
-                if (componentCount > 0) {
-                    _textFieldPanel.remove(componentCount - 1);
-                    _textFieldPanel.updateUI();
-                    fireValueChanged();
-                }
+        removeButton.addActionListener(e -> {
+            final int componentCount = _textFieldPanel.getComponentCount();
+            if (componentCount > 0) {
+                _textFieldPanel.remove(componentCount - 1);
+                _textFieldPanel.updateUI();
+                fireValueChanged();
             }
         });
 

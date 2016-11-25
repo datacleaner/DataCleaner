@@ -46,8 +46,7 @@ public class ELInputColumn extends AbstractExpressionBasedInputColumn<String> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(ELInputColumn.class);
+    private static final Logger logger = LoggerFactory.getLogger(ELInputColumn.class);
 
     private final ExpressionFactory _factory;
     private final String _expression;
@@ -65,18 +64,15 @@ public class ELInputColumn extends AbstractExpressionBasedInputColumn<String> {
             if (!(inputColumn instanceof ExpressionBasedInputColumn)) {
                 final Object value = row.getValue(inputColumn);
                 final Class<?> javaType = inputColumn.getDataType();
-                final ValueExpression valueExpression = _factory
-                        .createValueExpression(value, javaType);
+                final ValueExpression valueExpression = _factory.createValueExpression(value, javaType);
                 String variableName = inputColumn.getName();
-                variableName = StringUtils
-                        .replaceWhitespaces(variableName, "_");
+                variableName = StringUtils.replaceWhitespaces(variableName, "_");
                 context.setVariable(variableName, valueExpression);
             }
         }
 
         try {
-            final ValueExpression valueExpression = _factory.createValueExpression(
-                    context, _expression, String.class);
+            final ValueExpression valueExpression = _factory.createValueExpression(context, _expression, String.class);
             return (String) valueExpression.getValue(context);
         } catch (final ELException e) {
             logger.error("Could not evaluate EL expression", e);

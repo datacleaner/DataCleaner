@@ -52,8 +52,7 @@ final class BerkeleyDbList<E> extends AbstractList<E> implements List<E> {
         if (!_wrappedMap.containsKey(index)) {
             throw new IndexOutOfBoundsException();
         }
-        final E element = _wrappedMap.get(index);
-        return element;
+        return _wrappedMap.get(index);
     }
 
     @Override

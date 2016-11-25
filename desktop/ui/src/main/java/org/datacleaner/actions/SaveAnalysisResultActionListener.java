@@ -57,8 +57,8 @@ public class SaveAnalysisResultActionListener implements ActionListener {
     @Override
     public void actionPerformed(final ActionEvent event) {
         if (_result.get() == null) {
-            WidgetUtils.showErrorMessage("Result not ready",
-                    "Please wait for the job to finish before saving the result");
+            WidgetUtils
+                    .showErrorMessage("Result not ready", "Please wait for the job to finish before saving the result");
             return;
         }
 
@@ -91,16 +91,16 @@ public class SaveAnalysisResultActionListener implements ActionListener {
 
             _userPreferences.setAnalysisJobDirectory(file.getParentFile());
 
-            final AnalysisResultSaveHandler saveHandler = new AnalysisResultSaveHandler(_result.get(),
-                    new FileResource(file));
+            final AnalysisResultSaveHandler saveHandler =
+                    new AnalysisResultSaveHandler(_result.get(), new FileResource(file));
             final boolean success = saveHandler.saveAttempt();
             if (!success) {
                 final AnalysisResult safeAnalysisResult = saveHandler.createSafeAnalysisResult();
                 if (safeAnalysisResult == null) {
                     WidgetUtils.showErrorMessage("Error writing result to file!", "See the log for error details.");
                 } else {
-                    final Map<ComponentJob, AnalyzerResult> unsafeResultElements = saveHandler
-                            .getUnsafeResultElements();
+                    final Map<ComponentJob, AnalyzerResult> unsafeResultElements =
+                            saveHandler.getUnsafeResultElements();
 
                     final StringBuilder details = new StringBuilder();
                     details.append(unsafeResultElements.size()
@@ -115,8 +115,9 @@ public class SaveAnalysisResultActionListener implements ActionListener {
                     details.append("\n\nSee the log for error details.");
                     details.append("\n\nDo you want to save the result without these elements?");
 
-                    final int confirmation = JOptionPane.showConfirmDialog(null, details.toString(),
-                            "Error writing result to file!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+                    final int confirmation = JOptionPane
+                            .showConfirmDialog(null, details.toString(), "Error writing result to file!",
+                                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
                     if (confirmation == JOptionPane.OK_OPTION) {
 
                         saveHandler.saveWithoutUnsafeResultElements();

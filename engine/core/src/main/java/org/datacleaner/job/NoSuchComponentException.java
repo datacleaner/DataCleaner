@@ -43,8 +43,8 @@ public class NoSuchComponentException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "No such " + (_componentType == null ? "component" : _componentType.getSimpleName())
-                + " descriptor: " + _componentName;
+        return "No such " + (_componentType == null ? "component" : _componentType.getSimpleName()) + " descriptor: "
+                + _componentName;
     }
 
     public String getComponentName() {

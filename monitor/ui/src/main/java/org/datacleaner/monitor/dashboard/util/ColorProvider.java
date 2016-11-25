@@ -23,9 +23,10 @@ import org.datacleaner.monitor.shared.widgets.Color;
 
 public class ColorProvider {
 
-    private static final Color[] SLICE_COLORS = new Color[] { Color.ADDITIONAL_COLOR_GREEN_BRIGHT,
-            Color.ADDITIONAL_COLOR_RED_BRIGHT, Color.BG_COLOR_BLUE_BRIGHT, Color.BG_COLOR_ORANGE_BRIGHT,
-            Color.ADDITIONAL_COLOR_PURPLE_BRIGHT, Color.ADDITIONAL_COLOR_CYAN_BRIGHT };
+    private static final Color[] SLICE_COLORS =
+            new Color[] { Color.ADDITIONAL_COLOR_GREEN_BRIGHT, Color.ADDITIONAL_COLOR_RED_BRIGHT,
+                    Color.BG_COLOR_BLUE_BRIGHT, Color.BG_COLOR_ORANGE_BRIGHT, Color.ADDITIONAL_COLOR_PURPLE_BRIGHT,
+                    Color.ADDITIONAL_COLOR_CYAN_BRIGHT };
 
     private int colorIndex = 0;
 

@@ -27,19 +27,19 @@ public class DatastoreSynonymCatalogReferenceDataWizardTest {
 
     @Test
     public void testIsApplicableTo() throws Exception {
-        DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
+        final DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
         assertTrue(wizard.isApplicableTo(null));
     }
 
     @Test
     public void testGetDisplayName() throws Exception {
-        DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
+        final DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
         assertNotEquals("", wizard.getDisplayName());
     }
 
     @Test
     public void testGetExpectedPageCount() throws Exception {
-        DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
+        final DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
         assertEquals(5, wizard.getExpectedPageCount());
     }
 }

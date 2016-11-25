@@ -76,6 +76,7 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
             setMappedStrings(value);
         }
     }
+
     private final WeakHashMap<InputColumn<?>, JXTextField> _mappedTextFields;
     private final ConfiguredPropertyDescriptor _mappedStringsProperty;
     private final MappedStringsPropertyWidget _mappedStringsPropertyWidget;
@@ -93,7 +94,8 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
      *            the property representing the mapped strings (String[])
      */
     public MultipleMappedStringsPropertyWidget(final ComponentBuilder componentBuilder,
-            final ConfiguredPropertyDescriptor inputColumnsProperty, final ConfiguredPropertyDescriptor mappedStringsProperty) {
+            final ConfiguredPropertyDescriptor inputColumnsProperty,
+            final ConfiguredPropertyDescriptor mappedStringsProperty) {
         super(componentBuilder, inputColumnsProperty);
         _mappedTextFields = new WeakHashMap<>();
         _mappedStringsProperty = mappedStringsProperty;
@@ -101,8 +103,8 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
         _mappedStringsPropertyWidget = new MappedStringsPropertyWidget(componentBuilder, mappedStringsProperty);
 
         final InputColumn<?>[] currentValue = getCurrentValue();
-        final String[] currentMappedStringsValue = (String[]) componentBuilder
-                .getConfiguredProperty(mappedStringsProperty);
+        final String[] currentMappedStringsValue =
+                (String[]) componentBuilder.getConfiguredProperty(mappedStringsProperty);
         if (currentValue != null && currentMappedStringsValue != null) {
             // first create combo's, then set value (so combo is ready before it
             // is requested)
@@ -162,12 +164,9 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
         } else {
             textField = createTextField(checkBox.getValue(), null);
         }
-        checkBox.addListenerToHead(new DCCheckBox.Listener<InputColumn<?>>() {
-            @Override
-            public void onItemSelected(final InputColumn<?> item, final boolean selected) {
-                textField.setVisible(selected);
-                updateUI();
-            }
+        checkBox.addListenerToHead((item, selected) -> {
+            textField.setVisible(selected);
+            updateUI();
         });
         checkBox.addListener((item, selected) -> updateMappedStrings());
         textField.setVisible(checkBox.isSelected());

@@ -19,12 +19,12 @@
  */
 package org.datacleaner.beans.dategap;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+
+import junit.framework.TestCase;
 
 public class AnalyzerComponentBuilderTest extends TestCase {
 
@@ -37,11 +37,11 @@ public class AnalyzerComponentBuilderTest extends TestCase {
     }
 
     public void testAddUnnamedColumnToMultiColumnAnalyzer() throws Exception {
-        AnalyzerComponentBuilder<DateGapAnalyzer> analyzer = ajb.addAnalyzer(DateGapAnalyzer.class);
+        final AnalyzerComponentBuilder<DateGapAnalyzer> analyzer = ajb.addAnalyzer(DateGapAnalyzer.class);
         try {
             analyzer.addInputColumn(new MockInputColumn<>("foo", String.class));
             fail("Exception expected");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertEquals(
                     "There are 2 named input columns in \"Date gap analyzer\", please specify which one to configure",
                     e.getMessage());

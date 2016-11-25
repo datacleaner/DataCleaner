@@ -38,8 +38,7 @@ public class AnalysisResultReductionException extends IllegalStateException {
     private final Collection<AnalyzerResult> _slaveResults;
 
     public AnalysisResultReductionException(final AnalyzerJob analyzerJob,
-            final Collection<AnalyzerResult> slaveResults,
-            final Exception cause) {
+            final Collection<AnalyzerResult> slaveResults, final Exception cause) {
         super(cause);
         _analyzerJob = analyzerJob;
         _slaveResults = slaveResults;

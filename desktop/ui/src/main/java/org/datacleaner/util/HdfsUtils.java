@@ -60,8 +60,8 @@ public class HdfsUtils {
             configuration = clusterInformation.getConfiguration();
         }
 
-        configuration.set(CommonConfigurationKeysPublic.IPC_CLIENT_CONNECT_MAX_RETRIES_ON_SOCKET_TIMEOUTS_KEY, String
-                .valueOf(1));
+        configuration.set(CommonConfigurationKeysPublic.IPC_CLIENT_CONNECT_MAX_RETRIES_ON_SOCKET_TIMEOUTS_KEY,
+                String.valueOf(1));
         return configuration;
     }
 }

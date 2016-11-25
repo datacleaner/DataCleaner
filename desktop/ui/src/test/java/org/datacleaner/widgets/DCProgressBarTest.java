@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 public class DCProgressBarTest extends TestCase {
 
     public void testGetBarWidth() throws Exception {
-        DCProgressBar bar = new DCProgressBar(50, 150);
+        final DCProgressBar bar = new DCProgressBar(50, 150);
         bar.setSize(100, 10);
 
         assertEquals(0, bar.getBarWidth(50));
@@ -35,7 +35,7 @@ public class DCProgressBarTest extends TestCase {
     }
 
     public void testSetValueIfGreater() throws Exception {
-        DCProgressBar bar = new DCProgressBar(0, 150);
+        final DCProgressBar bar = new DCProgressBar(0, 150);
 
         assertTrue(bar.setValueIfGreater(2));
         assertFalse(bar.setValueIfGreater(1));

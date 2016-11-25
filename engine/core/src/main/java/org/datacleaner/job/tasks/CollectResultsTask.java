@@ -45,8 +45,8 @@ public final class CollectResultsTask implements Task {
     private final ComponentJob _componentJob;
 
     public CollectResultsTask(final HasAnalyzerResult<?> hasResult, final AnalysisJob job,
-            final ComponentJob componentJob,
-            final Collection<JobAndResult> results, final AnalysisListener analysisListener) {
+            final ComponentJob componentJob, final Collection<JobAndResult> results,
+            final AnalysisListener analysisListener) {
         _hasResult = hasResult;
         _job = job;
         _componentJob = componentJob;

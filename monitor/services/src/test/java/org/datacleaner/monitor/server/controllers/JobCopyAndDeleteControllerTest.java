@@ -22,8 +22,6 @@ package org.datacleaner.monitor.server.controllers;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.events.JobCopyEvent;
@@ -32,9 +30,9 @@ import org.datacleaner.monitor.server.job.DefaultJobEngineManager;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import junit.framework.TestCase;
 
 public class JobCopyAndDeleteControllerTest extends TestCase {
 
@@ -42,8 +40,8 @@ public class JobCopyAndDeleteControllerTest extends TestCase {
     private TenantContextFactoryImpl tenantContextFactory;
 
     protected void setUp() throws Exception {
-        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                "context/application-context.xml");
+        final ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("context/application-context.xml");
         repository = applicationContext.getBean(FileRepository.class);
 
         tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
@@ -57,17 +55,14 @@ public class JobCopyAndDeleteControllerTest extends TestCase {
 
         final JobCopyController jobCopyController = new JobCopyController();
         jobCopyController._contextFactory = tenantContextFactory;
-        jobCopyController._eventPublisher = new ApplicationEventPublisher() {
-            @Override
-            public void publishEvent(ApplicationEvent event) {
-                copyEventReceived.set(true);
+        jobCopyController._eventPublisher = event -> {
+            copyEventReceived.set(true);
 
-                assertTrue(event instanceof JobCopyEvent);
-                JobCopyEvent copyEvent = (JobCopyEvent) event;
+            assertTrue(event instanceof JobCopyEvent);
+            final JobCopyEvent copyEvent = (JobCopyEvent) event;
 
-                assertEquals("product_profiling", copyEvent.getSourceJob().getName());
-                assertEquals("product_analysis", copyEvent.getTargetJob().getName());
-            }
+            assertEquals("product_profiling", copyEvent.getSourceJob().getName());
+            assertEquals("product_analysis", copyEvent.getTargetJob().getName());
         };
 
         final JobCopyPayload input = new JobCopyPayload();
@@ -84,16 +79,13 @@ public class JobCopyAndDeleteControllerTest extends TestCase {
         final AtomicBoolean deleteEventReceived = new AtomicBoolean(false);
         final JobDeletionController jobDeleteController = new JobDeletionController();
         jobDeleteController._contextFactory = tenantContextFactory;
-        jobDeleteController._eventPublisher = new ApplicationEventPublisher() {
-            @Override
-            public void publishEvent(ApplicationEvent event) {
-                deleteEventReceived.set(true);
+        jobDeleteController._eventPublisher = event -> {
+            deleteEventReceived.set(true);
 
-                assertTrue(event instanceof JobDeletionEvent);
-                JobDeletionEvent copyEvent = (JobDeletionEvent) event;
+            assertTrue(event instanceof JobDeletionEvent);
+            final JobDeletionEvent copyEvent = (JobDeletionEvent) event;
 
-                assertEquals("product_analysis", copyEvent.getJobName());
-            }
+            assertEquals("product_analysis", copyEvent.getJobName());
         };
 
         result = jobDeleteController.deleteJob("tenant1", "product_analysis");

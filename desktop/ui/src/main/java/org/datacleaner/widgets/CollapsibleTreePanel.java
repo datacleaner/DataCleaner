@@ -20,8 +20,6 @@
 package org.datacleaner.widgets;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -57,19 +55,16 @@ public class CollapsibleTreePanel extends DCPanel {
         _toggleTreeViewButton.setBorder(null);
         _toggleTreeViewButton.setOpaque(false);
         _toggleTreeViewButton.setContentAreaFilled(false);
-        _toggleTreeViewButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final boolean collapsed = _collapsibleTreePane.isCollapsed();
-                if (collapsed) {
-                    _toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
-                    _toggleTreeViewButton.setBorder(null);
-                } else {
-                    _toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-expand.png"));
-                    _toggleTreeViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
-                }
-                _collapsibleTreePane.setCollapsed(!collapsed);
+        _toggleTreeViewButton.addActionListener(e -> {
+            final boolean collapsed = _collapsibleTreePane.isCollapsed();
+            if (collapsed) {
+                _toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
+                _toggleTreeViewButton.setBorder(null);
+            } else {
+                _toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-expand.png"));
+                _toggleTreeViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
             }
+            _collapsibleTreePane.setCollapsed(!collapsed);
         });
 
         final DCPanel collapseButtonPanel = new DCPanel();

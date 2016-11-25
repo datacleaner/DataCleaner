@@ -48,8 +48,8 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
      * and testing.
      */
     public AnalyzerBeansConfigurationImpl() {
-        this(defaultDatastoreCatalog(), defaultReferenceDataCatalog(), DataCleanerEnvironmentImpl
-                        .defaultDescriptorProvider(), DataCleanerEnvironmentImpl.defaultTaskRunner(),
+        this(defaultDatastoreCatalog(), defaultReferenceDataCatalog(),
+                DataCleanerEnvironmentImpl.defaultDescriptorProvider(), DataCleanerEnvironmentImpl.defaultTaskRunner(),
                 DataCleanerEnvironmentImpl.defaultStorageProvider());
     }
 
@@ -61,8 +61,8 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
      * @param injectionManagerFactory
      */
     public AnalyzerBeansConfigurationImpl(final InjectionManagerFactory injectionManagerFactory) {
-        this(defaultDatastoreCatalog(), defaultReferenceDataCatalog(), DataCleanerEnvironmentImpl
-                        .defaultDescriptorProvider(), DataCleanerEnvironmentImpl.defaultTaskRunner(),
+        this(defaultDatastoreCatalog(), defaultReferenceDataCatalog(),
+                DataCleanerEnvironmentImpl.defaultDescriptorProvider(), DataCleanerEnvironmentImpl.defaultTaskRunner(),
                 DataCleanerEnvironmentImpl.defaultStorageProvider(), injectionManagerFactory, defaultHomeFolder());
     }
 
@@ -77,9 +77,8 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
      * @param storageProvider
      */
     public AnalyzerBeansConfigurationImpl(final DatastoreCatalog datastoreCatalog,
-            final ReferenceDataCatalog referenceDataCatalog,
-            final DescriptorProvider descriptorProvider, final TaskRunner taskRunner,
-            final StorageProvider storageProvider) {
+            final ReferenceDataCatalog referenceDataCatalog, final DescriptorProvider descriptorProvider,
+            final TaskRunner taskRunner, final StorageProvider storageProvider) {
         this(datastoreCatalog, referenceDataCatalog, descriptorProvider, taskRunner, storageProvider, null,
                 defaultHomeFolder());
     }
@@ -95,9 +94,8 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
      * @param injectionManagerFactory
      */
     public AnalyzerBeansConfigurationImpl(final DatastoreCatalog datastoreCatalog,
-            final ReferenceDataCatalog referenceDataCatalog,
-            final DescriptorProvider descriptorProvider, final TaskRunner taskRunner,
-            final StorageProvider storageProvider,
+            final ReferenceDataCatalog referenceDataCatalog, final DescriptorProvider descriptorProvider,
+            final TaskRunner taskRunner, final StorageProvider storageProvider,
             final InjectionManagerFactory injectionManagerFactory, final DataCleanerHomeFolder homeFolder) {
         if (datastoreCatalog == null) {
             throw new IllegalArgumentException("datastoreCatalog cannot be null");

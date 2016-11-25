@@ -39,7 +39,7 @@ public class MockDatastore implements Datastore {
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
     }
 
     @Override

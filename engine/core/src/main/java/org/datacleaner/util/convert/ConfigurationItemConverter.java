@@ -163,7 +163,7 @@ public class ConfigurationItemConverter implements Converter<Object> {
 
     @Override
     public boolean isConvertable(final Class<?> type) {
-        return isSchema(type) || isTable(type) || isColumn(type) || is(type, Dictionary.class)
-                || is(type, SynonymCatalog.class) || is(type, StringPattern.class) || is(type, Datastore.class);
+        return isSchema(type) || isTable(type) || isColumn(type) || is(type, Dictionary.class) || is(type,
+                SynonymCatalog.class) || is(type, StringPattern.class) || is(type, Datastore.class);
     }
 }

@@ -26,8 +26,8 @@ import junit.framework.TestCase;
 public class MongoDbDatastoreTest extends TestCase {
 
     public void testCreateAndCompare() throws Exception {
-        MongoDbDatastore ds1 = new MongoDbDatastore("mongo", "localhost", 27017, "db", "user", "pw");
-        MongoDbDatastore ds2 = new MongoDbDatastore("mongo", null, null, "db", "user", "pw");
+        final MongoDbDatastore ds1 = new MongoDbDatastore("mongo", "localhost", 27017, "db", "user", "pw");
+        final MongoDbDatastore ds2 = new MongoDbDatastore("mongo", null, null, "db", "user", "pw");
 
         assertEquals(ds1, ds2);
 

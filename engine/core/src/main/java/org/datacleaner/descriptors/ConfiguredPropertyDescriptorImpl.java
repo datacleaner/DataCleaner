@@ -71,8 +71,7 @@ final class ConfiguredPropertyDescriptorImpl extends AbstractPropertyDescriptor
     @Override
     public boolean isInputColumn() {
         final Class<?> baseType = getBaseType();
-        final boolean result = ReflectionUtils.isInputColumn(baseType);
-        return result;
+        return ReflectionUtils.isInputColumn(baseType);
     }
 
     @Override

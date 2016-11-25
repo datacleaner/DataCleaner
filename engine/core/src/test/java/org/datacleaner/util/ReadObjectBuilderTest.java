@@ -22,30 +22,28 @@ package org.datacleaner.util;
 import java.io.FileInputStream;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.connection.Datastore;
+
+import junit.framework.TestCase;
 
 public class ReadObjectBuilderTest extends TestCase {
 
     public void testDeserializeLegacyDatastores() throws Exception {
-        Object deserializedObject;
-        try (ChangeAwareObjectInputStream objectInputStream = new ChangeAwareObjectInputStream(new FileInputStream(
-                "src/test/resources/analyzerbeans-0.4-datastores.dat"))) {
+        final Object deserializedObject;
+        try (ChangeAwareObjectInputStream objectInputStream = new ChangeAwareObjectInputStream(
+                new FileInputStream("src/test/resources/analyzerbeans-0.4-datastores.dat"))) {
             deserializedObject = objectInputStream.readObject();
         }
 
         assertTrue(deserializedObject instanceof List);
 
-        @SuppressWarnings("unchecked")
-        List<Datastore> list = (List<Datastore>) deserializedObject;
+        @SuppressWarnings("unchecked") final List<Datastore> list = (List<Datastore>) deserializedObject;
         assertEquals(8, list.size());
 
         assertEquals("JdbcDatastore[name=my_jdbc_connection,url=jdbc:hsqldb:res:metamodel]", list.get(0).toString());
         assertEquals("DbaseDatastore[name=my_dbase]", list.get(1).toString());
-        assertEquals(
-                "CsvDatastore[name=my_csv, filename=src/test/resources/employees.csv, quoteChar='\"', separatorChar=',', encoding=null, headerLineNumber=0]",
-                list.get(2).toString());
+        assertEquals( "CsvDatastore[name=my_csv, filename=src/test/resources/employees.csv, quoteChar='\"', "
+                + "separatorChar=',', encoding=null, headerLineNumber=0]", list.get(2).toString());
         assertEquals("ExcelDatastore[name=my_xml]", list.get(3).toString());
         assertEquals("OdbDatastore[name=my_odb]", list.get(4).toString());
         assertEquals("ExcelDatastore[name=my_excel_2003]", list.get(5).toString());

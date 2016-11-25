@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.ToStringComparator;
 import org.datacleaner.repository.AbstractRepositoryNode;
 import org.datacleaner.repository.RepositoryFile;
@@ -94,25 +93,17 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
 
     @Override
     public List<RepositoryFolder> getFolders() {
-        final File[] directories = _file.listFiles(new FileFilter() {
-
-            @Override
-            public boolean accept(final File file) {
-                if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
-                    return true;
-                }
-                return false;
+        final File[] directories = _file.listFiles(file -> {
+            if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
+                return true;
             }
+            return false;
         });
         //Sort the directories as listFiles does not gurantee an order.
         Arrays.sort(directories);
 
-        return CollectionUtils.map(directories, new Func<File, RepositoryFolder>() {
-            @Override
-            public RepositoryFolder eval(final File directory) {
-                return (RepositoryFolder) getChildCache().getUnchecked(directory);
-            }
-        });
+        return CollectionUtils
+                .map(directories, directory -> (RepositoryFolder) getChildCache().getUnchecked(directory));
     }
 
     @Override
@@ -134,30 +125,22 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
     public List<RepositoryFile> getFiles(final String prefix, final String extension) {
         final File[] files = _file.listFiles(createFileFilter(prefix, extension));
         Arrays.sort(files, ToStringComparator.getComparator());
-        return CollectionUtils.map(files, new Func<File, RepositoryFile>() {
-            @Override
-            public RepositoryFile eval(final File file) {
-                return (RepositoryFile) getChildCache().getUnchecked(file);
-            }
-        });
+        return CollectionUtils.map(files, file -> (RepositoryFile) getChildCache().getUnchecked(file));
     }
 
     private FileFilter createFileFilter(final String prefix, final String extension) {
-        return new FileFilter() {
-            @Override
-            public boolean accept(final File file) {
-                if (file.isFile() && !file.isHidden()) {
-                    final String filename = file.getName();
-                    if (prefix == null || filename.startsWith(prefix)) {
-                        if (extension == null) {
-                            return true;
-                        } else {
-                            return filename.endsWith(extension);
-                        }
+        return file -> {
+            if (file.isFile() && !file.isHidden()) {
+                final String filename = file.getName();
+                if (prefix == null || filename.startsWith(prefix)) {
+                    if (extension == null) {
+                        return true;
+                    } else {
+                        return filename.endsWith(extension);
                     }
                 }
-                return false;
             }
+            return false;
         };
     }
 

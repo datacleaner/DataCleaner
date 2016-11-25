@@ -73,9 +73,9 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
     public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final DatastoreDictionary other = (DatastoreDictionary) obj;
-            return Objects.equals(_datastoreName, other._datastoreName)
-                    && Objects.equals(_qualifiedColumnName, other._qualifiedColumnName)
-                    && Objects.equals(_loadIntoMemory, other._loadIntoMemory);
+            return Objects.equals(_datastoreName, other._datastoreName) && Objects
+                    .equals(_qualifiedColumnName, other._qualifiedColumnName) && Objects
+                    .equals(_loadIntoMemory, other._loadIntoMemory);
         }
         return false;
     }

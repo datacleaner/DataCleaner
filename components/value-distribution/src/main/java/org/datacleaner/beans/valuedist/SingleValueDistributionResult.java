@@ -39,8 +39,8 @@ import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.NullTolerableComparator;
 
-public class SingleValueDistributionResult extends ValueDistributionAnalyzerResult implements
-        Comparable<SingleValueDistributionResult> {
+public class SingleValueDistributionResult extends ValueDistributionAnalyzerResult
+        implements Comparable<SingleValueDistributionResult> {
 
     private static final long serialVersionUID = 1L;
 
@@ -57,10 +57,11 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
     private final int _distinctCount;
     private final Ref<RowAnnotationFactory> _annotationFactoryRef;
 
-    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues, final ValueCountList bottomValues,
-            final Collection<String> uniqueValues, final int uniqueValueCount, final int distinctCount, final int totalCount,
-            final Map<String, RowAnnotation> annotations, final RowAnnotation nullValueAnnotation,
-            final RowAnnotationFactory annotationFactory, final InputColumn<?>[] highlightedColumns) {
+    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues,
+            final ValueCountList bottomValues, final Collection<String> uniqueValues, final int uniqueValueCount,
+            final int distinctCount, final int totalCount, final Map<String, RowAnnotation> annotations,
+            final RowAnnotation nullValueAnnotation, final RowAnnotationFactory annotationFactory,
+            final InputColumn<?>[] highlightedColumns) {
         _groupName = groupName;
         _topValues = topValues;
         _bottomValues = bottomValues;
@@ -75,26 +76,26 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
         _nullCount = 0;
     }
 
-    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues, final int uniqueValueCount,
-            final int distinctCount, final int totalCount, final Map<String, RowAnnotation> annotations,
-            final RowAnnotation nullValueAnnotation, final RowAnnotationFactory annotationFactory,
-            final InputColumn<?>[] highlightedColumns) {
+    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues,
+            final int uniqueValueCount, final int distinctCount, final int totalCount,
+            final Map<String, RowAnnotation> annotations, final RowAnnotation nullValueAnnotation,
+            final RowAnnotationFactory annotationFactory, final InputColumn<?>[] highlightedColumns) {
         this(groupName, topValues, null, null, uniqueValueCount, distinctCount, totalCount, annotations,
                 nullValueAnnotation, annotationFactory, highlightedColumns);
     }
 
-    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues, final Collection<String> uniqueValues,
-            final int uniqueValueCount, final int distinctCount, final int totalCount, final Map<String, RowAnnotation> annotations,
-            final RowAnnotation nullValueAnnotation, final RowAnnotationFactory annotationFactory,
-            final InputColumn<?>[] highlightedColumns) {
+    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues,
+            final Collection<String> uniqueValues, final int uniqueValueCount, final int distinctCount,
+            final int totalCount, final Map<String, RowAnnotation> annotations, final RowAnnotation nullValueAnnotation,
+            final RowAnnotationFactory annotationFactory, final InputColumn<?>[] highlightedColumns) {
         this(groupName, topValues, null, uniqueValues, uniqueValueCount, distinctCount, totalCount, annotations,
                 nullValueAnnotation, annotationFactory, highlightedColumns);
     }
 
-    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues, final ValueCountList bottomValues,
-            final int uniqueValueCount, final int distinctCount, final int totalCount, final Map<String, RowAnnotation> annotations,
-            final RowAnnotation nullValueAnnotation, final RowAnnotationFactory annotationFactory,
-            final InputColumn<?>[] highlightedColumns) {
+    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues,
+            final ValueCountList bottomValues, final int uniqueValueCount, final int distinctCount,
+            final int totalCount, final Map<String, RowAnnotation> annotations, final RowAnnotation nullValueAnnotation,
+            final RowAnnotationFactory annotationFactory, final InputColumn<?>[] highlightedColumns) {
         this(groupName, topValues, bottomValues, null, uniqueValueCount, distinctCount, totalCount, annotations,
                 nullValueAnnotation, annotationFactory, highlightedColumns);
     }

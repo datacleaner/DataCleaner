@@ -23,9 +23,7 @@ import java.io.Serializable;
 
 public class ReferenceDataItem implements Serializable {
     public enum Type {
-        DICTIONARY,
-        SYNONYM_CATALOG,
-        STRING_PATTERN,
+        DICTIONARY, SYNONYM_CATALOG, STRING_PATTERN,
     }
 
     private String _name;

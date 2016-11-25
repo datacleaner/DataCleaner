@@ -68,7 +68,8 @@ public class WizardServiceImpl implements WizardService {
     WizardDao _wizardDao;
 
     @Override
-    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(final TenantIdentifier tenant, final String locale) {
+    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(final TenantIdentifier tenant,
+            final String locale) {
         final List<WizardIdentifier> result = new ArrayList<>();
         final Collection<JobWizard> jobWizards = _wizardDao.getWizardsOfType(JobWizard.class);
         for (final JobWizard jobWizard : jobWizards) {
@@ -81,7 +82,8 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
-    public List<WizardIdentifier> getDatastoreWizardIdentifiers(final TenantIdentifier tenant, final String localeString) {
+    public List<WizardIdentifier> getDatastoreWizardIdentifiers(final TenantIdentifier tenant,
+            final String localeString) {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
 
@@ -104,8 +106,8 @@ public class WizardServiceImpl implements WizardService {
             final DatastoreIdentifier datastoreIdentifier, final String localeString) {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        final Datastore datastore = tenantContext.getConfiguration().getDatastoreCatalog()
-                .getDatastore(datastoreIdentifier.getName());
+        final Datastore datastore =
+                tenantContext.getConfiguration().getDatastoreCatalog().getDatastore(datastoreIdentifier.getName());
 
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
         final Locale locale = getLocale(localeString);
@@ -145,8 +147,8 @@ public class WizardServiceImpl implements WizardService {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
         final Locale locale = getLocale(localeString);
-        final DatastoreWizardContext context = new DatastoreWizardContextImpl(wizard, tenantContext, sessionFunc,
-                locale);
+        final DatastoreWizardContext context =
+                new DatastoreWizardContextImpl(wizard, tenantContext, sessionFunc, locale);
         final WizardSession session = wizard.start(context);
 
         return startSession(session, wizardIdentifier);
@@ -172,8 +174,8 @@ public class WizardServiceImpl implements WizardService {
         if (selectedDatastore == null) {
             datastore = null;
         } else {
-            datastore = tenantContext.getConfiguration().getDatastoreCatalog()
-                    .getDatastore(selectedDatastore.getName());
+            datastore =
+                    tenantContext.getConfiguration().getDatastoreCatalog().getDatastore(selectedDatastore.getName());
         }
 
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
@@ -236,8 +238,8 @@ public class WizardServiceImpl implements WizardService {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
         final Locale locale = getLocale(localeString);
-        final ReferenceDataWizardContext context = new ReferenceDataWizardContextImpl(null, tenantContext, sessionFunc,
-                locale);
+        final ReferenceDataWizardContext context =
+                new ReferenceDataWizardContextImpl(null, tenantContext, sessionFunc, locale);
         final List<WizardIdentifier> result = new ArrayList<>();
         final Collection wizards;
 
@@ -277,8 +279,8 @@ public class WizardServiceImpl implements WizardService {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
         final Locale locale = getLocale(localeString);
-        final ReferenceDataWizardContext context = new ReferenceDataWizardContextImpl(wizard, tenantContext,
-                sessionFunc, locale);
+        final ReferenceDataWizardContext context =
+                new ReferenceDataWizardContextImpl(wizard, tenantContext, sessionFunc, locale);
         final WizardSession session = wizard.start(context);
 
         return startSession(session, wizardIdentifier);

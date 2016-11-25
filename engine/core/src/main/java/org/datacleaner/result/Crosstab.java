@@ -85,8 +85,8 @@ public final class Crosstab<E extends Serializable> implements Serializable {
         for (int i = 0; i < categories.length; i++) {
             if (categories[i] == null) {
                 final CrosstabDimension dimension = dimensions.get(i);
-                throw new NullPointerException("Not all dimensions have been specified ('" + dimension.getName()
-                        + "' is null)");
+                throw new NullPointerException(
+                        "Not all dimensions have been specified ('" + dimension.getName() + "' is null)");
 
             }
         }
@@ -95,8 +95,8 @@ public final class Crosstab<E extends Serializable> implements Serializable {
             final CrosstabDimension dimension = dimensions.get(i);
             final String category = categories[i];
             if (!dimension.containsCategory(category)) {
-                throw new IllegalArgumentException("Unknown category [" + category + "] for dimension ["
-                        + dimension.getName() + "]");
+                throw new IllegalArgumentException(
+                        "Unknown category [" + category + "] for dimension [" + dimension.getName() + "]");
             }
             if (i != 0) {
                 sb.append('^');

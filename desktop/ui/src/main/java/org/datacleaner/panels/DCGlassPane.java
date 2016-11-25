@@ -23,8 +23,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -59,12 +57,7 @@ public class DCGlassPane {
     public void showTooltip(final JComponent comp, final int timeoutMillis) {
         add(comp);
 
-        new Timer(timeoutMillis, new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                remove(comp);
-            }
-        }).start();
+        new Timer(timeoutMillis, e -> remove(comp)).start();
     }
 
     public void add(final JComponent comp) {

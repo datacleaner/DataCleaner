@@ -21,8 +21,6 @@ package org.datacleaner.widgets.properties;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.util.EqualsBuilder;
@@ -53,6 +51,8 @@ import org.datacleaner.util.VFSUtils;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import junit.framework.TestCase;
+
 public class PropertyWidgetFactoryTest extends TestCase {
 
     private SimpleDictionary dict1 = new SimpleDictionary("dict1");
@@ -69,7 +69,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
 
-        FileObject file = VFSUtils.getFileSystemManager().resolveFile(UserPreferencesImpl.DEFAULT_FILENAME);
+        final FileObject file = VFSUtils.getFileSystemManager().resolveFile(UserPreferencesImpl.DEFAULT_FILENAME);
 
         if (file != null) {
             file.delete();
@@ -82,9 +82,9 @@ public class PropertyWidgetFactoryTest extends TestCase {
         Injector injector;
 
         injector = Guice.createInjector(dcModule);
-        DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
-        MutableReferenceDataCatalog referenceDataCatalog = (MutableReferenceDataCatalog) configuration
-                .getReferenceDataCatalog();
+        final DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
+        final MutableReferenceDataCatalog referenceDataCatalog =
+                (MutableReferenceDataCatalog) configuration.getReferenceDataCatalog();
         referenceDataCatalog.addDictionary(dict1);
         referenceDataCatalog.addDictionary(dict2);
         referenceDataCatalog.addDictionary(dict3);
@@ -98,17 +98,17 @@ public class PropertyWidgetFactoryTest extends TestCase {
         injector = injector.getInstance(InjectorBuilder.class).with(DataCleanerConfiguration.class, configuration)
                 .createInjector();
 
-        AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
+        final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
 
-        AnalyzerDescriptor<ManyPropertiesAnalyzer> descriptor = Descriptors
-                .ofAnalyzer(ManyPropertiesAnalyzer.class);
+        final AnalyzerDescriptor<ManyPropertiesAnalyzer> descriptor =
+                Descriptors.ofAnalyzer(ManyPropertiesAnalyzer.class);
 
         assertEquals(28, descriptor.getConfiguredProperties().size());
 
-        AnalyzerComponentBuilder<ManyPropertiesAnalyzer> analyzerBuilder = ajb.addAnalyzer(descriptor);
+        final AnalyzerComponentBuilder<ManyPropertiesAnalyzer> analyzerBuilder = ajb.addAnalyzer(descriptor);
 
-        PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(analyzerBuilder)
-                .getInstance(PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(analyzerBuilder).getInstance(PropertyWidgetFactory.class);
         assertNotNull(propertyWidgetFactory);
 
         performAssertions(propertyWidgetFactory, "Int property", SingleNumberPropertyWidget.class, 0, 2);
@@ -128,8 +128,8 @@ public class PropertyWidgetFactoryTest extends TestCase {
 
         performAssertions(propertyWidgetFactory, "Bool property", SingleBooleanPropertyWidget.class, false, true);
 
-        performAssertions(propertyWidgetFactory, "Bool array property", DummyPropertyWidget.class, null, new boolean[] {
-                true, false }); // TODO
+        performAssertions(propertyWidgetFactory, "Bool array property", DummyPropertyWidget.class, null,
+                new boolean[] { true, false }); // TODO
 
         performAssertions(propertyWidgetFactory, "String property", SingleStringPropertyWidget.class, "", "foo");
 
@@ -145,14 +145,14 @@ public class PropertyWidgetFactoryTest extends TestCase {
                 ValidationCategory.VALID);
 
         performAssertions(propertyWidgetFactory, "Enum array property", MultipleEnumPropertyWidget.class,
-                new ValidationCategory[0], new ValidationCategory[] { ValidationCategory.VALID,
-                        ValidationCategory.INVALID });
+                new ValidationCategory[0],
+                new ValidationCategory[] { ValidationCategory.VALID, ValidationCategory.INVALID });
 
-        File fooFile = new File("foo").getAbsoluteFile();
+        final File fooFile = new File("foo").getAbsoluteFile();
         performAssertions(propertyWidgetFactory, "File property", SingleFilePropertyWidget.class, null, fooFile);
 
-        performAssertions(propertyWidgetFactory, "File array property", DummyPropertyWidget.class, null, new File[] {
-                fooFile, new File("bar") });
+        performAssertions(propertyWidgetFactory, "File array property", DummyPropertyWidget.class, null,
+                new File[] { fooFile, new File("bar") });
 
         // TODO: Disabled because pattern.equals only works by identity!
         // performAssertions(propertyWidgetFactory, "Pattern property",
@@ -163,12 +163,12 @@ public class PropertyWidgetFactoryTest extends TestCase {
         // DummyPropertyWidget.class, null, new Pattern[] {
         // Pattern.compile("foo"), Pattern.compile("bar") });
 
-        performAssertions(propertyWidgetFactory, "Input column property",
-                SingleInputColumnComboBoxPropertyWidget.class, null, new MockInputColumn<>("foo", String.class));
+        performAssertions(propertyWidgetFactory, "Input column property", SingleInputColumnComboBoxPropertyWidget.class,
+                null, new MockInputColumn<>("foo", String.class));
 
         performAssertions(propertyWidgetFactory, "Input column array property",
-                MultipleInputColumnsPropertyWidget.class, new InputColumn[0], new InputColumn[] {
-                        new MockInputColumn<>("foo", String.class),
+                MultipleInputColumnsPropertyWidget.class, new InputColumn[0],
+                new InputColumn[] { new MockInputColumn<>("foo", String.class),
                         new MockInputColumn<>("bar", String.class) });
 
         performAssertions(propertyWidgetFactory, "Dictionary property", SingleDictionaryPropertyWidget.class, null,
@@ -181,8 +181,8 @@ public class PropertyWidgetFactoryTest extends TestCase {
                 null, new SimpleStringPattern("foo", "aaa"));
 
         performAssertions(propertyWidgetFactory, "String pattern array property",
-                MultipleStringPatternPropertyWidget.class, new StringPattern[0], new StringPattern[] { stringPattern1,
-                        stringPattern3 });
+                MultipleStringPatternPropertyWidget.class, new StringPattern[0],
+                new StringPattern[] { stringPattern1, stringPattern3 });
 
         performAssertions(propertyWidgetFactory, "Synonym catalog property", SingleSynonymCatalogPropertyWidget.class,
                 null, new TextFileSynonymCatalog("foo", new File("foobar"), true, "UTF8"));
@@ -200,8 +200,8 @@ public class PropertyWidgetFactoryTest extends TestCase {
 
     private void performAssertions(final PropertyWidgetFactory propertyWidgetFactory, final String propertyName,
             final Class<? extends PropertyWidget<?>> widgetClass, final Object initialValue, final Object setValue) {
-        @SuppressWarnings("unchecked")
-        PropertyWidget<Object> widget = (PropertyWidget<Object>) propertyWidgetFactory.create(propertyName);
+        @SuppressWarnings("unchecked") final PropertyWidget<Object> widget =
+                (PropertyWidget<Object>) propertyWidgetFactory.create(propertyName);
         assertNotNull(widget);
         assertEquals(widgetClass, widget.getClass());
 
@@ -216,8 +216,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
         assertTrue("Expected: " + initialValue + ", actual: " + widget.getValue(), equals);
         widget.onValueTouched(setValue);
         assertTrue(widget.isSet());
-        assertTrue(
-                "Expected: " + ArrayUtils.toString(setValue) + ", actual: " + ArrayUtils.toString(widget.getValue()),
+        assertTrue("Expected: " + ArrayUtils.toString(setValue) + ", actual: " + ArrayUtils.toString(widget.getValue()),
                 EqualsBuilder.equals(setValue, widget.getValue()));
     }
 }

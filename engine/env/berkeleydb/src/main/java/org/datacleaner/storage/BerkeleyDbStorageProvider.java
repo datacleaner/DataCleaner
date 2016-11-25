@@ -20,7 +20,6 @@
 package org.datacleaner.storage;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.lang.reflect.Type;
 import java.util.UUID;
 
@@ -65,8 +64,7 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
     public BerkeleyDbStorageProvider(final File parentDirectory) {
         if (!parentDirectory.exists()) {
             if (!parentDirectory.mkdirs()) {
-                throw new IllegalArgumentException(
-                        "Could not create directory: " + parentDirectory);
+                throw new IllegalArgumentException("Could not create directory: " + parentDirectory);
             }
         }
         _parentDirectory = parentDirectory;
@@ -92,12 +90,7 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
      * when all collections are ensured to be unused.
      */
     public void cleanDirectory() {
-        final File[] directories = _parentDirectory.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.startsWith(DIRECTORY_PREFIX);
-            }
-        });
+        final File[] directories = _parentDirectory.listFiles((dir, name) -> name.startsWith(DIRECTORY_PREFIX));
         for (final File directory : directories) {
             delete(directory);
         }
@@ -124,8 +117,7 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
         }
     }
 
-    public Object createProvidedCollection(
-            final ProvidedPropertyDescriptor providedDescriptor) {
+    public Object createProvidedCollection(final ProvidedPropertyDescriptor providedDescriptor) {
         final Type typeArgument = providedDescriptor.getTypeArgument(0);
         final Class<?> clazz1 = (Class<?>) typeArgument;
         if (providedDescriptor.isList()) {
@@ -156,22 +148,20 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
         if (_targetDir == null) {
             while (_targetDir == null) {
                 try {
-                    final File candidateDir = new File(_parentDirectory,
-                            DIRECTORY_PREFIX + UUID.randomUUID().toString());
+                    final File candidateDir =
+                            new File(_parentDirectory, DIRECTORY_PREFIX + UUID.randomUUID().toString());
                     if (!candidateDir.exists() && candidateDir.mkdir()) {
                         _targetDir = candidateDir;
                         _deleteOnExit = true;
                     }
                 } catch (final Exception e) {
-                    logger.error(
-                            "Exception thrown while trying to create targetDir inside tempDir",
-                            e);
+                    logger.error("Exception thrown while trying to create targetDir inside tempDir", e);
                     _targetDir = _parentDirectory;
                 }
             }
             if (logger.isInfoEnabled()) {
-                logger.info("Using target directory for persistent collections (deleteOnExit="
-                        + _deleteOnExit + "): " + _targetDir.getAbsolutePath());
+                logger.info("Using target directory for persistent collections (deleteOnExit=" + _deleteOnExit + "): "
+                        + _targetDir.getAbsolutePath());
             }
             initDeleteOnExit(_targetDir);
         }
@@ -187,8 +177,7 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
             } else if (file.isFile()) {
                 file.deleteOnExit();
             } else {
-                logger.warn("Unable to set the deleteOnExit flag on file: "
-                        + file);
+                logger.warn("Unable to set the deleteOnExit flag on file: " + file);
             }
         }
     }
@@ -197,14 +186,11 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
         final DatabaseConfig databaseConfig = new DatabaseConfig();
         databaseConfig.setAllowCreate(true);
         final String databaseName = UUID.randomUUID().toString();
-        final Database database = getEnvironment().openDatabase(null, databaseName,
-                databaseConfig);
-        return database;
+        return getEnvironment().openDatabase(null, databaseName, databaseConfig);
     }
 
     @Override
-    public <E> BerkeleyDbList<E> createList(final Class<E> valueType)
-            throws IllegalStateException {
+    public <E> BerkeleyDbList<E> createList(final Class<E> valueType) throws IllegalStateException {
         final BerkeleyDbMap<Integer, E> map = createMap(Integer.class, valueType);
 
         // Berkeley StoredLists are non-functional!
@@ -214,12 +200,10 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
     }
 
     @Override
-    public <E> BerkeleyDbSet<E> createSet(final Class<E> valueType)
-            throws IllegalStateException {
+    public <E> BerkeleyDbSet<E> createSet(final Class<E> valueType) throws IllegalStateException {
         try {
             final Database database = createDatabase();
-            final StoredKeySet set = new StoredKeySet(database,
-                    createBinding(valueType), true);
+            final StoredKeySet set = new StoredKeySet(database, createBinding(valueType), true);
             return new BerkeleyDbSet<>(getEnvironment(), database, set);
         } catch (final DatabaseException e) {
             throw new IllegalStateException(e);
@@ -227,22 +211,20 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
     }
 
     @Override
-    public <K, V> BerkeleyDbMap<K, V> createMap(final Class<K> keyType,
-            final Class<V> valueType) throws IllegalStateException {
+    public <K, V> BerkeleyDbMap<K, V> createMap(final Class<K> keyType, final Class<V> valueType)
+            throws IllegalStateException {
         try {
             final EntryBinding keyBinding = createBinding(keyType);
             final EntryBinding valueBinding = createBinding(valueType);
             final Database database = createDatabase();
-            final StoredMap map = new StoredMap(database, keyBinding,
-                    valueBinding, true);
+            final StoredMap map = new StoredMap(database, keyBinding, valueBinding, true);
             return new BerkeleyDbMap<>(getEnvironment(), database, map);
         } catch (final DatabaseException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private EntryBinding createBinding(final Type type)
-            throws UnsupportedOperationException {
+    private EntryBinding createBinding(final Type type) throws UnsupportedOperationException {
         if (ReflectionUtils.isString(type)) {
             return new StringBinding();
         }
@@ -273,8 +255,7 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
         if (ReflectionUtils.isByteArray(type)) {
             return new ByteArrayBinding();
         }
-        throw new UnsupportedOperationException(
-                "Cannot provide collection of type " + type);
+        throw new UnsupportedOperationException("Cannot provide collection of type " + type);
     }
 
     @Override

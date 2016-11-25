@@ -70,7 +70,8 @@ public class QuickAnalysisStrategy implements Serializable {
      * @param strategy
      * @param userPreferences
      */
-    public static void saveToUserPreferences(final QuickAnalysisStrategy strategy, final UserPreferences userPreferences) {
+    public static void saveToUserPreferences(final QuickAnalysisStrategy strategy,
+            final UserPreferences userPreferences) {
         final Map<String, String> properties = userPreferences.getAdditionalProperties();
 
         properties.put(USER_PREFERENCES_NAMESPACE + ".columnsPerAnalyzer", "" + strategy.columnsPerAnalyzer);
@@ -89,12 +90,12 @@ public class QuickAnalysisStrategy implements Serializable {
     public static QuickAnalysisStrategy loadFromUserPreferences(final UserPreferences userPreferences) {
         final Map<String, String> properties = userPreferences.getAdditionalProperties();
 
-        final int columnsPerAnalyzer = MapUtils.getIntValue(properties, USER_PREFERENCES_NAMESPACE
-                + ".columnsPerAnalyzer", 5);
-        final boolean includeValueDistribution = MapUtils.getBooleanValue(properties, USER_PREFERENCES_NAMESPACE
-                + ".includeValueDistribution", false);
-        final boolean includePatternFinder = MapUtils.getBooleanValue(properties, USER_PREFERENCES_NAMESPACE
-                + ".includePatternFinder", false);
+        final int columnsPerAnalyzer =
+                MapUtils.getIntValue(properties, USER_PREFERENCES_NAMESPACE + ".columnsPerAnalyzer", 5);
+        final boolean includeValueDistribution =
+                MapUtils.getBooleanValue(properties, USER_PREFERENCES_NAMESPACE + ".includeValueDistribution", false);
+        final boolean includePatternFinder =
+                MapUtils.getBooleanValue(properties, USER_PREFERENCES_NAMESPACE + ".includePatternFinder", false);
 
         return new QuickAnalysisStrategy(columnsPerAnalyzer, includeValueDistribution, includePatternFinder);
     }

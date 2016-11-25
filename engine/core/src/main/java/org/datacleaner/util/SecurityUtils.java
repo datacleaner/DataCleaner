@@ -54,9 +54,7 @@ public class SecurityUtils {
         try {
             final SSLContextBuilder builder = new SSLContextBuilder();
             builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
-            final SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build(),
-                    new NaiveHostnameVerifier());
-            return sslsf;
+            return new SSLConnectionSocketFactory(builder.build(), new NaiveHostnameVerifier());
         } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
@@ -81,14 +79,13 @@ public class SecurityUtils {
             sslContext.init(null, new TrustManager[] { trustManager }, new SecureRandom());
 
             final org.apache.http.conn.ssl.SSLSocketFactory schemeSocketFactory =
-                    new org.apache.http.conn.ssl.SSLSocketFactory(
-                            sslContext);
-            final org.apache.http.conn.scheme.Scheme sslScheme = new org.apache.http.conn.scheme.Scheme("https", 443,
-                    schemeSocketFactory);
+                    new org.apache.http.conn.ssl.SSLSocketFactory(sslContext);
+            final org.apache.http.conn.scheme.Scheme sslScheme =
+                    new org.apache.http.conn.scheme.Scheme("https", 443, schemeSocketFactory);
 
             // try again with a new registry
-            final org.apache.http.conn.scheme.SchemeRegistry registry = httpClient.getConnectionManager()
-                    .getSchemeRegistry();
+            final org.apache.http.conn.scheme.SchemeRegistry registry =
+                    httpClient.getConnectionManager().getSchemeRegistry();
             registry.register(sslScheme);
         } catch (final Exception e) {
             throw new IllegalStateException(e);
@@ -108,8 +105,7 @@ public class SecurityUtils {
             return null;
         }
         final EncodedStringConverter converter = new EncodedStringConverter();
-        final String encodedPassword = converter.toString(new String(password));
-        return encodedPassword;
+        return converter.toString(new String(password));
     }
 
     /**
@@ -142,8 +138,7 @@ public class SecurityUtils {
             return null;
         }
         final EncodedStringConverter converter = new EncodedStringConverter();
-        final String password = converter.fromString(String.class, encodedPassword);
-        return password;
+        return converter.fromString(String.class, encodedPassword);
     }
 
     /**

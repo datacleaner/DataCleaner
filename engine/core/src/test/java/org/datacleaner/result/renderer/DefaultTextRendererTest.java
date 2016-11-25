@@ -19,14 +19,14 @@
  */
 package org.datacleaner.result.renderer;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.result.NumberResult;
+
+import junit.framework.TestCase;
 
 public class DefaultTextRendererTest extends TestCase {
 
     public void testSimpleRendering() throws Exception {
-        ToStringTextRenderer r = new ToStringTextRenderer();
+        final ToStringTextRenderer r = new ToStringTextRenderer();
         assertEquals("1234", r.render(new NumberResult(1234)));
     }
 }

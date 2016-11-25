@@ -22,8 +22,6 @@ package org.datacleaner.widgets.properties;
 import java.awt.Component;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -32,20 +30,22 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.widgets.DCCheckBox;
 
+import junit.framework.TestCase;
+
 public class MultipleEnumPropertyWidgetTest extends TestCase {
 
     public void testSelection() throws Exception {
 
-        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
-            AnalyzerComponentBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder =
+            final AnalyzerComponentBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder =
                     ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
-            ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(
-                    "Enum array property");
+            final ConfiguredPropertyDescriptor property =
+                    analyzerJobBuilder.getDescriptor().getConfiguredProperty("Enum array property");
 
             assertEquals(ValidationCategory.class, property.getBaseType());
 
-            MultipleEnumPropertyWidget widget = new MultipleEnumPropertyWidget(analyzerJobBuilder, property);
+            final MultipleEnumPropertyWidget widget = new MultipleEnumPropertyWidget(analyzerJobBuilder, property);
             widget.initialize(new ValidationCategory[] { ValidationCategory.VALID, ValidationCategory.INVALID });
 
             assertEquals("VALID,INVALID", getAvailableCheckboxValues(widget));
@@ -65,14 +65,14 @@ public class MultipleEnumPropertyWidgetTest extends TestCase {
         }
     }
 
-    private String getAvailableCheckboxValues(MultipleEnumPropertyWidget widget) {
-        StringBuilder sb = new StringBuilder();
-        Component[] components = widget.getWidget().getComponents();
-        for (Component component : components) {
+    private String getAvailableCheckboxValues(final MultipleEnumPropertyWidget widget) {
+        final StringBuilder sb = new StringBuilder();
+        final Component[] components = widget.getWidget().getComponents();
+        for (final Component component : components) {
             if (component instanceof DCCheckBox) {
-                @SuppressWarnings("unchecked")
-                DCCheckBox<ValidationCategory> checkBox = (DCCheckBox<ValidationCategory>) component;
-                String name = checkBox.getValue().toString();
+                @SuppressWarnings("unchecked") final DCCheckBox<ValidationCategory> checkBox =
+                        (DCCheckBox<ValidationCategory>) component;
+                final String name = checkBox.getValue().toString();
                 if (sb.length() > 0) {
                     sb.append(',');
                 }

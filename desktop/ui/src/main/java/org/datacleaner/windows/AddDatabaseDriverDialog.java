@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +46,7 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -74,8 +70,8 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
     private final UserPreferences _userPreferences;
 
     public AddDatabaseDriverDialog(final DatabaseDriverCatalog databaseDriverCatalog,
-            final DatabaseDriversPanel databaseDriversPanel,
-            final WindowContext windowContext, final UserPreferences userPreferences) {
+            final DatabaseDriversPanel databaseDriversPanel, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
         super(windowContext);
         _databaseDriverCatalog = databaseDriverCatalog;
         _databaseDriversPanel = databaseDriversPanel;
@@ -92,27 +88,20 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
         }
         _driverClassNameComboBox = new DCComboBox<>(classNames);
         _driverClassNameComboBox.setEditable(true);
-        _driverClassNameComboBox.addListener(new Listener<String>() {
-            @Override
-            public void onItemSelected(final String item) {
-                updateStatus();
-            }
-        });
+        _driverClassNameComboBox.addListener(item -> updateStatus());
 
         _addDriverButton = WidgetFactory.createDefaultButton("Add database driver", IconUtils.FILE_ARCHIVE);
-        _addDriverButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                final UserDatabaseDriver userDatabaseDriver = new UserDatabaseDriver(getDriverFiles(), getDriverClassName());
-                _userPreferences.getDatabaseDrivers().add(userDatabaseDriver);
+        _addDriverButton.addActionListener(event -> {
+            final UserDatabaseDriver userDatabaseDriver =
+                    new UserDatabaseDriver(getDriverFiles(), getDriverClassName());
+            _userPreferences.getDatabaseDrivers().add(userDatabaseDriver);
 
-                try {
-                    userDatabaseDriver.loadDriver();
-                    _databaseDriversPanel.updateDriverList();
-                    dispose();
-                } catch (final IllegalStateException e) {
-                    WidgetUtils.showErrorMessage("Error while loading driver", "Error message: " + e.getMessage(), e);
-                }
+            try {
+                userDatabaseDriver.loadDriver();
+                _databaseDriversPanel.updateDriverList();
+                dispose();
+            } catch (final IllegalStateException e) {
+                WidgetUtils.showErrorMessage("Error while loading driver", "Error message: " + e.getMessage(), e);
             }
         });
 
@@ -141,15 +130,10 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
     }
 
     private void addFilenameTextField() {
-        final FilenameTextField filenameTextField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(),
-                true);
+        final FilenameTextField filenameTextField =
+                new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), true);
         filenameTextField.setSelectedFileFilter(new ExtensionFilter("JDBC driver JAR file (.jar)", ".jar"));
-        filenameTextField.addFileSelectionListener(new FileSelectionListener() {
-            @Override
-            public void onSelected(final FilenameTextField filenameTextField, final File file) {
-                updateStatus();
-            }
-        });
+        filenameTextField.addFileSelectionListener((filenameTextField1, file) -> updateStatus());
         _filenameTextFields.add(filenameTextField);
         _filesPanel.add(filenameTextField);
         _filesPanel.updateUI();
@@ -217,19 +201,9 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
         driverClassOuterPanel.add(_driverClassNameComboBox);
 
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addFilenameTextField();
-            }
-        });
+        addButton.addActionListener(e -> addFilenameTextField());
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                removeFilenameTextField();
-            }
-        });
+        removeButton.addActionListener(e -> removeFilenameTextField());
 
         final DCPanel filesButtonPanel = new DCPanel();
         filesButtonPanel.setBorder(new EmptyBorder(0, 4, 0, 0));

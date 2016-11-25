@@ -40,8 +40,8 @@ public class MultipleMappedPrefixedColumnsPropertyWidget extends MultipleMappedC
     private final String _prefix;
 
     public MultipleMappedPrefixedColumnsPropertyWidget(final ComponentBuilder componentBuilder,
-            final ConfiguredPropertyDescriptor inputColumnsProperty, final ConfiguredPropertyDescriptor mappedColumnsProperty,
-            final String prefix) {
+            final ConfiguredPropertyDescriptor inputColumnsProperty,
+            final ConfiguredPropertyDescriptor mappedColumnsProperty, final String prefix) {
         super(componentBuilder, inputColumnsProperty, mappedColumnsProperty);
         _prefix = prefix;
     }

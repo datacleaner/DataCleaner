@@ -20,7 +20,6 @@
 package org.datacleaner.spark.utils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.hadoop.conf.Configuration;
@@ -28,7 +27,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -122,11 +120,8 @@ public class HdfsHelper {
         if (resourceInUse == null) {
             return null;
         }
-        return resourceInUse.read(new Func<InputStream, String>() {
-            @Override
-            public String eval(final InputStream in) {
-                return FileHelper.readInputStreamAsString(in, FileHelper.DEFAULT_ENCODING);
-            }
+        return resourceInUse.read(in -> {
+            return FileHelper.readInputStreamAsString(in, FileHelper.DEFAULT_ENCODING);
         });
     }
 

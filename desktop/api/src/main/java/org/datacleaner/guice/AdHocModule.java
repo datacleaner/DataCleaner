@@ -81,8 +81,8 @@ final class AdHocModule implements Module {
     public void configure(final Binder binder) {
         final Set<Entry<TypeLiteral<?>, Object>> entrySet = _bindings.entrySet();
         for (final Entry<TypeLiteral<?>, Object> entry : entrySet) {
-            @SuppressWarnings("unchecked")
-            final TypeLiteral<Object> bindingLiteral = (TypeLiteral<Object>) entry.getKey();
+            @SuppressWarnings("unchecked") final TypeLiteral<Object> bindingLiteral =
+                    (TypeLiteral<Object>) entry.getKey();
 
             final Object providerOrInstance = entry.getValue();
 

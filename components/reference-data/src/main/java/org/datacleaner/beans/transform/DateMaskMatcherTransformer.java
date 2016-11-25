@@ -36,13 +36,14 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 @Named("Date mask matcher")
-@Description("Matches String values against a set of date masks, producing a corresponding set of output columns, specifying whether or not the strings could be interpreted as dates given those date masks")
+@Description("Matches String values against a set of date masks, producing a corresponding set of output columns, "
+        + "specifying whether or not the strings could be interpreted as dates given those date masks")
 @Categorized({ DateAndTimeCategory.class })
 public class DateMaskMatcherTransformer implements Transformer {
 
     public static final String[] DEFAULT_DATE_MASKS =
-            new String[] { "yyyy-MM-dd", "yyyy/MM/dd", "dd.MM.yyyy", "dd/MM/yyyy",
-                    "MM/dd/yy", "d MMM yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss.S" };
+            new String[] { "yyyy-MM-dd", "yyyy/MM/dd", "dd.MM.yyyy", "dd/MM/yyyy", "MM/dd/yy", "d MMM yyyy HH:mm:ss",
+                    "yyyy-MM-dd HH:mm:ss.S" };
 
     @Configured
     InputColumn<String> _column;

@@ -82,8 +82,8 @@ public final class StringConverter {
             throw new IllegalArgumentException("DataCleanerConfiguration cannot be null");
         }
         _configuration = configuration;
-        _injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
-                .getInjectionManager(configuration);
+        _injectionManager =
+                configuration.getEnvironment().getInjectionManagerFactory().getInjectionManager(configuration);
         _baseConverter = createBaseConverter();
     }
 
@@ -91,8 +91,8 @@ public final class StringConverter {
         if (injectionManager == null) {
             throw new IllegalArgumentException("InjectionManager cannot be null");
         }
-        final InjectionPoint<DataCleanerConfiguration> injectionPoint = SimpleInjectionPoint
-                .of(DataCleanerConfiguration.class);
+        final InjectionPoint<DataCleanerConfiguration> injectionPoint =
+                SimpleInjectionPoint.of(DataCleanerConfiguration.class);
         _configuration = injectionManager.getInstance(injectionPoint);
         _injectionManager = injectionManager;
         _baseConverter = createBaseConverter();
@@ -115,8 +115,8 @@ public final class StringConverter {
 
     private static InjectionManager getInjectionManager(final DataCleanerConfiguration configuration,
             final AnalysisJob job) {
-        final InjectionManagerFactory injectionManagerFactory = configuration.getEnvironment()
-                .getInjectionManagerFactory();
+        final InjectionManagerFactory injectionManagerFactory =
+                configuration.getEnvironment().getInjectionManagerFactory();
         if (job == null) {
             return injectionManagerFactory.getInjectionManager(configuration);
         } else {
@@ -191,8 +191,8 @@ public final class StringConverter {
         if (_injectionManager == null) {
             return new ResourceConverter(_configuration);
         } else {
-            final ResourceConverter converter = _injectionManager.getInstance(SimpleInjectionPoint
-                    .of(ResourceConverter.class));
+            final ResourceConverter converter =
+                    _injectionManager.getInstance(SimpleInjectionPoint.of(ResourceConverter.class));
             if (converter == null) {
                 return new ResourceConverter(_configuration);
             }
@@ -202,8 +202,7 @@ public final class StringConverter {
 
     private Converter<?> createConverter(final Class<? extends Converter<?>> converterClass) {
         try {
-            final Converter<?> converter = converterClass.newInstance();
-            return converter;
+            return converterClass.newInstance();
         } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
@@ -261,8 +260,7 @@ public final class StringConverter {
 
         if (converters == null || converters.isEmpty()) {
             // when possible, just reuse the base converter
-            @SuppressWarnings("unchecked")
-            final E result = (E) _baseConverter.fromString(type, str);
+            @SuppressWarnings("unchecked") final E result = (E) _baseConverter.fromString(type, str);
             return result;
         }
 
@@ -280,8 +278,7 @@ public final class StringConverter {
             delegatingConverter.addConverter(converter);
         }
 
-        @SuppressWarnings("unchecked")
-        final E result = (E) delegatingConverter.fromString(type, str);
+        @SuppressWarnings("unchecked") final E result = (E) delegatingConverter.fromString(type, str);
         return result;
     }
 }

@@ -61,11 +61,11 @@ public class CoalesceMultipleFieldsTransformerComponentBuilderPresenterRenderer 
     @Override
     public TransformerComponentBuilderPresenter render(
             final TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
-                PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(tjb).getInstance(PropertyWidgetFactory.class);
 
-        return new CoalesceMultipleFieldsTransformerComponentBuilderPresenter(tjb, propertyWidgetFactory,
-                windowContext, configuration);
+        return new CoalesceMultipleFieldsTransformerComponentBuilderPresenter(tjb, propertyWidgetFactory, windowContext,
+                configuration);
     }
 
 }

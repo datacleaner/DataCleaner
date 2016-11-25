@@ -19,8 +19,6 @@
  */
 package org.datacleaner.beans.filter;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.query.Query;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.filter.NullCheckFilter.EvaluationMode;
@@ -35,36 +33,38 @@ import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.test.TestHelper;
 
+import junit.framework.TestCase;
+
 public class NullCheckFilterTest extends TestCase {
 
     public void testAliases() throws Exception {
-        FilterDescriptor<?, ?> desc1 = Descriptors.ofFilterUnbound(NullCheckFilter.class);
+        final FilterDescriptor<?, ?> desc1 = Descriptors.ofFilterUnbound(NullCheckFilter.class);
 
-        SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
+        final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
         descriptorProvider.addFilterBeanDescriptor(desc1);
 
-        FilterDescriptor<?, ?> desc2 = descriptorProvider.getFilterDescriptorByDisplayName("Not null");
-        FilterDescriptor<?, ?> desc3 = descriptorProvider.getFilterDescriptorByDisplayName("Null check");
+        final FilterDescriptor<?, ?> desc2 = descriptorProvider.getFilterDescriptorByDisplayName("Not null");
+        final FilterDescriptor<?, ?> desc3 = descriptorProvider.getFilterDescriptorByDisplayName("Null check");
 
         assertSame(desc1, desc2);
         assertSame(desc1, desc3);
 
-        Enum<?> notNullOutcome1 = desc1.getOutcomeCategoryByName("VALID");
-        Enum<?> notNullOutcome2 = desc1.getOutcomeCategoryByName("NOT_NULL");
+        final Enum<?> notNullOutcome1 = desc1.getOutcomeCategoryByName("VALID");
+        final Enum<?> notNullOutcome2 = desc1.getOutcomeCategoryByName("NOT_NULL");
         assertSame(notNullOutcome1, notNullOutcome2);
 
-        Enum<?> nullOutcome1 = desc1.getOutcomeCategoryByName("INVALID");
-        Enum<?> nullOutcome2 = desc1.getOutcomeCategoryByName("NULL");
+        final Enum<?> nullOutcome1 = desc1.getOutcomeCategoryByName("INVALID");
+        final Enum<?> nullOutcome2 = desc1.getOutcomeCategoryByName("NULL");
         assertSame(nullOutcome1, nullOutcome2);
     }
 
     public void testCategorize() throws Exception {
-        InputColumn<Integer> col1 = new MockInputColumn<>("col1", Integer.class);
-        InputColumn<Boolean> col2 = new MockInputColumn<>("col2", Boolean.class);
-        InputColumn<String> col3 = new MockInputColumn<>("col3", String.class);
-        InputColumn<?>[] columns = new InputColumn[] { col1, col2, col3 };
+        final InputColumn<Integer> col1 = new MockInputColumn<>("col1", Integer.class);
+        final InputColumn<Boolean> col2 = new MockInputColumn<>("col2", Boolean.class);
+        final InputColumn<String> col3 = new MockInputColumn<>("col3", String.class);
+        final InputColumn<?>[] columns = new InputColumn[] { col1, col2, col3 };
 
-        NullCheckFilter filter = new NullCheckFilter(columns, true);
+        final NullCheckFilter filter = new NullCheckFilter(columns, true);
         assertEquals(NullCheckFilter.NullCheckCategory.NOT_NULL,
                 filter.categorize(new MockInputRow().put(col1, 1).put(col2, true).put(col3, "foo")));
 
@@ -82,12 +82,12 @@ public class NullCheckFilterTest extends TestCase {
     }
 
     public void testCategorizeAllFieldsMode() throws Exception {
-        InputColumn<Integer> col1 = new MockInputColumn<>("col1", Integer.class);
-        InputColumn<Boolean> col2 = new MockInputColumn<>("col2", Boolean.class);
-        InputColumn<String> col3 = new MockInputColumn<>("col3", String.class);
-        InputColumn<?>[] columns = new InputColumn[] { col1, col2, col3 };
+        final InputColumn<Integer> col1 = new MockInputColumn<>("col1", Integer.class);
+        final InputColumn<Boolean> col2 = new MockInputColumn<>("col2", Boolean.class);
+        final InputColumn<String> col3 = new MockInputColumn<>("col3", String.class);
+        final InputColumn<?>[] columns = new InputColumn[] { col1, col2, col3 };
 
-        NullCheckFilter filter = new NullCheckFilter(columns, true, EvaluationMode.ALL_FIELDS);
+        final NullCheckFilter filter = new NullCheckFilter(columns, true, EvaluationMode.ALL_FIELDS);
         assertEquals(NullCheckFilter.NullCheckCategory.NOT_NULL,
                 filter.categorize(new MockInputRow().put(col1, 1).put(col2, true).put(col3, "foo")));
 
@@ -111,24 +111,24 @@ public class NullCheckFilterTest extends TestCase {
     }
 
     public void testDescriptor() throws Exception {
-        FilterDescriptor<NullCheckFilter, NullCheckFilter.NullCheckCategory> desc = Descriptors
-                .ofFilter(NullCheckFilter.class);
-        Class<NullCheckFilter.NullCheckCategory> categoryEnum = desc.getOutcomeCategoryEnum();
+        final FilterDescriptor<NullCheckFilter, NullCheckFilter.NullCheckCategory> desc =
+                Descriptors.ofFilter(NullCheckFilter.class);
+        final Class<NullCheckFilter.NullCheckCategory> categoryEnum = desc.getOutcomeCategoryEnum();
         assertEquals(NullCheckFilter.NullCheckCategory.class, categoryEnum);
     }
 
     public void testOptimizeQuery() throws Exception {
-        Datastore datastore = TestHelper.createSampleDatabaseDatastore("mydb");
-        DatastoreConnection con = datastore.openConnection();
-        SchemaNavigator nav = con.getSchemaNavigator();
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("mydb");
+        final DatastoreConnection con = datastore.openConnection();
+        final SchemaNavigator nav = con.getSchemaNavigator();
 
-        MetaModelInputColumn col1 = new MetaModelInputColumn(nav.convertToColumn("EMPLOYEES.EMAIL"));
-        MetaModelInputColumn col2 = new MetaModelInputColumn(nav.convertToColumn("EMPLOYEES.EMPLOYEENUMBER"));
-        InputColumn<?>[] columns = new InputColumn[] { col1, col2 };
+        final MetaModelInputColumn col1 = new MetaModelInputColumn(nav.convertToColumn("EMPLOYEES.EMAIL"));
+        final MetaModelInputColumn col2 = new MetaModelInputColumn(nav.convertToColumn("EMPLOYEES.EMPLOYEENUMBER"));
+        final InputColumn<?>[] columns = new InputColumn[] { col1, col2 };
 
-        NullCheckFilter filter = new NullCheckFilter(columns, true);
+        final NullCheckFilter filter = new NullCheckFilter(columns, true);
 
-        Query baseQuery =
+        final Query baseQuery =
                 con.getDataContext().query().from("EMPLOYEES").select("EMAIL").and("EMPLOYEENUMBER").toQuery();
         Query optimizedQuery = filter.optimizeQuery(baseQuery.clone(), NullCheckFilter.NullCheckCategory.NOT_NULL);
 

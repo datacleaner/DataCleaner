@@ -1,14 +1,12 @@
 package org.datacleaner.monitor.jobwizard.completeness
 import org.apache.metamodel.schema.Table
-import scala.collection.JavaConversions._
-import scala.collection.JavaConversions
-import org.datacleaner.monitor.wizard.WizardPageController
-import org.datacleaner.job.builder.AnalysisJobBuilder
-import org.datacleaner.beans.CompletenessAnalyzer
 import org.datacleaner.api.InputColumn
+import org.datacleaner.beans.CompletenessAnalyzer
+import org.datacleaner.job.builder.AnalysisJobBuilder
 import org.datacleaner.monitor.shared.model.DCUserInputException
-import org.datacleaner.monitor.server.wizard.JobNameWizardPage
-import org.datacleaner.monitor.wizard.job.JobWizardContext
+import org.datacleaner.monitor.wizard.WizardPageController
+
+import scala.collection.JavaConversions._
 
 abstract class DefineFieldGroupPage(pageIndex: Int, fieldGroupIndex: Int, fieldGroupCount: Int, selectedTable: Table, analysisJobBuilder: AnalysisJobBuilder) extends WizardPageController {
 

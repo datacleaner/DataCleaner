@@ -19,11 +19,11 @@
  */
 package org.datacleaner.util;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.metadata.ColumnMeaning;
+
+import junit.framework.TestCase;
 
 public class DefaultEnumMatcherTest extends TestCase {
 

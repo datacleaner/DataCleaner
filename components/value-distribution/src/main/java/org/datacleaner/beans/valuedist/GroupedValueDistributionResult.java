@@ -39,8 +39,8 @@ import org.datacleaner.result.ValueFrequency;
  *
  *
  */
-public class GroupedValueDistributionResult extends ValueDistributionAnalyzerResult implements
-        GroupedValueCountingAnalyzerResult {
+public class GroupedValueDistributionResult extends ValueDistributionAnalyzerResult
+        implements GroupedValueCountingAnalyzerResult {
 
     private static final long serialVersionUID = 1L;
 

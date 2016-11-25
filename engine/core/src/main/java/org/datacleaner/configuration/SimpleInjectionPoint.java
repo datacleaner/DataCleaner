@@ -86,8 +86,8 @@ public class SimpleInjectionPoint<E> implements InjectionPoint<E> {
 
     @Override
     public Class<?> getGenericTypeArgument(final int i) throws IndexOutOfBoundsException {
-        throw new IndexOutOfBoundsException("This injection point has no generic type arguments, requested index no. "
-                + i);
+        throw new IndexOutOfBoundsException(
+                "This injection point has no generic type arguments, requested index no. " + i);
     }
 
 }

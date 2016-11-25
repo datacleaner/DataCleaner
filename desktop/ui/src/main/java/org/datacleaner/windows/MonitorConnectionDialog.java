@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -54,7 +52,6 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCCheckBox;
-import org.datacleaner.widgets.DCCheckBox.Listener;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.jdesktop.swingx.JXTextField;
@@ -105,12 +102,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         _httpsCheckBox.setBorderPainted(false);
         _httpsCheckBox.setOpaque(false);
         _httpsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _httpsCheckBox.addListener(new Listener<Void>() {
-            @Override
-            public void onItemSelected(final Void item, final boolean selected) {
-                updateUrlLabel();
-            }
-        });
+        _httpsCheckBox.addListener((item, selected) -> updateUrlLabel());
 
         _hostnameTextField = WidgetFactory.createTextField("Hostname");
         if (monitorConnection != null && monitorConnection.getHostname() != null) {
@@ -172,12 +164,9 @@ public class MonitorConnectionDialog extends AbstractDialog {
         _authenticationCheckBox.setBorderPainted(false);
         _authenticationCheckBox.setOpaque(false);
         _authenticationCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _authenticationCheckBox.addListener(new Listener<Void>() {
-            @Override
-            public void onItemSelected(final Void item, final boolean selected) {
-                _usernameTextField.setEnabled(selected);
-                _passwordTextField.setEnabled(selected);
-            }
+        _authenticationCheckBox.addListener((item, selected) -> {
+            _usernameTextField.setEnabled(selected);
+            _passwordTextField.setEnabled(selected);
         });
 
         if (monitorConnection != null && monitorConnection.isAuthenticationEnabled()) {
@@ -283,65 +272,56 @@ public class MonitorConnectionDialog extends AbstractDialog {
         formPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
         final JButton testButton = WidgetFactory.createDefaultButton("Test connection", IconUtils.ACTION_REFRESH);
-        testButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                final MonitorConnection connection = createMonitorConnection();
-                final String pingUrl = connection.getRepositoryUrl() + "/ping";
-                final HttpGet request = new HttpGet(pingUrl);
-                try (MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
-                    final HttpResponse response = monitorHttpClient.execute(request);
+        testButton.addActionListener(event -> {
+            final MonitorConnection connection = createMonitorConnection();
+            final String pingUrl = connection.getRepositoryUrl() + "/ping";
+            final HttpGet request = new HttpGet(pingUrl);
+            try (MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
+                final HttpResponse response = monitorHttpClient.execute(request);
 
-                    final StatusLine statusLine = response.getStatusLine();
+                final StatusLine statusLine = response.getStatusLine();
 
-                    if (statusLine.getStatusCode() == 200 || statusLine.getStatusCode() == 201) {
-                        // read response as JSON.
-                        final InputStream content = response.getEntity().getContent();
-                        final Map<?, ?> map;
-                        try {
-                            map = new ObjectMapper().readValue(content, Map.class);
-                        } finally {
-                            FileHelper.safeClose(content);
-                        }
-                        logger.info("Ping request responded: {}", map);
-                        JOptionPane.showMessageDialog(MonitorConnectionDialog.this, "Connection successful!");
-                    } else {
-                        final String reasonPhrase = statusLine.getReasonPhrase();
-                        WidgetUtils.showErrorMessage("Server reported error", "Server replied with status "
-                                + statusLine.getStatusCode() + ":\n" + reasonPhrase);
+                if (statusLine.getStatusCode() == 200 || statusLine.getStatusCode() == 201) {
+                    // read response as JSON.
+                    final InputStream content = response.getEntity().getContent();
+                    final Map<?, ?> map;
+                    try {
+                        map = new ObjectMapper().readValue(content, Map.class);
+                    } finally {
+                        FileHelper.safeClose(content);
                     }
-                } catch (final Exception e) {
-                    // TODO: This dialog is shown behind the modal dialog
-                    WidgetUtils
-                            .showErrorMessage(
-                                    "Connection failed",
-                                    "Connecting to DataCleaner monitor failed. Did you remember to fill in all the nescesary fields?",
-                                    e);
+                    logger.info("Ping request responded: {}", map);
+                    JOptionPane.showMessageDialog(MonitorConnectionDialog.this, "Connection successful!");
+                } else {
+                    final String reasonPhrase = statusLine.getReasonPhrase();
+                    WidgetUtils.showErrorMessage("Server reported error",
+                            "Server replied with status " + statusLine.getStatusCode() + ":\n" + reasonPhrase);
                 }
+            } catch (final Exception e) {
+                // TODO: This dialog is shown behind the modal dialog
+                WidgetUtils.showErrorMessage("Connection failed",
+                        "Connecting to DataCleaner monitor failed. Did you remember to fill in all the nescesary fields?",
+                        e);
             }
         });
 
         final JButton saveButton = WidgetFactory.createPrimaryButton("Save connection", IconUtils.ACTION_SAVE_BRIGHT);
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final MonitorConnection monitorConnection = createMonitorConnection();
-                _userPreferences.setMonitorConnection(monitorConnection);
+        saveButton.addActionListener(e -> {
+            final MonitorConnection monitorConnection = createMonitorConnection();
+            _userPreferences.setMonitorConnection(monitorConnection);
 
-                MonitorConnectionDialog.this.close();
-            }
+            MonitorConnectionDialog.this.close();
         });
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, saveButton, testButton);
         buttonPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
         final DescriptionLabel descriptionLabel = new DescriptionLabel();
-        descriptionLabel
-                .setText(
-                        "The DataCleaner monitor is a separate web application that is part of the DataCleaner eco-system. "
-                                + "In this dialog you can configure your connection to it. "
-                                + "With the monitor you can create, share, monitor and govern current and historic data quality metrics. "
-                                + "You can also set up alerts to react when certain metrics are out of their expected ranges.");
+        descriptionLabel.setText(
+                "The DataCleaner monitor is a separate web application that is part of the DataCleaner eco-system. "
+                        + "In this dialog you can configure your connection to it. "
+                        + "With the monitor you can create, share, monitor and govern current and historic data quality metrics. "
+                        + "You can also set up alerts to react when certain metrics are out of their expected ranges.");
 
         final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());

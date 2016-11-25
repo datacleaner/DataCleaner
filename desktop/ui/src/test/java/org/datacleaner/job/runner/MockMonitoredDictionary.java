@@ -63,7 +63,7 @@ public class MockMonitoredDictionary extends AbstractReferenceData implements Di
     }
 
     @Override
-    public DictionaryConnection openConnection(DataCleanerConfiguration arg0) {
+    public DictionaryConnection openConnection(final DataCleanerConfiguration arg0) {
         return new DictionaryConnection() {
             @Override
             public Iterator<String> getLengthSortedValues() {
@@ -76,7 +76,7 @@ public class MockMonitoredDictionary extends AbstractReferenceData implements Di
             }
 
             @Override
-            public boolean containsValue(String value) {
+            public boolean containsValue(final String value) {
                 return false;
             }
 

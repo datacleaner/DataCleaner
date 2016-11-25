@@ -51,9 +51,9 @@ final class SpringInjectionManager extends InjectionManagerImpl {
      * Classes that Spring injection should definately ignore (and avoid warn
      * logging).
      */
-    private static final Collection<Class<?>> NON_INJECTED_CLASSES = Sets.newHashSet(
-            DataCleanerConfiguration.class, DataCleanerHomeFolder.class, Datastore.class, DatastoreCatalog.class,
-            ReferenceDataCatalog.class, Table.class, Column.class);
+    private static final Collection<Class<?>> NON_INJECTED_CLASSES =
+            Sets.newHashSet(DataCleanerConfiguration.class, DataCleanerHomeFolder.class, Datastore.class,
+                    DatastoreCatalog.class, ReferenceDataCatalog.class, Table.class, Column.class);
 
     private final ApplicationContext _applicationContext;
 

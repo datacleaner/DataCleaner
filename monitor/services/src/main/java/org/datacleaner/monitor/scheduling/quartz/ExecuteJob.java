@@ -162,8 +162,8 @@ public class ExecuteJob extends AbstractQuartzJob {
                 throw new UnsupportedOperationException("No Job engine available for job: " + job);
             }
 
-            final DataCleanerConfiguration configuration = context.getConfiguration(execution.getSchedule()
-                    .getOverrideProperties());
+            final DataCleanerConfiguration configuration =
+                    context.getConfiguration(execution.getSchedule().getOverrideProperties());
 
             final VariableProviderDefinition variableProviderDef = execution.getSchedule().getVariableProvider();
             final Map<String, String> variables = overrideVariables(variableProviderDef, job, execution, configuration);
@@ -179,8 +179,9 @@ public class ExecuteJob extends AbstractQuartzJob {
         return execution.getResultId();
     }
 
-    private Map<String, String> overrideVariables(final VariableProviderDefinition variableProviderDef, final JobContext job,
-            final ExecutionLog execution, final DataCleanerConfiguration configuration) throws ClassNotFoundException {
+    private Map<String, String> overrideVariables(final VariableProviderDefinition variableProviderDef,
+            final JobContext job, final ExecutionLog execution, final DataCleanerConfiguration configuration)
+            throws ClassNotFoundException {
         if (variableProviderDef == null) {
             return null;
         }
@@ -192,8 +193,8 @@ public class ExecuteJob extends AbstractQuartzJob {
 
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration, null, true);
 
-        @SuppressWarnings("unchecked")
-        final Class<? extends VariableProvider> cls = (Class<? extends VariableProvider>) Class.forName(className);
+        @SuppressWarnings("unchecked") final Class<? extends VariableProvider> cls =
+                (Class<? extends VariableProvider>) Class.forName(className);
         final ComponentDescriptor<? extends VariableProvider> descriptor = Descriptors.ofComponent(cls);
         final VariableProvider variableProvider = ReflectionUtils.newInstance(cls);
         lifeCycleHelper.assignProvidedProperties(descriptor, variableProvider);

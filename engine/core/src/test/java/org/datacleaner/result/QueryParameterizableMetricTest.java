@@ -38,7 +38,7 @@ public class QueryParameterizableMetricTest extends TestCase {
         }
 
         @Override
-        public int getInstanceCount(String instance) {
+        public int getInstanceCount(final String instance) {
             if ("foo".equals(instance)) {
                 return 200;
             }

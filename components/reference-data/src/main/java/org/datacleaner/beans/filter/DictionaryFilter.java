@@ -60,7 +60,8 @@ public class DictionaryFilter implements Filter<DictionaryFilter.Category> {
     public DictionaryFilter() {
     }
 
-    public DictionaryFilter(final InputColumn<String> column, final Dictionary dictionary, final DataCleanerConfiguration configuration) {
+    public DictionaryFilter(final InputColumn<String> column, final Dictionary dictionary,
+            final DataCleanerConfiguration configuration) {
         this();
         this.column = column;
         this.dictionary = dictionary;

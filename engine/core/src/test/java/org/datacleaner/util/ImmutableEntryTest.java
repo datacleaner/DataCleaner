@@ -31,7 +31,7 @@ public class ImmutableEntryTest extends TestCase {
         try {
             e1.setValue(55);
             fail("Exception expected");
-        } catch (UnsupportedOperationException e) {
+        } catch (final UnsupportedOperationException e) {
             assertNull(e.getMessage());
         }
 

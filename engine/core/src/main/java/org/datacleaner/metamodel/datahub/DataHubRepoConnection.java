@@ -101,9 +101,8 @@ public class DataHubRepoConnection {
      * @return URL to REST service
      */
     public String getSchemaUrl(final String tenantName, final String datastoreName) {
-        final String uri = getRepoUrlWithTenant(tenantName) + DATASTORES_PATH + "/"
-                + urlPathSegmentEscaper().escape(datastoreName) + SCHEMA_EXTENSION;
-        return uri;
+        return getRepoUrlWithTenant(tenantName) + DATASTORES_PATH + "/" + urlPathSegmentEscaper().escape(datastoreName)
+                + SCHEMA_EXTENSION;
     }
 
     /**
@@ -114,8 +113,7 @@ public class DataHubRepoConnection {
      * @return URL to REST service
      */
     public String getDatastoreUrl(final String tenantName) {
-        final String uri = getRepoUrlWithTenant(tenantName) + DATASTORES_PATH;
-        return uri;
+        return getRepoUrlWithTenant(tenantName) + DATASTORES_PATH;
     }
 
     /**

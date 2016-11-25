@@ -50,6 +50,5 @@ public interface WizardPageController {
      * @param formParameters
      * @return
      */
-    WizardPageController nextPageController(Map<String, List<String>> formParameters)
-            throws DCUserInputException;
+    WizardPageController nextPageController(Map<String, List<String>> formParameters) throws DCUserInputException;
 }

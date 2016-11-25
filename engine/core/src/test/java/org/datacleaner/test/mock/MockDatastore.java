@@ -38,7 +38,7 @@ public class MockDatastore implements Datastore, PerformanceCharacteristics {
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
     }
 
     @Override

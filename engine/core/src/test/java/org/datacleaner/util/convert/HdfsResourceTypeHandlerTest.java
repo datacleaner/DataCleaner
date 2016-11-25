@@ -34,7 +34,7 @@ public class HdfsResourceTypeHandlerTest {
 
     @Test
     public void testToAndFromString() throws Exception {
-        MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);
+        final MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);
         helper.generateCoreFile();
         try {
             System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR,

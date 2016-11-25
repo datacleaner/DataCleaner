@@ -27,7 +27,7 @@ public class DatastoreSynonymCatalogReferenceDataPageDatastoreTest {
 
     @Test
     public void testGetNameLabel() throws Exception {
-        DatastoreSynonymCatalogReferenceDataPageDatastore page =
+        final DatastoreSynonymCatalogReferenceDataPageDatastore page =
                 new DatastoreSynonymCatalogReferenceDataPageDatastore(null);
         assertNotEquals("", page.getNameLabel());
     }

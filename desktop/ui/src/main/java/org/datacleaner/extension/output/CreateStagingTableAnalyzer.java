@@ -48,7 +48,8 @@ import org.datacleaner.user.UserPreferences;
 
 @Named("Create staging table")
 @Alias("Write to Datastore")
-@Description("Write data to DataCleaner's embedded staging database (based on H2), which provides a convenient location for staging data or simply storing data temporarily for further analysis.")
+@Description("Write data to DataCleaner's embedded staging database (based on H2), which provides a convenient "
+        + "location for staging data or simply storing data temporarily for further analysis.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Distributed(false)
 public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
@@ -61,6 +62,7 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
     public enum WriteMode {
         TRUNCATE, NEW_TABLE
     }
+
     static final String H2_DATABASE_CONNECTION_PROTOCOL = "jdbc:h2:";
     static final String H2_DRIVER_CLASS_NAME = "org.h2.Driver";
     @Configured(order = 1)
@@ -110,10 +112,10 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
         final boolean truncate = (writeMode == WriteMode.TRUNCATE);
         final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegateImpl(datastoreCatalog);
 
-        final File saveDatastoreDirectory = (userPreferences == null ? new File("datastores") : userPreferences
-                .getSaveDatastoreDirectory());
-        final OutputWriter outputWriter = DatastoreOutputWriterFactory.getWriter(saveDatastoreDirectory,
-                creationDelegate, datastoreName, tableName, truncate, columns);
+        final File saveDatastoreDirectory =
+                (userPreferences == null ? new File("datastores") : userPreferences.getSaveDatastoreDirectory());
+        final OutputWriter outputWriter = DatastoreOutputWriterFactory
+                .getWriter(saveDatastoreDirectory, creationDelegate, datastoreName, tableName, truncate, columns);
 
         // update the tablename property with the actual name (whitespace
         // escaped etc.)
@@ -123,8 +125,7 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
 
     @Override
     protected WriteDataResult getResultInternal(final int rowCount) {
-        final WriteDataResult result = new WriteDataResultImpl(rowCount, datastoreName, null, tableName);
-        return result;
+        return new WriteDataResultImpl(rowCount, datastoreName, null, tableName);
     }
 
     public String getDatastoreName() {
@@ -147,10 +148,10 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
             final Datastore datastore = datastoreCatalog.getDatastore(datastoreName);
 
             if (datastore != null) {
-                if (datastore instanceof JdbcDatastore
-                        && ((JdbcDatastore) datastore).getDriverClass().equals(H2_DRIVER_CLASS_NAME)) {
-                    if (!((JdbcDatastore) datastore).getJdbcUrl().startsWith(H2_DATABASE_CONNECTION_PROTOCOL
-                            + userPreferences.getSaveDatastoreDirectory().getPath())) {
+                if (datastore instanceof JdbcDatastore && ((JdbcDatastore) datastore).getDriverClass()
+                        .equals(H2_DRIVER_CLASS_NAME)) {
+                    if (!((JdbcDatastore) datastore).getJdbcUrl().startsWith(
+                            H2_DATABASE_CONNECTION_PROTOCOL + userPreferences.getSaveDatastoreDirectory().getPath())) {
                         throw new IllegalStateException("Datastore \"" + datastoreName
                                 + "\" is not located in \"Written datastores\" directory \"" + userPreferences
                                 .getSaveDatastoreDirectory().getPath() + "\".");

@@ -46,8 +46,8 @@ public class JobDeletionEventDeleteTimelinesListener implements ApplicationListe
         final TenantIdentifier tenantIdentifier = new TenantIdentifier(event.getTenant());
         final JobIdentifier jobIdentifier = new JobIdentifier(event.getJobName());
 
-        final Map<TimelineIdentifier, TimelineDefinition> timelines = timelineDao.getTimelinesForJob(tenantIdentifier,
-                jobIdentifier);
+        final Map<TimelineIdentifier, TimelineDefinition> timelines =
+                timelineDao.getTimelinesForJob(tenantIdentifier, jobIdentifier);
         for (final TimelineIdentifier timeline : timelines.keySet()) {
             timelineDao.removeTimeline(timeline);
         }

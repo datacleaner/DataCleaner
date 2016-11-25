@@ -36,21 +36,16 @@ public class FilenameTextFieldTest {
         final FilenameTextField filenameTextField = new FilenameTextField(new File("."), true);
 
         // create some silly listeners that re-set the value of the widget.
-        filenameTextField.addFileSelectionListener(new FileSelectionListener() {
-            @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
-                filenameTextField.setFile(file);
-            }
-        });
+        filenameTextField.addFileSelectionListener(FilenameTextField::setFile);
         filenameTextField.addListener(new ResourceTypePresenter.Listener() {
 
             @Override
-            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
+            public void onResourceSelected(final ResourceTypePresenter<?> presenter, final Resource resource) {
                 filenameTextField.setResource((FileResource) resource);
             }
 
             @Override
-            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+            public void onPathEntered(final ResourceTypePresenter<?> presenter, final String path) {
             }
         });
 
@@ -66,21 +61,17 @@ public class FilenameTextFieldTest {
         final AtomicBoolean resourceListenerInvoked = new AtomicBoolean(false);
 
         // create some silly listeners that re-set the value of the widget.
-        filenameTextField.addFileSelectionListener(new FileSelectionListener() {
-            @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
-                fileSelectionListenerInvoked.set(true);
-            }
-        });
+        filenameTextField
+                .addFileSelectionListener((filenameTextField1, file) -> fileSelectionListenerInvoked.set(true));
         filenameTextField.addListener(new ResourceTypePresenter.Listener() {
 
             @Override
-            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
+            public void onResourceSelected(final ResourceTypePresenter<?> presenter, final Resource resource) {
                 resourceListenerInvoked.set(true);
             }
 
             @Override
-            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+            public void onPathEntered(final ResourceTypePresenter<?> presenter, final String path) {
             }
         });
 

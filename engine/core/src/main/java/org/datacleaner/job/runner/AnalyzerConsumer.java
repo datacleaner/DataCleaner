@@ -34,8 +34,7 @@ final class AnalyzerConsumer extends AbstractRowProcessingConsumer implements Ro
     private final boolean _concurrent;
 
     public AnalyzerConsumer(final Analyzer<?> analyzer, final AnalyzerJob analyzerJob,
-            final InputColumn<?>[] inputColumns,
-            final RowProcessingPublisher publisher) {
+            final InputColumn<?>[] inputColumns, final RowProcessingPublisher publisher) {
         super(publisher, analyzerJob, analyzerJob);
         _analyzer = analyzer;
         _analyzerJob = analyzerJob;

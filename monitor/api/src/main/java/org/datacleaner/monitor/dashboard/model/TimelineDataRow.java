@@ -73,9 +73,9 @@ public class TimelineDataRow implements Comparable<TimelineDataRow>, Serializabl
     }
 
     @SuppressWarnings("deprecation")
-    private String format(final Date d) {
-        return (d.getYear() + 1900) + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":"
-                + d.getMinutes();
+    private String format(final Date date) {
+        return (date.getYear() + 1900) + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours()
+                + ":" + date.getMinutes();
     }
 
     @Override

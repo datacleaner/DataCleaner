@@ -35,8 +35,8 @@ import org.datacleaner.util.ReadObjectBuilder;
 /**
  * Datastore implementation for Excel spreadsheets.
  */
-public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataContext> implements FileDatastore,
-        ResourceDatastore, UpdateableDatastore {
+public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataContext>
+        implements FileDatastore, ResourceDatastore, UpdateableDatastore {
 
     private static final long serialVersionUID = 1L;
 
@@ -94,8 +94,8 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
 
     private ExcelConfiguration getExcelConfiguration() {
         if (_customColumnNames != null && _customColumnNames.size() > 0) {
-            return new ExcelConfiguration(ExcelConfiguration.DEFAULT_COLUMN_NAME_LINE, new CustomColumnNamingStrategy(
-                    _customColumnNames), true, false);
+            return new ExcelConfiguration(ExcelConfiguration.DEFAULT_COLUMN_NAME_LINE,
+                    new CustomColumnNamingStrategy(_customColumnNames), true, false);
         } else {
             return new ExcelConfiguration();
         }

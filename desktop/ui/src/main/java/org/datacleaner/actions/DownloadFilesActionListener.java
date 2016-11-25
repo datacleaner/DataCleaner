@@ -63,8 +63,9 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
     private final WebServiceHttpClient _httpClient;
     private volatile boolean _cancelled = false;
 
-    public DownloadFilesActionListener(final String[] urls, final FileDownloadListener listener, final WindowContext windowContext,
-            final WebServiceHttpClient httpClient, final UserPreferences userPreferences) {
+    public DownloadFilesActionListener(final String[] urls, final FileDownloadListener listener,
+            final WindowContext windowContext, final WebServiceHttpClient httpClient,
+            final UserPreferences userPreferences) {
         this(urls, createTargetDirectory(userPreferences), createTargetFilenames(urls), listener, windowContext,
                 httpClient);
     }
@@ -99,12 +100,7 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
             }
         }
 
-        final Action<Void> cancelCallback = new Action<Void>() {
-            @Override
-            public void run(final Void arg0) throws Exception {
-                cancelDownload();
-            }
-        };
+        final Action<Void> cancelCallback = arg0 -> cancelDownload();
 
         _downloadProgressWindow = new FileTransferProgressWindow(windowContext, cancelCallback, finalFilenames);
         _httpClient = httpClient;
@@ -183,12 +179,7 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
         _cancelled = true;
 
         if (hideWindowImmediately && _downloadProgressWindow != null) {
-            WidgetUtils.invokeSwingAction(new Runnable() {
-                @Override
-                public void run() {
-                    _downloadProgressWindow.close();
-                }
-            });
+            WidgetUtils.invokeSwingAction(_downloadProgressWindow::close);
         }
     }
 
@@ -236,12 +227,8 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
                     final HttpEntity responseEntity = response.getEntity();
                     final long expectedSize = responseEntity.getContentLength();
                     if (expectedSize > 0) {
-                        publish(new Task() {
-                            @Override
-                            public void execute() throws Exception {
-                                _downloadProgressWindow.setExpectedSize(file.getName().getBaseName(), expectedSize);
-                            }
-                        });
+                        publish((Task) () -> _downloadProgressWindow
+                                .setExpectedSize(file.getName().getBaseName(), expectedSize));
                     }
 
                     inputStream = responseEntity.getContent();
@@ -260,21 +247,12 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
                         bytes += numBytes;
 
                         final long totalBytes = bytes;
-                        publish(new Task() {
-                            @Override
-                            public void execute() throws Exception {
-                                _downloadProgressWindow.setProgress(file.getName().getBaseName(), totalBytes);
-                            }
-                        });
+                        publish((Task) () -> _downloadProgressWindow
+                                .setProgress(file.getName().getBaseName(), totalBytes));
                     }
 
                     if (!_cancelled) {
-                        publish(new Task() {
-                            @Override
-                            public void execute() throws Exception {
-                                _downloadProgressWindow.setFinished(file.getName().getBaseName());
-                            }
-                        });
+                        publish((Task) () -> _downloadProgressWindow.setFinished(file.getName().getBaseName()));
                     }
                 }
             } catch (final IOException e) {

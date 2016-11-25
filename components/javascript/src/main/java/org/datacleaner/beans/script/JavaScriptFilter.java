@@ -37,7 +37,8 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
 @Named("JavaScript filter")
-@Description("Supply your own piece of JavaScript that evaluates whether rows should be included or excluded from processing.")
+@Description(
+        "Supply your own piece of JavaScript that evaluates whether rows should be included or excluded from processing.")
 @Categorized(ScriptingCategory.class)
 public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
 
@@ -49,7 +50,9 @@ public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
     InputColumn<?>[] columns;
 
     @Configured
-    @Description("Available variables:\nvalues[0..]: Array of values\nvalues[\"my_col\"]: Map of values\nmy_col: Each column value has it's own variable\nout: Print to console using out.println('hello')\nlogger: Print to log using log.info(...), log.warn(...), log.error(...)")
+    @Description("Available variables:\nvalues[0..]: Array of values\nvalues[\"my_col\"]: Map of values\nmy_col: "
+            + "Each column value has it's own variable\nout: Print to console using out.println('hello')\n"
+            + "logger: Print to log using log.info(...), log.warn(...), log.error(...)")
     @StringProperty(multiline = true, mimeType = { "text/javascript", "application/x-javascript" })
     String sourceCode = "function eval() {\n  return values[0] != null;\n}\n\neval();";
 

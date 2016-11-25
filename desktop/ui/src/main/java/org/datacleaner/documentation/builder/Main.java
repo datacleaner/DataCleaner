@@ -40,13 +40,13 @@ public class Main {
 
     public static void main(final String[] args) {
         final DCModuleImpl module = new DCModuleImpl(DataCleanerHome.get());
-        final DataCleanerConfiguration configuration = Guice.createInjector(module).getInstance(
-                DataCleanerConfiguration.class);
+        final DataCleanerConfiguration configuration =
+                Guice.createInjector(module).getInstance(DataCleanerConfiguration.class);
 
-        final ComponentReferenceDocumentationBuilder docBuilder = new ComponentReferenceDocumentationBuilder(
-                configuration.getEnvironment().getDescriptorProvider());
-        final RepositoryFolder folder = configuration.getHomeFolder().toRepositoryFolder()
-                .getOrCreateFolder("documentation");
+        final ComponentReferenceDocumentationBuilder docBuilder =
+                new ComponentReferenceDocumentationBuilder(configuration.getEnvironment().getDescriptorProvider());
+        final RepositoryFolder folder =
+                configuration.getHomeFolder().toRepositoryFolder().getOrCreateFolder("documentation");
 
         // clean up the directory
         final List<RepositoryFile> htmlFiles = folder.getFiles(null, ".html");

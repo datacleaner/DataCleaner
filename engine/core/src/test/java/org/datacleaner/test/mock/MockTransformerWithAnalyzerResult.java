@@ -62,7 +62,7 @@ public class MockTransformerWithAnalyzerResult implements Transformer, HasAnalyz
     }
 
     @Override
-    public Object[] transform(InputRow inputRow) {
+    public Object[] transform(final InputRow inputRow) {
         _counter.incrementAndGet();
         return new Object[] { inputRow.getId() };
     }

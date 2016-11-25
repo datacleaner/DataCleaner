@@ -53,8 +53,8 @@ public final class RegexStringPattern extends AbstractReferenceData implements S
     public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final RegexStringPattern other = (RegexStringPattern) obj;
-            return Objects.equals(_expression, other._expression)
-                    && Objects.equals(_matchEntireString, other._matchEntireString);
+            return Objects.equals(_expression, other._expression) && Objects
+                    .equals(_matchEntireString, other._matchEntireString);
         }
         return false;
     }

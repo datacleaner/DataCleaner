@@ -53,9 +53,11 @@ public class GenerateIdTransformer implements Transformer {
             return name;
         }
     }
+
     private final AtomicLong _counter;
     @Configured
-    @Description("A type of ID which will be generated for each record in scope. Current options: sequential numbers or row number.")
+    @Description(
+            "A type of ID which will be generated for each record in scope. Current options: sequential numbers or row number.")
     IdType idType = IdType.SEQUENCE;
     @Configured
     @Description("A column which represent the scope for which the ID will be generated. "
@@ -63,8 +65,9 @@ public class GenerateIdTransformer implements Transformer {
             + "If a transformed column is selected, an ID will be generated for each record generated that has this column.")
     InputColumn<?> columnInScope;
     @Configured
-    @Description("The row number offset. This is often used to insert into a database with existing sequential IDs."
-            + " Since the transformer increments before inserting, an offset of e.g. 100 would make the first newly inserted ID 101.")
+    @Description("The row number offset. This is often used to insert into a database with existing sequential IDs. "
+            + "Since the transformer increments before inserting, an offset of e.g. 100 would make the first newly "
+            + "inserted ID 101.")
     long offset = 0;
 
     public GenerateIdTransformer() {

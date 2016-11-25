@@ -29,8 +29,8 @@ import org.junit.Test;
 public class DatastoreDictionaryReferenceDataPageDatastoreTest {
     @Test
     public void testNextPage() throws Exception {
-        final DatastoreWizardSession sessionMock = new DatastoreDictionaryReferenceDataWizardSession(
-                TestHelper.getReferenceDataWizardContextMock());
+        final DatastoreWizardSession sessionMock =
+                new DatastoreDictionaryReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         final DatastoreDictionaryReferenceDataPageDatastore page =
                 new DatastoreDictionaryReferenceDataPageDatastore(sessionMock);
         assertNotEquals("", page.getNameLabel());

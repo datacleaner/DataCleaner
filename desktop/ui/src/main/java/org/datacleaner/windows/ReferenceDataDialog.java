@@ -22,8 +22,6 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.inject.Inject;
 import javax.swing.ImageIcon;
@@ -116,10 +114,10 @@ public final class ReferenceDataDialog extends AbstractDialog {
         final Injector injectorWithGlassPane = _injectorBuilder.with(DCGlassPane.class, _glassPane).createInjector();
 
         final DictionaryListPanel dictionaryListPanel = injectorWithGlassPane.getInstance(DictionaryListPanel.class);
-        final SynonymCatalogListPanel synonymCatalogListPanel = injectorWithGlassPane
-                .getInstance(SynonymCatalogListPanel.class);
-        final StringPatternListPanel stringPatternListPanel = injectorWithGlassPane
-                .getInstance(StringPatternListPanel.class);
+        final SynonymCatalogListPanel synonymCatalogListPanel =
+                injectorWithGlassPane.getInstance(SynonymCatalogListPanel.class);
+        final StringPatternListPanel stringPatternListPanel =
+                injectorWithGlassPane.getInstance(StringPatternListPanel.class);
 
         _tabbedPane.addTab("Dictionaries",
                 new ImageIcon(imageManager.getImage(IconUtils.DICTIONARY_IMAGEPATH, IconUtils.ICON_SIZE_TAB)),
@@ -140,21 +138,14 @@ public final class ReferenceDataDialog extends AbstractDialog {
         _tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 550));
 
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                ReferenceDataDialog.this.dispose();
-            }
-        });
+        closeButton.addActionListener(e -> ReferenceDataDialog.this.dispose());
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         panel.setLayout(new BorderLayout());
-        panel.add(
-                new DescriptionLabel(
-                        "Reference data is used throughout DataCleaner. In this dialog you can set up your own "
-                                + "reference data items for identifying items in dictionaries (whitelists and blacklists), "
-                                + "synonym catalogs (usually used for replacement) and in string patterns (used for pattern matching)."),
-                BorderLayout.NORTH);
+        panel.add(new DescriptionLabel( "Reference data is used throughout DataCleaner. In this dialog you can set "
+                + "up your own reference data items for identifying items in dictionaries "
+                + "(whitelists and blacklists), synonym catalogs (usually used for replacement) and in "
+                + "string patterns (used for pattern matching)."), BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);
         panel.add(DCPanel.flow(Alignment.CENTER, closeButton), BorderLayout.SOUTH);
         panel.setPreferredSize(getDialogWidth(), 500);

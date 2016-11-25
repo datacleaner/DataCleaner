@@ -20,8 +20,6 @@
 package org.datacleaner.panels;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -89,23 +87,18 @@ public class HadoopClusterPanel extends DCPanel {
     private JButton createEditButton() {
         final JButton editButton = WidgetFactory.createDefaultButton("Edit", IconUtils.ACTION_EDIT);
         editButton.setToolTipText("Edit Hadoop cluster");
-        editButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (_serverInformation instanceof DirectConnectionHadoopClusterInformation) {
-                    final DirectConnectionHadoopClusterDialog hadoopConnectionToNamenodeDialog =
-                            new DirectConnectionHadoopClusterDialog(
-                                    _windowContext, (DirectConnectionHadoopClusterInformation) _serverInformation,
-                                    _serverInformationCatalog);
-                    hadoopConnectionToNamenodeDialog.setVisible(true);
-                } else if (_serverInformation.getClass().equals(DirectoryBasedHadoopClusterInformation.class)) {
-                    final DirectoryBasedHadoopClusterDialog hadoopDirectoryConfigurationDialog =
-                            new DirectoryBasedHadoopClusterDialog(
-                                    _windowContext, (DirectoryBasedHadoopClusterInformation) _serverInformation,
-                                    _serverInformationCatalog);
-                    hadoopDirectoryConfigurationDialog.setVisible(true);
-                }
+        editButton.addActionListener(e -> {
+            if (_serverInformation instanceof DirectConnectionHadoopClusterInformation) {
+                final DirectConnectionHadoopClusterDialog hadoopConnectionToNamenodeDialog =
+                        new DirectConnectionHadoopClusterDialog(_windowContext,
+                                (DirectConnectionHadoopClusterInformation) _serverInformation,
+                                _serverInformationCatalog);
+                hadoopConnectionToNamenodeDialog.setVisible(true);
+            } else if (_serverInformation.getClass().equals(DirectoryBasedHadoopClusterInformation.class)) {
+                final DirectoryBasedHadoopClusterDialog hadoopDirectoryConfigurationDialog =
+                        new DirectoryBasedHadoopClusterDialog(_windowContext,
+                                (DirectoryBasedHadoopClusterInformation) _serverInformation, _serverInformationCatalog);
+                hadoopDirectoryConfigurationDialog.setVisible(true);
             }
         });
         return editButton;
@@ -114,15 +107,12 @@ public class HadoopClusterPanel extends DCPanel {
     private JButton createRemoveButton(final ServerInformation serverInformation) {
         final JButton removeButton = WidgetFactory.createDefaultButton("Remove", IconUtils.ACTION_REMOVE_DARK);
         removeButton.setToolTipText("Remove Hadoop cluster");
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final int result = JOptionPane.showConfirmDialog(HadoopClusterPanel.this,
-                        "Are you sure you wish to remove the Hadoop cluster '" + serverInformation.getName() + "'?",
-                        "Confirm remove", JOptionPane.YES_NO_OPTION);
-                if (result == JOptionPane.YES_OPTION) {
-                    _serverInformationCatalog.removeServer(_serverInformation);
-                }
+        removeButton.addActionListener(e -> {
+            final int result = JOptionPane.showConfirmDialog(HadoopClusterPanel.this,
+                    "Are you sure you wish to remove the Hadoop cluster '" + serverInformation.getName() + "'?",
+                    "Confirm remove", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                _serverInformationCatalog.removeServer(_serverInformation);
             }
         });
         return removeButton;

@@ -20,8 +20,6 @@
 package org.datacleaner.widgets.tree;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -76,51 +74,45 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
                 toggleColumn(column);
             } else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
                 // right click = open popup menu
-                final JMenuItem toggleColumnItem = WidgetFactory.createMenuItem(null,
-                        "images/actions/toggle-source-column.png");
+                final JMenuItem toggleColumnItem =
+                        WidgetFactory.createMenuItem(null, "images/actions/toggle-source-column.png");
                 if (_analysisJobBuilder.containsSourceColumn(column)) {
                     toggleColumnItem.setText("Remove column from source");
                 } else {
                     toggleColumnItem.setText("Add column to source");
                 }
-                toggleColumnItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        toggleColumn(column);
-                    }
+                toggleColumnItem.addActionListener(e12 -> toggleColumn(column));
+
+                final JMenuItem createDictionaryItem =
+                        WidgetFactory.createMenuItem("Create dictionary from column", IconUtils.DICTIONARY_IMAGEPATH);
+                createDictionaryItem.addActionListener(e1 -> {
+                    final String datastoreName = _analysisJobBuilder.getDatastoreConnection().getDatastore().getName();
+                    final DatastoreDictionary dictionary =
+                            new DatastoreDictionary(column.getName(), datastoreName, column.getQualifiedLabel());
+
+                    final Injector injector =
+                            _injectorBuilder.with(DatastoreDictionary.class, dictionary).createInjector();
+
+                    final DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
+                    dialog.setVisible(true);
                 });
 
-                final JMenuItem createDictionaryItem = WidgetFactory.createMenuItem("Create dictionary from column",
-                        IconUtils.DICTIONARY_IMAGEPATH);
-                createDictionaryItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        final String datastoreName = _analysisJobBuilder.getDatastoreConnection().getDatastore().getName();
-                        final DatastoreDictionary dictionary = new DatastoreDictionary(column.getName(), datastoreName,
-                                column.getQualifiedLabel());
+                final JMenuItem quickAnalysisMenuItem =
+                        WidgetFactory.createMenuItem("Quick analysis", IconUtils.MODEL_QUICK_ANALYSIS);
 
-                        final Injector injector = _injectorBuilder.with(DatastoreDictionary.class, dictionary)
+                final Injector injector =
+                        _injectorBuilder.with(Column[].class, new Column[] { column }).with(Table.class, null)
                                 .createInjector();
-
-                        final DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
-                        dialog.setVisible(true);
-                    }
-                });
-
-                final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
-                        IconUtils.MODEL_QUICK_ANALYSIS);
-
-                final Injector injector = _injectorBuilder.with(Column[].class, new Column[] { column })
-                        .with(Table.class, null).createInjector();
-                final QuickAnalysisActionListener quickAnalysisActionListener = injector
-                        .getInstance(QuickAnalysisActionListener.class);
+                final QuickAnalysisActionListener quickAnalysisActionListener =
+                        injector.getInstance(QuickAnalysisActionListener.class);
 
                 quickAnalysisMenuItem.addActionListener(quickAnalysisActionListener);
 
-                final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview column",
-                        IconUtils.ACTION_PREVIEW);
-                previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getWindowContext(),
-                        _schemaTree.getDatastore(), column));
+                final JMenuItem previewMenuItem =
+                        WidgetFactory.createMenuItem("Preview column", IconUtils.ACTION_PREVIEW);
+                previewMenuItem.addActionListener(
+                        new PreviewSourceDataActionListener(_schemaTree.getWindowContext(), _schemaTree.getDatastore(),
+                                column));
 
                 final JPopupMenu popup = new JPopupMenu();
                 popup.setLabel(column.getName());

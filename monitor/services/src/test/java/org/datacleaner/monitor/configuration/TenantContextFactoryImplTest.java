@@ -19,8 +19,6 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -33,12 +31,14 @@ import org.datacleaner.repository.RepositoryFileResource;
 import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.util.convert.StringConverter;
 
+import junit.framework.TestCase;
+
 public class TenantContextFactoryImplTest extends TestCase {
 
     private Repository repository = new FileRepository("src/test/resources/example_repo");
     private JobEngineManager jobEngineManager = new MockJobEngineManager();
-    private TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
-            new DataCleanerEnvironmentImpl(), jobEngineManager);
+    private TenantContextFactory tenantContextFactory =
+            new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), jobEngineManager);
 
     public void testUseTenantSpecificInjectionManager() throws Exception {
         final TenantContext tenantContext = tenantContextFactory.getContext("tenant1");
@@ -48,20 +48,20 @@ public class TenantContextFactoryImplTest extends TestCase {
                 configuration.getEnvironment().getInjectionManagerFactory().getInjectionManager(configuration);
         assertTrue(injectionManager instanceof TenantInjectionManager);
 
-        TenantInjectionManager tenantInjectionManager = (TenantInjectionManager) injectionManager;
+        final TenantInjectionManager tenantInjectionManager = (TenantInjectionManager) injectionManager;
         assertEquals("tenant1", tenantInjectionManager.getTenantId());
 
-        StringConverter converter = injectionManager.getInstance(SimpleInjectionPoint.of(StringConverter.class));
+        final StringConverter converter = injectionManager.getInstance(SimpleInjectionPoint.of(StringConverter.class));
 
-        Resource resource = converter.deserialize("repo://jobs/email_standardizer.analysis.xml", Resource.class);
+        final Resource resource = converter.deserialize("repo://jobs/email_standardizer.analysis.xml", Resource.class);
         assertTrue(resource.isExists());
 
-        RepositoryFileResource repositoryFileResource = (RepositoryFileResource) resource;
+        final RepositoryFileResource repositoryFileResource = (RepositoryFileResource) resource;
 
-        assertEquals("/tenant1/jobs/email_standardizer.analysis.xml", repositoryFileResource.getRepositoryFile()
-                .getQualifiedPath());
+        assertEquals("/tenant1/jobs/email_standardizer.analysis.xml",
+                repositoryFileResource.getRepositoryFile().getQualifiedPath());
 
-        String serializedForm = converter.serialize(resource);
+        final String serializedForm = converter.serialize(resource);
         assertEquals("repo://jobs/email_standardizer.analysis.xml", serializedForm);
     }
 
@@ -69,22 +69,22 @@ public class TenantContextFactoryImplTest extends TestCase {
         try {
             tenantContextFactory.getContext("\\//");
             fail("Exception expected");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals("Tenant ID contained only invalid characters: \\//", e.getMessage());
         }
     }
 
     public void testStandardizeTenantIdToCacheTenantContext() throws Exception {
-        TenantContext tc1 = tenantContextFactory.getContext("tenant1");
-        TenantContext tc2 = tenantContextFactory.getContext("   TENANT1 ");
-        TenantContext tc3 = tenantContextFactory.getContext("Tenant\\1");
+        final TenantContext tc1 = tenantContextFactory.getContext("tenant1");
+        final TenantContext tc2 = tenantContextFactory.getContext("   TENANT1 ");
+        final TenantContext tc3 = tenantContextFactory.getContext("Tenant\\1");
 
         assertSame(tc1, tc2);
         assertSame(tc1, tc3);
 
         assertEquals("tenant1", tc3.getTenantId());
 
-        TenantContext tc4 = tenantContextFactory.getContext("Tenant\\\n2");
+        final TenantContext tc4 = tenantContextFactory.getContext("Tenant\\\n2");
 
         assertNotSame(tc1, tc4);
 

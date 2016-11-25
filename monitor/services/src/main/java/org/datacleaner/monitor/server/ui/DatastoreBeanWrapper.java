@@ -101,8 +101,7 @@ public class DatastoreBeanWrapper {
                     return resource.getQualifiedPath();
                 }
             }
-            final String filename = ((FileDatastore) _datastore).getFilename();
-            return filename;
+            return ((FileDatastore) _datastore).getFilename();
         } else {
             return null;
         }

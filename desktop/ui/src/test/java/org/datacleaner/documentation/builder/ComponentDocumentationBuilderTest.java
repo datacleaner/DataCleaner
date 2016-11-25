@@ -125,8 +125,8 @@ public class ComponentDocumentationBuilderTest {
         runBenchmarkTest(descriptor, benchmarkFile, outputFile);
     }
 
-    private void runBenchmarkTest(ComponentDescriptor<?> descriptor, File benchmarkFile, File outputFile)
-            throws Exception {
+    private void runBenchmarkTest(final ComponentDescriptor<?> descriptor, final File benchmarkFile,
+            final File outputFile) throws Exception {
         documentationCreator.write(descriptor, new FileOutputStream(outputFile));
         final String output = normalize(FileHelper.readFileAsString(outputFile));
 
@@ -146,7 +146,7 @@ public class ComponentDocumentationBuilderTest {
         assertEquals(benchmark, output);
     }
 
-    private String normalize(String str) {
+    private String normalize(final String str) {
         return StringUtils.replaceAll(str, "\r\n", "\n").trim();
     }
 }

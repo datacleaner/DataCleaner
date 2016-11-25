@@ -39,7 +39,7 @@ public class MockMonthConsumingAnalyzer implements Analyzer<ListResult<InputRow>
     private List<InputRow> rows = new ArrayList<>();
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         rows.add(row);
     }
 

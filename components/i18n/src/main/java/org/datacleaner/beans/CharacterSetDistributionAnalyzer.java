@@ -49,9 +49,10 @@ import org.datacleaner.storage.RowAnnotationFactory;
 import com.ibm.icu.text.UnicodeSet;
 
 @Named("Character set distribution")
-@Description("Inspects and maps text characters according to character set affinity, such as Latin, Hebrew, Cyrillic, Chinese and more.")
-@ExternalDocumentation({
-        @DocumentationLink(title = "Internationalization in DataCleaner", url = "https://www.youtube.com/watch?v=ApA-nhtLbhI", type = DocumentationType.VIDEO, version = "3.0") })
+@Description("Inspects and maps text characters according to character set affinity, "
+        + "such as Latin, Hebrew, Cyrillic, Chinese and more.")
+@ExternalDocumentation({ @DocumentationLink(title = "Internationalization in DataCleaner",
+        url = "https://www.youtube.com/watch?v=ApA-nhtLbhI", type = DocumentationType.VIDEO, version = "3.0") })
 @Concurrent(true)
 public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDistributionResult> {
 
@@ -119,8 +120,7 @@ public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDi
     public void init() {
         for (final InputColumn<String> column : _columns) {
             final CharacterSetDistributionAnalyzerColumnDelegate delegate =
-                    new CharacterSetDistributionAnalyzerColumnDelegate(
-                            _annotationFactory, UNICODE_SETS);
+                    new CharacterSetDistributionAnalyzerColumnDelegate(_annotationFactory, UNICODE_SETS);
             _columnDelegates.put(column, delegate);
         }
     }

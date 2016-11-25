@@ -1,14 +1,10 @@
 package org.datacleaner.beans
-import org.datacleaner.result.html.BodyElement
-import org.datacleaner.result.html.HtmlRenderingContext
-import org.datacleaner.api.AnalyzerResult
-import org.datacleaner.descriptors.HasAnalyzerResultComponentDescriptor
+import org.datacleaner.api.{AnalyzerResult, InputColumn}
+import org.datacleaner.descriptors.{ConfiguredPropertyDescriptor, HasAnalyzerResultComponentDescriptor, MetricParameters}
 import org.datacleaner.job.ComponentJob
+import org.datacleaner.result.html.{BodyElement, HtmlRenderingContext}
+
 import scala.collection.JavaConversions._
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor
-import org.datacleaner.api.InputColumn
-import org.datacleaner.job.ComponentJob
-import org.datacleaner.descriptors.MetricParameters
 
 /**
  * Body element which simply produces a list of metrics as per the descriptor of the component job being rendered.

@@ -22,8 +22,6 @@ package org.datacleaner.job.runner;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
@@ -43,6 +41,8 @@ import org.datacleaner.job.tasks.MockMultiRowTransformer;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
 
+import junit.framework.TestCase;
+
 public class ConsumeRowHandlerTest extends TestCase {
 
     final DataCleanerConfiguration _configuration = new DataCleanerConfigurationImpl();
@@ -56,9 +56,10 @@ public class ConsumeRowHandlerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        List<TableDataProvider<?>> tableDataProviders = new ArrayList<>();
-        tableDataProviders.add(new ArrayTableDataProvider(new SimpleTableDef("table", new String[] { "name", "age",
-                "country" }), new ArrayList<>()));
+        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<>();
+        tableDataProviders
+                .add(new ArrayTableDataProvider(new SimpleTableDef("table", new String[] { "name", "age", "country" }),
+                        new ArrayList<>()));
 
         ajb = new AnalysisJobBuilder(_configuration);
         ajb.setDatastore(new PojoDatastore("ds", "sch", tableDataProviders));
@@ -93,20 +94,20 @@ public class ConsumeRowHandlerTest extends TestCase {
 
         final ConsumeRowHandler handler = new ConsumeRowHandler(job, _configuration, configuration);
 
-        List<InputRow> result;
+        final List<InputRow> result;
 
-        MockInputRow inputRow = new MockInputRow().put(nameColumn, "Kasper").put(ageColumn, null)
-                .put(countryColumn, null);
+        final MockInputRow inputRow =
+                new MockInputRow().put(nameColumn, "Kasper").put(ageColumn, null).put(countryColumn, null);
         result = handler.consumeRow(inputRow).getRows();
 
         assertEquals(1, result.size());
-        InputRow outputRow = result.get(0);
+        final InputRow outputRow = result.get(0);
         assertEquals("TransformedInputRow[values={"
                 + "TransformedInputColumn[id=trans-0001-0002,name=mock output]=mocked: Kasper, "
                 + "TransformedInputColumn[id=trans-0003-0004,name=mock output]=mocked: mocked: Kasper}," + "delegate="
                 + inputRow.toString() + "]", outputRow.toString());
 
-        List<InputColumn<?>> outputColumns = outputRow.getInputColumns();
+        final List<InputColumn<?>> outputColumns = outputRow.getInputColumns();
         assertEquals(5, outputColumns.size());
 
         assertEquals("mocked: Kasper", outputRow.getValue(outputColumns.get(3)).toString());
@@ -131,10 +132,10 @@ public class ConsumeRowHandlerTest extends TestCase {
 
         final ConsumeRowHandler handler = new ConsumeRowHandler(job, _configuration, configuration);
 
-        List<InputRow> result;
+        final List<InputRow> result;
 
-        MockInputRow inputRow = new MockInputRow(100).put(nameColumn, "Vera").put(ageColumn, 3)
-                .put(countryColumn, "DK");
+        final MockInputRow inputRow =
+                new MockInputRow(100).put(nameColumn, "Vera").put(ageColumn, 3).put(countryColumn, "DK");
         result = handler.consumeRow(inputRow).getRows();
 
         assertEquals(3, result.size());
@@ -162,7 +163,7 @@ public class ConsumeRowHandlerTest extends TestCase {
                 + "]", outputRow.toString());
         assertEquals(9223372036853775810L, outputRow.getId());
 
-        List<InputColumn<?>> outputColumns = outputRow.getInputColumns();
+        final List<InputColumn<?>> outputColumns = outputRow.getInputColumns();
         assertEquals(6, outputColumns.size());
     }
 }

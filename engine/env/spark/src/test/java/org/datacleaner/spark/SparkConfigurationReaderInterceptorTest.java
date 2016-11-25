@@ -50,11 +50,11 @@ public class SparkConfigurationReaderInterceptorTest {
     @Test
     public void testRemoveServerFromHdfsUrl() throws Exception {
 
-        final SparkConfigurationReaderInterceptor interceptor = new SparkConfigurationReaderInterceptor(
-                new HashMap<>());
-        final Resource resource = interceptor.createResource(
-                "hdfs://{foo.bar.hadoop.environment}/datacleaner/data/companies_1.csv",
-                new DataCleanerConfigurationImpl());
+        final SparkConfigurationReaderInterceptor interceptor =
+                new SparkConfigurationReaderInterceptor(new HashMap<>());
+        final Resource resource = interceptor
+                .createResource("hdfs://{foo.bar.hadoop.environment}/datacleaner/data/companies_1.csv",
+                        new DataCleanerConfigurationImpl());
 
         assertTrue("Found: " + resource.getClass().getName(), resource instanceof HadoopResource);
         assertEquals("hdfs:///datacleaner/data/companies_1.csv", resource.getQualifiedPath());
@@ -62,10 +62,10 @@ public class SparkConfigurationReaderInterceptorTest {
 
     @Test
     public void testSimpleHdfsUrl() throws Exception {
-        final SparkConfigurationReaderInterceptor interceptor = new SparkConfigurationReaderInterceptor(
-                new HashMap<>());
-        final Resource resource = interceptor.createResource("hdfs:///datacleaner/data/companies_2.csv",
-                new DataCleanerConfigurationImpl());
+        final SparkConfigurationReaderInterceptor interceptor =
+                new SparkConfigurationReaderInterceptor(new HashMap<>());
+        final Resource resource = interceptor
+                .createResource("hdfs:///datacleaner/data/companies_2.csv", new DataCleanerConfigurationImpl());
 
         assertTrue("Found: " + resource.getClass().getName(), resource instanceof HadoopResource);
         assertEquals("hdfs:///datacleaner/data/companies_2.csv", resource.getQualifiedPath());
@@ -73,10 +73,10 @@ public class SparkConfigurationReaderInterceptorTest {
 
     @Test
     public void testSimpleSchemeLessUrl() throws Exception {
-        final SparkConfigurationReaderInterceptor interceptor = new SparkConfigurationReaderInterceptor(
-                new HashMap<>());
-        final Resource resource = interceptor.createResource("/datacleaner/data/companies_3.csv",
-                new DataCleanerConfigurationImpl());
+        final SparkConfigurationReaderInterceptor interceptor =
+                new SparkConfigurationReaderInterceptor(new HashMap<>());
+        final Resource resource =
+                interceptor.createResource("/datacleaner/data/companies_3.csv", new DataCleanerConfigurationImpl());
 
         assertTrue("Found: " + resource.getClass().getName(), resource instanceof HadoopResource);
         assertEquals("hdfs:///datacleaner/data/companies_3.csv", resource.getQualifiedPath());

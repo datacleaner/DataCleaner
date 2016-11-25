@@ -50,8 +50,8 @@ public class InformationPanelLabel extends JLabel {
         final JComponent createInformationComponent = labelPanel.createInformationComponent(null);
         _rightPanel.addTabToPane(_labelName, createInformationComponent);
 
-        final ImageIcon imageIcon = ImageManager.get().getImageIcon(labelPanel.getLabelImagePath(),
-                IconUtils.ICON_SIZE_SMALL);
+        final ImageIcon imageIcon =
+                ImageManager.get().getImageIcon(labelPanel.getLabelImagePath(), IconUtils.ICON_SIZE_SMALL);
         setIcon(imageIcon);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addMouseListener(new MouseAdapter() {

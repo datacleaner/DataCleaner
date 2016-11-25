@@ -22,25 +22,25 @@ package org.datacleaner.beans.script;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 
+import junit.framework.TestCase;
+
 public class JavaScriptTransformerTest extends TestCase {
 
     public void testReturnNull() throws Exception {
-        JavaScriptTransformer t = new JavaScriptTransformer();
+        final JavaScriptTransformer t = new JavaScriptTransformer();
         t.setSourceCode("function eval() {return null;}; eval();");
         t.setColumns(new InputColumn[0]);
         t.init();
-        Object object = t.transform(null)[0];
+        final Object object = t.transform(null)[0];
         assertNull(object);
     }
 
     public void testSimpleScriptExecution() throws Exception {
-        JavaScriptTransformer t = new JavaScriptTransformer();
+        final JavaScriptTransformer t = new JavaScriptTransformer();
         t.setSourceCode("function eval() {return 1+1;}; eval();");
         t.setColumns(new InputColumn[0]);
         t.init();
@@ -62,14 +62,14 @@ public class JavaScriptTransformerTest extends TestCase {
      * @throws Exception
      */
     public void testSharedScopedVariables() throws Exception {
-        JavaScriptTransformer t = new JavaScriptTransformer();
+        final JavaScriptTransformer t = new JavaScriptTransformer();
         t.setSourceCode("function eval() {out.print(\"hello world\"); return 1+1;}; eval();");
         t.setColumns(new InputColumn[0]);
 
-        PrintStream oldOut = System.out;
+        final PrintStream oldOut = System.out;
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PrintStream newOut = new PrintStream(byteArrayOutputStream);
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final PrintStream newOut = new PrintStream(byteArrayOutputStream);
         System.setOut(newOut);
         t.init();
         t.transform(null);
@@ -77,7 +77,7 @@ public class JavaScriptTransformerTest extends TestCase {
 
         newOut.flush();
         newOut.close();
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        final byte[] byteArray = byteArrayOutputStream.toByteArray();
         assertEquals("hello world", new String(byteArray));
     }
 
@@ -88,10 +88,9 @@ public class JavaScriptTransformerTest extends TestCase {
      * @throws Exception
      */
     public void testAddNumberTypes() throws Exception {
-        JavaScriptTransformer t = new JavaScriptTransformer();
+        final JavaScriptTransformer t = new JavaScriptTransformer();
         t.setSourceCode("function eval() {return values[0] + 2;}; eval();");
-        InputColumn<Number> col = new MockInputColumn<>("my number",
-                Number.class);
+        final InputColumn<Number> col = new MockInputColumn<>("my number", Number.class);
         t.setColumns(new InputColumn[] { col });
 
         t.init();
@@ -103,10 +102,9 @@ public class JavaScriptTransformerTest extends TestCase {
     }
 
     public void testSimpleScriptParseIntExecution() throws Exception {
-        JavaScriptTransformer t = new JavaScriptTransformer();
+        final JavaScriptTransformer t = new JavaScriptTransformer();
         t.setSourceCode("function eval() {return parseInt(values[0], 10)}; eval();");
-        InputColumn<String> col = new MockInputColumn<>("my number",
-                String.class);
+        final InputColumn<String> col = new MockInputColumn<>("my number", String.class);
         t.setColumns(new InputColumn[] { col });
 
         t.init();

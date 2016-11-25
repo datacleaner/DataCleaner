@@ -29,7 +29,7 @@ public class BerkeleyDbListTest extends TestCase {
     private BerkeleyDbStorageProvider sp = new BerkeleyDbStorageProvider(new File("target"));
 
     public void testAdd() throws Exception {
-        BerkeleyDbList<String> list = (BerkeleyDbList<String>) sp.createList(String.class);
+        final BerkeleyDbList<String> list = (BerkeleyDbList<String>) sp.createList(String.class);
 
         list.add("foo1");
         list.add("foo2");
@@ -49,7 +49,7 @@ public class BerkeleyDbListTest extends TestCase {
     }
 
     public void testSet() throws Exception {
-        List<String> list = sp.createList(String.class);
+        final List<String> list = sp.createList(String.class);
 
         list.add("foo1");
         list.add("foo2");
@@ -62,7 +62,7 @@ public class BerkeleyDbListTest extends TestCase {
     }
 
     public void testRemove() throws Exception {
-        List<String> list = sp.createList(String.class);
+        final List<String> list = sp.createList(String.class);
 
         list.add("foo1");
         list.add("foo2");

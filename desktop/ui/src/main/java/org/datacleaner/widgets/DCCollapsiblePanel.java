@@ -46,10 +46,10 @@ import org.jdesktop.swingx.JXCollapsiblePane.Direction;
  */
 public class DCCollapsiblePanel {
 
-    private static final Icon _expandedIcon = ImageManager.get().getImageIcon(IconUtils.ACTION_ADD_DARK,
-            IconUtils.ICON_SIZE_SMALL);
-    private static final Icon _collapsedIcon = ImageManager.get().getImageIcon(IconUtils.ACTION_REMOVE_DARK,
-            IconUtils.ICON_SIZE_SMALL);
+    private static final Icon _expandedIcon =
+            ImageManager.get().getImageIcon(IconUtils.ACTION_ADD_DARK, IconUtils.ICON_SIZE_SMALL);
+    private static final Icon _collapsedIcon =
+            ImageManager.get().getImageIcon(IconUtils.ACTION_REMOVE_DARK, IconUtils.ICON_SIZE_SMALL);
 
     private final JXCollapsiblePane _collapsiblePane;
     private final DCLabel _label;

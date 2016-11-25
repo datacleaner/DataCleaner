@@ -21,13 +21,13 @@ package org.datacleaner.components.fuse;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.InjectionManagerImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.util.convert.StringConverter;
+
+import junit.framework.TestCase;
 
 public class CoalesceUnitConverterTest extends TestCase {
 
@@ -42,47 +42,47 @@ public class CoalesceUnitConverterTest extends TestCase {
     private final MockInputColumn<?> objCol1 = new MockInputColumn<>("obj1", Object.class);
 
     public void testGetOutputDataType() throws Exception {
-        CoalesceUnitConverter converter = new CoalesceUnitConverter();
+        final CoalesceUnitConverter converter = new CoalesceUnitConverter();
 
-        InputColumn<?>[] allColumns = new InputColumn[] { numberCol1, numberCol2, integerCol1, integerCol2, stringCol1,
-                stringCol2, objCol1 };
+        final InputColumn<?>[] allColumns =
+                new InputColumn[] { numberCol1, numberCol2, integerCol1, integerCol2, stringCol1, stringCol2, objCol1 };
 
-        CoalesceUnit unit1 = new CoalesceUnit(stringCol1, stringCol2);
-        String str = converter.toString(unit1);
+        final CoalesceUnit unit1 = new CoalesceUnit(stringCol1, stringCol2);
+        final String str = converter.toString(unit1);
         assertEquals("[str1,str2]", str);
 
-        CoalesceUnit unit2 = converter.fromString(CoalesceUnit.class, str);
+        final CoalesceUnit unit2 = converter.fromString(CoalesceUnit.class, str);
         assertEquals("[str1, str2]", Arrays.toString(unit2.getInputColumnNames()));
         assertEquals(String.class, unit2.updateInputColumns(allColumns).getOutputDataType());
     }
 
     public void testDiscoverAndResolveConverter() throws Exception {
-        StringConverter stringConverter = new StringConverter(new InjectionManagerImpl(
-                new DataCleanerConfigurationImpl()));
+        final StringConverter stringConverter =
+                new StringConverter(new InjectionManagerImpl(new DataCleanerConfigurationImpl()));
 
-        CoalesceUnit unit1 = new CoalesceUnit(stringCol1, stringCol2);
+        final CoalesceUnit unit1 = new CoalesceUnit(stringCol1, stringCol2);
         String str = stringConverter.serialize(unit1);
         assertEquals("&#91;str1&#44;str2&#93;", str);
 
-        CoalesceUnit[] array = new CoalesceUnit[] { unit1, unit1 };
+        final CoalesceUnit[] array = new CoalesceUnit[] { unit1, unit1 };
         str = stringConverter.serialize(array);
         assertEquals("[&#91;str1&#44;str2&#93;,&#91;str1&#44;str2&#93;]", str);
 
-        CoalesceUnit[] units = stringConverter.deserialize(str, CoalesceUnit[].class);
+        final CoalesceUnit[] units = stringConverter.deserialize(str, CoalesceUnit[].class);
         assertEquals(2, units.length);
         assertEquals("CoalesceUnit[inputColumnNames=[str1, str2]]", units[0].toString());
         assertEquals("CoalesceUnit[inputColumnNames=[str1, str2]]", units[1].toString());
     }
 
     public void testConvertCommaNames() throws Exception {
-        StringConverter stringConverter = new StringConverter(new InjectionManagerImpl(
-                new DataCleanerConfigurationImpl()));
+        final StringConverter stringConverter =
+                new StringConverter(new InjectionManagerImpl(new DataCleanerConfigurationImpl()));
 
-        CoalesceUnit unitIn = new CoalesceUnit(stringCommaCol1, stringCommaCol2);
-        String str = stringConverter.serialize(unitIn);
+        final CoalesceUnit unitIn = new CoalesceUnit(stringCommaCol1, stringCommaCol2);
+        final String str = stringConverter.serialize(unitIn);
         assertEquals("&#91;str1&amp;#44;a&#44;str2&amp;#44;b&#93;", str);
 
-        CoalesceUnit unitOut = stringConverter.deserialize(str, CoalesceUnit.class);
+        final CoalesceUnit unitOut = stringConverter.deserialize(str, CoalesceUnit.class);
         assertEquals("CoalesceUnit[inputColumnNames=[str1,a, str2,b]]", unitOut.toString());
     }
 }

@@ -32,7 +32,7 @@ public class ExtensionReaderTest extends TestCase {
         assertTrue(extensions.size() >= 1);
 
         boolean foundTestExtension = false;
-        for (ExtensionPackage extensionPackage : extensions) {
+        for (final ExtensionPackage extensionPackage : extensions) {
             if ("Test extension".equals(extensionPackage.getName())) {
 
                 foundTestExtension = true;
@@ -51,7 +51,7 @@ public class ExtensionReaderTest extends TestCase {
     }
 
     public void testAutoDetectPackageName() throws Exception {
-        File file = new File("src/test/resources/FooBarPlugin.jar");
+        final File file = new File("src/test/resources/FooBarPlugin.jar");
         assertTrue("example plugin jar does not exist", file.exists());
 
         assertEquals("foo.bar", new ExtensionReader().autoDetectPackageName(file));

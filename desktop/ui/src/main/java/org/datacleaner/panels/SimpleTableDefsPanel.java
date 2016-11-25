@@ -22,8 +22,6 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -43,8 +41,6 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.datacleaner.widgets.tabs.TabCloseEvent;
-import org.datacleaner.widgets.tabs.TabCloseListener;
 
 /**
  * A panel for letting the user build multiple {@link SimpleTableDef}s
@@ -53,8 +49,8 @@ public class SimpleTableDefsPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Icon TABLE_ICON = ImageManager.get().getImageIcon(IconUtils.MODEL_TABLE,
-            IconUtils.ICON_SIZE_TAB);
+    private static final Icon TABLE_ICON =
+            ImageManager.get().getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_TAB);
 
     private final CloseableTabbedPane _tabbedPane;
     private final SchemaFactory _schemaFactory;
@@ -96,12 +92,9 @@ public class SimpleTableDefsPanel extends DCPanel {
         add(createButtonPanel(), BorderLayout.NORTH);
         setMinimumSize(new Dimension(400, 300));
 
-        _tabbedPane.addTabCloseListener(new TabCloseListener() {
-            @Override
-            public void tabClosed(final TabCloseEvent ev) {
-                if (_tabbedPane.getTabCount() == 0) {
-                    setTabbedPaneVisible(false);
-                }
+        _tabbedPane.addTabCloseListener(ev -> {
+            if (_tabbedPane.getTabCount() == 0) {
+                setTabbedPaneVisible(false);
             }
         });
     }
@@ -119,15 +112,13 @@ public class SimpleTableDefsPanel extends DCPanel {
     private DCPanel createButtonPanel() {
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
         addButton.setText("Add table");
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final String tableName = JOptionPane.showInputDialog(SimpleTableDefsPanel.this,
-                        "What is the name of the table", "Add table", JOptionPane.QUESTION_MESSAGE);
-                if (!StringUtils.isNullOrEmpty(tableName)) {
-                    final SimpleTableDef tableDef = new SimpleTableDef(tableName, new String[0]);
-                    addTableDef(tableDef);
-                }
+        addButton.addActionListener(e -> {
+            final String tableName = JOptionPane
+                    .showInputDialog(SimpleTableDefsPanel.this, "What is the name of the table", "Add table",
+                            JOptionPane.QUESTION_MESSAGE);
+            if (!StringUtils.isNullOrEmpty(tableName)) {
+                final SimpleTableDef tableDef = new SimpleTableDef(tableName, new String[0]);
+                addTableDef(tableDef);
             }
         });
 
@@ -136,16 +127,13 @@ public class SimpleTableDefsPanel extends DCPanel {
         if (_schemaFactory != null) {
             final JButton autoDetectButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REFRESH);
             autoDetectButton.setText("Auto-detect tables");
-            autoDetectButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    removeAllTableDefs();
+            autoDetectButton.addActionListener(e -> {
+                removeAllTableDefs();
 
-                    final Schema schema = _schemaFactory.createSchema();
-                    final Table[] tables = schema.getTables();
-                    for (final Table table : tables) {
-                        addTableDef(createTableDef(table));
-                    }
+                final Schema schema = _schemaFactory.createSchema();
+                final Table[] tables = schema.getTables();
+                for (final Table table : tables) {
+                    addTableDef(createTableDef(table));
                 }
             });
             buttonPanel = DCPanel.flow(Alignment.RIGHT, 10, 10, addButton, autoDetectButton);

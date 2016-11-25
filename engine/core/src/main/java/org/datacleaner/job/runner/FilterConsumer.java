@@ -92,18 +92,18 @@ final class FilterConsumer extends AbstractRowProcessingConsumer implements RowP
 
     public boolean isQueryOptimizable(final FilterOutcome filterOutcome) {
         if (_filter instanceof QueryOptimizedFilter) {
-            @SuppressWarnings("rawtypes") final
-            QueryOptimizedFilter queryOptimizedFilter = (QueryOptimizedFilter) _filter;
-            @SuppressWarnings("unchecked") final
-            boolean optimizable = queryOptimizedFilter.isOptimizable(filterOutcome.getCategory());
+            @SuppressWarnings("rawtypes") final QueryOptimizedFilter queryOptimizedFilter =
+                    (QueryOptimizedFilter) _filter;
+            @SuppressWarnings("unchecked") final boolean optimizable =
+                    queryOptimizedFilter.isOptimizable(filterOutcome.getCategory());
             return optimizable;
         }
         return false;
     }
 
     public boolean isRemoveableUponOptimization() {
-        final Optimizeable optimizeable = ReflectionUtils.getAnnotation(_filterJob.getDescriptor().getComponentClass(),
-                Optimizeable.class);
+        final Optimizeable optimizeable =
+                ReflectionUtils.getAnnotation(_filterJob.getDescriptor().getComponentClass(), Optimizeable.class);
         if (optimizeable == null) {
             return true;
         }

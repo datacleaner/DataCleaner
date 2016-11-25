@@ -32,7 +32,7 @@ public class CommunityEditionStatusLabelTest {
 
     @Before
     public void setup() {
-        RightInformationPanel rightInformationPanel = mock(RightInformationPanel.class);
+        final RightInformationPanel rightInformationPanel = mock(RightInformationPanel.class);
 
         _label = new CommunityEditionStatusLabel(rightInformationPanel);
     }

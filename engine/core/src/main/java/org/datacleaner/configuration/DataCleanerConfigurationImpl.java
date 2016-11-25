@@ -62,15 +62,14 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
     }
 
     public DataCleanerConfigurationImpl(final DataCleanerEnvironment environment,
-            final DataCleanerHomeFolder homeFolder,
-            final DatastoreCatalog datastoreCatalog, final ReferenceDataCatalog referenceDataCatalog) {
+            final DataCleanerHomeFolder homeFolder, final DatastoreCatalog datastoreCatalog,
+            final ReferenceDataCatalog referenceDataCatalog) {
         this(environment, homeFolder, datastoreCatalog, referenceDataCatalog, defaultServerInformationCatalog());
     }
 
     public DataCleanerConfigurationImpl(final DataCleanerEnvironment environment,
-            final DataCleanerHomeFolder homeFolder,
-            final DatastoreCatalog datastoreCatalog, final ReferenceDataCatalog referenceDataCatalog,
-            final ServerInformationCatalog serverInformationCatalog) {
+            final DataCleanerHomeFolder homeFolder, final DatastoreCatalog datastoreCatalog,
+            final ReferenceDataCatalog referenceDataCatalog, final ServerInformationCatalog serverInformationCatalog) {
         if (environment == null) {
             _environment = defaultEnvironment();
         } else {

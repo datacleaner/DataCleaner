@@ -69,7 +69,8 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
 
     private FileTransferProgressWindow _progressWindow;
 
-    public PublishFileToMonitorActionListener(final WindowContext windowContext, final UserPreferences userPreferences) {
+    public PublishFileToMonitorActionListener(final WindowContext windowContext,
+            final UserPreferences userPreferences) {
         super();
         _windowContext = windowContext;
         _userPreferences = userPreferences;
@@ -147,12 +148,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
 
         final long expectedSize = getExpectedSize();
 
-        publish(new Task() {
-            @Override
-            public void execute() throws Exception {
-                _progressWindow.setExpectedSize(getTransferredFilename(), expectedSize);
-            }
-        });
+        publish((Task) () -> _progressWindow.setExpectedSize(getTransferredFilename(), expectedSize));
 
         final ContentBody uploadFilePart = new AbstractContentBody(ContentType.APPLICATION_OCTET_STREAM) {
 
@@ -185,12 +181,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
 
                         final long updatedProgress = progress;
 
-                        publish(new Task() {
-                            @Override
-                            public void execute() throws Exception {
-                                _progressWindow.setProgress(getTransferredFilename(), updatedProgress);
-                            }
-                        });
+                        publish((Task) () -> _progressWindow.setProgress(getTransferredFilename(), updatedProgress));
                     }
                     out.flush();
                 }
@@ -229,9 +220,8 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
 
                 final ObjectMapper objectMapper = new ObjectMapper();
                 try {
-                    final Map<?, ?> responseMap = objectMapper.readValue(contentString, Map.class);
 
-                    return responseMap;
+                    return objectMapper.readValue(contentString, Map.class);
                 } catch (final Exception e) {
                     logger.warn("Received non-JSON response:\n{}", contentString);
                     logger.error("Failed to parse response as JSON", e);
@@ -274,8 +264,8 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
         if (openBrowserWhenDone() && responseMap != null) {
             final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
             final String repositoryPath = responseMap.get("repository_path").toString();
-            final OpenBrowserAction openBrowserAction = new OpenBrowserAction(monitorConnection.getBaseUrl()
-                    + "/repository" + encodeSpaces(repositoryPath));
+            final OpenBrowserAction openBrowserAction = new OpenBrowserAction(
+                    monitorConnection.getBaseUrl() + "/repository" + encodeSpaces(repositoryPath));
             openBrowserAction.actionPerformed(null);
         }
     }

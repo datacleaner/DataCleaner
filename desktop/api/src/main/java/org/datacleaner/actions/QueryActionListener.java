@@ -40,12 +40,13 @@ public class QueryActionListener implements ActionListener {
     private final WindowContext _windowContext;
     private final Collection<? extends HasName> _columns;
 
-    public QueryActionListener(final WindowContext windowContext, final AnalysisJobBuilder analysisJobBuilder, final Table table) {
+    public QueryActionListener(final WindowContext windowContext, final AnalysisJobBuilder analysisJobBuilder,
+            final Table table) {
         this(windowContext, analysisJobBuilder, table, null);
     }
 
-    public QueryActionListener(final WindowContext windowContext, final AnalysisJobBuilder analysisJobBuilder, final Table table,
-            final Collection<? extends HasName> columns) {
+    public QueryActionListener(final WindowContext windowContext, final AnalysisJobBuilder analysisJobBuilder,
+            final Table table, final Collection<? extends HasName> columns) {
         _windowContext = windowContext;
         _analysisJobBuilder = analysisJobBuilder;
         _table = table;

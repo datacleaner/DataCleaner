@@ -19,26 +19,27 @@
  */
 package org.datacleaner.configuration;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
 
+import junit.framework.TestCase;
+
 @SuppressWarnings("deprecation")
 public class AnalyzerBeansConfigurationImplTest extends TestCase {
 
     public void testReplaceRetainsInjectionManagerFactory() throws Exception {
-        InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactory() {
+        final InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactory() {
             @Override
-            public InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
+            public InjectionManager getInjectionManager(final DataCleanerConfiguration configuration,
+                    final AnalysisJob job) {
                 throw new UnsupportedOperationException("I'm just a mock");
             }
 
             @Override
-            public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
+            public InjectionManager getInjectionManager(final DataCleanerConfiguration configuration) {
                 throw new UnsupportedOperationException("I'm just a mock");
             }
         };
@@ -52,7 +53,7 @@ public class AnalyzerBeansConfigurationImplTest extends TestCase {
         try {
             conf.getInjectionManager(null).getInstance(null);
             fail("Exception expected");
-        } catch (UnsupportedOperationException e) {
+        } catch (final UnsupportedOperationException e) {
             assertEquals("I'm just a mock", e.getMessage());
         }
     }

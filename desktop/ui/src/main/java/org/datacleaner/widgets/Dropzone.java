@@ -26,8 +26,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -89,33 +87,32 @@ public class Dropzone extends DCPanel {
         setLayout(new GridBagLayout());
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        setBorder(new CompoundBorder(BorderFactory.createDashedBorder(WidgetUtils.BG_COLOR_MEDIUM, 3f, 3.0f, 3.0f,
-                false), new EmptyBorder(30, 30, 30, 30)));
+        setBorder(
+                new CompoundBorder(BorderFactory.createDashedBorder(WidgetUtils.BG_COLOR_MEDIUM, 3f, 3.0f, 3.0f, false),
+                        new EmptyBorder(30, 30, 30, 30)));
 
         final DCLabel dropFileLabel = DCLabel.dark("<html><b>Drop file</b> here</html>");
         dropFileLabel.setFont(WidgetUtils.FONT_BANNER);
-        add(dropFileLabel, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+        add(dropFileLabel,
+                new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 10, 0), 0, 0));
 
         // orclick button
         final JButton orClickButton = WidgetFactory.createPrimaryButton("(Click to browse)", IconUtils.FILE_FILE);
         orClickButton.setFont(WidgetUtils.FONT_HEADER2);
         orClickButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(orClickButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.EAST,
-                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
-        orClickButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                showFileChooser();
-            }
-        });
+        add(orClickButton,
+                new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        new Insets(0, 0, 10, 0), 0, 0));
+        orClickButton.addActionListener(e -> showFileChooser());
         // select hadoop file button
-        final JButton selectHadoopButton = WidgetFactory.createPrimaryButton("Select Hadoop HDFS file",
-                IconUtils.FILE_HDFS);
+        final JButton selectHadoopButton =
+                WidgetFactory.createPrimaryButton("Select Hadoop HDFS file", IconUtils.FILE_HDFS);
         selectHadoopButton.setFont(WidgetUtils.FONT_HEADER2);
         selectHadoopButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(selectHadoopButton, new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST,
-                GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
+        add(selectHadoopButton,
+                new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(0, 10, 10, 0), 0, 0));
 
         selectHadoopButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -136,24 +133,25 @@ public class Dropzone extends DCPanel {
                 }
 
                 if (selectedServer == null) {
-                    final SelectHadoopClusterDialog selectHadoopConfigurationDialog = new SelectHadoopClusterDialog(
-                            windowContext, serverInformationCatalog, optionsDialogProvider);
+                    final SelectHadoopClusterDialog selectHadoopConfigurationDialog =
+                            new SelectHadoopClusterDialog(windowContext, serverInformationCatalog,
+                                    optionsDialogProvider);
                     selectHadoopConfigurationDialog.setVisible(true);
                     selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration();
                 }
 
                 if (selectedServer != null) {
-                    final URI selectedFile = HdfsUrlChooser.showDialog(Dropzone.this, serverInformationCatalog,
-                            selectedServer, null, OpenType.LOAD);
+                    final URI selectedFile = HdfsUrlChooser
+                            .showDialog(Dropzone.this, serverInformationCatalog, selectedServer, null, OpenType.LOAD);
                     logger.info("Selected HDFS file: " + selectedFile);
 
                     if (selectedFile != null) {
-                        final HadoopClusterInformation server = (HadoopClusterInformation) serverInformationCatalog
-                                .getServer(selectedServer);
-                        final HdfsResource resource = new HadoopResource(selectedFile, server.getConfiguration(),
-                                selectedServer);
-                        final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(
-                                _datastoreCatalog, resource);
+                        final HadoopClusterInformation server =
+                                (HadoopClusterInformation) serverInformationCatalog.getServer(selectedServer);
+                        final HdfsResource resource =
+                                new HadoopResource(selectedFile, server.getConfiguration(), selectedServer);
+                        final Datastore datastore = DatastoreCreationUtil
+                                .createAndAddUniqueDatastoreFromResource(_datastoreCatalog, resource);
                         _datastoreSelectListener.datastoreSelected(datastore);
                     }
                 }
@@ -196,8 +194,8 @@ public class Dropzone extends DCPanel {
                     }
                 }
                 if (datastore == null) {
-                    datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(_datastoreCatalog,
-                            new FileResource(file));
+                    datastore = DatastoreCreationUtil
+                            .createAndAddUniqueDatastoreFromResource(_datastoreCatalog, new FileResource(file));
                 }
                 _datastoreSelectListener.datastoreSelected(datastore);
 
@@ -257,8 +255,8 @@ public class Dropzone extends DCPanel {
                     return false;
                 }
 
-                final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(_datastoreCatalog,
-                        new FileResource(file));
+                final Datastore datastore = DatastoreCreationUtil
+                        .createAndAddUniqueDatastoreFromResource(_datastoreCatalog, new FileResource(file));
                 _datastoreSelectListener.datastoreSelected(datastore);
                 return true;
             }

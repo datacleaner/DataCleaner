@@ -25,7 +25,7 @@ public class Month {
     private String monthShortCut;
     private int monthAsNumber;
 
-    public Month(String monthNameFull, String monthShortCut, int monthAsNumber) {
+    public Month(final String monthNameFull, final String monthShortCut, final int monthAsNumber) {
         super();
         this.monthNameFull = monthNameFull;
         this.monthShortCut = monthShortCut;
@@ -36,7 +36,7 @@ public class Month {
         return monthNameFull;
     }
 
-    public void setMonthNameFull(String monthNameFull) {
+    public void setMonthNameFull(final String monthNameFull) {
         this.monthNameFull = monthNameFull;
     }
 
@@ -44,7 +44,7 @@ public class Month {
         return monthShortCut;
     }
 
-    public void setMonthShortCut(String monthShortCut) {
+    public void setMonthShortCut(final String monthShortCut) {
         this.monthShortCut = monthShortCut;
     }
 
@@ -52,7 +52,7 @@ public class Month {
         return monthAsNumber;
     }
 
-    public void setMonthAsNumber(int monthAsNumber) {
+    public void setMonthAsNumber(final int monthAsNumber) {
         this.monthAsNumber = monthAsNumber;
     }
 

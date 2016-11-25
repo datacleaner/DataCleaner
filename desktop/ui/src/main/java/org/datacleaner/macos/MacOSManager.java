@@ -87,6 +87,7 @@ public class MacOSManager {
         public void handleReOpenApplication(final ApplicationEvent event) {
         }
     }
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final WindowContext _windowContext;
     private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;

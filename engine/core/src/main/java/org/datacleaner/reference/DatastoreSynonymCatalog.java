@@ -81,10 +81,10 @@ public final class DatastoreSynonymCatalog extends AbstractReferenceData impleme
     public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final DatastoreSynonymCatalog other = (DatastoreSynonymCatalog) obj;
-            return Objects.equals(_datastoreName, other._datastoreName)
-                    && Objects.equals(_masterTermColumnPath, other._masterTermColumnPath)
-                    && Arrays.equals(_synonymColumnPaths, other._synonymColumnPaths)
-                    && Objects.equals(_loadIntoMemory, other._loadIntoMemory);
+            return Objects.equals(_datastoreName, other._datastoreName) && Objects
+                    .equals(_masterTermColumnPath, other._masterTermColumnPath) && Arrays
+                    .equals(_synonymColumnPaths, other._synonymColumnPaths) && Objects
+                    .equals(_loadIntoMemory, other._loadIntoMemory);
         }
         return false;
     }
@@ -162,8 +162,7 @@ public final class DatastoreSynonymCatalog extends AbstractReferenceData impleme
             }
         }
 
-        final SimpleSynonymCatalog simpleSynonymCatalog = new SimpleSynonymCatalog(getName(), synonymMap);
-        return simpleSynonymCatalog;
+        return new SimpleSynonymCatalog(getName(), synonymMap);
     }
 
     public boolean isLoadIntoMemory() {

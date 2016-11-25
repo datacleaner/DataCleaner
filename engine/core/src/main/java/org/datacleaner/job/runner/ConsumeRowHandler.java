@@ -142,18 +142,17 @@ public class ConsumeRowHandler {
     public ConsumeRowResult consumeRow(final InputRow row) {
         final FilterOutcomes outcomes = new FilterOutcomesImpl(_alwaysSatisfiedOutcomes);
         final ConsumeRowHandlerDelegate delegate = new ConsumeRowHandlerDelegate(_consumers, row, 0, outcomes);
-        final ConsumeRowResult result = delegate.consume();
-        return result;
+        return delegate.consume();
     }
 
     private List<RowProcessingConsumer> extractConsumers(final AnalysisJob analysisJob,
             final DataCleanerConfiguration configuration, final Configuration rowConsumeConfiguration) {
-        final InjectionManagerFactory injectionManagerFactory = configuration.getEnvironment()
-                .getInjectionManagerFactory();
-        final InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(configuration,
-                analysisJob);
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager,
-                rowConsumeConfiguration.includeNonDistributedTasks);
+        final InjectionManagerFactory injectionManagerFactory =
+                configuration.getEnvironment().getInjectionManagerFactory();
+        final InjectionManager injectionManager =
+                injectionManagerFactory.getInjectionManager(configuration, analysisJob);
+        final LifeCycleHelper lifeCycleHelper =
+                new LifeCycleHelper(injectionManager, rowConsumeConfiguration.includeNonDistributedTasks);
 
         /**
          * Use a single threaded task runner since this handler is invoked in a
@@ -163,20 +162,20 @@ public class ConsumeRowHandler {
         final SingleThreadedTaskRunner taskRunner = new SingleThreadedTaskRunner();
 
         final ErrorAwareAnalysisListener errorAwareAnalysisListener = new ErrorAwareAnalysisListener();
-        final AnalysisListener analysisListener = new CompositeAnalysisListener(
-                rowConsumeConfiguration.analysisListener, errorAwareAnalysisListener);
+        final AnalysisListener analysisListener =
+                new CompositeAnalysisListener(rowConsumeConfiguration.analysisListener, errorAwareAnalysisListener);
 
-        final RowProcessingPublishers rowProcessingPublishers = new RowProcessingPublishers(analysisJob,
-                analysisListener, errorAwareAnalysisListener, taskRunner, lifeCycleHelper);
+        final RowProcessingPublishers rowProcessingPublishers =
+                new RowProcessingPublishers(analysisJob, analysisListener, errorAwareAnalysisListener, taskRunner,
+                        lifeCycleHelper);
 
         final RowProcessingPublisher publisher;
         if (rowConsumeConfiguration.table != null) {
-            @SuppressWarnings("deprecation")
-            final RowProcessingPublisher tablePublisher = rowProcessingPublishers
-                    .getRowProcessingPublisher(rowConsumeConfiguration.table);
+            @SuppressWarnings("deprecation") final RowProcessingPublisher tablePublisher =
+                    rowProcessingPublishers.getRowProcessingPublisher(rowConsumeConfiguration.table);
             if (tablePublisher == null) {
-                throw new IllegalArgumentException("Job does not consume records from table: "
-                        + rowConsumeConfiguration.table);
+                throw new IllegalArgumentException(
+                        "Job does not consume records from table: " + rowConsumeConfiguration.table);
             }
             publisher = tablePublisher;
         } else {

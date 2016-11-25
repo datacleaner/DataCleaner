@@ -59,7 +59,8 @@ public class ImageServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+            throws ServletException, IOException {
         final String pathInfo = req.getPathInfo();
         logger.debug("Path info: {}", pathInfo);
 

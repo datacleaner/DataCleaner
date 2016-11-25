@@ -61,7 +61,8 @@ final class JavaScriptUtils {
      * @param columns
      * @param arrayName
      */
-    public static void addToScope(final Scriptable scope, final InputRow inputRow, final InputColumn<?>[] columns, final String arrayName) {
+    public static void addToScope(final Scriptable scope, final InputRow inputRow, final InputColumn<?>[] columns,
+            final String arrayName) {
         final NativeArray values = new NativeArray(columns.length * 2);
         for (int i = 0; i < columns.length; i++) {
             final InputColumn<?> column = columns[i];

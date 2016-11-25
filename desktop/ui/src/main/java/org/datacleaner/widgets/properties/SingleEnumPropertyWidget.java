@@ -49,12 +49,7 @@ public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<
         final Enum<?> currentValue = getCurrentValue();
         _comboBox.setSelectedItem(currentValue);
 
-        addComboListener(new Listener<Enum<?>>() {
-            @Override
-            public void onItemSelected(final Enum<?> item) {
-                fireValueChanged();
-            }
-        });
+        addComboListener(item -> fireValueChanged());
         add(_comboBox);
     }
 

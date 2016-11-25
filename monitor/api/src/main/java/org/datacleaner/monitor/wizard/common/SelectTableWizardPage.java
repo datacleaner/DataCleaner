@@ -27,7 +27,6 @@ import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.monitor.wizard.WizardPageController;
@@ -87,12 +86,9 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
         map.put("selectedTableName", _selectedTableName);
         try (DatastoreConnection con = _datastore.openConnection()) {
             final Schema[] schemas = con.getSchemaNavigator().getSchemas();
-            final List<Schema> schemaList = CollectionUtils.filter(schemas, new Predicate<Schema>() {
-                @Override
-                public Boolean eval(final Schema schema) {
-                    final boolean isInformationSchema = MetaModelHelper.isInformationSchema(schema);
-                    return !isInformationSchema;
-                }
+            final List<Schema> schemaList = CollectionUtils.filter(schemas, schema -> {
+                final boolean isInformationSchema = MetaModelHelper.isInformationSchema(schema);
+                return !isInformationSchema;
             });
             for (final Schema schema : schemaList) {
                 // make sure all table names are cached.

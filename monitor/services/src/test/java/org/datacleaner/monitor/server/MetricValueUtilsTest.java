@@ -75,13 +75,14 @@ public class MetricValueUtilsTest extends EasyMockSupport {
         }
 
         @Metric("My parameterized metric")
-        public int getMyMetric(String param) {
+        public int getMyMetric(final String param) {
             return param.length();
         }
     }
+
     private final MyResultClass analyzerResult = new MyResultClass();
-    private final DataCleanerJobEngine jobEngine = new DataCleanerJobEngine(null, new SimpleDescriptorProvider(true),
-            null);
+    private final DataCleanerJobEngine jobEngine =
+            new DataCleanerJobEngine(null, new SimpleDescriptorProvider(true), null);
     private final AnalysisJob analysisJob = null;
     private final MetricValueUtils utils = new MetricValueUtils();
     private final ResultDescriptor resultDescriptor = Descriptors.ofResult(MyResultClass.class);
@@ -97,8 +98,8 @@ public class MetricValueUtilsTest extends EasyMockSupport {
         final MetricDescriptor metricDescriptor = resultDescriptor.getResultMetric("My metric");
         final MetricParameters parameters = new MetricParameters();
 
-        final AnalyzerResultFuture<MyResultClass> analyzerResultFuture = new AnalyzerResultFutureImpl<>("my result",
-                new ImmutableRef<>(analyzerResult));
+        final AnalyzerResultFuture<MyResultClass> analyzerResultFuture =
+                new AnalyzerResultFutureImpl<>("my result", new ImmutableRef<>(analyzerResult));
 
         EasyMock.expect(metricIdentifier.isFormulaBased()).andReturn(false).atLeastOnce();
 
@@ -108,8 +109,9 @@ public class MetricValueUtilsTest extends EasyMockSupport {
 
         replayAll();
 
-        final Number value = utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor,
-                analysisJob, componentJob, analysisResult, parameters);
+        final Number value =
+                utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor, analysisJob,
+                        componentJob, analysisResult, parameters);
         assertEquals(42, value);
 
         verifyAll();
@@ -127,12 +129,14 @@ public class MetricValueUtilsTest extends EasyMockSupport {
 
         replayAll();
 
-        final Number value1 = utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor,
-                analysisJob, componentJob, analysisResult, new MetricParameters("foo"));
+        final Number value1 =
+                utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor, analysisJob,
+                        componentJob, analysisResult, new MetricParameters("foo"));
         assertEquals(3, value1);
 
-        final Number value2 = utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor,
-                analysisJob, componentJob, analysisResult, new MetricParameters("foo bar"));
+        final Number value2 =
+                utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor, analysisJob,
+                        componentJob, analysisResult, new MetricParameters("foo bar"));
         assertEquals(7, value2);
 
         verifyAll();
@@ -150,8 +154,8 @@ public class MetricValueUtilsTest extends EasyMockSupport {
             ajb.addSourceColumns("customers.contactlastname");
             ajb.addSourceColumns("customers.city");
 
-            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = ajb
-                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 =
+                    ajb.addAnalyzer(MockOutputDataStreamAnalyzer.class);
 
             final List<MetaModelInputColumn> sourceColumns = ajb.getSourceColumns();
             analyzer1.setName("analyzer1");
@@ -162,8 +166,8 @@ public class MetricValueUtilsTest extends EasyMockSupport {
             final List<MetaModelInputColumn> outputDataStreamColumns = outputDataStreamJobBuilder.getSourceColumns();
 
 
-            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 = outputDataStreamJobBuilder
-                    .addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 =
+                    outputDataStreamJobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer2.addInputColumns(outputDataStreamColumns);
             analyzer2.setName("analyzer2");
 

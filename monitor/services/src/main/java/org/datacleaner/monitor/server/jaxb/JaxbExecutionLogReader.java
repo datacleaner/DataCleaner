@@ -40,10 +40,10 @@ public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.datacleaner.
         super(org.datacleaner.monitor.jaxb.ExecutionLog.class);
     }
 
-    public ExecutionLog read(final InputStream inputStream, final JobIdentifier jobIdentifier, final TenantIdentifier tenant) {
+    public ExecutionLog read(final InputStream inputStream, final JobIdentifier jobIdentifier,
+            final TenantIdentifier tenant) {
         final org.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog = unmarshal(inputStream);
-        final ExecutionLog executionLog = convert(jaxbExecutionLog, jobIdentifier, tenant);
-        return executionLog;
+        return convert(jaxbExecutionLog, jobIdentifier, tenant);
     }
 
     private ExecutionLog convert(final org.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog,
@@ -81,8 +81,7 @@ public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.datacleaner.
 
         final JaxbScheduleReader reader = new JaxbScheduleReader();
         final ScheduleDefinition schedule =
-                reader.createSchedule(jaxbExecutionLog.getSchedule(), jobIdentifier, tenant, null,
-                        false);
+                reader.createSchedule(jaxbExecutionLog.getSchedule(), jobIdentifier, tenant, null, false);
         executionLog.setSchedule(schedule);
         executionLog.setJob(jobIdentifier);
 

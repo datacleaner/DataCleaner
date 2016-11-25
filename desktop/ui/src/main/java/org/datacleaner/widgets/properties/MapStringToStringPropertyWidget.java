@@ -20,8 +20,6 @@
 package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,24 +60,18 @@ public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<
         _textFieldPanel.setLayout(new VerticalLayout(2));
 
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addEntryPanel("", "", true);
-                fireValueChanged();
-            }
+        addButton.addActionListener(e -> {
+            addEntryPanel("", "", true);
+            fireValueChanged();
         });
 
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final int componentCount = _textFieldPanel.getComponentCount();
-                if (componentCount > 0) {
-                    removeEntryPanel();
-                    _textFieldPanel.updateUI();
-                    fireValueChanged();
-                }
+        removeButton.addActionListener(e -> {
+            final int componentCount = _textFieldPanel.getComponentCount();
+            if (componentCount > 0) {
+                removeEntryPanel();
+                _textFieldPanel.updateUI();
+                fireValueChanged();
             }
         });
 
@@ -139,27 +131,24 @@ public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<
             updateComponents(createEmptyMap());
             return;
         }
-        batchUpdateWidget(new Runnable() {
-            @Override
-            public void run() {
-                while (_entryPanels.size() > value.size()) {
-                    // remove entry panels to make size equal
-                    removeEntryPanel();
-                }
+        batchUpdateWidget(() -> {
+            while (_entryPanels.size() > value.size()) {
+                // remove entry panels to make size equal
+                removeEntryPanel();
+            }
 
-                while (_entryPanels.size() < value.size()) {
-                    // remove entry panels to make size equal
-                    addEntryPanel("", "", false);
-                }
+            while (_entryPanels.size() < value.size()) {
+                // remove entry panels to make size equal
+                addEntryPanel("", "", false);
+            }
 
-                // update all the panels
-                int i = 0;
-                final Set<Entry<String, String>> entries = value.entrySet();
-                for (final Entry<String, String> entry : entries) {
-                    final MapEntryStringStringPanel entryPanel = _entryPanels.get(i);
-                    entryPanel.setEntry(entry);
-                    i++;
-                }
+            // update all the panels
+            int i = 0;
+            final Set<Entry<String, String>> entries = value.entrySet();
+            for (final Entry<String, String> entry : entries) {
+                final MapEntryStringStringPanel entryPanel = _entryPanels.get(i);
+                entryPanel.setEntry(entry);
+                i++;
             }
         });
         _textFieldPanel.updateUI();

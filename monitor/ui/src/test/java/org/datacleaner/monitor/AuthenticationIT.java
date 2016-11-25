@@ -49,14 +49,11 @@ public class AuthenticationIT {
 
     @Test
     public void testUnauthorized() {
-        get(JOBS_PATH)
-                .then().statusCode(HttpStatus.SC_UNAUTHORIZED);
+        get(JOBS_PATH).then().statusCode(HttpStatus.SC_UNAUTHORIZED);
     }
 
     @Test
     public void testAuthorized() {
-        given().auth().basic(USER_NAME, USER_PASSWORD)
-                .when().get(JOBS_PATH)
-                .then().statusCode(HttpStatus.SC_OK);
+        given().auth().basic(USER_NAME, USER_PASSWORD).when().get(JOBS_PATH).then().statusCode(HttpStatus.SC_OK);
     }
 }

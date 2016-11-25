@@ -22,8 +22,6 @@ package org.datacleaner.beans;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
@@ -55,10 +53,12 @@ import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 
+import junit.framework.TestCase;
+
 public class CompletenessAnalyzerTest extends TestCase {
 
     public void testIsDistributable() throws Exception {
-        AnalyzerDescriptor<CompletenessAnalyzer> descriptor = Descriptors.ofAnalyzer(CompletenessAnalyzer.class);
+        final AnalyzerDescriptor<CompletenessAnalyzer> descriptor = Descriptors.ofAnalyzer(CompletenessAnalyzer.class);
         assertTrue(descriptor.isDistributable());
     }
 
@@ -134,11 +134,11 @@ public class CompletenessAnalyzerTest extends TestCase {
 
     public void testConfigurableBeanConfiguration() throws Exception {
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
-            List<TableDataProvider<?>> tableDataProviders = Collections.emptyList();
+            final List<TableDataProvider<?>> tableDataProviders = Collections.emptyList();
             ajb.setDatastore(new PojoDatastore("ds", tableDataProviders));
             ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
 
-            AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer = ajb.addAnalyzer(CompletenessAnalyzer.class);
+            final AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer = ajb.addAnalyzer(CompletenessAnalyzer.class);
             analyzer.getComponentInstance().setValueColumns(ajb.getSourceColumns().toArray(new InputColumn[0]));
             analyzer.getComponentInstance().fillAllConditions(Condition.NOT_BLANK_OR_NULL);
 
@@ -184,8 +184,8 @@ public class CompletenessAnalyzerTest extends TestCase {
         final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
         final Resource file = new UrlResource(this.getClass().getResource("/completeness_output_stream_test.csv"));
         final Datastore datastore = new CsvDatastore("testoutputdatastream", file);
-        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
-                .withEnvironment(environment);
+        final DataCleanerConfiguration configuration =
+                new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(environment);
 
         final AnalysisJob job;
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
@@ -194,8 +194,8 @@ public class CompletenessAnalyzerTest extends TestCase {
             ajb.addSourceColumns("B");
             ajb.addSourceColumns("C");
 
-            final AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer1 = ajb
-                    .addAnalyzer(CompletenessAnalyzer.class);
+            final AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer1 =
+                    ajb.addAnalyzer(CompletenessAnalyzer.class);
 
             final List<MetaModelInputColumn> sourceColumns = ajb.getSourceColumns();
             analyzer1.setName("analyzer1");
@@ -207,17 +207,17 @@ public class CompletenessAnalyzerTest extends TestCase {
                             Condition.NOT_BLANK_OR_NULL });
 
             assertTrue(analyzer1.isConfigured());
-            final OutputDataStream completeStream = analyzer1
-                    .getOutputDataStream(CompletenessAnalyzer.OUTPUT_STREAM_COMPLETE);
+            final OutputDataStream completeStream =
+                    analyzer1.getOutputDataStream(CompletenessAnalyzer.OUTPUT_STREAM_COMPLETE);
             assertNotNull(completeStream);
-            final OutputDataStream incompleteStream = analyzer1
-                    .getOutputDataStream(CompletenessAnalyzer.OUTPUT_STREAM_INCOMPLETE);
+            final OutputDataStream incompleteStream =
+                    analyzer1.getOutputDataStream(CompletenessAnalyzer.OUTPUT_STREAM_INCOMPLETE);
             assertNotNull(incompleteStream);
 
-            final AnalysisJobBuilder completeDataStreamJobBuilder = analyzer1
-                    .getOutputDataStreamJobBuilder(completeStream);
-            final List<MetaModelInputColumn> completeDataStreamColumns = completeDataStreamJobBuilder
-                    .getSourceColumns();
+            final AnalysisJobBuilder completeDataStreamJobBuilder =
+                    analyzer1.getOutputDataStreamJobBuilder(completeStream);
+            final List<MetaModelInputColumn> completeDataStreamColumns =
+                    completeDataStreamJobBuilder.getSourceColumns();
             assertEquals(3, completeDataStreamColumns.size());
             assertEquals("MetaModelInputColumn[" + CompletenessAnalyzer.OUTPUT_STREAM_COMPLETE + ".A]",
                     completeDataStreamColumns.get(0).toString());
@@ -226,10 +226,10 @@ public class CompletenessAnalyzerTest extends TestCase {
             assertEquals("MetaModelInputColumn[" + CompletenessAnalyzer.OUTPUT_STREAM_COMPLETE + ".C]",
                     completeDataStreamColumns.get(2).toString());
 
-            final AnalysisJobBuilder incompleteDataStreamJobBuilder = analyzer1
-                    .getOutputDataStreamJobBuilder(incompleteStream);
-            final List<MetaModelInputColumn> incompleteDataStreamColumns = incompleteDataStreamJobBuilder
-                    .getSourceColumns();
+            final AnalysisJobBuilder incompleteDataStreamJobBuilder =
+                    analyzer1.getOutputDataStreamJobBuilder(incompleteStream);
+            final List<MetaModelInputColumn> incompleteDataStreamColumns =
+                    incompleteDataStreamJobBuilder.getSourceColumns();
             assertEquals(3, incompleteDataStreamColumns.size());
             assertEquals("MetaModelInputColumn[" + CompletenessAnalyzer.OUTPUT_STREAM_INCOMPLETE + ".A]",
                     incompleteDataStreamColumns.get(0).toString());
@@ -238,15 +238,15 @@ public class CompletenessAnalyzerTest extends TestCase {
             assertEquals("MetaModelInputColumn[" + CompletenessAnalyzer.OUTPUT_STREAM_INCOMPLETE + ".C]",
                     incompleteDataStreamColumns.get(2).toString());
 
-            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 = completeDataStreamJobBuilder
-                    .addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 =
+                    completeDataStreamJobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer2.addInputColumns(completeDataStreamColumns);
             analyzer2.setName("analyzer2");
             assertTrue(analyzer2.isConfigured());
             assertTrue(analyzer1.isOutputDataStreamConsumed(completeStream));
 
-            final AnalyzerComponentBuilder<MockAnalyzer> analyzer3 = incompleteDataStreamJobBuilder
-                    .addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer3 =
+                    incompleteDataStreamJobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer3.addInputColumns(incompleteDataStreamColumns);
             analyzer3.setName("analyzer3");
             assertTrue(analyzer3.isConfigured());
@@ -291,8 +291,8 @@ public class CompletenessAnalyzerTest extends TestCase {
         final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
         final Resource file = new UrlResource(this.getClass().getResource("/completeness_output_stream_test.csv"));
         final Datastore datastore = new CsvDatastore("testoutputdatastream", file);
-        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
-                .withEnvironment(environment);
+        final DataCleanerConfiguration configuration =
+                new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(environment);
 
         final AnalysisJob job;
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
@@ -301,13 +301,13 @@ public class CompletenessAnalyzerTest extends TestCase {
             ajb.addSourceColumns("B");
             ajb.addSourceColumns("C");
 
-            final AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer1 = ajb
-                    .addAnalyzer(CompletenessAnalyzer.class);
+            final AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer1 =
+                    ajb.addAnalyzer(CompletenessAnalyzer.class);
 
             analyzer1.setName("analyzer1");
             analyzer1.addInputColumns(ajb.getSourceColumnByName("A"));
-            analyzer1.setConfiguredProperty(CompletenessAnalyzer.PROPERTY_ADDITIONAL_OUTPUT_VALUES, new InputColumn[] {
-                    ajb.getSourceColumnByName("A"), ajb.getSourceColumnByName("C") });
+            analyzer1.setConfiguredProperty(CompletenessAnalyzer.PROPERTY_ADDITIONAL_OUTPUT_VALUES,
+                    new InputColumn[] { ajb.getSourceColumnByName("A"), ajb.getSourceColumnByName("C") });
             analyzer1.setConfiguredProperty(CompletenessAnalyzer.PROPERTY_EVALUATION_MODE,
                     CompletenessAnalyzer.EvaluationMode.ANY_FIELD);
             analyzer1.setConfiguredProperty(CompletenessAnalyzer.PROPERTY_CONDITIONS,
@@ -315,42 +315,42 @@ public class CompletenessAnalyzerTest extends TestCase {
                             Condition.NOT_BLANK_OR_NULL });
 
             assertTrue(analyzer1.isConfigured());
-            final OutputDataStream completeStream = analyzer1
-                    .getOutputDataStream(CompletenessAnalyzer.OUTPUT_STREAM_COMPLETE);
+            final OutputDataStream completeStream =
+                    analyzer1.getOutputDataStream(CompletenessAnalyzer.OUTPUT_STREAM_COMPLETE);
             assertNotNull(completeStream);
-            final OutputDataStream incompleteStream = analyzer1
-                    .getOutputDataStream(CompletenessAnalyzer.OUTPUT_STREAM_INCOMPLETE);
+            final OutputDataStream incompleteStream =
+                    analyzer1.getOutputDataStream(CompletenessAnalyzer.OUTPUT_STREAM_INCOMPLETE);
             assertNotNull(incompleteStream);
 
-            final AnalysisJobBuilder completeDataStreamJobBuilder = analyzer1
-                    .getOutputDataStreamJobBuilder(completeStream);
-            final List<MetaModelInputColumn> completeDataStreamColumns = completeDataStreamJobBuilder
-                    .getSourceColumns();
+            final AnalysisJobBuilder completeDataStreamJobBuilder =
+                    analyzer1.getOutputDataStreamJobBuilder(completeStream);
+            final List<MetaModelInputColumn> completeDataStreamColumns =
+                    completeDataStreamJobBuilder.getSourceColumns();
             assertEquals(2, completeDataStreamColumns.size());
             assertEquals("MetaModelInputColumn[" + CompletenessAnalyzer.OUTPUT_STREAM_COMPLETE + ".A]",
                     completeDataStreamColumns.get(0).toString());
             assertEquals("MetaModelInputColumn[" + CompletenessAnalyzer.OUTPUT_STREAM_COMPLETE + ".C]",
                     completeDataStreamColumns.get(1).toString());
 
-            final AnalysisJobBuilder incompleteDataStreamJobBuilder = analyzer1
-                    .getOutputDataStreamJobBuilder(incompleteStream);
-            final List<MetaModelInputColumn> incompleteDataStreamColumns = incompleteDataStreamJobBuilder
-                    .getSourceColumns();
+            final AnalysisJobBuilder incompleteDataStreamJobBuilder =
+                    analyzer1.getOutputDataStreamJobBuilder(incompleteStream);
+            final List<MetaModelInputColumn> incompleteDataStreamColumns =
+                    incompleteDataStreamJobBuilder.getSourceColumns();
             assertEquals(2, incompleteDataStreamColumns.size());
             assertEquals("MetaModelInputColumn[" + CompletenessAnalyzer.OUTPUT_STREAM_INCOMPLETE + ".A]",
                     incompleteDataStreamColumns.get(0).toString());
             assertEquals("MetaModelInputColumn[" + CompletenessAnalyzer.OUTPUT_STREAM_INCOMPLETE + ".C]",
                     incompleteDataStreamColumns.get(1).toString());
 
-            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 = completeDataStreamJobBuilder
-                    .addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 =
+                    completeDataStreamJobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer2.addInputColumns(completeDataStreamColumns);
             analyzer2.setName("analyzer2");
             assertTrue(analyzer2.isConfigured());
             assertTrue(analyzer1.isOutputDataStreamConsumed(completeStream));
 
-            final AnalyzerComponentBuilder<MockAnalyzer> analyzer3 = incompleteDataStreamJobBuilder
-                    .addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer3 =
+                    incompleteDataStreamJobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer3.addInputColumns(incompleteDataStreamColumns);
             analyzer3.setName("analyzer3");
             assertTrue(analyzer3.isConfigured());

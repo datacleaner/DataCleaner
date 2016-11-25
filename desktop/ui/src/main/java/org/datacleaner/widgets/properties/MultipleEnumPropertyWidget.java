@@ -36,8 +36,8 @@ public class MultipleEnumPropertyWidget extends AbstractMultipleCheckboxesProper
 
     @Override
     protected Enum<?>[] getAvailableValues() {
-        @SuppressWarnings("unchecked") final
-        Class<? extends Enum<?>> baseType = (Class<? extends Enum<?>>) getPropertyDescriptor().getBaseType();
+        @SuppressWarnings("unchecked") final Class<? extends Enum<?>> baseType =
+                (Class<? extends Enum<?>>) getPropertyDescriptor().getBaseType();
         return baseType.getEnumConstants();
     }
 

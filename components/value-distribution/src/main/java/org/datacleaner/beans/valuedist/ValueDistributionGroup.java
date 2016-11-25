@@ -57,8 +57,8 @@ class ValueDistributionGroup {
     private final InputColumn<?>[] _inputColumns;
     private final AtomicInteger _totalCount;
 
-    public ValueDistributionGroup(final String groupName, final RowAnnotationFactory annotationFactory, final boolean recordAnnotations,
-            final InputColumn<?>[] inputColumns) {
+    public ValueDistributionGroup(final String groupName, final RowAnnotationFactory annotationFactory,
+            final boolean recordAnnotations, final InputColumn<?>[] inputColumns) {
         _groupName = groupName;
         _annotationFactory = annotationFactory;
         _recordAnnotations = recordAnnotations;

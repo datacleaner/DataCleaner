@@ -19,16 +19,16 @@
  */
 package org.datacleaner.beans;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.beans.dategap.DateGapAnalyzer;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 
+import junit.framework.TestCase;
+
 public class DateGapAnalyzerTest extends TestCase {
 
     public void testDescriptor() throws Exception {
-        AnalyzerDescriptor<DateGapAnalyzer> descriptor = Descriptors.ofAnalyzer(DateGapAnalyzer.class);
+        final AnalyzerDescriptor<DateGapAnalyzer> descriptor = Descriptors.ofAnalyzer(DateGapAnalyzer.class);
         assertEquals("Date gap analyzer", descriptor.getDisplayName());
     }
 }

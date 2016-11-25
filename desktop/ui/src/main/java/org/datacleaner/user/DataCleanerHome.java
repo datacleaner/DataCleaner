@@ -182,8 +182,8 @@ public final class DataCleanerHome {
             final DemoConfiguration demoConfiguration = new DemoConfiguration();
             allFilePaths.addAll(demoConfiguration.getAllFilePaths());
         } else {
-            final ServiceLoader<InitialConfiguration> initialConfigurations = ServiceLoader.load(
-                    InitialConfiguration.class);
+            final ServiceLoader<InitialConfiguration> initialConfigurations =
+                    ServiceLoader.load(InitialConfiguration.class);
             initialConfigurations.forEach(configuration -> allFilePaths.addAll(configuration.getAllFilePaths()));
         }
         return allFilePaths;
@@ -253,8 +253,8 @@ public final class DataCleanerHome {
         return VFSUtils.toFile(_dataCleanerHome);
     }
 
-    private static FileObject copyIfNonExisting(final FileObject candidate, final FileSystemManager manager, final String filename)
-            throws FileSystemException {
+    private static FileObject copyIfNonExisting(final FileObject candidate, final FileSystemManager manager,
+            final String filename) throws FileSystemException {
         final FileObject file = candidate.resolveFile(filename);
         if (file.exists()) {
             logger.info("File already exists in DATACLEANER_HOME: " + filename);
@@ -289,9 +289,7 @@ public final class DataCleanerHome {
 
     private static String getUserHomeCandidatePath() {
         final String userHomePath = System.getProperty("user.home");
-        final String path = userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar
-                + Version.getVersion();
-        return path;
+        return userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar + Version.getVersion();
     }
 
     private static boolean isUsable(final FileObject candidate) throws FileSystemException {

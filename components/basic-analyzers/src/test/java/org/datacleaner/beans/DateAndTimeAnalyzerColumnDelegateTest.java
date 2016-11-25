@@ -19,16 +19,16 @@
  */
 package org.datacleaner.beans;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.storage.RowAnnotations;
 import org.joda.time.DateTime;
 
+import junit.framework.TestCase;
+
 public class DateAndTimeAnalyzerColumnDelegateTest extends TestCase {
 
     public void testMaxAndMinValues() throws Exception {
-        DateAndTimeAnalyzerColumnDelegate d =
+        final DateAndTimeAnalyzerColumnDelegate d =
                 new DateAndTimeAnalyzerColumnDelegate(false, RowAnnotations.getDefaultFactory());
 
         assertNull(d.getMaxDate());

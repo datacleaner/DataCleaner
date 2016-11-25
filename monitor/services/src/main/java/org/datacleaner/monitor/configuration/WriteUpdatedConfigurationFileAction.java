@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Writes an updated conf.xml file to the repository. This is used by taking the
- * <datastore-catalog> and <reference-data-catalog> elements of the updated
+ * &lt;datastore-catalog&gt; and &lt;reference-data-catalog&gt; elements of the updated
  * conf.xml file, and replacing them in the existing conf.xml file.
  */
 public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Configuration>
@@ -71,9 +71,7 @@ public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Con
             if (existingConfigurationFile == null) {
                 existingConfiguration = null;
             } else {
-                existingConfiguration = existingConfigurationFile.readFile(in -> {
-                    return unmarshal(in);
-                });
+                existingConfiguration = existingConfigurationFile.readFile(this::unmarshal);
             }
         } catch (final Exception e) {
             logger.warn("Failed to parse configuration file - treating it as invalid and will override.", e);
@@ -155,8 +153,8 @@ public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Con
             } else {
                 addUniqueValues(currentConfiguration.getReferenceDataCatalog().getStringPatterns()
                                 .getRegexPatternOrRegexSwapPatternOrSimplePattern(),
-                        newConfiguration.getReferenceDataCatalog()
-                                .getStringPatterns().getRegexPatternOrRegexSwapPatternOrSimplePattern());
+                        newConfiguration.getReferenceDataCatalog().getStringPatterns()
+                                .getRegexPatternOrRegexSwapPatternOrSimplePattern());
             }
         }
     }

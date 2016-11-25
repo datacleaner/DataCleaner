@@ -28,7 +28,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.user.UserPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,15 +156,13 @@ public class DatabaseDriverCatalog implements Serializable {
     }
 
     private static void add(final String databaseName, final String iconImagePath, final String driverClassName,
-            final String[] downloadUrls,
-            final String[] urlTemplates) {
+            final String[] downloadUrls, final String[] urlTemplates) {
         _databaseDrivers.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, downloadUrls,
                 urlTemplates));
     }
 
     private static void add(final String databaseName, final String iconImagePath, final String driverClassName,
-            final String downloadUrl,
-            final String... urlTemplates) {
+            final String downloadUrl, final String... urlTemplates) {
         final String[] urls;
         if (downloadUrl == null) {
             urls = null;
@@ -227,15 +224,11 @@ public class DatabaseDriverCatalog implements Serializable {
     }
 
     public List<DatabaseDriverDescriptor> getInstalledWorkingDatabaseDrivers() {
-        return CollectionUtils.filter(_databaseDrivers, new Predicate<DatabaseDriverDescriptor>() {
-
-            @Override
-            public Boolean eval(final DatabaseDriverDescriptor input) {
-                if (getState(input) == DatabaseDriverState.INSTALLED_WORKING) {
-                    return true;
-                }
-                return false;
+        return CollectionUtils.filter(_databaseDrivers, input -> {
+            if (getState(input) == DatabaseDriverState.INSTALLED_WORKING) {
+                return true;
             }
+            return false;
         });
     }
 

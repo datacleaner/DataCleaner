@@ -30,8 +30,7 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * Specialization of {@link AbstractComponentBuilderPanel} for {@link Analyzer}s.
  */
 public class AnalyzerComponentBuilderPanel extends AbstractComponentBuilderPanel
-        implements AnalyzerComponentBuilderPresenter,
-        AnalyzerChangeListener {
+        implements AnalyzerComponentBuilderPresenter, AnalyzerChangeListener {
 
     private static final long serialVersionUID = 1L;
 

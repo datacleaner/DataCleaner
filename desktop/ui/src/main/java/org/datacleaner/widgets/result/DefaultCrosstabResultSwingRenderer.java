@@ -34,7 +34,8 @@ public class DefaultCrosstabResultSwingRenderer extends AbstractCrosstabResultSw
      * @param windowContext
      * @param rendererFactory
      */
-    public DefaultCrosstabResultSwingRenderer(final WindowContext windowContext, final RendererFactory rendererFactory) {
+    public DefaultCrosstabResultSwingRenderer(final WindowContext windowContext,
+            final RendererFactory rendererFactory) {
         super(windowContext, rendererFactory);
     }
 

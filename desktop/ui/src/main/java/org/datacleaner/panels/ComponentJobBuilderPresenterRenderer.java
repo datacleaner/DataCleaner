@@ -38,8 +38,7 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * Renders/creates the default panels that present component job builders.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class ComponentJobBuilderPresenterRenderer implements
-        Renderer<ComponentBuilder, ComponentBuilderPresenter> {
+public class ComponentJobBuilderPresenterRenderer implements Renderer<ComponentBuilder, ComponentBuilderPresenter> {
 
     @Inject
     @Provided
@@ -60,8 +59,8 @@ public class ComponentJobBuilderPresenterRenderer implements
 
     @Override
     public ComponentBuilderPresenter render(final ComponentBuilder renderable) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(renderable)
-                .getInstance(PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(renderable).getInstance(PropertyWidgetFactory.class);
 
         if (renderable instanceof FilterComponentBuilder) {
             final FilterComponentBuilder<?, ?> fjb = (FilterComponentBuilder<?, ?>) renderable;

@@ -22,8 +22,6 @@ package org.datacleaner.monitor.configuration;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -33,6 +31,8 @@ import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
+
+import junit.framework.TestCase;
 
 public class TenantContextImplTest extends TestCase {
 
@@ -49,10 +49,10 @@ public class TenantContextImplTest extends TestCase {
 
     public void testJobNameWithSignificantSpace() throws Exception {
 
-        JobContext job1 = tenantContext.getJob("my job");
-        JobContext job2 = tenantContext.getJob("my job ");
-        JobContext job3 = tenantContext.getJob("my job");
-        JobContext job4 = tenantContext.getJob("my job ");
+        final JobContext job1 = tenantContext.getJob("my job");
+        final JobContext job2 = tenantContext.getJob("my job ");
+        final JobContext job3 = tenantContext.getJob("my job");
+        final JobContext job4 = tenantContext.getJob("my job ");
 
         assertNotNull(job1);
         assertNotNull(job2);
@@ -69,7 +69,7 @@ public class TenantContextImplTest extends TestCase {
     }
 
     public void testGetConfiguration() throws Exception {
-        DataCleanerConfiguration configuration = tenantContext.getConfiguration();
+        final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
         assertNotNull(configuration);
     }
 
@@ -80,7 +80,8 @@ public class TenantContextImplTest extends TestCase {
         final Map<String, String> overrideProperties = new HashMap<>();
         overrideProperties.put("datastoreCatalog." + datastoreName + ".filename", overrideFilename);
 
-        assertEquals(overrideFilename, ((CsvDatastore) tenantContext.getConfiguration(overrideProperties)
-                .getDatastoreCatalog().getDatastore(datastoreName)).getFilename());
+        assertEquals(overrideFilename,
+                ((CsvDatastore) tenantContext.getConfiguration(overrideProperties).getDatastoreCatalog()
+                        .getDatastore(datastoreName)).getFilename());
     }
 }

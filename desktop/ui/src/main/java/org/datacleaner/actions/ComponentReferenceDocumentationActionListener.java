@@ -55,13 +55,13 @@ public class ComponentReferenceDocumentationActionListener implements ActionList
             docDirectory.mkdir();
         }
 
-        final ComponentDocumentationWrapper componentDocumentationWrapper = new ComponentDocumentationWrapper(
-                _componentDescriptor);
+        final ComponentDocumentationWrapper componentDocumentationWrapper =
+                new ComponentDocumentationWrapper(_componentDescriptor);
 
         final File documentationFile = new File(docDirectory, componentDocumentationWrapper.getHref());
         if (!documentationFile.exists()) {
-            final ComponentReferenceDocumentationBuilder builder = new ComponentReferenceDocumentationBuilder(
-                    _configuration.getEnvironment().getDescriptorProvider());
+            final ComponentReferenceDocumentationBuilder builder =
+                    new ComponentReferenceDocumentationBuilder(_configuration.getEnvironment().getDescriptorProvider());
             builder.writeDocumentationToDirectory(docDirectory);
         }
 

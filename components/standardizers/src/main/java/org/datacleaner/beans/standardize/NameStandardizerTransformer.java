@@ -59,10 +59,11 @@ public class NameStandardizerTransformer implements Transformer {
             return null;
         }
     }
-    public static final String[] DEFAULT_PATTERNS = { "FIRSTNAME LASTNAME", "TITULATION. FIRSTNAME LASTNAME",
-            "TITULATION FIRSTNAME LASTNAME", "FIRSTNAME MIDDLENAME LASTNAME",
-            "TITULATION. FIRSTNAME MIDDLENAME LASTNAME",
-            "LASTNAME, FIRSTNAME", "LASTNAME, FIRSTNAME MIDDLENAME" };
+
+    public static final String[] DEFAULT_PATTERNS =
+            { "FIRSTNAME LASTNAME", "TITULATION. FIRSTNAME LASTNAME", "TITULATION FIRSTNAME LASTNAME",
+                    "FIRSTNAME MIDDLENAME LASTNAME", "TITULATION. FIRSTNAME MIDDLENAME LASTNAME", "LASTNAME, FIRSTNAME",
+                    "LASTNAME, FIRSTNAME MIDDLENAME" };
     @Inject
     @Configured
     InputColumn<String> inputColumn;

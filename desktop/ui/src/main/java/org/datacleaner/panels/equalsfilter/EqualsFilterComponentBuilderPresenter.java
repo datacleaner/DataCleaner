@@ -17,13 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.panels.comparefilter;
+package org.datacleaner.panels.equalsfilter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.datacleaner.beans.filter.CompareFilter;
+import org.datacleaner.beans.filter.EqualsFilter;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
@@ -35,13 +35,13 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link FilterComponentBuilderPresenter} for the {@link CompareFilter}.
+ * Specialized {@link FilterComponentBuilderPresenter} for the {@link EqualsFilter}.
  */
-class CompareFilterComponentBuilderPresenter extends FilterComponentBuilderPanel {
+class EqualsFilterComponentBuilderPresenter extends FilterComponentBuilderPanel {
 
     private static final long serialVersionUID = 1L;
 
-    public CompareFilterComponentBuilderPresenter(final FilterComponentBuilder<?, ?> filterJobBuilder,
+    public EqualsFilterComponentBuilderPresenter(final FilterComponentBuilder<?, ?> filterJobBuilder,
             final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory) {
         super(filterJobBuilder, windowContext, propertyWidgetFactory);
     }
@@ -49,8 +49,8 @@ class CompareFilterComponentBuilderPresenter extends FilterComponentBuilderPanel
     @Override
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
         final FilterDescriptor<?, ?> descriptor = getComponentBuilder().getDescriptor();
-        final List<ConfiguredPropertyDescriptor> configuredProperties = new ArrayList<>(
-                new TreeSet<>(descriptor.getConfiguredProperties()));
+        final List<ConfiguredPropertyDescriptor> configuredProperties =
+                new ArrayList<>(new TreeSet<>(descriptor.getConfiguredProperties()));
 
         // create a single task pane
         final List<ConfiguredPropertyTaskPane> result = new ArrayList<>();

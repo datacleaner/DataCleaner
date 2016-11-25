@@ -29,7 +29,6 @@ import javax.annotation.security.RolesAllowed;
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HasNameMapper;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -90,7 +89,8 @@ public class JobInvocationController {
      * @return
      * @throws Throwable
      */
-    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke", method = RequestMethod.POST,
+            produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public JobInvocationPayload invokeJob(@PathVariable("tenant") final String tenant,
@@ -108,12 +108,7 @@ public class JobInvocationController {
         final List<String> columnNames = getColumnNames(analysisJobContext.getSourceColumnPaths(), tablePath);
 
         final List<JobInvocationRowData> inputRows = input.getRows();
-        final List<Object[]> inputRowData = CollectionUtils.map(inputRows, new Func<JobInvocationRowData, Object[]>() {
-            @Override
-            public Object[] eval(final JobInvocationRowData rowData) {
-                return rowData.getValues();
-            }
-        });
+        final List<Object[]> inputRowData = CollectionUtils.map(inputRows, JobInvocationRowData::getValues);
 
         // TODO: No column types added
         final SimpleTableDef tableDef = new SimpleTableDef(tableName, columnNames.toArray(new String[0]));
@@ -124,8 +119,8 @@ public class JobInvocationController {
 
         final AnalysisJob originalJob = analysisJobContext.getAnalysisJob();
 
-        final PlaceholderAnalysisJob placeholderAnalysisJob = new PlaceholderAnalysisJob(placeholderDatastore,
-                originalJob);
+        final PlaceholderAnalysisJob placeholderAnalysisJob =
+                new PlaceholderAnalysisJob(placeholderDatastore, originalJob);
 
         final DataCleanerConfiguration configuration = getRunnerConfiguration(tenantContext);
 
@@ -170,10 +165,12 @@ public class JobInvocationController {
      * @param tenant
      * @param jobName
      * @param input
-     * @return - returns the output in row/ column format and adds a list with the output/ value map e.g. {"outputColumn1": "Output Value 1", "outputColumn2": "Output Value 2"} per row
+     * @return - returns the output in row/ column format and adds a list with the output/ value map e.g.
+     * {"outputColumn1": "Output Value 1", "outputColumn2": "Output Value 2"} per row
      * @throws Throwable
      */
-    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke/mapped", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke/mapped", method = RequestMethod.POST,
+            produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public JobInvocationPayload invokeJobMapped(@PathVariable("tenant") final String tenant,
@@ -217,14 +214,11 @@ public class JobInvocationController {
     }
 
     private List<String> getColumnNames(final List<String> columnPaths, final String tablePath) {
-        return CollectionUtils.map(columnPaths, new Func<String, String>() {
-            @Override
-            public String eval(final String columnPath) {
-                if (!tablePath.isEmpty()) {
-                    return columnPath.substring(tablePath.length() + 1);
-                }
-                return columnPath;
+        return CollectionUtils.map(columnPaths, columnPath -> {
+            if (!tablePath.isEmpty()) {
+                return columnPath.substring(tablePath.length() + 1);
             }
+            return columnPath;
         });
     }
 
@@ -243,8 +237,8 @@ public class JobInvocationController {
 
         // replace task runner with single threaded taskrunner to ensure order
         // of output records.
-        final DataCleanerEnvironmentImpl replacementEnvironment = new DataCleanerEnvironmentImpl(environment)
-                .withTaskRunner(new SingleThreadedTaskRunner());
+        final DataCleanerEnvironmentImpl replacementEnvironment =
+                new DataCleanerEnvironmentImpl(environment).withTaskRunner(new SingleThreadedTaskRunner());
 
         return new DataCleanerConfigurationImpl(configuration).withEnvironment(replacementEnvironment);
     }
@@ -259,7 +253,8 @@ public class JobInvocationController {
         return tablePath;
     }
 
-    private List<JobInvocationRowData> toRows(final List<String> columnNames, final List<Map<String, Object>> columnValueMapRows) {
+    private List<JobInvocationRowData> toRows(final List<String> columnNames,
+            final List<Map<String, Object>> columnValueMapRows) {
         final List<JobInvocationRowData> result = new ArrayList<>();
         for (final Map<String, Object> columnValueMap : columnValueMapRows) {
             final List<Object> values = new ArrayList<>();
@@ -276,7 +271,8 @@ public class JobInvocationController {
         return result;
     }
 
-    private List<Map<String, Object>> toColumnValueMap(final List<String> columnNames, final List<JobInvocationRowData> rows) {
+    private List<Map<String, Object>> toColumnValueMap(final List<String> columnNames,
+            final List<JobInvocationRowData> rows) {
         final List<Map<String, Object>> result = new ArrayList<>();
         for (final JobInvocationRowData row : rows) {
             final Object[] values = row.getValues();

@@ -19,9 +19,6 @@
  */
 package org.datacleaner.widgets.properties;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.swing.JButton;
@@ -36,15 +33,16 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.windows.ReferenceDataDialog;
 
-public class MultipleDictionariesPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<Dictionary> implements
-        ReferenceDataChangeListener<Dictionary> {
+public class MultipleDictionariesPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<Dictionary>
+        implements ReferenceDataChangeListener<Dictionary> {
 
     private final MutableReferenceDataCatalog _referenceDataCatalog;
     private Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
     @Inject
     public MultipleDictionariesPropertyWidget(final ComponentBuilder componentBuilder,
-            final ConfiguredPropertyDescriptor propertyDescriptor, final MutableReferenceDataCatalog referenceDataCatalog,
+            final ConfiguredPropertyDescriptor propertyDescriptor,
+            final MutableReferenceDataCatalog referenceDataCatalog,
             final Provider<ReferenceDataDialog> referenceDataDialogProvider) {
         super(componentBuilder, propertyDescriptor, Dictionary.class);
         _referenceDataCatalog = referenceDataCatalog;
@@ -69,13 +67,10 @@ public class MultipleDictionariesPropertyWidget extends AbstractMultipleCheckbox
 
         final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
         dialogButton.setToolTipText("Configure dictionaries");
-        dialogButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
-                dialog.selectDictionariesTab();
-                dialog.setVisible(true);
-            }
+        dialogButton.addActionListener(e -> {
+            final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+            dialog.selectDictionariesTab();
+            dialog.setVisible(true);
         });
 
         buttonPanel.add(dialogButton);

@@ -28,21 +28,21 @@ public class MyConvertable {
     public static class DefaultConverter implements Converter<MyConvertable> {
 
         @Override
-        public MyConvertable fromString(Class<?> type, String serializedForm) {
-            String[] tokens = serializedForm.split(":");
-            MyConvertable instance = new MyConvertable();
+        public MyConvertable fromString(final Class<?> type, final String serializedForm) {
+            final String[] tokens = serializedForm.split(":");
+            final MyConvertable instance = new MyConvertable();
             instance.setName(tokens[0]);
             instance.setDescription(tokens[1]);
             return instance;
         }
 
         @Override
-        public String toString(MyConvertable instance) {
+        public String toString(final MyConvertable instance) {
             return instance.getName() + ":" + instance.getDescription();
         }
 
         @Override
-        public boolean isConvertable(Class<?> type) {
+        public boolean isConvertable(final Class<?> type) {
             return type == MyConvertable.class;
         }
     }
@@ -50,21 +50,21 @@ public class MyConvertable {
     public static class SecondaryConverter implements Converter<MyConvertable> {
 
         @Override
-        public MyConvertable fromString(Class<?> type, String serializedForm) {
-            String[] tokens = serializedForm.split("\\|");
-            MyConvertable instance = new MyConvertable();
+        public MyConvertable fromString(final Class<?> type, final String serializedForm) {
+            final String[] tokens = serializedForm.split("\\|");
+            final MyConvertable instance = new MyConvertable();
             instance.setName(tokens[0]);
             instance.setDescription(tokens[1]);
             return instance;
         }
 
         @Override
-        public String toString(MyConvertable instance) {
+        public String toString(final MyConvertable instance) {
             return instance.getName() + "|" + instance.getDescription();
         }
 
         @Override
-        public boolean isConvertable(Class<?> type) {
+        public boolean isConvertable(final Class<?> type) {
             return type == MyConvertable.class;
         }
     }
@@ -76,7 +76,7 @@ public class MyConvertable {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -84,7 +84,7 @@ public class MyConvertable {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 }

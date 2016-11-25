@@ -49,8 +49,8 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] COLUMN_NAMES = new String[] { "Table", "Column", "Type", "Native type", "Size",
-            "Nullable?", "Indexed?" };
+    private static final String[] COLUMN_NAMES =
+            new String[] { "Table", "Column", "Type", "Native type", "Size", "Nullable?", "Indexed?" };
 
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final DCTable _table;
@@ -121,8 +121,7 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
             _authorTextField.setText(Strings.nullToEmpty(metadata.getAuthor()));
         }
 
-        final SortedSet<InputColumn<?>> sourceColumns = new TreeSet<>(
-                _analysisJobBuilder.getSourceColumns());
+        final SortedSet<InputColumn<?>> sourceColumns = new TreeSet<>(_analysisJobBuilder.getSourceColumns());
 
         final Icon validIcon = ImageManager.get().getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
 

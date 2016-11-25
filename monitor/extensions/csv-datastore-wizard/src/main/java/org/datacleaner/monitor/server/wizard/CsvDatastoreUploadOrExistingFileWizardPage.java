@@ -122,8 +122,8 @@ public abstract class CsvDatastoreUploadOrExistingFileWizardPage extends Abstrac
 
     private Map<String, String> parseJson(final String fileJsonString) {
         try {
-            @SuppressWarnings("unchecked") final
-            Map<String, String> map = new ObjectMapper().readValue(fileJsonString, Map.class);
+            @SuppressWarnings("unchecked") final Map<String, String> map =
+                    new ObjectMapper().readValue(fileJsonString, Map.class);
             return map;
         } catch (final Exception e) {
             logger.warn("Could not parse form result as JSON: {}", fileJsonString);

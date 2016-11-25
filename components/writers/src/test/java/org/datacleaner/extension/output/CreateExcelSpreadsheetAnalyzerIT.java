@@ -50,14 +50,14 @@ public class CreateExcelSpreadsheetAnalyzerIT {
 
         jobBuilder.setDatastore(datastore);
 
-        final Table datastoreTableDefinition = datastore.openConnection().getDataContext().getDefaultSchema()
-                .getTables()[0];
+        final Table datastoreTableDefinition =
+                datastore.openConnection().getDataContext().getDefaultSchema().getTables()[0];
 
         jobBuilder.addSourceColumns(datastoreTableDefinition.getColumns());
 
-        final TransformerComponentBuilder<MultiStreamTestTransformer> transformer = new TransformerComponentBuilder<>(
-                jobBuilder, new SimpleDescriptorProvider().getTransformerDescriptorForClass(
-                MultiStreamTestTransformer.class), new PrefixedIdGenerator());
+        final TransformerComponentBuilder<MultiStreamTestTransformer> transformer =
+                new TransformerComponentBuilder<>(jobBuilder, new SimpleDescriptorProvider()
+                        .getTransformerDescriptorForClass(MultiStreamTestTransformer.class), new PrefixedIdGenerator());
 
         transformer.addInputColumns(jobBuilder.getSourceColumns());
 
@@ -73,13 +73,13 @@ public class CreateExcelSpreadsheetAnalyzerIT {
 
         final AnalysisResultFuture firstRunResult = runner.run(analysisJob);
         firstRunResult.await();
-        firstRunResult.getErrors().forEach(error -> error.printStackTrace());
+        firstRunResult.getErrors().forEach(Throwable::printStackTrace);
 
         assertEquals(JobStatus.SUCCESSFUL, firstRunResult.getStatus());
 
         final AnalysisResultFuture secondRunResult = runner.run(analysisJob);
         secondRunResult.await();
-        secondRunResult.getErrors().forEach(error -> error.printStackTrace());
+        secondRunResult.getErrors().forEach(Throwable::printStackTrace);
 
         assertEquals(JobStatus.SUCCESSFUL, secondRunResult.getStatus());
     }
@@ -88,13 +88,13 @@ public class CreateExcelSpreadsheetAnalyzerIT {
             final String outputStreamName, final Table datastoreTableDefinition, final File excelFile) {
         final AnalysisJobBuilder jobBuilder = transformer.getOutputDataStreamJobBuilder(outputStreamName);
 
-        final AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> excelWriter = new AnalyzerComponentBuilder<>(
-                jobBuilder, new SimpleDescriptorProvider().getAnalyzerDescriptorForClass(
-                CreateExcelSpreadsheetAnalyzer.class));
+        final AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> excelWriter =
+                new AnalyzerComponentBuilder<>(jobBuilder, new SimpleDescriptorProvider()
+                        .getAnalyzerDescriptorForClass(CreateExcelSpreadsheetAnalyzer.class));
 
         excelWriter.addInputColumns(jobBuilder.getAvailableInputColumns(excelWriter));
-        excelWriter.setConfiguredProperty(AbstractOutputWriterAnalyzer.PROPERTY_FIELD_NAMES, datastoreTableDefinition
-                .getColumnNames());
+        excelWriter.setConfiguredProperty(AbstractOutputWriterAnalyzer.PROPERTY_FIELD_NAMES,
+                datastoreTableDefinition.getColumnNames());
         excelWriter.setConfiguredProperty(CreateExcelSpreadsheetAnalyzer.PROPERTY_FILE, excelFile);
         excelWriter.setConfiguredProperty(CreateExcelSpreadsheetAnalyzer.PROPERTY_SHEET_NAME, outputStreamName);
         excelWriter.setConfiguredProperty(CreateExcelSpreadsheetAnalyzer.PROPERTY_OVERWRITE_SHEET_IF_EXISTS, true);

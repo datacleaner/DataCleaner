@@ -70,8 +70,8 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
      *            provide tenant-specific injection options.
      * @param jobEngineManager
      */
-    public TenantContextImpl(final String tenantId, final Repository repository, final DataCleanerEnvironment environment,
-            final JobEngineManager jobEngineManager) {
+    public TenantContextImpl(final String tenantId, final Repository repository,
+            final DataCleanerEnvironment environment, final JobEngineManager jobEngineManager) {
         _tenantId = tenantId;
         _repository = repository;
         _jobEngineManager = jobEngineManager;
@@ -80,8 +80,8 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
         }
 
         final InjectionManagerFactory injectionManagerFactory = environment.getInjectionManagerFactory();
-        final TenantInjectionManagerFactory tenantInjectionManagerFactory = new TenantInjectionManagerFactory(
-                injectionManagerFactory, repository, this);
+        final TenantInjectionManagerFactory tenantInjectionManagerFactory =
+                new TenantInjectionManagerFactory(injectionManagerFactory, repository, this);
 
         _configurationCache = new ConfigurationCache(tenantInjectionManagerFactory, this, repository);
         _componentStore = new ComponentStoreImpl(_repository, _tenantId);
@@ -89,8 +89,8 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     }
 
     private LoadingCache<JobIdentifier, JobContext> buildJobCache() {
-        final LoadingCache<JobIdentifier, JobContext> cache = CacheBuilder.newBuilder()
-                .expireAfterWrite(5, TimeUnit.SECONDS).build(new CacheLoader<JobIdentifier, JobContext>() {
+        return CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.SECONDS)
+                .build(new CacheLoader<JobIdentifier, JobContext>() {
                     @Override
                     public JobContext load(final JobIdentifier job) throws Exception {
                         final String jobName = job.getName();
@@ -103,11 +103,9 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
                         if (jobEngine == null) {
                             throw new NoSuchObjectException();
                         }
-                        final JobContext result = jobEngine.getJobContext(tenantContext, job);
-                        return result;
+                        return jobEngine.getJobContext(tenantContext, job);
                     }
                 });
-        return cache;
     }
 
     @Override

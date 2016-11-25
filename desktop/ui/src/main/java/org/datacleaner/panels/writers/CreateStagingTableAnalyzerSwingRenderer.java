@@ -32,8 +32,8 @@ import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class CreateStagingTableAnalyzerSwingRenderer implements
-        Renderer<AnalyzerComponentBuilder<CreateStagingTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
+public class CreateStagingTableAnalyzerSwingRenderer
+        implements Renderer<AnalyzerComponentBuilder<CreateStagingTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     DCModule dcModule;
@@ -49,8 +49,8 @@ public class CreateStagingTableAnalyzerSwingRenderer implements
 
     @Override
     public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<CreateStagingTableAnalyzer> ajb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
-                PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
         return new CustomHeaderColumnNamesAnalyzerJobPanel(ajb, propertyWidgetFactory);
     }
 

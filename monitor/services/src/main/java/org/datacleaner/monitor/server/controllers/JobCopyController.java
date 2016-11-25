@@ -19,14 +19,11 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -61,8 +58,8 @@ public class JobCopyController {
     @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed({ SecurityRoles.JOB_EDITOR })
-    public Map<String, String> copyJob(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName, @RequestBody final JobCopyPayload input) {
+    public Map<String, String> copyJob(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
+            @RequestBody final JobCopyPayload input) {
 
         logger.info("Request payload: {} - {}", jobName, input);
 
@@ -89,17 +86,9 @@ public class JobCopyController {
         }
 
 
-        final RepositoryFile newJobFile = jobFolder.createFile(newJobFilename, new Action<OutputStream>() {
-            @Override
-            public void run(final OutputStream out) throws Exception {
-                existingFile.readFile(new Action<InputStream>() {
-                    @Override
-                    public void run(final InputStream in) throws Exception {
-                        FileHelper.copy(in, out);
-                    }
-                });
-            }
-        });
+        final RepositoryFile newJobFile = jobFolder.createFile(newJobFilename, out -> existingFile.readFile(in -> {
+            FileHelper.copy(in, out);
+        }));
 
         final JobContext newJob = tenantContext.getJob(newJobFilename);
 

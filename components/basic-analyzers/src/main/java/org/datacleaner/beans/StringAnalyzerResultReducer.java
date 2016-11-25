@@ -37,14 +37,16 @@ import org.datacleaner.util.AverageBuilder;
  */
 public class StringAnalyzerResultReducer extends AbstractCrosstabResultReducer<StringAnalyzerResult> {
 
-    private static final Set<String> AVG_MEASURES = new HashSet<>(Arrays.asList(StringAnalyzer.MEASURE_AVG_CHARS,
-            StringAnalyzer.MEASURE_AVG_WHITE_SPACES));
+    private static final Set<String> AVG_MEASURES =
+            new HashSet<>(Arrays.asList(StringAnalyzer.MEASURE_AVG_CHARS, StringAnalyzer.MEASURE_AVG_WHITE_SPACES));
 
-    private static final Set<String> MIN_MEASURES = new HashSet<>(Arrays.asList(StringAnalyzer.MEASURE_MIN_CHARS,
-            StringAnalyzer.MEASURE_MIN_WHITE_SPACES, StringAnalyzer.MEASURE_MIN_WORDS));
+    private static final Set<String> MIN_MEASURES = new HashSet<>(
+            Arrays.asList(StringAnalyzer.MEASURE_MIN_CHARS, StringAnalyzer.MEASURE_MIN_WHITE_SPACES,
+                    StringAnalyzer.MEASURE_MIN_WORDS));
 
-    private static final Set<String> MAX_MEASURES = new HashSet<>(Arrays.asList(StringAnalyzer.MEASURE_MAX_CHARS,
-            StringAnalyzer.MEASURE_MAX_WHITE_SPACES, StringAnalyzer.MEASURE_MAX_WORDS));
+    private static final Set<String> MAX_MEASURES = new HashSet<>(
+            Arrays.asList(StringAnalyzer.MEASURE_MAX_CHARS, StringAnalyzer.MEASURE_MAX_WHITE_SPACES,
+                    StringAnalyzer.MEASURE_MAX_WORDS));
 
     @Override
     protected Serializable reduceValues(final List<Object> slaveValues, final String category1, final String category2,
@@ -63,16 +65,17 @@ public class StringAnalyzerResultReducer extends AbstractCrosstabResultReducer<S
         }
     }
 
-    private Serializable weightedAverage(final List<Object> slaveValues, final Collection<? extends StringAnalyzerResult> results,
-            final String columnName, final String measureName) {
+    private Serializable weightedAverage(final List<Object> slaveValues,
+            final Collection<? extends StringAnalyzerResult> results, final String columnName,
+            final String measureName) {
         final AverageBuilder averageBuilder = new AverageBuilder();
 
         for (final StringAnalyzerResult analyzerResult : results) {
             final Crosstab<?> crosstab = analyzerResult.getCrosstab();
             final CrosstabNavigator<?> nav = crosstab.where(StringAnalyzer.DIMENSION_COLUMN, columnName);
 
-            final Number rowCount = (Number) nav.where(StringAnalyzer.DIMENSION_MEASURES,
-                    StringAnalyzer.MEASURE_ROW_COUNT).get();
+            final Number rowCount =
+                    (Number) nav.where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_ROW_COUNT).get();
             final Number averageMeasureValue = (Number) nav.where(StringAnalyzer.DIMENSION_MEASURES, measureName).get();
 
             averageBuilder.addValue(averageMeasureValue, rowCount.intValue());

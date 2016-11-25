@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 
 /**
  * Represents a group of values, counted as one item.
@@ -62,12 +61,7 @@ public final class CompositeValueFrequency extends AbstractValueFrequency implem
      */
     public CompositeValueFrequency(final String name, final Collection<String> values, final int count) {
         _name = name;
-        _children = CollectionUtils.map(values, new Func<String, ValueFrequency>() {
-            @Override
-            public ValueFrequency eval(final String str) {
-                return new SingleValueFrequency(str, count);
-            }
-        });
+        _children = CollectionUtils.map(values, str -> new SingleValueFrequency(str, count));
         _count = count * values.size();
     }
 

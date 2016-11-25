@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -91,22 +89,12 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
         }
         _saveButton = WidgetFactory.createPrimaryButton("Save", IconUtils.ACTION_SAVE_BRIGHT);
         _cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
-        _saveButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                // Update the value of column names list
-                _columnNames = getNewColumnNames();
-                dispose();
-            }
+        _saveButton.addActionListener(e -> {
+            // Update the value of column names list
+            _columnNames = getNewColumnNames();
+            dispose();
         });
-        _cancelButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                dispose();
-            }
-        });
+        _cancelButton.addActionListener(e -> dispose());
 
 
     }
@@ -144,8 +132,9 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
                 final String columnName = entry.getKey();
                 final JXTextField textField = entry.getValue();
 
-                WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon("images/model/variable.png",
-                        IconUtils.ICON_SIZE_SMALL)), formPanel, 0, row);
+                WidgetUtils.addToGridBag(
+                        new JLabel(imageManager.getImageIcon("images/model/variable.png", IconUtils.ICON_SIZE_SMALL)),
+                        formPanel, 0, row);
                 WidgetUtils.addToGridBag(DCLabel.bright(columnName), formPanel, 1, row, GridBagConstraints.WEST);
                 WidgetUtils.addToGridBag(textField, formPanel, 2, row, GridBagConstraints.WEST);
             }

@@ -19,18 +19,18 @@
  */
 package org.datacleaner.beans.valuedist;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.result.SingleValueFrequency;
 import org.datacleaner.result.ValueFrequency;
+
+import junit.framework.TestCase;
 
 public class ValueCountTest extends TestCase {
 
     public void testEqualsAndHashCode() throws Exception {
-        ValueFrequency vc1 = new SingleValueFrequency("foo", 1337);
-        ValueFrequency vc2 = new SingleValueFrequency("foo", 1337);
-        ValueFrequency vc3 = new SingleValueFrequency(null, 1337);
-        ValueFrequency vc4 = new SingleValueFrequency("foo", 1338);
+        final ValueFrequency vc1 = new SingleValueFrequency("foo", 1337);
+        final ValueFrequency vc2 = new SingleValueFrequency("foo", 1337);
+        final ValueFrequency vc3 = new SingleValueFrequency(null, 1337);
+        final ValueFrequency vc4 = new SingleValueFrequency("foo", 1338);
 
         assertEquals(vc1, vc2);
         assertEquals(vc1.hashCode(), vc2.hashCode());

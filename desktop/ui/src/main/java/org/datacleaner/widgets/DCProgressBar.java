@@ -71,12 +71,7 @@ public class DCProgressBar extends JProgressBar {
     public boolean setValueIfGreater(final int newValue) {
         final boolean greater = _value.setIfSignificantToUser(newValue);
         if (greater) {
-            WidgetUtils.invokeSwingAction(new Runnable() {
-                @Override
-                public void run() {
-                    DCProgressBar.super.setValue(newValue);
-                }
-            });
+            WidgetUtils.invokeSwingAction(() -> DCProgressBar.super.setValue(newValue));
         }
         return greater;
     }
@@ -118,8 +113,7 @@ public class DCProgressBar extends JProgressBar {
         final int adjustedMax = maximum - minimum;
         final int adjustedValue = value - minimum;
         final double completenessRatio = 1.0 * adjustedValue / adjustedMax;
-        final int barWidth = (int) (width * completenessRatio);
-        return barWidth;
+        return (int) (width * completenessRatio);
     }
 
     public Color getProgressBarColor() {

@@ -139,8 +139,7 @@ public class DataHubDataSet extends AbstractDataSet {
     private List<Object[]> getResultSet(final HttpEntity entity) {
         final JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
         try {
-            final List<Object[]> resultSet = parser.parseQueryResult(entity.getContent());
-            return resultSet;
+            return parser.parseQueryResult(entity.getContent());
         } catch (final Exception e) {
             throw new IllegalStateException(e);
         }

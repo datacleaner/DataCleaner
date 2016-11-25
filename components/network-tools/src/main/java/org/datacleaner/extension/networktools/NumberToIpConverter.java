@@ -58,10 +58,8 @@ public class NumberToIpConverter implements Transformer {
         }
         final long l = number.longValue();
         if (l > 0) {
-            final String str = ((l >> 24) & 0xFF) + "." + ((l >> 16) & 0xFF)
-                    + "." + ((l >> 8) & 0xFF) + "." + (l & 0xFF);
 
-            return str;
+            return ((l >> 24) & 0xFF) + "." + ((l >> 16) & 0xFF) + "." + ((l >> 8) & 0xFF) + "." + (l & 0xFF);
         }
         return null;
     }

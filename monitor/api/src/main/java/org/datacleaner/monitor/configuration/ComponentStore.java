@@ -30,7 +30,7 @@ public interface ComponentStore {
 
     ComponentStoreHolder get(String instanceId);
 
-    void store(final ComponentStoreHolder configuration);
+    void store(ComponentStoreHolder configuration);
 
     boolean remove(String instanceId);
 

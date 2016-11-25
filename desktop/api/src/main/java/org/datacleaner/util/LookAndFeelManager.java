@@ -198,8 +198,9 @@ public final class LookAndFeelManager {
         UIManager.put("TableHeader.focusCellBackground", WidgetUtils.COLOR_WELL_BACKGROUND);
         UIManager.put("TableHeader.foreground", WidgetUtils.BG_COLOR_DARKEST);
         UIManager.put("TableHeader.font", WidgetUtils.FONT_TABLE_HEADER);
-        UIManager.put("TableHeader.cellBorder", new CompoundBorder(new MatteBorder(0, 0, 0, 1,
-                WidgetUtils.BG_COLOR_LESS_BRIGHT), WidgetUtils.BORDER_EMPTY));
+        UIManager.put("TableHeader.cellBorder",
+                new CompoundBorder(new MatteBorder(0, 0, 0, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT),
+                        WidgetUtils.BORDER_EMPTY));
 
         // titled borders
         UIManager.put("TitledBorder.font", WidgetUtils.FONT_HEADER1);

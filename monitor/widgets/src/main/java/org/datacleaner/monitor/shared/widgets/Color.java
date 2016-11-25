@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.shared.widgets;
 
+@SuppressWarnings({ "checkstyle:MemberName", "checkstyle:ParameterName", "checkstyle:LocalVariableName" })
 public class Color {
 
     public static final Color ADDITIONAL_COLOR_GREEN_BRIGHT = new Color(123, 207, 38);
@@ -45,19 +46,24 @@ public class Color {
     private static final double DARKER_BRIGHTER_FACTOR = 0.7;
 
     private static final double SLIGHT_DARKER_FACTOR = 0.9;
-
-    private int r, g, b;
     int value;
+    private int r;
+    private int g;
+    private int b;
 
     public Color(final int r, final int g, final int b) {
         this(r, g, b, 255);
     }
 
     public Color(final int r, final int g, final int b, final int a) {
+        // @formatter:off
+        // @checkstyle:off
         value = ((a & 0xFF) << 24) |
                 ((r & 0xFF) << 16) |
                 ((g & 0xFF) << 8) |
                 ((b & 0xFF) << 0);
+        // @checkstyle:on
+        // @formatter:on
     }
 
     public Color(final float h, final float s, final float l) {
@@ -72,39 +78,25 @@ public class Color {
         final float hk = h / 360.0f;
 
         final float tr = hk + 1.0f / 3;
-        final float tg = hk;
         final float tb = hk - 1.0f / 3;
 
         this.r = (int) (getComponent(tr, q, p) * 255f);
-        this.g = (int) (getComponent(tg, q, p) * 255f);
+        this.g = (int) (getComponent(hk, q, p) * 255f);
         this.b = (int) (getComponent(tb, q, p) * 255f);
 
-    }
-
-    private float getComponent(float tc, final float q, final float p) {
-        if (tc < 0) {
-            tc += 1;
-        } else if (tc > 1) {
-            tc -= 1;
-        }
-
-        if (tc < (1f / 6f)) {
-            tc = p + ((q - p) * 6f * tc);
-        } else if ((1f / 6f) <= tc && tc < 0.5f) {
-            tc = q;
-        } else if (0.5f <= tc && tc < (2f / 3f)) {
-            tc = p + ((q - p) * 6.0f * (2f / 3f - tc));
-        } else {
-            tc = p;
-        }
-
-        return tc;
     }
 
     public Color(final float r, final float g, final float b, final float a) {
         this((int) (r * 255 + 0.5), (int) (g * 255 + 0.5), (int) (b * 255 + 0.5), (int) (a * 255 + 0.5));
     }
 
+    public Color(final String hex) {
+        final int rgb = Integer.decode(hex);
+        r = (rgb & 0xff0000) >> 16;
+        g = (rgb & 0x00ff00) >> 8;
+        b = rgb & 0x0000ff;
+    }
+
     private float getComponent(float tc, final float q, final float p) {
         if (tc < 0) {
             tc += 1;
@@ -123,11 +115,6 @@ public class Color {
         }
 
         return tc;
-    }    public Color(final String hex) {
-        final int rgb = Integer.decode(hex);
-        r = (rgb & 0xff0000) >> 16;
-        g = (rgb & 0x00ff00) >> 8;
-        b = rgb & 0x0000ff;
     }
 
     public float getHue() {
@@ -187,6 +174,10 @@ public class Color {
         return r < g ? (r < b ? r : b) : (g < b ? g : b);
     }
 
+    public int getAlpha() {
+        return (getRGB() >> 24) & 0xff;
+    }
+
     public int getRed() {
         return (getRGB() >> 16) & 0xFF;
     }
@@ -197,10 +188,6 @@ public class Color {
 
     public int getBlue() {
         return (getRGB() >> 0) & 0xFF;
-    }
-
-    public int getAlpha() {
-        return (getRGB() >> 24) & 0xff;
     }
 
     public int getRGB() {
@@ -227,8 +214,7 @@ public class Color {
         }
 
         return new Color(Math.min((int) (r / DARKER_BRIGHTER_FACTOR), 255),
-                Math.min((int) (g / DARKER_BRIGHTER_FACTOR), 255),
-                Math.min((int) (b / DARKER_BRIGHTER_FACTOR), 255));
+                Math.min((int) (g / DARKER_BRIGHTER_FACTOR), 255), Math.min((int) (b / DARKER_BRIGHTER_FACTOR), 255));
     }
 
     public Color darker() {
@@ -238,9 +224,9 @@ public class Color {
     }
 
     public Color slightlyDarker() {
-        return new Color(Math.max((int) (getRed() * SLIGHT_DARKER_FACTOR), 0), Math.max(
-                (int) (getGreen() * SLIGHT_DARKER_FACTOR), 0), Math.max(
-                (int) (getBlue() * SLIGHT_DARKER_FACTOR), 0));
+        return new Color(Math.max((int) (getRed() * SLIGHT_DARKER_FACTOR), 0),
+                Math.max((int) (getGreen() * SLIGHT_DARKER_FACTOR), 0),
+                Math.max((int) (getBlue() * SLIGHT_DARKER_FACTOR), 0));
     }
 
 
@@ -259,10 +245,7 @@ public class Color {
     }
 
     public String toString() {
-        return "#"
-                + pad(Integer.toHexString(r))
-                + pad(Integer.toHexString(g))
-                + pad(Integer.toHexString(b));
+        return "#" + pad(Integer.toHexString(r)) + pad(Integer.toHexString(g)) + pad(Integer.toHexString(b));
     }
 
     public String toHexString() {

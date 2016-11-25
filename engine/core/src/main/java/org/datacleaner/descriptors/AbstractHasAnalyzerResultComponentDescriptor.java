@@ -34,8 +34,8 @@ import org.datacleaner.util.ReflectionUtils;
  *
  * @param <B>
  */
-abstract class AbstractHasAnalyzerResultComponentDescriptor<B extends HasAnalyzerResult<?>> extends
-        AbstractComponentDescriptor<B> implements HasAnalyzerResultComponentDescriptor<B> {
+abstract class AbstractHasAnalyzerResultComponentDescriptor<B extends HasAnalyzerResult<?>>
+        extends AbstractComponentDescriptor<B> implements HasAnalyzerResultComponentDescriptor<B> {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,11 +44,11 @@ abstract class AbstractHasAnalyzerResultComponentDescriptor<B extends HasAnalyze
     AbstractHasAnalyzerResultComponentDescriptor(final Class<B> beanClass, final boolean requireInputColumns) {
         super(beanClass, requireInputColumns);
 
-        final Class<?> typeParameter = ReflectionUtils
-                .getTypeParameter(getComponentClass(), HasAnalyzerResult.class, 0);
+        final Class<?> typeParameter =
+                ReflectionUtils.getTypeParameter(getComponentClass(), HasAnalyzerResult.class, 0);
 
-        @SuppressWarnings("unchecked") final
-        Class<? extends AnalyzerResult> resultClass = (Class<? extends AnalyzerResult>) typeParameter;
+        @SuppressWarnings("unchecked") final Class<? extends AnalyzerResult> resultClass =
+                (Class<? extends AnalyzerResult>) typeParameter;
         _resultDescriptor = Descriptors.ofResult(resultClass);
     }
 

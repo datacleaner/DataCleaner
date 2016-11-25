@@ -32,7 +32,8 @@ public final class TokenPatternImpl implements TokenPattern {
     private final List<TokenPatternSymbol> _symbols;
     private final String _sampleString;
 
-    public TokenPatternImpl(final String sampleString, final List<Token> tokens, final TokenizerConfiguration configuration) {
+    public TokenPatternImpl(final String sampleString, final List<Token> tokens,
+            final TokenizerConfiguration configuration) {
         if (tokens == null) {
             throw new IllegalArgumentException("tokens cannot be null");
         }

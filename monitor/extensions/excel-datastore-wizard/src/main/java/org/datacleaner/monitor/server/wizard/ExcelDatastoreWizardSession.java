@@ -79,8 +79,8 @@ public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession 
                                 // only .csv and .tsv files are allowed to be
                                 // referenced on the server, for security
                                 // reasons.
-                                throw new DCUserInputException(
-                                        "For security reasons, only existing .xls and .xlsx files can be referenced on the server");
+                                throw new DCUserInputException("For security reasons, only existing .xls and .xlsx "
+                                        + "files can be referenced on the server");
                             }
                         }
 
@@ -120,8 +120,7 @@ public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession 
         final ExcelDatastore datastore = new ExcelDatastore(_name, new FileResource(file), _filepath);
         datastore.setDescription(_description);
 
-        final Element ds = externalizer.toElement(datastore, _filepath);
-        return ds;
+        return externalizer.toElement(datastore, _filepath);
     }
 
 }

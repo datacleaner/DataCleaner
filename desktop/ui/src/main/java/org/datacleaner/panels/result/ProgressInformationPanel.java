@@ -120,8 +120,8 @@ public class ProgressInformationPanel extends DCPanel {
             final RestrictedFunctionalityException restrictedFunctionalityException =
                     (RestrictedFunctionalityException) throwable;
             final String exceptionMessage = restrictedFunctionalityException.getMessage();
-            final RestrictedFunctionalityCallToAction[] callToActions = restrictedFunctionalityException
-                    .getCallToActions();
+            final RestrictedFunctionalityCallToAction[] callToActions =
+                    restrictedFunctionalityException.getCallToActions();
             addRestrictedFunctionalityMessage(exceptionMessage, callToActions);
             return;
         }
@@ -152,8 +152,7 @@ public class ProgressInformationPanel extends DCPanel {
 
         if (jobFinished) {
             final Collection<TableProgressInformationPanel> tableProgressInformationPanels =
-                    _tableProgressInformationPanels
-                            .values();
+                    _tableProgressInformationPanels.values();
             for (final TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
                 tableProgressInformationPanel.setProgressStopped(throwable != null);
             }
@@ -184,24 +183,16 @@ public class ProgressInformationPanel extends DCPanel {
     }
 
     private void appendMessage(final String message) {
-        WidgetUtils.invokeSwingAction(new Runnable() {
-            @Override
-            public void run() {
-                _executionLogTextArea.append(message);
-            }
-        });
+        WidgetUtils.invokeSwingAction(() -> _executionLogTextArea.append(message));
     }
 
     public void addProgressBar(final Table table, final int expectedRows) {
-        final TableProgressInformationPanel tableProgressInformationPanel = getTableProgressInformationPanel(table,
-                expectedRows);
-        WidgetUtils.invokeSwingAction(new Runnable() {
-            @Override
-            public void run() {
-                _progressBarPanel.add(tableProgressInformationPanel);
-                tableProgressInformationPanel.setProgressMaximum(expectedRows);
-                _progressBarPanel.updateUI();
-            }
+        final TableProgressInformationPanel tableProgressInformationPanel =
+                getTableProgressInformationPanel(table, expectedRows);
+        WidgetUtils.invokeSwingAction(() -> {
+            _progressBarPanel.add(tableProgressInformationPanel);
+            tableProgressInformationPanel.setProgressMaximum(expectedRows);
+            _progressBarPanel.updateUI();
         });
     }
 
@@ -212,8 +203,8 @@ public class ProgressInformationPanel extends DCPanel {
                 expectedRows = Integer.MAX_VALUE;
             }
             tableProgressInformationPanel = new TableProgressInformationPanel(table, expectedRows);
-            final TableProgressInformationPanel previous = _tableProgressInformationPanels.putIfAbsent(table,
-                    tableProgressInformationPanel);
+            final TableProgressInformationPanel previous =
+                    _tableProgressInformationPanels.putIfAbsent(table, tableProgressInformationPanel);
             if (previous != null) {
                 tableProgressInformationPanel = previous;
             }
@@ -266,8 +257,8 @@ public class ProgressInformationPanel extends DCPanel {
 
     public void onCancelled() {
         appendMessage("\n--- DataCleaner job cancelled at " + getTimestamp() + " ---");
-        final Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
-                .values();
+        final Collection<TableProgressInformationPanel> tableProgressInformationPanels =
+                _tableProgressInformationPanels.values();
         for (final TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
             tableProgressInformationPanel.setProgressCancelled();
         }
@@ -291,8 +282,8 @@ public class ProgressInformationPanel extends DCPanel {
             addUserLog("Job success! Elapsed time: " + _stopWatch);
         }
 
-        final Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
-                .values();
+        final Collection<TableProgressInformationPanel> tableProgressInformationPanels =
+                _tableProgressInformationPanels.values();
 
         for (final TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
             tableProgressInformationPanel.setProgressFinished();

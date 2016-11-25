@@ -28,25 +28,25 @@ public class RegexSwapStringPatternReferenceDataWizardTest {
 
     @Test
     public void testIsApplicableTo() throws Exception {
-        RegexSwapStringPatternReferenceDataWizard wizard = new RegexSwapStringPatternReferenceDataWizard();
+        final RegexSwapStringPatternReferenceDataWizard wizard = new RegexSwapStringPatternReferenceDataWizard();
         assertTrue(wizard.isApplicableTo(null));
     }
 
     @Test
     public void testGetDisplayName() throws Exception {
-        RegexSwapStringPatternReferenceDataWizard wizard = new RegexSwapStringPatternReferenceDataWizard();
+        final RegexSwapStringPatternReferenceDataWizard wizard = new RegexSwapStringPatternReferenceDataWizard();
         assertNotEquals("", wizard.getDisplayName());
     }
 
     @Test
     public void testGetExpectedPageCount() throws Exception {
-        RegexSwapStringPatternReferenceDataWizard wizard = new RegexSwapStringPatternReferenceDataWizard();
+        final RegexSwapStringPatternReferenceDataWizard wizard = new RegexSwapStringPatternReferenceDataWizard();
         assertEquals(2, wizard.getExpectedPageCount());
     }
 
     @Test
     public void testStart() throws Exception {
-        RegexSwapStringPatternReferenceDataWizard wizard = new RegexSwapStringPatternReferenceDataWizard();
+        final RegexSwapStringPatternReferenceDataWizard wizard = new RegexSwapStringPatternReferenceDataWizard();
         assertNotNull(wizard.start(TestHelper.getReferenceDataWizardContextMock()));
     }
 }

@@ -23,8 +23,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
@@ -32,12 +30,14 @@ import org.datacleaner.job.concurrent.StatusAwareTaskListener;
 import org.datacleaner.result.NumberResult;
 import org.easymock.EasyMock;
 
+import junit.framework.TestCase;
+
 public class AnalysisResultFutureImplTest extends TestCase {
 
     public void testIsSuccessful() throws Exception {
-        Queue<JobAndResult> resultQueue = new LinkedList<>();
-        StatusAwareTaskListener jobCompletionListener = EasyMock.createMock(StatusAwareTaskListener.class);
-        ErrorAware errorAware = EasyMock.createMock(ErrorAware.class);
+        final Queue<JobAndResult> resultQueue = new LinkedList<>();
+        final StatusAwareTaskListener jobCompletionListener = EasyMock.createMock(StatusAwareTaskListener.class);
+        final ErrorAware errorAware = EasyMock.createMock(ErrorAware.class);
 
         EasyMock.expect(jobCompletionListener.isDone()).andReturn(true);
         EasyMock.expect(errorAware.isErrornous()).andReturn(false);
@@ -45,7 +45,7 @@ public class AnalysisResultFutureImplTest extends TestCase {
 
         EasyMock.replay(jobCompletionListener, errorAware);
 
-        AnalysisResultFutureImpl resultFuture =
+        final AnalysisResultFutureImpl resultFuture =
                 new AnalysisResultFutureImpl(resultQueue, jobCompletionListener, errorAware);
         assertTrue(resultFuture.isSuccessful());
 
@@ -55,23 +55,23 @@ public class AnalysisResultFutureImplTest extends TestCase {
     }
 
     public void testGetResultByJob() throws Exception {
-        AnalyzerJob analyzerJob1 = EasyMock.createMock(AnalyzerJob.class);
-        AnalyzerJob analyzerJob2 = EasyMock.createMock(AnalyzerJob.class);
-        AnalyzerJob analyzerJob3 = EasyMock.createMock(AnalyzerJob.class);
+        final AnalyzerJob analyzerJob1 = EasyMock.createMock(AnalyzerJob.class);
+        final AnalyzerJob analyzerJob2 = EasyMock.createMock(AnalyzerJob.class);
+        final AnalyzerJob analyzerJob3 = EasyMock.createMock(AnalyzerJob.class);
 
-        Queue<JobAndResult> resultQueue = new LinkedList<>();
+        final Queue<JobAndResult> resultQueue = new LinkedList<>();
 
         resultQueue.add(new JobAndResult(analyzerJob1, new NumberResult(1)));
         resultQueue.add(new JobAndResult(analyzerJob2, new NumberResult(2)));
 
-        StatusAwareTaskListener jobCompletionListener = EasyMock.createMock(StatusAwareTaskListener.class);
-        ErrorAware errorAware = EasyMock.createMock(ErrorAware.class);
+        final StatusAwareTaskListener jobCompletionListener = EasyMock.createMock(StatusAwareTaskListener.class);
+        final ErrorAware errorAware = EasyMock.createMock(ErrorAware.class);
         EasyMock.expect(jobCompletionListener.isDone()).andReturn(true);
         EasyMock.expect(errorAware.isErrornous()).andReturn(false).times(4);
 
         EasyMock.replay(jobCompletionListener, errorAware);
 
-        AnalysisResultFutureImpl resultFuture =
+        final AnalysisResultFutureImpl resultFuture =
                 new AnalysisResultFutureImpl(resultQueue, jobCompletionListener, errorAware);
 
         resultFuture.await();
@@ -80,7 +80,7 @@ public class AnalysisResultFutureImplTest extends TestCase {
         assertEquals("2", resultFuture.getResult(analyzerJob2).toString());
         assertNull(resultFuture.getResult(analyzerJob3));
 
-        Map<ComponentJob, AnalyzerResult> resultMap = resultFuture.getResultMap();
+        final Map<ComponentJob, AnalyzerResult> resultMap = resultFuture.getResultMap();
 
         EasyMock.verify(jobCompletionListener, errorAware);
 
@@ -90,16 +90,16 @@ public class AnalysisResultFutureImplTest extends TestCase {
     }
 
     public void testCancel() throws Exception {
-        Queue<JobAndResult> resultQueue = new LinkedList<>();
-        StatusAwareTaskListener jobCompletionListener = EasyMock.createMock(StatusAwareTaskListener.class);
-        ErrorAware errorAware = EasyMock.createMock(ErrorAware.class);
+        final Queue<JobAndResult> resultQueue = new LinkedList<>();
+        final StatusAwareTaskListener jobCompletionListener = EasyMock.createMock(StatusAwareTaskListener.class);
+        final ErrorAware errorAware = EasyMock.createMock(ErrorAware.class);
 
         jobCompletionListener.onError(null, new AnalysisJobCancellation());
         EasyMock.expect(errorAware.isCancelled()).andReturn(true);
 
         EasyMock.replay(jobCompletionListener, errorAware);
 
-        AnalysisResultFutureImpl resultFuture =
+        final AnalysisResultFutureImpl resultFuture =
                 new AnalysisResultFutureImpl(resultQueue, jobCompletionListener, errorAware);
         resultFuture.cancel();
 

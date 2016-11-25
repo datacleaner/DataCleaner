@@ -69,8 +69,8 @@ public final class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialo
 
     @Override
     protected void setFileFilters(final AbstractResourceTextField<?> filenameField) {
-        final FileFilter combinedFilter = FileFilters.combined("Any Access database (.mdb, .accdb)", FileFilters.MDB,
-                FileFilters.ACCDB);
+        final FileFilter combinedFilter =
+                FileFilters.combined("Any Access database (.mdb, .accdb)", FileFilters.MDB, FileFilters.ACCDB);
         filenameField.addChoosableFileFilter(FileFilters.MDB);
         filenameField.addChoosableFileFilter(FileFilters.ACCDB);
         filenameField.addChoosableFileFilter(FileFilters.ALL);

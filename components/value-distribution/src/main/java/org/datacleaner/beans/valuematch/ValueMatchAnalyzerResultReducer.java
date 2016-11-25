@@ -66,8 +66,8 @@ public class ValueMatchAnalyzerResultReducer implements AnalyzerResultReducer<Va
 
             final Set<String> expectedValues = analyzerResult.getExpectedValueAnnotations().keySet();
             for (final String expectedValue : expectedValues) {
-                final AnnotatedRowsResult annotatedRowsResultForExpectedValue = analyzerResult
-                        .getAnnotatedRowsForValue(expectedValue);
+                final AnnotatedRowsResult annotatedRowsResultForExpectedValue =
+                        analyzerResult.getAnnotatedRowsForValue(expectedValue);
                 if (annotatedRowsResultForExpectedValue != null) {
                     final int slaveRowCount = annotatedRowsResultForExpectedValue.getAnnotatedRowCount();
                     if (slaveRowCount > 0) {
@@ -83,9 +83,8 @@ public class ValueMatchAnalyzerResultReducer implements AnalyzerResultReducer<Va
             }
         }
 
-        final ValueMatchAnalyzerResult result = new ValueMatchAnalyzerResult(column, _rowAnnotationFactory,
-                valueAnnotations, nullAnnotation, unexpectedValuesAnnotation, totalCount);
-        return result;
+        return new ValueMatchAnalyzerResult(column, _rowAnnotationFactory, valueAnnotations, nullAnnotation,
+                unexpectedValuesAnnotation, totalCount);
     }
 
     private void reduce(final RowAnnotation annotation, final AnnotatedRowsResult annotatedRowsResult) {

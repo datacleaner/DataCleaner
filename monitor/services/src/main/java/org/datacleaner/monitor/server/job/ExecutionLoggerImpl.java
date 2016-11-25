@@ -19,7 +19,6 @@
  */
 package org.datacleaner.monitor.server.job;
 
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -29,7 +28,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
@@ -89,12 +87,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
 
         final RepositoryFile existingLogFile = resultFolder.getFile(logFilename);
         if (existingLogFile == null) {
-            _logFile = resultFolder.createFile(logFilename, new Action<OutputStream>() {
-                @Override
-                public void run(final OutputStream out) throws Exception {
-                    _executionLogWriter.write(_execution, out);
-                }
-            });
+            _logFile = resultFolder.createFile(logFilename, out -> _executionLogWriter.write(_execution, out));
         } else {
             _logFile = existingLogFile;
         }
@@ -116,9 +109,8 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
         if (erronuousBefore) {
             if (throwable instanceof PreviousErrorsExistException) {
                 // don't report PreviousErrorsExistExceptions
-                logger.error(
-                        "More than one error was reported, but only the first will be put into the user-log. This error was also reported: "
-                                + throwable.getMessage(), throwable);
+                logger.error("More than one error was reported, but only the first will be put into the user-log. "
+                        + "This error was also reported: " + throwable.getMessage(), throwable);
             } else {
                 log("\n - Additional exception stacktrace:", throwable);
                 flushLog();
@@ -228,12 +220,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
                 throw e;
             }
         } else {
-            _resultFolder.createFile(resultFilename, new Action<OutputStream>() {
-                @Override
-                public void run(final OutputStream out) throws Exception {
-                    SerializationUtils.serialize(result, out);
-                }
-            });
+            _resultFolder.createFile(resultFilename, out -> SerializationUtils.serialize(result, out));
         }
     }
 
@@ -270,13 +257,10 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
     public void flushLog() {
         _execution.setLogOutput(_log.toString());
 
-        _logFile.writeFile(new Action<OutputStream>() {
-            @Override
-            public void run(final OutputStream out) throws Exception {
-                // synchronize while writing
-                synchronized (_log) {
-                    _executionLogWriter.write(_execution, out);
-                }
+        _logFile.writeFile(out -> {
+            // synchronize while writing
+            synchronized (_log) {
+                _executionLogWriter.write(_execution, out);
             }
         });
     }

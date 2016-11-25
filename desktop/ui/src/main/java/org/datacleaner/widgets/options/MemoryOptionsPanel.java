@@ -59,12 +59,9 @@ public class MemoryOptionsPanel extends DCPanel {
         WidgetUtils.addToGridBag(freeMemoryLabel, this, 1, 3);
 
         final JButton button = WidgetFactory.createDefaultButton("Perform garbage collection");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                System.gc();
-                System.runFinalization();
-            }
+        button.addActionListener(e -> {
+            System.gc();
+            System.runFinalization();
         });
         WidgetUtils.addToGridBag(button, this, 1, 4);
 

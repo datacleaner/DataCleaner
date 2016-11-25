@@ -28,18 +28,18 @@ import junit.framework.TestCase;
 
 public class ChangeAwareObjectInputStreamTest extends TestCase {
 
-    private final File JAR_FILE = new File("src/test/resources/code-company.jar");
+    private final File _jarFile = new File("src/test/resources/code-company.jar");
 
     // contains a serialized Company object with an Employee array
-    private final File SERIALIZED_OBJECT_FILE = new File("src/test/resources/serialized-company.ser");
+    private final File _serializedObjectFile = new File("src/test/resources/serialized-company.ser");
 
     public void testDeserializeArrayFromAlternativeClassloaders() throws Exception {
-        final URL[] urls = new URL[] { JAR_FILE.toURI().toURL() };
+        final URL[] urls = new URL[] { _jarFile.toURI().toURL() };
         final ClassLoader classLoader = new URLClassLoader(urls);
 
         final Object obj;
-        try (ChangeAwareObjectInputStream ois = new ChangeAwareObjectInputStream(new FileInputStream(
-                SERIALIZED_OBJECT_FILE))) {
+        try (ChangeAwareObjectInputStream ois = new ChangeAwareObjectInputStream(
+                new FileInputStream(_serializedObjectFile))) {
             ois.addClassLoader(classLoader);
 
             try {

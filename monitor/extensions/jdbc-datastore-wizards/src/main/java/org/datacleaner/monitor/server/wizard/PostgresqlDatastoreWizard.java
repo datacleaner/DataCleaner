@@ -50,7 +50,6 @@ public class PostgresqlDatastoreWizard implements DatastoreWizard {
     @Override
     public boolean isApplicableTo(final DatastoreWizardContext context) {
         final DatabaseDriverCatalog catalog = new DatabaseDriverCatalog(null);
-        final boolean installed = catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL);
-        return installed;
+        return catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL);
     }
 }

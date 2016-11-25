@@ -19,9 +19,9 @@
  */
 package org.datacleaner.job.concurrent;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.job.tasks.Task;
+
+import junit.framework.TestCase;
 
 public class SingleThreadedTaskRunnerTest extends TestCase {
 
@@ -31,7 +31,8 @@ public class SingleThreadedTaskRunnerTest extends TestCase {
         private char charToPrint;
         private StringBuilder sb;
 
-        public SimpleRecursiveTask(StringBuilder sb, char c, Task nextTask, TaskRunner taskRunner) {
+        public SimpleRecursiveTask(final StringBuilder sb, final char c, final Task nextTask,
+                final TaskRunner taskRunner) {
             this.sb = sb;
             this.charToPrint = c;
             this.nextTask = nextTask;
@@ -49,12 +50,12 @@ public class SingleThreadedTaskRunnerTest extends TestCase {
     }
 
     public void testNonQueuedChronology() throws Exception {
-        SingleThreadedTaskRunner runner = new SingleThreadedTaskRunner();
+        final SingleThreadedTaskRunner runner = new SingleThreadedTaskRunner();
 
-        StringBuilder sb = new StringBuilder();
-        Task task3 = new SimpleRecursiveTask(sb, 'c', null, null);
-        Task task2 = new SimpleRecursiveTask(sb, 'b', task3, runner);
-        Task task1 = new SimpleRecursiveTask(sb, 'a', task2, runner);
+        final StringBuilder sb = new StringBuilder();
+        final Task task3 = new SimpleRecursiveTask(sb, 'c', null, null);
+        final Task task2 = new SimpleRecursiveTask(sb, 'b', task3, runner);
+        final Task task1 = new SimpleRecursiveTask(sb, 'a', task2, runner);
 
         runner.run(task1, null);
 

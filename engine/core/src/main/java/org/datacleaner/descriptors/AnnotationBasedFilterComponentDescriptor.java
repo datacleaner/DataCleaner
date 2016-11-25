@@ -30,8 +30,8 @@ import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.util.ReflectionUtils;
 
-final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C extends Enum<C>> extends
-        AbstractComponentDescriptor<F> implements FilterDescriptor<F, C> {
+final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C extends Enum<C>>
+        extends AbstractComponentDescriptor<F> implements FilterDescriptor<F, C> {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,8 +48,8 @@ final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C exte
     @Override
     @SuppressWarnings("deprecation")
     protected String getDisplayNameIfNotNamed(final Class<?> cls) {
-        final org.eobjects.analyzer.beans.api.FilterBean annotation = ReflectionUtils.getAnnotation(cls,
-                org.eobjects.analyzer.beans.api.FilterBean.class);
+        final org.eobjects.analyzer.beans.api.FilterBean annotation =
+                ReflectionUtils.getAnnotation(cls, org.eobjects.analyzer.beans.api.FilterBean.class);
         if (annotation == null) {
             return null;
         }

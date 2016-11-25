@@ -21,23 +21,23 @@ package org.datacleaner.job;
 
 import java.util.Calendar;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.job.jaxb.JobMetadataType;
 import org.easymock.EasyMock;
+
+import junit.framework.TestCase;
 
 public class JaxbJobMetadataFactoryImplTest extends TestCase {
 
     public void testCreate() throws Exception {
-        JaxbJobMetadataFactory factory = new JaxbJobMetadataFactoryImpl("kasper", "my job", "desc", "1.0");
+        final JaxbJobMetadataFactory factory = new JaxbJobMetadataFactoryImpl("kasper", "my job", "desc", "1.0");
 
-        AnalysisJob job = EasyMock.createMock(AnalysisJob.class);
+        final AnalysisJob job = EasyMock.createMock(AnalysisJob.class);
         EasyMock.expect(job.getMetadata()).andReturn(AnalysisJobMetadata.EMPTY_METADATA).anyTimes();
 
         EasyMock.replay(job);
 
-        JobMetadataType metadata = factory.create(job);
-        int year = Calendar.getInstance().get(Calendar.YEAR);
+        final JobMetadataType metadata = factory.create(job);
+        final int year = Calendar.getInstance().get(Calendar.YEAR);
 
         assertEquals("kasper", metadata.getAuthor());
         assertEquals("my job", metadata.getJobName());

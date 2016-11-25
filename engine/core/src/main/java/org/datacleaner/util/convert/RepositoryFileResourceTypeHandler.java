@@ -64,9 +64,7 @@ public class RepositoryFileResourceTypeHandler implements ResourceTypeHandler<Re
                             + "'. Got: " + qualifiedPath);
         }
 
-        final String relativePath = qualifiedPath.substring(prefix.length());
-
-        return relativePath;
+        return qualifiedPath.substring(prefix.length());
     }
 
     private String getHomeFolderPrefix() {

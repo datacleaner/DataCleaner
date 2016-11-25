@@ -28,7 +28,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
@@ -140,8 +139,7 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
 
     private Element getResultStatusElement() {
         final Element transstatusElement = getTransStatusElement();
-        final Element resultStatusElement = DomUtils.getChildElementByTagName(transstatusElement, "result");
-        return resultStatusElement;
+        return DomUtils.getChildElementByTagName(transstatusElement, "result");
     }
 
     protected Number getMeasure(final Element parentElement, final String measureKey) {
@@ -154,20 +152,13 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
 
     protected Collection<String> getStepNames() {
         final List<Element> elements = getStepStatusElements();
-        return CollectionUtils.map(elements, new Func<Element, String>() {
-            @Override
-            public String eval(final Element element) {
-                final String stepName = DomUtils.getChildElementValueByTagName(element, "stepname");
-                return stepName;
-            }
-        });
+        return CollectionUtils.map(elements, element -> DomUtils.getChildElementValueByTagName(element, "stepname"));
     }
 
     private List<Element> getStepStatusElements() {
         final Element transstatusElement = getTransStatusElement();
         final Element stepstatuslistElement = DomUtils.getChildElementByTagName(transstatusElement, "stepstatuslist");
-        final List<Element> stepstatusElements = DomUtils.getChildElements(stepstatuslistElement);
-        return stepstatusElements;
+        return DomUtils.getChildElements(stepstatuslistElement);
     }
 
     private Element getStepStatusElement(final String name) {
@@ -186,8 +177,7 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
 
     public Element getTransStatusElement() {
         final Document document = getDocument();
-        final Element transstatusElement = document.getDocumentElement();
-        return transstatusElement;
+        return document.getDocumentElement();
     }
 
     @Override
@@ -218,8 +208,8 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
         return crosstab;
     }
 
-    private void addCrosstabMeasure(final CrosstabNavigator<Serializable> nav, final Element stepstatusElement, final String measureKey,
-            final String measureName) {
+    private void addCrosstabMeasure(final CrosstabNavigator<Serializable> nav, final Element stepstatusElement,
+            final String measureKey, final String measureName) {
         final String measure = DomUtils.getChildElementValueByTagName(stepstatusElement, measureKey);
         nav.where("Measure", measureName).put(measure, true);
     }

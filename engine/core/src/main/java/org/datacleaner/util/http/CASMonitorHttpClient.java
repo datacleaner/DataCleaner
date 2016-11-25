@@ -79,8 +79,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
     private String _casRestServiceUrl;
 
     public CASMonitorHttpClient(final CloseableHttpClient client, final String casServerUrl, final String username,
-            final String password,
-            final String monitorBaseUrl) {
+            final String password, final String monitorBaseUrl) {
         _httpClient = client;
         _casServerUrl = casServerUrl;
         _username = username;
@@ -202,9 +201,8 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
 
         if (statusCode == 302) {
             final String reason = statusLine.getReasonPhrase();
-            throwError(
-                    "Unexpected HTTP status code from CAS service: 302. This indicates that "
-                            + "the RESTful API for CAS is not installed. Reason: " + reason);
+            throwError("Unexpected HTTP status code from CAS service: 302. This indicates that "
+                    + "the RESTful API for CAS is not installed. Reason: " + reason);
         }
 
         if (statusCode != 201) {

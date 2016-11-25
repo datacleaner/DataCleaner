@@ -19,9 +19,6 @@
  */
 package org.datacleaner.widgets.properties;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.inject.Inject;
 import javax.swing.JCheckBox;
 
@@ -29,7 +26,6 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 
 public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean> {
 
@@ -52,12 +48,7 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
             if (currentValue != null) {
                 _checkBox.setSelected(currentValue.booleanValue());
             }
-            _checkBox.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    fireValueChanged();
-                }
-            });
+            _checkBox.addActionListener(e -> fireValueChanged());
             add(_checkBox);
         } else {
             _checkBox = null;
@@ -69,12 +60,7 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
                 _comboBox.setSelectedItem(currentValue.toString());
             }
 
-            _comboBox.addListener(new Listener<String>() {
-                @Override
-                public void onItemSelected(final String item) {
-                    fireValueChanged();
-                }
-            });
+            _comboBox.addListener(item -> fireValueChanged());
 
             add(_comboBox);
         }

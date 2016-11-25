@@ -28,7 +28,8 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 
 final class DatastoreSynonymCatalogReferenceDataPageSchema extends DatastorePageSchema {
 
-    public DatastoreSynonymCatalogReferenceDataPageSchema(final DatastoreSynonymCatalogReferenceDataWizardSession session) {
+    public DatastoreSynonymCatalogReferenceDataPageSchema(
+            final DatastoreSynonymCatalogReferenceDataWizardSession session) {
         super(session);
     }
 

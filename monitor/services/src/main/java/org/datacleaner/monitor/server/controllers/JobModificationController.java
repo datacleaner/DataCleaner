@@ -20,7 +20,6 @@
 package org.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.TreeMap;
@@ -65,9 +64,8 @@ public class JobModificationController {
     @ResponseBody
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     public Map<String, String> modifyJob(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName,
-            @RequestBody final JobModificationPayload input, final HttpServletResponse httpServletResponse)
-            throws IOException {
+            @PathVariable("job") String jobName, @RequestBody final JobModificationPayload input,
+            final HttpServletResponse httpServletResponse) throws IOException {
 
         logger.info("Request payload: {} - {}", jobName, input);
 
@@ -96,17 +94,9 @@ public class JobModificationController {
 
         final boolean overwrite = input.getOverwrite() != null && input.getOverwrite().booleanValue();
 
-        final Action<OutputStream> writeAction = new Action<OutputStream>() {
-            @Override
-            public void run(final OutputStream out) throws Exception {
-                existingFile.readFile(new Action<InputStream>() {
-                    @Override
-                    public void run(final InputStream in) throws Exception {
-                        FileHelper.copy(in, out);
-                    }
-                });
-            }
-        };
+        final Action<OutputStream> writeAction = out -> existingFile.readFile(in -> {
+            FileHelper.copy(in, out);
+        });
 
         if (newFile == null) {
             jobFolder.createFile(newFilename, writeAction);
@@ -147,17 +137,9 @@ public class JobModificationController {
             final RepositoryFolder jobFolder) {
         final String newScheduleFilename = nameInput + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML;
 
-        final Action<OutputStream> writeScheduleAction = new Action<OutputStream>() {
-            @Override
-            public void run(final OutputStream out) throws Exception {
-                oldScheduleFile.readFile(new Action<InputStream>() {
-                    @Override
-                    public void run(final InputStream in) throws Exception {
-                        FileHelper.copy(in, out);
-                    }
-                });
-            }
-        };
+        final Action<OutputStream> writeScheduleAction = out -> oldScheduleFile.readFile(in -> {
+            FileHelper.copy(in, out);
+        });
         final RepositoryFile newScheduleFile = jobFolder.getFile(newScheduleFilename);
         if (newScheduleFile == null) {
             jobFolder.createFile(newScheduleFilename, writeScheduleAction);

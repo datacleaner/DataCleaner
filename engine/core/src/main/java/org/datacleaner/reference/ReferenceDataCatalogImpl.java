@@ -42,8 +42,7 @@ public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
     }
 
     public ReferenceDataCatalogImpl(final Collection<Dictionary> dictionaries,
-            final Collection<SynonymCatalog> synonymCatalogs,
-            final Collection<StringPattern> stringPatterns) {
+            final Collection<SynonymCatalog> synonymCatalogs, final Collection<StringPattern> stringPatterns) {
         if (dictionaries == null) {
             throw new IllegalArgumentException("dictionaries cannot be null");
         }

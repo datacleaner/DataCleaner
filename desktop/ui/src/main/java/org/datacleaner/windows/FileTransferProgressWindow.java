@@ -21,7 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 
@@ -63,7 +62,8 @@ public class FileTransferProgressWindow extends AbstractDialog {
     private final JLabel[] _infoLabels;
     private final String[] _filenames;
 
-    public FileTransferProgressWindow(final WindowContext windowContext, final Action<Void> cancelCallback, final String[] filenames) {
+    public FileTransferProgressWindow(final WindowContext windowContext, final Action<Void> cancelCallback,
+            final String[] filenames) {
         super(windowContext);
         setBackgroundColor(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
 
@@ -187,12 +187,9 @@ public class FileTransferProgressWindow extends AbstractDialog {
         }
 
         final Timer timer = new Timer(1500, null);
-        final ActionListener listener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                FileTransferProgressWindow.this.dispose();
-                timer.stop();
-            }
+        final ActionListener listener = e -> {
+            FileTransferProgressWindow.this.dispose();
+            timer.stop();
         };
         timer.addActionListener(listener);
         timer.start();

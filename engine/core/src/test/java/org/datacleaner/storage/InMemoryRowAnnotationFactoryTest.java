@@ -19,15 +19,15 @@
  */
 package org.datacleaner.storage;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.data.MockInputRow;
+
+import junit.framework.TestCase;
 
 public class InMemoryRowAnnotationFactoryTest extends TestCase {
 
     public void testCountingAboveThreshold() throws Exception {
-        RowAnnotationFactory f = RowAnnotations.getDefaultFactory();
-        RowAnnotation a = f.createAnnotation();
+        final RowAnnotationFactory f = RowAnnotations.getDefaultFactory();
+        final RowAnnotation a = f.createAnnotation();
 
         f.annotate(new MockInputRow(), 1, a);
         f.annotate(new MockInputRow(), 1, a);

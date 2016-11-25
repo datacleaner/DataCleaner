@@ -62,6 +62,7 @@ class JobGraphNodeBuilder {
             return item;
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(JobGraphNodeBuilder.class);
     private final AnalysisJobBuilder _analysisJobBuilder;
 
@@ -190,13 +191,13 @@ class JobGraphNodeBuilder {
         return !linksToRemove.isEmpty();
     }
 
-    private boolean isEdgeShortcutFor(final DirectedGraph<Object, JobGraphLink> graph, final JobGraphLink potentialShortcut,
-            final JobGraphLink otherEdge) {
+    private boolean isEdgeShortcutFor(final DirectedGraph<Object, JobGraphLink> graph,
+            final JobGraphLink potentialShortcut, final JobGraphLink otherEdge) {
         return isEdgeShortcutFor(graph, potentialShortcut, otherEdge, new HashSet<>());
     }
 
-    private boolean isEdgeShortcutFor(final DirectedGraph<Object, JobGraphLink> graph, final JobGraphLink potentialShortcut,
-            final JobGraphLink otherEdge, final Set<JobGraphLink> checkedEdges) {
+    private boolean isEdgeShortcutFor(final DirectedGraph<Object, JobGraphLink> graph,
+            final JobGraphLink potentialShortcut, final JobGraphLink otherEdge, final Set<JobGraphLink> checkedEdges) {
         if (otherEdge == null) {
             return false;
         }
@@ -321,14 +322,14 @@ class JobGraphNodeBuilder {
 
                 for (final OutputDataStream outputDataStream : componentBuilder.getOutputDataStreams()) {
                     if (componentBuilder.isOutputDataStreamConsumed(outputDataStream)) {
-                        final AnalysisJobBuilder outputDataStreamJobBuilder = componentBuilder
-                                .getOutputDataStreamJobBuilder(outputDataStream);
+                        final AnalysisJobBuilder outputDataStreamJobBuilder =
+                                componentBuilder.getOutputDataStreamJobBuilder(outputDataStream);
 
                         final List<Table> sourceTables = outputDataStreamJobBuilder.getSourceTables();
                         final JobGraphElementFactory childLinkFactory = new JobGraphElementFactory() {
                             @Override
-                            public JobGraphLink createLink(final Object from, final Object to, final ComponentRequirement requirement,
-                                    final FilterOutcome filterOutcome) {
+                            public JobGraphLink createLink(final Object from, final Object to,
+                                    final ComponentRequirement requirement, final FilterOutcome filterOutcome) {
                                 if (sourceTables.contains(from)) {
                                     // replace "from" with "vertex" and add the
                                     // outputDataStream
@@ -367,13 +368,14 @@ class JobGraphNodeBuilder {
     }
 
     private void addEdge(final DirectedGraph<Object, JobGraphLink> graph, final JobGraphElementFactory linkFactory,
-            final Object from, final Object to, final ComponentRequirement requirement, final FilterOutcome filterOutcome) {
+            final Object from, final Object to, final ComponentRequirement requirement,
+            final FilterOutcome filterOutcome) {
         addEdge(graph, linkFactory, from, to, requirement, filterOutcome, null);
     }
 
     private void addEdge(final DirectedGraph<Object, JobGraphLink> graph, final JobGraphElementFactory linkFactory,
-            final Object from, final Object to, final ComponentRequirement requirement, final FilterOutcome filterOutcome,
-            final OutputDataStream outputDataStream) {
+            final Object from, final Object to, final ComponentRequirement requirement,
+            final FilterOutcome filterOutcome, final OutputDataStream outputDataStream) {
         final JobGraphLink link = linkFactory.createLink(from, to, requirement, filterOutcome);
         if (!graph.containsEdge(link)) {
             graph.addEdge(link, link.getFrom(), link.getTo(), EdgeType.DIRECTED);

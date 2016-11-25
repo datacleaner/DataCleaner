@@ -22,8 +22,8 @@ package org.datacleaner.components.group;
 import org.apache.metamodel.util.HasName;
 
 enum SortationType implements HasName {
-    NONE("None"), RECORD_ORDER("Record order"), NATURAL_SORT_ASC("Natural sort, ascending"), NATURAL_SORT_DESC(
-            "Natural sort, descending");
+    NONE("None"), RECORD_ORDER("Record order"), NATURAL_SORT_ASC("Natural sort, ascending"),
+    NATURAL_SORT_DESC("Natural sort, descending");
 
     private final String _name;
 

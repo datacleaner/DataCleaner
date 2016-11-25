@@ -21,8 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -94,8 +92,8 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     }
 
     private static Image getBannerImage(final ComponentBuilder componentBuilder) {
-        final ImageIcon descriptorIcon = IconUtils.getDescriptorIcon(componentBuilder.getDescriptor(),
-                IconUtils.ICON_SIZE_LARGE);
+        final ImageIcon descriptorIcon =
+                IconUtils.getDescriptorIcon(componentBuilder.getDescriptor(), IconUtils.ICON_SIZE_LARGE);
         return descriptorIcon.getImage();
     }
 
@@ -128,10 +126,10 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
         if (_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
             final RemoteTransformerDescriptor<?> remoteTransformerDescriptor =
-                    (RemoteTransformerDescriptor<?>) (_componentBuilder
-                            .getDescriptor());
-            remoteServerName = " ("
-                    + remoteTransformerDescriptor.getRemoteDescriptorProvider().getServerData().getServerName() + ")";
+                    (RemoteTransformerDescriptor<?>) (_componentBuilder.getDescriptor());
+            remoteServerName =
+                    " (" + remoteTransformerDescriptor.getRemoteDescriptorProvider().getServerData().getServerName()
+                            + ")";
         } else {
             remoteServerName = "";
         }
@@ -148,8 +146,8 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
             }
         });
 
-        final JButton documentationButton = WidgetFactory.createDefaultButton("Documentation",
-                IconUtils.MENU_DOCUMENTATION);
+        final JButton documentationButton =
+                WidgetFactory.createDefaultButton("Documentation", IconUtils.MENU_DOCUMENTATION);
         documentationButton.addActionListener(new ComponentReferenceDocumentationActionListener(
                 _componentBuilder.getAnalysisJobBuilder().getConfiguration(), _componentBuilder.getDescriptor()));
 
@@ -183,12 +181,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         final JComponent configurationComponent = _renderer.render(_componentBuilder).createJComponent();
 
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                ComponentConfigurationDialog.this.dispose();
-            }
-        });
+        closeButton.addActionListener(e -> ComponentConfigurationDialog.this.dispose());
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_WELL_BACKGROUND);
         panel.setLayout(new BorderLayout());

@@ -146,9 +146,8 @@ public final class CollectionUtils2 {
      * @return
      */
     public static <K, V> Cache<K, V> createCache(final int maximumSize, final long expiryDurationSeconds) {
-        final Cache<K, V> cache = CacheBuilder.newBuilder().maximumSize(maximumSize)
+        return CacheBuilder.newBuilder().maximumSize(maximumSize)
                 .expireAfterAccess(expiryDurationSeconds, TimeUnit.SECONDS).build();
-        return cache;
     }
 
     public static Object toArray(final List<?> list, final Class<?> componentType) {

@@ -39,7 +39,8 @@ final class NumberAnalyzerColumnDelegate {
     private final RowAnnotation _minAnnotation;
     private volatile int _numRows;
 
-    public NumberAnalyzerColumnDelegate(final boolean descriptiveStatistics, final RowAnnotationFactory annotationFactory) {
+    public NumberAnalyzerColumnDelegate(final boolean descriptiveStatistics,
+            final RowAnnotationFactory annotationFactory) {
         _annotationFactory = annotationFactory;
         _nullAnnotation = _annotationFactory.createAnnotation();
         _maxAnnotation = _annotationFactory.createAnnotation();

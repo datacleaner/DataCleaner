@@ -39,8 +39,9 @@ import org.datacleaner.components.categories.TextCategory;
 
 @Named("Regex search/replace")
 @Description("Search and replace text in String values using regular expressions.")
-@ExternalDocumentation({
-        @DocumentationLink(title = "Java Tutorials: Regular Expressions Lesson", url = "https://docs.oracle.com/javase/tutorial/essential/regex/", type = DocumentationType.TECH, version = "3.0") })
+@ExternalDocumentation({ @DocumentationLink(title = "Java Tutorials: Regular Expressions Lesson",
+        url = "https://docs.oracle.com/javase/tutorial/essential/regex/", type = DocumentationType.TECH,
+        version = "3.0") })
 @Categorized(TextCategory.class)
 public class RegexSearchReplaceTransformer implements Transformer {
 

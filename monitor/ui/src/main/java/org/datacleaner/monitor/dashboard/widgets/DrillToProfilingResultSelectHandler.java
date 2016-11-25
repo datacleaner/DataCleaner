@@ -126,9 +126,10 @@ public class DrillToProfilingResultSelectHandler {
             }
         });
 
-        final SafeHtml labelHtml = new SafeHtmlBuilder().appendHtmlConstant(
-                "Do you wish to inspect the profiling result for ").appendEscaped(metricLabel).appendEscapedLines(
-                "\ncollected at ").appendEscaped(formattedDate).appendHtmlConstant("?").toSafeHtml();
+        final SafeHtml labelHtml =
+                new SafeHtmlBuilder().appendHtmlConstant("Do you wish to inspect the profiling result for ")
+                        .appendEscaped(metricLabel).appendEscapedLines("\ncollected at ").appendEscaped(formattedDate)
+                        .appendHtmlConstant("?").toSafeHtml();
 
         _popup.setWidget(new HTML(labelHtml));
         _popup.removeButtons();

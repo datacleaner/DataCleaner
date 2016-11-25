@@ -22,7 +22,6 @@ package org.datacleaner.widgets.table;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -62,22 +61,17 @@ public class DCTable extends JXTable implements MouseListener {
     private final transient DCTableCellRenderer _tableCellRenderer;
     protected transient List<JMenuItem> _rightClickMenuItems;
     protected transient DCPanel _panel;
-    private ActionListener _copySelectItemsActionListener = new ActionListener() {
-        public void actionPerformed(final ActionEvent e) {
-            final int rowIndex = DCTable.this.getSelectedRow();
-            final int rowCount = DCTable.this.getSelectedRowCount();
+    private ActionListener _copySelectItemsActionListener = e -> {
+        final int rowIndex = DCTable.this.getSelectedRow();
+        final int rowCount = DCTable.this.getSelectedRowCount();
 
-            final int colIndex = DCTable.this.getSelectedColumn();
-            final int colCount = DCTable.this.getSelectedColumnCount();
+        final int colIndex = DCTable.this.getSelectedColumn();
+        final int colCount = DCTable.this.getSelectedColumnCount();
 
-            copyToClipboard(rowIndex, colIndex, colCount, rowCount);
-        }
+        copyToClipboard(rowIndex, colIndex, colCount, rowCount);
     };
-    private ActionListener _copyEntireTableActionListener = new ActionListener() {
-        public void actionPerformed(final ActionEvent e) {
-            copyToClipboard(0, 0, DCTable.this.getColumnCount(), DCTable.this.getRowCount());
-        }
-    };
+    private ActionListener _copyEntireTableActionListener =
+            e -> copyToClipboard(0, 0, DCTable.this.getColumnCount(), DCTable.this.getRowCount());
 
     public DCTable(final String... columnNames) {
         super(new Object[0][columnNames.length], columnNames);

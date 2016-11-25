@@ -181,8 +181,8 @@ public final class ExtensionPackage implements Serializable, HasName {
             _loaded = true;
 
             logger.info("Succesfully loaded extension '{}' containing {} analyzers, {} transformers, {} filters,"
-                            + " {} renderers",
-                    getName(), getLoadedAnalyzers(), getLoadedTransformers(), getLoadedFilters(), getLoadedRenderers());
+                            + " {} renderers", getName(), getLoadedAnalyzers(), getLoadedTransformers(), getLoadedFilters(),
+                    getLoadedRenderers());
         }
         return this;
     }

@@ -112,7 +112,8 @@ public class FileUploadServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
+            throws ServletException, IOException {
         clearSession(req);
 
         File tempFolder = FileHelper.getTempDir();
@@ -135,8 +136,7 @@ public class FileUploadServlet extends HttpServlet {
 
         try {
             int index = 0;
-            @SuppressWarnings("unchecked")
-            final List<DiskFileItem> items = servletFileUpload.parseRequest(req);
+            @SuppressWarnings("unchecked") final List<DiskFileItem> items = servletFileUpload.parseRequest(req);
             for (final DiskFileItem item : items) {
                 if (item.isFormField()) {
                     logger.warn("Ignoring form field in request: {}", item);

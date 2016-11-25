@@ -22,21 +22,20 @@ package org.datacleaner.util;
 import java.io.FileInputStream;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.reference.ReferenceData;
+
+import junit.framework.TestCase;
 
 public class ReadObjectBuilderTest extends TestCase {
 
     public void testDeserializeLegacyReferenceData() throws Exception {
-        ChangeAwareObjectInputStream objectInputStream = new ChangeAwareObjectInputStream(new FileInputStream(
-                "src/test/resources/analyzerbeans-0.4-reference-data.dat"));
-        Object deserializedObject = objectInputStream.readObject();
+        final ChangeAwareObjectInputStream objectInputStream = new ChangeAwareObjectInputStream(
+                new FileInputStream("src/test/resources/analyzerbeans-0.4-reference-data.dat"));
+        final Object deserializedObject = objectInputStream.readObject();
         objectInputStream.close();
         assertTrue(deserializedObject instanceof List);
 
-        @SuppressWarnings("unchecked")
-        List<ReferenceData> list = (List<ReferenceData>) deserializedObject;
+        @SuppressWarnings("unchecked") final List<ReferenceData> list = (List<ReferenceData>) deserializedObject;
         assertEquals(6, list.size());
 
         assertEquals("DatastoreDictionary[name=datastore_dict]", list.get(0).toString());
@@ -44,9 +43,8 @@ public class ReadObjectBuilderTest extends TestCase {
                 "TextFileDictionary[name=textfile_dict, filename=src/test/resources/lastnames.txt, encoding=UTF-8]",
                 list.get(1).toString());
         assertEquals("SimpleDictionary[name=valuelist_dict]", list.get(2).toString());
-        assertEquals(
-                "TextFileSynonymCatalog[name=textfile_syn, filename=src/test/resources/synonym-countries.txt, caseSensitive=false, encoding=UTF-8]",
-                list.get(3).toString());
+        assertEquals( "TextFileSynonymCatalog[name=textfile_syn, filename=src/test/resources/synonym-countries.txt, "
+                + "caseSensitive=false, encoding=UTF-8]", list.get(3).toString());
         assertEquals(
                 "RegexStringPattern[name=regex danish email, expression=[a-z]+@[a-z]+\\.dk, matchEntireString=true]",
                 list.get(4).toString());

@@ -87,13 +87,13 @@ public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {
     InputColumn<? extends Number>[] _columns;
     @Inject
     @Configured
-    @Description("Gather so-called descriptive statistics, including median, skewness, kurtosis and percentiles, which have a larger memory-footprint.")
+    @Description("Gather so-called descriptive statistics, including median, skewness, kurtosis and percentiles, "
+            + "which have a larger memory-footprint.")
     boolean descriptiveStatistics = false;
     @Inject
     @Provided
     RowAnnotationFactory _annotationFactory;
-    private Map<InputColumn<? extends Number>, NumberAnalyzerColumnDelegate> _columnDelegates =
-            new HashMap<>();
+    private Map<InputColumn<? extends Number>, NumberAnalyzerColumnDelegate> _columnDelegates = new HashMap<>();
 
     public NumberAnalyzer() {
     }
@@ -226,7 +226,8 @@ public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {
         return new NumberAnalyzerResult(_columns, crosstab);
     }
 
-    private void addAttachment(final CrosstabNavigator<Number> nav, final RowAnnotation annotation, final InputColumn<?> column) {
+    private void addAttachment(final CrosstabNavigator<Number> nav, final RowAnnotation annotation,
+            final InputColumn<?> column) {
         nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(annotation, _annotationFactory, column));
     }
 }

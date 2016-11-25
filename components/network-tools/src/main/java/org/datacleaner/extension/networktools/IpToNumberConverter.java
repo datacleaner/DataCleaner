@@ -34,7 +34,8 @@ import org.slf4j.LoggerFactory;
 
 @Named("Convert IP to number")
 @Categorized(NetworkToolsCategory.class)
-@Description("Converts an IPv4 string to a number value, which makes it appropriate for eg. persisting in a number column.")
+@Description(
+        "Converts an IPv4 string to a number value, which makes it appropriate for eg. persisting in a number column.")
 public class IpToNumberConverter implements Transformer {
     private static final Logger logger = LoggerFactory.getLogger(IpToNumberConverter.class);
 
@@ -57,8 +58,7 @@ public class IpToNumberConverter implements Transformer {
         try {
             final String[] addrArray = addr.split("\\.");
             if (addrArray.length != 4) {
-                throw new IllegalStateException("Found " + addrArray.length
-                        + " tokens, expected 4");
+                throw new IllegalStateException("Found " + addrArray.length + " tokens, expected 4");
             }
             long num = 0;
 
@@ -66,8 +66,7 @@ public class IpToNumberConverter implements Transformer {
                 final int power = 3 - i;
                 final int ipPart = Integer.parseInt(addrArray[i]);
                 if (ipPart < 0 || ipPart > 255) {
-                    throw new IllegalStateException("Illegal IP part: "
-                            + ipPart);
+                    throw new IllegalStateException("Illegal IP part: " + ipPart);
                 }
                 num += (ipPart * Math.pow(256, power));
             }

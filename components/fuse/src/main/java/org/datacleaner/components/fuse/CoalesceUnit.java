@@ -117,7 +117,8 @@ public class CoalesceUnit {
         return getUpdatedCoalesceUnit(getUpdatedInputColumns(allInputColumns, true));
     }
 
-    public InputColumn<?>[] getUpdatedInputColumns(final InputColumn<?>[] allInputColumns, final boolean exceptionOnMissing) {
+    public InputColumn<?>[] getUpdatedInputColumns(final InputColumn<?>[] allInputColumns,
+            final boolean exceptionOnMissing) {
         final String[] newInputColumnNames = getInputColumnNames();
         final List<InputColumn<?>> newInputColumns = new ArrayList<>(newInputColumnNames.length);
 

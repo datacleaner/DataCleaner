@@ -70,15 +70,16 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
         private void downloadDescriptors() {
             try {
                 logger.info("Loading remote components list from " + remoteServerData.getUrl());
-                final ComponentRESTClient client = new ComponentRESTClient(remoteServerData.getUrl(),
-                        remoteServerData.getUsername(), remoteServerData.getPassword(), Version.getVersion());
+                final ComponentRESTClient client =
+                        new ComponentRESTClient(remoteServerData.getUrl(), remoteServerData.getUsername(),
+                                remoteServerData.getPassword(), Version.getVersion());
                 final ComponentList components = client.getAllComponents(true);
 
                 for (final ComponentList.ComponentInfo component : components.getComponents()) {
                     try {
                         final RemoteTransformerDescriptorImpl transformerDescriptor =
-                                new RemoteTransformerDescriptorImpl(
-                                        RemoteDescriptorProviderImpl.this, component.getName(),
+                                new RemoteTransformerDescriptorImpl(RemoteDescriptorProviderImpl.this,
+                                        component.getName(),
                                         initAnnotations(component.getName(), null, component.getAnnotations()),
                                         component.getIconData(), component.isEnabled());
                         for (final Map.Entry<String, ComponentList.PropertyInfo> propE : component.getProperties()
@@ -91,9 +92,9 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                                 transformerDescriptor.addPropertyDescriptor(
                                         new TypeBasedConfiguredPropertyDescriptorImpl(propertyName,
                                                 propInfo.getDescription(), cl, propInfo.isRequired(),
-                                                transformerDescriptor, initAnnotations(component.getName(),
-                                                propertyName, propInfo.getAnnotations()),
-                                                propInfo.getDefaultValue()));
+                                                transformerDescriptor,
+                                                initAnnotations(component.getName(), propertyName,
+                                                        propInfo.getAnnotations()), propInfo.getDefaultValue()));
                             } catch (final ClassNotFoundException e) {
                                 logger.debug("Cannot initialize typed property descriptor '{}'.'{}' because of {}",
                                         component.getName(), propertyName, e.toString());
@@ -101,10 +102,9 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
                                 transformerDescriptor.addPropertyDescriptor(
                                         new JsonSchemaConfiguredPropertyDescriptorImpl(propertyName,
                                                 propInfo.getSchema(), propInfo.isInputColumn(),
-                                                propInfo.getDescription(), propInfo.isRequired(),
-                                                transformerDescriptor, initAnnotations(component.getName(),
-                                                propertyName, propInfo.getAnnotations()),
-                                                propInfo.getDefaultValue()));
+                                                propInfo.getDescription(), propInfo.isRequired(), transformerDescriptor,
+                                                initAnnotations(component.getName(), propertyName,
+                                                        propInfo.getAnnotations()), propInfo.getDefaultValue()));
                             }
                         }
                         _transformerBeanDescriptors.put(transformerDescriptor.getDisplayName(), transformerDescriptor);
@@ -189,8 +189,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
     }
 
     private Map<Class<? extends Annotation>, Annotation> initAnnotations(final String componentName,
-            final String propertyName,
-            final JsonNode annotationsInfo) {
+            final String propertyName, final JsonNode annotationsInfo) {
         final Map<Class<? extends Annotation>, Annotation> annotations = new HashMap<>();
         if (annotationsInfo == null) {
             return annotations;
@@ -200,8 +199,8 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
             final Map.Entry<String, JsonNode> annotationEntry = it.next();
             try {
                 final String annotClassName = annotationEntry.getKey();
-                @SuppressWarnings("unchecked")
-                final Class<? extends Annotation> anClass = (Class<? extends Annotation>) Class.forName(annotClassName);
+                @SuppressWarnings("unchecked") final Class<? extends Annotation> anClass =
+                        (Class<? extends Annotation>) Class.forName(annotClassName);
 
                 final Map<String, Object> annotationValues = new HashMap<>();
                 final JsonNode annProperties = annotationEntry.getValue();
@@ -223,8 +222,7 @@ public class RemoteDescriptorProviderImpl extends AbstractDescriptorProvider imp
             } catch (final Exception e) {
                 if (propertyName == null) {
                     logger.warn("Cannot create annotation '{}' for component '{}' property '{}'",
-                            annotationEntry.getKey(),
-                            componentName, propertyName, e);
+                            annotationEntry.getKey(), componentName, propertyName, e);
                 } else {
                     logger.warn("Cannot create annotation '{}' for component '{}'", annotationEntry.getKey(),
                             componentName, e);

@@ -32,27 +32,27 @@ public class VersionComparatorTest {
 
     @Test
     public void testSameMajors() {
-        VersionComparator comparator = new VersionComparator();
+        final VersionComparator comparator = new VersionComparator();
 
-        List<String> versions = Arrays.asList("4.0.2", "4.0.4", "4.0.6");
+        final List<String> versions = Arrays.asList("4.0.2", "4.0.4", "4.0.6");
 
-        String max = Collections.max(versions, comparator);
+        final String max = Collections.max(versions, comparator);
         assertEquals("4.0.6", max);
     }
 
     @Test
     public void testDifferentMajors() {
-        VersionComparator comparator = new VersionComparator();
+        final VersionComparator comparator = new VersionComparator();
 
-        List<String> versions = Arrays.asList("3.7.2", "4.0.4", "4.0.6", "5.0");
+        final List<String> versions = Arrays.asList("3.7.2", "4.0.4", "4.0.6", "5.0");
 
-        String max = Collections.max(versions, comparator);
+        final String max = Collections.max(versions, comparator);
         assertEquals("5.0", max);
     }
 
     @Test
     public void testSnapshotAndRelease() {
-        VersionComparator comparator = new VersionComparator();
+        final VersionComparator comparator = new VersionComparator();
 
         List<String> versions = Arrays.asList("4.1", "4.1-SNAPSHOT");
 
@@ -68,25 +68,23 @@ public class VersionComparatorTest {
 
     @Test
     public void testRC() {
-        VersionComparator comparator = new VersionComparator();
+        final VersionComparator comparator = new VersionComparator();
 
-        List<String> versions1 =
+        final List<String> versions1 =
                 Arrays.asList("5.0-RC1", "5.0", "5.0.1.5", "4.0", "5.0-SNAPSHOT", "4.0.1-SNAPSHOT", "5.0.1-beta",
                         "5.0.1-alfa", "5.0.1-RC2", "5.0.0-SNAPSHOT", "5.0.1-SNAPSHOT", "5.0.1-RC1");
-        List<String> versions2 = new ArrayList<>(versions1);
+        final List<String> versions2 = new ArrayList<>(versions1);
 
         Collections.sort(versions1, comparator);
-        assertEquals(
-                "[4.0, 4.0.1-SNAPSHOT, 5.0-RC1, 5.0-SNAPSHOT, 5.0, 5.0.0-SNAPSHOT, 5.0.1-alfa, 5.0.1-beta, 5.0.1-RC1, 5.0.1-RC2, 5.0.1-SNAPSHOT, 5.0.1.5]",
-                versions1.toString());
+        assertEquals("[4.0, 4.0.1-SNAPSHOT, 5.0-RC1, 5.0-SNAPSHOT, 5.0, 5.0.0-SNAPSHOT, 5.0.1-alfa, 5.0.1-beta, "
+                + "5.0.1-RC1, 5.0.1-RC2, 5.0.1-SNAPSHOT, 5.0.1.5]", versions1.toString());
 
         // Reversed order
         Collections.reverse(versions2);
 
         Collections.sort(versions2, comparator);
-        assertEquals(
-                "[4.0, 4.0.1-SNAPSHOT, 5.0-RC1, 5.0-SNAPSHOT, 5.0, 5.0.0-SNAPSHOT, 5.0.1-alfa, 5.0.1-beta, 5.0.1-RC1, 5.0.1-RC2, 5.0.1-SNAPSHOT, 5.0.1.5]",
-                versions2.toString());
+        assertEquals("[4.0, 4.0.1-SNAPSHOT, 5.0-RC1, 5.0-SNAPSHOT, 5.0, 5.0.0-SNAPSHOT, 5.0.1-alfa, "
+                + "5.0.1-beta, 5.0.1-RC1, 5.0.1-RC2, 5.0.1-SNAPSHOT, 5.0.1.5]", versions2.toString());
     }
 
 }

@@ -75,9 +75,8 @@ final class AnalysisRunnerJobDelegate {
      *            typically be false.
      */
     public AnalysisRunnerJobDelegate(final AnalysisJob job, final DataCleanerConfiguration configuration,
-            final TaskRunner taskRunner,
-            final AnalysisListener analysisListener, final Queue<JobAndResult> resultQueue, final ErrorAware errorAware,
-            final boolean includeNonDistributedTasks) {
+            final TaskRunner taskRunner, final AnalysisListener analysisListener, final Queue<JobAndResult> resultQueue,
+            final ErrorAware errorAware, final boolean includeNonDistributedTasks) {
         _job = job;
         _configuration = configuration;
         _taskRunner = taskRunner;
@@ -98,19 +97,20 @@ final class AnalysisRunnerJobDelegate {
             final InjectionManager injectionManager = _configuration.getEnvironment().getInjectionManagerFactory()
                     .getInjectionManager(_configuration, _job);
 
-            final LifeCycleHelper rowProcessingLifeCycleHelper = new LifeCycleHelper(injectionManager,
-                    _includeNonDistributedTasks);
+            final LifeCycleHelper rowProcessingLifeCycleHelper =
+                    new LifeCycleHelper(injectionManager, _includeNonDistributedTasks);
 
-            final RowProcessingPublishers publishers = new RowProcessingPublishers(_job, _analysisListener,
-                    _errorAware, _taskRunner, rowProcessingLifeCycleHelper);
+            final RowProcessingPublishers publishers =
+                    new RowProcessingPublishers(_job, _analysisListener, _errorAware, _taskRunner,
+                            rowProcessingLifeCycleHelper);
 
             final AnalysisJobMetrics analysisJobMetrics = publishers.getAnalysisJobMetrics();
 
             // A task listener that will register either succesfull executions
             // or unexpected errors (which will be delegated to the
             // errorListener)
-            final JobCompletionTaskListener jobCompletionTaskListener = new JobCompletionTaskListener(
-                    analysisJobMetrics, _analysisListener, 1);
+            final JobCompletionTaskListener jobCompletionTaskListener =
+                    new JobCompletionTaskListener(analysisJobMetrics, _analysisListener, 1);
 
             _analysisListener.jobBegin(_job, analysisJobMetrics);
 
@@ -140,8 +140,8 @@ final class AnalysisRunnerJobDelegate {
             final JobCompletionTaskListener jobCompletionTaskListener, final AnalysisJobMetrics analysisJobMetrics) {
 
         logger.info("Created {} row processor publisher(s)", publishers.size());
-        final TaskListener rowProcessorPublishersDoneCompletionListener = new JoinTaskListener(publishers.size(),
-                jobCompletionTaskListener);
+        final TaskListener rowProcessorPublishersDoneCompletionListener =
+                new JoinTaskListener(publishers.size(), jobCompletionTaskListener);
 
         final Collection<RowProcessingPublisher> rowProcessingPublishers = publishers.getRowProcessingPublishers();
         logger.debug("RowProcessingPublishers: {}", rowProcessingPublishers);
@@ -158,8 +158,8 @@ final class AnalysisRunnerJobDelegate {
 
             for (final Iterator<RowProcessingPublisher> it = remainingPublishers.iterator(); it.hasNext(); ) {
                 final RowProcessingPublisher rowProcessingPublisher = it.next();
-                final boolean started = rowProcessingPublisher.runRowProcessing(_resultQueue,
-                        rowProcessorPublishersDoneCompletionListener);
+                final boolean started = rowProcessingPublisher
+                        .runRowProcessing(_resultQueue, rowProcessorPublishersDoneCompletionListener);
                 if (started) {
                     logger.debug("Scheduled row processing publisher: {}", rowProcessingPublisher);
                     it.remove();
@@ -214,8 +214,8 @@ final class AnalysisRunnerJobDelegate {
                             originatingTable = table;
                         } else {
                             if (!originatingTable.equals(table)) {
-                                throw new IllegalArgumentException("Input columns in " + componentJob
-                                        + " originate from different tables");
+                                throw new IllegalArgumentException(
+                                        "Input columns in " + componentJob + " originate from different tables");
                             }
                         }
                     }

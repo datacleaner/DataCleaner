@@ -35,8 +35,8 @@ public class HistoryCommand implements Command {
     private TenantIdentifier _tenant;
     private DCPopupPanel _morePopup;
 
-    public HistoryCommand(final ScheduleDefinition schedule, final SchedulingServiceAsync service, final TenantIdentifier tenant,
-            final DCPopupPanel morePopup) {
+    public HistoryCommand(final ScheduleDefinition schedule, final SchedulingServiceAsync service,
+            final TenantIdentifier tenant, final DCPopupPanel morePopup) {
         _schedule = schedule;
         _service = service;
         _tenant = tenant;

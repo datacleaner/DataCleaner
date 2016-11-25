@@ -48,13 +48,13 @@ import com.google.inject.Injector;
 public class MockAnalyzerResultSwingRenderer implements Renderer<MockAnalyzerFutureResult, JComponent> {
 
     @Override
-    public RendererPrecedence getPrecedence(MockAnalyzerFutureResult renderable) {
+    public RendererPrecedence getPrecedence(final MockAnalyzerFutureResult renderable) {
         return RendererPrecedence.MEDIUM;
     }
 
     @Override
-    public JComponent render(MockAnalyzerFutureResult renderable) {
-        DCLabel resultLabel = new DCLabel(false, renderable.getMockMessage(), Color.GREEN, null);
+    public JComponent render(final MockAnalyzerFutureResult renderable) {
+        final DCLabel resultLabel = new DCLabel(false, renderable.getMockMessage(), Color.GREEN, null);
 
         final DCPanel resultPanel = new DCPanel();
         resultPanel.add(resultLabel);
@@ -62,25 +62,25 @@ public class MockAnalyzerResultSwingRenderer implements Renderer<MockAnalyzerFut
         return resultPanel;
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         LookAndFeelManager.get().init();
 
-        Injector injector = Guice.createInjector(new DCModuleImpl());
+        final Injector injector = Guice.createInjector(new DCModuleImpl());
 
         // run a small job
         final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
-        Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
-        DatastoreConnection con = ds.openConnection();
-        SchemaNavigator sn = con.getSchemaNavigator();
+        final Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
+        final DatastoreConnection con = ds.openConnection();
+        final SchemaNavigator sn = con.getSchemaNavigator();
         ajb.setDatastore(ds);
         ajb.addSourceColumns(sn.convertToTable("PUBLIC.CUSTOMERS").getColumns());
 
-        AnalyzerComponentBuilder<MockFutureAnalyzer> mockAnalyzerResultFutureAnalyzerBuilder = ajb
-                .addAnalyzer(MockFutureAnalyzer.class);
+        final AnalyzerComponentBuilder<MockFutureAnalyzer> mockAnalyzerResultFutureAnalyzerBuilder =
+                ajb.addAnalyzer(MockFutureAnalyzer.class);
         mockAnalyzerResultFutureAnalyzerBuilder
                 .addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.ADDRESSLINE2"));
 
-        ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
+        final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
         resultWindow.setVisible(true);
         resultWindow.startAnalysis();
     }

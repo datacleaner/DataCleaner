@@ -90,8 +90,8 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
 
     @Override
     protected boolean runRowProcessingInternal(final List<TaskRunnable> postProcessingTasks) {
-        final TaskListener runCompletionListener = new ForkTaskListener("run row processing (" + getStream() + ")",
-                getTaskRunner(), postProcessingTasks);
+        final TaskListener runCompletionListener =
+                new ForkTaskListener("run row processing (" + getStream() + ")", getTaskRunner(), postProcessingTasks);
 
         final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
         final RunRowProcessingPublisherTask runTask = new RunRowProcessingPublisherTask(this, rowProcessingMetrics);

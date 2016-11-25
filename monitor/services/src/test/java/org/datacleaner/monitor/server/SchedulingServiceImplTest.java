@@ -23,17 +23,17 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.DateUtils;
 import org.apache.metamodel.util.Month;
 import org.quartz.CronExpression;
 
+import junit.framework.TestCase;
+
 public class SchedulingServiceImplTest extends TestCase {
 
     public void testToCronExpressionYearly() throws Exception {
-        CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@yearly");
-        Calendar cal = Calendar.getInstance();
+        final CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@yearly");
+        final Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MILLISECOND, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
@@ -46,8 +46,8 @@ public class SchedulingServiceImplTest extends TestCase {
     }
 
     public void testToCronExpressionMonthly() throws Exception {
-        CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@monthly");
-        Calendar cal = Calendar.getInstance();
+        final CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@monthly");
+        final Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MILLISECOND, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
@@ -59,10 +59,10 @@ public class SchedulingServiceImplTest extends TestCase {
     }
 
     public void testToCronExpressionWeekly() throws Exception {
-        CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@weekly");
+        final CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@weekly");
         Date callTime = new Date();
 
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(callTime);
         if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
             cal.add(Calendar.DAY_OF_MONTH, 1);
@@ -73,7 +73,7 @@ public class SchedulingServiceImplTest extends TestCase {
             while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
                 cal.add(Calendar.DAY_OF_YEAR, 1);
             }
-            Date time = cal.getTime();
+            final Date time = cal.getTime();
             assertEquals(time, dailyExpr.getNextValidTimeAfter(callTime));
         }
 
@@ -95,8 +95,8 @@ public class SchedulingServiceImplTest extends TestCase {
     }
 
     public void testToCronExpressionDaily() throws Exception {
-        CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@daily");
-        Calendar cal = Calendar.getInstance();
+        final CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@daily");
+        final Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MILLISECOND, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
@@ -107,8 +107,8 @@ public class SchedulingServiceImplTest extends TestCase {
     }
 
     public void testToCronExpressionHourly() throws Exception {
-        CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@hourly");
-        Calendar cal = Calendar.getInstance();
+        final CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@hourly");
+        final Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MILLISECOND, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
@@ -118,8 +118,8 @@ public class SchedulingServiceImplTest extends TestCase {
     }
 
     public void testToCronExpressionMinutely() throws Exception {
-        CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@minutely");
-        Calendar cal = Calendar.getInstance();
+        final CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@minutely");
+        final Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MILLISECOND, 0);
         cal.set(Calendar.SECOND, 0);
         cal.add(Calendar.MINUTE, 1);

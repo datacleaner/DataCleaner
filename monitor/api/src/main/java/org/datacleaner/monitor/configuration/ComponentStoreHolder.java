@@ -45,7 +45,8 @@ public class ComponentStoreHolder implements Serializable {
     public ComponentStoreHolder() {
     }
 
-    public ComponentStoreHolder(final long timeout, final CreateInput createInput, final String instanceId, final String componentName) {
+    public ComponentStoreHolder(final long timeout, final CreateInput createInput, final String instanceId,
+            final String componentName) {
         this.timeout = timeout;
         this.createInput = createInput;
         this.instanceId = instanceId;

@@ -41,15 +41,16 @@ public abstract class DatastoreNameAndDescriptionWizardPage extends AbstractFree
     private final String _suggestedName;
     private final String _suggestedDescription;
 
-    public DatastoreNameAndDescriptionWizardPage(final DatastoreWizardContext context, final int pageIndex, final String suggestedName,
-            final String suggestedDescription) {
+    public DatastoreNameAndDescriptionWizardPage(final DatastoreWizardContext context, final int pageIndex,
+            final String suggestedName, final String suggestedDescription) {
         _context = context;
         _pageIndex = pageIndex;
         _suggestedName = (suggestedName == null ? "" : suggestedName);
         _suggestedDescription = (suggestedDescription == null ? "" : suggestedDescription);
     }
 
-    public DatastoreNameAndDescriptionWizardPage(final DatastoreWizardContext context, final int pageIndex, final String suggestedName) {
+    public DatastoreNameAndDescriptionWizardPage(final DatastoreWizardContext context, final int pageIndex,
+            final String suggestedName) {
         this(context, pageIndex, suggestedName, null);
     }
 

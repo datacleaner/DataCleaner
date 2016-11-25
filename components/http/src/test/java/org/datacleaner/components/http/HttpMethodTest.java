@@ -17,18 +17,18 @@
  */
 package org.datacleaner.components.http;
 
-import junit.framework.TestCase;
-
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Test;
+
+import junit.framework.TestCase;
 
 public class HttpMethodTest extends TestCase {
 
     @Test
     public void testCreateRequestOnAllMethodTypes() throws Exception {
-        HttpMethod[] methods = HttpMethod.values();
-        for (HttpMethod method : methods) {
-            HttpUriRequest request = method.createRequest("http://localhost");
+        final HttpMethod[] methods = HttpMethod.values();
+        for (final HttpMethod method : methods) {
+            final HttpUriRequest request = method.createRequest("http://localhost");
             assertNotNull(request);
         }
     }

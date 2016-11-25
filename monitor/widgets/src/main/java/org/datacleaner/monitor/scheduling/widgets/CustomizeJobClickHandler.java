@@ -51,8 +51,8 @@ public class CustomizeJobClickHandler implements ClickHandler {
     private final ClientConfig _clientConfig;
     private final DCPopupPanel _popup;
 
-    public CustomizeJobClickHandler(final SchedulePanel schedulePanel, final TenantIdentifier tenant, final ScheduleDefinition schedule,
-            final SchedulingServiceAsync service, final ClientConfig clientConfig) {
+    public CustomizeJobClickHandler(final SchedulePanel schedulePanel, final TenantIdentifier tenant,
+            final ScheduleDefinition schedule, final SchedulingServiceAsync service, final ClientConfig clientConfig) {
         _schedulePanel = schedulePanel;
         _tenant = tenant;
         _schedule = schedule;

@@ -27,15 +27,13 @@ import java.util.Map;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.wizard.WizardPageController;
 
 /**
  * A simple {@link WizardPageController} that asks the user to select the
  * {@link Column}s of interest.
  */
-public abstract class SelectColumnsWizardPage extends
-        AbstractFreemarkerWizardPage {
+public abstract class SelectColumnsWizardPage extends AbstractFreemarkerWizardPage {
 
     private final Integer _pageIndex;
     private final Map<String, Column> _availableColumns;
@@ -98,22 +96,14 @@ public abstract class SelectColumnsWizardPage extends
     }
 
     @Override
-    public WizardPageController nextPageController(
-            final Map<String, List<String>> formParameters) {
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters) {
         final List<String> columnNames = formParameters.get("columns");
 
-        final List<Column> selectedColumns = CollectionUtils.map(columnNames,
-                new Func<String, Column>() {
-                    @Override
-                    public Column eval(final String columnName) {
-                        return _availableColumns.get(columnName);
-                    }
-                });
+        final List<Column> selectedColumns = CollectionUtils.map(columnNames, _availableColumns::get);
 
         return nextPageController(selectedColumns);
     }
 
-    protected abstract WizardPageController nextPageController(
-            List<Column> selectedColumns);
+    protected abstract WizardPageController nextPageController(List<Column> selectedColumns);
 
 }

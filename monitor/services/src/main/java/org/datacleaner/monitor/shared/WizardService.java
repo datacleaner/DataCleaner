@@ -50,8 +50,8 @@ public interface WizardService extends WizardNavigationService, RemoteService {
             String locale);
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizard,
-            DatastoreIdentifier selectedDatastore, String locale) throws IllegalArgumentException;
+    WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizard, DatastoreIdentifier selectedDatastore,
+            String locale) throws IllegalArgumentException;
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant, String locale);

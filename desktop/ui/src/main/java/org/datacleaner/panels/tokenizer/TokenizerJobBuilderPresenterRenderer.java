@@ -40,8 +40,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * @author Kasper Sørensen
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class TokenizerJobBuilderPresenterRenderer implements
-        Renderer<TransformerComponentBuilder<TokenizerTransformer>, TransformerComponentBuilderPresenter> {
+public class TokenizerJobBuilderPresenterRenderer
+        implements Renderer<TransformerComponentBuilder<TokenizerTransformer>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -62,8 +62,8 @@ public class TokenizerJobBuilderPresenterRenderer implements
 
     @Override
     public TransformerComponentBuilderPresenter render(final TransformerComponentBuilder<TokenizerTransformer> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
-                PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(tjb).getInstance(PropertyWidgetFactory.class);
 
         return new TokenizerJobBuilderPresenter(tjb, windowContext, propertyWidgetFactory, configuration);
     }

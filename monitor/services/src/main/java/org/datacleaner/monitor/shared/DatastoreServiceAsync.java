@@ -42,9 +42,7 @@ public interface DatastoreServiceAsync {
     void getSchemas(TenantIdentifier tenant, DatastoreIdentifier datastore,
             AsyncCallback<List<SchemaIdentifier>> callback);
 
-    void getTables(TenantIdentifier tenant, SchemaIdentifier schema,
-            AsyncCallback<List<TableIdentifier>> callback);
+    void getTables(TenantIdentifier tenant, SchemaIdentifier schema, AsyncCallback<List<TableIdentifier>> callback);
 
-    void getColumns(TenantIdentifier tenant, TableIdentifier table,
-            AsyncCallback<List<ColumnIdentifier>> callback);
+    void getColumns(TenantIdentifier tenant, TableIdentifier table, AsyncCallback<List<ColumnIdentifier>> callback);
 }

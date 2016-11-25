@@ -25,12 +25,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.pojo.MapTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.util.SimpleTableDef;
+
+import junit.framework.TestCase;
 
 public class PojoDatastoreTest extends TestCase {
 
@@ -57,7 +57,7 @@ public class PojoDatastoreTest extends TestCase {
         assertNotNull(con);
 
         final Column col = con.getSchemaNavigator().convertToColumn("foo.col1");
-        assertEquals("Column[name=col1,columnNumber=0,type=VARCHAR,nullable=true,"
-                + "nativeType=null,columnSize=null]", col.toString());
+        assertEquals("Column[name=col1,columnNumber=0,type=VARCHAR,nullable=true," + "nativeType=null,columnSize=null]",
+                col.toString());
     }
 }

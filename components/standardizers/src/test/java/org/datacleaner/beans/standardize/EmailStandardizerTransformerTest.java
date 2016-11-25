@@ -24,16 +24,16 @@ import junit.framework.TestCase;
 public class EmailStandardizerTransformerTest extends TestCase {
 
     public void testNull() throws Exception {
-        EmailStandardizerTransformer transformer = new EmailStandardizerTransformer();
+        final EmailStandardizerTransformer transformer = new EmailStandardizerTransformer();
 
-        String[] result = transformer.transform((String) null);
+        final String[] result = transformer.transform((String) null);
         assertEquals(2, result.length);
         assertEquals(null, result[0]);
         assertEquals(null, result[1]);
     }
 
     public void testTransform() throws Exception {
-        EmailStandardizerTransformer transformer = new EmailStandardizerTransformer();
+        final EmailStandardizerTransformer transformer = new EmailStandardizerTransformer();
 
         String[] result = transformer.transform("kasper@eobjects.dk");
         assertEquals(2, result.length);

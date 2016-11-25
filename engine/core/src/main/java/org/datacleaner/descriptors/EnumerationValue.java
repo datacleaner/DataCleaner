@@ -103,8 +103,8 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
                 return result;
             }
         }
-        throw new IllegalArgumentException("Unsupported enumeration value array: "
-                + (value == null ? null : value.getClass()));
+        throw new IllegalArgumentException(
+                "Unsupported enumeration value array: " + (value == null ? null : value.getClass()));
     }
 
     public static EnumerationProvider providerFromEnumClass(final Class<? extends Enum<?>> enumClass) {
@@ -156,8 +156,7 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
 
     @Override
     public void serializeWithType(final JsonGenerator jgen, final SerializerProvider provider,
-            final TypeSerializer typeSer)
-            throws IOException, JsonProcessingException {
+            final TypeSerializer typeSer) throws IOException, JsonProcessingException {
         jgen.writeString(value);
     }
 
@@ -193,10 +192,8 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
         final Enum<?> javaEnum2 = o.asJavaEnum();
         if (enumValue != null && javaEnum2 != null) {
             try {
-                @SuppressWarnings("rawtypes")
-                final Enum javaEnum1 = (Enum<?>) asJavaEnum();
-                @SuppressWarnings("unchecked") final
-                int result = javaEnum1.compareTo(javaEnum2);
+                @SuppressWarnings("rawtypes") final Enum javaEnum1 = (Enum<?>) asJavaEnum();
+                @SuppressWarnings("unchecked") final int result = javaEnum1.compareTo(javaEnum2);
                 return result;
             } catch (final Exception e) {
                 // nothing to do

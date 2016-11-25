@@ -50,7 +50,7 @@ public class ResourceConverterTest {
 
     @Test
     public void testParse() throws Exception {
-        ResourceConverter resourceConverter = new ResourceConverter(configuration);
+        final ResourceConverter resourceConverter = new ResourceConverter(configuration);
         assertEquals("url", resourceConverter.parseStructure("url://foobar").getScheme());
         assertEquals("foobar", resourceConverter.parseStructure("url://foobar").getPath());
         assertEquals("file", resourceConverter.parseStructure("file://c:/blabla").getScheme());
@@ -60,16 +60,17 @@ public class ResourceConverterTest {
 
     @Test
     public void testConvertFileResource() throws Exception {
-        List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new FileResourceTypeHandler(configuration));
-        ResourceConverter converter = new ResourceConverter(handlers, "foo");
+        final List<? extends ResourceTypeHandler<?>> handlers =
+                Arrays.asList(new FileResourceTypeHandler(configuration));
+        final ResourceConverter converter = new ResourceConverter(handlers, "foo");
 
-        FileResource resource1 = new FileResource("foo/bar.txt");
+        final FileResource resource1 = new FileResource("foo/bar.txt");
 
-        String str = converter.toString(resource1);
+        final String str = converter.toString(resource1);
 
         assertEquals("file://foo/bar.txt", str);
 
-        Resource resource2 = converter.fromString(Resource.class, str);
+        final Resource resource2 = converter.fromString(Resource.class, str);
 
         assertTrue(resource2 instanceof FileResource);
         assertEquals("foo/bar.txt", ((FileResource) resource2).getFile().getPath().replace('\\', '/'));
@@ -77,16 +78,16 @@ public class ResourceConverterTest {
 
     @Test
     public void testConvertUrlResource() throws Exception {
-        List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new UrlResourceTypeHandler());
-        ResourceConverter converter = new ResourceConverter(handlers, "foo");
+        final List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new UrlResourceTypeHandler());
+        final ResourceConverter converter = new ResourceConverter(handlers, "foo");
 
-        UrlResource resource1 = new UrlResource("http://localhost");
+        final UrlResource resource1 = new UrlResource("http://localhost");
 
-        String str = converter.toString(resource1);
+        final String str = converter.toString(resource1);
 
         assertEquals("url://http://localhost", str);
 
-        Resource resource2 = converter.fromString(Resource.class, str);
+        final Resource resource2 = converter.fromString(Resource.class, str);
 
         assertTrue(resource2 instanceof UrlResource);
         assertEquals("localhost", resource2.getName());
@@ -94,21 +95,21 @@ public class ResourceConverterTest {
 
     @Test
     public void testConvertVfsResource() throws Exception {
-        List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new VfsResourceTypeHandler());
-        ResourceConverter converter = new ResourceConverter(handlers, "foo");
+        final List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new VfsResourceTypeHandler());
+        final ResourceConverter converter = new ResourceConverter(handlers, "foo");
 
-        VfsResource resource1 = new VfsResource(VFSUtils.getFileSystemManager().resolveFile("target"));
+        final VfsResource resource1 = new VfsResource(VFSUtils.getFileSystemManager().resolveFile("target"));
 
-        String str = converter.toString(resource1);
+        final String str = converter.toString(resource1);
 
-        String absoluteFilePath = new File("target").getAbsolutePath().replaceAll("\\\\", "/");
+        final String absoluteFilePath = new File("target").getAbsolutePath().replaceAll("\\\\", "/");
         if (absoluteFilePath.startsWith("/")) {
             assertEquals("vfs://file://" + absoluteFilePath, str);
         } else {
             assertEquals("vfs://file:///" + absoluteFilePath, str);
         }
 
-        Resource resource2 = converter.fromString(Resource.class, str);
+        final Resource resource2 = converter.fromString(Resource.class, str);
 
         assertTrue(resource2 instanceof VfsResource);
         assertEquals("target", resource2.getName());
@@ -116,22 +117,22 @@ public class ResourceConverterTest {
 
     @Test
     public void testConvertHdfsResource() throws Exception {
-        MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);
+        final MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);
         helper.generateCoreFile();
         try {
             System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR,
                     helper.getConfFolder().getAbsolutePath());
 
-            List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new HdfsResourceTypeHandler("hdfs"));
-            ResourceConverter converter = new ResourceConverter(handlers, "foo");
+            final List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new HdfsResourceTypeHandler("hdfs"));
+            final ResourceConverter converter = new ResourceConverter(handlers, "foo");
 
-            HdfsResource resource1 = new HdfsResource("hdfs://localhost:9000/user/vagrant/file.csv");
+            final HdfsResource resource1 = new HdfsResource("hdfs://localhost:9000/user/vagrant/file.csv");
 
-            String str = converter.toString(resource1);
+            final String str = converter.toString(resource1);
 
             assertEquals("hdfs://localhost:9000/user/vagrant/file.csv", str);
 
-            Resource resource2 = converter.fromString(Resource.class, str);
+            final Resource resource2 = converter.fromString(Resource.class, str);
 
             assertTrue(resource2 instanceof HdfsResource);
             assertEquals("file.csv", resource2.getName());

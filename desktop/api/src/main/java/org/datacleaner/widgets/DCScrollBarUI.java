@@ -57,6 +57,8 @@ public class DCScrollBarUI extends BasicScrollBarUI {
                 decrButton = createDecreaseButton(EAST);
             }
             break;
+        default:
+            throw new IllegalArgumentException("No such orientation");
         }
 
         incrGap = -1 * scrollBarWidth;

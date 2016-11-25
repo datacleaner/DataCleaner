@@ -21,9 +21,9 @@ package org.datacleaner.storage;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.data.MockInputRow;
+
+import junit.framework.TestCase;
 
 public class InMemoryRowAnnotationFactory2Test extends TestCase {
 
@@ -35,7 +35,7 @@ public class InMemoryRowAnnotationFactory2Test extends TestCase {
         final AtomicInteger idCounter = new AtomicInteger();
 
         {
-            RowAnnotation a1 = f.createAnnotation();
+            final RowAnnotation a1 = f.createAnnotation();
             assertNotNull(a1);
             assertFalse(f.hasSampleRows(a1));
 
@@ -53,7 +53,7 @@ public class InMemoryRowAnnotationFactory2Test extends TestCase {
         }
 
         {
-            RowAnnotation a2 = f.createAnnotation();
+            final RowAnnotation a2 = f.createAnnotation();
             assertNotNull(a2);
             assertFalse(f.hasSampleRows(a2));
 
@@ -71,7 +71,7 @@ public class InMemoryRowAnnotationFactory2Test extends TestCase {
         }
 
         {
-            RowAnnotation a3 = f.createAnnotation();
+            final RowAnnotation a3 = f.createAnnotation();
             assertNotNull(a3);
 
             assertFalse(f.hasSampleRows(a3));

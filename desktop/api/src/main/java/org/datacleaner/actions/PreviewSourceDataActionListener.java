@@ -43,14 +43,16 @@ public class PreviewSourceDataActionListener implements ActionListener {
     private final Collection<? extends InputColumn<?>> _inputColumns;
     private final WindowContext _windowContext;
 
-    public PreviewSourceDataActionListener(final WindowContext windowContext, final Datastore datastore, final Column... columns) {
+    public PreviewSourceDataActionListener(final WindowContext windowContext, final Datastore datastore,
+            final Column... columns) {
         _windowContext = windowContext;
         _datastore = datastore;
         _columns = columns;
         _inputColumns = null;
     }
 
-    public PreviewSourceDataActionListener(final WindowContext windowContext, final Datastore datastore, final Table table) {
+    public PreviewSourceDataActionListener(final WindowContext windowContext, final Datastore datastore,
+            final Table table) {
         this(windowContext, datastore, table.getColumns());
     }
 

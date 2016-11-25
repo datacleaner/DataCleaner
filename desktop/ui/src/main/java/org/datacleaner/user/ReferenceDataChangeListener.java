@@ -21,14 +21,14 @@ package org.datacleaner.user;
 
 /**
  * Interface for adding, removing, changing the value of a Reference
- * @param <ReferenceData>
+ * @param <R>
  */
-public interface ReferenceDataChangeListener<ReferenceData> {
+public interface ReferenceDataChangeListener<R> {
 
-    void onAdd(ReferenceData referenceData);
+    void onAdd(R referenceData);
 
-    void onChange(ReferenceData oldReferenceData, ReferenceData newReferenceData);
+    void onChange(R oldReferenceData, R newReferenceData);
 
-    void onRemove(ReferenceData referenceData);
+    void onRemove(R referenceData);
 
 }

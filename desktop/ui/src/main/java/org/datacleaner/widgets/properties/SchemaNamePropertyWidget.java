@@ -50,12 +50,7 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
         _comboBox = new DCComboBox<>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
         _comboBox.setEditable(false);
-        addComboListener(new Listener<Schema>() {
-            @Override
-            public void onItemSelected(final Schema item) {
-                fireValueChanged();
-            }
-        });
+        addComboListener(item -> fireValueChanged());
         add(_comboBox);
         _datastoreRef = new MutableRef<>();
 
@@ -127,17 +122,13 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
     }
 
     public Schema getSchema() {
-        final Schema schema = _comboBox.getSelectedItem();
-        return schema;
+        return _comboBox.getSelectedItem();
     }
 
     public void connectToTableNamePropertyWidget(final SingleTableNamePropertyWidget tableNamePropertyWidget) {
-        addComboListener(new Listener<Schema>() {
-            @Override
-            public void onItemSelected(final Schema item) {
-                // update the table name when schema is selected
-                tableNamePropertyWidget.setSchema(_datastoreRef.get(), item);
-            }
+        addComboListener(item -> {
+            // update the table name when schema is selected
+            tableNamePropertyWidget.setSchema(_datastoreRef.get(), item);
         });
     }
 

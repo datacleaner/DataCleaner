@@ -46,8 +46,8 @@ public class ValueDistributionAnalyzerTest {
 
     @Test
     public void testComponentBuilderIsDistributable() {
-        Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+        final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore(datastore);
             ajb.addSourceColumns("customers.country", "customers.city");
@@ -66,7 +66,7 @@ public class ValueDistributionAnalyzerTest {
 
     @Test
     public void testDescriptor() {
-        AnalyzerDescriptor<?> desc = Descriptors.ofAnalyzer(ValueDistributionAnalyzer.class);
+        final AnalyzerDescriptor<?> desc = Descriptors.ofAnalyzer(ValueDistributionAnalyzer.class);
         assertEquals(0, desc.getInitializeMethods().size());
         assertEquals(6, desc.getConfiguredProperties().size());
         assertEquals(1, desc.getProvidedProperties().size());
@@ -75,8 +75,8 @@ public class ValueDistributionAnalyzerTest {
 
     @Test
     public void testGetCounts() {
-        ValueDistributionAnalyzer vd = new ValueDistributionAnalyzer(
-                new MetaModelInputColumn(new MutableColumn("col")), true);
+        final ValueDistributionAnalyzer vd =
+                new ValueDistributionAnalyzer(new MetaModelInputColumn(new MutableColumn("col")), true);
 
         assertEquals(0, vd.getResult().getUniqueCount().intValue());
         assertEquals(0, vd.getResult().getNullCount());
@@ -124,8 +124,8 @@ public class ValueDistributionAnalyzerTest {
 
     @Test
     public void testGetValueCountMetric() {
-        ValueDistributionAnalyzer vd = new ValueDistributionAnalyzer(
-                new MetaModelInputColumn(new MutableColumn("col")), true);
+        final ValueDistributionAnalyzer vd =
+                new ValueDistributionAnalyzer(new MetaModelInputColumn(new MutableColumn("col")), true);
         vd.runInternal(new MockInputRow(), "hello", 1);
         vd.runInternal(new MockInputRow(), "world", 1);
         vd.runInternal(new MockInputRow(), "foobar", 2);
@@ -139,7 +139,7 @@ public class ValueDistributionAnalyzerTest {
         final AnalyzerDescriptor<?> desc = Descriptors.ofAnalyzer(ValueDistributionAnalyzer.class);
 
         final MetricDescriptor metric = desc.getResultMetric("Value count");
-        Collection<String> suggestions = metric.getMetricParameterSuggestions(result);
+        final Collection<String> suggestions = metric.getMetricParameterSuggestions(result);
         assertEquals("[hello, foobar, world]", suggestions.toString());
 
         assertEquals(4, metric.getValue(result, new MetricParameters("hello")));
@@ -150,16 +150,16 @@ public class ValueDistributionAnalyzerTest {
 
     @Test
     public void testGetValueDistribution() {
-        ValueDistributionAnalyzer vd = new ValueDistributionAnalyzer(
-                new MetaModelInputColumn(new MutableColumn("col")), true);
+        final ValueDistributionAnalyzer vd =
+                new ValueDistributionAnalyzer(new MetaModelInputColumn(new MutableColumn("col")), true);
 
         vd.runInternal(new MockInputRow(), "hello", 1);
         vd.runInternal(new MockInputRow(), "hello", 1);
         vd.runInternal(new MockInputRow(), "world", 3);
 
-        ValueCountingAnalyzerResult result = vd.getResult();
+        final ValueCountingAnalyzerResult result = vd.getResult();
 
-        ValueCountList topValues = ((SingleValueDistributionResult) result).getTopValues();
+        final ValueCountList topValues = ((SingleValueDistributionResult) result).getTopValues();
         assertEquals(2, topValues.getActualSize());
         assertEquals("[world->3]", topValues.getValueCounts().get(0).toString());
         assertEquals("[hello->2]", topValues.getValueCounts().get(1).toString());
@@ -167,7 +167,7 @@ public class ValueDistributionAnalyzerTest {
         assertEquals(0, result.getNullCount());
         assertEquals(0, result.getUniqueCount().intValue());
 
-        String[] resultLines = result.toString().split("\n");
+        final String[] resultLines = result.toString().split("\n");
         assertEquals(3, resultLines.length);
         assertEquals("Value distribution for: col", resultLines[0]);
         assertEquals(" - world: 3", resultLines[1]);
@@ -176,7 +176,7 @@ public class ValueDistributionAnalyzerTest {
 
     @Test
     public void testGroupedRun() {
-        ValueDistributionAnalyzer vd = new ValueDistributionAnalyzer(new MockInputColumn<>("foo", String.class),
+        final ValueDistributionAnalyzer vd = new ValueDistributionAnalyzer(new MockInputColumn<>("foo", String.class),
                 new MockInputColumn<>("bar", String.class), true);
 
         vd.runInternal(new MockInputRow(), "Copenhagen N", "2200", 3);
@@ -184,12 +184,12 @@ public class ValueDistributionAnalyzerTest {
         vd.runInternal(new MockInputRow(), "Copenhagen", "1732", 4);
         vd.runInternal(new MockInputRow(), "Coppenhagen", "1732", 3);
 
-        ValueCountingAnalyzerResult result = vd.getResult();
+        final ValueCountingAnalyzerResult result = vd.getResult();
         assertTrue(result instanceof GroupedValueCountingAnalyzerResult);
 
-        String resultString = result.toString();
+        final String resultString = result.toString();
         System.out.println(resultString);
-        String[] resultLines = resultString.split("\n");
+        final String[] resultLines = resultString.split("\n");
         assertEquals(11, resultLines.length);
 
         assertEquals("Value distribution for column: foo", resultLines[0]);

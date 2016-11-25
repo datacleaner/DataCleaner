@@ -96,11 +96,11 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
 
     @Override
     public Resource createResource(final String resourceUrl, final DataCleanerConfiguration temporaryConfiguration) {
-        final ResourceConverter converter = new ResourceConverter(temporaryConfiguration,
-                ResourceConverter.getConfiguredDefaultScheme()).withExtraHandlers(getExtraResourceTypeHandlers());
+        final ResourceConverter converter =
+                new ResourceConverter(temporaryConfiguration, ResourceConverter.getConfiguredDefaultScheme())
+                        .withExtraHandlers(getExtraResourceTypeHandlers());
 
-        final Resource resource = converter.fromString(Resource.class, resourceUrl);
-        return resource;
+        return converter.fromString(Resource.class, resourceUrl);
     }
 
     /**

@@ -19,13 +19,10 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,8 +84,8 @@ public final class DescriptorMenuBuilder {
 
     public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
             final Collection<? extends ComponentDescriptor<?>> descriptors, final Point2D coordinate) {
-        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(descriptors,
-                new DeprecatedComponentPredicate());
+        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors =
+                CollectionUtils.filter(descriptors, new DeprecatedComponentPredicate());
         final List<ComponentDescriptor<?>> componentDescriptors = new ArrayList<>(filteredDescriptors);
         Collections.sort(componentDescriptors, new DisplayNameComparator());
 
@@ -104,17 +101,17 @@ public final class DescriptorMenuBuilder {
         _usageLogger = usageLogger;
         _coordinate = coordinate;
 
-        final DescriptorProvider descriptorProvider = analysisJobBuilder.getConfiguration().getEnvironment()
-                .getDescriptorProvider();
-        final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
-                .getComponentDescriptorsOfSuperCategory(superCategory);
+        final DescriptorProvider descriptorProvider =
+                analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider();
+        final Collection<? extends ComponentDescriptor<?>> componentDescriptors =
+                descriptorProvider.getComponentDescriptorsOfSuperCategory(superCategory);
         _componentDescriptors = Collections.unmodifiableCollection(componentDescriptors);
     }
 
     public static void createMenuStructure(final MenuCallback callback,
             final Collection<? extends ComponentDescriptor<?>> componentDescriptors) {
-        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(
-                componentDescriptors, new DeprecatedComponentPredicate());
+        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors =
+                CollectionUtils.filter(componentDescriptors, new DeprecatedComponentPredicate());
 
         final Map<ComponentCategory, List<Class<?>>> categories = new HashMap<>();
         buildSubMenus(categories, filteredDescriptors);
@@ -143,13 +140,10 @@ public final class DescriptorMenuBuilder {
         }
     }
 
-    private static void placeSubMenus(final Map<ComponentCategory, List<Class<?>>> categories, final MenuCallback callback) {
-        final List<ComponentCategory> sortedCategories = CollectionUtils2.sorted(categories.keySet(),
-                new Comparator<ComponentCategory>() {
-                    public int compare(final ComponentCategory o1, final ComponentCategory o2) {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                });
+    private static void placeSubMenus(final Map<ComponentCategory, List<Class<?>>> categories,
+            final MenuCallback callback) {
+        final List<ComponentCategory> sortedCategories =
+                CollectionUtils2.sorted(categories.keySet(), (o1, o2) -> o1.getName().compareTo(o2.getName()));
 
         for (final ComponentCategory category : sortedCategories) {
             final int count = categories.get(category).size();
@@ -204,12 +198,7 @@ public final class DescriptorMenuBuilder {
 
     private JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor) {
         final DescriptorMenuItem menuItem = new DescriptorMenuItem(_analysisJobBuilder, _coordinate, descriptor);
-        menuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                _usageLogger.logComponentUsage(descriptor);
-            }
-        });
+        menuItem.addActionListener(e -> _usageLogger.logComponentUsage(descriptor));
         return menuItem;
     }
 }

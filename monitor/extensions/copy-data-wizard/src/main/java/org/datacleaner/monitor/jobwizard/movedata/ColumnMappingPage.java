@@ -98,8 +98,8 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
 
         final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = createAnalyzer(mappings);
 
-        return new SelectUpdateStrategyWizardPage(_session, _analysisJobBuilder, _targetDatastore, _targetTable,
-                insert, mappings);
+        return new SelectUpdateStrategyWizardPage(_session, _analysisJobBuilder, _targetDatastore, _targetTable, insert,
+                mappings);
     }
 
     private AnalyzerComponentBuilder<InsertIntoTableAnalyzer> createAnalyzer(final List<ColumnMapping> mappings) {
@@ -107,8 +107,7 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
             _analysisJobBuilder.addSourceColumn(mapping.getSourceColumn());
         }
 
-        final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = buildInsert(mappings);
-        return insert;
+        return buildInsert(mappings);
     }
 
     private AnalyzerComponentBuilder<InsertIntoTableAnalyzer> buildInsert(final List<ColumnMapping> mappings) {
@@ -121,8 +120,8 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
             columnNames[i] = mapping.getTargetColumn().getName();
         }
 
-        final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = _analysisJobBuilder
-                .addAnalyzer(InsertIntoTableAnalyzer.class);
+        final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert =
+                _analysisJobBuilder.addAnalyzer(InsertIntoTableAnalyzer.class);
         insert.setConfiguredProperty("Datastore", _targetDatastore);
         insert.setConfiguredProperty("Schema name", _targetTable.getSchema().getName());
         insert.setConfiguredProperty("Table name", _targetTable.getName());

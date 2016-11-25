@@ -90,8 +90,8 @@ public class InjectionManagerImpl implements InjectionManager {
             @Override
             protected RowAnnotationFactory fetch() {
                 logger.info("Creating RowAnnotationFactory for job: {}", _job);
-                final RowAnnotationFactory rowAnnotationFactory = _configuration.getEnvironment().getStorageProvider()
-                        .createRowAnnotationFactory();
+                final RowAnnotationFactory rowAnnotationFactory =
+                        _configuration.getEnvironment().getStorageProvider().createRowAnnotationFactory();
                 if (rowAnnotationFactory == null) {
                     throw new IllegalStateException("Storage provider returned null RowAnnotationFactory!");
                 }
@@ -159,37 +159,29 @@ public class InjectionManagerImpl implements InjectionManager {
             }
             return new StringConverter(getConfiguration(), _job);
         } else if (baseType == ComponentContext.class) {
-            final ComponentContext componentContext = new ComponentContextImpl(_job);
-            return componentContext;
+            return new ComponentContextImpl(_job);
         } else if (baseType == Datastore.class && _job != null) {
             return _job.getDatastore();
         } else if (baseType == DatastoreConnection.class && _job != null) {
-            throw new UnsupportedOperationException(
-                    "DatastoreConnections cannot be injected as of AnalyzerBeans 0.16. "
-                            + "Inject a Datastore and manage a connection instead.");
+            throw new UnsupportedOperationException("DatastoreConnections cannot be injected as of AnalyzerBeans 0.16. "
+                    + "Inject a Datastore and manage a connection instead.");
         } else if (baseType == DataContext.class && _job != null) {
-            throw new UnsupportedOperationException(
-                    "DataContext cannot be injected as of AnalyzerBeans 0.16. "
-                            + "Inject a Datastore and manage a connection instead.");
+            throw new UnsupportedOperationException("DataContext cannot be injected as of AnalyzerBeans 0.16. "
+                    + "Inject a Datastore and manage a connection instead.");
         } else if (baseType == SchemaNavigator.class && _job != null) {
-            throw new UnsupportedOperationException(
-                    "SchemaNavigator cannot be injected as of AnalyzerBeans 0.16. "
-                            + "Inject a Datastore and manage a connection instead.");
+            throw new UnsupportedOperationException("SchemaNavigator cannot be injected as of AnalyzerBeans 0.16. "
+                    + "Inject a Datastore and manage a connection instead.");
         } else {
             // only inject persistent lists, sets, maps into @Provided fields.
             if (injectionPoint.getAnnotation(Provided.class) != null && injectionPoint.isGenericType()) {
                 final Class<?> clazz1 = injectionPoint.getGenericTypeArgument(0);
                 if (baseType == List.class) {
-                    final List<?> list = getConfiguration().getEnvironment().getStorageProvider().createList(clazz1);
-                    return list;
+                    return getConfiguration().getEnvironment().getStorageProvider().createList(clazz1);
                 } else if (baseType == Set.class) {
-                    final Set<?> set = getConfiguration().getEnvironment().getStorageProvider().createSet(clazz1);
-                    return set;
+                    return getConfiguration().getEnvironment().getStorageProvider().createSet(clazz1);
                 } else if (baseType == Map.class) {
                     final Class<?> clazz2 = (Class<?>) injectionPoint.getGenericTypeArgument(1);
-                    final Map<?, ?> map =
-                            getConfiguration().getEnvironment().getStorageProvider().createMap(clazz1, clazz2);
-                    return map;
+                    return getConfiguration().getEnvironment().getStorageProvider().createMap(clazz1, clazz2);
                 }
             }
         }

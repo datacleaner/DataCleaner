@@ -38,8 +38,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * {@link TableLookupTransformer}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class TableLookupJobBuilderPresenterRenderer implements
-        Renderer<TransformerComponentBuilder<TableLookupTransformer>, TransformerComponentBuilderPresenter> {
+public class TableLookupJobBuilderPresenterRenderer
+        implements Renderer<TransformerComponentBuilder<TableLookupTransformer>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -60,8 +60,8 @@ public class TableLookupJobBuilderPresenterRenderer implements
 
     @Override
     public TransformerComponentBuilderPresenter render(final TransformerComponentBuilder<TableLookupTransformer> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
-                PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(tjb).getInstance(PropertyWidgetFactory.class);
 
         return new TableLookupJobBuilderPresenter(tjb, windowContext, propertyWidgetFactory, configuration, dcModule);
     }

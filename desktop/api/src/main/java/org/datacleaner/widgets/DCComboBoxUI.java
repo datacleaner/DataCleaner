@@ -42,14 +42,12 @@ public class DCComboBoxUI extends BasicComboBoxUI {
      * @return
      */
     public static ComponentUI createUI(final JComponent c) {
-        final DCComboBoxUI ui = new DCComboBoxUI();
-        return ui;
+        return new DCComboBoxUI();
     }
 
     @Override
     protected JButton createArrowButton() {
-        final JButton arrowButton = WidgetFactory.createSmallButton(IconUtils.ACTION_SCROLLDOWN_DARK);
-        return arrowButton;
+        return WidgetFactory.createSmallButton(IconUtils.ACTION_SCROLLDOWN_DARK);
     }
 
     @SuppressWarnings("rawtypes")

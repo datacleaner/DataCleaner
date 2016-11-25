@@ -35,7 +35,8 @@ public class ScheduleGroupPanel extends FlowPanel {
     private final SchedulingServiceAsync _service;
     private final ClientConfig _clientConfig;
 
-    public ScheduleGroupPanel(final String name, final ClientConfig clientConfig, final SchedulingServiceAsync service) {
+    public ScheduleGroupPanel(final String name, final ClientConfig clientConfig,
+            final SchedulingServiceAsync service) {
         _clientConfig = clientConfig;
         _service = service;
 

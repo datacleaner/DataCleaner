@@ -28,7 +28,6 @@ public class CompareUtilsTest extends TestCase {
         assertEquals(-1, CompareUtils.compare(null, "hello"));
         assertEquals(1, CompareUtils.compare("hello", null));
         assertEquals(0, CompareUtils.compare("hello", "hello"));
-        assertEquals("hello".compareTo("world"),
-                CompareUtils.compare("hello", "world"));
+        assertEquals("hello".compareTo("world"), CompareUtils.compare("hello", "world"));
     }
 }

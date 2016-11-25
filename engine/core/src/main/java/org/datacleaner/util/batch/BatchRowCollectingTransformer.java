@@ -42,9 +42,7 @@ public abstract class BatchRowCollectingTransformer
     OutputRowCollector outputRowCollector;
 
     public BatchRowCollectingTransformer() {
-        _batchTransformationBuffer =
-                new BatchTransformationBuffer<>(this, getMaxBatchSize(),
-                        getFlushIntervalMillis());
+        _batchTransformationBuffer = new BatchTransformationBuffer<>(this, getMaxBatchSize(), getFlushIntervalMillis());
     }
 
     /**

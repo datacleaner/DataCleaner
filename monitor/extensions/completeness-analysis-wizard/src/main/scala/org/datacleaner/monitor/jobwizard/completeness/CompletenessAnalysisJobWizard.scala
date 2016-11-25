@@ -1,16 +1,12 @@
 package org.datacleaner.monitor.jobwizard.completeness
 
-import org.datacleaner.job.builder.AnalysisJobBuilder
-import org.datacleaner.monitor.wizard.common.SelectTableWizardPage
-import org.datacleaner.monitor.wizard.job.JobWizard
-import org.datacleaner.monitor.wizard.job.JobWizardContext
-import org.datacleaner.monitor.wizard.job.JobWizardSession
-import org.datacleaner.monitor.wizard.WizardPageController
 import org.apache.metamodel.schema.Table
-import org.springframework.stereotype.Component
-import org.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession
-import org.datacleaner.monitor.wizard.job.DataCleanerJobWizard
+import org.datacleaner.job.builder.AnalysisJobBuilder
 import org.datacleaner.monitor.server.wizard.JobNameWizardPage
+import org.datacleaner.monitor.wizard.WizardPageController
+import org.datacleaner.monitor.wizard.common.SelectTableWizardPage
+import org.datacleaner.monitor.wizard.job.{DataCleanerJobWizard, DataCleanerJobWizardSession, JobWizardContext}
+import org.springframework.stereotype.Component
 
 @Component
 class CompletenessAnalysisJobWizard extends DataCleanerJobWizard {

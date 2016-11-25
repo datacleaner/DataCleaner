@@ -97,8 +97,7 @@ public class DescriptorMenuItem extends JMenuItem implements ActionListener {
 
     @Override
     public JToolTip createToolTip() {
-        final JToolTip toolTip = new DCToolTip(this, createToolTipPanel());
-        return toolTip;
+        return new DCToolTip(this, createToolTipPanel());
     }
 
     protected JComponent createToolTipPanel() {

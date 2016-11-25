@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -60,6 +58,7 @@ public class CreateTableDialog extends AbstractDialog {
     public interface Listener {
         void onTableCreated(UpdateableDatastore datastore, Schema schema, String tableName);
     }
+
     private static final long serialVersionUID = 1L;
     private final UpdateableDatastore _datastore;
     private final Schema _schema;
@@ -67,12 +66,13 @@ public class CreateTableDialog extends AbstractDialog {
     private final List<CreateTableColumnDefintionPanel> _columnDefinitionPanels;
     private final List<Listener> _listeners;
 
-    public CreateTableDialog(final WindowContext windowContext, final UpdateableDatastore datastore, final Schema schema) {
+    public CreateTableDialog(final WindowContext windowContext, final UpdateableDatastore datastore,
+            final Schema schema) {
         this(windowContext, datastore, schema, null);
     }
 
-    public CreateTableDialog(final WindowContext windowContext, final UpdateableDatastore datastore, final Schema schema,
-            final Collection<InputColumn<?>> columnSuggestions) {
+    public CreateTableDialog(final WindowContext windowContext, final UpdateableDatastore datastore,
+            final Schema schema, final Collection<InputColumn<?>> columnSuggestions) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
 
         _datastore = datastore;
@@ -161,75 +161,56 @@ public class CreateTableDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        final DCLabel label1 = DCLabel
-                .darkMultiLine(
-                        "Please fill out the name and describe the columns that should comprise your new table. The table will be created in the schema '<b>"
-                                + _schema.getName() + "</b>' of datastore '<b>" + _datastore.getName() + "</b>'");
+        final DCLabel label1 = DCLabel.darkMultiLine(
+                "Please fill out the name and describe the columns that should comprise your new table. "
+                        + "The table will be created in the schema '<b>" + _schema.getName() + "</b>' of datastore '<b>"
+                        + _datastore.getName() + "</b>'");
 
-        final DCLabel label2 = DCLabel
-                .darkMultiLine(
-                        "Note that the column data types may be adapted/interpreted in order to fit the type of datastore, should they not apply to the datastore natively.");
+        final DCLabel label2 = DCLabel.darkMultiLine("Note that the column data types may be adapted/interpreted in "
+                + "order to fit the type of datastore, should they not apply to the datastore natively.");
 
         final JXTextField tableNameTextField = WidgetFactory.createTextField("Table name");
 
-        final JButton createTableButton = WidgetFactory.createPrimaryButton("Create table",
-                IconUtils.ACTION_CREATE_TABLE);
-        createTableButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final String tableName = tableNameTextField.getText().trim();
-                if (tableName.isEmpty()) {
-                    WidgetUtils.showErrorMessage("Invalid table name", "Please enter a valid table name.");
-                    return;
-                }
-
-                if (_columnDefinitionPanels.isEmpty()) {
-                    WidgetUtils.showErrorMessage("No columns defined", "Please add at least one column to the table.");
-                    return;
-                }
-
-                final List<Column> columns = new ArrayList<>(_columnDefinitionPanels.size());
-                for (final CreateTableColumnDefintionPanel columnDefinitionPanel : _columnDefinitionPanels) {
-                    columnDefinitionPanel.highlightIssues();
-                    if (!columnDefinitionPanel.isColumnDefined()) {
-                        return;
-                    }
-                    columns.add(columnDefinitionPanel.toColumn());
-                }
-
-                doCreateTable(tableName, columns);
-                for (final Listener listener : _listeners) {
-                    listener.onTableCreated(_datastore, _schema, tableName);
-                }
-                CreateTableDialog.this.close();
+        final JButton createTableButton =
+                WidgetFactory.createPrimaryButton("Create table", IconUtils.ACTION_CREATE_TABLE);
+        createTableButton.addActionListener(e -> {
+            final String tableName = tableNameTextField.getText().trim();
+            if (tableName.isEmpty()) {
+                WidgetUtils.showErrorMessage("Invalid table name", "Please enter a valid table name.");
+                return;
             }
+
+            if (_columnDefinitionPanels.isEmpty()) {
+                WidgetUtils.showErrorMessage("No columns defined", "Please add at least one column to the table.");
+                return;
+            }
+
+            final List<Column> columns = new ArrayList<>(_columnDefinitionPanels.size());
+            for (final CreateTableColumnDefintionPanel columnDefinitionPanel : _columnDefinitionPanels) {
+                columnDefinitionPanel.highlightIssues();
+                if (!columnDefinitionPanel.isColumnDefined()) {
+                    return;
+                }
+                columns.add(columnDefinitionPanel.toColumn());
+            }
+
+            doCreateTable(tableName, columns);
+            for (final Listener listener : _listeners) {
+                listener.onTableCreated(_datastore, _schema, tableName);
+            }
+            CreateTableDialog.this.close();
         });
 
         final JButton cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                CreateTableDialog.this.close();
-            }
-        });
+        cancelButton.addActionListener(e -> CreateTableDialog.this.close());
 
         final JButton addColumnButton = WidgetFactory.createSmallButton("Add column", IconUtils.ACTION_ADD_DARK);
-        addColumnButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addColumnDefinitionPanel();
-            }
-        });
+        addColumnButton.addActionListener(e -> addColumnDefinitionPanel());
 
-        final JButton removeAllColumnsButton = WidgetFactory.createSmallButton("Remove all columns",
-                IconUtils.ACTION_REMOVE_DARK);
+        final JButton removeAllColumnsButton =
+                WidgetFactory.createSmallButton("Remove all columns", IconUtils.ACTION_REMOVE_DARK);
         removeAllColumnsButton.setForeground(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
-        removeAllColumnsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                removeAllColumns();
-            }
-        });
+        removeAllColumnsButton.addActionListener(e -> removeAllColumns());
 
         final DCPanel buttonPanel = DCPanel.flow(addColumnButton, removeAllColumnsButton);
         buttonPanel.setBorder(WidgetUtils.BORDER_EMPTY);
@@ -260,16 +241,13 @@ public class CreateTableDialog extends AbstractDialog {
     }
 
     protected void doCreateTable(final String tableName, final List<Column> columns) {
-        final UpdateableDatastoreConnection con = _datastore.openConnection();
-        try {
+        try (UpdateableDatastoreConnection con = _datastore.openConnection()) {
             final CreateTable createTable = new CreateTable(_schema, tableName);
             for (final Column column : columns) {
                 createTable.withColumn(column.getName()).like(column);
             }
             final UpdateableDataContext dataContext = con.getUpdateableDataContext();
             dataContext.executeUpdate(createTable);
-        } finally {
-            con.close();
         }
     }
 

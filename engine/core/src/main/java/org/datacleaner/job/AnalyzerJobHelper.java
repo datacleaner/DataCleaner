@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -73,8 +72,7 @@ public class AnalyzerJobHelper {
         final Object input = componentJob.getConfiguration().getProperty(inputProperty);
 
         if (input instanceof InputColumn) {
-            final InputColumn<?> inputColumn = (InputColumn<?>) input;
-            return inputColumn;
+            return (InputColumn<?>) input;
         } else if (input instanceof InputColumn[]) {
             final InputColumn<?>[] inputColumns = (InputColumn[]) input;
             if (inputColumns.length != 1) {
@@ -125,37 +123,28 @@ public class AnalyzerJobHelper {
         List<AnalyzerJob> candidates = new ArrayList<>(_jobs);
 
         // filter analyzers of the corresponding type
-        candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-            @Override
-            public Boolean eval(final AnalyzerJob o) {
-                final String actualDescriptorName = o.getDescriptor().getDisplayName();
-                return descriptorName.equals(actualDescriptorName);
-            }
+        candidates = CollectionUtils2.refineCandidates(candidates, o -> {
+            final String actualDescriptorName = o.getDescriptor().getDisplayName();
+            return descriptorName.equals(actualDescriptorName);
         });
 
         if (analyzerName != null) {
             // filter analyzers with a particular name
-            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                @Override
-                public Boolean eval(final AnalyzerJob o) {
-                    final String actualAnalyzerName = o.getName();
-                    return analyzerName.equals(actualAnalyzerName);
-                }
+            candidates = CollectionUtils2.refineCandidates(candidates, o -> {
+                final String actualAnalyzerName = o.getName();
+                return analyzerName.equals(actualAnalyzerName);
             });
         }
 
         if (analyzerInputName != null) {
             // filter analyzers with a particular input
-            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                @Override
-                public Boolean eval(final AnalyzerJob o) {
-                    final InputColumn<?> inputColumn = getIdentifyingInputColumn(o);
-                    if (inputColumn == null) {
-                        return false;
-                    }
-
-                    return analyzerInputName.equals(inputColumn.getName());
+            candidates = CollectionUtils2.refineCandidates(candidates, o -> {
+                final InputColumn<?> inputColumn = getIdentifyingInputColumn(o);
+                if (inputColumn == null) {
+                    return false;
                 }
+
+                return analyzerInputName.equals(inputColumn.getName());
             });
         }
 
@@ -166,7 +155,6 @@ public class AnalyzerJobHelper {
             logger.warn("Multiple ({}) AnalyzerJob candidates to choose from, picking first");
         }
 
-        final AnalyzerJob analyzerJob = candidates.iterator().next();
-        return analyzerJob;
+        return candidates.iterator().next();
     }
 }

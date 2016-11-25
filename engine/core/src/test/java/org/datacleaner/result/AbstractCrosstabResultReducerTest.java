@@ -45,14 +45,15 @@ public class AbstractCrosstabResultReducerTest extends TestCase {
                 new AbstractCrosstabResultReducer<CrosstabResult>() {
 
                     @Override
-                    protected Serializable reduceValues(List<Object> slaveValues, String category1, String category2,
-                            Collection<? extends CrosstabResult> results, Class<?> valueClass) {
+                    protected Serializable reduceValues(final List<Object> slaveValues, final String category1,
+                            final String category2, final Collection<? extends CrosstabResult> results,
+                            final Class<?> valueClass) {
                         return sumAsInteger(slaveValues);
                     }
 
                     @Override
-                    protected CrosstabResult buildResult(Crosstab<?> crosstab,
-                            Collection<? extends CrosstabResult> results) {
+                    protected CrosstabResult buildResult(final Crosstab<?> crosstab,
+                            final Collection<? extends CrosstabResult> results) {
                         return new CrosstabResult(crosstab);
                     }
                 };
@@ -70,19 +71,18 @@ public class AbstractCrosstabResultReducerTest extends TestCase {
     }
 
     public void testSumAsDouble() throws Exception {
-        Number sum = AbstractCrosstabResultReducer.sumAsDouble(Arrays.asList(123.1d, null, 124d, 125d, 12d));
-        assertTrue(sum instanceof Double);
-        assertEquals(384.1, sum.doubleValue());
+        final Double sum = AbstractCrosstabResultReducer.sumAsDouble(Arrays.asList(123.1d, null, 124d, 125d, 12d));
+        assertEquals(384.1, sum);
         assertEquals(384, sum.intValue());
     }
 
     public void testMaximum() throws Exception {
-        Number maximum = AbstractCrosstabResultReducer.maximum(Arrays.asList(123, null, 124, 125, 12));
+        final Number maximum = AbstractCrosstabResultReducer.maximum(Arrays.asList(123, null, 124, 125, 12));
         assertEquals(125, maximum.intValue());
     }
 
     public void testMinimum() throws Exception {
-        Number minimum = AbstractCrosstabResultReducer.minimum(Arrays.asList(123, 124, 125, null, 12));
+        final Number minimum = AbstractCrosstabResultReducer.minimum(Arrays.asList(123, 124, 125, null, 12));
         assertEquals(12, minimum.intValue());
     }
 }

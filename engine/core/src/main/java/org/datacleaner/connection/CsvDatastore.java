@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Datastore implementation for CSV files.
  */
-public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContext> implements FileDatastore,
-        ResourceDatastore, UpdateableDatastore {
+public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContext>
+        implements FileDatastore, ResourceDatastore, UpdateableDatastore {
 
     /**
      * The value is '\\uFFFF', the "not a character" value which should not
@@ -79,15 +79,14 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
     }
 
     public CsvDatastore(final String name, final String filename, final Character quoteChar,
-            final Character separatorChar, final String encoding,
-            final boolean failOnInconsistencies) {
+            final Character separatorChar, final String encoding, final boolean failOnInconsistencies) {
         this(name, filename, quoteChar, separatorChar, encoding, failOnInconsistencies,
                 CsvConfiguration.DEFAULT_COLUMN_NAME_LINE);
     }
 
     public CsvDatastore(final String name, final String filename, final Character quoteChar,
-            final Character separatorChar, final String encoding,
-            final boolean failOnInconsistencies, final int headerLineNumber) {
+            final Character separatorChar, final String encoding, final boolean failOnInconsistencies,
+            final int headerLineNumber) {
         this(name, null, filename, quoteChar, separatorChar, CsvConfiguration.DEFAULT_ESCAPE_CHAR, encoding,
                 failOnInconsistencies, headerLineNumber);
     }
@@ -100,27 +99,23 @@ public final class CsvDatastore extends UsageAwareDatastore<UpdateableDataContex
     }
 
     public CsvDatastore(final String name, final Resource resource, final String filename, final Character quoteChar,
-            final Character separatorChar,
-            final Character escapeChar, final String encoding, final boolean failOnInconsistencies,
-            final int headerLineNumber) {
+            final Character separatorChar, final Character escapeChar, final String encoding,
+            final boolean failOnInconsistencies, final int headerLineNumber) {
         this(name, resource, filename, quoteChar, separatorChar, escapeChar, encoding, failOnInconsistencies, true,
                 headerLineNumber);
     }
 
     public CsvDatastore(final String name, final Resource resource, final String filename, final Character quoteChar,
-            final Character separatorChar,
-            final Character escapeChar, final String encoding, final boolean failOnInconsistencies,
-            final boolean multilineValues,
-            final int headerLineNumber) {
+            final Character separatorChar, final Character escapeChar, final String encoding,
+            final boolean failOnInconsistencies, final boolean multilineValues, final int headerLineNumber) {
         this(name, resource, filename, quoteChar, separatorChar, escapeChar, encoding, failOnInconsistencies,
                 multilineValues, headerLineNumber, null);
     }
 
     public CsvDatastore(final String name, Resource resource, final String filename, final Character quoteChar,
-            final Character separatorChar,
-            final Character escapeChar, final String encoding, final boolean failOnInconsistencies,
-            final boolean multilineValues,
-            int headerLineNumber, final List<String> customColumnNames) {
+            final Character separatorChar, final Character escapeChar, final String encoding,
+            final boolean failOnInconsistencies, final boolean multilineValues, int headerLineNumber,
+            final List<String> customColumnNames) {
         super(name);
         _filename = filename;
         if (resource == null) {

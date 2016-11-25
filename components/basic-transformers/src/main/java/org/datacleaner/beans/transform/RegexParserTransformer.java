@@ -48,16 +48,19 @@ import org.datacleaner.components.categories.TextCategory;
         + "<blockquote>(\\w+) (\\w+)</blockquote></li>"
         + "<li>Match a hash-sign and 3 pairs of hexadecimal digits (using pseudo-characters of Java regular expressions):"
         + "<blockquote>\\#?(\\p{XDigit}{2})(\\p{XDigit}{2})(\\p{XDigit}{2})</blockquote></li>" + "</ul>")
-@ExternalDocumentation({
-        @DocumentationLink(title = "Regex parsing with DataCleaner", url = "https://www.youtube.com/watch?v=VA6dw5Nv2AM", type = DocumentationType.VIDEO, version = "3.0"),
-        @DocumentationLink(title = "Java Tutorials: Regular Expressions Lesson", url = "https://docs.oracle.com/javase/tutorial/essential/regex/", type = DocumentationType.TECH, version = "3.0") })
+@ExternalDocumentation({ @DocumentationLink(title = "Regex parsing with DataCleaner",
+        url = "https://www.youtube.com/watch?v=VA6dw5Nv2AM", type = DocumentationType.VIDEO, version = "3.0"),
+        @DocumentationLink(title = "Java Tutorials: Regular Expressions Lesson",
+                url = "https://docs.oracle.com/javase/tutorial/essential/regex/", type = DocumentationType.TECH,
+                version = "3.0") })
 @Categorized(TextCategory.class)
 public class RegexParserTransformer implements Transformer {
 
     public enum Mode implements HasName {
         @Description("Find the first match within the value.")FIND_FIRST("Find first match"),
 
-        @Description("Find all matches of the expression within the value. Each match yields a new row in the data stream.")FIND_ALL(
+        @Description(
+                "Find all matches of the expression within the value. Each match yields a new row in the data stream.")FIND_ALL(
                 "Find all matches"),
 
         @Description("Match the complete value using the expression.")FULL_MATCH("Match the complete value");

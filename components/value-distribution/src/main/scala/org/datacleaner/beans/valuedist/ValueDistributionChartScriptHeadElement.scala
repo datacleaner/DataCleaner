@@ -1,6 +1,6 @@
 package org.datacleaner.beans.valuedist
-import org.datacleaner.result.{ValueCountingAnalyzerResult, ValueFrequency}
 import org.datacleaner.result.html.{HeadElement, HtmlRenderingContext}
+import org.datacleaner.result.{ValueCountingAnalyzerResult, ValueFrequency}
 import org.datacleaner.util.LabelUtils
 
 class ValueDistributionChartScriptHeadElement(result: ValueCountingAnalyzerResult, valueCounts: Iterable[ValueFrequency], chartElementId: String) extends HeadElement {

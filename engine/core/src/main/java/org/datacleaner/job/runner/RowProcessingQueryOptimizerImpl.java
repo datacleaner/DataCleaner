@@ -138,9 +138,8 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
             // the datastore doesn't prefer query optimization
             final Class<?> filterClass = filterConsumer.getComponentJob().getDescriptor().getComponentClass();
             if (!ArrayUtils.contains(ALWAYS_OPTIMIZABLE, filterClass)) {
-                logger.debug(
-                        "Datastore performance characteristics indicate that query optimization will "
-                                + "not improve performance for {}, stopping", filterConsumer);
+                logger.debug("Datastore performance characteristics indicate that query optimization will "
+                        + "not improve performance for {}, stopping", filterConsumer);
 
                 // the filter is not in the "always optimizable" set.
                 return false;
@@ -177,9 +176,8 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
                 for (final InputColumn<?> column : requiredColumns) {
                     if (column.isVirtualColumn()) {
                         if (!satisfiedColumns.contains(column)) {
-                            logger.debug(
-                                    "InputColumn {} is available at query time, and therefore not satisfied "
-                                            + "for query optimization of {}", column, filterConsumer);
+                            logger.debug("InputColumn {} is available at query time, and therefore not satisfied "
+                                    + "for query optimization of {}", column, filterConsumer);
                             return false;
                         } else {
                             independentComponent = false;
@@ -190,9 +188,8 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
 
             if (independentComponent) {
                 // totally independent components prohibit optimization
-                logger.debug(
-                        "Component {} is completely independent. Position in chain is not determinable, "
-                                + "so optimization cannot be done.", filterConsumer);
+                logger.debug("Component {} is completely independent. Position in chain is not determinable, "
+                        + "so optimization cannot be done.", filterConsumer);
                 return false;
             }
 
@@ -232,11 +229,11 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
                 final FilterOutcome outcome = entry.getValue();
                 final Filter<?> filter = consumer.getComponent();
 
-                @SuppressWarnings("rawtypes")
-                final QueryOptimizedFilter queryOptimizedFilter = (QueryOptimizedFilter) filter;
+                @SuppressWarnings("rawtypes") final QueryOptimizedFilter queryOptimizedFilter =
+                        (QueryOptimizedFilter) filter;
 
-                @SuppressWarnings("unchecked")
-                final Query newQuery = queryOptimizedFilter.optimizeQuery(query, outcome.getCategory());
+                @SuppressWarnings("unchecked") final Query newQuery =
+                        queryOptimizedFilter.optimizeQuery(query, outcome.getCategory());
                 query = newQuery;
             }
         }
@@ -257,8 +254,7 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
 
     @Override
     public Set<? extends RowProcessingConsumer> getEliminatedConsumers() {
-        final Set<FilterConsumer> consumers = _optimizedFilters.keySet();
-        return consumers;
+        return _optimizedFilters.keySet();
     }
 
     @Override

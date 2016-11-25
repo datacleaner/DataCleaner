@@ -71,8 +71,7 @@ public final class InitializeTask implements Task {
                     for (final RowProcessingConsumer outputDataStreamConsumer : outputDataStreamPublisher
                             .getConsumers()) {
                         final LifeCycleHelper outputDataStreamLifeCycleHelper =
-                                outputDataStreamPublisher.getPublishers()
-                                        .getConsumerSpecificLifeCycleHelper(consumer);
+                                outputDataStreamPublisher.getPublishers().getConsumerSpecificLifeCycleHelper(consumer);
                         executeInternal(outputDataStreamConsumer, outputDataStreamPublisher,
                                 outputDataStreamLifeCycleHelper);
                     }

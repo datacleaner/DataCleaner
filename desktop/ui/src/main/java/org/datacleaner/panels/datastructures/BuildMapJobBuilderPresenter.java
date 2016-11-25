@@ -57,13 +57,13 @@ final class BuildMapJobBuilderPresenter extends TransformerComponentBuilderPanel
         final ConfiguredPropertyDescriptor valuesProperty = descriptor.getConfiguredProperty("Values");
         final ConfiguredPropertyDescriptor keysProperty = descriptor.getConfiguredProperty("Keys");
 
-        final MultipleMappedStringsPropertyWidget propertyWidget = new MultipleMappedStringsPropertyWidget(tjb,
-                valuesProperty, keysProperty) {
-            @Override
-            protected String getDefaultMappedString(final InputColumn<?> inputColumn) {
-                return inputColumn.getName();
-            }
-        };
+        final MultipleMappedStringsPropertyWidget propertyWidget =
+                new MultipleMappedStringsPropertyWidget(tjb, valuesProperty, keysProperty) {
+                    @Override
+                    protected String getDefaultMappedString(final InputColumn<?> inputColumn) {
+                        return inputColumn.getName();
+                    }
+                };
         _overriddenPropertyWidgets.put(valuesProperty, propertyWidget);
         _overriddenPropertyWidgets.put(keysProperty, propertyWidget.getMappedStringsPropertyWidget());
     }

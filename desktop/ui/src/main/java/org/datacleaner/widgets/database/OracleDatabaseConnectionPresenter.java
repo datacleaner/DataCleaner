@@ -19,7 +19,6 @@
  */
 package org.datacleaner.widgets.database;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
@@ -65,12 +64,7 @@ public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnec
         buttonGroup.add(_radioServiceName);
         buttonGroup.add(_radioSid);
 
-        final ActionListener radioActionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                updateTextFieldsAfterRadioButtonChange();
-            }
-        };
+        final ActionListener radioActionListener = e -> updateTextFieldsAfterRadioButtonChange();
 
         updateTextFieldsAfterRadioButtonChange();
 
@@ -91,8 +85,8 @@ public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnec
     }
 
     @Override
-    protected String getJdbcUrl(final String hostname, final int port, final String database, final String param1, final String param2,
-            final String param3, final String param4) {
+    protected String getJdbcUrl(final String hostname, final int port, final String database, final String param1,
+            final String param2, final String param3, final String param4) {
         if (_radioSid.isSelected()) {
             return replaceParameters(URL_SID_BASED, hostname, port, database, param1, param2, param3);
         } else if (_radioServiceName.isSelected()) {
@@ -103,8 +97,8 @@ public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnec
         return replaceParameters(URL_FALLBACK, hostname, port, database, param1, param2, param3);
     }
 
-    private String replaceParameters(String url, final String hostname, final int port, final String database, final String param1,
-            final String param2, final String param3) {
+    private String replaceParameters(String url, final String hostname, final int port, final String database,
+            final String param1, final String param2, final String param3) {
         url = url.replace("HOSTNAME", hostname);
         url = url.replace("PORT", Integer.toString(port));
         url = url.replace("DATABASE", database);

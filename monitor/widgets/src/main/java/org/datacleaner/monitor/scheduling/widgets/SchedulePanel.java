@@ -98,7 +98,8 @@ public class SchedulePanel extends Composite {
         }
 
         if (_clientConfig.isScheduleEditor()) {
-            final CustomizeScheduleClickHandler handler = new CustomizeScheduleClickHandler(this, service, tenant, schedule);
+            final CustomizeScheduleClickHandler handler =
+                    new CustomizeScheduleClickHandler(this, service, tenant, schedule);
             scheduleAnchor.addClickHandler(handler);
 
             final String token = History.getToken();
@@ -186,6 +187,8 @@ public class SchedulePanel extends Composite {
         case HOTFOLDER:
             scheduleAnchor.setText(_schedule.getHotFolder());
             scheduleAnchor.removeStyleName("discrete");
+        default:
+            // ignore
         }
     }
 

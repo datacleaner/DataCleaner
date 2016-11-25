@@ -105,8 +105,9 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
             WidgetUtils.addToGridBag(DCLabel.bright("<html><b>New/mapped value:</b></html>"), _panel, 2, _row);
 
             _row++;
-            WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH)),
-                    _panel, 0, _row);
+            WidgetUtils
+                    .addToGridBag(new JLabel(imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH)), _panel,
+                            0, _row);
             WidgetUtils.addToGridBag(DCLabel.bright(_metadata.getDatastoreName()), _panel, 1, _row,
                     GridBagConstraints.WEST);
         }
@@ -133,8 +134,9 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
         private void addTableSourceColumnComboBox(final SourceColumnComboBox comboBox) {
             _row++;
-            WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon(IconUtils.MODEL_COLUMN,
-                    IconUtils.ICON_SIZE_SMALL)), _panel, 0, _row);
+            WidgetUtils.addToGridBag(
+                    new JLabel(imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL)), _panel, 0,
+                    _row);
             WidgetUtils.addToGridBag(DCLabel.bright(comboBox.getName()), _panel, 1, _row, GridBagConstraints.WEST);
             WidgetUtils.addToGridBag(comboBox, _panel, 2, _row, GridBagConstraints.WEST);
         }
@@ -168,8 +170,9 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
                 final String variableId = entry.getKey();
                 final JXTextField textField = entry.getValue();
 
-                WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon("images/model/variable.png",
-                        IconUtils.ICON_SIZE_SMALL)), _panel, 0, _row);
+                WidgetUtils.addToGridBag(
+                        new JLabel(imageManager.getImageIcon("images/model/variable.png", IconUtils.ICON_SIZE_SMALL)),
+                        _panel, 0, _row);
                 WidgetUtils.addToGridBag(DCLabel.bright(variableId), _panel, 1, _row, GridBagConstraints.WEST);
                 WidgetUtils.addToGridBag(textField, _panel, 2, _row, GridBagConstraints.WEST);
             }
@@ -228,6 +231,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
             _loadingIcon.setVisible(false);
         }
     }
+
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobAsTemplateDialog.class);
     private static final ImageManager imageManager = ImageManager.get();
@@ -246,8 +250,8 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
     private final LoadingIcon _loadingIcon = createLoadingIcon();
     private volatile Datastore _datastore;
 
-    public OpenAnalysisJobAsTemplateDialog(final WindowContext windowContext, final DataCleanerConfiguration configuration,
-            final FileObject file, final AnalysisJobMetadata metadata,
+    public OpenAnalysisJobAsTemplateDialog(final WindowContext windowContext,
+            final DataCleanerConfiguration configuration, final FileObject file, final AnalysisJobMetadata metadata,
             final Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider) {
         super(windowContext, imageManager.getImage("images/window/banner-logo.png"));
         _configuration = configuration;
@@ -333,8 +337,8 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
         for (final String columnPath : columnPaths) {
             final String tablePath = getTablePath(columnPath);
-            final SourceColumnComboBox comboBox = createSourceColumnComboBoxForColumn(sourceColumnComboBoxes,
-                    tablePath, columnPath);
+            final SourceColumnComboBox comboBox =
+                    createSourceColumnComboBoxForColumn(sourceColumnComboBoxes, tablePath, columnPath);
             sourceColumnComboBoxes.get(tablePath).add(comboBox);
         }
 
@@ -356,8 +360,9 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         return tablePath;
     }
 
-    private SourceColumnComboBox createSourceColumnComboBoxForColumn(final Map<String,
-            List<SourceColumnComboBox>> sourceColumnComboBoxes, final String tablePath, final String columnPath) {
+    private SourceColumnComboBox createSourceColumnComboBoxForColumn(
+            final Map<String, List<SourceColumnComboBox>> sourceColumnComboBoxes, final String tablePath,
+            final String columnPath) {
         final SourceColumnComboBox comboBox = new SourceColumnComboBox();
         comboBox.setEnabled(false);
         comboBox.setName(columnPath);
@@ -390,8 +395,8 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
                 final ComboBoxUpdater comboBoxUpdater = new ComboBoxUpdater(parent);
                 comboBoxUpdater.execute();
             } catch (final Exception exception) {
-                final String exceptionMessage = "An unexpected error occurred while updating combo boxes:\n"
-                        + exception.getMessage();
+                final String exceptionMessage =
+                        "An unexpected error occurred while updating combo boxes:\n" + exception.getMessage();
                 logger.error(exceptionMessage);
                 WidgetUtils.showErrorMessage("Unexpected error", exceptionMessage);
             }

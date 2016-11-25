@@ -22,10 +22,6 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -80,6 +76,7 @@ public class AboutDialog extends AbstractDialog {
         public String websiteUrl;
         public String license;
     }
+
     private static final long serialVersionUID = 1L;
     private static final ResourceManager resourceManager = ResourceManager.get();
     private static final ImageManager imageManager = ImageManager.get();
@@ -202,13 +199,9 @@ public class AboutDialog extends AbstractDialog {
 
         final JButton dcLicenseButton = WidgetFactory.createSmallButton("images/menu/license.png");
         dcLicenseButton.setToolTipText("DataCleaner's license: GNU LGPL");
-        dcLicenseButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                licenseHeader.setText("Displaying license of DataCleaner");
-                licenseLabel.setText(dcLicense);
-            }
+        dcLicenseButton.addActionListener(e -> {
+            licenseHeader.setText("Displaying license of DataCleaner");
+            licenseLabel.setText(dcLicense);
         });
 
         final JComboBox<Object> librariesComboBox = new JComboBox<>();
@@ -219,8 +212,8 @@ public class AboutDialog extends AbstractDialog {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected,
-                    final boolean cellHasFocus) {
+            public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index,
+                    final boolean isSelected, final boolean cellHasFocus) {
                 if (value instanceof LicensedProject) {
                     final LicensedProject project = (LicensedProject) value;
                     final String name = project.name;
@@ -231,32 +224,26 @@ public class AboutDialog extends AbstractDialog {
                 throw new UnsupportedOperationException();
             }
         });
-        librariesComboBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(final ItemEvent e) {
-                final Object item = e.getItem();
-                if (item instanceof LicensedProject) {
-                    visitProjectButton.setEnabled(true);
-                    final LicensedProject project = (LicensedProject) item;
-                    licenseLabel.setText(project.license);
-                    licenseHeader.setText("Displaying license of " + project.name + "");
-                } else {
-                    visitProjectButton.setEnabled(false);
-                    licenseHeader.setText("Displaying license of DataCleaner");
-                    licenseLabel.setText(dcLicense);
-                }
+        librariesComboBox.addItemListener(e -> {
+            final Object item = e.getItem();
+            if (item instanceof LicensedProject) {
+                visitProjectButton.setEnabled(true);
+                final LicensedProject project = (LicensedProject) item;
+                licenseLabel.setText(project.license);
+                licenseHeader.setText("Displaying license of " + project.name + "");
+            } else {
+                visitProjectButton.setEnabled(false);
+                licenseHeader.setText("Displaying license of DataCleaner");
+                licenseLabel.setText(dcLicense);
             }
         });
 
-        visitProjectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final Object item = librariesComboBox.getSelectedItem();
-                final LicensedProject project = (LicensedProject) item;
-                final String websiteUrl = project.websiteUrl;
-                if (!StringUtils.isNullOrEmpty(websiteUrl)) {
-                    new OpenBrowserAction(websiteUrl).actionPerformed(e);
-                }
+        visitProjectButton.addActionListener(e -> {
+            final Object item = librariesComboBox.getSelectedItem();
+            final LicensedProject project = (LicensedProject) item;
+            final String websiteUrl = project.websiteUrl;
+            if (!StringUtils.isNullOrEmpty(websiteUrl)) {
+                new OpenBrowserAction(websiteUrl).actionPerformed(e);
             }
         });
 
@@ -293,8 +280,8 @@ public class AboutDialog extends AbstractDialog {
     }
 
     private JComponent getAboutPanel() {
-        final DCLabel headerLabel = DCLabel.dark("DataCleaner " + Version.getEdition() + " "
-                + Version.getDistributionVersion());
+        final DCLabel headerLabel =
+                DCLabel.dark("DataCleaner " + Version.getEdition() + " " + Version.getDistributionVersion());
         headerLabel.setFont(WidgetUtils.FONT_HEADER1);
 
         final ImageManager imageManager = ImageManager.get();
@@ -322,8 +309,8 @@ public class AboutDialog extends AbstractDialog {
         buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(linkedInButton);
 
-        final NeopostToolbarButton neopostButton = new NeopostToolbarButton(
-                imageManager.getImageIcon("images/powered-by-neopost-bright.png"));
+        final NeopostToolbarButton neopostButton =
+                new NeopostToolbarButton(imageManager.getImageIcon("images/powered-by-neopost-bright.png"));
 
         final DCPanel contentPanel = new DCPanel();
         contentPanel.setLayout(new VerticalLayout());

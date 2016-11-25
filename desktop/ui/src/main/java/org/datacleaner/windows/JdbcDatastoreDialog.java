@@ -21,8 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +55,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCListCellRenderer;
 import org.datacleaner.widgets.DescriptionLabel;
@@ -98,9 +95,10 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
     private final DatabaseConnectionPresenter[] _connectionPresenters;
 
     @Inject
-    protected JdbcDatastoreDialog(@Nullable final JdbcDatastore originalDatastore, final MutableDatastoreCatalog catalog,
-            final WindowContext windowContext, final Provider<OptionsDialog> optionsDialogProvider,
-            final DatabaseDriverCatalog databaseDriverCatalog, final UserPreferences userPreferences) {
+    protected JdbcDatastoreDialog(@Nullable final JdbcDatastore originalDatastore,
+            final MutableDatastoreCatalog catalog, final WindowContext windowContext,
+            final Provider<OptionsDialog> optionsDialogProvider, final DatabaseDriverCatalog databaseDriverCatalog,
+            final UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
         setSaveButtonEnabled(false);
@@ -120,19 +118,18 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
         _tabbedPane.setUnclosableTab(0);
 
         _multipleConnectionsCheckBox = new DCCheckBox<>("Allow multiple concurrent connections", true);
-        _multipleConnectionsCheckBox
-                .setToolTipText(
-                        "Indicates whether multiple connections (aka. connection pooling) may be created or not. "
-                                + "Connection pooling is preferred for performance reasons, but can safely be disabled if not desired. "
-                                + "The max number of connections cannot be configured, "
-                                + "but no more connections than the number of threads in the task runner should be expected.");
+        _multipleConnectionsCheckBox.setToolTipText(
+                "Indicates whether multiple connections (aka. connection pooling) may be created or not. "
+                        + "Connection pooling is preferred for performance reasons, but can safely be disabled if not desired. "
+                        + "The max number of connections cannot be configured, "
+                        + "but no more connections than the number of threads in the task runner should be expected.");
         _multipleConnectionsCheckBox.setOpaque(false);
         _multipleConnectionsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
         _driverClassNameTextField = WidgetFactory.createTextField("Driver class name", TEXT_FIELD_WIDTH);
 
-        final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog
-                .getInstalledWorkingDatabaseDrivers();
+        final List<DatabaseDriverDescriptor> databaseDrivers =
+                _databaseDriverCatalog.getInstalledWorkingDatabaseDrivers();
         final Object[] comboBoxModel = new Object[databaseDrivers.size() + 3];
         comboBoxModel[0] = "";
         for (int i = 0; i < databaseDrivers.size(); i++) {
@@ -147,14 +144,14 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Component getListCellRendererComponent(final JList<?> list, Object value, final int index, final boolean isSelected,
-                    final boolean cellHasFocus) {
+            public Component getListCellRendererComponent(final JList<?> list, Object value, final int index,
+                    final boolean isSelected, final boolean cellHasFocus) {
                 if ("".equals(value)) {
                     value = "- select -";
                 }
 
-                final JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
-                        cellHasFocus);
+                final JLabel result =
+                        (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
                 if (value instanceof DatabaseDriverDescriptor) {
                     final DatabaseDriverDescriptor databaseDriver = (DatabaseDriverDescriptor) value;
@@ -174,28 +171,25 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
             }
         });
 
-        _databaseDriverComboBox.addListener(new Listener<Object>() {
-            @Override
-            public void onItemSelected(final Object value) {
-                if ("".equals(value)) {
-                    setSelectedDatabase((DatabaseDriverDescriptor) null);
-                    _driverClassNameTextField.setText("");
-                    _driverClassNameTextField.setEnabled(true);
-                } else if (value instanceof DatabaseDriverDescriptor) {
-                    final DatabaseDriverDescriptor driver = (DatabaseDriverDescriptor) value;
+        _databaseDriverComboBox.addListener(value -> {
+            if ("".equals(value)) {
+                setSelectedDatabase((DatabaseDriverDescriptor) null);
+                _driverClassNameTextField.setText("");
+                _driverClassNameTextField.setEnabled(true);
+            } else if (value instanceof DatabaseDriverDescriptor) {
+                final DatabaseDriverDescriptor driver = (DatabaseDriverDescriptor) value;
 
-                    setSelectedDatabase(driver);
+                setSelectedDatabase(driver);
 
-                    _driverClassNameTextField.setText(driver.getDriverClassName());
-                    _driverClassNameTextField.setEnabled(false);
-                } else if (MANAGE_DATABASE_DRIVERS.equals(value)) {
-                    final OptionsDialog optionsDialog = _optionsDialogProvider.get();
-                    optionsDialog.selectDatabaseDriversTab();
-                    JdbcDatastoreDialog.this.dispose();
+                _driverClassNameTextField.setText(driver.getDriverClassName());
+                _driverClassNameTextField.setEnabled(false);
+            } else if (MANAGE_DATABASE_DRIVERS.equals(value)) {
+                final OptionsDialog optionsDialog = _optionsDialogProvider.get();
+                optionsDialog.selectDatabaseDriversTab();
+                JdbcDatastoreDialog.this.dispose();
 
-                    optionsDialog.setVisible(true);
-                    optionsDialog.toFront();
-                }
+                optionsDialog.setVisible(true);
+                optionsDialog.toFront();
             }
         });
 
@@ -207,8 +201,8 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
 
             // the database driver has to be set as the first thing, because the
             // combobox's action listener will set other field's values as well.
-            final DatabaseDriverDescriptor databaseDriver = DatabaseDriverCatalog
-                    .getDatabaseDriverByDriverClassName(originalDatastore.getDriverClass());
+            final DatabaseDriverDescriptor databaseDriver =
+                    DatabaseDriverCatalog.getDatabaseDriverByDriverClassName(originalDatastore.getDriverClass());
             _databaseDriverComboBox.setSelectedItem(databaseDriver);
 
             _datastoreNameTextField.setText(originalDatastore.getName());
@@ -219,13 +213,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
             _driverClassNameTextField.setText(originalDatastore.getDriverClass());
         }
 
-        _databaseDriverComboBox.addListener(new Listener<Object>() {
-
-            @Override
-            public void onItemSelected(final Object item) {
-                validateAndUpdate();
-            }
-        });
+        _databaseDriverComboBox.addListener(item -> validateAndUpdate());
 
         _driverClassNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
@@ -243,8 +231,8 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
             return false;
         }
 
-        final DatabaseDriverDescriptor databaseDriverDescriptor = (DatabaseDescriptorImpl) _databaseDriverComboBox
-                .getSelectedItem();
+        final DatabaseDriverDescriptor databaseDriverDescriptor =
+                (DatabaseDescriptorImpl) _databaseDriverComboBox.getSelectedItem();
         if (databaseDriverDescriptor == null) {
             final String databaseDriverClass = _driverClassNameTextField.getText();
             if (StringUtils.isNullOrEmpty(databaseDriverClass)) {
@@ -258,8 +246,8 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
     }
 
     public void setSelectedDatabase(final String databaseName) {
-        final DatabaseDriverDescriptor databaseDriverDescriptor = DatabaseDriverCatalog
-                .getDatabaseDriverByDriverDatabaseName(databaseName);
+        final DatabaseDriverDescriptor databaseDriverDescriptor =
+                DatabaseDriverCatalog.getDatabaseDriverByDriverDatabaseName(databaseName);
         setSelectedDatabase(databaseDriverDescriptor);
     }
 
@@ -371,44 +359,35 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
         }
 
         final JButton testButton = WidgetFactory.createDefaultButton(getTestButtonText(), IconUtils.ACTION_REFRESH);
-        testButton.addActionListener(new ActionListener() {
+        testButton.addActionListener(event -> {
+            final JdbcDatastore datastore = createDatastore();
 
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                final JdbcDatastore datastore = createDatastore();
+            final List<Connection> connections = new ArrayList<>();
 
-                final List<Connection> connections = new ArrayList<>();
-
-                try {
-                    if (datastore.isMultipleConnections()) {
-                        final DataSource ds = datastore.createDataSource();
-                        for (int i = 0; i < TEST_CONNECTION_COUNT; i++) {
-                            final Connection connection = ds.getConnection();
-                            connections.add(connection);
-                        }
-                    } else {
-                        final Connection connnection = datastore.createConnection();
-                        connections.add(connnection);
+            try {
+                if (datastore.isMultipleConnections()) {
+                    final DataSource ds = datastore.createDataSource();
+                    for (int i = 0; i < TEST_CONNECTION_COUNT; i++) {
+                        final Connection connection = ds.getConnection();
+                        connections.add(connection);
                     }
-                } catch (final Throwable e) {
-                    WidgetUtils.showErrorMessage("Could not establish connection", e);
-                    return;
-                } finally {
-                    for (final Connection connection : connections) {
-                        FileHelper.safeClose(connection);
-                    }
+                } else {
+                    final Connection connnection = datastore.createConnection();
+                    connections.add(connnection);
                 }
-
-                JOptionPane.showMessageDialog(JdbcDatastoreDialog.this, "Connection successful!");
+            } catch (final Throwable e) {
+                WidgetUtils.showErrorMessage("Could not establish connection", e);
+                return;
+            } finally {
+                for (final Connection connection : connections) {
+                    FileHelper.safeClose(connection);
+                }
             }
+
+            JOptionPane.showMessageDialog(JdbcDatastoreDialog.this, "Connection successful!");
         });
 
-        _multipleConnectionsCheckBox.addListener(new DCCheckBox.Listener<Object>() {
-            @Override
-            public void onItemSelected(final Object item, final boolean selected) {
-                testButton.setText(getTestButtonText());
-            }
-        });
+        _multipleConnectionsCheckBox.addListener((item, selected) -> testButton.setText(getTestButtonText()));
 
         final DCPanel buttonPanel = getButtonPanel();
         buttonPanel.add(testButton);
@@ -466,10 +445,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
         final String password = connectionPresenter.getPassword();
         final boolean multipleConnections = _multipleConnectionsCheckBox.isSelected();
 
-        final JdbcDatastore datastore = new JdbcDatastore(datastoreName, connectionString, driverClass, username,
-                password, multipleConnections);
-
-        return datastore;
+        return new JdbcDatastore(datastoreName, connectionString, driverClass, username, password, multipleConnections);
     }
 
     @Override

@@ -51,8 +51,8 @@ public class ExecutionStatusPanel extends FlowPanel {
     private ExecutionLog _result;
     private ExecutionLogPanel _logPanel;
 
-    public ExecutionStatusPanel(final SchedulingServiceAsync service, final TenantIdentifier tenant, final ScheduleDefinition schedule,
-            final DCPopupPanel popupPanel) {
+    public ExecutionStatusPanel(final SchedulingServiceAsync service, final TenantIdentifier tenant,
+            final ScheduleDefinition schedule, final DCPopupPanel popupPanel) {
         super();
         _service = service;
         _tenant = tenant;

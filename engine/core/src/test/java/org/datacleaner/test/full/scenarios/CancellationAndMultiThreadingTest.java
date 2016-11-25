@@ -21,8 +21,6 @@ package org.datacleaner.test.full.scenarios;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.components.mock.AnalyzerMock;
@@ -40,12 +38,14 @@ import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.test.TestEnvironment;
 import org.datacleaner.test.TestHelper;
 
+import junit.framework.TestCase;
+
 public class CancellationAndMultiThreadingTest extends TestCase {
 
     public void test10Times() throws Exception {
-        Thread[] threads = new Thread[10];
+        final Thread[] threads = new Thread[10];
         for (int i = 0; i < threads.length; i++) {
-            Thread thread = new Thread() {
+            final Thread thread = new Thread() {
                 public void run() {
                     runScenario();
                 }
@@ -61,42 +61,42 @@ public class CancellationAndMultiThreadingTest extends TestCase {
     }
 
     public void runScenario() {
-        MultiThreadedTaskRunner taskRunner = TestEnvironment.getMultiThreadedTaskRunner();
+        final MultiThreadedTaskRunner taskRunner = TestEnvironment.getMultiThreadedTaskRunner();
 
-        ThreadPoolExecutor executorService = (ThreadPoolExecutor) taskRunner.getExecutorService();
+        final ThreadPoolExecutor executorService = (ThreadPoolExecutor) taskRunner.getExecutorService();
         assertEquals(TestEnvironment.THREAD_COUNT, executorService.getMaximumPoolSize());
         assertEquals(0, executorService.getActiveCount());
 
-        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
                 .withEnvironment(new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner));
 
-        AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
+        final AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
 
-        Datastore ds = TestHelper.createSampleDatabaseDatastore("foobar");
+        final Datastore ds = TestHelper.createSampleDatabaseDatastore("foobar");
         try (DatastoreConnection con = ds.openConnection()) {
 
-            AnalysisJob job;
+            final AnalysisJob job;
             try (AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(configuration)) {
                 analysisJobBuilder.setDatastore(ds);
 
-                Table table = con.getDataContext().getDefaultSchema().getTableByName("ORDERFACT");
+                final Table table = con.getDataContext().getDefaultSchema().getTableByName("ORDERFACT");
                 assertNotNull(table);
 
-                Column statusColumn = table.getColumnByName("STATUS");
-                Column commentsColumn = table.getColumnByName("COMMENTS");
+                final Column statusColumn = table.getColumnByName("STATUS");
+                final Column commentsColumn = table.getColumnByName("COMMENTS");
 
                 analysisJobBuilder.addSourceColumns(statusColumn, commentsColumn);
-                analysisJobBuilder.addAnalyzer(AnalyzerMock.class).addInputColumns(
-                        analysisJobBuilder.getSourceColumns());
+                analysisJobBuilder.addAnalyzer(AnalyzerMock.class)
+                        .addInputColumns(analysisJobBuilder.getSourceColumns());
 
                 job = analysisJobBuilder.toAnalysisJob();
             }
 
-            AnalysisResultFuture resultFuture = runner.run(job);
+            final AnalysisResultFuture resultFuture = runner.run(job);
 
             try {
                 Thread.sleep(550);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 e.printStackTrace();
                 fail("Interrupted! " + e.getMessage());
             }
@@ -109,17 +109,17 @@ public class CancellationAndMultiThreadingTest extends TestCase {
 
             try {
                 Thread.sleep(400);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 e.printStackTrace();
                 fail("Interrupted! " + e.getMessage());
             }
 
             assertEquals(TestEnvironment.THREAD_COUNT, executorService.getMaximumPoolSize());
 
-            long completedTaskCount = executorService.getCompletedTaskCount();
+            final long completedTaskCount = executorService.getCompletedTaskCount();
             assertTrue("completedTaskCount was: " + completedTaskCount, completedTaskCount > 3);
 
-            int largestPoolSize = executorService.getLargestPoolSize();
+            final int largestPoolSize = executorService.getLargestPoolSize();
             assertTrue("largestPoolSize was: " + largestPoolSize, largestPoolSize > 5);
             assertEquals(0, executorService.getActiveCount());
         }

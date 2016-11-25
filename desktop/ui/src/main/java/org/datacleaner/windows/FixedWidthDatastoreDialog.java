@@ -144,7 +144,7 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 
         _columnNamesWidget.getButtons().forEach(button -> button.addActionListener(action -> {
             onSettingsUpdated(false);
-            SwingUtilities.invokeLater(() -> registerColumnNameFields());
+            SwingUtilities.invokeLater(this::registerColumnNameFields);
         }));
 
         registerColumnNameFields();
@@ -365,13 +365,13 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 
     }
 
-    private FixedWidthDatastore createDatastore(final String name, final Resource resource, final boolean failOnInconsistencies,
-            final boolean skipEbcdicHeader, final boolean eolPresent) {
+    private FixedWidthDatastore createDatastore(final String name, final Resource resource,
+            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent) {
         final int[] valueWidths = getValueWidths(true);
         try {
-            return new FixedWidthDatastore(name, resource, resource.getQualifiedPath(), _encodingComboBox
-                    .getSelectedItem(), valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
-                    getHeaderLine(), _columnNamesWidget.getColumnNames());
+            return new FixedWidthDatastore(name, resource, resource.getQualifiedPath(),
+                    _encodingComboBox.getSelectedItem(), valueWidths, failOnInconsistencies, skipEbcdicHeader,
+                    eolPresent, getHeaderLine(), _columnNamesWidget.getColumnNames());
         } catch (final NumberFormatException e) {
             throw new IllegalStateException("Value width must be a valid number.");
         }
@@ -422,8 +422,8 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
     }
 
     private void registerColumnNameFields() {
-        _columnNamesWidget.getColumnNameFields().stream().filter(field -> !_columnNameFields.contains(field)).forEach(
-                field -> {
+        _columnNamesWidget.getColumnNameFields().stream().filter(field -> !_columnNameFields.contains(field))
+                .forEach(field -> {
                     field.addKeyListener(new KeyAdapter() {
                         @Override
                         public void keyTyped(final KeyEvent e) {
@@ -437,8 +437,9 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 
     @Override
     protected void initializeFileFilters(final ResourceSelector resourceSelector) {
-        final FileFilter combinedFilter = FileFilters.combined("Any text, data or EBCDIC files (.txt, .dat, .ebc)",
-                FileFilters.TXT, FileFilters.DAT, FileFilters.EBC);
+        final FileFilter combinedFilter = FileFilters
+                .combined("Any text, data or EBCDIC files (.txt, .dat, .ebc)", FileFilters.TXT, FileFilters.DAT,
+                        FileFilters.EBC);
         resourceSelector.addChoosableFileFilter(combinedFilter);
         resourceSelector.addChoosableFileFilter(FileFilters.TXT);
         resourceSelector.addChoosableFileFilter(FileFilters.DAT);

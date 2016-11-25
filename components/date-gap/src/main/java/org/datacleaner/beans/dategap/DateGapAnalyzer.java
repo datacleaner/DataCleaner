@@ -60,7 +60,8 @@ public class DateGapAnalyzer implements Analyzer<DateGapAnalyzerResult> {
     public DateGapAnalyzer() {
     }
 
-    public DateGapAnalyzer(final InputColumn<Date> fromColumn, final InputColumn<Date> toColumn, final InputColumn<String> groupColumn) {
+    public DateGapAnalyzer(final InputColumn<Date> fromColumn, final InputColumn<Date> toColumn,
+            final InputColumn<String> groupColumn) {
         this.fromColumn = fromColumn;
         this.toColumn = toColumn;
         this.groupColumn = groupColumn;
@@ -79,8 +80,7 @@ public class DateGapAnalyzer implements Analyzer<DateGapAnalyzerResult> {
 
             if (faultTolerantDateSwitch && from.compareTo(to) > 0) {
                 logger.debug("Switching around from and to, because {} is higher than {} (row: {})",
-                        new Object[] { from, to,
-                                row });
+                        new Object[] { from, to, row });
                 put(groupName, new TimeInterval(to, from));
             } else {
                 put(groupName, new TimeInterval(from, to));
@@ -122,8 +122,7 @@ public class DateGapAnalyzer implements Analyzer<DateGapAnalyzerResult> {
 
         final String groupColumnName = groupColumn == null ? null : groupColumn.getName();
         return new DateGapAnalyzerResult(fromColumn.getName(), toColumn.getName(), groupColumnName, completeIntervals,
-                gaps,
-                overlaps);
+                gaps, overlaps);
     }
 
     public void setFromColumn(final InputColumn<Date> fromColumn) {

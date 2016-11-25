@@ -55,8 +55,7 @@ public class DirectoryBasedHadoopClusterInformation extends AbstractServerInform
         });
 
         if (configurationFiles.size() == 0) {
-            throw new IllegalStateException(
-                    "Specified directories does not contain any Hadoop configuration files");
+            throw new IllegalStateException("Specified directories does not contain any Hadoop configuration files");
         }
 
         configurationFiles.values().stream().map(File::toURI).map(Path::new).forEach(configuration::addResource);

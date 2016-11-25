@@ -20,21 +20,17 @@
 package org.datacleaner.monitor.alertnotification;
 
 import java.io.File;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.metamodel.util.Ref;
-import org.datacleaner.monitor.configuration.ResultContext;
-import org.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.datacleaner.monitor.scheduling.model.TriggerType;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import junit.framework.TestCase;
 
 public class AlertNotificationServiceImplTest extends TestCase {
 
@@ -48,22 +44,17 @@ public class AlertNotificationServiceImplTest extends TestCase {
         try (ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
                 "context/application-context.xml")) {
             final AlertNotificationServiceImpl alertNotificationService =
-                    (AlertNotificationServiceImpl) applicationContext
-                            .getBean(AlertNotificationService.class);
-            alertNotificationService.getAlertNotifiers().add(new AlertNotifier() {
-                @Override
-                public void onExecutionFinished(ExecutionLog execution, Ref<Map<AlertDefinition, Number>> activeAlerts,
-                        ResultContext result) {
-                    counter.incrementAndGet();
+                    (AlertNotificationServiceImpl) applicationContext.getBean(AlertNotificationService.class);
+            alertNotificationService.getAlertNotifiers().add((execution, activeAlerts, result) -> {
+                counter.incrementAndGet();
 
-                    assertTrue(activeAlerts.get().isEmpty());
-                }
+                assertTrue(activeAlerts.get().isEmpty());
             });
 
-            TenantIdentifier tenant = new TenantIdentifier("tenant1");
-            JobIdentifier job = new JobIdentifier("product_profiling");
-            ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, "orderdb");
-            ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
+            final TenantIdentifier tenant = new TenantIdentifier("tenant1");
+            final JobIdentifier job = new JobIdentifier("product_profiling");
+            final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, "orderdb");
+            final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
             execution.setResultId("product_profiling-3.analysis.result.dat");
             alertNotificationService.notifySubscribers(execution);
 
@@ -72,7 +63,7 @@ public class AlertNotificationServiceImplTest extends TestCase {
     }
 
     public void testIsBeyondThreshold() throws Exception {
-        AlertNotificationServiceImpl service = new AlertNotificationServiceImpl(null, null);
+        final AlertNotificationServiceImpl service = new AlertNotificationServiceImpl(null, null);
 
         assertFalse(service.isBeyondThreshold(10, 5, 15));
         assertFalse(service.isBeyondThreshold(10, null, null));

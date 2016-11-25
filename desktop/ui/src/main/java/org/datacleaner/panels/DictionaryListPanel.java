@@ -20,8 +20,6 @@
 package org.datacleaner.panels;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -128,35 +126,26 @@ public class DictionaryListPanel extends DCPanel implements ReferenceDataChangeL
 
         final JButton textFileDictionaryButton = createButton(IconUtils.DICTIONARY_TEXTFILE_IMAGEPATH,
                 "<html><b>Text file dictionary</b><br/>A dictionary based on a text file on your filesystem.</html>");
-        textFileDictionaryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final Injector injector = _injectorBuilder.with(TextFileDictionary.class, null).createInjector();
-                final TextFileDictionaryDialog dialog = injector.getInstance(TextFileDictionaryDialog.class);
-                dialog.open();
-            }
+        textFileDictionaryButton.addActionListener(e -> {
+            final Injector injector = _injectorBuilder.with(TextFileDictionary.class, null).createInjector();
+            final TextFileDictionaryDialog dialog = injector.getInstance(TextFileDictionaryDialog.class);
+            dialog.open();
         });
 
         final JButton simpleDictionaryButton = createButton(IconUtils.DICTIONARY_SIMPLE_IMAGEPATH,
                 "<html><b>Simple dictionary</b><br/>A dictionary written and stored directly in DataCleaner.</html>");
-        simpleDictionaryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final Injector injector = _injectorBuilder.with(SimpleDictionary.class, null).createInjector();
-                final SimpleDictionaryDialog dialog = injector.getInstance(SimpleDictionaryDialog.class);
-                dialog.open();
-            }
+        simpleDictionaryButton.addActionListener(e -> {
+            final Injector injector = _injectorBuilder.with(SimpleDictionary.class, null).createInjector();
+            final SimpleDictionaryDialog dialog = injector.getInstance(SimpleDictionaryDialog.class);
+            dialog.open();
         });
 
         final JButton datastoreDictionaryButton = createButton(IconUtils.DICTIONARY_DATASTORE_IMAGEPATH,
                 "<html><b>Datastore dictionary</b><br/>Dictionary based on a column in a datastore.</html>");
-        datastoreDictionaryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final Injector injector = _injectorBuilder.with(DatastoreDictionary.class, null).createInjector();
-                final DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
-                dialog.open();
-            }
+        datastoreDictionaryButton.addActionListener(e -> {
+            final Injector injector = _injectorBuilder.with(DatastoreDictionary.class, null).createInjector();
+            final DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
+            dialog.open();
         });
 
         final HelpIcon helpIcon = new HelpIcon("<b>Dictionaries</b><br>"
@@ -190,8 +179,8 @@ public class DictionaryListPanel extends DCPanel implements ReferenceDataChangeL
         for (final String name : names) {
             final Dictionary dictionary = _catalog.getDictionary(name);
 
-            final DCLabel dictLabel = DCLabel.dark("<html><b>" + name + "</b><br/>" + getDescription(dictionary)
-                    + "</html>");
+            final DCLabel dictLabel =
+                    DCLabel.dark("<html><b>" + name + "</b><br/>" + getDescription(dictionary) + "</html>");
             dictLabel.setIcon(icon);
             dictLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
 
@@ -199,33 +188,25 @@ public class DictionaryListPanel extends DCPanel implements ReferenceDataChangeL
             editButton.setToolTipText("Edit dictionary");
 
             if (dictionary instanceof DatastoreDictionary) {
-                editButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        final Injector injector = _injectorBuilder.with(DatastoreDictionary.class, dictionary)
-                                .createInjector();
-                        final DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
-                        dialog.open();
-                    }
+                editButton.addActionListener(e -> {
+                    final Injector injector =
+                            _injectorBuilder.with(DatastoreDictionary.class, dictionary).createInjector();
+                    final DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
+                    dialog.open();
                 });
             } else if (dictionary instanceof TextFileDictionary) {
-                editButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        final Injector injector = _injectorBuilder.with(TextFileDictionary.class, dictionary)
-                                .createInjector();
-                        final TextFileDictionaryDialog dialog = injector.getInstance(TextFileDictionaryDialog.class);
-                        dialog.open();
-                    }
+                editButton.addActionListener(e -> {
+                    final Injector injector =
+                            _injectorBuilder.with(TextFileDictionary.class, dictionary).createInjector();
+                    final TextFileDictionaryDialog dialog = injector.getInstance(TextFileDictionaryDialog.class);
+                    dialog.open();
                 });
             } else if (dictionary instanceof SimpleDictionary) {
-                editButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        final Injector injector = _injectorBuilder.with(SimpleDictionary.class, dictionary).createInjector();
-                        final SimpleDictionaryDialog dialog = injector.getInstance(SimpleDictionaryDialog.class);
-                        dialog.open();
-                    }
+                editButton.addActionListener(e -> {
+                    final Injector injector =
+                            _injectorBuilder.with(SimpleDictionary.class, dictionary).createInjector();
+                    final SimpleDictionaryDialog dialog = injector.getInstance(SimpleDictionaryDialog.class);
+                    dialog.open();
                 });
             } else {
                 editButton.setEnabled(false);
@@ -233,15 +214,12 @@ public class DictionaryListPanel extends DCPanel implements ReferenceDataChangeL
 
             final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
             removeButton.setToolTipText("Remove dictionary");
-            removeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final int result = JOptionPane.showConfirmDialog(DictionaryListPanel.this,
-                            "Are you sure you wish to remove the dictionary '" + name + "'?", "Confirm remove",
-                            JOptionPane.YES_NO_OPTION);
-                    if (result == JOptionPane.YES_OPTION) {
-                        _catalog.removeDictionary(dictionary);
-                    }
+            removeButton.addActionListener(e -> {
+                final int result = JOptionPane.showConfirmDialog(DictionaryListPanel.this,
+                        "Are you sure you wish to remove the dictionary '" + name + "'?", "Confirm remove",
+                        JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION) {
+                    _catalog.removeDictionary(dictionary);
                 }
             });
 
@@ -262,12 +240,12 @@ public class DictionaryListPanel extends DCPanel implements ReferenceDataChangeL
 
     @Override
     public void onAdd(final Dictionary dictionary) {
-        SwingUtilities.invokeLater(() -> updateComponents());
+        SwingUtilities.invokeLater(this::updateComponents);
     }
 
     @Override
     public void onRemove(final Dictionary dictionary) {
-        SwingUtilities.invokeLater(() -> updateComponents());
+        SwingUtilities.invokeLater(this::updateComponents);
     }
 
     @Override
@@ -278,6 +256,6 @@ public class DictionaryListPanel extends DCPanel implements ReferenceDataChangeL
 
     @Override
     public void onChange(final Dictionary oldPattern, final Dictionary newPattern) {
-        SwingUtilities.invokeLater(() -> updateComponents());
+        SwingUtilities.invokeLater(this::updateComponents);
     }
 }

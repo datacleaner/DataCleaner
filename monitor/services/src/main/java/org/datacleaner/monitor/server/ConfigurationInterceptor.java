@@ -45,7 +45,6 @@ public interface ConfigurationInterceptor {
      * @param out
      * @throws Exception
      */
-    void intercept(final String tenantId, DataCleanerJobContext job, final String datastoreName,
-            final InputStream in,
-            final OutputStream out) throws Exception;
+    void intercept(String tenantId, DataCleanerJobContext job, String datastoreName, InputStream in, OutputStream out)
+            throws Exception;
 }

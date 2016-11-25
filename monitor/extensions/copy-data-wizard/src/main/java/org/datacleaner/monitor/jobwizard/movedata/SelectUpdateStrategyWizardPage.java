@@ -57,9 +57,9 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
     private final List<ColumnMapping> _columnMappings;
     private final DataCleanerJobWizardSession _session;
 
-    public SelectUpdateStrategyWizardPage(final DataCleanerJobWizardSession session, final AnalysisJobBuilder jobBuilder,
-            final Datastore targetDatastore, final Table targetTable, final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert,
-            final List<ColumnMapping> columnMappings) {
+    public SelectUpdateStrategyWizardPage(final DataCleanerJobWizardSession session,
+            final AnalysisJobBuilder jobBuilder, final Datastore targetDatastore, final Table targetTable,
+            final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert, final List<ColumnMapping> columnMappings) {
         _session = session;
         _analysisJobBuilder = jobBuilder;
         _targetDatastore = targetDatastore;
@@ -144,8 +144,8 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
 
         // bind UPDATE and INSERT to outcome of a null check on the looked
         // up fields
-        final FilterComponentBuilder<NullCheckFilter, NullCheckCategory> nullCheck = _analysisJobBuilder
-                .addFilter(NullCheckFilter.class);
+        final FilterComponentBuilder<NullCheckFilter, NullCheckCategory> nullCheck =
+                _analysisJobBuilder.addFilter(NullCheckFilter.class);
         nullCheck.addInputColumns(tableLookup.getOutputColumns());
         update.setRequirement(nullCheck, NullCheckCategory.NOT_NULL);
         _insert.setRequirement(nullCheck, NullCheckCategory.NULL);
@@ -157,8 +157,8 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
         // set the ID conditions of the UPDATE ... WHERE clause
         final InputColumn<?>[] conditionValues = new InputColumn[1];
         final String[] conditionColumns = new String[1];
-        conditionValues[0] = _analysisJobBuilder.getSourceColumnByName(primaryKeyColumnMapping.getSourceColumn()
-                .getQualifiedLabel());
+        conditionValues[0] = _analysisJobBuilder
+                .getSourceColumnByName(primaryKeyColumnMapping.getSourceColumn().getQualifiedLabel());
         conditionColumns[0] = primaryKeyColumnMapping.getTargetColumn().getName();
 
         final InputColumn<?>[] values;
@@ -178,16 +178,16 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
             int i = 0;
             for (final ColumnMapping mapping : mappings) {
                 if (!primaryKeyColumnMapping.equals(mapping)) {
-                    values[i] = _analysisJobBuilder
-                            .getSourceColumnByName(mapping.getSourceColumn().getQualifiedLabel());
+                    values[i] =
+                            _analysisJobBuilder.getSourceColumnByName(mapping.getSourceColumn().getQualifiedLabel());
                     columnNames[i] = mapping.getTargetColumn().getName();
                     i++;
                 }
             }
         }
 
-        final AnalyzerComponentBuilder<UpdateTableAnalyzer> update = _analysisJobBuilder
-                .addAnalyzer(UpdateTableAnalyzer.class);
+        final AnalyzerComponentBuilder<UpdateTableAnalyzer> update =
+                _analysisJobBuilder.addAnalyzer(UpdateTableAnalyzer.class);
         update.setConfiguredProperty("Datastore", _targetDatastore);
         update.setConfiguredProperty("Schema name", _targetTable.getSchema().getName());
         update.setConfiguredProperty("Table name", _targetTable.getName());
@@ -205,16 +205,16 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
             final ColumnMapping primaryKeyColumnMapping) {
         final InputColumn<?>[] conditionValues = new InputColumn[1];
         final String[] conditionColumns = new String[1];
-        conditionValues[0] = _analysisJobBuilder.getSourceColumnByName(primaryKeyColumnMapping.getSourceColumn()
-                .getQualifiedLabel());
+        conditionValues[0] = _analysisJobBuilder
+                .getSourceColumnByName(primaryKeyColumnMapping.getSourceColumn().getQualifiedLabel());
         conditionColumns[0] = primaryKeyColumnMapping.getTargetColumn().getName();
 
         // use the target (ANY) column as output of the lookup
         final String[] outputColumns = new String[1];
         outputColumns[0] = primaryKeyColumnMapping.getTargetColumn().getName();
 
-        final TransformerComponentBuilder<TableLookupTransformer> tableLookup = _analysisJobBuilder
-                .addTransformer(TableLookupTransformer.class);
+        final TransformerComponentBuilder<TableLookupTransformer> tableLookup =
+                _analysisJobBuilder.addTransformer(TableLookupTransformer.class);
         tableLookup.setConfiguredProperty("Datastore", _targetDatastore);
         tableLookup.setConfiguredProperty("Schema name", _targetTable.getSchema().getName());
         tableLookup.setConfiguredProperty("Table name", _targetTable.getName());

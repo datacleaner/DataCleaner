@@ -21,8 +21,6 @@ package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -64,24 +62,18 @@ public abstract class AbstractMultipleNumberPropertyWidget<N> extends AbstractPr
         updateComponents(currentValue);
 
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addTextField(null, true);
-                fireValueChanged();
-            }
+        addButton.addActionListener(e -> {
+            addTextField(null, true);
+            fireValueChanged();
         });
 
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final int componentCount = _textFieldPanel.getComponentCount();
-                if (componentCount > 0) {
-                    _textFieldPanel.remove(componentCount - 1);
-                    _textFieldPanel.updateUI();
-                    fireValueChanged();
-                }
+        removeButton.addActionListener(e -> {
+            final int componentCount = _textFieldPanel.getComponentCount();
+            if (componentCount > 0) {
+                _textFieldPanel.remove(componentCount - 1);
+                _textFieldPanel.updateUI();
+                fireValueChanged();
             }
         });
 

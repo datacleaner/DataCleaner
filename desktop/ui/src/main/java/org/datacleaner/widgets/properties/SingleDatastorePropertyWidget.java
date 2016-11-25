@@ -20,7 +20,6 @@
 package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +76,8 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
     @Inject
     public SingleDatastorePropertyWidget(final ComponentBuilder componentBuilder,
-            final ConfiguredPropertyDescriptor propertyDescriptor, final DatastoreCatalog datastoreCatalog, final DCModule dcModule) {
+            final ConfiguredPropertyDescriptor propertyDescriptor, final DatastoreCatalog datastoreCatalog,
+            final DCModule dcModule) {
         super(componentBuilder, propertyDescriptor);
         _datastoreCatalog = datastoreCatalog;
         _dcModule = dcModule;
@@ -101,12 +101,9 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         _comboBox = new DCComboBox<>(list);
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
 
-        addComboListener(new Listener<Datastore>() {
-            @Override
-            public void onItemSelected(final Datastore item) {
-                openConnection(item);
-                fireValueChanged();
-            }
+        addComboListener(item -> {
+            openConnection(item);
+            fireValueChanged();
         });
 
         final Datastore currentValue = (Datastore) componentBuilder.getConfiguredProperty(propertyDescriptor);
@@ -137,11 +134,11 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     }
 
     private void populateCreateDatastoreMenu(final JPopupMenu createDatastoreMenu) {
-        final DatabaseDriverCatalog databaseDriverCatalog = _dcModule.createInjectorBuilder().getInstance(
-                DatabaseDriverCatalog.class);
+        final DatabaseDriverCatalog databaseDriverCatalog =
+                _dcModule.createInjectorBuilder().getInstance(DatabaseDriverCatalog.class);
 
-        final List<DatastoreDescriptor> availableDatastoreDescriptors = new DatastoreDescriptors(databaseDriverCatalog)
-                .getAvailableDatastoreDescriptors();
+        final List<DatastoreDescriptor> availableDatastoreDescriptors =
+                new DatastoreDescriptors(databaseDriverCatalog).getAvailableDatastoreDescriptors();
 
         for (final DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
             if (_onlyUpdatableDatastores) {
@@ -150,11 +147,11 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
                 }
             }
 
-            final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(),
-                    datastoreDescriptor.getIconPath());
-            menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),
-                    datastoreDescriptor.getDatastoreClass(),
-                    datastoreDescriptor.getDatastoreDialogClass()));
+            final JMenuItem menuItem =
+                    WidgetFactory.createMenuItem(datastoreDescriptor.getName(), datastoreDescriptor.getIconPath());
+            menuItem.addActionListener(
+                    createActionListener(datastoreDescriptor.getName(), datastoreDescriptor.getDatastoreClass(),
+                            datastoreDescriptor.getDatastoreDialogClass()));
             createDatastoreMenu.add(menuItem);
         }
     }
@@ -162,20 +159,15 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     private ActionListener createActionListener(final String datastoreName,
             final Class<? extends Datastore> datastoreClass,
             final Class<? extends AbstractDialog> datastoreDialogClass) {
-        return new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null)
-                        .createInjector();
-                final AbstractDialog dialog = injectorWithNullDatastore.getInstance(datastoreDialogClass);
-                if (dialog instanceof JdbcDatastoreDialog) {
-                    final JdbcDatastoreDialog jdbcDatastoreDialog = (JdbcDatastoreDialog) dialog;
-                    jdbcDatastoreDialog.setSelectedDatabase(datastoreName);
-                }
-                dialog.setVisible(true);
+        return e -> {
+            final Injector injectorWithNullDatastore =
+                    _dcModule.createInjectorBuilder().with(datastoreClass, null).createInjector();
+            final AbstractDialog dialog = injectorWithNullDatastore.getInstance(datastoreDialogClass);
+            if (dialog instanceof JdbcDatastoreDialog) {
+                final JdbcDatastoreDialog jdbcDatastoreDialog = (JdbcDatastoreDialog) dialog;
+                jdbcDatastoreDialog.setSelectedDatabase(datastoreName);
             }
-
+            dialog.setVisible(true);
         };
     }
 
@@ -260,11 +252,6 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     }
 
     public void connectToSchemaNamePropertyWidget(final SchemaNamePropertyWidget schemaNamePropertyWidget) {
-        addComboListener(new Listener<Datastore>() {
-            @Override
-            public void onItemSelected(final Datastore item) {
-                schemaNamePropertyWidget.setDatastore(item);
-            }
-        });
+        addComboListener(schemaNamePropertyWidget::setDatastore);
     }
 }

@@ -41,7 +41,8 @@ import org.slf4j.LoggerFactory;
  * Transformer for building lists based on values in a row.
  */
 @Named("Build list")
-@Description("Build a list containing a variable amount of elements. Adds the capability to save multiple values in a single field.")
+@Description("Build a list containing a variable amount of elements. "
+        + "Adds the capability to save multiple values in a single field.")
 @Categorized(DataStructuresCategory.class)
 public class BuildListTransformer implements Transformer {
 
@@ -83,8 +84,7 @@ public class BuildListTransformer implements Transformer {
                 sb.append(",");
             }
         }
-        final OutputColumns outputColumns = new OutputColumns(new String[] { sb.toString() }, new Class[] { List.class });
-        return outputColumns;
+        return new OutputColumns(new String[] { sb.toString() }, new Class[] { List.class });
     }
 
     @Override
@@ -107,8 +107,7 @@ public class BuildListTransformer implements Transformer {
             }
         }
 
-        final List<?>[] result = new List[] { list };
-        return result;
+        return (List<?>[]) new List[] { list };
     }
 
 }

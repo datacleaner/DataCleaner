@@ -47,8 +47,8 @@ public class ReferenceDataComboBoxListRenderer extends DCListCellRenderer {
     private String nullText = "- none -";
 
     @Override
-    public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected,
-            final boolean cellHasFocus) {
+    public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index,
+            final boolean isSelected, final boolean cellHasFocus) {
         final JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
         if (value == null) {

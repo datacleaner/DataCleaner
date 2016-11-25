@@ -33,7 +33,6 @@ import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
@@ -73,8 +72,8 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
 
         _queryOptimizerRef = createQueryOptimizerRef();
 
-        final boolean aggressiveOptimizeSelectClause = SystemProperties.getBoolean(
-                SystemProperties.QUERY_SELECTCLAUSE_OPTIMIZE, false);
+        final boolean aggressiveOptimizeSelectClause =
+                SystemProperties.getBoolean(SystemProperties.QUERY_SELECTCLAUSE_OPTIMIZE, false);
         if (!aggressiveOptimizeSelectClause) {
             final Collection<InputColumn<?>> sourceColumns = stream.getAnalysisJob().getSourceColumns();
             final List<Column> columns = new ArrayList<>();
@@ -111,12 +110,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
         }
 
         final Collection<InputColumn<?>> sourceInputColumns = getAnalysisJob().getSourceColumns();
-        final List<Column> sourceColumns = CollectionUtils.map(sourceInputColumns, new Func<InputColumn<?>, Column>() {
-            @Override
-            public Column eval(final InputColumn<?> inputColumn) {
-                return inputColumn.getPhysicalColumn();
-            }
-        });
+        final List<Column> sourceColumns = CollectionUtils.map(sourceInputColumns, InputColumn::getPhysicalColumn);
 
         for (final Column primaryKeyColumn : primaryKeyColumns) {
             if (!sourceColumns.contains(primaryKeyColumn)) {
@@ -142,10 +136,8 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
                     logger.debug("Base query for row processing: {}", baseQuery);
 
                     // try to optimize
-                    final RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore,
-                            getConsumersSorted(), baseQuery);
 
-                    return optimizer;
+                    return new RowProcessingQueryOptimizerImpl(datastore, getConsumersSorted(), baseQuery);
                 } catch (final RuntimeException e) {
                     logger.error("Failed to build query optimizer! {}", e.getMessage(), e);
                     throw e;
@@ -163,8 +155,9 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
     public void addPhysicalColumns(final Column... columns) {
         for (final Column column : columns) {
             if (!getTable().equals(column.getTable())) {
-                throw new IllegalArgumentException("Column does not pertain to the correct table. Expected table: "
-                        + getTable() + ", actual table: " + column.getTable());
+                throw new IllegalArgumentException(
+                        "Column does not pertain to the correct table. Expected table: " + getTable()
+                                + ", actual table: " + column.getTable());
             }
             _physicalColumns.add(column);
         }
@@ -200,8 +193,8 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
 
         final ConsumeRowHandler consumeRowHandler = createConsumeRowHandler();
 
-        final RowConsumerTaskListener taskListener = new RowConsumerTaskListener(getAnalysisJob(), analysisListener,
-                getTaskRunner());
+        final RowConsumerTaskListener taskListener =
+                new RowConsumerTaskListener(getAnalysisJob(), analysisListener, getTaskRunner());
 
         final Datastore datastore = getAnalysisJob().getDatastore();
 
@@ -237,8 +230,9 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
 
                     final MetaModelInputRow inputRow = new MetaModelInputRow(rowId, metaModelRow);
 
-                    final ConsumeRowTask task = new ConsumeRowTask(consumeRowHandler, rowProcessingMetrics, inputRow,
-                            analysisListener, numTasks);
+                    final ConsumeRowTask task =
+                            new ConsumeRowTask(consumeRowHandler, rowProcessingMetrics, inputRow, analysisListener,
+                                    numTasks);
                     getTaskRunner().run(task, taskListener);
 
                 }
@@ -251,14 +245,14 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
 
     @Override
     protected boolean runRowProcessingInternal(final List<TaskRunnable> postProcessingTasks) {
-        final TaskListener runCompletionListener = new ForkTaskListener("run row processing (" + getStream() + ")",
-                getTaskRunner(), postProcessingTasks);
+        final TaskListener runCompletionListener =
+                new ForkTaskListener("run row processing (" + getStream() + ")", getTaskRunner(), postProcessingTasks);
 
         final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
         final RunRowProcessingPublisherTask runTask = new RunRowProcessingPublisherTask(this, rowProcessingMetrics);
 
-        final TaskListener initFinishedListener = new RunNextTaskTaskListener(getTaskRunner(), runTask,
-                runCompletionListener);
+        final TaskListener initFinishedListener =
+                new RunNextTaskTaskListener(getTaskRunner(), runTask, runCompletionListener);
 
         // kick off the initialization
         initializeConsumers(initFinishedListener);

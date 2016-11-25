@@ -51,8 +51,8 @@ public class WriteDataResultHtmlRenderer implements Renderer<WriteDataResult, Ht
         final int updates = r.getUpdatesCount();
         final int errors = r.getErrorRowCount();
         final int total = inserts + updates + errors;
-        final Datastore datastore = (_configuration == null ? null : r.getDatastore(_configuration
-                .getDatastoreCatalog()));
+        final Datastore datastore =
+                (_configuration == null ? null : r.getDatastore(_configuration.getDatastoreCatalog()));
 
         final StringBuilder sb = new StringBuilder("<div>");
         if (datastore != null) {

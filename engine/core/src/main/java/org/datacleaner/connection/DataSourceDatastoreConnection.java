@@ -28,8 +28,8 @@ import org.apache.metamodel.schema.TableType;
 /**
  * A {@link DatastoreConnection} based on a {@link DataSource}.
  */
-public class DataSourceDatastoreConnection extends UsageAwareDatastoreConnection<UpdateableDataContext> implements
-        UpdateableDatastoreConnection {
+public class DataSourceDatastoreConnection extends UsageAwareDatastoreConnection<UpdateableDataContext>
+        implements UpdateableDatastoreConnection {
 
     private final UpdateableDataContext _dataContext;
     private final SchemaNavigator _schemaNavigator;

@@ -22,11 +22,11 @@ package org.datacleaner.beans.transform;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.joda.time.LocalDate;
+
+import junit.framework.TestCase;
 
 public class FormatDateTransformerTest extends TestCase {
 
@@ -43,7 +43,7 @@ public class FormatDateTransformerTest extends TestCase {
         assertEquals("1970-01-01 00:00:00",
                 transformer.transform(new MockInputRow().put(col, new LocalDate(1970, 1, 1).toDate()))[0]);
 
-        Date date = new Date();
+        final Date date = new Date();
         assertEquals(new SimpleDateFormat(transformer.dateFormat).format(date),
                 transformer.transform(new MockInputRow().put(col, date))[0]);
     }

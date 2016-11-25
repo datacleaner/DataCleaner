@@ -73,7 +73,7 @@ public interface AnalysisJobBuilderWindow extends DCWindow {
      *
      * @param datastore
      */
-    void setDatastore(final Datastore datastore);
+    void setDatastore(Datastore datastore);
 
     /**
      * Initializes the window to use a particular datastore in the schema tree.
@@ -82,7 +82,7 @@ public interface AnalysisJobBuilderWindow extends DCWindow {
      * @param expandTree
      *            true if the datastore tree should be initially expanded.
      */
-    void setDatastore(final Datastore datastore, boolean expandTree);
+    void setDatastore(Datastore datastore, boolean expandTree);
 
     /**
      * Gets the current job file

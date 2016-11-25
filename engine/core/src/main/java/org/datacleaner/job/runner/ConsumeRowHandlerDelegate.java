@@ -85,8 +85,8 @@ final class ConsumeRowHandlerDelegate implements RowProcessingChain {
             return;
         }
 
-        final ConsumeRowHandlerDelegate subDelegate = new ConsumeRowHandlerDelegate(_consumers, row, nextIndex,
-                outcomes, _resultRecords, _resultOutcomes);
+        final ConsumeRowHandlerDelegate subDelegate =
+                new ConsumeRowHandlerDelegate(_consumers, row, nextIndex, outcomes, _resultRecords, _resultOutcomes);
         subDelegate.consume();
     }
 

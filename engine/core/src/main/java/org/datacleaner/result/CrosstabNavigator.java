@@ -139,8 +139,7 @@ public class CrosstabNavigator<E extends Serializable> implements Cloneable {
     @Override
     public CrosstabNavigator<E> clone() {
         try {
-            @SuppressWarnings("unchecked") final
-            CrosstabNavigator<E> n = (CrosstabNavigator<E>) super.clone();
+            @SuppressWarnings("unchecked") final CrosstabNavigator<E> n = (CrosstabNavigator<E>) super.clone();
             n.categories = categories.clone();
             return n;
         } catch (final CloneNotSupportedException e) {

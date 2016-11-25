@@ -59,10 +59,12 @@ public class DatastoreSchemaController {
     TenantContextFactory _tenantContextFactory;
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    @RequestMapping(value = "/{tenant}/datastores/{datastore}.schemas", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/{tenant}/datastores/{datastore}.schemas", method = RequestMethod.GET,
+            produces = "application/json")
     @ResponseBody
-    public Map<String, Object> getSchemas(final HttpServletResponse response, @PathVariable("tenant") final String tenant,
-            @PathVariable("datastore") String datastoreName) throws IOException {
+    public Map<String, Object> getSchemas(final HttpServletResponse response,
+            @PathVariable("tenant") final String tenant, @PathVariable("datastore") String datastoreName)
+            throws IOException {
 
         datastoreName = datastoreName.replaceAll("\\+", " ");
 

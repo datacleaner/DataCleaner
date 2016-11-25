@@ -119,10 +119,9 @@ public class PatternFinderResult implements AnalyzerResult {
             @Override
             public Collection<String> getParameterSuggestions() {
                 final Crosstab<?> crosstab = getSingleCrosstab();
-                final CrosstabDimension patternDimension = crosstab
-                        .getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
-                final List<String> categories = patternDimension.getCategories();
-                return categories;
+                final CrosstabDimension patternDimension =
+                        crosstab.getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
+                return patternDimension.getCategories();
             }
         };
     }
@@ -149,10 +148,10 @@ public class PatternFinderResult implements AnalyzerResult {
         final CrosstabDimension patternDimension = crosstab.getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
         final List<String> categories = patternDimension.getCategories();
         for (final String category : categories) {
-            final SimpleStringPattern stringPattern = new SimpleStringPattern(category, category, _tokenizerConfiguration);
+            final SimpleStringPattern stringPattern =
+                    new SimpleStringPattern(category, category, _tokenizerConfiguration);
             if (stringPattern.matches(pattern)) {
-                final Object value = crosstab
-                        .where(patternDimension, category)
+                final Object value = crosstab.where(patternDimension, category)
                         .where(PatternFinderAnalyzer.DIMENSION_NAME_MEASURES, PatternFinderAnalyzer.MEASURE_MATCH_COUNT)
                         .get();
                 if (value instanceof Number) {

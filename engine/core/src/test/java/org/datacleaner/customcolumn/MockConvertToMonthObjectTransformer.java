@@ -46,13 +46,13 @@ public class MockConvertToMonthObjectTransformer implements Transformer {
     }
 
     @Override
-    public Month[] transform(InputRow inputRow) {
-        String value = inputRow.getValue(monthString);
-        Month monthObject = createMonthObject(value);
+    public Month[] transform(final InputRow inputRow) {
+        final String value = inputRow.getValue(monthString);
+        final Month monthObject = createMonthObject(value);
         return new Month[] { monthObject };
     }
 
-    private Month createMonthObject(String value) {
+    private Month createMonthObject(final String value) {
         Month returnObject = null;
         if (value.equalsIgnoreCase("january")) {
             returnObject = new Month("January", "JAN", 1);

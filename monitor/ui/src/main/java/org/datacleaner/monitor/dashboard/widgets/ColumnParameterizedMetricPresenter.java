@@ -43,8 +43,8 @@ public class ColumnParameterizedMetricPresenter implements MetricPresenter {
     private final FlowPanel _panel;
     private final List<MetricIdentifier> _selectedMetrics;
 
-    public ColumnParameterizedMetricPresenter(final MetricIdentifier metricIdentifier, final List<MetricIdentifier> activeMetrics,
-            final MetricGroup metricGroup) {
+    public ColumnParameterizedMetricPresenter(final MetricIdentifier metricIdentifier,
+            final List<MetricIdentifier> activeMetrics, final MetricGroup metricGroup) {
         _metricIdentifier = metricIdentifier;
         _activeMetrics = activeMetrics;
         _metricGroup = metricGroup;

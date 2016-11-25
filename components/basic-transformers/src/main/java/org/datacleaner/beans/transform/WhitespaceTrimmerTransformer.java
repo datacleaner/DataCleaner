@@ -51,7 +51,8 @@ public class WhitespaceTrimmerTransformer implements Transformer {
     public WhitespaceTrimmerTransformer() {
     }
 
-    public WhitespaceTrimmerTransformer(final boolean trimLeft, final boolean trimRight, final boolean trimMultipleToSingleSpace) {
+    public WhitespaceTrimmerTransformer(final boolean trimLeft, final boolean trimRight,
+            final boolean trimMultipleToSingleSpace) {
         this();
         this.trimLeft = trimLeft;
         this.trimRight = trimRight;

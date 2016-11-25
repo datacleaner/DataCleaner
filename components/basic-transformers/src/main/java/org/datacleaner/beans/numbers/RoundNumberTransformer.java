@@ -35,7 +35,8 @@ import org.datacleaner.components.categories.NumbersCategory;
  * Simple transformer for rounding a number
  */
 @Named("Round number")
-@Description("Transformation for rounding a number, typically to the nearest integer, nearest ten, hundred or thousand.")
+@Description(
+        "Transformation for rounding a number, typically to the nearest integer, nearest ten, hundred or thousand.")
 @Categorized(NumbersCategory.class)
 public class RoundNumberTransformer implements Transformer {
 
@@ -43,7 +44,8 @@ public class RoundNumberTransformer implements Transformer {
     InputColumn<Number> _number;
 
     @Configured
-    @Description("Defines the factor of rounding. A factor of 1 will round to the nearest integer. A factor of 1000 will round the number to the nearest thousand.")
+    @Description( "Defines the factor of rounding. A factor of 1 will round to the nearest integer. "
+            + "A factor of 1000 will round the number to the nearest thousand.")
     @NumberProperty(zero = false, positive = true, negative = false)
     int _roundFactor = 1;
 

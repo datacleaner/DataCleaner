@@ -52,8 +52,9 @@ public class QuickAnalysisActionListener implements ActionListener {
     private final DataCleanerConfiguration _configuration;
 
     @Inject
-    protected QuickAnalysisActionListener(final Datastore datastore, @Nullable final Table table, @Nullable final Column[] columns,
-            final DCModule dcModule, final UserPreferences userPreferences, final DataCleanerConfiguration configuration) {
+    protected QuickAnalysisActionListener(final Datastore datastore, @Nullable final Table table,
+            @Nullable final Column[] columns, final DCModule dcModule, final UserPreferences userPreferences,
+            final DataCleanerConfiguration configuration) {
         _datastore = datastore;
         _table = table;
         _columns = columns;
@@ -82,8 +83,8 @@ public class QuickAnalysisActionListener implements ActionListener {
         ajb.setDatastore(_datastore);
         ajb.addSourceColumns(getColumns());
 
-        final QuickAnalysisStrategy quickAnalysisStrategy = QuickAnalysisStrategy
-                .loadFromUserPreferences(_userPreferences);
+        final QuickAnalysisStrategy quickAnalysisStrategy =
+                QuickAnalysisStrategy.loadFromUserPreferences(_userPreferences);
 
         quickAnalysisStrategy.configureAnalysisJobBuilder(ajb);
 

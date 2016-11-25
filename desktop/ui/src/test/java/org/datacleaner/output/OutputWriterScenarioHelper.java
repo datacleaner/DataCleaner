@@ -70,27 +70,27 @@ public class OutputWriterScenarioHelper {
         return DateUtils.get(2010, Month.MARCH, 21);
     }
 
-    private Date normalizeDate(Date d) {
-        return DateUtils.get(d);
+    private Date normalizeDate(final Date date) {
+        return DateUtils.get(date);
     }
 
     public ArrayList<InputColumn<?>> getColumns() {
         return columns;
     }
 
-    public void writeExampleData(OutputWriter writer) {
+    public void writeExampleData(final OutputWriter writer) {
         // write just two columns in a row (the rest should be null
         writer.createRow().setValue(col1, "hello, world").setValue(col2, null).setValue(col3, getExampleDate())
                 .setValue(col4, null).setValue(col5, null).write();
 
-        TestObject testObject = new TestObject();
+        final TestObject testObject = new TestObject();
         writer.createRow().setValue(col1, null).setValue(col2, -20).setValue(col3, null).setValue(col4, 3.14f)
                 .setValue(col5, testObject).write();
 
         writer.close();
     }
 
-    public void performAssertions(DataSet dataSet, boolean typeSafe) {
+    public void performAssertions(final DataSet dataSet, final boolean typeSafe) {
         Assert.assertTrue(dataSet.next());
         assertEquals("hello, world", dataSet.getRow().getValue(0), typeSafe);
         assertEquals(null, dataSet.getRow().getValue(1), typeSafe);
@@ -108,14 +108,14 @@ public class OutputWriterScenarioHelper {
         Assert.assertFalse(dataSet.next());
     }
 
-    private void assertEquals(Object o1, Object o2, boolean typeSafe) {
+    private void assertEquals(final Object o1, final Object o2, final boolean typeSafe) {
         if (typeSafe) {
             if (o1 instanceof Date && o2 instanceof Date) {
-                Date date1 = (Date) o1;
-                Date date2 = normalizeDate((Date) o2);
+                final Date date1 = (Date) o1;
+                final Date date2 = normalizeDate((Date) o2);
 
-                long time1 = date1.getTime();
-                long time2 = date2.getTime();
+                final long time1 = date1.getTime();
+                final long time2 = date2.getTime();
                 if (time1 != time2) {
                     System.out.println("time1: " + time1);
                     System.out.println("time2: " + time2);
@@ -123,8 +123,8 @@ public class OutputWriterScenarioHelper {
                     Assert.fail("Non-equal dates: " + date1 + " and " + date2);
                 }
             } else if (o1 instanceof Float && o2 instanceof Double) {
-                Float f1 = (Float) o1;
-                Double d2 = (Double) o2;
+                final Float f1 = (Float) o1;
+                final Double d2 = (Double) o2;
                 Assert.assertEquals(f1.doubleValue(), d2.doubleValue(), 0.01);
             } else {
                 Assert.assertEquals(o1, o2);
@@ -133,8 +133,8 @@ public class OutputWriterScenarioHelper {
             if (o1 == null) {
                 Assert.assertEquals("", o2);
             } else {
-                String s1 = o1.toString();
-                String s2 = o2.toString();
+                final String s1 = o1.toString();
+                final String s2 = o2.toString();
                 Assert.assertEquals(s1, s2);
             }
         }

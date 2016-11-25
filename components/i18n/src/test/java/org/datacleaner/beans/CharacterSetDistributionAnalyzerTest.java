@@ -23,8 +23,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -39,14 +37,18 @@ import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 
 import com.ibm.icu.text.UnicodeSet;
 
+import junit.framework.TestCase;
+
 public class CharacterSetDistributionAnalyzerTest extends TestCase {
 
     private static final String CHARSET_NAMES =
-            "[Arabic, Armenian, Bengali, Cyrillic, Devanagari, Georgian, Greek, Gujarati, Gurmukhi, Han, Hangul, Hebrew, Hiragana, Kannada, Katakana, Latin, ASCII, Latin, non-ASCII, Malayalam, Oriya, Syriac, Tamil, Telugu, Thaana, Thai]";
+            "[Arabic, Armenian, Bengali, Cyrillic, Devanagari, Georgian, Greek, Gujarati, Gurmukhi, Han, Hangul, "
+                    + "Hebrew, Hiragana, Kannada, Katakana, Latin, ASCII, Latin, non-ASCII, Malayalam, Oriya, Syriac, "
+                    + "Tamil, Telugu, Thaana, Thai]";
 
     public void testCreateFilters() throws Exception {
-        Map<String, UnicodeSet> unicodeSets = CharacterSetDistributionAnalyzer.createUnicodeSets();
-        Set<String> keys = unicodeSets.keySet();
+        final Map<String, UnicodeSet> unicodeSets = CharacterSetDistributionAnalyzer.createUnicodeSets();
+        final Set<String> keys = unicodeSets.keySet();
         assertEquals(CHARSET_NAMES, keys.toString());
 
         UnicodeSet set = unicodeSets.get("Arabic");
@@ -67,12 +69,11 @@ public class CharacterSetDistributionAnalyzerTest extends TestCase {
     }
 
     public void testSimpleScenario() throws Exception {
-        CharacterSetDistributionAnalyzer analyzer = new CharacterSetDistributionAnalyzer();
-        InputColumn<String> col1 = new MockInputColumn<>("foo", String.class);
-        InputColumn<String> col2 = new MockInputColumn<>("bar", String.class);
+        final CharacterSetDistributionAnalyzer analyzer = new CharacterSetDistributionAnalyzer();
+        final InputColumn<String> col1 = new MockInputColumn<>("foo", String.class);
+        final InputColumn<String> col2 = new MockInputColumn<>("bar", String.class);
 
-        @SuppressWarnings("unchecked")
-        InputColumn<String>[] cols = new InputColumn[] { col1, col2 };
+        @SuppressWarnings("unchecked") final InputColumn<String>[] cols = new InputColumn[] { col1, col2 };
         analyzer._columns = cols;
         analyzer._annotationFactory = new InMemoryRowAnnotationFactory();
         analyzer.init();
@@ -84,21 +85,21 @@ public class CharacterSetDistributionAnalyzerTest extends TestCase {
         analyzer.run(new MockInputRow().put(col1, "بيانات الأنظف"), 1);
         analyzer.run(new MockInputRow().put(col1, "dữ liệu sạch hơn"), 1);
 
-        CharacterSetDistributionResult result = analyzer.getResult();
+        final CharacterSetDistributionResult result = analyzer.getResult();
         assertTrue(EqualsBuilder.equals(analyzer._columns, result.getColumns()));
         assertEquals(CHARSET_NAMES, Arrays.toString(result.getUnicodeSetNames()));
 
-        Crosstab<?> crosstab = result.getCrosstab();
+        final Crosstab<?> crosstab = result.getCrosstab();
         assertEquals("[Column, Measures]", Arrays.toString(crosstab.getDimensionNames()));
 
         assertEquals(CHARSET_NAMES, crosstab.getDimension("Measures").getCategories().toString());
 
-        CrosstabNavigator<?> cyrillicNavigation =
+        final CrosstabNavigator<?> cyrillicNavigation =
                 crosstab.navigate().where("Column", "foo").where("Measures", "Cyrillic");
         assertEquals("1", cyrillicNavigation.get().toString());
-        AnnotatedRowsResult cyrillicAnnotatedRowsResult =
+        final AnnotatedRowsResult cyrillicAnnotatedRowsResult =
                 (AnnotatedRowsResult) cyrillicNavigation.explore().getResult();
-        InputRow[] annotatedRows = cyrillicAnnotatedRowsResult.getRows();
+        final InputRow[] annotatedRows = cyrillicAnnotatedRowsResult.getRows();
         assertEquals(1, annotatedRows.length);
         assertEquals("Данныечистого", annotatedRows[0].getValue(col1));
         assertEquals("12",
@@ -106,8 +107,8 @@ public class CharacterSetDistributionAnalyzerTest extends TestCase {
         assertEquals("2",
                 crosstab.navigate().where("Column", "foo").where("Measures", "Latin, non-ASCII").get().toString());
 
-        String resultString = new CrosstabTextRenderer().render(result);
-        String[] resultLines = resultString.split("\n");
+        final String resultString = new CrosstabTextRenderer().render(result);
+        final String[] resultLines = resultString.split("\n");
         assertEquals(25, resultLines.length);
         assertEquals("                    foo    bar ", resultLines[0]);
         assertEquals("Arabic                1      0 ", resultLines[1]);

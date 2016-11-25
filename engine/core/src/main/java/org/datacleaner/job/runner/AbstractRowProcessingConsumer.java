@@ -66,17 +66,16 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     private final AtomicInteger _publishersClosedCount;
 
     protected AbstractRowProcessingConsumer(final RowProcessingPublisher publisher,
-            final HasComponentRequirement outcomeSinkJob,
-            final InputColumnSinkJob inputColumnSinkJob) {
-        this(publisher.getAnalysisJob(), publisher.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob, publisher
-                .getSourceColumnFinder());
+            final HasComponentRequirement outcomeSinkJob, final InputColumnSinkJob inputColumnSinkJob) {
+        this(publisher.getAnalysisJob(), publisher.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob,
+                publisher.getSourceColumnFinder());
     }
 
     protected AbstractRowProcessingConsumer(final AnalysisJob analysisJob, final AnalysisListener analysisListener,
             final HasComponentRequirement outcomeSinkJob, final InputColumnSinkJob inputColumnSinkJob,
             final SourceColumnFinder sourceColumnFinder) {
-        this(analysisJob, analysisListener, outcomeSinkJob, buildSourceJobsOfInputColumns(inputColumnSinkJob,
-                sourceColumnFinder));
+        this(analysisJob, analysisListener, outcomeSinkJob,
+                buildSourceJobsOfInputColumns(inputColumnSinkJob, sourceColumnFinder));
     }
 
     protected AbstractRowProcessingConsumer(final AnalysisJob analysisJob, final AnalysisListener analysisListener,
@@ -93,8 +92,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     }
 
     private static Set<HasComponentRequirement> buildSourceJobsOfInputColumns(
-            final InputColumnSinkJob inputColumnSinkJob,
-            final SourceColumnFinder sourceColumnFinder) {
+            final InputColumnSinkJob inputColumnSinkJob, final SourceColumnFinder sourceColumnFinder) {
         final Set<HasComponentRequirement> result = new HashSet<>();
 
         final Set<Object> sourceJobsOfInputColumns = sourceColumnFinder.findAllSourceJobs(inputColumnSinkJob);
@@ -143,8 +141,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         if (!satisfiedOutcomesForConsume) {
             return false;
         }
-        final boolean satisfiedInputsForConsume = satisfiedInputsForConsume(row, outcomes);
-        return satisfiedInputsForConsume;
+        return satisfiedInputsForConsume(row, outcomes);
     }
 
     @Override
@@ -197,8 +194,8 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
                 if (sourceJobsOfInputColumn instanceof HasComponentRequirement) {
                     final HasComponentRequirement hasComponentRequirement =
                             (HasComponentRequirement) sourceJobsOfInputColumn;
-                    final boolean satisfiedOutcomesForConsume = satisfiedOutcomesForConsume(hasComponentRequirement,
-                            row, outcomes);
+                    final boolean satisfiedOutcomesForConsume =
+                            satisfiedOutcomesForConsume(hasComponentRequirement, row, outcomes);
                     if (satisfiedOutcomesForConsume) {
                         return true;
                     }

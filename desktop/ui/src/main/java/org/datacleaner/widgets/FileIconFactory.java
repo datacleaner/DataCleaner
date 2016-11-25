@@ -30,5 +30,5 @@ import javax.swing.Icon;
  */
 public interface FileIconFactory {
 
-    Icon getIcon(File f);
+    Icon getIcon(File file);
 }

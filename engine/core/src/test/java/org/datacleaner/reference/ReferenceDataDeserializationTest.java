@@ -28,23 +28,24 @@ import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.SerializationUtils;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.junit.Ignore;
 
+import junit.framework.TestCase;
+
 public class ReferenceDataDeserializationTest extends TestCase {
 
     public void testDeserializeSimpleDictionary() throws Exception {
-        SimpleDictionary obj = deserialize("src/test/resources/serialized_ref_data/dc_4_dictionary_simple.dat");
+        final SimpleDictionary obj = deserialize("src/test/resources/serialized_ref_data/dc_4_dictionary_simple.dat");
         assertEquals("simple dictionary", obj.getName());
         assertEquals("[bar, baz, foo]", new TreeSet<>(obj.getValueSet()).toString());
         assertTrue(obj.isCaseSensitive());
     }
 
     public void testDeserializeTextFileDictionary() throws Exception {
-        TextFileDictionary obj = deserialize("src/test/resources/serialized_ref_data/dc_4_dictionary_text_file.dat");
+        final TextFileDictionary obj =
+                deserialize("src/test/resources/serialized_ref_data/dc_4_dictionary_text_file.dat");
         assertEquals("text file dictionary", obj.getName());
         assertEquals("dictionary.txt", obj.getFilename());
         assertEquals("UTF8", obj.getEncoding());
@@ -52,23 +53,23 @@ public class ReferenceDataDeserializationTest extends TestCase {
     }
 
     public void testDeserializeDatastoreDictionary() throws Exception {
-        DatastoreDictionary obj = deserialize("src/test/resources/serialized_ref_data/dc_4_dictionary_datastore.dat");
+        final DatastoreDictionary obj =
+                deserialize("src/test/resources/serialized_ref_data/dc_4_dictionary_datastore.dat");
         assertEquals("datastore dictionary", obj.getName());
         assertEquals("orderdb", obj.getDatastoreName());
         assertEquals("dictionary.term", obj.getQualifiedColumnName());
     }
 
     public void testDeserializeSimpleSynonymCatalog() throws Exception {
-        SimpleSynonymCatalog obj =
+        final SimpleSynonymCatalog obj =
                 deserialize("src/test/resources/serialized_ref_data/dc_4_synonym_catalog_simple.dat");
         assertEquals("simple synonym catalog", obj.getName());
-        assertEquals("{DK=DK, DNK=DK, Danmark=DK, Denmark=DK}",
-                new TreeMap<>(obj.getSynonymMap()).toString());
+        assertEquals("{DK=DK, DNK=DK, Danmark=DK, Denmark=DK}", new TreeMap<>(obj.getSynonymMap()).toString());
         assertTrue(obj.isCaseSensitive());
     }
 
     public void testDeserializeTextFileSynonymCatalog() throws Exception {
-        TextFileSynonymCatalog obj =
+        final TextFileSynonymCatalog obj =
                 deserialize("src/test/resources/serialized_ref_data/dc_4_synonym_catalog_text_file.dat");
         assertEquals("text file synonym catalog", obj.getName());
         assertEquals("synonyms.txt", obj.getFilename());
@@ -77,7 +78,7 @@ public class ReferenceDataDeserializationTest extends TestCase {
     }
 
     public void testDeserializeDatastoreSynonymCatalog() throws Exception {
-        DatastoreSynonymCatalog obj =
+        final DatastoreSynonymCatalog obj =
                 deserialize("src/test/resources/serialized_ref_data/dc_4_synonym_catalog_datastore.dat");
         assertEquals("datastore synonym catalog", obj.getName());
         assertEquals("orderdb", obj.getDatastoreName());
@@ -86,7 +87,7 @@ public class ReferenceDataDeserializationTest extends TestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T deserialize(String path) throws Exception {
+    private <T> T deserialize(final String path) throws Exception {
         try (FileInputStream in = new FileInputStream(new File(path))) {
             try (ChangeAwareObjectInputStream objectInputStream = new ChangeAwareObjectInputStream(in)) {
                 return (T) objectInputStream.readObject();
@@ -96,28 +97,30 @@ public class ReferenceDataDeserializationTest extends TestCase {
 
     @Ignore
     public void testSerialize() throws Exception {
-        Dictionary dict1 = new SimpleDictionary("simple dictionary", "foo", "bar", "baz");
+        final Dictionary dict1 = new SimpleDictionary("simple dictionary", "foo", "bar", "baz");
         serialize(dict1, "target/dc_4_dictionary_simple.dat");
 
-        Dictionary dict2 = new TextFileDictionary("text file dictionary", "dictionary.txt", "UTF8");
+        final Dictionary dict2 = new TextFileDictionary("text file dictionary", "dictionary.txt", "UTF8");
         serialize(dict2, "target/dc_4_dictionary_text_file.dat");
 
-        Dictionary dict3 = new DatastoreDictionary("datastore dictionary", "orderdb", "dictionary.term");
+        final Dictionary dict3 = new DatastoreDictionary("datastore dictionary", "orderdb", "dictionary.term");
         serialize(dict3, "target/dc_4_dictionary_datastore.dat");
 
-        Synonym synonym = new SimpleSynonym("DK", "Denmark", "Danmark", "DNK");
-        SynonymCatalog sc1 = new SimpleSynonymCatalog("simple synonym catalog", synonym);
+        final Synonym synonym = new SimpleSynonym("DK", "Denmark", "Danmark", "DNK");
+        final SynonymCatalog sc1 = new SimpleSynonymCatalog("simple synonym catalog", synonym);
         serialize(sc1, "target/dc_4_synonym_catalog_simple.dat");
 
-        SynonymCatalog sc2 = new TextFileSynonymCatalog("text file synonym catalog", "synonyms.txt", true, "UTF8");
+        final SynonymCatalog sc2 =
+                new TextFileSynonymCatalog("text file synonym catalog", "synonyms.txt", true, "UTF8");
         serialize(sc2, "target/dc_4_synonym_catalog_text_file.dat");
 
-        SynonymCatalog sc3 = new DatastoreSynonymCatalog("datastore synonym catalog", "orderdb", "synonyms.master",
-                new String[] { "synonyms.syn1", "synonyms.syn2" });
+        final SynonymCatalog sc3 =
+                new DatastoreSynonymCatalog("datastore synonym catalog", "orderdb", "synonyms.master",
+                        new String[] { "synonyms.syn1", "synonyms.syn2" });
         serialize(sc3, "target/dc_4_synonym_catalog_datastore.dat");
     }
 
-    private void serialize(Serializable obj, String path) throws Exception {
+    private void serialize(final Serializable obj, final String path) throws Exception {
         try (OutputStream out = new FileOutputStream(new File(path))) {
             SerializationUtils.serialize(obj, out);
         }

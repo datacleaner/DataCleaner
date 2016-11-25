@@ -22,7 +22,6 @@ package org.datacleaner.monitor.configuration;
 import java.util.List;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.monitor.job.JobContext;
@@ -73,8 +72,8 @@ public abstract class AbstractTenantContext implements TenantContext {
 
         final RepositoryFile resultFile;
         if (resultFilename.endsWith("-latest" + EXTENSION_RESULT)) {
-            final String jobName = resultFilename.substring(0,
-                    resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
+            final String jobName =
+                    resultFilename.substring(0, resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
             resultFile = resultFolder.getLatestFile(jobName, EXTENSION_RESULT);
         } else {
             resultFile = resultFolder.getFile(resultFilename);
@@ -86,22 +85,19 @@ public abstract class AbstractTenantContext implements TenantContext {
     @Override
     public final RepositoryFolder getJobFolder() {
         final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder jobsFolder = tenantFolder.getOrCreateFolder(PATH_JOBS);
-        return jobsFolder;
+        return tenantFolder.getOrCreateFolder(PATH_JOBS);
     }
 
     @Override
     public final RepositoryFolder getResultFolder() {
         final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder resultsFolder = tenantFolder.getOrCreateFolder(PATH_RESULTS);
-        return resultsFolder;
+        return tenantFolder.getOrCreateFolder(PATH_RESULTS);
     }
 
     @Override
     public final RepositoryFolder getTimelineFolder() {
         final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder timelinesFolder = tenantFolder.getOrCreateFolder(PATH_TIMELINES);
-        return timelinesFolder;
+        return tenantFolder.getOrCreateFolder(PATH_TIMELINES);
     }
 
     @Override
@@ -132,11 +128,6 @@ public abstract class AbstractTenantContext implements TenantContext {
         final DatastoreCatalog datastoreCatalog = getConfiguration().getDatastoreCatalog();
         final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
 
-        return CollectionUtils.map(datastoreNames, new Func<String, DatastoreIdentifier>() {
-            @Override
-            public DatastoreIdentifier eval(final String name) {
-                return new DatastoreIdentifier(name);
-            }
-        });
+        return CollectionUtils.map(datastoreNames, DatastoreIdentifier::new);
     }
 }

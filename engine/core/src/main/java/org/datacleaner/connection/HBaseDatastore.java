@@ -61,12 +61,10 @@ public class HBaseDatastore extends UsageAwareDatastore<HBaseDataContext> {
 
     @Override
     protected UsageAwareDatastoreConnection<HBaseDataContext> createDatastoreConnection() {
-        final HBaseConfiguration hBaseConfiguration = new HBaseConfiguration("HBase", _zookeeperHostname,
-                _zookeeperPort, _tableDefs, ColumnType.STRING);
+        final HBaseConfiguration hBaseConfiguration =
+                new HBaseConfiguration("HBase", _zookeeperHostname, _zookeeperPort, _tableDefs, ColumnType.STRING);
         final HBaseDataContext hBaseDataContext = new HBaseDataContext(hBaseConfiguration);
-        final DatastoreConnectionImpl<HBaseDataContext> connection = new DatastoreConnectionImpl<>(
-                hBaseDataContext, this);
-        return connection;
+        return new DatastoreConnectionImpl<>(hBaseDataContext, this);
     }
 
     public String getZookeeperHostname() {

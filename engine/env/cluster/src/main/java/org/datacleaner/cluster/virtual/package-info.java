@@ -18,6 +18,8 @@
  * Boston, MA  02110-1301  USA
  */
 /**
- * This package contains a cluster implementation which is virtual - i.e. it will simulate separate nodes, but they will actually be running on the same machine, even in the same JVM. Mostly useful for testing purposes, or potentially when parallel database access is desired.
+ * This package contains a cluster implementation which is virtual - i.e. it will simulate separate nodes,
+ * but they will actually be running on the same machine, even in the same JVM. Mostly useful for testing purposes,
+ * or potentially when parallel database access is desired.
  */
 package org.datacleaner.cluster.virtual;

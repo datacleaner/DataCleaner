@@ -21,9 +21,7 @@ package org.datacleaner.util;
 
 import java.awt.BasicStroke;
 import java.awt.Font;
-import java.awt.Paint;
 import java.awt.Shape;
-import java.awt.Stroke;
 import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
 
@@ -54,18 +52,8 @@ public class GraphUtils {
         final RenderContext<V, E> renderContext = visualizationViewer.getRenderContext();
 
         renderContext.setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM, false));
-        renderContext.setEdgeStrokeTransformer(new Transformer<E, Stroke>() {
-            @Override
-            public Stroke transform(final E input) {
-                return stroke;
-            }
-        });
-        renderContext.setEdgeDrawPaintTransformer(new Transformer<E, Paint>() {
-            @Override
-            public Paint transform(final E input) {
-                return WidgetUtils.BG_COLOR_MEDIUM;
-            }
-        });
+        renderContext.setEdgeStrokeTransformer(input -> stroke);
+        renderContext.setEdgeDrawPaintTransformer(input -> WidgetUtils.BG_COLOR_MEDIUM);
         renderContext.setVertexLabelRenderer(new DefaultVertexLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM));
         renderContext.setEdgeFontTransformer(GraphUtils.createFontTransformer());
         renderContext.setVertexFontTransformer(GraphUtils.createFontTransformer());
@@ -84,29 +72,26 @@ public class GraphUtils {
     }
 
     private static <E> Transformer<E, Font> createFontTransformer() {
-        return new Transformer<E, Font>() {
-            @Override
-            public Font transform(final E input) {
-                final Font defaultFont = WidgetUtils.FONT_SMALL;
-                if (input == null) {
-                    return defaultFont;
-                }
-
-                final String str;
-                if (input instanceof HasName) {
-                    str = ((HasName) input).getName();
-                } else if (input instanceof Object[]) {
-                    str = Arrays.toString((Object[]) input);
-                } else {
-                    str = input.toString();
-                }
-
-                if (defaultFont.canDisplayUpTo(str) == -1) {
-                    return defaultFont;
-                }
-                final Font findCompatibleFont = WidgetUtils.findCompatibleFont(str, WidgetUtils.FONT_SMALL);
-                return findCompatibleFont.deriveFont(WidgetUtils.FONT_SIZE_SMALL);
+        return input -> {
+            final Font defaultFont = WidgetUtils.FONT_SMALL;
+            if (input == null) {
+                return defaultFont;
             }
+
+            final String str;
+            if (input instanceof HasName) {
+                str = ((HasName) input).getName();
+            } else if (input instanceof Object[]) {
+                str = Arrays.toString((Object[]) input);
+            } else {
+                str = input.toString();
+            }
+
+            if (defaultFont.canDisplayUpTo(str) == -1) {
+                return defaultFont;
+            }
+            final Font findCompatibleFont = WidgetUtils.findCompatibleFont(str, WidgetUtils.FONT_SMALL);
+            return findCompatibleFont.deriveFont(WidgetUtils.FONT_SIZE_SMALL);
         };
     }
 }

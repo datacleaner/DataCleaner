@@ -36,8 +36,8 @@ public final class OdbDatastoreDialog extends AbstractFileBasedDatastoreDialog<O
 
     @Inject
     protected OdbDatastoreDialog(@Nullable final OdbDatastore originalDatastore,
-            final MutableDatastoreCatalog mutableDatastoreCatalog,
-            final WindowContext windowContext, final UserPreferences userPreferences) {
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
     }
 

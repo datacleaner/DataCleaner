@@ -19,10 +19,8 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import java.io.InputStream;
 import java.util.Map;
 
-import org.apache.metamodel.util.Func;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -79,7 +77,8 @@ final class ConfigurationCache {
      * @deprecated use {@link #ConfigurationCache(InjectionManagerFactory, TenantContext, Repository)} instead
      */
     @Deprecated
-    public ConfigurationCache(final DataCleanerEnvironment environment, final TenantContext tenantContext, final Repository repository) {
+    public ConfigurationCache(final DataCleanerEnvironment environment, final TenantContext tenantContext,
+            final Repository repository) {
         this(environment.getInjectionManagerFactory(), tenantContext, repository);
     }
 
@@ -94,8 +93,7 @@ final class ConfigurationCache {
                 lastModified = _file.getLastModified();
                 if (_configuration == null || lastModified != _lastModifiedCache) {
                     final DataCleanerConfiguration readConfiguration = readConfiguration();
-                    final DataCleanerConfiguration decoratedConfiguration = decorateConfiguration(readConfiguration);
-                    _configuration = decoratedConfiguration;
+                    _configuration = decorateConfiguration(readConfiguration);
                 }
             }
         }
@@ -112,16 +110,16 @@ final class ConfigurationCache {
     }
 
     DataCleanerConfiguration readConfiguration(final Map<String, String> overrideProperties) {
-        final ConfigurationReaderInterceptor interceptor = new MonitorConfigurationReaderInterceptor(_repository,
-                _tenantContext, overrideProperties, _injectionManagerFactory);
+        final ConfigurationReaderInterceptor interceptor =
+                new MonitorConfigurationReaderInterceptor(_repository, _tenantContext, overrideProperties,
+                        _injectionManagerFactory);
         final JaxbConfigurationReader reader = new JaxbConfigurationReader(interceptor);
 
         final RepositoryFile configurationFile = getConfigurationFile();
         _lastModifiedCache = configurationFile.getLastModified();
         if (_lastModifiedCache < 0) {
-            logger.warn(
-                    "Last modified timestamp was negative ({})! Returning plain DataCleanerConfiguration since this indicates that the file has been deleted.",
-                    _lastModifiedCache);
+            logger.warn("Last modified timestamp was negative ({})! Returning plain DataCleanerConfiguration "
+                    + "since this indicates that the file has been deleted.", _lastModifiedCache);
             final RepositoryFolder tenantRootFolder = _tenantContext.getTenantRootFolder();
             final DataCleanerHomeFolder homeFolder = new DataCleanerHomeFolderImpl(tenantRootFolder);
             final DataCleanerEnvironmentImpl baseEnvironment =
@@ -131,16 +129,7 @@ final class ConfigurationCache {
 
         logger.info("Reading configuration from file: {}", configurationFile);
 
-        final DataCleanerConfiguration readConfiguration = configurationFile
-                .readFile(new Func<InputStream, DataCleanerConfiguration>() {
-                    @Override
-                    public DataCleanerConfiguration eval(final InputStream inputStream) {
-                        final DataCleanerConfiguration readConfiguration = reader.read(inputStream);
-                        return readConfiguration;
-                    }
-                });
-
-        return readConfiguration;
+        return configurationFile.readFile(reader::read);
     }
 
     public void clearCache() {

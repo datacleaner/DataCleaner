@@ -36,7 +36,7 @@ public class MockRenderers {
     public static class RenderableString implements Renderable {
         private final String str;
 
-        public RenderableString(String str) {
+        public RenderableString(final String str) {
             this.str = str;
         }
 
@@ -49,7 +49,7 @@ public class MockRenderers {
     @RendererBean(TextRenderingFormat.class)
     public static class FooPrecedenceRenderer implements Renderer<RenderableString, String> {
         @Override
-        public RendererPrecedence getPrecedence(RenderableString renderable) {
+        public RendererPrecedence getPrecedence(final RenderableString renderable) {
             if (renderable.toString().equals("foo")) {
                 return RendererPrecedence.HIGHEST;
             }
@@ -57,7 +57,7 @@ public class MockRenderers {
         }
 
         @Override
-        public String render(RenderableString renderable) {
+        public String render(final RenderableString renderable) {
             return "high";
         }
     }
@@ -65,7 +65,7 @@ public class MockRenderers {
     @RendererBean(TextRenderingFormat.class)
     public static class BarPrecedenceRenderer implements Renderer<RenderableString, String> {
         @Override
-        public RendererPrecedence getPrecedence(RenderableString renderable) {
+        public RendererPrecedence getPrecedence(final RenderableString renderable) {
             if (renderable.toString().equals("bar")) {
                 return RendererPrecedence.HIGHEST;
             }
@@ -73,7 +73,7 @@ public class MockRenderers {
         }
 
         @Override
-        public String render(RenderableString renderable) {
+        public String render(final RenderableString renderable) {
             return "low";
         }
     }
@@ -82,7 +82,7 @@ public class MockRenderers {
     public static class ConditionalPrecedenceRenderer implements Renderer<RenderableString, String> {
 
         @Override
-        public RendererPrecedence getPrecedence(RenderableString renderable) {
+        public RendererPrecedence getPrecedence(final RenderableString renderable) {
             // renderable's toString() method should return the name of the
             // precedence (can also be used for testing exceptions in
             // resolving).
@@ -90,7 +90,7 @@ public class MockRenderers {
         }
 
         @Override
-        public String render(RenderableString renderable) {
+        public String render(final RenderableString renderable) {
             return "low";
         }
     }
@@ -99,12 +99,12 @@ public class MockRenderers {
     public static class InvalidRenderer1 implements Renderer<AnalyzerResult, Object> {
 
         @Override
-        public RendererPrecedence getPrecedence(AnalyzerResult renderable) {
+        public RendererPrecedence getPrecedence(final AnalyzerResult renderable) {
             return RendererPrecedence.MEDIUM;
         }
 
         @Override
-        public Object render(AnalyzerResult result) {
+        public Object render(final AnalyzerResult result) {
             return null;
         }
     }
@@ -113,24 +113,24 @@ public class MockRenderers {
     public static class InvalidRenderer4 implements Renderer<AnalyzerResult, Integer> {
 
         @Override
-        public RendererPrecedence getPrecedence(AnalyzerResult renderable) {
+        public RendererPrecedence getPrecedence(final AnalyzerResult renderable) {
             return RendererPrecedence.MEDIUM;
         }
 
         @Override
-        public Integer render(AnalyzerResult result) {
+        public Integer render(final AnalyzerResult result) {
             return null;
         }
     }
 
     public static class InvalidRenderer2 implements Renderer<AnalyzerResult, String> {
         @Override
-        public RendererPrecedence getPrecedence(AnalyzerResult renderable) {
+        public RendererPrecedence getPrecedence(final AnalyzerResult renderable) {
             return RendererPrecedence.MEDIUM;
         }
 
         @Override
-        public String render(AnalyzerResult result) {
+        public String render(final AnalyzerResult result) {
             return null;
         }
     }

@@ -19,18 +19,18 @@
  */
 package org.datacleaner.beans.script;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 
+import junit.framework.TestCase;
+
 public class JavaScriptFilterTest extends TestCase {
 
     public void testNotNullFilteringString() throws Exception {
-        JavaScriptFilter filter = new JavaScriptFilter();
+        final JavaScriptFilter filter = new JavaScriptFilter();
         filter.setSourceCode("my_col != null;");
-        InputColumn<String> myCol = new MockInputColumn<>("my_col", String.class);
+        final InputColumn<String> myCol = new MockInputColumn<>("my_col", String.class);
         filter.setColumns(new InputColumn[] { myCol });
         filter.init();
 
@@ -41,9 +41,9 @@ public class JavaScriptFilterTest extends TestCase {
     }
 
     public void testNotNullFilteringNumber() throws Exception {
-        JavaScriptFilter filter = new JavaScriptFilter();
+        final JavaScriptFilter filter = new JavaScriptFilter();
         filter.setSourceCode("my_col != null;");
-        InputColumn<Number> myCol = new MockInputColumn<>("my_col", Number.class);
+        final InputColumn<Number> myCol = new MockInputColumn<>("my_col", Number.class);
         filter.setColumns(new InputColumn[] { myCol });
         filter.init();
 

@@ -21,8 +21,6 @@ package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.inject.Inject;
@@ -71,7 +69,8 @@ public class ExtensionPackagesPanel extends DCPanel {
     private final DataCleanerConfiguration _configuration;
 
     @Inject
-    protected ExtensionPackagesPanel(final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
+    protected ExtensionPackagesPanel(final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _configuration = configuration;
         _userPreferences = userPreferences;
@@ -84,35 +83,32 @@ public class ExtensionPackagesPanel extends DCPanel {
     private void updateComponents() {
         removeAll();
 
-        final PopupButton addExtensionButton = WidgetFactory.createDefaultPopupButton("Add extension package",
-                IconUtils.ACTION_ADD_DARK);
+        final PopupButton addExtensionButton =
+                WidgetFactory.createDefaultPopupButton("Add extension package", IconUtils.ACTION_ADD_DARK);
         final JPopupMenu addExtensionMenu = addExtensionButton.getMenu();
 
-        final JMenuItem extensionSwapMenuItem = new JMenuItem("Browse the ExtensionSwap",
-                imageManager.getImageIcon("images/actions/website.png"));
+        final JMenuItem extensionSwapMenuItem =
+                new JMenuItem("Browse the ExtensionSwap", imageManager.getImageIcon("images/actions/website.png"));
         extensionSwapMenuItem.addActionListener(new OpenBrowserAction("https://datacleaner.org/extensions"));
 
-        final JMenuItem manualInstallMenuItem = new JMenuItem("Manually install JAR file",
-                imageManager.getImageIcon("images/filetypes/archive.png"));
-        manualInstallMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getConfiguredFileDirectory());
-                fileChooser.setMultiSelectionEnabled(true);
-                fileChooser.setFileFilter(new ExtensionFilter("DataCleaner extension JAR file (.jar)", ".jar"));
-                final int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);
-                if (result == DCFileChooser.APPROVE_OPTION) {
+        final JMenuItem manualInstallMenuItem =
+                new JMenuItem("Manually install JAR file", imageManager.getImageIcon("images/filetypes/archive.png"));
+        manualInstallMenuItem.addActionListener(e -> {
+            final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getConfiguredFileDirectory());
+            fileChooser.setMultiSelectionEnabled(true);
+            fileChooser.setFileFilter(new ExtensionFilter("DataCleaner extension JAR file (.jar)", ".jar"));
+            final int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);
+            if (result == DCFileChooser.APPROVE_OPTION) {
 
-                    final File[] files = fileChooser.getSelectedFiles();
+                final File[] files = fileChooser.getSelectedFiles();
 
-                    final ExtensionReader extensionReader = new ExtensionReader();
-                    final ExtensionPackage extensionPackage = extensionReader.readExternalExtension(files);
+                final ExtensionReader extensionReader = new ExtensionReader();
+                final ExtensionPackage extensionPackage = extensionReader.readExternalExtension(files);
 
-                    extensionPackage.loadDescriptors(_configuration.getEnvironment().getDescriptorProvider());
-                    _userPreferences.addExtensionPackage(extensionPackage);
+                extensionPackage.loadDescriptors(_configuration.getEnvironment().getDescriptorProvider());
+                _userPreferences.addExtensionPackage(extensionPackage);
 
-                    updateComponents();
-                }
+                updateComponents();
             }
         });
 
@@ -213,13 +209,10 @@ public class ExtensionPackagesPanel extends DCPanel {
         if (extensionPackage.isExternal()) {
             final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
             removeButton.setToolTipText("Remove extension");
-            removeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    _userPreferences.removeExtensionPackage(extensionPackage);
-                    removeButton.setEnabled(false);
-                    extensionLabel.setText("*** Removal requires application restart ***");
-                }
+            removeButton.addActionListener(e -> {
+                _userPreferences.removeExtensionPackage(extensionPackage);
+                removeButton.setEnabled(false);
+                extensionLabel.setText("*** Removal requires application restart ***");
             });
             WidgetUtils.addToGridBag(removeButton, extensionPanel, col, 0, GridBagConstraints.EAST);
         } else {
@@ -234,8 +227,8 @@ public class ExtensionPackagesPanel extends DCPanel {
         final String iconPath = extensionPackage.getAdditionalProperties().get("icon");
         if (iconPath != null) {
             try {
-                final ImageIcon imageIcon = imageManager.getImageIcon(iconPath, IconUtils.ICON_SIZE_LARGE,
-                        ExtensionPackage.getExtensionClassLoader());
+                final ImageIcon imageIcon = imageManager
+                        .getImageIcon(iconPath, IconUtils.ICON_SIZE_LARGE, ExtensionPackage.getExtensionClassLoader());
                 if (imageIcon != null) {
                     return imageIcon;
                 }

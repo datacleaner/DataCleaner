@@ -36,7 +36,8 @@ public class JavaStackedAreaAnalyzerResult implements IStackedAreaAnalyzerResult
     private final InputColumn<Number>[] _measureColumns;
     private final Map<Object, List<Number>> _measureMap = new HashMap<>();
 
-    public JavaStackedAreaAnalyzerResult(final InputColumn<?> categoryColumn, final InputColumn<Number>[] measureColumns) {
+    public JavaStackedAreaAnalyzerResult(final InputColumn<?> categoryColumn,
+            final InputColumn<Number>[] measureColumns) {
         _categoryColumn = categoryColumn;
         _measureColumns = measureColumns;
     }

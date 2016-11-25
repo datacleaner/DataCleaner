@@ -27,7 +27,7 @@ import org.datacleaner.api.HasAnalyzerResult;
  *
  * @param <B>
  */
-public interface HasAnalyzerResultComponentDescriptor<B extends HasAnalyzerResult<?>> extends ResultDescriptor,
-        ComponentDescriptor<B> {
+public interface HasAnalyzerResultComponentDescriptor<B extends HasAnalyzerResult<?>>
+        extends ResultDescriptor, ComponentDescriptor<B> {
 
 }

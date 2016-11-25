@@ -23,8 +23,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
@@ -40,10 +38,10 @@ import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import junit.framework.TestCase;
 
 public class JobModificationControllerTest extends TestCase {
 
@@ -54,12 +52,13 @@ public class JobModificationControllerTest extends TestCase {
     private TimelineDaoImpl timelineDao;
 
     protected void setUp() throws Exception {
-        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                "context/application-context.xml");
+        final ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("context/application-context.xml");
         repository = applicationContext.getBean(FileRepository.class);
 
-        final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new DefaultJobEngineManager(applicationContext));
+        final TenantContextFactoryImpl tenantContextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
+                        new DefaultJobEngineManager(applicationContext));
 
         final ResultDao resultDao = new ResultDaoImpl(tenantContextFactory, null);
         timelineDao = new TimelineDaoImpl(tenantContextFactory, repository);
@@ -68,12 +67,9 @@ public class JobModificationControllerTest extends TestCase {
         jobModificationListener1 = new JobModificationEventRenameResultsListener(resultDao);
         jobModificationListener2 = new JobModificationEventUpdateTimelinesListener(timelineDao);
         jobModificationController._contextFactory = tenantContextFactory;
-        jobModificationController._eventPublisher = new ApplicationEventPublisher() {
-            @Override
-            public void publishEvent(ApplicationEvent event) {
-                jobModificationListener1.onApplicationEvent((JobModificationEvent) event);
-                jobModificationListener2.onApplicationEvent((JobModificationEvent) event);
-            }
+        jobModificationController._eventPublisher = event -> {
+            jobModificationListener1.onApplicationEvent((JobModificationEvent) event);
+            jobModificationListener2.onApplicationEvent((JobModificationEvent) event);
         };
     }
 
@@ -81,7 +77,7 @@ public class JobModificationControllerTest extends TestCase {
         final JobModificationPayload input = new JobModificationPayload();
         input.setName("renamed_job");
 
-        HttpServletResponse response = new MockHttpServletResponse();
+        final HttpServletResponse response = new MockHttpServletResponse();
         final Map<String, String> result =
                 jobModificationController.modifyJob("tenant1", "product_profiling", input, response);
         assertEquals("{new_job_name=renamed_job, old_job_name=product_profiling, "
@@ -93,8 +89,9 @@ public class JobModificationControllerTest extends TestCase {
         assertEquals(0, resultsFolder.getFiles("product_profiling", ".result.dat").size());
         assertEquals(6, resultsFolder.getFiles("renamed_job", ".result.dat").size());
 
-        final TimelineDefinition timelineDefinition = timelineDao.getTimelineDefinition(new TimelineIdentifier(
-                "Product types", "/tenant1/timelines/Product data/Product types.analysis.timeline.xml", null));
+        final TimelineDefinition timelineDefinition = timelineDao.getTimelineDefinition(
+                new TimelineIdentifier("Product types",
+                        "/tenant1/timelines/Product data/Product types.analysis.timeline.xml", null));
 
         assertEquals("renamed_job", timelineDefinition.getJobIdentifier().getName());
     }

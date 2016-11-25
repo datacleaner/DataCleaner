@@ -72,7 +72,7 @@ public class ComponentDocumentationBuilder {
 
     /**
      * Used to convert an image object to buffered image. Used in
-     * {@link #createDocumentation(ComponentDescriptor, OutputStream)()}
+     * {@link ComponentDocumentationWrapper#getIconSrc(int)}
      *
      * @param image
      * @return buffered image
@@ -83,8 +83,8 @@ public class ComponentDocumentationBuilder {
         }
 
         // Create a buffered image with transparency
-        final BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null),
-                BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage bufferedImage =
+                new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
         final Graphics2D bufferedGraphics = bufferedImage.createGraphics();
         bufferedGraphics.drawImage(image, 0, 0, null);
@@ -104,7 +104,8 @@ public class ComponentDocumentationBuilder {
      *            the target {@link OutputStream} to write to
      * @throws IOException
      */
-    public void write(final ComponentDescriptor<?> componentDescriptor, final OutputStream outputStream) throws IOException {
+    public void write(final ComponentDescriptor<?> componentDescriptor, final OutputStream outputStream)
+            throws IOException {
         write(new ComponentDocumentationWrapper(componentDescriptor), outputStream);
     }
 
@@ -118,7 +119,8 @@ public class ComponentDocumentationBuilder {
      *            the target {@link OutputStream} to write to
      * @throws IOException
      */
-    public void write(final ComponentDocumentationWrapper componentWrapper, final OutputStream outputStream) throws IOException {
+    public void write(final ComponentDocumentationWrapper componentWrapper, final OutputStream outputStream)
+            throws IOException {
 
         final Map<String, Object> data = new HashMap<>();
 
@@ -127,10 +129,9 @@ public class ComponentDocumentationBuilder {
             data.put("component", componentWrapper);
 
             {
-                final Set<ConfiguredPropertyDescriptor> configuredProperties = componentWrapper
-                        .getComponentDescriptor().getConfiguredProperties();
-                final List<ConfiguredPropertyDescriptor> properties = new ArrayList<>(
-                        configuredProperties);
+                final Set<ConfiguredPropertyDescriptor> configuredProperties =
+                        componentWrapper.getComponentDescriptor().getConfiguredProperties();
+                final List<ConfiguredPropertyDescriptor> properties = new ArrayList<>(configuredProperties);
                 final List<ConfiguredPropertyDocumentationWrapper> propertyList = new ArrayList<>();
                 for (final ConfiguredPropertyDescriptor property : properties) {
                     final HiddenProperty hiddenProperty = property.getAnnotation(HiddenProperty.class);
@@ -140,8 +141,7 @@ public class ComponentDocumentationBuilder {
                     if ((hiddenProperty == null || hiddenProperty.hiddenForLocalAccess() == false)
                             && deprecatedProperty == null) {
                         final ConfiguredPropertyDocumentationWrapper wrapper =
-                                new ConfiguredPropertyDocumentationWrapper(
-                                        property);
+                                new ConfiguredPropertyDocumentationWrapper(property);
                         propertyList.add(wrapper);
                     }
                 }

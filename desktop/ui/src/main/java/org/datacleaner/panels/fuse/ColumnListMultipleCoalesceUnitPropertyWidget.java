@@ -21,8 +21,6 @@ package org.datacleaner.panels.fuse;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -64,8 +62,8 @@ import org.slf4j.LoggerFactory;
  * This widget displays a list of {@link CoalesceUnit}s with {@link InputColumn}
  * s that the user can add an remove from.
  */
-public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
-        SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
+public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]>
+        implements SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
 
     private static final Logger logger = LoggerFactory.getLogger(ColumnListMultipleCoalesceUnitPropertyWidget.class);
 
@@ -89,20 +87,10 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         _unitPropertyWidget = createUnitPropertyWidget();
 
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addCoalesceUnit();
-            }
-        });
+        addButton.addActionListener(e -> addCoalesceUnit());
 
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                removeCoalesceUnit();
-            }
-        });
+        removeButton.addActionListener(e -> removeCoalesceUnit());
 
         final DCPanel buttonPanel = new DCPanel();
         buttonPanel.setBorder(new EmptyBorder(0, 4, 0, 0));
@@ -122,12 +110,9 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         if (currentValue == null) {
             addCoalesceUnit();
         } else {
-            batchUpdateWidget(new Runnable() {
-                @Override
-                public void run() {
-                    for (final CoalesceUnit unit : currentValue) {
-                        addCoalesceUnit(unit);
-                    }
+            batchUpdateWidget(() -> {
+                for (final CoalesceUnit unit : currentValue) {
+                    addCoalesceUnit(unit);
                 }
             });
         }
@@ -252,23 +237,20 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     }
 
     public void setCoalesceUnits(final CoalesceUnit[] units) {
-        batchUpdateWidget(new Runnable() {
-            @Override
-            public void run() {
-                _unitContainerPanel.removeAll();
-                for (final CoalesceUnit unit : units) {
-                    addCoalesceUnit(unit);
-                }
+        batchUpdateWidget(() -> {
+            _unitContainerPanel.removeAll();
+            for (final CoalesceUnit unit : units) {
+                addCoalesceUnit(unit);
             }
         });
     }
 
     @Override
     public InputColumn<?>[] getValue() {
-        final List<InputColumn<?>> availableInputColumns = getAnalysisJobBuilder().getAvailableInputColumns(
-                Object.class);
-        final InputColumn<?>[] allInputColumns = availableInputColumns.toArray(new InputColumn[availableInputColumns
-                .size()]);
+        final List<InputColumn<?>> availableInputColumns =
+                getAnalysisJobBuilder().getAvailableInputColumns(Object.class);
+        final InputColumn<?>[] allInputColumns =
+                availableInputColumns.toArray(new InputColumn[availableInputColumns.size()]);
         final List<InputColumn<?>> resultList = new ArrayList<>();
 
         final CoalesceUnit[] units = getCoalesceUnits();
@@ -283,8 +265,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         }
 
         logger.debug("Returning Input.value = {}", resultList);
-        final InputColumn<?>[] result = resultList.toArray(new InputColumn[resultList.size()]);
-        return result;
+        return resultList.toArray(new InputColumn[resultList.size()]);
     }
 
     @Override
@@ -331,8 +312,8 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     }
 
     public List<InputColumn<?>> getAvailableInputColumns() {
-        final List<InputColumn<?>> availableInputColumns = getAnalysisJobBuilder().getAvailableInputColumns(
-                Object.class);
+        final List<InputColumn<?>> availableInputColumns =
+                getAnalysisJobBuilder().getAvailableInputColumns(Object.class);
 
         if (getComponentBuilder() instanceof TransformerComponentBuilder) {
             // remove all the columns that are generated by the transformer

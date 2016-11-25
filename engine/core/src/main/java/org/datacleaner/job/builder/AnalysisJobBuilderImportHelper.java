@@ -72,8 +72,7 @@ final class AnalysisJobBuilderImportHelper {
         sourceColumnFinder.addSources(job);
 
         // map that translates original component jobs to their builder objects
-        final Map<ComponentJob, ComponentBuilder> componentBuilders =
-                new IdentityHashMap<>();
+        final Map<ComponentJob, ComponentBuilder> componentBuilders = new IdentityHashMap<>();
         addComponentBuilders(job.getFilterJobs(), componentBuilders);
         addComponentBuilders(job.getTransformerJobs(), componentBuilders);
         addComponentBuilders(job.getAnalyzerJobs(), componentBuilders);
@@ -83,8 +82,8 @@ final class AnalysisJobBuilderImportHelper {
             final ComponentJob componentJob = entry.getKey();
             final ComponentBuilder builder = entry.getValue();
             final ComponentRequirement originalRequirement = componentJob.getComponentRequirement();
-            final ComponentRequirement componentRequirement = findImportedRequirement(originalRequirement,
-                    componentBuilders);
+            final ComponentRequirement componentRequirement =
+                    findImportedRequirement(originalRequirement, componentBuilders);
             builder.setComponentRequirement(componentRequirement);
         }
 
@@ -92,14 +91,14 @@ final class AnalysisJobBuilderImportHelper {
         for (final Entry<ComponentJob, ComponentBuilder> entry : componentBuilders.entrySet()) {
             final ComponentJob componentJob = entry.getKey();
             final ComponentBuilder builder = entry.getValue();
-            final Set<ConfiguredPropertyDescriptor> inputColumnProperties = componentJob.getDescriptor()
-                    .getConfiguredPropertiesForInput(true);
+            final Set<ConfiguredPropertyDescriptor> inputColumnProperties =
+                    componentJob.getDescriptor().getConfiguredPropertiesForInput(true);
 
             for (final ConfiguredPropertyDescriptor inputColumnProperty : inputColumnProperties) {
-                final Object originalInputColumnValue = componentJob.getConfiguration()
-                        .getProperty(inputColumnProperty);
-                final Object newInputColumnValue = findImportedInputColumns(originalInputColumnValue,
-                        componentBuilders, sourceColumnFinder);
+                final Object originalInputColumnValue =
+                        componentJob.getConfiguration().getProperty(inputColumnProperty);
+                final Object newInputColumnValue =
+                        findImportedInputColumns(originalInputColumnValue, componentBuilders, sourceColumnFinder);
                 builder.setConfiguredProperty(inputColumnProperty, newInputColumnValue);
             }
         }
@@ -111,12 +110,12 @@ final class AnalysisJobBuilderImportHelper {
             final OutputDataStreamJob[] outputDataStreamJobs = componentJob.getOutputDataStreamJobs();
             for (final OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
                 final OutputDataStream outputDataStream = outputDataStreamJob.getOutputDataStream();
-                final AnalysisJobBuilder outputDataStreamJobBuilder = builder
-                        .getOutputDataStreamJobBuilder(outputDataStream.getName());
+                final AnalysisJobBuilder outputDataStreamJobBuilder =
+                        builder.getOutputDataStreamJobBuilder(outputDataStream.getName());
 
                 // delegate to a new helper to handle the output data stream
-                final AnalysisJobBuilderImportHelper helper = new AnalysisJobBuilderImportHelper(
-                        outputDataStreamJobBuilder);
+                final AnalysisJobBuilderImportHelper helper =
+                        new AnalysisJobBuilderImportHelper(outputDataStreamJobBuilder);
                 helper.importJob(outputDataStreamJob.getJob());
             }
         }
@@ -160,15 +159,16 @@ final class AnalysisJobBuilderImportHelper {
 
         final InputColumnSourceJob originalSourceJob = sourceColumnFinder.findInputColumnSource(originalInputColumn);
         if (originalSourceJob == null) {
-            throw new IllegalStateException("Could not find source for input column  " + originalInputColumn
-                    + " in original job");
+            throw new IllegalStateException(
+                    "Could not find source for input column  " + originalInputColumn + " in original job");
         }
 
         final InputColumnSourceJob newSourceJob = (InputColumnSourceJob) componentBuilders.get(originalSourceJob);
 
         if (newSourceJob == null) {
-            throw new IllegalStateException("Could not find builder corresponding to " + originalSourceJob
-                    + " in builder map: " + componentBuilders);
+            throw new IllegalStateException(
+                    "Could not find builder corresponding to " + originalSourceJob + " in builder map: "
+                            + componentBuilders);
         }
 
         final String originalColumnName = originalInputColumn.getName();
@@ -200,8 +200,8 @@ final class AnalysisJobBuilderImportHelper {
         }
 
         if (originalRequirement instanceof CompoundComponentRequirement) {
-            final Set<FilterOutcome> originalOutcomes = ((CompoundComponentRequirement) originalRequirement)
-                    .getOutcomes();
+            final Set<FilterOutcome> originalOutcomes =
+                    ((CompoundComponentRequirement) originalRequirement).getOutcomes();
             final Collection<FilterOutcome> newOutcomes = new HashSet<>();
             for (final FilterOutcome originalOutcome : originalOutcomes) {
                 final FilterOutcome newOutcome = findFilterOutcome(originalOutcome, componentBuilders);
@@ -219,14 +219,13 @@ final class AnalysisJobBuilderImportHelper {
         final HasFilterOutcomes source = originalFilterOutcome.getSource();
         final ComponentBuilder builder = componentBuilders.get(source);
         if (builder == null) {
-            throw new IllegalStateException("Could not find builder corresponding to " + source + " in builder map: "
-                    + componentBuilders);
+            throw new IllegalStateException(
+                    "Could not find builder corresponding to " + source + " in builder map: " + componentBuilders);
         }
         final Enum<?> category = originalFilterOutcome.getCategory();
 
         final FilterComponentBuilder<?, ?> filterJobBuilder = (FilterComponentBuilder<?, ?>) builder;
-        final FilterOutcome newOutcome = filterJobBuilder.getFilterOutcome(category);
-        return newOutcome;
+        return filterJobBuilder.getFilterOutcome(category);
     }
 
     private void addComponentBuilders(final Collection<? extends ComponentJob> componentJobs,

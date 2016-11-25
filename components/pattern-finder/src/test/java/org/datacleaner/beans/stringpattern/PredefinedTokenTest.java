@@ -24,22 +24,22 @@ import junit.framework.TestCase;
 public class PredefinedTokenTest extends TestCase {
 
     public void testEqualsAndHashCode() throws Exception {
-        PredefinedToken token1 =
+        final PredefinedToken token1 =
                 new PredefinedToken(new PredefinedTokenDefinition("Salutations", "Mr", "Mrs", "Hr"), "Mrs");
 
-        PredefinedToken token2 =
+        final PredefinedToken token2 =
                 new PredefinedToken(new PredefinedTokenDefinition("Salutations", "Mr", "Mrs", "Hr"), "Mr");
         assertFalse(token1.equals(token2));
         assertFalse(token1.hashCode() == token2.hashCode());
 
-        PredefinedToken token3 =
+        final PredefinedToken token3 =
                 new PredefinedToken(new PredefinedTokenDefinition("Salutations", "Mr", "Mrs", "Hr"), "Mrs");
         assertTrue(token1.equals(token3));
         assertTrue(token1.hashCode() == token3.hashCode());
     }
 
     public void testTokenMethods() throws Exception {
-        PredefinedToken token =
+        final PredefinedToken token =
                 new PredefinedToken(new PredefinedTokenDefinition("Salutations", "Mr", "Mrs", "Hr"), "Mrs");
         assertEquals("Token['Mrs' (PREDEFINED Salutations)]", token.toString());
         assertEquals(TokenType.PREDEFINED, token.getType());

@@ -33,7 +33,8 @@ public class EditJobCommand implements Command {
     private ScheduleDefinition _schedule;
     private DCPopupPanel _morePopup;
 
-    public EditJobCommand(final TenantIdentifier tenantIdentifier, final ScheduleDefinition schedule, final DCPopupPanel morePopup) {
+    public EditJobCommand(final TenantIdentifier tenantIdentifier, final ScheduleDefinition schedule,
+            final DCPopupPanel morePopup) {
         _tenant = tenantIdentifier;
         _schedule = schedule;
         _morePopup = morePopup;

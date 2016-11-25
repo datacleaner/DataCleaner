@@ -74,9 +74,7 @@ public final class LabelUtils {
             }
         }
 
-        final String descriptorDisplayName = builder.getDescriptor().getDisplayName();
-
-        return descriptorDisplayName;
+        return builder.getDescriptor().getDisplayName();
     }
 
     /**
@@ -100,8 +98,7 @@ public final class LabelUtils {
      * @return
      */
     public static String getLabel(final ComponentJob job, final boolean includeDescriptorName,
-            boolean includeInputColumnNames,
-            final boolean includeRequirements) {
+            boolean includeInputColumnNames, final boolean includeRequirements) {
         final String jobName = job.getName();
         final StringBuilder label = new StringBuilder();
         if (Strings.isNullOrEmpty(jobName)) {
@@ -110,8 +107,8 @@ public final class LabelUtils {
             if (ReflectionUtils.is(descriptor.getComponentClass(), HasLabelAdvice.class)) {
                 try {
                     final HasLabelAdvice c = (HasLabelAdvice) descriptor.newInstance();
-                    final LifeCycleHelper lch = new LifeCycleHelper((DataCleanerConfiguration) null, (AnalysisJob) null,
-                            false);
+                    final LifeCycleHelper lch =
+                            new LifeCycleHelper((DataCleanerConfiguration) null, (AnalysisJob) null, false);
                     lch.assignConfiguredProperties(descriptor, c, job.getConfiguration());
                     final String suggestedLabel = c.getSuggestedLabel();
                     if (!StringUtils.isNullOrEmpty(suggestedLabel)) {

@@ -53,12 +53,7 @@ public class SingleRemoteEnumPropertyWidget extends AbstractPropertyWidget<Enume
         final EnumerationValue currentValue = getCurrentValue();
         _comboBox.setSelectedItem(currentValue);
 
-        addComboListener(new DCComboBox.Listener<EnumerationValue>() {
-            @Override
-            public void onItemSelected(final EnumerationValue item) {
-                fireValueChanged();
-            }
-        });
+        addComboListener(item -> fireValueChanged());
         add(_comboBox);
     }
 

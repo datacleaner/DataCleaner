@@ -24,9 +24,9 @@ import junit.framework.TestCase;
 public class CouchDbDatastoreTest extends TestCase {
 
     public void testCreateAndCompare() throws Exception {
-        CouchDbDatastore ds1 =
+        final CouchDbDatastore ds1 =
                 new CouchDbDatastore("couch", "localhost", CouchDbDatastore.DEFAULT_PORT, "user", "pw", true, null);
-        CouchDbDatastore ds2 = new CouchDbDatastore("couch", "localhost", null, "user", "pw", true, null);
+        final CouchDbDatastore ds2 = new CouchDbDatastore("couch", "localhost", null, "user", "pw", true, null);
 
         assertEquals(ds1, ds2);
 

@@ -49,9 +49,8 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
     private final RemoteDescriptorProvider remoteDescriptorProvider;
 
     public RemoteTransformerDescriptorImpl(final RemoteDescriptorProvider remoteDescriptorProvider,
-            final String displayName,
-            final Map<Class<? extends Annotation>, Annotation> annotations, final byte[] iconData,
-            final Boolean isEnabled) {
+            final String displayName, final Map<Class<? extends Annotation>, Annotation> annotations,
+            final byte[] iconData, final Boolean isEnabled) {
         super(RemoteTransformer.class, true);
         this.remoteDescriptorProvider = remoteDescriptorProvider;
         this.remoteDisplayName = displayName;

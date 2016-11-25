@@ -49,7 +49,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Named("String analyzer")
-@Description("The String analyzer is used to collect a variety of typical metrics on string values.\nMetrics include statistics on character case, words, diacritics, white-spaces and more...")
+@Description("The String analyzer is used to collect a variety of typical metrics on string values.\n"
+        + "Metrics include statistics on character case, words, diacritics, white-spaces and more...")
 @Concurrent(true)
 public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
 
@@ -80,8 +81,7 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
 
     private static final Logger logger = LoggerFactory.getLogger(StringAnalyzer.class);
 
-    private final Map<InputColumn<String>, StringAnalyzerColumnDelegate> _columnDelegates =
-            new HashMap<>();
+    private final Map<InputColumn<String>, StringAnalyzerColumnDelegate> _columnDelegates = new HashMap<>();
 
     @Configured
     InputColumn<String>[] _columns;
@@ -267,7 +267,8 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
         return new StringAnalyzerResult(_columns, crosstab);
     }
 
-    private void addAttachment(final CrosstabNavigator<Number> nav, final RowAnnotation annotation, final InputColumn<?> column) {
+    private void addAttachment(final CrosstabNavigator<Number> nav, final RowAnnotation annotation,
+            final InputColumn<?> column) {
         nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(annotation, _annotationFactory, column));
     }
 }

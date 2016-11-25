@@ -20,8 +20,6 @@
 package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +31,6 @@ import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.MutableRef;
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
@@ -95,37 +92,26 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         _comboBox = new DCComboBox<>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
         _comboBox.setEditable(false);
-        addComboListener(new Listener<Table>() {
-            @Override
-            public void onItemSelected(final Table item) {
-                fireValueChanged();
-            }
-        });
+        addComboListener(item -> fireValueChanged());
 
         final JButton createTableButton = WidgetFactory.createSmallButton(IconUtils.ACTION_CREATE_TABLE);
         createTableButton.setToolTipText("Create table");
-        createTableButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final Schema schema = _schemaRef.get();
-                final Datastore datastore = _datastoreRef.get();
-                if (datastore instanceof UpdateableDatastore) {
-                    final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
-                    final CreateTableDialog dialog = new CreateTableDialog(windowContext, updateableDatastore, schema,
-                            getCreateTableColumnSuggestions());
-                    dialog.addListener(new CreateTableDialog.Listener() {
-                        @Override
-                        public void onTableCreated(final UpdateableDatastore datastore, final Schema schema, final String tableName) {
-                            try (UpdateableDatastoreConnection con = datastore.openConnection()) {
-                                con.getDataContext().refreshSchemas();
-                                final Schema newSchema = con.getDataContext().getSchemaByName(schema.getName());
-                                setSchema(datastore, newSchema);
-                                setValue(tableName);
-                            }
-                        }
-                    });
-                    dialog.open();
-                }
+        createTableButton.addActionListener(e -> {
+            final Schema schema = _schemaRef.get();
+            final Datastore datastore = _datastoreRef.get();
+            if (datastore instanceof UpdateableDatastore) {
+                final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
+                final CreateTableDialog dialog = new CreateTableDialog(windowContext, updateableDatastore, schema,
+                        getCreateTableColumnSuggestions());
+                dialog.addListener((datastore1, schema1, tableName) -> {
+                    try (UpdateableDatastoreConnection con = datastore1.openConnection()) {
+                        con.getDataContext().refreshSchemas();
+                        final Schema newSchema = con.getDataContext().getSchemaByName(schema1.getName());
+                        setSchema(datastore1, newSchema);
+                        setValue(tableName);
+                    }
+                });
+                dialog.open();
             }
         });
 
@@ -145,16 +131,13 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
 
     protected Collection<InputColumn<?>> getCreateTableColumnSuggestions() {
         final ComponentBuilder componentBuilder = getComponentBuilder();
-        List<InputColumn<?>> columns = componentBuilder.getAnalysisJobBuilder().getAvailableInputColumns(
-                componentBuilder);
-        columns = CollectionUtils.filter(columns, new Predicate<InputColumn<?>>() {
-            @Override
-            public Boolean eval(final InputColumn<?> column) {
-                if (column instanceof MutableInputColumn) {
-                    return !((MutableInputColumn<?>) column).isHidden();
-                }
-                return true;
+        List<InputColumn<?>> columns =
+                componentBuilder.getAnalysisJobBuilder().getAvailableInputColumns(componentBuilder);
+        columns = CollectionUtils.filter(columns, column -> {
+            if (column instanceof MutableInputColumn) {
+                return !((MutableInputColumn<?>) column).isHidden();
             }
+            return true;
         });
         return columns;
     }

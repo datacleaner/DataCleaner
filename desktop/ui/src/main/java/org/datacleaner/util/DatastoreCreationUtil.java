@@ -79,7 +79,8 @@ public class DatastoreCreationUtil {
         return FileDatastoreEnum.getDatastoreTypeFromResource(resource);
     }
 
-    public static Datastore createAndAddUniqueDatastoreFromResource(final DatastoreCatalog catalog, final Resource resource) {
+    public static Datastore createAndAddUniqueDatastoreFromResource(final DatastoreCatalog catalog,
+            final Resource resource) {
         String name = resource.getName();
         if (catalog.containsDatastore(name)) {
             final String originalName = name;
@@ -125,8 +126,8 @@ public class DatastoreCreationUtil {
             return new OdbDatastore(datastoreName, resource.getQualifiedPath());
         case XML:
             return new XmlDatastore(datastoreName, resource.getQualifiedPath());
+        default:
+            throw new IllegalArgumentException("No such datastore type");
         }
-
-        throw new IllegalArgumentException("No such datastore type");
     }
 }

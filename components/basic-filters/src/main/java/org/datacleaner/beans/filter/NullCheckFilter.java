@@ -57,8 +57,8 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
     }
 
     public enum EvaluationMode implements HasName {
-        ALL_FIELDS("When all fields are NULL, the record is considered NULL"), ANY_FIELD(
-                "When any field is NULL, the record is considered NULL");
+        ALL_FIELDS("When all fields are NULL, the record is considered NULL"),
+        ANY_FIELD("When any field is NULL, the record is considered NULL");
 
         private final String _name;
 
@@ -93,7 +93,8 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
         this.considerEmptyStringAsNull = considerEmptyStringAsNull;
     }
 
-    public NullCheckFilter(final InputColumn<?>[] columns, final boolean considerEmptyStringAsNull, final EvaluationMode evaluationMode) {
+    public NullCheckFilter(final InputColumn<?>[] columns, final boolean considerEmptyStringAsNull,
+            final EvaluationMode evaluationMode) {
         this();
         this.columns = columns;
         this.considerEmptyStringAsNull = considerEmptyStringAsNull;

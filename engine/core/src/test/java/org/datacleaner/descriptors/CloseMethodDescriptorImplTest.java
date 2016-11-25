@@ -29,8 +29,8 @@ public class CloseMethodDescriptorImplTest extends TestCase {
 
     public void testClose() throws Exception {
         executed = false;
-        Method m = getClass().getDeclaredMethod("doClose");
-        CloseMethodDescriptorImpl closeMethodDescriptorImpl = new CloseMethodDescriptorImpl(m, null);
+        final Method m = getClass().getDeclaredMethod("doClose");
+        final CloseMethodDescriptorImpl closeMethodDescriptorImpl = new CloseMethodDescriptorImpl(m, null);
         closeMethodDescriptorImpl.close(this);
 
         assertTrue(executed);

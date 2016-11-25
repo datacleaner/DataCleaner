@@ -25,11 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+
+import junit.framework.TestCase;
 
 public class SelectFromMapTransformerTest extends TestCase {
 
@@ -43,9 +43,8 @@ public class SelectFromMapTransformerTest extends TestCase {
                 new Class[] { Integer.class, String.class, String.class, String.class, String.class, String.class };
         trans.verifyTypes = true;
 
-        assertEquals(
-                "OutputColumns[id, Name.GivenName, email.address, Name.FamilyName, Name.Something.That.Does.Not.Exist, Addresses[1].street]",
-                trans.getOutputColumns().toString());
+        assertEquals("OutputColumns[id, Name.GivenName, email.address, Name.FamilyName, "
+                + "Name.Something.That.Does.Not.Exist, Addresses[1].street]", trans.getOutputColumns().toString());
 
         final Map<String, Object> map = new HashMap<>();
         map.put("id", 1001);

@@ -39,8 +39,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * {@link InsertIntoTableAnalyzer}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class InsertIntoTableJobBuilderPresenterRenderer implements
-        Renderer<AnalyzerComponentBuilder<InsertIntoTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
+public class InsertIntoTableJobBuilderPresenterRenderer
+        implements Renderer<AnalyzerComponentBuilder<InsertIntoTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -61,8 +61,8 @@ public class InsertIntoTableJobBuilderPresenterRenderer implements
 
     @Override
     public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> ajb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
-                PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
 
         return new InsertIntoTableJobBuilderPresenter(ajb, windowContext, propertyWidgetFactory, configuration,
                 dcModule);

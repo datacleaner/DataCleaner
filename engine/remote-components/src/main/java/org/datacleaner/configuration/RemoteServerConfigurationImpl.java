@@ -253,8 +253,8 @@ public class RemoteServerConfigurationImpl implements RemoteServerConfiguration 
             }
         } catch (final IOException e) {
             logger.warn(
-                    "Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getUrl() + ")' is down: "
-                            + e.getMessage());
+                    "Server '" + remoteServerData.getServerName() + "(" + remoteServerData.getUrl() + ")' is down: " + e
+                            .getMessage());
             return new RemoteServerState(RemoteServerState.State.ERROR, remoteServerData.getUsername(),
                     getErrorMessage(e));
         }

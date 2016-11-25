@@ -122,8 +122,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
         final int x = rect.x + rect.width - CLOSE_ICON_WIDTH - CLOSE_ICON_RIGHT_MARGIN;
         final int y = rect.y + (rect.height - CLOSE_ICON_WIDTH) / 2;
         final int width = CLOSE_ICON_WIDTH;
-        final int height = width;
-        return new Rectangle(x, y, width, height);
+        return new Rectangle(x, y, width, width);
     }
 
     /**
@@ -144,8 +143,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
     @Override
     protected int calculateTabAreaHeight(final int tabPlacement, final int horizRunCount, final int maxTabHeight) {
         final Insets insets = getBorderInsets();
-        final int result = maxTabHeight * horizRunCount + insets.top;
-        return result;
+        return maxTabHeight * horizRunCount + insets.top;
     }
 
     @Override
@@ -154,8 +152,8 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
     }
 
     @Override
-    protected void paintText(final Graphics g, final int tabPlacement, final Font font, final FontMetrics metrics, final int tabIndex, final String title,
-            final Rectangle textRect, final boolean isSelected) {
+    protected void paintText(final Graphics g, final int tabPlacement, final Font font, final FontMetrics metrics,
+            final int tabIndex, final String title, final Rectangle textRect, final boolean isSelected) {
         final Rectangle r = new Rectangle(textRect);
         if (!_pane.getUnclosables().contains(tabIndex)) {
             r.x -= CLOSE_ICON_WIDTH - (CLOSE_ICON_WIDTH / 2);
@@ -164,8 +162,8 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
     }
 
     @Override
-    protected void paintIcon(final Graphics g, final int tabPlacement, final int tabIndex, final Icon icon, final Rectangle iconRect,
-            final boolean isSelected) {
+    protected void paintIcon(final Graphics g, final int tabPlacement, final int tabIndex, final Icon icon,
+            final Rectangle iconRect, final boolean isSelected) {
         final Rectangle r = new Rectangle(iconRect);
         if (!_pane.getUnclosables().contains(tabIndex)) {
             r.x -= CLOSE_ICON_WIDTH - (CLOSE_ICON_WIDTH / 2);
@@ -174,8 +172,8 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
     }
 
     @Override
-    protected void paintTabBorder(final Graphics g, final int tabPlacement, final int tabIndex, final int x, final int y, final int w, final int h,
-            final boolean isSelected) {
+    protected void paintTabBorder(final Graphics g, final int tabPlacement, final int tabIndex, final int x,
+            final int y, final int w, final int h, final boolean isSelected) {
         g.setColor(_tabBorderColor);
 
         // the top line
@@ -195,8 +193,8 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
     }
 
     @Override
-    protected void paintTabBackground(final Graphics g, final int tabPlacement, final int tabIndex, final int x, final int y, final int w, final int h,
-            final boolean isSelected) {
+    protected void paintTabBackground(final Graphics g, final int tabPlacement, final int tabIndex, final int x,
+            final int y, final int w, final int h, final boolean isSelected) {
 
         final Color backgroundColor;
         if (isSelected) {
@@ -256,8 +254,8 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
     }
 
     @Override
-    protected void paintTab(final Graphics g, final int tabPlacement, final Rectangle[] rects, final int tabIndex, final Rectangle iconRect,
-            final Rectangle textRect) {
+    protected void paintTab(final Graphics g, final int tabPlacement, final Rectangle[] rects, final int tabIndex,
+            final Rectangle iconRect, final Rectangle textRect) {
         if (_pane.getSeparators().contains(tabIndex)) {
             return;
         }
@@ -265,7 +263,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
     }
 
     @Override
-    protected void paintFocusIndicator(final Graphics g, final int tabPlacement, final Rectangle[] rects, final int tabIndex,
-            final Rectangle iconRect, final Rectangle textRect, final boolean isSelected) {
+    protected void paintFocusIndicator(final Graphics g, final int tabPlacement, final Rectangle[] rects,
+            final int tabIndex, final Rectangle iconRect, final Rectangle textRect, final boolean isSelected) {
     }
 }

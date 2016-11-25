@@ -31,8 +31,8 @@ import org.datacleaner.api.InputRow;
  * allow deserialization of old DataCleaner results, yet this class fully
  * replaces the old one functionally.
  */
-public abstract class AbstractRowAnnotationFactory2 implements RowAnnotationFactory, RowAnnotationSampleContainer,
-        RowAnnotationHandler {
+public abstract class AbstractRowAnnotationFactory2
+        implements RowAnnotationFactory, RowAnnotationSampleContainer, RowAnnotationHandler {
 
     @Override
     public final RowAnnotation createAnnotation() {

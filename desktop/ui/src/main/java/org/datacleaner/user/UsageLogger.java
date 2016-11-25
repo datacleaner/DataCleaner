@@ -111,6 +111,7 @@ public final class UsageLogger {
             }
         }
     }
+
     // Special username used for anonymous entries. This is the only
     // non-existing username that is allowed on server side.
     private static final String NOT_LOGGED_IN_USERNAME = "[not-logged-in]";
@@ -141,9 +142,9 @@ public final class UsageLogger {
         _country = defaultLocale.getCountry();
         _language = defaultLocale.getLanguage();
 
-        logger.debug(
-                "Determined installation details as:\nJava version: {}\nJava vendor: {}\nOS name: {}\nOS arch: {}\nUser country: {}\nUser language: {}",
-                _javaVersion, _javaVendor, _osName, _osArch, _country, _language);
+        logger.debug("Determined installation details as:\nJava version: {}\nJava vendor: {}\nOS name: {}\n"
+                        + "OS arch: {}\nUser country: {}\nUser language: {}", _javaVersion, _javaVendor, _osName, _osArch,
+                _country, _language);
     }
 
     public void logApplicationStartup() {

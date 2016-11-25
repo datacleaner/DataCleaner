@@ -29,7 +29,6 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
@@ -37,8 +36,7 @@ import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 /**
  * Page where user gets to select value distribution columns
  */
-public abstract class SelectValueDistributionColumnsPage extends
-        AbstractFreemarkerWizardPage {
+public abstract class SelectValueDistributionColumnsPage extends AbstractFreemarkerWizardPage {
 
     private final int _pageIndex;
     private final Map<String, Column> _availableColumns;
@@ -60,27 +58,19 @@ public abstract class SelectValueDistributionColumnsPage extends
     }
 
     @Override
-    public WizardPageController nextPageController(
-            final Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         List<String> columnNames = formParameters.get("columns");
         if (columnNames == null) {
             columnNames = Collections.emptyList();
         }
 
-        final List<Column> selectedColumns = CollectionUtils.map(columnNames,
-                new Func<String, Column>() {
-                    @Override
-                    public Column eval(final String columnName) {
-                        return _availableColumns.get(columnName);
-                    }
-                });
+        final List<Column> selectedColumns = CollectionUtils.map(columnNames, _availableColumns::get);
 
         return nextPageController(selectedColumns);
     }
 
-    protected abstract WizardPageController nextPageController(
-            List<Column> selectedColumns);
+    protected abstract WizardPageController nextPageController(List<Column> selectedColumns);
 
     @Override
     protected String getTemplateFilename() {

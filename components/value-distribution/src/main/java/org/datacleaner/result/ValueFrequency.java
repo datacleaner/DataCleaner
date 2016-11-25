@@ -26,7 +26,7 @@ import org.apache.metamodel.util.HasName;
 
 /**
  * Represents a frequency of values. Value frequencies can either represent a single
- * value or a composite list of other values (for instance - "<unique>" is
+ * value or a composite list of other values (for instance - "&lt;unique&gt;" is
  * a typical composite group of values - all with a frequency of 1).
  */
 public interface ValueFrequency extends HasName, Serializable, Comparable<ValueFrequency> {

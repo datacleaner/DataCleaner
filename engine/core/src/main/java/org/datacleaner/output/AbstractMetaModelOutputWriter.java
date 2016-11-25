@@ -23,8 +23,6 @@ import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.insert.RowInsertionBuilder;
 import org.apache.metamodel.schema.Table;
@@ -83,17 +81,14 @@ public abstract class AbstractMetaModelOutputWriter implements OutputWriter {
     private synchronized void flushBuffer() {
         if (!_buffer.isEmpty()) {
             logger.info("Flushing {} rows in write buffer", _buffer.size());
-            _dataContext.executeUpdate(new UpdateScript() {
-                @Override
-                public void run(final UpdateCallback callback) {
-                    for (Object[] rowData = _buffer.poll(); rowData != null; rowData = _buffer.poll()) {
-                        RowInsertionBuilder insertBuilder = callback.insertInto(getTable());
-                        for (int i = 0; i < _columns.length; i++) {
-                            final Object value = rowData[i];
-                            insertBuilder = insertBuilder.value(i, value);
-                        }
-                        insertBuilder.execute();
+            _dataContext.executeUpdate(callback -> {
+                for (Object[] rowData = _buffer.poll(); rowData != null; rowData = _buffer.poll()) {
+                    RowInsertionBuilder insertBuilder = callback.insertInto(getTable());
+                    for (int i = 0; i < _columns.length; i++) {
+                        final Object value = rowData[i];
+                        insertBuilder = insertBuilder.value(i, value);
                     }
+                    insertBuilder.execute();
                 }
             });
         }

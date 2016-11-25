@@ -22,7 +22,6 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -78,30 +77,25 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
 
         final String saveButtonText = directConnection == null ? "Register cluster" : "Save cluster";
         _saveButton = WidgetFactory.createPrimaryButton(saveButtonText, IconUtils.ACTION_SAVE_BRIGHT);
-        _saveButton.addActionListener(e -> {
+        _saveButton.addActionListener(listener -> {
             try {
                 final URI nameNodeUri = new URI(_fileSystemURITextField.getText().trim());
-                final DirectConnectionHadoopClusterInformation newServer = new DirectConnectionHadoopClusterInformation(
-                        _nameTextField.getText(), _descriptionTextField.getText(), nameNodeUri);
+                final DirectConnectionHadoopClusterInformation newServer =
+                        new DirectConnectionHadoopClusterInformation(_nameTextField.getText(),
+                                _descriptionTextField.getText(), nameNodeUri);
                 _savedServer = newServer;
                 if (_directConnection != null) {
                     _mutableServerInformationCatalog.removeServer(_directConnection);
                 }
                 _mutableServerInformationCatalog.addServerInformation(newServer);
                 close();
-            } catch (final URISyntaxException e1) {
-                invalidateForm(e1);
-                return;
-            } catch (final Exception exception) {
-                invalidateForm(exception);
-                return;
+            } catch (final Exception e) {
+                invalidateForm(e);
             }
         });
 
         _cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
-        _cancelButton.addActionListener(e -> {
-            DirectConnectionHadoopClusterDialog.this.close();
-        });
+        _cancelButton.addActionListener(e -> DirectConnectionHadoopClusterDialog.this.close());
 
         if (directConnection != null) {
             _nameTextField.setText(directConnection.getName());
@@ -159,8 +153,8 @@ public class DirectConnectionHadoopClusterDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(_fileSystemURITextField, formPanel, 1, row);
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, _saveButton, _cancelButton);
-        final DescriptionLabel descriptionLabel = new DescriptionLabel(
-                "Fill out the connection information needed for DataCleaner to connect directly to the Apache Hadoop namenode and HDFS.");
+        final DescriptionLabel descriptionLabel = new DescriptionLabel("Fill out the connection information needed "
+                + "for DataCleaner to connect directly to the Apache Hadoop namenode and HDFS.");
 
         final DCPanel centerPanel = new DCPanel();
         centerPanel.setLayout(new BorderLayout());

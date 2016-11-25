@@ -91,8 +91,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
-public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer,
-        DescriptorProviderListener {
+public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer, DescriptorProviderListener {
 
     class LoadTablesSwingWorker extends SwingWorker<Void, Table> {
 
@@ -193,6 +192,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         }
 
     }
+
     public static final String LOADING_TABLES_STRING = "Loading tables...";
     public static final String LOADING_COLUMNS_STRING = "Loading columns...";
     public static final String UNNAMED_SCHEMA_STRING = "(unnamed schema)";
@@ -213,7 +213,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
     @Inject
     protected SchemaTree(final Datastore datastore, @Nullable final AnalysisJobBuilder analysisJobBuilder,
-            final DataCleanerConfiguration configuration, final WindowContext windowContext, final InjectorBuilder injectorBuilder) {
+            final DataCleanerConfiguration configuration, final WindowContext windowContext,
+            final InjectorBuilder injectorBuilder) {
         super();
         if (datastore == null) {
             throw new IllegalArgumentException("Datastore cannot be null");
@@ -388,8 +389,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
         for (final ComponentSuperCategory superCategory : superCategories) {
             final DefaultMutableTreeNode superCategoryNode = new DefaultMutableTreeNode(superCategory);
-            final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
-                    .getComponentDescriptorsOfSuperCategory(superCategory);
+            final Collection<? extends ComponentDescriptor<?>> componentDescriptors =
+                    descriptorProvider.getComponentDescriptorsOfSuperCategory(superCategory);
 
             final List<ComponentDescriptor<?>> filteredComponentDescriptors = new ArrayList<>();
 
@@ -430,11 +431,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                 }
             };
 
-            final Comparator<ComponentDescriptor<?>> comparatorDescriptor = new Comparator<ComponentDescriptor<?>>() {
-                public int compare(final ComponentDescriptor<?> o1, final ComponentDescriptor<?> o2) {
-                    return o1.getDisplayName().compareTo(o2.getDisplayName());
-                }
-            };
+            final Comparator<ComponentDescriptor<?>> comparatorDescriptor =
+                    (o1, o2) -> o1.getDisplayName().compareTo(o2.getDisplayName());
 
             Collections.sort(filteredComponentDescriptors, comparatorDescriptor);
             DescriptorMenuBuilder.createMenuStructure(menuCallback, filteredComponentDescriptors);
@@ -503,8 +501,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     }
 
     @Override
-    public Component getTreeCellRendererComponent(final JTree tree, Object value, final boolean selected, final boolean expanded,
-            final boolean leaf, final int row, final boolean hasFocus) {
+    public Component getTreeCellRendererComponent(final JTree tree, Object value, final boolean selected,
+            final boolean expanded, final boolean leaf, final int row, final boolean hasFocus) {
         if (value instanceof DefaultMutableTreeNode) {
             value = ((DefaultMutableTreeNode) value).getUserObject();
         }
@@ -518,42 +516,46 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         Icon icon = null;
 
         if (value instanceof Datastore) {
-            component = _rendererDelegate.getTreeCellRendererComponent(tree, ((Datastore) value).getName(), selected,
-                    expanded, leaf, row, hasFocus);
+            component = _rendererDelegate
+                    .getTreeCellRendererComponent(tree, ((Datastore) value).getName(), selected, expanded, leaf, row,
+                            hasFocus);
             icon = IconUtils.getDatastoreIcon((Datastore) value, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof Schema) {
             final Schema schema = ((Schema) value);
             final String schemaName = schema.getName();
-            component = _rendererDelegate.getTreeCellRendererComponent(tree, schemaName, selected, expanded, leaf, row,
-                    hasFocus);
+            component = _rendererDelegate
+                    .getTreeCellRendererComponent(tree, schemaName, selected, expanded, leaf, row, hasFocus);
             icon = imageManager.getImageIcon(IconUtils.MODEL_SCHEMA, IconUtils.ICON_SIZE_MENU_ITEM);
             if (MetaModelHelper.isInformationSchema(schema)) {
                 icon = imageManager.getImageIcon(IconUtils.MODEL_SCHEMA_INFORMATION, IconUtils.ICON_SIZE_MENU_ITEM);
             }
         } else if (value instanceof Table) {
-            component = _rendererDelegate.getTreeCellRendererComponent(tree, ((Table) value).getName(), selected,
-                    expanded, leaf, row, hasFocus);
+            component = _rendererDelegate
+                    .getTreeCellRendererComponent(tree, ((Table) value).getName(), selected, expanded, leaf, row,
+                            hasFocus);
             icon = imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof Column) {
             final Column column = (Column) value;
             final String columnLabel = column.getName();
-            component = _rendererDelegate.getTreeCellRendererComponent(tree, columnLabel, selected, expanded, leaf,
-                    row, hasFocus);
+            component = _rendererDelegate
+                    .getTreeCellRendererComponent(tree, columnLabel, selected, expanded, leaf, row, hasFocus);
             icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof ComponentSuperCategory) {
             final ComponentSuperCategory superCategory = (ComponentSuperCategory) value;
-            component = _rendererDelegate.getTreeCellRendererComponent(tree, superCategory.getName(), selected,
-                    expanded, leaf, row, hasFocus);
+            component = _rendererDelegate
+                    .getTreeCellRendererComponent(tree, superCategory.getName(), selected, expanded, leaf, row,
+                            hasFocus);
             icon = IconUtils.getComponentSuperCategoryIcon(superCategory, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof ComponentCategory) {
             final ComponentCategory category = (ComponentCategory) value;
-            component = _rendererDelegate.getTreeCellRendererComponent(tree, category.getName(), selected, expanded,
-                    leaf, row, hasFocus);
+            component = _rendererDelegate
+                    .getTreeCellRendererComponent(tree, category.getName(), selected, expanded, leaf, row, hasFocus);
             icon = IconUtils.getComponentCategoryIcon(category, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof ComponentDescriptor<?>) {
             final ComponentDescriptor<?> descriptor = (ComponentDescriptor<?>) value;
-            component = _rendererDelegate.getTreeCellRendererComponent(tree, descriptor.getDisplayName(), selected,
-                    expanded, leaf, row, hasFocus);
+            component = _rendererDelegate
+                    .getTreeCellRendererComponent(tree, descriptor.getDisplayName(), selected, expanded, leaf, row,
+                            hasFocus);
             icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_MENU_ITEM, false);
         } else if (value instanceof String) {
             if (LIBRARY_STRING.equals(value)) {
@@ -562,13 +564,14 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                 // "empty" icon -> no icon
                 icon = new ImageIcon();
             }
-            component = _rendererDelegate.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row,
-                    hasFocus);
+            component = _rendererDelegate
+                    .getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
         }
 
         if (component == null) {
-            throw new IllegalArgumentException("Unexpected value: " + value + " of class: "
-                    + (value == null ? "<null>" : value.getClass().getName()));
+            throw new IllegalArgumentException("Unexpected value: " + value + " of class: " + (value == null
+                    ? "<null>"
+                    : value.getClass().getName()));
         }
 
         final boolean opaque = hasFocus || selected;
@@ -653,17 +656,14 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
     @Override
     public void onDescriptorsUpdated(final DescriptorProvider descriptorProvider) {
-        WidgetUtils.invokeSwingAction(new Runnable() {
-            @Override
-            public void run() {
-                final TreeNode root = (TreeNode) getModel().getRoot();
-                final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
-                libraryNode.removeAllChildren();
-                createLibrary(libraryNode);
-                final DefaultTreeModel model = (DefaultTreeModel) getModel();
-                model.reload(libraryNode);
-                expandStandardPaths();
-            }
+        WidgetUtils.invokeSwingAction(() -> {
+            final TreeNode root = (TreeNode) getModel().getRoot();
+            final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
+            libraryNode.removeAllChildren();
+            createLibrary(libraryNode);
+            final DefaultTreeModel model = (DefaultTreeModel) getModel();
+            model.reload(libraryNode);
+            expandStandardPaths();
         });
     }
 

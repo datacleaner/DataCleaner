@@ -22,8 +22,6 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Set;
 
 import javax.swing.Box;
@@ -50,8 +48,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 /**
  * Specialization of {@link AbstractComponentBuilderPanel} for {@link Filter}s.
  */
-public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel implements
-        FilterComponentBuilderPresenter, FilterChangeListener {
+public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel
+        implements FilterComponentBuilderPresenter, FilterChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -60,8 +58,8 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
     private final FilterComponentBuilder<?, ?> _filterComponentBuilder;
     private final DCPanel _outcomePanel;
 
-    public FilterComponentBuilderPanel(final FilterComponentBuilder<?, ?> filterJobBuilder, final WindowContext windowContext,
-            final PropertyWidgetFactory propertyWidgetFactory) {
+    public FilterComponentBuilderPanel(final FilterComponentBuilder<?, ?> filterJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory) {
         this(null, 95, 95, filterJobBuilder, windowContext, propertyWidgetFactory);
     }
 
@@ -77,32 +75,30 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
         _outcomePanel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 0));
         final Set<String> categoryNames = _filterComponentBuilder.getDescriptor().getOutcomeCategoryNames();
         for (final String categoryName : categoryNames) {
-            final PopupButton outcomeButton = WidgetFactory.createDefaultPopupButton(categoryName,
-                    IconUtils.FILTER_OUTCOME_PATH);
+            final PopupButton outcomeButton =
+                    WidgetFactory.createDefaultPopupButton(categoryName, IconUtils.FILTER_OUTCOME_PATH);
 
-            outcomeButton.addActionListener(new DisplayOptionsForFilterOutcomeActionListener(outcomeButton,
-                    _filterComponentBuilder, categoryName));
+            outcomeButton.addActionListener(
+                    new DisplayOptionsForFilterOutcomeActionListener(outcomeButton, _filterComponentBuilder,
+                            categoryName));
             _outcomePanel.add(outcomeButton);
             _outcomePanel.add(Box.createHorizontalStrut(4));
         }
 
         final JButton helpButton = WidgetFactory.createSmallButton(IconUtils.ACTION_HELP);
-        helpButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final DCPanel messagePanel = new DCPanel();
-                messagePanel.setLayout(new BorderLayout());
-                messagePanel.add(new JLabel(imageManager.getImageIcon("images/help/help_requirement_mapping.png")),
-                        BorderLayout.WEST);
-                messagePanel.add(DCLabel.darkMultiLine("Filter outcomes can be set as requirements<br>"
-                        + "for other components, using the<br>" + "\""
-                        + ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT + "\" buttons.<br><br>"
-                        + "You can also click the categories directly to eg.<br>"
-                        + "write categorized records or to map them<br>"
-                        + "as requirements for existing or new components."));
-                JOptionPane.showMessageDialog(FilterComponentBuilderPanel.this, messagePanel,
-                        "Help: Filter categories / outcomes", JOptionPane.PLAIN_MESSAGE);
-            }
+        helpButton.addActionListener(e -> {
+            final DCPanel messagePanel = new DCPanel();
+            messagePanel.setLayout(new BorderLayout());
+            messagePanel.add(new JLabel(imageManager.getImageIcon("images/help/help_requirement_mapping.png")),
+                    BorderLayout.WEST);
+            messagePanel.add(DCLabel.darkMultiLine(
+                    "Filter outcomes can be set as requirements<br>" + "for other components, using the<br>" + "\""
+                            + ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT + "\" buttons.<br><br>"
+                            + "You can also click the categories directly to eg.<br>"
+                            + "write categorized records or to map them<br>"
+                            + "as requirements for existing or new components."));
+            JOptionPane.showMessageDialog(FilterComponentBuilderPanel.this, messagePanel,
+                    "Help: Filter categories / outcomes", JOptionPane.PLAIN_MESSAGE);
         });
         _outcomePanel.add(helpButton);
     }

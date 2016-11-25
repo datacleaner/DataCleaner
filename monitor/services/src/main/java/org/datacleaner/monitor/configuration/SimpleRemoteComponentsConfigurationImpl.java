@@ -41,7 +41,6 @@ public class SimpleRemoteComponentsConfigurationImpl implements RemoteComponents
 
     @Override
     public Map<PropertyDescriptor, Object> getDefaultValues(final ComponentDescriptor<?> componentDescriptor) {
-        final Map<PropertyDescriptor, Object> configuredProperties = new HashMap<>();
-        return configuredProperties;
+        return new HashMap<>();
     }
 }

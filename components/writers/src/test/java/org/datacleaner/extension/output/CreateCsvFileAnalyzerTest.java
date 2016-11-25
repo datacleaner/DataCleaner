@@ -74,7 +74,7 @@ public class CreateCsvFileAnalyzerTest {
             analyzer.overwriteFileIfExists = false;
             analyzer.validate();
             fail("Exception expected");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertEquals("The file already exists. Please configure the job to overwrite the existing file.",
                     e.getMessage());
 
@@ -109,7 +109,7 @@ public class CreateCsvFileAnalyzerTest {
 
         analyzer.init();
 
-        InputRow[] rows = new InputRow[13];
+        final InputRow[] rows = new InputRow[13];
         rows[0] = new MockInputRow().put(testColumn, "row00").put(idColumn, 7);
         rows[1] = new MockInputRow().put(testColumn, "row01").put(idColumn, 9);
         rows[2] = new MockInputRow().put(testColumn, "row02").put(idColumn, 2);
@@ -131,13 +131,13 @@ public class CreateCsvFileAnalyzerTest {
         analyzer.getResult();
 
         final List<Integer> resultIds = new ArrayList<>(13);
-        CsvDatastore outputDatastore = new CsvDatastore("csvtest-sortnumerical", analyzer.file);
+        final CsvDatastore outputDatastore = new CsvDatastore("csvtest-sortnumerical", analyzer.file);
         try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
-            DataContext dataContext = outputDatastoreConnection.getDataContext();
+            final DataContext dataContext = outputDatastoreConnection.getDataContext();
             try (DataSet dataSet = dataContext.query().from(targetFilename).selectAll().execute()) {
                 while (dataSet.next()) {
-                    Row row = dataSet.getRow();
-                    Integer idValue = Integer.parseInt((String) row.getValue(1));
+                    final Row row = dataSet.getRow();
+                    final Integer idValue = Integer.parseInt((String) row.getValue(1));
                     resultIds.add(idValue);
                 }
             }
@@ -148,7 +148,7 @@ public class CreateCsvFileAnalyzerTest {
 
     @Test
     public void testSortLexicographic() throws Exception {
-        CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
+        final CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
 
         final InputColumn<String> testColumn = new MockInputColumn<>("TestColumn");
         final InputColumn<String> idColumn = new MockInputColumn<>("IdToSort", String.class);
@@ -166,7 +166,7 @@ public class CreateCsvFileAnalyzerTest {
 
         analyzer.init();
 
-        InputRow[] rows = new InputRow[13];
+        final InputRow[] rows = new InputRow[13];
         rows[0] = new MockInputRow().put(testColumn, "row00").put(idColumn, 7);
         rows[1] = new MockInputRow().put(testColumn, "row01").put(idColumn, 9);
         rows[2] = new MockInputRow().put(testColumn, "row02").put(idColumn, 2);
@@ -188,13 +188,13 @@ public class CreateCsvFileAnalyzerTest {
         analyzer.getResult();
 
         final List<String> resultIds = new ArrayList<>(13);
-        CsvDatastore outputDatastore = new CsvDatastore("csvtest-sortnumerical", analyzer.file);
+        final CsvDatastore outputDatastore = new CsvDatastore("csvtest-sortnumerical", analyzer.file);
         try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
-            DataContext dataContext = outputDatastoreConnection.getDataContext();
+            final DataContext dataContext = outputDatastoreConnection.getDataContext();
             try (DataSet dataSet = dataContext.query().from(targetFilename).selectAll().execute()) {
                 while (dataSet.next()) {
-                    Row row = dataSet.getRow();
-                    String idValue = (String) row.getValue(1);
+                    final Row row = dataSet.getRow();
+                    final String idValue = (String) row.getValue(1);
                     resultIds.add(idValue);
                 }
             }
@@ -205,7 +205,7 @@ public class CreateCsvFileAnalyzerTest {
 
     @Test
     public void testSortLexicographicCaseSensitivity() throws Exception {
-        CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
+        final CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
 
         final InputColumn<String> sortColumn = new MockInputColumn<>("SortColumn");
         final InputColumn<String> someColumn = new MockInputColumn<>("SomeColumn", String.class);
@@ -223,7 +223,7 @@ public class CreateCsvFileAnalyzerTest {
 
         analyzer.init();
 
-        InputRow[] rows = new InputRow[8];
+        final InputRow[] rows = new InputRow[8];
         rows[0] = new MockInputRow().put(sortColumn, "Claudia").put(someColumn, 1);
         rows[1] = new MockInputRow().put(sortColumn, "Dennis").put(someColumn, 2);
         rows[2] = new MockInputRow().put(sortColumn, "Kasper").put(someColumn, 3);
@@ -240,13 +240,14 @@ public class CreateCsvFileAnalyzerTest {
         analyzer.getResult();
 
         final List<String> resultIds = new ArrayList<>(13);
-        CsvDatastore outputDatastore = new CsvDatastore("csvtest-sortlexicographiccasesensitivity", analyzer.file);
+        final CsvDatastore outputDatastore =
+                new CsvDatastore("csvtest-sortlexicographiccasesensitivity", analyzer.file);
         try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
-            DataContext dataContext = outputDatastoreConnection.getDataContext();
+            final DataContext dataContext = outputDatastoreConnection.getDataContext();
             try (DataSet dataSet = dataContext.query().from(targetFilename).selectAll().execute()) {
                 while (dataSet.next()) {
-                    Row row = dataSet.getRow();
-                    String idValue = (String) row.getValue(0);
+                    final Row row = dataSet.getRow();
+                    final String idValue = (String) row.getValue(0);
                     resultIds.add(idValue);
                 }
             }
@@ -257,7 +258,7 @@ public class CreateCsvFileAnalyzerTest {
 
     @Test
     public void testCustomColumnHeaders() throws Exception {
-        CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
+        final CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
 
         final InputColumn<String> stringColumn = new MockInputColumn<>("StringColumn");
         final InputColumn<Integer> integerColumn = new MockInputColumn<>("IntegerColumn");
@@ -277,7 +278,7 @@ public class CreateCsvFileAnalyzerTest {
 
         analyzer.init();
 
-        InputRow[] rows = new InputRow[13];
+        final InputRow[] rows = new InputRow[13];
         rows[0] = new MockInputRow().put(stringColumn, "row00").put(integerColumn, 7);
         rows[1] = new MockInputRow().put(stringColumn, "row01").put(integerColumn, 9);
         rows[2] = new MockInputRow().put(stringColumn, "row02").put(integerColumn, 2);
@@ -298,10 +299,11 @@ public class CreateCsvFileAnalyzerTest {
 
         analyzer.getResult();
 
-        CsvDatastore outputDatastore = new CsvDatastore("csvtest-customcolumnheaders", analyzer.file);
+        final CsvDatastore outputDatastore = new CsvDatastore("csvtest-customcolumnheaders", analyzer.file);
         try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
-            String[] columnNames = outputDatastoreConnection.getSchemaNavigator().getDefaultSchema()
-                    .getTableByName(targetFilename).getColumnNames();
+            final String[] columnNames =
+                    outputDatastoreConnection.getSchemaNavigator().getDefaultSchema().getTableByName(targetFilename)
+                            .getColumnNames();
             assertEquals(2, columnNames.length);
             assertEquals("CustomNameForStringColumn", columnNames[0]);
             assertEquals("CustomNameForIntegerColumn", columnNames[1]);

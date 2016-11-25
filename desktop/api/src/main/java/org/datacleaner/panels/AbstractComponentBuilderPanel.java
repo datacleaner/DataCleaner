@@ -118,8 +118,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     @Override
     public final JComponent createJComponent() {
         init();
-        final JComponent decorate = decorateMainPanel(this);
-        return decorate;
+        return decorateMainPanel(this);
     }
 
     @Override
@@ -147,9 +146,10 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         unconfiguredPropertyDescriptors.addAll(componentBuilder.getDescriptor().getConfiguredProperties());
 
         for (final ConfiguredPropertyTaskPane propertyTaskPane : propertyTaskPanes) {
-            buildTaskPane(propertyTaskPane.getProperties(), imageManager.getImageIcon(
-                    propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_TASK_PANE, getClass().getClassLoader()),
-                    propertyTaskPane.getTitle(), componentBuilder, propertyTaskPane.isExpanded());
+            buildTaskPane(propertyTaskPane.getProperties(), imageManager
+                            .getImageIcon(propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_TASK_PANE,
+                                    getClass().getClassLoader()), propertyTaskPane.getTitle(), componentBuilder,
+                    propertyTaskPane.isExpanded());
 
             unconfiguredPropertyDescriptors.removeAll(propertyTaskPane.getProperties());
         }
@@ -173,18 +173,17 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
             final DCPanel panel = new DCPanel();
             final DCHtmlBox dcHtmlBox = new DCHtmlBox(
                     "<p>This service is not currently available for your DataCloud account.</p>"
-                            + "<p> Please check the Access Rights on your "
-                            + "<a href='" + RemoteDescriptorProvider.DATACLEANER_BASE_URL
-                            + "/userprofile#DataCloudAccessRights" + "'>DataCleaner profile</a>"
-                            + ".</p>");
+                            + "<p> Please check the Access Rights on your " + "<a href='"
+                            + RemoteDescriptorProvider.DATACLEANER_BASE_URL + "/userprofile#DataCloudAccessRights"
+                            + "'>DataCleaner profile</a>" + ".</p>");
             panel.add(dcHtmlBox);
             addTaskPane(icon, "Component is disabled", panel, true);
         }
     }
 
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-        final Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<>(
-                _descriptor.getConfiguredProperties());
+        final Set<ConfiguredPropertyDescriptor> configuredProperties =
+                new TreeSet<>(_descriptor.getConfiguredProperties());
 
         final List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<>();
         final List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<>();
@@ -213,13 +212,13 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         return result;
     }
 
-    protected void buildTaskPane(final List<ConfiguredPropertyDescriptor> properties, final Icon icon, final String title,
-            final ComponentBuilder componentBuilder) {
+    protected void buildTaskPane(final List<ConfiguredPropertyDescriptor> properties, final Icon icon,
+            final String title, final ComponentBuilder componentBuilder) {
         buildTaskPane(properties, icon, title, componentBuilder, true);
     }
 
-    protected void buildTaskPane(final List<ConfiguredPropertyDescriptor> properties, final Icon icon, final String title,
-            final ComponentBuilder componentBuilder, final boolean expanded) {
+    protected void buildTaskPane(final List<ConfiguredPropertyDescriptor> properties, final Icon icon,
+            final String title, final ComponentBuilder componentBuilder, final boolean expanded) {
         if (!properties.isEmpty()) {
             final PropertyWidgetPanel panel = new PropertyWidgetPanel() {
 
@@ -227,8 +226,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
 
                 @Override
                 protected PropertyWidget<?> getPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor) {
-                    final PropertyWidget<?> propertyWidget = createPropertyWidget(getComponentBuilder(),
-                            propertyDescriptor);
+                    final PropertyWidget<?> propertyWidget =
+                            createPropertyWidget(getComponentBuilder(), propertyDescriptor);
                     getPropertyWidgetCollection().registerWidget(propertyDescriptor, propertyWidget);
                     return propertyWidget;
                 }
@@ -250,7 +249,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         return addTaskPane(iconImagePath, title, content, true);
     }
 
-    protected JXTaskPane addTaskPane(final String iconImagePath, final String title, final JComponent content, final boolean expanded) {
+    protected JXTaskPane addTaskPane(final String iconImagePath, final String title, final JComponent content,
+            final boolean expanded) {
         final ImageIcon icon = imageManager.getImageIcon(iconImagePath, IconUtils.ICON_SIZE_TASK_PANE);
         return addTaskPane(icon, title, content, expanded);
     }
@@ -259,7 +259,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         return addTaskPane(icon, title, content, true);
     }
 
-    protected JXTaskPane addTaskPane(final Icon icon, final String title, final JComponent content, final boolean expanded) {
+    protected JXTaskPane addTaskPane(final Icon icon, final String title, final JComponent content,
+            final boolean expanded) {
         final JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
         taskPane.setCollapsed(!expanded);
         taskPane.add(content);
@@ -320,8 +321,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         _taskPaneContainer.remove(_outputDataStreamsTaskPane);
         _outputDataStreamsViewer.refresh();
         if (_outputDataStreamsViewer.isEnabled()) {
-            _outputDataStreamsTaskPane = addTaskPane(IconUtils.OUTPUT_DATA_STREAM_PATH, "Output data streams",
-                    _outputDataStreamsViewer);
+            _outputDataStreamsTaskPane =
+                    addTaskPane(IconUtils.OUTPUT_DATA_STREAM_PATH, "Output data streams", _outputDataStreamsViewer);
             _taskPaneContainer.updateUI();
         }
     }

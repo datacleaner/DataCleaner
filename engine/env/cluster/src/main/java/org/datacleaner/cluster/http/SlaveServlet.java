@@ -75,8 +75,8 @@ public class SlaveServlet extends HttpServlet {
             }
         }
         if (_analysisListener == null) {
-            final Object analysisListenerAttribute = servletContext
-                    .getAttribute(SERVLET_CONTEXT_ATTRIBUTE_ANALYSIS_LISTENER);
+            final Object analysisListenerAttribute =
+                    servletContext.getAttribute(SERVLET_CONTEXT_ATTRIBUTE_ANALYSIS_LISTENER);
             if (analysisListenerAttribute != null && analysisListenerAttribute instanceof AnalysisListener) {
                 _analysisListener = (AnalysisListener) analysisListenerAttribute;
             }

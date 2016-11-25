@@ -36,7 +36,6 @@ import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 
 /**
@@ -45,25 +44,20 @@ import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
  *
  * @author Kasper Sørensen
  */
-public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWidget<InputColumn<?>> implements
-        SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
+public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWidget<InputColumn<?>>
+        implements SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
 
     private final DCComboBox<InputColumn<?>> _comboBox;
     private final Class<?> _dataType;
     private volatile List<InputColumn<?>> _inputColumns;
 
     @Inject
-    public SingleInputColumnComboBoxPropertyWidget(
-            final ComponentBuilder componentBuilder, final ConfiguredPropertyDescriptor propertyDescriptor) {
+    public SingleInputColumnComboBoxPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
         _comboBox = new DCComboBox<>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
-        _comboBox.addListener(new Listener<InputColumn<?>>() {
-            @Override
-            public void onItemSelected(final InputColumn<?> item) {
-                fireValueChanged();
-            }
-        });
+        _comboBox.addListener(item -> fireValueChanged());
         getAnalysisJobBuilder().addSourceColumnChangeListener(this);
         getAnalysisJobBuilder().addTransformerChangeListener(this);
         _dataType = propertyDescriptor.getTypeArgument(0);
@@ -129,8 +123,8 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
             final ConfiguredPropertyDescriptor propertyDescriptor = getPropertyDescriptor();
             final ComponentBuilder componentBuilder = getComponentBuilder();
 
-            final InputColumn<?> currentValue = (InputColumn<?>) componentBuilder
-                    .getConfiguredProperty(propertyDescriptor);
+            final InputColumn<?> currentValue =
+                    (InputColumn<?>) componentBuilder.getConfiguredProperty(propertyDescriptor);
             if (currentValue != null) {
                 if (currentValue.equals(column)) {
                     componentBuilder.setConfiguredProperty(propertyDescriptor, null);

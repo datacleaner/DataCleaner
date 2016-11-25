@@ -41,15 +41,12 @@ final class DatastoreDictionaryConnection implements DictionaryConnection {
     public boolean containsValue(final String value) {
         final DataContext dataContext = _datastoreConnection.getDataContext();
         final Column column = _dictionary.getColumn(_datastoreConnection);
-        final DataSet dataSet = dataContext.query().from(column.getTable()).select(column).where(column).eq(value)
-                .maxRows(1).execute();
-        try {
+        try (DataSet dataSet = dataContext.query().from(column.getTable()).select(column).where(column).eq(value)
+                .maxRows(1).execute()) {
             if (dataSet.next()) {
                 return true;
             }
             return false;
-        } finally {
-            dataSet.close();
         }
     }
 

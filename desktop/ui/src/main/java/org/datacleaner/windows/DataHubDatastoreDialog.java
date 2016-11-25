@@ -19,10 +19,6 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map.Entry;
@@ -73,6 +69,7 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         public String username;
         public String tenant;
     }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DataHubDatastoreDialog.class);
     private static final long serialVersionUID = 1L;
     private final JXTextField _hostTextField;
@@ -96,8 +93,8 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _passwordTextField = WidgetFactory.createPasswordField();
         // _contextPathTextField =
         // WidgetFactory.createTextField("Context path");
-        _securityModeSelector = new JComboBox<>(new String[] { DataHubSecurityMode.DEFAULT.toString(),
-                DataHubSecurityMode.CAS.toString() });
+        _securityModeSelector = new JComboBox<>(
+                new String[] { DataHubSecurityMode.DEFAULT.toString(), DataHubSecurityMode.CAS.toString() });
         _securityModeSelector.setEditable(false);
 
         _urlLabel = DCLabel.bright("");
@@ -115,74 +112,58 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         _httpsCheckBox = new JCheckBox("Use HTTPS?", false);
         _httpsCheckBox.setOpaque(false);
         _httpsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _httpsCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                updateUrlLabel();
-                validateAndUpdate();
-            }
+        _httpsCheckBox.addActionListener(event -> {
+            updateUrlLabel();
+            validateAndUpdate();
         });
 
         _acceptUnverifiedSslPeersCheckBox = new JCheckBox("Accept unverified SSL peers?", false);
         _acceptUnverifiedSslPeersCheckBox.setOpaque(false);
         _acceptUnverifiedSslPeersCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _acceptUnverifiedSslPeersCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                validateAndUpdate();
-            }
-        });
+        _acceptUnverifiedSslPeersCheckBox.addActionListener(event -> validateAndUpdate());
 
         _hostTextField.getDocument().addDocumentListener(genericDocumentListener);
         _portTextField.getDocument().addDocumentListener(genericDocumentListener);
         _usernameTextField.getDocument().addDocumentListener(genericDocumentListener);
         _passwordTextField.getDocument().addDocumentListener(genericDocumentListener);
-        _securityModeSelector.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(final ItemEvent e) {
-                validateAndUpdate();
-                updateUrlLabel();
-            }
-
+        _securityModeSelector.addItemListener(e -> {
+            validateAndUpdate();
+            updateUrlLabel();
         });
 
         _testButton = WidgetFactory.createDefaultButton("Test connection", IconUtils.ACTION_REFRESH);
-        _testButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                final DataHubRepoConnection connection = createConnection();
-                final String getTenantInfoUrl = connection.getUserInfoUrl();
-                final HttpGet request = new HttpGet(getTenantInfoUrl);
-                try (MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
-                    final HttpResponse response = monitorHttpClient.execute(request);
+        _testButton.addActionListener(event -> {
+            final DataHubRepoConnection connection = createConnection();
+            final String getTenantInfoUrl = connection.getUserInfoUrl();
+            final HttpGet request = new HttpGet(getTenantInfoUrl);
+            try (MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
+                final HttpResponse response = monitorHttpClient.execute(request);
 
-                    final StatusLine statusLine = response.getStatusLine();
+                final StatusLine statusLine = response.getStatusLine();
 
-                    if (statusLine.getStatusCode() == HttpStatus.SC_OK
-                            || statusLine.getStatusCode() == HttpStatus.SC_CREATED) {
-                        // read response as JSON.
-                        final InputStream content = response.getEntity().getContent();
-                        final UserInfo userInfo;
-                        try {
-                            userInfo = new ObjectMapper().readValue(content, UserInfo.class);
-                        } finally {
-                            FileHelper.safeClose(content);
-                        }
-                        LOGGER.info("Get tenant info request responded with tenant name: {}", userInfo.tenant);
-                        JOptionPane.showMessageDialog(DataHubDatastoreDialog.this, "Connection successful!");
-                    } else {
-                        final String reasonPhrase = statusLine.getReasonPhrase();
-                        WidgetUtils.showErrorMessage("Server reported error", "Server replied with status "
-                                + statusLine.getStatusCode() + ":\n" + reasonPhrase);
+                if (statusLine.getStatusCode() == HttpStatus.SC_OK
+                        || statusLine.getStatusCode() == HttpStatus.SC_CREATED) {
+                    // read response as JSON.
+                    final InputStream content = response.getEntity().getContent();
+                    final UserInfo userInfo;
+                    try {
+                        userInfo = new ObjectMapper().readValue(content, UserInfo.class);
+                    } finally {
+                        FileHelper.safeClose(content);
                     }
-                } catch (final Exception e) {
-                    // TODO: This dialog is shown behind the modal dialog
-                    WidgetUtils.showErrorMessage("Connection failed",
-                            "Connecting to DataHub failed. Did you remember to fill in all the necessary fields?", e);
+                    LOGGER.info("Get tenant info request responded with tenant name: {}", userInfo.tenant);
+                    JOptionPane.showMessageDialog(DataHubDatastoreDialog.this, "Connection successful!");
+                } else {
+                    final String reasonPhrase = statusLine.getReasonPhrase();
+                    WidgetUtils.showErrorMessage("Server reported error",
+                            "Server replied with status " + statusLine.getStatusCode() + ":\n" + reasonPhrase);
                 }
-                validateAndUpdate();
+            } catch (final Exception e) {
+                // TODO: This dialog is shown behind the modal dialog
+                WidgetUtils.showErrorMessage("Connection failed",
+                        "Connecting to DataHub failed. Did you remember to fill in all the necessary fields?", e);
             }
-
+            validateAndUpdate();
         });
 
         if (originalDatastore != null) {
@@ -219,10 +200,10 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final String username = _usernameTextField.getText();
         final String password = new String(_passwordTextField.getPassword());
 
-        return new DataHubRepoConnection(new DataHubConnection(_hostTextField.getText(), port, username, password,
-                _httpsCheckBox.isSelected(),
-                _acceptUnverifiedSslPeersCheckBox.isSelected(), DataHubSecurityMode.valueOf(_securityModeSelector
-                .getSelectedItem().toString())));
+        return new DataHubRepoConnection(
+                new DataHubConnection(_hostTextField.getText(), port, username, password, _httpsCheckBox.isSelected(),
+                        _acceptUnverifiedSslPeersCheckBox.isSelected(),
+                        DataHubSecurityMode.valueOf(_securityModeSelector.getSelectedItem().toString())));
     }
 
     private void updateUrlLabel() {
@@ -289,8 +270,8 @@ public class DataHubDatastoreDialog extends AbstractDatastoreDialog<DataHubDatas
         final boolean acceptUnverifiedSslPeersCheckBox = _acceptUnverifiedSslPeersCheckBox.isSelected();
         final String securityMode = _securityModeSelector.getSelectedItem().toString().toUpperCase();
 
-        return new DataHubDatastore(name, host, port, username, password, https,
-                acceptUnverifiedSslPeersCheckBox, DataHubSecurityMode.valueOf(securityMode));
+        return new DataHubDatastore(name, host, port, username, password, https, acceptUnverifiedSslPeersCheckBox,
+                DataHubSecurityMode.valueOf(securityMode));
     }
 
     @Override

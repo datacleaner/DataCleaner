@@ -55,16 +55,13 @@ public class HtmlAnalysisResultWriterFactory {
         this.flotLibraryLocation = flotLibraryLocation;
     }
 
-    public HtmlAnalysisResultWriter create(
-            final boolean tabs,
-            final Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate,
-            final boolean headers) {
+    public HtmlAnalysisResultWriter create(final boolean tabs,
+            final Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate, final boolean headers) {
 
         if (null != flotLibraryLocation) {
             FlotChartLocator.setFlotHome(flotLibraryLocation);
         }
-        return new HtmlAnalysisResultWriter(tabs, jobInclusionPredicate,
-                headers) {
+        return new HtmlAnalysisResultWriter(tabs, jobInclusionPredicate, headers) {
             @Override
             protected HeadElement createBaseHeadElement() {
                 if (resourcesDirectory == null) {

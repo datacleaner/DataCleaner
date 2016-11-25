@@ -49,8 +49,8 @@ final class SimpleStringPatternReferenceDataPage extends AbstractFreemarkerWizar
             throws DCUserInputException {
         final String name = getString(formParameters, PROPERTY_NAME);
         final String expression = getString(formParameters, PROPERTY_EXPRESSION);
-        ReferenceDataHelper.checkUniqueStringPattern(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog());
+        ReferenceDataHelper.checkUniqueStringPattern(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
 
         _session.setName(name);
         _session.setExpression(expression);

@@ -51,12 +51,12 @@ public class TokenizerConfiguration implements Serializable {
 
     public TokenizerConfiguration(final boolean enableMixedTokens) {
         this(enableMixedTokens, DecimalFormatSymbols.getInstance().getDecimalSeparator(),
-                DecimalFormatSymbols.getInstance()
-                        .getGroupingSeparator(), DecimalFormatSymbols.getInstance().getMinusSign());
+                DecimalFormatSymbols.getInstance().getGroupingSeparator(),
+                DecimalFormatSymbols.getInstance().getMinusSign());
     }
 
-    public TokenizerConfiguration(final boolean enableMixed, final Character decimalSeparator, final Character thousandsSeparator,
-            final Character minusSign) {
+    public TokenizerConfiguration(final boolean enableMixed, final Character decimalSeparator,
+            final Character thousandsSeparator, final Character minusSign) {
         _tokenTypes = EnumSet.allOf(TokenType.class);
         if (!enableMixed) {
             _tokenTypes.remove(TokenType.MIXED);

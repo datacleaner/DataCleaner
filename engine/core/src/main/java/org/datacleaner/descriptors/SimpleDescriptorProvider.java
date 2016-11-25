@@ -131,8 +131,8 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
 
     public void setAnalyzerClassNames(final Collection<String> classNames) throws ClassNotFoundException {
         for (final String className : classNames) {
-            @SuppressWarnings("unchecked") final
-            Class<? extends Analyzer<?>> c = (Class<? extends Analyzer<?>>) Class.forName(className);
+            @SuppressWarnings("unchecked") final Class<? extends Analyzer<?>> c =
+                    (Class<? extends Analyzer<?>>) Class.forName(className);
             final AnalyzerDescriptor<?> descriptor = getAnalyzerDescriptorForClass(c);
             if (descriptor == null || !_analyzerBeanDescriptors.contains(descriptor)) {
                 addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(c));
@@ -142,8 +142,8 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
 
     public void setTransformerClassNames(final Collection<String> classNames) throws ClassNotFoundException {
         for (final String className : classNames) {
-            @SuppressWarnings("unchecked") final
-            Class<? extends Transformer> c = (Class<? extends Transformer>) Class.forName(className);
+            @SuppressWarnings("unchecked") final Class<? extends Transformer> c =
+                    (Class<? extends Transformer>) Class.forName(className);
             final TransformerDescriptor<?> descriptor = getTransformerDescriptorForClass(c);
             if (descriptor == null || !_transformerBeanDescriptors.contains(descriptor)) {
                 addTransformerBeanDescriptor(Descriptors.ofTransformer(c));
@@ -153,8 +153,8 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
 
     public void setRendererClassNames(final Collection<String> classNames) throws ClassNotFoundException {
         for (final String className : classNames) {
-            @SuppressWarnings("unchecked") final
-            Class<? extends Renderer<?, ?>> c = (Class<? extends Renderer<?, ?>>) Class.forName(className);
+            @SuppressWarnings("unchecked") final Class<? extends Renderer<?, ?>> c =
+                    (Class<? extends Renderer<?, ?>>) Class.forName(className);
             final RendererBeanDescriptor<?> descriptor = getRendererBeanDescriptorForClass(c);
             if (descriptor == null || !_rendererBeanDescriptors.contains(descriptor)) {
                 addRendererBeanDescriptor(Descriptors.ofRenderer(c));
@@ -164,8 +164,8 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
 
     public void setFilterClassNames(final Collection<String> classNames) throws ClassNotFoundException {
         for (final String className : classNames) {
-            @SuppressWarnings("unchecked") final
-            Class<? extends Filter<?>> c = (Class<? extends Filter<?>>) Class.forName(className);
+            @SuppressWarnings("unchecked") final Class<? extends Filter<?>> c =
+                    (Class<? extends Filter<?>>) Class.forName(className);
 
             final FilterDescriptor<?, ?> descriptor = getFilterBeanDescriptorForClassUnbounded(c);
 

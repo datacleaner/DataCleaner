@@ -79,8 +79,7 @@ public class SimpleServiceSession<R> implements ServiceSession<R> {
     @Override
     public <E> E invokeAdhocService(final Callable<E> callable) throws RuntimeException, IllegalStateException {
         try {
-            final E result = callable.call();
-            return result;
+            return callable.call();
         } catch (Throwable e) {
             if (e instanceof WebServiceException && e.getCause() != null) {
                 logger.info("Exception thrown was a WebServiceException. Throwing cause exception instead.", e);

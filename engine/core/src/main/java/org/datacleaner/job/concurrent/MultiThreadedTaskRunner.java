@@ -101,8 +101,9 @@ public final class MultiThreadedTaskRunner implements ScheduledTaskRunner {
         // place in it.
         _workQueue = new AlwaysBlockingQueue<>(taskCapacity);
 
-        _executorService = new ThreadPoolExecutor(numThreads, numThreads, 60, TimeUnit.SECONDS, _workQueue,
-                _threadFactory, rejectionHandler);
+        _executorService =
+                new ThreadPoolExecutor(numThreads, numThreads, 60, TimeUnit.SECONDS, _workQueue, _threadFactory,
+                        rejectionHandler);
 
         _executorScheduledService = new ScheduledThreadPoolExecutor(1);
         _executorScheduledService.setMaximumPoolSize(50);

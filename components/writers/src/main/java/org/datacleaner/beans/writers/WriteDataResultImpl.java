@@ -67,12 +67,7 @@ public final class WriteDataResultImpl implements WriteDataResult {
         _schemaName = schemaName;
         _tableName = tableName;
         _datastoreName = (datastore == null ? null : datastore.getName());
-        _datastoreFunc = new Func<DatastoreCatalog, Datastore>() {
-            @Override
-            public Datastore eval(final DatastoreCatalog catalog) {
-                return datastore;
-            }
-        };
+        _datastoreFunc = catalog -> datastore;
         _errorRowCount = errorRowCount;
         _errorDatastore = errorDatastore;
     }
@@ -89,12 +84,7 @@ public final class WriteDataResultImpl implements WriteDataResult {
         _schemaName = schemaName;
         _tableName = tableName;
         _datastoreName = datastoreName;
-        _datastoreFunc = new Func<DatastoreCatalog, Datastore>() {
-            @Override
-            public Datastore eval(final DatastoreCatalog catalog) {
-                return catalog.getDatastore(datastoreName);
-            }
-        };
+        _datastoreFunc = catalog -> catalog.getDatastore(datastoreName);
         _errorRowCount = 0;
         _errorDatastore = null;
     }
@@ -132,11 +122,8 @@ public final class WriteDataResultImpl implements WriteDataResult {
 
     @Override
     public Table getPreviewTable(final Datastore datastore) {
-        final DatastoreConnection con = datastore.openConnection();
-        try {
+        try (DatastoreConnection con = datastore.openConnection()) {
             return con.getSchemaNavigator().convertToTable(_schemaName, _tableName);
-        } finally {
-            con.close();
         }
     }
 

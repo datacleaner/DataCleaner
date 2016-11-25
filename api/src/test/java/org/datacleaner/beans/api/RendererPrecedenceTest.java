@@ -19,9 +19,9 @@
  */
 package org.datacleaner.beans.api;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.RendererPrecedence;
+
+import junit.framework.TestCase;
 
 public class RendererPrecedenceTest extends TestCase {
 

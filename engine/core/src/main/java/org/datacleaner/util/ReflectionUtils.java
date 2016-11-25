@@ -302,8 +302,8 @@ public final class ReflectionUtils {
         assert supertype != null;
 
         if (!ReflectionUtils.is(subtype, supertype)) {
-            throw new IllegalArgumentException("Not a valid subtype of " + supertype.getName() + ": " + subtype
-                    .getName());
+            throw new IllegalArgumentException(
+                    "Not a valid subtype of " + supertype.getName() + ": " + subtype.getName());
         }
 
         if (supertype.isInterface()) {
@@ -430,8 +430,7 @@ public final class ReflectionUtils {
 
         try {
             // first try without parameters
-            final Method method = clazz.getDeclaredMethod(name);
-            return method;
+            return clazz.getDeclaredMethod(name);
         } catch (final SecurityException e) {
             throw new IllegalStateException(e);
         } catch (final NoSuchMethodException e) {

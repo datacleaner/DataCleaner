@@ -35,25 +35,25 @@ public class RegexSwapClientTest {
     public void testUpdateContent() throws Exception {
         Assume.assumeTrue(TestHelper.isInternetConnected());
 
-        RegexSwapClient client = new RegexSwapClient(HttpClients.createSystem());
+        final RegexSwapClient client = new RegexSwapClient(HttpClients.createSystem());
         client.getCategories();
-        Collection<Category> categories = client.getCategories();
+        final Collection<Category> categories = client.getCategories();
         assertFalse(categories.isEmpty());
-        Category partials = client.getCategoryByName("partials");
+        final Category partials = client.getCategoryByName("partials");
         assertEquals("partials", partials.getName());
         assertNotNull(partials.getDescription());
 
-        List<Regex> partialsRegexes = client.getRegexes(partials);
+        final List<Regex> partialsRegexes = client.getRegexes(partials);
 
         int regexInCategoryCount = 0;
-        for (Category category : categories) {
-            List<Regex> regexes = client.getRegexes(category);
+        for (final Category category : categories) {
+            final List<Regex> regexes = client.getRegexes(category);
             regexInCategoryCount += regexes.size();
         }
         assertTrue(regexInCategoryCount >= partialsRegexes.size());
 
         assertFalse(partialsRegexes.isEmpty());
-        for (Regex regex : partialsRegexes) {
+        for (final Regex regex : partialsRegexes) {
             assertFalse(regex.getCategories().isEmpty());
             assertTrue(regex.containsCategory(partials));
         }
@@ -61,9 +61,9 @@ public class RegexSwapClientTest {
         Regex regex = client.getRegexByName("Integer or rounded decimal");
         assertNotNull(regex);
         regex = client.refreshRegex(regex);
-        List<Category> regexCategories = regex.getCategories();
+        final List<Category> regexCategories = regex.getCategories();
         assertFalse(regexCategories.isEmpty());
-        for (Category category : regexCategories) {
+        for (final Category category : regexCategories) {
             assertNotNull(category);
             assertTrue(regex.containsCategory(category));
             assertTrue(client.getRegexes(category).contains(regex));

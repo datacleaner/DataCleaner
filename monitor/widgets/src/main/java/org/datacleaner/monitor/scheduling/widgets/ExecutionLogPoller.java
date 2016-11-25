@@ -44,7 +44,8 @@ public class ExecutionLogPoller {
     private final TenantIdentifier _tenant;
     private final Callback _callback;
 
-    public ExecutionLogPoller(final SchedulingServiceAsync service, final TenantIdentifier tenant, final Callback callback) {
+    public ExecutionLogPoller(final SchedulingServiceAsync service, final TenantIdentifier tenant,
+            final Callback callback) {
         _service = service;
         _tenant = tenant;
         _callback = callback;

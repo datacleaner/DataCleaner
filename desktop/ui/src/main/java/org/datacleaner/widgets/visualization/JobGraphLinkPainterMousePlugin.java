@@ -37,8 +37,8 @@ import edu.uci.ics.jung.visualization.control.GraphMousePlugin;
  * support the creation of new links between parts of a visualized DataCleaner
  * job.
  */
-public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin implements MouseListener,
-        MouseMotionListener {
+public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin
+        implements MouseListener, MouseMotionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainterMousePlugin.class);
 
@@ -79,8 +79,9 @@ public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin imp
             final Object vertex = _graphContext.getVertex(me);
             if (vertex != null) {
                 me.consume();
-                _linkPainter.startLink(new JobGraphLinkPainter.VertexContext(vertex,
-                        _graphContext.getAnalysisJobBuilder(vertex), null));
+                _linkPainter.startLink(
+                        new JobGraphLinkPainter.VertexContext(vertex, _graphContext.getAnalysisJobBuilder(vertex),
+                                null));
             }
         }
     }

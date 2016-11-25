@@ -42,8 +42,7 @@ public class JaxbMetricAdaptor extends AbstractJaxbAdaptor<MetricsType> {
     }
 
     public MetricsType read(final InputStream in) {
-        final MetricsType result = super.unmarshal(in);
-        return result;
+        return super.unmarshal(in);
     }
 
     @Override

@@ -59,8 +59,8 @@ public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {
             dataContexts.add(dc);
         }
         final Closeable[] closeablesArray = closeables.toArray(new Closeable[closeables.size()]);
-        return new DatastoreConnectionImpl<>(DataContextFactory.createCompositeDataContext(dataContexts),
-                this, closeablesArray);
+        return new DatastoreConnectionImpl<>(DataContextFactory.createCompositeDataContext(dataContexts), this,
+                closeablesArray);
     }
 
     @Override
@@ -69,10 +69,10 @@ public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {
         boolean naturalRecordOrderConsistent = true;
         for (final Datastore datastore : _datastores) {
             final PerformanceCharacteristics performanceCharacteristics = datastore.getPerformanceCharacteristics();
-            queryOptimizationPreferred = queryOptimizationPreferred
-                    && performanceCharacteristics.isQueryOptimizationPreferred();
-            naturalRecordOrderConsistent = naturalRecordOrderConsistent
-                    && performanceCharacteristics.isNaturalRecordOrderConsistent();
+            queryOptimizationPreferred =
+                    queryOptimizationPreferred && performanceCharacteristics.isQueryOptimizationPreferred();
+            naturalRecordOrderConsistent =
+                    naturalRecordOrderConsistent && performanceCharacteristics.isNaturalRecordOrderConsistent();
         }
         return new PerformanceCharacteristicsImpl(queryOptimizationPreferred, naturalRecordOrderConsistent);
     }

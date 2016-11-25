@@ -81,9 +81,9 @@ public final class DataCleanerHomeUpgrader {
                 try {
                     Integer.parseInt(versionPart);
                 } catch (final NumberFormatException e) {
-                    logger.warn(
-                            "Found a version folder in home directory ({}) with a part that could not be parsed to an integer: {} Removing this folder from potential upgrade candidates.",
-                            baseName, versionPart);
+                    logger.warn("Found a version folder in home directory ({}) with a part that could not be parsed "
+                                    + "to an integer: {} Removing this folder from potential upgrade candidates.", baseName,
+                            versionPart);
                     validated = false;
                 }
             }
@@ -173,9 +173,8 @@ public final class DataCleanerHomeUpgrader {
         final FileObject[] allFoldersInParent = parentFolder.findFiles(new FileDepthSelector(1, 1));
         for (final FileObject folderInParent : allFoldersInParent) {
             final String folderInParentName = folderInParent.getName().getBaseName();
-            if (folderInParent.getType().equals(FileType.FOLDER)
-                    && (!folderInParentName.equals(target.getName().getBaseName()))
-                    && (!candidateBlacklist.contains(folderInParentName))) {
+            if (folderInParent.getType().equals(FileType.FOLDER) && (!folderInParentName
+                    .equals(target.getName().getBaseName())) && (!candidateBlacklist.contains(folderInParentName))) {
                 versionFolders.add(folderInParent);
             }
         }

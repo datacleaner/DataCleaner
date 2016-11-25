@@ -22,8 +22,6 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
 
@@ -104,43 +102,33 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         _previewAlternativesButton = WidgetFactory.createDefaultButton(WidgetUtils.CHAR_CARET_DOWN);
         final int defaultPreviewRows = getPreviewRows();
         final PreviewTransformedDataActionListener defaultPreviewTransformedDataActionListener =
-                new PreviewTransformedDataActionListener(
-                        _windowContext, this, _componentBuilder, defaultPreviewRows);
+                new PreviewTransformedDataActionListener(_windowContext, this, _componentBuilder, defaultPreviewRows);
         final TransformerComponentBuilderPanel transformerComponentBuilderPanel = this;
         _previewButton.addActionListener(defaultPreviewTransformedDataActionListener);
-        _previewAlternativesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final JMenuItem defaultPreviewMenutItem = WidgetFactory
-                        .createMenuItem("Preview " + defaultPreviewRows + " records", IconUtils.ACTION_PREVIEW);
-                defaultPreviewMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
+        _previewAlternativesButton.addActionListener(e -> {
+            final JMenuItem defaultPreviewMenutItem = WidgetFactory
+                    .createMenuItem("Preview " + defaultPreviewRows + " records", IconUtils.ACTION_PREVIEW);
+            defaultPreviewMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
 
-                final JMenuItem maxRowsPreviewMenuItem = WidgetFactory.createMenuItem("Preview N records",
-                        IconUtils.ACTION_PREVIEW);
-                maxRowsPreviewMenuItem.addActionListener(new ActionListener() {
+            final JMenuItem maxRowsPreviewMenuItem =
+                    WidgetFactory.createMenuItem("Preview N records", IconUtils.ACTION_PREVIEW);
+            maxRowsPreviewMenuItem.addActionListener(e1 -> {
+                final Integer maxRows = WidgetFactory.showMaxRowsDialog(defaultPreviewRows);
 
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        final Integer maxRows = WidgetFactory.showMaxRowsDialog(defaultPreviewRows);
+                if (maxRows != null) {
+                    final PreviewTransformedDataActionListener maxRowsPreviewTransformedDataActionListener =
+                            new PreviewTransformedDataActionListener(_windowContext, transformerComponentBuilderPanel,
+                                    _componentBuilder, maxRows);
+                    maxRowsPreviewTransformedDataActionListener.actionPerformed(e1);
+                }
+            });
 
-                        if (maxRows != null) {
-                            final PreviewTransformedDataActionListener maxRowsPreviewTransformedDataActionListener =
-                                    new PreviewTransformedDataActionListener(
-                                            _windowContext, transformerComponentBuilderPanel, _componentBuilder,
-                                            maxRows);
-                            maxRowsPreviewTransformedDataActionListener.actionPerformed(e);
-                        }
-                    }
-                });
+            final JPopupMenu menu = new JPopupMenu();
+            menu.add(defaultPreviewMenutItem);
+            menu.add(maxRowsPreviewMenuItem);
 
-                final JPopupMenu menu = new JPopupMenu();
-                menu.add(defaultPreviewMenutItem);
-                menu.add(maxRowsPreviewMenuItem);
-
-                final int horizontalPosition = -1 * menu.getPreferredSize().width
-                        + _previewAlternativesButton.getWidth();
-                menu.show(_previewAlternativesButton, horizontalPosition, _previewAlternativesButton.getHeight());
-            }
+            final int horizontalPosition = -1 * menu.getPreferredSize().width + _previewAlternativesButton.getWidth();
+            menu.show(_previewAlternativesButton, horizontalPosition, _previewAlternativesButton.getHeight());
         });
     }
 
@@ -220,7 +208,8 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
     }
 
     @Override
-    public void onOutputChanged(final TransformerComponentBuilder<?> tjb, final List<MutableInputColumn<?>> outputColumns) {
+    public void onOutputChanged(final TransformerComponentBuilder<?> tjb,
+            final List<MutableInputColumn<?>> outputColumns) {
         _outputColumnsTable.setColumns(outputColumns);
     }
 

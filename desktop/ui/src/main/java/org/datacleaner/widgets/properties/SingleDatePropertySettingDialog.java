@@ -76,7 +76,8 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     private final JTextField _todayPlusTextField;
     private final JButton _closeButton;
 
-    protected SingleDatePropertySettingDialog(final WindowContext windowContext, final SingleDatePropertyWidget widget) {
+    protected SingleDatePropertySettingDialog(final WindowContext windowContext,
+            final SingleDatePropertyWidget widget) {
         super(windowContext, ImageManager.get().getImage(IMAGE_PATH));
 
         _widget = widget;
@@ -107,11 +108,8 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     }
 
     private boolean isParticularDateSpecified() {
-        return (!_dateNowRadio.isSelected() &&
-                !_dateTodayRadio.isSelected() &&
-                !_dateYesterdayRadio.isSelected() &&
-                !_todayPlusRadio.isSelected() &&
-                !_datePicker.getEditor().getText().isEmpty());
+        return (!_dateNowRadio.isSelected() && !_dateTodayRadio.isSelected() && !_dateYesterdayRadio.isSelected()
+                && !_todayPlusRadio.isSelected() && !_datePicker.getEditor().getText().isEmpty());
     }
 
     private JTextField createTodayPlusTextField() {
@@ -143,8 +141,8 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
     }
 
     public String getFormattedString() {
-        if (_dateNowRadio.isSelected() || _dateTodayRadio.isSelected() || _dateYesterdayRadio.isSelected() ||
-                _todayPlusRadio.isSelected()) {
+        if (_dateNowRadio.isSelected() || _dateTodayRadio.isSelected() || _dateYesterdayRadio.isSelected()
+                || _todayPlusRadio.isSelected()) {
             return String.format("%s", getLabelForFormattedString());
         } else {
             return String.format("%s", getValue().toString());

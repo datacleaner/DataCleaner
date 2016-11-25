@@ -41,8 +41,8 @@ public class RowProcessingStream {
     }
 
     public static RowProcessingStream ofOutputDataStream(final OutputDataStreamJob outputDataStreamJob) {
-        return new RowProcessingStream(outputDataStreamJob.getJob(), outputDataStreamJob.getOutputDataStream()
-                .getTable(), false);
+        return new RowProcessingStream(outputDataStreamJob.getJob(),
+                outputDataStreamJob.getOutputDataStream().getTable(), false);
     }
 
     public static RowProcessingStream ofSourceTable(final AnalysisJob analysisJob, final Table table) {

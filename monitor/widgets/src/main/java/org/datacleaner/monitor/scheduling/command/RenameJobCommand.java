@@ -42,7 +42,8 @@ public class RenameJobCommand implements Command {
     private JobIdentifier _job;
     private DCPopupPanel _morePopup;
 
-    public RenameJobCommand(final TenantIdentifier tenant, final JobIdentifier jobIdentifier, final DCPopupPanel morePopup) {
+    public RenameJobCommand(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
+            final DCPopupPanel morePopup) {
         _tenant = tenant;
         _job = jobIdentifier;
         _morePopup = morePopup;

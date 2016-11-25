@@ -114,8 +114,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
         }
         _configuration = configuration;
         try {
-            _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
-                    ObjectFactory.class.getClassLoader());
+            _jaxbContext = JAXBContext
+                    .newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class.getClassLoader());
         } catch (final JAXBException e) {
             throw new IllegalStateException(e);
         }
@@ -124,8 +124,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
     private static void processRemovedProperties(final ComponentBuilder builder, final StringConverter stringConverter,
             final ComponentDescriptor<?> descriptor, final Map<String, String> removedProperties) {
         if (descriptor.getComponentClass() == PlainSearchReplaceTransformer.class) {
-            PlainSearchReplaceTransformer.processRemovedProperties(builder, stringConverter, descriptor,
-                    removedProperties);
+            PlainSearchReplaceTransformer
+                    .processRemovedProperties(builder, stringConverter, descriptor, removedProperties);
         }
     }
 
@@ -137,8 +137,9 @@ public class JaxbJobReader implements JobReader<InputStream> {
      * {@inheritDoc}
      */
     @Override
-    public AnalysisJob read(final InputStream inputStream) throws NoSuchDatastoreException, NoSuchColumnException,
-            NoSuchComponentException, ComponentConfigurationException, IllegalStateException {
+    public AnalysisJob read(final InputStream inputStream)
+            throws NoSuchDatastoreException, NoSuchColumnException, NoSuchComponentException,
+            ComponentConfigurationException, IllegalStateException {
         try (AnalysisJobBuilder ajb = create(inputStream)) {
             return ajb.toAnalysisJob();
         }
@@ -297,8 +298,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     types.add(null);
                 } else {
                     try {
-                        final org.apache.metamodel.schema.ColumnType type = org.apache.metamodel.schema.ColumnTypeImpl
-                                .valueOf(typeName);
+                        final org.apache.metamodel.schema.ColumnType type =
+                                org.apache.metamodel.schema.ColumnTypeImpl.valueOf(typeName);
                         types.add(type);
                     } catch (final IllegalArgumentException e) {
                         // type literal was not a valid ColumnType
@@ -369,8 +370,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
             final Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
 
             unmarshaller.setEventHandler(new JaxbValidationEventHandler());
-            final JobType job = (JobType) unmarshaller.unmarshal(inputStream);
-            return job;
+            return (JobType) unmarshaller.unmarshal(inputStream);
         } catch (final JAXBException e) {
             throw new IllegalArgumentException(e);
         }
@@ -419,8 +419,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         final AnalysisJobBuilder builder = new AnalysisJobBuilder(_configuration);
 
         try {
-            final AnalysisJobBuilder result = create(job, sourceColumnMapping, metadata, variables, builder);
-            return result;
+            return create(job, sourceColumnMapping, metadata, variables, builder);
         } catch (final RuntimeException e) {
             FileHelper.safeClose(builder);
             throw e;
@@ -428,8 +427,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
     }
 
     private AnalysisJobBuilder create(final JobType job, SourceColumnMapping sourceColumnMapping,
-            final JobMetadataType metadata,
-            final Map<String, String> variables, final AnalysisJobBuilder analysisJobBuilder) {
+            final JobMetadataType metadata, final Map<String, String> variables,
+            final AnalysisJobBuilder analysisJobBuilder) {
 
         final Datastore datastore;
         final DatastoreConnection datastoreConnection;
@@ -460,11 +459,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
         try {
             analysisJobBuilder.setDatastore(datastore);
             if (metadata != null) {
-                final ImmutableAnalysisJobMetadata immutableAnalysisJobMetadata = new ImmutableAnalysisJobMetadata(
-                        metadata.getJobName(), metadata.getJobVersion(), metadata.getJobDescription(),
-                        metadata.getAuthor(), convertToDate(metadata.getCreatedDate()),
-                        convertToDate(metadata.getUpdatedDate()), datastore.getName(), getSourceColumnPaths(job),
-                        getSourceColumnTypes(job), variables, getMetadataProperties(metadata));
+                final ImmutableAnalysisJobMetadata immutableAnalysisJobMetadata =
+                        new ImmutableAnalysisJobMetadata(metadata.getJobName(), metadata.getJobVersion(),
+                                metadata.getJobDescription(), metadata.getAuthor(),
+                                convertToDate(metadata.getCreatedDate()), convertToDate(metadata.getUpdatedDate()),
+                                datastore.getName(), getSourceColumnPaths(job), getSourceColumnTypes(job), variables,
+                                getMetadataProperties(metadata));
                 analysisJobBuilder.setAnalysisJobMetadata(immutableAnalysisJobMetadata);
             } else {
                 if (variables.size() > 0) {
@@ -475,8 +475,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
             }
 
             // map column id's to input columns
-            final Map<String, InputColumn<?>> inputColumns = readSourceColumns(sourceColumnMapping, analysisJobBuilder,
-                    source);
+            final Map<String, InputColumn<?>> inputColumns =
+                    readSourceColumns(sourceColumnMapping, analysisJobBuilder, source);
 
             configureComponents(job, variables, analysisJobBuilder, inputColumns);
 
@@ -498,8 +498,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
         // wiring
         final List<ComponentType> allComponentTypes = getAllComponentTypes(job);
         for (final ComponentType componentType : allComponentTypes) {
-            final ComponentBuilder componentBuilder = createComponentBuilder(analysisJobBuilder, descriptorProvider,
-                    componentType);
+            final ComponentBuilder componentBuilder =
+                    createComponentBuilder(analysisJobBuilder, descriptorProvider, componentType);
 
             initializeComponentBuilder(variables, stringConverter, componentBuilders, componentType, componentBuilder,
                     inputColumns, columnsTypes);
@@ -519,8 +519,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
             for (final OutputDataStreamType outputDataStreamType : componentType.getOutputDataStream()) {
                 final String name = outputDataStreamType.getName();
                 final OutputDataStream outputDataStream = componentBuilder.getOutputDataStream(name);
-                final AnalysisJobBuilder outputDataStreamJobBuilder = componentBuilder
-                        .getOutputDataStreamJobBuilder(outputDataStream);
+                final AnalysisJobBuilder outputDataStreamJobBuilder =
+                        componentBuilder.getOutputDataStreamJobBuilder(outputDataStream);
                 final JobType job = outputDataStreamType.getJob();
 
                 final List<ColumnType> sourceColumnTypes = job.getSource().getColumns().getColumn();
@@ -552,8 +552,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
         if (componentType.getDescriptor().getRef().equals("Union")) {
             final ConfiguredPropertyDescriptor configuredPropertyDescriptor =
                     componentBuilder.getDescriptor().getConfiguredProperty("Units");
-            final CoalesceUnit[] units = (CoalesceUnit[])
-                    componentBuilder.getConfiguredProperty(configuredPropertyDescriptor);
+            final CoalesceUnit[] units =
+                    (CoalesceUnit[]) componentBuilder.getConfiguredProperty(configuredPropertyDescriptor);
             final CoalesceUnit unit = units[sourceColumnIndex];
             return unit.getSuggestedOutputColumnName();
         } else {
@@ -568,16 +568,17 @@ public class JaxbJobReader implements JobReader<InputStream> {
         for (final ComponentType componentType : componentBuilders.keySet()) {
             if (componentType instanceof FilterType) {
                 final FilterType filterType = (FilterType) componentType;
-                final FilterComponentBuilder<?, ?> filterBuilder = (FilterComponentBuilder<?, ?>) componentBuilders
-                        .get(componentType);
+                final FilterComponentBuilder<?, ?> filterBuilder =
+                        (FilterComponentBuilder<?, ?>) componentBuilders.get(componentType);
 
                 final List<OutcomeType> outcomeTypes = filterType.getOutcome();
                 for (final OutcomeType outcomeType : outcomeTypes) {
                     final String categoryName = outcomeType.getCategory();
                     final Enum<?> category = filterBuilder.getDescriptor().getOutcomeCategoryByName(categoryName);
                     if (category == null) {
-                        throw new ComponentConfigurationException("No such outcome category name: " + categoryName
-                                + " (in " + filterBuilder.getDescriptor().getDisplayName() + ")");
+                        throw new ComponentConfigurationException(
+                                "No such outcome category name: " + categoryName + " (in " + filterBuilder
+                                        .getDescriptor().getDisplayName() + ")");
                     }
 
                     final String id = outcomeType.getId();
@@ -676,8 +677,9 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         final List<OutputType> output = transformerType.getOutput();
 
                         if (outputColumns.size() < output.size()) {
-                            final String message = "Expected " + outputColumns.size() + " output column(s), but found "
-                                    + output.size() + " (" + transformerBuilder + ")";
+                            final String message =
+                                    "Expected " + outputColumns.size() + " output column(s), but found " + output.size()
+                                            + " (" + transformerBuilder + ")";
                             if (outputColumns.isEmpty()) {
                                 // typically empty output columns is due to
                                 // a component not being configured, we'll
@@ -744,8 +746,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     }
                     sb.append(")");
                 }
-                throw new ComponentConfigurationException("Could not connect column dependencies for components: "
-                        + sb.toString());
+                throw new ComponentConfigurationException(
+                        "Could not connect column dependencies for components: " + sb.toString());
             }
         }
     }
@@ -809,8 +811,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 if (expectedType != null) {
                     final org.apache.metamodel.schema.ColumnType actualType = physicalColumn.getType();
                     if (actualType != null && !expectedType.equals(actualType.toString())) {
-                        logger.warn("Column '{}' had type '{}', but '{}' was expected.", new Object[] { path,
-                                actualType, expectedType });
+                        logger.warn("Column '{}' had type '{}', but '{}' was expected.",
+                                new Object[] { path, actualType, expectedType });
                     }
                 }
 
@@ -848,8 +850,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
             for (final String token : tokens) {
                 final FilterOutcome filterOutcome = outcomeMapping.get(token);
                 if (filterOutcome == null) {
-                    throw new ComponentConfigurationException("Could not resolve outcome '" + token
-                            + "' in requirement: " + ref);
+                    throw new ComponentConfigurationException(
+                            "Could not resolve outcome '" + token + "' in requirement: " + ref);
                 }
                 list.add(filterOutcome);
             }
@@ -875,12 +877,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 inputColumn = inputColumns.get(ref);
             }
             if (StringUtils.isNullOrEmpty(name)) {
-                final ConfiguredPropertyDescriptor propertyDescriptor = componentBuilder
-                        .getDefaultConfiguredPropertyForInput();
+                final ConfiguredPropertyDescriptor propertyDescriptor =
+                        componentBuilder.getDefaultConfiguredPropertyForInput();
                 inputMap.put(propertyDescriptor, inputColumn);
             } else {
-                final ConfiguredPropertyDescriptor propertyDescriptor = componentBuilder.getDescriptor()
-                        .getConfiguredProperty(name);
+                final ConfiguredPropertyDescriptor propertyDescriptor =
+                        componentBuilder.getDescriptor().getConfiguredProperty(name);
                 inputMap.put(propertyDescriptor, inputColumn);
             }
         }
@@ -946,8 +948,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     if (stringValue == null) {
                         final String variableRef = property.getRef();
                         if (variableRef == null) {
-                            throw new IllegalStateException("Neither value nor ref was specified for property: "
-                                    + name);
+                            throw new IllegalStateException(
+                                    "Neither value nor ref was specified for property: " + name);
                         }
 
                         stringValue = variables.get(variableRef);
@@ -956,13 +958,13 @@ public class JaxbJobReader implements JobReader<InputStream> {
                             throw new ComponentConfigurationException("No such variable: " + variableRef);
                         }
 
-                        builder.getMetadataProperties().put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty
-                                .getName(), variableRef);
+                        builder.getMetadataProperties()
+                                .put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
                     }
 
                     final Converter<?> customConverter = configuredProperty.createCustomConverter();
-                    final Object value = stringConverter.deserialize(stringValue, configuredProperty.getType(),
-                            customConverter);
+                    final Object value =
+                            stringConverter.deserialize(stringValue, configuredProperty.getType(), customConverter);
 
                     if (value instanceof CoalesceUnit[]) {
                         /*
@@ -1013,8 +1015,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
                             // create new coalesce unit with the mapped columns.
                             if (!newInputColumns.isEmpty()) {
-                                final CoalesceUnit newCoalesceUnit = new CoalesceUnit(newInputColumns.toArray(
-                                        new String[0]));
+                                final CoalesceUnit newCoalesceUnit =
+                                        new CoalesceUnit(newInputColumns.toArray(new String[0]));
                                 newUnitsList.add(newCoalesceUnit);
                             }
                         }
@@ -1035,8 +1037,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
             processRemovedProperties(builder, stringConverter, descriptor, removedProperties);
         }
         if (metadataPropertiesType != null) {
-            final List<org.datacleaner.job.jaxb.MetadataProperties.Property> propertyList = metadataPropertiesType
-                    .getProperty();
+            final List<org.datacleaner.job.jaxb.MetadataProperties.Property> propertyList =
+                    metadataPropertiesType.getProperty();
             for (final org.datacleaner.job.jaxb.MetadataProperties.Property property : propertyList) {
                 final String name = property.getName();
                 final String value = property.getValue();
@@ -1045,9 +1047,9 @@ public class JaxbJobReader implements JobReader<InputStream> {
         }
     }
 
-    private String getPath(final List<ColumnType> columnsTypes, final String column_id) {
+    private String getPath(final List<ColumnType> columnsTypes, final String columnId) {
         for (final ColumnType column : columnsTypes) {
-            if (column_id.equals(column.getId())) {
+            if (columnId.equals(column.getId())) {
                 return column.getPath();
             }
         }

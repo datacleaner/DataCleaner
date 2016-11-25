@@ -19,10 +19,10 @@
  */
 package org.datacleaner.sample;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+
+import junit.framework.TestCase;
 
 /**
  * TestCase for the {@link HelloWorldTransformer} class.
@@ -37,9 +37,9 @@ import org.datacleaner.data.MockInputRow;
 public class HelloWorldTransformerTest extends TestCase {
 
     public void testSingleGreeting() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<>("Name", String.class);
+        final MockInputColumn<String> col = new MockInputColumn<>("Name", String.class);
 
-        HelloWorldTransformer transformer = new HelloWorldTransformer();
+        final HelloWorldTransformer transformer = new HelloWorldTransformer();
         transformer.nameColumn = col;
         transformer.greetings = new String[] { "Hello" };
 
@@ -51,15 +51,15 @@ public class HelloWorldTransformerTest extends TestCase {
     }
 
     public void testRandomGreeting() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<>("Name", String.class);
+        final MockInputColumn<String> col = new MockInputColumn<>("Name", String.class);
 
-        HelloWorldTransformer transformer = new HelloWorldTransformer();
+        final HelloWorldTransformer transformer = new HelloWorldTransformer();
         transformer.nameColumn = col;
         transformer.greetings = new String[] { "Hello", "Hi" };
 
         assertEquals("Name (greeting)", transformer.getOutputColumns().getColumnName(0));
 
-        String greetingLine = transformer.transform(new MockInputRow().put(col, "Tom"))[0];
+        final String greetingLine = transformer.transform(new MockInputRow().put(col, "Tom"))[0];
         assertTrue(greetingLine.endsWith(" Tom"));
         assertTrue(greetingLine.startsWith("Hello") || greetingLine.startsWith("Hi"));
     }

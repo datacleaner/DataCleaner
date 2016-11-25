@@ -20,16 +20,13 @@
 package org.datacleaner.monitor.server;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.dashboard.DashboardService;
@@ -78,8 +75,9 @@ public class DashboardServiceImpl implements DashboardService {
         _timelineDao = timelineDao;
     }
 
-    protected static List<TimelineDataRow> getTimelineData(final TenantIdentifier tenant, final TimelineDefinition timeline,
-            final Iterable<RepositoryFile> resultFiles, final MetricValueProducer metricValueProducer) {
+    protected static List<TimelineDataRow> getTimelineData(final TenantIdentifier tenant,
+            final TimelineDefinition timeline, final Iterable<RepositoryFile> resultFiles,
+            final MetricValueProducer metricValueProducer) {
         final List<MetricIdentifier> metricIdentifiers = timeline.getMetrics();
         final JobIdentifier jobIdentifier = timeline.getJobIdentifier();
         final HorizontalAxisOption horizontalAxisOption = timeline.getChartOptions().getHorizontalAxisOption();
@@ -88,8 +86,8 @@ public class DashboardServiceImpl implements DashboardService {
         for (final RepositoryFile resultFile : resultFiles) {
             final MetricValues metricValues;
             try {
-                metricValues = metricValueProducer
-                        .getMetricValues(metricIdentifiers, resultFile, tenant, jobIdentifier);
+                metricValues =
+                        metricValueProducer.getMetricValues(metricIdentifiers, resultFile, tenant, jobIdentifier);
             } catch (final Exception e) {
                 logger.warn("Failed to read result metrics of file: {}", resultFile, e);
                 continue;
@@ -135,24 +133,21 @@ public class DashboardServiceImpl implements DashboardService {
             if (descriptionFile == null) {
                 logger.debug("No description file for timeline group: {}", group);
             } else {
-                descriptionFile.readFile(new Action<InputStream>() {
-                    @Override
-                    public void run(final InputStream in) throws Exception {
-                        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                            final StringBuilder sb = new StringBuilder();
-                            boolean first = false;
-                            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    sb.append('\n');
-                                }
-                                sb.append(line);
+                descriptionFile.readFile(in -> {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+                        final StringBuilder sb = new StringBuilder();
+                        boolean first = false;
+                        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                sb.append('\n');
                             }
-                            group.setDescription(sb.toString());
-                        } catch (final Exception e) {
-                            logger.error("Error while reading timeline group description file: " + descriptionFile, e);
+                            sb.append(line);
                         }
+                        group.setDescription(sb.toString());
+                    } catch (final Exception e) {
+                        logger.error("Error while reading timeline group description file: " + descriptionFile, e);
                     }
                 });
             }
@@ -179,7 +174,8 @@ public class DashboardServiceImpl implements DashboardService {
             if (file.getType() == Type.TIMELINE_SPEC) {
                 final String timelineName = file.getName().substring(0,
                         file.getName().length() - FileFilters.ANALYSIS_TIMELINE_XML.getExtension().length());
-                final TimelineIdentifier timeline = new TimelineIdentifier(timelineName, file.getQualifiedPath(), group);
+                final TimelineIdentifier timeline =
+                        new TimelineIdentifier(timelineName, file.getQualifiedPath(), group);
                 result.add(timeline);
             }
         }
@@ -209,21 +205,18 @@ public class DashboardServiceImpl implements DashboardService {
     public List<JobIdentifier> getJobs(final TenantIdentifier tenant) {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         List<JobIdentifier> jobs = tenantContext.getJobs();
-        jobs = CollectionUtils.filter(jobs, new Predicate<JobIdentifier>() {
-            @Override
-            public Boolean eval(final JobIdentifier job) {
-                final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job.getType());
-                if (analysisJob) {
-                    // in most cases we have DC jobs, and this evaluation is
-                    // faster
-                    return true;
-                }
-                final JobContext jobContext = tenantContext.getJob(job);
-                if (jobContext instanceof MetricJobContext) {
-                    return true;
-                }
-                return false;
+        jobs = CollectionUtils.filter(jobs, job -> {
+            final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job.getType());
+            if (analysisJob) {
+                // in most cases we have DC jobs, and this evaluation is
+                // faster
+                return true;
             }
+            final JobContext jobContext = tenantContext.getJob(job);
+            if (jobContext instanceof MetricJobContext) {
+                return true;
+            }
+            return false;
         });
         Collections.sort(jobs);
         return jobs;

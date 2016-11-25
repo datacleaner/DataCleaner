@@ -55,8 +55,8 @@ public class JobWithOutputDataStreamsTest {
 
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
     private DataCleanerEnvironment environment = TestEnvironment.getEnvironment();
-    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
-            .withEnvironment(environment);
+    private final DataCleanerConfiguration configuration =
+            new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(environment);
 
     @Test(timeout = 30 * 1000)
     public void testSimpleBuildAndExecuteScenario() throws Throwable {
@@ -68,8 +68,8 @@ public class JobWithOutputDataStreamsTest {
             ajb.addSourceColumns("customers.contactlastname");
             ajb.addSourceColumns("customers.city");
 
-            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = ajb
-                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 =
+                    ajb.addAnalyzer(MockOutputDataStreamAnalyzer.class);
 
             // analyzer is still unconfigured
             assertEquals(0, analyzer1.getOutputDataStreams().size());
@@ -103,8 +103,8 @@ public class JobWithOutputDataStreamsTest {
             // the output stream
             assertFalse(analyzer1.isOutputDataStreamConsumed(dataStream));
 
-            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 = outputDataStreamJobBuilder
-                    .addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 =
+                    outputDataStreamJobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer2.addInputColumns(outputDataStreamColumns);
             analyzer2.setName("analyzer2");
             assertTrue(analyzer2.isConfigured());

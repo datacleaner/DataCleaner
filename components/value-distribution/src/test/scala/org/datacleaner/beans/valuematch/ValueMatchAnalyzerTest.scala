@@ -1,11 +1,10 @@
 package org.datacleaner.beans.valuematch
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Test
+import org.datacleaner.data.{MockInputColumn, MockInputRow}
 import org.datacleaner.storage.InMemoryRowAnnotationFactory2
-import org.datacleaner.data.MockInputColumn
+import org.junit.{Assert, Test}
+import org.scalatest.junit.AssertionsForJUnit
+
 import scala.collection.JavaConversions._
-import org.datacleaner.data.MockInputRow
-import org.junit.Assert
 
 class ValueMatchAnalyzerTest extends AssertionsForJUnit {
 

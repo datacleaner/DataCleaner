@@ -23,13 +23,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.job.AbstractOutputRowCollector;
+
+import junit.framework.TestCase;
 
 public class JavaScriptAdvancedTransformerTest extends TestCase {
 
@@ -40,12 +40,12 @@ public class JavaScriptAdvancedTransformerTest extends TestCase {
         final List<String> output = new ArrayList<>();
         final OutputRowCollector collector = new AbstractOutputRowCollector() {
             @Override
-            public void putValues(Object... arg0) {
+            public void putValues(final Object... arg0) {
                 output.add(Arrays.toString(arg0));
             }
         };
 
-        JavaScriptAdvancedTransformer transformer = new JavaScriptAdvancedTransformer();
+        final JavaScriptAdvancedTransformer transformer = new JavaScriptAdvancedTransformer();
         transformer.rowCollector = collector;
         transformer.columns = new InputColumn[] { col1, col2 };
         transformer.init();

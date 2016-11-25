@@ -66,8 +66,7 @@ public final class CsvOutputWriterFactory {
      * @return
      */
     public static OutputWriter getWriter(final String filename, final String[] headers, final char separatorChar,
-            final char quoteChar,
-            final char escapeChar, final boolean includeHeader, final InputColumn<?>... columns) {
+            final char quoteChar, final char escapeChar, final boolean includeHeader, final InputColumn<?>... columns) {
         return getWriter(new FileResource(filename), headers, FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar,
                 escapeChar, includeHeader, columns);
     }
@@ -75,8 +74,8 @@ public final class CsvOutputWriterFactory {
     public static OutputWriter getWriter(final Resource resource, final String[] headers, final String encoding,
             final char separatorChar, final char quoteChar, final char escapeChar, final boolean includeHeader,
             final InputColumn<?>... columns) {
-        final CsvConfiguration csvConfiguration = getConfiguration(encoding, separatorChar, quoteChar, escapeChar,
-                includeHeader);
+        final CsvConfiguration csvConfiguration =
+                getConfiguration(encoding, separatorChar, quoteChar, escapeChar, includeHeader);
 
         CsvOutputWriter outputWriter;
         final String qualifiedPath = resource.getQualifiedPath();
@@ -107,8 +106,7 @@ public final class CsvOutputWriterFactory {
     }
 
     private static CsvConfiguration getConfiguration(final String encoding, final char separatorChar,
-            final char quoteChar,
-            final char escapeChar, final boolean includeHeader) {
+            final char quoteChar, final char escapeChar, final boolean includeHeader) {
         final int headerLine;
         if (includeHeader) {
             headerLine = CsvConfiguration.DEFAULT_COLUMN_NAME_LINE;

@@ -82,8 +82,8 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
             if (filters.size() == 1) {
                 _resourceTextField.setSelectedFileFilter(filters.get(0));
             } else {
-                final FileFilter filter = FileFilters.combined("All suggested file formats",
-                        filters.toArray(new FileFilter[filters.size()]));
+                final FileFilter filter = FileFilters
+                        .combined("All suggested file formats", filters.toArray(new FileFilter[filters.size()]));
                 _resourceTextField.setSelectedFileFilter(filter);
             }
         } else {

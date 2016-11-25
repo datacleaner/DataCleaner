@@ -28,22 +28,22 @@ public class RegexStringPatternReferenceDataWizardSessionTest {
 
     @Test
     public void testFirstPageController() throws Exception {
-        RegexStringPatternReferenceDataWizardSession session = new RegexStringPatternReferenceDataWizardSession(
-                TestHelper.getReferenceDataWizardContextMock());
+        final RegexStringPatternReferenceDataWizardSession session =
+                new RegexStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNotNull(session.firstPageController());
     }
 
     @Test
     public void testGetPageCount() throws Exception {
-        RegexStringPatternReferenceDataWizardSession session = new RegexStringPatternReferenceDataWizardSession(
-                TestHelper.getReferenceDataWizardContextMock());
+        final RegexStringPatternReferenceDataWizardSession session =
+                new RegexStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertEquals(new Integer(1), session.getPageCount());
     }
 
     @Test
     public void testName() throws Exception {
-        RegexStringPatternReferenceDataWizardSession session = new RegexStringPatternReferenceDataWizardSession(
-                TestHelper.getReferenceDataWizardContextMock());
+        final RegexStringPatternReferenceDataWizardSession session =
+                new RegexStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getName());
         session.setName("name-value");
         assertNotNull(session.getName());
@@ -51,8 +51,8 @@ public class RegexStringPatternReferenceDataWizardSessionTest {
 
     @Test
     public void testExpression() throws Exception {
-        RegexStringPatternReferenceDataWizardSession session = new RegexStringPatternReferenceDataWizardSession(
-                TestHelper.getReferenceDataWizardContextMock());
+        final RegexStringPatternReferenceDataWizardSession session =
+                new RegexStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getExpression());
         session.setExpression("expression-value");
         assertNotNull(session.getExpression());
@@ -60,8 +60,8 @@ public class RegexStringPatternReferenceDataWizardSessionTest {
 
     @Test
     public void testMatchEntireString() throws Exception {
-        RegexStringPatternReferenceDataWizardSession session = new RegexStringPatternReferenceDataWizardSession(
-                TestHelper.getReferenceDataWizardContextMock());
+        final RegexStringPatternReferenceDataWizardSession session =
+                new RegexStringPatternReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getMatchEntireString());
         session.setMatchEntireString("match-entire-string-value");
         assertNotNull(session.getMatchEntireString());

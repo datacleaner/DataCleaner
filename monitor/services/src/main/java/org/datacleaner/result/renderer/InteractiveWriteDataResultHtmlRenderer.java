@@ -98,9 +98,9 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
                     }
 
                     if (user.isQueryAllowed()) {
-                        frag.addBodyElement("<button onclick=\"window.open('../../../query?ds="
-                                + encodedName
-                                + "','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');\" class=\"QueryButton\">Query</button>");
+                        frag.addBodyElement("<button onclick=\"window.open('../../../query?ds=" + encodedName
+                                + "','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');\" "
+                                + "class=\"QueryButton\">Query</button>");
                     }
                 } catch (final Exception e) {
                     logger.error("Failed to append interactive HTML fragments to result", e);

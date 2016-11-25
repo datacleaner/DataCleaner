@@ -48,7 +48,8 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 @Named("Date/time analyzer")
-@Description("Records a variety of interesting measures for date or time based data. Which are the highest/lowest values? How is the year distribution of dates? Are there null values?")
+@Description("Records a variety of interesting measures for date or time based data. Which are the highest/lowest "
+        + "values? How is the year distribution of dates? Are there null values?")
 @Concurrent(true)
 @Categorized(DateAndTimeCategory.class)
 public class DateAndTimeAnalyzer implements Analyzer<DateAndTimeAnalyzerResult> {
@@ -73,19 +74,19 @@ public class DateAndTimeAnalyzer implements Analyzer<DateAndTimeAnalyzerResult> 
     InputColumn<Date>[] _columns;
     @Inject
     @Configured(order = 10)
-    @Description("Gather so-called descriptive statistics, including median, skewness, kurtosis and percentiles, which have a larger memory-footprint.")
+    @Description("Gather so-called descriptive statistics, including median, skewness, kurtosis and percentiles, "
+            + "which have a larger memory-footprint.")
     boolean descriptiveStatistics = false;
     @Inject
     @Provided
     RowAnnotationFactory _annotationFactory;
-    private Map<InputColumn<Date>, DateAndTimeAnalyzerColumnDelegate> _delegates =
-            new HashMap<>();
+    private Map<InputColumn<Date>, DateAndTimeAnalyzerColumnDelegate> _delegates = new HashMap<>();
 
     @Initialize
     public void init() {
         for (final InputColumn<Date> col : _columns) {
-            final DateAndTimeAnalyzerColumnDelegate delegate = new DateAndTimeAnalyzerColumnDelegate(
-                    descriptiveStatistics, _annotationFactory);
+            final DateAndTimeAnalyzerColumnDelegate delegate =
+                    new DateAndTimeAnalyzerColumnDelegate(descriptiveStatistics, _annotationFactory);
             _delegates.put(col, delegate);
         }
     }
@@ -123,8 +124,7 @@ public class DateAndTimeAnalyzer implements Analyzer<DateAndTimeAnalyzerResult> 
             columnDimension.addCategory(column.getName());
         }
 
-        final Crosstab<Serializable> crosstab = new Crosstab<>(Serializable.class, columnDimension,
-                measureDimension);
+        final Crosstab<Serializable> crosstab = new Crosstab<>(Serializable.class, columnDimension, measureDimension);
         final CrosstabNavigator<Serializable> nav = crosstab.navigate();
         for (final InputColumn<Date> column : _columns) {
             final DateAndTimeAnalyzerColumnDelegate delegate = _delegates.get(column);

@@ -34,36 +34,37 @@ import com.google.common.base.Strings;
  */
 public class CliArguments {
 
-    private static final String[] USAGE_TOKENS = new String[] { "-usage", "--usage", "-help", "--help", "-?", "/?",
-            "/help", "/usage" };
+    private static final String[] USAGE_TOKENS =
+            new String[] { "-usage", "--usage", "-help", "--help", "-?", "/?", "/help", "/usage" };
 
     private static final String[] VERSION_TOKENS = new String[] { "-version", "--version", "/version" };
-    @Option(name = "-conf", aliases = { "-configuration",
-            "--configuration-file" }, metaVar = "PATH", usage = "Path to an XML file describing the configuration of DataCleaner")
+    @Option(name = "-conf", aliases = { "-configuration", "--configuration-file" }, metaVar = "PATH",
+            usage = "Path to an XML file describing the configuration of DataCleaner")
     private String configurationFile;
-    @Option(name = "-job", aliases = {
-            "--job-file" }, metaVar = "PATH", usage = "Path to an analysis job XML file to execute")
+    @Option(name = "-job", aliases = { "--job-file" }, metaVar = "PATH",
+            usage = "Path to an analysis job XML file to execute")
     private String jobFile;
-    @Option(name = "-properties", aliases = {
-            "--properties-file" }, metaVar = "PATH", usage = "Path to a custom properties file")
+    @Option(name = "-properties", aliases = { "--properties-file" }, metaVar = "PATH",
+            usage = "Path to a custom properties file")
     private String propertiesFile;
     @Option(name = "-list", usage = "Used to print a list of various elements available in the configuration")
     private CliListType listType;
-    @Option(name = "-ds", aliases = { "-datastore",
-            "--datastore-name" }, usage = "Name of datastore when printing a list of schemas, tables or columns. Overrides datastore used when used with -job")
+    @Option(name = "-ds", aliases = { "-datastore", "--datastore-name" },
+            usage = "Name of datastore when printing a list of schemas, tables or columns. "
+                    + "Overrides datastore used when used with -job")
     private String datastoreName;
-    @Option(name = "-s", aliases = { "-schema",
-            "--schema-name" }, usage = "Name of schema when printing a list of tables or columns")
+    @Option(name = "-s", aliases = { "-schema", "--schema-name" },
+            usage = "Name of schema when printing a list of tables or columns")
     private String schemaName;
-    @Option(name = "-t", aliases = { "-table",
-            "--table-name" }, usage = "Name of table when printing a list of columns")
+    @Option(name = "-t", aliases = { "-table", "--table-name" },
+            usage = "Name of table when printing a list of columns")
     private String tableName;
     @Option(name = "-ot", aliases = { "--output-type" }, usage = "How to represent the result of the job")
     private CliOutputType outputType;
     @Option(name = "-runtype", aliases = { "--runtype" }, usage = "How/where to run the job")
     private CliRunType runType;
-    @Option(name = "-of", aliases = {
-            "--output-file" }, metaVar = "PATH", usage = "Path to file in which to save the result of the job", required = false)
+    @Option(name = "-of", aliases = { "--output-file" }, metaVar = "PATH",
+            usage = "Path to file in which to save the result of the job", required = false)
     private String outputFile;
     @Option(name = "-v", aliases = { "-var", "--variable" }, multiValued = true)
     private Map<String, String> variableOverrides;

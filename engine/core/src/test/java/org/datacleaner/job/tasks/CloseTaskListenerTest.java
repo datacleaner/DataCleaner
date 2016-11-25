@@ -63,8 +63,8 @@ public class CloseTaskListenerTest {
 
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
     private DataCleanerEnvironment environment = TestEnvironment.getEnvironment();
-    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
-            .withEnvironment(environment);
+    private final DataCleanerConfiguration configuration =
+            new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(environment);
 
     @Test(timeout = 15000L) // If the error code fails, this would freeze forever otherwise
     public void testFailingClose() throws Throwable {
@@ -87,7 +87,7 @@ public class CloseTaskListenerTest {
         assertEquals(OnExecutionAndCloseFailingMockAnalyzer.OUCH_IN_RUN, errors.get(0).getMessage());
 
         boolean hasCorrectException = false; // We can't really trust the order of errors.
-        for (Throwable error : errors) {
+        for (final Throwable error : errors) {
             if (error instanceof PreviousErrorsExistException) {
                 hasCorrectException = true;
                 assertEquals(3, error.getSuppressed().length);
@@ -102,29 +102,26 @@ public class CloseTaskListenerTest {
      * This is probably a bigger test than needed, but it was how issue #1247 was explained.
      * TODO: Maybe slim it down later.
      */
-    private AnalysisResultFuture runAnalysisJob(Class<? extends MockOutputDataStreamAnalyzer> analyserClass) {
+    private AnalysisResultFuture runAnalysisJob(final Class<? extends MockOutputDataStreamAnalyzer> analyserClass) {
         final AnalysisJob job;
         try (AnalysisJobBuilder ajb1 = new AnalysisJobBuilder(configuration)) {
             ajb1.setDatastore(datastore);
 
             ajb1.addSourceColumns("customers.city");
 
-            final AnalyzerComponentBuilder<?> analyzer1 = ajb1
-                    .addAnalyzer(analyserClass);
+            final AnalyzerComponentBuilder<?> analyzer1 = ajb1.addAnalyzer(analyserClass);
             analyzer1.addInputColumn(ajb1.getSourceColumns().get(0));
             analyzer1.setConfiguredProperty(OnExecutionAndCloseFailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer1");
 
-            final AnalysisJobBuilder ajb2 = analyzer1.getOutputDataStreamJobBuilder(analyzer1.getOutputDataStreams()
-                    .get(0));
-            final AnalyzerComponentBuilder<?> analyzer2 = ajb2
-                    .addAnalyzer(analyserClass);
+            final AnalysisJobBuilder ajb2 =
+                    analyzer1.getOutputDataStreamJobBuilder(analyzer1.getOutputDataStreams().get(0));
+            final AnalyzerComponentBuilder<?> analyzer2 = ajb2.addAnalyzer(analyserClass);
             analyzer2.addInputColumn(ajb2.getSourceColumns().get(0));
             analyzer2.setConfiguredProperty(OnExecutionAndCloseFailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer2");
 
-            final AnalysisJobBuilder ajb3 = analyzer2.getOutputDataStreamJobBuilder(analyzer2.getOutputDataStreams()
-                    .get(0));
-            final AnalyzerComponentBuilder<?> analyzer3 = ajb3
-                    .addAnalyzer(analyserClass);
+            final AnalysisJobBuilder ajb3 =
+                    analyzer2.getOutputDataStreamJobBuilder(analyzer2.getOutputDataStreams().get(0));
+            final AnalyzerComponentBuilder<?> analyzer3 = ajb3.addAnalyzer(analyserClass);
             analyzer3.addInputColumn(ajb3.getSourceColumns().get(0));
             analyzer3.setConfiguredProperty(OnExecutionAndCloseFailingMockAnalyzer.PROPERTY_IDENTIFIER, "analyzer3");
 

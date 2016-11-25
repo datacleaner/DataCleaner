@@ -55,9 +55,10 @@ public class CompareFilterComponentBuilderPresenterRenderer implements
     }
 
     @Override
-    public FilterComponentBuilderPresenter render(final FilterComponentBuilder<CompareFilter, CompareFilter.Category> fjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(fjb)
-                .getInstance(PropertyWidgetFactory.class);
+    public FilterComponentBuilderPresenter render(
+            final FilterComponentBuilder<CompareFilter, CompareFilter.Category> fjb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(fjb).getInstance(PropertyWidgetFactory.class);
 
         return new CompareFilterComponentBuilderPresenter(fjb, windowContext, propertyWidgetFactory);
     }

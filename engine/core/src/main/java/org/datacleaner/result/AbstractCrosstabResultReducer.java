@@ -169,8 +169,8 @@ public abstract class AbstractCrosstabResultReducer<R extends CrosstabResult> im
                 masterNav.put(masterValue);
 
                 if (!slaveResultProducers.isEmpty()) {
-                    final ResultProducer masterResultProducer = reduceResultProducers(slaveResultProducers, category1,
-                            category2, valueClass, masterValue);
+                    final ResultProducer masterResultProducer =
+                            reduceResultProducers(slaveResultProducers, category1, category2, valueClass, masterValue);
                     if (masterResultProducer != null) {
                         masterNav.attach(masterResultProducer);
                     }
@@ -201,14 +201,13 @@ public abstract class AbstractCrosstabResultReducer<R extends CrosstabResult> im
         final CrosstabDimension dimension1 = firstCrosstab.getDimension(0);
         final CrosstabDimension dimension2 = firstCrosstab.getDimension(1);
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        final Crosstab<Serializable> masterCrosstab = new Crosstab(valueClass, dimension1, dimension2);
+        @SuppressWarnings({ "unchecked", "rawtypes" }) final Crosstab<Serializable> masterCrosstab =
+                new Crosstab(valueClass, dimension1, dimension2);
         return masterCrosstab;
     }
 
     protected ResultProducer reduceResultProducers(final List<ResultProducer> slaveResultProducers,
-            final String category1,
-            final String category2, final Class<?> valueClass, final Serializable masterValue) {
+            final String category1, final String category2, final Class<?> valueClass, final Serializable masterValue) {
         for (final ResultProducer resultProducer : slaveResultProducers) {
             final AnalyzerResult result = resultProducer.getResult();
             if (result instanceof AnnotatedRowsResult) {

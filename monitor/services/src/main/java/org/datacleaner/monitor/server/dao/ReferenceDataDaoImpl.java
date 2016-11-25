@@ -56,7 +56,8 @@ import org.xml.sax.InputSource;
 public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
     @Override
-    public String updateReferenceDataSubSection(final TenantContext tenantContext, final Element updatedReferenceDataSubSection) {
+    public String updateReferenceDataSubSection(final TenantContext tenantContext,
+            final Element updatedReferenceDataSubSection) {
         final Document configurationFileDocument = getConfigurationFileDocument(tenantContext);
         final Element referenceDataCatalogElement = getReferenceDataElement(configurationFileDocument);
         removeOldElementIfExists(referenceDataCatalogElement.getChildNodes(), updatedReferenceDataSubSection);
@@ -68,7 +69,8 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
     }
 
 
-    private void removeOldElementIfExists(final NodeList referenceDataNodes, final Element updatedReferenceDataSubSection) {
+    private void removeOldElementIfExists(final NodeList referenceDataNodes,
+            final Element updatedReferenceDataSubSection) {
         Node oldNode = null;
 
         for (int i = 0; i < referenceDataNodes.getLength(); i++) {
@@ -96,8 +98,8 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
     private Element getReferenceDataElement(final Document configurationFileDocument) {
         final Element configurationFileDocumentElement = configurationFileDocument.getDocumentElement();
-        final Element referenceDataCatalogElement = DomUtils.getChildElementByTagName(configurationFileDocumentElement,
-                "reference-data-catalog");
+        final Element referenceDataCatalogElement =
+                DomUtils.getChildElementByTagName(configurationFileDocumentElement, "reference-data-catalog");
 
         if (referenceDataCatalogElement == null) {
             throw new IllegalStateException("Could not find <reference-data-catalog> element in configuration file");
@@ -167,9 +169,7 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
         final JaxbConfigurationReader jaxbConfigurationAdaptor = new JaxbConfigurationReader();
         final RepositoryFile configurationFile = tenantContext.getConfigurationFile();
-        final Configuration configuration = configurationFile.readFile(in -> {
-            return jaxbConfigurationAdaptor.unmarshall(in);
-        });
+        final Configuration configuration = configurationFile.readFile(jaxbConfigurationAdaptor::unmarshall);
 
         boolean found = false;
         final List<Object> referenceDataList = getReferenceDataListByType(configuration, referenceData);
@@ -188,12 +188,11 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
             throw new IllegalArgumentException("Could not find reference data with name '" + referenceData + "'");
         }
 
-        configurationFile.writeFile(out -> {
-            jaxbConfigurationAdaptor.marshall(configuration, out);
-        });
+        configurationFile.writeFile(out -> jaxbConfigurationAdaptor.marshall(configuration, out));
     }
 
-    private List<Object> getReferenceDataListByType(final Configuration configuration, final ReferenceData referenceData) {
+    private List<Object> getReferenceDataListByType(final Configuration configuration,
+            final ReferenceData referenceData) {
         if (referenceData instanceof Dictionary) {
             return configuration.getReferenceDataCatalog().getDictionaries()
                     .getTextFileDictionaryOrValueListDictionaryOrDatastoreDictionary();

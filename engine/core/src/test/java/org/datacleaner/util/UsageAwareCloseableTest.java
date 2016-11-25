@@ -25,10 +25,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.TestCase;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import junit.framework.TestCase;
 
 public class UsageAwareCloseableTest extends TestCase {
 
@@ -107,25 +107,23 @@ public class UsageAwareCloseableTest extends TestCase {
         final int numThreads = 3;
         final int numInternalUsages = 500;
 
-        ExecutorService threadPool = Executors.newFixedThreadPool(numThreads);
+        final ExecutorService threadPool = Executors.newFixedThreadPool(numThreads);
         final Future<?>[] futures = new Future[numThreads];
         for (int i = 0; i < numThreads; i++) {
             final int threadNumber = i + 1;
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    for (int j = 0; j < numInternalUsages; j++) {
-                        String action = "Thread" + threadNumber + "_" + numInternalUsages + "_"
-                                + _actionCounter.incrementAndGet();
+            final Runnable runnable = () -> {
+                for (int j = 0; j < numInternalUsages; j++) {
+                    final String action =
+                            "Thread" + threadNumber + "_" + numInternalUsages + "_" + _actionCounter.incrementAndGet();
 
-                        logger.debug("Usage (B" + action + "): " + _closeable.getUsageCount() + ", Creates: "
+                    logger.debug(
+                            "Usage (B" + action + "): " + _closeable.getUsageCount() + ", Creates: " + _createdCounter
+                                    .get() + ", Closes: " + _closedCounter.get());
+
+                    try (UsageAwareCloseable closeable = giveMeUsage(action)) {
+                        // do something
+                        logger.debug("Usage (A" + action + "): " + _closeable.getUsageCount() + ", Creates: "
                                 + _createdCounter.get() + ", Closes: " + _closedCounter.get());
-
-                        try (UsageAwareCloseable closeable = giveMeUsage(action)) {
-                            // do something
-                            logger.debug("Usage (A" + action + "): " + _closeable.getUsageCount() + ", Creates: "
-                                    + _createdCounter.get() + ", Closes: " + _closedCounter.get());
-                        }
                     }
                 }
             };
@@ -135,7 +133,7 @@ public class UsageAwareCloseableTest extends TestCase {
         for (int i = 0; i < numThreads; i++) {
             try {
                 futures[i].get();
-            } catch (ExecutionException e) {
+            } catch (final ExecutionException e) {
                 throw e.getCause();
             }
         }
@@ -148,19 +146,19 @@ public class UsageAwareCloseableTest extends TestCase {
     }
 
     // will either return the existing or create a new closable for usage.
-    private UsageAwareCloseable giveMeUsage(String action) {
+    private UsageAwareCloseable giveMeUsage(final String action) {
         final UsageAwareCloseable closeable = _closeable;
         final boolean useExisting = closeable.requestUsage();
         if (useExisting) {
-            int closed = _closedCounter.get();
-            int created = _createdCounter.get();
+            final int closed = _closedCounter.get();
+            final int created = _createdCounter.get();
             assertEquals("Action: " + action + ", Closed: " + closed + ", Created: " + created, closed + 1, created);
             return closeable;
         }
         synchronized (this) {
             if (_closeable.isClosed()) {
-                int closed = _closedCounter.get();
-                int created = _createdCounter.get();
+                final int closed = _closedCounter.get();
+                final int created = _createdCounter.get();
                 assertEquals("Action: " + action + ", Closed: " + closed + ", Created: " + created, closed, created);
                 _closeable = createCloseable();
                 return _closeable;

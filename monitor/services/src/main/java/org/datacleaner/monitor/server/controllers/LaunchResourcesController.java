@@ -27,7 +27,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -122,19 +121,17 @@ public class LaunchResourcesController {
 
         final ServletOutputStream out = response.getOutputStream();
 
-        confFile.readFile(new Action<InputStream>() {
-            @Override
-            public void run(final InputStream in) throws Exception {
-                // intercept the input stream to decorate it with client-side
-                // config elements.
-                _configurationInterceptor.intercept(tenant, jobContext, datastoreName, in, out);
-            }
+        confFile.readFile(in -> {
+            // intercept the input stream to decorate it with client-side
+            // config elements.
+            _configurationInterceptor.intercept(tenant, jobContext, datastoreName, in, out);
         });
     }
 
     @RequestMapping(value = "/{filename:.+}.jar")
     public void fetchJarFile(final HttpServletRequest request, final HttpServletResponse response,
-            @PathVariable("tenant") final String tenant, @PathVariable("filename") final String filename) throws Exception {
+            @PathVariable("tenant") final String tenant, @PathVariable("filename") final String filename)
+            throws Exception {
 
         final InputStream in;
         try {

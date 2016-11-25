@@ -82,8 +82,8 @@ public class MetricAnchor extends DropDownAnchor implements ClickHandler {
             return;
         }
 
-        final DefineMetricPopup popup = new DefineMetricPopup(_tenant, _jobMetrics, _metric, false,
-                new DefineMetricPopup.Handler() {
+        final DefineMetricPopup popup =
+                new DefineMetricPopup(_tenant, _jobMetrics, _metric, false, new DefineMetricPopup.Handler() {
                     @Override
                     public void onMetricDefined(final MetricIdentifier metric) {
                         setMetric(metric);

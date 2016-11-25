@@ -104,8 +104,8 @@ class RowProcessingConsumerSorter {
                     }
 
                     if (componentJob instanceof HasFilterOutcomes) {
-                        final Collection<FilterOutcome> outcomes = ((HasFilterOutcomes) componentJob)
-                                .getFilterOutcomes();
+                        final Collection<FilterOutcome> outcomes =
+                                ((HasFilterOutcomes) componentJob).getFilterOutcomes();
                         for (final FilterOutcome outcome : outcomes) {
                             availableOutcomes.add(outcome);
                         }

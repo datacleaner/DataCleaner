@@ -125,8 +125,7 @@ public class DCBannerPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        final Dimension dimension = new Dimension(400, getHeight());
-        return dimension;
+        return new Dimension(400, getHeight());
     }
 
     @Override

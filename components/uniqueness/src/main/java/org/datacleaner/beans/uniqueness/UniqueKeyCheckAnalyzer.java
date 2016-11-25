@@ -32,7 +32,6 @@ import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.csv.CsvWriter;
 import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.ToStringComparator;
@@ -57,7 +56,8 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
     InputColumn<?> column;
 
     @Configured
-    @Description("How many values to buffer before loading them to disk. For high volume data, consider increasing the buffer to minimize the amount of open disk handles.")
+    @Description( "How many values to buffer before loading them to disk. For high volume data, "
+            + "consider increasing the buffer to minimize the amount of open disk handles.")
     int _bufferSize = 20000;
 
     private WriteBuffer _writeBuffer;
@@ -99,13 +99,10 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
                 return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
             }
         };
-        _writeBuffer = new WriteBuffer(_bufferSize, new Action<Iterable<Object[]>>() {
-            @Override
-            public void run(final Iterable<Object[]> rows) throws Exception {
-                for (final Object[] objects : rows) {
-                    final String string = (String) objects[0];
-                    _sorter.append(string);
-                }
+        _writeBuffer = new WriteBuffer(_bufferSize, rows -> {
+            for (final Object[] objects : rows) {
+                final String string = (String) objects[0];
+                _sorter.append(string);
             }
         });
     }

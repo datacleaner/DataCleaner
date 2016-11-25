@@ -30,8 +30,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.StringProperty;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -121,28 +119,22 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
         }
 
         List<Field> fields = Arrays.asList(SyntaxConstants.class.getFields());
-        fields = CollectionUtils.filter(fields, new Predicate<Field>() {
-            @Override
-            public Boolean eval(final Field f) {
-                if (f.getName().startsWith("SYNTAX_STYLE_")) {
-                    if (f.getType() == String.class) {
-                        final int modifiers = f.getModifiers();
-                        final boolean accessible = f.isAccessible() || Modifier.isPublic(modifiers);
-                        final boolean isStatic = Modifier.isStatic(modifiers);
-                        return accessible && isStatic;
-                    }
+        fields = CollectionUtils.filter(fields, f -> {
+            if (f.getName().startsWith("SYNTAX_STYLE_")) {
+                if (f.getType() == String.class) {
+                    final int modifiers = f.getModifiers();
+                    final boolean accessible = f.isAccessible() || Modifier.isPublic(modifiers);
+                    final boolean isStatic = Modifier.isStatic(modifiers);
+                    return accessible && isStatic;
                 }
-                return false;
             }
+            return false;
         });
-        final List<String> acceptedMimeTypes = CollectionUtils.map(fields, new Func<Field, String>() {
-            @Override
-            public String eval(final Field f) {
-                try {
-                    return (String) f.get(null);
-                } catch (final Exception e) {
-                    return null;
-                }
+        final List<String> acceptedMimeTypes = CollectionUtils.map(fields, f -> {
+            try {
+                return (String) f.get(null);
+            } catch (final Exception e) {
+                return null;
             }
         });
 

@@ -39,8 +39,8 @@ public class RewriteConfigurationProvider extends HttpConfigurationProvider {
     public Configuration getConfiguration(final ServletContext servletContext) {
         ConfigurationBuilder builder = ConfigurationBuilder.begin();
 
-        builder.addRule().when(Path.matches("/").or(Path.matches(""))).perform(Redirect.temporary(servletContext
-                .getContextPath() + "/login"));
+        builder.addRule().when(Path.matches("/").or(Path.matches("")))
+                .perform(Redirect.temporary(servletContext.getContextPath() + "/login"));
 
         builder = addJoinRule(builder, "/login", "/login.jsf");
         builder = addJoinRule(builder, "/dashboard", "/dashboard.jsf");
@@ -53,7 +53,8 @@ public class RewriteConfigurationProvider extends HttpConfigurationProvider {
         return builder;
     }
 
-    private ConfigurationBuilder addJoinRule(final ConfigurationBuilder builder, final String fromPath, final String toPath) {
+    private ConfigurationBuilder addJoinRule(final ConfigurationBuilder builder, final String fromPath,
+            final String toPath) {
         return builder.addRule(Join.path(fromPath).to(toPath));
     }
 

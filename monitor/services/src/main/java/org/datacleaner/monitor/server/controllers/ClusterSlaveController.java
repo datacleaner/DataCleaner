@@ -51,8 +51,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ClusterSlaveController {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterSlaveController.class);
-    private final ConcurrentMap<String, AnalysisResultFuture> _runningJobsMap =
-            new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, AnalysisResultFuture> _runningJobsMap = new ConcurrentHashMap<>();
     @Autowired
     TenantContextFactory _tenantContextFactory;
     @Autowired(required = false)
@@ -70,8 +69,8 @@ public class ClusterSlaveController {
                 _runningJobsMap.size());
 
         try {
-            final SlaveServletHelper slaveServletHelper = new SlaveServletHelper(configuration, _slaveJobInterceptor,
-                    _runningJobsMap);
+            final SlaveServletHelper slaveServletHelper =
+                    new SlaveServletHelper(configuration, _slaveJobInterceptor, _runningJobsMap);
             slaveServletHelper.handleRequest(request, response);
             logger.info("Succesfully handled slave job request for tenant: {}. Running slave jobs: {}", tenant,
                     _runningJobsMap.size());

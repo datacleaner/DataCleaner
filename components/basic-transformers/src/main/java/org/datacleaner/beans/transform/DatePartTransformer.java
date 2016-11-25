@@ -42,9 +42,8 @@ import org.datacleaner.components.categories.DateAndTimeCategory;
 public class DatePartTransformer implements Transformer {
 
     public enum WeekDay {
-        MONDAY(Calendar.MONDAY), TUESDAY(Calendar.TUESDAY), WEDNESDAY(Calendar.WEDNESDAY), THURSDAY(
-                Calendar.THURSDAY), FRIDAY(
-                Calendar.FRIDAY), SATURDAY(Calendar.SATURDAY), SUNDAY(Calendar.SUNDAY);
+        MONDAY(Calendar.MONDAY), TUESDAY(Calendar.TUESDAY), WEDNESDAY(Calendar.WEDNESDAY), THURSDAY(Calendar.THURSDAY),
+        FRIDAY(Calendar.FRIDAY), SATURDAY(Calendar.SATURDAY), SUNDAY(Calendar.SUNDAY);
 
         private final int _calendarInt;
 

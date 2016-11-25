@@ -36,7 +36,8 @@ public class BooleanAnalyzerResult implements AnalyzerResult {
     private final Crosstab<Number> _columnStatisticsCrosstab;
     private final Crosstab<Number> _valueCombinationCrosstab;
 
-    public BooleanAnalyzerResult(final Crosstab<Number> columnStatisticsCrosstab, final Crosstab<Number> valueCombinationCrosstab) {
+    public BooleanAnalyzerResult(final Crosstab<Number> columnStatisticsCrosstab,
+            final Crosstab<Number> valueCombinationCrosstab) {
         _columnStatisticsCrosstab = columnStatisticsCrosstab;
         _valueCombinationCrosstab = valueCombinationCrosstab;
     }
@@ -59,15 +60,15 @@ public class BooleanAnalyzerResult implements AnalyzerResult {
      * @return
      */
     private List<String> getColumnNameSuggestions() {
-        final CrosstabDimension columnDimension = _columnStatisticsCrosstab
-                .getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
+        final CrosstabDimension columnDimension =
+                _columnStatisticsCrosstab.getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
         return columnDimension.getCategories();
     }
 
     @Metric(order = 1, value = "Row count")
     public Number getRowCount() {
-        final CrosstabDimension columnDimension = _columnStatisticsCrosstab
-                .getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
+        final CrosstabDimension columnDimension =
+                _columnStatisticsCrosstab.getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
         return _columnStatisticsCrosstab.where(BooleanAnalyzer.DIMENSION_MEASURE, BooleanAnalyzer.MEASURE_ROW_COUNT)
                 .where(columnDimension, columnDimension.getCategories().get(0)).get();
     }

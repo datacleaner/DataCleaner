@@ -61,8 +61,8 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         return _dateForOneTimeSchedule;
     }
 
-    public void setDateForOneTimeSchedule(final String _dateForOneTimeSchedule) {
-        this._dateForOneTimeSchedule = _dateForOneTimeSchedule;
+    public void setDateForOneTimeSchedule(final String dateForOneTimeSchedule) {
+        this._dateForOneTimeSchedule = dateForOneTimeSchedule;
     }
 
     public void setRunOnHadoop(final boolean runOnHadoop) {

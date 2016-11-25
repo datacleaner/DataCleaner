@@ -50,14 +50,14 @@ public class TenantCheckFilter extends GenericFilterBean {
     @Override
     protected void initFilterBean() throws ServletException {
         super.initFilterBean();
-        final WebApplicationContext applicationContext = WebApplicationContextUtils
-                .getWebApplicationContext(getServletContext());
+        final WebApplicationContext applicationContext =
+                WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         _tenantResolver = applicationContext.getBean(TenantResolver.class);
     }
 
     @Override
-    public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain) throws IOException,
-            ServletException {
+    public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain)
+            throws IOException, ServletException {
         if (req instanceof HttpServletRequest) {
             if ("OPTIONS".equals(((HttpServletRequest) req).getMethod())) {
                 // OPTIONS should succeed even without authentication
@@ -83,8 +83,9 @@ public class TenantCheckFilter extends GenericFilterBean {
                             logger.debug("Tenant check passed");
                         } else {
                             final String username = user.getUsername();
-                            final String message = "User " + username + " (" + userTenantId
-                                    + ") is not authorized to access tenant: " + urlTenantId;
+                            final String message =
+                                    "User " + username + " (" + userTenantId + ") is not authorized to access tenant: "
+                                            + urlTenantId;
                             if (resp instanceof HttpServletResponse) {
                                 final HttpServletResponse response = (HttpServletResponse) resp;
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);

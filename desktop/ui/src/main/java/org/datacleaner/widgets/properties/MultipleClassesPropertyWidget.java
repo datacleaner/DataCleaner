@@ -21,8 +21,6 @@ package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -40,7 +38,6 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -63,24 +60,18 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
         _outerPanel.setLayout(new VerticalLayout(2));
 
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addComboBox(String.class, true);
-                fireValueChanged();
-            }
+        addButton.addActionListener(e -> {
+            addComboBox(String.class, true);
+            fireValueChanged();
         });
 
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final int componentCount = _outerPanel.getComponentCount();
-                if (componentCount > 0) {
-                    removeComboBox();
-                    _outerPanel.updateUI();
-                    fireValueChanged();
-                }
+        removeButton.addActionListener(e -> {
+            final int componentCount = _outerPanel.getComponentCount();
+            if (componentCount > 0) {
+                removeComboBox();
+                _outerPanel.updateUI();
+                fireValueChanged();
             }
         });
 
@@ -148,12 +139,7 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
         if (value != null) {
             comboBox.setSelectedItem(value);
         }
-        comboBox.addListener(new Listener<Class<?>>() {
-            @Override
-            public void onItemSelected(final Class<?> item) {
-                fireValueChanged();
-            }
-        });
+        comboBox.addListener(item -> fireValueChanged());
 
         final int index = _outerPanel.getComponentCount();
         final JComponent decoration = decorateComboBox(comboBox, index);

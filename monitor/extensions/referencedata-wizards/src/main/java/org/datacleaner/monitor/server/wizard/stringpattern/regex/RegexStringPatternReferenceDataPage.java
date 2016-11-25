@@ -51,8 +51,8 @@ final class RegexStringPatternReferenceDataPage extends AbstractFreemarkerWizard
         final String name = getString(formParameters, PROPERTY_NAME);
         final String expression = getString(formParameters, PROPERTY_EXPRESSION);
         final String matchEntireString = getString(formParameters, PROPERTY_MATCH_ENTIRE_STRING);
-        ReferenceDataHelper.checkUniqueStringPattern(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog());
+        ReferenceDataHelper.checkUniqueStringPattern(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
 
         _session.setName(name);
         _session.setExpression(expression);

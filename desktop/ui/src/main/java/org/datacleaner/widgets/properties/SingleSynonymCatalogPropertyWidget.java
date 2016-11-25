@@ -19,9 +19,6 @@
  */
 package org.datacleaner.widgets.properties;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.swing.JButton;
@@ -35,13 +32,12 @@ import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.ReferenceDataComboBoxListRenderer;
 import org.datacleaner.windows.ReferenceDataDialog;
 import org.jdesktop.swingx.HorizontalLayout;
 
-public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<SynonymCatalog> implements
-        ReferenceDataChangeListener<SynonymCatalog> {
+public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<SynonymCatalog>
+        implements ReferenceDataChangeListener<SynonymCatalog> {
 
     private final DCComboBox<SynonymCatalog> _comboBox;
     private final MutableReferenceDataCatalog _referenceDataCatalog;
@@ -71,22 +67,14 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
         final SynonymCatalog currentValue = getCurrentValue();
         _comboBox.setSelectedItem(currentValue);
 
-        _comboBox.addListener(new Listener<SynonymCatalog>() {
-            @Override
-            public void onItemSelected(final SynonymCatalog item) {
-                fireValueChanged();
-            }
-        });
+        _comboBox.addListener(item -> fireValueChanged());
 
         final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
         dialogButton.setToolTipText("Configure synonym catalogs");
-        dialogButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
-                dialog.selectSynonymsTab();
-                dialog.setVisible(true);
-            }
+        dialogButton.addActionListener(e -> {
+            final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+            dialog.selectSynonymsTab();
+            dialog.setVisible(true);
         });
 
         final DCPanel outerPanel = new DCPanel();

@@ -25,8 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
@@ -46,6 +44,8 @@ import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
 import org.datacleaner.test.mock.MockTransformerWithAnalyzerResult;
 
+import junit.framework.TestCase;
+
 public class AnalysisRunnerImplTest extends TestCase {
 
     @Named("Test analyzer")
@@ -58,7 +58,7 @@ public class AnalysisRunnerImplTest extends TestCase {
         boolean produceAnErrorOnGetResult = false;
 
         @Override
-        public void run(InputRow row, int distinctCount) {
+        public void run(final InputRow row, final int distinctCount) {
             if (produceAnError) {
                 throw new IllegalStateException("produceAnError=true");
             }
@@ -113,7 +113,7 @@ public class AnalysisRunnerImplTest extends TestCase {
             jobBuilder.setDatastore(datastore);
             jobBuilder.addSourceColumns("name");
 
-            TransformerComponentBuilder<MockTransformerWithAnalyzerResult> t =
+            final TransformerComponentBuilder<MockTransformerWithAnalyzerResult> t =
                     jobBuilder.addTransformer(MockTransformerWithAnalyzerResult.class);
             t.setName("Example");
             t.addInputColumn(jobBuilder.getSourceColumns().get(0));
@@ -142,18 +142,18 @@ public class AnalysisRunnerImplTest extends TestCase {
             jobBuilder.setDatastore(datastore);
             jobBuilder.addSourceColumns("name");
 
-            final TransformerComponentBuilder<TestTransformer1> transformer1 = jobBuilder
-                    .addTransformer(TestTransformer1.class);
+            final TransformerComponentBuilder<TestTransformer1> transformer1 =
+                    jobBuilder.addTransformer(TestTransformer1.class);
             transformer1.addInputColumn(jobBuilder.getSourceColumnByName("name"));
             final List<MutableInputColumn<?>> outputColumns1 = transformer1.getOutputColumns();
 
-            final TransformerComponentBuilder<TestTransformer2> transformer2 = jobBuilder
-                    .addTransformer(TestTransformer2.class);
+            final TransformerComponentBuilder<TestTransformer2> transformer2 =
+                    jobBuilder.addTransformer(TestTransformer2.class);
             transformer2.addInputColumn(jobBuilder.getSourceColumnByName("name"));
             final List<MutableInputColumn<?>> outputColumns2 = transformer2.getOutputColumns();
 
-            final TransformerComponentBuilder<TestTransformer3> transformer3 = jobBuilder
-                    .addTransformer(TestTransformer3.class);
+            final TransformerComponentBuilder<TestTransformer3> transformer3 =
+                    jobBuilder.addTransformer(TestTransformer3.class);
             transformer3.addInputColumn(jobBuilder.getSourceColumnByName("name"));
             final List<MutableInputColumn<?>> outputColumns3 = transformer3.getOutputColumns();
 

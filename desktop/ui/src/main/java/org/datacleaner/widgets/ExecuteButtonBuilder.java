@@ -19,7 +19,6 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -57,44 +56,31 @@ public class ExecuteButtonBuilder {
         _alternativesButton = WidgetFactory.createToolbarButton(WidgetUtils.CHAR_CARET_DOWN, null);
         _alternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME);
 
-        _mainButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                execute(_analysisJobBuilder);
-            }
-        });
+        _mainButton.addActionListener(e -> execute(_analysisJobBuilder));
 
-        _alternativesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final JPopupMenu menu = new JPopupMenu();
+        _alternativesButton.addActionListener(e -> {
+            final JPopupMenu menu = new JPopupMenu();
 
-                final Action<AnalysisJobBuilder> executeAction = new Action<AnalysisJobBuilder>() {
-                    @Override
-                    public void run(final AnalysisJobBuilder jobBuilder) throws Exception {
-                        execute(jobBuilder);
-                    }
-                };
-                final List<ExecutionMenuItem> menuItems = ExecuteButtonOptions.getMenuItems();
-                for (final ExecutionMenuItem item : menuItems) {
-                    if (item instanceof ExecuteButtonOptions.Separator) {
-                        menu.addSeparator();
+            final Action<AnalysisJobBuilder> executeAction = this::execute;
+            final List<ExecutionMenuItem> menuItems = ExecuteButtonOptions.getMenuItems();
+            for (final ExecutionMenuItem item : menuItems) {
+                if (item instanceof ExecuteButtonOptions.Separator) {
+                    menu.addSeparator();
+                } else {
+                    final JMenuItem menuItem = WidgetFactory.createMenuItem(item.getText(), item.getIconPath());
+                    final ActionListener actionListener =
+                            item.createActionListener(_analysisJobBuilder, executeAction, _window);
+                    if (actionListener == null) {
+                        menuItem.setEnabled(false);
                     } else {
-                        final JMenuItem menuItem = WidgetFactory.createMenuItem(item.getText(), item.getIconPath());
-                        final ActionListener actionListener = item.createActionListener(_analysisJobBuilder,
-                                executeAction, _window);
-                        if (actionListener == null) {
-                            menuItem.setEnabled(false);
-                        } else {
-                            menuItem.addActionListener(actionListener);
-                        }
-                        menu.add(menuItem);
+                        menuItem.addActionListener(actionListener);
                     }
+                    menu.add(menuItem);
                 }
-
-                final int horizontalPosition = -1 * menu.getPreferredSize().width + _alternativesButton.getWidth();
-                menu.show(_alternativesButton, horizontalPosition, _alternativesButton.getHeight());
             }
+
+            final int horizontalPosition = -1 * menu.getPreferredSize().width + _alternativesButton.getWidth();
+            menu.show(_alternativesButton, horizontalPosition, _alternativesButton.getHeight());
         });
     }
 
@@ -115,8 +101,9 @@ public class ExecuteButtonBuilder {
             if (analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders().isEmpty()) {
                 // Present choices to user to write file somewhere,
                 // and then run a copy of the job based on that.
-                final ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
-                        dcModule, _window.getWindowContext(), analysisJobBuilder, _window.getUserPreferences());
+                final ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel =
+                        new ExecuteJobWithoutAnalyzersDialog(dcModule, _window.getWindowContext(), analysisJobBuilder,
+                                _window.getUserPreferences());
                 executeJobWithoutAnalyzersPanel.open();
                 return;
             }

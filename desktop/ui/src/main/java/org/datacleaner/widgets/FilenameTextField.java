@@ -19,8 +19,6 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,57 +56,53 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
     public FilenameTextField(final File directory, final boolean fileOpenDialog) {
         _directory = directory;
 
-        _browseButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final DCFileChooser fileChooser;
-                if (_directory == null) {
-                    fileChooser = new DCFileChooser();
-                } else {
-                    fileChooser = new DCFileChooser(_directory);
-                }
-
-                WidgetUtils.centerOnScreen(fileChooser);
-
-                for (final FileFilter filter : _choosableFileFilters) {
-                    fileChooser.addChoosableFileFilter(filter);
-                }
-
-                fileChooser.setFileSelectionMode(_fileSelectionMode);
-
-                if (_selectedFileFilter != null) {
-                    if (!_choosableFileFilters.contains(_selectedFileFilter)) {
-                        _choosableFileFilters.add(_selectedFileFilter);
-                    }
-                    fileChooser.setFileFilter(_selectedFileFilter);
-                }
-
-                final int result;
-                if (fileOpenDialog) {
-                    result = fileChooser.showOpenDialog(FilenameTextField.this);
-                } else {
-                    result = fileChooser.showSaveDialog(FilenameTextField.this);
-                }
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    final File file = fileChooser.getSelectedFile();
-
-                    boolean accepted = true;
-                    if (fileOpenDialog) {
-                        accepted = file.exists();
-                    }
-
-                    if (accepted) {
-                        setFile(file);
-                        if (file.isDirectory()) {
-                            _directory = file;
-                        } else {
-                            _directory = file.getParentFile();
-                        }
-                        notifySelectionListeners(file);
-                    }
-                }
+        _browseButton.addActionListener(e -> {
+            final DCFileChooser fileChooser;
+            if (_directory == null) {
+                fileChooser = new DCFileChooser();
+            } else {
+                fileChooser = new DCFileChooser(_directory);
             }
 
+            WidgetUtils.centerOnScreen(fileChooser);
+
+            for (final FileFilter filter : _choosableFileFilters) {
+                fileChooser.addChoosableFileFilter(filter);
+            }
+
+            fileChooser.setFileSelectionMode(_fileSelectionMode);
+
+            if (_selectedFileFilter != null) {
+                if (!_choosableFileFilters.contains(_selectedFileFilter)) {
+                    _choosableFileFilters.add(_selectedFileFilter);
+                }
+                fileChooser.setFileFilter(_selectedFileFilter);
+            }
+
+            final int result;
+            if (fileOpenDialog) {
+                result = fileChooser.showOpenDialog(FilenameTextField.this);
+            } else {
+                result = fileChooser.showSaveDialog(FilenameTextField.this);
+            }
+            if (result == JFileChooser.APPROVE_OPTION) {
+                final File file = fileChooser.getSelectedFile();
+
+                boolean accepted = true;
+                if (fileOpenDialog) {
+                    accepted = file.exists();
+                }
+
+                if (accepted) {
+                    setFile(file);
+                    if (file.isDirectory()) {
+                        _directory = file;
+                    } else {
+                        _directory = file.getParentFile();
+                    }
+                    notifySelectionListeners(file);
+                }
+            }
         });
     }
 
@@ -164,7 +158,7 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
     public void setFile(final File file) {
         try {
             setFilename(file.getCanonicalPath());
-        } catch (final IOException e1) {
+        } catch (final IOException e) {
             // ignore
             setFilename(file.getAbsolutePath());
         }

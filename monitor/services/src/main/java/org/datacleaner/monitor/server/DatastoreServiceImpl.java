@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.monitor.configuration.TenantContext;
@@ -91,14 +90,7 @@ public class DatastoreServiceImpl implements DatastoreService {
 
         try (DatastoreConnection con = datastore.openConnection()) {
             final String[] schemaNames = con.getDataContext().getSchemaNames();
-            final List<SchemaIdentifier> schemaIdentifiers = CollectionUtils.map(schemaNames,
-                    new Func<String, SchemaIdentifier>() {
-                        @Override
-                        public SchemaIdentifier eval(final String schemaName) {
-                            return new SchemaIdentifier(datastoreId, schemaName);
-                        }
-                    });
-            return schemaIdentifiers;
+            return CollectionUtils.map(schemaNames, schemaName -> new SchemaIdentifier(datastoreId, schemaName));
         } catch (final Exception e) {
             logger.warn("Failed to open connection to datastore: " + datastoreId.getName(), e);
             throw new DatastoreConnectionException(e.getMessage());
@@ -115,14 +107,7 @@ public class DatastoreServiceImpl implements DatastoreService {
         try (DatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getSchemaByName(schemaId.getName());
             final String[] tableNames = schema.getTableNames();
-            final List<TableIdentifier> tableIdentifiers = CollectionUtils.map(tableNames,
-                    new Func<String, TableIdentifier>() {
-                        @Override
-                        public TableIdentifier eval(final String tableName) {
-                            return new TableIdentifier(schemaId, tableName);
-                        }
-                    });
-            return tableIdentifiers;
+            return CollectionUtils.map(tableNames, tableName -> new TableIdentifier(schemaId, tableName));
         }
     }
 
@@ -140,14 +125,7 @@ public class DatastoreServiceImpl implements DatastoreService {
             final Schema schema = con.getDataContext().getSchemaByName(schemaId.getName());
             final Table table = schema.getTableByName(tableId.getName());
             final String[] columnNames = table.getColumnNames();
-            final List<ColumnIdentifier> columnIdentifiers = CollectionUtils.map(columnNames,
-                    new Func<String, ColumnIdentifier>() {
-                        @Override
-                        public ColumnIdentifier eval(final String columnName) {
-                            return new ColumnIdentifier(tableId, columnName);
-                        }
-                    });
-            return columnIdentifiers;
+            return CollectionUtils.map(columnNames, columnName -> new ColumnIdentifier(tableId, columnName));
         }
     }
 }

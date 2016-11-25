@@ -71,8 +71,8 @@ public class DescriptorServiceServlet extends SecureGwtServlet implements Descri
     }
 
     @Override
-    public Collection<String> getMetricParameterSuggestions(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
-            final MetricIdentifier metric) throws DCSecurityException {
+    public Collection<String> getMetricParameterSuggestions(final TenantIdentifier tenant,
+            final JobIdentifier jobIdentifier, final MetricIdentifier metric) throws DCSecurityException {
         return _delegate.getMetricParameterSuggestions(tenant, jobIdentifier, metric);
     }
 }

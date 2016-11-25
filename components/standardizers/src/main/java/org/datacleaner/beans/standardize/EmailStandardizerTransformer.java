@@ -57,8 +57,8 @@ public class EmailStandardizerTransformer implements Transformer {
             return groupLiteral;
         }
     }
-    public static final NamedPattern<EmailPart> EMAIL_PATTERN = new NamedPattern<>("USERNAME@DOMAIN",
-            EmailPart.class);
+
+    public static final NamedPattern<EmailPart> EMAIL_PATTERN = new NamedPattern<>("USERNAME@DOMAIN", EmailPart.class);
     @Inject
     @Configured
     InputColumn<String> inputColumn;

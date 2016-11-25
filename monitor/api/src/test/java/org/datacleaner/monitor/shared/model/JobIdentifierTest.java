@@ -41,12 +41,12 @@ public class JobIdentifierTest extends TestCase {
         runFromResultIdFailTest("Foo 1234-1234-abc");
     }
 
-    private String runFromResultIdFailTest(String string) {
+    private String runFromResultIdFailTest(final String string) {
         try {
             JobIdentifier.fromResultId(string);
             fail("Exception expected");
             return null;
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             // good then
             return e.getMessage();
         }

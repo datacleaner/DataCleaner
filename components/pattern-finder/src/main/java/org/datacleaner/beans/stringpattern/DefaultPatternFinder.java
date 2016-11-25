@@ -43,7 +43,8 @@ public final class DefaultPatternFinder extends PatternFinder<InputRow> {
      * @param configuration
      * @param annotationFactory
      */
-    public DefaultPatternFinder(final TokenizerConfiguration configuration, final RowAnnotationFactory annotationFactory) {
+    public DefaultPatternFinder(final TokenizerConfiguration configuration,
+            final RowAnnotationFactory annotationFactory) {
         super(configuration);
         if (annotationFactory == null) {
             throw new IllegalArgumentException("RowAnnotationFactory cannot be null");
@@ -66,14 +67,16 @@ public final class DefaultPatternFinder extends PatternFinder<InputRow> {
     }
 
     @Override
-    protected void storeNewPattern(final TokenPattern pattern, final InputRow row, final String value, final int distinctCount) {
+    protected void storeNewPattern(final TokenPattern pattern, final InputRow row, final String value,
+            final int distinctCount) {
         final RowAnnotation annotation = _annotationFactory.createAnnotation();
         _annotations.put(pattern, annotation);
         _annotationFactory.annotate(row, distinctCount, annotation);
     }
 
     @Override
-    protected void storeMatch(final TokenPattern pattern, final InputRow row, final String value, final int distinctCount) {
+    protected void storeMatch(final TokenPattern pattern, final InputRow row, final String value,
+            final int distinctCount) {
         final RowAnnotation annotation = _annotations.get(pattern);
         if (annotation == null) {
             throw new IllegalStateException("No annotation available for pattern: " + pattern);

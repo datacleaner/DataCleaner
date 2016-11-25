@@ -49,7 +49,8 @@ public class SchemaTree extends Tree implements OpenHandler<TreeItem> {
     private final DatastoreServiceAsync _service;
     private final TenantIdentifier _tenant;
 
-    public SchemaTree(final TenantIdentifier tenant, final DatastoreIdentifier datastore, final DatastoreServiceAsync service) {
+    public SchemaTree(final TenantIdentifier tenant, final DatastoreIdentifier datastore,
+            final DatastoreServiceAsync service) {
         super();
         addStyleName("SchemaTree");
 

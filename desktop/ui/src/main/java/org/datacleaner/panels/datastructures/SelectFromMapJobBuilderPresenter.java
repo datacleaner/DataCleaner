@@ -55,7 +55,8 @@ final class SelectFromMapJobBuilderPresenter extends TransformerComponentBuilder
         final ConfiguredPropertyDescriptor keysProperty = descriptor.getConfiguredProperty("Keys");
         final ConfiguredPropertyDescriptor typesProperty = descriptor.getConfiguredProperty("Types");
 
-        final KeysAndTypesPropertyWidget propertyWidget = new KeysAndTypesPropertyWidget(keysProperty, typesProperty, tjb);
+        final KeysAndTypesPropertyWidget propertyWidget =
+                new KeysAndTypesPropertyWidget(keysProperty, typesProperty, tjb);
         _overriddenPropertyWidgets.put(keysProperty, propertyWidget);
         _overriddenPropertyWidgets.put(typesProperty, propertyWidget.getTypesPropertyWidget());
     }

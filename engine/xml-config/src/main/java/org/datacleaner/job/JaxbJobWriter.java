@@ -100,8 +100,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         _configuration = configuration;
         _jobMetadataFactory = jobMetadataFactory;
         try {
-            _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class
-                    .getClassLoader());
+            _jaxbContext = JAXBContext
+                    .newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class.getClassLoader());
         } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
@@ -203,8 +203,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         final Map<FilterOutcome, String> outcomeMappings = new LinkedHashMap<>();
 
         // mappings for lookup of component's elements
-        final Map<TransformerJob, TransformerType> transformerMappings =
-                new LinkedHashMap<>();
+        final Map<TransformerJob, TransformerType> transformerMappings = new LinkedHashMap<>();
         final Map<FilterJob, FilterType> filterMappings = new LinkedHashMap<>();
         final Map<AnalyzerJob, AnalyzerType> analyzerMappings = new LinkedHashMap<>();
 
@@ -296,8 +295,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             final TransformerType elementType = entry.getValue();
             final ComponentConfiguration configuration = job.getConfiguration();
 
-            Set<ConfiguredPropertyDescriptor> configuredProperties = job.getDescriptor()
-                    .getConfiguredPropertiesForInput();
+            Set<ConfiguredPropertyDescriptor> configuredProperties =
+                    job.getDescriptor().getConfiguredPropertiesForInput();
             elementType.getInput().addAll(createInputConfiguration(configuration, configuredProperties, columnMappings,
                     stringConverter));
 
@@ -313,8 +312,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             final FilterType elementType = entry.getValue();
             final ComponentConfiguration configuration = job.getConfiguration();
 
-            Set<ConfiguredPropertyDescriptor> configuredProperties = job.getDescriptor()
-                    .getConfiguredPropertiesForInput();
+            Set<ConfiguredPropertyDescriptor> configuredProperties =
+                    job.getDescriptor().getConfiguredPropertiesForInput();
             elementType.getInput().addAll(createInputConfiguration(configuration, configuredProperties, columnMappings,
                     stringConverter));
 
@@ -332,8 +331,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
             final AnalyzerType elementType = entry.getValue();
             final ComponentConfiguration configuration = job.getConfiguration();
-            Set<ConfiguredPropertyDescriptor> configuredProperties = job.getDescriptor()
-                    .getConfiguredPropertiesForInput();
+            Set<ConfiguredPropertyDescriptor> configuredProperties =
+                    job.getDescriptor().getConfiguredPropertiesForInput();
 
             if (builderId != null && !elementType.getInput().isEmpty()) {
                 // this is the continuation of an already created AnalyzerType.
@@ -348,16 +347,19 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                     }
                 }
 
-                elementType.getInput().addAll(createInputConfiguration(configuration, escalatingInputProperties,
-                        columnMappings, stringConverter, true));
+                elementType.getInput()
+                        .addAll(createInputConfiguration(configuration, escalatingInputProperties, columnMappings,
+                                stringConverter, true));
             } else {
 
-                elementType.getInput().addAll(createInputConfiguration(configuration, configuredProperties,
-                        columnMappings, stringConverter));
+                elementType.getInput()
+                        .addAll(createInputConfiguration(configuration, configuredProperties, columnMappings,
+                                stringConverter));
 
                 configuredProperties = job.getDescriptor().getConfiguredProperties();
-                elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties,
-                        stringConverter, metadataProperties));
+                elementType.setProperties(
+                        createPropertyConfiguration(configuration, configuredProperties, stringConverter,
+                                metadataProperties));
                 elementType.setMetadataProperties(createMetadataProperties(metadataProperties));
             }
         }
@@ -396,8 +398,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
     private List<InputType> createInputConfiguration(final ComponentConfiguration configuration,
             final Set<ConfiguredPropertyDescriptor> configuredProperties,
-            final BiMap<InputColumn<?>, String> columnMappings,
-            final StringConverter stringConverter) {
+            final BiMap<InputColumn<?>, String> columnMappings, final StringConverter stringConverter) {
         return createInputConfiguration(configuration, configuredProperties, columnMappings, stringConverter,
                 configuredProperties.size() > 1);
     }
@@ -429,8 +430,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                                 final ExpressionBasedInputColumn<?> expressionBasedInputColumn =
                                         (ExpressionBasedInputColumn<?>) inputColumn;
                                 final Object columnValue = expressionBasedInputColumn.getExpression();
-                                inputType.setValue(stringConverter.serialize(columnValue, property
-                                        .createCustomConverter()));
+                                inputType.setValue(
+                                        stringConverter.serialize(columnValue, property.createCustomConverter()));
                             } else {
                                 inputType.setRef(getColumnId(inputColumn, columnMappings));
                             }
@@ -459,8 +460,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                 final Property propertyType = new Property();
                 propertyType.setName(property.getName());
 
-                final String variableNameWithPrefix = JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX + property
-                        .getName();
+                final String variableNameWithPrefix =
+                        JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX + property.getName();
                 if (componentMetadataProperties.containsKey(variableNameWithPrefix)) {
                     propertyType.setRef(componentMetadataProperties.get(variableNameWithPrefix));
                 } else {
@@ -643,8 +644,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         final Map<String, AnalyzerType> analyzerTypesByBuilderId = new HashMap<>();
 
         for (final AnalyzerJob analyzerJob : analyzerJobs) {
-            final String builderId = analyzerJob.getMetadataProperties().get(
-                    AnalyzerComponentBuilder.METADATA_PROPERTY_BUILDER_ID);
+            final String builderId =
+                    analyzerJob.getMetadataProperties().get(AnalyzerComponentBuilder.METADATA_PROPERTY_BUILDER_ID);
             if (builderId != null && analyzerTypesByBuilderId.containsKey(builderId)) {
                 // reuse the AnalyzerType to retain the single builder upon job
                 // reading

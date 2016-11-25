@@ -40,7 +40,8 @@ public abstract class ExcelDatastoreLocationWizardPage extends AbstractFreemarke
     private final String _filename;
     private final boolean _newFile;
 
-    public ExcelDatastoreLocationWizardPage(final WizardContext wizardContext, final String filename, final boolean newFile) {
+    public ExcelDatastoreLocationWizardPage(final WizardContext wizardContext, final String filename,
+            final boolean newFile) {
         _wizardContext = wizardContext;
         _filename = filename;
         _newFile = newFile;

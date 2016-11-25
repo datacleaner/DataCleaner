@@ -42,24 +42,24 @@ public class ComponentStoreTest {
 
     @Test
     public void testStore() throws Exception {
-        File tempFolder = Files.createTempDir();
+        final File tempFolder = Files.createTempDir();
         tempFolder.deleteOnExit();
 
-        FileRepositoryFolder repo = new FileRepositoryFolder(null, tempFolder);
-        Repository repository = new FileRepository(repo.getFile());
+        final FileRepositoryFolder repo = new FileRepositoryFolder(null, tempFolder);
+        final Repository repository = new FileRepository(repo.getFile());
         repository.createFolder(tenantId);
-        ComponentStore store = new ComponentStoreImpl(repository, tenantId);
+        final ComponentStore store = new ComponentStoreImpl(repository, tenantId);
 
-        ComponentStoreHolder conf1 = createHolder(instanceId1);
+        final ComponentStoreHolder conf1 = createHolder(instanceId1);
         store.store(conf1);
 
-        File tenantDir = new File(tempFolder, tenantId);
-        File componentFolder = new File(tenantDir, ComponentStoreImpl.FOLDER_NAME);
+        final File tenantDir = new File(tempFolder, tenantId);
+        final File componentFolder = new File(tenantDir, ComponentStoreImpl.FOLDER_NAME);
         Assert.assertTrue(componentFolder.exists());
-        File confFile = new File(componentFolder, instanceId1);
+        final File confFile = new File(componentFolder, instanceId1);
         Assert.assertTrue(confFile.exists());
 
-        ComponentStoreHolder conf2 = store.get(instanceId1);
+        final ComponentStoreHolder conf2 = store.get(instanceId1);
         Assert.assertEquals(conf1.getInstanceId(), conf2.getInstanceId());
         Assert.assertEquals(conf1.getTimeout(), conf2.getTimeout());
         Assert.assertEquals(null, store.get(instanceId2));
@@ -67,7 +67,7 @@ public class ComponentStoreTest {
         Assert.assertEquals(null, store.get(instanceId1));
     }
 
-    private ComponentStoreHolder createHolder(String instanceId) {
+    private ComponentStoreHolder createHolder(final String instanceId) {
         return new ComponentStoreHolder(10L, null, instanceId, componentName);
     }
 }

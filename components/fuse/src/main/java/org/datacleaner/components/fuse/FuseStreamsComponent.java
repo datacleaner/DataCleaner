@@ -121,15 +121,15 @@ public class FuseStreamsComponent extends MultiStreamComponent {
     public OutputDataStream[] getOutputDataStreams() {
         final OutputDataStreamBuilder builder = OutputDataStreams.pushDataStream(OUTPUT_DATA_STREAM_NAME);
         boolean foundOutputDataStream = false;
-        for (final CoalesceUnit _unit : _units) {
+        for (final CoalesceUnit unit : _units) {
             // Not necessarily initialized yet, so no _initializedUnits available
-            final InputColumn<?>[] updatedInputColumns = _unit.getUpdatedInputColumns(_inputs, false);
-            if (_unit.getInputColumnNames().length == updatedInputColumns.length) {
+            final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(_inputs, false);
+            if (unit.getInputColumnNames().length == updatedInputColumns.length) {
                 // Valid Unit
                 foundOutputDataStream = true;
-                final CoalesceUnit unit = _unit.getUpdatedCoalesceUnit(updatedInputColumns);
-                final Class<?> dataType = unit.getOutputDataType();
-                final String columnName = unit.getSuggestedOutputColumnName();
+                final CoalesceUnit updatedCoalesceUnit = unit.getUpdatedCoalesceUnit(updatedInputColumns);
+                final Class<?> dataType = updatedCoalesceUnit.getOutputDataType();
+                final String columnName = updatedCoalesceUnit.getSuggestedOutputColumnName();
                 final ColumnType columnType = ColumnTypeImpl.convertColumnType(dataType);
                 builder.withColumn(columnName, columnType);
             } else {

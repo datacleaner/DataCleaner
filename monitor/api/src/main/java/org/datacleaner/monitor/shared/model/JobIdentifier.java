@@ -57,16 +57,16 @@ public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, H
 
         final int lastIndexOfDash = resultId.lastIndexOf('-');
         if (lastIndexOfDash == -1 || lastIndexOfDash == 0) {
-            throw new IllegalArgumentException("Result ID '" + resultId
-                    + "' does not match expected pattern: [jobname]-[timestamp]");
+            throw new IllegalArgumentException(
+                    "Result ID '" + resultId + "' does not match expected pattern: [jobname]-[timestamp]");
         }
 
         final String timestamp = resultId.substring(lastIndexOfDash + 1);
         try {
             Long.parseLong(timestamp);
         } catch (final NumberFormatException e) {
-            throw new IllegalArgumentException("Result ID '" + resultId
-                    + "' does not match expected pattern: [jobname]-[timestamp]");
+            throw new IllegalArgumentException(
+                    "Result ID '" + resultId + "' does not match expected pattern: [jobname]-[timestamp]");
         }
 
         final String jobName = resultId.substring(0, lastIndexOfDash);

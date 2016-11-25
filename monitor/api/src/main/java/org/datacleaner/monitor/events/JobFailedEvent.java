@@ -52,8 +52,8 @@ public class JobFailedEvent extends ApplicationEvent {
      *            the exception thrown that made the job fail, if available, or
      *            null.
      */
-    public JobFailedEvent(final Object source, final ExecutionLog executionLog, final Object component, final Object data,
-            final Throwable throwable) {
+    public JobFailedEvent(final Object source, final ExecutionLog executionLog, final Object component,
+            final Object data, final Throwable throwable) {
         super(source);
         _executionLog = executionLog;
         _component = component;

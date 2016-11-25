@@ -98,7 +98,8 @@ public class ExecuteButtonOptions {
 
         @Override
         public final ActionListener createActionListener(final AnalysisJobBuilder analysisJobBuilder,
-                final Action<AnalysisJobBuilder> executeAction, final AnalysisJobBuilderWindow analysisJobBuilderWindow) {
+                final Action<AnalysisJobBuilder> executeAction,
+                final AnalysisJobBuilderWindow analysisJobBuilderWindow) {
             return event -> {
                 try {
                     run(analysisJobBuilder, executeAction, analysisJobBuilderWindow);
@@ -130,7 +131,8 @@ public class ExecuteButtonOptions {
 
         @Override
         public ActionListener createActionListener(final AnalysisJobBuilder analysisJobBuilder,
-                final Action<AnalysisJobBuilder> executeAction, final AnalysisJobBuilderWindow analysisJobBuilderWindow) {
+                final Action<AnalysisJobBuilder> executeAction,
+                final AnalysisJobBuilderWindow analysisJobBuilderWindow) {
             return null;
         }
     }
@@ -141,7 +143,8 @@ public class ExecuteButtonOptions {
         // initialize the default menu items
         addMenuItem(new SimpleExecutionMenuItem("Run normally", IconUtils.ACTION_EXECUTE) {
             @Override
-            protected void run(final AnalysisJobBuilder analysisJobBuilder, final Action<AnalysisJobBuilder> executeAction,
+            protected void run(final AnalysisJobBuilder analysisJobBuilder,
+                    final Action<AnalysisJobBuilder> executeAction,
                     final AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
                 executeAction.run(analysisJobBuilder);
             }
@@ -149,18 +152,18 @@ public class ExecuteButtonOptions {
 
         addMenuItem(new SimpleExecutionMenuItem("Run first N records", IconUtils.ACTION_PREVIEW) {
             @Override
-            protected void run(final AnalysisJobBuilder analysisJobBuilder, final Action<AnalysisJobBuilder> executeAction,
+            protected void run(final AnalysisJobBuilder analysisJobBuilder,
+                    final Action<AnalysisJobBuilder> executeAction,
                     final AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
                 final Integer maxRows = WidgetFactory.showMaxRowsDialog(100);
 
                 if (maxRows != null) {
                     final AnalysisJob jobCopy = analysisJobBuilder.toAnalysisJob(false);
-                    final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(
-                            analysisJobBuilder.getConfiguration(), jobCopy);
+                    final AnalysisJobBuilder jobBuilderCopy =
+                            new AnalysisJobBuilder(analysisJobBuilder.getConfiguration(), jobCopy);
 
                     final Set<ComponentBuilder> analyzers = jobBuilderCopy.getComponentBuilders().stream()
-                            .filter(o -> o instanceof AnalyzerComponentBuilder)
-                            .collect(Collectors.toSet());
+                            .filter(o -> o instanceof AnalyzerComponentBuilder).collect(Collectors.toSet());
 
                     final SourceColumnFinder scf = new SourceColumnFinder();
                     scf.addSources(jobBuilderCopy);
@@ -191,7 +194,8 @@ public class ExecuteButtonOptions {
 
         addMenuItem(new SimpleExecutionMenuItem("Run single-threaded", IconUtils.MODEL_ROW) {
             @Override
-            protected void run(final AnalysisJobBuilder analysisJobBuilder, final Action<AnalysisJobBuilder> executeAction,
+            protected void run(final AnalysisJobBuilder analysisJobBuilder,
+                    final Action<AnalysisJobBuilder> executeAction,
                     final AnalysisJobBuilderWindow analysisJobBuilderWindow) throws Exception {
                 final DataCleanerConfiguration baseConfiguration = analysisJobBuilder.getConfiguration();
                 final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl(baseConfiguration)

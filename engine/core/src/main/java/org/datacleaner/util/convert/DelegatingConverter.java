@@ -88,8 +88,7 @@ public class DelegatingConverter implements Converter<Object> {
 
         for (final Converter<?> converter : _converters) {
             if (converter.isConvertable(type)) {
-                final Object result = converter.fromString(type, serializedForm);
-                return result;
+                return converter.fromString(type, serializedForm);
             }
         }
 
@@ -104,8 +103,8 @@ public class DelegatingConverter implements Converter<Object> {
         if (convertable != null) {
             try {
                 final Class<? extends Converter<?>> converterClass = convertable.value();
-                @SuppressWarnings("unchecked")
-                final Converter<Object> converter = (Converter<Object>) ReflectionUtils.newInstance(converterClass);
+                @SuppressWarnings("unchecked") final Converter<Object> converter =
+                        (Converter<Object>) ReflectionUtils.newInstance(converterClass);
                 return converter.fromString(type, serializedForm);
             } catch (final Exception e) {
                 logger.warn("Failed to convert fromString(" + serializedForm
@@ -133,8 +132,7 @@ public class DelegatingConverter implements Converter<Object> {
 
         for (final Converter<?> converter : _converters) {
             if (converter.isConvertable(type)) {
-                @SuppressWarnings("unchecked")
-                final Converter<Object> castedConverter = (Converter<Object>) converter;
+                @SuppressWarnings("unchecked") final Converter<Object> castedConverter = (Converter<Object>) converter;
                 final String serializedForm = castedConverter.toString(instance);
 
                 return SerializationStringEscaper.escape(serializedForm);
@@ -145,8 +143,8 @@ public class DelegatingConverter implements Converter<Object> {
         if (convertable != null) {
             try {
                 final Class<? extends Converter<?>> converterClass = convertable.value();
-                @SuppressWarnings("unchecked")
-                final Converter<Object> converter = (Converter<Object>) ReflectionUtils.newInstance(converterClass);
+                @SuppressWarnings("unchecked") final Converter<Object> converter =
+                        (Converter<Object>) ReflectionUtils.newInstance(converterClass);
                 return SerializationStringEscaper.escape(converter.toString(instance));
             } catch (final Exception e) {
                 logger.warn("Failed to convert toString(" + instance + ") using Convertable annotated converter class",

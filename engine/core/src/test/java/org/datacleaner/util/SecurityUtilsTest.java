@@ -33,10 +33,10 @@ public class SecurityUtilsTest extends TestCase {
     }
 
     public void testEmptyStringValues() throws Exception {
-        String encoded = SecurityUtils.encodePassword("".toCharArray());
+        final String encoded = SecurityUtils.encodePassword("".toCharArray());
         assertNotNull(encoded);
 
-        String decoded = SecurityUtils.decodePassword(encoded);
+        final String decoded = SecurityUtils.decodePassword(encoded);
         assertNotNull(decoded);
         assertEquals("", decoded);
 
@@ -44,15 +44,15 @@ public class SecurityUtilsTest extends TestCase {
     }
 
     public void testEncodeAndDecode() throws Exception {
-        String encoded = SecurityUtils.encodePassword(PLAIN_TEXT_VALUE.toCharArray());
+        final String encoded = SecurityUtils.encodePassword(PLAIN_TEXT_VALUE.toCharArray());
         assertEquals(ENCODED_VALUE, encoded);
 
-        String decoded = SecurityUtils.decodePassword(encoded);
+        final String decoded = SecurityUtils.decodePassword(encoded);
         assertEquals(PLAIN_TEXT_VALUE, decoded);
     }
 
     public void testEncodeAndDecodeWithPrefix() throws Exception {
-        String encodedWithPrefix = SecurityUtils.encodePasswordWithPrefix(PLAIN_TEXT_VALUE);
+        final String encodedWithPrefix = SecurityUtils.encodePasswordWithPrefix(PLAIN_TEXT_VALUE);
         assertEquals(ENCODED_VALUE_WITH_PREFIX, encodedWithPrefix);
 
         String decoded = SecurityUtils.decodePasswordWithPrefix(encodedWithPrefix);

@@ -27,7 +27,7 @@ public class FileSynonymCatalogReferenceDataPageTest {
 
     @Test
     public void testGetNameLabel() throws Exception {
-        FileSynonymCatalogReferenceDataPage page = new FileSynonymCatalogReferenceDataPage(null);
+        final FileSynonymCatalogReferenceDataPage page = new FileSynonymCatalogReferenceDataPage(null);
         assertNotEquals("", page.getNameLabel());
     }
 }

@@ -21,7 +21,6 @@ package org.datacleaner.result;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Predicate;
 import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SerializableRef;
 import org.datacleaner.api.AnalyzerResult;
@@ -99,17 +97,14 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
             if (!rows.isEmpty()) {
                 final InputRow firstRow = rows.iterator().next();
                 final List<InputColumn<?>> inputColumns = firstRow.getInputColumns();
-                _inputColumns = CollectionUtils.filter(inputColumns, new Predicate<InputColumn<?>>() {
-                    @Override
-                    public Boolean eval(final InputColumn<?> col) {
-                        if (col instanceof MutableInputColumn) {
-                            if (((MutableInputColumn<?>) col).isHidden()) {
-                                // avoid hidden columns in the
-                                return false;
-                            }
+                _inputColumns = CollectionUtils.filter(inputColumns, col -> {
+                    if (col instanceof MutableInputColumn) {
+                        if (((MutableInputColumn<?>) col).isHidden()) {
+                            // avoid hidden columns in the
+                            return false;
                         }
-                        return true;
                     }
+                    return true;
                 });
             } else {
                 _inputColumns = new ArrayList<>(0);
@@ -159,21 +154,18 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
         } else {
             valueCounts = getValueCounts(annotationFactory, getAnnotation(), inputColumnOfInterest);
         }
-        final DefaultTableModel tableModel = new DefaultTableModel(new String[] { inputColumnOfInterest.getName(),
-                "Count in dataset" }, valueCounts.size());
+        final DefaultTableModel tableModel =
+                new DefaultTableModel(new String[] { inputColumnOfInterest.getName(), "Count in dataset" },
+                        valueCounts.size());
 
         // sort the set
-        final TreeSet<Entry<Object, Integer>> set = new TreeSet<>(
-                new Comparator<Entry<Object, Integer>>() {
-                    @Override
-                    public int compare(final Entry<Object, Integer> o1, final Entry<Object, Integer> o2) {
-                        final int countDiff = o2.getValue().intValue() - o1.getValue().intValue();
-                        if (countDiff == 0) {
-                            return -1;
-                        }
-                        return countDiff;
-                    }
-                });
+        final TreeSet<Entry<Object, Integer>> set = new TreeSet<>((o1, o2) -> {
+            final int countDiff = o2.getValue().intValue() - o1.getValue().intValue();
+            if (countDiff == 0) {
+                return -1;
+            }
+            return countDiff;
+        });
         set.addAll(valueCounts.entrySet());
 
         int i = 0;
@@ -187,8 +179,7 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
     }
 
     private Map<Object, Integer> getValueCounts(final RowAnnotationFactory annotationFactory,
-            final RowAnnotation annotation,
-            final InputColumn<?> inputColumn) {
+            final RowAnnotation annotation, final InputColumn<?> inputColumn) {
         final List<InputRow> rows = annotationFactory.getSampleRows(annotation);
 
         if (rows == null || rows.isEmpty()) {

@@ -49,10 +49,10 @@ final class FuseStreamsComponentBuilderPresenter extends TransformerComponentBui
             final DataCleanerConfiguration configuration) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
 
-        _inputProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty(
-                FuseStreamsComponent.PROPERTY_INPUTS);
-        _unitsProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty(
-                FuseStreamsComponent.PROPERTY_UNITS);
+        _inputProperty =
+                transformerJobBuilder.getDescriptor().getConfiguredProperty(FuseStreamsComponent.PROPERTY_INPUTS);
+        _unitsProperty =
+                transformerJobBuilder.getDescriptor().getConfiguredProperty(FuseStreamsComponent.PROPERTY_UNITS);
 
         _propertyWidget =
                 new StreamColumnMatrixMultipleCoalesceUnitPropertyWidget(transformerJobBuilder, _inputProperty,

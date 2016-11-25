@@ -70,13 +70,11 @@ public class NewsChannelPanel extends JPanel {
         }
 
         private void setContentText() {
-            setText("<div style='" + divStyles + getBgColor() + "'>" +
-                    "<span style='" + titleStyles + "'>" + _item.getTitle() + "</span>" +
-                    " <span style='" + dateStyles + "'>(" + formatter.format(_item.getDateCreated()) + ")</span>" +
-                    "<br /><span style='" + msgStyles + "'>" + _item.getMessage() + "</span>" +
-                    " <a href='" + RemoteDescriptorProvider.DATACLEANER_BASE_URL + "/newsitem/" + _item.getName() +
-                    "' style='text-decoration: none;'>More.</a>" +
-                    "</div>");
+            setText("<div style='" + divStyles + getBgColor() + "'>" + "<span style='" + titleStyles + "'>" + _item
+                    .getTitle() + "</span>" + " <span style='" + dateStyles + "'>(" + formatter
+                    .format(_item.getDateCreated()) + ")</span>" + "<br /><span style='" + msgStyles + "'>" + _item
+                    .getMessage() + "</span>" + " <a href='" + RemoteDescriptorProvider.DATACLEANER_BASE_URL
+                    + "/newsitem/" + _item.getName() + "' style='text-decoration: none;'>More.</a>" + "</div>");
         }
 
         private String getBgColor() {
@@ -88,6 +86,7 @@ public class NewsChannelPanel extends JPanel {
             return backgroundItemColor;
         }
     }
+
     private static final long serialVersionUID = 1L;
     private final Color _background = WidgetUtils.BG_COLOR_BRIGHTEST;
     private final Color _foreground = WidgetUtils.BG_COLOR_DARKEST;
@@ -150,12 +149,7 @@ public class NewsChannelPanel extends JPanel {
     }
 
     public void scrollToTop() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                scroll.getViewport().setViewPosition(new Point(0, 0));
-            }
-        });
+        SwingUtilities.invokeLater(() -> scroll.getViewport().setViewPosition(new Point(0, 0)));
     }
 
     @Override

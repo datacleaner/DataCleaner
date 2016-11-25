@@ -19,17 +19,17 @@
  */
 package org.datacleaner.result.renderer;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.result.Crosstab;
+
+import junit.framework.TestCase;
 
 public class CrosstabRendererTest extends TestCase {
 
     public void testEmptyDimension() throws Exception {
-        Crosstab<Integer> crosstab = new Crosstab<>(Integer.class, "foo", "bar");
+        final Crosstab<Integer> crosstab = new Crosstab<>(Integer.class, "foo", "bar");
 
-        CrosstabTextRenderer renderer = new CrosstabTextRenderer();
-        String result = renderer.render(crosstab);
+        final CrosstabTextRenderer renderer = new CrosstabTextRenderer();
+        final String result = renderer.render(crosstab);
 
         assertEquals("", result);
     }

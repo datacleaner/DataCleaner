@@ -25,20 +25,20 @@ import org.datacleaner.restclient.ProcessStatelessInput;
 
 public class InputRewriterController {
 
-    private InputRewriter[] inputRewriters = new InputRewriter[] {
-            new InputColumnAndMappedPropertyRewriter()
-    };
+    private InputRewriter[] inputRewriters = new InputRewriter[] { new InputColumnAndMappedPropertyRewriter() };
 
     /**
      * Enrich the input data in case the client uses simplified input format
      */
-    public void rewriteStatelessInput(final ComponentDescriptor<?> compDesc, final ProcessStatelessInput processStatelessInput) {
+    public void rewriteStatelessInput(final ComponentDescriptor<?> compDesc,
+            final ProcessStatelessInput processStatelessInput) {
         if (compDesc instanceof TransformerDescriptor) {
             rewriteStatelessInputForTransformer((TransformerDescriptor<?>) compDesc, processStatelessInput);
         }
     }
 
-    private void rewriteStatelessInputForTransformer(final TransformerDescriptor<?> compDesc, final ProcessStatelessInput input) {
+    private void rewriteStatelessInputForTransformer(final TransformerDescriptor<?> compDesc,
+            final ProcessStatelessInput input) {
         for (final InputRewriter rewriter : inputRewriters) {
             if (rewriter.rewriteInput(compDesc, input)) {
                 return;

@@ -49,8 +49,7 @@ public class CassandraDatastore extends UsageAwareDatastore<CassandraDataContext
     }
 
     public CassandraDatastore(final String name, final String hostname, final int port, final String keyspace,
-            final String username,
-            final String password, final boolean ssl, final SimpleTableDef[] tableDefs) {
+            final String username, final String password, final boolean ssl, final SimpleTableDef[] tableDefs) {
         super(name);
         _hostname = hostname;
         _port = port;

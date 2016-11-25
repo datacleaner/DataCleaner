@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.filter;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -53,7 +53,8 @@ import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.util.ReflectionUtils;
 
 @Named("Compare")
-@Description("Compare two values using an operator of your choice. The options available in this filter resemble those of a SQL WHERE clause - you can specify columns, fixed values and use operators including the LIKE operator.")
+@Description("Compare two values using an operator of your choice. The options available in this filter resemble those "
+        + "of a SQL WHERE clause - you can specify columns, fixed values and use operators including the LIKE operator.")
 @Categorized(FilterCategory.class)
 @Distributed(true)
 public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Category>, HasLabelAdvice {
@@ -130,7 +131,8 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         init();
     }
 
-    public CompareFilter(final InputColumn<?> inputColumn, final Operator operator, final InputColumn<?> compareColumn) {
+    public CompareFilter(final InputColumn<?> inputColumn, final Operator operator,
+            final InputColumn<?> compareColumn) {
         this();
         this.inputColumn = inputColumn;
         this.operator = operator;
@@ -247,13 +249,14 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         return filter(inputValue, operator, operand);
     }
 
-    public CompareFilter.Category filter(final Object v, final Operator operator, final Object operand) {
+    public CompareFilter.Category filter(final Object value, final Operator operator, final Object operand) {
         // use MetaModel FilterItem to do the evaluation - it's a bit of a
         // detour, but there's a ton of operator/operand combinations to take
         // care of which is already done there.
         final FilterItem item = new FilterItem(compareSelectItem, operator.getOperatorType(), operand);
         final boolean evaluation = item.evaluate(
-                new DefaultRow(new SimpleDataSetHeader(Arrays.asList(compareSelectItem)), new Object[] { v }));
+                new DefaultRow(new SimpleDataSetHeader(Collections.singletonList(compareSelectItem)),
+                        new Object[] { value }));
 
         if (evaluation) {
             return Category.TRUE;

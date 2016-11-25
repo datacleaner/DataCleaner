@@ -28,13 +28,13 @@ public class SimpleStringPatternReferenceDataPageTest {
 
     @Test
     public void testGetPageIndex() throws Exception {
-        SimpleStringPatternReferenceDataPage page = new SimpleStringPatternReferenceDataPage(null);
+        final SimpleStringPatternReferenceDataPage page = new SimpleStringPatternReferenceDataPage(null);
         assertEquals(new Integer(0), page.getPageIndex());
     }
 
     @Test
     public void testGetTemplateFilename() throws Exception {
-        SimpleStringPatternReferenceDataPage page = new SimpleStringPatternReferenceDataPage(null);
+        final SimpleStringPatternReferenceDataPage page = new SimpleStringPatternReferenceDataPage(null);
         assertNotEquals("", page.getTemplateFilename());
     }
 }

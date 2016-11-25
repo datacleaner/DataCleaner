@@ -20,8 +20,6 @@
 package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
@@ -67,24 +65,13 @@ public class SimpleTableDefPanel extends DCPanel {
     private DCPanel createButtonPanel() {
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
         addButton.setText("Add field");
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addField(null, null);
-            }
-        });
+        addButton.addActionListener(e -> addField(null, null));
 
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
         removeButton.setText("Remove field");
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                _tableModel.removeRow(_tableModel.getRowCount() - 1);
-            }
-        });
+        removeButton.addActionListener(e -> _tableModel.removeRow(_tableModel.getRowCount() - 1));
 
-        final DCPanel buttonPanel = DCPanel.flow(Alignment.RIGHT, 10, 10, addButton, removeButton);
-        return buttonPanel;
+        return DCPanel.flow(Alignment.RIGHT, 10, 10, addButton, removeButton);
     }
 
     private void addField(String name, ColumnType columnType) {
@@ -119,8 +106,8 @@ public class SimpleTableDefPanel extends DCPanel {
             final JXTextField nameTextField = (JXTextField) _tableModel.getValueAt(i, 0);
             names[i] = nameTextField.getText();
 
-            @SuppressWarnings("unchecked")
-            final DCComboBox<ColumnType> typeComboBox = (DCComboBox<ColumnType>) _tableModel.getValueAt(i, 1);
+            @SuppressWarnings("unchecked") final DCComboBox<ColumnType> typeComboBox =
+                    (DCComboBox<ColumnType>) _tableModel.getValueAt(i, 1);
             types[i] = typeComboBox.getSelectedItem();
         }
         return new SimpleTableDef(_tableName, names, types);

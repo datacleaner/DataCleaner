@@ -46,6 +46,7 @@ public class DCPopupBubble {
          */
         boolean onBeforeShow();
     }
+
     private static final Image BACKGROUND_IMAGE_BOTTOM =
             ImageManager.get().getImage("images/window/popup-bubble-bottom.png");
     private static final Image BACKGROUND_IMAGE_TOP = ImageManager.get().getImage("images/window/popup-bubble-top.png");
@@ -60,16 +61,18 @@ public class DCPopupBubble {
         this(glassPane, text, xOnScreen, yOnScreen, (Icon) null);
     }
 
-    public DCPopupBubble(final DCGlassPane glassPane, final String text, final int xOnScreen, final int yOnScreen, final String iconPath) {
+    public DCPopupBubble(final DCGlassPane glassPane, final String text, final int xOnScreen, final int yOnScreen,
+            final String iconPath) {
         this(glassPane, text, xOnScreen, yOnScreen, ImageManager.get().getImageIcon(iconPath));
     }
 
-    public DCPopupBubble(final DCGlassPane glassPane, final String text, final int xOnScreen, final int yOnScreen, final Icon icon) {
+    public DCPopupBubble(final DCGlassPane glassPane, final String text, final int xOnScreen, final int yOnScreen,
+            final Icon icon) {
         this(glassPane, text, xOnScreen, yOnScreen, icon, Position.BOTTOM);
     }
 
-    public DCPopupBubble(final DCGlassPane glassPane, final String text, final int xOnScreen, final int yOnScreen, final Icon icon,
-            final Position position) {
+    public DCPopupBubble(final DCGlassPane glassPane, final String text, final int xOnScreen, final int yOnScreen,
+            final Icon icon, final Position position) {
         _glassPane = glassPane;
         _position = position;
 
@@ -142,11 +145,9 @@ public class DCPopupBubble {
                     final Point locationOnScreen = component.getLocationOnScreen();
                     final int x = locationOnScreen.x + 15;
                     if (_position == Position.BOTTOM) {
-                        DCPopupBubble.this.setLocationOnScreen(x,
-                                locationOnScreen.y + component.getHeight());
+                        DCPopupBubble.this.setLocationOnScreen(x, locationOnScreen.y + component.getHeight());
                     } else {
-                        DCPopupBubble.this.setLocationOnScreen(x,
-                                locationOnScreen.y - 81);
+                        DCPopupBubble.this.setLocationOnScreen(x, locationOnScreen.y - 81);
                     }
                     DCPopupBubble.this.show();
                 }

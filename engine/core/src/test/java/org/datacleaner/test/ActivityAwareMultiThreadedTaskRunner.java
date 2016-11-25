@@ -55,14 +55,14 @@ public final class ActivityAwareMultiThreadedTaskRunner implements TaskRunner {
     }
 
     @Override
-    public void run(Task task, TaskListener listener) {
-        Future<?> future = _executorService.submit(new TaskRunnable(task, listener));
+    public void run(final Task task, final TaskListener listener) {
+        final Future<?> future = _executorService.submit(new TaskRunnable(task, listener));
         _tasksAndFutures.put(future, task);
     }
 
     @Override
-    public void run(TaskRunnable taskRunnable) {
-        Future<?> future = _executorService.submit(taskRunnable);
+    public void run(final TaskRunnable taskRunnable) {
+        final Future<?> future = _executorService.submit(taskRunnable);
         _tasksAndFutures.put(future, taskRunnable.getTask());
     }
 
@@ -94,22 +94,22 @@ public final class ActivityAwareMultiThreadedTaskRunner implements TaskRunner {
      *             any exceptions either thrown because of failing assertions or
      *             because of exceptions thrown in the tasks
      */
-    public int assertAllBegunTasksFinished(int timeoutMillis) throws Exception {
-        long millisBefore = System.currentTimeMillis();
+    public int assertAllBegunTasksFinished(final int timeoutMillis) throws Exception {
+        final long millisBefore = System.currentTimeMillis();
         int taskCount = 0;
-        for (Future<?> future : _tasksAndFutures.keySet()) {
+        for (final Future<?> future : _tasksAndFutures.keySet()) {
             if (future.isDone()) {
                 taskCount++;
             } else {
-                long millisNow = System.currentTimeMillis();
-                long millisUsed = millisNow - millisBefore;
+                final long millisNow = System.currentTimeMillis();
+                final long millisUsed = millisNow - millisBefore;
                 try {
                     // using the timeout'ed get method to ensure that the future
                     // will not just wait for the result to be ready. It SHOULD
                     // be ready already!
                     future.get(timeoutMillis - millisUsed, TimeUnit.MILLISECONDS);
-                } catch (TimeoutException e) {
-                    Task task = _tasksAndFutures.get(future);
+                } catch (final TimeoutException e) {
+                    final Task task = _tasksAndFutures.get(future);
                     Assert.fail("Task is not finished: " + task);
                 }
             }

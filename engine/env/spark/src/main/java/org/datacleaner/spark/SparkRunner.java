@@ -129,8 +129,8 @@ public class SparkRunner {
             listener.onJobFilesReady();
         }
 
-        final SparkLauncher sparkLauncher = _applicationDriver.createSparkLauncher(_hadoopConfigurationDirectory,
-                configurationFile, jobFile, resultFile);
+        final SparkLauncher sparkLauncher = _applicationDriver
+                .createSparkLauncher(_hadoopConfigurationDirectory, configurationFile, jobFile, resultFile);
         final Process launchProcess = _applicationDriver.launchProcess(sparkLauncher);
 
         if (listener != null) {

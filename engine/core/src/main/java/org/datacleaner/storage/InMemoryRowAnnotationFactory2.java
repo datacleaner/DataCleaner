@@ -34,8 +34,8 @@ import org.datacleaner.api.InputRow;
  * records. A new class was added to allow deserialization of old DataCleaner
  * results, yet this class fully replaces the old one functionally.
  */
-public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFactory2 implements RowAnnotationFactory,
-        Serializable {
+public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFactory2
+        implements RowAnnotationFactory, Serializable {
 
     private static final long serialVersionUID = 1L;
 

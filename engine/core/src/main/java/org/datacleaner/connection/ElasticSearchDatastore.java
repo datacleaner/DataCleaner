@@ -79,25 +79,21 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
     private final String _keystorePassword;
 
     public ElasticSearchDatastore(final String name, final ClientType clientType, final String hostname,
-            final Integer port, final String clusterName,
-            final String indexName) {
+            final Integer port, final String clusterName, final String indexName) {
         this(name, clientType, hostname, port, clusterName, indexName, null, null, null, false, null, null);
     }
 
     public ElasticSearchDatastore(final String name, final ClientType clientType, final String hostname,
-            final Integer port, final String clusterName,
-            final String indexName, final String username, final String password, final boolean ssl,
-            final String keystorePath,
-            final String keystorePassword) {
+            final Integer port, final String clusterName, final String indexName, final String username,
+            final String password, final boolean ssl, final String keystorePath, final String keystorePassword) {
         this(name, clientType, hostname, port, clusterName, indexName, null, username, password, ssl, keystorePath,
                 keystorePassword);
     }
 
     public ElasticSearchDatastore(final String name, final ClientType clientType, final String hostname,
-            final Integer port, final String clusterName,
-            final String indexName, final SimpleTableDef[] tableDefs, final String username, final String password,
-            final boolean ssl,
-            final String keystorePath, final String keystorePassword) {
+            final Integer port, final String clusterName, final String indexName, final SimpleTableDef[] tableDefs,
+            final String username, final String password, final boolean ssl, final String keystorePath,
+            final String keystorePassword) {
         super(name);
         _hostname = hostname;
         _port = port;
@@ -147,11 +143,9 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
         switch (_clientType) {
         case NODE:
         case TRANSPORT:
-            return new UpdateableDatastoreConnectionImpl<>((ElasticSearchDataContext) dataContext,
-                    this, simpleclient);
+            return new UpdateableDatastoreConnectionImpl<>((ElasticSearchDataContext) dataContext, this, simpleclient);
         case REST:
-            return new UpdateableDatastoreConnectionImpl<>(
-                    (ElasticSearchRestDataContext) dataContext, this);
+            return new UpdateableDatastoreConnectionImpl<>((ElasticSearchRestDataContext) dataContext, this);
         default:
             //do nothing
         }
@@ -173,8 +167,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
     private JestClient getClientForRestProtocol() {
         final JestClientFactory factory = new JestClientFactory();
         HttpClientConfig.Builder builder =
-                new HttpClientConfig.Builder("http://" + _hostname + ":" + _port).multiThreaded(
-                        true);
+                new HttpClientConfig.Builder("http://" + _hostname + ":" + _port).multiThreaded(true);
         if (!Strings.isNullOrEmpty(_username)) {
             builder = builder.defaultCredentials(_username, _password);
         }

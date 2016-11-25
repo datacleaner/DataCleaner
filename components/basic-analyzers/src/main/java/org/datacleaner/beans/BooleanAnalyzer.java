@@ -61,23 +61,18 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
 
     // comparator used to sort entries, getting the most frequent value
     // combinations to the top
+    @SuppressWarnings("checkstyle:Indentation")
     private static final Comparator<Map.Entry<ValueCombination<Boolean>, RowAnnotation>>
-            frequentValueCombinationComparator = new Comparator<Map.Entry<ValueCombination<Boolean>, RowAnnotation>>() {
-        @Override
-        public int compare(final Entry<ValueCombination<Boolean>, RowAnnotation> o1,
-                final Entry<ValueCombination<Boolean>, RowAnnotation> o2) {
-            int result = o2.getValue().getRowCount() - o1.getValue().getRowCount();
-            if (result == 0) {
-                result = o2.getKey().compareTo(o1.getKey());
-            }
-            return result;
+            frequentValueCombinationComparator = (o1, o2) -> {
+        int result = o2.getValue().getRowCount() - o1.getValue().getRowCount();
+        if (result == 0) {
+            result = o2.getKey().compareTo(o1.getKey());
         }
+        return result;
     };
 
-    private final Map<InputColumn<Boolean>, BooleanAnalyzerColumnDelegate> _columnDelegates =
-            new HashMap<>();
-    private final Map<ValueCombination<Boolean>, RowAnnotation> _valueCombinations =
-            new HashMap<>();
+    private final Map<InputColumn<Boolean>, BooleanAnalyzerColumnDelegate> _columnDelegates = new HashMap<>();
+    private final Map<ValueCombination<Boolean>, RowAnnotation> _valueCombinations = new HashMap<>();
 
     @Configured
     InputColumn<Boolean>[] _columns;
@@ -176,8 +171,7 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
             valueCombinationCrosstab = new Crosstab<>(Number.class, columnDimension, measureDimension);
 
             final SortedSet<Entry<ValueCombination<Boolean>, RowAnnotation>> entries =
-                    new TreeSet<>(
-                            frequentValueCombinationComparator);
+                    new TreeSet<>(frequentValueCombinationComparator);
             entries.addAll(_valueCombinations.entrySet());
 
             int row = 0;
@@ -207,7 +201,7 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
                     final Boolean value = valueCombination.getValueAt(i);
                     Byte numberValue = null;
                     if (value != null) {
-                        if (value.booleanValue()) {
+                        if (value) {
                             numberValue = 1;
                         } else {
                             numberValue = 0;

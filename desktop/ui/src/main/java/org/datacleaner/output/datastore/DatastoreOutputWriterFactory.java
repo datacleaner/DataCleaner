@@ -46,8 +46,9 @@ public final class DatastoreOutputWriterFactory {
         return getWriter(directory, creationDelegate, datastoreName, tableName, true, columns);
     }
 
-    public static DatastoreOutputWriter getWriter(final File directory, final DatastoreCreationDelegate creationDelegate,
-            final String datastoreName, final String tableName, final boolean truncate, final InputColumn<?>... columns) {
+    public static DatastoreOutputWriter getWriter(final File directory,
+            final DatastoreCreationDelegate creationDelegate, final String datastoreName, final String tableName,
+            final boolean truncate, final InputColumn<?>... columns) {
         if (!directory.exists()) {
             if (!directory.mkdirs()) {
                 logger.error("Failed to create directory for datastores: {}", directory);
@@ -55,8 +56,8 @@ public final class DatastoreOutputWriterFactory {
         }
 
         synchronized (counters) {
-            final DatastoreOutputWriter outputWriter = new DatastoreOutputWriter(datastoreName, tableName, directory,
-                    columns, creationDelegate, truncate);
+            final DatastoreOutputWriter outputWriter =
+                    new DatastoreOutputWriter(datastoreName, tableName, directory, columns, creationDelegate, truncate);
 
             AtomicInteger counter = counters.get(outputWriter.getJdbcUrl());
             if (counter == null) {
@@ -91,14 +92,10 @@ public final class DatastoreOutputWriterFactory {
 
                 try (Connection connection = writer.getConnection()) {
 
-                    Statement st = null;
-                    try {
-                        st = connection.createStatement();
+                    try (Statement st = connection.createStatement()) {
                         st.execute("SHUTDOWN");
                     } catch (final SQLException e) {
                         logger.error("Could not invoke SHUTDOWN", e);
-                    } finally {
-                        st.close();
                     }
 
                 } catch (final SQLException e) {

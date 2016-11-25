@@ -24,8 +24,8 @@ import java.util.List;
 
 import org.apache.metamodel.util.AggregateBuilder;
 
-final class CreateListAggregateBuilder extends AbstractRowNumberAwareAggregateBuilder<List<?>> implements
-        AggregateBuilder<List<?>> {
+final class CreateListAggregateBuilder extends AbstractRowNumberAwareAggregateBuilder<List<?>>
+        implements AggregateBuilder<List<?>> {
 
     private final List<Object> _result;
 

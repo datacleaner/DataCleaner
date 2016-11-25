@@ -94,8 +94,9 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     private final DCTable _previewTable;
     private final LoadingIcon _loadingIcon;
 
-    protected AbstractFileBasedDatastoreDialog(final D originalDatastore, final MutableDatastoreCatalog mutableDatastoreCatalog,
-            final WindowContext windowContext, final UserPreferences userPreferences) {
+    protected AbstractFileBasedDatastoreDialog(final D originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
         _statusLabel.setText("Please select file");
         _filenameField = new FilenameTextField(getUserPreferences().getOpenDatastoreDirectory(), true);
@@ -342,8 +343,8 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         WidgetUtils.addToGridBag(formPanel, centerPanel, 0, 0, 1, 1, GridBagConstraints.NORTH, 4, 0, 0);
 
         if (isPreviewTableEnabled()) {
-            WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1,
-                    1.0, GridBagConstraints.BOTH);
+            WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1, 1.0,
+                    GridBagConstraints.BOTH);
         }
         WidgetUtils.addToGridBag(getButtonPanel(), centerPanel, 0, 2, 1, 1, GridBagConstraints.SOUTH, 4, 0, 0.1);
 

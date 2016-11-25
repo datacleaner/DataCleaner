@@ -159,8 +159,8 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         final HttpPut request = new HttpPut(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        request.setEntity(new StringEntity(JsonUpdateDataBuilder.buildJsonArray(pendingUpdates),
-                ContentType.APPLICATION_JSON));
+        request.setEntity(
+                new StringEntity(JsonUpdateDataBuilder.buildJsonArray(pendingUpdates), ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
 
@@ -175,9 +175,8 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        request.setEntity(
-                new StringEntity(JsonUpdateDataBuilder.buildJsonArray(pendingGoldenRecordDeletes),
-                        ContentType.APPLICATION_JSON));
+        request.setEntity(new StringEntity(JsonUpdateDataBuilder.buildJsonArray(pendingGoldenRecordDeletes),
+                ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
 
@@ -192,8 +191,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        request.setEntity(new StringEntity(
-                JsonUpdateDataBuilder.buildJsonArray(pendingSourceDeletes),
+        request.setEntity(new StringEntity(JsonUpdateDataBuilder.buildJsonArray(pendingSourceDeletes),
                 ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }

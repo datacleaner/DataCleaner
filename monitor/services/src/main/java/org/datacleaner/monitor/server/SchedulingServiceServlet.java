@@ -73,7 +73,8 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     }
 
     @Override
-    public ScheduleDefinition updateSchedule(final TenantIdentifier tenant, final ScheduleDefinition scheduleDefinition) {
+    public ScheduleDefinition updateSchedule(final TenantIdentifier tenant,
+            final ScheduleDefinition scheduleDefinition) {
         return _delegate.updateSchedule(tenant, scheduleDefinition);
     }
 
@@ -106,8 +107,8 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     }
 
     @Override
-    public List<JobIdentifier> getDependentJobCandidates(final TenantIdentifier tenant, final ScheduleDefinition schedule)
-            throws DCSecurityException {
+    public List<JobIdentifier> getDependentJobCandidates(final TenantIdentifier tenant,
+            final ScheduleDefinition schedule) throws DCSecurityException {
         return _delegate.getDependentJobCandidates(tenant, schedule);
     }
 
@@ -117,7 +118,8 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     }
 
     @Override
-    public boolean cancelExecution(final TenantIdentifier tenant, final ExecutionLog executionLog) throws DCSecurityException {
+    public boolean cancelExecution(final TenantIdentifier tenant, final ExecutionLog executionLog)
+            throws DCSecurityException {
         return _delegate.cancelExecution(tenant, executionLog);
     }
 

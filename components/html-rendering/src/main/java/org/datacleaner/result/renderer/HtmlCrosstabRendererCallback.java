@@ -42,7 +42,8 @@ public class HtmlCrosstabRendererCallback implements CrosstabRendererCallback<Ht
 
     private int rowNumber;
 
-    public HtmlCrosstabRendererCallback(final RendererFactory rendererFactory, final HtmlRenderingContext htmlRenderingContext) {
+    public HtmlCrosstabRendererCallback(final RendererFactory rendererFactory,
+            final HtmlRenderingContext htmlRenderingContext) {
         this.rendererFactory = rendererFactory;
         this.htmlRenderingContext = htmlRenderingContext;
         this.sb = new StringBuilder();
@@ -130,8 +131,8 @@ public class HtmlCrosstabRendererCallback implements CrosstabRendererCallback<Ht
 
         final String drillElementId = htmlRenderingContext.createElementId();
 
-        final DrillToDetailsBodyElement drillBodyElement = new DrillToDetailsBodyElement(drillElementId,
-                rendererFactory, drillResult);
+        final DrillToDetailsBodyElement drillBodyElement =
+                new DrillToDetailsBodyElement(drillElementId, rendererFactory, drillResult);
         htmlFragtment.addBodyElement(drillBodyElement);
 
         final String invocation = drillBodyElement.toJavaScriptInvocation();
@@ -159,8 +160,8 @@ public class HtmlCrosstabRendererCallback implements CrosstabRendererCallback<Ht
             final int indexOfDecimalSeparator = valueLabel.lastIndexOf(decimalSeparator);
             if (indexOfDecimalSeparator != -1) {
                 // add a <span class="decimal"></span> around the decimal part.
-                valueLabel = valueLabel.substring(0, indexOfDecimalSeparator) + "<span class=\"decimal\">"
-                        + valueLabel.substring(indexOfDecimalSeparator) + "</span>";
+                valueLabel = valueLabel.substring(0, indexOfDecimalSeparator) + "<span class=\"decimal\">" + valueLabel
+                        .substring(indexOfDecimalSeparator) + "</span>";
             }
         }
         return valueLabel;

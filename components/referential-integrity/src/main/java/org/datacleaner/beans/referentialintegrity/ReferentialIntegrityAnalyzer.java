@@ -41,7 +41,8 @@ import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 
 @Named("Referential integrity")
-@Description("Check the integrity of a foreign key by checking that every value can be resolved in another table (which may be in a different datastore altogether).")
+@Description( "Check the integrity of a foreign key by checking that every value can be resolved in "
+        + "another table (which may be in a different datastore altogether).")
 public class ReferentialIntegrityAnalyzer implements Analyzer<ReferentialIntegrityAnalyzerResult> {
 
     private static final String PROPERTY_NAME_DATASTORE = "Datastore";

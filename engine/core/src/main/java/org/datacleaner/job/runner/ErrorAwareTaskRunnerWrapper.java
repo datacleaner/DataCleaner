@@ -41,8 +41,8 @@ final class ErrorAwareTaskRunnerWrapper implements TaskRunner, ErrorAware {
     // A per-job exception is used if previous exceptions have been
     // reported. This is to make sure that the error message
     // ("A previous exception has occurred") will only be saved once.
-    private final PreviousErrorsExistException _previousErrorsExistException = new PreviousErrorsExistException(
-            "A previous exception has occurred");
+    private final PreviousErrorsExistException _previousErrorsExistException =
+            new PreviousErrorsExistException("A previous exception has occurred");
 
     private final TaskRunner _taskRunner;
     private final ErrorAware _errorAware;

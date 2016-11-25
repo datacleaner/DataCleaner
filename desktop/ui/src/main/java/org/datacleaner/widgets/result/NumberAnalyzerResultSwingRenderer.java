@@ -20,7 +20,6 @@
 package org.datacleaner.widgets.result;
 
 import java.awt.BasicStroke;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import org.apache.metamodel.schema.Table;
@@ -87,47 +86,46 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
         for (final InputColumn<? extends Number> column : columns) {
             final CrosstabNavigator<?> nav = crosstab.where(NumberAnalyzer.DIMENSION_COLUMN, column.getName());
 
-            final Number numRows = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
-                    NumberAnalyzer.MEASURE_ROW_COUNT).get();
+            final Number numRows =
+                    (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_ROW_COUNT).get();
             if (numRows.intValue() > 0) {
-                final Number standardDeviation = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
-                        NumberAnalyzer.MEASURE_STANDARD_DEVIATION).get();
+                final Number standardDeviation =
+                        (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_STANDARD_DEVIATION)
+                                .get();
                 if (standardDeviation != null) {
 
-                    final ActionListener action = new ActionListener() {
-                        @Override
-                        public void actionPerformed(final ActionEvent e) {
-                            final Number mean = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
-                                    NumberAnalyzer.MEASURE_MEAN).get();
-                            final Number min = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
-                                    NumberAnalyzer.MEASURE_LOWEST_VALUE).get();
-                            final Number max = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
-                                    NumberAnalyzer.MEASURE_HIGHEST_VALUE).get();
+                    final ActionListener action = e -> {
+                        final Number mean =
+                                (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_MEAN).get();
+                        final Number min = (Number) nav
+                                .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_LOWEST_VALUE).get();
+                        final Number max = (Number) nav
+                                .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_HIGHEST_VALUE).get();
 
-                            final NormalDistributionFunction2D normalDistributionFunction =
-                                    new NormalDistributionFunction2D(
-                                            mean.doubleValue(), standardDeviation.doubleValue());
-                            final XYDataset dataset = DatasetUtilities.sampleFunction2D(normalDistributionFunction,
-                                    min.doubleValue(), max.doubleValue(), 100, "Normal");
+                        final NormalDistributionFunction2D normalDistributionFunction =
+                                new NormalDistributionFunction2D(mean.doubleValue(), standardDeviation.doubleValue());
+                        final XYDataset dataset = DatasetUtilities
+                                .sampleFunction2D(normalDistributionFunction, min.doubleValue(), max.doubleValue(), 100,
+                                        "Normal");
 
-                            final JFreeChart chart = ChartFactory.createXYLineChart(
-                                    "Normal distribution of " + column.getName(), column.getName(), "", dataset,
-                                    PlotOrientation.VERTICAL, false, true, false);
-                            ChartUtils.applyStyles(chart);
-                            final Marker meanMarker = new ValueMarker(mean.doubleValue(), WidgetUtils.BG_COLOR_BLUE_DARK,
-                                    new BasicStroke(2f));
-                            meanMarker.setLabel("Mean");
-                            meanMarker.setLabelOffset(new RectangleInsets(70d, 25d, 0d, 0d));
-                            meanMarker.setLabelFont(WidgetUtils.FONT_SMALL);
-                            chart.getXYPlot().addDomainMarker(meanMarker);
+                        final JFreeChart chart = ChartFactory
+                                .createXYLineChart("Normal distribution of " + column.getName(), column.getName(), "",
+                                        dataset, PlotOrientation.VERTICAL, false, true, false);
+                        ChartUtils.applyStyles(chart);
+                        final Marker meanMarker = new ValueMarker(mean.doubleValue(), WidgetUtils.BG_COLOR_BLUE_DARK,
+                                new BasicStroke(2f));
+                        meanMarker.setLabel("Mean");
+                        meanMarker.setLabelOffset(new RectangleInsets(70d, 25d, 0d, 0d));
+                        meanMarker.setLabelFont(WidgetUtils.FONT_SMALL);
+                        chart.getXYPlot().addDomainMarker(meanMarker);
 
-                            final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
-                            displayChartCallback.displayChart(chartPanel);
-                        }
+                        final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
+                        displayChartCallback.displayChart(chartPanel);
                     };
 
-                    final DCPanel panel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(standardDeviation,
-                            Alignment.RIGHT, action, IconUtils.CHART_LINE);
+                    final DCPanel panel = AbstractCrosstabResultSwingRenderer
+                            .createActionableValuePanel(standardDeviation, Alignment.RIGHT, action,
+                                    IconUtils.CHART_LINE);
                     table.setValueAt(panel, rowNumber, columnNumber);
                 }
             }

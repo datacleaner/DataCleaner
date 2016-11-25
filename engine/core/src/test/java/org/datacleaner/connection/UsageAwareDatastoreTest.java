@@ -23,26 +23,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.SerializationUtils;
+
+import junit.framework.TestCase;
 
 public class UsageAwareDatastoreTest extends TestCase {
 
     public void testSerializationAndDeserializationOfAllDatastoreTypes() throws Exception {
-        List<UsageAwareDatastore<?>> datastores = new ArrayList<>();
+        final List<UsageAwareDatastore<?>> datastores = new ArrayList<>();
         datastores.add(new AccessDatastore("access", "bar.mdb"));
         datastores.add(new CsvDatastore("csv", "bar.csv"));
         datastores.add(new DbaseDatastore("dbase", "bar.dbf"));
         datastores.add(new ExcelDatastore("excel", null, "bar.xls"));
         datastores.add(new JdbcDatastore("jdbc", "url"));
         datastores.add(new FixedWidthDatastore("fixedwidth", "foo.txt", "UTF8", new int[] { 1, 2, 3 }));
-        datastores.add(new CompositeDatastore("foo", Arrays.<Datastore> asList(datastores.get(0), datastores.get(1),
-                datastores.get(3))));
+        datastores.add(new CompositeDatastore("foo",
+                Arrays.asList(datastores.get(0), datastores.get(1), datastores.get(3))));
 
-        for (UsageAwareDatastore<?> ds : datastores) {
+        for (final UsageAwareDatastore<?> ds : datastores) {
             System.out.println("Cloning datastore: " + ds);
-            Object clone = SerializationUtils.clone(ds);
+            final Object clone = SerializationUtils.clone(ds);
             assertEquals(ds, clone);
         }
     }

@@ -150,7 +150,8 @@ public final class Main {
         main(args, true, true);
     }
 
-    public static void main(final String[] args, final boolean initializeSystemProperties, final boolean initializeLogging) {
+    public static void main(final String[] args, final boolean initializeSystemProperties,
+            final boolean initializeLogging) {
         if (initializeSystemProperties) {
             initializeSystemProperties(args);
         }

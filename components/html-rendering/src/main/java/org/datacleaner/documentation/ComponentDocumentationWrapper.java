@@ -81,8 +81,8 @@ public class ComponentDocumentationWrapper {
 
     public String[] getCategories() {
         final Set<ComponentCategory> componentCategories = _componentDescriptor.getComponentCategories();
-        final ComponentCategory[] array = componentCategories
-                .toArray(new ComponentCategory[componentCategories.size()]);
+        final ComponentCategory[] array =
+                componentCategories.toArray(new ComponentCategory[componentCategories.size()]);
         final String[] result = new String[componentCategories.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = array[i].getName();
@@ -95,8 +95,8 @@ public class ComponentDocumentationWrapper {
     }
 
     public ExternalDocumentation.DocumentationLink[] getDocumentationLinks() {
-        final ExternalDocumentation externalDocumentation = _componentDescriptor
-                .getAnnotation(ExternalDocumentation.class);
+        final ExternalDocumentation externalDocumentation =
+                _componentDescriptor.getAnnotation(ExternalDocumentation.class);
         if (externalDocumentation == null) {
             return new ExternalDocumentation.DocumentationLink[0];
         }
@@ -144,9 +144,8 @@ public class ComponentDocumentationWrapper {
          * Atach the prefix that will make html <img> know how to decode the
          * image
          */
-        final String iconHtmlRepresentation = HTMLBASE64_PREFIX + encodedImage;
 
-        return iconHtmlRepresentation;
+        return HTMLBASE64_PREFIX + encodedImage;
     }
 
     public int getIconSizeLarge() {
@@ -191,10 +190,8 @@ public class ComponentDocumentationWrapper {
         if (_componentDescriptor instanceof HasAnalyzerResultComponentDescriptor) {
             return (HasAnalyzerResultComponentDescriptor<?>) _componentDescriptor;
         }
-        @SuppressWarnings("unchecked") final
-        Class<? extends HasAnalyzerResult<?>> componentClass =
-                (Class<? extends HasAnalyzerResult<?>>) _componentDescriptor
-                        .getComponentClass();
+        @SuppressWarnings("unchecked") final Class<? extends HasAnalyzerResult<?>> componentClass =
+                (Class<? extends HasAnalyzerResult<?>>) _componentDescriptor.getComponentClass();
         return new SimpleHasAnalyzerResultComponentDescriptor<>(componentClass);
     }
 
@@ -220,8 +217,9 @@ public class ComponentDocumentationWrapper {
      */
     public String getHref() {
         final String displayName = _componentDescriptor.getDisplayName();
-        final String filename = StringUtils.replaceWhitespaces(displayName.toLowerCase().trim(), "_")
-                .replaceAll("\\/", "_").replaceAll("\\\\", "_");
+        final String filename =
+                StringUtils.replaceWhitespaces(displayName.toLowerCase().trim(), "_").replaceAll("\\/", "_")
+                        .replaceAll("\\\\", "_");
         return filename + ".html";
     }
 }

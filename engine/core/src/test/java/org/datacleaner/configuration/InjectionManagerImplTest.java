@@ -24,8 +24,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.MutableRef;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Configured;
@@ -44,6 +42,8 @@ import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.test.TestHelper;
 import org.datacleaner.util.convert.StringConverter;
 import org.junit.Ignore;
+
+import junit.framework.TestCase;
 
 public class InjectionManagerImplTest extends TestCase {
 
@@ -64,8 +64,8 @@ public class InjectionManagerImplTest extends TestCase {
         RowAnnotationFactory rowAnnotationFactory;
 
         @Override
-        public void run(InputRow row, int distinctCount) {
-            Number value = row.getValue(col);
+        public void run(final InputRow row, final int distinctCount) {
+            final Number value = row.getValue(col);
             if (value.intValue() % 2 == 0) {
                 rowAnnotationFactory.annotate(row, distinctCount, rowAnnotation);
             } else {
@@ -88,8 +88,8 @@ public class InjectionManagerImplTest extends TestCase {
         final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(FancyTransformer.class));
 
-        final DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl().withDatastores(TestHelper
-                .createSampleDatabaseDatastore("orderdb"));
+        final DataCleanerConfigurationImpl conf =
+                new DataCleanerConfigurationImpl().withDatastores(TestHelper.createSampleDatabaseDatastore("orderdb"));
 
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
 
@@ -102,7 +102,7 @@ public class InjectionManagerImplTest extends TestCase {
             final AnalysisResultFuture result = new AnalysisRunnerImpl(conf).run(ajb.toAnalysisJob());
             assertTrue(result.isSuccessful());
 
-            AnnotatedRowsResult res = (AnnotatedRowsResult) result.getResults().get(0);
+            final AnnotatedRowsResult res = (AnnotatedRowsResult) result.getResults().get(0);
             assertEquals(13, res.getAnnotatedRowCount());
             assertNotNull(listRef.get());
             assertEquals(10, listRef.get().size());
@@ -111,11 +111,11 @@ public class InjectionManagerImplTest extends TestCase {
     }
 
     public void testGetInstanceUsingSimpleInjectionPoint() throws Exception {
-        InjectionManagerImpl injectionManager = new InjectionManagerImpl(null);
+        final InjectionManagerImpl injectionManager = new InjectionManagerImpl(null);
 
-        InjectionPoint<StringConverter> point = SimpleInjectionPoint.of(StringConverter.class);
+        final InjectionPoint<StringConverter> point = SimpleInjectionPoint.of(StringConverter.class);
 
-        StringConverter instance = injectionManager.getInstance(point);
+        final StringConverter instance = injectionManager.getInstance(point);
         assertNotNull(instance);
     }
 }

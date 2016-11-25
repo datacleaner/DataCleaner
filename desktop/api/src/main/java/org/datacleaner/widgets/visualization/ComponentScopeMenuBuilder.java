@@ -19,8 +19,6 @@
  */
 package org.datacleaner.widgets.visualization;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +43,8 @@ public class ComponentScopeMenuBuilder {
     public static final String DEFAULT_SCOPE_TEXT = "Default scope";
     private static final ImageManager imageManager = ImageManager.get();
 
-    private static final Icon selectedScopeIcon = imageManager.getImageIcon(IconUtils.STATUS_VALID,
-            IconUtils.ICON_SIZE_SMALL);
+    private static final Icon selectedScopeIcon =
+            imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
 
     private final ComponentBuilder _componentBuilder;
     private final AnalysisJobBuilder _rootJobBuilder;
@@ -62,8 +60,8 @@ public class ComponentScopeMenuBuilder {
             if (child != _componentBuilder && child.getOutputDataStreams().size() > 0) {
                 descendants.add(child);
                 for (final OutputDataStream outputDataStream : child.getOutputDataStreams()) {
-                    descendants.addAll(getComponentBuildersWithOutputDataStreams(child
-                            .getOutputDataStreamJobBuilder(outputDataStream)));
+                    descendants.addAll(getComponentBuildersWithOutputDataStreams(
+                            child.getOutputDataStreamJobBuilder(outputDataStream)));
                 }
             }
         }
@@ -85,7 +83,8 @@ public class ComponentScopeMenuBuilder {
         }
         for (final ComponentBuilder osComponenBuilder : getComponentBuildersWithOutputDataStreams(_rootJobBuilder)) {
             for (final OutputDataStream outputDataStream : osComponenBuilder.getOutputDataStreams()) {
-                final AnalysisJobBuilder osJobBuilder = osComponenBuilder.getOutputDataStreamJobBuilder(outputDataStream);
+                final AnalysisJobBuilder osJobBuilder =
+                        osComponenBuilder.getOutputDataStreamJobBuilder(outputDataStream);
                 if (osJobBuilder == analysisJobBuilder) {
                     return osComponenBuilder;
                 }
@@ -100,14 +99,11 @@ public class ComponentScopeMenuBuilder {
         final List<JMenuItem> popup = new ArrayList<>();
         final JMenuItem rootMenuItem = new JMenuItem(DEFAULT_SCOPE_TEXT);
         rootMenuItem.setToolTipText("Use the default scope for this component");
-        rootMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                onScopeChangeStart();
-                _rootJobBuilder.moveComponent(_componentBuilder);
-                _componentBuilder.setComponentRequirement(null);
-                onScopeChangeComplete(_rootJobBuilder, null);
-            }
+        rootMenuItem.addActionListener(e -> {
+            onScopeChangeStart();
+            _rootJobBuilder.moveComponent(_componentBuilder);
+            _componentBuilder.setComponentRequirement(null);
+            onScopeChangeComplete(_rootJobBuilder, null);
         });
 
         if (_rootJobBuilder == _componentBuilder.getAnalysisJobBuilder()) {
@@ -122,8 +118,8 @@ public class ComponentScopeMenuBuilder {
             final JMenu componentMenu = new JMenu(LabelUtils.getLabel(osComponentBuilder));
 
             for (final OutputDataStream outputDataStream : osComponentBuilder.getOutputDataStreams()) {
-                final AnalysisJobBuilder osJobBuilder = osComponentBuilder
-                        .getOutputDataStreamJobBuilder(outputDataStream);
+                final AnalysisJobBuilder osJobBuilder =
+                        osComponentBuilder.getOutputDataStreamJobBuilder(outputDataStream);
 
                 final JMenuItem scopeMenuItem = new JMenuItem(osJobBuilder.getDatastore().getName());
 
@@ -132,15 +128,11 @@ public class ComponentScopeMenuBuilder {
                     scopeMenuItem.setIcon(selectedScopeIcon);
                 }
 
-                scopeMenuItem.addActionListener(new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        onScopeChangeStart();
-                        osJobBuilder.moveComponent(_componentBuilder);
-                        _componentBuilder.setComponentRequirement(null);
-                        onScopeChangeComplete(osJobBuilder, osComponentBuilder);
-                    }
+                scopeMenuItem.addActionListener(e -> {
+                    onScopeChangeStart();
+                    osJobBuilder.moveComponent(_componentBuilder);
+                    _componentBuilder.setComponentRequirement(null);
+                    onScopeChangeComplete(osJobBuilder, osComponentBuilder);
                 });
                 componentMenu.add(scopeMenuItem);
             }

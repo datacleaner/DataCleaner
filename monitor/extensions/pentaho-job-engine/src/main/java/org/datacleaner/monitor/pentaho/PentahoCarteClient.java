@@ -93,8 +93,8 @@ public final class PentahoCarteClient implements Closeable {
                 final List<PentahoTransformation> result = new ArrayList<>();
                 final Document doc = parse(response.getEntity());
                 final Element serverstatusElement = doc.getDocumentElement();
-                final Element transstatuslistElement = DomUtils.getChildElementByTagName(serverstatusElement,
-                        "transstatuslist");
+                final Element transstatuslistElement =
+                        DomUtils.getChildElementByTagName(serverstatusElement, "transstatuslist");
                 final List<Element> transstatusElements = DomUtils.getChildElements(transstatuslistElement);
                 for (final Element transstatusElement : transstatusElements) {
                     final String transId = DomUtils.getChildElementValueByTagName(transstatusElement, "id");
@@ -104,8 +104,8 @@ public final class PentahoCarteClient implements Closeable {
                 }
                 return result;
             } else {
-                throw new PentahoJobException("Unexpected response status when updating transformation status: "
-                        + statusCode);
+                throw new PentahoJobException(
+                        "Unexpected response status when updating transformation status: " + statusCode);
             }
         } finally {
             request.releaseConnection();

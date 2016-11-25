@@ -36,7 +36,6 @@ import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.widgets.AbstractResourceTextField;
-import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 
 /**
@@ -51,8 +50,8 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
     private final String[] _extensions;
 
     @Inject
-    public SingleFilePropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor, final ComponentBuilder componentBuilder,
-            final UserPreferences userPreferences) {
+    public SingleFilePropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder, final UserPreferences userPreferences) {
         super(componentBuilder, propertyDescriptor);
         _userPreferences = userPreferences;
         _fileResolver = new FileResolver(getAnalysisJobBuilder().getConfiguration());
@@ -82,8 +81,8 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
             if (filters.size() == 1) {
                 _filenameField.setSelectedFileFilter(filters.get(0));
             } else {
-                final FileFilter filter = FileFilters.combined("All suggested file formats",
-                        filters.toArray(new FileFilter[filters.size()]));
+                final FileFilter filter = FileFilters
+                        .combined("All suggested file formats", filters.toArray(new FileFilter[filters.size()]));
                 _filenameField.setSelectedFileFilter(filter);
             }
         } else {
@@ -95,15 +94,12 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
             _filenameField.setFile(currentValue);
         }
 
-        _filenameField.addFileSelectionListener(new FileSelectionListener() {
-            @Override
-            public void onSelected(final FilenameTextField filenameTextField, final File file) {
-                if (file != null) {
-                    final File dir = file.getParentFile();
-                    _userPreferences.setConfiguredFileDirectory(dir);
-                }
-                fireValueChanged();
+        _filenameField.addFileSelectionListener((filenameTextField, file) -> {
+            if (file != null) {
+                final File dir = file.getParentFile();
+                _userPreferences.setConfiguredFileDirectory(dir);
             }
+            fireValueChanged();
         });
 
         add(_filenameField);

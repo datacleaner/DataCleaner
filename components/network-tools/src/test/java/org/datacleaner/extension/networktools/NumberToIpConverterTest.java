@@ -19,17 +19,16 @@
  */
 package org.datacleaner.extension.networktools;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+
+import junit.framework.TestCase;
 
 public class NumberToIpConverterTest extends TestCase {
 
     public void testConvertToNumber() throws Exception {
-        NumberToIpConverter trans = new NumberToIpConverter();
-        trans.ipColumn = new MockInputColumn<>("my ip number",
-                Number.class);
+        final NumberToIpConverter trans = new NumberToIpConverter();
+        trans.ipColumn = new MockInputColumn<>("my ip number", Number.class);
 
         String[] result;
 
@@ -41,18 +40,15 @@ public class NumberToIpConverterTest extends TestCase {
         assertEquals(1, result.length);
         assertNull(result[0]);
 
-        result = trans.transform(new MockInputRow().put(trans.ipColumn,
-                2130706433L));
+        result = trans.transform(new MockInputRow().put(trans.ipColumn, 2130706433L));
         assertEquals(1, result.length);
         assertEquals("127.0.0.1", result[0]);
 
-        result = trans.transform(new MockInputRow().put(trans.ipColumn,
-                4294967295L));
+        result = trans.transform(new MockInputRow().put(trans.ipColumn, 4294967295L));
         assertEquals(1, result.length);
         assertEquals("255.255.255.255", result[0]);
 
-        result = trans.transform(new MockInputRow().put(trans.ipColumn,
-                2825259556L));
+        result = trans.transform(new MockInputRow().put(trans.ipColumn, 2825259556L));
         assertEquals(1, result.length);
         assertEquals("168.102.10.36", result[0]);
     }

@@ -21,8 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -111,41 +109,34 @@ public class HdfsServerAddressDialog extends JComponent {
         }
 
         final HdfsServerAddressDialog serverChoiceDialog = new HdfsServerAddressDialog(host, port);
-        final JDialog dialog = WidgetFactory.createModalDialog(serverChoiceDialog, parent,
-                "Enter HDFS namenode details", false);
-        serverChoiceDialog._okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent aE) {
-                try {
-                    final URI uri = new URIBuilder().setScheme(HdfsUrlChooser.HDFS_SCHEME)
-                            .setHost(serverChoiceDialog._hostnameField.getText())
-                            .setPort(Integer.parseInt(serverChoiceDialog._portField.getText())).setPath("/").build();
+        final JDialog dialog =
+                WidgetFactory.createModalDialog(serverChoiceDialog, parent, "Enter HDFS namenode details", false);
+        serverChoiceDialog._okButton.addActionListener(aE -> {
+            try {
+                final URI uri = new URIBuilder().setScheme(HdfsUrlChooser.HDFS_SCHEME)
+                        .setHost(serverChoiceDialog._hostnameField.getText())
+                        .setPort(Integer.parseInt(serverChoiceDialog._portField.getText())).setPath("/").build();
 
-                    final FileSystem tempFS = HdfsUtils.getFileSystemFromUri(uri);
-                    tempFS.listStatus(new Path(uri));
+                final FileSystem tempFS = HdfsUtils.getFileSystemFromUri(uri);
+                tempFS.listStatus(new Path(uri));
 
-                    // Let's update the URI
-                    serverChoiceDialog._serverUri = uri;
-                    dialog.setVisible(false);
-
-                } catch (URISyntaxException | NumberFormatException e) {
-                    JOptionPane.showMessageDialog(serverChoiceDialog, "This server address is wrong",
-                            "Wrong server address", JOptionPane.ERROR_MESSAGE);
-                } catch (final IOException e) {
-                    // _fileSystem.makeQualified will throw illegal argument is
-                    // it cannot connect.
-                    JOptionPane.showMessageDialog(serverChoiceDialog, "This server address is not available",
-                            "Server unavailable", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        serverChoiceDialog._cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
+                // Let's update the URI
+                serverChoiceDialog._serverUri = uri;
                 dialog.setVisible(false);
+
+            } catch (URISyntaxException | NumberFormatException e) {
+                JOptionPane
+                        .showMessageDialog(serverChoiceDialog, "This server address is wrong", "Wrong server address",
+                                JOptionPane.ERROR_MESSAGE);
+            } catch (final IOException e) {
+                // _fileSystem.makeQualified will throw illegal argument is
+                // it cannot connect.
+                JOptionPane.showMessageDialog(serverChoiceDialog, "This server address is not available",
+                        "Server unavailable", JOptionPane.ERROR_MESSAGE);
             }
         });
+
+        serverChoiceDialog._cancelButton.addActionListener(e -> dialog.setVisible(false));
 
         // Modal, will not return until closed, and will update _uri
         dialog.setVisible(true);

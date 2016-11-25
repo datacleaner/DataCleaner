@@ -72,8 +72,7 @@ public class SpringVariableProvider implements VariableProvider {
 
     private String getEnvironmentProperty(String key) {
         key = key.trim();
-        final String property = key.substring(2, key.length() - 1);
-        return property;
+        return key.substring(2, key.length() - 1);
     }
 
     private boolean isEnvironmentProperty(String key) {

@@ -29,8 +29,8 @@ import junit.framework.TestCase;
 public class SimpleSynonymCatalogTest extends TestCase {
 
     public void testGetMasterTerm() throws Exception {
-        final SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] {
-                new SimpleSynonym("DNK", "Denmark"), new SimpleSynonym("NLD", "The netherlands") }));
+        final SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(
+                new Synonym[] { new SimpleSynonym("DNK", "Denmark"), new SimpleSynonym("NLD", "The netherlands") }));
 
         try (SynonymCatalogConnection connection = sc.openConnection(null)) {
             assertEquals("DNK", connection.getMasterTerm("DNK"));
@@ -42,9 +42,9 @@ public class SimpleSynonymCatalogTest extends TestCase {
     }
 
     public void testReplaceInline() {
-        final SimpleSynonymCatalog sc =
-                new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] { new SimpleSynonym("Test", "land"),
-                        new SimpleSynonym("DNK", "Denmark", "Danmark"), new SimpleSynonym("NLD", "The netherlands") }));
+        final SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(
+                new Synonym[] { new SimpleSynonym("Test", "land"), new SimpleSynonym("DNK", "Denmark", "Danmark"),
+                        new SimpleSynonym("NLD", "The netherlands") }));
 
         final SynonymCatalogConnection connection = sc.openConnection(null);
         final SynonymCatalogConnection.Replacement replacement =
@@ -60,8 +60,9 @@ public class SimpleSynonymCatalogTest extends TestCase {
     }
 
     public void testGetSynonyms() throws Exception {
-        final SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] {
-                new SimpleSynonym("DNK", "Denmark", "Danmark"), new SimpleSynonym("NLD", "The netherlands") }));
+        final SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(
+                new Synonym[] { new SimpleSynonym("DNK", "Denmark", "Danmark"),
+                        new SimpleSynonym("NLD", "The netherlands") }));
 
         final SynonymCatalogConnection connection = sc.openConnection(null);
         final Collection<? extends Synonym> synonyms = connection.getSynonyms();

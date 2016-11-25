@@ -49,8 +49,7 @@ public final class CompareUtils {
             return 1;
         }
 
-        @SuppressWarnings("unchecked")
-        final Comparable<Object> castedObj1 = (Comparable<Object>) obj1;
+        @SuppressWarnings("unchecked") final Comparable<Object> castedObj1 = (Comparable<Object>) obj1;
         return castedObj1.compareTo(obj2);
     }
 

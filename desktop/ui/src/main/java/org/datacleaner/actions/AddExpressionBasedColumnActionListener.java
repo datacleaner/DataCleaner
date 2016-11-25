@@ -86,8 +86,8 @@ public class AddExpressionBasedColumnActionListener implements ActionListener {
                     currentValue = new InputColumn[0];
                 }
 
-                @SuppressWarnings("unchecked")
-                final InputColumn<?>[] newValue = CollectionUtils.array(currentValue, expressionBasedInputColumn);
+                @SuppressWarnings("unchecked") final InputColumn<?>[] newValue =
+                        CollectionUtils.array(currentValue, expressionBasedInputColumn);
                 _multiplePropertyWidget.onValueTouched(newValue);
             } else {
                 _singlePropertyWidget.onValueTouched(expressionBasedInputColumn);

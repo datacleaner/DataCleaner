@@ -56,8 +56,7 @@ final class SalesforceDatastoreSecurityTokenPage extends AbstractFreemarkerWizar
         }
 
         return new DatastoreNameAndDescriptionWizardPage(_session.getWizardContext(), getPageIndex() + 1,
-                "Salesforce.com",
-                "Connects to the web services of Salesforce.com") {
+                "Salesforce.com", "Connects to the web services of Salesforce.com") {
 
             @Override
             protected WizardPageController nextPageController(final String name, final String description) {

@@ -82,7 +82,8 @@ public abstract class FilePage extends AbstractFreemarkerWizardPage {
         return null;
     }
 
-    protected void storeFileProperties(final Map<String, List<String>> formParameters, final FileWizardSession session) {
+    protected void storeFileProperties(final Map<String, List<String>> formParameters,
+            final FileWizardSession session) {
         final String caseSensitive = getBoolean(formParameters, PROPERTY_CASE_SENSITIVE) ? "on" : "";
         final String name = getString(formParameters, PROPERTY_NAME);
         final String encoding = getString(formParameters, PROPERTY_ENCODING);
@@ -108,8 +109,8 @@ public abstract class FilePage extends AbstractFreemarkerWizardPage {
 
     private Map<String, String> parseJson(final String fileJsonString) {
         try {
-            @SuppressWarnings("unchecked") final
-            Map<String, String> map = new ObjectMapper().readValue(fileJsonString, Map.class);
+            @SuppressWarnings("unchecked") final Map<String, String> map =
+                    new ObjectMapper().readValue(fileJsonString, Map.class);
             return map;
         } catch (final Exception e) {
             if (fileJsonString.indexOf('\n') != -1) {

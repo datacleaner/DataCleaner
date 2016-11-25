@@ -22,16 +22,16 @@ package org.datacleaner.descriptors;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.components.maxrows.MaxRowsFilter;
+
+import junit.framework.TestCase;
 
 public class AnnotationBasedFilterDescriptorTest extends TestCase {
 
     private FilterDescriptor<MaxRowsFilter, MaxRowsFilter.Category> desc = Descriptors.ofFilter(MaxRowsFilter.class);
 
     public void testGetCategoryEnum() throws Exception {
-        Class<MaxRowsFilter.Category> categoryEnum = desc.getOutcomeCategoryEnum();
+        final Class<MaxRowsFilter.Category> categoryEnum = desc.getOutcomeCategoryEnum();
 
         assertEquals(MaxRowsFilter.Category.class, categoryEnum);
     }

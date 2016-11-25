@@ -94,8 +94,8 @@ public final class LifeCycleHelper {
         if (configuration == null) {
             _injectionManager = null;
         } else {
-            final InjectionManagerFactory injectionManagerFactory = configuration.getEnvironment()
-                    .getInjectionManagerFactory();
+            final InjectionManagerFactory injectionManagerFactory =
+                    configuration.getEnvironment().getInjectionManagerFactory();
             if (job == null) {
                 _injectionManager = injectionManagerFactory.getInjectionManager(configuration);
             } else {

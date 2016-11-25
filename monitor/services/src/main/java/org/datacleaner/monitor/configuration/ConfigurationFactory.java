@@ -131,14 +131,13 @@ public class ConfigurationFactory {
 
         logger.info("Creating shared descriptor provider with packages: {}", _scannedPackages);
 
-        final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats =
-                new HashSet<>();
+        final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<>();
         excludedRenderingFormats.add(SwingRenderingFormat.class);
         excludedRenderingFormats.add(TextRenderingFormat.class);
         excludedRenderingFormats.add(ComponentBuilderPresenterRenderingFormat.class);
 
-        final ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner,
-                excludedRenderingFormats, true);
+        final ClasspathScanDescriptorProvider descriptorProvider =
+                new ClasspathScanDescriptorProvider(taskRunner, excludedRenderingFormats, true);
         final ClassLoader classLoader = getClass().getClassLoader();
         logger.info("Using classloader: {}", classLoader);
 
@@ -172,7 +171,8 @@ public class ConfigurationFactory {
     @Bean(name = "dataCleanerEnvironment")
     public DataCleanerEnvironment createDataCleanerEnvironment(final TaskRunner taskRunner,
             final DescriptorProvider descriptorProvider, final StorageProvider storageProvider,
-            final InjectionManagerFactory injectionManagerFactory, final RemoteServerConfiguration remoteServerConfiguration) {
+            final InjectionManagerFactory injectionManagerFactory,
+            final RemoteServerConfiguration remoteServerConfiguration) {
         return new DataCleanerEnvironmentImpl(taskRunner, descriptorProvider, storageProvider, injectionManagerFactory,
                 remoteServerConfiguration);
     }

@@ -41,10 +41,7 @@ public class MapConverterTest {
 
         assertEquals(map1, map2);
 
-        assertEquals("\"foo\"=\"bar\"\n" +
-                "\"hello\"=\"\"\n" +
-                "\"lorem\"=\"ipsum\"\n" +
-                "", str);
+        assertEquals("\"foo\"=\"bar\"\n" + "\"hello\"=\"\"\n" + "\"lorem\"=\"ipsum\"\n" + "", str);
     }
 
     @Test

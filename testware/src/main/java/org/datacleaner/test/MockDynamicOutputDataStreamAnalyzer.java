@@ -36,8 +36,8 @@ import org.datacleaner.job.output.OutputDataStreamBuilder;
 import org.datacleaner.job.output.OutputDataStreams;
 
 @Named("Mock dynamic output data stream analyzer")
-public class MockDynamicOutputDataStreamAnalyzer implements Analyzer<MockDynamicOutputDataStreamAnalyzer>,
-        HasOutputDataStreams, AnalyzerResult {
+public class MockDynamicOutputDataStreamAnalyzer
+        implements Analyzer<MockDynamicOutputDataStreamAnalyzer>, HasOutputDataStreams, AnalyzerResult {
 
     private static final long serialVersionUID = 1L;
     @Configured

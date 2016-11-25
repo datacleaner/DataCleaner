@@ -58,12 +58,7 @@ public final class SingleColumnNamePropertyWidget extends AbstractPropertyWidget
         final String currentValue = getCurrentValue();
         setValue(currentValue);
 
-        addComboListener(new Listener<Column>() {
-            @Override
-            public void onItemSelected(final Column item) {
-                fireValueChanged();
-            }
-        });
+        addComboListener(item -> fireValueChanged());
         add(_comboBox);
     }
 

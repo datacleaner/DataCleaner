@@ -167,8 +167,7 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
     public Schema createSchema() {
         final CassandraDatastore datastore = createDatastore();
         try (DatastoreConnection con = datastore.openConnection()) {
-            final Schema schema = con.getDataContext().getDefaultSchema();
-            return schema;
+            return con.getDataContext().getDefaultSchema();
         }
     }
 

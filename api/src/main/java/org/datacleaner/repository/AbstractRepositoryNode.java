@@ -60,8 +60,7 @@ public abstract class AbstractRepositoryNode implements RepositoryNode {
         }
         if (obj instanceof RepositoryNode) {
             final String otherQualifiedPath = ((RepositoryNode) obj).getQualifiedPath();
-            final boolean equalPath = getQualifiedPath().equals(otherQualifiedPath);
-            return equalPath;
+            return getQualifiedPath().equals(otherQualifiedPath);
         }
 
         return false;

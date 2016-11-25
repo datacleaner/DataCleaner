@@ -22,7 +22,6 @@ package org.datacleaner.util.ws;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import junit.framework.TestCase;
 
@@ -36,17 +35,14 @@ public class ServiceSessionTest extends TestCase {
         final List<Long> executionTimes = Collections.synchronizedList(new ArrayList<Long>());
         final Thread[] threads = new Thread[poolSize + 1];
         for (int i = 0; i < threads.length; i++) {
-            Thread thread = new Thread() {
+            final Thread thread = new Thread() {
                 public void run() {
                     final long timeBefore = System.currentTimeMillis();
-                    session.invokeService(new Callable<Boolean>() {
-                        @Override
-                        public Boolean call() throws Exception {
-                            Thread.sleep(executionTimeMillis);
-                            long timeAfter = System.currentTimeMillis();
-                            executionTimes.add(timeAfter - timeBefore);
-                            return Boolean.TRUE;
-                        }
+                    session.invokeService(() -> {
+                        Thread.sleep(executionTimeMillis);
+                        final long timeAfter = System.currentTimeMillis();
+                        executionTimes.add(timeAfter - timeBefore);
+                        return Boolean.TRUE;
                     });
                 }
             };

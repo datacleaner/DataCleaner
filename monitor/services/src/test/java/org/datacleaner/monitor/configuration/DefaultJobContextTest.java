@@ -19,19 +19,19 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.server.job.DataCleanerJobContextImpl;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.file.FileRepository;
 
+import junit.framework.TestCase;
+
 public class DefaultJobContextTest extends TestCase {
 
     public void testGetName() throws Exception {
-        RepositoryFile file = (RepositoryFile) new FileRepository("src/test/resources/example_repo")
+        final RepositoryFile file = (RepositoryFile) new FileRepository("src/test/resources/example_repo")
                 .getRepositoryNode("/tenant1/jobs/email_standardizer.analysis.xml");
-        JobContext jobContext = new DataCleanerJobContextImpl(null, null, file);
+        final JobContext jobContext = new DataCleanerJobContextImpl(null, null, file);
 
         assertEquals("email_standardizer", jobContext.getName());
     }

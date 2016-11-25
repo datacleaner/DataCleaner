@@ -67,6 +67,7 @@ class DCExitActionListener implements ExitActionListener {
                     // chance to shut down the applications properly
                     Thread.sleep(5000);
                 } catch (final InterruptedException e) {
+                    logger.info("Interrupted", e);
                 }
 
                 if (logger.isWarnEnabled()) {

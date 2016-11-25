@@ -46,32 +46,31 @@ public class JsonUpdateQueryBuilderTest {
 
     @Test
     public void shouldConvertQueriesToJson() throws IOException {
-        List<String> queries = Arrays.asList(new String[] { QUERY1, QUERY2 });
-        String jsonString = JsonUpdateQueryBuilder.buildJsonArray(queries);
-        List<String> jsonArrayValues = jsonArrayToList(jsonString);
+        final List<String> queries = Arrays.asList(new String[] { QUERY1, QUERY2 });
+        final String jsonString = JsonUpdateQueryBuilder.buildJsonArray(queries);
+        final List<String> jsonArrayValues = jsonArrayToList(jsonString);
         assertThat(jsonArrayValues, containsInAnyOrder(QUERY1, QUERY2));
     }
 
     @Test
     public void shouldConvertEmptyList() throws IOException {
-        List<String> emptyList = Collections.emptyList();
-        String jsonString = JsonUpdateQueryBuilder.buildJsonArray(emptyList);
-        List<String> jsonArrayValues = jsonArrayToList(jsonString);
+        final List<String> emptyList = Collections.emptyList();
+        final String jsonString = JsonUpdateQueryBuilder.buildJsonArray(emptyList);
+        final List<String> jsonArrayValues = jsonArrayToList(jsonString);
         assertThat(jsonArrayValues.isEmpty(), is(true));
     }
 
     @Test
     public void shouldHandleNullValue() {
-        String jsonString = JsonUpdateQueryBuilder.buildJsonArray(null);
+        final String jsonString = JsonUpdateQueryBuilder.buildJsonArray(null);
         assertThat(jsonString, is("null"));
     }
 
-    private List<String> jsonArrayToList(String jsonString)
+    private List<String> jsonArrayToList(final String jsonString)
             throws IOException, JsonParseException, JsonMappingException {
-        CollectionType stringListCollectionType =
+        final CollectionType stringListCollectionType =
                 TypeFactory.defaultInstance().constructCollectionType(List.class, String.class);
-        List<String> jsonArrayValues = mapper.readValue(jsonString, stringListCollectionType);
-        return jsonArrayValues;
+        return mapper.readValue(jsonString, stringListCollectionType);
     }
 
 }

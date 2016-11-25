@@ -91,21 +91,13 @@ public class ReorderColumnsActionListener implements ActionListener {
         final JDialog dialog = new JDialog();
 
         final JButton saveButton = WidgetFactory.createPrimaryButton("Save order", IconUtils.ACTION_SAVE_BRIGHT);
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                saveReorderedValue(list);
-                dialog.dispose();
-            }
+        saveButton.addActionListener(e12 -> {
+            saveReorderedValue(list);
+            dialog.dispose();
         });
 
         final JButton cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                dialog.dispose();
-            }
-        });
+        cancelButton.addActionListener(e1 -> dialog.dispose());
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, saveButton, cancelButton);
 
@@ -138,27 +130,21 @@ public class ReorderColumnsActionListener implements ActionListener {
             final int index = i;
 
             final JButton moveDownButton = WidgetFactory.createSmallButton("/images/actions/move-down.png");
-            moveDownButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final InputColumn<?> col1 = list.get(index);
-                    final InputColumn<?> col2 = list.get(index + 1);
-                    list.set(index, col2);
-                    list.set(index + 1, col1);
-                    updateTableModel(table, list);
-                }
+            moveDownButton.addActionListener(e -> {
+                final InputColumn<?> col1 = list.get(index);
+                final InputColumn<?> col2 = list.get(index + 1);
+                list.set(index, col2);
+                list.set(index + 1, col1);
+                updateTableModel(table, list);
             });
 
             final JButton moveUpButton = WidgetFactory.createSmallButton("/images/actions/move-up.png");
-            moveUpButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final InputColumn<?> col1 = list.get(index);
-                    final InputColumn<?> col2 = list.get(index - 1);
-                    list.set(index, col2);
-                    list.set(index - 1, col1);
-                    updateTableModel(table, list);
-                }
+            moveUpButton.addActionListener(e -> {
+                final InputColumn<?> col1 = list.get(index);
+                final InputColumn<?> col2 = list.get(index - 1);
+                list.set(index, col2);
+                list.set(index - 1, col1);
+                updateTableModel(table, list);
             });
 
             final DCPanel buttonPanel = new DCPanel();

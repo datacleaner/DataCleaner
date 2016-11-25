@@ -52,8 +52,8 @@ final class JdbcDriverWizardPage extends AbstractFreemarkerWizardPage {
 
         _session.setDriverClassName(driverClassName);
 
-        final DatabaseDriverDescriptor driver = DatabaseDriverCatalog
-                .getDatabaseDriverByDriverClassName(driverClassName);
+        final DatabaseDriverDescriptor driver =
+                DatabaseDriverCatalog.getDatabaseDriverByDriverClassName(driverClassName);
         final String templateUrl;
         if (driver == null) {
             templateUrl = "jdbc:<vendor>://<hostname>/<database>";

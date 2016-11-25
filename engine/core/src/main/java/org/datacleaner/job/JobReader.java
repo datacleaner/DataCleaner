@@ -74,8 +74,8 @@ public interface JobReader<E> {
      *             if the source has syntactical or formatting errors, or if the
      *             reading of the source was not possible.
      */
-    AnalysisJob read(E source, SourceColumnMapping sourceColumnMapping) throws NoSuchComponentException,
-            ComponentConfigurationException, IllegalStateException;
+    AnalysisJob read(E source, SourceColumnMapping sourceColumnMapping)
+            throws NoSuchComponentException, ComponentConfigurationException, IllegalStateException;
 
     /**
      * Reads metadata about the job from the source. Typically this does not

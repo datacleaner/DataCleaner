@@ -115,8 +115,8 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
                     try (DatastoreConnection connection = datastore.openConnection()) {
                         try (DataSet countDataSet = connection.getDataContext().executeQuery(countQuery)) {
                             if (countDataSet.next()) {
-                                final Number count = ConvertToNumberTransformer.transformValue(countDataSet.getRow()
-                                        .getValue(0));
+                                final Number count =
+                                        ConvertToNumberTransformer.transformValue(countDataSet.getRow().getValue(0));
                                 if (count != null) {
                                     expectedRows = count.intValue();
                                 }

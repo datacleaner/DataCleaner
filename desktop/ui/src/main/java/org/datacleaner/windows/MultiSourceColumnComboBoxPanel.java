@@ -21,8 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -65,22 +63,13 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
         _buttonPanel.add(addButton);
         _buttonPanel.add(removeButton);
 
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                createSourceColumnComboBox(null);
-            }
+        addButton.addActionListener(e -> createSourceColumnComboBox(null));
 
-        });
-
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final int componentCount = _sourceComboBoxPanel.getComponentCount();
-                if (componentCount > 0) {
-                    _sourceComboBoxPanel.remove(componentCount - 1);
-                    _sourceComboBoxPanel.updateUI();
-                }
+        removeButton.addActionListener(e -> {
+            final int componentCount = _sourceComboBoxPanel.getComponentCount();
+            if (componentCount > 0) {
+                _sourceComboBoxPanel.remove(componentCount - 1);
+                _sourceComboBoxPanel.updateUI();
             }
         });
 
@@ -89,8 +78,8 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
     }
 
     private void createSourceColumnComboBox(final Column column) {
-        final SourceColumnComboBox sourceColumnComboBox = (_table == null) ? new SourceColumnComboBox(_datastore)
-                : new SourceColumnComboBox(_datastore, _table);
+        final SourceColumnComboBox sourceColumnComboBox =
+                (_table == null) ? new SourceColumnComboBox(_datastore) : new SourceColumnComboBox(_datastore, _table);
         sourceColumnComboBox.setSelectedItem(column);
         _sourceColumnComboBoxes.add(sourceColumnComboBox);
         _sourceComboBoxPanel.add(sourceColumnComboBox);

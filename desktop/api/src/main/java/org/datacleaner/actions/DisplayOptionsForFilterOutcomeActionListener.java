@@ -62,8 +62,8 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-        final FilterOutcome filterOutcome = _filterJobBuilder.getFilterOutcome(_filterJobBuilder.getDescriptor()
-                .getOutcomeCategoryByName(_categoryName));
+        final FilterOutcome filterOutcome = _filterJobBuilder
+                .getFilterOutcome(_filterJobBuilder.getDescriptor().getOutcomeCategoryByName(_categoryName));
         final ComponentRequirement requirement = new SimpleComponentRequirement(filterOutcome);
 
         final DescriptorMenu writeDataMenu = new DescriptorMenu(new WriteDataCategory());
@@ -85,17 +85,14 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
 
         final ComponentRequirement existingDefaultRequirement = analysisJobBuilder.getDefaultRequirement();
         if (requirement.equals(existingDefaultRequirement)) {
-            setAsDefaultOutcomeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID,
-                    IconUtils.ICON_SIZE_SMALL));
+            setAsDefaultOutcomeMenuItem
+                    .setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
         }
 
-        setAsDefaultOutcomeMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final Enum<?> category = _filterJobBuilder.getDescriptor().getOutcomeCategoryByName(_categoryName);
-                final FilterOutcome outcome = _filterJobBuilder.getFilterOutcome(category);
-                analysisJobBuilder.setDefaultRequirement(outcome);
-            }
+        setAsDefaultOutcomeMenuItem.addActionListener(e1 -> {
+            final Enum<?> category = _filterJobBuilder.getDescriptor().getOutcomeCategoryByName(_categoryName);
+            final FilterOutcome outcome = _filterJobBuilder.getFilterOutcome(category);
+            analysisJobBuilder.setDefaultRequirement(outcome);
         });
 
         final JPopupMenu popup = _popupButton.getMenu();
@@ -110,8 +107,8 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
         if (component instanceof PrecedingComponentConsumer) {
             final LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration(), null, true);
             helper.assignProvidedProperties(componentBuilder.getDescriptor(), component);
-            ((PrecedingComponentConsumer) component).configureForFilterOutcome(analysisJobBuilder,
-                    _filterJobBuilder.getDescriptor(), _categoryName);
+            ((PrecedingComponentConsumer) component)
+                    .configureForFilterOutcome(analysisJobBuilder, _filterJobBuilder.getDescriptor(), _categoryName);
         }
         final FilterOutcome outcome = _filterJobBuilder.getFilterOutcome(_categoryName);
         final ComponentRequirement requirement = new SimpleComponentRequirement(outcome);

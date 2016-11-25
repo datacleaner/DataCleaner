@@ -36,8 +36,7 @@ public class DataHubDefaultMonitorHttpClient extends HttpBasicMonitorHttpClient 
     private final String _userName;
 
     public DataHubDefaultMonitorHttpClient(final CloseableHttpClient client, final String host, final int port,
-            final String username,
-            final String password) {
+            final String username, final String password) {
         super(client, host, port, username, password);
         this._userName = username;
     }

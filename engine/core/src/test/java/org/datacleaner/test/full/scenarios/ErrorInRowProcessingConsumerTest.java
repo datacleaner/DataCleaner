@@ -19,15 +19,11 @@
  */
 package org.datacleaner.test.full.scenarios;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Named;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.Analyzer;
@@ -52,6 +48,9 @@ import org.datacleaner.test.ActivityAwareMultiThreadedTaskRunner;
 import org.datacleaner.test.TestHelper;
 import org.datacleaner.util.CollectionUtils2;
 
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+
 /**
  * Tests that a job where one of the row processing consumers fail is gracefully
  * error handled.
@@ -74,13 +73,13 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
         }
 
         @Override
-        public void run(InputRow row, int distinctCount) {
+        public void run(final InputRow row, final int distinctCount) {
             assertNotNull(inputColumn);
             assertNotNull(row);
             assertEquals(1, distinctCount);
-            String value = row.getValue(inputColumn);
+            final String value = row.getValue(inputColumn);
             assertNotNull(value);
-            int count = counter.incrementAndGet();
+            final int count = counter.incrementAndGet();
             if (count == 3) {
                 throw new IllegalStateException("This analyzer can only analyze two rows!");
             }
@@ -98,19 +97,19 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
     public void testScenario() throws Exception {
         closed.set(false);
 
-        ActivityAwareMultiThreadedTaskRunner taskRunner = new ActivityAwareMultiThreadedTaskRunner();
+        final ActivityAwareMultiThreadedTaskRunner taskRunner = new ActivityAwareMultiThreadedTaskRunner();
 
-        Datastore datastore = TestHelper.createSampleDatabaseDatastore("my db");
-        DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
-        DataCleanerConfiguration conf =
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("my db");
+        final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
+        final DataCleanerConfiguration conf =
                 new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(environment);
 
-        AnalysisJob job;
+        final AnalysisJob job;
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
             ajb.setDatastore(datastore);
 
-            SchemaNavigator schemaNavigator = datastore.openConnection().getSchemaNavigator();
-            Column column = schemaNavigator.convertToColumn("PUBLIC.EMPLOYEES.EMAIL");
+            final SchemaNavigator schemaNavigator = datastore.openConnection().getSchemaNavigator();
+            final Column column = schemaNavigator.convertToColumn("PUBLIC.EMPLOYEES.EMAIL");
             assertNotNull(column);
 
             ajb.addSourceColumn(column);
@@ -119,7 +118,7 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
             job = ajb.toAnalysisJob();
         }
 
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(conf).run(job);
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(conf).run(job);
 
         assertTrue(resultFuture.isErrornous());
 
@@ -129,8 +128,8 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
         try {
             resultFuture.getResults();
             fail("Exception expected");
-        } catch (AnalysisJobFailedException e) {
-            String message = e.getMessage();
+        } catch (final AnalysisJobFailedException e) {
+            final String message = e.getMessage();
             assertEquals("The analysis ended with 2 errors: ["
                     + "IllegalStateException: This analyzer can only analyze two rows!,"
                     + "PreviousErrorsExistException: A previous exception has occurred]", message);
@@ -139,16 +138,12 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
         List<Throwable> errors = resultFuture.getErrors();
 
         // the amount of errors may vary depending on the thread scheduling
-        int numErrors = errors.size();
+        final int numErrors = errors.size();
         assertTrue(numErrors == 2 || numErrors == 3);
 
         // sort the errors to make the order deterministic
-        errors = CollectionUtils2.sorted(errors, new Comparator<Throwable>() {
-            @Override
-            public int compare(Throwable o1, Throwable o2) {
-                return o1.getClass().getName().compareTo(o2.getClass().getName());
-            }
-        });
+        errors =
+                CollectionUtils2.sorted(errors, (o1, o2) -> o1.getClass().getName().compareTo(o2.getClass().getName()));
 
         assertEquals(IllegalStateException.class, errors.get(0).getClass());
         assertEquals("This analyzer can only analyze two rows!", errors.get(0).getMessage());
@@ -168,7 +163,7 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
             assertEquals("A previous exception has occurred", errors.get(1).getMessage());
         }
 
-        int taskCount = taskRunner.assertAllBegunTasksFinished(500);
+        final int taskCount = taskRunner.assertAllBegunTasksFinished(500);
         assertTrue("taskCount was: " + taskCount, taskCount > 4);
 
         assertTrue(closed.get());

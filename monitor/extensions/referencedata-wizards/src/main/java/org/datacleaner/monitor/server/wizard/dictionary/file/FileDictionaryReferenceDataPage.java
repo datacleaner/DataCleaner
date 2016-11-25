@@ -36,7 +36,7 @@ final class FileDictionaryReferenceDataPage extends FilePage {
 
     @Override
     protected void checkUniqueName(final String name) throws DCUserInputException {
-        ReferenceDataHelper.checkUniqueDictionary(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog());
+        ReferenceDataHelper.checkUniqueDictionary(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
     }
 }

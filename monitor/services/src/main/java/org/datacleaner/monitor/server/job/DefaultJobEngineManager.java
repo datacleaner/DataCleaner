@@ -45,8 +45,8 @@ public class DefaultJobEngineManager extends SimpleJobEngineManager {
 
     @Override
     public Collection<JobEngine<?>> getJobEngines() {
-        @SuppressWarnings("rawtypes")
-        final Map<String, JobEngine> beans = _applicationContext.getBeansOfType(JobEngine.class);
+        @SuppressWarnings("rawtypes") final Map<String, JobEngine> beans =
+                _applicationContext.getBeansOfType(JobEngine.class);
         final Collection<JobEngine<?>> result = new ArrayList<>(beans.size());
         for (final JobEngine<?> jobEngine : beans.values()) {
             result.add(jobEngine);

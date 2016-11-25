@@ -23,13 +23,11 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,8 +138,9 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
      */
     @Inject
     protected ResultWindow(final DataCleanerConfiguration configuration, @Nullable final AnalysisJob job,
-            @Nullable final AnalysisResult result, @Nullable @JobFile final FileObject jobFilename, final WindowContext windowContext,
-            final UserPreferences userPreferences, final RendererFactory rendererFactory) {
+            @Nullable final AnalysisResult result, @Nullable @JobFile final FileObject jobFilename,
+            final WindowContext windowContext, final UserPreferences userPreferences,
+            final RendererFactory rendererFactory) {
         super(windowContext);
         final boolean running = (result == null);
 
@@ -152,14 +151,10 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         _userPreferences = userPreferences;
         _rendererFactory = rendererFactory;
 
-        final Ref<AnalysisResult> resultRef = new Ref<AnalysisResult>() {
-            @Override
-            public AnalysisResult get() {
-                return getResult();
-            }
-        };
+        final Ref<AnalysisResult> resultRef = this::getResult;
 
-        final Border buttonBorder = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
+        final Border buttonBorder =
+                new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
         _cancelButton = WidgetFactory.createDefaultButton("Cancel job", IconUtils.ACTION_STOP);
         _cancelButton.setHorizontalAlignment(SwingConstants.LEFT);
         _cancelButton.setBorder(buttonBorder);
@@ -170,7 +165,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         _saveResultsPopupButton.setMenuPosition(MenuPosition.TOP);
         _saveResultsPopupButton.getMenu().setBorder(new MatteBorder(1, 0, 0, 1, WidgetUtils.BG_COLOR_MEDIUM));
 
-        final JMenuItem saveAsFileItem = WidgetFactory.createMenuItem("Save as result file", IconUtils.ACTION_SAVE_DARK);
+        final JMenuItem saveAsFileItem =
+                WidgetFactory.createMenuItem("Save as result file", IconUtils.ACTION_SAVE_DARK);
         saveAsFileItem.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
         saveAsFileItem.setBorder(buttonBorder);
         _saveResultsPopupButton.getMenu().add(saveAsFileItem);
@@ -181,9 +177,11 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         exportToHtmlItem.setBorder(buttonBorder);
         _saveResultsPopupButton.getMenu().add(exportToHtmlItem);
 
-        final JMenuItem publishToServerItem = WidgetFactory.createMenuItem("Publish to server", IconUtils.MENU_DQ_MONITOR);
-        publishToServerItem.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(),
-                _userPreferences, resultRef, _jobFilename));
+        final JMenuItem publishToServerItem =
+                WidgetFactory.createMenuItem("Publish to server", IconUtils.MENU_DQ_MONITOR);
+        publishToServerItem.addActionListener(
+                new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences, resultRef,
+                        _jobFilename));
         publishToServerItem.setBorder(buttonBorder);
         _saveResultsPopupButton.getMenu().add(publishToServerItem);
 
@@ -238,12 +236,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             _result = null;
             _worker = new AnalysisRunnerSwingWorker(_configuration, _job, this);
 
-            _cancelButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    _worker.cancelIfRunning();
-                }
-            });
+            _cancelButton.addActionListener(e -> _worker.cancelIfRunning());
         } else {
             // don't add the progress information, simply render the job asap
             _result = result;
@@ -258,13 +251,10 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
             _progressInformationPanel.onSuccess();
 
-            WidgetUtils.invokeSwingAction(new Runnable() {
-                @Override
-                public void run() {
-                    if (_tabbedPane.getTabCount() > 1) {
-                        // switch to the first available result panel
-                        _tabbedPane.setSelectedIndex(1);
-                    }
+            WidgetUtils.invokeSwingAction(() -> {
+                if (_tabbedPane.getTabCount() > 1) {
+                    // switch to the first available result panel
+                    _tabbedPane.setSelectedIndex(1);
                 }
             });
         }
@@ -311,8 +301,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             final Icon icon = IconUtils.getDescriptorIcon(componentJob.getDescriptor(), IconUtils.ICON_SIZE_TAB);
-            final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory, _progressInformationPanel,
-                    componentJob);
+            final AnalyzerResultPanel resultPanel =
+                    new AnalyzerResultPanel(_rendererFactory, _progressInformationPanel, componentJob);
             final Tab<AnalyzerResultPanel> tab = _tabbedPane.addTab(title, icon, resultPanel);
             tab.setTooltip(LabelUtils.getLabel(componentJob, false, true, true));
 
@@ -393,14 +383,11 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
         }
 
-        final DCBannerPanel banner = new DCBannerPanel(imageManager.getImage("images/window/banner-results.png"),
-                bannerTitle);
-        _tabbedPane.addListener(new VerticalTabbedPane.Listener() {
-            @Override
-            public void stateChanged(final int newIndex, final Tab<?> newTab) {
-                banner.setTitle2(newTab.getTitle());
-                banner.updateUI();
-            }
+        final DCBannerPanel banner =
+                new DCBannerPanel(imageManager.getImage("images/window/banner-results.png"), bannerTitle);
+        _tabbedPane.addListener((newIndex, newTab) -> {
+            banner.setTitle2(newTab.getTitle());
+            banner.updateUI();
         });
 
         final DCPanel panel = new DCPersistentSizedPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND, _windowSizePreference);
@@ -477,15 +464,12 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
             @Override
             public void jobSuccess(final AnalysisJob job, final AnalysisJobMetrics metrics) {
-                WidgetUtils.invokeSwingAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateButtonVisibility(false);
-                        _progressInformationPanel.onSuccess();
-                        if (_tabbedPane.getTabCount() > 1) {
-                            // switch to the first available result panel
-                            _tabbedPane.setSelectedIndex(1);
-                        }
+                WidgetUtils.invokeSwingAction(() -> {
+                    updateButtonVisibility(false);
+                    _progressInformationPanel.onSuccess();
+                    if (_tabbedPane.getTabCount() > 1) {
+                        // switch to the first available result panel
+                        _tabbedPane.setSelectedIndex(1);
                     }
                 });
             }
@@ -513,48 +497,41 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 final int expectedRows = metrics.getExpectedRows();
                 final Table table = metrics.getTable();
 
-                WidgetUtils.invokeSwingAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        final ComponentJob[] componentJobs = metrics.getResultProducers();
-                        // Put analyzers at the top, then the rest (untouched)
-                        Arrays.sort(componentJobs, new Comparator<ComponentJob>() {
-
-                            @Override
-                            public int compare(final ComponentJob o1, final ComponentJob o2) {
-                                if ((o1 instanceof ImmutableAnalyzerJob) && !(o2 instanceof ImmutableAnalyzerJob)) {
-                                    return -1;
-                                }
-                                if ((o2 instanceof ImmutableAnalyzerJob) && !(o1 instanceof ImmutableAnalyzerJob)) {
-                                    return 1;
-                                }
-                                return 0;
-                            }
-                        });
-
-                        for (final ComponentJob componentJob : componentJobs) {
-                            // instantiate result panels
-                            getOrCreateResultPanel(componentJob, false);
+                WidgetUtils.invokeSwingAction(() -> {
+                    final ComponentJob[] componentJobs = metrics.getResultProducers();
+                    // Put analyzers at the top, then the rest (untouched)
+                    Arrays.sort(componentJobs, (o1, o2) -> {
+                        if ((o1 instanceof ImmutableAnalyzerJob) && !(o2 instanceof ImmutableAnalyzerJob)) {
+                            return -1;
                         }
-                        _tabbedPane.updateUI();
-
-                        final String startingProcessingString = "Starting processing of " + table.getName();
-
-                        if (expectedRows != -1) {
-                            _progressInformationPanel
-                                    .addUserLog(startingProcessingString + " (approx. " + expectedRows + " rows)");
-                        } else {
-                            _progressInformationPanel.addUserLog(startingProcessingString);
+                        if ((o2 instanceof ImmutableAnalyzerJob) && !(o1 instanceof ImmutableAnalyzerJob)) {
+                            return 1;
                         }
+                        return 0;
+                    });
 
-                        _progressInformationPanel.addProgressBar(table, expectedRows);
+                    for (final ComponentJob componentJob : componentJobs) {
+                        // instantiate result panels
+                        getOrCreateResultPanel(componentJob, false);
                     }
+                    _tabbedPane.updateUI();
+
+                    final String startingProcessingString = "Starting processing of " + table.getName();
+
+                    if (expectedRows != -1) {
+                        _progressInformationPanel
+                                .addUserLog(startingProcessingString + " (approx. " + expectedRows + " rows)");
+                    } else {
+                        _progressInformationPanel.addUserLog(startingProcessingString);
+                    }
+
+                    _progressInformationPanel.addProgressBar(table, expectedRows);
                 });
             }
 
             @Override
-            public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
-                    final int currentRow) {
+            public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics,
+                    final InputRow row, final int currentRow) {
                 _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
             }
 
@@ -567,7 +544,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void componentBegin(final AnalysisJob job, final ComponentJob componentJob, final ComponentMetrics metrics) {
+            public void componentBegin(final AnalysisJob job, final ComponentJob componentJob,
+                    final ComponentMetrics metrics) {
                 _progressInformationPanel.addUserLog("Starting component '" + LabelUtils.getLabel(componentJob) + "'");
             }
 
@@ -584,12 +562,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 } else {
                     sb.append(" Adding result...");
                     _progressInformationPanel.addUserLog(sb.toString());
-                    WidgetUtils.invokeSwingAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            addResult(componentJob, result);
-                        }
-                    });
+                    WidgetUtils.invokeSwingAction(() -> addResult(componentJob, result));
                 }
             }
 
@@ -597,9 +570,9 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             public void errorInComponent(final AnalysisJob job, final ComponentJob componentJob, final InputRow row,
                     final Throwable throwable) {
                 if (!(throwable instanceof PreviousErrorsExistException)) {
-                    _progressInformationPanel.addUserLog(
-                            "An error occurred in the component: " + LabelUtils.getLabel(componentJob), throwable,
-                            true);
+                    _progressInformationPanel
+                            .addUserLog("An error occurred in the component: " + LabelUtils.getLabel(componentJob),
+                                    throwable, true);
                 }
             }
 
@@ -611,13 +584,9 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
     }
 
     protected void updateButtonVisibility(final boolean running) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                _cancelButton.setVisible(running);
-                _saveResultsPopupButton.setVisible(!running);
-            }
+        SwingUtilities.invokeLater(() -> {
+            _cancelButton.setVisible(running);
+            _saveResultsPopupButton.setVisible(!running);
         });
     }
 

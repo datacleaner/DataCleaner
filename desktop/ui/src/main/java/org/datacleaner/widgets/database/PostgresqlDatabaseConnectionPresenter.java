@@ -29,8 +29,8 @@ public class PostgresqlDatabaseConnectionPresenter extends UrlTemplateDatabaseCo
     }
 
     @Override
-    protected String getJdbcUrl(final String hostname, final int port, final String database, final String param1, final String param2,
-            final String param3, final String param4) {
+    protected String getJdbcUrl(final String hostname, final int port, final String database, final String param1,
+            final String param2, final String param3, final String param4) {
         return "jdbc:postgresql://" + hostname + ":" + port + "/" + database;
     }
 

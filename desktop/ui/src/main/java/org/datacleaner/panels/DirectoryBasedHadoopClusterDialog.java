@@ -22,8 +22,6 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.io.File;
@@ -48,7 +46,6 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
-import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.windows.AbstractDialog;
 import org.jdesktop.swingx.HorizontalLayout;
@@ -75,13 +72,9 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
                 _directoryTextField = new FilenameTextField(directory, true);
             }
             _directoryTextField.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            _directoryTextField.addFileSelectionListener(new FileSelectionListener() {
-
-                @Override
-                public void onSelected(final FilenameTextField filenameTextField, final File file) {
-                    _directory = file;
-                    validateAndUpdate();
-                }
+            _directoryTextField.addFileSelectionListener((filenameTextField, file) -> {
+                _directory = file;
+                validateAndUpdate();
             });
             if (_directory != null) {
                 _directoryTextField.setFile(_directory);
@@ -93,14 +86,10 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
             add(_removeButton);
             setBorder(WidgetUtils.BORDER_TOP_PADDING);
 
-            _removeButton.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    _pathPanels.remove(DirectoryPathPanel.this);
-                    _parent.remove(DirectoryPathPanel.this);
-                    validateAndUpdate();
-                }
+            _removeButton.addActionListener(e -> {
+                _pathPanels.remove(DirectoryPathPanel.this);
+                _parent.remove(DirectoryPathPanel.this);
+                validateAndUpdate();
             });
         }
 
@@ -149,36 +138,26 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
         final String saveButtonText = server == null ? "Register cluster" : "Save cluster";
         _saveButton = WidgetFactory.createPrimaryButton(saveButtonText, IconUtils.ACTION_SAVE_BRIGHT);
         _cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
-        _cancelButton.addActionListener(new ActionListener() {
+        _cancelButton.addActionListener(e -> DirectoryBasedHadoopClusterDialog.this.close());
 
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                DirectoryBasedHadoopClusterDialog.this.close();
+        _saveButton.addActionListener(e -> {
+            if (_server != null) {
+                _serverInformationCatalog.removeServer(_server);
             }
-        });
+            try {
+                final List<String> paths = getPathList();
 
-        _saveButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (_server != null) {
-                    _serverInformationCatalog.removeServer(_server);
-                }
-                try {
-                    final List<String> paths = getPathList();
-
-                    final DirectoryBasedHadoopClusterInformation newServer = new DirectoryBasedHadoopClusterInformation(
-                            _nameTextField.getText(), _descriptionTextField.getText(), paths.toArray(new String[paths
-                            .size()]));
-                    _serverInformationCatalog.addServerInformation(newServer);
-                } catch (final Exception exception) {
-                    WidgetUtils.showErrorMessage("Error", exception);
-                    invalidateForm(exception);
-                    return;
-                }
-
-                close();
+                final DirectoryBasedHadoopClusterInformation newServer =
+                        new DirectoryBasedHadoopClusterInformation(_nameTextField.getText(),
+                                _descriptionTextField.getText(), paths.toArray(new String[paths.size()]));
+                _serverInformationCatalog.addServerInformation(newServer);
+            } catch (final Exception exception) {
+                WidgetUtils.showErrorMessage("Error", exception);
+                invalidateForm(exception);
+                return;
             }
+
+            close();
         });
 
     }
@@ -189,8 +168,7 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
             final String[] directories = _server.getDirectories();
             if (directories != null) {
                 for (final String directory : directories) {
-                    final DirectoryPathPanel directoryPanel = new DirectoryPathPanel(new File(directory),
-                            parent);
+                    final DirectoryPathPanel directoryPanel = new DirectoryPathPanel(new File(directory), parent);
                     _pathPanels.add(directoryPanel);
                 }
             } else {
@@ -262,8 +240,9 @@ public class DirectoryBasedHadoopClusterDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(listPanel, formPanel, 1, 2, 2, 1);
         WidgetUtils.addToGridBag(addPath, formPanel, 2, 3, GridBagConstraints.SOUTH);
 
-        final DescriptionLabel descriptionLabel = new DescriptionLabel(
-                "Add directories that contain the Apache Hadoop configuration files (such as core-site.xml and yarn-site.xml). DataCleaner will use these configuration files to determine how to connect to Apache Hadoop.");
+        final DescriptionLabel descriptionLabel = new DescriptionLabel("Add directories that contain the Apache Hadoop "
+                + "configuration files (such as core-site.xml and yarn-site.xml). DataCleaner will use these "
+                + "configuration files to determine how to connect to Apache Hadoop.");
         final DCPanel buttonsPanel = DCPanel.flow(Alignment.CENTER, _saveButton, _cancelButton);
 
         final DCPanel centerPanel = new DCPanel();

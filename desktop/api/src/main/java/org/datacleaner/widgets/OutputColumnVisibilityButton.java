@@ -27,15 +27,15 @@ import org.datacleaner.util.ImageManager;
 /**
  * A toggle button for the visibility of a {@link MutableInputColumn}.
  */
-public class OutputColumnVisibilityButton extends DCCheckBox<MutableInputColumn<?>> implements
-        DCCheckBox.Listener<MutableInputColumn<?>> {
+public class OutputColumnVisibilityButton extends DCCheckBox<MutableInputColumn<?>>
+        implements DCCheckBox.Listener<MutableInputColumn<?>> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Icon SELECTED_ICON = ImageManager.get().getImageIcon(
-            "images/widgets/output_column_visibility_visible.png");
-    private static final Icon NOT_SELECTED_ICON = ImageManager.get().getImageIcon(
-            "images/widgets/output_column_visibility_hidden.png");
+    private static final Icon SELECTED_ICON =
+            ImageManager.get().getImageIcon("images/widgets/output_column_visibility_visible.png");
+    private static final Icon NOT_SELECTED_ICON =
+            ImageManager.get().getImageIcon("images/widgets/output_column_visibility_hidden.png");
 
     public OutputColumnVisibilityButton(final MutableInputColumn<?> column) {
         super(null, !column.isHidden());

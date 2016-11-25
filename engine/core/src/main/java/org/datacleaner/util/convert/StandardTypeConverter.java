@@ -215,8 +215,7 @@ public class StandardTypeConverter implements Converter<Object> {
             try {
                 objectInputStream = new ChangeAwareObjectInputStream(new ByteArrayInputStream(bytes));
                 objectInputStream.addClassLoader(type.getClassLoader());
-                final Object obj = objectInputStream.readObject();
-                return obj;
+                return objectInputStream.readObject();
             } catch (final Exception e) {
                 throw new IllegalStateException("Could not deserialize to " + type + ".", e);
             } finally {

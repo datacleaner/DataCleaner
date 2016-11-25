@@ -65,8 +65,8 @@ public class ExecutionCancellationController {
 
         final TenantIdentifier tenantIdentifier = new TenantIdentifier(tenantContext.getTenantId());
 
-        ExecutionLog executionLog = _schedulingService.getExecution(tenantIdentifier, new ExecutionIdentifier(
-                resultName));
+        ExecutionLog executionLog =
+                _schedulingService.getExecution(tenantIdentifier, new ExecutionIdentifier(resultName));
 
         if (executionLog == null) {
             throw new IllegalArgumentException("The execution '" + resultName + "' does not exist.");

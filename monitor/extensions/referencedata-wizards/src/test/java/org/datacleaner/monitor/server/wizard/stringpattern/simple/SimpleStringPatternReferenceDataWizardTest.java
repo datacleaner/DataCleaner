@@ -27,19 +27,19 @@ public class SimpleStringPatternReferenceDataWizardTest {
 
     @Test
     public void testIsApplicableTo() throws Exception {
-        SimpleStringPatternReferenceDataWizard wizard = new SimpleStringPatternReferenceDataWizard();
+        final SimpleStringPatternReferenceDataWizard wizard = new SimpleStringPatternReferenceDataWizard();
         assertTrue(wizard.isApplicableTo(null));
     }
 
     @Test
     public void testGetDisplayName() throws Exception {
-        SimpleStringPatternReferenceDataWizard wizard = new SimpleStringPatternReferenceDataWizard();
+        final SimpleStringPatternReferenceDataWizard wizard = new SimpleStringPatternReferenceDataWizard();
         assertNotEquals("", wizard.getDisplayName());
     }
 
     @Test
     public void testGetExpectedPageCount() throws Exception {
-        SimpleStringPatternReferenceDataWizard wizard = new SimpleStringPatternReferenceDataWizard();
+        final SimpleStringPatternReferenceDataWizard wizard = new SimpleStringPatternReferenceDataWizard();
         assertEquals(1, wizard.getExpectedPageCount());
     }
 }

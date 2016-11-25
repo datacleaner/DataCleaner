@@ -78,8 +78,8 @@ public class DescriptorServiceImpl implements DescriptorService {
     }
 
     @Override
-    public Collection<String> getMetricParameterSuggestions(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
-            final MetricIdentifier metric) {
+    public Collection<String> getMetricParameterSuggestions(final TenantIdentifier tenant,
+            final JobIdentifier jobIdentifier, final MetricIdentifier metric) {
         if (metric == null || metric.isFormulaBased()) {
             return new ArrayList<>(0);
         }

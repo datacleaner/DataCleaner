@@ -19,8 +19,6 @@
  */
 package org.datacleaner.beans.filter;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
@@ -31,20 +29,23 @@ import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.StringPattern;
 
+import junit.framework.TestCase;
+
 public class StringPatternMatchFilterTest extends TestCase {
 
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
-    private final FilterDescriptor<StringPatternFilter, ValidationCategory> descriptor = Descriptors
-            .ofFilter(StringPatternFilter.class);
+    private final FilterDescriptor<StringPatternFilter, ValidationCategory> descriptor =
+            Descriptors.ofFilter(StringPatternFilter.class);
 
     public void testFilterSinglePattern() throws Exception {
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(new DataCleanerConfigurationImpl(), null, true);
 
         final StringPattern stringPattern = new RegexStringPattern("very simple email pattern", ".+@.+", true);
         final MockInputColumn<String> column = new MockInputColumn<>("my col", String.class);
-        StringPatternFilter filter = new StringPatternFilter(column, new StringPattern[] { stringPattern },
-                MatchFilterCriteria.ANY, configuration);
+        StringPatternFilter filter =
+                new StringPatternFilter(column, new StringPattern[] { stringPattern }, MatchFilterCriteria.ANY,
+                        configuration);
 
         lifeCycleHelper.initialize(descriptor, filter);
 
@@ -65,11 +66,12 @@ public class StringPatternMatchFilterTest extends TestCase {
     }
 
     public void testFilterMultiplePatterns() throws Exception {
-        StringPattern stringPattern1 = new RegexStringPattern("very simple email pattern", ".+@.+", true);
-        StringPattern stringPattern2 = new RegexStringPattern("something with 'kas'", ".*kas.*", true);
-        MockInputColumn<String> column = new MockInputColumn<>("my col", String.class);
-        StringPatternFilter filter = new StringPatternFilter(column, new StringPattern[] { stringPattern1,
-                stringPattern2 }, MatchFilterCriteria.ANY, configuration);
+        final StringPattern stringPattern1 = new RegexStringPattern("very simple email pattern", ".+@.+", true);
+        final StringPattern stringPattern2 = new RegexStringPattern("something with 'kas'", ".*kas.*", true);
+        final MockInputColumn<String> column = new MockInputColumn<>("my col", String.class);
+        StringPatternFilter filter =
+                new StringPatternFilter(column, new StringPattern[] { stringPattern1, stringPattern2 },
+                        MatchFilterCriteria.ANY, configuration);
         filter.init();
         assertEquals(ValidationCategory.VALID,
                 filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));

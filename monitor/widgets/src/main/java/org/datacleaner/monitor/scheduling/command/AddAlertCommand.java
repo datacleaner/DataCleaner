@@ -49,7 +49,8 @@ public class AddAlertCommand implements Command {
     private SchedulingServiceAsync _service;
     private DCPopupPanel _morePopup;
 
-    public AddAlertCommand(final ScheduleDefinition schedule, final SchedulingServiceAsync service, final DCPopupPanel morePopup) {
+    public AddAlertCommand(final ScheduleDefinition schedule, final SchedulingServiceAsync service,
+            final DCPopupPanel morePopup) {
         _schedule = schedule;
         _service = service;
         _morePopup = morePopup;
@@ -77,8 +78,8 @@ public class AddAlertCommand implements Command {
 
                         final AlertDefinition alert = new AlertDefinition();
                         alert.setMetricIdentifier(metric);
-                        final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(tenant, job, alert,
-                                jobMetrics);
+                        final CustomizeAlertPanel customizeAlertPanel =
+                                new CustomizeAlertPanel(tenant, job, alert, jobMetrics);
 
                         final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
                         saveButton.addClickHandler(new ClickHandler() {

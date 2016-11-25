@@ -52,7 +52,8 @@ final class DateAndTimeAnalyzerColumnDelegate {
     private volatile LocalTime _minTime;
     private volatile LocalTime _maxTime;
 
-    public DateAndTimeAnalyzerColumnDelegate(final boolean descriptiveStatistics, final RowAnnotationFactory annotationFactory) {
+    public DateAndTimeAnalyzerColumnDelegate(final boolean descriptiveStatistics,
+            final RowAnnotationFactory annotationFactory) {
         _annotationFactory = annotationFactory;
         _nullAnnotation = _annotationFactory.createAnnotation();
         _maxDateAnnotation = _annotationFactory.createAnnotation();

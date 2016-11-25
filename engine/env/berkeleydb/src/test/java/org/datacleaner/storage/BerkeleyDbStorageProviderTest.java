@@ -39,14 +39,13 @@ public class BerkeleyDbStorageProviderTest extends TestCase {
     }
 
     public void testCreateMap() throws Throwable {
-        BerkeleyDbMap<String, Long> map = sp
-                .createMap(String.class, Long.class);
+        final BerkeleyDbMap<String, Long> map = sp.createMap(String.class, Long.class);
         assertNotNull(map);
         map.finalize();
     }
 
     public void testCreateList() throws Throwable {
-        BerkeleyDbList<String> list = sp.createList(String.class);
+        final BerkeleyDbList<String> list = sp.createList(String.class);
         assertNotNull(list);
         list.add("hello");
         list.add("hello");
@@ -58,7 +57,7 @@ public class BerkeleyDbStorageProviderTest extends TestCase {
     }
 
     public void testCreateSet() throws Throwable {
-        BerkeleyDbSet<String> set = sp.createSet(String.class);
+        final BerkeleyDbSet<String> set = sp.createSet(String.class);
         set.add("hello");
         set.add("hello");
         assertEquals(1, set.size());
@@ -76,11 +75,11 @@ public class BerkeleyDbStorageProviderTest extends TestCase {
     }
 
     public void testCleanDirectory() throws Throwable {
-        BerkeleyDbSet<String> set = sp.createSet(String.class);
+        final BerkeleyDbSet<String> set = sp.createSet(String.class);
         set.add("hello");
         set.add("hello");
 
-        File parentDirectory = sp.getParentDirectory();
+        final File parentDirectory = sp.getParentDirectory();
         assertTrue(countDbFiles(parentDirectory) > 2);
 
         set.finalize();
@@ -89,10 +88,10 @@ public class BerkeleyDbStorageProviderTest extends TestCase {
         assertEquals(0, countDbFiles(parentDirectory));
     }
 
-    private int countDbFiles(File dir) {
+    private int countDbFiles(final File dir) {
         int result = 0;
-        File[] files = dir.listFiles();
-        for (File file : files) {
+        final File[] files = dir.listFiles();
+        for (final File file : files) {
             if (file.isDirectory()) {
                 result += countDbFiles(file);
             } else if ("je.lck".equals(file.getName())) {

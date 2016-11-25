@@ -26,9 +26,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.util.Collection;
 import java.util.HashSet;
@@ -108,7 +105,8 @@ public final class JobGraph {
     }
 
     public JobGraph(final WindowContext windowContext, final UserPreferences userPreferences,
-            final AnalysisJobBuilder analysisJobBuilder, final RendererFactory presenterRendererFactory, final UsageLogger usageLogger) {
+            final AnalysisJobBuilder analysisJobBuilder, final RendererFactory presenterRendererFactory,
+            final UsageLogger usageLogger) {
         _highlighedVertexes = new HashSet<>();
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
@@ -166,8 +164,7 @@ public final class JobGraph {
         final JobGraphLayoutTransformer layoutTransformer = new JobGraphLayoutTransformer(_analysisJobBuilder, graph);
         final Dimension preferredSize = layoutTransformer.getPreferredSize();
 
-        final StaticLayout<Object, JobGraphLink> layout = new StaticLayout<>(graph,
-                layoutTransformer, preferredSize);
+        final StaticLayout<Object, JobGraphLink> layout = new StaticLayout<>(graph, layoutTransformer, preferredSize);
 
         final Collection<Object> vertices = graph.getVertices();
         for (final Object vertex : vertices) {
@@ -180,8 +177,7 @@ public final class JobGraph {
         }
 
         final VisualizationViewer<Object, JobGraphLink> visualizationViewer =
-                new VisualizationViewer<>(
-                        layout, preferredSize);
+                new VisualizationViewer<>(layout, preferredSize);
         visualizationViewer.setTransferHandler(new TransferHandler() {
 
             private static final long serialVersionUID = 1L;
@@ -217,8 +213,8 @@ public final class JobGraph {
                 if (data instanceof Column) {
                     final Column column = (Column) data;
                     final Table table = column.getTable();
-                    final List<MetaModelInputColumn> columnsOfSameTable = _analysisJobBuilder
-                            .getSourceColumnsOfTable(table);
+                    final List<MetaModelInputColumn> columnsOfSameTable =
+                            _analysisJobBuilder.getSourceColumnsOfTable(table);
                     if (columnsOfSameTable.isEmpty()) {
                         // the table is new - position it
                         JobGraphMetadata.setPointForTable(_analysisJobBuilder, table, dropPoint.x, dropPoint.y);
@@ -245,8 +241,9 @@ public final class JobGraph {
 
             @Override
             public void paint(final Graphics g) {
-                final GradientPaint paint = new GradientPaint(0, 0, WidgetUtils.BG_COLOR_BRIGHTEST, 0,
-                        visualizationViewer.getHeight(), WidgetUtils.BG_COLOR_BRIGHTEST);
+                final GradientPaint paint =
+                        new GradientPaint(0, 0, WidgetUtils.BG_COLOR_BRIGHTEST, 0, visualizationViewer.getHeight(),
+                                WidgetUtils.BG_COLOR_BRIGHTEST);
                 if (g instanceof Graphics2D) {
                     final Graphics2D g2d = (Graphics2D) g;
                     g2d.setPaint(paint);
@@ -262,8 +259,8 @@ public final class JobGraph {
                     return;
                 }
 
-                final String showCanvasHints = _userPreferences.getAdditionalProperties().get(
-                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
+                final String showCanvasHints = _userPreferences.getAdditionalProperties()
+                        .get(JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
                 if ("false".equals(showCanvasHints)) {
                     // don't show the background hints - the user has decided
                     // not to have them.
@@ -321,10 +318,10 @@ public final class JobGraph {
                         if (ex instanceof UnconfiguredConfiguredPropertyException) {
                             final UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException =
                                     (UnconfiguredConfiguredPropertyException) ex;
-                            final ConfiguredPropertyDescriptor configuredProperty = unconfiguredConfiguredPropertyException
-                                    .getConfiguredProperty();
-                            final ComponentBuilder componentBuilder = unconfiguredConfiguredPropertyException
-                                    .getComponentBuilder();
+                            final ConfiguredPropertyDescriptor configuredProperty =
+                                    unconfiguredConfiguredPropertyException.getConfiguredProperty();
+                            final ComponentBuilder componentBuilder =
+                                    unconfiguredConfiguredPropertyException.getComponentBuilder();
                             title = "Configure " + "'" + LabelUtils.getLabel(componentBuilder) + "' ...";
                             errorMessage = "Please set '" + configuredProperty.getName() + "' to continue";
                         } else {
@@ -376,16 +373,16 @@ public final class JobGraph {
                 _componentConfigurationDialogs, _tableConfigurationDialogs);
         final JobGraphLinkPainter linkPainter = new JobGraphLinkPainter(graphContext, actions);
 
-        final JobGraphLinkPainterMousePlugin linkPainterMousePlugin = new JobGraphLinkPainterMousePlugin(linkPainter,
-                graphContext);
+        final JobGraphLinkPainterMousePlugin linkPainterMousePlugin =
+                new JobGraphLinkPainterMousePlugin(linkPainter, graphContext);
         final GraphMouse graphMouse = visualizationViewer.getGraphMouse();
         if (graphMouse instanceof PluggableGraphMouse) {
             final PluggableGraphMouse pluggableGraphMouse = (PluggableGraphMouse) graphMouse;
             pluggableGraphMouse.add(linkPainterMousePlugin);
         }
 
-        final JobGraphMouseListener graphMouseListener = new JobGraphMouseListener(graphContext, linkPainter, actions,
-                _windowContext, _usageLogger);
+        final JobGraphMouseListener graphMouseListener =
+                new JobGraphMouseListener(graphContext, linkPainter, actions, _windowContext, _usageLogger);
 
         visualizationViewer.addGraphMouseListener(graphMouseListener);
         visualizationViewer.addMouseListener(graphMouseListener);
@@ -420,12 +417,9 @@ public final class JobGraph {
         if (_scrollVertical > 0) {
             setScrollbarValue(scrollPane.getVerticalScrollBar(), _scrollVertical);
         }
-        final AdjustmentListener adjustmentListener = new AdjustmentListener() {
-            @Override
-            public void adjustmentValueChanged(final AdjustmentEvent e) {
-                _scrollHorizontal = scrollPane.getHorizontalScrollBar().getValue();
-                _scrollVertical = scrollPane.getVerticalScrollBar().getValue();
-            }
+        final AdjustmentListener adjustmentListener = e -> {
+            _scrollHorizontal = scrollPane.getHorizontalScrollBar().getValue();
+            _scrollVertical = scrollPane.getVerticalScrollBar().getValue();
         };
         scrollPane.getHorizontalScrollBar().addAdjustmentListener(adjustmentListener);
         scrollPane.getVerticalScrollBar().addAdjustmentListener(adjustmentListener);
@@ -435,20 +429,17 @@ public final class JobGraph {
     }
 
     private JButton createGraphPreferencesButton() {
-        final JButton uiPreferencesButton = WidgetFactory.createSmallButton(ImageManager.get().getImageIcon(
-                IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_MEDIUM));
+        final JButton uiPreferencesButton = WidgetFactory
+                .createSmallButton(ImageManager.get().getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_MEDIUM));
         uiPreferencesButton.setOpaque(false);
         uiPreferencesButton.setBorder(null);
-        uiPreferencesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final JobGraphPreferencesPanel panel = new JobGraphPreferencesPanel(_userPreferences, JobGraph.this);
+        uiPreferencesButton.addActionListener(e -> {
+            final JobGraphPreferencesPanel panel = new JobGraphPreferencesPanel(_userPreferences, JobGraph.this);
 
-                final JPopupMenu popup = new JPopupMenu("Graph UI Preferences");
-                popup.add(panel);
-                final Dimension panelSize = panel.getPreferredSize();
-                popup.show(uiPreferencesButton, -1 * panelSize.width - 4, 0);
-            }
+            final JPopupMenu popup = new JPopupMenu("Graph UI Preferences");
+            popup.add(panel);
+            final Dimension panelSize = panel.getPreferredSize();
+            popup.show(uiPreferencesButton, -1 * panelSize.width - 4, 0);
         });
         return uiPreferencesButton;
     }

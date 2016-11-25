@@ -33,7 +33,8 @@ abstract class JdbcConnectionInformationWizardPage extends AbstractFreemarkerWiz
     private final AbstractJdbcDatastoreWizardSession _session;
     private final String _templateUrl;
 
-    public JdbcConnectionInformationWizardPage(final AbstractJdbcDatastoreWizardSession session, final String templateUrl) {
+    public JdbcConnectionInformationWizardPage(final AbstractJdbcDatastoreWizardSession session,
+            final String templateUrl) {
         _session = session;
         _templateUrl = templateUrl;
     }

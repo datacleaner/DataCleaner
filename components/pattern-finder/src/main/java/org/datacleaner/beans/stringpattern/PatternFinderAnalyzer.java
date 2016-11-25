@@ -21,7 +21,6 @@ package org.datacleaner.beans.stringpattern;
 
 import java.io.Serializable;
 import java.text.DecimalFormatSymbols;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -55,9 +54,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named("Pattern finder")
-@Description("The Pattern Finder will inspect your String values and generate and match string patterns that suit your data.\nIt can be used for a lot of purposes but is excellent for verifying or getting ideas about the format of the string-values in a column.")
-@ExternalDocumentation(value = {
-        @DocumentationLink(title = "Kasper's Source: Pattern Finder 2.0", url = "http://kasper.eobjects.org/2010/09/pattern-finder-20-latest-feature-in.html", type = DocumentationType.TECH, version = "2.0") })
+@Description( "The Pattern Finder will inspect your String values and generate and match string patterns that suit "
+        + "your data.\nIt can be used for a lot of purposes but is excellent for verifying or getting ideas about "
+        + "the format of the string-values in a column.")
+@ExternalDocumentation(value = { @DocumentationLink(title = "Kasper's Source: Pattern Finder 2.0",
+        url = "http://kasper.eobjects.org/2010/09/pattern-finder-20-latest-feature-in.html",
+        type = DocumentationType.TECH, version = "2.0") })
 @Concurrent(true)
 public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
 
@@ -133,9 +135,7 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
         measuresDimension.addCategory(MEASURE_MATCH_COUNT);
         measuresDimension.addCategory(MEASURE_SAMPLE);
         final CrosstabDimension patternDimension = new CrosstabDimension(DIMENSION_NAME_PATTERN);
-        final Crosstab<Serializable> crosstab = new Crosstab<>(Serializable.class, measuresDimension,
-                patternDimension);
-        return crosstab;
+        return new Crosstab<>(Serializable.class, measuresDimension, patternDimension);
     }
 
     @Initialize
@@ -211,8 +211,7 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
             final Crosstab<?> crosstab = createCrosstab(getPatternFinderForGroup(null));
             return new PatternFinderResult(column, crosstab, _configuration);
         } else {
-            final Map<String, Crosstab<?>> crosstabs = new TreeMap<>(NullTolerableComparator.get(
-                    String.class));
+            final Map<String, Crosstab<?>> crosstabs = new TreeMap<>(NullTolerableComparator.get(String.class));
             final Set<Entry<String, DefaultPatternFinder>> patternFinderEntries = _patternFinders.entrySet();
             for (final Entry<String, DefaultPatternFinder> entry : patternFinderEntries) {
                 final DefaultPatternFinder patternFinder = entry.getValue();
@@ -233,17 +232,13 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
 
         // sort the entries so that the ones with the highest amount of
         // matches are at the top
-        final Set<Entry<TokenPattern, RowAnnotation>> sortedEntrySet = new TreeSet<>(
-                new Comparator<Entry<TokenPattern, RowAnnotation>>() {
-                    public int compare(final Entry<TokenPattern, RowAnnotation> o1,
-                            final Entry<TokenPattern, RowAnnotation> o2) {
-                        int result = o2.getValue().getRowCount() - o1.getValue().getRowCount();
-                        if (result == 0) {
-                            result = o1.getKey().toSymbolicString().compareTo(o2.getKey().toSymbolicString());
-                        }
-                        return result;
-                    }
-                });
+        final Set<Entry<TokenPattern, RowAnnotation>> sortedEntrySet = new TreeSet<>((o1, o2) -> {
+            int result = o2.getValue().getRowCount() - o1.getValue().getRowCount();
+            if (result == 0) {
+                result = o1.getKey().toSymbolicString().compareTo(o2.getKey().toSymbolicString());
+            }
+            return result;
+        });
         sortedEntrySet.addAll(entrySet);
 
         for (final Entry<TokenPattern, RowAnnotation> entry : sortedEntrySet) {

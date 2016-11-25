@@ -40,9 +40,8 @@ public class FixedChunkSizeJobDivisionManager implements JobDivisionManager {
 
     @Override
     public int calculateDivisionCount(final AnalysisJob masterJob, final int expectedRows) {
-        final int chunkCount = (int) Math.ceil((1.0d * expectedRows / _chunkSize));
 
-        return chunkCount;
+        return (int) Math.ceil((1.0d * expectedRows / _chunkSize));
     }
 
 }

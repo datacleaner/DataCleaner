@@ -47,8 +47,8 @@ import org.slf4j.LoggerFactory;
  * Datastore implementation for JDBC based connections. Connections can either
  * be based on JDBC urls or JNDI urls.
  */
-public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> implements UpdateableDatastore,
-        UsernameDatastore {
+public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext>
+        implements UpdateableDatastore, UsernameDatastore {
 
     public static final String SYSTEM_PROPERTY_CONNECTION_POOL_MAX_SIZE = "datastore.jdbc.connection.pool.max.size";
     public static final String SYSTEM_PROPERTY_CONNECTION_POOL_MIN_EVICTABLE_IDLE_TIME_MILLIS =
@@ -68,9 +68,8 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
     private final String _catalogName;
 
     private JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username,
-            final String password,
-            final String datasourceJndiUrl, final boolean multipleConnections, final TableType[] tableTypes,
-            final String catalogName) {
+            final String password, final String datasourceJndiUrl, final boolean multipleConnections,
+            final TableType[] tableTypes, final String catalogName) {
         super(name);
         _jdbcUrl = jdbcUrl;
         _driverClass = driverClass;
@@ -87,14 +86,13 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
     }
 
     public JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username,
-            final String password,
-            final boolean multipleConnections, final TableType[] tableTypes, final String catalogName) {
+            final String password, final boolean multipleConnections, final TableType[] tableTypes,
+            final String catalogName) {
         this(name, jdbcUrl, driverClass, username, password, null, multipleConnections, tableTypes, catalogName);
     }
 
     public JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username,
-            final String password,
-            final boolean multipleConnections) {
+            final String password, final boolean multipleConnections) {
         this(name, jdbcUrl, driverClass, username, password, multipleConnections, null, null);
     }
 
@@ -203,10 +201,10 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
         ds.setUrl(_jdbcUrl);
 
         ds.setMaxActive(getSystemPropertyValue(SYSTEM_PROPERTY_CONNECTION_POOL_MAX_SIZE, -1));
-        ds.setMinEvictableIdleTimeMillis(getSystemPropertyValue(
-                SYSTEM_PROPERTY_CONNECTION_POOL_MIN_EVICTABLE_IDLE_TIME_MILLIS, 500));
-        ds.setTimeBetweenEvictionRunsMillis(getSystemPropertyValue(
-                SYSTEM_PROPERTY_CONNECTION_POOL_TIME_BETWEEN_EVICTION_RUNS_MILLIS, 1000));
+        ds.setMinEvictableIdleTimeMillis(
+                getSystemPropertyValue(SYSTEM_PROPERTY_CONNECTION_POOL_MIN_EVICTABLE_IDLE_TIME_MILLIS, 500));
+        ds.setTimeBetweenEvictionRunsMillis(
+                getSystemPropertyValue(SYSTEM_PROPERTY_CONNECTION_POOL_TIME_BETWEEN_EVICTION_RUNS_MILLIS, 1000));
 
         if (_username != null && _password != null) {
             ds.setUsername(_username);

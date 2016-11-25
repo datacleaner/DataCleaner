@@ -32,8 +32,8 @@ public class SQLServerDatabaseConnectionPresenter extends UrlTemplateDatabaseCon
     }
 
     @Override
-    protected String getJdbcUrl(final String hostname, final int port, final String database, final String param1, final String param2,
-            final String param3, final String param4) {
+    protected String getJdbcUrl(final String hostname, final int port, final String database, final String param1,
+            final String param2, final String param3, final String param4) {
         if (StringUtils.isNullOrEmpty(param1)) {
             return "jdbc:jtds:sqlserver://" + hostname + ":" + port + "/" + database
                     + ";useUnicode=true;characterEncoding=UTF-8";

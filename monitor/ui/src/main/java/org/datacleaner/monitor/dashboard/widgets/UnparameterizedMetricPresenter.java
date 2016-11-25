@@ -38,7 +38,8 @@ public class UnparameterizedMetricPresenter implements MetricPresenter {
     private final List<MetricIdentifier> _activeMetrics;
     private final CheckBox _checkBox;
 
-    public UnparameterizedMetricPresenter(final MetricIdentifier metricIdentifier, final List<MetricIdentifier> activeMetrics) {
+    public UnparameterizedMetricPresenter(final MetricIdentifier metricIdentifier,
+            final List<MetricIdentifier> activeMetrics) {
         _metricIdentifier = metricIdentifier;
         _activeMetrics = activeMetrics;
 

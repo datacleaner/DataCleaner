@@ -39,8 +39,7 @@ public class JsonUpdateQueryBuilder {
         try {
             mapper.writeValue(os, queries);
             final byte[] data = ((ByteArrayOutputStream) os).toByteArray();
-            final String json = new String(data, "UTF-8");
-            return json;
+            return new String(data, "UTF-8");
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }

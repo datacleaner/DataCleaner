@@ -58,15 +58,15 @@ public class MonitorConnection implements Serializable {
     private transient boolean _acceptUnverifiedSslPeers = false;
 
     public MonitorConnection(final UserPreferences userPreferences, final String hostname, final int port,
-            final String contextPath,
-            final boolean isHttps, final String tenantId, final String username, final char[] password) {
-        this(userPreferences, hostname, port, contextPath, isHttps, tenantId, username, SecurityUtils
-                .encodePassword(password));
+            final String contextPath, final boolean isHttps, final String tenantId, final String username,
+            final char[] password) {
+        this(userPreferences, hostname, port, contextPath, isHttps, tenantId, username,
+                SecurityUtils.encodePassword(password));
     }
 
     public MonitorConnection(final UserPreferences userPreferences, final String hostname, final int port,
-            final String contextPath,
-            final boolean isHttps, final String tenantId, final String username, final String encodedPassword) {
+            final String contextPath, final boolean isHttps, final String tenantId, final String username,
+            final String encodedPassword) {
         _userPreferences = userPreferences;
         _hostname = hostname;
         _port = port;

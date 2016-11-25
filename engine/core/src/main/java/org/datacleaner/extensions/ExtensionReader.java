@@ -123,8 +123,7 @@ public class ExtensionReader {
                         } else {
                             final InputStream inputStream = jarFile.getInputStream(entry);
                             try {
-                                final ExtensionPackage extension = readExtension(name, inputStream, jarFiles);
-                                return extension;
+                                return readExtension(name, inputStream, jarFiles);
                             } finally {
                                 FileHelper.safeClose(inputStream);
                             }
@@ -151,9 +150,8 @@ public class ExtensionReader {
             extensionName = name;
         }
         final String packageName = (autoDetectPackage ? autoDetectPackageName(jarFiles[0]) : "");
-        final ExtensionPackage extension = new ExtensionPackage(extensionName, packageName, true, files);
 
-        return extension;
+        return new ExtensionPackage(extensionName, packageName, true, files);
     }
 
     private ExtensionPackage readExtension(final InputStream inputStream, final File[] files) throws Exception {

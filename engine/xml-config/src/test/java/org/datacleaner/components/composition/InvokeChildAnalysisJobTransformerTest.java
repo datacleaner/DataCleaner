@@ -55,24 +55,24 @@ public class InvokeChildAnalysisJobTransformerTest {
     public void testIntegrationScenario() throws Throwable {
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
         final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider(true);
-        descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(
-                CountryStandardizationTransformer.class));
+        descriptorProvider
+                .addTransformerBeanDescriptor(Descriptors.ofTransformer(CountryStandardizationTransformer.class));
         descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(EqualsFilter.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
-        final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withDescriptorProvider(
-                descriptorProvider);
-        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
-                .withEnvironment(environment);
+        final DataCleanerEnvironment environment =
+                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider);
+        final DataCleanerConfiguration configuration =
+                new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(environment);
 
         final AnalysisJob job;
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore(datastore);
             ajb.addSourceColumns("CUSTOMERS.CONTACTLASTNAME", "CUSTOMERS.CONTACTFIRSTNAME", "CUSTOMERS.COUNTRY");
 
-            final TransformerComponentBuilder<InvokeChildAnalysisJobTransformer> transformer = ajb.addTransformer(
-                    InvokeChildAnalysisJobTransformer.class);
-            transformer.setConfiguredProperty(InvokeChildAnalysisJobTransformer.PROPERTY_JOB_RESOURCE, new FileResource(
-                    "src/test/resources/childjob.analysis.xml"));
+            final TransformerComponentBuilder<InvokeChildAnalysisJobTransformer> transformer =
+                    ajb.addTransformer(InvokeChildAnalysisJobTransformer.class);
+            transformer.setConfiguredProperty(InvokeChildAnalysisJobTransformer.PROPERTY_JOB_RESOURCE,
+                    new FileResource("src/test/resources/childjob.analysis.xml"));
             transformer.addInputColumns(ajb.getSourceColumns());
 
             assertTrue(transformer.isConfigured());
@@ -94,8 +94,8 @@ public class InvokeChildAnalysisJobTransformerTest {
             throw resultFuture.getErrors().get(0);
         }
 
-        @SuppressWarnings("unchecked")
-        final ListResult<InputRow> result = (ListResult<InputRow>) resultFuture.getResults().get(0);
+        @SuppressWarnings("unchecked") final ListResult<InputRow> result =
+                (ListResult<InputRow>) resultFuture.getResults().get(0);
         final List<InputRow> list = result.getValues();
 
         assertEquals(214, list.size());

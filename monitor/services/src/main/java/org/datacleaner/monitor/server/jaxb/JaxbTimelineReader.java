@@ -52,8 +52,7 @@ public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements
     }
 
     public Timeline unmarshallTimeline(final InputStream inputStream) {
-        final Timeline timeline = unmarshal(inputStream);
-        return timeline;
+        return unmarshal(inputStream);
     }
 
     @Override
@@ -84,12 +83,11 @@ public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements
             return null;
         }
 
-        final HorizontalAxisOption horizontalAxisOption = createHorizontalAxisOption(chartOptionsType
-                .getHorizontalAxis());
+        final HorizontalAxisOption horizontalAxisOption =
+                createHorizontalAxisOption(chartOptionsType.getHorizontalAxis());
         final VerticalAxisOption verticalAxisOption = createVericalAxisOption(chartOptionsType.getVerticalAxis());
 
-        final ChartOptions chartOptions = new ChartOptions(horizontalAxisOption, verticalAxisOption);
-        return chartOptions;
+        return new ChartOptions(horizontalAxisOption, verticalAxisOption);
     }
 
     private VerticalAxisOption createVericalAxisOption(final VerticalAxis axis) {

@@ -41,9 +41,7 @@ public class CrosstabHtmlFragment implements HtmlFragment {
     @Override
     public void initialize(final HtmlRenderingContext context) {
         final CrosstabRenderer crosstabRenderer = new CrosstabRenderer(_crosstab);
-        final HtmlFragment htmlFragment = crosstabRenderer.render(new HtmlCrosstabRendererCallback(_rendererFactory,
-                context));
-        _htmlFragment = htmlFragment;
+        _htmlFragment = crosstabRenderer.render(new HtmlCrosstabRendererCallback(_rendererFactory, context));
     }
 
     @Override

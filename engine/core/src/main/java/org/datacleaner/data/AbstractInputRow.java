@@ -41,8 +41,7 @@ public abstract class AbstractInputRow implements InputRow {
         }
         if (column instanceof ExpressionBasedInputColumn) {
             final ExpressionBasedInputColumn<E> ebic = (ExpressionBasedInputColumn<E>) column;
-            final E value = ebic.evaluate(this);
-            return value;
+            return ebic.evaluate(this);
         }
 
         return getValueInternal(column);

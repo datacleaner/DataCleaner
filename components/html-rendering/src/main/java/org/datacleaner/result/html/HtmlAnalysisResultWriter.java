@@ -75,16 +75,16 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
         this(tabs, jobInclusionPredicate, true);
     }
 
-    public HtmlAnalysisResultWriter(final boolean tabs, final Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate,
-            final boolean headers) {
+    public HtmlAnalysisResultWriter(final boolean tabs,
+            final Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate, final boolean headers) {
         _tabs = tabs;
         _jobInclusionPredicate = jobInclusionPredicate;
         _headers = headers;
     }
 
     @Override
-    public void write(final AnalysisResult result, final DataCleanerConfiguration configuration, final Ref<Writer> writerRef,
-            final Ref<OutputStream> outputStreamRef) throws IOException {
+    public void write(final AnalysisResult result, final DataCleanerConfiguration configuration,
+            final Ref<Writer> writerRef, final Ref<OutputStream> outputStreamRef) throws IOException {
         final Writer writer = writerRef.get();
         write(result, configuration, writer);
     }
@@ -95,8 +95,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
 
         final RendererFactory rendererFactory = new RendererFactory(configuration);
         final Map<ComponentJob, HtmlFragment> htmlFragments = new LinkedHashMap<>();
-        final Map<ComponentJob, AnalyzerResult> resultMap = new TreeMap<>(
-                new ComponentJobComparator());
+        final Map<ComponentJob, AnalyzerResult> resultMap = new TreeMap<>(new ComponentJobComparator());
         resultMap.putAll(result.getResultMap());
 
         for (final Entry<ComponentJob, AnalyzerResult> entry : resultMap.entrySet()) {
@@ -104,8 +103,8 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
             final AnalyzerResult analyzerResult = entry.getValue();
 
             if (_jobInclusionPredicate.eval(entry)) {
-                final Renderer<? super AnalyzerResult, ? extends HtmlFragment> renderer = rendererFactory.getRenderer(
-                        analyzerResult, HtmlRenderingFormat.class);
+                final Renderer<? super AnalyzerResult, ? extends HtmlFragment> renderer =
+                        rendererFactory.getRenderer(analyzerResult, HtmlRenderingFormat.class);
                 if (renderer == null) {
                     throw new IllegalStateException("No HTML renderer found for result: " + analyzerResult);
                 }
@@ -132,17 +131,18 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
         writeHtmlEnd(writer, context);
     }
 
-    private void writeMaterializationError(final Writer writer, final ComponentJob componentJob, final Exception e) throws IOException {
+    private void writeMaterializationError(final Writer writer, final ComponentJob componentJob, final Exception e)
+            throws IOException {
         writeGenericError(writer, componentJob, null, e);
     }
 
-    private void writeRenderingError(final Writer writer, final ComponentJob componentJob, final AnalyzerResult analyzerResult,
-            final Exception e) throws IOException {
+    private void writeRenderingError(final Writer writer, final ComponentJob componentJob,
+            final AnalyzerResult analyzerResult, final Exception e) throws IOException {
         writeGenericError(writer, componentJob, analyzerResult, e);
     }
 
-    private void writeGenericError(final Writer writer, final ComponentJob componentJob, final AnalyzerResult analyzerResult, final Exception e)
-            throws IOException {
+    private void writeGenericError(final Writer writer, final ComponentJob componentJob,
+            final AnalyzerResult analyzerResult, final Exception e) throws IOException {
         writer.write("<div class=\"error\">");
         writer.write("<p>Component job: " + LabelUtils.getLabel(componentJob) + "</p>");
         if (analyzerResult != null) {
@@ -240,8 +240,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
                         final String iconSrc = wrapper.getIconSrc(IconUtils.ICON_SIZE_MEDIUM);
                         final String styleName = toStyleName(descriptor.getDisplayName());
                         writer.write("<li style=\"background-image: url(" + iconSrc
-                                + ")\"><a href=\"#analysisResultDescriptorGroup_"
-                                + styleName + "\">");
+                                + ")\"><a href=\"#analysisResultDescriptorGroup_" + styleName + "\">");
                         writer.write(context.escapeHtml(descriptor.getDisplayName()));
                         writer.write("</a></li>");
 
@@ -298,8 +297,8 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
         writer.write("</body>");
     }
 
-    protected void writeBodyHtmlFragment(final Writer writer, final ComponentJob componentJob, final HtmlFragment htmlFragment,
-            final HtmlRenderingContext context) throws IOException {
+    protected void writeBodyHtmlFragment(final Writer writer, final ComponentJob componentJob,
+            final HtmlFragment htmlFragment, final HtmlRenderingContext context) throws IOException {
         final String displayName = componentJob.getDescriptor().getDisplayName();
         final String styleName = toStyleName(displayName);
 
@@ -329,12 +328,12 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
 
     protected String toStyleName(final String displayName) {
         final String camelCase = StringUtils.toCamelCase(displayName);
-        final String cleaned = camelCase.replaceAll("/", "_").replaceAll("&", "_");
-        return cleaned;
+        return camelCase.replaceAll("/", "_").replaceAll("&", "_");
     }
 
-    protected void writeBodyElement(final Writer writer, final ComponentJob componentJob, final HtmlFragment htmlFragment,
-            final BodyElement bodyElement, final HtmlRenderingContext context) throws IOException {
+    protected void writeBodyElement(final Writer writer, final ComponentJob componentJob,
+            final HtmlFragment htmlFragment, final BodyElement bodyElement, final HtmlRenderingContext context)
+            throws IOException {
         final HtmlRenderingContext localContext = new ComponentHtmlRenderingContext(context, componentJob);
 
         writer.write("  ");

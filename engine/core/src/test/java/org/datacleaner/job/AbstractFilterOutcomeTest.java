@@ -22,8 +22,6 @@ package org.datacleaner.job;
 import java.io.File;
 import java.util.Collection;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -32,14 +30,16 @@ import org.datacleaner.job.builder.LazyFilterOutcome;
 import org.datacleaner.test.MockFilter;
 import org.datacleaner.test.MockFilter.Category;
 
+import junit.framework.TestCase;
+
 public class AbstractFilterOutcomeTest extends TestCase {
 
     public void testEqualsAndHashCodeOnDifferentSubclasses() throws Exception {
-        FilterOutcome fo1;
+        final FilterOutcome fo1;
         FilterOutcome fo2;
 
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
-            FilterComponentBuilder<MockFilter, Category> filterJobBuilder = ajb.addFilter(MockFilter.class);
+            final FilterComponentBuilder<MockFilter, Category> filterJobBuilder = ajb.addFilter(MockFilter.class);
             filterJobBuilder.addInputColumn(new MockInputColumn<String>("foo"));
             filterJobBuilder.getComponentInstance().setSomeEnum(Category.INVALID);
             filterJobBuilder.getComponentInstance().setSomeFile(new File("."));
@@ -49,9 +49,9 @@ public class AbstractFilterOutcomeTest extends TestCase {
 
             final FilterJob filterJob = filterJobBuilder.toFilterJob();
 
-            Collection<FilterOutcome> filterOutcomes = filterJob.getFilterOutcomes();
+            final Collection<FilterOutcome> filterOutcomes = filterJob.getFilterOutcomes();
             fo2 = null;
-            for (FilterOutcome filterOutcome : filterOutcomes) {
+            for (final FilterOutcome filterOutcome : filterOutcomes) {
                 if (filterOutcome.getCategory() == Category.VALID) {
                     fo2 = filterOutcome;
                 }

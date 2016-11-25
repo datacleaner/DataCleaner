@@ -21,7 +21,6 @@ package org.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,7 +30,6 @@ import java.util.Map.Entry;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Predicate;
 import org.apache.metamodel.util.TruePredicate;
@@ -98,15 +96,12 @@ public class ResultFileController {
             filename = resultName + "-" + timestamp + EXTENSION;
         }
 
-        final RepositoryFile resultFile = resultsFolder.createFile(filename, new Action<OutputStream>() {
-            @Override
-            public void run(final OutputStream out) throws Exception {
-                final InputStream in = file.getInputStream();
-                try {
-                    FileHelper.copy(in, out);
-                } finally {
-                    FileHelper.safeClose(in);
-                }
+        final RepositoryFile resultFile = resultsFolder.createFile(filename, out -> {
+            final InputStream in = file.getInputStream();
+            try {
+                FileHelper.copy(in, out);
+            } finally {
+                FileHelper.safeClose(in);
             }
         });
 
@@ -160,8 +155,8 @@ public class ResultFileController {
             analysisResult = resultContext.getAnalysisResult();
         } catch (final IllegalStateException e) {
             logger.error("Failed to read AnalysisResult in file: " + resultFile, e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to read result file: "
-                    + resultFile.getName() + ". See server logs for details.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Failed to read result file: " + resultFile.getName() + ". See server logs for details.");
             return;
         }
         final DataCleanerConfiguration configuration = context.getConfiguration();
@@ -177,8 +172,8 @@ public class ResultFileController {
             headers = false;
         }
 
-        final HtmlAnalysisResultWriter htmlWriter = _htmlAnalysisResultWriterFactory.create(tabs,
-                jobInclusionPredicate, headers);
+        final HtmlAnalysisResultWriter htmlWriter =
+                _htmlAnalysisResultWriterFactory.create(tabs, jobInclusionPredicate, headers);
         final PrintWriter out = response.getWriter();
 
         try {

@@ -43,7 +43,8 @@ enum HttpMethod {
             return new HttpDelete(uri);
         case HEAD:
             return new HttpHead(uri);
+        default:
+            throw new UnsupportedOperationException("Method not supported: " + m);
         }
-        throw new UnsupportedOperationException("Method not supported: " + m);
     }
 }

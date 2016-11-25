@@ -21,19 +21,19 @@ package org.datacleaner.job.runner;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentMessage;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 
+import junit.framework.TestCase;
+
 public class CompositeAnalysisListenerTest extends TestCase {
     public void testHandlingErrors() {
         final AtomicInteger counter = new AtomicInteger(0);
 
-        AnalysisListener faultyListener = new AnalysisListener() {
+        final AnalysisListener faultyListener = new AnalysisListener() {
             @Override
             public void jobBegin(final AnalysisJob job, final AnalysisJobMetrics metrics) {
                 throw new RuntimeException("OUCH!");
@@ -90,7 +90,7 @@ public class CompositeAnalysisListenerTest extends TestCase {
             }
         };
 
-        AnalysisListener goodListener = new AnalysisListener() {
+        final AnalysisListener goodListener = new AnalysisListener() {
             @Override
             public void jobBegin(final AnalysisJob job, final AnalysisJobMetrics metrics) {
                 counter.incrementAndGet();

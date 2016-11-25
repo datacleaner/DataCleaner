@@ -27,7 +27,7 @@ import org.junit.Test;
 public class DatastoreDictionaryReferenceDataWizardSessionTest {
     @Test
     public void testFirstPageController() {
-        DatastoreDictionaryReferenceDataWizardSession session =
+        final DatastoreDictionaryReferenceDataWizardSession session =
                 new DatastoreDictionaryReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNotNull(session.firstPageController());
     }

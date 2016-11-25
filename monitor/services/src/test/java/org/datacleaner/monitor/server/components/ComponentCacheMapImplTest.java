@@ -28,14 +28,9 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.descriptors.CloseMethodDescriptor;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.InitializeMethodDescriptor;
-import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.descriptors.ValidateMethodDescriptor;
 import org.datacleaner.monitor.configuration.ComponentStore;
 import org.datacleaner.monitor.configuration.ComponentStoreHolder;
 import org.datacleaner.monitor.configuration.SimpleRemoteComponentsConfigurationImpl;
@@ -44,7 +39,6 @@ import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.CreateInput;
 import org.easymock.EasyMock;
-import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -62,7 +56,7 @@ public class ComponentCacheMapImplTest {
     private String componentName = "name";
 
     private void createComponentCache() {
-        ComponentHandlerFactory compHandlerFac =
+        final ComponentHandlerFactory compHandlerFac =
                 new ComponentHandlerFactory(new SimpleRemoteComponentsConfigurationImpl());
         cache = new ComponentCache(compHandlerFac, mockTenantContextFactory);
     }
@@ -75,67 +69,64 @@ public class ComponentCacheMapImplTest {
     @Test
     public void testCacheStoreNewConfiguration() throws Exception {
         mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
-        TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
+        final TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
         EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
 
-        ComponentStore store = EasyMock.createMock(ComponentStore.class);
+        final ComponentStore store = EasyMock.createMock(ComponentStore.class);
         EasyMock.expect(mockTenantContext.getComponentStore()).andReturn(store).anyTimes();
         EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
         store.store(EasyMock.anyObject(ComponentStoreHolder.class));
         final boolean[] ok = { false };
-        EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
-            public Object answer() {
-                ok[0] = true;
-                return null;
-            }
+        EasyMock.expectLastCall().andAnswer(() -> {
+            ok[0] = true;
+            return null;
         });
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
         createComponentCache();
 
-        CreateInput createInput = new CreateInput();
+        final CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
-        ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(100000, createInput, "id", componentName);
+        final ComponentStoreHolder componentStoreHolder =
+                new ComponentStoreHolder(100000, createInput, "id", componentName);
         cache.put(tenantName, mockTenantContext, componentStoreHolder);
         Assert.assertTrue(ok[0]);
-        Assert.assertEquals(componentStoreHolder, cache.get("id", tenantName, mockTenantContext)
-                .getComponentStoreHolder());
+        Assert.assertEquals(componentStoreHolder,
+                cache.get("id", tenantName, mockTenantContext).getComponentStoreHolder());
     }
 
     @Test
     public void testCacheRemoveConfig() throws Exception {
-        String instanceId = "id";
+        final String instanceId = "id";
         mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
-        TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
+        final TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
         EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
 
-        ComponentStore store = EasyMock.createMock(ComponentStore.class);
+        final ComponentStore store = EasyMock.createMock(ComponentStore.class);
         EasyMock.expect(mockTenantContext.getComponentStore()).andReturn(store).anyTimes();
         EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
         store.store(EasyMock.anyObject(ComponentStoreHolder.class));
 
         store.remove(EasyMock.anyString());
         final boolean[] ok = { false };
-        EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
-            public Object answer() {
-                ok[0] = true;
-                return true;
-            }
+        EasyMock.expectLastCall().andAnswer(() -> {
+            ok[0] = true;
+            return true;
         });
 
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
         createComponentCache();
-        CreateInput createInput = new CreateInput();
+        final CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
 
-        ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(100000, createInput, instanceId,
-                componentName);
+        final ComponentStoreHolder componentStoreHolder =
+                new ComponentStoreHolder(100000, createInput, instanceId, componentName);
         cache.put(tenantName, mockTenantContext, componentStoreHolder);
         cache.remove(instanceId, mockTenantContext);
         Assert.assertTrue(ok[0]);
     }
 
     private DataCleanerConfiguration getDCConfigurationMock() {
-        DataCleanerConfiguration dataCleanerConfiguration = createNiceMock(DataCleanerConfiguration.class);
+        final DataCleanerConfiguration dataCleanerConfiguration = createNiceMock(DataCleanerConfiguration.class);
         expect(dataCleanerConfiguration.getEnvironment()).andReturn(getEnvironmentMock()).anyTimes();
         expect(dataCleanerConfiguration.getHomeFolder()).andReturn(DataCleanerConfigurationImpl.defaultHomeFolder())
                 .anyTimes();
@@ -145,7 +136,7 @@ public class ComponentCacheMapImplTest {
     }
 
     private DataCleanerEnvironment getEnvironmentMock() {
-        DataCleanerEnvironment dataCleanerEnvironment = createNiceMock(DataCleanerEnvironment.class);
+        final DataCleanerEnvironment dataCleanerEnvironment = createNiceMock(DataCleanerEnvironment.class);
         expect(dataCleanerEnvironment.getDescriptorProvider()).andReturn(getDescriptorProviderMock()).anyTimes();
         expect(dataCleanerEnvironment.getInjectionManagerFactory()).andReturn(getInjectionManagerFactoryMock())
                 .anyTimes();
@@ -155,7 +146,7 @@ public class ComponentCacheMapImplTest {
     }
 
     private InjectionManagerFactory getInjectionManagerFactoryMock() {
-        InjectionManagerFactory injectionManagerFactory = createNiceMock(InjectionManagerFactory.class);
+        final InjectionManagerFactory injectionManagerFactory = createNiceMock(InjectionManagerFactory.class);
         expect(injectionManagerFactory.getInjectionManager(null)).andReturn(null).anyTimes();
         replay(injectionManagerFactory);
 
@@ -170,20 +161,14 @@ public class ComponentCacheMapImplTest {
     }
 
     private TransformerDescriptor<?> getTransformerDescriptorMock() {
-        @SuppressWarnings("unchecked")
-        TransformerDescriptor<ConcatenatorTransformer> transformerDescriptor =
+        @SuppressWarnings("unchecked") final TransformerDescriptor<ConcatenatorTransformer> transformerDescriptor =
                 createNiceMock(TransformerDescriptor.class);
         expect(transformerDescriptor.getDisplayName()).andReturn(componentName).anyTimes();
-        expect(transformerDescriptor.getProvidedProperties()).andReturn(
-                Collections.emptySet()).anyTimes();
-        expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.emptySet())
-                .anyTimes();
-        expect(transformerDescriptor.getInitializeMethods()).andReturn(
-                Collections.emptySet()).anyTimes();
-        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.emptySet())
-                .anyTimes();
-        expect(transformerDescriptor.getConfiguredProperties()).andReturn(
-                Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getProvidedProperties()).andReturn(Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getInitializeMethods()).andReturn(Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getConfiguredProperties()).andReturn(Collections.emptySet()).anyTimes();
         expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
         replay(transformerDescriptor);
 

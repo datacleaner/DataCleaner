@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -62,10 +61,10 @@ import com.google.common.base.Strings;
 @Named("HTTP request")
 @Categorized(value = ReferenceDataCategory.class, superCategory = ImproveSuperCategory.class)
 @Description("Sends a HTTP request for each record and retrieves the response as transformation output.\n"
-        + "For each request you can have dynamic elements in the URL or in the request body that is sent. Provide variable names that are unique to the URL and request body and reference them there. For instance:\n"
+        + "For each request you can have dynamic elements in the URL or in the request body that is sent. "
+        + "Provide variable names that are unique to the URL and request body and reference them there. For instance:\n"
         + "<table><tr><td>URL:</td><td>http://www.google.com/?q=${term}</td></tr>"
-        + "<tr><td>Input:</td><td>column1</td></tr>"
-        + "<tr><td>Variable:</td><td>${term}</td></tr></table>")
+        + "<tr><td>Input:</td><td>column1</td></tr>" + "<tr><td>Variable:</td><td>${term}</td></tr></table>")
 public class HttpRequestTransformer implements Transformer {
 
     public static final String PROPERTY_INPUT_COLUMNS = "Input";
@@ -74,7 +73,8 @@ public class HttpRequestTransformer implements Transformer {
 
     @Inject
     @Configured(value = PROPERTY_URL, order = 1)
-    @Description("The URL to invoke. The URL will be pre-processed by replacing any variable names in it with the corresponding dynamic values.")
+    @Description("The URL to invoke. The URL will be pre-processed by replacing any variable names in it with "
+            + "the corresponding dynamic values.")
     String url = "http://";
 
     @Inject
@@ -93,7 +93,9 @@ public class HttpRequestTransformer implements Transformer {
     @Inject
     @Configured(order = 5)
     @StringProperty(multiline = true, emptyString = true)
-    @Description("The body of the request to invoke. The request body will be pre-processed by replacing any variable names in it with the corresponding dynamic values.")
+    @Description(
+            "The body of the request to invoke. The request body will be pre-processed by replacing any variable names "
+                    + "in it with the corresponding dynamic values.")
     String requestBody = "";
 
     @Inject
@@ -152,14 +154,11 @@ public class HttpRequestTransformer implements Transformer {
             }
         }
 
-        final ServiceResult<Object[]> result = _session.invokeService(new Callable<Object[]>() {
-            @Override
-            public Object[] call() throws Exception {
-                final HttpResponse response = _httpClient.execute(request);
-                final int statusCode = response.getStatusLine().getStatusCode();
-                final String body = EntityUtils.toString(response.getEntity(), usedCharset);
-                return new Object[] { statusCode, body };
-            }
+        final ServiceResult<Object[]> result = _session.invokeService(() -> {
+            final HttpResponse response = _httpClient.execute(request);
+            final int statusCode = response.getStatusLine().getStatusCode();
+            final String body = EntityUtils.toString(response.getEntity(), usedCharset);
+            return new Object[] { statusCode, body };
         });
 
         if (!result.isSuccesfull()) {

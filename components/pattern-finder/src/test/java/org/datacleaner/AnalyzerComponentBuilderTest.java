@@ -19,8 +19,6 @@
  */
 package org.datacleaner;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
@@ -33,6 +31,8 @@ import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 
+import junit.framework.TestCase;
+
 public class AnalyzerComponentBuilderTest extends TestCase {
 
     private AnalysisJobBuilder ajb;
@@ -44,31 +44,32 @@ public class AnalyzerComponentBuilderTest extends TestCase {
     }
 
     public void testBuildMultipleJobsForSingleInputAnalyzer() throws Exception {
-        AnalyzerComponentBuilder<PatternFinderAnalyzer> analyzerBuilder = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+        final AnalyzerComponentBuilder<PatternFinderAnalyzer> analyzerBuilder =
+                ajb.addAnalyzer(PatternFinderAnalyzer.class);
 
         assertFalse(analyzerBuilder.isConfigured());
 
-        Table table = new MutableTable("table");
+        final Table table = new MutableTable("table");
         analyzerBuilder
                 .addInputColumn(new MetaModelInputColumn(new MutableColumn("foo", ColumnType.VARCHAR, table, 0, true)));
         analyzerBuilder
                 .addInputColumn(new MetaModelInputColumn(new MutableColumn("bar", ColumnType.VARCHAR, table, 1, true)));
 
         // change a property
-        ConfiguredPropertyDescriptor property = analyzerBuilder.getDescriptor().getConfiguredProperty(
-                "Discriminate negative numbers");
+        final ConfiguredPropertyDescriptor property =
+                analyzerBuilder.getDescriptor().getConfiguredProperty("Discriminate negative numbers");
         analyzerBuilder.setConfiguredProperty(property, false);
 
         try {
             // cannot create a single job, since there will be two
             analyzerBuilder.toAnalyzerJob();
             fail("Exception expected");
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             assertEquals("This builder generates 2 jobs, but a single job was requested", e.getMessage());
         }
 
         assertTrue(analyzerBuilder.isConfigured());
-        AnalyzerJob[] analyzerJobs = analyzerBuilder.toAnalyzerJobs();
+        final AnalyzerJob[] analyzerJobs = analyzerBuilder.toAnalyzerJobs();
         assertEquals(2, analyzerJobs.length);
 
         assertEquals(1, analyzerJobs[0].getInput().length);

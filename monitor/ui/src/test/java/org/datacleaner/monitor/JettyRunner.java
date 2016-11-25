@@ -48,17 +48,17 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class JettyRunner {
 
     private static void createExitListenerThread(final Server server) {
-        Thread thread = new Thread() {
+        final Thread thread = new Thread() {
             @Override
             public void run() {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                 try {
                     for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                         if ("exit".equals(line)) {
                             System.out.println("Signal 'stop' -> server!");
                             try {
                                 server.stop();
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 e.printStackTrace();
                             }
 
@@ -66,7 +66,7 @@ public class JettyRunner {
                             server.destroy();
                         }
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     e.printStackTrace();
                     System.err.println("Graceful shutdown thread failed.");
                 }
@@ -76,19 +76,19 @@ public class JettyRunner {
         thread.start();
     }
 
-    public static void main(String[] args) throws Exception {
-        File webappFolder = new File("../../monitor/ui/src/main/webapp");
+    public static void main(final String[] args) throws Exception {
+        final File webappFolder = new File("../../monitor/ui/src/main/webapp");
         if (!webappFolder.exists()) {
             throw new IllegalStateException("Does not exist: " + webappFolder);
         }
 
-        Server server = new Server();
+        final Server server = new Server();
 
-        SelectChannelConnector connector = new SelectChannelConnector();
+        final SelectChannelConnector connector = new SelectChannelConnector();
         connector.setPort(8888);
         server.addConnector(connector);
 
-        WebAppContext webApp = new WebAppContext();
+        final WebAppContext webApp = new WebAppContext();
         webApp.setContextPath("/DataCleaner-monitor");
         webApp.setWar(webappFolder.getCanonicalPath());
         server.setHandler(webApp);
@@ -102,9 +102,9 @@ public class JettyRunner {
 
         System.out.println("Now we expect the program to exit, or else there is a thread leak.");
 
-        Set<Entry<Thread, StackTraceElement[]>> threadEntries = Thread.getAllStackTraces().entrySet();
-        for (Entry<Thread, StackTraceElement[]> entry : threadEntries) {
-            Thread thread = entry.getKey();
+        final Set<Entry<Thread, StackTraceElement[]>> threadEntries = Thread.getAllStackTraces().entrySet();
+        for (final Entry<Thread, StackTraceElement[]> entry : threadEntries) {
+            final Thread thread = entry.getKey();
             if (!thread.isDaemon()) {
                 if (Thread.currentThread() != thread) {
                     System.out.println("Still alive: " + thread);

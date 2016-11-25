@@ -36,8 +36,8 @@ public class ResultModificationEvent extends ApplicationEvent {
     private final long _newTimestamp;
     private final String _oldFilename;
 
-    public ResultModificationEvent(final Object source, final String tenant, final String oldFilename, final String newFilename,
-            final String newJobName, final long newTimestamp) {
+    public ResultModificationEvent(final Object source, final String tenant, final String oldFilename,
+            final String newFilename, final String newJobName, final long newTimestamp) {
         super(source);
         _tenant = tenant;
         _oldFilename = oldFilename;

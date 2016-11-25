@@ -22,8 +22,6 @@ package org.datacleaner.beans.datastructures;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -40,28 +38,31 @@ import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 
+import junit.framework.TestCase;
+
 public class DataStructuresIntegrationTest extends TestCase {
 
     public void testBuildAndExtractFromStructures() throws Throwable {
-        Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
-        DataCleanerConfigurationImpl configuration =
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+        final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
+        final DataCleanerConfigurationImpl configuration =
                 new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog);
 
-        AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
         ajb.setDatastore("orderdb");
 
         ajb.addSourceColumns("PUBLIC.EMPLOYEES.EMPLOYEENUMBER", "PUBLIC.EMPLOYEES.EMAIL");
 
         final MutableInputColumn<?> mapColumn;
         {
-            TransformerComponentBuilder<BuildMapTransformer> buildMap = ajb.addTransformer(BuildMapTransformer.class);
+            final TransformerComponentBuilder<BuildMapTransformer> buildMap =
+                    ajb.addTransformer(BuildMapTransformer.class);
             buildMap.addInputColumns(ajb.getSourceColumns());
-            BuildMapTransformer bean = buildMap.getComponentInstance();
+            final BuildMapTransformer bean = buildMap.getComponentInstance();
             bean.setKeys(new String[] { "empno", "email_address" });
             bean.setRetainKeyOrder(true);
             bean.setIncludeNullValues(true);
-            List<MutableInputColumn<?>> outputColumns = buildMap.getOutputColumns();
+            final List<MutableInputColumn<?>> outputColumns = buildMap.getOutputColumns();
             assertEquals(1, outputColumns.size());
             mapColumn = outputColumns.get(0);
             assertEquals("Map: empno,email_address", mapColumn.getName());
@@ -71,13 +72,13 @@ public class DataStructuresIntegrationTest extends TestCase {
 
         final MutableInputColumn<?> listColumn;
         {
-            TransformerComponentBuilder<BuildListTransformer> buildList =
+            final TransformerComponentBuilder<BuildListTransformer> buildList =
                     ajb.addTransformer(BuildListTransformer.class);
             buildList.addInputColumn(ajb.getSourceColumnByName("firstname"));
             buildList.addInputColumn(ajb.getSourceColumnByName("lastname"));
-            BuildListTransformer bean = buildList.getComponentInstance();
+            final BuildListTransformer bean = buildList.getComponentInstance();
             bean.setIncludeNullValues(false);
-            List<MutableInputColumn<?>> outputColumns = buildList.getOutputColumns();
+            final List<MutableInputColumn<?>> outputColumns = buildList.getOutputColumns();
             assertEquals(1, outputColumns.size());
             listColumn = outputColumns.get(0);
             assertEquals("List: FIRSTNAME,LASTNAME", listColumn.getName());
@@ -90,13 +91,13 @@ public class DataStructuresIntegrationTest extends TestCase {
 
         final MutableInputColumn<?> elementColumn;
         {
-            TransformerComponentBuilder<ReadFromListTransformer> extractFromList = ajb
-                    .addTransformer(ReadFromListTransformer.class);
+            final TransformerComponentBuilder<ReadFromListTransformer> extractFromList =
+                    ajb.addTransformer(ReadFromListTransformer.class);
             extractFromList.addInputColumn(listColumn);
-            ReadFromListTransformer bean = extractFromList.getComponentInstance();
+            final ReadFromListTransformer bean = extractFromList.getComponentInstance();
             bean.setVerifyTypes(true);
             bean.setElementType(String.class);
-            List<MutableInputColumn<?>> outputColumns = extractFromList.getOutputColumns();
+            final List<MutableInputColumn<?>> outputColumns = extractFromList.getOutputColumns();
             assertEquals(1, outputColumns.size());
             elementColumn = outputColumns.get(0);
             assertEquals("List: FIRSTNAME,LASTNAME (element)", elementColumn.getName());
@@ -105,14 +106,14 @@ public class DataStructuresIntegrationTest extends TestCase {
         final MutableInputColumn<?> valueColumn1;
         final MutableInputColumn<?> valueColumn2;
         {
-            TransformerComponentBuilder<SelectFromMapTransformer> extractFromMap = ajb
-                    .addTransformer(SelectFromMapTransformer.class);
+            final TransformerComponentBuilder<SelectFromMapTransformer> extractFromMap =
+                    ajb.addTransformer(SelectFromMapTransformer.class);
             extractFromMap.addInputColumn(mapColumn);
-            SelectFromMapTransformer bean = extractFromMap.getComponentInstance();
+            final SelectFromMapTransformer bean = extractFromMap.getComponentInstance();
             bean.setKeys(new String[] { "empno", "email_address" });
             bean.setTypes(new Class[] { Number.class, String.class });
             bean.setVerifyTypes(true);
-            List<MutableInputColumn<?>> outputColumns = extractFromMap.getOutputColumns();
+            final List<MutableInputColumn<?>> outputColumns = extractFromMap.getOutputColumns();
             assertEquals(2, outputColumns.size());
             valueColumn1 = outputColumns.get(0);
             assertEquals("empno", valueColumn1.getName());
@@ -123,21 +124,20 @@ public class DataStructuresIntegrationTest extends TestCase {
         ajb.addAnalyzer(MockAnalyzer.class)
                 .addInputColumns(mapColumn, valueColumn1, valueColumn2, listColumn, elementColumn);
 
-        AnalysisJob job = ajb.toAnalysisJob();
+        final AnalysisJob job = ajb.toAnalysisJob();
         ajb.close();
 
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
 
         if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 
-        List<AnalyzerResult> results = resultFuture.getResults();
+        final List<AnalyzerResult> results = resultFuture.getResults();
         assertEquals(1, results.size());
 
-        @SuppressWarnings("unchecked")
-        ListResult<InputRow> result = (ListResult<InputRow>) results.get(0);
-        List<InputRow> rows = result.getValues();
+        @SuppressWarnings("unchecked") final ListResult<InputRow> result = (ListResult<InputRow>) results.get(0);
+        final List<InputRow> rows = result.getValues();
 
         // first row
         InputRow row = rows.get(0);

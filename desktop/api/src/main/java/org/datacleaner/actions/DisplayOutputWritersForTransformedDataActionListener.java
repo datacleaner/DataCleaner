@@ -40,12 +40,13 @@ import org.datacleaner.lifecycle.LifeCycleHelper;
 /**
  * Action that displays output writers for a transformer's data.
  */
-public class DisplayOutputWritersForTransformedDataActionListener extends DisplayOutputWritersAction implements
-        ActionListener {
+public class DisplayOutputWritersForTransformedDataActionListener extends DisplayOutputWritersAction
+        implements ActionListener {
 
     private final TransformerComponentBuilder<?> _transformerJobBuilder;
 
-    public DisplayOutputWritersForTransformedDataActionListener(final TransformerComponentBuilder<?> transformerJobBuilder) {
+    public DisplayOutputWritersForTransformedDataActionListener(
+            final TransformerComponentBuilder<?> transformerJobBuilder) {
         super(transformerJobBuilder.getAnalysisJobBuilder());
         _transformerJobBuilder = transformerJobBuilder;
     }
@@ -56,12 +57,12 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Displa
         if (component instanceof PrecedingComponentConsumer) {
             final LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration(), null, true);
             helper.assignProvidedProperties(componentBuilder.getDescriptor(), component);
-            ((PrecedingComponentConsumer) component).configureForTransformedData(analysisJobBuilder,
-                    _transformerJobBuilder.getDescriptor());
+            ((PrecedingComponentConsumer) component)
+                    .configureForTransformedData(analysisJobBuilder, _transformerJobBuilder.getDescriptor());
         }
 
-        final Set<ConfiguredPropertyDescriptor> inputProperties = componentBuilder.getDescriptor()
-                .getConfiguredPropertiesForInput(false);
+        final Set<ConfiguredPropertyDescriptor> inputProperties =
+                componentBuilder.getDescriptor().getConfiguredPropertiesForInput(false);
         if (!inputProperties.isEmpty()) {
             final ConfiguredPropertyDescriptor property = inputProperties.iterator().next();
 

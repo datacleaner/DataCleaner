@@ -24,12 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.easymock.EasyMock;
+
+import junit.framework.TestCase;
 
 public class CsvConfigurationWizardPageTest extends TestCase {
 
@@ -39,7 +39,7 @@ public class CsvConfigurationWizardPageTest extends TestCase {
         final Resource file = null;
         final CsvConfigurationWizardPage page = new CsvConfigurationWizardPage(file) {
             @Override
-            protected WizardPageController nextPageController(CsvConfiguration configuration) {
+            protected WizardPageController nextPageController(final CsvConfiguration configuration) {
                 assertEquals("UTF8", configuration.getEncoding());
                 assertEquals(1, configuration.getColumnNameLineNumber());
                 assertEquals(CsvConfiguration.NOT_A_CHAR, configuration.getEscapeChar());

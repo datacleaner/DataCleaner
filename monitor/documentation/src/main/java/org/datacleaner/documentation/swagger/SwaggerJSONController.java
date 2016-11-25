@@ -174,7 +174,8 @@ public class SwaggerJSONController {
             final Class<?>[] parameterTypes = method.getParameterTypes();
 
             for (int i = 0; i < parameterTypes.length; i++) {
-                final SwaggerParameter swaggerParameter = getSwaggerParameter(parameterTypes[i], parameterAnnotations[i]);
+                final SwaggerParameter swaggerParameter =
+                        getSwaggerParameter(parameterTypes[i], parameterAnnotations[i]);
 
                 if (swaggerParameter != null) {
                     swaggerParameterList.add(swaggerParameter);
@@ -184,7 +185,8 @@ public class SwaggerJSONController {
             return swaggerParameterList.toArray(new SwaggerParameter[swaggerParameterList.size()]);
         }
 
-        private SwaggerParameter getSwaggerParameter(final Class<?> parameterType, final Annotation[] parameterAnnotations) {
+        private SwaggerParameter getSwaggerParameter(final Class<?> parameterType,
+                final Annotation[] parameterAnnotations) {
             SwaggerParameter swaggerParameter = null;
             final RequestBody requestBody = (RequestBody) findAnnotation(parameterAnnotations, RequestBody.class);
             final RequestParam requestParam = (RequestParam) findAnnotation(parameterAnnotations, RequestParam.class);
@@ -226,6 +228,7 @@ public class SwaggerJSONController {
             return null;
         }
     }
+
     static final String SWAGGER_JSON_PATH = "/swagger.json";
     static final String ORIGINAL_URL_HEADER = "X-Original-Url";
     private static final Logger logger = LoggerFactory.getLogger(SwaggerJSONController.class);
@@ -248,8 +251,9 @@ public class SwaggerJSONController {
             final String originalUrl = httpServletRequest.getHeader(ORIGINAL_URL_HEADER);
             final String servletUrl = httpServletRequest.getRequestURL().toString();
 
-            final String serviceUrl = (originalUrl != null && !originalUrl.isEmpty()) ?
-                    originalUrl : httpServletRequest.getRequestURL().toString();
+            final String serviceUrl = (originalUrl != null && !originalUrl.isEmpty())
+                    ? originalUrl
+                    : httpServletRequest.getRequestURL().toString();
             URL url;
             try {
                 url = new URL(serviceUrl);

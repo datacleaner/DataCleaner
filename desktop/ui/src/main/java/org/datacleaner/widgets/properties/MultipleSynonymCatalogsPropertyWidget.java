@@ -19,9 +19,6 @@
  */
 package org.datacleaner.widgets.properties;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.swing.JButton;
@@ -44,7 +41,8 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractMultipleCheck
 
     @Inject
     public MultipleSynonymCatalogsPropertyWidget(final ComponentBuilder componentBuilder,
-            final ConfiguredPropertyDescriptor propertyDescriptor, final MutableReferenceDataCatalog referenceDataCatalog,
+            final ConfiguredPropertyDescriptor propertyDescriptor,
+            final MutableReferenceDataCatalog referenceDataCatalog,
             final Provider<ReferenceDataDialog> referenceDataDialogProvider) {
         super(componentBuilder, propertyDescriptor, SynonymCatalog.class);
         _referenceDataCatalog = referenceDataCatalog;
@@ -69,13 +67,10 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractMultipleCheck
 
         final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
         dialogButton.setToolTipText("Configure synonym catalogs");
-        dialogButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
-                dialog.selectSynonymsTab();
-                dialog.setVisible(true);
-            }
+        dialogButton.addActionListener(e -> {
+            final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+            dialog.selectSynonymsTab();
+            dialog.setVisible(true);
         });
 
         buttonPanel.add(dialogButton);

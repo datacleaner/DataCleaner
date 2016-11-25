@@ -32,17 +32,17 @@ public class RESTClientImplTest {
 
     @Test
     public void testSetEndpoint() throws Exception {
-        String requestBody = "";
+        final String requestBody = "";
 
         try {
             restClient.getResponse(RESTClient.HttpMethod.GET, "", requestBody);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("URI is not absolute"));
         }
 
         try {
             restClient.getResponse(RESTClient.HttpMethod.GET, URL, requestBody);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
@@ -51,19 +51,19 @@ public class RESTClientImplTest {
     public void testGetResponse() throws Exception {
         try {
             restClient.getResponse(RESTClient.HttpMethod.GET, URL, "");
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             Assert.assertTrue(e.getMessage().contains("Connection refused"));
         }
     }
 
     @Test
     public void testCache() {
-        String username = "username";
-        String password = "password";
-        Client instance1 = new RESTClientImpl(username, password, "test").getClient();
-        Client instance2 = new RESTClientImpl(username + "2", password + "2", "test").getClient();
-        Client instance3 = new RESTClientImpl(username, password, "test").getClient();
-        Client instance4 = new RESTClientImpl(username, password + "4", "test").getClient();
+        final String username = "username";
+        final String password = "password";
+        final Client instance1 = new RESTClientImpl(username, password, "test").getClient();
+        final Client instance2 = new RESTClientImpl(username + "2", password + "2", "test").getClient();
+        final Client instance3 = new RESTClientImpl(username, password, "test").getClient();
+        final Client instance4 = new RESTClientImpl(username, password + "4", "test").getClient();
 
         Assert.assertEquals(instance1, instance3);
         Assert.assertNotEquals(instance1, instance2);

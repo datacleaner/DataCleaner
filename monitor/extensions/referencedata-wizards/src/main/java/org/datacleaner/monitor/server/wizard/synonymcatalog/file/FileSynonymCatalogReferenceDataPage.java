@@ -36,7 +36,7 @@ final class FileSynonymCatalogReferenceDataPage extends FilePage {
 
     @Override
     protected void checkUniqueName(final String name) throws DCUserInputException {
-        ReferenceDataHelper.checkUniqueSynonymCatalog(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog());
+        ReferenceDataHelper.checkUniqueSynonymCatalog(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
     }
 }

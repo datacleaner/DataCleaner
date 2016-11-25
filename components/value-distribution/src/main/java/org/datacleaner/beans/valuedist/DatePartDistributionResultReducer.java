@@ -47,7 +47,8 @@ public class DatePartDistributionResultReducer extends AbstractCrosstabResultRed
     }
 
     @Override
-    protected CrosstabResult buildResult(final Crosstab<?> crosstab, final Collection<? extends CrosstabResult> results) {
+    protected CrosstabResult buildResult(final Crosstab<?> crosstab,
+            final Collection<? extends CrosstabResult> results) {
         return new CrosstabResult(crosstab);
     }
 
@@ -70,8 +71,8 @@ public class DatePartDistributionResultReducer extends AbstractCrosstabResultRed
         final CrosstabDimension dimension2 = new CrosstabDimension(firstResult.getCrosstab().getDimension(1).getName());
         dimension2.addCategories(categories2);
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        final Crosstab<Serializable> crosstab = new Crosstab(valueClass, dimension1, dimension2);
+        @SuppressWarnings({ "unchecked", "rawtypes" }) final Crosstab<Serializable> crosstab =
+                new Crosstab(valueClass, dimension1, dimension2);
         return crosstab;
     }
 

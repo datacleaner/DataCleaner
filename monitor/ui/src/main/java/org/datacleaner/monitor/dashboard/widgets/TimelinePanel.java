@@ -55,8 +55,9 @@ public class TimelinePanel extends FlowPanel {
     private TimelineDefinition _timelineDefinition;
     private TimelineData _timelineData;
 
-    public TimelinePanel(final TenantIdentifier tenant, final DashboardServiceAsync service, final TimelineIdentifier timelineIdentifier,
-            final DashboardGroupPanel timelineGroupPanel, final boolean isDashboardEditor) {
+    public TimelinePanel(final TenantIdentifier tenant, final DashboardServiceAsync service,
+            final TimelineIdentifier timelineIdentifier, final DashboardGroupPanel timelineGroupPanel,
+            final boolean isDashboardEditor) {
         super();
         _tenant = tenant;
         _service = service;
@@ -190,8 +191,8 @@ public class TimelinePanel extends FlowPanel {
 
     private void renderChart() {
         remove(_loadingIndicator);
-        final TimelineDesigner timeLineDesigner = new TimelineDesigner(_timelineDefinition, _timelineData, this,
-                _isDashboardEditor);
+        final TimelineDesigner timeLineDesigner =
+                new TimelineDesigner(_timelineDefinition, _timelineData, this, _isDashboardEditor);
         add(timeLineDesigner.createPlot());
         add(timeLineDesigner.getLegendPanel());
     }
@@ -221,8 +222,8 @@ public class TimelinePanel extends FlowPanel {
         copyButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(final ClickEvent event) {
-                final TimelinePanel copyPanel = new TimelinePanel(_tenant, _service, null, _timelineGroupPanel,
-                        _isDashboardEditor);
+                final TimelinePanel copyPanel =
+                        new TimelinePanel(_tenant, _service, null, _timelineGroupPanel, _isDashboardEditor);
                 copyPanel.setTimelineDefinition(_timelineDefinition);
                 _timelineGroupPanel.add(copyPanel);
             }

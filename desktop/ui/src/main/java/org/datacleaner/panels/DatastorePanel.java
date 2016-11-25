@@ -20,8 +20,6 @@
 package org.datacleaner.panels;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -30,8 +28,6 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
@@ -110,8 +106,8 @@ public class DatastorePanel extends DCPanel {
     private final DCModule _dcModule;
 
     public DatastorePanel(final Datastore datastore, final MutableDatastoreCatalog datastoreCatalog,
-            final DatastoreManagementPanel datastoreListPanel, final WindowContext windowContext, final UserPreferences userPreferences,
-            final DCModule dcModule) {
+            final DatastoreManagementPanel datastoreListPanel, final WindowContext windowContext,
+            final UserPreferences userPreferences, final DCModule dcModule) {
         super(WidgetUtils.BG_COLOR_BRIGHT);
         _datastore = datastore;
         _datastoreCatalog = datastoreCatalog;
@@ -127,23 +123,15 @@ public class DatastorePanel extends DCPanel {
 
         _checkBox = new JCheckBox();
         _checkBox.setOpaque(false);
-        _checkBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                _datastoreListPanel.setSelectedDatastorePanel(DatastorePanel.this);
-            }
-        });
-        _checkBox.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(final ChangeEvent e) {
-                setOpaque(isSelected());
-                updateUI();
-            }
+        _checkBox.addActionListener(e -> _datastoreListPanel.setSelectedDatastorePanel(DatastorePanel.this));
+        _checkBox.addChangeListener(e -> {
+            setOpaque(isSelected());
+            updateUI();
         });
 
         final String datastoreName = datastore.getName();
-        final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastoreName + "</b><br/>" + description
-                + "</html>");
+        final DCLabel datastoreNameLabel =
+                DCLabel.dark("<html><b>" + datastoreName + "</b><br/>" + description + "</html>");
         datastoreNameLabel.setIconTextGap(10);
         datastoreNameLabel.setIcon(icon);
         datastoreNameLabel.setMaximumWidth(LABEL_MAX_WIDTH);
@@ -232,15 +220,12 @@ public class DatastorePanel extends DCPanel {
         final String name = datastore.getName();
         final JButton removeButton = WidgetFactory.createDefaultButton("Remove", IconUtils.ACTION_REMOVE_DARK);
         removeButton.setToolTipText("Remove datastore");
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final int result = JOptionPane.showConfirmDialog(DatastorePanel.this,
-                        "Are you sure you wish to remove the datastore '" + name + "'?", "Confirm remove",
-                        JOptionPane.YES_NO_OPTION);
-                if (result == JOptionPane.YES_OPTION) {
-                    _datastoreCatalog.removeDatastore(datastore);
-                }
+        removeButton.addActionListener(e -> {
+            final int result = JOptionPane.showConfirmDialog(DatastorePanel.this,
+                    "Are you sure you wish to remove the datastore '" + name + "'?", "Confirm remove",
+                    JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                _datastoreCatalog.removeDatastore(datastore);
             }
         });
         return removeButton;
@@ -249,25 +234,18 @@ public class DatastorePanel extends DCPanel {
     private JButton createQueryButton(final Datastore datastore) {
         final JButton queryButton = WidgetFactory.createDefaultButton("Query", IconUtils.MODEL_QUERY);
         queryButton.setToolTipText("Query datastore");
-        queryButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final String queryString;
-                final DatastoreConnection connection = datastore.openConnection();
-                try {
-                    final Table[] tables = connection.getSchemaNavigator().getDefaultSchema().getTables();
-                    if (tables.length > 0) {
-                        queryString = "SELECT *\nFROM " + tables[0].getQualifiedLabel();
-                    } else {
-                        queryString = "SELECT *\nFROM ?";
-                    }
-                } finally {
-                    connection.close();
+        queryButton.addActionListener(e -> {
+            final String queryString;
+            try (DatastoreConnection connection = datastore.openConnection()) {
+                final Table[] tables = connection.getSchemaNavigator().getDefaultSchema().getTables();
+                if (tables.length > 0) {
+                    queryString = "SELECT *\nFROM " + tables[0].getQualifiedLabel();
+                } else {
+                    queryString = "SELECT *\nFROM ?";
                 }
-                final QueryWindow queryWindow = new QueryWindow(_windowContext, datastore, queryString);
-                queryWindow.open();
             }
+            final QueryWindow queryWindow = new QueryWindow(_windowContext, datastore, queryString);
+            queryWindow.open();
         });
 
         return queryButton;
@@ -278,190 +256,131 @@ public class DatastorePanel extends DCPanel {
         editButton.setToolTipText("Edit datastore");
 
         if (datastore instanceof JdbcDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injectorWithDatastore = getInjectorBuilder().with(JdbcDatastore.class, datastore)
-                            .createInjector();
-                    final JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injectorWithDatastore =
+                        getInjectorBuilder().with(JdbcDatastore.class, datastore).createInjector();
+                final JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof CsvDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(CsvDatastore.class, datastore).createInjector();
-                    final CsvDatastoreDialog dialog = injector.getInstance(CsvDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(CsvDatastore.class, datastore).createInjector();
+                final CsvDatastoreDialog dialog = injector.getInstance(CsvDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof AccessDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(AccessDatastore.class, datastore).createInjector();
-                    final AccessDatastoreDialog dialog = injector.getInstance(AccessDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(AccessDatastore.class, datastore).createInjector();
+                final AccessDatastoreDialog dialog = injector.getInstance(AccessDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof ExcelDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(ExcelDatastore.class, datastore).createInjector();
-                    final ExcelDatastoreDialog dialog = injector.getInstance(ExcelDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(ExcelDatastore.class, datastore).createInjector();
+                final ExcelDatastoreDialog dialog = injector.getInstance(ExcelDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof SasDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(SasDatastore.class, datastore).createInjector();
-                    final SasDatastoreDialog dialog = injector.getInstance(SasDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(SasDatastore.class, datastore).createInjector();
+                final SasDatastoreDialog dialog = injector.getInstance(SasDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof XmlDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(XmlDatastore.class, datastore).createInjector();
-                    final XmlDatastoreDialog dialog = injector.getInstance(XmlDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(XmlDatastore.class, datastore).createInjector();
+                final XmlDatastoreDialog dialog = injector.getInstance(XmlDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof OdbDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(OdbDatastore.class, datastore).createInjector();
-                    final OdbDatastoreDialog dialog = injector.getInstance(OdbDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(OdbDatastore.class, datastore).createInjector();
+                final OdbDatastoreDialog dialog = injector.getInstance(OdbDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof FixedWidthDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(FixedWidthDatastore.class, datastore)
-                            .createInjector();
-                    final FixedWidthDatastoreDialog dialog = injector.getInstance(FixedWidthDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector =
+                        getInjectorBuilder().with(FixedWidthDatastore.class, datastore).createInjector();
+                final FixedWidthDatastoreDialog dialog = injector.getInstance(FixedWidthDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof DbaseDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(DbaseDatastore.class, datastore).createInjector();
-                    final DbaseDatastoreDialog dialog = injector.getInstance(DbaseDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(DbaseDatastore.class, datastore).createInjector();
+                final DbaseDatastoreDialog dialog = injector.getInstance(DbaseDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof HBaseDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(HBaseDatastore.class, datastore).createInjector();
-                    final HBaseDatastoreDialog dialog = injector.getInstance(HBaseDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(HBaseDatastore.class, datastore).createInjector();
+                final HBaseDatastoreDialog dialog = injector.getInstance(HBaseDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof CassandraDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(CassandraDatastore.class, datastore).createInjector();
-                    final CassandraDatastoreDialog dialog = injector.getInstance(CassandraDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector =
+                        getInjectorBuilder().with(CassandraDatastore.class, datastore).createInjector();
+                final CassandraDatastoreDialog dialog = injector.getInstance(CassandraDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof ElasticSearchDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(ElasticSearchDatastore.class, datastore)
-                            .createInjector();
-                    final ElasticSearchDatastoreDialog dialog = injector.getInstance(ElasticSearchDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector =
+                        getInjectorBuilder().with(ElasticSearchDatastore.class, datastore).createInjector();
+                final ElasticSearchDatastoreDialog dialog = injector.getInstance(ElasticSearchDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof CouchDbDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(CouchDbDatastore.class, datastore).createInjector();
-                    final CouchDbDatastoreDialog dialog = injector.getInstance(CouchDbDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(CouchDbDatastore.class, datastore).createInjector();
+                final CouchDbDatastoreDialog dialog = injector.getInstance(CouchDbDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof MongoDbDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(MongoDbDatastore.class, datastore).createInjector();
-                    final MongoDbDatastoreDialog dialog = injector.getInstance(MongoDbDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(MongoDbDatastore.class, datastore).createInjector();
+                final MongoDbDatastoreDialog dialog = injector.getInstance(MongoDbDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof SalesforceDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(SalesforceDatastore.class, datastore)
-                            .createInjector();
-                    final SalesforceDatastoreDialog dialog = injector.getInstance(SalesforceDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector =
+                        getInjectorBuilder().with(SalesforceDatastore.class, datastore).createInjector();
+                final SalesforceDatastoreDialog dialog = injector.getInstance(SalesforceDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof SugarCrmDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(SugarCrmDatastore.class, datastore).createInjector();
-                    final SugarCrmDatastoreDialog dialog = injector.getInstance(SugarCrmDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector =
+                        getInjectorBuilder().with(SugarCrmDatastore.class, datastore).createInjector();
+                final SugarCrmDatastoreDialog dialog = injector.getInstance(SugarCrmDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof DataHubDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(DataHubDatastore.class, datastore).createInjector();
-                    final DataHubDatastoreDialog dialog = injector.getInstance(DataHubDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(DataHubDatastore.class, datastore).createInjector();
+                final DataHubDatastoreDialog dialog = injector.getInstance(DataHubDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof Neo4jDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(Neo4jDatastore.class, datastore)
-                            .createInjector();
-                    final Neo4jDatastoreDialog dialog = injector.getInstance(Neo4jDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(Neo4jDatastore.class, datastore).createInjector();
+                final Neo4jDatastoreDialog dialog = injector.getInstance(Neo4jDatastoreDialog.class);
+                dialog.open();
             });
         } else if (datastore instanceof CompositeDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final CompositeDatastoreDialog dialog = new CompositeDatastoreDialog((CompositeDatastore) datastore,
-                            _datastoreCatalog, _windowContext, _userPreferences);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final CompositeDatastoreDialog dialog =
+                        new CompositeDatastoreDialog((CompositeDatastore) datastore, _datastoreCatalog, _windowContext,
+                                _userPreferences);
+                dialog.open();
             });
         } else if (datastore instanceof JsonDatastore) {
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final Injector injector = getInjectorBuilder().with(JsonDatastore.class, datastore)
-                            .createInjector();
-                    final JsonDatastoreDialog dialog = injector.getInstance(JsonDatastoreDialog.class);
-                    dialog.open();
-                }
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(JsonDatastore.class, datastore).createInjector();
+                final JsonDatastoreDialog dialog = injector.getInstance(JsonDatastoreDialog.class);
+                dialog.open();
             });
         } else {
             editButton.setEnabled(false);

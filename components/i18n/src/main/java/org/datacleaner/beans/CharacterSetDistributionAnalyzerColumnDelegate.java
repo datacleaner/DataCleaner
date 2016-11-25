@@ -63,8 +63,7 @@ final class CharacterSetDistributionAnalyzerColumnDelegate {
     }
 
     public synchronized void run(final String value, final InputRow row, final int distinctCount) {
-        final List<Entry<String, UnicodeSet>> unicodeSetsRemaining = new ArrayList<>(
-                _unicodeSets.entrySet());
+        final List<Entry<String, UnicodeSet>> unicodeSetsRemaining = new ArrayList<>(_unicodeSets.entrySet());
         final CharIterator charIterator = new CharIterator(value);
         while (charIterator.hasNext()) {
             final Character c = charIterator.next();

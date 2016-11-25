@@ -49,9 +49,9 @@ public abstract class DatastorePageColumn extends AbstractFreemarkerWizardPage {
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
         model.put(PROPERTY_COLUMN, _session.getColumn());
-        model.put(PROPERTY_COLUMN_OPTIONS, DatastoreHelper.getColumnOptions(
-                _session.getWizardContext().getTenantContext(), _session.getDatastore(), _session.getSchema(),
-                _session.getTable()));
+        model.put(PROPERTY_COLUMN_OPTIONS, DatastoreHelper
+                .getColumnOptions(_session.getWizardContext().getTenantContext(), _session.getDatastore(),
+                        _session.getSchema(), _session.getTable()));
 
         return model;
     }

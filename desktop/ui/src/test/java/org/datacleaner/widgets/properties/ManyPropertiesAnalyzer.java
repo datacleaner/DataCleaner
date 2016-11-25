@@ -131,7 +131,7 @@ public class ManyPropertiesAnalyzer implements Analyzer<NumberResult> {
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         // do nothing
     }
 

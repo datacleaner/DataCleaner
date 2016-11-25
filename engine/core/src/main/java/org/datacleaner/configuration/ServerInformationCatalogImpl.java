@@ -53,8 +53,7 @@ public class ServerInformationCatalogImpl implements ServerInformationCatalog {
         try {
             if (!containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
                 final EnvironmentBasedHadoopClusterInformation environmentBasedHadoopClusterInformation =
-                        new EnvironmentBasedHadoopClusterInformation(
-                                HadoopResource.DEFAULT_CLUSTERREFERENCE, null);
+                        new EnvironmentBasedHadoopClusterInformation(HadoopResource.DEFAULT_CLUSTERREFERENCE, null);
                 if (environmentBasedHadoopClusterInformation.getDirectories().length > 0) {
                     serversList.add(0, environmentBasedHadoopClusterInformation);
                 }

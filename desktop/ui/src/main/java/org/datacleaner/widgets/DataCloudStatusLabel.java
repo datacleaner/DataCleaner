@@ -53,6 +53,7 @@ public class DataCloudStatusLabel extends JLabel {
             }
         }
     }
+
     public static final String PANEL_NAME = "DataCloud";
     private final RightInformationPanel _rightPanel;
     private RemoteServerConfiguration _remoteServerConfiguration;
@@ -78,8 +79,7 @@ public class DataCloudStatusLabel extends JLabel {
                     .setInformationStatus(new RemoteServerState(RemoteServerState.State.NOT_CONNECTED, null, null));
         } else {
             setIcon(actualServerStateOfDataCloud.getActualState());
-            _dataCloudInformationPanel
-                    .setInformationStatus(actualServerStateOfDataCloud);
+            _dataCloudInformationPanel.setInformationStatus(actualServerStateOfDataCloud);
         }
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -105,6 +105,8 @@ public class DataCloudStatusLabel extends JLabel {
         case ERROR:
             setIcon(ImageManager.get().getImageIcon(IconUtils.CLOUD_RED, IconUtils.ICON_SIZE_SMALL));
             break;
+        default:
+            throw new IllegalArgumentException();
         }
     }
 

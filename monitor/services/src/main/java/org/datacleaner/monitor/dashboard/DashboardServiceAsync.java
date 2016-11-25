@@ -35,14 +35,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface DashboardServiceAsync {
 
-    void getTimelines(TenantIdentifier tenant, DashboardGroup group,
-            AsyncCallback<List<TimelineIdentifier>> callback);
+    void getTimelines(TenantIdentifier tenant, DashboardGroup group, AsyncCallback<List<TimelineIdentifier>> callback);
 
     void getTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier identifier,
             AsyncCallback<TimelineDefinition> callback);
 
-    void getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline,
-            AsyncCallback<TimelineData> callback);
+    void getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline, AsyncCallback<TimelineData> callback);
 
     void getJobs(TenantIdentifier tenant, AsyncCallback<List<JobIdentifier>> callback);
 
@@ -58,6 +56,5 @@ public interface DashboardServiceAsync {
 
     void addDashboardGroup(TenantIdentifier tenant, String name, AsyncCallback<DashboardGroup> callback);
 
-    void removeDashboardGroup(TenantIdentifier tenant, DashboardGroup timelineGroup,
-            AsyncCallback<Boolean> callback);
+    void removeDashboardGroup(TenantIdentifier tenant, DashboardGroup timelineGroup, AsyncCallback<Boolean> callback);
 }

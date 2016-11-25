@@ -61,9 +61,10 @@ public class SelectFromMapJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public TransformerComponentBuilderPresenter render(final TransformerComponentBuilder<SelectFromMapTransformer> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
-                PropertyWidgetFactory.class);
+    public TransformerComponentBuilderPresenter render(
+            final TransformerComponentBuilder<SelectFromMapTransformer> tjb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(tjb).getInstance(PropertyWidgetFactory.class);
 
         return new SelectFromMapJobBuilderPresenter(tjb, windowContext, propertyWidgetFactory, configuration);
     }

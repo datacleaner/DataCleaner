@@ -19,8 +19,6 @@
  */
 package org.datacleaner.widgets.result;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.MockInputColumn;
@@ -33,31 +31,33 @@ import org.datacleaner.user.UserPreferencesImpl;
 import org.datacleaner.widgets.result.AnnotatedRowsResultSwingRenderer.AnnotatedRowResultPanel;
 import org.datacleaner.widgets.table.DCTable;
 
+import junit.framework.TestCase;
+
 public class AnnotatedRowsResultSwingRendererTest extends TestCase {
 
     public void testInitialViewState() throws Exception {
-        AnnotatedRowsResultSwingRenderer renderer = new AnnotatedRowsResultSwingRenderer();
+        final AnnotatedRowsResultSwingRenderer renderer = new AnnotatedRowsResultSwingRenderer();
         renderer.userPreferences = new UserPreferencesImpl(null);
         renderer.datastoreCatalog = new DatastoreCatalogImpl();
 
-        RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
-        RowAnnotation annotation = annotationFactory.createAnnotation();
+        final RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
+        final RowAnnotation annotation = annotationFactory.createAnnotation();
 
-        MockInputColumn<String> colFoo = new MockInputColumn<>("foo", String.class);
-        MockInputColumn<String> colBar = new MockInputColumn<>("bar", String.class);
-        MockInputColumn<String> colBaz = new MockInputColumn<>("baz", String.class);
+        final MockInputColumn<String> colFoo = new MockInputColumn<>("foo", String.class);
+        final MockInputColumn<String> colBar = new MockInputColumn<>("bar", String.class);
+        final MockInputColumn<String> colBaz = new MockInputColumn<>("baz", String.class);
 
-        MockInputRow row1 = new MockInputRow().put(colFoo, "1").put(colBar, "2").put(colBaz, "3");
+        final MockInputRow row1 = new MockInputRow().put(colFoo, "1").put(colBar, "2").put(colBaz, "3");
         annotationFactory.annotate(row1, 1, annotation);
 
-        MockInputRow row2 = new MockInputRow().put(colFoo, "4").put(colBar, "5").put(colBaz, "6");
+        final MockInputRow row2 = new MockInputRow().put(colFoo, "4").put(colBar, "5").put(colBaz, "6");
         annotationFactory.annotate(row2, 1, annotation);
 
         // test multiple highlighted columns
         InputColumn<?>[] highlightedColumns = new InputColumn[] { colFoo, colBaz };
 
-        AnnotatedRowResultPanel panel = renderer.render(new AnnotatedRowsResult(annotation, annotationFactory,
-                highlightedColumns));
+        AnnotatedRowResultPanel panel =
+                renderer.render(new AnnotatedRowsResult(annotation, annotationFactory, highlightedColumns));
 
         DCTable table = panel.getTable();
         assertEquals(2, table.getRowCount());

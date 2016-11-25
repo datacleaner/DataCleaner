@@ -22,7 +22,6 @@ package org.datacleaner.monitor.server.job;
 import java.util.List;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HasNameMapper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.job.JobContext;
@@ -73,14 +72,10 @@ public abstract class AbstractJobEngine<T extends JobContext> implements JobEngi
         final RepositoryFolder jobsFolder = tenantContext.getJobFolder();
         final List<RepositoryFile> files = jobsFolder.getFiles(null, _fileExtension);
         final List<String> filenames = CollectionUtils.map(files, new HasNameMapper());
-        final List<JobIdentifier> jobs = CollectionUtils.map(filenames, new Func<String, JobIdentifier>() {
-            @Override
-            public JobIdentifier eval(final String filename) {
-                final String jobName = filename.substring(0, filename.length() - _fileExtension.length());
-                return new JobIdentifier(jobName, getJobType());
-            }
+        return CollectionUtils.map(filenames, filename -> {
+            final String jobName = filename.substring(0, filename.length() - _fileExtension.length());
+            return new JobIdentifier(jobName, getJobType());
         });
-        return jobs;
     }
 
     @Override

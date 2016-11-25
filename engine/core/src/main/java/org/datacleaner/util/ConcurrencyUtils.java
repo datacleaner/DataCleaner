@@ -62,8 +62,8 @@ public class ConcurrencyUtils {
                 iteration++;
                 finished = countDownLatch.await(AWAIT_TIMEOUT_MINUTES, TimeUnit.MINUTES);
                 if (!finished) {
-                    logger.info("Awaited completion of '" + countDownLatchId + "' for "
-                            + (iteration * AWAIT_TIMEOUT_MINUTES) + " minutes...");
+                    logger.info("Awaited completion of '" + countDownLatchId + "' for " + (iteration
+                            * AWAIT_TIMEOUT_MINUTES) + " minutes...");
                 }
             }
         } catch (final InterruptedException e) {

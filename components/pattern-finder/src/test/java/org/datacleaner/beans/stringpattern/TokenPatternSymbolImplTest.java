@@ -29,7 +29,8 @@ public class TokenPatternSymbolImplTest extends TestCase {
         configuration.setDiscriminateTextCase(false);
         configuration.setDistriminateTokenLength(TokenType.TEXT, true);
 
-        TokenPatternSymbol t1 = new TokenPatternSymbolImpl(new SimpleToken(TokenType.TEXT, "hello"), configuration);
+        final TokenPatternSymbol t1 =
+                new TokenPatternSymbolImpl(new SimpleToken(TokenType.TEXT, "hello"), configuration);
         SimpleToken t2;
 
         t2 = new SimpleToken(TokenType.TEXT, "WORLD");
@@ -52,7 +53,8 @@ public class TokenPatternSymbolImplTest extends TestCase {
         configuration.setDiscriminateDecimalNumbers(true);
         configuration.setDiscriminateNegativeNumbers(true);
 
-        TokenPatternSymbol t1 = new TokenPatternSymbolImpl(new SimpleToken(TokenType.NUMBER, "123"), configuration);
+        final TokenPatternSymbol t1 =
+                new TokenPatternSymbolImpl(new SimpleToken(TokenType.NUMBER, "123"), configuration);
         SimpleToken t2;
 
         t2 = new SimpleToken(TokenType.NUMBER, "45678");
@@ -76,14 +78,15 @@ public class TokenPatternSymbolImplTest extends TestCase {
     }
 
     public void testMatchDifferentTypes() throws Exception {
-        TokenPatternSymbol t1 = new TokenPatternSymbolImpl(new SimpleToken(TokenType.TEXT, "hello"), configuration);
-        SimpleToken t2 = new SimpleToken(TokenType.NUMBER, "123");
+        final TokenPatternSymbol t1 =
+                new TokenPatternSymbolImpl(new SimpleToken(TokenType.TEXT, "hello"), configuration);
+        final SimpleToken t2 = new SimpleToken(TokenType.NUMBER, "123");
 
         assertFalse(t1.matches(t2, null));
     }
 
     public void testMatchDelim() throws Exception {
-        TokenPatternSymbol t1 = new TokenPatternSymbolImpl(new SimpleToken(TokenType.DELIM, ",-"), configuration);
+        final TokenPatternSymbol t1 = new TokenPatternSymbolImpl(new SimpleToken(TokenType.DELIM, ",-"), configuration);
 
         SimpleToken t2;
         t2 = new SimpleToken(TokenType.DELIM, ",-");
@@ -96,7 +99,7 @@ public class TokenPatternSymbolImplTest extends TestCase {
     }
 
     public void testMixedTypeSymbolicString() throws Exception {
-        TokenPatternSymbolImpl t1 =
+        final TokenPatternSymbolImpl t1 =
                 new TokenPatternSymbolImpl(new SimpleToken(TokenType.MIXED, "foo123"), configuration);
         assertEquals("??????", t1.toSymbolicString());
         assertTrue(t1.matches(new SimpleToken(TokenType.MIXED, "bar12"), configuration));

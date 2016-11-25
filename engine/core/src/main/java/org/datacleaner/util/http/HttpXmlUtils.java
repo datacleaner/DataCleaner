@@ -110,8 +110,8 @@ public final class HttpXmlUtils {
             return null;
         }
         if (childNodes.size() > 1) {
-            throw new IllegalArgumentException("The node " + node + " contains several childNodes named "
-                    + childNodeName);
+            throw new IllegalArgumentException(
+                    "The node " + node + " contains several childNodes named " + childNodeName);
         }
         return getText(childNodes.get(0));
     }
@@ -133,8 +133,7 @@ public final class HttpXmlUtils {
         }
         method.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
         final ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        final String response = getHttpClient().execute(method, responseHandler);
-        return response;
+        return getHttpClient().execute(method, responseHandler);
     }
 
     private HttpClient getHttpClient() {

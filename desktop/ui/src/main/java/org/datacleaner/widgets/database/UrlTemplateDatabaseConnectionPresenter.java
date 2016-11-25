@@ -62,6 +62,7 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
             }
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(UrlTemplateDatabaseConnectionPresenter.class);
     private final JXTextField _hostnameTextField;
     private final JXTextField _portTextField;
@@ -182,8 +183,8 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
         return initializeFromMatch(datastore, matchingUrlTemplate, match);
     }
 
-    protected boolean initializeFromMatch(final JdbcDatastore datastore, final NamedPattern<UrlPart> matchingUrlTemplate,
-            final NamedPatternMatch<UrlPart> match) {
+    protected boolean initializeFromMatch(final JdbcDatastore datastore,
+            final NamedPattern<UrlPart> matchingUrlTemplate, final NamedPatternMatch<UrlPart> match) {
         _hostnameTextField.setText(match.get(UrlPart.HOSTNAME));
         _portTextField.setText(match.get(UrlPart.PORT));
         _databaseTextField.setText(match.get(UrlPart.DATABASE));

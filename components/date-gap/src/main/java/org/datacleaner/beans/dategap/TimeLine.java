@@ -41,8 +41,8 @@ public class TimeLine implements Serializable {
     public TimeLine() {
     }
 
-    public void addInterval(final TimeInterval i) {
-        intervals.add(i);
+    public void addInterval(final TimeInterval timeInterval) {
+        intervals.add(timeInterval);
     }
 
     /**

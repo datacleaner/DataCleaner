@@ -112,8 +112,8 @@ public final class RendererFactory {
     }
 
     private static RendererInitializer defaultRendererInitializer(final DataCleanerConfiguration configuration) {
-        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
-                .getInjectionManager(configuration);
+        final InjectionManager injectionManager =
+                configuration.getEnvironment().getInjectionManagerFactory().getInjectionManager(configuration);
 
         return new DefaultRendererInitializer(injectionManager);
     }
@@ -140,8 +140,8 @@ public final class RendererFactory {
 
         RendererSelection bestMatch = null;
 
-        final Collection<RendererBeanDescriptor<?>> descriptors = _descriptorProvider
-                .getRendererBeanDescriptorsForRenderingFormat(renderingFormat);
+        final Collection<RendererBeanDescriptor<?>> descriptors =
+                _descriptorProvider.getRendererBeanDescriptorsForRenderingFormat(renderingFormat);
         for (final RendererBeanDescriptor<?> descriptor : descriptors) {
             final RendererSelection rendererMatch = isRendererMatch(descriptor, renderable, bestMatch);
             if (rendererMatch != null) {
@@ -154,12 +154,12 @@ public final class RendererFactory {
             return null;
         }
 
-        @SuppressWarnings("unchecked") final
-        Renderer<? super I, ? extends O> renderer = (Renderer<? super I, ? extends O>) bestMatch.getRenderer();
+        @SuppressWarnings("unchecked") final Renderer<? super I, ? extends O> renderer =
+                (Renderer<? super I, ? extends O>) bestMatch.getRenderer();
 
         if (logger.isInfoEnabled()) {
-            logger.info("Returning renderer '{}' for renderable '{}' in format '{}'", new Object[] { renderer,
-                    renderable.getClass().getName(), renderingFormat.getName() });
+            logger.info("Returning renderer '{}' for renderable '{}' in format '{}'",
+                    new Object[] { renderer, renderable.getClass().getName(), renderingFormat.getName() });
         }
 
         return renderer;
@@ -180,8 +180,7 @@ public final class RendererFactory {
      *         null if not.
      */
     private RendererSelection isRendererMatch(final RendererBeanDescriptor<?> rendererDescriptor,
-            final Renderable renderable,
-            final RendererSelection bestMatch) {
+            final Renderable renderable, final RendererSelection bestMatch) {
         final Class<? extends Renderable> renderableType = rendererDescriptor.getRenderableType();
         final Class<? extends Renderable> renderableClass = renderable.getClass();
         if (ReflectionUtils.is(renderableClass, renderableType)) {
@@ -214,8 +213,7 @@ public final class RendererFactory {
     }
 
     private RendererSelection isRendererCapable(final RendererBeanDescriptor<?> rendererDescriptor,
-            final Renderable renderable,
-            final RendererSelection bestMatch) {
+            final Renderable renderable, final RendererSelection bestMatch) {
         final Renderer<Renderable, ?> renderer = instantiate(rendererDescriptor);
 
         if (_rendererInitializer != null) {

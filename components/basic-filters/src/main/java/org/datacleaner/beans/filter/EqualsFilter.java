@@ -186,11 +186,11 @@ public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>
         return filter(inputValue, compareValue);
     }
 
-    public EqualsFilter.Category filter(final Object v) {
-        return filter(v, null);
+    public EqualsFilter.Category filter(final Object value) {
+        return filter(value, null);
     }
 
-    public EqualsFilter.Category filter(final Object v, final Object compareValue) {
+    public EqualsFilter.Category filter(final Object value, final Object compareValue) {
         final Object[] operands;
 
         if (compareColumn != null) {
@@ -199,7 +199,7 @@ public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>
             operands = _operands;
         }
 
-        if (v == null) {
+        if (value == null) {
             for (final Object obj : operands) {
                 if (obj == null) {
                     return Category.EQUALS;
@@ -212,18 +212,18 @@ public class EqualsFilter implements QueryOptimizedFilter<EqualsFilter.Category>
 
                     if (_number) {
                         final Number n1 = (Number) operand;
-                        final Number n2 = (Number) v;
+                        final Number n2 = (Number) value;
                         if (equals(n1, n2)) {
                             return Category.EQUALS;
                         }
                     } else {
-                        if (operand.equals(v)) {
+                        if (operand.equals(value)) {
                             return Category.EQUALS;
                         }
                         if (operand instanceof String) {
                             // convert to string to check
                             final String str1 = operand.toString();
-                            final String str2 = v.toString();
+                            final String str2 = value.toString();
                             if (str1.equals(str2)) {
                                 return Category.EQUALS;
                             }

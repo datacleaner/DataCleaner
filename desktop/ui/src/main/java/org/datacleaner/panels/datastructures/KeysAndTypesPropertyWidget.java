@@ -35,7 +35,6 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.properties.MinimalPropertyWidget;
 import org.datacleaner.widgets.properties.MultipleStringPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
@@ -151,25 +150,17 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
             comboBox = createComboBox(null);
         }
 
-        comboBox.addListener(new Listener<Class<?>>() {
-            @Override
-            public void onItemSelected(final Class<?> item) {
-                _typesPropertyWidget.fireValueChanged();
-            }
-        });
+        comboBox.addListener(item -> _typesPropertyWidget.fireValueChanged());
 
         textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(final DocumentEvent event) {
                 // invoke later, because document events are fired before the
                 // textfield.getText() returns the new value
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        setUpdating(true);
-                        _typesPropertyWidget.fireValueChanged();
-                        setUpdating(false);
-                    }
+                SwingUtilities.invokeLater(() -> {
+                    setUpdating(true);
+                    _typesPropertyWidget.fireValueChanged();
+                    setUpdating(false);
                 });
             }
         });

@@ -30,7 +30,7 @@ public class ShiftedTodayTest {
     @Test
     public void testOutput() throws Exception {
         for (int i = 0; i < 10; i++) {
-            Date x = getTodayPlus(i, 0, 0);
+            final Date x = getTodayPlus(i, 0, 0);
             x.setTime(x.getTime() + i * 10000);
             System.out.println(x.toString());
         }
@@ -38,13 +38,13 @@ public class ShiftedTodayTest {
 
     @Test
     public void testMonthChangeByDays() throws Exception {
-        ShiftedToday shiftedToday = new ShiftedToday("42d0m0y");
+        final ShiftedToday shiftedToday = new ShiftedToday("42d0m0y");
         assertEquals(getTodayPlus(42, 0, 0), shiftedToday);
     }
 
     @Test
     public void testNegativeShifts() throws Exception {
-        ShiftedToday shiftedToday = new ShiftedToday("-3d-2m-1y");
+        final ShiftedToday shiftedToday = new ShiftedToday("-3d-2m-1y");
         assertEquals(getTodayPlus(-3, -2, -1), shiftedToday);
     }
 
@@ -58,36 +58,36 @@ public class ShiftedTodayTest {
     public void testExpression() throws Exception {
         final String shift = "-0d+0m+0y";
         final String input = "shifted_today(" + shift + ")";
-        ShiftedToday shiftedToday = new ShiftedToday(input);
+        final ShiftedToday shiftedToday = new ShiftedToday(input);
         assertEquals(shift, shiftedToday.getInput());
     }
 
     @Test
     public void testZeroShift() throws Exception {
-        ShiftedToday shiftedToday = new ShiftedToday("0d0m0y");
+        final ShiftedToday shiftedToday = new ShiftedToday("0d0m0y");
         assertEquals(getTodayPlus(0, 0, 0), shiftedToday);
     }
 
     @Test
     public void testPlus() throws Exception {
-        ShiftedToday shiftedToday = new ShiftedToday("+1d0m0y");
+        final ShiftedToday shiftedToday = new ShiftedToday("+1d0m0y");
         assertEquals(getTodayPlus(1, 0, 0), shiftedToday);
     }
 
     @Test
     public void testMinus() throws Exception {
-        ShiftedToday shiftedToday = new ShiftedToday("0d0m-1y");
+        final ShiftedToday shiftedToday = new ShiftedToday("0d0m-1y");
         assertEquals(getTodayPlus(0, 0, -1), shiftedToday);
     }
 
     @Test
     public void testSpacesInInput() throws Exception {
-        ShiftedToday shiftedToday = new ShiftedToday("   0d +0m   -0y  ");
+        final ShiftedToday shiftedToday = new ShiftedToday("   0d +0m   -0y  ");
         assertEquals(getTodayPlus(0, 0, 0), shiftedToday);
     }
 
-    private Date getTodayPlus(int days, int months, int years) {
-        Calendar calendar = Calendar.getInstance();
+    private Date getTodayPlus(final int days, final int months, final int years) {
+        final Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);

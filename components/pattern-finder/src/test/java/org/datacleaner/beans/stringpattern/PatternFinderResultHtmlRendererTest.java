@@ -21,8 +21,6 @@ package org.datacleaner.beans.stringpattern;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -38,6 +36,8 @@ import org.datacleaner.result.html.HtmlRenderingContext;
 import org.datacleaner.result.renderer.AnnotatedRowsHtmlRenderer;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.storage.RowAnnotations;
+
+import junit.framework.TestCase;
 
 public class PatternFinderResultHtmlRendererTest extends TestCase {
 
@@ -55,29 +55,29 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
     }
 
     public void testNoPatterns() throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<>("email username", String.class);
+        final InputColumn<String> col1 = new MockInputColumn<>("email username", String.class);
 
-        PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
+        final PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);
         analyzer.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         analyzer.init();
 
-        PatternFinderResult result = analyzer.getResult();
+        final PatternFinderResult result = analyzer.getResult();
 
-        HtmlFragment htmlFragment = new PatternFinderResultHtmlRenderer(rendererFactory).render(result);
+        final HtmlFragment htmlFragment = new PatternFinderResultHtmlRenderer(rendererFactory).render(result);
         htmlFragment.initialize(context);
         assertEquals(0, htmlFragment.getHeadElements().size());
         assertEquals(1, htmlFragment.getBodyElements().size());
 
-        String html = htmlFragment.getBodyElements().get(0).toHtml(context);
-        assertEquals(FileHelper.readFileAsString(new File(
-                "src/test/resources/pattern_finder_result_html_renderer_empty.html")), html);
+        final String html = htmlFragment.getBodyElements().get(0).toHtml(context);
+        assertEquals(FileHelper
+                .readFileAsString(new File("src/test/resources/pattern_finder_result_html_renderer_empty.html")), html);
     }
 
     public void testSinglePatterns() throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<>("email username", String.class);
+        final InputColumn<String> col1 = new MockInputColumn<>("email username", String.class);
 
-        PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
+        final PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);
         analyzer.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         analyzer.init();
@@ -89,23 +89,24 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
         analyzer.run(new MockInputRow().put(col1, "winfried.vanholland"), 1);
         analyzer.run(new MockInputRow().put(col1, "kaspers"), 1);
 
-        PatternFinderResult result = analyzer.getResult();
+        final PatternFinderResult result = analyzer.getResult();
 
-        HtmlFragment htmlFragment = new PatternFinderResultHtmlRenderer(rendererFactory).render(result);
+        final HtmlFragment htmlFragment = new PatternFinderResultHtmlRenderer(rendererFactory).render(result);
         htmlFragment.initialize(context);
         assertEquals(0, htmlFragment.getHeadElements().size());
         assertEquals(1, htmlFragment.getBodyElements().size());
 
-        String html = htmlFragment.getBodyElements().get(0).toHtml(context);
-        assertEquals(FileHelper.readFileAsString(new File(
-                "src/test/resources/pattern_finder_result_html_renderer_single.html")), html);
+        final String html = htmlFragment.getBodyElements().get(0).toHtml(context);
+        assertEquals(FileHelper
+                        .readFileAsString(new File("src/test/resources/pattern_finder_result_html_renderer_single.html")),
+                html);
     }
 
     public void testMultiplePatterns() throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<>("email username", String.class);
-        InputColumn<String> col2 = new MockInputColumn<>("email domain", String.class);
+        final InputColumn<String> col1 = new MockInputColumn<>("email username", String.class);
+        final InputColumn<String> col2 = new MockInputColumn<>("email domain", String.class);
 
-        PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
+        final PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);
         analyzer.setGroupColumn(col2);
         analyzer.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
@@ -118,15 +119,16 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
         analyzer.run(new MockInputRow().put(col1, "winfried.vanholland").put(col2, "humaninference.com"), 1);
         analyzer.run(new MockInputRow().put(col1, "kaspers").put(col2, "humaninference.com"), 1);
 
-        PatternFinderResult result = analyzer.getResult();
+        final PatternFinderResult result = analyzer.getResult();
 
-        HtmlFragment htmlFragment = new PatternFinderResultHtmlRenderer(rendererFactory).render(result);
+        final HtmlFragment htmlFragment = new PatternFinderResultHtmlRenderer(rendererFactory).render(result);
         htmlFragment.initialize(context);
         assertEquals(0, htmlFragment.getHeadElements().size());
         assertEquals(1, htmlFragment.getBodyElements().size());
 
-        String html = htmlFragment.getBodyElements().get(0).toHtml(context);
-        assertEquals(FileHelper.readFileAsString(new File(
-                "src/test/resources/pattern_finder_result_html_renderer_multiple.html")), html);
+        final String html = htmlFragment.getBodyElements().get(0).toHtml(context);
+        assertEquals(FileHelper
+                        .readFileAsString(new File("src/test/resources/pattern_finder_result_html_renderer_multiple.html")),
+                html);
     }
 }

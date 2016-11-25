@@ -145,7 +145,6 @@ public class ComponentRESTClient {
 
     private String call(final RESTClient.HttpMethod httpMethod, final String url, final String requestBody)
             throws RestrictedFunctionalityException {
-        final String response = restClient.getResponse(httpMethod, url, requestBody);
-        return response;
+        return restClient.getResponse(httpMethod, url, requestBody);
     }
 }

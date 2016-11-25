@@ -19,7 +19,6 @@
  */
 package org.datacleaner.beans.composition;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -27,7 +26,6 @@ import java.util.Map;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
@@ -42,7 +40,9 @@ import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 
 @Named("Invoke child Analysis job")
-@Description("Wraps another (external) Analysis job's transformations and invokes them as an integrated part of the current job. Using this transformation you can compose parent and child jobs for more coarse or more fine granularity of transformations.")
+@Description( "Wraps another (external) Analysis job's transformations and invokes them as an integrated part of the "
+        + "current job. Using this transformation you can compose parent and child jobs for more coarse or more fine "
+        + "granularity of transformations.")
 @Categorized(CompositionCategory.class)
 public class InvokeChildAnalysisJobTransformer extends AbstractWrappedAnalysisJobTransformer {
 
@@ -57,24 +57,20 @@ public class InvokeChildAnalysisJobTransformer extends AbstractWrappedAnalysisJo
 
     @Override
     protected AnalysisJob createWrappedAnalysisJob() {
-        final AnalysisJob job = analysisJobResource.read(new Func<InputStream, AnalysisJob>() {
-            @Override
-            public AnalysisJob eval(final InputStream in) {
-                final JaxbJobReader reader = new JaxbJobReader(getDataCleanerConfiguration());
-                final AnalysisJobBuilder jobBuilder = reader.create(in);
-                final AnalysisJob job = jobBuilder.toAnalysisJob(false);
-                return job;
-            }
+        return analysisJobResource.read(in -> {
+            final JaxbJobReader reader = new JaxbJobReader(getDataCleanerConfiguration());
+            final AnalysisJobBuilder jobBuilder = reader.create(in);
+            return jobBuilder.toAnalysisJob(false);
         });
-        return job;
     }
 
     @Override
     protected Map<InputColumn<?>, InputColumn<?>> getInputColumnConversion(final AnalysisJob wrappedAnalysisJob) {
         final Collection<InputColumn<?>> sourceColumns = wrappedAnalysisJob.getSourceColumns();
         if (input.length < sourceColumns.size()) {
-            throw new IllegalStateException("Wrapped job defines " + sourceColumns.size()
-                    + " columns, but transformer input only defines " + input.length);
+            throw new IllegalStateException(
+                    "Wrapped job defines " + sourceColumns.size() + " columns, but transformer input only defines "
+                            + input.length);
         }
 
         final Map<InputColumn<?>, InputColumn<?>> result = new LinkedHashMap<>();

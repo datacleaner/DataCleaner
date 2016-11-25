@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.jobwizard.common.MockAnalysisWizard;
@@ -45,6 +43,8 @@ import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.util.FileFilters;
 import org.easymock.EasyMock;
 import org.springframework.context.ApplicationContext;
+
+import junit.framework.TestCase;
 
 public class WizardServiceImplTest extends TestCase {
 
@@ -67,8 +67,8 @@ public class WizardServiceImplTest extends TestCase {
 
         wizardDao = new WizardDaoImpl(applicationContextMock);
 
-        final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final TenantContextFactoryImpl tenantContextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         service = new WizardServiceImpl();
         service._tenantContextFactory = tenantContextFactory;
         service._wizardDao = wizardDao;
@@ -93,15 +93,14 @@ public class WizardServiceImplTest extends TestCase {
 
         final DatastoreIdentifier selectedDatastore = datastores.get(1);
 
-        final List<WizardIdentifier> jobWizardIdentifiers = service.getJobWizardIdentifiers(tenant, selectedDatastore,
-                "en");
+        final List<WizardIdentifier> jobWizardIdentifiers =
+                service.getJobWizardIdentifiers(tenant, selectedDatastore, "en");
         assertEquals(1, jobWizardIdentifiers.size());
 
         final WizardIdentifier jobWizardIdentifier = jobWizardIdentifiers.get(0);
         assertEquals("JobWizardIdentifier[Mock wizard]", jobWizardIdentifier.toString());
 
         WizardPage wizardPage;
-        Map<String, List<String>> formParameters;
 
         final String jobName = "JobWizardServiceImplTest-job1";
 
@@ -116,6 +115,7 @@ public class WizardServiceImplTest extends TestCase {
         final WizardSessionIdentifier wizardSession = wizardPage.getSessionIdentifier();
         assertNotNull(wizardSession.getSessionId());
 
+        Map<String, List<String>> formParameters;
         formParameters = new HashMap<>();
         formParameters.put("tableName", Arrays.asList("PUBLIC.CUSTOMERS"));
 
@@ -149,11 +149,12 @@ public class WizardServiceImplTest extends TestCase {
         assertTrue(wizardPage.isFinished());
 
         // find the job and do assertions on it.
-        final File jobFile = new File("src/test/resources/example_repo/" + tenant.getId() + "/jobs/" + jobName
-                + FileFilters.ANALYSIS_XML.getExtension());
+        final File jobFile = new File(
+                "src/test/resources/example_repo/" + tenant.getId() + "/jobs/" + jobName + FileFilters.ANALYSIS_XML
+                        .getExtension());
         try {
-            final DataCleanerJobContext job = (DataCleanerJobContext) service._tenantContextFactory.getContext(tenant)
-                    .getJob(jobName);
+            final DataCleanerJobContext job =
+                    (DataCleanerJobContext) service._tenantContextFactory.getContext(tenant).getJob(jobName);
             assertNotNull(job);
             assertEquals("orderdb", job.getSourceDatastoreName());
             assertEquals("[CUSTOMERS.CUSTOMERNUMBER, CUSTOMERS.CUSTOMERNAME]", job.getSourceColumnPaths().toString());

@@ -38,8 +38,8 @@ public final class Regex extends BaseObject implements Serializable {
     private final List<Category> _categories;
 
     public Regex(final String name, final String description, final String expression, final String author,
-            final long timestamp, final int positiveVotes,
-            final int negativeVotes, final String detailsUrl, final List<Category> categories) {
+            final long timestamp, final int positiveVotes, final int negativeVotes, final String detailsUrl,
+            final List<Category> categories) {
         _name = name;
         _description = description;
         _expression = expression;

@@ -20,8 +20,6 @@
 package org.datacleaner.panels.tablelookup;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +37,6 @@ import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.SourceColumnComboBox;
 import org.datacleaner.widgets.properties.AbstractPropertyWidget;
 import org.jdesktop.swingx.VerticalLayout;
@@ -68,24 +65,18 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
         _comboBoxPanel.setLayout(new VerticalLayout(2));
 
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addComboBox(null, true);
-                fireValueChanged();
-            }
+        addButton.addActionListener(e -> {
+            addComboBox(null, true);
+            fireValueChanged();
         });
 
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final int componentCount = _comboBoxPanel.getComponentCount();
-                if (componentCount > 0) {
-                    removeComboBox();
-                    _comboBoxPanel.updateUI();
-                    fireValueChanged();
-                }
+        removeButton.addActionListener(e -> {
+            final int componentCount = _comboBoxPanel.getComponentCount();
+            if (componentCount > 0) {
+                removeComboBox();
+                _comboBoxPanel.updateUI();
+                fireValueChanged();
             }
         });
 
@@ -123,12 +114,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
         comboBox.setEditable(true);
         comboBox.setSelectedItem(column);
         comboBox.setEditable(false);
-        comboBox.addColumnSelectedListener(new Listener<Column>() {
-            @Override
-            public void onItemSelected(final Column item) {
-                fireValueChanged();
-            }
-        });
+        comboBox.addColumnSelectedListener(item -> fireValueChanged());
 
         _comboBoxes.add(comboBox);
         _comboBoxPanel.add(comboBox);

@@ -19,11 +19,11 @@
  */
 package org.datacleaner.beans.codec;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+
+import junit.framework.TestCase;
 
 public class XmlDecoderTransformerTest extends TestCase {
 
@@ -38,32 +38,32 @@ public class XmlDecoderTransformerTest extends TestCase {
     }
 
     public void testGetOutputColumns() throws Exception {
-        OutputColumns outputColumns = transformer.getOutputColumns();
+        final OutputColumns outputColumns = transformer.getOutputColumns();
         assertEquals(1, outputColumns.getColumnCount());
         assertEquals("mock (XML decoded)", outputColumns.getColumnName(0));
     }
 
     public void testNull() throws Exception {
-        String[] result = transformer.transform(new MockInputRow());
+        final String[] result = transformer.transform(new MockInputRow());
         assertEquals(1, result.length);
         assertEquals(null, result[0]);
     }
 
     public void testNoXml() throws Exception {
-        String[] result = transformer.transform(new MockInputRow().put(column, "hello world"));
+        final String[] result = transformer.transform(new MockInputRow().put(column, "hello world"));
         assertEquals(1, result.length);
         assertEquals("hello world", result[0]);
     }
 
     public void testSimpleAmp() throws Exception {
-        String[] result = transformer.transform(new MockInputRow().put(column, "hello gartner &amp; forrester"));
+        final String[] result = transformer.transform(new MockInputRow().put(column, "hello gartner &amp; forrester"));
         assertEquals(1, result.length);
         assertEquals("hello gartner & forrester", result[0]);
     }
 
     public void testFullDoc() throws Exception {
-        String[] result = transformer.transform(new MockInputRow().put(column,
-                "<greeting lang=\"en\">Hello</greeting><who>World</who>"));
+        final String[] result = transformer
+                .transform(new MockInputRow().put(column, "<greeting lang=\"en\">Hello</greeting><who>World</who>"));
         assertEquals(1, result.length);
         assertEquals("<greeting lang=\"en\">Hello</greeting><who>World</who>", result[0]);
     }

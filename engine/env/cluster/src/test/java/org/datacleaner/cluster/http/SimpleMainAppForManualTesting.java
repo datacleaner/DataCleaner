@@ -42,7 +42,7 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 
 public class SimpleMainAppForManualTesting {
 
-    public static void main(String[] args) throws Throwable {
+    public static void main(final String[] args) throws Throwable {
 
         // create a HTTP BASIC enabled HTTP client
         final CloseableHttpClient httpClient = HttpClients.createSystem();
@@ -71,27 +71,29 @@ public class SimpleMainAppForManualTesting {
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER", "CUSTOMERS.CUSTOMERNAME", "CUSTOMERS.CONTACTFIRSTNAME",
                 "CUSTOMERS.CONTACTLASTNAME");
 
-        AnalyzerComponentBuilder<CompletenessAnalyzer> completeness = jobBuilder
-                .addAnalyzer(CompletenessAnalyzer.class);
+        final AnalyzerComponentBuilder<CompletenessAnalyzer> completeness =
+                jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
         completeness.addInputColumns(jobBuilder.getSourceColumns());
-        completeness.setConfiguredProperty("Conditions", new CompletenessAnalyzer.Condition[] {
-                CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL, CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL,
-                CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL, CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL });
+        completeness.setConfiguredProperty("Conditions",
+                new CompletenessAnalyzer.Condition[] { CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL,
+                        CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL,
+                        CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL,
+                        CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL });
 
-        AnalysisJob job = jobBuilder.toAnalysisJob();
+        final AnalysisJob job = jobBuilder.toAnalysisJob();
         jobBuilder.close();
 
-        AnalysisResultFuture result = new DistributedAnalysisRunner(configuration, clusterManager).run(job);
+        final AnalysisResultFuture result = new DistributedAnalysisRunner(configuration, clusterManager).run(job);
 
         if (result.isErrornous()) {
             throw result.getErrors().get(0);
         }
 
         final List<AnalyzerResult> results = result.getResults();
-        for (AnalyzerResult analyzerResult : results) {
+        for (final AnalyzerResult analyzerResult : results) {
             System.out.println("result:" + analyzerResult);
             if (analyzerResult instanceof CompletenessAnalyzerResult) {
-                int invalidRowCount = ((CompletenessAnalyzerResult) analyzerResult).getInvalidRowCount();
+                final int invalidRowCount = ((CompletenessAnalyzerResult) analyzerResult).getInvalidRowCount();
                 System.out.println("invalid records found: " + invalidRowCount);
             } else {
                 System.out.println("class: " + analyzerResult.getClass().getName());

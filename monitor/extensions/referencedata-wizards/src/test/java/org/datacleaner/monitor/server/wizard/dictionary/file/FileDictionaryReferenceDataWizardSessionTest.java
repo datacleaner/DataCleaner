@@ -27,7 +27,7 @@ import org.junit.Test;
 public class FileDictionaryReferenceDataWizardSessionTest {
     @Test
     public void testFirstPageController() {
-        FileDictionaryReferenceDataWizardSession session =
+        final FileDictionaryReferenceDataWizardSession session =
                 new FileDictionaryReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNotNull(session.firstPageController());
     }

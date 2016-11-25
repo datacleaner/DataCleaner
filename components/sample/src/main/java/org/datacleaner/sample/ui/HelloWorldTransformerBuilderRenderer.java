@@ -41,8 +41,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * User Interface which may be useful for certain types of extensions.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class HelloWorldTransformerBuilderRenderer implements
-        Renderer<TransformerComponentBuilder<?>, TransformerComponentBuilderPresenter> {
+public class HelloWorldTransformerBuilderRenderer
+        implements Renderer<TransformerComponentBuilder<?>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -63,8 +63,8 @@ public class HelloWorldTransformerBuilderRenderer implements
 
     @Override
     public TransformerComponentBuilderPresenter render(final TransformerComponentBuilder<?> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
-                PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(tjb).getInstance(PropertyWidgetFactory.class);
         return new HelloWorldTransformerPresenter(tjb, windowContext, propertyWidgetFactory, configuration);
     }
 }

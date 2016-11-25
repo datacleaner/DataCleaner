@@ -124,8 +124,7 @@ public class ComponentControllerV1 {
 
     public enum OutputStyle {
 
-        TABULAR,
-        MAP;
+        TABULAR, MAP;
 
         public static OutputStyle forString(String outputStyle) {
             if (outputStyle == null) {
@@ -152,6 +151,7 @@ public class ComponentControllerV1 {
             @JsonProperty
             private String exceptionClass;
         }
+
         @JsonProperty
         ErrorDetails error;
 
@@ -161,6 +161,7 @@ public class ComponentControllerV1 {
             error.exceptionClass = e.getClass().getName();
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(ComponentControllerV1.class);
     private static final String VERSION_ENABLE_COMPONENT_PARAM = "5.0.4-SNAPSHOT";
     private static final String PARAMETER_NAME_TENANT = "tenant";
@@ -195,14 +196,13 @@ public class ComponentControllerV1 {
         return objectMapper.valueToTree(value);
     }
 
-    public static ComponentList.ComponentInfo createComponentInfo(final String tenant, final ComponentDescriptor<?> descriptor,
-            final boolean iconData, final Boolean isEnabled) {
+    public static ComponentList.ComponentInfo createComponentInfo(final String tenant,
+            final ComponentDescriptor<?> descriptor, final boolean iconData, final Boolean isEnabled) {
         final Object componentInstance = descriptor.newInstance();
-        final ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo()
-                .setName(descriptor.getDisplayName())
-                .setEnabled(isEnabled)
-                .setCreateURL(getURLForCreation(tenant, descriptor))
-                .setProperties(createPropertiesInfo(descriptor, componentInstance));
+        final ComponentList.ComponentInfo componentInfo =
+                new ComponentList.ComponentInfo().setName(descriptor.getDisplayName()).setEnabled(isEnabled)
+                        .setCreateURL(getURLForCreation(tenant, descriptor))
+                        .setProperties(createPropertiesInfo(descriptor, componentInstance));
         setComponentAnnotations(descriptor, componentInfo);
         if (iconData) {
             componentInfo.setIconData(getComponentIconData(descriptor));
@@ -219,12 +219,10 @@ public class ComponentControllerV1 {
             }
 
             final String iconImagePath = IconUtils.getImagePathForClass(descriptor.getComponentClass());
-            final InputStream iconStream = descriptor.getComponentClass().getClassLoader().getResourceAsStream(iconImagePath);
             Image icon;
-            try {
+            try (InputStream iconStream = descriptor.getComponentClass().getClassLoader()
+                    .getResourceAsStream(iconImagePath)) {
                 icon = ImageIO.read(iconStream);
-            } finally {
-                iconStream.close();
             }
             final int maxSize = IconUtils.ICON_SIZE_LARGE;
             int iconW = icon.getWidth(null);
@@ -292,7 +290,8 @@ public class ComponentControllerV1 {
         return result;
     }
 
-    private static Map<String, Map<String, Object>> getAnnotationMap(final Set<Annotation> annotations, final String objectName) {
+    private static Map<String, Map<String, Object>> getAnnotationMap(final Set<Annotation> annotations,
+            final String objectName) {
         final Map<String, Map<String, Object>> annotationMap = new HashMap<>();
         for (final Annotation an : annotations) {
             boolean addAnnotationToMap = true;
@@ -352,8 +351,7 @@ public class ComponentControllerV1 {
     }
 
     private static void setPropertyType(final ComponentDescriptor<?> descriptor,
-            final ConfiguredPropertyDescriptor propertyDescriptor,
-            final ComponentList.PropertyInfo propInfo) {
+            final ConfiguredPropertyDescriptor propertyDescriptor, final ComponentList.PropertyInfo propInfo) {
 
         // Special support for enumerations in case we are publishing info about a remote transformer from another server.
         // (Client -> Server1 -> Server2)
@@ -401,8 +399,9 @@ public class ComponentControllerV1 {
             }
             if (!propertyDescriptor.isInputColumn()) {
                 try {
-                    ComponentHandler.mapper.acceptJsonFormatVisitor(
-                            ComponentHandler.mapper.constructType(f.getGenericType()), visitor);
+                    ComponentHandler.mapper
+                            .acceptJsonFormatVisitor(ComponentHandler.mapper.constructType(f.getGenericType()),
+                                    visitor);
                 } catch (final JsonMappingException e) {
                     throw new RuntimeException(e);
                 }
@@ -445,13 +444,13 @@ public class ComponentControllerV1 {
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ComponentList getAllComponents(
-            @RequestHeader(value = RESTClient.HEADER_DC_VERSION, required = false) final String dataCleanerClientVersion,
-            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") final boolean iconData) {
+    public ComponentList getAllComponents(@RequestHeader(value = RESTClient.HEADER_DC_VERSION, required = false)
+            final String dataCleanerClientVersion, @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false")
+            final boolean iconData) {
         final DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
-        final Collection<TransformerDescriptor<?>> transformerDescriptors = configuration.getEnvironment()
-                .getDescriptorProvider().getTransformerDescriptors();
+        final Collection<TransformerDescriptor<?>> transformerDescriptors =
+                configuration.getEnvironment().getDescriptorProvider().getTransformerDescriptors();
         final ComponentList componentList = new ComponentList();
 
         final int comp = compareVersions(VERSION_ENABLE_COMPONENT_PARAM, dataCleanerClientVersion);
@@ -480,10 +479,11 @@ public class ComponentControllerV1 {
     @ResponseBody
     @RequestMapping(value = "/{name}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ComponentList.ComponentInfo getComponentInfo(
-            @RequestHeader(value = RESTClient.HEADER_DC_VERSION, required = false) final String dataCleanerClientVersion,
-            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @RequestHeader(value = RESTClient.HEADER_DC_VERSION, required = false)
+            final String dataCleanerClientVersion, @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) String name,
-            @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false") final boolean iconData) {
+            @RequestParam(value = PARAMETER_NAME_ICON_DATA, required = false, defaultValue = "false")
+            final boolean iconData) {
         name = ComponentsRestClientUtils.unescapeComponentName(name);
         logger.debug("Informing about '" + name + "'");
         final DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
@@ -506,7 +506,8 @@ public class ComponentControllerV1 {
      * Returns output columns specification, based on the provided configuration
      */
     @ResponseBody
-    @RequestMapping(value = "/{name}/_outputColumns", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{name}/_outputColumns", method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public OutputColumns getOutputColumns(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name, @RequestBody final CreateInput createInput) {
@@ -532,13 +533,14 @@ public class ComponentControllerV1 {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProcessStatelessOutput processStateless(
-            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+    @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ProcessStatelessOutput processStateless(@PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_NAME) final String name,
-            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false, defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) final String outputStyle,
-            @RequestParam(value = PARAMETER_NAME_COLUMNS, required = false, defaultValue = "false") final boolean outputColumnsInfo,
-            @RequestBody final ProcessStatelessInput processStatelessInput) {
+            @RequestParam(value = PARAMETER_NAME_OUTPUT_STYLE, required = false,
+                    defaultValue = PARAMETER_VALUE_OUTPUT_STYLE_TABULAR) final String outputStyle,
+            @RequestParam(value = PARAMETER_NAME_COLUMNS, required = false, defaultValue = "false")
+            final boolean outputColumnsInfo, @RequestBody final ProcessStatelessInput processStatelessInput) {
         final String decodedName = ComponentsRestClientUtils.unescapeComponentName(name);
 
         logger.debug("One-shot processing '{}'", decodedName);
@@ -701,8 +703,8 @@ public class ComponentControllerV1 {
 
     @ExceptionHandler
     @ResponseBody
-    public Object handleException(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
-            final Exception ex) throws IOException {
+    public Object handleException(final HttpServletRequest request, final HttpServletResponse response,
+            final Object handler, final Exception ex) throws IOException {
         logger.debug("Error in controller", ex);
 
         final AtomicInteger errorCode = new AtomicInteger(500);

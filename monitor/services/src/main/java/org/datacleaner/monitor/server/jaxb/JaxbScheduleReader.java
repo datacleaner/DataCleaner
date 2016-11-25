@@ -45,11 +45,10 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
         super(Schedule.class);
     }
 
-    public ScheduleDefinition read(final InputStream inputStream, final JobIdentifier job, final TenantIdentifier tenant,
-            final String groupName) {
+    public ScheduleDefinition read(final InputStream inputStream, final JobIdentifier job,
+            final TenantIdentifier tenant, final String groupName) {
         final Schedule schedule = unmarshal(inputStream);
-        final ScheduleDefinition scheduleDefinition = createSchedule(schedule, job, tenant, groupName, true);
-        return scheduleDefinition;
+        return createSchedule(schedule, job, tenant, groupName, true);
     }
 
     public AlertDefinition createAlert(final Alert alert) {
@@ -81,8 +80,8 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
         }
     }
 
-    public ScheduleDefinition createSchedule(final Schedule schedule, final JobIdentifier job, final TenantIdentifier tenant,
-            final String groupName, final boolean includeAlerts) {
+    public ScheduleDefinition createSchedule(final Schedule schedule, final JobIdentifier job,
+            final TenantIdentifier tenant, final String groupName, final boolean includeAlerts) {
         final ScheduleDefinition scheduleDefinition = new ScheduleDefinition();
         if (schedule != null) {
             scheduleDefinition.setDateForOneTimeSchedule(schedule.getOneTime());

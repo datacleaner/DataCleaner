@@ -49,8 +49,8 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ChangeRequirementButton.class);
     private static final ImageManager imageManager = ImageManager.get();
-    private static final Icon filterIcon = imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH,
-            IconUtils.ICON_SIZE_MEDIUM);
+    private static final Icon filterIcon =
+            imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);
 
     private final ComponentBuilder _componentBuilder;
 
@@ -83,17 +83,14 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     public void updateText() {
         logger.debug("updateText()");
 
-        final Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                final ComponentRequirement requirement = _componentBuilder.getComponentRequirement();
-                if (requirement == null) {
-                    setText(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT);
-                } else if (AnyComponentRequirement.get().equals(requirement)) {
-                    setText(ChangeRequirementMenuBuilder.ANY_REQUIREMENT_TEXT);
-                } else {
-                    setText(requirement.getSimpleName());
-                }
+        final Runnable runnable = () -> {
+            final ComponentRequirement requirement = _componentBuilder.getComponentRequirement();
+            if (requirement == null) {
+                setText(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT);
+            } else if (AnyComponentRequirement.get().equals(requirement)) {
+                setText(ChangeRequirementMenuBuilder.ANY_REQUIREMENT_TEXT);
+            } else {
+                setText(requirement.getSimpleName());
             }
         };
         try {

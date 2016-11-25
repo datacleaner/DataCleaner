@@ -20,7 +20,6 @@
 package org.datacleaner.user;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -82,13 +81,13 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
         loadExtensions(userPreferences);
 
         // load the configuration file
-        final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(
-                new DesktopConfigurationReaderInterceptor(_dataCleanerHome));
+        final JaxbConfigurationReader configurationReader =
+                new JaxbConfigurationReader(new DesktopConfigurationReaderInterceptor(_dataCleanerHome));
 
         boolean exists;
         try {
             exists = _configurationFile != null && _configurationFile.exists();
-        } catch (final FileSystemException e1) {
+        } catch (final FileSystemException e) {
             logger.debug("Could not determine if configuration file exists");
             exists = false;
         }
@@ -115,8 +114,8 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
                 if (e instanceof RuntimeException) {
                     throw (RuntimeException) e;
                 }
-                throw new IllegalStateException("Unexpected error while reading configuration file: "
-                        + _configurationFile, e);
+                throw new IllegalStateException(
+                        "Unexpected error while reading configuration file: " + _configurationFile, e);
             } finally {
                 FileHelper.safeClose(inputStream);
             }
@@ -182,12 +181,7 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
 
         // List directories and treat each sub directory with JAR files as
         // an extension
-        final File[] subDirectories = extensionsDirectory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(final File file) {
-                return file.isDirectory();
-            }
-        });
+        final File[] subDirectories = extensionsDirectory.listFiles(File::isDirectory);
         if (subDirectories != null) {
             for (final File subDirectory : subDirectories) {
                 final String directoryName = subDirectory.getName();
@@ -209,8 +203,8 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
         logger.info("Reading conf.xml from classpath");
         try {
             return configurationReader.create(ResourceManager.get().getUrl("datacleaner-home/conf.xml").openStream());
-        } catch (final Exception ex2) {
-            logger.warn("Unexpected error while reading conf.xml from classpath!", ex2);
+        } catch (final Exception e) {
+            logger.warn("Unexpected error while reading conf.xml from classpath!", e);
             logger.warn("Creating a bare-minimum configuration because of previous errors!");
             return new DataCleanerConfigurationImpl();
         }

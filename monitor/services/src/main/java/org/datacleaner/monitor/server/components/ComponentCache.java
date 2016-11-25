@@ -98,7 +98,8 @@ public class ComponentCache {
             }
         }
 
-        private void checkComponentStoreHolder(final TenantContext tenantContext, final ComponentStoreHolder componentStoreHolder) {
+        private void checkComponentStoreHolder(final TenantContext tenantContext,
+                final ComponentStoreHolder componentStoreHolder) {
             final String instanceId = componentStoreHolder.getInstanceId();
             allIdInCache.remove(instanceId);
             final ComponentCacheConfigWrapper cache = data.get(instanceId);
@@ -106,8 +107,8 @@ public class ComponentCache {
             if (cache == null) {
                 removeFromStore(tenantContext, componentStoreHolder);
             } else {
-                final long maxTimestamp = Math.max(
-                        cache.getComponentStoreHolder().getUseTimestamp(), componentStoreHolder.getUseTimestamp());
+                final long maxTimestamp = Math.max(cache.getComponentStoreHolder().getUseTimestamp(),
+                        componentStoreHolder.getUseTimestamp());
 
                 if (maxTimestamp + componentStoreHolder.getTimeout() < System.currentTimeMillis()) {
                     remove(tenantContext, componentStoreHolder);
@@ -125,7 +126,8 @@ public class ComponentCache {
             removeConfigurationOnlyFromStore(instanceId, tenantContext);
         }
 
-        private void removeFromStore(final TenantContext tenantContext, final ComponentStoreHolder componentStoreHolder) {
+        private void removeFromStore(final TenantContext tenantContext,
+                final ComponentStoreHolder componentStoreHolder) {
             final String instanceId = componentStoreHolder.getInstanceId();
 
             if (!componentStoreHolder.isValid()) {
@@ -150,6 +152,7 @@ public class ComponentCache {
             }
         }
     }
+
     private static final Logger logger = LoggerFactory.getLogger(ComponentCache.class);
     private static final long CHECK_INTERVAL = 5 * 60 * 1000;
     private static final long CLOSE_TIMEOUT = 60 * 1000;
@@ -160,7 +163,8 @@ public class ComponentCache {
     private final TenantContextFactory _tenantContextFactory;
 
     @Autowired
-    public ComponentCache(final ComponentHandlerFactory componentHandlerFactory, final TenantContextFactory tenantCtxFac) {
+    public ComponentCache(final ComponentHandlerFactory componentHandlerFactory,
+            final TenantContextFactory tenantCtxFac) {
         this.componentHandlerFactory = componentHandlerFactory;
         this._tenantContextFactory = tenantCtxFac;
         checker = new TimeoutChecker();
@@ -172,13 +176,13 @@ public class ComponentCache {
     /**
      * Put configuration of component to the cache
      */
-    public void put(final String tenant, final TenantContext tenantContext, final ComponentStoreHolder componentsHolder) {
+    public void put(final String tenant, final TenantContext tenantContext,
+            final ComponentStoreHolder componentsHolder) {
         logger.info("Put component. name: {}, instanceId: {}.", componentsHolder.getComponentName(),
                 componentsHolder.getInstanceId());
-        final ComponentHandler handler = componentHandlerFactory.createComponent(
-                tenantContext,
-                componentsHolder.getComponentName(),
-                componentsHolder.getCreateInput().configuration);
+        final ComponentHandler handler = componentHandlerFactory
+                .createComponent(tenantContext, componentsHolder.getComponentName(),
+                        componentsHolder.getCreateInput().configuration);
         final ComponentCacheConfigWrapper wrapper = new ComponentCacheConfigWrapper(tenant, componentsHolder, handler);
         data.put(componentsHolder.getInstanceId(), wrapper);
         tenantContext.getComponentStore().store(wrapper.getComponentStoreHolder());
@@ -199,10 +203,9 @@ public class ComponentCache {
                 logger.warn("Configuration {} does not exist in store.", id);
                 return null;
             } else {
-                final ComponentHandler componentHandler = componentHandlerFactory.createComponent(
-                        tenantContext,
-                        storeConfig.getComponentName(),
-                        storeConfig.getCreateInput().configuration);
+                final ComponentHandler componentHandler = componentHandlerFactory
+                        .createComponent(tenantContext, storeConfig.getComponentName(),
+                                storeConfig.getCreateInput().configuration);
                 componentCacheConfigWrapper = new ComponentCacheConfigWrapper(tenant, storeConfig, componentHandler);
                 data.put(id, componentCacheConfigWrapper);
             }

@@ -32,7 +32,6 @@ import javax.el.ValueExpression;
 
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.AnalyzerResultFuture;
 import org.datacleaner.api.InputColumn;
@@ -110,8 +109,8 @@ public class MetricValueUtils {
         return result;
     }
 
-    private ComponentJob getComponentJobFuzzy(final Collection<ComponentJob> componentJobs, final ComponentJob componentJob,
-            final MetricIdentifier metricIdentifier) {
+    private ComponentJob getComponentJobFuzzy(final Collection<ComponentJob> componentJobs,
+            final ComponentJob componentJob, final MetricIdentifier metricIdentifier) {
         List<ComponentJob> candidates = new ArrayList<>(componentJobs);
 
         final String analyzerJobName;
@@ -125,58 +124,42 @@ public class MetricValueUtils {
         }
 
         // filter analyzers of the corresponding type
-        candidates = CollectionUtils.filter(candidates, new Predicate<ComponentJob>() {
-            @Override
-            public Boolean eval(final ComponentJob o) {
-                final String actualDescriptorName = o.getDescriptor().getDisplayName();
-                final String metricDescriptorName = componentJobDescriptorName;
-                return metricDescriptorName.equals(actualDescriptorName);
-            }
+        candidates = CollectionUtils.filter(candidates, o -> {
+            final String actualDescriptorName = o.getDescriptor().getDisplayName();
+            return componentJobDescriptorName.equals(actualDescriptorName);
         });
 
         if (!StringUtils.isNullOrEmpty(analyzerJobName)) {
             // filter analyzers with a particular name
-            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<ComponentJob>() {
-                @Override
-                public Boolean eval(final ComponentJob o) {
-                    final String actualAnalyzerName = o.getName();
-                    final String metricAnalyzerName = analyzerJobName;
-                    return metricAnalyzerName.equals(actualAnalyzerName);
-                }
+            candidates = CollectionUtils2.refineCandidates(candidates, o -> {
+                final String actualAnalyzerName = o.getName();
+                return analyzerJobName.equals(actualAnalyzerName);
             });
         }
 
         if (componentJob instanceof InputColumnSinkJob) {
             // filter analyzer jobs with same input
-            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<ComponentJob>() {
-                @Override
-                public Boolean eval(final ComponentJob o) {
-                    if (o instanceof InputColumnSinkJob) {
-                        final InputColumn<?>[] input1 = ((InputColumnSinkJob) o).getInput();
-                        final InputColumn<?>[] input2 = ((InputColumnSinkJob) componentJob).getInput();
-                        final String actualAnalyzerInputNames = CollectionUtils.map(input1, new HasNameMapper())
-                                .toString();
-                        final String metricAnalyzerInputNames = CollectionUtils.map(input2, new HasNameMapper())
-                                .toString();
-                        return metricAnalyzerInputNames.equals(actualAnalyzerInputNames);
-                    }
-                    return false;
+            candidates = CollectionUtils2.refineCandidates(candidates, o -> {
+                if (o instanceof InputColumnSinkJob) {
+                    final InputColumn<?>[] input1 = ((InputColumnSinkJob) o).getInput();
+                    final InputColumn<?>[] input2 = ((InputColumnSinkJob) componentJob).getInput();
+                    final String actualAnalyzerInputNames = CollectionUtils.map(input1, new HasNameMapper()).toString();
+                    final String metricAnalyzerInputNames = CollectionUtils.map(input2, new HasNameMapper()).toString();
+                    return metricAnalyzerInputNames.equals(actualAnalyzerInputNames);
                 }
+                return false;
             });
         }
 
         // filter analyzer jobs with input matching the metric
         final String analyzerInputName = metricIdentifier.getAnalyzerInputName();
         if (analyzerInputName != null) {
-            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<ComponentJob>() {
-                @Override
-                public Boolean eval(final ComponentJob o) {
-                    final InputColumn<?> identifyingInputColumn = AnalyzerJobHelper.getIdentifyingInputColumn(o);
-                    if (identifyingInputColumn == null) {
-                        return false;
-                    }
-                    return analyzerInputName.equals(identifyingInputColumn.getName());
+            candidates = CollectionUtils2.refineCandidates(candidates, o -> {
+                final InputColumn<?> identifyingInputColumn = AnalyzerJobHelper.getIdentifyingInputColumn(o);
+                if (identifyingInputColumn == null) {
+                    return false;
                 }
+                return analyzerInputName.equals(identifyingInputColumn.getName());
             });
         }
 
@@ -186,8 +169,7 @@ public class MetricValueUtils {
             logger.warn("Multiple matching AnalyzerJobs found, selecting the first: {}", candidates);
         }
 
-        final ComponentJob candidate = candidates.iterator().next();
-        return candidate;
+        return candidates.iterator().next();
     }
 
     private AnalyzerResult getResultFuzzy(final AnalysisResult analysisResult, final ComponentJob componentJob,
@@ -200,8 +182,8 @@ public class MetricValueUtils {
             final int candidateHash = candidate.hashCode();
             final int keyHash = componentJob.hashCode();
             final boolean equals = candidate.equals(componentJob);
-            logger.debug("Result of fuzzy result lookup: Equals={}, CandidateHash={}, KeyHash={}", new Object[] {
-                    equals, candidateHash, keyHash });
+            logger.debug("Result of fuzzy result lookup: Equals={}, CandidateHash={}, KeyHash={}",
+                    new Object[] { equals, candidateHash, keyHash });
         }
 
         return analysisResult.getResult(candidate);
@@ -229,14 +211,12 @@ public class MetricValueUtils {
 
         if (analysisJob == null) {
             final Set<ComponentJob> componentJobs = analysisResult.getResultMap().keySet();
-            final ComponentJob analyzer = getComponentJobFuzzy(componentJobs, null, metricIdentifier);
-            return analyzer;
+            return getComponentJobFuzzy(componentJobs, null, metricIdentifier);
         }
 
         final AnalyzerJobHelper analyzerJobHelper = new AnalyzerJobHelper(analysisJob);
-        final AnalyzerJob analyzerJob = analyzerJobHelper.getAnalyzerJob(metricIdentifier.getAnalyzerDescriptorName(),
-                metric.getAnalyzerName(), metric.getAnalyzerInputName());
-        return analyzerJob;
+        return analyzerJobHelper.getAnalyzerJob(metricIdentifier.getAnalyzerDescriptorName(), metric.getAnalyzerName(),
+                metric.getAnalyzerInputName());
     }
 
     private MetricIdentifier findSingularMetricIdentifierOfFormula(final MetricIdentifier metric) {
@@ -278,8 +258,8 @@ public class MetricValueUtils {
                 // specified by the component) - that's the most precise way to
                 // resolve the metric
                 final ResultDescriptor resultDescriptor = Descriptors.ofResult(analyzerResult);
-                final MetricDescriptor metric = resultDescriptor.getResultMetric(metricIdentifier
-                        .getMetricDescriptorName());
+                final MetricDescriptor metric =
+                        resultDescriptor.getResultMetric(metricIdentifier.getMetricDescriptorName());
                 if (metric == null) {
                     logger.error("Did not find any metric descriptors with name '{}' in result {}",
                             metricIdentifier.getMetricDescriptorName(), analyzerResult);
@@ -291,8 +271,8 @@ public class MetricValueUtils {
         if (componentDescriptor instanceof HasAnalyzerResultComponentDescriptor) {
             final HasAnalyzerResultComponentDescriptor<?> hasAnalyzerResultBeanDescriptor =
                     (HasAnalyzerResultComponentDescriptor<?>) componentDescriptor;
-            final MetricDescriptor metric = hasAnalyzerResultBeanDescriptor.getResultMetric(metricIdentifier
-                    .getMetricDescriptorName());
+            final MetricDescriptor metric =
+                    hasAnalyzerResultBeanDescriptor.getResultMetric(metricIdentifier.getMetricDescriptorName());
 
             if (metric == null) {
                 logger.error("Did not find any metric descriptors with name '{}' in {}",
@@ -374,10 +354,11 @@ public class MetricValueUtils {
             for (final MetricIdentifier child : children) {
                 final MetricDescriptor childDescriptor = getMetricDescriptor(child, analysisJob, null, analysisResult);
                 final ComponentJob childComponentJob = getComponentJob(child, analysisJob, null);
-                final MetricParameters childParameters = getParameters(jobEngine, jobContext, child, childDescriptor,
-                        childComponentJob);
-                final Number childValue = getMetricValue(jobEngine, jobContext, child, childDescriptor, analysisJob,
-                        childComponentJob, analysisResult, childParameters);
+                final MetricParameters childParameters =
+                        getParameters(jobEngine, jobContext, child, childDescriptor, childComponentJob);
+                final Number childValue =
+                        getMetricValue(jobEngine, jobContext, child, childDescriptor, analysisJob, childComponentJob,
+                                analysisResult, childParameters);
                 final String variableName = prepareVariableName(child.getDisplayName());
                 context.getELResolver().setValue(context, null, variableName, childValue);
             }
@@ -436,8 +417,9 @@ public class MetricValueUtils {
      */
     public List<MetricGroup> getMetricGroups(final MetricJobContext jobContext, final AnalysisJob analysisJob) {
         final List<MetricGroup> metricGroups = new ArrayList<>();
-        final List<AnalyzerJob> analyzerJobs = analysisJob.flattened()
-                .flatMap(analysisJob1 -> analysisJob1.getAnalyzerJobs().stream()).collect(Collectors.toList());
+        final List<AnalyzerJob> analyzerJobs =
+                analysisJob.flattened().flatMap(analysisJob1 -> analysisJob1.getAnalyzerJobs().stream())
+                        .collect(Collectors.toList());
 
         for (final AnalyzerJob analyzerJob : analyzerJobs) {
             final Set<MetricDescriptor> metricDescriptors = analyzerJob.getDescriptor().getResultMetrics();
@@ -451,8 +433,8 @@ public class MetricValueUtils {
 
     public List<String> getInputColumnNames(final AnalyzerJob analyzerJob) {
         final List<String> columnNames = new ArrayList<>();
-        final Set<ConfiguredPropertyDescriptor> inputProperties = analyzerJob.getDescriptor()
-                .getConfiguredPropertiesForInput(false);
+        final Set<ConfiguredPropertyDescriptor> inputProperties =
+                analyzerJob.getDescriptor().getConfiguredPropertiesForInput(false);
         for (final ConfiguredPropertyDescriptor inputProperty : inputProperties) {
             final Object input = analyzerJob.getConfiguration().getProperty(inputProperty);
             if (input instanceof InputColumn) {
@@ -486,9 +468,9 @@ public class MetricValueUtils {
             return null;
         }
 
-        if (componentJob.getDescriptor().getComponentClass() == PatternFinderAnalyzer.class && !(componentJob
-                .getConfiguration().getProperty(componentJob.getDescriptor().getConfiguredProperty(
-                        "Group column")) == null)) {
+        if (componentJob.getDescriptor().getComponentClass() == PatternFinderAnalyzer.class && !(
+                componentJob.getConfiguration()
+                        .getProperty(componentJob.getDescriptor().getConfiguredProperty("Group column")) == null)) {
             logger.warn("Pattern finder analyzer doesn't support metrics if it has a Group column configured.");
             return null;
         }

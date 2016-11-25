@@ -40,8 +40,8 @@ public class HelloWorldTransformerPresenter extends TransformerComponentBuilderP
     private static final long serialVersionUID = 1L;
 
     public HelloWorldTransformerPresenter(final TransformerComponentBuilder<?> transformerJobBuilder,
-            final WindowContext windowContext,
-            final PropertyWidgetFactory propertyWidgetFactory, final AnalyzerBeansConfiguration configuration) {
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final AnalyzerBeansConfiguration configuration) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
     }
 

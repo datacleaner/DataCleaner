@@ -20,14 +20,11 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
@@ -88,27 +85,19 @@ public class ErrorDialog extends AbstractDialog {
         final JXEditorPane detailedMessagePane = new JXEditorPane("text/html", detailedMessage);
         detailedMessagePane.setEditable(false);
         detailedMessagePane.setOpaque(false);
-        detailedMessagePane.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(final HyperlinkEvent event) {
-                if (HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
-                    final String href = event.getDescription();
-                    if (!Strings.isNullOrEmpty(href)) {
-                        final OpenBrowserAction openBrowserAction = new OpenBrowserAction(href);
-                        openBrowserAction.actionPerformed(null);
-                    }
+        detailedMessagePane.addHyperlinkListener(event -> {
+            if (HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
+                final String href = event.getDescription();
+                if (!Strings.isNullOrEmpty(href)) {
+                    final OpenBrowserAction openBrowserAction = new OpenBrowserAction(href);
+                    openBrowserAction.actionPerformed(null);
                 }
             }
         });
         detailedMessagePane.setBorder(new EmptyBorder(10, 10, 40, 10));
 
         final JButton button = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                ErrorDialog.this.close();
-            }
-        });
+        button.addActionListener(e -> ErrorDialog.this.close());
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());

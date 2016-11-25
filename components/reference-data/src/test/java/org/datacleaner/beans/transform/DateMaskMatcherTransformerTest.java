@@ -21,22 +21,22 @@ package org.datacleaner.beans.transform;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 
+import junit.framework.TestCase;
+
 public class DateMaskMatcherTransformerTest extends TestCase {
 
     public void testSimpleScenario() throws Exception {
-        MockInputColumn<String> col = new MockInputColumn<>("foo", String.class);
-        DateMaskMatcherTransformer t = new DateMaskMatcherTransformer(col);
+        final MockInputColumn<String> col = new MockInputColumn<>("foo", String.class);
+        final DateMaskMatcherTransformer t = new DateMaskMatcherTransformer(col);
 
         t.setDateMasks(new String[] { "yyyy-MM-dd", "yyyy-dd-MM" });
         t.init();
 
-        OutputColumns outputColumns = t.getOutputColumns();
+        final OutputColumns outputColumns = t.getOutputColumns();
         assertEquals(2, outputColumns.getColumnCount());
         assertEquals("foo 'yyyy-MM-dd'", outputColumns.getColumnName(0));
         assertEquals("foo 'yyyy-dd-MM'", outputColumns.getColumnName(1));

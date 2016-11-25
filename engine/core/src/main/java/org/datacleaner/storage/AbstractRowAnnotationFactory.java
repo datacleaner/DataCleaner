@@ -41,8 +41,7 @@ public abstract class AbstractRowAnnotationFactory implements RowAnnotationFacto
 
     private static final long serialVersionUID = 1L;
 
-    private final Map<RowAnnotationImpl, AtomicInteger> _rowCounts =
-            new ConcurrentHashMap<>();
+    private final Map<RowAnnotationImpl, AtomicInteger> _rowCounts = new ConcurrentHashMap<>();
     private final Integer _storedRowsThreshold;
 
     private final transient Cache<Integer, Boolean> _cachedRows = CollectionUtils2.createCache(10000, 10 * 60);
@@ -122,8 +121,7 @@ public abstract class AbstractRowAnnotationFactory implements RowAnnotationFacto
 
     @Override
     public final RowAnnotation createAnnotation() {
-        final RowAnnotationImpl ann = new RowAnnotationImpl();
-        return ann;
+        return new RowAnnotationImpl();
     }
 
     /**

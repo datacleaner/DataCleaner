@@ -100,6 +100,7 @@ public final class IconUtils {
             return (int) (k * rgb + q);
         }
     }
+
     public static final int ICON_SIZE_LARGE = 32;
     public static final int ICON_SIZE_MEDIUM = 22;
     public static final int ICON_SIZE_SMALL = 16;
@@ -251,13 +252,13 @@ public final class IconUtils {
         // prevent instantiation
     }
 
-    public static Icon getDescriptorIcon(final ComponentDescriptor<?> descriptor, final boolean configured, final int iconWidth) {
+    public static Icon getDescriptorIcon(final ComponentDescriptor<?> descriptor, final boolean configured,
+            final int iconWidth) {
         boolean serverDown = false;
 
         if (descriptor instanceof RemoteTransformerDescriptor) {
             if (((RemoteTransformerDescriptor<?>) descriptor).getRemoteDescriptorProvider().getServerState()
-                    .getActualState().equals(
-                            RemoteServerState.State.ERROR)) {
+                    .getActualState().equals(RemoteServerState.State.ERROR)) {
                 serverDown = true;
             }
         }
@@ -284,8 +285,8 @@ public final class IconUtils {
         final int iconWidth = imageIcon.getIconWidth();
         final int decorationSize = iconWidth / 2;
         final Image errorImage = _imageManager.getImage(STATUS_ERROR, decorationSize);
-        final BufferedImage bufferedImage = new BufferedImage(iconWidth + offset, iconWidth + offset,
-                BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage bufferedImage =
+                new BufferedImage(iconWidth + offset, iconWidth + offset, BufferedImage.TYPE_INT_ARGB);
         bufferedImage.getGraphics().drawImage(imageIcon.getImage(), offset, 0, null);
         bufferedImage.getGraphics().drawImage(errorImage, 0, iconWidth + offset - decorationSize, null);
 
@@ -421,7 +422,8 @@ public final class IconUtils {
         return getComponentSuperCategoryIcon(superCategory, ICON_SIZE_LARGE);
     }
 
-    public static ImageIcon getComponentSuperCategoryIcon(final ComponentSuperCategory superCategory, final int newWidth) {
+    public static ImageIcon getComponentSuperCategoryIcon(final ComponentSuperCategory superCategory,
+            final int newWidth) {
         final Class<? extends ComponentSuperCategory> superCategoryClass = superCategory.getClass();
         return getCategoryIcon(superCategoryClass, false, newWidth);
     }
@@ -438,10 +440,8 @@ public final class IconUtils {
     private static ImageIcon getCategoryIcon(final Class<?> cls, final boolean decorateWithFolder, final int newWidth) {
         final String bundledIconPath = getImagePathForClass(cls);
 
-        final int totalSize = newWidth;
-
         if (!decorateWithFolder && bundledIconPath != null) {
-            return _imageManager.getImageIcon(bundledIconPath, totalSize);
+            return _imageManager.getImageIcon(bundledIconPath, newWidth);
         }
 
         final Image decoration;
@@ -453,15 +453,15 @@ public final class IconUtils {
             decoration = _imageManager.getImage(bundledIconPath, decorationSize, classLoader);
         }
 
-        final Image folderIcon = _imageManager.getImage("images/component-types/category.png", totalSize);
+        final Image folderIcon = _imageManager.getImage("images/component-types/category.png", newWidth);
 
         if (decoration == null) {
             return new ImageIcon(folderIcon);
         }
 
-        final BufferedImage bufferedImage = new BufferedImage(totalSize, totalSize, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage bufferedImage = new BufferedImage(newWidth, newWidth, BufferedImage.TYPE_INT_ARGB);
         bufferedImage.getGraphics().drawImage(folderIcon, 0, 0, null);
-        bufferedImage.getGraphics().drawImage(decoration, totalSize - decorationSize, totalSize - decorationSize, null);
+        bufferedImage.getGraphics().drawImage(decoration, newWidth - decorationSize, newWidth - decorationSize, null);
         return new ImageIcon(bufferedImage);
     }
 
@@ -482,8 +482,8 @@ public final class IconUtils {
 
         final BufferedImage bufferedImage = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
         bufferedImage.getGraphics().drawImage(jobIcon, 0, 0, null);
-        bufferedImage.getGraphics().drawImage(datastoreIcon, totalWidth - decorationSize, totalHeight - decorationSize,
-                null);
+        bufferedImage.getGraphics()
+                .drawImage(datastoreIcon, totalWidth - decorationSize, totalHeight - decorationSize, null);
         return new ImageIcon(bufferedImage);
     }
 
@@ -503,8 +503,8 @@ public final class IconUtils {
         return iconPath;
     }
 
-    protected static String getDescriptorImagePath(final ComponentDescriptor<?> descriptor, final ClassLoader classLoader,
-            final boolean allowGeneric) {
+    protected static String getDescriptorImagePath(final ComponentDescriptor<?> descriptor,
+            final ClassLoader classLoader, final boolean allowGeneric) {
         final Class<?> componentClass = descriptor.getComponentClass();
         final String bundledIconPath = getImagePathForClass(componentClass, classLoader);
 
@@ -553,20 +553,21 @@ public final class IconUtils {
         return _imageManager.getImageIcon(MODEL_COLUMN, iconSize);
     }
 
-    protected static String getDatastoreImagePath(final Datastore datastore, final boolean considerOrderdbSpecialization) {
+    protected static String getDatastoreImagePath(final Datastore datastore,
+            final boolean considerOrderdbSpecialization) {
         String imagePath = GENERIC_DATASTORE_IMAGEPATH;
         if (datastore == null) {
             return imagePath;
         } else if (datastore instanceof JdbcDatastore) {
             final JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
-            if (considerOrderdbSpecialization
-                    && "jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
+            if (considerOrderdbSpecialization && "jdbc:hsqldb:res:orderdb;readonly=true"
+                    .equals(jdbcDatastore.getJdbcUrl())) {
                 imagePath = "images/datastore-types/orderdb.png";
             } else {
                 final String driverClass = jdbcDatastore.getDriverClass();
                 if (!StringUtils.isNullOrEmpty(driverClass)) {
-                    final DatabaseDriverDescriptor driver = DatabaseDriverCatalog
-                            .getDatabaseDriverByDriverClassName(driverClass);
+                    final DatabaseDriverDescriptor driver =
+                            DatabaseDriverCatalog.getDatabaseDriverByDriverClassName(driverClass);
                     if (driver != null) {
                         imagePath = driver.getIconImagePath();
                     }

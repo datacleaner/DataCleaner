@@ -40,8 +40,7 @@ import com.google.common.base.Splitter;
  */
 public class MapStringToStringConverter implements Converter<Map<?, ?>> {
 
-    private final CsvConfiguration configuration = new CsvConfiguration(1, "UTF-8", '=', '"',
-            '\\');
+    private final CsvConfiguration configuration = new CsvConfiguration(1, "UTF-8", '=', '"', '\\');
 
     @Override
     public Map<?, ?> fromString(final Class<?> type, final String serializedForm) {

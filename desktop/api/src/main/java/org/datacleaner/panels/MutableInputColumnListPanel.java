@@ -21,8 +21,6 @@ package org.datacleaner.panels;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.Closeable;
@@ -57,13 +55,15 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
      *
      * @param analysisJobBuilder
      * @param inputColumn
-     * @param panelOwner - the component that logically owns this component. Will be repainted after this component changes a content.
-     *                   Since this component is used as a cell renderer in a table, it is not really part of the physical Swing component hierarchy
-     *                   (the table doesn't have it as a Component child). So changing our content doesn't automatically
-     *                   revalidate and repaint the table. Must be called explicitly.
+     * @param panelOwner - the component that logically owns this component. Will be repainted after
+     *                   this component changes a content. Since this component is used as a cell
+     *                   renderer in a table, it is not really part of the physical Swing component
+     *                   hierarchy (the table doesn't have it as a Component child). So changing our
+     *                   content doesn't automatically revalidate and repaint the table.
+     *                   Must be called explicitly.
      */
-    public MutableInputColumnListPanel(final AnalysisJobBuilder analysisJobBuilder, final MutableInputColumn<?> inputColumn,
-            final JComponent panelOwner) {
+    public MutableInputColumnListPanel(final AnalysisJobBuilder analysisJobBuilder,
+            final MutableInputColumn<?> inputColumn, final JComponent panelOwner) {
         _analysisJobBuilder = analysisJobBuilder;
         _inputColumn = inputColumn;
 
@@ -78,8 +78,8 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
                 if (!_inputColumn.getName().equals(_textField.getText())) {
                     _inputColumn.setName(_textField.getText());
 
-                    final TransformerComponentBuilder<?> tjb = _analysisJobBuilder
-                            .getOriginatingTransformer(_inputColumn);
+                    final TransformerComponentBuilder<?> tjb =
+                            _analysisJobBuilder.getOriginatingTransformer(_inputColumn);
                     if (tjb != null) {
                         tjb.onOutputChanged();
                     }
@@ -93,13 +93,7 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
 
         final JButton resetButton = WidgetFactory.createSmallButton(IconUtils.ACTION_RESET);
         resetButton.setToolTipText("Reset output column name");
-        resetButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                _textField.setText(_inputColumn.getInitialName());
-            }
-        });
+        resetButton.addActionListener(e -> _textField.setText(_inputColumn.getInitialName()));
 
         WidgetUtils.addToGridBag(_visibilityButton, this, 0, 0, GridBagConstraints.WEST, 0.0, 0.0);
         WidgetUtils.addToGridBag(_textField, this, 1, 0, GridBagConstraints.WEST, 1.0, 1.0);

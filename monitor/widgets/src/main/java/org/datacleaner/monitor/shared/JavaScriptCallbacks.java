@@ -35,9 +35,9 @@ public final class JavaScriptCallbacks {
     /**
      * This method (if present on the host page), should return the name of the property
      * which should be used to group the jobs on the scheduling page. All those jobs
-     * which have this name as a key in their <property> tag (in the <job-metadata> tag present
+     * which have this name as a key in their &lt;property&gt; tag (in the &lt;job-metadata&gt; tag present
      * in the job metadata), will be shown grouped by the corresponding value present in
-     * this <property> tag.
+     * this &lt;property&gt; tag.
      *
      * @return
      */
@@ -205,6 +205,7 @@ public final class JavaScriptCallbacks {
      *
      * startJobWizard(datastoreName, wizardName, htmlDivId)
      */
+    @SuppressWarnings("checkstyle:LineLength")
     public static native void exportStartJobWizard() /*-{
         if (!$wnd.datacleaner) {
             $wnd.datacleaner = {};
@@ -217,6 +218,7 @@ public final class JavaScriptCallbacks {
      *
      * startJobWizard(wizardName, htmlDivId)
      */
+    @SuppressWarnings("checkstyle:LineLength")
     public static native void exportStartDatastoreWizard() /*-{
         if (!$wnd.datacleaner) {
             $wnd.datacleaner = {};
@@ -229,6 +231,7 @@ public final class JavaScriptCallbacks {
      *
      * startReferenceDataWizard(referenceDataType, wizardName, htmlDivId)
      */
+    @SuppressWarnings("checkstyle:LineLength")
     public static native void exportStartReferenceDataWizard() /*-{
         if (!$wnd.datacleaner) {
             $wnd.datacleaner = {};
@@ -263,8 +266,8 @@ public final class JavaScriptCallbacks {
         final WizardServiceAsync wizardService = GWT.create(WizardService.class);
         final TenantIdentifier tenant = clientConfig.getTenant();
 
-        final JobWizardController controller = new JobWizardController(wizardPanel, tenant, wizardIdentifier,
-                datastoreIdentifier, wizardService);
+        final JobWizardController controller =
+                new JobWizardController(wizardPanel, tenant, wizardIdentifier, datastoreIdentifier, wizardService);
 
         GWT.log("Starting job wizard '" + wizardDisplayName + "'. Datastore=" + datastoreName + ", htmlDivId="
                 + htmlDivId);
@@ -290,8 +293,8 @@ public final class JavaScriptCallbacks {
         final WizardServiceAsync wizardService = GWT.create(WizardService.class);
         final TenantIdentifier tenant = clientConfig.getTenant();
 
-        final DatastoreWizardController controller = new DatastoreWizardController(wizardPanel, tenant,
-                wizardIdentifier, wizardService);
+        final DatastoreWizardController controller =
+                new DatastoreWizardController(wizardPanel, tenant, wizardIdentifier, wizardService);
 
         GWT.log("Starting datastore wizard '" + wizardDisplayName + "'. HtmlDivId=" + htmlDivId);
 
@@ -327,8 +330,9 @@ public final class JavaScriptCallbacks {
         final WizardPanel wizardPanel = WizardPanelFactory.createWizardPanel(htmlDivId);
         final WizardServiceAsync wizardService = GWT.create(WizardService.class);
         final TenantIdentifier tenant = clientConfig.getTenant();
-        final ReferenceDataWizardController controller = new ReferenceDataWizardController(referenceDataType,
-                wizardPanel, tenant, wizardIdentifier, wizardService);
+        final ReferenceDataWizardController controller =
+                new ReferenceDataWizardController(referenceDataType, wizardPanel, tenant, wizardIdentifier,
+                        wizardService);
         GWT.log("Starting reference data wizard '" + wizardDisplayName + "'. HtmlDivId=" + htmlDivId);
         controller.startWizard();
     }

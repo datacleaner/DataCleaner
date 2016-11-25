@@ -22,8 +22,6 @@ package org.datacleaner.beans.valuedist;
 import java.util.Arrays;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.DateUtils;
 import org.apache.metamodel.util.Month;
 import org.datacleaner.api.InputColumn;
@@ -31,6 +29,8 @@ import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
+
+import junit.framework.TestCase;
 
 public class MonthDistributionResultReducerTest extends TestCase {
 
@@ -80,7 +80,7 @@ public class MonthDistributionResultReducerTest extends TestCase {
         assertEquals(13, lines.length);
     }
 
-    private Date getADate(Month month) {
+    private Date getADate(final Month month) {
         return DateUtils.get(2013, month, 31);
     }
 }

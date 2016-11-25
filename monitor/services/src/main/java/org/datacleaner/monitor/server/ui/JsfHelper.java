@@ -48,11 +48,10 @@ public class JsfHelper {
     }
 
     public DatastoreBeanWrapper[] getDatastores() {
-        final DatastoreCatalog datastoreCatalog = tenantContextFactory.getContext(user.getTenant()).getConfiguration()
-                .getDatastoreCatalog();
+        final DatastoreCatalog datastoreCatalog =
+                tenantContextFactory.getContext(user.getTenant()).getConfiguration().getDatastoreCatalog();
 
-        final DatastoreBeanWrapper[] datastoreBeanWrapper = prepareDatastoreWrappers(datastoreCatalog);
-        return datastoreBeanWrapper;
+        return prepareDatastoreWrappers(datastoreCatalog);
     }
 
     private DatastoreBeanWrapper[] prepareDatastoreWrappers(final DatastoreCatalog datastoreCatalog) {

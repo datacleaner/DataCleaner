@@ -49,7 +49,8 @@ public class DefaultMetricValueProducer implements MetricValueProducer {
     private final JobEngineManager _jobEngineManager;
 
     @Autowired
-    public DefaultMetricValueProducer(final TenantContextFactory tenantContextFactory, final JobEngineManager jobEngineManager) {
+    public DefaultMetricValueProducer(final TenantContextFactory tenantContextFactory,
+            final JobEngineManager jobEngineManager) {
         _tenantContextFactory = tenantContextFactory;
         _jobEngineManager = jobEngineManager;
     }

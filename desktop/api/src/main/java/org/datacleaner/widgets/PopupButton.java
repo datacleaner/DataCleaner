@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
@@ -53,6 +51,7 @@ public class PopupButton extends JToggleButton {
     public enum MenuPosition {
         TOP, BOTTOM, LEFT, RIGHT
     }
+
     private static final long serialVersionUID = 1L;
     private final JPopupMenu popupMenu = new JPopupMenu();
     private MenuPosition menuPosition;
@@ -69,12 +68,9 @@ public class PopupButton extends JToggleButton {
         super(text, icon);
         this.menuPosition = position;
 
-        addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (isSelected()) {
-                    showPopup(popupMenu);
-                }
+        addActionListener(e -> {
+            if (isSelected()) {
+                showPopup(popupMenu);
             }
         });
 
@@ -151,7 +147,8 @@ public class PopupButton extends JToggleButton {
 
     public static void main(final String[] args) {
         LookAndFeelManager.get().init();
-        final PopupButton popupButton = new PopupButton("More", ImageManager.get().getImageIcon("images/menu/more.png"));
+        final PopupButton popupButton =
+                new PopupButton("More", ImageManager.get().getImageIcon("images/menu/more.png"));
         final JPanel toolBarPanel = new JPanel();
         toolBarPanel.add(popupButton);
         final JToolBar toolBar = new JToolBar();

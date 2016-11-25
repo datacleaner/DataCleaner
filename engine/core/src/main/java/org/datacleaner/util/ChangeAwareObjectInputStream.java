@@ -86,20 +86,17 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
      * transparently changed their serialization IDs.
      */
     private static final Set<String> INTERFACES_WITH_SERIAL_ID_CHANGES = new HashSet<>();
-    private static final Comparator<String> packageNameComparator = new Comparator<String>() {
-        @Override
-        public int compare(final String o1, final String o2) {
-            if (EqualsBuilder.equals(o1, o2)) {
-                return 0;
-            }
-            // use length as the primary differentiator, to make sure long
-            // packages are placed before short ones.
-            int diff = o1.length() - o2.length();
-            if (diff == 0) {
-                diff = o1.compareTo(o2);
-            }
-            return diff;
+    private static final Comparator<String> packageNameComparator = (o1, o2) -> {
+        if (EqualsBuilder.equals(o1, o2)) {
+            return 0;
         }
+        // use length as the primary differentiator, to make sure long
+        // packages are placed before short ones.
+        int diff = o1.length() - o2.length();
+        if (diff == 0) {
+            diff = o1.compareTo(o2);
+        }
+        return diff;
     };
 
     static {
@@ -248,9 +245,7 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         }
 
         if (INTERFACES_WITH_SERIAL_ID_CHANGES.contains(originalClassName)) {
-            final ObjectStreamClass newClassDescriptor = ObjectStreamClass
-                    .lookup(resolveClass(originalClassName, false));
-            return newClassDescriptor;
+            return ObjectStreamClass.lookup(resolveClass(originalClassName, false));
         }
 
         return resultClassDescriptor;

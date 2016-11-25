@@ -21,19 +21,19 @@ package org.datacleaner.beans.transform;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.SimpleStringPattern;
 import org.datacleaner.reference.StringPattern;
 
+import junit.framework.TestCase;
+
 public class StringPatternMatcherTransformerTest extends TestCase {
 
     public void testTransform() throws Exception {
-        StringPatternMatcherTransformer t = new StringPatternMatcherTransformer();
-        StringPattern[] stringPatterns = new StringPattern[3];
+        final StringPatternMatcherTransformer t = new StringPatternMatcherTransformer();
+        final StringPattern[] stringPatterns = new StringPattern[3];
         stringPatterns[0] = new RegexStringPattern("lowercase word", "[a-z]+", true);
         stringPatterns[1] = new RegexStringPattern("any word", "[a-zA-Z]+", true);
         stringPatterns[2] = new SimpleStringPattern("capitalized word", "Aaaa");

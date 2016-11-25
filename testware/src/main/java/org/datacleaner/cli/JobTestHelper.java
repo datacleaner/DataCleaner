@@ -36,12 +36,11 @@ import org.apache.commons.lang3.ArrayUtils;
 
 public class JobTestHelper {
     private static final String DATACLEANER_MAIN_CLASS_NAME = "org.datacleaner.Main";
-    private static final String JAVA_EXECUTABLE = System.getProperty("java.home") + File.separator + "bin"
-            + File.separator + "java";
+    private static final String JAVA_EXECUTABLE =
+            System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
 
     public static void testJob(final File repository, final String jobName,
-            final Map<String, String[]> expectedResultSets,
-            final String... extraCliArgs) throws Exception {
+            final Map<String, String[]> expectedResultSets, final String... extraCliArgs) throws Exception {
         final InputStream resultInputStream =
                 new ByteArrayInputStream(runJob(repository, jobName, extraCliArgs).getBytes());
         final InputStreamReader resultInputStreamReader = new InputStreamReader(resultInputStream);
@@ -86,9 +85,9 @@ public class JobTestHelper {
         final String jobFileName = getAbsoluteFilename(repository, "jobs/" + jobName + ".analysis.xml");
         final String confFileName = getAbsoluteFilename(repository, "conf.xml");
 
-        final String[] processBuilderArguments =
-                ArrayUtils.addAll(new String[] { JAVA_EXECUTABLE, DATACLEANER_MAIN_CLASS_NAME,
-                        "-job", jobFileName, "-conf", confFileName }, extraCliArgs);
+        final String[] processBuilderArguments = ArrayUtils
+                .addAll(new String[] { JAVA_EXECUTABLE, DATACLEANER_MAIN_CLASS_NAME, "-job", jobFileName, "-conf",
+                        confFileName }, extraCliArgs);
         final ProcessBuilder builder = new ProcessBuilder(processBuilderArguments);
         builder.environment().put("CLASSPATH", System.getProperty("java.class.path"));
 

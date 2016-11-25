@@ -44,8 +44,7 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
     private volatile boolean _done;
 
     public AnalysisResultFutureImpl(final Queue<JobAndResult> resultQueue,
-            final StatusAwareTaskListener jobCompletionListener,
-            final ErrorAware errorAware) {
+            final StatusAwareTaskListener jobCompletionListener, final ErrorAware errorAware) {
         _resultQueue = resultQueue;
         _jobTaskListener = jobCompletionListener;
         _errorAware = errorAware;

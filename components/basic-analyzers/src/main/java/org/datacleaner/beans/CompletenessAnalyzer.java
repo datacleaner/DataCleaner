@@ -90,9 +90,10 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
             return _predicate.test(argument);
         }
     }
+
     public enum EvaluationMode implements HasName {
-        ALL_FIELDS("When all fields are incomplete, the record is incomplete"), ANY_FIELD(
-                "When any field is incomplete, the record is incomplete");
+        ALL_FIELDS("When all fields are incomplete, the record is incomplete"),
+        ANY_FIELD("When any field is incomplete, the record is incomplete");
 
         private final String _name;
 
@@ -105,6 +106,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
             return _name;
         }
     }
+
     public static final String OUTPUT_STREAM_COMPLETE = "Complete rows";
     public static final String OUTPUT_STREAM_INCOMPLETE = "Incomplete rows";
     public static final String PROPERTY_VALUES = "Values";
@@ -217,16 +219,16 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     @Override
     public OutputDataStream[] getOutputDataStreams() {
         final OutputDataStreamBuilder completeStreamBuilder = OutputDataStreams.pushDataStream(OUTPUT_STREAM_COMPLETE);
-        final OutputDataStreamBuilder incompleteStreamBuilder = OutputDataStreams.pushDataStream(
-                OUTPUT_STREAM_INCOMPLETE);
+        final OutputDataStreamBuilder incompleteStreamBuilder =
+                OutputDataStreams.pushDataStream(OUTPUT_STREAM_INCOMPLETE);
 
         for (final InputColumn<?> column : createOutputDataStreamColumns()) {
             completeStreamBuilder.withColumnLike(column);
             incompleteStreamBuilder.withColumnLike(column);
         }
 
-        return new OutputDataStream[] { completeStreamBuilder.toOutputDataStream(), incompleteStreamBuilder
-                .toOutputDataStream() };
+        return new OutputDataStream[] { completeStreamBuilder.toOutputDataStream(),
+                incompleteStreamBuilder.toOutputDataStream() };
     }
 
     @Override

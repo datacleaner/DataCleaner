@@ -42,7 +42,8 @@ public class ReducedValueDistributionResult extends ValueDistributionAnalyzerRes
     private final Map<String, Integer> _valueCountsMap;
     private final int _nullCount;
 
-    public ReducedValueDistributionResult(final String name, final Map<String, Integer> valueCountsMap, final int nullCount) {
+    public ReducedValueDistributionResult(final String name, final Map<String, Integer> valueCountsMap,
+            final int nullCount) {
         _name = name;
         _valueCountsMap = valueCountsMap;
         _nullCount = nullCount;

@@ -26,22 +26,22 @@ import junit.framework.TestCase;
 public class ReverseTokenizerTest extends TestCase {
 
     public void testTextTokens() throws Exception {
-        ReverseTokenizer tokenizer = new ReverseTokenizer(new TokenizerConfiguration(true));
-        List<Token> tokens = tokenizer.tokenize("AAaaaaaA");
+        final ReverseTokenizer tokenizer = new ReverseTokenizer(new TokenizerConfiguration(true));
+        final List<Token> tokens = tokenizer.tokenize("AAaaaaaA");
         assertEquals(3, tokens.size());
         assertEquals("[Token['AA' (TEXT)], Token['aaaaa' (TEXT)], Token['A' (TEXT)]]", tokens.toString());
     }
 
     public void testEntirelyMixedTokens() throws Exception {
-        ReverseTokenizer tokenizer = new ReverseTokenizer(new TokenizerConfiguration(true));
-        List<Token> tokens = tokenizer.tokenize("????");
+        final ReverseTokenizer tokenizer = new ReverseTokenizer(new TokenizerConfiguration(true));
+        final List<Token> tokens = tokenizer.tokenize("????");
         assertEquals(1, tokens.size());
         assertEquals("[Token['????' (MIXED)]]", tokens.toString());
     }
 
     public void testMixedAndDelimTokens() throws Exception {
-        ReverseTokenizer tokenizer = new ReverseTokenizer(new TokenizerConfiguration(true));
-        List<Token> tokens = tokenizer.tokenize("hello there __????!");
+        final ReverseTokenizer tokenizer = new ReverseTokenizer(new TokenizerConfiguration(true));
+        final List<Token> tokens = tokenizer.tokenize("hello there __????!");
         assertEquals(7, tokens.size());
         assertEquals("[Token['hello' (TEXT)], Token[' ' (WHITESPACE)], Token['there' (TEXT)], "
                         + "Token[' ' (WHITESPACE)], Token['__' (DELIM)], Token['????' (MIXED)], Token['!' (DELIM)]]",

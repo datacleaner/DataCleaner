@@ -80,8 +80,8 @@ public class SecureGwtServlet extends RemoteServiceServlet {
                 getLogger().error("Failed to send error: " + exception.getMessage(), e);
             }
         } else {
-            getLogger().warn("Unexpected exception occurred in GWT servlet: " + exception.getClass().getName(),
-                    exception);
+            getLogger()
+                    .warn("Unexpected exception occurred in GWT servlet: " + exception.getClass().getName(), exception);
         }
         super.doUnexpectedFailure(exception);
     }
@@ -148,8 +148,9 @@ public class SecureGwtServlet extends RemoteServiceServlet {
         final String authorizedTenant = user.getTenant();
         final String requestedTenant = tenantIdentifier.getId();
         if (!authorizedTenant.equals(requestedTenant)) {
-            throw new DCSecurityException("User " + user.getUsername() + " (" + authorizedTenant
-                    + ") is not authorized to access tenant: " + requestedTenant);
+            throw new DCSecurityException(
+                    "User " + user.getUsername() + " (" + authorizedTenant + ") is not authorized to access tenant: "
+                            + requestedTenant);
         }
     }
 

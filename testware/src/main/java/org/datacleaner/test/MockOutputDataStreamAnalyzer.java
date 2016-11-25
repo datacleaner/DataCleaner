@@ -49,11 +49,13 @@ public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Number>
     public static final String STREAM_NAME1 = "foo bar records";
     public static final String STREAM_NAME2 = "counter records";
 
-    private final OutputDataStream stream1 = OutputDataStreams.pushDataStream(STREAM_NAME1)
-            .withColumn("foo", ColumnType.STRING).withColumn("bar", ColumnType.TIMESTAMP).toOutputDataStream();
+    private final OutputDataStream stream1 =
+            OutputDataStreams.pushDataStream(STREAM_NAME1).withColumn("foo", ColumnType.STRING)
+                    .withColumn("bar", ColumnType.TIMESTAMP).toOutputDataStream();
 
-    private final OutputDataStream stream2 = OutputDataStreams.pushDataStream(STREAM_NAME2)
-            .withColumn("count", ColumnType.INTEGER).withColumn("uuid", ColumnType.STRING).toOutputDataStream();
+    private final OutputDataStream stream2 =
+            OutputDataStreams.pushDataStream(STREAM_NAME2).withColumn("count", ColumnType.INTEGER)
+                    .withColumn("uuid", ColumnType.STRING).toOutputDataStream();
     @Configured
     InputColumn<?> column;
     @Configured(value = PROPERTY_IDENTIFIER, required = false)
@@ -105,8 +107,8 @@ public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Number>
     @Override
     public void run(final InputRow row, final int distinctCount) {
         if (list == null) {
-            throw new IllegalStateException("It seems that initialize() has not been invoked on component: "
-                    + identifier);
+            throw new IllegalStateException(
+                    "It seems that initialize() has not been invoked on component: " + identifier);
         }
 
         final long id = row.getId();

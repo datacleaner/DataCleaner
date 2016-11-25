@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
 
 	<source>
 		<data-context ref="person_names" />

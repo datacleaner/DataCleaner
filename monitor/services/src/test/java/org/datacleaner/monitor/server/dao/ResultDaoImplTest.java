@@ -22,16 +22,16 @@ package org.datacleaner.monitor.server.dao;
 import java.io.File;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.file.FileRepositoryFolder;
+
+import junit.framework.TestCase;
 
 public class ResultDaoImplTest extends TestCase {
 
     public void testReturnOnlyJobSpecificResult() throws Exception {
-        File file = new File("src/test/resources/example_dubious_result_files");
-        FileRepositoryFolder folder = new FileRepositoryFolder(null, file);
+        final File file = new File("src/test/resources/example_dubious_result_files");
+        final FileRepositoryFolder folder = new FileRepositoryFolder(null, file);
         List<RepositoryFile> results;
 
         results = ResultDaoImpl.getResultsForJob("bar", folder);

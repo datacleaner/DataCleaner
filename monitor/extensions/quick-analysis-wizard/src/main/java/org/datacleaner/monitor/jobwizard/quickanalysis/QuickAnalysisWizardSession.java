@@ -82,7 +82,8 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
 
                     @Override
                     protected String getHeaderHtml() {
-                        return "<p>Please select columns to check for <b>standard data quality metrics</b>, based on data type:</p>";
+                        return "<p>Please select columns to check for <b>standard data quality metrics</b>, "
+                                + "based on data type:</p>";
                     }
 
                     @Override
@@ -97,11 +98,10 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
                             protected WizardPageController nextPageController(final List<Column> selectedColumns) {
                                 for (final Column selectedColumn : selectedColumns) {
                                     _analysisJobBuilder.addSourceColumn(selectedColumn);
-                                    final InputColumn<?> sourceColumn = _analysisJobBuilder
-                                            .getSourceColumnByName(selectedColumn.getName());
+                                    final InputColumn<?> sourceColumn =
+                                            _analysisJobBuilder.getSourceColumnByName(selectedColumn.getName());
                                     final AnalyzerComponentBuilder<ValueDistributionAnalyzer> valueDistribution =
-                                            _analysisJobBuilder
-                                                    .addAnalyzer(ValueDistributionAnalyzer.class);
+                                            _analysisJobBuilder.addAnalyzer(ValueDistributionAnalyzer.class);
                                     valueDistribution.setName("Value distribution of " + selectedColumn.getName());
                                     valueDistribution.addInputColumn(sourceColumn);
                                 }
@@ -111,14 +111,14 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
                                 }
                                 return new SelectPatternFinderColumnsPage(3, selectedTable) {
                                     @Override
-                                    protected WizardPageController nextPageController(final List<Column> selectedColumns) {
+                                    protected WizardPageController nextPageController(
+                                            final List<Column> selectedColumns) {
                                         for (final Column selectedColumn : selectedColumns) {
                                             _analysisJobBuilder.addSourceColumn(selectedColumn);
-                                            final InputColumn<?> sourceColumn = _analysisJobBuilder
-                                                    .getSourceColumnByName(selectedColumn.getName());
+                                            final InputColumn<?> sourceColumn =
+                                                    _analysisJobBuilder.getSourceColumnByName(selectedColumn.getName());
                                             final AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinder =
-                                                    _analysisJobBuilder
-                                                            .addAnalyzer(PatternFinderAnalyzer.class);
+                                                    _analysisJobBuilder.addAnalyzer(PatternFinderAnalyzer.class);
                                             patternFinder.setName("Patterns of " + selectedColumn.getName());
                                             patternFinder.addInputColumn(sourceColumn);
                                         }

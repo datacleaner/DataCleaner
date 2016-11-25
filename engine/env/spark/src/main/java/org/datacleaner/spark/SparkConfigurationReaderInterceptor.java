@@ -49,16 +49,16 @@ import org.datacleaner.util.convert.HadoopResourceBuilder;
 public class SparkConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor {
 
     private static final TaskRunner TASK_RUNNER = new SingleThreadedTaskRunner();
-    private static final Collection<Class<? extends RenderingFormat<?>>> EXCLUDED_RENDERER_FORMATS = Arrays.asList(
-            SwingRenderingFormat.class, ComponentBuilderPresenterRenderingFormat.class);
-    private static final DescriptorProvider DESCRIPTOR_PROVIDER = new ClasspathScanDescriptorProvider(TASK_RUNNER,
-            EXCLUDED_RENDERER_FORMATS).scanPackage("org.datacleaner", true).scanPackage("com.hi", true).scanPackage(
-            "com.neopost", true);
+    private static final Collection<Class<? extends RenderingFormat<?>>> EXCLUDED_RENDERER_FORMATS =
+            Arrays.asList(SwingRenderingFormat.class, ComponentBuilderPresenterRenderingFormat.class);
+    private static final DescriptorProvider DESCRIPTOR_PROVIDER =
+            new ClasspathScanDescriptorProvider(TASK_RUNNER, EXCLUDED_RENDERER_FORMATS)
+                    .scanPackage("org.datacleaner", true).scanPackage("com.hi", true).scanPackage("com.neopost", true);
     private static final StorageProvider STORAGE_PROVIDER = new InMemoryStorageProvider(500, 20);
 
-    private static final DataCleanerEnvironment BASE_ENVIRONMENT = new DataCleanerEnvironmentImpl()
-            .withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER)
-            .withStorageProvider(STORAGE_PROVIDER);
+    private static final DataCleanerEnvironment BASE_ENVIRONMENT =
+            new DataCleanerEnvironmentImpl().withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER)
+                    .withStorageProvider(STORAGE_PROVIDER);
 
     private final HdfsHelper _hdfsHelper;
 

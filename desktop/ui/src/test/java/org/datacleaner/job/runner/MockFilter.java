@@ -32,11 +32,12 @@ public class MockFilter implements Filter<MockFilter.Category> {
     public enum Category {
         VALID, INVALID
     }
+
     @Configured
     InputColumn<?> input;
 
     @Override
-    public Category categorize(InputRow inputRow) {
+    public Category categorize(final InputRow inputRow) {
         return Category.VALID;
     }
 }

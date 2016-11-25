@@ -84,12 +84,7 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
         _usernameTextField.getDocument().addDocumentListener(genericDocumentListener);
         _passwordTextField.getDocument().addDocumentListener(genericDocumentListener);
         _securityTokenTextField.getDocument().addDocumentListener(genericDocumentListener);
-        _endpointUrlComboBox.addListener(new DCComboBox.Listener<String>() {
-            @Override
-            public void onItemSelected(final String item) {
-                validateAndUpdate();
-            }
-        });
+        _endpointUrlComboBox.addListener(item -> validateAndUpdate());
 
 
         if (originalDatastore != null) {
@@ -206,8 +201,9 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
         final FlowLayout layout = (FlowLayout) securityTokenPanel.getLayout();
         layout.setVgap(0);
         layout.setHgap(0);
-        final HelpIcon securityTokenHelpIcon = new HelpIcon(
-                "Your security token is set on Salesforce.com by going to: <b><i>Your Name</i> | Setup | My Personal Information | Reset Security Token</b>.<br/>This security token is needed in order to use the Salesforce.com web services.");
+        final HelpIcon securityTokenHelpIcon = new HelpIcon("Your security token is set on Salesforce.com by going "
+                + "to: <b><i>Your Name</i> | Setup | My Personal Information | Reset Security Token</b>.<br/>This "
+                + "security token is needed in order to use the Salesforce.com web services.");
         securityTokenHelpIcon.setBorder(WidgetUtils.BORDER_EMPTY);
         _securityTokenTextField.setBorder(WidgetUtils.BORDER_EMPTY);
         securityTokenPanel.add(_securityTokenTextField);

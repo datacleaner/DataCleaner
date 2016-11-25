@@ -253,8 +253,7 @@ public class SlaveServletHelper {
             if (_jobInterceptor != null) {
                 _jobInterceptor.intercept(jobBuilder, _configuration);
             }
-            final AnalysisJob job = jobBuilder.toAnalysisJob();
-            return job;
+            return jobBuilder.toAnalysisJob();
         } finally {
             FileHelper.safeClose(inputStream);
         }

@@ -20,8 +20,6 @@
 package org.datacleaner.panels.fuse;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.IdentityHashMap;
@@ -65,14 +63,11 @@ public class CoalesceUnitPanel extends DCPanel {
         final SchemaStructureComboBoxListRenderer renderer = new SchemaStructureComboBoxListRenderer();
         renderer.setNullText("- Add input column -");
         _comboBox.setRenderer(renderer);
-        _comboBox.addListener(new DCComboBox.Listener<InputColumn<?>>() {
-            @Override
-            public void onItemSelected(final InputColumn<?> item) {
-                if (item == null) {
-                    return;
-                }
-                addInputColumn(item);
+        _comboBox.addListener(item -> {
+            if (item == null) {
+                return;
             }
+            addInputColumn(item);
         });
 
         _columnListPanel = new DCPanel();
@@ -94,8 +89,8 @@ public class CoalesceUnitPanel extends DCPanel {
         setAvailableInputColumns(availableInputColumns);
 
         if (unit != null) {
-            final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(availableInputColumns
-                    .toArray(new InputColumn[availableInputColumns.size()]), false);
+            final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(
+                    availableInputColumns.toArray(new InputColumn[availableInputColumns.size()]), false);
             for (final InputColumn<?> inputColumn : updatedInputColumns) {
                 addInputColumn(inputColumn);
             }
@@ -147,12 +142,7 @@ public class CoalesceUnitPanel extends DCPanel {
         panel.add(new JLabel(item.getName(), IconUtils.getColumnIcon(item, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT),
                 BorderLayout.CENTER);
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                removeInputColumn(item);
-            }
-        });
+        removeButton.addActionListener(e -> removeInputColumn(item));
         panel.add(removeButton, BorderLayout.EAST);
 
         _inputColumnPanels.put(item, panel);

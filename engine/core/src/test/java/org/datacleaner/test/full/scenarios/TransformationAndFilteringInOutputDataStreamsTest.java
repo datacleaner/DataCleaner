@@ -55,7 +55,7 @@ public class TransformationAndFilteringInOutputDataStreamsTest {
         InputColumn<?> inputColumn;
 
         @Override
-        public BespokeCategory categorize(InputRow inputRow) {
+        public BespokeCategory categorize(final InputRow inputRow) {
             Assert.assertTrue(inputRow + " does not contain " + inputColumn, inputRow.containsInputColumn(inputColumn));
             return inputRow.getValue(inputColumn) == null ? BespokeCategory.INVALID : BespokeCategory.VALID;
         }
@@ -72,21 +72,21 @@ public class TransformationAndFilteringInOutputDataStreamsTest {
             jobBuilder.setDatastore(ds);
             jobBuilder.addSourceColumns("customers.country");
 
-            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = jobBuilder
-                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 =
+                    jobBuilder.addAnalyzer(MockOutputDataStreamAnalyzer.class);
             analyzer1.addInputColumn(jobBuilder.getSourceColumnByName("country"));
 
-            final AnalysisJobBuilder jobBuilder2 = analyzer1
-                    .getOutputDataStreamJobBuilder(MockOutputDataStreamAnalyzer.STREAM_NAME1);
+            final AnalysisJobBuilder jobBuilder2 =
+                    analyzer1.getOutputDataStreamJobBuilder(MockOutputDataStreamAnalyzer.STREAM_NAME1);
             final InputColumn<?> fooColumn = jobBuilder2.getSourceColumnByName("foo");
 
-            final TransformerComponentBuilder<MockTransformer> transformer1 = jobBuilder2
-                    .addTransformer(MockTransformer.class);
+            final TransformerComponentBuilder<MockTransformer> transformer1 =
+                    jobBuilder2.addTransformer(MockTransformer.class);
             transformer1.addInputColumn(fooColumn);
             final MutableInputColumn<?> transformedColumn = transformer1.getOutputColumns().get(0);
 
-            final FilterComponentBuilder<BespokeNotNullFilter, BespokeCategory> filter1 = jobBuilder2
-                    .addFilter(BespokeNotNullFilter.class);
+            final FilterComponentBuilder<BespokeNotNullFilter, BespokeCategory> filter1 =
+                    jobBuilder2.addFilter(BespokeNotNullFilter.class);
             filter1.addInputColumn(transformedColumn);
 
             final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 = jobBuilder2.addAnalyzer(MockAnalyzer.class);

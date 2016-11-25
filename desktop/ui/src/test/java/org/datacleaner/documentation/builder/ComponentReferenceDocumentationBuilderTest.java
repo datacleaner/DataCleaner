@@ -49,8 +49,8 @@ public class ComponentReferenceDocumentationBuilderTest {
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(TokenizerTransformer.class));
 
-        final ComponentReferenceDocumentationBuilder docBuilder = new ComponentReferenceDocumentationBuilder(
-                descriptorProvider);
+        final ComponentReferenceDocumentationBuilder docBuilder =
+                new ComponentReferenceDocumentationBuilder(descriptorProvider);
         final boolean success = docBuilder.writeDocumentationToDirectory(directory);
         assertTrue(success);
 

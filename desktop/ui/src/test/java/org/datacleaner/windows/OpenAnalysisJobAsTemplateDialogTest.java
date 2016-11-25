@@ -124,16 +124,16 @@ public class OpenAnalysisJobAsTemplateDialogTest {
                 final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
                 final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
                 final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
-                final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
-                        .withDatastoreCatalog(datastoreCatalog).withEnvironment(new DataCleanerEnvironmentImpl()
-                                .withDescriptorProvider(descriptorProvider));
+                final DataCleanerConfiguration configuration =
+                        new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog).withEnvironment(
+                                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
                 final FileObject file = VFSUtils.getFileSystemManager()
                         .resolveFile("src/test/resources/cli-examples/date_analysis_job.xml");
                 final Provider<OpenAnalysisJobActionListener> providerMock = Providers.of(null);
 
                 _dialog = new OpenAnalysisJobAsTemplateDialog(windowContext, configuration, file, createMetadata(),
                         providerMock);
-            } catch (FileSystemException e) {
+            } catch (final FileSystemException e) {
                 logger.error("Problem occurred while creating dialog instance. \n" + e.getMessage());
             }
         }

@@ -22,7 +22,6 @@ package org.datacleaner.connection;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
@@ -68,8 +67,8 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     }
 
     public FixedWidthDatastore(final String name, final String filename, final String encoding,
-            final int fixedValueWidth,
-            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent) {
+            final int fixedValueWidth, final boolean failOnInconsistencies, final boolean skipEbcdicHeader,
+            final boolean eolPresent) {
         this(name, filename, encoding, fixedValueWidth, failOnInconsistencies, skipEbcdicHeader, eolPresent,
                 FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE);
     }
@@ -81,17 +80,15 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     }
 
     public FixedWidthDatastore(final String name, final String filename, final String encoding,
-            final int fixedValueWidth,
-            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent,
-            final int headerLineNumber) {
+            final int fixedValueWidth, final boolean failOnInconsistencies, final boolean skipEbcdicHeader,
+            final boolean eolPresent, final int headerLineNumber) {
         this(name, null, filename, encoding, fixedValueWidth, failOnInconsistencies, skipEbcdicHeader, eolPresent,
                 headerLineNumber);
     }
 
     public FixedWidthDatastore(final String name, Resource resource, final String filename, final String encoding,
-            final int fixedValueWidth,
-            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent,
-            final int headerLineNumber) {
+            final int fixedValueWidth, final boolean failOnInconsistencies, final boolean skipEbcdicHeader,
+            final boolean eolPresent, final int headerLineNumber) {
         super(name);
         _filename = filename;
         if (resource == null) {
@@ -117,17 +114,14 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 
     public FixedWidthDatastore(final String name, final String filename, final String encoding, final int[] valueWidths,
             final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent,
-            final int headerLineNumber,
-            final List<String> customColumnNames) {
+            final int headerLineNumber, final List<String> customColumnNames) {
         this(name, null, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
                 headerLineNumber, null);
     }
 
     public FixedWidthDatastore(final String name, Resource resource, final String filename, final String encoding,
-            final int[] valueWidths,
-            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent,
-            final int headerLineNumber,
-            final List<String> customColumnNames) {
+            final int[] valueWidths, final boolean failOnInconsistencies, final boolean skipEbcdicHeader,
+            final boolean eolPresent, final int headerLineNumber, final List<String> customColumnNames) {
         super(name);
         _filename = filename;
         if (resource == null) {
@@ -145,17 +139,13 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     }
 
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        final ReadObjectBuilder.Adaptor adaptor = new ReadObjectBuilder.Adaptor() {
-            @Override
-            public void deserialize(final ObjectInputStream.GetField getField, final Serializable serializable)
-                    throws Exception {
-                final String filename = (String) getField.get("_filename", "");
-                final Field field = FixedWidthDatastore.class.getDeclaredField("_resourceRef");
-                field.setAccessible(true);
-                final FileResource fileResource = new FileResource(filename);
-                final SerializableRef<Resource> resourceRef = new SerializableRef<>(fileResource);
-                field.set(serializable, resourceRef);
-            }
+        final ReadObjectBuilder.Adaptor adaptor = (getField, serializable) -> {
+            final String filename = (String) getField.get("_filename", "");
+            final Field field = FixedWidthDatastore.class.getDeclaredField("_resourceRef");
+            field.setAccessible(true);
+            final FileResource fileResource = new FileResource(filename);
+            final SerializableRef<Resource> resourceRef = new SerializableRef<>(fileResource);
+            field.set(serializable, resourceRef);
         };
         ReadObjectBuilder.create(this, FixedWidthDatastore.class).readObject(stream, adaptor);
     }
@@ -184,16 +174,18 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 
         if (isEbcdic()) {
             if (_fixedValueWidth == -1) {
-                configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths,
-                        _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
+                configuration =
+                        new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths, _failOnInconsistencies,
+                                _skipEbcdicHeader, _eolPresent);
             } else {
-                configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _fixedValueWidth,
-                        _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
+                configuration =
+                        new EbcdicConfiguration(_headerLineNumber, _encoding, _fixedValueWidth, _failOnInconsistencies,
+                                _skipEbcdicHeader, _eolPresent);
             }
         } else {
             if (_fixedValueWidth == -1) {
-                configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _valueWidths,
-                        _failOnInconsistencies);
+                configuration =
+                        new FixedWidthConfiguration(_headerLineNumber, _encoding, _valueWidths, _failOnInconsistencies);
             } else {
                 configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _fixedValueWidth,
                         _failOnInconsistencies);

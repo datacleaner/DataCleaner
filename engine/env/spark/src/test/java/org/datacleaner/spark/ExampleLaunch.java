@@ -60,7 +60,7 @@ public class ExampleLaunch {
     private static final String JOB_LOCATION = "/datacleaner/test/vanilla-job.analysis.xml";
     private static final String DATA_LOCATION = "/datacleaner/test/person_names.txt";
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         if (System.getenv("SPARK_HOME") == null) {
             System.setProperty("SPARK_HOME", SPARK_HOME);
         }
@@ -73,8 +73,8 @@ public class ExampleLaunch {
         launcher.copyFileToHdfs(new File("src/test/resources/vanilla-job.analysis.xml"), JOB_LOCATION, false);
 
         final File hadoopConfDir = launcher.createTemporaryHadoopConfDir();
-        final SparkLauncher sparkLauncher = launcher.createSparkLauncher(hadoopConfDir, CONFIGURATION_LOCATION,
-                JOB_LOCATION, null);
+        final SparkLauncher sparkLauncher =
+                launcher.createSparkLauncher(hadoopConfDir, CONFIGURATION_LOCATION, JOB_LOCATION, null);
         final int exitCode = launcher.launch(sparkLauncher);
 
         System.out.println("Exit code: " + exitCode);

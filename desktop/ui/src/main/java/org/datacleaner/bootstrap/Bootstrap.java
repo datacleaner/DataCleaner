@@ -177,8 +177,9 @@ public final class Bootstrap {
         final UserPreferences initialUserPreferences = new UserPreferencesImpl(null);
 
         final String configurationFilePath = arguments.getConfigurationFile();
-        final FileObject configurationFile = resolveFile(configurationFilePath,
-                DataCleanerConfigurationImpl.DEFAULT_FILENAME, initialUserPreferences);
+        final FileObject configurationFile =
+                resolveFile(configurationFilePath, DataCleanerConfigurationImpl.DEFAULT_FILENAME,
+                        initialUserPreferences);
 
         Injector injector = Guice.createInjector(new DCModuleImpl(DataCleanerHome.get(), configurationFile));
 
@@ -242,23 +243,18 @@ public final class Bootstrap {
             if (welcomeImage != null) {
                 // Ticket #834: make sure to show welcome dialog in swing's
                 // dispatch thread.
-                WidgetUtils.invokeSwingAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        final WelcomeDialog welcomeDialog = new WelcomeDialog(analysisJobBuilderWindow, welcomeImage);
-                        welcomeDialog.setVisible(true);
-                    }
+                WidgetUtils.invokeSwingAction(() -> {
+                    final WelcomeDialog welcomeDialog = new WelcomeDialog(analysisJobBuilderWindow, welcomeImage);
+                    welcomeDialog.setVisible(true);
                 });
             }
 
-            WidgetUtils.invokeSwingAction(new Runnable() {
-                @Override
-                public void run() {
-                    if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration, true)) {
-                        final DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(configuration,
-                                userPreferences, windowContext, (AbstractWindow) analysisJobBuilderWindow);
-                        dataCloudLogInWindow.open();
-                    }
+            WidgetUtils.invokeSwingAction(() -> {
+                if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration, true)) {
+                    final DataCloudLogInWindow dataCloudLogInWindow =
+                            new DataCloudLogInWindow(configuration, userPreferences, windowContext,
+                                    (AbstractWindow) analysisJobBuilderWindow);
+                    dataCloudLogInWindow.open();
                 }
             });
 
@@ -310,8 +306,8 @@ public final class Bootstrap {
             if (lowerCaseFilename.startsWith("http://") || lowerCaseFilename.startsWith("https://")) {
                 if (!GraphicsEnvironment.isHeadless()) {
                     // download to a RAM file.
-                    final FileObject targetDirectory = VFSUtils.getFileSystemManager().resolveFile(
-                            "ram:///datacleaner/temp");
+                    final FileObject targetDirectory =
+                            VFSUtils.getFileSystemManager().resolveFile("ram:///datacleaner/temp");
                     if (!targetDirectory.exists()) {
                         targetDirectory.createFolder();
                     }
@@ -334,8 +330,8 @@ public final class Bootstrap {
                         if (monitorConnection.matchesURI(uri)) {
                             if (monitorConnection.isAuthenticationEnabled()) {
                                 if (monitorConnection.getEncodedPassword() == null) {
-                                    final MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext,
-                                            userPreferences);
+                                    final MonitorConnectionDialog dialog =
+                                            new MonitorConnectionDialog(windowContext, userPreferences);
                                     dialog.openBlocking();
                                 }
                                 monitorConnection = userPreferences.getMonitorConnection();
@@ -348,8 +344,9 @@ public final class Bootstrap {
                         final String[] urls = new String[] { userRequestedFilename };
                         final String[] targetFilenames = DownloadFilesActionListener.createTargetFilenames(urls);
 
-                        final FileObject[] files = downloadFiles(urls, targetDirectory, targetFilenames, windowContext,
-                                httpClient, monitorConnection);
+                        final FileObject[] files =
+                                downloadFiles(urls, targetDirectory, targetFilenames, windowContext, httpClient,
+                                        monitorConnection);
 
                         assert files.length == 1;
 
@@ -358,8 +355,8 @@ public final class Bootstrap {
                         if (logger.isInfoEnabled()) {
                             final InputStream in = ramFile.getContent().getInputStream();
                             try {
-                                final String str = FileHelper.readInputStreamAsString(ramFile.getContent()
-                                        .getInputStream(), "UTF8");
+                                final String str = FileHelper
+                                        .readInputStreamAsString(ramFile.getContent().getInputStream(), "UTF8");
                                 logger.info("Downloaded file contents: {}\n{}", userRequestedFilename, str);
                             } finally {
                                 FileHelper.safeClose(in);
@@ -374,8 +371,9 @@ public final class Bootstrap {
                             defaultPort = 443;
                         }
 
-                        final UrlFileName fileName = new UrlFileName(scheme, uri.getHost(), uri.getPort(), defaultPort,
-                                null, null, uri.getPath(), FileType.FILE, uri.getQuery());
+                        final UrlFileName fileName =
+                                new UrlFileName(scheme, uri.getHost(), uri.getPort(), defaultPort, null, null,
+                                        uri.getPath(), FileType.FILE, uri.getQuery());
 
                         final AbstractFileSystem fileSystem = (AbstractFileSystem) VFSUtils.getBaseFileSystem();
                         return new DelegateFileObject(fileName, fileSystem, ramFile);
@@ -398,10 +396,12 @@ public final class Bootstrap {
         }
     }
 
-    private FileObject[] downloadFiles(final String[] urls, final FileObject targetDirectory, final String[] targetFilenames,
-            final WindowContext windowContext, MonitorHttpClient httpClient, final MonitorConnection monitorConnection) {
-        final DownloadFilesActionListener downloadAction = new DownloadFilesActionListener(urls, targetDirectory,
-                targetFilenames, null, windowContext, httpClient);
+    private FileObject[] downloadFiles(final String[] urls, final FileObject targetDirectory,
+            final String[] targetFilenames, final WindowContext windowContext, MonitorHttpClient httpClient,
+            final MonitorConnection monitorConnection) {
+        final DownloadFilesActionListener downloadAction =
+                new DownloadFilesActionListener(urls, targetDirectory, targetFilenames, null, windowContext,
+                        httpClient);
         try {
             downloadAction.actionPerformed(null);
             final FileObject[] files = downloadAction.getFiles();
@@ -418,8 +418,8 @@ public final class Bootstrap {
                 logger.info("SSL peer not verified. Asking user for confirmation to accept urls: {}",
                         Arrays.toString(urls));
             }
-            final int confirmation = JOptionPane.showConfirmDialog(null, "Unverified SSL peer.\n\n"
-                            + "The certificate presented by the server could not be verified.\n\n"
+            final int confirmation = JOptionPane.showConfirmDialog(null,
+                    "Unverified SSL peer.\n\n" + "The certificate presented by the server could not be verified.\n\n"
                             + "Do you want to continue, accepting the unverified certificate?", "Unverified SSL peer",
                     JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
             if (confirmation != JOptionPane.YES_OPTION) {
@@ -460,20 +460,15 @@ public final class Bootstrap {
             extensionSwapClient = new ExtensionSwapClient(windowContext, userPreferences, configuration);
         } else {
             logger.info("Using custom ExtensionSwap website hostname: {}", websiteHostname);
-            extensionSwapClient = new ExtensionSwapClient(websiteHostname, windowContext, userPreferences,
-                    configuration);
+            extensionSwapClient =
+                    new ExtensionSwapClient(websiteHostname, windowContext, userPreferences, configuration);
         }
-        final ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(
-                extensionSwapClient, usageLogger);
+        final ExtensionSwapInstallationHttpContainer container =
+                new ExtensionSwapInstallationHttpContainer(extensionSwapClient, usageLogger);
 
         final Closeable closeableConnection = container.initialize();
         if (closeableConnection != null) {
-            windowContext.addExitActionListener(new ExitActionListener() {
-                @Override
-                public void exit(final int statusCode) {
-                    FileHelper.safeClose(closeableConnection);
-                }
-            });
+            windowContext.addExitActionListener(statusCode -> FileHelper.safeClose(closeableConnection));
         }
     }
 }

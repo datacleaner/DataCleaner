@@ -38,8 +38,8 @@ public final class ConfiguredPropertyTaskPane {
         this(title, iconImagePath, properties, true);
     }
 
-    public ConfiguredPropertyTaskPane(final String title, final String iconImagePath, final List<ConfiguredPropertyDescriptor> properties,
-            final boolean expanded) {
+    public ConfiguredPropertyTaskPane(final String title, final String iconImagePath,
+            final List<ConfiguredPropertyDescriptor> properties, final boolean expanded) {
         _title = title;
         _iconImagePath = iconImagePath;
         _properties = properties;

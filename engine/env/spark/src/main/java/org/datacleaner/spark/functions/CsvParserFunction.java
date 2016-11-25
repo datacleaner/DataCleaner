@@ -42,8 +42,8 @@ public final class CsvParserFunction implements Function<String, Object[]> {
             // supported
             break;
         default:
-            throw new IllegalStateException("Unsupported encoding: '" + encoding
-                    + "'. CSV files on Hadoop must be UTF-8 encoded.");
+            throw new IllegalStateException(
+                    "Unsupported encoding: '" + encoding + "'. CSV files on Hadoop must be UTF-8 encoded.");
         }
 
         _csvConfiguration = csvConfiguration;
@@ -51,10 +51,10 @@ public final class CsvParserFunction implements Function<String, Object[]> {
 
     @Override
     public Object[] call(final String csvLine) throws Exception {
-        final CSVParser csvParser = new CSVParser(_csvConfiguration.getSeparatorChar(),
-                _csvConfiguration.getQuoteChar(), _csvConfiguration.getEscapeChar());
-        final String[] values = csvParser.parseLine(csvLine);
-        return values;
+        final CSVParser csvParser =
+                new CSVParser(_csvConfiguration.getSeparatorChar(), _csvConfiguration.getQuoteChar(),
+                        _csvConfiguration.getEscapeChar());
+        return csvParser.parseLine(csvLine);
     }
 
 }

@@ -19,15 +19,15 @@
  */
 package org.datacleaner.result;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
+
+import junit.framework.TestCase;
 
 public class DefaultResultProducerTest extends TestCase {
 
     public void testConstructAndGet() throws Exception {
-        AnalyzerResult result = new NumberResult(42);
-        DefaultResultProducer producer = new DefaultResultProducer(result);
+        final AnalyzerResult result = new NumberResult(42);
+        final DefaultResultProducer producer = new DefaultResultProducer(result);
         assertSame(result, producer.getResult());
     }
 }

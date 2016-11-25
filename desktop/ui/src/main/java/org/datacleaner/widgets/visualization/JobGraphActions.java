@@ -63,14 +63,13 @@ public class JobGraphActions {
             return;
         }
 
-        @SuppressWarnings("unchecked")
-        final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer =
+        @SuppressWarnings("unchecked") final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer =
                 (Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
                         .getRenderer(componentBuilder, ComponentBuilderPresenterRenderingFormat.class);
 
         if (renderer != null) {
-            final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(_windowContext,
-                    componentBuilder, renderer);
+            final ComponentConfigurationDialog dialog =
+                    new ComponentConfigurationDialog(_windowContext, componentBuilder, renderer);
             dialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(final WindowEvent e) {
@@ -91,8 +90,8 @@ public class JobGraphActions {
         }
 
         final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder(table);
-        final SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
-                analysisJobBuilder, table);
+        final SourceTableConfigurationDialog dialog =
+                new SourceTableConfigurationDialog(_windowContext, analysisJobBuilder, table);
 
         dialog.addWindowListener(new WindowAdapter() {
             @Override

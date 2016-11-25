@@ -21,18 +21,18 @@ package org.datacleaner.connection;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.util.MutableRef;
+
+import junit.framework.TestCase;
 
 public class UsageAwareDatastoreConnectionTest extends TestCase {
 
     public void testGetUsageCount() throws Exception {
-        CsvDatastore ds = new CsvDatastore("foo", "src/test/resources/employees.csv");
+        final CsvDatastore ds = new CsvDatastore("foo", "src/test/resources/employees.csv");
         assertFalse(ds.isDatastoreConnectionOpen());
 
-        UpdateableDatastoreConnectionLease connection1 = (UpdateableDatastoreConnectionLease) ds.openConnection();
+        final UpdateableDatastoreConnectionLease connection1 = (UpdateableDatastoreConnectionLease) ds.openConnection();
 
         try (UsageAwareDatastoreConnection<?> usageAware = (UsageAwareDatastoreConnection<?>) connection1
                 .getDelegate()) {
@@ -40,10 +40,10 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
             assertTrue(ds.isDatastoreConnectionOpen());
             assertEquals(1, usageAware.getUsageCount());
 
-            DatastoreConnection con2 = ds.openConnection();
+            final DatastoreConnection con2 = ds.openConnection();
             assertEquals(2, usageAware.getUsageCount());
 
-            DatastoreConnection con3 = ds.openConnection();
+            final DatastoreConnection con3 = ds.openConnection();
             assertEquals(3, usageAware.getUsageCount());
 
             con3.close();
@@ -63,7 +63,7 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
     }
 
     public void testCloseByGarbageCollection() throws Exception {
-        CsvDatastore ds = new CsvDatastore("foo", "src/test/resources/employees.csv");
+        final CsvDatastore ds = new CsvDatastore("foo", "src/test/resources/employees.csv");
         assertFalse(ds.isDatastoreConnectionOpen());
 
         DatastoreConnectionLease con1 = (DatastoreConnectionLease) ds.openConnection();
@@ -109,9 +109,10 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
             protected void closeInternal() {
                 try {
                     Thread.sleep(14);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
+                    // ignore
                 }
-                int closeCount = _closeCount.incrementAndGet();
+                final int closeCount = _closeCount.incrementAndGet();
                 if (closeCount != 1) {
                     raceConditions.incrementAndGet();
                 }
@@ -136,7 +137,8 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
                     }
                     try {
                         Thread.sleep((long) (Math.random() * 10));
-                    } catch (InterruptedException e) {
+                    } catch (final InterruptedException e) {
+                        // ignore
                     }
                     con.close();
                 }
@@ -153,7 +155,7 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
         for (int i = 0; i < threads.length; i++) {
             try {
                 threads[i].join();
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 // do nothing
             }
         }
@@ -161,7 +163,8 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
         assertTrue(creations.get() > 0);
         assertTrue(creations.get() < threadCount);
         assertTrue(reuses.get() > 0);
-        assertEquals("Found " + raceConditions
-                + " race conditions! Object creation and close() method is not thread safe!", 0, raceConditions.get());
+        assertEquals(
+                "Found " + raceConditions + " race conditions! Object creation and close() method is not thread safe!",
+                0, raceConditions.get());
     }
 }

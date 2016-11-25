@@ -19,8 +19,6 @@
  */
 package org.datacleaner.spark;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
@@ -32,6 +30,8 @@ import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.Neo4jDatastore;
 import org.datacleaner.spark.utils.HadoopJobExecutionUtils;
 import org.junit.Test;
+
+import junit.framework.TestCase;
 
 public class HadoopConfigurationUtilsTest extends TestCase {
 
@@ -72,9 +72,10 @@ public class HadoopConfigurationUtilsTest extends TestCase {
 
     public void testFixedWidthDatastore() {
         final HdfsResource hdfsResource = new HdfsResource("hdfs://datacleaner/employees-fixed-width.txt");
-        int[] widths = new int[] { 19, 22 };
-        final FixedWidthDatastore datastore = new FixedWidthDatastore("My datastore", hdfsResource, hdfsResource
-                .getFilepath(), "UTF-8", widths, false, false, false, 0, null);
+        final int[] widths = new int[] { 19, 22 };
+        final FixedWidthDatastore datastore =
+                new FixedWidthDatastore("My datastore", hdfsResource, hdfsResource.getFilepath(), "UTF-8", widths,
+                        false, false, false, 0, null);
         assertTrue(HadoopJobExecutionUtils.isValidSourceDatastore(datastore));
     }
 }

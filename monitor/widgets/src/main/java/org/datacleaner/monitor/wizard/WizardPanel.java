@@ -69,9 +69,9 @@ public interface WizardPanel {
     /**
      * Add a widget on the wizard panel
      *
-     * @param w
+     * @param widget
      */
-    void setContent(IsWidget w);
+    void setContent(IsWidget widget);
 
     /**
      * Gets the widget representing the complete wizard panel.

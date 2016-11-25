@@ -40,7 +40,8 @@ public class AlertPanel extends FlowPanel {
     private final AlertDefinition _alert;
     private final Anchor _anchor;
 
-    public AlertPanel(final SchedulingServiceAsync service, final ScheduleDefinition schedule, final AlertDefinition alert) {
+    public AlertPanel(final SchedulingServiceAsync service, final ScheduleDefinition schedule,
+            final AlertDefinition alert) {
         super();
         _service = service;
         _schedule = schedule;

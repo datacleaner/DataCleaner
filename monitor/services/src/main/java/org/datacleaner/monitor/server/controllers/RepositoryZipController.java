@@ -162,12 +162,7 @@ public class RepositoryZipController {
                     folder = rootFolder;
                 }
                 final RepositoryFile existingFile = folder.getFile(filename);
-                final Action<OutputStream> writeCallback = new Action<OutputStream>() {
-                    @Override
-                    public void run(final OutputStream fileOutput) throws Exception {
-                        FileHelper.copy(zipInputStream, fileOutput);
-                    }
-                };
+                final Action<OutputStream> writeCallback = fileOutput -> FileHelper.copy(zipInputStream, fileOutput);
                 if (existingFile == null) {
                     folder.createFile(filename, writeCallback);
                 } else {
@@ -216,11 +211,8 @@ public class RepositoryZipController {
         for (final RepositoryFile file : files) {
             logger.info("File: " + path + file.getName());
             zipOutput.putNextEntry(new ZipEntry(path + file.getName()));
-            file.readFile(new Action<InputStream>() {
-                @Override
-                public void run(final InputStream fileInput) throws Exception {
-                    FileHelper.copy(fileInput, zipOutput);
-                }
+            file.readFile(fileInput -> {
+                FileHelper.copy(fileInput, zipOutput);
             });
             zipOutput.closeEntry();
             itemsCount++;
@@ -235,9 +227,8 @@ public class RepositoryZipController {
         }
 
         if (itemsCount == 0 && !path.equals("")) {
-            final String relativePath = path;
-            logger.info("Empty: " + relativePath);
-            final ZipEntry entry = new ZipEntry(relativePath);
+            logger.info("Empty: " + path);
+            final ZipEntry entry = new ZipEntry(path);
             zipOutput.putNextEntry(entry);
         }
     }

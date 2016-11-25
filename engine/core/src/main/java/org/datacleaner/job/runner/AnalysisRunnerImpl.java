@@ -70,8 +70,8 @@ public class AnalysisRunnerImpl implements AnalysisRunner {
         final ErrorAwareAnalysisListener errorListener = new ErrorAwareAnalysisListener();
 
         // This analysis listener is a composite for all other listeners
-        final CompositeAnalysisListener analysisListener = new CompositeAnalysisListener(errorListener,
-                _sharedAnalysisListeners);
+        final CompositeAnalysisListener analysisListener =
+                new CompositeAnalysisListener(errorListener, _sharedAnalysisListeners);
 
         if (DebugLoggingAnalysisListener.isEnabled()) {
             // enable debug logging?
@@ -87,8 +87,9 @@ public class AnalysisRunnerImpl implements AnalysisRunner {
         final boolean includedNonDistributed = isNonDistributedTasksIncluded();
 
         // the delegate will do all the actual work
-        final AnalysisRunnerJobDelegate delegate = new AnalysisRunnerJobDelegate(job, _configuration, taskRunner,
-                analysisListener, resultQueue, errorListener, includedNonDistributed);
+        final AnalysisRunnerJobDelegate delegate =
+                new AnalysisRunnerJobDelegate(job, _configuration, taskRunner, analysisListener, resultQueue,
+                        errorListener, includedNonDistributed);
         return delegate.run();
     }
 

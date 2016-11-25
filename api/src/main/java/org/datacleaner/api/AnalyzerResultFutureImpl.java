@@ -66,24 +66,20 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
         _result = null;
         _error = null;
 
-        SharedExecutorService.get().submit(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    _result = resultRef.get();
-                    if (_result == null && resultRef instanceof LazyRef) {
-                        // TODO: workaround - reported as MM bug, remove when
-                        // fixed.
-                        throw new RuntimeException(((LazyRef<?>) resultRef).getError());
-                    }
-                    onSuccess();
-                } catch (final RuntimeException e) {
-                    _error = e;
-                    onError();
-                } finally {
-                    _countDownLatch.countDown();
+        SharedExecutorService.get().submit(() -> {
+            try {
+                _result = resultRef.get();
+                if (_result == null && resultRef instanceof LazyRef) {
+                    // TODO: workaround - reported as MM bug, remove when
+                    // fixed.
+                    throw new RuntimeException(((LazyRef<?>) resultRef).getError());
                 }
+                onSuccess();
+            } catch (final RuntimeException e) {
+                _error = e;
+                onError();
+            } finally {
+                _countDownLatch.countDown();
             }
         });
     }

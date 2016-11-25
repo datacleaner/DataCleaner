@@ -50,8 +50,8 @@ final class AnnotationBasedRendererBeanDescriptor<R extends Renderer<?, ?>> exte
         }
 
         _renderingFormat = rendererBeanAnnotation.value();
-        if (_renderingFormat == null || _renderingFormat.isInterface()
-                || Modifier.isAbstract(_renderingFormat.getModifiers())) {
+        if (_renderingFormat == null || _renderingFormat.isInterface() || Modifier
+                .isAbstract(_renderingFormat.getModifiers())) {
             throw new DescriptorException("Rendering format (" + _renderingFormat + ") is not a non-abstract class");
         }
 
@@ -62,9 +62,8 @@ final class AnnotationBasedRendererBeanDescriptor<R extends Renderer<?, ?>> exte
             throw new DescriptorException("Could not determine output type of rendering format: " + _renderingFormat);
         }
 
-        @SuppressWarnings("unchecked") final
-        Class<? extends Renderable> rendererInputType = (Class<? extends Renderable>) ReflectionUtils.getTypeParameter(
-                rendererClass, Renderer.class, 0);
+        @SuppressWarnings("unchecked") final Class<? extends Renderable> rendererInputType =
+                (Class<? extends Renderable>) ReflectionUtils.getTypeParameter(rendererClass, Renderer.class, 0);
         _rendererInputType = rendererInputType;
 
         logger.debug("Found renderer input type: {}", _rendererInputType);

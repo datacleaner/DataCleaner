@@ -30,13 +30,9 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.descriptors.CloseMethodDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.InitializeMethodDescriptor;
-import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.descriptors.ValidateMethodDescriptor;
 import org.datacleaner.monitor.configuration.SimpleRemoteComponentsConfigurationImpl;
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.junit.Before;
@@ -54,17 +50,15 @@ public class ComponentHandlerTest {
     @Before
     public void setUp() {
         componentConfiguration = getComponentConfiguration();
-        DataCleanerConfiguration dcConfigMock = getDCConfigurationMock();
-        componentHandler = new ComponentHandler(
-                dcConfigMock,
-                dcConfigMock.getEnvironment().getDescriptorProvider()
-                        .getTransformerDescriptorByDisplayName(componentName), componentConfiguration,
+        final DataCleanerConfiguration dcConfigMock = getDCConfigurationMock();
+        componentHandler = new ComponentHandler(dcConfigMock, dcConfigMock.getEnvironment().getDescriptorProvider()
+                .getTransformerDescriptorByDisplayName(componentName), componentConfiguration,
                 new SimpleRemoteComponentsConfigurationImpl(), null);
         jsonData = getJsonDataMock();
     }
 
     private DataCleanerConfiguration getDCConfigurationMock() {
-        DataCleanerConfiguration dataCleanerConfiguration = createNiceMock(DataCleanerConfiguration.class);
+        final DataCleanerConfiguration dataCleanerConfiguration = createNiceMock(DataCleanerConfiguration.class);
         expect(dataCleanerConfiguration.getEnvironment()).andReturn(getEnvironmentMock()).anyTimes();
         expect(dataCleanerConfiguration.getHomeFolder()).andReturn(DataCleanerConfigurationImpl.defaultHomeFolder())
                 .anyTimes();
@@ -74,7 +68,7 @@ public class ComponentHandlerTest {
     }
 
     private DataCleanerEnvironment getEnvironmentMock() {
-        DataCleanerEnvironment dataCleanerEnvironment = createNiceMock(DataCleanerEnvironment.class);
+        final DataCleanerEnvironment dataCleanerEnvironment = createNiceMock(DataCleanerEnvironment.class);
         expect(dataCleanerEnvironment.getDescriptorProvider()).andReturn(getDescriptorProviderMock()).anyTimes();
         expect(dataCleanerEnvironment.getInjectionManagerFactory()).andReturn(getInjectionManagerFactoryMock())
                 .anyTimes();
@@ -84,7 +78,7 @@ public class ComponentHandlerTest {
     }
 
     private InjectionManagerFactory getInjectionManagerFactoryMock() {
-        InjectionManagerFactory injectionManagerFactory = createNiceMock(InjectionManagerFactory.class);
+        final InjectionManagerFactory injectionManagerFactory = createNiceMock(InjectionManagerFactory.class);
         expect(injectionManagerFactory.getInjectionManager(null)).andReturn(null).anyTimes();
         replay(injectionManagerFactory);
 
@@ -93,8 +87,8 @@ public class ComponentHandlerTest {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private DescriptorProvider getDescriptorProviderMock() {
-        DescriptorProvider descriptorProvider = createNiceMock(DescriptorProvider.class);
-        TransformerDescriptor mock = getTransformerDescriptorMock();
+        final DescriptorProvider descriptorProvider = createNiceMock(DescriptorProvider.class);
+        final TransformerDescriptor mock = getTransformerDescriptorMock();
         expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(mock).anyTimes();
         replay(descriptorProvider);
 
@@ -102,19 +96,14 @@ public class ComponentHandlerTest {
     }
 
     private TransformerDescriptor<?> getTransformerDescriptorMock() {
-        @SuppressWarnings("unchecked")
-        TransformerDescriptor<ConcatenatorTransformer> transformerDescriptor =
+        @SuppressWarnings("unchecked") final TransformerDescriptor<ConcatenatorTransformer> transformerDescriptor =
                 createNiceMock(TransformerDescriptor.class);
         expect(transformerDescriptor.getConfiguredProperties()).andReturn(getConfiguredPropertiesMock()).anyTimes();
         expect(transformerDescriptor.getDisplayName()).andReturn("descriptor display name").anyTimes();
-        expect(transformerDescriptor.getProvidedProperties()).andReturn(
-                Collections.emptySet()).anyTimes();
-        expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.emptySet())
-                .anyTimes();
-        expect(transformerDescriptor.getInitializeMethods()).andReturn(
-                Collections.emptySet()).anyTimes();
-        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.emptySet())
-                .anyTimes();
+        expect(transformerDescriptor.getProvidedProperties()).andReturn(Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getInitializeMethods()).andReturn(Collections.emptySet()).anyTimes();
+        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.emptySet()).anyTimes();
         expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
         replay(transformerDescriptor);
 
@@ -122,7 +111,7 @@ public class ComponentHandlerTest {
     }
 
     private Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesMock() {
-        ConfiguredPropertyDescriptor configuredPropertyDescriptorMock =
+        final ConfiguredPropertyDescriptor configuredPropertyDescriptorMock =
                 createNiceMock(ConfiguredPropertyDescriptor.class);
         expect(configuredPropertyDescriptorMock.getName()).andReturn("propertyName").anyTimes();
         expect(configuredPropertyDescriptorMock.isInputColumn()).andReturn(true).anyTimes();
@@ -130,15 +119,15 @@ public class ComponentHandlerTest {
         expect(configuredPropertyDescriptorMock.isRequired()).andReturn(true).anyTimes();
         replay(configuredPropertyDescriptorMock);
 
-        Set<ConfiguredPropertyDescriptor> propertiesSet = new HashSet<>();
+        final Set<ConfiguredPropertyDescriptor> propertiesSet = new HashSet<>();
         propertiesSet.add(configuredPropertyDescriptorMock);
 
         return propertiesSet;
     }
 
     private JsonNode getJsonDataMock() {
-        JsonNode jsonNode = createNiceMock(JsonNode.class);
-        Set<JsonNode> set = new HashSet<>();
+        final JsonNode jsonNode = createNiceMock(JsonNode.class);
+        final Set<JsonNode> set = new HashSet<>();
         expect(jsonNode.iterator()).andReturn(set.iterator()).anyTimes();
         replay(jsonNode);
 

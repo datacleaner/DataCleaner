@@ -34,13 +34,15 @@ import com.fasterxml.jackson.core.JsonParseException;
 public class JsonQueryResultParserHelperTest {
 
     @Test
-    public void testShouldParseQueryResult()
-            throws JsonParseException, IOException {
-        String result =
-                "{\"table\":{\"header\":[\"CUSTOMERNUMBER\",\"CUSTOMERNAME\",\"LINKAGE\"],\"rows\":[[\"bla1\",null,\"[{source_name=SRCA1, source_id=316013}, {source_name=SRCA1, source_id=394129}]\"],[\"bla2\",\"blieb2\",\"[{source_name=SRCA2, source_id=316013}, {source_name=SRCA2, source_id=394129}]\"]]}}";
-        InputStream is = new ByteArrayInputStream(result.getBytes());
-        JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
-        MutableColumn[] columns = new MutableColumn[3];
+    public void testShouldParseQueryResult() throws JsonParseException, IOException {
+        final String result =
+                "{\"table\":{\"header\":[\"CUSTOMERNUMBER\",\"CUSTOMERNAME\",\"LINKAGE\"],"
+                        + "\"rows\":[[\"bla1\",null,\"[{source_name=SRCA1, source_id=316013}, "
+                        + "{source_name=SRCA1, source_id=394129}]\"],[\"bla2\",\"blieb2\","
+                        + "\"[{source_name=SRCA2, source_id=316013}, {source_name=SRCA2, source_id=394129}]\"]]}}";
+        final InputStream is = new ByteArrayInputStream(result.getBytes());
+        final JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
+        final MutableColumn[] columns = new MutableColumn[3];
         columns[0] = new MutableColumn();
         columns[0].setName("CUSTOMERNUMBER");
         columns[0].setColumnNumber(1);
@@ -50,22 +52,18 @@ public class JsonQueryResultParserHelperTest {
         columns[2] = new MutableColumn();
         columns[2].setName("LINKAGE");
         columns[2].setColumnNumber(3);
-        List<Object[]> queryResult = parser.parseQueryResult(is);
-        Iterator<Object[]> iterator = queryResult.iterator();
+        final List<Object[]> queryResult = parser.parseQueryResult(is);
+        final Iterator<Object[]> iterator = queryResult.iterator();
 
         Object[] record = iterator.next();
         assertEquals("bla1", record[0]);
         assertEquals(null, record[1]);
-        assertEquals(
-                "[{source_name=SRCA1, source_id=316013}, {source_name=SRCA1, source_id=394129}]",
-                record[2]);
+        assertEquals("[{source_name=SRCA1, source_id=316013}, {source_name=SRCA1, source_id=394129}]", record[2]);
 
         record = iterator.next();
         assertEquals("bla2", record[0]);
         assertEquals("blieb2", record[1]);
-        assertEquals(
-                "[{source_name=SRCA2, source_id=316013}, {source_name=SRCA2, source_id=394129}]",
-                record[2]);
+        assertEquals("[{source_name=SRCA2, source_id=316013}, {source_name=SRCA2, source_id=394129}]", record[2]);
 
     }
 

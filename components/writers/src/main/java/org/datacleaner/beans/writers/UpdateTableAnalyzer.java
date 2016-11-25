@@ -31,8 +31,6 @@ import javax.inject.Named;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.metamodel.BatchUpdateScript;
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.create.TableCreationBuilder;
 import org.apache.metamodel.csv.CsvDataContext;
@@ -82,16 +80,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named("Update table")
-@Description(
-        "Update records in a table in a registered datastore. This component allows you to map the values available in the flow with the columns of the target table, in order to update the values of these columns in the datastore."
-                + "\nTo understand the configuration of the Update table component, consider a typical SQL update statement:"
-                + "\n<blockquote>UPDATE table SET name = 'John Doe' WHERE id = 42</blockquote>"
-                + "\nHere we see that there is a condition (WHERE id=42) and a value to update (name should become 'John Doe'). This is what the two inputs are referring to. But obviously you are not dealing with constant values like 'John Doe' or '42'. You have a field in your DC job that you want to map to fields in your database."
-                + "\nUsually the 'condition value' would be a mapping of the key that you have in your job towards the key that is in the database. The 'values to update' property would include the columns that you wish to update based on the values you have in your job.")
+@Description("Update records in a table in a registered datastore. This component allows you to map the values "
+        + "available in the flow with the columns of the target table, in order to update the values of these columns "
+        + "in the datastore.\nTo understand the configuration of the Update table component, consider a typical SQL "
+        + "update statement:\n<blockquote>UPDATE table SET name = 'John Doe' WHERE id = 42</blockquote>\nHere we see "
+        + "that there is a condition (WHERE id=42) and a value to update (name should become 'John Doe'). This is what "
+        + "the two inputs are referring to. But obviously you are not dealing with constant values like 'John Doe' or "
+        + "'42'. You have a field in your DC job that you want to map to fields in your database.\nUsually the "
+        + "'condition value' would be a mapping of the key that you have in your job towards the key that is in the "
+        + "database. The 'values to update' property would include the columns that you wish to update based on the "
+        + "values you have in your job.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Concurrent(true)
-public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice,
-        PrecedingComponentConsumer {
+public class UpdateTableAnalyzer
+        implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice, PrecedingComponentConsumer {
 
     private static final String PROPERTY_NAME_VALUES = "Values";
     private static final String PROPERTY_NAME_CONDITION_VALUES = "Condition values";
@@ -145,7 +147,8 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
 
     @Inject
     @Configured(order = 8, value = "Buffer size")
-    @Description("How much data to buffer before committing batches of data. Large batches often perform better, but require more memory.")
+    @Description( "How much data to buffer before committing batches of data. Large batches often perform better, "
+            + "but require more memory.")
     WriteBufferSizeOption bufferSizeOption = WriteBufferSizeOption.MEDIUM;
 
     @Inject
@@ -202,8 +205,7 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
 
         _writeBuffer = new WriteBuffer(bufferSize, this);
 
-        final UpdateableDatastoreConnection con = datastore.openConnection();
-        try {
+        try (UpdateableDatastoreConnection con = datastore.openConnection()) {
             final SchemaNavigator schemaNavigator = con.getSchemaNavigator();
 
             final List<String> columnsNotFound = new ArrayList<>();
@@ -225,8 +227,6 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
             if (!columnsNotFound.isEmpty()) {
                 throw new IllegalArgumentException("Could not find column(s): " + columnsNotFound);
             }
-        } finally {
-            con.close();
         }
     }
 
@@ -265,16 +265,16 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
                 final String columnName = translateAdditionalErrorLogColumnName(inputColumn.getName());
                 final Column column = table.getColumnByName(columnName);
                 if (column == null) {
-                    throw new IllegalStateException("Error log file does not have required column header: "
-                            + columnName);
+                    throw new IllegalStateException(
+                            "Error log file does not have required column header: " + columnName);
                 }
             }
         }
 
         final Column column = table.getColumnByName(ERROR_MESSAGE_COLUMN_NAME);
         if (column == null) {
-            throw new IllegalStateException("Error log file does not have required column: "
-                    + ERROR_MESSAGE_COLUMN_NAME);
+            throw new IllegalStateException(
+                    "Error log file does not have required column: " + ERROR_MESSAGE_COLUMN_NAME);
         }
     }
 
@@ -308,28 +308,25 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
             validateCsvHeaders(dc);
         } else {
             // create table if no table exists.
-            dc.executeUpdate(new UpdateScript() {
-                @Override
-                public void run(final UpdateCallback cb) {
-                    TableCreationBuilder tableBuilder = cb.createTable(schema, "error_table");
-                    for (final String columnName : columnNames) {
-                        tableBuilder = tableBuilder.withColumn(columnName);
-                    }
-                    for (final String columnName : conditionColumnNames) {
-                        tableBuilder = tableBuilder.withColumn(columnName);
-                    }
-
-                    if (additionalErrorLogValues != null) {
-                        for (final InputColumn<?> inputColumn : additionalErrorLogValues) {
-                            final String columnName = translateAdditionalErrorLogColumnName(inputColumn.getName());
-                            tableBuilder = tableBuilder.withColumn(columnName);
-                        }
-                    }
-
-                    tableBuilder = tableBuilder.withColumn(ERROR_MESSAGE_COLUMN_NAME);
-
-                    tableBuilder.execute();
+            dc.executeUpdate(cb -> {
+                TableCreationBuilder tableBuilder = cb.createTable(schema, "error_table");
+                for (final String columnName : columnNames) {
+                    tableBuilder = tableBuilder.withColumn(columnName);
                 }
+                for (final String columnName : conditionColumnNames) {
+                    tableBuilder = tableBuilder.withColumn(columnName);
+                }
+
+                if (additionalErrorLogValues != null) {
+                    for (final InputColumn<?> inputColumn : additionalErrorLogValues) {
+                        final String columnName = translateAdditionalErrorLogColumnName(inputColumn.getName());
+                        tableBuilder = tableBuilder.withColumn(columnName);
+                    }
+                }
+
+                tableBuilder = tableBuilder.withColumn(ERROR_MESSAGE_COLUMN_NAME);
+
+                tableBuilder.execute();
             });
         }
 
@@ -422,58 +419,52 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
     @Override
     public void run(final Iterable<Object[]> buffer) throws Exception {
 
-        final UpdateableDatastoreConnection con = datastore.openConnection();
-        try {
-            final Column[] updateColumns = con.getSchemaNavigator()
-                    .convertToColumns(schemaName, tableName, columnNames);
-            final Column[] whereColumns = con.getSchemaNavigator().convertToColumns(schemaName, tableName,
-                    conditionColumnNames);
+        try (UpdateableDatastoreConnection con = datastore.openConnection()) {
+            final Column[] updateColumns =
+                    con.getSchemaNavigator().convertToColumns(schemaName, tableName, columnNames);
+            final Column[] whereColumns =
+                    con.getSchemaNavigator().convertToColumns(schemaName, tableName, conditionColumnNames);
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Updating columns: {}", Arrays.toString(updateColumns));
             }
 
             final UpdateableDataContext dc = con.getUpdateableDataContext();
-            dc.executeUpdate(new BatchUpdateScript() {
-                @Override
-                public void run(final UpdateCallback callback) {
-                    int updateCount = 0;
-                    for (final Object[] rowData : buffer) {
-                        RowUpdationBuilder updationBuilder = callback.update(updateColumns[0].getTable());
-                        for (int i = 0; i < updateColumns.length; i++) {
-                            final Object value = rowData[i];
-                            updationBuilder = updationBuilder.value(updateColumns[i], value);
-                        }
-
-                        for (int i = 0; i < whereColumns.length; i++) {
-                            final Object value = rowData[i + updateColumns.length];
-                            final Column whereColumn = whereColumns[i];
-                            final FilterItem filterItem = new FilterItem(new SelectItem(whereColumn),
-                                    OperatorType.EQUALS_TO, value);
-
-                            updationBuilder = updationBuilder.where(filterItem);
-                        }
-
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Updating: {}", Arrays.toString(rowData));
-                        }
-
-                        try {
-                            updationBuilder.execute();
-                            updateCount++;
-                            _updatedRowCount.incrementAndGet();
-                        } catch (final RuntimeException e) {
-                            errorOccurred(rowData, e);
-                        }
+            dc.executeUpdate((BatchUpdateScript) callback -> {
+                int updateCount = 0;
+                for (final Object[] rowData : buffer) {
+                    RowUpdationBuilder updationBuilder = callback.update(updateColumns[0].getTable());
+                    for (int i = 0; i < updateColumns.length; i++) {
+                        final Object value = rowData[i];
+                        updationBuilder = updationBuilder.value(updateColumns[i], value);
                     }
 
-                    if (updateCount > 0) {
-                        _componentContext.publishMessage(new ExecutionLogMessage(updateCount + " updates executed"));
+                    for (int i = 0; i < whereColumns.length; i++) {
+                        final Object value = rowData[i + updateColumns.length];
+                        final Column whereColumn = whereColumns[i];
+                        final FilterItem filterItem =
+                                new FilterItem(new SelectItem(whereColumn), OperatorType.EQUALS_TO, value);
+
+                        updationBuilder = updationBuilder.where(filterItem);
+                    }
+
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Updating: {}", Arrays.toString(rowData));
+                    }
+
+                    try {
+                        updationBuilder.execute();
+                        updateCount++;
+                        _updatedRowCount.incrementAndGet();
+                    } catch (final RuntimeException e) {
+                        errorOccurred(rowData, e);
                     }
                 }
+
+                if (updateCount > 0) {
+                    _componentContext.publishMessage(new ExecutionLogMessage(updateCount + " updates executed"));
+                }
             });
-        } finally {
-            con.close();
         }
     }
 
@@ -483,27 +474,23 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
             throw e;
         } else {
             logger.warn("Error occurred while updating record. Writing to error stream", e);
-            _errorDataContext.executeUpdate(new UpdateScript() {
-                @Override
-                public void run(final UpdateCallback cb) {
-                    RowInsertionBuilder insertBuilder = cb
-                            .insertInto(_errorDataContext.getDefaultSchema().getTables()[0]);
-                    for (int i = 0; i < columnNames.length; i++) {
-                        insertBuilder = insertBuilder.value(columnNames[i], rowData[i]);
-                    }
-
-                    if (additionalErrorLogValues != null) {
-                        for (int i = 0; i < additionalErrorLogValues.length; i++) {
-                            final String columnName = translateAdditionalErrorLogColumnName(additionalErrorLogValues[i]
-                                    .getName());
-                            final Object value = rowData[columnNames.length + i];
-                            insertBuilder = insertBuilder.value(columnName, value);
-                        }
-                    }
-
-                    insertBuilder = insertBuilder.value(ERROR_MESSAGE_COLUMN_NAME, e.getMessage());
-                    insertBuilder.execute();
+            _errorDataContext.executeUpdate(cb -> {
+                RowInsertionBuilder insertBuilder = cb.insertInto(_errorDataContext.getDefaultSchema().getTables()[0]);
+                for (int i = 0; i < columnNames.length; i++) {
+                    insertBuilder = insertBuilder.value(columnNames[i], rowData[i]);
                 }
+
+                if (additionalErrorLogValues != null) {
+                    for (int i = 0; i < additionalErrorLogValues.length; i++) {
+                        final String columnName =
+                                translateAdditionalErrorLogColumnName(additionalErrorLogValues[i].getName());
+                        final Object value = rowData[columnNames.length + i];
+                        insertBuilder = insertBuilder.value(columnName, value);
+                    }
+                }
+
+                insertBuilder = insertBuilder.value(ERROR_MESSAGE_COLUMN_NAME, e.getMessage());
+                insertBuilder.execute();
             });
         }
     }
@@ -528,7 +515,7 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
     }
 
     @Override
-    public void configureForFilterOutcome(final AnalysisJobBuilder analysisJobBuilder, final FilterDescriptor<?, ?> descriptor,
-            final String categoryName) {
+    public void configureForFilterOutcome(final AnalysisJobBuilder analysisJobBuilder,
+            final FilterDescriptor<?, ?> descriptor, final String categoryName) {
     }
 }

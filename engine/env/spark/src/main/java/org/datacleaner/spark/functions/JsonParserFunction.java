@@ -41,8 +41,7 @@ public class JsonParserFunction implements Function<String, Object[]> {
     public Object[] call(final String line) throws Exception {
         final ObjectMapper mapper = new ObjectMapper();
         final JsonNode readTree = mapper.readTree(line);
-        final Object[] values = getValues(readTree);
-        return values;
+        return getValues(readTree);
     }
 
     private Object[] getValues(final JsonNode readTree) {

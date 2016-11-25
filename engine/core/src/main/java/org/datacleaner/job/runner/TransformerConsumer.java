@@ -47,16 +47,15 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
     private RowIdGenerator _idGenerator;
 
     public TransformerConsumer(final Transformer transformer, final TransformerJob transformerJob,
-            final InputColumn<?>[] inputColumns,
-            final RowProcessingPublisher publisher) {
+            final InputColumn<?>[] inputColumns, final RowProcessingPublisher publisher) {
         super(publisher, transformerJob, transformerJob);
         _transformer = transformer;
         _transformerJob = transformerJob;
         _inputColumns = inputColumns;
         _concurrent = determineConcurrent();
 
-        _outputRowCollectorProperties = _transformerJob.getDescriptor().getProvidedPropertiesByType(
-                OutputRowCollector.class);
+        _outputRowCollectorProperties =
+                _transformerJob.getDescriptor().getProvidedPropertiesByType(OutputRowCollector.class);
     }
 
     private boolean determineConcurrent() {

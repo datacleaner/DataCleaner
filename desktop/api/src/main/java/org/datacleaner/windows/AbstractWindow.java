@@ -78,16 +78,13 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 
     @Override
     public void open() {
-        WidgetUtils.invokeSwingAction(new Runnable() {
-            @Override
-            public void run() {
-                if ("true".equals(System.getProperty(SYSTEM_PROPERTY_HIDE_WINDOWS))) {
-                    // simulate that the window has opened.
-                    initialize();
-                    return;
-                }
-                setVisible(true);
+        WidgetUtils.invokeSwingAction(() -> {
+            if ("true".equals(System.getProperty(SYSTEM_PROPERTY_HIDE_WINDOWS))) {
+                // simulate that the window has opened.
+                initialize();
+                return;
             }
+            setVisible(true);
         });
     }
 

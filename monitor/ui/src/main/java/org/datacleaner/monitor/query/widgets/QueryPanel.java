@@ -62,8 +62,8 @@ public class QueryPanel extends FlowPanel {
     private final HTML _resultPanel;
     private final LoadingIndicator _loadingIcon;
 
-    public QueryPanel(final TenantIdentifier tenant, final DatastoreServiceAsync service, final DatastoreIdentifier datastore,
-            final SchemaIdentifier schema, final List<TableIdentifier> tables) {
+    public QueryPanel(final TenantIdentifier tenant, final DatastoreServiceAsync service,
+            final DatastoreIdentifier datastore, final SchemaIdentifier schema, final List<TableIdentifier> tables) {
         super();
         setStyleName("QueryPanel");
 
@@ -147,8 +147,8 @@ public class QueryPanel extends FlowPanel {
         if (table == null) {
             _queryTextArea.setText("SELECT *\nFROM [table] \nLIMIT 50");
         } else {
-            _queryTextArea.setText("SELECT *\nFROM " + table.getSchema().getName() + "." + table.getName()
-                    + "\nLIMIT 50");
+            _queryTextArea
+                    .setText("SELECT *\nFROM " + table.getSchema().getName() + "." + table.getName() + "\nLIMIT 50");
         }
     }
 

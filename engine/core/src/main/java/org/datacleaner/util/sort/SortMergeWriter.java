@@ -294,15 +294,13 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
     }
 
     private void readNextRows(final List<Entry<R, Integer>> nextRows,
-            final ObjectInputStream[] tempFileObjectInputStreams)
-            throws Exception {
+            final ObjectInputStream[] tempFileObjectInputStreams) throws Exception {
         for (int i = 0; i < tempFileObjectInputStreams.length; i++) {
             if (tempFileObjectInputStreams[i] != null) {
                 if (nextRows.get(i) == null) {
 
                     try {
-                        @SuppressWarnings("unchecked")
-                        final R row = (R) tempFileObjectInputStreams[i].readObject();
+                        @SuppressWarnings("unchecked") final R row = (R) tempFileObjectInputStreams[i].readObject();
                         final int count = tempFileObjectInputStreams[i].readInt();
 
                         final Entry<R, Integer> entry = new ImmutableEntry<>(row, count);

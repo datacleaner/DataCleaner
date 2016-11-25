@@ -127,8 +127,8 @@ public final class AnalysisJobImmutabilizer {
                 componentJob = tjb.toTransformerJob(validate, this);
                 _componentJobs.put(tjb, componentJob);
             } catch (final IllegalStateException e) {
-                throw new IllegalStateException("Could not create transformer job from builder: " + tjb + ", ("
-                        + e.getMessage() + ")", e);
+                throw new IllegalStateException(
+                        "Could not create transformer job from builder: " + tjb + ", (" + e.getMessage() + ")", e);
             }
         }
         return componentJob;

@@ -24,21 +24,21 @@ import junit.framework.TestCase;
 public class ELInputColumnTest extends TestCase {
 
     public void testPhysicalColumn() throws Exception {
-        ELInputColumn elCol = new ELInputColumn("Hello #{foo}");
+        final ELInputColumn elCol = new ELInputColumn("Hello #{foo}");
         assertFalse(elCol.isPhysicalColumn());
     }
 
     public void testSimpleExpression() throws Exception {
-        ELInputColumn elCol = new ELInputColumn("Hello #{foo}");
+        final ELInputColumn elCol = new ELInputColumn("Hello #{foo}");
 
-        MockInputColumn<String> fooCol = new MockInputColumn<>("foo", String.class);
+        final MockInputColumn<String> fooCol = new MockInputColumn<>("foo", String.class);
         assertEquals("Hello World", elCol.evaluate(new MockInputRow().put(fooCol, "World")));
     }
 
     public void testVariableWithWhitespace() throws Exception {
-        ELInputColumn elCol = new ELInputColumn("Hello #{foo_bar}");
+        final ELInputColumn elCol = new ELInputColumn("Hello #{foo_bar}");
 
-        MockInputColumn<String> fooCol = new MockInputColumn<>("foo bar", String.class);
+        final MockInputColumn<String> fooCol = new MockInputColumn<>("foo bar", String.class);
         assertEquals("Hello World", elCol.evaluate(new MockInputRow().put(fooCol, "World")));
     }
 }

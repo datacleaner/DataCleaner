@@ -25,8 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
@@ -48,6 +46,8 @@ import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.test.MockTransformer;
 
+import junit.framework.TestCase;
+
 public class RowProcessingConsumerSorterTest extends TestCase {
 
     private MutableColumn physicalColumn;
@@ -60,39 +60,39 @@ public class RowProcessingConsumerSorterTest extends TestCase {
     }
 
     public void testCreateProcessOrderedConsumerListNoConsumers() throws Exception {
-        List<RowProcessingConsumer> consumerList = new RowProcessingConsumerSorter(
-                new ArrayList<>()).createProcessOrderedConsumerList();
+        final List<RowProcessingConsumer> consumerList =
+                new RowProcessingConsumerSorter(new ArrayList<>()).createProcessOrderedConsumerList();
         assertTrue(consumerList.isEmpty());
     }
 
     public void testCreateProcessOrderedConsumerListWithMergedOutcomes() throws Exception {
-        AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
+        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         ajb.setDatastoreConnection(new MockDatastoreConnection());
         ajb.addSourceColumn(physicalColumn);
-        MetaModelInputColumn inputColumn = ajb.getSourceColumns().get(0);
+        final MetaModelInputColumn inputColumn = ajb.getSourceColumns().get(0);
 
         // 1: add a filter
-        FilterComponentBuilder<MockFilter, MockFilter.Category> fjb1 = ajb.addFilter(MockFilter.class);
+        final FilterComponentBuilder<MockFilter, MockFilter.Category> fjb1 = ajb.addFilter(MockFilter.class);
         fjb1.addInputColumn(inputColumn);
         fjb1.setName("fjb1");
 
         // 2: trim (depends on filter)
-        TransformerComponentBuilder<MockTransformer> tjb1 = ajb.addTransformer(MockTransformer.class);
+        final TransformerComponentBuilder<MockTransformer> tjb1 = ajb.addTransformer(MockTransformer.class);
         tjb1.addInputColumn(inputColumn);
         tjb1.setRequirement(fjb1, MockFilter.Category.VALID);
         tjb1.setName("tjb1");
 
         // 3: merge either the null or the trimmed value
-        TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> coalesce = ajb
-                .addTransformer(CoalesceMultipleFieldsTransformer.class);
-        CoalesceUnit unit1 = new CoalesceUnit(tjb1.getOutputColumns().get(0));
-        CoalesceUnit unit2 = new CoalesceUnit(inputColumn);
+        final TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> coalesce =
+                ajb.addTransformer(CoalesceMultipleFieldsTransformer.class);
+        final CoalesceUnit unit1 = new CoalesceUnit(tjb1.getOutputColumns().get(0));
+        final CoalesceUnit unit2 = new CoalesceUnit(inputColumn);
         coalesce.getComponentInstance().configureUsingCoalesceUnits(unit1, unit2);
 
-        MutableInputColumn<?> mergedColumn1 = coalesce.getOutputColumns().get(0);
+        final MutableInputColumn<?> mergedColumn1 = coalesce.getOutputColumns().get(0);
 
         // 4: add another filter (depends on merged output)
-        FilterComponentBuilder<MockFilter, MockFilter.Category> fjb2 = ajb.addFilter(MockFilter.class);
+        final FilterComponentBuilder<MockFilter, MockFilter.Category> fjb2 = ajb.addFilter(MockFilter.class);
         fjb2.addInputColumn(mergedColumn1);
         fjb2.setName("fjb2");
 
@@ -109,41 +109,41 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         assertEquals(5, consumers.size());
 
         assertEquals("ImmutableFilterJob[name=fjb1,filter=Mock filter]", consumers.get(0).getComponentJob().toString());
-        assertEquals("ImmutableTransformerJob[name=tjb1,transformer=Mock transformer]", consumers.get(1)
-                .getComponentJob().toString());
-        assertEquals("ImmutableTransformerJob[name=null,transformer=Fuse / Coalesce fields]", consumers.get(2)
-                .getComponentJob().toString());
+        assertEquals("ImmutableTransformerJob[name=tjb1,transformer=Mock transformer]",
+                consumers.get(1).getComponentJob().toString());
+        assertEquals("ImmutableTransformerJob[name=null,transformer=Fuse / Coalesce fields]",
+                consumers.get(2).getComponentJob().toString());
         assertEquals("ImmutableFilterJob[name=fjb2,filter=Mock filter]", consumers.get(3).getComponentJob().toString());
-        assertEquals("ImmutableAnalyzerJob[name=null,analyzer=String analyzer]", consumers.get(4).getComponentJob()
-                .toString());
+        assertEquals("ImmutableAnalyzerJob[name=null,analyzer=String analyzer]",
+                consumers.get(4).getComponentJob().toString());
 
         ajb.close();
     }
 
     public void testCreateProcessOrderedConsumerListWithFilterDependencies() throws Exception {
-        AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
+        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         ajb.setDatastoreConnection(new MockDatastoreConnection());
         ajb.addSourceColumn(physicalColumn);
-        MetaModelInputColumn inputColumn = ajb.getSourceColumns().get(0);
+        final MetaModelInputColumn inputColumn = ajb.getSourceColumns().get(0);
 
         // 1: add a filter
-        FilterComponentBuilder<MockFilter, MockFilter.Category> fjb1 = ajb.addFilter(MockFilter.class);
+        final FilterComponentBuilder<MockFilter, MockFilter.Category> fjb1 = ajb.addFilter(MockFilter.class);
         fjb1.addInputColumn(inputColumn);
         fjb1.setName("fjb1");
 
         // 2: trim (depends on filter)
-        TransformerComponentBuilder<TransformerMock> tjb1 = ajb.addTransformer(TransformerMock.class);
+        final TransformerComponentBuilder<TransformerMock> tjb1 = ajb.addTransformer(TransformerMock.class);
         tjb1.addInputColumn(inputColumn);
         tjb1.setRequirement(fjb1, MockFilter.Category.VALID);
         tjb1.setName("tjb1");
 
         // 3: trim again, just to examplify (depends on first trim output)
-        TransformerComponentBuilder<TransformerMock> tjb2 = ajb.addTransformer(TransformerMock.class);
+        final TransformerComponentBuilder<TransformerMock> tjb2 = ajb.addTransformer(TransformerMock.class);
         tjb2.addInputColumn(tjb1.getOutputColumns().get(0));
         tjb2.setName("tjb2");
 
         // 4: add a single word filter (depends on second trim)
-        FilterComponentBuilder<MockFilter, MockFilter.Category> fjb2 = ajb.addFilter(MockFilter.class);
+        final FilterComponentBuilder<MockFilter, MockFilter.Category> fjb2 = ajb.addFilter(MockFilter.class);
         fjb2.addInputColumn(tjb2.getOutputColumns().get(0));
         fjb2.setName("fjb2");
 
@@ -164,25 +164,25 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         consumers = new RowProcessingConsumerSorter(consumers).createProcessOrderedConsumerList();
 
         assertEquals("ImmutableFilterJob[name=fjb1,filter=Mock filter]", consumers.get(0).getComponentJob().toString());
-        assertEquals("ImmutableTransformerJob[name=tjb1,transformer=Transformer mock]", consumers.get(1)
-                .getComponentJob().toString());
-        assertEquals("ImmutableTransformerJob[name=tjb2,transformer=Transformer mock]", consumers.get(2)
-                .getComponentJob().toString());
+        assertEquals("ImmutableTransformerJob[name=tjb1,transformer=Transformer mock]",
+                consumers.get(1).getComponentJob().toString());
+        assertEquals("ImmutableTransformerJob[name=tjb2,transformer=Transformer mock]",
+                consumers.get(2).getComponentJob().toString());
         assertEquals("ImmutableFilterJob[name=fjb2,filter=Mock filter]", consumers.get(3).getComponentJob().toString());
 
         ajb.close();
     }
 
     public void testCreateProcessOrderedConsumerListChainedTransformers() throws Exception {
-        AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
+        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         ajb.addSourceColumn(physicalColumn);
 
-        TransformerComponentBuilder<TransformerMock> tjb1 = ajb.addTransformer(TransformerMock.class).addInputColumn(
-                ajb.getSourceColumns().get(0));
-        TransformerComponentBuilder<TransformerMock> tjb2 = ajb.addTransformer(TransformerMock.class).addInputColumn(
-                tjb1.getOutputColumns().get(0));
-        TransformerComponentBuilder<ConvertToStringTransformer> tjb3 = ajb.addTransformer(
-                ConvertToStringTransformer.class).addInputColumn(tjb2.getOutputColumns().get(0));
+        final TransformerComponentBuilder<TransformerMock> tjb1 =
+                ajb.addTransformer(TransformerMock.class).addInputColumn(ajb.getSourceColumns().get(0));
+        final TransformerComponentBuilder<TransformerMock> tjb2 =
+                ajb.addTransformer(TransformerMock.class).addInputColumn(tjb1.getOutputColumns().get(0));
+        final TransformerComponentBuilder<ConvertToStringTransformer> tjb3 =
+                ajb.addTransformer(ConvertToStringTransformer.class).addInputColumn(tjb2.getOutputColumns().get(0));
 
         ajb.addAnalyzer(StringAnalyzer.class).addInputColumn(ajb.getSourceColumns().get(0));
         ajb.addAnalyzer(StringAnalyzer.class).addInputColumn(tjb3.getOutputColumns().get(0));
@@ -190,7 +190,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         ajb.setDatastoreConnection(new MockDatastoreConnection());
 
         assertTrue(ajb.isConfigured());
-        AnalysisJob analysisJob = ajb.toAnalysisJob();
+        final AnalysisJob analysisJob = ajb.toAnalysisJob();
 
         List<RowProcessingConsumer> consumers = getConsumers(analysisJob);
 
@@ -198,11 +198,11 @@ public class RowProcessingConsumerSorterTest extends TestCase {
 
         assertEquals(5, consumers.size());
 
-        List<TransformerJob> transformerJobs = new ArrayList<>(analysisJob.getTransformerJobs());
-        List<AnalyzerJob> analyzerJobs = new ArrayList<>(analysisJob.getAnalyzerJobs());
+        final List<TransformerJob> transformerJobs = new ArrayList<>(analysisJob.getTransformerJobs());
+        final List<AnalyzerJob> analyzerJobs = new ArrayList<>(analysisJob.getAnalyzerJobs());
 
         // create a list that represents the expected dependent sequence
-        Queue<ComponentJob> jobDependencies = new LinkedList<>();
+        final Queue<ComponentJob> jobDependencies = new LinkedList<>();
         jobDependencies.add(transformerJobs.get(0));
         jobDependencies.add(transformerJobs.get(1));
         jobDependencies.add(transformerJobs.get(2));
@@ -212,8 +212,8 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         boolean analyzerJob1found = false;
 
         ComponentJob nextJobDependency = jobDependencies.poll();
-        for (RowProcessingConsumer rowProcessingConsumer : consumers) {
-            ComponentJob job = rowProcessingConsumer.getComponentJob();
+        for (final RowProcessingConsumer rowProcessingConsumer : consumers) {
+            final ComponentJob job = rowProcessingConsumer.getComponentJob();
             if (job == nextJobDependency) {
                 nextJobDependency = jobDependencies.poll();
                 jobDependenciesFound++;
@@ -231,27 +231,30 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         ajb.close();
     }
 
-    private List<RowProcessingConsumer> getConsumers(AnalysisJob analysisJob) {
-        List<RowProcessingConsumer> consumers = new ArrayList<>();
+    private List<RowProcessingConsumer> getConsumers(final AnalysisJob analysisJob) {
+        final List<RowProcessingConsumer> consumers = new ArrayList<>();
         final ErrorAwareAnalysisListener errorListener = new ErrorAwareAnalysisListener();
-        RowProcessingPublishers publishers = new RowProcessingPublishers(analysisJob, null, errorListener, null, null);
-        Table table = analysisJob.getSourceColumns().get(0)
-                .getPhysicalColumn().getTable();
-        RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(publishers.getStream(table));
+        final RowProcessingPublishers publishers =
+                new RowProcessingPublishers(analysisJob, null, errorListener, null, null);
+        final Table table = analysisJob.getSourceColumns().get(0).getPhysicalColumn().getTable();
+        final RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(publishers.getStream(table));
 
-        for (AnalyzerJob analyzerJob : analysisJob.getAnalyzerJobs()) {
-            RowProcessingConsumer consumer = new AnalyzerConsumer(analyzerJob.getDescriptor().newInstance(),
-                    analyzerJob, analyzerJob.getInput(), publisher);
+        for (final AnalyzerJob analyzerJob : analysisJob.getAnalyzerJobs()) {
+            final RowProcessingConsumer consumer =
+                    new AnalyzerConsumer(analyzerJob.getDescriptor().newInstance(), analyzerJob, analyzerJob.getInput(),
+                            publisher);
             consumers.add(consumer);
         }
-        for (TransformerJob transformerJob : analysisJob.getTransformerJobs()) {
-            RowProcessingConsumer consumer = new TransformerConsumer(transformerJob.getDescriptor().newInstance(),
-                    transformerJob, transformerJob.getInput(), publisher);
+        for (final TransformerJob transformerJob : analysisJob.getTransformerJobs()) {
+            final RowProcessingConsumer consumer =
+                    new TransformerConsumer(transformerJob.getDescriptor().newInstance(), transformerJob,
+                            transformerJob.getInput(), publisher);
             consumers.add(consumer);
         }
-        for (FilterJob filterJob : analysisJob.getFilterJobs()) {
-            FilterConsumer consumer = new FilterConsumer(filterJob.getDescriptor().newInstance(), filterJob,
-                    filterJob.getInput(), publisher);
+        for (final FilterJob filterJob : analysisJob.getFilterJobs()) {
+            final FilterConsumer consumer =
+                    new FilterConsumer(filterJob.getDescriptor().newInstance(), filterJob, filterJob.getInput(),
+                            publisher);
             consumers.add(consumer);
         }
 

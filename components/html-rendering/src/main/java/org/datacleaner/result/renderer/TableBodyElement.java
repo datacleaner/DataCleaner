@@ -148,9 +148,9 @@ public class TableBodyElement implements BodyElement {
      * @param value
      * @return
      */
-    protected String getCellValue(final HtmlRenderingContext context, final int row, final int col, final Object value) {
+    protected String getCellValue(final HtmlRenderingContext context, final int row, final int col,
+            final Object value) {
         final String stringValue = LabelUtils.getValueLabel(value);
-        final String result = context.escapeHtml(stringValue);
-        return result;
+        return context.escapeHtml(stringValue);
     }
 }

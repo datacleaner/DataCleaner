@@ -60,8 +60,7 @@ public final class ColumnHighlighter implements Highlighter {
 
     public Component highlight(final Component component, final ComponentAdapter adapter) {
         if (_evaluatedColumnsPredicate.isHighlighted(component, adapter)) {
-            final Component highlight = _colorHighlighter.highlight(component, adapter);
-            return highlight;
+            return _colorHighlighter.highlight(component, adapter);
         }
         return component;
     }

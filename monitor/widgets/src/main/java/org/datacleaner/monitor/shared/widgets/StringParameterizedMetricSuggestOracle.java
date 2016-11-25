@@ -65,7 +65,8 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
         _suggestions = suggestions;
     }
 
-    public StringParameterizedMetricSuggestOracle(final TenantIdentifier tenant, final JobIdentifier job, final MetricIdentifier metric) {
+    public StringParameterizedMetricSuggestOracle(final TenantIdentifier tenant, final JobIdentifier job,
+            final MetricIdentifier metric) {
         _suggestions = new ArrayList<>();
         setMetric(tenant, job, metric);
     }

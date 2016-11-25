@@ -22,8 +22,7 @@ package org.datacleaner.connection;
 import org.apache.metamodel.UpdateableDataContext;
 
 public class UpdateableDatastoreConnectionImpl<E extends UpdateableDataContext> extends DatastoreConnectionImpl<E>
-        implements
-        UpdateableDatastoreConnection {
+        implements UpdateableDatastoreConnection {
 
     public UpdateableDatastoreConnectionImpl(final E dataContext, final Datastore datastore,
             final AutoCloseable... closeables) {
@@ -32,8 +31,7 @@ public class UpdateableDatastoreConnectionImpl<E extends UpdateableDataContext> 
 
     @Override
     public UpdateableDataContext getUpdateableDataContext() {
-        final E dc = getDataContext();
-        return dc;
+        return getDataContext();
     }
 
 }

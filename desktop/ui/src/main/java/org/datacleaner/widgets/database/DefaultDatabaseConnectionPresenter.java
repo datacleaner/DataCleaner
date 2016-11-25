@@ -20,7 +20,6 @@
 package org.datacleaner.widgets.database;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
@@ -52,30 +51,24 @@ public class DefaultDatabaseConnectionPresenter extends AbstractDatabaseConnecti
     private volatile String[] _connectionUrls;
 
     public DefaultDatabaseConnectionPresenter() {
-        _connectionStringTextField = WidgetFactory.createTextField("Connection string / URL",
-                JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
+        _connectionStringTextField =
+                WidgetFactory.createTextField("Connection string / URL", JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
 
         _connectionStringTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
         _connectionStringTextField.getActionMap().put("nextTemplateItem", getNextTemplateItemAction());
         _connectionStringTemplateButton = WidgetFactory.createSmallButton(IconUtils.ACTION_HELP);
-        _connectionStringTemplateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (_connectionUrls != null) {
-                    final JPopupMenu menu = new JPopupMenu();
-                    for (final String connectionUrl : _connectionUrls) {
-                        final JMenuItem menuItem = new JMenuItem(connectionUrl);
-                        menuItem.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(final ActionEvent e) {
-                                _connectionStringTextField.setText(connectionUrl);
-                                getNextTemplateItemAction().actionPerformed(null);
-                            }
-                        });
-                        menu.add(menuItem);
-                    }
-                    menu.show(_connectionStringTemplateButton, 0, 0);
+        _connectionStringTemplateButton.addActionListener(e -> {
+            if (_connectionUrls != null) {
+                final JPopupMenu menu = new JPopupMenu();
+                for (final String connectionUrl : _connectionUrls) {
+                    final JMenuItem menuItem = new JMenuItem(connectionUrl);
+                    menuItem.addActionListener(e1 -> {
+                        _connectionStringTextField.setText(connectionUrl);
+                        getNextTemplateItemAction().actionPerformed(null);
+                    });
+                    menu.add(menuItem);
                 }
+                menu.show(_connectionStringTemplateButton, 0, 0);
             }
         });
     }

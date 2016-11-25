@@ -66,8 +66,8 @@ public class DatastoreQueryController {
     TenantContextFactory _tenantContextFactory;
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.POST, produces = {
-            "text/xml", "application/xml", "application/xhtml+xml", "text/html" })
+    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.POST,
+            produces = { "text/xml", "application/xml", "application/xhtml+xml", "text/html" })
     public void queryDatastorePost(final HttpServletResponse response, @PathVariable("tenant") final String tenant,
             @PathVariable("datastore") final String datastoreName, @RequestBody final String query) throws IOException {
         response.setContentType("application/xhtml+xml");
@@ -75,17 +75,18 @@ public class DatastoreQueryController {
     }
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.GET, produces = {
-            "text/xml", "application/xml", "application/xhtml+xml", "text/html" })
+    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.GET,
+            produces = { "text/xml", "application/xml", "application/xhtml+xml", "text/html" })
     public void queryDatastoreGet(final HttpServletResponse response, @PathVariable("tenant") final String tenant,
-            @PathVariable("datastore") final String datastoreName, @RequestParam("q") final String query) throws IOException {
+            @PathVariable("datastore") final String datastoreName, @RequestParam("q") final String query)
+            throws IOException {
         response.setContentType("application/xhtml+xml");
         queryDatastoreHtml(tenant, datastoreName, query, response);
     }
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.GET, headers = "Accept=application/json", produces = {
-            "application/json" })
+    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.GET,
+            headers = "Accept=application/json", produces = { "application/json" })
     @ResponseBody
     public Map<String, Object> jsonQueryDatastoreGet(final HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("datastore") final String datastoreName,
@@ -95,13 +96,13 @@ public class DatastoreQueryController {
     }
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", params = { "q", "f",
-            "m" }, method = RequestMethod.GET, headers = "Accept=application/json", produces = { "application/json" })
+    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", params = { "q", "f", "m" },
+            method = RequestMethod.GET, headers = "Accept=application/json", produces = { "application/json" })
     @ResponseBody
     public Map<String, Object> jsonPaginatedGet(@PathVariable("tenant") final String tenant,
             @PathVariable("datastore") String datastoreName, @RequestParam("q") final String query,
-            @RequestParam("f") final int firstRow, @RequestParam("m") final int maxRows, final UriComponentsBuilder uriBuilder,
-            final HttpServletResponse response) throws IOException {
+            @RequestParam("f") final int firstRow, @RequestParam("m") final int maxRows,
+            final UriComponentsBuilder uriBuilder, final HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         // should test for a sensible page size
 
@@ -204,8 +205,8 @@ public class DatastoreQueryController {
         return values;
     }
 
-    private void queryDatastoreHtml(final String tenant, String datastoreName, final String query, final HttpServletResponse response)
-            throws IOException {
+    private void queryDatastoreHtml(final String tenant, String datastoreName, final String query,
+            final HttpServletResponse response) throws IOException {
         datastoreName = datastoreName.replaceAll("\\+", " ");
 
         final DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();

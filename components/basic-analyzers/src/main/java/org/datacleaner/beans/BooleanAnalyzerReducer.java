@@ -39,17 +39,13 @@ import org.datacleaner.util.ValueCombination;
 public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnalyzerResult> {
 
     private static final Comparator<Map.Entry<ValueCombination<Number>, Number>> frequentValueCombinationComparator =
-            new Comparator<Map.Entry<ValueCombination<Number>, Number>>() {
-                @Override
-                public int compare(final Entry<ValueCombination<Number>, Number> o1,
-                        final Entry<ValueCombination<Number>, Number> o2) {
+            (o1, o2) -> {
 
-                    Number result = CrosstabReducerHelper.subtract(o2.getValue(), o1.getValue());
-                    if (result.intValue() == 0) {
-                        result = o2.getKey().compareTo(o1.getKey());
-                    }
-                    return result.intValue();
+                Number result = CrosstabReducerHelper.subtract(o2.getValue(), o1.getValue());
+                if (result.intValue() == 0) {
+                    result = o2.getKey().compareTo(o1.getKey());
                 }
+                return result.intValue();
             };
 
     @Override
@@ -64,15 +60,15 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
         for (final BooleanAnalyzerResult partialResult : partialResults) {
             final Crosstab<Number> partialColumnStatisticsCrosstab = partialResult.getColumnStatisticsCrosstab();
             final Crosstab<Number> partialValueCombinationCrosstab = partialResult.getValueCombinationCrosstab();
-            CrosstabReducerHelper.createDimensionsColumnCrosstab(columnStatisticCrosstabDimensions,
-                    partialColumnStatisticsCrosstab);
+            CrosstabReducerHelper
+                    .createDimensionsColumnCrosstab(columnStatisticCrosstabDimensions, partialColumnStatisticsCrosstab);
             createDimensionsValueCombinationCrosstab(columnValueCombinationCrosstabDimensions,
                     partialValueCombinationCrosstab);
         }
-        final Crosstab<Number> newResultColumnStatistics = new Crosstab<>(Number.class,
-                columnStatisticCrosstabDimensions);
-        final Crosstab<Number> newResultColumnValueCombination = new Crosstab<>(Number.class,
-                columnValueCombinationCrosstabDimensions);
+        final Crosstab<Number> newResultColumnStatistics =
+                new Crosstab<>(Number.class, columnStatisticCrosstabDimensions);
+        final Crosstab<Number> newResultColumnValueCombination =
+                new Crosstab<>(Number.class, columnValueCombinationCrosstabDimensions);
 
         final Map<ValueCombination<Number>, Number> valueCombinations = new HashMap<>();
 
@@ -81,12 +77,13 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
             final Crosstab<Number> partialColumnStatisticsCrosstab = partialResult.getColumnStatisticsCrosstab();
             final Crosstab<Number> partialValueCombinationCrosstab = partialResult.getValueCombinationCrosstab();
             if (partialColumnStatisticsCrosstab != null) {
-                final CrosstabDimension columnDimension = partialColumnStatisticsCrosstab
-                        .getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
-                final CrosstabDimension measureDimension = partialColumnStatisticsCrosstab
-                        .getDimension(BooleanAnalyzer.DIMENSION_MEASURE);
-                CrosstabReducerHelper.addData(newResultColumnStatistics, partialColumnStatisticsCrosstab,
-                        columnDimension, measureDimension);
+                final CrosstabDimension columnDimension =
+                        partialColumnStatisticsCrosstab.getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
+                final CrosstabDimension measureDimension =
+                        partialColumnStatisticsCrosstab.getDimension(BooleanAnalyzer.DIMENSION_MEASURE);
+                CrosstabReducerHelper
+                        .addData(newResultColumnStatistics, partialColumnStatisticsCrosstab, columnDimension,
+                                measureDimension);
             }
             // gather the sum of all possible value combinations found in the
             // partial crosstabs
@@ -107,21 +104,21 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
      * @param valueCombinations
      * @param valueCombinationCrosstab
      */
-    public void createMeasureDimensionValueCombinationCrosstab(final Map<ValueCombination<Number>, Number> valueCombinations,
+    public void createMeasureDimensionValueCombinationCrosstab(
+            final Map<ValueCombination<Number>, Number> valueCombinations,
             final Crosstab<Number> valueCombinationCrosstab) {
 
         if (CrosstabReducerHelper.findDimension(valueCombinationCrosstab, BooleanAnalyzer.DIMENSION_MEASURE)) {
 
             final SortedSet<Entry<ValueCombination<Number>, Number>> entries =
-                    new TreeSet<>(
-                            frequentValueCombinationComparator);
+                    new TreeSet<>(frequentValueCombinationComparator);
             entries.addAll(valueCombinations.entrySet());
 
             final CrosstabNavigator<Number> nav = new CrosstabNavigator<>(valueCombinationCrosstab);
-            final CrosstabDimension measureDimension = valueCombinationCrosstab
-                    .getDimension(BooleanAnalyzer.DIMENSION_MEASURE);
-            final CrosstabDimension columnDimension = valueCombinationCrosstab
-                    .getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
+            final CrosstabDimension measureDimension =
+                    valueCombinationCrosstab.getDimension(BooleanAnalyzer.DIMENSION_MEASURE);
+            final CrosstabDimension columnDimension =
+                    valueCombinationCrosstab.getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
             final List<String> columnDimCategories = columnDimension.getCategories();
             int row = 0;
             for (final Entry<ValueCombination<Number>, Number> entry : entries) {
@@ -184,8 +181,8 @@ public class BooleanAnalyzerReducer implements AnalyzerResultReducer<BooleanAnal
                 }
             }
 
-            final CrosstabNavigator<Number> where = nav.where(columnDimension,
-                    BooleanAnalyzer.VALUE_COMBINATION_COLUMN_FREQUENCY);
+            final CrosstabNavigator<Number> where =
+                    nav.where(columnDimension, BooleanAnalyzer.VALUE_COMBINATION_COLUMN_FREQUENCY);
             final Number frequency = where.safeGet(null);
             final Number frequencyVal = frequency != null ? frequency : 0;
             final ValueCombination<Number> valComb = new ValueCombination<>(values);

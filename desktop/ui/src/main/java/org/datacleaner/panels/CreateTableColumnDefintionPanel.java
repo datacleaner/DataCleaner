@@ -19,8 +19,6 @@
  */
 package org.datacleaner.panels;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -35,7 +33,6 @@ import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCCheckBox;
-import org.datacleaner.widgets.DCCheckBox.Listener;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.windows.CreateTableDialog;
 import org.jdesktop.swingx.HorizontalLayout;
@@ -51,11 +48,11 @@ public class CreateTableColumnDefintionPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Collection<ColumnType> AVAILABLE_COLUMN_TYPES = Arrays.asList(ColumnType.STRING,
-            ColumnType.VARCHAR, ColumnType.CHAR, ColumnType.CLOB, ColumnType.NUMBER, ColumnType.BIGINT,
-            ColumnType.INTEGER, ColumnType.SMALLINT, ColumnType.TINYINT, ColumnType.DOUBLE, ColumnType.FLOAT,
-            ColumnType.BOOLEAN, ColumnType.BIT, ColumnType.TIMESTAMP, ColumnType.DATE, ColumnType.BINARY,
-            ColumnType.BLOB);
+    private static final Collection<ColumnType> AVAILABLE_COLUMN_TYPES =
+            Arrays.asList(ColumnType.STRING, ColumnType.VARCHAR, ColumnType.CHAR, ColumnType.CLOB, ColumnType.NUMBER,
+                    ColumnType.BIGINT, ColumnType.INTEGER, ColumnType.SMALLINT, ColumnType.TINYINT, ColumnType.DOUBLE,
+                    ColumnType.FLOAT, ColumnType.BOOLEAN, ColumnType.BIT, ColumnType.TIMESTAMP, ColumnType.DATE,
+                    ColumnType.BINARY, ColumnType.BLOB);
 
     private final CreateTableDialog _parentDialog;
     private final JXTextField _nameTextField;
@@ -71,8 +68,8 @@ public class CreateTableColumnDefintionPanel extends DCPanel {
         this(parentDialog, "", ColumnType.STRING, false);
     }
 
-    public CreateTableColumnDefintionPanel(final CreateTableDialog parentDialog, final String name, final ColumnType columnType,
-            final boolean primaryKey) {
+    public CreateTableColumnDefintionPanel(final CreateTableDialog parentDialog, final String name,
+            final ColumnType columnType, final boolean primaryKey) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _parentDialog = parentDialog;
         _nameTextField = WidgetFactory.createTextField("Column name");
@@ -83,20 +80,11 @@ public class CreateTableColumnDefintionPanel extends DCPanel {
         _sizeTextField.setDocument(new NumberDocument(false, false));
         _primaryKeyCheckBox = new DCCheckBox<>("Primary key?", primaryKey);
         final DCCheckBox<Boolean> notNullCheckBox = new DCCheckBox<>("Not null?", false);
-        notNullCheckBox.addListener(new Listener<Boolean>() {
-            @Override
-            public void onItemSelected(final Boolean item, final boolean selected) {
-                _notNull = selected;
-            }
-        });
+        notNullCheckBox.addListener((item, selected) -> _notNull = selected);
 
         final JButton removeButton = WidgetFactory.createSmallButton("Remove", IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent evt) {
-                _parentDialog.removeColumnDefinitionPanel(CreateTableColumnDefintionPanel.this);
-            }
-        });
+        removeButton.addActionListener(
+                evt -> _parentDialog.removeColumnDefinitionPanel(CreateTableColumnDefintionPanel.this));
 
         final DCPanel buttonPanel = DCPanel.around(removeButton);
         buttonPanel.setBorder(WidgetUtils.BORDER_EMPTY);

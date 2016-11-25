@@ -42,11 +42,8 @@ public final class Main {
     public static void main(final String[] args) throws Throwable {
         final CliArguments arguments = CliArguments.parse(args);
         if (arguments.isSet() && !arguments.isUsageMode()) {
-            final CliRunner runner = new CliRunner(arguments);
-            try {
+            try (CliRunner runner = new CliRunner(arguments)) {
                 runner.run();
-            } finally {
-                runner.close();
             }
         } else {
             final PrintWriter out = new PrintWriter(System.out);

@@ -64,8 +64,8 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
     private final DCPanel _outerPanel = new DCPanel();
 
     @Inject
-    public CompositeDatastoreDialog(final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
-            final UserPreferences userPreferences) {
+    public CompositeDatastoreDialog(final MutableDatastoreCatalog mutableDatastoreCatalog,
+            final WindowContext windowContext, final UserPreferences userPreferences) {
         this(null, mutableDatastoreCatalog, windowContext, userPreferences);
     }
 
@@ -94,12 +94,7 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
                 checkBox.setName(datastoreName);
                 checkBox.setOpaque(false);
                 checkBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-                checkBox.addListener(new DCCheckBox.Listener<Datastore>() {
-                    @Override
-                    public void onItemSelected(final Datastore item, final boolean selected) {
-                        updateStatusLabel();
-                    }
-                });
+                checkBox.addListener((item, selected) -> updateStatusLabel());
                 _checkBoxes.add(checkBox);
             }
         }
@@ -217,8 +212,7 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
             }
         }
 
-        final CompositeDatastore datastore = new CompositeDatastore(_datastoreNameField.getText(), datastores);
-        return datastore;
+        return new CompositeDatastore(_datastoreNameField.getText(), datastores);
     }
 
     @Override

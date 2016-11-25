@@ -35,14 +35,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class SimpleCORSFilter extends OncePerRequestFilter {
     @Override
-    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
+            final FilterChain filterChain) throws ServletException, IOException {
         response.addHeader("Access-Control-Allow-Headers",
-                "Authorization, Origin, X-Atmosphere-tracking-id, X-Atmosphere-Framework, X-Cache-Date, Content-Type, X-Atmosphere-Transport, *");
+                "Authorization, Origin, X-Atmosphere-tracking-id, X-Atmosphere-Framework, X-Cache-Date, "
+                        + "Content-Type, X-Atmosphere-Transport, *");
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,PATCH,OPTIONS");
         response.addHeader("Access-Control-Request-Headers",
-                "Origin, X-Atmosphere-tracking-id, X-Atmosphere-Framework, X-Atmosphere-Transport, X-Cache-Date, Content-Type, api_key, Authorization, *");
+                "Origin, X-Atmosphere-tracking-id, X-Atmosphere-Framework, X-Atmosphere-Transport, "
+                        + "X-Cache-Date, Content-Type, api_key, Authorization, *");
 
         filterChain.doFilter(request, response);
     }

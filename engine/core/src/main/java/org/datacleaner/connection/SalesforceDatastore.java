@@ -26,8 +26,8 @@ import com.google.common.base.Strings;
 /**
  * A datastore that uses a Salesforce.com account as it's source.
  */
-public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataContext> implements UpdateableDatastore,
-        UsernameDatastore {
+public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataContext>
+        implements UpdateableDatastore, UsernameDatastore {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,8 +42,7 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
     }
 
     public SalesforceDatastore(final String name, final String username, final String password,
-            final String securityToken,
-            final String endpointUrl) {
+            final String securityToken, final String endpointUrl) {
         super(name);
         _username = username;
         _password = password;

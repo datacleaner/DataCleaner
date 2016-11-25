@@ -47,21 +47,20 @@ public class DateAndTimeAnalyzerResult extends CrosstabResult {
         super(crosstab);
     }
 
-    protected static Number convertToDaysSinceEpoch(final String s) {
-        if (s == null) {
+    protected static Number convertToDaysSinceEpoch(final String str) {
+        if (str == null) {
             return null;
         }
 
         final LocalDate epoch = new LocalDate(1970, 1, 1);
 
-        final Date date = ConvertToDateTransformer.getInternalInstance().transformValue(s);
+        final Date date = ConvertToDateTransformer.getInternalInstance().transformValue(str);
         if (date == null) {
-            logger.warn("Could not parse date string: '{}', returning null metric value.", s);
+            logger.warn("Could not parse date string: '{}', returning null metric value.", str);
             return null;
         }
-        final int days = Days.daysBetween(epoch, new LocalDate(date)).getDays();
 
-        return days;
+        return Days.daysBetween(epoch, new LocalDate(date)).getDays();
     }
 
     @Metric(order = 1, value = DateAndTimeAnalyzer.MEASURE_ROW_COUNT)
@@ -79,7 +78,8 @@ public class DateAndTimeAnalyzerResult extends CrosstabResult {
     }
 
     @Metric(order = 3, value = DateAndTimeAnalyzer.MEASURE_HIGHEST_DATE)
-    @Description("The highest date value for the given column. The value is measured in number of days since 1970-01-01.")
+    @Description(
+            "The highest date value for the given column. The value is measured in number of days since 1970-01-01.")
     public Number getHighestDate(final InputColumn<?> col) {
         final String s = (String) getCrosstab().where(DateAndTimeAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(DateAndTimeAnalyzer.DIMENSION_MEASURE, DateAndTimeAnalyzer.MEASURE_HIGHEST_DATE).safeGet(null);
@@ -87,7 +87,8 @@ public class DateAndTimeAnalyzerResult extends CrosstabResult {
     }
 
     @Metric(order = 3, value = DateAndTimeAnalyzer.MEASURE_LOWEST_DATE)
-    @Description("The lowest date value for the given column. The value is measured in number of days since 1970-01-01.")
+    @Description(
+            "The lowest date value for the given column. The value is measured in number of days since 1970-01-01.")
     public Number getLowestDate(final InputColumn<?> col) {
         final String s = (String) getCrosstab().where(DateAndTimeAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(DateAndTimeAnalyzer.DIMENSION_MEASURE, DateAndTimeAnalyzer.MEASURE_LOWEST_DATE).safeGet(null);
@@ -111,7 +112,8 @@ public class DateAndTimeAnalyzerResult extends CrosstabResult {
     }
 
     @Metric(order = 6, value = DateAndTimeAnalyzer.MEASURE_PERCENTILE25)
-    @Description("The 25th percentile value for the given column. The value is measured in number of days since 1970-01-01.")
+    @Description(
+            "The 25th percentile value for the given column. The value is measured in number of days since 1970-01-01.")
     public Number getPercentile25(final InputColumn<?> col) {
         final String s = (String) getCrosstab().where(DateAndTimeAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(DateAndTimeAnalyzer.DIMENSION_MEASURE, DateAndTimeAnalyzer.MEASURE_PERCENTILE25).safeGet(null);
@@ -119,7 +121,8 @@ public class DateAndTimeAnalyzerResult extends CrosstabResult {
     }
 
     @Metric(order = 7, value = DateAndTimeAnalyzer.MEASURE_PERCENTILE75)
-    @Description("The 75th percentile value for the given column. The value is measured in number of days since 1970-01-01.")
+    @Description(
+            "The 75th percentile value for the given column. The value is measured in number of days since 1970-01-01.")
     public Number getPercentile75(final InputColumn<?> col) {
         final String s = (String) getCrosstab().where(DateAndTimeAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(DateAndTimeAnalyzer.DIMENSION_MEASURE, DateAndTimeAnalyzer.MEASURE_PERCENTILE75).safeGet(null);
@@ -128,15 +131,13 @@ public class DateAndTimeAnalyzerResult extends CrosstabResult {
 
     @Metric(order = 8, value = DateAndTimeAnalyzer.MEASURE_KURTOSIS)
     public Number getKurtosis(final InputColumn<?> col) {
-        final Number n = (Number) getCrosstab().where(DateAndTimeAnalyzer.DIMENSION_COLUMN, col.getName())
+        return (Number) getCrosstab().where(DateAndTimeAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(DateAndTimeAnalyzer.DIMENSION_MEASURE, DateAndTimeAnalyzer.MEASURE_KURTOSIS).safeGet(null);
-        return n;
     }
 
     @Metric(order = 9, value = DateAndTimeAnalyzer.MEASURE_SKEWNESS)
     public Number getSkewness(final InputColumn<?> col) {
-        final Number n = (Number) getCrosstab().where(DateAndTimeAnalyzer.DIMENSION_COLUMN, col.getName())
+        return (Number) getCrosstab().where(DateAndTimeAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(DateAndTimeAnalyzer.DIMENSION_MEASURE, DateAndTimeAnalyzer.MEASURE_SKEWNESS).safeGet(null);
-        return n;
     }
 }

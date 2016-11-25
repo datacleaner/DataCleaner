@@ -83,8 +83,8 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
 
     private void deleteGoldenRecord(final List<FilterItem> whereItems) {
         if (whereItems.size() != 1) {
-            throw new IllegalArgumentException("Delete requires the " + GR_ID_COLUMN_NAME
-                    + " as the sole condition value.");
+            throw new IllegalArgumentException(
+                    "Delete requires the " + GR_ID_COLUMN_NAME + " as the sole condition value.");
         }
         final FilterItem whereItem = whereItems.get(0);
         final String grId = getConditionColumnValue(whereItem);

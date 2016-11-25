@@ -57,8 +57,8 @@ public class ResultsFolderController {
         final List<Map<String, String>> result = new ArrayList<>();
 
         {
-            final List<RepositoryFile> files = resultsFolder.getFiles(null,
-                    FileFilters.ANALYSIS_RESULT_SER.getExtension());
+            final List<RepositoryFile> files =
+                    resultsFolder.getFiles(null, FileFilters.ANALYSIS_RESULT_SER.getExtension());
             for (final RepositoryFile file : files) {
                 final Map<String, String> map = new HashMap<>();
                 map.put("filename", file.getName());

@@ -29,8 +29,8 @@ import javax.swing.Timer;
 public abstract class MoveComponentTimerActionListener implements ActionListener {
 
     private final JComponent component;
-    private final int x;
-    private final int y;
+    private final int _toX;
+    private final int _toY;
     private volatile int numSteps;
 
     public MoveComponentTimerActionListener(final JComponent component, final int x, final int y, final int numSteps) {
@@ -38,8 +38,8 @@ public abstract class MoveComponentTimerActionListener implements ActionListener
             throw new IllegalArgumentException("numSteps must be a postive number");
         }
         this.component = component;
-        this.x = x;
-        this.y = y;
+        this._toX = x;
+        this._toY = y;
         this.numSteps = numSteps;
     }
 
@@ -50,15 +50,15 @@ public abstract class MoveComponentTimerActionListener implements ActionListener
         final Point location = component.getLocation();
         final int currentX = location.x;
         final int currentY = location.y;
-        if (currentX == x && currentY == y) {
+        if (currentX == _toX && currentY == _toY) {
             timer.stop();
         } else if (numSteps <= 1) {
-            component.setLocation(x, y);
+            component.setLocation(_toX, _toY);
             done();
         } else {
-            int diffX = x - currentX;
+            int diffX = _toX - currentX;
             diffX = diffX / numSteps;
-            int diffY = y - currentY;
+            int diffY = _toY - currentY;
             diffY = diffY / numSteps;
 
             component.setLocation(currentX + diffX, currentY + diffY);

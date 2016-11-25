@@ -48,8 +48,9 @@ final class AssignConfiguredPropertiesHelper {
                         if (Array.getLength(configuredValue) == 1) {
                             configuredValue = Array.get(configuredValue, 0);
                         } else if (Array.getLength(configuredValue) > 1) {
-                            throw new IllegalStateException("Cannot assign an array-value (" + Arrays.toString(
-                                    (Object[]) configuredValue) + ") to a non-array property (" + property + ")");
+                            throw new IllegalStateException(
+                                    "Cannot assign an array-value (" + Arrays.toString((Object[]) configuredValue)
+                                            + ") to a non-array property (" + property + ")");
                         } else {
                             configuredValue = null;
                         }

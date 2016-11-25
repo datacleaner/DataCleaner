@@ -42,7 +42,7 @@ final class CoalesceMultipleFieldsTransformerComponentBuilderPresenter extends T
     private final ConfiguredPropertyDescriptor _inputProperty;
     private final ConfiguredPropertyDescriptor _unitsProperty;
 
-    public CoalesceMultipleFieldsTransformerComponentBuilderPresenter(
+    CoalesceMultipleFieldsTransformerComponentBuilderPresenter(
             final TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> transformerJobBuilder,
             final PropertyWidgetFactory propertyWidgetFactory, final WindowContext windowContext,
             final DataCleanerConfiguration configuration) {

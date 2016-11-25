@@ -36,7 +36,8 @@ class CloseableTabbedPaneMouseListener extends MouseAdapter implements MouseMoti
     /**
      * @param closeableTabbedPaneUI
      */
-    public CloseableTabbedPaneMouseListener(final CloseableTabbedPaneUI closeableTabbedPaneUI, final CloseableTabbedPane pane) {
+    public CloseableTabbedPaneMouseListener(final CloseableTabbedPaneUI closeableTabbedPaneUI,
+            final CloseableTabbedPane pane) {
         _tabbedPaneUI = closeableTabbedPaneUI;
         _pane = pane;
     }

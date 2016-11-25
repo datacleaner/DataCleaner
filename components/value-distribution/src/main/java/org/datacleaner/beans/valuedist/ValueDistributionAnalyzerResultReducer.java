@@ -66,9 +66,9 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
                     || (partialResult instanceof ReducedSingleValueDistributionResult)) {
                 nullCount = reduceValueCounts(reducedValueCounts, nullCount, partialResult);
             } else {
-                throw new IllegalStateException("Unsupported type of "
-                        + ValueDistributionAnalyzerResult.class.getSimpleName() + ": "
-                        + partialResult.getClass().getSimpleName());
+                throw new IllegalStateException(
+                        "Unsupported type of " + ValueDistributionAnalyzerResult.class.getSimpleName() + ": "
+                                + partialResult.getClass().getSimpleName());
             }
         }
 
@@ -96,7 +96,8 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
                 final GroupedValueDistributionResult groupedPartialResult =
                         (GroupedValueDistributionResult) partialResult;
 
-                for (final ValueCountingAnalyzerResult childValueCountingResult : groupedPartialResult.getGroupResults()) {
+                for (final ValueCountingAnalyzerResult childValueCountingResult : groupedPartialResult
+                        .getGroupResults()) {
                     final ValueDistributionAnalyzerResult childValueDistributionResult =
                             (ValueDistributionAnalyzerResult) childValueCountingResult;
                     final String groupName = childValueCountingResult.getName();
@@ -110,9 +111,9 @@ public class ValueDistributionAnalyzerResultReducer implements AnalyzerResultRed
                     }
                 }
             } else {
-                throw new IllegalStateException("Unsupported type of "
-                        + ValueDistributionAnalyzerResult.class.getSimpleName() + ": "
-                        + partialResult.getClass().getSimpleName());
+                throw new IllegalStateException(
+                        "Unsupported type of " + ValueDistributionAnalyzerResult.class.getSimpleName() + ": "
+                                + partialResult.getClass().getSimpleName());
             }
         }
 

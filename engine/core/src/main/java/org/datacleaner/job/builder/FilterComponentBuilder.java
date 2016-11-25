@@ -44,8 +44,9 @@ import org.datacleaner.job.OutputDataStreamJob;
  * @param <C>
  *            the {@link Filter}s category enum
  */
-public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>> extends
-        AbstractComponentBuilder<FilterDescriptor<F, C>, F, FilterComponentBuilder<F, C>> implements HasFilterOutcomes {
+public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>>
+        extends AbstractComponentBuilder<FilterDescriptor<F, C>, F, FilterComponentBuilder<F, C>>
+        implements HasFilterOutcomes {
 
     private final List<FilterChangeListener> _localChangeListeners;
     // We keep a cached version of the resulting filter job because of
@@ -86,8 +87,9 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
         final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
 
         if (_cachedJob == null) {
-            _cachedJob = new ImmutableFilterJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(
-                    getConfiguredProperties()), componentRequirement, getMetadataProperties(), outputDataStreamJobs);
+            _cachedJob = new ImmutableFilterJob(getName(), getDescriptor(),
+                    new ImmutableComponentConfiguration(getConfiguredProperties()), componentRequirement,
+                    getMetadataProperties(), outputDataStreamJobs);
         } else {
             final ImmutableFilterJob newFilterJob = new ImmutableFilterJob(getName(), getDescriptor(),
                     new ImmutableComponentConfiguration(getConfiguredProperties()), componentRequirement,
@@ -105,10 +107,10 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
      * @return
      */
     private List<FilterChangeListener> getAllListeners() {
-        @SuppressWarnings("deprecation") final
-        List<FilterChangeListener> globalChangeListeners = getAnalysisJobBuilder().getFilterChangeListeners();
-        final List<FilterChangeListener> list = new ArrayList<>(globalChangeListeners.size()
-                + _localChangeListeners.size());
+        @SuppressWarnings("deprecation") final List<FilterChangeListener> globalChangeListeners =
+                getAnalysisJobBuilder().getFilterChangeListeners();
+        final List<FilterChangeListener> list =
+                new ArrayList<>(globalChangeListeners.size() + _localChangeListeners.size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);
         return list;
@@ -140,8 +142,7 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
 
     @Override
     public Collection<FilterOutcome> getFilterOutcomes() {
-        final Collection<FilterOutcome> outcomes = _outcomes.values();
-        return outcomes;
+        return _outcomes.values();
     }
 
     /**

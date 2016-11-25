@@ -28,6 +28,7 @@ import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.ReferenceData;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
 import org.datacleaner.reference.StringPattern;
@@ -129,7 +130,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
     @Override
     public String[] getDictionaryNames() {
-        return _userPreferences.getUserDictionaries().stream().map(d -> d.getName()).toArray(size -> new String[size]);
+        return _userPreferences.getUserDictionaries().stream().map(ReferenceData::getName).toArray(String[]::new);
     }
 
     public void addDictionary(final Dictionary dict) {
@@ -193,7 +194,8 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         changeDictionary(oldDictionary, newDictionary, true);
     }
 
-    public void changeDictionary(final Dictionary oldDictionary, final Dictionary newDictionary, final boolean externalize) {
+    public void changeDictionary(final Dictionary oldDictionary, final Dictionary newDictionary,
+            final boolean externalize) {
         final List<Dictionary> dictionaries = _userPreferences.getUserDictionaries();
         if (dictionaries.remove(oldDictionary)) {
             if (externalize) {
@@ -273,7 +275,8 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
         changeStringPattern(oldPattern, newPattern, true);
     }
 
-    public void changeStringPattern(final StringPattern oldPattern, final StringPattern newPattern, final boolean externalize) {
+    public void changeStringPattern(final StringPattern oldPattern, final StringPattern newPattern,
+            final boolean externalize) {
         // The old reference is removed from user preferences and we add a new
         //pattern with the same name but with a different expression value
         final List<StringPattern> stringPatterns = _userPreferences.getUserStringPatterns();
@@ -307,8 +310,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
     @Override
     public String[] getSynonymCatalogNames() {
-        return _userPreferences.getUserSynonymCatalogs().stream().map(d -> d.getName()).toArray(
-                size -> new String[size]);
+        return _userPreferences.getUserSynonymCatalogs().stream().map(SynonymCatalog::getName).toArray(String[]::new);
     }
 
     public void addSynonymCatalog(final SynonymCatalog sc) {
@@ -405,8 +407,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
     @Override
     public String[] getStringPatternNames() {
-        return _userPreferences.getUserStringPatterns().stream().map(d -> d.getName()).toArray(
-                size -> new String[size]);
+        return _userPreferences.getUserStringPatterns().stream().map(ReferenceData::getName).toArray(String[]::new);
     }
 
     @Override

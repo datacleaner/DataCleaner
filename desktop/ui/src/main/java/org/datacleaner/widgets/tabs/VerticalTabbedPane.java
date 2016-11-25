@@ -21,8 +21,6 @@ package org.datacleaner.widgets.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,12 +50,13 @@ public class VerticalTabbedPane extends DCPanel {
     public interface Listener {
         void stateChanged(int newIndex, Tab<?> newTab);
     }
+
     private static final long serialVersionUID = 1L;
     private static final ImageManager imageManager = ImageManager.get();
     private static final Color COLOR_SELECTED_FOREGROUND = WidgetUtils.BG_COLOR_BLUE_DARK;
     private static final Color COLOR_SELECTED_BACKGROUND = WidgetUtils.BG_COLOR_LESS_BRIGHT;
-    private static final Border BORDER_TABS = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(
-            10, 4, 10, 4));
+    private static final Border BORDER_TABS =
+            new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
     private final List<VerticalTab<?>> _tabs;
     private final DCPanel _leftPanel;
     private JComponent _currentContent;
@@ -86,24 +85,21 @@ public class VerticalTabbedPane extends DCPanel {
         collapsiblePane.add(panel);
         collapsiblePane.setAnimated(false);
 
-        final JButton toggleTabViewButton = new JButton(
-                imageManager.getImageIcon("images/widgets/vertical-tabs-collapse.png"));
+        final JButton toggleTabViewButton =
+                new JButton(imageManager.getImageIcon("images/widgets/vertical-tabs-collapse.png"));
         toggleTabViewButton.setBorder(null);
         toggleTabViewButton.setOpaque(false);
         toggleTabViewButton.setContentAreaFilled(false);
-        toggleTabViewButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final boolean collapsed = collapsiblePane.isCollapsed();
-                if (collapsed) {
-                    toggleTabViewButton.setIcon(imageManager.getImageIcon("images/widgets/vertical-tabs-collapse.png"));
-                    toggleTabViewButton.setBorder(null);
-                } else {
-                    toggleTabViewButton.setIcon(imageManager.getImageIcon("images/widgets/vertical-tabs-expand.png"));
-                    toggleTabViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
-                }
-                collapsiblePane.setCollapsed(!collapsed);
+        toggleTabViewButton.addActionListener(e -> {
+            final boolean collapsed = collapsiblePane.isCollapsed();
+            if (collapsed) {
+                toggleTabViewButton.setIcon(imageManager.getImageIcon("images/widgets/vertical-tabs-collapse.png"));
+                toggleTabViewButton.setBorder(null);
+            } else {
+                toggleTabViewButton.setIcon(imageManager.getImageIcon("images/widgets/vertical-tabs-expand.png"));
+                toggleTabViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
             }
+            collapsiblePane.setCollapsed(!collapsed);
         });
 
         final DCPanel collapseButtonPanel = new DCPanel();
@@ -179,12 +175,7 @@ public class VerticalTabbedPane extends DCPanel {
         final JButton button = WidgetFactory.createDefaultButton(title, icon);
         button.setHorizontalAlignment(SwingConstants.LEFT);
         button.setBorder(BORDER_TABS);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                setSelectedIndex(index);
-            }
-        });
+        button.addActionListener(e -> setSelectedIndex(index));
         _leftPanel.add(button);
         final VerticalTab<C> tab = new VerticalTab<>(button, component);
         _tabs.add(tab);

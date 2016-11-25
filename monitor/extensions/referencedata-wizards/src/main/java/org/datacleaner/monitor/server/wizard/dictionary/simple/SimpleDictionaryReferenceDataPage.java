@@ -51,8 +51,8 @@ final class SimpleDictionaryReferenceDataPage extends AbstractFreemarkerWizardPa
         final String name = getString(formParameters, PROPERTY_NAME);
         final String values = getString(formParameters, PROPERTY_VALUES);
 
-        ReferenceDataHelper.checkUniqueDictionary(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog());
+        ReferenceDataHelper.checkUniqueDictionary(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
 
         _session.setName(name);
         _session.setValues(values);

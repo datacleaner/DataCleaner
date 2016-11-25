@@ -48,20 +48,20 @@ public class BooleanAnalyzerResultSwingRenderer extends AbstractRenderer<Boolean
 
     @Override
     public JComponent render(final BooleanAnalyzerResult result) {
-        final DefaultCrosstabResultSwingRenderer crosstabResultSwingRenderer = new DefaultCrosstabResultSwingRenderer(
-                _windowContext, _rendererFactory);
+        final DefaultCrosstabResultSwingRenderer crosstabResultSwingRenderer =
+                new DefaultCrosstabResultSwingRenderer(_windowContext, _rendererFactory);
 
         final Crosstab<Number> columnStatisticsCrosstab = result.getColumnStatisticsCrosstab();
         final Crosstab<Number> valueCombinationCrosstab = result.getValueCombinationCrosstab();
 
-        final CrosstabPanel columnStatisticsPanel = crosstabResultSwingRenderer.renderInternal(new CrosstabResult(
-                columnStatisticsCrosstab));
+        final CrosstabPanel columnStatisticsPanel =
+                crosstabResultSwingRenderer.renderInternal(new CrosstabResult(columnStatisticsCrosstab));
         if (valueCombinationCrosstab == null) {
             return columnStatisticsPanel;
         }
 
-        final CrosstabPanel valueCombinationPanel = crosstabResultSwingRenderer.renderInternal(new CrosstabResult(
-                valueCombinationCrosstab));
+        final CrosstabPanel valueCombinationPanel =
+                crosstabResultSwingRenderer.renderInternal(new CrosstabResult(valueCombinationCrosstab));
 
         final DCPanel panel = new DCPanel();
         panel.setLayout(new VerticalLayout(4));

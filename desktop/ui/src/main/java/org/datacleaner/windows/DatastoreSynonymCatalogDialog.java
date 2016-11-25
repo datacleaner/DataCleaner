@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -48,7 +46,6 @@ import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.SourceColumnComboBox;
@@ -83,31 +80,23 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         _synonymColumnsPanel = new MultiSourceColumnComboBoxPanel();
         _datastoreComboBox.setEditable(false);
 
-        _datastoreComboBox.addActionListener(new ActionListener() {
+        _datastoreComboBox.addActionListener(e -> {
+            final String datastoreName = (String) _datastoreComboBox.getSelectedItem();
+            if (datastoreName != null) {
+                _datastore = _datastoreCatalog.getDatastore(datastoreName);
+                _masterTermColumnComboBox.setModel(_datastore);
+                _masterTermColumnComboBox.addColumnSelectedListener(column -> {
+                    final Table table;
+                    if (column == null) {
+                        table = null;
+                    } else {
+                        table = column.getTable();
+                    }
+                    _synonymColumnsPanel.updateSourceComboBoxes(_datastore, table);
+                    _synonymColumnsPanel.updateUI();
+                });
 
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final String datastoreName = (String) _datastoreComboBox.getSelectedItem();
-                if (datastoreName != null) {
-                    _datastore = _datastoreCatalog.getDatastore(datastoreName);
-                    _masterTermColumnComboBox.setModel(_datastore);
-                    _masterTermColumnComboBox.addColumnSelectedListener(new Listener<Column>() {
-
-                        @Override
-                        public void onItemSelected(final Column column) {
-                            final Table table;
-                            if (column == null) {
-                                table = null;
-                            } else {
-                                table = column.getTable();
-                            }
-                            _synonymColumnsPanel.updateSourceComboBoxes(_datastore, table);
-                            _synonymColumnsPanel.updateUI();
-                        }
-                    });
-
-                    _synonymColumnsPanel.setModel(_datastore);
-                }
+                _synonymColumnsPanel.setModel(_datastore);
             }
         });
 
@@ -162,47 +151,44 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("Synonym columns:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_synonymColumnsPanel.createPanel(), formPanel, 1, row);
         row++;
-        final JButton saveButton = WidgetFactory.createPrimaryButton("Save Synonym Catalog",
-                IconUtils.ACTION_SAVE_BRIGHT);
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final String name = _nameTextField.getText();
-                if (StringUtils.isNullOrEmpty(name)) {
-                    JOptionPane.showMessageDialog(DatastoreSynonymCatalogDialog.this,
-                            "Please fill out the name of the synonym catalog");
-                    return;
-                }
-
-                final String nameOfDatastore = (String) _datastoreComboBox.getSelectedItem();
-                if (StringUtils.isNullOrEmpty(nameOfDatastore)) {
-                    JOptionPane.showMessageDialog(DatastoreSynonymCatalogDialog.this,
-                            "Please select a character encoding");
-                    return;
-                }
-
-                final Column selectedItem = _masterTermColumnComboBox.getSelectedItem();
-                final String[] synonymColumnNames = _synonymColumnsPanel.getColumnNames();
-
-                final DatastoreSynonymCatalog dataStoreBasedSynonymCatalog = new DatastoreSynonymCatalog(name,
-                        nameOfDatastore, selectedItem.getQualifiedLabel(), synonymColumnNames);
-
-                if (_originalsynonymCatalog != null) {
-                    _mutableReferenceCatalog.changeSynonymCatalog(_originalsynonymCatalog,
-                            dataStoreBasedSynonymCatalog);
-                } else {
-                    _mutableReferenceCatalog.addSynonymCatalog(dataStoreBasedSynonymCatalog);
-                }
-
-                _mutableReferenceCatalog.addSynonymCatalog(dataStoreBasedSynonymCatalog);
-                DatastoreSynonymCatalogDialog.this.dispose();
+        final JButton saveButton =
+                WidgetFactory.createPrimaryButton("Save Synonym Catalog", IconUtils.ACTION_SAVE_BRIGHT);
+        saveButton.addActionListener(e -> {
+            final String name1 = _nameTextField.getText();
+            if (StringUtils.isNullOrEmpty(name1)) {
+                JOptionPane.showMessageDialog(DatastoreSynonymCatalogDialog.this,
+                        "Please fill out the name of the synonym catalog");
+                return;
             }
+
+            final String nameOfDatastore = (String) _datastoreComboBox.getSelectedItem();
+            if (StringUtils.isNullOrEmpty(nameOfDatastore)) {
+                JOptionPane.showMessageDialog(DatastoreSynonymCatalogDialog.this, "Please select a character encoding");
+                return;
+            }
+
+            final Column selectedItem = _masterTermColumnComboBox.getSelectedItem();
+            final String[] synonymColumnNames = _synonymColumnsPanel.getColumnNames();
+
+            final DatastoreSynonymCatalog dataStoreBasedSynonymCatalog =
+                    new DatastoreSynonymCatalog(name1, nameOfDatastore, selectedItem.getQualifiedLabel(),
+                            synonymColumnNames);
+
+            if (_originalsynonymCatalog != null) {
+                _mutableReferenceCatalog.changeSynonymCatalog(_originalsynonymCatalog, dataStoreBasedSynonymCatalog);
+            } else {
+                _mutableReferenceCatalog.addSynonymCatalog(dataStoreBasedSynonymCatalog);
+            }
+
+            _mutableReferenceCatalog.addSynonymCatalog(dataStoreBasedSynonymCatalog);
+            DatastoreSynonymCatalogDialog.this.dispose();
         });
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, saveButton);
 
-        final DescriptionLabel descriptionLabel = new DescriptionLabel(
-                "A datastore synonym catalog is based on a datastore and columns within it. The layout of the datastore is flexible: There should be a master term column and either a single or multiple synonym columns.");
+        final DescriptionLabel descriptionLabel = new DescriptionLabel("A datastore synonym catalog is based on a "
+                + "datastore and columns within it. The layout of the datastore is flexible: There should be a master "
+                + "term column and either a single or multiple synonym columns.");
 
         final DCPanel mainPanel = new DCPanel();
         mainPanel.setLayout(new BorderLayout());

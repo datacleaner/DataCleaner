@@ -52,8 +52,8 @@ public class HadoopResourceBuilder {
         if (!matcher.matches()) {
             _clusterReferenceName = null;
             final String fixedUri = templatedUri.replace(" ", "%20");
-            final HadoopClusterInformation hadoopClusterInformation = (HadoopClusterInformation)
-                    catalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
+            final HadoopClusterInformation hadoopClusterInformation =
+                    (HadoopClusterInformation) catalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
 
             if (hadoopClusterInformation != null) {
                 _configuration = hadoopClusterInformation.getConfiguration();
@@ -64,8 +64,8 @@ public class HadoopResourceBuilder {
             _uri = URI.create(fixedUri);
         } else {
             _clusterReferenceName = matcher.group(2);
-            final HadoopClusterInformation hadoopClusterInformation = (HadoopClusterInformation) catalog.getServer(
-                    _clusterReferenceName);
+            final HadoopClusterInformation hadoopClusterInformation =
+                    (HadoopClusterInformation) catalog.getServer(_clusterReferenceName);
             _configuration = hadoopClusterInformation.getConfiguration();
             _uri = URI.create(matcher.group(3).replace(" ", "%20"));
         }

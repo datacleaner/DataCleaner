@@ -38,7 +38,8 @@ public class DeleteJobCommand implements Command {
     private JobIdentifier _job;
     private DCPopupPanel _morePopup;
 
-    public DeleteJobCommand(final TenantIdentifier tenant, final JobIdentifier jobIdentifier, final DCPopupPanel morePopup) {
+    public DeleteJobCommand(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
+            final DCPopupPanel morePopup) {
         _tenant = tenant;
         _job = jobIdentifier;
         _morePopup = morePopup;

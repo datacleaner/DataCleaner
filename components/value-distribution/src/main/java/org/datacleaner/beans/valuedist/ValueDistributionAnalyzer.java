@@ -46,9 +46,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named("Value distribution")
-@Description("Gets the distributions of values that occur in a dataset.\nOften used as an initial way to see if a lot of repeated values are to be expected, if nulls occur and if a few un-repeated values add exceptions to the typical usage-pattern.")
-@ExternalDocumentation({
-        @DocumentationLink(title = "Analyzer rundown", url = "https://www.youtube.com/watch?v=hZWxB_eu_A0", type = DocumentationType.VIDEO, version = "4.0") })
+@Description("Gets the distributions of values that occur in a dataset.\nOften used as an initial way to see if a "
+        + "lot of repeated values are to be expected, if nulls occur and if a few un-repeated values add exceptions "
+        + "to the typical usage-pattern.")
+@ExternalDocumentation(
+        { @DocumentationLink(title = "Analyzer rundown", url = "https://www.youtube.com/watch?v=hZWxB_eu_A0",
+                type = DocumentationType.VIDEO, version = "4.0") })
 @Concurrent(true)
 public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnalyzerResult> {
 
@@ -71,7 +74,8 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
     boolean _recordUniqueValues = true;
     @Inject
     @Configured(value = PROPERTY_RECORD_DRILL_DOWN_INFORMATION, required = false, order = 4)
-    @Description("Record extra information to allow drilling to the records that represent a particular value in the distribution")
+    @Description(
+            "Record extra information to allow drilling to the records that represent a particular value in the distribution")
     boolean _recordDrillDownInformation = true;
     @Inject
     @Configured(value = "Top n most frequent values", required = false, order = 5)
@@ -115,8 +119,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
      * Main constructor
      */
     public ValueDistributionAnalyzer() {
-        _valueDistributionGroups = new TreeMap<>(
-                NullTolerableComparator.get(String.class));
+        _valueDistributionGroups = new TreeMap<>(NullTolerableComparator.get(String.class));
     }
 
     @Override
@@ -158,8 +161,9 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
                     } else {
                         inputColumns = new InputColumn[] { _column, _groupColumn };
                     }
-                    valueDistributionGroup = new ValueDistributionGroup(group, _annotationFactory,
-                            _recordDrillDownInformation, inputColumns);
+                    valueDistributionGroup =
+                            new ValueDistributionGroup(group, _annotationFactory, _recordDrillDownInformation,
+                                    inputColumns);
                     _valueDistributionGroups.put(group, valueDistributionGroup);
                 }
             }
@@ -180,8 +184,8 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
             final SortedSet<SingleValueDistributionResult> groupedResults = new TreeSet<>();
             for (final String group : _valueDistributionGroups.keySet()) {
                 final ValueDistributionGroup valueDistributibutionGroup = getValueDistributionGroup(group);
-                final SingleValueDistributionResult result = valueDistributibutionGroup
-                        .createResult(_recordUniqueValues);
+                final SingleValueDistributionResult result =
+                        valueDistributibutionGroup.createResult(_recordUniqueValues);
                 groupedResults.add(result);
             }
             return new GroupedValueDistributionResult(_column, _groupColumn, groupedResults);

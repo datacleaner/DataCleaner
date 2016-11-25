@@ -23,9 +23,9 @@ import org.apache.commons.lang.ArrayUtils;
 
 public class SerializationStringEscaper {
     @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
-    private static final String[][] ESCAPE_MAPPING = { { "&amp;", "&" }, { "&#91;", "[" }, { "&#93;", "]" },
-            { "&#44;", "," }, { "&lt;", "<" }, { "&gt;", ">" }, { "&quot;", "\"" }, { "&copy;", "\u00a9" },
-            { "&reg;", "\u00ae" }, { "&euro;", "\u20a0" } };
+    private static final String[][] ESCAPE_MAPPING =
+            { { "&amp;", "&" }, { "&#91;", "[" }, { "&#93;", "]" }, { "&#44;", "," }, { "&lt;", "<" }, { "&gt;", ">" },
+                    { "&quot;", "\"" }, { "&copy;", "\u00a9" }, { "&reg;", "\u00ae" }, { "&euro;", "\u20a0" } };
     private static final String[][] ESCAPE_MAPPING_REVERSED;
 
     // Ughhh.

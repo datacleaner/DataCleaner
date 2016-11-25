@@ -21,7 +21,6 @@ package org.datacleaner.beans.filter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Properties;
@@ -62,7 +61,9 @@ import com.google.common.base.Strings;
  * recorded and picked up successively by the next run.
  */
 @Named("Capture changed records")
-@Description("Include only records that have changed since the last time you ran the job. This filter assumes a field containing the timestamp or a number field of the latest change for each record, and stores the greatest encountered value in order to update the filter's future state.")
+@Description("Include only records that have changed since the last time you ran the job. "
+        + "This filter assumes a field containing the timestamp or a number field of the latest change for each "
+        + "record, and stores the greatest encountered value in order to update the filter's future state.")
 @Distributed(false)
 @Categorized({ FilterCategory.class, DateAndTimeCategory.class })
 @Optimizeable(removeableUponOptimization = false)
@@ -80,7 +81,8 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
     Resource captureStateFile;
 
     @Configured(required = false)
-    @Description("A custom identifier for this captured state. If omitted, the name of the 'Last modified column' will be used.")
+    @Description(
+            "A custom identifier for this captured state. If omitted, the name of the 'Last modified column' will be used.")
     String captureStateIdentifier;
 
     private long _lastModifiedThresholdMillis = -1L;
@@ -151,12 +153,7 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
             }
             properties.setProperty(key, value);
 
-            captureStateFile.write(new Action<OutputStream>() {
-                @Override
-                public void run(final OutputStream out) throws Exception {
-                    properties.store(out, null);
-                }
-            });
+            captureStateFile.write(out -> properties.store(out, null));
         }
     }
 
@@ -189,12 +186,7 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
             return properties;
         }
 
-        captureStateFile.read(new Action<InputStream>() {
-            @Override
-            public void run(final InputStream in) throws Exception {
-                properties.load(in);
-            }
-        });
+        captureStateFile.read((Action<InputStream>) properties::load);
         return properties;
     }
 

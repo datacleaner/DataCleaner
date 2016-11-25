@@ -35,7 +35,7 @@ public class PlainSearchReplaceTransformerTest {
 
     @Test
     public void testNullAndEmptyValues() throws Exception {
-        PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
+        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
         t.replacements = new LinkedHashMap<>();
@@ -48,7 +48,7 @@ public class PlainSearchReplaceTransformerTest {
 
     @Test
     public void testVanillaReplacements() throws Exception {
-        PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
+        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
         t.replacements = new LinkedHashMap<>();
@@ -57,14 +57,14 @@ public class PlainSearchReplaceTransformerTest {
         t.validate();
 
         assertEquals("[hello world]", Arrays.toString(t.transform(new MockInputRow().put(input, "foo bar"))));
-        assertEquals("[hello hello world hello]", Arrays.toString(t.transform(new MockInputRow().put(input,
-                "hello foo world foo"))));
+        assertEquals("[hello hello world hello]",
+                Arrays.toString(t.transform(new MockInputRow().put(input, "hello foo world foo"))));
         assertEquals("[hello world]", Arrays.toString(t.transform(new MockInputRow().put(input, "hello world"))));
     }
 
     @Test
     public void testReplacementEntireString() throws Exception {
-        PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
+        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = true;
         t.replacements = new LinkedHashMap<>();
@@ -79,7 +79,7 @@ public class PlainSearchReplaceTransformerTest {
 
     @Test
     public void testReplacementOnReplacement() throws Exception {
-        PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
+        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
         t.replacements = new LinkedHashMap<>();
@@ -87,13 +87,13 @@ public class PlainSearchReplaceTransformerTest {
         t.replacements.put("bar", "world");
         t.validate();
 
-        assertEquals("[world world world world]", Arrays.toString(t.transform(new MockInputRow().put(input,
-                "foo bar"))));
+        assertEquals("[world world world world]",
+                Arrays.toString(t.transform(new MockInputRow().put(input, "foo bar"))));
     }
 
     @Test
     public void testEmptyReplacements() throws Exception {
-        PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
+        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
         t.replacements = new LinkedHashMap<>();
@@ -105,7 +105,7 @@ public class PlainSearchReplaceTransformerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testEmptySearchKey() throws Exception {
-        PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
+        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
         t.replacements = new LinkedHashMap<>();
@@ -115,7 +115,7 @@ public class PlainSearchReplaceTransformerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testRecursiveReplacement() throws Exception {
-        PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
+        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
         t.valueColumn = input;
         t.replaceEntireString = false;
         t.replacements = new LinkedHashMap<>();

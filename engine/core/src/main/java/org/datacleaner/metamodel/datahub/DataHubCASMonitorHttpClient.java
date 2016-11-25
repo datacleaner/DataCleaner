@@ -36,9 +36,7 @@ public class DataHubCASMonitorHttpClient extends CASMonitorHttpClient {
     private static final String CDI_USERID = "CDI-userId";
 
     public DataHubCASMonitorHttpClient(final CloseableHttpClient client, final String casServerUrl,
-            final String username,
-            final String password,
-            final String monitorBaseUrl) {
+            final String username, final String password, final String monitorBaseUrl) {
         super(client, casServerUrl, username, password, monitorBaseUrl);
     }
 

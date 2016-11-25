@@ -157,8 +157,7 @@ public class Serializator {
             extends JsonDeserializer<ComponentScope.ServiceType> {
         @Override
         public ComponentScope.ServiceType deserialize(final JsonParser jsonParser,
-                final DeserializationContext deserializationContext)
-                throws IOException {
+                final DeserializationContext deserializationContext) throws IOException {
             final String jsonParserText = jsonParser.getText();
             for (final ComponentScope.ServiceType value : ComponentScope.ServiceType.values()) {
                 if (value.name().equals(jsonParserText)) {
@@ -173,8 +172,7 @@ public class Serializator {
             extends JsonDeserializer<ComponentScope.EntityType> {
         @Override
         public ComponentScope.EntityType deserialize(final JsonParser jsonParser,
-                final DeserializationContext deserializationContext)
-                throws IOException {
+                final DeserializationContext deserializationContext) throws IOException {
             final String jsonParserText = jsonParser.getText();
             for (final ComponentScope.EntityType value : ComponentScope.EntityType.values()) {
                 if (value.name().equals(jsonParserText)) {
@@ -216,8 +214,7 @@ public class Serializator {
     }
 
     public static ComponentList componentList(final String response) {
-        final ComponentList components = Serializator.fromString(response, ComponentList.class);
-        return components;
+        return Serializator.fromString(response, ComponentList.class);
     }
 
     public static ComponentList.ComponentInfo componentInfo(final String response) {

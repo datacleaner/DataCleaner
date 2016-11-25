@@ -20,8 +20,6 @@
 package org.datacleaner.widgets;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
@@ -32,7 +30,6 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.SchemaFactory;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.MongoDbDatastoreDialog;
 import org.datacleaner.windows.TableDefinitionDialog;
@@ -55,6 +52,7 @@ public class TableDefinitionOptionSelectionPanel extends DCPanel {
             return "Manual definition";
         }
     }
+
     private static final long serialVersionUID = 1L;
     private final DCComboBox<TableDefinitionOption> _comboBox;
     private final JButton _configureButton;
@@ -70,37 +68,24 @@ public class TableDefinitionOptionSelectionPanel extends DCPanel {
         _tableDefs = tableDefs;
         _label = DCLabel.bright("Loading...");
 
-        _saveAction = new Action<SimpleTableDef[]>() {
-            @Override
-            public void run(final SimpleTableDef[] tableDefs) throws Exception {
-                setTableDefs(tableDefs);
-            }
-        };
+        _saveAction = this::setTableDefs;
 
         _comboBox = new DCComboBox<>(TableDefinitionOption.values());
         _comboBox.setRenderer(new EnumComboBoxListRenderer());
         _configureButton = WidgetFactory.createSmallButton("images/menu/options.png");
         _configureButton.setText("Define");
 
-        _configureButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final TableDefinitionDialog dialog = new TableDefinitionDialog(_windowContext, schemaFactory, _tableDefs,
-                        _saveAction);
-                dialog.setVisible(true);
-            }
+        _configureButton.addActionListener(e -> {
+            final TableDefinitionDialog dialog =
+                    new TableDefinitionDialog(_windowContext, schemaFactory, _tableDefs, _saveAction);
+            dialog.setVisible(true);
         });
         if (tableDefs != null && tableDefs.length > 0) {
             _comboBox.setSelectedItem(TableDefinitionOption.MANUAL);
         } else {
             _comboBox.setSelectedItem(TableDefinitionOption.AUTOMATIC);
         }
-        _comboBox.addListener(new Listener<TableDefinitionOptionSelectionPanel.TableDefinitionOption>() {
-            @Override
-            public void onItemSelected(final TableDefinitionOption item) {
-                updateComponents();
-            }
-        });
+        _comboBox.addListener(item -> updateComponents());
         updateComponents();
 
         setLayout(new BorderLayout(4, 0));

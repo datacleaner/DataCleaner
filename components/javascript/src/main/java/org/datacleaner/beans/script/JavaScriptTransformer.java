@@ -58,9 +58,11 @@ public class JavaScriptTransformer implements Transformer {
     ReturnType returnType = ReturnType.STRING;
 
     @Configured
-    @Description("Available variables:\nvalues[0..]: Array of values\nvalues[\"my_col\"]: Map of values\nmy_col: Each column value has it's own variable\nout: Print to console using out.println('hello')\nlog: Print to log using log.info(...), log.warn(...), log.error(...)")
-    @StringProperty(multiline = true, mimeType = { "text/javascript",
-            "application/x-javascript" })
+    @Description(
+            "Available variables:\nvalues[0..]: Array of values\nvalues[\"my_col\"]: Map of values\nmy_col: "
+                    + "Each column value has it's own variable\nout: Print to console using out.println('hello')\n"
+                    + "log: Print to log using log.info(...), log.warn(...), log.error(...)")
+    @StringProperty(multiline = true, mimeType = { "text/javascript", "application/x-javascript" })
     String sourceCode = "function eval() {\n\treturn \"hello \" + values[0];\n}\n\neval();";
 
     private ContextFactory _contextFactory;

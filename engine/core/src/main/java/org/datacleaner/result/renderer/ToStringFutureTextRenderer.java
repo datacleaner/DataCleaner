@@ -53,8 +53,8 @@ public class ToStringFutureTextRenderer implements Renderer<AnalyzerResultFuture
         try {
             final AnalyzerResult result = renderable.get();
 
-            final Renderer<? super AnalyzerResult, ? extends CharSequence> renderer = _rendererFactory.getRenderer(
-                    result, TextRenderingFormat.class);
+            final Renderer<? super AnalyzerResult, ? extends CharSequence> renderer =
+                    _rendererFactory.getRenderer(result, TextRenderingFormat.class);
             if (renderer != null) {
                 logger.debug("renderer.render({})", result);
                 final CharSequence component = renderer.render(result);

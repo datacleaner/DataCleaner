@@ -20,8 +20,6 @@
 package org.datacleaner.widgets.tree;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -82,16 +80,13 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
     }
 
     private void addAddTablesToSourceMenuItem(final Schema schema, final JPopupMenu popup) {
-        final JMenuItem addTableItem = WidgetFactory.createMenuItem("Add all schema tables to source",
-                "images/actions/toggle-source-table.png");
-        addTableItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final TableMouseListener tableMouseListener = _tableMouseListenerProvider.get();
-                final Table[] tables = schema.getTables();
-                for (final Table table : tables) {
-                    tableMouseListener.addTable(table);
-                }
+        final JMenuItem addTableItem = WidgetFactory
+                .createMenuItem("Add all schema tables to source", "images/actions/toggle-source-table.png");
+        addTableItem.addActionListener(e -> {
+            final TableMouseListener tableMouseListener = _tableMouseListenerProvider.get();
+            final Table[] tables = schema.getTables();
+            for (final Table table : tables) {
+                tableMouseListener.addTable(table);
             }
         });
         popup.add(addTableItem);
@@ -103,20 +98,12 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
             popup.addSeparator();
 
             final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
-            final JMenuItem createTableMenuItem = WidgetFactory.createMenuItem("Create table",
-                    IconUtils.ACTION_CREATE_TABLE);
-            createTableMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(final ActionEvent e) {
-                    final CreateTableDialog dialog = new CreateTableDialog(_windowContext, updateableDatastore, schema);
-                    dialog.addListener(new CreateTableDialog.Listener() {
-                        @Override
-                        public void onTableCreated(final UpdateableDatastore datastore, final Schema schema, final String tableName) {
-                            _schemaTree.refreshDatastore();
-                        }
-                    });
-                    dialog.open();
-                }
+            final JMenuItem createTableMenuItem =
+                    WidgetFactory.createMenuItem("Create table", IconUtils.ACTION_CREATE_TABLE);
+            createTableMenuItem.addActionListener(e -> {
+                final CreateTableDialog dialog = new CreateTableDialog(_windowContext, updateableDatastore, schema);
+                dialog.addListener((datastore1, schema1, tableName) -> _schemaTree.refreshDatastore());
+                dialog.open();
             });
             popup.add(createTableMenuItem);
         }

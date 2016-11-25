@@ -65,8 +65,8 @@ public class SimpleJobEngineManager implements JobEngineManager {
     public <T extends JobContext> JobEngine<? extends T> getJobEngine(final Class<T> jobContext) {
         final Collection<JobEngine<?>> jobEngines = getJobEngines();
         for (final JobEngine<?> jobEngine : jobEngines) {
-            final Class<?> jobEngineTypeParameter = ReflectionUtils.getTypeParameter(jobEngine.getClass(),
-                    JobEngine.class, 0);
+            final Class<?> jobEngineTypeParameter =
+                    ReflectionUtils.getTypeParameter(jobEngine.getClass(), JobEngine.class, 0);
             if (ReflectionUtils.is(jobContext, jobEngineTypeParameter)) {
                 return (JobEngine<? extends T>) jobEngine;
             }
@@ -115,8 +115,8 @@ public class SimpleJobEngineManager implements JobEngineManager {
         for (final JobEngine<?> engine : jobEngines) {
             types.add(engine.getClass().getName());
         }
-        throw new UnsupportedOperationException("No job engine available of type: " + cls.getName()
-                + ". Available job engine types are: " + types);
+        throw new UnsupportedOperationException(
+                "No job engine available of type: " + cls.getName() + ". Available job engine types are: " + types);
     }
 
 }

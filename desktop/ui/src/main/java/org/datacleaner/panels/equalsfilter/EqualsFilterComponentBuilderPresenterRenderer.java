@@ -55,9 +55,10 @@ public class EqualsFilterComponentBuilderPresenterRenderer implements
     }
 
     @Override
-    public FilterComponentBuilderPresenter render(final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> fjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(fjb)
-                .getInstance(PropertyWidgetFactory.class);
+    public FilterComponentBuilderPresenter render(
+            final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> fjb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(fjb).getInstance(PropertyWidgetFactory.class);
 
         return new EqualsFilterComponentBuilderPresenter(fjb, windowContext, propertyWidgetFactory);
     }

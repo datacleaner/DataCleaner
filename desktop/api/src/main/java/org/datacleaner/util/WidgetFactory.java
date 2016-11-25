@@ -113,8 +113,7 @@ public final class WidgetFactory {
         if (Strings.isNullOrEmpty(imagePath)) {
             return null;
         }
-        final ImageIcon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_BUTTON);
-        return icon;
+        return ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_BUTTON);
     }
 
     public static PopupButton createDarkPopupButton(final String text, final String imagePath) {
@@ -326,8 +325,7 @@ public final class WidgetFactory {
     }
 
     public static DCTaskPaneContainer createTaskPaneContainer() {
-        final DCTaskPaneContainer taskPaneContainer = new DCTaskPaneContainer();
-        return taskPaneContainer;
+        return new DCTaskPaneContainer();
     }
 
     public static JXTaskPane createTaskPane(final String title, final String imagePath) {
@@ -386,8 +384,7 @@ public final class WidgetFactory {
 
                         @Override
                         public Object stringToValue(final String text) throws ParseException {
-                            final Object value = format.parseObject(text);
-                            return value;
+                            return format.parseObject(text);
                         }
 
                         @Override
@@ -396,8 +393,7 @@ public final class WidgetFactory {
                                 return "";
                             }
 
-                            final String string = format.format(value);
-                            return string;
+                            return format.format(value);
                         }
                     };
                 }
@@ -474,8 +470,7 @@ public final class WidgetFactory {
         contentPane.add(component, BorderLayout.CENTER);
         dialog.setResizable(resizable);
         if (JDialog.isDefaultLookAndFeelDecorated()) {
-            final boolean supportsWindowDecorations =
-                    UIManager.getLookAndFeel().getSupportsWindowDecorations();
+            final boolean supportsWindowDecorations = UIManager.getLookAndFeel().getSupportsWindowDecorations();
             if (supportsWindowDecorations) {
                 dialog.setUndecorated(true);
             }
@@ -496,8 +491,8 @@ public final class WidgetFactory {
     }
 
     public static Integer showMaxRowsDialog(final int defaultValue) {
-        final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?",
-                defaultValue);
+        final String maxRowsString =
+                JOptionPane.showInputDialog("How many records do you want to process?", defaultValue);
         if (Strings.isNullOrEmpty(maxRowsString)) {
             return null;
         }

@@ -97,6 +97,7 @@ public class ReferenceDataAnalysisJobWindowImplListeners {
         }
 
     }
+
     private final AnalysisJobBuilder _analysisJobBuilder;
 
     ReferenceDataAnalysisJobWindowImplListeners(final AnalysisJobBuilder analysisJobBuilder) {
@@ -111,12 +112,12 @@ public class ReferenceDataAnalysisJobWindowImplListeners {
      * @param newReferenceData
      * @param referenceDataClass
      */
-    private void changeReferenceDataValuesInComponents(final ReferenceData oldReferenceData, final ReferenceData newReferenceData,
-            final Class<?> referenceDataClass) {
+    private void changeReferenceDataValuesInComponents(final ReferenceData oldReferenceData,
+            final ReferenceData newReferenceData, final Class<?> referenceDataClass) {
         final Collection<ComponentBuilder> componentBuilders = _analysisJobBuilder.getComponentBuilders();
         for (final ComponentBuilder componentBuilder : componentBuilders) {
-            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties = componentBuilder
-                    .getConfiguredProperties();
+            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties =
+                    componentBuilder.getConfiguredProperties();
             for (final Map.Entry<ConfiguredPropertyDescriptor, Object> entry : configuredProperties.entrySet()) {
                 final ConfiguredPropertyDescriptor propertyDescriptor = entry.getKey();
                 if (referenceDataClass.isAssignableFrom(propertyDescriptor.getBaseType())) {
@@ -148,11 +149,12 @@ public class ReferenceDataAnalysisJobWindowImplListeners {
      * @param referenceData
      * @param referenceDataClass
      */
-    private void removeReferenceDataValuesInComponents(final ReferenceData referenceData, final Class<?> referenceDataClass) {
+    private void removeReferenceDataValuesInComponents(final ReferenceData referenceData,
+            final Class<?> referenceDataClass) {
         final Collection<ComponentBuilder> componentBuilders = _analysisJobBuilder.getComponentBuilders();
         for (final ComponentBuilder componentBuilder : componentBuilders) {
-            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties = componentBuilder
-                    .getConfiguredProperties();
+            final Map<ConfiguredPropertyDescriptor, Object> configuredProperties =
+                    componentBuilder.getConfiguredProperties();
             for (final Map.Entry<ConfiguredPropertyDescriptor, Object> entry : configuredProperties.entrySet()) {
                 final ConfiguredPropertyDescriptor propertyDescriptor = entry.getKey();
                 if (referenceDataClass.isAssignableFrom(propertyDescriptor.getBaseType())) {

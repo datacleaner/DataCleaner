@@ -19,8 +19,6 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.List;
@@ -77,72 +75,67 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
         }
         _addColumnNamesPanel = new DCPanel();
         _addColumnNamesPanel.setLayout(new HorizontalLayout());
-        _addColumnNamesButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-                if (_columnNames == null) {
-                    final ExcelDatastore datastore = createDatastore(getDatastoreName(), getFilename());
-                    datastore.openConnection();
-                    _columnNames = datastore.getCustomColumnNames();
-                }
-                final ColumnNamesSetterDialog columnNamesChooserDialog = new ColumnNamesSetterDialog(windowContext,
-                        _columnNames);
-                columnNamesChooserDialog.setVisible(true);
-                columnNamesChooserDialog.addWindowListener(new WindowListener() {
-                    @Override
-                    public void windowClosed(final WindowEvent e) {
-                        _columnNames = columnNamesChooserDialog.getColumnNames();
-                        onSetingsUpdated();
-                        columnNamesChooserDialog.dispose();
-                    }
-
-                    @Override
-                    public void windowActivated(final WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowClosing(final WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowDeactivated(final WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowDeiconified(final WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowIconified(final WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowOpened(final WindowEvent e) {
-
-                    }
-                });
+        _addColumnNamesButton.addActionListener(arg0 -> {
+            if (_columnNames == null) {
+                final ExcelDatastore datastore = createDatastore(getDatastoreName(), getFilename());
+                datastore.openConnection();
+                _columnNames = datastore.getCustomColumnNames();
             }
+            final ColumnNamesSetterDialog columnNamesChooserDialog =
+                    new ColumnNamesSetterDialog(windowContext, _columnNames);
+            columnNamesChooserDialog.setVisible(true);
+            columnNamesChooserDialog.addWindowListener(new WindowListener() {
+                @Override
+                public void windowClosed(final WindowEvent e) {
+                    _columnNames = columnNamesChooserDialog.getColumnNames();
+                    onSetingsUpdated();
+                    columnNamesChooserDialog.dispose();
+                }
+
+                @Override
+                public void windowActivated(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowClosing(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeactivated(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeiconified(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowIconified(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowOpened(final WindowEvent e) {
+
+                }
+            });
         });
         _addColumnNamesPanel.add(_addColumnNamesButton, 0);
     }
 
     protected List<Entry<String, JComponent>> getFormElements() {
-        final List<Entry<String, JComponent>> res = super.getFormElements();
         // TODO: Uncomment the line about columns names panel after the release of metamodel 4.5.5
         //res.add(new ImmutableEntry<>("Column Names", _addColumnNamesPanel));
-        return res;
+        return super.getFormElements();
     }
 
     @Override
     protected void setFileFilters(final AbstractResourceTextField<?> filenameField) {
-        final FileFilter combinedFilter = FileFilters.combined("Any Excel Spreadsheet (.xls, .xlsx)", FileFilters.XLS,
-                FileFilters.XLSX);
+        final FileFilter combinedFilter =
+                FileFilters.combined("Any Excel Spreadsheet (.xls, .xlsx)", FileFilters.XLS, FileFilters.XLSX);
         filenameField.addChoosableFileFilter(combinedFilter);
         filenameField.addChoosableFileFilter(FileFilters.XLS);
         filenameField.addChoosableFileFilter(FileFilters.XLSX);
@@ -214,8 +207,7 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
             @Override
             protected void done() {
                 try {
-                    @SuppressWarnings("unused")
-                    final ExcelConfiguration configuration = get();
+                    @SuppressWarnings("unused") final ExcelConfiguration configuration = get();
                     showPreview = true;
                 } catch (final Exception e) {
                     final Throwable error = ErrorUtils.unwrapForPresentation(e);

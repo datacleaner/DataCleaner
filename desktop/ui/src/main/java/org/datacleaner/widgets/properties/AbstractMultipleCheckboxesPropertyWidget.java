@@ -49,14 +49,9 @@ import org.jdesktop.swingx.VerticalLayout;
  */
 public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends AbstractPropertyWidget<E[]> {
 
-    private final Listener<E> CHANGE_LISTENER = new Listener<E>() {
-        @Override
-        public void onItemSelected(final E item, final boolean selected) {
-            fireValueChanged();
-        }
-    };
+    private final Listener<E> _changeListener = (item, selected) -> fireValueChanged();
     private final Map<String, DCCheckBox<E>> _checkBoxes;
-    private final ActionListener SELECT_ALL_LISTENER = new ActionListener() {
+    private final ActionListener _selectAllListener = new ActionListener() {
         @Override
         public void actionPerformed(final ActionEvent e) {
             for (final JCheckBox cb : _checkBoxes.values()) {
@@ -67,7 +62,7 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
             fireValueChanged();
         }
     };
-    private final ActionListener SELECT_NONE_LISTENER = new ActionListener() {
+    private final ActionListener _selectNoneListener = new ActionListener() {
         @Override
         public void actionPerformed(final ActionEvent e) {
             for (final JCheckBox cb : _checkBoxes.values()) {
@@ -110,11 +105,11 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
         buttonPanel.setLayout(new HorizontalLayout(2));
 
         final JButton selectAllButton = WidgetFactory.createDefaultButton("Select all");
-        selectAllButton.addActionListener(SELECT_ALL_LISTENER);
+        selectAllButton.addActionListener(_selectAllListener);
         buttonPanel.add(selectAllButton);
 
         final JButton selectNoneButton = WidgetFactory.createDefaultButton("Select none");
-        selectNoneButton.addActionListener(SELECT_NONE_LISTENER);
+        selectNoneButton.addActionListener(_selectNoneListener);
         buttonPanel.add(selectNoneButton);
         return buttonPanel;
     }
@@ -160,7 +155,7 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
         checkBox = new DCCheckBox<>(name, checked);
         checkBox.setValue(item);
         checkBox.setOpaque(false);
-        checkBox.addListener(CHANGE_LISTENER);
+        checkBox.addListener(_changeListener);
         _checkBoxes.put(name, checkBox);
         add(checkBox);
 
@@ -175,7 +170,7 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
         final DCCheckBox<E> checkBox = _checkBoxes.get(name);
         if (checkBox != null) {
             _checkBoxes.remove(name);
-            checkBox.addListener(CHANGE_LISTENER);
+            checkBox.addListener(_changeListener);
             final boolean isSelected = checkBox.isSelected();
             checkBox.setValue(newValue);
             checkBox.setSelected(isSelected, true);
@@ -231,8 +226,7 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
                 result.add(cb.getValue());
             }
         }
-        @SuppressWarnings("unchecked") final
-        E[] array = (E[]) Array.newInstance(_itemClass, result.size());
+        @SuppressWarnings("unchecked") final E[] array = (E[]) Array.newInstance(_itemClass, result.size());
         return result.toArray(array);
     }
 

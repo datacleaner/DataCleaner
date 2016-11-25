@@ -55,14 +55,15 @@ public final class FileFilters {
     public static final ExtensionFilter JAR = new ExtensionFilter("Java Archive (.jar)", ".jar");
     public static final ExtensionFilter HTML = new ExtensionFilter("HTML web page (.html)", ".html");
     public static final ExtensionFilter EBC = new ExtensionFilter("EBCDIC (.ebc)", ".ebc");
-    public static final ExtensionFilter ANALYSIS_XML = new ExtensionFilter("Analysis job (.analysis.xml)",
-            ".analysis.xml");
-    public static final ExtensionFilter ANALYSIS_RESULT_SER = new ExtensionFilter(
-            "Analysis result (.analysis.result.dat)", ".analysis.result.dat");
-    public static final ExtensionFilter ANALYSIS_TIMELINE_XML = new ExtensionFilter(
-            "Analysis timeline (.analysis.timeline.xml)", ".analysis.timeline.xml");
-    public static final ExtensionFilter ANALYSIS_EXECUTION_LOG_XML = new ExtensionFilter(
-            "Analysis job execution log (.analysis.execution.log.xml)", ".analysis.execution.log.xml");
+    public static final ExtensionFilter ANALYSIS_XML =
+            new ExtensionFilter("Analysis job (.analysis.xml)", ".analysis.xml");
+    public static final ExtensionFilter ANALYSIS_RESULT_SER =
+            new ExtensionFilter("Analysis result (.analysis.result.dat)", ".analysis.result.dat");
+    public static final ExtensionFilter ANALYSIS_TIMELINE_XML =
+            new ExtensionFilter("Analysis timeline (.analysis.timeline.xml)", ".analysis.timeline.xml");
+    public static final ExtensionFilter ANALYSIS_EXECUTION_LOG_XML =
+            new ExtensionFilter("Analysis job execution log (.analysis.execution.log.xml)",
+                    ".analysis.execution.log.xml");
 
     private FileFilters() {
         // prevent instantiation

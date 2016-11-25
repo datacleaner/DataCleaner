@@ -62,7 +62,8 @@ public class JobTriggeringController {
     @ResponseBody
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Map<String, String> invokeJob(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") final String jobName, @RequestParam(value = "block", required = false) final Boolean block,
+            @PathVariable("job") final String jobName,
+            @RequestParam(value = "block", required = false) final Boolean block,
             @RequestParam(value = "timeoutMillis", required = false) final Integer timeoutMillis) throws Throwable {
         return handleJob(tenant, jobName, block, timeoutMillis, null);
     }
@@ -72,7 +73,8 @@ public class JobTriggeringController {
     @ResponseBody
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Map<String, String> handlePlainText(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") final String jobName, @RequestParam(value = "block", required = false) final Boolean block,
+            @PathVariable("job") final String jobName,
+            @RequestParam(value = "block", required = false) final Boolean block,
             @RequestParam(value = "timeoutMillis", required = false) final Integer timeoutMillis,
             @RequestBody final String overrideProperties) throws Throwable {
         final Properties properties = new Properties();
@@ -88,7 +90,8 @@ public class JobTriggeringController {
     @ResponseBody
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Map<String, String> handleMultipartFormData(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") final String jobName, @RequestParam(value = "block", required = false) final Boolean block,
+            @PathVariable("job") final String jobName,
+            @RequestParam(value = "block", required = false) final Boolean block,
             @RequestParam(value = "timeoutMillis", required = false) final Integer timeoutMillis,
             @RequestParam(value = "overrideProperties") final MultipartFile overrideProperties) throws Throwable {
         final Properties properties = new Properties();
@@ -113,15 +116,16 @@ public class JobTriggeringController {
 
         final TenantIdentifier tenantIdentifier = new TenantIdentifier(tenant);
 
-        ExecutionLog executionLog = _schedulingService.triggerExecution(tenantIdentifier, new JobIdentifier(jobName),
-                mapProperties(overrideProperties));
+        ExecutionLog executionLog = _schedulingService
+                .triggerExecution(tenantIdentifier, new JobIdentifier(jobName), mapProperties(overrideProperties));
 
         if (blocking) {
             int millisWaited = 0;
             while (!executionLog.isFinished() && !isTimedOut(millisWaited, timeoutMillis)) {
                 Thread.sleep(POLL_INCREMENT_MILLIS);
                 millisWaited += POLL_INCREMENT_MILLIS;
-                final ExecutionLog updatedExecutionLog = _schedulingService.getExecution(tenantIdentifier, executionLog);
+                final ExecutionLog updatedExecutionLog =
+                        _schedulingService.getExecution(tenantIdentifier, executionLog);
                 if (updatedExecutionLog != null) {
                     executionLog = updatedExecutionLog;
                 }

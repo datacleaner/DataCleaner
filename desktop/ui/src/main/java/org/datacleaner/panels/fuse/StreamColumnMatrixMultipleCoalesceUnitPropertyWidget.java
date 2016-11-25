@@ -63,8 +63,8 @@ import com.google.common.collect.Multimap;
 public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]>
         implements TransformerChangeListener, MutableInputColumn.Listener {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(StreamColumnMatrixMultipleCoalesceUnitPropertyWidget.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(StreamColumnMatrixMultipleCoalesceUnitPropertyWidget.class);
 
     private final ConfiguredPropertyDescriptor _unitProperty;
     private final MinimalPropertyWidget<CoalesceUnit[]> _unitPropertyWidget;
@@ -90,8 +90,8 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
 
         add(scroll);
 
-        final CoalesceUnit[] coalesceUnits = (CoalesceUnit[]) getComponentBuilder()
-                .getConfiguredProperty(_unitProperty);
+        final CoalesceUnit[] coalesceUnits =
+                (CoalesceUnit[]) getComponentBuilder().getConfiguredProperty(_unitProperty);
 
         refresh(coalesceUnits);
 
@@ -140,8 +140,8 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
                     }
                 }
             }
-            if (!Arrays.equals(units,
-                    survivingCoalesceUnits.toArray(new CoalesceUnit[survivingCoalesceUnits.size()]))) {
+            if (!Arrays
+                    .equals(units, survivingCoalesceUnits.toArray(new CoalesceUnit[survivingCoalesceUnits.size()]))) {
                 final Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<>();
                 properties.put(getPropertyDescriptor(), getValue());
                 properties.put(_unitProperty,
@@ -151,14 +151,10 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
         }
 
         for (final Table table : allTablesAndColumns.keySet()) {
-            final StreamColumnListPanel tablePanel = new StreamColumnListPanel(ajb, table,
-                    new StreamColumnListPanel.Listener() {
-                        @Override
-                        public void onValueChanged(final StreamColumnListPanel panel) {
-                            fireValueChanged();
-                            _unitPropertyWidget.fireValueChanged();
-                        }
-                    });
+            final StreamColumnListPanel tablePanel = new StreamColumnListPanel(ajb, table, panel -> {
+                fireValueChanged();
+                _unitPropertyWidget.fireValueChanged();
+            });
 
             final Collection<InputColumn<?>> selectedColumns = coalescedTablesAndColumns.get(table);
 

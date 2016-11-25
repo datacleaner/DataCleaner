@@ -73,8 +73,7 @@ public class Version {
         }
 
         final String[] versionParts = VERSION.split("\\.");
-        final int majorVersion = Integer.parseInt(versionParts[0]);
-        return majorVersion;
+        return Integer.parseInt(versionParts[0]);
     }
 
     public static String getDistributionVersion() {
@@ -125,8 +124,7 @@ public class Version {
             FileHelper.safeClose(inputStream);
         }
 
-        final String version = properties.getProperty("version", valueIfNull);
-        return version;
+        return properties.getProperty("version", valueIfNull);
     }
 
     private static String determineEdition() {

@@ -29,7 +29,6 @@ import java.util.Set;
 
 import org.apache.commons.math.stat.descriptive.AggregateSummaryStatistics;
 import org.apache.commons.math.stat.descriptive.StatisticalSummary;
-import org.apache.commons.math.stat.descriptive.StatisticalSummaryValues;
 import org.apache.commons.math.stat.descriptive.SummaryStatistics;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
@@ -52,8 +51,9 @@ public class NumberAnalyzerResultReducer extends AbstractCrosstabResultReducer<N
 
     private static final Logger logger = LoggerFactory.getLogger(NumberAnalyzerResultReducer.class);
 
-    private static final Set<String> SUM_MEASURES = new HashSet<>(Arrays.asList(NumberAnalyzer.MEASURE_SUM,
-            NumberAnalyzer.MEASURE_ROW_COUNT, NumberAnalyzer.MEASURE_NULL_COUNT));
+    private static final Set<String> SUM_MEASURES = new HashSet<>(
+            Arrays.asList(NumberAnalyzer.MEASURE_SUM, NumberAnalyzer.MEASURE_ROW_COUNT,
+                    NumberAnalyzer.MEASURE_NULL_COUNT));
 
     @Override
     protected Serializable reduceValues(final List<Object> slaveValues, final String column, final String measure,
@@ -80,18 +80,18 @@ public class NumberAnalyzerResultReducer extends AbstractCrosstabResultReducer<N
         return null;
     }
 
-    private StatisticalSummary getSummary(final String column, final Collection<? extends NumberAnalyzerResult> results) {
+    private StatisticalSummary getSummary(final String column,
+            final Collection<? extends NumberAnalyzerResult> results) {
         final List<SummaryStatistics> statistics = new ArrayList<>(results.size());
         for (final NumberAnalyzerResult analyzerResult : results) {
             final SummaryStatistics stats = buildStatistics(column, analyzerResult);
             statistics.add(stats);
         }
-        final StatisticalSummaryValues summary = AggregateSummaryStatistics.aggregate(statistics);
-        return summary;
+        return AggregateSummaryStatistics.aggregate(statistics);
     }
 
     private SummaryStatistics buildStatistics(final String column, final NumberAnalyzerResult analyzerResult) {
-        final SummaryStatistics stats = new SummaryStatistics() {
+        return new SummaryStatistics() {
             private static final long serialVersionUID = 1L;
 
             private final InputColumn<Number> col = new MockInputColumn<>(column);
@@ -146,7 +146,6 @@ public class NumberAnalyzerResultReducer extends AbstractCrosstabResultReducer<N
                 return analyzerResult.getSumOfSquares(col).doubleValue();
             }
         };
-        return stats;
     }
 
     @Override

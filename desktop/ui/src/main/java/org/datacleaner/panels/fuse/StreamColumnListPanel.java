@@ -21,8 +21,6 @@ package org.datacleaner.panels.fuse;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +30,6 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.actions.ReorderColumnsActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -52,6 +49,7 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
     public interface Listener {
         void onValueChanged(StreamColumnListPanel panel);
     }
+
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(StreamColumnListPanel.class);
     private final Table _table;
@@ -61,7 +59,8 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
 
     private DCPanel _buttonPanelForSelected;
 
-    public StreamColumnListPanel(final AnalysisJobBuilder rootAnalysisJobBuilder, final Table table, final Listener listener) {
+    public StreamColumnListPanel(final AnalysisJobBuilder rootAnalysisJobBuilder, final Table table,
+            final Listener listener) {
         super();
         _table = table;
         _listeners = new ArrayList<>();
@@ -88,26 +87,20 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
 
         final JButton selectAllButton = WidgetFactory.createDefaultButton("Select all");
         selectAllButton.setFont(WidgetUtils.FONT_SMALL);
-        selectAllButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                for (final DCCheckBox<InputColumn<?>> checkBox : getAvailableInputColumnCheckBoxes()) {
-                    checkBox.setSelected(true);
-                }
-                fireValueChanged();
+        selectAllButton.addActionListener(e -> {
+            for (final DCCheckBox<InputColumn<?>> checkBox : getAvailableInputColumnCheckBoxes()) {
+                checkBox.setSelected(true);
             }
+            fireValueChanged();
         });
 
         final JButton selectNoneButton = WidgetFactory.createDefaultButton("Select none");
         selectNoneButton.setFont(WidgetUtils.FONT_SMALL);
-        selectNoneButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                for (final DCCheckBox<InputColumn<?>> checkBox : getSelectedInputColumnCheckBoxes()) {
-                    checkBox.setSelected(false);
-                }
-                fireValueChanged();
+        selectNoneButton.addActionListener(e -> {
+            for (final DCCheckBox<InputColumn<?>> checkBox : getSelectedInputColumnCheckBoxes()) {
+                checkBox.setSelected(false);
             }
+            fireValueChanged();
         });
 
         _buttonPanelForSelected = createButtonPanel();
@@ -116,12 +109,7 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
         _buttonPanelForSelected.add(selectNoneButton);
 
         // only show the "selected" button panel when there are any selections
-        addListener(new Listener() {
-            @Override
-            public void onValueChanged(final StreamColumnListPanel panel) {
-                refresh();
-            }
-        });
+        addListener(panel -> refresh());
 
         final DCPanel buttonPanelForAvailable = createButtonPanel();
         buttonPanelForAvailable.add(selectAllButton);
@@ -146,8 +134,8 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
     private DCPanel createButtonPanel() {
         final DCPanel buttonPanel = new DCPanel();
         buttonPanel.setLayout(new HorizontalLayout(2));
-        buttonPanel.setBorder(new CompoundBorder(new EmptyBorder(4, 0, 0, 0),
-                WidgetUtils.BORDER_CHECKBOX_LIST_INDENTATION));
+        buttonPanel.setBorder(
+                new CompoundBorder(new EmptyBorder(4, 0, 0, 0), WidgetUtils.BORDER_CHECKBOX_LIST_INDENTATION));
         return buttonPanel;
     }
 
@@ -161,29 +149,20 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
 
     private List<DCCheckBox<InputColumn<?>>> getInputColumnCheckBoxes(final DCPanel panel) {
         final Component[] components = panel.getComponents();
-        return CollectionUtils.map(components, new Func<Component, DCCheckBox<InputColumn<?>>>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public DCCheckBox<InputColumn<?>> eval(final Component component) {
-                return (DCCheckBox<InputColumn<?>>) component;
-            }
-        });
+        return CollectionUtils.map(components, component -> (DCCheckBox<InputColumn<?>>) component);
     }
 
     public void addInputColumn(final InputColumn<?> inputColumn, final boolean coalesced) {
         final DCCheckBox<InputColumn<?>> checkBox = new DCCheckBox<>(inputColumn.getName(), coalesced);
-        checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
-            @Override
-            public void onItemSelected(final InputColumn<?> item, final boolean selected) {
-                if (selected) {
-                    _availableCheckboxesPanel.remove(checkBox);
-                    _selectedCheckboxesPanel.add(checkBox);
-                } else {
-                    _selectedCheckboxesPanel.remove(checkBox);
-                    _availableCheckboxesPanel.add(checkBox);
-                }
-                fireValueChanged();
+        checkBox.addListener((item, selected) -> {
+            if (selected) {
+                _availableCheckboxesPanel.remove(checkBox);
+                _selectedCheckboxesPanel.add(checkBox);
+            } else {
+                _selectedCheckboxesPanel.remove(checkBox);
+                _availableCheckboxesPanel.add(checkBox);
             }
+            fireValueChanged();
         });
         checkBox.setValue(inputColumn);
 

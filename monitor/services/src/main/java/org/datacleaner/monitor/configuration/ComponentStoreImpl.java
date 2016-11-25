@@ -20,14 +20,12 @@
 package org.datacleaner.monitor.configuration;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
@@ -75,12 +73,9 @@ public class ComponentStoreImpl implements ComponentStore {
             if (configFile == null) {
                 return null;
             }
-            configFile.readFile(new Action<InputStream>() {
-                @Override
-                public void run(final InputStream arg) throws Exception {
-                    final String theString = IOUtils.toString(arg);
-                    conf[0] = objectMapper.readValue(theString, ComponentStoreHolder.class);
-                }
+            configFile.readFile(arg -> {
+                final String theString = IOUtils.toString(arg);
+                conf[0] = objectMapper.readValue(theString, ComponentStoreHolder.class);
             });
         } finally {
             readLock.unlock();
@@ -102,14 +97,10 @@ public class ComponentStoreImpl implements ComponentStore {
             configFile.delete();
         }
         try {
-            componentsFolder.createFile(configuration.getInstanceId(), new Action<OutputStream>() {
-                @Override
-                public void run(final OutputStream fileOutput) throws Exception {
-                    final String jsonConf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(
-                            configuration);
-                    final InputStream jsonConfStream = IOUtils.toInputStream(jsonConf);
-                    FileHelper.copy(jsonConfStream, fileOutput);
-                }
+            componentsFolder.createFile(configuration.getInstanceId(), fileOutput -> {
+                final String jsonConf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(configuration);
+                final InputStream jsonConfStream = IOUtils.toInputStream(jsonConf);
+                FileHelper.copy(jsonConfStream, fileOutput);
             });
         } finally {
             writeLock.unlock();
@@ -151,12 +142,9 @@ public class ComponentStoreImpl implements ComponentStore {
         try {
             final List<RepositoryFile> files = componentsFolder.getFiles();
             for (final RepositoryFile file : files) {
-                file.readFile(new Action<InputStream>() {
-                    @Override
-                    public void run(final InputStream arg) throws Exception {
-                        final String theString = IOUtils.toString(arg);
-                        holderList.add(objectMapper.readValue(theString, ComponentStoreHolder.class));
-                    }
+                file.readFile(arg -> {
+                    final String theString = IOUtils.toString(arg);
+                    holderList.add(objectMapper.readValue(theString, ComponentStoreHolder.class));
                 });
             }
         } finally {

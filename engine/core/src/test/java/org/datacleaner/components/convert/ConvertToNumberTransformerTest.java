@@ -24,12 +24,12 @@ import junit.framework.TestCase;
 public class ConvertToNumberTransformerTest extends TestCase {
 
     public void testParseWithSpecialSeparators() throws Exception {
-        ConvertToNumberTransformer trans = new ConvertToNumberTransformer('|', '-', '!');
+        final ConvertToNumberTransformer trans = new ConvertToNumberTransformer('|', '-', '!');
 
         assertEquals(-1000.01, trans.transform("!1-000|01"));
         assertEquals(-1000.01, trans.transform("!1000|01"));
 
-        Number res = trans.transform("1000");
+        final Number res = trans.transform("1000");
         assertEquals(Long.class, res.getClass());
         assertEquals(1000L, res);
     }

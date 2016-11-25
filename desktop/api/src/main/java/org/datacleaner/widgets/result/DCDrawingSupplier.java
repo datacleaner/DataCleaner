@@ -28,10 +28,10 @@ import org.jfree.chart.plot.DrawingSupplier;
 
 public class DCDrawingSupplier extends DefaultDrawingSupplier implements DrawingSupplier {
 
-    public static final Color[] DEFAULT_FILL_COLORS = new Color[] { WidgetUtils.BG_COLOR_GREEN_MEDIUM,
-            WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_BLUE_BRIGHT,
-            WidgetUtils.BG_COLOR_ORANGE_BRIGHT,
-            WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_CYAN_BRIGHT };
+    public static final Color[] DEFAULT_FILL_COLORS =
+            new Color[] { WidgetUtils.BG_COLOR_GREEN_MEDIUM, WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT,
+                    WidgetUtils.BG_COLOR_BLUE_BRIGHT, WidgetUtils.BG_COLOR_ORANGE_BRIGHT,
+                    WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_CYAN_BRIGHT };
     private static final long serialVersionUID = 1L;
     private final Color[] _fillColors;
     private volatile int _colorIndex;

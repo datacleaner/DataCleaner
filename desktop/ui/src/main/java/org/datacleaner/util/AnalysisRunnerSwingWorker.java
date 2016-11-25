@@ -79,6 +79,9 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
             break;
         case PENDING:
             logger.info("SwingWorker hasn't started yet - cancelIfRunning() invocation disregarded");
+            break;
+        default:
+            throw new IllegalArgumentException();
         }
     }
 }

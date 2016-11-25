@@ -53,7 +53,8 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 
     private final ExtensionSwapClient _client;
 
-    public ExtensionSwapInstallationHttpContainer(final ExtensionSwapClient extensionSwapClient, final UsageLogger usageLogger) {
+    public ExtensionSwapInstallationHttpContainer(final ExtensionSwapClient extensionSwapClient,
+            final UsageLogger usageLogger) {
         _client = extensionSwapClient;
     }
 
@@ -86,12 +87,7 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
                 resp.setCode(500);
             } else {
                 // install the extension
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        displayInstallationOptions(extensionSwapPackage, username);
-                    }
-                });
+                SwingUtilities.invokeLater(() -> displayInstallationOptions(extensionSwapPackage, username));
 
                 if (callback != null) {
                     out.print(callback + "({\"success\":true})");
@@ -115,8 +111,8 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
     private void displayInstallationOptions(final ExtensionSwapPackage extensionSwapPackage, final String username) {
 
         final String title = "Install DataCleaner extension?";
-        final String message = "Do you want to download and install the extension '" + extensionSwapPackage.getName()
-                + "'";
+        final String message =
+                "Do you want to download and install the extension '" + extensionSwapPackage.getName() + "'";
 
         final Component window = (Component) DCWindowContext.getAnyWindow();
         final int confirmation = JOptionPane.showConfirmDialog(window, message, title, JOptionPane.YES_NO_OPTION);

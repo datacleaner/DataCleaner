@@ -75,8 +75,8 @@ public interface ResultDao {
      *            the new timestamp of the result, or null if unchanged
      * @return
      */
-    ResultContext updateResult(TenantIdentifier tenantIdentifier, RepositoryFile resultFile,
-            JobIdentifier newJob, Date newTimestamp);
+    ResultContext updateResult(TenantIdentifier tenantIdentifier, RepositoryFile resultFile, JobIdentifier newJob,
+            Date newTimestamp);
 
     /**
      * Updates an existing result with a new job and/or new timestamp

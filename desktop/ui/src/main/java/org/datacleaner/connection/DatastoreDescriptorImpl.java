@@ -97,7 +97,8 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
             if (that instanceof DatastoreDescriptor) {
                 final DatastoreDescriptor thatDescriptor = (DatastoreDescriptor) that;
                 final boolean nameEquals = this.getName().equals(thatDescriptor.getName());
-                final boolean datastoreClassEquals = this.getDatastoreClass().equals(thatDescriptor.getDatastoreClass());
+                final boolean datastoreClassEquals =
+                        this.getDatastoreClass().equals(thatDescriptor.getDatastoreClass());
 
                 if (nameEquals && datastoreClassEquals) {
                     return true;

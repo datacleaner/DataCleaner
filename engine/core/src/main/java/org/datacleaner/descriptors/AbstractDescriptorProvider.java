@@ -126,8 +126,8 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
             final Class<R> rendererBeanClass) {
         for (final RendererBeanDescriptor<?> descriptor : getRendererBeanDescriptors()) {
             if (descriptor.getComponentClass() == rendererBeanClass) {
-                @SuppressWarnings("unchecked") final
-                RendererBeanDescriptor<R> result = (RendererBeanDescriptor<R>) descriptor;
+                @SuppressWarnings("unchecked") final RendererBeanDescriptor<R> result =
+                        (RendererBeanDescriptor<R>) descriptor;
                 return result;
             }
         }

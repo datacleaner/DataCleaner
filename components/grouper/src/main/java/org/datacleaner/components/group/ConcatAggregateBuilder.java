@@ -26,7 +26,8 @@ final class ConcatAggregateBuilder extends AbstractRowNumberAwareAggregateBuilde
     private final String _concatenationSeparator;
     private final StringBuilder _result;
 
-    public ConcatAggregateBuilder(final SortationType sortationType, final boolean skipNulls, final String concatenationSeparator) {
+    public ConcatAggregateBuilder(final SortationType sortationType, final boolean skipNulls,
+            final String concatenationSeparator) {
         super(sortationType, skipNulls);
         _concatenationSeparator = concatenationSeparator;
         _result = new StringBuilder();

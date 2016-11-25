@@ -93,7 +93,8 @@ public class DCLabel extends JLabel {
             // remove <html> tags since that will be added below also
             text = text.substring(6, text.length() - 7);
         }
-        super.setText("<html><table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"" + width + "\"><tr><td>"
-                + text + "</td></tr></table></html>");
+        super.setText(
+                "<html><table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"" + width + "\"><tr><td>" + text
+                        + "</td></tr></table></html>");
     }
 }

@@ -68,7 +68,8 @@ import org.datacleaner.util.sort.SortMergeWriter;
 
 @Named("Create Excel spreadsheet")
 @Alias("Write to Excel spreadsheet")
-@Description("Write data to an Excel spreadsheet, useful for manually editing and inspecting the data in Microsoft Excel.")
+@Description(
+        "Write data to an Excel spreadsheet, useful for manually editing and inspecting the data in Microsoft Excel.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Distributed(false)
 public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
@@ -133,13 +134,14 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         }
 
         if (!overwriteSheetIfExists && file.exists()) {
-            final Datastore datastore = new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
+            final Datastore datastore =
+                    new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
             try (DatastoreConnection connection = datastore.openConnection()) {
                 final String[] tableNames = connection.getDataContext().getDefaultSchema().getTableNames();
                 for (int i = 0; i < tableNames.length; i++) {
                     if (tableNames[i].equals(sheetName)) {
-                        throw new IllegalStateException("The sheet '" + sheetName
-                                + "' already exists. Please select another sheet name.");
+                        throw new IllegalStateException(
+                                "The sheet '" + sheetName + "' already exists. Please select another sheet name.");
                     }
                 }
             }
@@ -179,8 +181,8 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     @Override
     public OutputWriter createOutputWriter() {
         if (file.exists()) {
-            final ExcelDatastore datastore = new ExcelDatastore(file.getName(), new FileResource(file),
-                    file.getAbsolutePath());
+            final ExcelDatastore datastore =
+                    new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
             try (UpdateableDatastoreConnection connection = datastore.openConnection()) {
                 final DataContext dataContext = connection.getDataContext();
                 final String[] tableNames = dataContext.getDefaultSchema().getTableNames();
@@ -237,15 +239,16 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
             }
         }
 
-        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar,
-                quoteChar, escapeChar, includeHeader, columns);
+        return CsvOutputWriterFactory
+                .getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar,
+                        includeHeader, columns);
     }
 
-    private String getColumnHeader(final int i) {
+    private String getColumnHeader(final int index) {
         if (fields == null) {
-            return columns[i].getName();
+            return columns[index].getName();
         }
-        return fields[i];
+        return fields[index];
     }
 
     @Override
@@ -257,23 +260,22 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         }
         final FileResource resource = new FileResource(file);
         final Datastore datastore = new ExcelDatastore(file.getName(), resource, file.getAbsolutePath());
-        final WriteDataResult result = new WriteDataResultImpl(rowCount, datastore, null, sheetName);
-        return result;
+        return new WriteDataResultImpl(rowCount, datastore, null, sheetName);
     }
 
     private void mergeSortFile() {
-        final CsvConfiguration csvConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
-                FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar, escapeChar, false, true);
+        final CsvConfiguration csvConfiguration =
+                new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, FileHelper.DEFAULT_ENCODING,
+                        separatorChar, quoteChar, escapeChar, false, true);
 
         final CsvDataContext tempDataContext = new CsvDataContext(_targetFile, csvConfiguration);
         final Table table = tempDataContext.getDefaultSchema().getTable(0);
 
-        final Comparator<? super Row> comparator = SortHelper.createComparator(columnToBeSortedOn,
-                indexOfColumnToBeSortedOn);
+        final Comparator<? super Row> comparator =
+                SortHelper.createComparator(columnToBeSortedOn, indexOfColumnToBeSortedOn);
 
         final SortMergeWriter<Row, ExcelDataContextWriter> sortMergeWriter =
-                new SortMergeWriter<Row, ExcelDataContextWriter>(
-                        comparator) {
+                new SortMergeWriter<Row, ExcelDataContextWriter>(comparator) {
 
                     @Override
                     protected ExcelDataContextWriter createWriter(final Resource resource) {
@@ -292,7 +294,8 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
                     }
 
                     @Override
-                    protected void writeRow(final ExcelDataContextWriter writer, final Row row, final int count) throws IOException {
+                    protected void writeRow(final ExcelDataContextWriter writer, final Row row, final int count)
+                            throws IOException {
                         for (int i = 0; i < count; i++) {
                             final List<Object> valuesList = new ArrayList<>(Arrays.asList(row.getValues()));
                             if (!isColumnToBeSortedOnPresentInInput) {
@@ -305,14 +308,11 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
                 };
 
         // read from the temp file and sort it into the final file
-        final DataSet dataSet = tempDataContext.query().from(table).selectAll().execute();
-        try {
+        try (DataSet dataSet = tempDataContext.query().from(table).selectAll().execute()) {
             while (dataSet.next()) {
                 final Row row = dataSet.getRow();
                 sortMergeWriter.append(row);
             }
-        } finally {
-            dataSet.close();
         }
         sortMergeWriter.write(file);
     }

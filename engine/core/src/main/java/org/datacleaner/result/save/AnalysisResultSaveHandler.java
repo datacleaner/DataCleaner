@@ -55,8 +55,8 @@ public class AnalysisResultSaveHandler {
         if (analysisResult instanceof SimpleAnalysisResult) {
             simpleAnalysisResult = (SimpleAnalysisResult) analysisResult;
         } else {
-            simpleAnalysisResult = new SimpleAnalysisResult(analysisResult.getResultMap(),
-                    analysisResult.getCreationDate());
+            simpleAnalysisResult =
+                    new SimpleAnalysisResult(analysisResult.getResultMap(), analysisResult.getCreationDate());
         }
 
         final OutputStream out = resource.write();

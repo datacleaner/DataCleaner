@@ -37,8 +37,8 @@ import com.google.gwt.user.client.ui.SuggestOracle;
  */
 public class StringParameterizedMetricTextBox extends SuggestBox {
 
-    public StringParameterizedMetricTextBox(final TenantIdentifier tenant, final JobIdentifier job, final MetricIdentifier metric,
-            final String text, final CheckBox checkBoxToActivate) {
+    public StringParameterizedMetricTextBox(final TenantIdentifier tenant, final JobIdentifier job,
+            final MetricIdentifier metric, final String text, final CheckBox checkBoxToActivate) {
         this(text, checkBoxToActivate, new StringParameterizedMetricSuggestOracle(tenant, job, metric));
     }
 
@@ -71,7 +71,8 @@ public class StringParameterizedMetricTextBox extends SuggestBox {
     }
 
     public void setMetric(final TenantIdentifier tenant, final JobIdentifier job, final MetricIdentifier metric) {
-        final StringParameterizedMetricSuggestOracle oracle = (StringParameterizedMetricSuggestOracle) getSuggestOracle();
+        final StringParameterizedMetricSuggestOracle oracle =
+                (StringParameterizedMetricSuggestOracle) getSuggestOracle();
         oracle.setMetric(tenant, job, metric);
     }
 }

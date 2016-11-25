@@ -22,22 +22,22 @@ package org.datacleaner.beans.api;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
-
-import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.NoAnalyzerResultReducer;
+
+import junit.framework.TestCase;
 
 public class NoAnalyzerResultReducerTest extends TestCase {
 
     public void testThrowException() throws Exception {
-        Constructor<?> constructor = NoAnalyzerResultReducer.class.getDeclaredConstructors()[0];
+        final Constructor<?> constructor = NoAnalyzerResultReducer.class.getDeclaredConstructors()[0];
         constructor.setAccessible(true);
-        NoAnalyzerResultReducer reducer = (NoAnalyzerResultReducer) constructor.newInstance();
+        final NoAnalyzerResultReducer reducer = (NoAnalyzerResultReducer) constructor.newInstance();
 
         try {
             reducer.reduce(new ArrayList<>());
             fail("Exception expected");
-        } catch (UnsupportedOperationException e) {
+        } catch (final UnsupportedOperationException e) {
+            // ignored
         }
     }
 }

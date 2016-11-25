@@ -56,8 +56,8 @@ public class DefineMetricPanel extends FlowPanel {
         super();
         addStyleName("DefineMetricPanel");
 
-        final boolean formulaBased = (formulaOnly ? true : (existingMetric == null ? false : existingMetric
-                .isFormulaBased()));
+        final boolean formulaBased =
+                (formulaOnly ? true : (existingMetric == null ? false : existingMetric.isFormulaBased()));
 
         _tenant = tenant;
         _jobMetrics = jobMetrics;

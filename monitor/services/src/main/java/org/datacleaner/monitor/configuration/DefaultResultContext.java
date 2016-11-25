@@ -19,7 +19,6 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.Map;
 
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.descriptors.PlaceholderComponentJob;
 import org.datacleaner.job.ComponentJob;
@@ -55,25 +53,21 @@ public class DefaultResultContext implements ResultContext {
 
     @Override
     public AnalysisResult getAnalysisResult() throws IllegalStateException {
-        final Object deserializedObject = _repositoryFile.readFile(new Func<InputStream, Object>() {
-            @Override
-            public Object eval(final InputStream in) {
-                ChangeAwareObjectInputStream inputStream = null;
-                try {
-                    inputStream = new ChangeAwareObjectInputStream(in);
-                    return inputStream.readObject();
-                } catch (final Exception e) {
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException) e;
-                    }
-                    throw new IllegalStateException(e);
-                } finally {
-                    FileHelper.safeClose(inputStream);
+        final Object deserializedObject = _repositoryFile.readFile(in -> {
+            ChangeAwareObjectInputStream inputStream = null;
+            try {
+                inputStream = new ChangeAwareObjectInputStream(in);
+                return inputStream.readObject();
+            } catch (final Exception e) {
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
                 }
+                throw new IllegalStateException(e);
+            } finally {
+                FileHelper.safeClose(inputStream);
             }
         });
-        final AnalysisResult analysisResult = toAnalysisResult(deserializedObject);
-        return analysisResult;
+        return toAnalysisResult(deserializedObject);
     }
 
     private AnalysisResult toAnalysisResult(final Object deserializedObject) {
@@ -90,8 +84,7 @@ public class DefaultResultContext implements ResultContext {
             final Map<ComponentJob, AnalyzerResult> results = new HashMap<>(1);
             final JobContext job = getJob();
 
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            final ComponentJob componentJob =
+            @SuppressWarnings({ "rawtypes", "unchecked" }) final ComponentJob componentJob =
                     new PlaceholderComponentJob(job.getName(), analyzerResult.getClass(), analyzerResult.getClass());
             results.put(componentJob, analyzerResult);
             return new SimpleAnalysisResult(results, creationDate);
@@ -103,8 +96,8 @@ public class DefaultResultContext implements ResultContext {
         }
 
         if (deserializedObject instanceof List) {
-            @SuppressWarnings({ "rawtypes", "unchecked" }) final
-            ListResult<?> listResult = new ListResult((List<?>) deserializedObject);
+            @SuppressWarnings({ "rawtypes", "unchecked" }) final ListResult<?> listResult =
+                    new ListResult((List<?>) deserializedObject);
             return toAnalysisResult(listResult);
         }
 

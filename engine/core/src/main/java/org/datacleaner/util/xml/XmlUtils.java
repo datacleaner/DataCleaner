@@ -114,7 +114,6 @@ public class XmlUtils {
         } catch (final TransformerException e) {
             throw new IllegalStateException(e);
         }
-        final String xmlString = sw.toString();
-        return xmlString;
+        return sw.toString();
     }
 }

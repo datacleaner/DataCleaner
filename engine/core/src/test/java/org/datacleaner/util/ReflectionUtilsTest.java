@@ -22,8 +22,6 @@ package org.datacleaner.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
@@ -32,6 +30,8 @@ import org.datacleaner.result.TableModelResult;
 import org.datacleaner.util.ReflectionUtilTestHelpClass.ClassA;
 import org.datacleaner.util.ReflectionUtilTestHelpClass.ClassB;
 import org.datacleaner.util.ReflectionUtilTestHelpClass.ClassC;
+
+import junit.framework.TestCase;
 
 public class ReflectionUtilsTest extends TestCase {
 
@@ -125,15 +125,14 @@ public class ReflectionUtilsTest extends TestCase {
 
         try {
             ReflectionUtils.getHierarchyDistance(TableModelResult.class, MySubclass.class);
-        } catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Not a valid subtype of org.datacleaner.util.ReflectionUtilsTest$MySubclass: org.datacleaner.result.TableModelResult",
-                    e.getMessage());
+        } catch (final IllegalArgumentException e) {
+            assertEquals( "Not a valid subtype of org.datacleaner.util.ReflectionUtilsTest$MySubclass: "
+                    + "org.datacleaner.result.TableModelResult", e.getMessage());
         }
     }
 
     public void testGetFields() throws Exception {
-        int nonSyntheticFieldsCountInA = 1;
+        final int nonSyntheticFieldsCountInA = 1;
         Field[] fields = ReflectionUtils.getNonSyntheticFields(ClassA.class);
         assertEquals(nonSyntheticFieldsCountInA, fields.length);
 
@@ -173,7 +172,7 @@ public class ReflectionUtilsTest extends TestCase {
 
         assertEquals(2, methods2.length);
 
-        for (Method method : methods2) {
+        for (final Method method : methods2) {
             switch (method.getName()) {
             case "getA":
             case "getB":
@@ -186,7 +185,7 @@ public class ReflectionUtilsTest extends TestCase {
 
         final Method[] methods3 = ReflectionUtils.getMethods(ClassC.class);
         assertEquals(2, methods3.length);
-        for (Method method : methods3) {
+        for (final Method method : methods3) {
             switch (method.getName()) {
             case "getA":
             case "getC":

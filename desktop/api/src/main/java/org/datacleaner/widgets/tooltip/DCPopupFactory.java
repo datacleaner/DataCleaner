@@ -32,7 +32,8 @@ import javax.swing.PopupFactory;
 public class DCPopupFactory extends PopupFactory {
 
     @Override
-    public Popup getPopup(final Component owner, final Component contents, int x, final int y) throws IllegalArgumentException {
+    public Popup getPopup(final Component owner, final Component contents, int x, final int y)
+            throws IllegalArgumentException {
         if (contents instanceof DCToolTip) {
             final DCToolTip toolTip = (DCToolTip) contents;
             final JComponent tooltipComponent = toolTip.getTooltipComponent();

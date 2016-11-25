@@ -157,8 +157,8 @@ public final class CliRunner implements Closeable {
             propertiesResource = null;
         }
 
-        final ConfigurationReaderInterceptor configurationReaderInterceptor = new DesktopConfigurationReaderInterceptor(
-                new File("."), propertiesResource);
+        final ConfigurationReaderInterceptor configurationReaderInterceptor =
+                new DesktopConfigurationReaderInterceptor(new File("."), propertiesResource);
 
         final InputStream inputStream = configurationFile.read();
         try {
@@ -359,8 +359,7 @@ public final class CliRunner implements Closeable {
                     if (datastore == null) {
                         throw new IllegalArgumentException("No such datastore: " + _arguments.getDatastoreName());
                     }
-                    analysisJobBuilder = jobReader.create(inputStream, variableOverrides,
-                            datastore);
+                    analysisJobBuilder = jobReader.create(inputStream, variableOverrides, datastore);
                 } else {
                     analysisJobBuilder = jobReader.create(inputStream, variableOverrides);
                 }
@@ -397,8 +396,8 @@ public final class CliRunner implements Closeable {
     }
 
     protected void printAnalyzers(final DataCleanerConfiguration configuration) {
-        final Collection<AnalyzerDescriptor<?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
-                .getAnalyzerDescriptors();
+        final Collection<AnalyzerDescriptor<?>> descriptors =
+                configuration.getEnvironment().getDescriptorProvider().getAnalyzerDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No analyzers configured!");
         } else {
@@ -409,8 +408,8 @@ public final class CliRunner implements Closeable {
     }
 
     private void printTransformers(final DataCleanerConfiguration configuration) {
-        final Collection<TransformerDescriptor<?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
-                .getTransformerDescriptors();
+        final Collection<TransformerDescriptor<?>> descriptors =
+                configuration.getEnvironment().getDescriptorProvider().getTransformerDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No transformers configured!");
         } else {
@@ -421,8 +420,8 @@ public final class CliRunner implements Closeable {
     }
 
     private void printFilters(final DataCleanerConfiguration configuration) {
-        final Collection<FilterDescriptor<?, ?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
-                .getFilterDescriptors();
+        final Collection<FilterDescriptor<?, ?>> descriptors =
+                configuration.getEnvironment().getDescriptorProvider().getFilterDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No filters configured!");
         } else {
@@ -442,22 +441,22 @@ public final class CliRunner implements Closeable {
                 final ConfiguredPropertyDescriptor propertyForInput = propertiesForInput.iterator().next();
                 if (propertyForInput != null) {
                     if (propertyForInput.isArray()) {
-                        write(" - Consumes multiple input columns (type: "
-                                + propertyForInput.getTypeArgument(0).getSimpleName() + ")");
+                        write(" - Consumes multiple input columns (type: " + propertyForInput.getTypeArgument(0)
+                                .getSimpleName() + ")");
                     } else {
-                        write(" - Consumes a single input column (type: "
-                                + propertyForInput.getTypeArgument(0).getSimpleName() + ")");
+                        write(" - Consumes a single input column (type: " + propertyForInput.getTypeArgument(0)
+                                .getSimpleName() + ")");
                     }
                 }
             } else {
                 write(" - Consumes " + propertiesForInput.size() + " named inputs");
                 for (final ConfiguredPropertyDescriptor propertyForInput : propertiesForInput) {
                     if (propertyForInput.isArray()) {
-                        write("   Input columns: " + propertyForInput.getName() + " (type: "
-                                + propertyForInput.getTypeArgument(0).getSimpleName() + ")");
+                        write("   Input columns: " + propertyForInput.getName() + " (type: " + propertyForInput
+                                .getTypeArgument(0).getSimpleName() + ")");
                     } else {
-                        write("   Input column: " + propertyForInput.getName() + " (type: "
-                                + propertyForInput.getTypeArgument(0).getSimpleName() + ")");
+                        write("   Input column: " + propertyForInput.getName() + " (type: " + propertyForInput
+                                .getTypeArgument(0).getSimpleName() + ")");
                     }
                 }
             }

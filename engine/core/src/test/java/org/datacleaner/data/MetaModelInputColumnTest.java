@@ -19,10 +19,10 @@
  */
 package org.datacleaner.data;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
+
+import junit.framework.TestCase;
 
 public class MetaModelInputColumnTest extends TestCase {
 
@@ -30,7 +30,7 @@ public class MetaModelInputColumnTest extends TestCase {
         try {
             new MetaModelInputColumn(null);
             fail("Exception expected");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals("column cannot be null", e.getMessage());
         }
     }

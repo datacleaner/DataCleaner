@@ -83,14 +83,14 @@ public class CreateTimelineHandler implements ClickHandler {
         final TimelinePanel timelinePanel = new TimelinePanel(_tenant, _service, null, _groupPanel, true);
         timelinePanel.setTimelineDefinition(timelineDefinition, false);
 
-        final CustomizeMetricsPanel customizeMetricsPanel = new CustomizeMetricsPanel(_service, _tenant,
-                timelineDefinition) {
-            @Override
-            protected void onMetricsLoaded() {
-                super.onMetricsLoaded();
-                popup.center();
-            }
-        };
+        final CustomizeMetricsPanel customizeMetricsPanel =
+                new CustomizeMetricsPanel(_service, _tenant, timelineDefinition) {
+                    @Override
+                    protected void onMetricsLoaded() {
+                        super.onMetricsLoaded();
+                        popup.center();
+                    }
+                };
 
         final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.addClickHandler(new ClickHandler() {

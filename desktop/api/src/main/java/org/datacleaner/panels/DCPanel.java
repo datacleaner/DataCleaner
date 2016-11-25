@@ -80,11 +80,13 @@ public class DCPanel extends JPanel {
      *            horizontal alignment of the watermark in percent where 0 is
      *            LEFT and 100 is RIGHT
      */
-    public DCPanel(final Image watermark, final int horizontalAlignmentInPercent, final int verticalAlignmentInPercent) {
+    public DCPanel(final Image watermark, final int horizontalAlignmentInPercent,
+            final int verticalAlignmentInPercent) {
         this(watermark, horizontalAlignmentInPercent, verticalAlignmentInPercent, null, null);
     }
 
-    public DCPanel(final Image watermark, final int horizontalAlignmentInPercent, final int verticalAlignmentInPercent, final Color bgColor) {
+    public DCPanel(final Image watermark, final int horizontalAlignmentInPercent, final int verticalAlignmentInPercent,
+            final Color bgColor) {
         this(watermark, horizontalAlignmentInPercent, verticalAlignmentInPercent, bgColor, bgColor);
     }
 
@@ -100,8 +102,8 @@ public class DCPanel extends JPanel {
      *             Use {@link #DCPanel(Image, int, int, Color)} instead.
      */
     @Deprecated
-    public DCPanel(final Image watermark, final int horizontalAlignmentInPercent, final int verticalAlignmentInPercent, final Color topColor,
-            final Color bottomColor) {
+    public DCPanel(final Image watermark, final int horizontalAlignmentInPercent, final int verticalAlignmentInPercent,
+            final Color topColor, final Color bottomColor) {
         super();
         if (topColor == null || bottomColor == null) {
             setOpaque(false);
@@ -140,7 +142,8 @@ public class DCPanel extends JPanel {
         return flow(alignment, 10, 2, components);
     }
 
-    public static DCPanel flow(final Alignment alignment, final int hgap, final int vgap, final Component... components) {
+    public static DCPanel flow(final Alignment alignment, final int hgap, final int vgap,
+            final Component... components) {
         final DCPanel panel = new DCPanel();
         // Instead of hgap we use horizontal struts. This is to avoid initial
         // and last gaps.
@@ -172,31 +175,31 @@ public class DCPanel extends JPanel {
         }
     }
 
-    protected void paintPanelBackgroundImage(final Graphics g, final Image watermark, final int imageWidth, final int imageHeight,
-            final float horizontalAlignment, final float verticalAlignment) {
+    protected void paintPanelBackgroundImage(final Graphics graphics, final Image watermark, final int imageWidth,
+            final int imageHeight, final float horizontalAlignment, final float verticalAlignment) {
         int x = getWidth() - imageWidth;
         x = (int) (x * horizontalAlignment);
 
         int y = getHeight() - imageHeight;
         y = (int) (y * verticalAlignment);
 
-        g.drawImage(watermark, x, y, imageWidth, imageHeight, this);
+        graphics.drawImage(watermark, x, y, imageWidth, imageHeight, this);
     }
 
-    protected void paintPanelBackgroundColor(final Graphics g) {
+    protected void paintPanelBackgroundColor(final Graphics graphics) {
         final Paint paint;
         if (_topColor == _bottomColor || _bottomColor == null) {
             paint = _topColor;
         } else {
             paint = new GradientPaint(0, 0, _topColor, 0, getHeight(), _bottomColor);
         }
-        if (g instanceof Graphics2D) {
-            final Graphics2D g2d = (Graphics2D) g;
+        if (graphics instanceof Graphics2D) {
+            final Graphics2D g2d = (Graphics2D) graphics;
             g2d.setPaint(paint);
         } else {
-            g.setColor(_topColor);
+            graphics.setColor(_topColor);
         }
-        g.fillRect(0, 0, getWidth(), getHeight());
+        graphics.fillRect(0, 0, getWidth(), getHeight());
     }
 
     public DCPanel setPreferredSize(final int width, final int height) {

@@ -1,20 +1,10 @@
 package org.datacleaner.beans.valuedist
-import scala.collection.JavaConversions._
-import org.datacleaner.result.html.BodyElement
-import org.datacleaner.result.html.DrillToDetailsBodyElement
-import org.datacleaner.result.html.HeadElement
-import org.datacleaner.result.html.HtmlFragment
-import org.datacleaner.result.html.HtmlRenderingContext
-import org.datacleaner.result.html.SimpleHtmlFragment
+import org.datacleaner.result.{GroupedValueCountingAnalyzerResult, ListResult, ValueCountingAnalyzerResult, ValueFrequency}
+import org.datacleaner.result.html._
 import org.datacleaner.result.renderer.RendererFactory
-import org.datacleaner.result.GroupedValueCountingAnalyzerResult
-import org.datacleaner.result.ListResult
-import org.datacleaner.result.ValueCountingAnalyzerResult
 import org.datacleaner.util.LabelUtils
-import org.datacleaner.result.ListResult
-import org.datacleaner.result.ListResult
-import org.datacleaner.result.SingleValueFrequency
-import org.datacleaner.result.ValueFrequency
+
+import scala.collection.JavaConversions._
 
 class ValueDistributionHtmlFragment(result: ValueCountingAnalyzerResult, rendererFactory: RendererFactory) extends HtmlFragment {
 

@@ -68,7 +68,8 @@ public class JobHistoryPanel extends Composite {
     @UiField(provided = true)
     CellList<ExecutionIdentifier> executionList;
 
-    public JobHistoryPanel(final JobIdentifier job, final SchedulingServiceAsync service, final TenantIdentifier tenant) {
+    public JobHistoryPanel(final JobIdentifier job, final SchedulingServiceAsync service,
+            final TenantIdentifier tenant) {
         super();
         _job = job;
         _service = service;
@@ -86,8 +87,7 @@ public class JobHistoryPanel extends Composite {
         executionList = new CellList<>(new ExecutionIdentifierCell());
         executionList.setEmptyListWidget(new Label("(none)"));
 
-        final SingleSelectionModel<ExecutionIdentifier> selectionModel =
-                new SingleSelectionModel<>();
+        final SingleSelectionModel<ExecutionIdentifier> selectionModel = new SingleSelectionModel<>();
         selectionModel.addSelectionChangeHandler(new Handler() {
             @Override
             public void onSelectionChange(final SelectionChangeEvent event) {
@@ -113,8 +113,7 @@ public class JobHistoryPanel extends Composite {
                 if (!executions.isEmpty()) {
                     // build a map of active executions, to be polled for
                     // updates
-                    final Map<Integer, ExecutionIdentifier> activeExecutions =
-                            new HashMap<>();
+                    final Map<Integer, ExecutionIdentifier> activeExecutions = new HashMap<>();
                     for (int i = 0; i < executions.size(); i++) {
                         final ExecutionIdentifier execution = executions.get(i);
                         if (!execution.isFinished()) {

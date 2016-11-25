@@ -106,28 +106,24 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
     private final boolean _replaceDatastores;
 
     @Autowired
-    public JaxbConfigurationInterceptor(final TenantContextFactory contextFactory, final ConfigurationFactory configurationFactory)
-            throws JAXBException {
+    public JaxbConfigurationInterceptor(final TenantContextFactory contextFactory,
+            final ConfigurationFactory configurationFactory) throws JAXBException {
         this(contextFactory, configurationFactory, true);
     }
 
-    public JaxbConfigurationInterceptor(final TenantContextFactory contextFactory, final ConfigurationFactory configurationFactory,
-            final boolean replaceDatastores) throws JAXBException {
-        this(contextFactory, configurationFactory, replaceDatastores, new Ref<Calendar>() {
-            @Override
-            public Calendar get() {
-                return Calendar.getInstance();
-            }
-        });
+    public JaxbConfigurationInterceptor(final TenantContextFactory contextFactory,
+            final ConfigurationFactory configurationFactory, final boolean replaceDatastores) throws JAXBException {
+        this(contextFactory, configurationFactory, replaceDatastores, Calendar::getInstance);
     }
 
-    public JaxbConfigurationInterceptor(final TenantContextFactory contextFactory, final ConfigurationFactory configurationFactory,
-            final boolean replaceDatastores, final Ref<Calendar> calRef) throws JAXBException {
+    public JaxbConfigurationInterceptor(final TenantContextFactory contextFactory,
+            final ConfigurationFactory configurationFactory, final boolean replaceDatastores,
+            final Ref<Calendar> calRef) throws JAXBException {
         _contextFactory = contextFactory;
         _configurationFactory = configurationFactory;
         _replaceDatastores = replaceDatastores;
-        _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
-                ObjectFactory.class.getClassLoader());
+        _jaxbContext = JAXBContext
+                .newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class.getClassLoader());
         _calRef = calRef;
     }
 
@@ -142,8 +138,8 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         // replace datastore catalog
         if (_replaceDatastores) {
             final DatastoreCatalogType originalDatastoreCatalog = configuration.getDatastoreCatalog();
-            final DatastoreCatalogType newDatastoreCatalog = interceptDatastoreCatalog(context, job, datastoreName,
-                    originalDatastoreCatalog);
+            final DatastoreCatalogType newDatastoreCatalog =
+                    interceptDatastoreCatalog(context, job, datastoreName, originalDatastoreCatalog);
             configuration.setDatastoreCatalog(newDatastoreCatalog);
         }
 
@@ -187,9 +183,8 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
      * @param originalDatastoreCatalog
      * @return
      */
-    private DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context,
-            final DataCleanerJobContext job, String datastoreName,
-            final DatastoreCatalogType originalDatastoreCatalog) {
+    private DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context, final DataCleanerJobContext job,
+            String datastoreName, final DatastoreCatalogType originalDatastoreCatalog) {
         final DataCleanerConfiguration configuration = context.getConfiguration();
 
         final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
@@ -228,8 +223,8 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                 usageSchema.setName(schema.getName());
                 final String[] tableNames = schema.getTableNames();
                 for (final String tableName : tableNames) {
-                    usageSchema.addTable(new MutableTable(tableName).setSchema(usageSchema).setRemarks(
-                            REMARK_INCLUDE_IN_QUERY));
+                    usageSchema.addTable(
+                            new MutableTable(tableName).setSchema(usageSchema).setRemarks(REMARK_INCLUDE_IN_QUERY));
                 }
                 datastoreUsage.put(datastoreName, usageSchema);
             }
@@ -278,17 +273,14 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
             final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(name);
             if (datastore != null) {
                 // a comparator that takes the column number into account.
-                final Comparator<Column> columnComparator = new Comparator<Column>() {
-                    @Override
-                    public int compare(final Column o1, final Column o2) {
-                        if (o1.getTable() == o2.getTable()) {
-                            final int diff = o1.getColumnNumber() - o2.getColumnNumber();
-                            if (diff != 0) {
-                                return diff;
-                            }
+                final Comparator<Column> columnComparator = (o1, o2) -> {
+                    if (o1.getTable() == o2.getTable()) {
+                        final int diff = o1.getColumnNumber() - o2.getColumnNumber();
+                        if (diff != 0) {
+                            return diff;
                         }
-                        return o1.compareTo(o2);
                     }
+                    return o1.compareTo(o2);
                 };
 
                 try (DatastoreConnection connection = datastore.openConnection()) {
@@ -325,13 +317,13 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                         if (usageColumns != null && usageColumns.length > 0) {
                             Arrays.sort(usageColumns, columnComparator);
 
-                            final int maxRows = REMARK_INCLUDE_IN_QUERY.equals(usageTable.getRemarks()) ? MAX_POJO_ROWS
-                                    : 0;
+                            final int maxRows =
+                                    REMARK_INCLUDE_IN_QUERY.equals(usageTable.getRemarks()) ? MAX_POJO_ROWS : 0;
 
                             final Table sourceTable = usageColumns[0].getTable();
                             try {
-                                final PojoTableType pojoTable = adaptor.createPojoTable(dataContext, sourceTable,
-                                        usageColumns, maxRows);
+                                final PojoTableType pojoTable =
+                                        adaptor.createPojoTable(dataContext, sourceTable, usageColumns, maxRows);
                                 pojoTables.add(pojoTable);
                             } catch (final Exception e) {
                                 // allow omitting errornous tables here.
@@ -341,8 +333,8 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                         }
                     }
 
-                    final AbstractDatastoreType pojoDatastoreType = adaptor.createPojoDatastore(datastore.getName(),
-                            schemaName, pojoTables);
+                    final AbstractDatastoreType pojoDatastoreType =
+                            adaptor.createPojoDatastore(datastore.getName(), schemaName, pojoTables);
                     pojoDatastoreType.setDescription(datastore.getDescription());
 
                     newDatastoreCatalog.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(pojoDatastoreType);

@@ -30,8 +30,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.metamodel.BatchUpdateScript;
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.create.TableCreationBuilder;
 import org.apache.metamodel.csv.CsvDataContext;
@@ -84,8 +82,8 @@ import org.slf4j.LoggerFactory;
 @Description("Delete records in a table. Records matching the specified condition(s) will be deleted in batch.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Concurrent(true)
-public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice,
-        PrecedingComponentConsumer {
+public class DeleteFromTableAnalyzer
+        implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice, PrecedingComponentConsumer {
 
     private static final String PROPERTY_NAME_CONDITION_VALUES = "Condition values";
 
@@ -126,7 +124,8 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
 
     @Inject
     @Configured(order = 6, value = "Buffer size")
-    @Description("How much data to buffer before committing batches of data. Large batches often perform better, but require more memory.")
+    @Description("How much data to buffer before committing batches of data. Large batches often perform better, but "
+            + "require more memory.")
     WriteBufferSizeOption bufferSizeOption = WriteBufferSizeOption.MEDIUM;
 
     @Inject
@@ -174,8 +173,7 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
 
         _writeBuffer = new WriteBuffer(bufferSize, this);
 
-        final UpdateableDatastoreConnection con = datastore.openConnection();
-        try {
+        try (UpdateableDatastoreConnection con = datastore.openConnection()) {
             final SchemaNavigator schemaNavigator = con.getSchemaNavigator();
 
             final List<String> columnsNotFound = new ArrayList<>();
@@ -190,8 +188,6 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             if (!columnsNotFound.isEmpty()) {
                 throw new IllegalArgumentException("Could not find column(s): " + columnsNotFound);
             }
-        } finally {
-            con.close();
         }
     }
 
@@ -221,8 +217,8 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
         }
         final Column column = table.getColumnByName(ERROR_MESSAGE_COLUMN_NAME);
         if (column == null) {
-            throw new IllegalStateException("Error log file does not have required column: "
-                    + ERROR_MESSAGE_COLUMN_NAME);
+            throw new IllegalStateException(
+                    "Error log file does not have required column: " + ERROR_MESSAGE_COLUMN_NAME);
         }
     }
 
@@ -249,18 +245,15 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             validateCsvHeaders(dc);
         } else {
             // create table if no table exists.
-            dc.executeUpdate(new UpdateScript() {
-                @Override
-                public void run(final UpdateCallback cb) {
-                    TableCreationBuilder tableBuilder = cb.createTable(schema, "error_table");
-                    for (final String columnName : conditionColumnNames) {
-                        tableBuilder = tableBuilder.withColumn(columnName);
-                    }
-
-                    tableBuilder = tableBuilder.withColumn(ERROR_MESSAGE_COLUMN_NAME);
-
-                    tableBuilder.execute();
+            dc.executeUpdate(cb -> {
+                TableCreationBuilder tableBuilder = cb.createTable(schema, "error_table");
+                for (final String columnName : conditionColumnNames) {
+                    tableBuilder = tableBuilder.withColumn(columnName);
                 }
+
+                tableBuilder = tableBuilder.withColumn(ERROR_MESSAGE_COLUMN_NAME);
+
+                tableBuilder.execute();
             });
         }
 
@@ -292,11 +285,10 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             // the
             // error data will be more complete if first loop finished.
             for (int i = 0; i < conditionValues.length; i++) {
-                final int index = i;
-                rowData[index] = TypeConverter.convertType(rowData[index], _targetConditionColumns[i]);
+                rowData[i] = TypeConverter.convertType(rowData[i], _targetConditionColumns[i]);
 
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Value for {} set to: {}", conditionColumnNames[i], rowData[index]);
+                    logger.debug("Value for {} set to: {}", conditionColumnNames[i], rowData[i]);
                 }
             }
         } catch (final RuntimeException e) {
@@ -340,47 +332,41 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
     @Override
     public void run(final Iterable<Object[]> buffer) throws Exception {
 
-        final UpdateableDatastoreConnection con = datastore.openConnection();
-        try {
-            final Column[] whereColumns = con.getSchemaNavigator().convertToColumns(schemaName, tableName,
-                    conditionColumnNames);
+        try (UpdateableDatastoreConnection con = datastore.openConnection()) {
+            final Column[] whereColumns =
+                    con.getSchemaNavigator().convertToColumns(schemaName, tableName, conditionColumnNames);
             final UpdateableDataContext dc = con.getUpdateableDataContext();
-            dc.executeUpdate(new BatchUpdateScript() {
-                @Override
-                public void run(final UpdateCallback callback) {
-                    int deleteCount = 0;
-                    for (final Object[] rowData : buffer) {
-                        RowDeletionBuilder deletionBuilder = callback.deleteFrom(tableName);
+            dc.executeUpdate((BatchUpdateScript) callback -> {
+                int deleteCount = 0;
+                for (final Object[] rowData : buffer) {
+                    RowDeletionBuilder deletionBuilder = callback.deleteFrom(tableName);
 
-                        for (int i = 0; i < whereColumns.length; i++) {
-                            final Object value = rowData[i];
-                            final Column whereColumn = whereColumns[i];
-                            final FilterItem filterItem = new FilterItem(new SelectItem(whereColumn),
-                                    OperatorType.EQUALS_TO, value);
+                    for (int i = 0; i < whereColumns.length; i++) {
+                        final Object value = rowData[i];
+                        final Column whereColumn = whereColumns[i];
+                        final FilterItem filterItem =
+                                new FilterItem(new SelectItem(whereColumn), OperatorType.EQUALS_TO, value);
 
-                            deletionBuilder = deletionBuilder.where(filterItem);
-                        }
-
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Updating: {}", Arrays.toString(rowData));
-                        }
-
-                        try {
-                            deletionBuilder.execute();
-                            deleteCount++;
-                            _updatedRowCount.incrementAndGet();
-                        } catch (final RuntimeException e) {
-                            errorOccurred(rowData, e);
-                        }
+                        deletionBuilder = deletionBuilder.where(filterItem);
                     }
 
-                    if (deleteCount > 0) {
-                        _componentContext.publishMessage(new ExecutionLogMessage(deleteCount + " deletes executed"));
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Updating: {}", Arrays.toString(rowData));
+                    }
+
+                    try {
+                        deletionBuilder.execute();
+                        deleteCount++;
+                        _updatedRowCount.incrementAndGet();
+                    } catch (final RuntimeException e) {
+                        errorOccurred(rowData, e);
                     }
                 }
+
+                if (deleteCount > 0) {
+                    _componentContext.publishMessage(new ExecutionLogMessage(deleteCount + " deletes executed"));
+                }
             });
-        } finally {
-            con.close();
         }
     }
 
@@ -390,15 +376,11 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             throw e;
         } else {
             logger.warn("Error occurred while deleting record. Writing to error stream", e);
-            _errorDataContext.executeUpdate(new UpdateScript() {
-                @Override
-                public void run(final UpdateCallback cb) {
-                    RowInsertionBuilder insertBuilder = cb
-                            .insertInto(_errorDataContext.getDefaultSchema().getTables()[0]);
+            _errorDataContext.executeUpdate(cb -> {
+                RowInsertionBuilder insertBuilder = cb.insertInto(_errorDataContext.getDefaultSchema().getTables()[0]);
 
-                    insertBuilder = insertBuilder.value(ERROR_MESSAGE_COLUMN_NAME, e.getMessage());
-                    insertBuilder.execute();
-                }
+                insertBuilder = insertBuilder.value(ERROR_MESSAGE_COLUMN_NAME, e.getMessage());
+                insertBuilder.execute();
             });
         }
     }
@@ -423,7 +405,7 @@ public class DeleteFromTableAnalyzer implements Analyzer<WriteDataResult>, Actio
     }
 
     @Override
-    public void configureForFilterOutcome(final AnalysisJobBuilder analysisJobBuilder, final FilterDescriptor<?, ?> descriptor,
-            final String categoryName) {
+    public void configureForFilterOutcome(final AnalysisJobBuilder analysisJobBuilder,
+            final FilterDescriptor<?, ?> descriptor, final String categoryName) {
     }
 }

@@ -21,8 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,8 +53,8 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
     private static final int NUM_TEST_FIELDS = 6;
     private static final ImageManager imageManager = ImageManager.get();
     private static final Icon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL);
-    private static final Icon ICON_SUCCESS = imageManager.getImageIcon(IconUtils.STATUS_VALID,
-            IconUtils.ICON_SIZE_SMALL);
+    private static final Icon ICON_SUCCESS =
+            imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
     final JButton _saveButton;
     private final MutableReferenceDataCatalog _catalog;
     private final JXTextField _expressionField;
@@ -83,8 +81,8 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         this(stringPattern.getName(), stringPattern.getExpression(), catalog, windowContext);
     }
 
-    public SimpleStringPatternDialog(final String expressionName, final String expression, final MutableReferenceDataCatalog catalog,
-            final WindowContext windowContext) {
+    public SimpleStringPatternDialog(final String expressionName, final String expression,
+            final MutableReferenceDataCatalog catalog, final WindowContext windowContext) {
         this(catalog, windowContext);
         _expressionString = expression;
         _expressionNameString = expressionName;
@@ -128,40 +126,32 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         });
         WidgetUtils.addToGridBag(_expressionField, formPanel, 1, row, 1.0, 0.0);
 
-        _resetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent event) {
-                _expressionField.setText(_expressionString);
-            }
-        });
+        _resetButton.addActionListener(event -> _expressionField.setText(_expressionString));
         WidgetUtils.addToGridBag(_resetButton, formPanel, 2, row);
 
         row++;
 
-        _saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final String expressionName = _expressionNameField.getText();
-                if (StringUtils.isNullOrEmpty(expressionName)) {
-                    JOptionPane.showMessageDialog(SimpleStringPatternDialog.this,
-                            "Please fill out the name of the string expression");
-                    return;
-                }
-
-                final String expression = _expressionField.getText();
-                if (StringUtils.isNullOrEmpty(expression)) {
-                    JOptionPane.showMessageDialog(SimpleStringPatternDialog.this,
-                            "Please fill out the string expression");
-                    return;
-                }
-                final SimpleStringPattern simpleStringPattern = new SimpleStringPattern(expressionName, expression);
-                if (_simpleStringPattern != null && _catalog.containsStringPattern(_simpleStringPattern.getName())) {
-                    _catalog.changeStringPattern(_simpleStringPattern, simpleStringPattern);
-                } else {
-                    _catalog.addStringPattern(simpleStringPattern);
-                }
-                _simpleStringPattern = simpleStringPattern;
-                SimpleStringPatternDialog.this.dispose();
+        _saveButton.addActionListener(e -> {
+            final String expressionName = _expressionNameField.getText();
+            if (StringUtils.isNullOrEmpty(expressionName)) {
+                JOptionPane.showMessageDialog(SimpleStringPatternDialog.this,
+                        "Please fill out the name of the string expression");
+                return;
             }
+
+            final String expression = _expressionField.getText();
+            if (StringUtils.isNullOrEmpty(expression)) {
+                JOptionPane.showMessageDialog(SimpleStringPatternDialog.this, "Please fill out the string expression");
+                return;
+            }
+            final SimpleStringPattern simpleStringPattern = new SimpleStringPattern(expressionName, expression);
+            if (_simpleStringPattern != null && _catalog.containsStringPattern(_simpleStringPattern.getName())) {
+                _catalog.changeStringPattern(_simpleStringPattern, simpleStringPattern);
+            } else {
+                _catalog.addStringPattern(simpleStringPattern);
+            }
+            _simpleStringPattern = simpleStringPattern;
+            SimpleStringPatternDialog.this.dispose();
         });
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, _saveButton);

@@ -149,8 +149,8 @@ public class HadoopJobExecutionUtils {
         // should also be added to the data stores which are externalized.
         dictionaries.forEach(dictionary -> {
             if (dictionary instanceof DatastoreDictionary) {
-                datastores.add(configuration.getDatastoreCatalog().getDatastore(((DatastoreDictionary) dictionary)
-                        .getDatastoreName()));
+                datastores.add(configuration.getDatastoreCatalog()
+                        .getDatastore(((DatastoreDictionary) dictionary).getDatastoreName()));
             }
         });
 
@@ -160,8 +160,8 @@ public class HadoopJobExecutionUtils {
         // externalized.
         synonymCatalogs.forEach(synonymCatalog -> {
             if (synonymCatalog instanceof DatastoreSynonymCatalog) {
-                datastores.add(configuration.getDatastoreCatalog().getDatastore(
-                        ((DatastoreSynonymCatalog) synonymCatalog).getDatastoreName()));
+                datastores.add(configuration.getDatastoreCatalog()
+                        .getDatastore(((DatastoreSynonymCatalog) synonymCatalog).getDatastoreName()));
             }
         });
 
@@ -170,8 +170,8 @@ public class HadoopJobExecutionUtils {
         datastores.stream().filter(configurationWriter::isExternalizable).forEach(configurationWriter::externalize);
         dictionaries.stream().filter(configurationWriter::isExternalizable).forEach(configurationWriter::externalize);
         stringPatterns.stream().filter(configurationWriter::isExternalizable).forEach(configurationWriter::externalize);
-        synonymCatalogs.stream().filter(configurationWriter::isExternalizable).forEach(
-                configurationWriter::externalize);
+        synonymCatalogs.stream().filter(configurationWriter::isExternalizable)
+                .forEach(configurationWriter::externalize);
 
         addRemoteServersConfiguration(configuration, configurationWriter);
 
@@ -182,12 +182,12 @@ public class HadoopJobExecutionUtils {
 
     private static void addRemoteServersConfiguration(final DataCleanerConfiguration configuration,
             final DomConfigurationWriter configurationWriter) {
-        final List<RemoteServerData> serverList = configuration.getEnvironment().getRemoteServerConfiguration()
-                .getServerList();
+        final List<RemoteServerData> serverList =
+                configuration.getEnvironment().getRemoteServerConfiguration().getServerList();
         if (serverList != null) {
             for (final RemoteServerData remoteServer : serverList) {
-                configurationWriter.addRemoteServer(remoteServer.getServerName(), remoteServer.getUrl(), remoteServer
-                        .getUsername(), remoteServer.getPassword());
+                configurationWriter.addRemoteServer(remoteServer.getServerName(), remoteServer.getUrl(),
+                        remoteServer.getUsername(), remoteServer.getPassword());
             }
         }
     }
@@ -197,8 +197,8 @@ public class HadoopJobExecutionUtils {
             final Set<SynonymCatalog> synonymCatalogs) {
         datastores.add(job.getDatastore());
 
-        Iterators.concat(job.getAnalyzerJobs().iterator(), job.getFilterJobs().iterator(), job.getTransformerJobs()
-                .iterator()).forEachRemaining(component -> {
+        Iterators.concat(job.getAnalyzerJobs().iterator(), job.getFilterJobs().iterator(),
+                job.getTransformerJobs().iterator()).forEachRemaining(component -> {
             component.getDescriptor().getConfiguredProperties().forEach(descriptor -> {
                 final Class<?> type = descriptor.getBaseType();
 

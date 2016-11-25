@@ -28,7 +28,6 @@ import java.util.Arrays;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.VFSUtils;
@@ -67,12 +66,7 @@ public final class UserDatabaseDriver implements Serializable {
     }
 
     private static File[] convert(final FileObject[] files) {
-        return CollectionUtils.map(files, new Func<FileObject, File>() {
-            @Override
-            public File eval(final FileObject arg) {
-                return VFSUtils.toFile(arg);
-            }
-        }).toArray(new File[0]);
+        return CollectionUtils.map(files, VFSUtils::toFile).toArray(new File[0]);
 
     }
 

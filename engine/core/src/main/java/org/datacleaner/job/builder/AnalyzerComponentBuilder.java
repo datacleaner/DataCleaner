@@ -55,8 +55,8 @@ import org.slf4j.LoggerFactory;
  * @param <A>
  *            the type of {@link Analyzer} being built.
  */
-public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
-        AbstractComponentBuilder<AnalyzerDescriptor<A>, A, AnalyzerComponentBuilder<A>> {
+public final class AnalyzerComponentBuilder<A extends Analyzer<?>>
+        extends AbstractComponentBuilder<AnalyzerDescriptor<A>, A, AnalyzerComponentBuilder<A>> {
 
     public static final String METADATA_PROPERTY_BUILDER_ID = "org.datacleaner.componentbuilder.id";
     public static final String METADATA_PROPERTY_BUILDER_PARTITION_INDEX =
@@ -78,8 +78,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             final AnalyzerDescriptor<A> descriptor) {
         super(analysisJobBuilder, descriptor, AnalyzerComponentBuilder.class);
 
-        final Set<ConfiguredPropertyDescriptor> requiredInputProperties = descriptor.getConfiguredPropertiesForInput(
-                false);
+        final Set<ConfiguredPropertyDescriptor> requiredInputProperties =
+                descriptor.getConfiguredPropertiesForInput(false);
         if (requiredInputProperties.size() == 1) {
             _escalatingInputProperty = requiredInputProperties.iterator().next();
             final ColumnProperty columnProperty = _escalatingInputProperty.getAnnotation(ColumnProperty.class);
@@ -101,10 +101,10 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
      * @return
      */
     private List<AnalyzerChangeListener> getAllListeners() {
-        @SuppressWarnings("deprecation") final
-        List<AnalyzerChangeListener> globalChangeListeners = getAnalysisJobBuilder().getAnalyzerChangeListeners();
-        final List<AnalyzerChangeListener> list = new ArrayList<>(globalChangeListeners.size() + _localChangeListeners
-                .size());
+        @SuppressWarnings("deprecation") final List<AnalyzerChangeListener> globalChangeListeners =
+                getAnalysisJobBuilder().getAnalyzerChangeListeners();
+        final List<AnalyzerChangeListener> list =
+                new ArrayList<>(globalChangeListeners.size() + _localChangeListeners.size());
         list.addAll(globalChangeListeners);
         list.addAll(_localChangeListeners);
         return list;
@@ -127,8 +127,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         }
 
         if (validate && analyzerJobs.length > 1) {
-            throw new IllegalStateException("This builder generates " + analyzerJobs.length
-                    + " jobs, but a single job was requested");
+            throw new IllegalStateException(
+                    "This builder generates " + analyzerJobs.length + " jobs, but a single job was requested");
         }
 
         return analyzerJobs[0];
@@ -239,8 +239,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         if (isMultipleJobsDeterminedBy(propertyDescriptor)) {
             _escalatingInputColumns.add(inputColumn);
 
-            registerListenerIfLinkedToTransformer(propertyDescriptor, _escalatingInputColumns.toArray(
-                    new InputColumn<?>[_escalatingInputColumns.size()]));
+            registerListenerIfLinkedToTransformer(propertyDescriptor,
+                    _escalatingInputColumns.toArray(new InputColumn<?>[_escalatingInputColumns.size()]));
 
             return this;
         } else {
@@ -275,8 +275,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                     }
                 }
                 if (throwException) {
-                    throw new ComponentConfigurationException("No input columns configured for " + LabelUtils.getLabel(
-                            this));
+                    throw new ComponentConfigurationException(
+                            "No input columns configured for " + LabelUtils.getLabel(this));
                 } else {
                     return false;
                 }
@@ -289,8 +289,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     private AnalyzerJob createPartitionedJob(final InputColumn<?> escalatingColumnValue,
             final Collection<InputColumn<?>> availableColumns,
             final Map<ConfiguredPropertyDescriptor, Object> configuredProperties, final int partitionIndex) {
-        final Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<>(
-                configuredProperties);
+        final Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<>(configuredProperties);
         for (final Entry<ConfiguredPropertyDescriptor, Object> jobProperty : jobProperties.entrySet()) {
             final ConfiguredPropertyDescriptor propertyDescriptor = jobProperty.getKey();
             if (propertyDescriptor.isInputColumn()) {
@@ -316,12 +315,10 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         // jobs and having output data streams
         final OutputDataStreamJob[] outputDataStreamJobs = new OutputDataStreamJob[0];
 
-        final ComponentRequirement componentRequirement = new AnalysisJobImmutabilizer().load(
-                getComponentRequirement());
-        final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                new ImmutableComponentConfiguration(jobProperties), componentRequirement, metadataProperties,
-                outputDataStreamJobs);
-        return job;
+        final ComponentRequirement componentRequirement =
+                new AnalysisJobImmutabilizer().load(getComponentRequirement());
+        return new ImmutableAnalyzerJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(jobProperties),
+                componentRequirement, metadataProperties, outputDataStreamJobs);
     }
 
     private Object partitionValue(final ConfiguredPropertyDescriptor key, final Object unpartitionedValue,

@@ -25,7 +25,8 @@ public class CoalesceUnitMissingColumnException extends IllegalStateException {
     private final CoalesceUnit _coalesceUnit;
     private final String _inputColunmName;
 
-    public CoalesceUnitMissingColumnException(final CoalesceUnit coalesceUnit, final String inputColunmName, final String message) {
+    public CoalesceUnitMissingColumnException(final CoalesceUnit coalesceUnit, final String inputColunmName,
+            final String message) {
         super(message);
         _coalesceUnit = coalesceUnit;
         _inputColunmName = inputColunmName;

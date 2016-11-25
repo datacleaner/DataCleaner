@@ -42,10 +42,10 @@ import org.easymock.EasyMock;
 
 public class TestHelper {
     public static TenantContext getTenantContext() {
-        Repository repository = new FileRepository("src/test/resources/example_repo");
-        JobEngineManager jobEngineManager = new SimpleJobEngineManager();
-        TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), jobEngineManager);
+        final Repository repository = new FileRepository("src/test/resources/example_repo");
+        final JobEngineManager jobEngineManager = new SimpleJobEngineManager();
+        final TenantContextFactory tenantContextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), jobEngineManager);
         return tenantContextFactory.getContext("demo");
     }
 
@@ -57,8 +57,8 @@ public class TestHelper {
         return formParameters;
     }
 
-    private static List<String> getListWithValue(String value) {
-        List<String> list = new ArrayList<>();
+    private static List<String> getListWithValue(final String value) {
+        final List<String> list = new ArrayList<>();
         list.add(value);
 
         return list;
@@ -98,9 +98,8 @@ public class TestHelper {
     }
 
     private static ReferenceDataCatalog getReferenceDataCatalogMock() {
-        final ReferenceDataCatalog referenceDataCatalogMock = EasyMock.createMock(ReferenceDataCatalog.class);
 
-        return referenceDataCatalogMock;
+        return EasyMock.createMock(ReferenceDataCatalog.class);
     }
 
     private static Resource getResourceMock() {

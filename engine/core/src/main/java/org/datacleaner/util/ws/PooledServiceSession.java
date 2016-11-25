@@ -91,8 +91,7 @@ public class PooledServiceSession<R> extends RetryServiceSession<R> {
      * @return
      */
     public static GenericObjectPool<Integer> createConnectionPool(final int maxConnections) {
-        final GenericObjectPool<Integer> connectionPool =
-                new GenericObjectPool<>(new ConnectionPoolObjectFactory());
+        final GenericObjectPool<Integer> connectionPool = new GenericObjectPool<>(new ConnectionPoolObjectFactory());
         connectionPool.setMaxActive(maxConnections);
         connectionPool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
         return connectionPool;

@@ -164,8 +164,7 @@ public class MongoDbDatastoreDialog extends AbstractDatastoreDialog<MongoDbDatas
     public Schema createSchema() {
         final MongoDbDatastore datastore = createDatastore();
         try (UpdateableDatastoreConnection con = datastore.openConnection()) {
-            final Schema schema = con.getDataContext().getDefaultSchema();
-            return schema;
+            return con.getDataContext().getDefaultSchema();
         }
     }
 

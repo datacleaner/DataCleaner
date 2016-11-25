@@ -115,8 +115,7 @@ public class SchemaTreePanel extends DCPanel {
             @Override
             protected SchemaTree doInBackground() throws Exception {
                 final Injector injector = _injectorBuilder.with(Datastore.class, datastore).createInjector();
-                final SchemaTree tree = injector.getInstance(SchemaTree.class);
-                return tree;
+                return injector.getInstance(SchemaTree.class);
             }
 
             protected void done() {

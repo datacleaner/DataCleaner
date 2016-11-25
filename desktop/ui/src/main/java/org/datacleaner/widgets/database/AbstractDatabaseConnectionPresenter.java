@@ -21,7 +21,6 @@ package org.datacleaner.widgets.database;
 
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
 
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.panels.DCPanel;
@@ -73,8 +72,7 @@ public abstract class AbstractDatabaseConnectionPresenter implements DatabaseCon
 
         layoutGridBagBelowCredentials(panel, row);
 
-        final JScrollPane scrolleable = WidgetUtils.scrolleable(panel);
-        return scrolleable;
+        return WidgetUtils.scrolleable(panel);
     }
 
     protected int layoutGridBagCredentials(final DCPanel panel, int row) {

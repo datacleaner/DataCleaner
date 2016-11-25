@@ -122,8 +122,7 @@ public class VfsResource extends AbstractResource {
     public OutputStream append() throws ResourceException {
         try {
             final FileContent content = _fileObject.getContent();
-            final OutputStream out = content.getOutputStream(true);
-            return out;
+            return content.getOutputStream(true);
         } catch (final Exception e) {
             throw new ResourceException(this, e);
         }
@@ -133,8 +132,7 @@ public class VfsResource extends AbstractResource {
     public OutputStream write() throws ResourceException {
         try {
             final FileContent content = _fileObject.getContent();
-            final OutputStream out = content.getOutputStream();
-            return out;
+            return content.getOutputStream();
         } catch (final Exception e) {
             throw new ResourceException(this, e);
         }

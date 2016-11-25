@@ -21,8 +21,6 @@ package org.datacleaner.reference;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectInputStream.GetField;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Comparator;
@@ -92,35 +90,31 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     }
 
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        final Adaptor adaptor = new Adaptor() {
-            @Override
-            public void deserialize(final GetField getField, final Serializable serializable) throws Exception {
-                final boolean caseSensitive = getField.get("_caseSensitive", true);
+        final Adaptor adaptor = (getField, serializable) -> {
+            final boolean caseSensitive = getField.get("_caseSensitive", true);
 
-                // handle potentially missing caseSensitive flag
-                {
-                    final Field caseSensitiveField = SimpleDictionary.class.getDeclaredField("_caseSensitive");
-                    caseSensitiveField.setAccessible(true);
-                    caseSensitiveField.set(serializable, caseSensitive);
+            // handle potentially missing caseSensitive flag
+            {
+                final Field caseSensitiveField = SimpleDictionary.class.getDeclaredField("_caseSensitive");
+                caseSensitiveField.setAccessible(true);
+                caseSensitiveField.set(serializable, caseSensitive);
+            }
+
+            // handle legacy SimpleReferenceValues based data
+            try {
+                final Object oldValues = getField.get("_values", null);
+                if (oldValues != null) {
+                    @SuppressWarnings("deprecation") final SimpleReferenceValues srv =
+                            (SimpleReferenceValues) oldValues;
+                    @SuppressWarnings("deprecation") final Object[] values = srv.getValues();
+                    final Set<String> valueSet = createValueSet(values, caseSensitive);
+
+                    final Field valuesField = SimpleDictionary.class.getDeclaredField("_valueSet");
+                    valuesField.setAccessible(true);
+                    valuesField.set(serializable, valueSet);
                 }
-
-                // handle legacy SimpleReferenceValues based data
-                try {
-                    final Object oldValues = getField.get("_values", null);
-                    if (oldValues != null) {
-                        @SuppressWarnings("deprecation") final
-                        SimpleReferenceValues srv = (SimpleReferenceValues) oldValues;
-                        @SuppressWarnings("deprecation")
-                        final Object[] values = srv.getValues();
-                        final Set<String> valueSet = createValueSet(values, caseSensitive);
-
-                        final Field valuesField = SimpleDictionary.class.getDeclaredField("_valueSet");
-                        valuesField.setAccessible(true);
-                        valuesField.set(serializable, valueSet);
-                    }
-                } catch (final IllegalArgumentException e) {
-                    // happens for newer versions of the object type.
-                }
+            } catch (final IllegalArgumentException e) {
+                // happens for newer versions of the object type.
             }
         };
         ReadObjectBuilder.create(this, SimpleDictionary.class).readObject(stream, adaptor);

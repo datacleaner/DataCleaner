@@ -53,8 +53,8 @@ public class JobModificationEventRenameResultsListener implements ApplicationLis
 
         final String tenant = event.getTenant();
         final TenantIdentifier tenantIdentifier = new TenantIdentifier(tenant);
-        final List<RepositoryFile> oldResultFiles = _resultDao.getResultsForJob(tenantIdentifier, new JobIdentifier(
-                oldJobName));
+        final List<RepositoryFile> oldResultFiles =
+                _resultDao.getResultsForJob(tenantIdentifier, new JobIdentifier(oldJobName));
 
         final JobIdentifier newJob = new JobIdentifier(newJobName);
         for (final RepositoryFile repositoryFile : oldResultFiles) {

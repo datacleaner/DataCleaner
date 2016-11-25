@@ -20,13 +20,11 @@
 package org.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -86,11 +84,8 @@ public class ExecutionLogController {
         response.setCharacterEncoding("UTF-8");
 
         final ServletOutputStream out = response.getOutputStream();
-        resultFile.readFile(new Action<InputStream>() {
-            @Override
-            public void run(final InputStream in) throws Exception {
-                FileHelper.copy(in, out);
-            }
+        resultFile.readFile(in -> {
+            FileHelper.copy(in, out);
         });
     }
 }

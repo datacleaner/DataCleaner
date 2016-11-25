@@ -105,7 +105,8 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> getFilterDescriptorForClass(final Class<F> arg0) {
+    public <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> getFilterDescriptorForClass(
+            final Class<F> arg0) {
         return getDelegate().getFilterDescriptorForClass(arg0);
     }
 

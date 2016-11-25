@@ -93,8 +93,8 @@ public final class RowProcessingPublishers {
      */
     @Deprecated
     public RowProcessingPublishers(final AnalysisJob analysisJob, final AnalysisListener analysisListener,
-            final TaskRunner taskRunner,
-            final LifeCycleHelper lifeCycleHelper, final SourceColumnFinder sourceColumnFinder) {
+            final TaskRunner taskRunner, final LifeCycleHelper lifeCycleHelper,
+            final SourceColumnFinder sourceColumnFinder) {
         this(analysisJob, analysisListener, (ErrorAware) analysisListener, taskRunner, lifeCycleHelper);
     }
 
@@ -108,8 +108,7 @@ public final class RowProcessingPublishers {
      * @param lifeCycleHelper
      */
     public RowProcessingPublishers(final AnalysisJob analysisJob, final AnalysisListener analysisListener,
-            final ErrorAware errorAware,
-            final TaskRunner taskRunner, final LifeCycleHelper lifeCycleHelper) {
+            final ErrorAware errorAware, final TaskRunner taskRunner, final LifeCycleHelper lifeCycleHelper) {
         _analysisJob = analysisJob;
         _analysisListener = analysisListener;
         _errorAware = errorAware;
@@ -127,8 +126,7 @@ public final class RowProcessingPublishers {
     }
 
     public static Collection<ComponentJob> getAllComponents(final AnalysisJob job) {
-        return CollectionUtils.concat(false, job.getFilterJobs(), job.getTransformerJobs(),
-                job.getAnalyzerJobs());
+        return CollectionUtils.concat(false, job.getFilterJobs(), job.getTransformerJobs(), job.getAnalyzerJobs());
     }
 
     private void registerAll() {
@@ -192,8 +190,7 @@ public final class RowProcessingPublishers {
             }
         }
 
-        final Column[] physicalColumnsArray = physicalColumns.toArray(new Column[physicalColumns.size()]);
-        return physicalColumnsArray;
+        return physicalColumns.toArray(new Column[physicalColumns.size()]);
     }
 
     public Table[] getTables(final SourceColumnFinder sourceColumnFinder, final ComponentJob componentJob) {
@@ -249,8 +246,8 @@ public final class RowProcessingPublishers {
         RowProcessingPublisher rowPublisher = _rowProcessingPublishers.get(dataStream);
         if (rowPublisher == null) {
             if (parentConsumer == null) {
-                final SourceTableRowProcessingPublisher sourceTableRowPublisher = new SourceTableRowProcessingPublisher(
-                        this, dataStream);
+                final SourceTableRowProcessingPublisher sourceTableRowPublisher =
+                        new SourceTableRowProcessingPublisher(this, dataStream);
                 sourceTableRowPublisher.addPrimaryKeysIfSourced();
                 rowPublisher = sourceTableRowPublisher;
             } else {
@@ -271,8 +268,8 @@ public final class RowProcessingPublishers {
 
         // find which input columns (both physical or virtual) are needed by
         // this per-table instance
-        final InputColumn<?>[] localInputColumns = getLocalInputColumns(sourceColumnFinder, dataStream.getTable(),
-                componentJob.getInput());
+        final InputColumn<?>[] localInputColumns =
+                getLocalInputColumns(sourceColumnFinder, dataStream.getTable(), componentJob.getInput());
 
         final ConsumerCreation consumerCreation = getOrCreateConsumer(rowPublisher, componentJob, localInputColumns);
         final RowProcessingConsumer consumer = consumerCreation._consumer;
@@ -287,8 +284,8 @@ public final class RowProcessingPublishers {
         }
     }
 
-    public ConsumerCreation getOrCreateConsumer(final RowProcessingPublisher publisher,
-            final ComponentJob componentJob, final InputColumn<?>[] inputColumns) {
+    public ConsumerCreation getOrCreateConsumer(final RowProcessingPublisher publisher, final ComponentJob componentJob,
+            final InputColumn<?>[] inputColumns) {
         RowProcessingConsumer consumer = _consumers.get(componentJob);
         final boolean create = consumer == null;
         if (create) {
@@ -422,11 +419,11 @@ public final class RowProcessingPublishers {
         final LifeCycleHelper outerLifeCycleHelper = getLifeCycleHelper();
         final boolean includeNonDistributedTasks = outerLifeCycleHelper.isIncludeNonDistributedTasks();
         final InjectionManager outerInjectionManager = outerLifeCycleHelper.getInjectionManager();
-        final ContextAwareInjectionManager injectionManager = new ContextAwareInjectionManager(outerInjectionManager,
-                consumer.getAnalysisJob(), consumer.getComponentJob(), getAnalysisListener());
+        final ContextAwareInjectionManager injectionManager =
+                new ContextAwareInjectionManager(outerInjectionManager, consumer.getAnalysisJob(),
+                        consumer.getComponentJob(), getAnalysisListener());
 
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, includeNonDistributedTasks);
-        return lifeCycleHelper;
+        return new LifeCycleHelper(injectionManager, includeNonDistributedTasks);
     }
 
     public ErrorAware getErrorAware() {

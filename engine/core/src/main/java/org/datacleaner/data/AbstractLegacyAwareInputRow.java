@@ -65,8 +65,8 @@ abstract class AbstractLegacyAwareInputRow extends AbstractInputRow {
 
         // fix issue of deserializing _rowNumber in it's previous int form
         final long rowNumber;
-        final ObjectStreamField legacyRowNumberField = readFields.getObjectStreamClass().getField(
-                getFieldNameForOldId());
+        final ObjectStreamField legacyRowNumberField =
+                readFields.getObjectStreamClass().getField(getFieldNameForOldId());
         if (legacyRowNumberField != null) {
             rowNumber = readFields.get(getFieldNameForOldId(), -1);
         } else {

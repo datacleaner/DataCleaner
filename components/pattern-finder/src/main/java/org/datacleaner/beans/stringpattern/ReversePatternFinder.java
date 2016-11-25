@@ -37,14 +37,16 @@ public class ReversePatternFinder extends PatternFinder<String> {
     }
 
     @Override
-    protected void storeNewPattern(final TokenPattern pattern, final String sample, final String originalPattern, final int distinctCount) {
+    protected void storeNewPattern(final TokenPattern pattern, final String sample, final String originalPattern,
+            final int distinctCount) {
         final AtomicInteger counter = new AtomicInteger(distinctCount);
         _patternCounts.put(pattern, counter);
         _patternSamples.put(pattern, sample);
     }
 
     @Override
-    protected void storeMatch(final TokenPattern pattern, final String sample, final String originalPattern, final int distinctCount) {
+    protected void storeMatch(final TokenPattern pattern, final String sample, final String originalPattern,
+            final int distinctCount) {
         final AtomicInteger counter = _patternCounts.get(pattern);
         counter.addAndGet(distinctCount);
     }

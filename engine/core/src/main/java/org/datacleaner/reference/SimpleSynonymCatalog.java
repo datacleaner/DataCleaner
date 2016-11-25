@@ -21,7 +21,6 @@ package org.datacleaner.reference;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -101,8 +100,8 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
     }
 
     private SortedMap<String, String> createMultiWordSynonymMap() {
-        final SortedMap<String, String> synonymMap = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
-                .thenComparing(String::compareTo));
+        final SortedMap<String, String> synonymMap =
+                new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
         final Set<Entry<String, String>> entries = _synonymMap.entrySet();
         for (final Entry<String, String> entry : entries) {
             final String synonym = entry.getKey();
@@ -119,15 +118,11 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
     }
 
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        final Adaptor adaptor = new Adaptor() {
-            @Override
-            public void deserialize(final ObjectInputStream.GetField getField, final Serializable serializable)
-                    throws Exception {
-                final boolean caseSensitive = getField.get("_caseSensitive", true);
-                final Field field = SimpleSynonymCatalog.class.getDeclaredField("_caseSensitive");
-                field.setAccessible(true);
-                field.set(serializable, caseSensitive);
-            }
+        final Adaptor adaptor = (getField, serializable) -> {
+            final boolean caseSensitive = getField.get("_caseSensitive", true);
+            final Field field = SimpleSynonymCatalog.class.getDeclaredField("_caseSensitive");
+            field.setAccessible(true);
+            field.set(serializable, caseSensitive);
         };
         ReadObjectBuilder.create(this, SimpleSynonymCatalog.class).readObject(stream, adaptor);
     }
@@ -209,8 +204,8 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
                     final String masterTerm = entry.getValue();
                     final Matcher matcher = Pattern.compile("\\b" + synonym + "\\b").matcher(matchString);
                     while (matcher.find()) {
-                        sentence = sentence.substring(0, matcher.start()) + masterTerm + sentence.substring(matcher
-                                .end());
+                        sentence =
+                                sentence.substring(0, matcher.start()) + masterTerm + sentence.substring(matcher.end());
                         if (_caseSensitive) {
                             matchString = sentence.toLowerCase();
                         } else {

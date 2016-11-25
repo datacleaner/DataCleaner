@@ -22,10 +22,7 @@ package org.datacleaner.widgets.result;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -119,8 +116,8 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
             }
 
             final TimeInterval completeDuration = result.getCompleteDuration(groupName);
-            final Task completeDurationTask = new Task(groupDisplayName, createTimePeriod(completeDuration.getFrom(),
-                    completeDuration.getTo()));
+            final Task completeDurationTask =
+                    new Task(groupDisplayName, createTimePeriod(completeDuration.getFrom(), completeDuration.getTo()));
             completeDurationTaskSeries.add(completeDurationTask);
 
             // plot gaps
@@ -180,8 +177,9 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
         {
             final CategoryPlot plot = (CategoryPlot) chart.getPlot();
 
-            plot.setDrawingSupplier(new DCDrawingSupplier(WidgetUtils.BG_COLOR_GREEN_BRIGHT,
-                    WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_BLUE_BRIGHT));
+            plot.setDrawingSupplier(
+                    new DCDrawingSupplier(WidgetUtils.BG_COLOR_GREEN_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT,
+                            WidgetUtils.BG_COLOR_BLUE_BRIGHT));
         }
 
         final int visibleLines = Math.min(GROUPS_VISIBLE, groupNames.size());
@@ -207,35 +205,26 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
         final JComponent decoratedChartPanel;
 
         final StringBuilder chartDescription = new StringBuilder("<html>");
-        chartDescription
-                .append("<p>The chart displays the recorded timeline based on FROM and TO dates.</p>");
-        chartDescription
-                .append("<p>The <b>red items</b> represent gaps in the timeline and the <b>green items</b> represent points in the timeline where more than one record show activity.</p>");
-        chartDescription
-                .append("<p>You can <b>zoom in</b> by clicking and dragging the area that you want to examine in further detail.</p>");
+        chartDescription.append("<p>The chart displays the recorded timeline based on FROM and TO dates.</p>");
+        chartDescription.append("<p>The <b>red items</b> represent gaps in the timeline and the <b>green items</b> "
+                + "represent points in the timeline where more than one record show activity.</p>");
+        chartDescription.append("<p>You can <b>zoom in</b> by clicking and dragging the area that you want to "
+                + "examine in further detail.</p>");
 
         if (groupNames.size() > GROUPS_VISIBLE) {
             final JScrollBar scroll = new JScrollBar(JScrollBar.VERTICAL);
             scroll.setMinimum(0);
             scroll.setMaximum(groupNames.size());
-            scroll.addAdjustmentListener(new AdjustmentListener() {
-
-                @Override
-                public void adjustmentValueChanged(final AdjustmentEvent e) {
-                    final int value = e.getAdjustable().getValue();
-                    slidingDataset.setFirstCategoryIndex(value);
-                }
+            scroll.addAdjustmentListener(e -> {
+                final int value = e.getAdjustable().getValue();
+                slidingDataset.setFirstCategoryIndex(value);
             });
 
-            chartPanel.addMouseWheelListener(new MouseWheelListener() {
-
-                @Override
-                public void mouseWheelMoved(final MouseWheelEvent e) {
-                    final int scrollType = e.getScrollType();
-                    if (scrollType == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-                        final int wheelRotation = e.getWheelRotation();
-                        scroll.setValue(scroll.getValue() + wheelRotation);
-                    }
+            chartPanel.addMouseWheelListener(e -> {
+                final int scrollType = e.getScrollType();
+                if (scrollType == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+                    final int wheelRotation = e.getWheelRotation();
+                    scroll.setValue(scroll.getValue() + wheelRotation);
                 }
             });
 
@@ -278,8 +267,8 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
     public static void main(final String[] args) throws Throwable {
         LookAndFeelManager.get().init();
 
-        final Injector injector = Guice.createInjector(new DCModuleImpl(VFSUtils.getFileSystemManager().resolveFile("."),
-                null));
+        final Injector injector =
+                Guice.createInjector(new DCModuleImpl(VFSUtils.getFileSystemManager().resolveFile("."), null));
 
         // run a small job
         final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
@@ -296,16 +285,15 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
         ajb.addSourceColumn(table.getColumnByName("SHIPPEDDATE"));
         ajb.addSourceColumn(table.getColumnByName("CUSTOMERNUMBER"));
 
-        @SuppressWarnings("unchecked") final
-        InputColumn<Date> orderDateColumn = (InputColumn<Date>) ajb.getSourceColumnByName("ORDERDATE");
-        @SuppressWarnings("unchecked") final
-        InputColumn<Date> shippedDateColumn = (InputColumn<Date>) ajb.getSourceColumnByName("SHIPPEDDATE");
-        @SuppressWarnings("unchecked") final
-        InputColumn<Integer> customerNumberColumn = (InputColumn<Integer>) ajb.getSourceColumnByName("CUSTOMERNUMBER");
-        @SuppressWarnings("unchecked") final
-        MutableInputColumn<String> customerNumberAsStringColumn = (MutableInputColumn<String>) ajb
-                .addTransformer(ConvertToStringTransformer.class).addInputColumn(customerNumberColumn)
-                .getOutputColumns().get(0);
+        @SuppressWarnings("unchecked") final InputColumn<Date> orderDateColumn =
+                (InputColumn<Date>) ajb.getSourceColumnByName("ORDERDATE");
+        @SuppressWarnings("unchecked") final InputColumn<Date> shippedDateColumn =
+                (InputColumn<Date>) ajb.getSourceColumnByName("SHIPPEDDATE");
+        @SuppressWarnings("unchecked") final InputColumn<Integer> customerNumberColumn =
+                (InputColumn<Integer>) ajb.getSourceColumnByName("CUSTOMERNUMBER");
+        @SuppressWarnings("unchecked") final MutableInputColumn<String> customerNumberAsStringColumn =
+                (MutableInputColumn<String>) ajb.addTransformer(ConvertToStringTransformer.class)
+                        .addInputColumn(customerNumberColumn).getOutputColumns().get(0);
 
         final DateGapAnalyzer dga = ajb.addAnalyzer(DateGapAnalyzer.class).getComponentInstance();
         dga.setFromColumn(orderDateColumn);
@@ -320,14 +308,14 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 
         final List<AnalyzerResult> list = Collections.emptyList();
         final RendererFactory rendererFactory = new RendererFactory(conf);
-        final DetailsResultWindow window = new DetailsResultWindow("Example", list,
-                injector.getInstance(WindowContext.class), rendererFactory);
+        final DetailsResultWindow window =
+                new DetailsResultWindow("Example", list, injector.getInstance(WindowContext.class), rendererFactory);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         final List<AnalyzerResult> results = resultFuture.getResults();
         for (final AnalyzerResult analyzerResult : results) {
-            final JComponent renderedResult = new DateGapAnalyzerResultSwingRenderer()
-                    .render((DateGapAnalyzerResult) analyzerResult);
+            final JComponent renderedResult =
+                    new DateGapAnalyzerResultSwingRenderer().render((DateGapAnalyzerResult) analyzerResult);
             window.addRenderedResult(renderedResult);
         }
         window.repaint();

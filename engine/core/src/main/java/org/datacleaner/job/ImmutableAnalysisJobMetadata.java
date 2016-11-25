@@ -49,11 +49,9 @@ public class ImmutableAnalysisJobMetadata extends BaseObject implements Analysis
     private final Map<String, String> _properties;
 
     public ImmutableAnalysisJobMetadata(final String jobName, final String jobVersion, final String jobDescription,
-            final String author,
-            final Date createdDate, final Date updatedDate, final String datastoreName,
-            final List<String> sourceColumnPaths,
-            final List<ColumnType> sourceColumnTypes, Map<String, String> variables,
-            final Map<String, String> properties) {
+            final String author, final Date createdDate, final Date updatedDate, final String datastoreName,
+            final List<String> sourceColumnPaths, final List<ColumnType> sourceColumnTypes,
+            Map<String, String> variables, final Map<String, String> properties) {
         _jobName = jobName;
         _jobVersion = jobVersion;
         _jobDescription = jobDescription;

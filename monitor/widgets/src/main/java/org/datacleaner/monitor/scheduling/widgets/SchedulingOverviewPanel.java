@@ -91,7 +91,8 @@ public class SchedulingOverviewPanel extends Composite {
                         panel.add(createHeaderPanel());
                         panel.addStyleName("SchedulingOverviewPanel");
                         tabPanel.add(panel, jobCategory);
-                        for (final ScheduleDefinition scheduleDefinition : categoryAndGroupMapForJobs.get(jobCategory)) {
+                        for (final ScheduleDefinition scheduleDefinition : categoryAndGroupMapForJobs
+                                .get(jobCategory)) {
                             addSchedule(scheduleDefinition, jobGroupingCategory, panel, scheduleGroupPanels);
                         }
                     }
@@ -116,8 +117,7 @@ public class SchedulingOverviewPanel extends Composite {
 
             private Map<String, List<ScheduleDefinition>> createCategoryAndGroupMapForJobs(
                     final List<ScheduleDefinition> result) {
-                final Map<String, List<ScheduleDefinition>> categoryAndGroupMap =
-                        new TreeMap<>();
+                final Map<String, List<ScheduleDefinition>> categoryAndGroupMap = new TreeMap<>();
 
                 for (final ScheduleDefinition scheduleDefinition : result) {
                     final Map<String, String> jobMetadataProperties = scheduleDefinition.getJobMetadataProperties();

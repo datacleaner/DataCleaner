@@ -49,8 +49,8 @@ public class SimpleToken implements Token {
         _stringBuilder.append(c);
     }
 
-    public void appendString(final String s) {
-        _stringBuilder.append(s);
+    public void appendString(final String str) {
+        _stringBuilder.append(str);
     }
 
     public void prependChar(final char c) {

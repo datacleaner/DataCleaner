@@ -56,9 +56,9 @@ import org.datacleaner.job.output.OutputDataStreams;
 public class GrouperTransformer extends MultiStreamComponent {
 
     public enum AggregationType implements HasName {
-        CONCAT_VALUES("Concatenate values"), FIRST_VALUE("Select first value"), LAST_VALUE(
-                "Select last value"), RANDOM_VALUE("Select random value"), CREATE_LIST("Create list of values"), SUM(
-                "Calculate sum"), AVG("Calculate average");
+        CONCAT_VALUES("Concatenate values"), FIRST_VALUE("Select first value"), LAST_VALUE("Select last value"),
+        RANDOM_VALUE("Select random value"), CREATE_LIST("Create list of values"), SUM("Calculate sum"),
+        AVG("Calculate average");
 
         private final String _name;
 
@@ -117,6 +117,7 @@ public class GrouperTransformer extends MultiStreamComponent {
 
         }
     }
+
     public static final String PROPERTY_GROUP_KEY = "Group key";
     public static final String PROPERTY_AGGREGATED_VALUES = "Aggregated values";
     public static final String PROPERTY_AGGREGATION_TYPES = "AggregationTypes";
@@ -152,8 +153,8 @@ public class GrouperTransformer extends MultiStreamComponent {
         outputDataStreamBuilder.withColumn("row_count", ColumnType.INTEGER);
         for (int i = 0; i < aggregatedValues.length; i++) {
             final InputColumn<?> inputColumn = aggregatedValues[i];
-            final AggregationType aggregationType = (aggregationTypes.length <= i ? AggregationType.CREATE_LIST
-                    : aggregationTypes[i]);
+            final AggregationType aggregationType =
+                    (aggregationTypes.length <= i ? AggregationType.CREATE_LIST : aggregationTypes[i]);
 
             if (aggregationType != null) {
                 aggregationType.addColumnToOutputStream(outputDataStreamBuilder, inputColumn);
@@ -165,7 +166,8 @@ public class GrouperTransformer extends MultiStreamComponent {
     }
 
     @Override
-    public void initializeOutputDataStream(final OutputDataStream stream, final Query q, final OutputRowCollector collector) {
+    public void initializeOutputDataStream(final OutputDataStream stream, final Query q,
+            final OutputRowCollector collector) {
         _rowCollector = collector;
     }
 
@@ -215,13 +217,13 @@ public class GrouperTransformer extends MultiStreamComponent {
             newCollectionOfValues.add(FunctionType.COUNT.createAggregateBuilder());
 
             for (final AggregationType aggregationType : aggregationTypes) {
-                final AggregateBuilder<?> aggregateBuilder = aggregationType.createAggregateBuilder(valueSortation,
-                        skipNullValues, concatenationSeparator);
+                final AggregateBuilder<?> aggregateBuilder =
+                        aggregationType.createAggregateBuilder(valueSortation, skipNullValues, concatenationSeparator);
                 newCollectionOfValues.add(aggregateBuilder);
             }
 
-            final List<AggregateBuilder<?>> previousCollectionOfValues = _aggregateBuilders.putIfAbsent(key,
-                    newCollectionOfValues);
+            final List<AggregateBuilder<?>> previousCollectionOfValues =
+                    _aggregateBuilders.putIfAbsent(key, newCollectionOfValues);
             if (previousCollectionOfValues == null) {
                 collectionOfAggregateBuilders = newCollectionOfValues;
             } else {

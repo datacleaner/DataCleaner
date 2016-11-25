@@ -28,13 +28,13 @@ public class RegexStringPatternReferenceDataPageTest {
 
     @Test
     public void testGetPageIndex() throws Exception {
-        RegexStringPatternReferenceDataPage page = new RegexStringPatternReferenceDataPage(null);
+        final RegexStringPatternReferenceDataPage page = new RegexStringPatternReferenceDataPage(null);
         assertEquals(new Integer(0), page.getPageIndex());
     }
 
     @Test
     public void testGetTemplateFilename() throws Exception {
-        RegexStringPatternReferenceDataPage page = new RegexStringPatternReferenceDataPage(null);
+        final RegexStringPatternReferenceDataPage page = new RegexStringPatternReferenceDataPage(null);
         assertNotEquals("", page.getTemplateFilename());
     }
 }

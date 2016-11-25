@@ -23,12 +23,12 @@ import java.io.ByteArrayInputStream;
 import java.io.PrintStream;
 import java.sql.SQLException;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.util.FileHelper;
+
+import junit.framework.TestCase;
 
 public class ErrorAwareAnalysisListenerTest extends TestCase {
 
@@ -57,15 +57,14 @@ public class ErrorAwareAnalysisListenerTest extends TestCase {
     }
 
     public void testHandleErrorWithSqlNextException() throws Exception {
-        ErrorAwareAnalysisListener listener = new ErrorAwareAnalysisListener();
-        SQLException sqlException = new SQLException("foo", new IllegalStateException("bar"));
+        final ErrorAwareAnalysisListener listener = new ErrorAwareAnalysisListener();
+        final SQLException sqlException = new SQLException("foo", new IllegalStateException("bar"));
         sqlException.setNextException(new SQLException("baz"));
 
         listener.handleError(null, new MetaModelException(sqlException));
 
-        String string = FileHelper.readInputStreamAsString(new ByteArrayInputStream(baos.toByteArray()), "UTF8");
-        assertTrue(string,
-                string.indexOf("org.apache.metamodel.MetaModelException: java.sql.SQLException: foo") != -1);
+        final String string = FileHelper.readInputStreamAsString(new ByteArrayInputStream(baos.toByteArray()), "UTF8");
+        assertTrue(string, string.indexOf("org.apache.metamodel.MetaModelException: java.sql.SQLException: foo") != -1);
 
         assertTrue(string,
                 string.indexOf("WARN  ErrorAwareAnalysisListener - SQLException.getNextException() stack trace:")

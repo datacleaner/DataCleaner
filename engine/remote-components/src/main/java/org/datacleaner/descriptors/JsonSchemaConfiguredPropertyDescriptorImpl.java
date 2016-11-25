@@ -97,9 +97,9 @@ public class JsonSchemaConfiguredPropertyDescriptorImpl extends RemoteConfigured
     private EnumerationValue[] enumValues;
 
     public JsonSchemaConfiguredPropertyDescriptorImpl(final String name, final JsonSchema schema,
-            final boolean isInputColumn,
-            final String description, final boolean required, final ComponentDescriptor<?> component,
-            final Map<Class<? extends Annotation>, Annotation> annotations, final JsonNode defaultValue) {
+            final boolean isInputColumn, final String description, final boolean required,
+            final ComponentDescriptor<?> component, final Map<Class<? extends Annotation>, Annotation> annotations,
+            final JsonNode defaultValue) {
         super(name, description, required, component, annotations, defaultValue);
         this.schema = schema;
         this.isInputColumn = isInputColumn;

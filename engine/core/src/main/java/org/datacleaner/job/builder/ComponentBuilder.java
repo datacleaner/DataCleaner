@@ -43,8 +43,9 @@ import org.datacleaner.metadata.HasMetadataProperties;
 /**
  * Represents a builder object for components in a {@link AnalysisJob}.
  */
-public interface ComponentBuilder extends HasMetadataProperties, InputColumnSinkJob, OutputDataStreamJobSource,
-        HasComponentRequirement, HasName, Renderable {
+public interface ComponentBuilder
+        extends HasMetadataProperties, InputColumnSinkJob, OutputDataStreamJobSource, HasComponentRequirement, HasName,
+        Renderable {
 
     /**
      * Determines if the underlying component is fully configured or not. This
@@ -202,15 +203,13 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
     ComponentBuilder addInputColumns(Collection<? extends InputColumn<?>> inputColumns,
             ConfiguredPropertyDescriptor propertyDescriptor) throws IllegalArgumentException;
 
-    ComponentBuilder addInputColumns(Collection<? extends InputColumn<?>> inputColumns)
-            throws IllegalArgumentException;
+    ComponentBuilder addInputColumns(Collection<? extends InputColumn<?>> inputColumns) throws IllegalArgumentException;
 
     ComponentBuilder addInputColumns(InputColumn<?>... inputColumns) throws IllegalArgumentException;
 
     ComponentBuilder removeInputColumn(InputColumn<?> inputColumn);
 
-    ComponentBuilder removeInputColumn(InputColumn<?> inputColumn,
-            ConfiguredPropertyDescriptor propertyDescriptor);
+    ComponentBuilder removeInputColumn(InputColumn<?> inputColumn, ConfiguredPropertyDescriptor propertyDescriptor);
 
     void clearInputColumns();
 

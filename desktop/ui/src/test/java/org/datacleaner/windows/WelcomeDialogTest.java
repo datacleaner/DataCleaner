@@ -28,10 +28,10 @@ import org.junit.Ignore;
 @Ignore
 public class WelcomeDialogTest {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         LookAndFeelManager.get().init();
-        Image welcomeImage = ImageManager.get().getImage("images/pdi_dc_banner.png");
-        WelcomeDialog dialog = new WelcomeDialog(null, welcomeImage);
+        final Image welcomeImage = ImageManager.get().getImage("images/pdi_dc_banner.png");
+        final WelcomeDialog dialog = new WelcomeDialog(null, welcomeImage);
         dialog.setVisible(true);
     }
 }

@@ -28,8 +28,8 @@ public class TestEnvironment {
     public static final int THREAD_COUNT = 16;
 
     private static final MultiThreadedTaskRunner TASK_RUNNER = new MultiThreadedTaskRunner(THREAD_COUNT);
-    private static final DataCleanerEnvironment ENVIRONMENT = new DataCleanerEnvironmentImpl()
-            .withTaskRunner(TASK_RUNNER);
+    private static final DataCleanerEnvironment ENVIRONMENT =
+            new DataCleanerEnvironmentImpl().withTaskRunner(TASK_RUNNER);
 
     public static MultiThreadedTaskRunner getMultiThreadedTaskRunner() {
         return TASK_RUNNER;

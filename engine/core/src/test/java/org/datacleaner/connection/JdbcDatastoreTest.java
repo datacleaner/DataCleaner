@@ -19,14 +19,14 @@
  */
 package org.datacleaner.connection;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.SerializationUtils;
+
+import junit.framework.TestCase;
 
 public class JdbcDatastoreTest extends TestCase {
 
     public void testEquals() throws Exception {
-        JdbcDatastore ds1 = new JdbcDatastore("hello", "url", "driver", "username", "pw", true);
+        final JdbcDatastore ds1 = new JdbcDatastore("hello", "url", "driver", "username", "pw", true);
         JdbcDatastore ds2;
 
         ds2 = new JdbcDatastore("hello", "url", "driver", "username", "pw", true);
@@ -40,9 +40,9 @@ public class JdbcDatastoreTest extends TestCase {
     }
 
     public void testSerializationAndDeserialization() throws Exception {
-        JdbcDatastore ds = new JdbcDatastore("name", "url", "driver", "username", "pw", true);
+        final JdbcDatastore ds = new JdbcDatastore("name", "url", "driver", "username", "pw", true);
 
-        Object clone = SerializationUtils.clone(ds);
+        final Object clone = SerializationUtils.clone(ds);
         assertEquals(ds, clone);
     }
 
@@ -85,7 +85,7 @@ public class JdbcDatastoreTest extends TestCase {
     }
 
     public void testToStringDataSource() throws Exception {
-        JdbcDatastore ds = new JdbcDatastore("foo", "bar");
+        final JdbcDatastore ds = new JdbcDatastore("foo", "bar");
 
         assertEquals("JdbcDatastore[name=foo,jndi=bar]", ds.toString());
     }

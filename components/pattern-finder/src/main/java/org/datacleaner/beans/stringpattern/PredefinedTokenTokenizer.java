@@ -42,8 +42,8 @@ public class PredefinedTokenTokenizer implements Tokenizer {
         _predefinedTokenDefitions = predefinedTokenDefinitions;
     }
 
-    protected static List<Token> tokenizeInternal(String string, final PredefinedTokenDefinition predefinedTokenDefinition,
-            final Pattern pattern) {
+    protected static List<Token> tokenizeInternal(String string,
+            final PredefinedTokenDefinition predefinedTokenDefinition, final Pattern pattern) {
         final LinkedList<Token> result = new LinkedList<>();
         result.add(new UndefinedToken(string));
 
@@ -84,8 +84,8 @@ public class PredefinedTokenTokenizer implements Tokenizer {
                 for (final ListIterator<Token> it = result.listIterator(); it.hasNext(); ) {
                     final Token token = it.next();
                     if (token instanceof UndefinedToken) {
-                        final List<Token> replacementTokens = tokenizeInternal(token.getString(), predefinedTokenDefinition,
-                                pattern);
+                        final List<Token> replacementTokens =
+                                tokenizeInternal(token.getString(), predefinedTokenDefinition, pattern);
                         if (replacementTokens.size() > 1) {
                             it.remove();
                             for (final Token newToken : replacementTokens) {

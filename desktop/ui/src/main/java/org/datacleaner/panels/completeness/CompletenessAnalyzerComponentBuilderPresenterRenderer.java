@@ -37,8 +37,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * {@link CompletenessAnalyzer}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class CompletenessAnalyzerComponentBuilderPresenterRenderer implements
-        Renderer<AnalyzerComponentBuilder<CompletenessAnalyzer>, AnalyzerComponentBuilderPresenter> {
+public class CompletenessAnalyzerComponentBuilderPresenterRenderer
+        implements Renderer<AnalyzerComponentBuilder<CompletenessAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     DCModule dcModule;

@@ -170,8 +170,8 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
         _wizardPanel.getProgressBar().setSteps(steps, indicateMore);
     }
 
-    protected final void setContent(final IsWidget w) {
-        _wizardPanel.setContent(w);
+    protected final void setContent(final IsWidget widget) {
+        _wizardPanel.setContent(widget);
     }
 
     protected final void setPreviousClickHandler(final ClickHandler clickHandler) {

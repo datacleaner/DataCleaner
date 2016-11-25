@@ -165,8 +165,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
                 superCategoryClass = getDefaultComponentSuperCategoryClass();
             }
         }
-        final ComponentSuperCategory superCategory = ReflectionUtils.newInstance(superCategoryClass);
-        return superCategory;
+        return ReflectionUtils.newInstance(superCategoryClass);
     }
 
     /**
@@ -236,8 +235,8 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
         final boolean isInitialize;
         {
             final boolean isInitializeAnnotationPresent = ReflectionUtils.isAnnotationPresent(method, Initialize.class);
-            final boolean isPostConstructAnnotationPresent = ReflectionUtils.isAnnotationPresent(method,
-                    PostConstruct.class);
+            final boolean isPostConstructAnnotationPresent =
+                    ReflectionUtils.isAnnotationPresent(method, PostConstruct.class);
             // @PostConstruct is a valid substitution for @Initialize
             isInitialize = isInitializeAnnotationPresent || isPostConstructAnnotationPresent;
         }
@@ -408,8 +407,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
 
     @Override
     public final Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput(final boolean includeOptional) {
-        final Set<ConfiguredPropertyDescriptor> descriptors = new TreeSet<>(
-                _configuredProperties);
+        final Set<ConfiguredPropertyDescriptor> descriptors = new TreeSet<>(_configuredProperties);
         for (final Iterator<ConfiguredPropertyDescriptor> it = descriptors.iterator(); it.hasNext(); ) {
             final ConfiguredPropertyDescriptor propertyDescriptor = it.next();
             if (!propertyDescriptor.isInputColumn()) {

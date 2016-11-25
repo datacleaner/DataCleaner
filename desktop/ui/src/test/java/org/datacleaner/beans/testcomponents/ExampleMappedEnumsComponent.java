@@ -48,8 +48,8 @@ public class ExampleMappedEnumsComponent implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow arg0) {
-        String[] strings = new String[enums.length];
+    public String[] transform(final InputRow arg0) {
+        final String[] strings = new String[enums.length];
         for (int i = 0; i < strings.length; i++) {
             strings[i] = enums[i].name();
         }

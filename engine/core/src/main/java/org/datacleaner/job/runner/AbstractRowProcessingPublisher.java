@@ -111,8 +111,7 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
     protected final List<RowProcessingConsumer> getConsumersSorted() {
         final List<RowProcessingConsumer> consumers = getConsumers();
         final RowProcessingConsumerSorter sorter = new RowProcessingConsumerSorter(consumers);
-        final List<RowProcessingConsumer> sortedConsumers = sorter.createProcessOrderedConsumerList();
-        return sortedConsumers;
+        return sorter.createProcessOrderedConsumerList();
     }
 
     @Override
@@ -162,8 +161,8 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
 
         for (final RowProcessingConsumer consumer : getConsumers()) {
             final ComponentJob componentJob = consumer.getComponentJob();
-            final ComponentMetrics metrics = new AnalysisJobMetricsImpl(consumer.getAnalysisJob(), publishers)
-                    .getComponentMetrics(componentJob);
+            final ComponentMetrics metrics =
+                    new AnalysisJobMetricsImpl(consumer.getAnalysisJob(), publishers).getComponentMetrics(componentJob);
             analysisListener.componentBegin(getStream().getAnalysisJob(), componentJob, metrics);
 
             if (consumer instanceof TransformerConsumer) {
@@ -172,8 +171,7 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
         }
         final List<RowProcessingConsumer> consumers = queryOptimizer.getOptimizedConsumers();
         final Collection<? extends FilterOutcome> availableOutcomes = queryOptimizer.getOptimizedAvailableOutcomes();
-        final ConsumeRowHandler consumeRowHandler = new ConsumeRowHandler(consumers, availableOutcomes);
-        return consumeRowHandler;
+        return new ConsumeRowHandler(consumers, availableOutcomes);
     }
 
     protected final Task createCollectResultTask(final RowProcessingConsumer consumer,
@@ -191,8 +189,9 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
     protected final TaskRunnable createCloseTask(final RowProcessingConsumer consumer,
             final TaskListener closeTaskListener) {
         final LifeCycleHelper lifeCycleHelper = _publishers.getConsumerSpecificLifeCycleHelper(consumer);
-        final CloseTaskListener taskListener = new CloseTaskListener(lifeCycleHelper, this, consumer, _success,
-                closeTaskListener, _publishers.getAnalysisListener(), _stream.getAnalysisJob());
+        final CloseTaskListener taskListener =
+                new CloseTaskListener(lifeCycleHelper, this, consumer, _success, closeTaskListener,
+                        _publishers.getAnalysisListener(), _stream.getAnalysisJob());
         return new TaskRunnable(null, taskListener);
     }
 
@@ -247,8 +246,8 @@ public abstract class AbstractRowProcessingPublisher implements RowProcessingPub
             closeTasks.add(createCloseTask(consumer, closeTaskListener));
         }
 
-        final TaskListener getResultCompletionListener = new ForkTaskListener("collect results (" + getStream() + ")",
-                getTaskRunner(), closeTasks);
+        final TaskListener getResultCompletionListener =
+                new ForkTaskListener("collect results (" + getStream() + ")", getTaskRunner(), closeTasks);
 
         // add tasks for collecting results
         final TaskListener getResultTaskListener = new JoinTaskListener(numConsumers, getResultCompletionListener);

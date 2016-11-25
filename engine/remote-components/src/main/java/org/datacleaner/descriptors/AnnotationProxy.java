@@ -93,8 +93,8 @@ public class AnnotationProxy {
     public static <A extends Annotation> A newAnnotation(final Class<A> anClass, final Map<String, Object> properties) {
         final InvHandler handler = new InvHandler(anClass, properties);
         final ClassLoader classLoader = AnnotationProxy.class.getClassLoader();
-        @SuppressWarnings("unchecked")
-        final A proxy = (A) Proxy.newProxyInstance(classLoader, new Class[] { anClass }, handler);
+        @SuppressWarnings("unchecked") final A proxy =
+                (A) Proxy.newProxyInstance(classLoader, new Class[] { anClass }, handler);
         return proxy;
     }
 }

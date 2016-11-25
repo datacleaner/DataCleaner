@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -60,8 +58,8 @@ import org.slf4j.LoggerFactory;
  */
 class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabResultSwingRenderer<CrosstabResult> {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(PatternFinderResultSwingRendererCrosstabDelegate.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(PatternFinderResultSwingRendererCrosstabDelegate.class);
 
     // don't show the pattern decoration buttons if there's a way too high
     // amount of patterns.
@@ -94,12 +92,9 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
         final JButton chartButton = WidgetFactory.createDefaultButton("Show distribution chart", IconUtils.CHART_BAR);
         chartButton.setMargin(new Insets(1, 1, 1, 1));
-        chartButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                headerPanel.setVisible(false);
-                displayChart(table, crosstabPanel.getDisplayChartCallback());
-            }
+        chartButton.addActionListener(e -> {
+            headerPanel.setVisible(false);
+            displayChart(table, crosstabPanel.getDisplayChartCallback());
         });
 
         headerPanel.add(chartButton);
@@ -131,8 +126,8 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
         // only show legend if there are not too many patterns
         final boolean showLegend = dataset.getRowCount() < 25;
 
-        final JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL,
-                showLegend, true, false);
+        final JFreeChart chart = ChartFactory
+                .createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL, showLegend, true, false);
         ChartUtils.applyStyles(chart);
 
         final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
@@ -141,7 +136,8 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
     }
 
     @Override
-    protected void decorate(final CrosstabResult result, final DCTable table, final DisplayChartCallback displayChartCallback) {
+    protected void decorate(final CrosstabResult result, final DCTable table,
+            final DisplayChartCallback displayChartCallback) {
         super.decorate(result, table, displayChartCallback);
 
         table.setAlignment(1, Alignment.RIGHT);
@@ -164,12 +160,9 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
                     final JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_SAVE_DARK);
                     button.setToolTipText("Save as string pattern");
-                    button.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(final ActionEvent e) {
-                            _catalog.addStringPattern(new SimpleStringPattern(stringPatternName, expression));
-                            button.setEnabled(false);
-                        }
+                    button.addActionListener(e -> {
+                        _catalog.addStringPattern(new SimpleStringPattern(stringPatternName, expression));
+                        button.setEnabled(false);
                     });
                     panel.add(Box.createHorizontalStrut(4));
                     panel.add(button);

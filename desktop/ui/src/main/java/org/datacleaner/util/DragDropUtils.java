@@ -62,12 +62,13 @@ public class DragDropUtils {
             return _modelObject;
         }
     }
+
     public static final DataFlavor MODEL_DATA_FLAVOR;
 
     static {
         try {
-            MODEL_DATA_FLAVOR = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=\""
-                    + Object.class.getName() + "\"");
+            MODEL_DATA_FLAVOR =
+                    new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=\"" + Object.class.getName() + "\"");
         } catch (final ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }
@@ -112,8 +113,7 @@ public class DragDropUtils {
                 final Object pathComponent = path.getLastPathComponent();
                 if (pathComponent instanceof DefaultMutableTreeNode) {
                     final DefaultMutableTreeNode node = (DefaultMutableTreeNode) pathComponent;
-                    final Object userObject = node.getUserObject();
-                    return userObject;
+                    return node.getUserObject();
                 }
             }
         }

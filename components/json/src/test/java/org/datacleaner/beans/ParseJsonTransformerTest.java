@@ -33,16 +33,14 @@ public class ParseJsonTransformerTest {
 
     @Test
     public void testExtractJsonValuesTransformerWithoutAnyValidation() {
-        InputColumn<String> col1 = new MockInputColumn<>("jsonDocument",
-                String.class);
-        ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
+        final InputColumn<String> col1 = new MockInputColumn<>("jsonDocument", String.class);
+        final ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
         transformer.init();
         assertEquals(1, transformer.getOutputColumns().getColumnCount());
 
-        String json = "{\"name\":\"shekhar\",\"country\":\"india\"}";
+        final String json = "{\"name\":\"shekhar\",\"country\":\"india\"}";
 
-        Object[] values = transformer.transform(new MockInputRow().put(col1,
-                json));
+        final Object[] values = transformer.transform(new MockInputRow().put(col1, json));
         assertEquals(1, values.length);
         assertEquals(2, ((Map<?, ?>) values[0]).size());
         assertEquals("{name=shekhar, country=india}", values[0].toString());
@@ -50,59 +48,50 @@ public class ParseJsonTransformerTest {
 
     @Test
     public void testExtractJsonNumbersAndBooleans() {
-        InputColumn<String> col1 = new MockInputColumn<>("jsonDocument",
-                String.class);
-        ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
+        final InputColumn<String> col1 = new MockInputColumn<>("jsonDocument", String.class);
+        final ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
         transformer.init();
         assertEquals(1, transformer.getOutputColumns().getColumnCount());
 
-        String json = "{\"name\":\"kasper\",\"age\":29,\"developer\":true,\"manager\":false,\"balance\":400.17}";
+        final String json = "{\"name\":\"kasper\",\"age\":29,\"developer\":true,\"manager\":false,\"balance\":400.17}";
 
-        Object[] values = transformer.transform(new MockInputRow().put(col1,
-                json));
+        final Object[] values = transformer.transform(new MockInputRow().put(col1, json));
 
         assertEquals(1, values.length);
         assertEquals(5, ((Map<?, ?>) values[0]).size());
-        assertEquals(
-                "{name=kasper, age=29, developer=true, manager=false, balance=400.17}",
-                values[0].toString());
+        assertEquals("{name=kasper, age=29, developer=true, manager=false, balance=400.17}", values[0].toString());
     }
 
     @Test
-    public void shouldReturnEmptyMapWhenNoJsonDocumentExistForColumn()
-            throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<>("jsonDocument",
-                String.class);
-        ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
+    public void shouldReturnEmptyMapWhenNoJsonDocumentExistForColumn() throws Exception {
+        final InputColumn<String> col1 = new MockInputColumn<>("jsonDocument", String.class);
+        final ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
         transformer.init();
         assertEquals(1, transformer.getOutputColumns().getColumnCount());
-        Object[] values = transformer.transform(new MockInputRow());
+        final Object[] values = transformer.transform(new MockInputRow());
         assertTrue(values.length == 1);
         assertNull(values[0]);
     }
 
     @Test
     public void shouldExtractNestedDocumentsAsCollections() throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<>("jsonDocument",
-                String.class);
-        ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
+        final InputColumn<String> col1 = new MockInputColumn<>("jsonDocument", String.class);
+        final ParseJsonTransformer transformer = new ParseJsonTransformer(col1);
         transformer.init();
         assertEquals(1, transformer.getOutputColumns().getColumnCount());
 
-        String json =
-                "{\"name\":\"shekhar\",\"addresses\":[{\"city\":\"Delhi\",\"country:\":\"India\"},{\"city\":\"Delhi\",\"country:\":\"India\"}],\"emails\":[\"email1\",\"email2\"]}";
+        final String json = "{\"name\":\"shekhar\",\"addresses\":[{\"city\":\"Delhi\",\"country:\":\"India\"},"
+                + "{\"city\":\"Delhi\",\"country:\":\"India\"}],\"emails\":[\"email1\",\"email2\"]}";
 
-        Object[] values = transformer.transform(new MockInputRow().put(col1,
-                json));
+        final Object[] values = transformer.transform(new MockInputRow().put(col1, json));
         assertEquals(1, values.length);
-        Map<?, ?> map = (Map<?, ?>) values[0];
-        assertEquals(
-                "{name=shekhar, addresses=[{city=Delhi, country:=India}, {city=Delhi, country:=India}], emails=[email1, email2]}",
-                map.toString());
+        final Map<?, ?> map = (Map<?, ?>) values[0];
+        assertEquals("{name=shekhar, addresses=[{city=Delhi, country:=India}, {city=Delhi, country:=India}], "
+                + "emails=[email1, email2]}", map.toString());
 
         assertTrue(map.get("addresses") instanceof List);
 
-        List<?> addresses = (List<?>) map.get("addresses");
+        final List<?> addresses = (List<?>) map.get("addresses");
 
         assertTrue(addresses.get(0) instanceof Map);
         assertTrue(map.get("emails") instanceof List);

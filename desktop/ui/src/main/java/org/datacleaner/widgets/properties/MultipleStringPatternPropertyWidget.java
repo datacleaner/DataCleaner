@@ -19,9 +19,6 @@
  */
 package org.datacleaner.widgets.properties;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.swing.JButton;
@@ -37,15 +34,15 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.windows.ReferenceDataDialog;
 
 public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<StringPattern>
-        implements
-        ReferenceDataChangeListener<StringPattern> {
+        implements ReferenceDataChangeListener<StringPattern> {
 
     private final MutableReferenceDataCatalog _referenceDataCatalog;
     private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
     @Inject
     public MultipleStringPatternPropertyWidget(final ComponentBuilder componentBuilder,
-            final ConfiguredPropertyDescriptor propertyDescriptor, final MutableReferenceDataCatalog referenceDataCatalog,
+            final ConfiguredPropertyDescriptor propertyDescriptor,
+            final MutableReferenceDataCatalog referenceDataCatalog,
             final Provider<ReferenceDataDialog> referenceDataDialogProvider) {
         super(componentBuilder, propertyDescriptor, StringPattern.class);
         _referenceDataCatalog = referenceDataCatalog;
@@ -70,13 +67,10 @@ public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckbo
 
         final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
         dialogButton.setToolTipText("Configure string patterns");
-        dialogButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
-                dialog.selectStringPatternsTab();
-                dialog.setVisible(true);
-            }
+        dialogButton.addActionListener(e -> {
+            final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+            dialog.selectStringPatternsTab();
+            dialog.setVisible(true);
         });
 
         buttonPanel.add(dialogButton);

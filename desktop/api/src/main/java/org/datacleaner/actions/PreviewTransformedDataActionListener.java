@@ -60,13 +60,15 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         public final AnalyzerComponentBuilder<?> rowCollectorAnalyzer;
         public final TransformerComponentBuilder<?> previewedTransformer;
 
-        public PreviewJob(final AnalysisJobBuilder analysisJobBuilder, final AnalyzerComponentBuilder<?> rowCollectorAnalyzer,
+        public PreviewJob(final AnalysisJobBuilder analysisJobBuilder,
+                final AnalyzerComponentBuilder<?> rowCollectorAnalyzer,
                 final TransformerComponentBuilder<?> previewedTransformer) {
             this.analysisJobBuilder = analysisJobBuilder;
             this.rowCollectorAnalyzer = rowCollectorAnalyzer;
             this.previewedTransformer = previewedTransformer;
         }
     }
+
     public static final int DEFAULT_PREVIEW_ROWS = 200;
     private static final Logger logger = LoggerFactory.getLogger(PreviewTransformedDataActionListener.class);
     private final TransformerComponentBuilderPresenter _transformerJobBuilderPresenter;
@@ -118,8 +120,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         final AnalysisJobBuilder originalAnalysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
         // put a marker metadata property on the AnalysisJobBuilder to make
         // it easy to identify it's equivalent object from the copy later.
-        originalAnalysisJobBuilder.getAnalysisJobMetadata().getProperties().put(PreviewUtils.METADATA_PROPERTY_MARKER,
-                jobBuilderIdentifier);
+        originalAnalysisJobBuilder.getAnalysisJobMetadata().getProperties()
+                .put(PreviewUtils.METADATA_PROPERTY_MARKER, jobBuilderIdentifier);
         final AnalysisJobBuilder ajb;
         try {
             final AnalysisJobBuilder copyAnalysisJobBuilder =
@@ -127,8 +129,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             ajb = PreviewUtils.findAnalysisJobBuilder(copyAnalysisJobBuilder, jobBuilderIdentifier);
         } finally {
             // remove the marker metadata
-            originalAnalysisJobBuilder.getAnalysisJobMetadata().getProperties().remove(
-                    PreviewUtils.METADATA_PROPERTY_MARKER);
+            originalAnalysisJobBuilder.getAnalysisJobMetadata().getProperties()
+                    .remove(PreviewUtils.METADATA_PROPERTY_MARKER);
         }
 
         if (ajb == null) {
@@ -156,8 +158,9 @@ public final class PreviewTransformedDataActionListener implements ActionListene
                     ajb.removeSourceTable(otherTable);
                 }
             }
-            alreadyFiltered = sourceColumnFinder.findAllSourceJobs(tjb).stream().filter(
-                    o -> o instanceof HasFilterOutcomes).findAny().isPresent();
+            alreadyFiltered =
+                    sourceColumnFinder.findAllSourceJobs(tjb).stream().filter(o -> o instanceof HasFilterOutcomes)
+                            .findAny().isPresent();
         }
 
         final List<MetaModelInputColumn> sourceColumns = ajb.getSourceColumns();
@@ -168,9 +171,9 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         }
 
         // add the result collector (a dummy analyzer)
-        final AnalyzerComponentBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb.addAnalyzer(Descriptors
-                .ofAnalyzer(PreviewTransformedDataAnalyzer.class)).addInputColumns(tjb.getInputColumns())
-                .addInputColumns(tjb.getOutputColumns());
+        final AnalyzerComponentBuilder<PreviewTransformedDataAnalyzer> rowCollector =
+                ajb.addAnalyzer(Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class))
+                        .addInputColumns(tjb.getInputColumns()).addInputColumns(tjb.getOutputColumns());
 
         if (tjb.getComponentRequirement() != null) {
             rowCollector.setComponentRequirement(tjb.getComponentRequirement());
@@ -223,8 +226,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             throw new IllegalStateException(firstError);
         }
 
-        final List<? extends PreviewTransformedDataAnalyzer> results = resultFuture.getResults(
-                PreviewTransformedDataAnalyzer.class);
+        final List<? extends PreviewTransformedDataAnalyzer> results =
+                resultFuture.getResults(PreviewTransformedDataAnalyzer.class);
         assert results.size() == 1;
 
         final PreviewTransformedDataAnalyzer result = results.get(0);
@@ -246,8 +249,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
     private TransformerComponentBuilder<?> findTransformerComponentBuilder(final AnalysisJobBuilder ajb) {
         final AnalysisJobBuilder analysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
-        final int transformerIndex = analysisJobBuilder.getTransformerComponentBuilders().indexOf(
-                _transformerJobBuilder);
+        final int transformerIndex =
+                analysisJobBuilder.getTransformerComponentBuilders().indexOf(_transformerJobBuilder);
         return ajb.getTransformerComponentBuilders().get(transformerIndex);
     }
 

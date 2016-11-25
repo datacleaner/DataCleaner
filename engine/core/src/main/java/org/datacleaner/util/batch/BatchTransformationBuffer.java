@@ -81,18 +81,15 @@ public class BatchTransformationBuffer<I, O> {
     }
 
     private Runnable createFlushCommand() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    do {
-                        flushBuffer(true);
-                    } while (!_queue.isEmpty());
-                } catch (final Throwable t) {
-                    logger.warn("Cannot flush buffer", t);
-                    exception = t;
-                    shutdown();
-                }
+        return () -> {
+            try {
+                do {
+                    flushBuffer(true);
+                } while (!_queue.isEmpty());
+            } catch (final Throwable t) {
+                logger.warn("Cannot flush buffer", t);
+                exception = t;
+                shutdown();
             }
         };
     }
@@ -165,7 +162,8 @@ public class BatchTransformationBuffer<I, O> {
                 rethrowException();
                 throw new PreviousErrorsExistException("Transformer closed");
             }
-            final long waitTime = (attemptIndex < AWAIT_TIMES.length ? AWAIT_TIMES[attemptIndex]
+            final long waitTime = (attemptIndex < AWAIT_TIMES.length
+                    ? AWAIT_TIMES[attemptIndex]
                     : AWAIT_TIMES[AWAIT_TIMES.length - 1]);
 
             try {

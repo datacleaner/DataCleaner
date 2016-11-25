@@ -22,22 +22,21 @@ package org.datacleaner.beans.transform;
 import java.util.Calendar;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+
+import junit.framework.TestCase;
 
 public class DateToAgeTransformerTest extends TestCase {
 
     public void testDiffs() throws Exception {
-        MockInputColumn<Date> col = new MockInputColumn<>("foobar",
-                Date.class);
+        final MockInputColumn<Date> col = new MockInputColumn<>("foobar", Date.class);
 
-        DateToAgeTransformer t = new DateToAgeTransformer();
+        final DateToAgeTransformer t = new DateToAgeTransformer();
         t.setDateColumn(col);
 
         // 2010-01-01
-        Calendar c1 = Calendar.getInstance();
+        final Calendar c1 = Calendar.getInstance();
         c1.setTimeInMillis(0L);
         c1.set(Calendar.YEAR, 2010);
         c1.set(Calendar.MONTH, Calendar.JANUARY);
@@ -45,14 +44,13 @@ public class DateToAgeTransformerTest extends TestCase {
         t.setToday(c1.getTime());
 
         // 2009-01-02
-        Calendar c2 = Calendar.getInstance();
+        final Calendar c2 = Calendar.getInstance();
         c2.setTimeInMillis(0L);
         c2.set(Calendar.YEAR, 2009);
         c2.set(Calendar.MONTH, Calendar.JANUARY);
         c2.set(Calendar.DAY_OF_MONTH, 2);
 
-        Integer[] result = t
-                .transform(new MockInputRow().put(col, c2.getTime()));
+        Integer[] result = t.transform(new MockInputRow().put(col, c2.getTime()));
         assertEquals(2, result.length);
         assertEquals(364, result[0].intValue());
         assertEquals(0, result[1].intValue());

@@ -22,8 +22,6 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,24 +77,25 @@ public final class ColumnListTable extends DCPanel {
 
     private final boolean _editable;
 
-    public ColumnListTable(final Collection<? extends InputColumn<?>> columns, final AnalysisJobBuilder analysisJobBuilder,
-            final boolean addShadowBorder, final WindowContext windowContext) {
+    public ColumnListTable(final Collection<? extends InputColumn<?>> columns,
+            final AnalysisJobBuilder analysisJobBuilder, final boolean addShadowBorder,
+            final WindowContext windowContext) {
         this(null, columns, analysisJobBuilder, addShadowBorder, true, windowContext);
     }
 
-    public ColumnListTable(final Collection<? extends InputColumn<?>> columns, final AnalysisJobBuilder analysisJobBuilder,
-            final boolean addShadowBorder, final boolean editable, final WindowContext windowContext) {
+    public ColumnListTable(final Collection<? extends InputColumn<?>> columns,
+            final AnalysisJobBuilder analysisJobBuilder, final boolean addShadowBorder, final boolean editable,
+            final WindowContext windowContext) {
         this(null, columns, analysisJobBuilder, addShadowBorder, editable, windowContext);
     }
 
-    public ColumnListTable(final Table table, final AnalysisJobBuilder analysisJobBuilder, final boolean addShadowBorder,
-            final WindowContext windowContext) {
+    public ColumnListTable(final Table table, final AnalysisJobBuilder analysisJobBuilder,
+            final boolean addShadowBorder, final WindowContext windowContext) {
         this(table, null, analysisJobBuilder, addShadowBorder, true, windowContext);
     }
 
-    public ColumnListTable(final Table table, final AnalysisJobBuilder analysisJobBuilder, final boolean addShadowBorder,
-            final boolean editable,
-            final WindowContext windowContext) {
+    public ColumnListTable(final Table table, final AnalysisJobBuilder analysisJobBuilder,
+            final boolean addShadowBorder, final boolean editable, final WindowContext windowContext) {
         this(table, null, analysisJobBuilder, addShadowBorder, editable, windowContext);
     }
 
@@ -115,8 +114,8 @@ public final class ColumnListTable extends DCPanel {
         if (table != null) {
             final DCPanel headerPanel = new DCPanel();
             headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-            final JLabel tableNameLabel = new JLabel(table.getQualifiedLabel(), imageManager.getImageIcon(
-                    IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
+            final JLabel tableNameLabel = new JLabel(table.getQualifiedLabel(),
+                    imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
             tableNameLabel.setOpaque(false);
             tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
             headerPanel.add(tableNameLabel);
@@ -124,8 +123,9 @@ public final class ColumnListTable extends DCPanel {
             if (_windowContext != null) {
                 final JButton previewButton = WidgetFactory.createSmallButton(IconUtils.ACTION_PREVIEW);
                 previewButton.setToolTipText("Preview table rows");
-                previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
-                        .getDatastore(), _columns.keySet()));
+                previewButton.addActionListener(
+                        new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder.getDatastore(),
+                                _columns.keySet()));
                 headerPanel.add(Box.createHorizontalStrut(4));
                 headerPanel.add(previewButton);
             }
@@ -133,8 +133,8 @@ public final class ColumnListTable extends DCPanel {
             if (_windowContext != null) {
                 final JButton queryButton = WidgetFactory.createSmallButton(IconUtils.MODEL_QUERY);
                 queryButton.setToolTipText("Ad-hoc query");
-                queryButton.addActionListener(new QueryActionListener(_windowContext, _analysisJobBuilder, _table,
-                        _columns.keySet()));
+                queryButton.addActionListener(
+                        new QueryActionListener(_windowContext, _analysisJobBuilder, _table, _columns.keySet()));
                 headerPanel.add(Box.createHorizontalStrut(4));
                 headerPanel.add(queryButton);
             }
@@ -142,12 +142,7 @@ public final class ColumnListTable extends DCPanel {
             if (_editable) {
                 final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
                 removeButton.setToolTipText("Remove table from source");
-                removeButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        _analysisJobBuilder.removeSourceTable(_table);
-                    }
-                });
+                removeButton.addActionListener(e -> _analysisJobBuilder.removeSourceTable(_table));
                 headerPanel.add(Box.createHorizontalStrut(4));
                 headerPanel.add(removeButton);
             }
@@ -200,12 +195,7 @@ public final class ColumnListTable extends DCPanel {
                 buttonPanel.setLayout(new GridBagLayout());
                 final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
                 removeButton.setToolTipText("Remove column from source");
-                removeButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        _analysisJobBuilder.removeSourceColumn(column.getPhysicalColumn());
-                    }
-                });
+                removeButton.addActionListener(e -> _analysisJobBuilder.removeSourceColumn(column.getPhysicalColumn()));
                 WidgetUtils.addToGridBag(removeButton, buttonPanel, 0, 0);
                 model.setValueAt(buttonPanel, i, 2);
             }
@@ -234,10 +224,7 @@ public final class ColumnListTable extends DCPanel {
         if (column instanceof MutableInputColumn<?>) {
             final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
 
-            final MutableInputColumnListPanel panel = new MutableInputColumnListPanel(_analysisJobBuilder,
-                    mutableInputColumn, _columnTable);
-
-            return panel;
+            return new MutableInputColumnListPanel(_analysisJobBuilder, mutableInputColumn, _columnTable);
         }
 
         final Icon icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_MEDIUM);

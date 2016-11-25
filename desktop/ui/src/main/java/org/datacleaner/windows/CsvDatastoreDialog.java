@@ -20,10 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.List;
@@ -56,8 +52,6 @@ import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
-import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.HeaderLineComboBox;
 import org.datacleaner.widgets.ResourceSelector;
 import org.datacleaner.widgets.ResourceTypePresenter;
@@ -90,17 +84,17 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     private final JCheckBox _failOnInconsistenciesCheckBox;
     private final JCheckBox _multilineValuesCheckBox;
     private final JButton _addColumnNamesButton;
-    private final DCPanel _addColumnNamesPanel;
     private List<String> _columnNames;
 
     private volatile boolean showPreview = true;
 
     @Inject
-    public CsvDatastoreDialog(@Nullable final CsvDatastore originalDatastore, final MutableDatastoreCatalog mutableDatastoreCatalog,
-            final WindowContext windowContext, final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
+    public CsvDatastoreDialog(@Nullable final CsvDatastore originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, configuration, userPreferences);
-        _separatorCharField = new JComboBox<>(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
-                SEPARATOR_PIPE });
+        _separatorCharField =
+                new JComboBox<>(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON, SEPARATOR_PIPE });
         _separatorCharField.setEditable(true);
 
         _quoteCharField = new JComboBox<>(new String[] { QUOTE_NONE, QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
@@ -117,14 +111,15 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
         _failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent column count", true);
         _failOnInconsistenciesCheckBox.setOpaque(false);
         _failOnInconsistenciesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _failOnInconsistenciesCheckBox.setToolTipText(
-                "Check this checkbox to fail fast in case of inconsistent record lengths found in the CSV file. If not checked, missing fields will be represented by <null> values.");
+        _failOnInconsistenciesCheckBox.setToolTipText("Check this checkbox to fail fast in case of inconsistent record "
+                + "lengths found in the CSV file. If not checked, missing fields will be represented by <null> values.");
 
         _multilineValuesCheckBox = new JCheckBox("Enable multi-line values?", false);
         _multilineValuesCheckBox.setOpaque(false);
         _multilineValuesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _multilineValuesCheckBox.setToolTipText(
-                "Check this checkbox if you want to allow CSV values to span multiple lines. Since this is rare, and comes at a performance penalty, we recommend turning multi-line values off.");
+                "Check this checkbox if you want to allow CSV values to span multiple lines. Since this is rare, and "
+                        + "comes at a performance penalty, we recommend turning multi-line values off.");
 
         setSaveButtonEnabled(false);
         showPreview = true;
@@ -195,88 +190,59 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
         }
 
         // add listeners
-        _separatorCharField.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(final ItemEvent e) {
-                onSettingsUpdated(false, false, getResource());
-            }
+        _separatorCharField.addItemListener(e -> onSettingsUpdated(false, false, getResource()));
+        _quoteCharField.addItemListener(e -> onSettingsUpdated(false, false, getResource()));
+        _escapeCharField.addItemListener(e -> onSettingsUpdated(false, false, getResource()));
+        _encodingComboBox.addListener(item -> onSettingsUpdated(true, false, getResource()));
+        _headerLineComboBox.addListener(item -> onSettingsUpdated(false, false, getResource()));
+
+        final DCPanel addColumnNamesPanel = new DCPanel();
+        addColumnNamesPanel.setLayout(new HorizontalLayout());
+        _addColumnNamesButton.addActionListener(arg0 -> {
+            final ColumnNamesSetterDialog columnNamesChooserDialog =
+                    new ColumnNamesSetterDialog(windowContext, _columnNames);
+            columnNamesChooserDialog.setVisible(true);
+            columnNamesChooserDialog.addWindowListener(new WindowListener() {
+                @Override
+                public void windowClosed(final WindowEvent e) {
+                    _columnNames = columnNamesChooserDialog.getColumnNames();
+                    onSettingsUpdated(false, false, getResource());
+                    columnNamesChooserDialog.dispose();
+
+                }
+
+                @Override
+                public void windowActivated(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowClosing(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeactivated(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeiconified(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowIconified(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowOpened(final WindowEvent e) {
+
+                }
+            });
         });
-        _quoteCharField.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(final ItemEvent e) {
-                onSettingsUpdated(false, false, getResource());
-            }
-        });
-        _escapeCharField.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(final ItemEvent e) {
-                onSettingsUpdated(false, false, getResource());
-            }
-        });
-        _encodingComboBox.addListener(new Listener<String>() {
-            @Override
-            public void onItemSelected(final String item) {
-                onSettingsUpdated(true, false, getResource());
-            }
-        });
-        _headerLineComboBox.addListener(new DCComboBox.Listener<Integer>() {
-            @Override
-            public void onItemSelected(final Integer item) {
-                onSettingsUpdated(false, false, getResource());
-            }
-        });
-
-        _addColumnNamesPanel = new DCPanel();
-        _addColumnNamesPanel.setLayout(new HorizontalLayout());
-        _addColumnNamesButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-                final ColumnNamesSetterDialog columnNamesChooserDialog = new ColumnNamesSetterDialog(windowContext,
-                        _columnNames);
-                columnNamesChooserDialog.setVisible(true);
-                columnNamesChooserDialog.addWindowListener(new WindowListener() {
-                    @Override
-                    public void windowClosed(final WindowEvent e) {
-                        _columnNames = columnNamesChooserDialog.getColumnNames();
-                        onSettingsUpdated(false, false, getResource());
-                        columnNamesChooserDialog.dispose();
-
-                    }
-
-                    @Override
-                    public void windowActivated(final WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowClosing(final WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowDeactivated(final WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowDeiconified(final WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowIconified(final WindowEvent e) {
-
-                    }
-
-                    @Override
-                    public void windowOpened(final WindowEvent e) {
-
-                    }
-                });
-            }
-        });
-        _addColumnNamesPanel.add(_addColumnNamesButton, 0);
+        addColumnNamesPanel.add(_addColumnNamesButton, 0);
     }
 
     @Override
@@ -495,7 +461,8 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
         return createDatastore(name, resource, failOnInconsistentRecords);
     }
 
-    private CsvDatastore createDatastore(final String name, final Resource resource, final boolean failOnInconsistentRecords) {
+    private CsvDatastore createDatastore(final String name, final Resource resource,
+            final boolean failOnInconsistentRecords) {
         return new CsvDatastore(name, resource, resource.getQualifiedPath(), getQuoteChar(), getSeparatorChar(),
                 getEscapeChar(), getEncoding(), failOnInconsistentRecords, isMultilineValues(), getHeaderLine(),
                 _columnNames);
@@ -512,8 +479,9 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
     @Override
     protected void initializeFileFilters(final ResourceSelector resourceSelector) {
-        final FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)",
-                FileFilters.CSV, FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
+        final FileFilter combinedFilter = FileFilters
+                .combined("Any raw data file (.csv, .tsv, .dat, .txt)", FileFilters.CSV, FileFilters.TSV,
+                        FileFilters.DAT, FileFilters.TXT);
         resourceSelector.addChoosableFileFilter(combinedFilter);
         resourceSelector.addChoosableFileFilter(FileFilters.CSV);
         resourceSelector.addChoosableFileFilter(FileFilters.TSV);

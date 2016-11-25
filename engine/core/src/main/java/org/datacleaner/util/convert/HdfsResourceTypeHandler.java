@@ -78,8 +78,8 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HadoopResour
             path = prefix + path;
         }
 
-        final HadoopResourceBuilder
-                builder = new HadoopResourceBuilder(_dataCleanerConfiguration.getServerInformationCatalog(), path);
+        final HadoopResourceBuilder builder =
+                new HadoopResourceBuilder(_dataCleanerConfiguration.getServerInformationCatalog(), path);
 
         return builder.build();
     }

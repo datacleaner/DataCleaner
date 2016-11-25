@@ -68,10 +68,10 @@ public class PlainSearchReplaceTransformer implements Transformer {
 
     public static void processRemovedProperties(final ComponentBuilder builder, final StringConverter stringConverter,
             final ComponentDescriptor<?> descriptor, final Map<String, String> removedProperties) {
-        if (removedProperties.containsKey(SEARCH_STRING_PROPERTY_NAME) && removedProperties.containsKey(
-                REPLACEMENT_STRING_PROPERTY_NAME)) {
-            final ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty(
-                    REPLACEMENTS_PROPERTY_NAME);
+        if (removedProperties.containsKey(SEARCH_STRING_PROPERTY_NAME) && removedProperties
+                .containsKey(REPLACEMENT_STRING_PROPERTY_NAME)) {
+            final ConfiguredPropertyDescriptor configuredProperty =
+                    descriptor.getConfiguredProperty(REPLACEMENTS_PROPERTY_NAME);
 
             final Converter<?> customConverter = configuredProperty.createCustomConverter();
 
@@ -79,8 +79,9 @@ public class PlainSearchReplaceTransformer implements Transformer {
             replacements.put(SerializationStringEscaper.unescape(removedProperties.get(SEARCH_STRING_PROPERTY_NAME)),
                     SerializationStringEscaper.unescape(removedProperties.get(REPLACEMENT_STRING_PROPERTY_NAME)));
 
-            final Object value = stringConverter.deserialize(new MapStringToStringConverter().toString(replacements),
-                    configuredProperty.getType(), customConverter);
+            final Object value = stringConverter
+                    .deserialize(new MapStringToStringConverter().toString(replacements), configuredProperty.getType(),
+                            customConverter);
 
             builder.setConfiguredProperty(configuredProperty, value);
         }

@@ -47,6 +47,7 @@ public class DCCheckBox<E> extends JCheckBox implements MouseListener, ItemListe
     public interface Listener<E> {
         void onItemSelected(E item, boolean selected);
     }
+
     private static final long serialVersionUID = 1L;
     private static final Border HOVER_BORDER = new LineBorder(WidgetUtils.BG_COLOR_LESS_BRIGHT, 1);
     private static final Border REGULAR_BORDER = new EmptyBorder(1, 1, 1, 1);
@@ -126,8 +127,8 @@ public class DCCheckBox<E> extends JCheckBox implements MouseListener, ItemListe
      */
     @Deprecated
     @Override
-    public void addItemListener(final ItemListener aListener) {
-        super.addItemListener(aListener);
+    public void addItemListener(final ItemListener newListener) {
+        super.addItemListener(newListener);
     }
 
     /**
@@ -135,8 +136,8 @@ public class DCCheckBox<E> extends JCheckBox implements MouseListener, ItemListe
      */
     @Deprecated
     @Override
-    public void addActionListener(final ActionListener l) {
-        super.addActionListener(l);
+    public void addActionListener(final ActionListener listener) {
+        super.addActionListener(listener);
     }
 
     public void notifyListeners() {

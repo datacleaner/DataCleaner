@@ -41,8 +41,7 @@ public class NewsChannelRESTClient {
     }
 
     private String call(final int count) throws RestrictedFunctionalityException {
-        final String response = restClient.getResponse(RESTClient.HttpMethod.GET, url + "?count=" + count, "");
-        return response;
+        return restClient.getResponse(RESTClient.HttpMethod.GET, url + "?count=" + count, "");
     }
 }
 

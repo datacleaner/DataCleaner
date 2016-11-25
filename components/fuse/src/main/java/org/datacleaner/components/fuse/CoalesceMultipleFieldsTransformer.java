@@ -43,8 +43,10 @@ import org.slf4j.LoggerFactory;
 @Named("Fuse / Coalesce fields")
 @Alias("Coalesce multiple fields")
 @Description("Lets you combine multiple fields into one, selecting the first value that is non-null.\n\n"
-        + "Use it to fuse data streams coming from different filter requirements. You can define new fields whose values represent whatever is available from one of the input streams.\n\n"
-        + "Or use it to identify the most accurate or most recent observation, if multiple entries have been recorded in separate columns.")
+        + "Use it to fuse data streams coming from different filter requirements. You can define new fields whose "
+        + "values represent whatever is available from one of the input streams.\n\n"
+        + "Or use it to identify the most accurate or most recent observation, "
+        + "if multiple entries have been recorded in separate columns.")
 @Categorized(CompositionCategory.class)
 public class CoalesceMultipleFieldsTransformer implements Transformer {
     public static final String PROPERTY_UNITS = "Units";
@@ -82,9 +84,9 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
 
     @Validate
     public void validate() {
-        for (final CoalesceUnit _unit : _units) {
+        for (final CoalesceUnit unit : _units) {
             // Ensure that initialization is actually possible.
-            _unit.updateInputColumns(_input);
+            unit.updateInputColumns(_input);
         }
     }
 

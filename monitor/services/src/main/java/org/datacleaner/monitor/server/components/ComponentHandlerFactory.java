@@ -75,10 +75,9 @@ public class ComponentHandlerFactory {
      */
     public ComponentHandler createComponent(final TenantContext tenantContext, final String componentName,
             final ComponentConfiguration configuration) throws RuntimeException {
-        return new ComponentHandler(
-                tenantContext.getConfiguration(),
-                resolveDescriptor(tenantContext.getConfiguration().getEnvironment(), componentName),
-                configuration, _remoteComponentsConfiguration, analysisListener);
+        return new ComponentHandler(tenantContext.getConfiguration(),
+                resolveDescriptor(tenantContext.getConfiguration().getEnvironment(), componentName), configuration,
+                _remoteComponentsConfiguration, analysisListener);
     }
 
     @PostConstruct
@@ -93,8 +92,8 @@ public class ComponentHandlerFactory {
     }
 
     public ComponentDescriptor<?> resolveDescriptor(final DataCleanerEnvironment env, final String componentName) {
-        final ComponentDescriptor<?> descriptor = env.getDescriptorProvider()
-                .getComponentDescriptorByDisplayName(componentName);
+        final ComponentDescriptor<?> descriptor =
+                env.getDescriptorProvider().getComponentDescriptorByDisplayName(componentName);
         if (descriptor == null) {
             logger.info("Component {} not found.", componentName);
             throw ComponentNotFoundException.createTypeNotFound(componentName);

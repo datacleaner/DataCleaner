@@ -162,11 +162,9 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         }
 
         for (final InputColumn<?> col : inputColumns) {
-            configuration.getColumns().add(ComponentsRestClientUtils.createInputColumnSpecification(
-                    col.getName(),
-                    col.getDataType(),
-                    ColumnTypeImpl.convertColumnType(col.getDataType()).getName(),
-                    mapper.getNodeFactory()));
+            configuration.getColumns().add(ComponentsRestClientUtils
+                    .createInputColumnSpecification(col.getName(), col.getDataType(),
+                            ColumnTypeImpl.convertColumnType(col.getDataType()).getName(), mapper.getNodeFactory()));
         }
         return configuration;
     }

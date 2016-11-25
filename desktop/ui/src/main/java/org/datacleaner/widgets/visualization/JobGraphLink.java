@@ -38,8 +38,8 @@ final class JobGraphLink {
     private final FilterOutcome _filterOutcome;
     private final OutputDataStream _outputDataStream;
 
-    public JobGraphLink(final Object from, final Object to, final ComponentRequirement requirement, final FilterOutcome filterOutcome,
-            final OutputDataStream outputDataStream) {
+    public JobGraphLink(final Object from, final Object to, final ComponentRequirement requirement,
+            final FilterOutcome filterOutcome, final OutputDataStream outputDataStream) {
         _from = from;
         _to = to;
         _requirement = requirement;

@@ -44,8 +44,8 @@ public class JaxbScheduleReaderTest {
         final FileInputStream fileInputStream = new FileInputStream(file);
         final JaxbScheduleReader reader = new JaxbScheduleReader();
         final JobIdentifier job = new JobIdentifier();
-        TenantIdentifier tenant = new TenantIdentifier();
-        String groupName = "test";
+        final TenantIdentifier tenant = new TenantIdentifier();
+        final String groupName = "test";
         final ScheduleDefinition schedule = reader.read(fileInputStream, job, tenant, groupName);
         assertEquals("@daily", schedule.getCronExpression());
         assertFalse(schedule.isDistributedExecution());

@@ -38,7 +38,6 @@ import org.easymock.EasyMock;
 import org.easymock.EasyMockSupport;
 import org.junit.Test;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -61,11 +60,11 @@ public class ConfigurationFileControllerTest extends EasyMockSupport {
         controller._contextFactory = tenantContextFactory;
 
         EasyMock.expect(tenantContextFactory.getContext("tenant1")).andReturn(tenantContext);
-        File file = new File("target/ConfigurationFileControllerTest.testGetFileContents.conf.xml");
+        final File file = new File("target/ConfigurationFileControllerTest.testGetFileContents.conf.xml");
         FileHelper.writeString(new FileOutputStream(file), "<configuration></configuration>",
                 FileHelper.DEFAULT_ENCODING);
 
-        FileRepositoryFile configurationFile = new FileRepositoryFile(new FileRepository("target"), file);
+        final FileRepositoryFile configurationFile = new FileRepositoryFile(new FileRepository("target"), file);
         EasyMock.expect(tenantContext.getConfigurationFile()).andReturn(configurationFile);
 
         replayAll();
@@ -83,32 +82,32 @@ public class ConfigurationFileControllerTest extends EasyMockSupport {
         controller._contextFactory = tenantContextFactory;
 
         EasyMock.expect(tenantContextFactory.getContext("tenant1")).andReturn(tenantContext);
-        File file = new File("target/ConfigurationFileControllerTest.testUploadFile.conf.xml");
-        FileRepositoryFile configurationFile = new FileRepositoryFile(new FileRepository("target"), file);
+        final File file = new File("target/ConfigurationFileControllerTest.testUploadFile.conf.xml");
+        final FileRepositoryFile configurationFile = new FileRepositoryFile(new FileRepository("target"), file);
         EasyMock.expect(tenantContext.getConfigurationFile()).andReturn(configurationFile);
 
         replayAll();
 
-        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+        final MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
         messageConverter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON));
-        ContentNegotiationManager contentNegotiationManager = new ContentNegotiationManager();
-        RequestResponseBodyMethodProcessor returnValueHandler = new RequestResponseBodyMethodProcessor(
-                Arrays.asList(messageConverter), contentNegotiationManager);
+        final ContentNegotiationManager contentNegotiationManager = new ContentNegotiationManager();
+        final RequestResponseBodyMethodProcessor returnValueHandler =
+                new RequestResponseBodyMethodProcessor(Arrays.asList(messageConverter), contentNegotiationManager);
 
-        InputStream inputStream = FileHelper
-                .getInputStream(new File("src/test/resources/example_repo/tenant1/conf.xml"));
-        MockMultipartFile uploadedFile = new MockMultipartFile("file", inputStream);
+        final InputStream inputStream =
+                FileHelper.getInputStream(new File("src/test/resources/example_repo/tenant1/conf.xml"));
+        final MockMultipartFile uploadedFile = new MockMultipartFile("file", inputStream);
 
-        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .setCustomReturnValueHandlers(returnValueHandler).build();
+        final MockMvc mockMvc =
+                MockMvcBuilders.standaloneSetup(controller).setCustomReturnValueHandlers(returnValueHandler).build();
 
         // note that in this test we have to use the "{tenant}/configuration"
         // url because MockMvc does some strange magic regarding the ".xml"
         // suffix which it interprets as a XML response then.
-        final String content = mockMvc
-                .perform(MockMvcRequestBuilders.fileUpload("/tenant1/configuration").file(uploadedFile)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        final String content = mockMvc.perform(
+                MockMvcRequestBuilders.fileUpload("/tenant1/configuration").file(uploadedFile)
+                        .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse()
+                .getContentAsString();
 
         final Map<?, ?> map = new ObjectMapper().readValue(content, Map.class);
         assertEquals("Success", map.get("status"));

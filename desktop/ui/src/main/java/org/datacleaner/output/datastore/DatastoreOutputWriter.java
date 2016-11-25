@@ -50,13 +50,14 @@ final class DatastoreOutputWriter implements OutputWriter {
     private final PreparedStatement _insertStatement;
     private final DatastoreCreationDelegate _datastoreCreationDelegate;
 
-    public DatastoreOutputWriter(final String datastoreName, final String tableName, final File directory, final InputColumn<?>[] columns,
-            final DatastoreCreationDelegate datastoreCreationDelegate) {
+    public DatastoreOutputWriter(final String datastoreName, final String tableName, final File directory,
+            final InputColumn<?>[] columns, final DatastoreCreationDelegate datastoreCreationDelegate) {
         this(datastoreName, tableName, directory, columns, datastoreCreationDelegate, true);
     }
 
-    public DatastoreOutputWriter(final String datastoreName, String tableName, final File directory, final InputColumn<?>[] columns,
-            final DatastoreCreationDelegate datastoreCreationDelegate, final boolean truncateExisting) {
+    public DatastoreOutputWriter(final String datastoreName, String tableName, final File directory,
+            final InputColumn<?>[] columns, final DatastoreCreationDelegate datastoreCreationDelegate,
+            final boolean truncateExisting) {
         _datastoreName = datastoreName;
         _jdbcUrl = DatastoreOutputUtils.getJdbcUrl(directory, _datastoreName);
         _columns = columns;
@@ -192,8 +193,8 @@ final class DatastoreOutputWriter implements OutputWriter {
 
     public static boolean isDirectlyInsertableType(final InputColumn<?> column) {
         final Class<?> dataType = column.getDataType();
-        return ReflectionUtils.isNumber(dataType) || ReflectionUtils.isDate(dataType)
-                || ReflectionUtils.isBoolean(dataType);
+        return ReflectionUtils.isNumber(dataType) || ReflectionUtils.isDate(dataType) || ReflectionUtils
+                .isBoolean(dataType);
     }
 
     @Override

@@ -146,8 +146,7 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
     public Schema createSchema() {
         final HBaseDatastore datastore = createDatastore();
         try (DatastoreConnection con = datastore.openConnection()) {
-            final Schema schema = con.getDataContext().getDefaultSchema();
-            return schema;
+            return con.getDataContext().getDefaultSchema();
         }
     }
 

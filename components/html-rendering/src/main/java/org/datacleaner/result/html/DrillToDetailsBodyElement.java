@@ -36,7 +36,8 @@ public class DrillToDetailsBodyElement implements BodyElement {
     private final String _elementId;
     private final RendererFactory _rendererFactory;
 
-    public DrillToDetailsBodyElement(final String elementId, final RendererFactory rendererFactory, final AnalyzerResult result) {
+    public DrillToDetailsBodyElement(final String elementId, final RendererFactory rendererFactory,
+            final AnalyzerResult result) {
         if (rendererFactory == null) {
             throw new IllegalArgumentException("RendererFactory cannot be null");
         }
@@ -50,8 +51,8 @@ public class DrillToDetailsBodyElement implements BodyElement {
 
     @Override
     public String toHtml(final HtmlRenderingContext context) {
-        final Renderer<? super AnalyzerResult, ? extends HtmlFragment> renderer = _rendererFactory.getRenderer(_result,
-                HtmlRenderingFormat.class);
+        final Renderer<? super AnalyzerResult, ? extends HtmlFragment> renderer =
+                _rendererFactory.getRenderer(_result, HtmlRenderingFormat.class);
         if (renderer == null) {
             throw new IllegalStateException("No renderer found for: " + _result);
         }

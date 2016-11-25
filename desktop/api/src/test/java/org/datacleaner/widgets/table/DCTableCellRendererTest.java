@@ -73,8 +73,8 @@ public class DCTableCellRendererTest {
         final JComponent inputComponent = DCLabel.dark("hello world");
 
         final DCTableCellRenderer renderer = new DCTableCellRenderer(null);
-        final Component component = renderer.getTableCellRendererComponent(new JTable(), inputComponent, false, false,
-                1, 1);
+        final Component component =
+                renderer.getTableCellRendererComponent(new JTable(), inputComponent, false, false, 1, 1);
         assertTrue(component instanceof JLabel);
 
         assertSame(inputComponent, component);

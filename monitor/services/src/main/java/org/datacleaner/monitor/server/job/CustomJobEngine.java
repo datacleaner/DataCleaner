@@ -55,15 +55,15 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
     @Override
     protected CustomJobContext getJobContext(final TenantContext context, final RepositoryFile file) {
         final DataCleanerConfiguration configuration = context.getConfiguration();
-        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
-                .getInjectionManager(configuration);
+        final InjectionManager injectionManager =
+                configuration.getEnvironment().getInjectionManagerFactory().getInjectionManager(configuration);
 
         return new CustomJobContext(context, this, file, injectionManager);
     }
 
     @Override
-    public void executeJob(final TenantContext context, final ExecutionLog execution, final ExecutionLogger executionLogger,
-            final Map<String, String> variables) throws Exception {
+    public void executeJob(final TenantContext context, final ExecutionLog execution,
+            final ExecutionLogger executionLogger, final Map<String, String> variables) throws Exception {
         executionLogger.setStatusRunning();
 
         final JobIdentifier jobIdentifier = execution.getJob();
@@ -85,8 +85,8 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
             final ComponentConfiguration beanConfiguration = jobContext.getComponentConfiguration(customJob);
 
             final DataCleanerConfiguration configuration = context.getConfiguration();
-            final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
-                    .getInjectionManager(configuration);
+            final InjectionManager injectionManager =
+                    configuration.getEnvironment().getInjectionManagerFactory().getInjectionManager(configuration);
             final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, true);
 
             lifeCycleHelper.assignProvidedProperties(descriptor, customJob);

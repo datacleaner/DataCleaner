@@ -123,25 +123,27 @@ public class StringPatternListPanel extends DCPanel implements ReferenceDataChan
 
         final JButton simpleStringPatternButton = createButton(IconUtils.STRING_PATTERN_SIMPLE_IMAGEPATH,
                 "<html><b>Simple string pattern</b><br/>A string pattern based on simple string tokens, eg. 'Aaaaa 999'.</html>");
-        simpleStringPatternButton.addActionListener(
-                e -> new SimpleStringPatternDialog(_catalog, _windowContext).setVisible(true));
+        simpleStringPatternButton
+                .addActionListener(e -> new SimpleStringPatternDialog(_catalog, _windowContext).setVisible(true));
 
         final JButton regexStringPatternButton = createButton(IconUtils.STRING_PATTERN_REGEX_IMAGEPATH,
-                "<html><b>Regular expression string pattern</b><br/>A very flexible string pattern, based on regular expressions.</html>");
-        regexStringPatternButton.addActionListener(
-                e -> new RegexStringPatternDialog(_catalog, _windowContext).setVisible(true));
+                "<html><b>Regular expression string pattern</b><br/>A very flexible string pattern, "
+                        + "based on regular expressions.</html>");
+        regexStringPatternButton
+                .addActionListener(e -> new RegexStringPatternDialog(_catalog, _windowContext).setVisible(true));
 
         final JButton regexSwapStringPatternButton = createButton(IconUtils.STRING_PATTERN_REGEXSWAP_IMAGEPATH,
                 "<html><b>Browse the RegexSwap</b><br/>Download patterns from DataCleaner's online RegexSwap.</html>");
         regexSwapStringPatternButton.addActionListener(
                 e -> new RegexSwapDialog(_catalog, _windowContext, _userPreferences).setVisible(true));
 
-        final HelpIcon helpIcon = new HelpIcon(
-                "<b>String patterns</b><br>"
-                        + "String pattern provides a way to match string values against patterns. This is often useful for validation or categorization of values in semi- or unstructured columns.");
+        final HelpIcon helpIcon = new HelpIcon("<b>String patterns</b><br>String pattern provides a way to match "
+                + "string values against patterns. This is often useful for validation or categorization of "
+                + "values in semi- or unstructured columns.");
 
-        final DCPanel panel = DCPanel.flow(simpleStringPatternButton, regexStringPatternButton,
-                regexSwapStringPatternButton, Box.createHorizontalStrut(100), helpIcon);
+        final DCPanel panel =
+                DCPanel.flow(simpleStringPatternButton, regexStringPatternButton, regexSwapStringPatternButton,
+                        Box.createHorizontalStrut(100), helpIcon);
         panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
         return panel;
     }
@@ -167,8 +169,7 @@ public class StringPatternListPanel extends DCPanel implements ReferenceDataChan
             final StringPattern stringPattern = _catalog.getStringPattern(name);
 
             final DCLabel stringPatternLabel =
-                    DCLabel.dark("<html><b>" + name + "</b><br/>" + getDescription(stringPattern)
-                            + "</html>");
+                    DCLabel.dark("<html><b>" + name + "</b><br/>" + getDescription(stringPattern) + "</html>");
             stringPatternLabel.setIcon(icon);
             stringPatternLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
 
@@ -177,14 +178,15 @@ public class StringPatternListPanel extends DCPanel implements ReferenceDataChan
 
             if (stringPattern instanceof RegexStringPattern) {
                 editButton.addActionListener(e -> {
-                    final RegexStringPatternDialog dialog = new RegexStringPatternDialog((RegexStringPattern) stringPattern,
-                            _catalog, _windowContext);
+                    final RegexStringPatternDialog dialog =
+                            new RegexStringPatternDialog((RegexStringPattern) stringPattern, _catalog, _windowContext);
                     dialog.setVisible(true);
                 });
             } else if (stringPattern instanceof SimpleStringPattern) {
                 editButton.addActionListener(e -> {
-                    final SimpleStringPatternDialog dialog = new SimpleStringPatternDialog(
-                            (SimpleStringPattern) stringPattern, _catalog, _windowContext);
+                    final SimpleStringPatternDialog dialog =
+                            new SimpleStringPatternDialog((SimpleStringPattern) stringPattern, _catalog,
+                                    _windowContext);
                     dialog.setVisible(true);
                 });
             } else {
@@ -219,12 +221,12 @@ public class StringPatternListPanel extends DCPanel implements ReferenceDataChan
 
     @Override
     public void onAdd(final StringPattern stringPattern) {
-        SwingUtilities.invokeLater(() -> updateComponents());
+        SwingUtilities.invokeLater(this::updateComponents);
     }
 
     @Override
     public void onRemove(final StringPattern stringPattern) {
-        SwingUtilities.invokeLater(() -> updateComponents());
+        SwingUtilities.invokeLater(this::updateComponents);
     }
 
     @Override
@@ -235,6 +237,6 @@ public class StringPatternListPanel extends DCPanel implements ReferenceDataChan
 
     @Override
     public void onChange(final StringPattern oldPattern, final StringPattern newPattern) {
-        SwingUtilities.invokeLater(() -> updateComponents());
+        SwingUtilities.invokeLater(this::updateComponents);
     }
 }

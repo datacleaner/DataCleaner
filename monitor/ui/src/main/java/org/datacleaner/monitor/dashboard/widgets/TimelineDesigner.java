@@ -78,6 +78,7 @@ public class TimelineDesigner {
 
     interface Binder extends UiBinder<Widget, TimelineDesigner> {
     }
+
     /**
      * The width of the full panel, minus the width of the group selection
      * panel, minus 10 px margin
@@ -164,8 +165,9 @@ public class TimelineDesigner {
 
         GWT.log("Setting point radius: " + pointsSeriesOptions.getRadius() + " (for " + pointCount + " points)");
 
-        plotOptions.setGridOptions(GridOptions.create().setShow(true).setBorderWidth(0).setBorderColor("#221f1f")
-                .setHoverable(true).setMouseActiveRadius(2).setClickable(true));
+        plotOptions.setGridOptions(
+                GridOptions.create().setShow(true).setBorderWidth(0).setBorderColor("#221f1f").setHoverable(true)
+                        .setMouseActiveRadius(2).setClickable(true));
 
         final TimeSeriesAxisOptions xAxisOptions = TimeSeriesAxisOptions.create();
 
@@ -323,8 +325,8 @@ public class TimelineDesigner {
                     item = _activePlotItem;
                 }
 
-                final DrillToProfilingResultSelectHandler handler = new DrillToProfilingResultSelectHandler(item,
-                        _timelineDefinition, _timelineData);
+                final DrillToProfilingResultSelectHandler handler =
+                        new DrillToProfilingResultSelectHandler(item, _timelineDefinition, _timelineData);
                 handler.onSelect();
             }
         }, false);
@@ -365,8 +367,9 @@ public class TimelineDesigner {
     private void addLegendItem(final LegendPanel legendPanel, final List<MetricIdentifier> metrics, final int index,
             final String color) {
         final Legend legend = new Legend(metrics.get(index).getDisplayName(), color);
-        legendPanel.addLegend(legend, new LegendClickHandler(metrics.get(index).getDisplayName(), metrics.get(index),
-                _timelinePanel, legend, _isDashboardEditor));
+        legendPanel.addLegend(legend,
+                new LegendClickHandler(metrics.get(index).getDisplayName(), metrics.get(index), _timelinePanel, legend,
+                        _isDashboardEditor));
     }
 
 }

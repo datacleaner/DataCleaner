@@ -44,8 +44,8 @@ final class DatastoreSynonymCatalogReferenceDataPageDatastore extends DatastoreP
             throws DCUserInputException {
         final String name = getString(formParameters, PROPERTY_NAME);
         final String datastore = getString(formParameters, PROPERTY_DATASTORE);
-        ReferenceDataHelper.checkUniqueSynonymCatalog(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog());
+        ReferenceDataHelper.checkUniqueSynonymCatalog(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
 
         _session.setName(name);
         _session.setDatastore(datastore);

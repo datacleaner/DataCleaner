@@ -54,8 +54,8 @@ public class PreviewUtils {
 
                 final FilterComponentBuilder<?, ?> maxRowFilter =
                         jobBuilder.getFilterComponentBuilderByName(filterName).orElseGet(() -> {
-                            final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter = jobBuilder
-                                    .addFilter(MaxRowsFilter.class);
+                            final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter =
+                                    jobBuilder.addFilter(MaxRowsFilter.class);
                             filter.setName(filterName);
                             filter.getComponentInstance().setMaxRows(maxRows);
                             filter.getComponentInstance().setApplyOrdering(false);
@@ -67,19 +67,18 @@ public class PreviewUtils {
                 componentBuilders.stream().filter(cb -> cb != maxRowFilter).forEach(componentBuilder -> {
                     final InputColumn<?>[] input = componentBuilder.getInput();
                     if (input.length > 0) {
-                        if (componentBuilder.getDescriptor().isMultiStreamComponent() || sourceColumnFinder
-                                .findOriginatingTable(input[0]) == table) {
-                            final ComponentRequirement existingRequirement = componentBuilder
-                                    .getComponentRequirement();
+                        if (componentBuilder.getDescriptor().isMultiStreamComponent()
+                                || sourceColumnFinder.findOriginatingTable(input[0]) == table) {
+                            final ComponentRequirement existingRequirement = componentBuilder.getComponentRequirement();
                             if (existingRequirement != null) {
                                 if (componentBuilder.getDescriptor().isMultiStreamComponent()) {
-                                    componentBuilder.setComponentRequirement(new CompoundComponentRequirement(
-                                            existingRequirement, maxRowFilter.getFilterOutcome(
-                                            MaxRowsFilter.Category.VALID)));
+                                    componentBuilder.setComponentRequirement(
+                                            new CompoundComponentRequirement(existingRequirement,
+                                                    maxRowFilter.getFilterOutcome(MaxRowsFilter.Category.VALID)));
                                 }
                             } else {
-                                componentBuilder.setComponentRequirement(new SimpleComponentRequirement(maxRowFilter
-                                        .getFilterOutcome(MaxRowsFilter.Category.VALID)));
+                                componentBuilder.setComponentRequirement(new SimpleComponentRequirement(
+                                        maxRowFilter.getFilterOutcome(MaxRowsFilter.Category.VALID)));
                             }
                         }
                     }
@@ -108,8 +107,8 @@ public class PreviewUtils {
                 final List<OutputDataStream> streams = componentBuilder.getOutputDataStreams();
                 for (final OutputDataStream stream : streams) {
                     if (componentBuilder.isOutputDataStreamConsumed(stream)) {
-                        final AnalysisJobBuilder childJobBuilder = componentBuilder.getOutputDataStreamJobBuilder(
-                                stream);
+                        final AnalysisJobBuilder childJobBuilder =
+                                componentBuilder.getOutputDataStreamJobBuilder(stream);
                         if (relevantAnalysisJobBuilders.contains(childJobBuilder)) {
                             importantComponent = true;
                         } else {
@@ -155,8 +154,8 @@ public class PreviewUtils {
 
     public static AnalysisJobBuilder findAnalysisJobBuilder(final AnalysisJobBuilder analysisJobBuilder,
             final String jobBuilderIdentifier) {
-        if (jobBuilderIdentifier.equals(analysisJobBuilder.getAnalysisJobMetadata().getProperties().get(
-                METADATA_PROPERTY_MARKER))) {
+        if (jobBuilderIdentifier
+                .equals(analysisJobBuilder.getAnalysisJobMetadata().getProperties().get(METADATA_PROPERTY_MARKER))) {
             return analysisJobBuilder;
         }
 
@@ -172,7 +171,6 @@ public class PreviewUtils {
     }
 
     public static boolean hasFilterPresent(final SourceColumnFinder scf, final ComponentBuilder acb) {
-        return scf.findAllSourceJobs(acb).stream().filter(
-                o -> o instanceof HasFilterOutcomes).findAny().isPresent();
+        return scf.findAllSourceJobs(acb).stream().filter(o -> o instanceof HasFilterOutcomes).findAny().isPresent();
     }
 }

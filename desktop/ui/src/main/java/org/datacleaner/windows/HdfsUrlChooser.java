@@ -98,8 +98,8 @@ public class HdfsUrlChooser extends JComponent {
 
         private static final long serialVersionUID = 1L;
 
-        public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected,
-                final boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index,
+                final boolean isSelected, final boolean cellHasFocus) {
 
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -133,12 +133,12 @@ public class HdfsUrlChooser extends JComponent {
         Icon _icon = DIRECTORY_ICON;
         int _depth = 0;
 
-        public void paintIcon(final Component c, final Graphics g, final int x, final int y) {
+        public void paintIcon(final Component c, final Graphics graphics, final int x, final int y) {
 
             if (c.getComponentOrientation().isLeftToRight()) {
-                _icon.paintIcon(c, g, x + _depth * SPACE, y);
+                _icon.paintIcon(c, graphics, x + _depth * SPACE, y);
             } else {
-                _icon.paintIcon(c, g, x, y);
+                _icon.paintIcon(c, graphics, x, y);
             }
         }
 
@@ -157,8 +157,8 @@ public class HdfsUrlChooser extends JComponent {
 
         IndentIcon ii = new IndentIcon();
 
-        public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index, final boolean isSelected,
-                final boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index,
+                final boolean isSelected, final boolean cellHasFocus) {
 
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -216,18 +216,18 @@ public class HdfsUrlChooser extends JComponent {
             directories.clear();
             directories.add(getRoot());
 
-            Path p = directory;
+            Path path = directory;
             final List<Path> paths = new ArrayList<>(10);
             do {
-                paths.add(p);
-            } while ((p = p.getParent()) != null);
+                paths.add(path);
+            } while ((path = path.getParent()) != null);
 
             final int pathCount = paths.size();
 
             for (int i = 0; i < pathCount; i++) {
-                p = paths.get(i);
-                if (directories.contains(p)) {
-                    final int topIndex = directories.indexOf(p);
+                path = paths.get(i);
+                if (directories.contains(path)) {
+                    final int topIndex = directories.indexOf(path);
                     for (int j = i - 1; j >= 0; j--) {
                         directories.add(topIndex + i - j, paths.get(j));
                     }
@@ -255,12 +255,12 @@ public class HdfsUrlChooser extends JComponent {
             }
         }
 
-        public int getDepth(final int i) {
-            if (depths == null || i < 0 || i > depths.length) {
+        public int getDepth(final int index) {
+            if (depths == null || index < 0 || index > depths.length) {
                 return 0;
             }
 
-            return depths[i];
+            return depths[index];
         }
 
         @Override
@@ -448,8 +448,7 @@ public class HdfsUrlChooser extends JComponent {
     }
 
     public static URI showDialog(final Component parent, final ServerInformationCatalog serverInformationCatalog,
-            final String selectedServer,
-            final URI currentUri, final OpenType openType) throws HeadlessException {
+            final String selectedServer, final URI currentUri, final OpenType openType) throws HeadlessException {
 
         final HdfsUrlChooser chooser = new HdfsUrlChooser(currentUri, openType);
         if (chooser._dialog != null) {
@@ -514,8 +513,8 @@ public class HdfsUrlChooser extends JComponent {
     /**
      * This scans Hadoop environment variables for a directory with configuration files
      *
-     * @return True if a configuration was yielded.
      * @param serverInformationCatalog
+     * @return True if a configuration was yielded.
      */
     private boolean scanHadoopConfigFiles(final ServerInformationCatalog serverInformationCatalog,
             final String selectedServer) {
@@ -524,8 +523,8 @@ public class HdfsUrlChooser extends JComponent {
         if (selectedServer != null) {
             clusterInformation = (HadoopClusterInformation) serverInformationCatalog.getServer(selectedServer);
         } else {
-            clusterInformation = (HadoopClusterInformation) serverInformationCatalog.getServer(
-                    HadoopResource.DEFAULT_CLUSTERREFERENCE);
+            clusterInformation = (HadoopClusterInformation) serverInformationCatalog
+                    .getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
         }
 
         if (clusterInformation == null) {
@@ -566,12 +565,12 @@ public class HdfsUrlChooser extends JComponent {
     }
 
     private Path getRoot() {
-        Path p = getCurrentDirectory();
-        while (!p.isRoot()) {
-            p = p.getParent();
+        Path path = getCurrentDirectory();
+        while (!path.isRoot()) {
+            path = path.getParent();
         }
 
-        return p;
+        return path;
     }
 
     private void rescanServer() {
@@ -611,8 +610,8 @@ public class HdfsUrlChooser extends JComponent {
         servers.add(new EnvironmentBasedHadoopClusterInformation("default", "hadoop conf dir"));
         servers.add(new DirectoryBasedHadoopClusterInformation("directory", "directopry set up",
                 "C:\\Users\\claudiap\\git\\vagrant-vms\\bigdatavm\\hadoop_conf"));
-        servers.add(new DirectConnectionHadoopClusterInformation("namenode", "directconnection", new URI(
-                "hdfs://192.168.0.255:9000/")));
+        servers.add(new DirectConnectionHadoopClusterInformation("namenode", "directconnection",
+                new URI("hdfs://192.168.0.255:9000/")));
         final ServerInformationCatalog serverInformationCatalog = new ServerInformationCatalogImpl(servers);
 
         final JFrame frame = new JFrame("test");

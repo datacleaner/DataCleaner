@@ -49,8 +49,8 @@ public class DashboardEntryPoint implements EntryPoint {
         timelinesSplitPanel.setStyleName("TimelinesSplitPanel");
         {
             final SimplePanel targetPanel = new SimplePanel();
-            final DashboardGroupSelectionPanel selectionPanel = new DashboardGroupSelectionPanel(clientConfig, service,
-                    targetPanel);
+            final DashboardGroupSelectionPanel selectionPanel =
+                    new DashboardGroupSelectionPanel(clientConfig, service, targetPanel);
 
             timelinesSplitPanel.add(selectionPanel);
             timelinesSplitPanel.add(targetPanel);

@@ -79,8 +79,7 @@ public interface DashboardService extends RemoteService {
      * @return a boolean indicating if the remove operation went well.
      */
     @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
-    Boolean removeDashboardGroup(TenantIdentifier tenant, DashboardGroup dashboardGroup)
-            throws DCSecurityException;
+    Boolean removeDashboardGroup(TenantIdentifier tenant, DashboardGroup dashboardGroup) throws DCSecurityException;
 
     /**
      * Gets the saved timeline identifiers of a tenant
@@ -91,8 +90,7 @@ public interface DashboardService extends RemoteService {
      * @return
      */
     @RolesAllowed(SecurityRoles.VIEWER)
-    List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, DashboardGroup group)
-            throws DCSecurityException;
+    List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, DashboardGroup group) throws DCSecurityException;
 
     /**
      * Gets the definition (incl. metric references) of a timeline
@@ -139,8 +137,7 @@ public interface DashboardService extends RemoteService {
      * @return
      */
     @RolesAllowed(SecurityRoles.VIEWER)
-    TimelineData getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline)
-            throws DCSecurityException;
+    TimelineData getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline) throws DCSecurityException;
 
     /**
      * Deletes a timeline from the repository

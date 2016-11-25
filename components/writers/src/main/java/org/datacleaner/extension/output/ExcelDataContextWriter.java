@@ -24,14 +24,11 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.create.CreateTable;
 import org.apache.metamodel.excel.ExcelDataContext;
 import org.apache.metamodel.insert.RowInsertionBuilder;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.Action;
 import org.datacleaner.util.WriteBuffer;
 import org.datacleaner.util.sort.SortMergeWriter;
 
@@ -52,25 +49,16 @@ class ExcelDataContextWriter implements Closeable {
     public ExcelDataContextWriter(final File file, final String sheetName) {
         _dataContext = new ExcelDataContext(file);
         _sheetName = sheetName;
-        _buffer = new WriteBuffer(2000, new Action<Iterable<Object[]>>() {
-
-            @Override
-            public void run(final Iterable<Object[]> records) throws Exception {
-                _dataContext.executeUpdate(new UpdateScript() {
-                    @Override
-                    public void run(final UpdateCallback callback) {
-                        final Table table = callback.getDataContext().getDefaultSchema().getTableByName(_sheetName);
-                        for (final Object[] objects : records) {
-                            final RowInsertionBuilder insert = callback.insertInto(table);
-                            for (int i = 0; i < objects.length; i++) {
-                                insert.value(i, objects[i]);
-                            }
-                            insert.execute();
-                        }
-                    }
-                });
+        _buffer = new WriteBuffer(2000, records -> _dataContext.executeUpdate(callback -> {
+            final Table table = callback.getDataContext().getDefaultSchema().getTableByName(_sheetName);
+            for (final Object[] objects : records) {
+                final RowInsertionBuilder insert = callback.insertInto(table);
+                for (int i = 0; i < objects.length; i++) {
+                    insert.value(i, objects[i]);
+                }
+                insert.execute();
             }
-        });
+        }));
     }
 
     @Override

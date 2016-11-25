@@ -36,7 +36,8 @@ import org.datacleaner.components.categories.TextCategory;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 
 @Named("Remove substring")
-@Description("Subtracts one or more substrings from a base text, i.e. [\"Hello world\",\"World\"] would yield \"Hello\".")
+@Description(
+        "Subtracts one or more substrings from a base text, i.e. [\"Hello world\",\"World\"] would yield \"Hello\".")
 @Categorized(TextCategory.class)
 public class RemoveSubstringTransformer implements Transformer {
 
@@ -84,7 +85,8 @@ public class RemoveSubstringTransformer implements Transformer {
             return subtractedString;
         }
 
-        final String substring = (caseSensitive ? ConvertToStringTransformer.transformValue(element)
+        final String substring = (caseSensitive
+                ? ConvertToStringTransformer.transformValue(element)
                 : ConvertToStringTransformer.transformValue(element).toLowerCase());
         String resultingString = subtractedString;
 

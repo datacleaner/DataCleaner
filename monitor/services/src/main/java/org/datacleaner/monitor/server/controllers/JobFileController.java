@@ -63,7 +63,8 @@ public class JobFileController {
     TenantContextFactory _contextFactory;
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadAnalysisJobHtml(@PathVariable("tenant") final String tenant,
             @PathVariable("job") final String jobName, @RequestParam("file") final MultipartFile file) {
         final Map<String, String> outcome = uploadAnalysisJobJson(tenant, jobName, file);
@@ -73,7 +74,8 @@ public class JobFileController {
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public Map<String, String> uploadAnalysisJobJson(@PathVariable("tenant") final String tenant,
             @PathVariable("job") String jobName, @RequestParam("file") final MultipartFile file) {
@@ -84,15 +86,12 @@ public class JobFileController {
 
         jobName = jobName.replaceAll("\\+", " ");
 
-        final Action<OutputStream> writeCallback = new Action<OutputStream>() {
-            @Override
-            public void run(final OutputStream out) throws Exception {
-                final InputStream in = file.getInputStream();
-                try {
-                    FileHelper.copy(in, out);
-                } finally {
-                    FileHelper.safeClose(in);
-                }
+        final Action<OutputStream> writeCallback = out -> {
+            final InputStream in = file.getInputStream();
+            try {
+                FileHelper.copy(in, out);
+            } finally {
+                FileHelper.safeClose(in);
             }
         };
 

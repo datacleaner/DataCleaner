@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 public class RegexStringPatternTest extends TestCase {
 
     public void testEquals() throws Exception {
-        RegexStringPattern rsp1 = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", true);
+        final RegexStringPattern rsp1 = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", true);
         RegexStringPattern rsp2 = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.com", true);
 
         assertFalse(rsp1.equals(rsp2));
@@ -34,7 +34,7 @@ public class RegexStringPatternTest extends TestCase {
     }
 
     public void testMatchesEntireString() throws Exception {
-        RegexStringPattern rsp = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", true);
+        final RegexStringPattern rsp = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", true);
         assertEquals("Danish email", rsp.getName());
 
         try (StringPatternConnection rspConnection = rsp.openConnection(null)) {
@@ -51,7 +51,7 @@ public class RegexStringPatternTest extends TestCase {
     }
 
     public void testMatchesNotEntireString() throws Exception {
-        RegexStringPattern rsp = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", false);
+        final RegexStringPattern rsp = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", false);
         assertEquals("Danish email", rsp.getName());
 
         try (StringPatternConnection rspConnection = rsp.openConnection(null)) {

@@ -36,7 +36,6 @@ import java.util.TreeSet;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.datacleaner.panels.DCBannerPanel;
@@ -283,12 +282,12 @@ public final class CloseableTabbedPane extends JTabbedPane {
         repaint();
     }
 
-    public boolean isCloseable(final int i) {
-        return !isUncloseable(i);
+    public boolean isCloseable(final int index) {
+        return !isUncloseable(index);
     }
 
-    public boolean isUncloseable(final int i) {
-        return _unclosables.contains(i);
+    public boolean isUncloseable(final int index) {
+        return _unclosables.contains(index);
     }
 
     public Rectangle getTabBounds(final int tabIndex) {
@@ -296,17 +295,14 @@ public final class CloseableTabbedPane extends JTabbedPane {
     }
 
     public void bindTabTitleToBanner(final DCBannerPanel bannerPanel) {
-        final ChangeListener changeListener = new ChangeListener() {
-            @Override
-            public void stateChanged(final ChangeEvent e) {
-                final int selectedIndex = getSelectedIndex();
-                if (selectedIndex == -1) {
-                    return;
-                }
-                final String title = getTitleAt(selectedIndex);
-                bannerPanel.setTitle2(title);
-                bannerPanel.updateUI();
+        final ChangeListener changeListener = e -> {
+            final int selectedIndex = getSelectedIndex();
+            if (selectedIndex == -1) {
+                return;
             }
+            final String title = getTitleAt(selectedIndex);
+            bannerPanel.setTitle2(title);
+            bannerPanel.updateUI();
         };
         addChangeListener(changeListener);
 

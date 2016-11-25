@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.SalesforceDatastore;
 
@@ -73,11 +72,6 @@ public class DemoConfiguration implements InitialConfiguration {
     }
 
     public List<String> getAllJobFilePaths() {
-        return CollectionUtils.filter(ALL_FILES, new Predicate<String>() {
-            @Override
-            public Boolean eval(final String path) {
-                return path.startsWith("jobs/") && path.endsWith(".analysis.xml");
-            }
-        });
+        return CollectionUtils.filter(ALL_FILES, path -> path.startsWith("jobs/") && path.endsWith(".analysis.xml"));
     }
 }

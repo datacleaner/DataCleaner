@@ -99,10 +99,9 @@ public class RESTClientImpl implements RESTClient {
     public String getResponse(final HttpMethod httpMethod, final String url, final String requestBody)
             throws RESTClientException {
         final WebResource webResource = client.resource(url);
-        final WebResource.Builder builder = webResource
-                .accept(MediaType.APPLICATION_JSON)
-                .type(MediaType.APPLICATION_JSON)
-                .header(HEADER_DC_VERSION, dataCleanerVersion);
+        final WebResource.Builder builder =
+                webResource.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON)
+                        .header(HEADER_DC_VERSION, dataCleanerVersion);
         ClientResponse response = null;
 
         if (requestBody != null && !requestBody.isEmpty()) {
@@ -139,8 +138,6 @@ public class RESTClientImpl implements RESTClient {
 
         }
 
-        final String output = response.getEntity(String.class);
-
-        return output;
+        return response.getEntity(String.class);
     }
 }

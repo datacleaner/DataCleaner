@@ -51,7 +51,8 @@ public class DatastoreHelper {
         return getOptionsHtml(names);
     }
 
-    public static String getTableOptions(final TenantContext tenantContext, final String datastoreName, final String schemaName) {
+    public static String getTableOptions(final TenantContext tenantContext, final String datastoreName,
+            final String schemaName) {
         final List<String> names = new ArrayList<>();
 
         for (final Table table : getSchema(tenantContext, datastoreName, schemaName).getTables()) {
@@ -61,8 +62,8 @@ public class DatastoreHelper {
         return getOptionsHtml(names);
     }
 
-    public static String getColumnOptions(final TenantContext tenantContext, final String datastoreName, final String schemaName,
-            final String tableName) {
+    public static String getColumnOptions(final TenantContext tenantContext, final String datastoreName,
+            final String schemaName, final String tableName) {
         final List<String> names = new ArrayList<>();
 
         for (final Column column : getTable(tenantContext, datastoreName, schemaName, tableName).getColumns()) {

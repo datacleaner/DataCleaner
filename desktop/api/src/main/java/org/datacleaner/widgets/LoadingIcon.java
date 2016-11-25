@@ -54,8 +54,8 @@ public class LoadingIcon extends JLabel {
         ICON.setImageObserver(null);
     }
 
-    public LoadingIcon setPreferredSize(final int w, final int h) {
-        setPreferredSize(new Dimension(w, h));
+    public LoadingIcon setPreferredSize(final int width, final int height) {
+        setPreferredSize(new Dimension(width, height));
         return this;
     }
 }

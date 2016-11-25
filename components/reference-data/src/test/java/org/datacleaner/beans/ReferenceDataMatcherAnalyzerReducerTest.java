@@ -62,10 +62,10 @@ public class ReferenceDataMatcherAnalyzerReducerTest {
         // assert first job
 
         {
-            final Crosstab<Number> partialResult1columnStatisticsCrosstab = partialResult1
-                    .getColumnStatisticsCrosstab();
-            final String[] resultLines1 = new CrosstabTextRenderer().render(partialResult1columnStatisticsCrosstab)
-                    .split("\n");
+            final Crosstab<Number> partialResult1columnStatisticsCrosstab =
+                    partialResult1.getColumnStatisticsCrosstab();
+            final String[] resultLines1 =
+                    new CrosstabTextRenderer().render(partialResult1columnStatisticsCrosstab).split("\n");
             assertEquals(5, resultLines1.length);
             assertEquals("            JOBTITLE in Job Titles ", resultLines1[0]);
             assertEquals("Row count                       12 ", resultLines1[1]);
@@ -81,10 +81,10 @@ public class ReferenceDataMatcherAnalyzerReducerTest {
         // assert second job
 
         {
-            final Crosstab<Number> partialResult2columnStatisticsCrosstab = partialResult2
-                    .getColumnStatisticsCrosstab();
-            final String[] resultLines2 = new CrosstabTextRenderer().render(partialResult2columnStatisticsCrosstab)
-                    .split("\n");
+            final Crosstab<Number> partialResult2columnStatisticsCrosstab =
+                    partialResult2.getColumnStatisticsCrosstab();
+            final String[] resultLines2 =
+                    new CrosstabTextRenderer().render(partialResult2columnStatisticsCrosstab).split("\n");
             assertEquals(5, resultLines2.length);
             assertEquals("            JOBTITLE in Job Titles ", resultLines2[0]);
             assertEquals("Row count                       11 ", resultLines2[1]);
@@ -99,10 +99,10 @@ public class ReferenceDataMatcherAnalyzerReducerTest {
         // assert third job
 
         {
-            final Crosstab<Number> partialResult3columnStatisticsCrosstab = partialResult3
-                    .getColumnStatisticsCrosstab();
-            final String[] resultLines3 = new CrosstabTextRenderer().render(partialResult3columnStatisticsCrosstab)
-                    .split("\n");
+            final Crosstab<Number> partialResult3columnStatisticsCrosstab =
+                    partialResult3.getColumnStatisticsCrosstab();
+            final String[] resultLines3 =
+                    new CrosstabTextRenderer().render(partialResult3columnStatisticsCrosstab).split("\n");
             assertEquals(5, resultLines3.length);
             assertEquals("            JOBTITLE in Job Titles ", resultLines3[0]);
             assertEquals("Row count                        0 ", resultLines3[1]);
@@ -117,8 +117,8 @@ public class ReferenceDataMatcherAnalyzerReducerTest {
         // assert full job result
 
         final Crosstab<Number> fullResultcolumnStatisticsCrosstab = fullResult.getColumnStatisticsCrosstab();
-        final String[] resultLinesFull = new CrosstabTextRenderer().render(fullResultcolumnStatisticsCrosstab).split(
-                "\n");
+        final String[] resultLinesFull =
+                new CrosstabTextRenderer().render(fullResultcolumnStatisticsCrosstab).split("\n");
         assertEquals(5, resultLinesFull.length);
         assertEquals("            JOBTITLE in Job Titles ", resultLinesFull[0]);
         assertEquals("Row count                       23 ", resultLinesFull[1]);
@@ -174,16 +174,16 @@ public class ReferenceDataMatcherAnalyzerReducerTest {
 
     private AnalysisJobBuilder getAnalysisJobBuilder() {
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl()
-                .withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
+        final DataCleanerConfigurationImpl configuration =
+                new DataCleanerConfigurationImpl().withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
         jobBuilder.setDatastore(datastore);
         jobBuilder.addSourceColumns("employees.JOBTITLE");
         return jobBuilder;
     }
 
-    private BooleanAnalyzerResult getPartialResult(AnalysisJobBuilder jobBuilder, Integer firstRow, Integer maxRows)
-            throws Throwable {
+    private BooleanAnalyzerResult getPartialResult(final AnalysisJobBuilder jobBuilder, final Integer firstRow,
+            final Integer maxRows) throws Throwable {
         final InputColumn<?> jobTitleColumn = jobBuilder.getSourceColumnByName("JOBTITLE");
         final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilder.addFilter(MaxRowsFilter.class);
         maxRowsFilter.addInputColumn(jobTitleColumn);
@@ -194,28 +194,25 @@ public class ReferenceDataMatcherAnalyzerReducerTest {
             maxRowsFilter.setConfiguredProperty("Max rows", maxRows);
         }
 
-        final AnalyzerComponentBuilder<ReferenceDataMatcherAnalyzer> referenceDataMatcherAnalyzer = jobBuilder
-                .addAnalyzer(ReferenceDataMatcherAnalyzer.class);
+        final AnalyzerComponentBuilder<ReferenceDataMatcherAnalyzer> referenceDataMatcherAnalyzer =
+                jobBuilder.addAnalyzer(ReferenceDataMatcherAnalyzer.class);
         referenceDataMatcherAnalyzer.setRequirement(maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID));
         final ReferenceDataMatcherAnalyzer referenceDataMatcher = referenceDataMatcherAnalyzer.getComponentInstance();
-        final InputColumn<?>[] inputColumns = { jobTitleColumn };
-        referenceDataMatcher.columns = inputColumns;
+        referenceDataMatcher.columns = new InputColumn<?>[] { jobTitleColumn };
         final File file = new File("src/test/resources/synonym_titles_test.txt");
         assertTrue(file.exists());
         final TextFileSynonymCatalog jobTitlesCatalog = new TextFileSynonymCatalog("Job Titles", file, true, "UTF-8");
-        final SynonymCatalog[] synonymCatalogs = { jobTitlesCatalog };
-        referenceDataMatcher.synonymCatalogs = synonymCatalogs;
+        referenceDataMatcher.synonymCatalogs = new SynonymCatalog[] { jobTitlesCatalog };
         final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
         jobBuilder.close();
-        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(jobBuilder.getConfiguration())
-                .run(analysisJob);
+        final AnalysisResultFuture resultFuture =
+                new AnalysisRunnerImpl(jobBuilder.getConfiguration()).run(analysisJob);
         resultFuture.await();
         if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
-        final BooleanAnalyzerResult result = resultFuture.getResults(BooleanAnalyzerResult.class).get(0);
 
-        return result;
+        return resultFuture.getResults(BooleanAnalyzerResult.class).get(0);
     }
 
 }

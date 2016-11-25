@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.api.Metric;
 import org.datacleaner.util.LabelUtils;
 
@@ -42,14 +41,9 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
 
             @Override
             public Collection<String> getParameterSuggestions() {
-                final Collection<ValueFrequency> valueCounts = AbstractValueCountingAnalyzerResult.this
-                        .getValueCounts();
-                final List<String> result = CollectionUtils.map(valueCounts, new Func<ValueFrequency, String>() {
-                    @Override
-                    public String eval(final ValueFrequency vc) {
-                        return vc.getName();
-                    }
-                });
+                final Collection<ValueFrequency> valueCounts =
+                        AbstractValueCountingAnalyzerResult.this.getValueCounts();
+                final List<String> result = CollectionUtils.map(valueCounts, ValueFrequency::getName);
                 result.remove(null);
                 result.remove(LabelUtils.NULL_LABEL);
                 result.remove(LabelUtils.UNEXPECTED_LABEL);
@@ -117,7 +111,8 @@ public abstract class AbstractValueCountingAnalyzerResult implements ValueCounti
      * @param maxEntries
      * @return
      */
-    protected void appendToString(final StringBuilder sb, final ValueCountingAnalyzerResult groupResult, int maxEntries) {
+    protected void appendToString(final StringBuilder sb, final ValueCountingAnalyzerResult groupResult,
+            int maxEntries) {
         if (maxEntries != 0) {
             final Collection<ValueFrequency> valueCounts = groupResult.getValueCounts();
             for (final ValueFrequency valueCount : valueCounts) {

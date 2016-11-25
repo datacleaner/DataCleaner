@@ -49,7 +49,8 @@ public class TenantInjectionManager implements InjectionManager {
     private final TenantContext _tenantContext;
     private final Repository _repository;
 
-    public TenantInjectionManager(final InjectionManager delegate, final Repository repository, final TenantContext tenantContext) {
+    public TenantInjectionManager(final InjectionManager delegate, final Repository repository,
+            final TenantContext tenantContext) {
         _delegate = delegate;
         _repository = repository;
         _tenantContext = tenantContext;

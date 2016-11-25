@@ -97,13 +97,10 @@ public class CsvDatastoreWizardSession extends AbstractDatastoreWizardSession {
                             final File file = ((FileResource) resource).getFile();
                             final String filepath = file.getAbsolutePath();
                             if (!FilenameUtils.isExtension(file.getName(), extensions)) {
-                                // only .csv and .tsv files are allowed
-                                // to
-                                // be referenced on the server, for
-                                // security
-                                // reasons.
-                                throw new DCUserInputException(
-                                        "For security reasons, only existing .csv, .tsv or .txt files can be referenced on the server");
+                                // only .csv and .tsv files are allowed to be referenced on the server,
+                                // for security reasons.
+                                throw new DCUserInputException("For security reasons, only existing .csv, .tsv or .txt "
+                                        + "files can be referenced on the server");
                             }
                             if (file.exists() && !file.canRead()) {
                                 throw new DCUserInputException("Cannot read from file:\n" + filepath);
@@ -148,7 +145,6 @@ public class CsvDatastoreWizardSession extends AbstractDatastoreWizardSession {
         final CsvDatastore datastore = new CsvDatastore(_name, _resource, _configuration);
         datastore.setDescription(_description);
         final DomConfigurationWriter writer = new DomConfigurationWriter();
-        final Element element = writer.externalize(datastore);
-        return element;
+        return writer.externalize(datastore);
     }
 }

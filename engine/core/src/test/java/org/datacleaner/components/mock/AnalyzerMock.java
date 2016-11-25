@@ -25,8 +25,6 @@ import java.util.Map;
 
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
@@ -35,6 +33,8 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.Provided;
 import org.datacleaner.result.NumberResult;
+
+import junit.framework.TestCase;
 
 @Named("Row-processing mock")
 public class AnalyzerMock implements Analyzer<NumberResult> {
@@ -112,7 +112,7 @@ public class AnalyzerMock implements Analyzer<NumberResult> {
     }
 
     @Override
-    public void run(InputRow row, int count) {
+    public void run(final InputRow row, final int count) {
         TestCase.assertNotNull(row);
         TestCase.assertNotNull(count);
         this.runCount++;

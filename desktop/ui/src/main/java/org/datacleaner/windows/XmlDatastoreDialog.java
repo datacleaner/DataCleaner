@@ -36,8 +36,8 @@ public final class XmlDatastoreDialog extends AbstractFileBasedDatastoreDialog<X
 
     @Inject
     protected XmlDatastoreDialog(@Nullable final XmlDatastore originalDatastore,
-            final MutableDatastoreCatalog mutableDatastoreCatalog,
-            final WindowContext windowContext, final UserPreferences userPreferences) {
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
     }
 

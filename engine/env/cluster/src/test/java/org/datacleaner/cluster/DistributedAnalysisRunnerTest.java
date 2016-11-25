@@ -21,8 +21,6 @@ package org.datacleaner.cluster;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.cluster.virtual.VirtualClusterManager;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -32,6 +30,8 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.test.TestHelper;
+
+import junit.framework.TestCase;
 
 public class DistributedAnalysisRunnerTest extends TestCase {
 
@@ -69,13 +69,13 @@ public class DistributedAnalysisRunnerTest extends TestCase {
         final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
 
         // run with only a single node to verify a baseline scenario
-        ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(
-                configuration, 1));
+        ClusterTestHelper
+                .runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(configuration, 1));
 
-        ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(
-                configuration, 10));
-        ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(
-                configuration, 3));
+        ClusterTestHelper
+                .runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(configuration, 10));
+        ClusterTestHelper
+                .runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(configuration, 3));
     }
 
     public void testRunBasicAnalyzers() throws Throwable {
@@ -91,8 +91,8 @@ public class DistributedAnalysisRunnerTest extends TestCase {
     public void testErrorHandlingSingleSlave() throws Exception {
         final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), false);
 
-        List<Throwable> errors = ClusterTestHelper.runErrorHandlingJob(configuration, new VirtualClusterManager(
-                configuration, 1));
+        final List<Throwable> errors =
+                ClusterTestHelper.runErrorHandlingJob(configuration, new VirtualClusterManager(configuration, 1));
 
         assertEquals("I am just a dummy transformer!", errors.get(0).getMessage());
         assertEquals("A previous exception has occurred", errors.get(1).getMessage());
@@ -102,13 +102,13 @@ public class DistributedAnalysisRunnerTest extends TestCase {
     public void testErrorHandlingFourSlaves() throws Exception {
         final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
 
-        List<Throwable> errors = ClusterTestHelper.runErrorHandlingJob(configuration, new VirtualClusterManager(
-                configuration, 4));
+        final List<Throwable> errors =
+                ClusterTestHelper.runErrorHandlingJob(configuration, new VirtualClusterManager(configuration, 4));
 
-        for (Throwable throwable : errors) {
-            String message = throwable.getMessage();
-            if (!"I am just a dummy transformer!".equals(message)
-                    && !"A previous exception has occurred".equals(message)) {
+        for (final Throwable throwable : errors) {
+            final String message = throwable.getMessage();
+            if (!"I am just a dummy transformer!".equals(message) && !"A previous exception has occurred"
+                    .equals(message)) {
                 fail("Unexpected exception: " + message + " (" + throwable.getClass().getName() + ")");
             }
         }
@@ -127,19 +127,19 @@ public class DistributedAnalysisRunnerTest extends TestCase {
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNAME");
 
         // The String Analyzer is (currently) not distributable
-        final AnalyzerComponentBuilder<MockAnalyzerWithoutReducer> analyzer = jobBuilder
-                .addAnalyzer(MockAnalyzerWithoutReducer.class);
+        final AnalyzerComponentBuilder<MockAnalyzerWithoutReducer> analyzer =
+                jobBuilder.addAnalyzer(MockAnalyzerWithoutReducer.class);
         analyzer.addInputColumns(jobBuilder.getSourceColumns());
 
-        AnalysisJob job = jobBuilder.toAnalysisJob();
+        final AnalysisJob job = jobBuilder.toAnalysisJob();
 
-        DistributedAnalysisRunner runner = new DistributedAnalysisRunner(configuration, new VirtualClusterManager(
-                configuration, 2));
+        final DistributedAnalysisRunner runner =
+                new DistributedAnalysisRunner(configuration, new VirtualClusterManager(configuration, 2));
 
         try {
             runner.run(job);
             fail("Exception expected");
-        } catch (UnsupportedOperationException e) {
+        } catch (final UnsupportedOperationException e) {
             assertEquals("Job is not distributable!", e.getMessage());
         } finally {
             jobBuilder.close();
@@ -155,27 +155,26 @@ public class DistributedAnalysisRunnerTest extends TestCase {
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNAME");
 
         // The String Analyzer is (currently) not distributable
-        final AnalyzerComponentBuilder<MockAnalyzerWithBadReducer> analyzer = jobBuilder
-                .addAnalyzer(MockAnalyzerWithBadReducer.class);
+        final AnalyzerComponentBuilder<MockAnalyzerWithBadReducer> analyzer =
+                jobBuilder.addAnalyzer(MockAnalyzerWithBadReducer.class);
         analyzer.addInputColumns(jobBuilder.getSourceColumns());
 
-        AnalysisJob job = jobBuilder.toAnalysisJob();
+        final AnalysisJob job = jobBuilder.toAnalysisJob();
         jobBuilder.close();
 
-        DistributedAnalysisRunner runner = new DistributedAnalysisRunner(configuration, new VirtualClusterManager(
-                configuration, 2));
+        final DistributedAnalysisRunner runner =
+                new DistributedAnalysisRunner(configuration, new VirtualClusterManager(configuration, 2));
 
-        AnalysisResultFuture result = runner.run(job);
+        final AnalysisResultFuture result = runner.run(job);
 
         if (result.isSuccessful()) {
             fail("Expected result to be errornous. Got result: " + result.getResults());
         }
 
-        List<Throwable> errors = result.getErrors();
+        final List<Throwable> errors = result.getErrors();
 
-        assertEquals(
-                "Failed to reduce results for ImmutableAnalyzerJob[name=null,analyzer=Analyzer with bad reducer]: Damn, I failed during reduction phase",
-                errors.get(0).getMessage());
+        assertEquals("Failed to reduce results for ImmutableAnalyzerJob[name=null,analyzer=Analyzer with bad reducer]: "
+                + "Damn, I failed during reduction phase", errors.get(0).getMessage());
 
         assertEquals(1, errors.size());
     }

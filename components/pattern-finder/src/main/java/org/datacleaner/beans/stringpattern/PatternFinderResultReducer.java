@@ -22,7 +22,6 @@ package org.datacleaner.beans.stringpattern;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,17 +99,19 @@ public class PatternFinderResultReducer implements AnalyzerResultReducer<Pattern
         final ReversePatternFinder patternFinder = new ReversePatternFinder(tokenizerConfiguration);
 
         for (final Crosstab<?> crosstab : crosstabs) {
-            final CrosstabDimension patternDimension = crosstab
-                    .getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
+            final CrosstabDimension patternDimension =
+                    crosstab.getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
             final List<String> patterns = patternDimension.getCategories();
 
             for (final String pattern : patterns) {
-                final CrosstabNavigator<?> navigator = crosstab.where(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN,
-                        pattern);
-                final Number matchCount = (Number) navigator.where(PatternFinderAnalyzer.DIMENSION_NAME_MEASURES,
-                        PatternFinderAnalyzer.MEASURE_MATCH_COUNT).get();
-                final String sample = (String) navigator.where(PatternFinderAnalyzer.DIMENSION_NAME_MEASURES,
-                        PatternFinderAnalyzer.MEASURE_SAMPLE).get();
+                final CrosstabNavigator<?> navigator =
+                        crosstab.where(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN, pattern);
+                final Number matchCount = (Number) navigator
+                        .where(PatternFinderAnalyzer.DIMENSION_NAME_MEASURES, PatternFinderAnalyzer.MEASURE_MATCH_COUNT)
+                        .get();
+                final String sample = (String) navigator
+                        .where(PatternFinderAnalyzer.DIMENSION_NAME_MEASURES, PatternFinderAnalyzer.MEASURE_SAMPLE)
+                        .get();
 
                 patternFinder.run(sample, pattern, matchCount.intValue());
             }
@@ -119,17 +120,13 @@ public class PatternFinderResultReducer implements AnalyzerResultReducer<Pattern
         final Set<Entry<TokenPattern, AtomicInteger>> entries = patternFinder.getPatternCounts().entrySet();
         // sort the entries so that the ones with the highest amount of
         // matches are at the top
-        final Set<Entry<TokenPattern, AtomicInteger>> sortedEntrySet = new TreeSet<>(
-                new Comparator<Entry<TokenPattern, AtomicInteger>>() {
-                    public int compare(final Entry<TokenPattern, AtomicInteger> o1,
-                            final Entry<TokenPattern, AtomicInteger> o2) {
-                        int result = o2.getValue().get() - o1.getValue().get();
-                        if (result == 0) {
-                            result = o1.getKey().toSymbolicString().compareTo(o2.getKey().toSymbolicString());
-                        }
-                        return result;
-                    }
-                });
+        final Set<Entry<TokenPattern, AtomicInteger>> sortedEntrySet = new TreeSet<>((o1, o2) -> {
+            int result = o2.getValue().get() - o1.getValue().get();
+            if (result == 0) {
+                result = o1.getKey().toSymbolicString().compareTo(o2.getKey().toSymbolicString());
+            }
+            return result;
+        });
         sortedEntrySet.addAll(entries);
 
         final Crosstab<Serializable> crosstab = PatternFinderAnalyzer.createCrosstab();

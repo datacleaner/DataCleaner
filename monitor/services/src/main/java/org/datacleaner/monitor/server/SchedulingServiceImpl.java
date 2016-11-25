@@ -21,7 +21,6 @@ package org.datacleaner.monitor.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,7 +45,6 @@ import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.ExecutionLogger;
@@ -131,16 +129,16 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         @Override
         public void onFileCreate(final File file) {
-            logger.info("file {} created in hot folder, triggering execution of job {}.", file.getName(), job
-                    .getName());
+            logger.info("file {} created in hot folder, triggering execution of job {}.", file.getName(),
+                    job.getName());
 
             triggerJobExecution();
         }
 
         @Override
         public void onFileChange(final File file) {
-            logger.info("file {} changed in hot folder, triggering execution of job {}.", file.getName(), job
-                    .getName());
+            logger.info("file {} changed in hot folder, triggering execution of job {}.", file.getName(),
+                    job.getName());
 
             triggerJobExecution();
         }
@@ -164,6 +162,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             triggerExecution(tenant, job, propertiesMap, TriggerType.HOTFOLDER);
         }
     }
+
     public static final String EXTENSION_SCHEDULE_XML = ".schedule.xml";
     private static final Logger logger = LoggerFactory.getLogger(SchedulingServiceImpl.class);
     private final Repository _repository;
@@ -191,8 +190,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
      * @param schedulingServiceConfiguration
      */
     @Autowired
-    public SchedulingServiceImpl(final Repository repository, final TenantContextFactory tenantContextFactory, final Scheduler scheduler,
-            final SchedulingServiceConfiguration schedulingServiceConfiguration) {
+    public SchedulingServiceImpl(final Repository repository, final TenantContextFactory tenantContextFactory,
+            final Scheduler scheduler, final SchedulingServiceConfiguration schedulingServiceConfiguration) {
         if (repository == null) {
             throw new IllegalArgumentException("Repository cannot be null");
         }
@@ -219,8 +218,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     public static Scheduler createDefaultScheduler() {
         try {
             final StdSchedulerFactory factory = new StdSchedulerFactory();
-            final Scheduler scheduler = factory.getScheduler();
-            return scheduler;
+            return factory.getScheduler();
         } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
@@ -238,19 +236,21 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             dateInfoExtractor.setTime(oneTimeSchedule);
             final int month = dateInfoExtractor.get(Calendar.MONTH) + 1;
             final StringBuilder cronStringBuilder = new StringBuilder();
-            final String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND)).append(
-                    " ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ").append(dateInfoExtractor.get(
-                    Calendar.HOUR_OF_DAY)).append(" ").append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH))
-                    .append(" ").append(month).append(" ? ").append(dateInfoExtractor.get(Calendar.YEAR)).toString();
+            final String cronBuilder =
+                    cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND)).append(" ")
+                            .append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ")
+                            .append(dateInfoExtractor.get(Calendar.HOUR_OF_DAY)).append(" ")
+                            .append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH)).append(" ").append(month)
+                            .append(" ? ").append(dateInfoExtractor.get(Calendar.YEAR)).toString();
             cronExpression = new CronExpression(cronBuilder);
         } catch (final ParseException e) {
-            throw new IllegalStateException("Failed to parse cron expression for one time schedule: "
-                    + scheduleExpression, e);
+            throw new IllegalStateException(
+                    "Failed to parse cron expression for one time schedule: " + scheduleExpression, e);
         }
 
         if (logger.isInfoEnabled()) {
-            logger.info("Cron expression summary ({}): {}", scheduleExpression, cronExpression.getExpressionSummary()
-                    .replaceAll("\n", ", "));
+            logger.info("Cron expression summary ({}): {}", scheduleExpression,
+                    cronExpression.getExpressionSummary().replaceAll("\n", ", "));
         }
 
         return cronExpression;
@@ -284,8 +284,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
 
         if (logger.isInfoEnabled()) {
-            logger.info("Cron expression summary ({}): {}", scheduleExpression, cronExpression.getExpressionSummary()
-                    .replaceAll("\n", ", "));
+            logger.info("Cron expression summary ({}): {}", scheduleExpression,
+                    cronExpression.getExpressionSummary().replaceAll("\n", ", "));
         }
 
         return cronExpression;
@@ -344,8 +344,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         for (final RepositoryFolder tenantFolder : tenantFolders) {
             final String tenantId = tenantFolder.getName();
             try {
-                final Set<TriggerKey> triggerKeys = _scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(
-                        tenantId));
+                final Set<TriggerKey> triggerKeys =
+                        _scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(tenantId));
                 if (triggerKeys == null || triggerKeys.isEmpty()) {
                     logger.info("No triggers initialized for tenant: {}", tenantId);
                 } else {
@@ -432,11 +432,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         if (scheduleFile == null) {
             schedule = new ScheduleDefinition(tenant, jobIdentifier, groupName);
         } else {
-            schedule = scheduleFile.readFile(new Func<InputStream, ScheduleDefinition>() {
-                @Override
-                public ScheduleDefinition eval(final InputStream inputStream) {
-                    return reader.read(inputStream, jobIdentifier, tenant, groupName);
-                }
+            schedule = scheduleFile.readFile(inputStream -> {
+                return reader.read(inputStream, jobIdentifier, tenant, groupName);
             });
         }
 
@@ -450,9 +447,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             final JobIdentifier jobIdentifier) {
         final JobContext jobContext = getJobContext(tenant, jobIdentifier);
         final String groupName = jobContext.getGroupName();
-        final ScheduleDefinition schedule = new ScheduleDefinition(tenant, jobIdentifier, groupName);
 
-        return schedule;
+        return new ScheduleDefinition(tenant, jobIdentifier, groupName);
     }
 
     private JobContext getJobContext(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
@@ -481,12 +477,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final String filename = jobName + EXTENSION_SCHEDULE_XML;
         final RepositoryFile file = jobsFolder.getFile(filename);
 
-        final Action<OutputStream> writeAction = new Action<OutputStream>() {
-            @Override
-            public void run(final OutputStream out) throws Exception {
-                final JaxbScheduleWriter writer = new JaxbScheduleWriter();
-                writer.write(scheduleDefinition, out);
-            }
+        final Action<OutputStream> writeAction = out -> {
+            final JaxbScheduleWriter writer = new JaxbScheduleWriter();
+            writer.write(scheduleDefinition, out);
         };
 
         if (file == null) {
@@ -513,8 +506,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             if (triggerType == TriggerType.MANUAL) {
                 logger.info("Not scheduling job: {} (manual trigger type)", jobName);
             } else {
-                final JobDetail jobDetail = JobBuilder.newJob(ExecuteJob.class).withIdentity(jobName, tenantId)
-                        .storeDurably().build();
+                final JobDetail jobDetail =
+                        JobBuilder.newJob(ExecuteJob.class).withIdentity(jobName, tenantId).storeDurably().build();
 
                 final JobDataMap jobDataMap = jobDetail.getJobDataMap();
                 jobDataMap.put(ExecuteJob.DETAIL_SCHEDULE_DEFINITION, schedule);
@@ -524,8 +517,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     final String scheduleExpression = schedule.getCronExpression();
                     final CronExpression cronExpression = toCronExpression(scheduleExpression);
                     final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
-                    final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId).forJob(
-                            jobDetail).withSchedule(cronSchedule).startNow().build();
+                    final CronTrigger trigger =
+                            TriggerBuilder.newTrigger().withIdentity(jobName, tenantId).forJob(jobDetail)
+                                    .withSchedule(cronSchedule).startNow().build();
 
                     logger.info("Adding trigger to scheduler: {} | {}", jobName, cronExpression);
                     _scheduler.scheduleJob(jobDetail, trigger);
@@ -536,8 +530,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     final Date nextValidTimeAfter = cronExpression.getNextValidTimeAfter(new Date());
                     if (nextValidTimeAfter != null) {
                         final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
-                        final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId).forJob(
-                                jobDetail).withSchedule(cronSchedule).startNow().build();
+                        final CronTrigger trigger =
+                                TriggerBuilder.newTrigger().withIdentity(jobName, tenantId).forJob(jobDetail)
+                                        .withSchedule(cronSchedule).startNow().build();
                         logger.info("Adding trigger to scheduler for One time schedule: {} | {}", jobName,
                                 cronExpression);
                         _scheduler.scheduleJob(jobDetail, trigger);
@@ -578,8 +573,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         if (file.isDirectory()) {
             return new FileAlterationObserver(file);
         } else {
-            return new FileAlterationObserver(FilenameUtils.getFullPathNoEndSeparator(fileName), FileFilterUtils
-                    .nameFileFilter(FilenameUtils.getName(fileName)));
+            return new FileAlterationObserver(FilenameUtils.getFullPathNoEndSeparator(fileName),
+                    FileFilterUtils.nameFileFilter(FilenameUtils.getName(fileName)));
         }
     }
 
@@ -602,12 +597,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public boolean cancelExecution(final TenantIdentifier tenant, final ExecutionLog execution) throws DCSecurityException {
+    public boolean cancelExecution(final TenantIdentifier tenant, final ExecutionLog execution)
+            throws DCSecurityException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(execution.getJob());
         final JobEngine<?> jobEngine = job.getJobEngine();
-        final boolean result = jobEngine.cancelJob(tenantContext, execution);
-        return result;
+        return jobEngine.cancelJob(tenantContext, execution);
     }
 
     @Override
@@ -642,8 +637,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 }
             }
             if (addJob) {
-                final JobDetail jobDetail = JobBuilder.newJob(ExecuteJob.class).withIdentity(jobNameToBeTriggered,
-                        tenant.getId()).storeDurably().build();
+                final JobDetail jobDetail =
+                        JobBuilder.newJob(ExecuteJob.class).withIdentity(jobNameToBeTriggered, tenant.getId())
+                                .storeDurably().build();
                 _scheduler.addJob(jobDetail, true);
             }
 
@@ -675,8 +671,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
 
-        final RepositoryFile latestFile = resultFolder.getLatestFile(job.getName(),
-                FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension());
+        final RepositoryFile latestFile =
+                resultFolder.getLatestFile(job.getName(), FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension());
 
         if (latestFile == null) {
             // no execution available
@@ -691,30 +687,20 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throws IllegalStateException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
-        final List<RepositoryFile> files = resultFolder.getFiles(job.getName(), FileFilters.ANALYSIS_EXECUTION_LOG_XML
-                .getExtension());
+        final List<RepositoryFile> files =
+                resultFolder.getFiles(job.getName(), FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension());
 
-        final List<ExecutionIdentifier> executionIdentifiers = CollectionUtils.map(files,
-                new Func<RepositoryFile, ExecutionIdentifier>() {
-                    @Override
-                    public ExecutionIdentifier eval(final RepositoryFile file) {
-                        try {
-                            final ExecutionIdentifier result = file.readFile(
-                                    new Func<InputStream, ExecutionIdentifier>() {
-                                        @Override
-                                        public ExecutionIdentifier eval(final InputStream in) {
-                                            return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
-                                        }
-                                    });
-                            return result;
-                        } catch (final Exception e) {
-                            logger.warn("The file " + file.getQualifiedPath()
-                                    + " could not be read or parsed correctly " + e);
-                            return new ExecutionIdentifier("Execution failed for " + FilenameUtils.getBaseName(file
-                                    .getQualifiedPath()));
-                        }
-                    }
+        final List<ExecutionIdentifier> executionIdentifiers = CollectionUtils.map(files, file -> {
+            try {
+                return file.readFile(in -> {
+                    return SaxExecutionIdentifierReader.read(in, file.getQualifiedPath());
                 });
+            } catch (final Exception e) {
+                logger.warn("The file " + file.getQualifiedPath() + " could not be read or parsed correctly " + e);
+                return new ExecutionIdentifier(
+                        "Execution failed for " + FilenameUtils.getBaseName(file.getQualifiedPath()));
+            }
+        });
 
         Collections.sort(executionIdentifiers);
 
@@ -735,8 +721,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
 
-        final RepositoryFile file = resultFolder.getFile(resultId + FileFilters.ANALYSIS_EXECUTION_LOG_XML
-                .getExtension());
+        final RepositoryFile file =
+                resultFolder.getFile(resultId + FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension());
         if (file == null) {
             logger.warn("No execution with result id: " + resultId);
             return null;
@@ -751,23 +737,20 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             final TenantIdentifier tenant, final int retries) {
         final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
 
-        final ExecutionLog result = file.readFile(new Func<InputStream, ExecutionLog>() {
-            @Override
-            public ExecutionLog eval(final InputStream in) {
-                try {
-                    return reader.read(in, jobIdentifier, tenant);
-                } catch (final JaxbException e) {
-                    if (retries > 0) {
-                        logger.debug(
-                                "Failed to read execution log in first pass. This could be because it is also being written at this time. Retrying.");
-                        return null;
-                    } else {
-                        logger.info("Failed to read execution log, returning unknown status.");
-                        final ExecutionLog executionLog = new ExecutionLog(null, null);
-                        executionLog.setExecutionStatus(ExecutionStatus.UNKNOWN);
-                        executionLog.setJob(jobIdentifier);
-                        return executionLog;
-                    }
+        final ExecutionLog result = file.readFile(in -> {
+            try {
+                return reader.read(in, jobIdentifier, tenant);
+            } catch (final JaxbException e) {
+                if (retries > 0) {
+                    logger.debug("Failed to read execution log in first pass. This could be because it "
+                            + "is also being written at this time. Retrying.");
+                    return null;
+                } else {
+                    logger.info("Failed to read execution log, returning unknown status.");
+                    final ExecutionLog executionLog = new ExecutionLog(null, null);
+                    executionLog.setExecutionStatus(ExecutionStatus.UNKNOWN);
+                    executionLog.setJob(jobIdentifier);
+                    return executionLog;
                 }
             }
         });
@@ -792,15 +775,15 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             final SchedulerContext schedulerContext = _scheduler.getContext();
             schedulerContext.put(AbstractQuartzJob.APPLICATION_CONTEXT, _applicationContext);
         } catch (final SchedulerException e) {
-            logger.error(
-                    "Failed to get scheduler context and set application context on it. Expect issues when invoking jobs, or set property '"
-                            + AbstractQuartzJob.APPLICATION_CONTEXT + " on the scheduler's context manually'.", e);
+            logger.error("Failed to get scheduler context and set application context on it. Expect issues when "
+                    + "invoking jobs, or set property '" + AbstractQuartzJob.APPLICATION_CONTEXT
+                    + " on the scheduler's context manually'.", e);
         }
     }
 
     @Override
-    public List<JobIdentifier> getDependentJobCandidates(final TenantIdentifier tenant, final ScheduleDefinition schedule)
-            throws DCSecurityException {
+    public List<JobIdentifier> getDependentJobCandidates(final TenantIdentifier tenant,
+            final ScheduleDefinition schedule) throws DCSecurityException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final List<JobIdentifier> jobs = tenantContext.getJobs();
         final List<JobIdentifier> result = new ArrayList<>();

@@ -66,8 +66,7 @@ public class AnnotatedRowsHtmlRenderer implements Renderer<AnnotatedRowsResult, 
             descriptionText = "Records";
         }
         final int rowCount = result.getAnnotatedRowCount();
-        htmlFragment.addBodyElement(new SectionHeaderBodyElement(descriptionText + " (" + rowCount
-                + ")"));
+        htmlFragment.addBodyElement(new SectionHeaderBodyElement(descriptionText + " (" + rowCount + ")"));
 
         if (rowCount == 0) {
             htmlFragment.addBodyElement("<p>No records to display.</p>");

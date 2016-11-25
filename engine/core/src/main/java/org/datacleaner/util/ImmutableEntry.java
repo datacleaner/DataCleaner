@@ -76,8 +76,7 @@ public final class ImmutableEntry<K, V> implements Entry<K, V>, Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        @SuppressWarnings("rawtypes") final
-        ImmutableEntry other = (ImmutableEntry) obj;
+        @SuppressWarnings("rawtypes") final ImmutableEntry other = (ImmutableEntry) obj;
         if (_key == null) {
             if (other._key != null) {
                 return false;

@@ -76,23 +76,22 @@ public class HadoopClustersOptionsPanel extends DCPanel implements ServerInforma
 
         directConnectionMenuItem.addActionListener(e -> {
             final DirectConnectionHadoopClusterDialog hadoopConnectionToNamenodeDialog =
-                    new DirectConnectionHadoopClusterDialog(
-                            _windowContext, null, _serverInformationCatalog);
+                    new DirectConnectionHadoopClusterDialog(_windowContext, null, _serverInformationCatalog);
             hadoopConnectionToNamenodeDialog.setVisible(true);
         });
 
         directoryMenuItem.addActionListener(e -> {
             final DirectoryBasedHadoopClusterDialog hadoopDirectoryConfigurationDialog =
-                    new DirectoryBasedHadoopClusterDialog(
-                            _windowContext, null, _serverInformationCatalog);
+                    new DirectoryBasedHadoopClusterDialog(_windowContext, null, _serverInformationCatalog);
             hadoopDirectoryConfigurationDialog.setVisible(true);
         });
 
         updateClusterList();
         setLayout(new BorderLayout());
-        add(new DescriptionLabel(
-                        "For DataCleaner to connect to Apache Hadoop information is required about the cluster to connect and execute jobs on it. By default you can use the HADOOP_CONF_DIR and YARN_CONF_DIR environment variables, or you can register a custom cluster using the options available in this dialog."),
-                BorderLayout.NORTH);
+        add(new DescriptionLabel( "For DataCleaner to connect to Apache Hadoop information is required about the "
+                + "cluster to connect and execute jobs on it. By default you can use the HADOOP_CONF_DIR and "
+                + "YARN_CONF_DIR environment variables, or you can register a custom cluster using the options "
+                + "available in this dialog."), BorderLayout.NORTH);
         add(WidgetUtils.scrolleable(_connectionsConfigurationsPanel), BorderLayout.CENTER);
     }
 
@@ -118,8 +117,8 @@ public class HadoopClustersOptionsPanel extends DCPanel implements ServerInforma
         final ServerInformation defaultServer =
                 _serverInformationCatalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
         if (defaultServer != null) {
-            final HadoopClusterPanel clusterPanel = new HadoopClusterPanel(_windowContext, defaultServer,
-                    _serverInformationCatalog);
+            final HadoopClusterPanel clusterPanel =
+                    new HadoopClusterPanel(_windowContext, defaultServer, _serverInformationCatalog);
             WidgetUtils.addToGridBag(clusterPanel, panel, 0, row + 1, 1.0, 0.0);
             row++;
         }
@@ -129,8 +128,8 @@ public class HadoopClustersOptionsPanel extends DCPanel implements ServerInforma
             final String serverName = serverNames[i];
             if (serverName != HadoopResource.DEFAULT_CLUSTERREFERENCE) {
                 final ServerInformation server = _serverInformationCatalog.getServer(serverName);
-                final HadoopClusterPanel clusterPanel = new HadoopClusterPanel(_windowContext, server,
-                        _serverInformationCatalog);
+                final HadoopClusterPanel clusterPanel =
+                        new HadoopClusterPanel(_windowContext, server, _serverInformationCatalog);
                 WidgetUtils.addToGridBag(clusterPanel, panel, 0, row + 1, 1.0, 0.0);
                 row++;
             }

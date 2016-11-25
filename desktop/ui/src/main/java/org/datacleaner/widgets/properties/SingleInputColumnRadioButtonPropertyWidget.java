@@ -20,8 +20,6 @@
 package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -54,8 +52,8 @@ import org.jdesktop.swingx.VerticalLayout;
  * {@link PropertyWidget} for single {@link InputColumn}s. Displays the
  * selection as a series of radiobuttons. Used for required input columns.
  */
-public class SingleInputColumnRadioButtonPropertyWidget extends AbstractPropertyWidget<InputColumn<?>> implements
-        SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
+public class SingleInputColumnRadioButtonPropertyWidget extends AbstractPropertyWidget<InputColumn<?>>
+        implements SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
 
     private final JXRadioGroup<JRadioButton> _radioGroup = new JXRadioGroup<>();
     private final Class<?> _dataType;
@@ -143,8 +141,9 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
         }
         if (_inputColumns.isEmpty()) {
             _radioButtons = new JRadioButton[1];
-            final JRadioButton radioButton = new JRadioButton("<html><font color=\"gray\">- no <i>"
-                    + LabelUtils.getDataTypeLabel(_dataType) + "</i> columns available -</font></html>");
+            final JRadioButton radioButton = new JRadioButton(
+                    "<html><font color=\"gray\">- no <i>" + LabelUtils.getDataTypeLabel(_dataType)
+                            + "</i> columns available -</font></html>");
             radioButton.setOpaque(false);
             radioButton.setEnabled(false);
             _radioButtons[0] = radioButton;
@@ -179,12 +178,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
         for (int i = 0; i < _radioButtons.length; i++) {
             final JRadioButton rb = _radioButtons[i];
 
-            rb.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(final ItemEvent e) {
-                    fireValueChanged();
-                }
-            });
+            rb.addItemListener(e -> fireValueChanged());
         }
 
         _radioGroup.setValues(_radioButtons);
@@ -221,8 +215,8 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
     private void handleRemovedColumn(final InputColumn<?> column) {
         if (isColumnApplicable(column)) {
             final ComponentBuilder componentBuilder = getComponentBuilder();
-            final InputColumn<?> currentValue = (InputColumn<?>) componentBuilder
-                    .getConfiguredProperty(_propertyDescriptor);
+            final InputColumn<?> currentValue =
+                    (InputColumn<?>) componentBuilder.getConfiguredProperty(_propertyDescriptor);
             if (currentValue != null) {
                 if (currentValue.equals(column)) {
                     componentBuilder.setConfiguredProperty(_propertyDescriptor, null);

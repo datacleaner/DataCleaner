@@ -1,22 +1,16 @@
 package org.datacleaner.visualization
 
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Test
-import org.datacleaner.data.MockInputColumn
-import org.datacleaner.api.InputColumn
-import org.datacleaner.data.MockInputRow
+import java.io.File
+
+import org.apache.metamodel.util.FileHelper
+import org.datacleaner.configuration.{DataCleanerConfigurationImpl, DataCleanerEnvironmentImpl}
+import org.datacleaner.descriptors.{Descriptors, SimpleDescriptorProvider}
 import org.datacleaner.job.builder.AnalysisJobBuilder
 import org.datacleaner.job.runner.AnalysisRunnerImpl
 import org.datacleaner.result.html.HtmlAnalysisResultWriter
 import org.datacleaner.test.TestHelper
-import org.datacleaner.descriptors.SimpleDescriptorProvider
-import org.datacleaner.descriptors.Descriptors
-import org.datacleaner.configuration.DataCleanerConfigurationImpl
-import org.datacleaner.configuration.DataCleanerEnvironmentImpl
-import org.datacleaner.components.maxrows.MaxRowsFilter
-import org.apache.metamodel.util.FileHelper
-import org.junit.Assert
-import java.io.File
+import org.junit.Test
+import org.scalatest.junit.AssertionsForJUnit
 
 class StackedAreaAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
 

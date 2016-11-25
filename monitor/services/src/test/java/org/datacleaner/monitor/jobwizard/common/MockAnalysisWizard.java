@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 public class MockAnalysisWizard extends DataCleanerJobWizard {
 
     @Override
-    public MockWizardSession startInternal(JobWizardContext context) {
+    public MockWizardSession startInternal(final JobWizardContext context) {
         return new MockWizardSession(context);
     }
 
@@ -42,7 +42,7 @@ public class MockAnalysisWizard extends DataCleanerJobWizard {
     }
 
     @Override
-    public boolean isApplicableTo(JobWizardContext datastore) {
+    public boolean isApplicableTo(final JobWizardContext datastore) {
         return true;
     }
 

@@ -30,8 +30,8 @@ import org.datacleaner.components.categories.AnalyzeSuperCategory;
  * @param <C>
  *            the component type
  */
-public class SimpleHasAnalyzerResultComponentDescriptor<C extends HasAnalyzerResult<?>> extends
-        AbstractHasAnalyzerResultComponentDescriptor<C> {
+public class SimpleHasAnalyzerResultComponentDescriptor<C extends HasAnalyzerResult<?>>
+        extends AbstractHasAnalyzerResultComponentDescriptor<C> {
 
     private static final long serialVersionUID = 1L;
 

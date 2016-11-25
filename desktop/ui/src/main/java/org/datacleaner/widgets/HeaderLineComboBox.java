@@ -46,8 +46,8 @@ public class HeaderLineComboBox extends DCComboBox<Integer> {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Component getListCellRendererComponent(final JList<?> list, Object value, final int index, final boolean isSelected,
-                    final boolean cellHasFocus) {
+            public Component getListCellRendererComponent(final JList<?> list, Object value, final int index,
+                    final boolean isSelected, final boolean cellHasFocus) {
                 if (value instanceof Integer) {
                     final Integer i = (Integer) value;
                     if (i <= 0) {

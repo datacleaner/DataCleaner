@@ -82,8 +82,8 @@ public class SparkJobContext implements Serializable {
 
         _configurationXml = hdfsHelper.readFile(dataCleanerConfigurationPath, true);
         if (Strings.isNullOrEmpty(_configurationXml)) {
-            throw new IllegalArgumentException("Failed to read content from configuration file: "
-                    + dataCleanerConfigurationPath);
+            throw new IllegalArgumentException(
+                    "Failed to read content from configuration file: " + dataCleanerConfigurationPath);
         }
 
         _analysisJobXml = hdfsHelper.readFile(analysisJobXmlPath, true);
@@ -97,8 +97,8 @@ public class SparkJobContext implements Serializable {
         } else {
             // this is a pretty ugly way to go back to the bytes to read the
             // properties - but works and is quick
-            _customProperties = new InputStreamToPropertiesMapFunc().eval(new ByteArrayInputStream(propertiesString
-                    .getBytes()));
+            _customProperties =
+                    new InputStreamToPropertiesMapFunc().eval(new ByteArrayInputStream(propertiesString.getBytes()));
         }
         validateCustomProperties();
     }
@@ -121,8 +121,7 @@ public class SparkJobContext implements Serializable {
         final String filename = uri.getPath();
         final int lastIndexOfSlash = filename.lastIndexOf("/");
         final int lastIndexOfFileExtension = filename.lastIndexOf(".analysis.xml");
-        final String jobName = filename.substring(lastIndexOfSlash + 1, lastIndexOfFileExtension);
-        return jobName;
+        return filename.substring(lastIndexOfSlash + 1, lastIndexOfFileExtension);
     }
 
     private void validateCustomProperties() {
@@ -134,8 +133,8 @@ public class SparkJobContext implements Serializable {
 
     public DataCleanerConfiguration getConfiguration() {
         if (_dataCleanerConfiguration == null) {
-            final JaxbConfigurationReader confReader = new JaxbConfigurationReader(
-                    new SparkConfigurationReaderInterceptor(_customProperties));
+            final JaxbConfigurationReader confReader =
+                    new JaxbConfigurationReader(new SparkConfigurationReaderInterceptor(_customProperties));
             _dataCleanerConfiguration = confReader.read(createInputStream(_configurationXml));
         }
         return _dataCleanerConfiguration;
@@ -183,8 +182,8 @@ public class SparkJobContext implements Serializable {
             final AtomicInteger currentComponentIndex) {
         final Collection<ComponentBuilder> componentBuilders = analysisJobBuilder.getComponentBuilders();
         for (final ComponentBuilder componentBuilder : componentBuilders) {
-            componentBuilder.setMetadataProperty(METADATA_PROPERTY_COMPONENT_INDEX, Integer.toString(
-                    currentComponentIndex.getAndIncrement()));
+            componentBuilder.setMetadataProperty(METADATA_PROPERTY_COMPONENT_INDEX,
+                    Integer.toString(currentComponentIndex.getAndIncrement()));
         }
 
         final List<AnalysisJobBuilder> childJobBuilders = analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders();
@@ -218,8 +217,8 @@ public class SparkJobContext implements Serializable {
     }
 
     private ComponentJob getComponentByKey(final AnalysisJob job, final String queriedKey) {
-        final List<ComponentJob> componentJobs = CollectionUtils.concat(false, job.getTransformerJobs(),
-                job.getTransformerJobs(), job.getAnalyzerJobs());
+        final List<ComponentJob> componentJobs = CollectionUtils
+                .concat(false, job.getTransformerJobs(), job.getTransformerJobs(), job.getAnalyzerJobs());
         for (final ComponentJob componentJob : componentJobs) {
             final String componentKey = getComponentKey(componentJob);
             if (queriedKey.equals(componentKey)) {

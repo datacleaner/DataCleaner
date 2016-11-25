@@ -54,7 +54,8 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
     private ResourceTypePresenter<?> _currentPresenter;
     private ServerInformationCatalog _serverInformationCatalog;
 
-    public ResourceSelector(final DataCleanerConfiguration configuration, final UserPreferences userPreferences, final boolean openMode) {
+    public ResourceSelector(final DataCleanerConfiguration configuration, final UserPreferences userPreferences,
+            final boolean openMode) {
         this(configuration, new ResourceConverter(configuration), userPreferences, openMode);
     }
 
@@ -77,12 +78,7 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         }
 
         _resourceTypeComboBox = new DCComboBox<>(schemes);
-        _resourceTypeComboBox.addListener(new DCComboBox.Listener<String>() {
-            @Override
-            public void onItemSelected(final String item) {
-                onSchemeSelected(item);
-            }
-        });
+        _resourceTypeComboBox.addListener(this::onSchemeSelected);
 
         setScheme("file");
 
@@ -141,8 +137,8 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
 
         // we need to do this ugly cast in order to call setResource(...) with a
         // generic argument
-        @SuppressWarnings("unchecked")
-        final ResourceTypePresenter<Resource> presenter = (ResourceTypePresenter<Resource>) _currentPresenter;
+        @SuppressWarnings("unchecked") final ResourceTypePresenter<Resource> presenter =
+                (ResourceTypePresenter<Resource>) _currentPresenter;
         presenter.setResource(resource);
     }
 

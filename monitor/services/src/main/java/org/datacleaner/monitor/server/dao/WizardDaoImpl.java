@@ -59,6 +59,7 @@ public class WizardDaoImpl implements WizardDao {
         WizardSession session;
         Deque<WizardPageController> pages;
     }
+
     private static final Logger logger = LoggerFactory.getLogger(WizardDaoImpl.class);
     private final Cache<String, WizardState> _wizardStateCache;
     private final ApplicationContext _applicationContext;
@@ -163,14 +164,11 @@ public class WizardDaoImpl implements WizardDao {
      */
     @Override
     public Func<String, Object> createSessionFunc() {
-        return new Func<String, Object>() {
-            @Override
-            public Object eval(final String key) {
-                final ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
-                        .currentRequestAttributes();
-                final HttpSession session = requestAttributes.getRequest().getSession(true);
-                return session.getAttribute(key);
-            }
+        return key -> {
+            final ServletRequestAttributes requestAttributes =
+                    (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+            final HttpSession session = requestAttributes.getRequest().getSession(true);
+            return session.getAttribute(key);
         };
     }
 
@@ -189,8 +187,8 @@ public class WizardDaoImpl implements WizardDao {
         return page;
     }
 
-    private WizardPage createPage(final WizardSessionIdentifier sessionIdentifier, final WizardPageController pageController,
-            final WizardSession session) {
+    private WizardPage createPage(final WizardSessionIdentifier sessionIdentifier,
+            final WizardPageController pageController, final WizardSession session) {
         final WizardPage page = new WizardPage();
         page.setSessionIdentifier(sessionIdentifier);
         page.setFormInnerHtml(pageController.getFormInnerHtml());

@@ -23,8 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
@@ -33,20 +31,21 @@ import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 
+import junit.framework.TestCase;
+
 public class WeekdayDistributionAnalyzerTest extends TestCase {
 
     public void testDescriptorIsDistributable() throws Exception {
-        AnalyzerDescriptor<WeekdayDistributionAnalyzer> desc =
+        final AnalyzerDescriptor<WeekdayDistributionAnalyzer> desc =
                 Descriptors.ofAnalyzer(WeekdayDistributionAnalyzer.class);
 
         assertTrue(desc.isDistributable());
     }
 
     public void testTypicalUsage() throws Exception {
-        WeekdayDistributionAnalyzer analyzer = new WeekdayDistributionAnalyzer();
+        final WeekdayDistributionAnalyzer analyzer = new WeekdayDistributionAnalyzer();
 
-        @SuppressWarnings("unchecked")
-        InputColumn<Date>[] dateColumns = new InputColumn[3];
+        @SuppressWarnings("unchecked") final InputColumn<Date>[] dateColumns = new InputColumn[3];
         dateColumns[0] = new MockInputColumn<>("Order date", Date.class);
         dateColumns[1] = new MockInputColumn<>("Shipment date", Date.class);
         dateColumns[2] = new MockInputColumn<>("Delivery date", Date.class);
@@ -55,15 +54,18 @@ public class WeekdayDistributionAnalyzerTest extends TestCase {
         analyzer.init();
 
         // 1x: friday, saturday, tuesday
-        analyzer.run(new MockInputRow(dateColumns, new Object[] { d(2010, 1, 1), d(2010, 1, 2), d(2010, 1, 5) }), 1);
+        analyzer.run(new MockInputRow(dateColumns,
+                new Object[] { toDate(2010, 1, 1), toDate(2010, 1, 2), toDate(2010, 1, 5) }), 1);
         // 2x: monday, tuesday, friday
-        analyzer.run(new MockInputRow(dateColumns, new Object[] { d(2010, 2, 1), d(2010, 2, 2), d(2010, 2, 5) }), 2);
+        analyzer.run(new MockInputRow(dateColumns,
+                new Object[] { toDate(2010, 2, 1), toDate(2010, 2, 2), toDate(2010, 2, 5) }), 2);
         // 1x: thursday, friday, monday
-        analyzer.run(new MockInputRow(dateColumns, new Object[] { d(2010, 4, 1), d(2010, 4, 2), d(2010, 4, 5) }), 1);
+        analyzer.run(new MockInputRow(dateColumns,
+                new Object[] { toDate(2010, 4, 1), toDate(2010, 4, 2), toDate(2010, 4, 5) }), 1);
 
-        CrosstabResult result = analyzer.getResult();
+        final CrosstabResult result = analyzer.getResult();
 
-        String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
+        final String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
         assertEquals(8, resultLines.length);
         assertEquals("             Order date Shipment date Delivery date ", resultLines[0]);
         assertEquals("Sunday                0             0             0 ", resultLines[1]);
@@ -76,12 +78,12 @@ public class WeekdayDistributionAnalyzerTest extends TestCase {
     }
 
     public void testDateGen() throws Exception {
-        Date d = d(2010, 1, 1);
+        final Date d = toDate(2010, 1, 1);
         assertEquals("2010-01-01", new SimpleDateFormat("yyyy-MM-dd").format(d));
     }
 
-    private Date d(int year, int month, int date) {
-        Calendar c = Calendar.getInstance();
+    private Date toDate(final int year, final int month, final int date) {
+        final Calendar c = Calendar.getInstance();
         c.setTimeInMillis(0L);
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month - 1);

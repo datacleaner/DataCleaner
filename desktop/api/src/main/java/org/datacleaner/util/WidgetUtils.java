@@ -226,8 +226,9 @@ public final class WidgetUtils {
     @Deprecated
     public static final Border BORDER_WIDE_BRIGHTEST = BORDER_WIDE_DEFAULT;
 
-    public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH,
-            WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
+    public static final Border BORDER_EMPTY =
+            new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH,
+                    WidgetUtils.BORDER_WIDE_WIDTH);
     public static Border BORDER_TOP_PADDING = new EmptyBorder(10, 0, 0, 0);
 
     public static final Border BORDER_THIN = new LineBorder(BG_COLOR_LESS_BRIGHT);
@@ -236,14 +237,16 @@ public final class WidgetUtils {
     public static final Border BORDER_LIST_ITEM = new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
             new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
 
-    public static final Border BORDER_LIST_ITEM_LEFT_ONLY = new CompoundBorder(new MatteBorder(0, 3, 0, 0,
-            BG_COLOR_BLUE_MEDIUM), new EmptyBorder(0, 0, 1, 0));
+    public static final Border BORDER_LIST_ITEM_LEFT_ONLY =
+            new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM), new EmptyBorder(0, 0, 1, 0));
 
-    public static final Border BORDER_LIST_ITEM_HIGHLIGHTED = new CompoundBorder(new MatteBorder(0, 3, 0, 0,
-            BG_COLOR_BLUE_MEDIUM), new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
+    public static final Border BORDER_LIST_ITEM_HIGHLIGHTED =
+            new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
+                    new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
 
-    public static final Border BORDER_LIST_ITEM_SUBTLE = new CompoundBorder(new MatteBorder(0, 3, 0, 0,
-            BG_COLOR_BLUE_MEDIUM), new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
+    public static final Border BORDER_LIST_ITEM_SUBTLE =
+            new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
+                    new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
 
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
@@ -258,12 +261,13 @@ public final class WidgetUtils {
 
     public static final Border BORDER_BUTTON_DARK = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
 
-    public static final Border BORDER_BUTTON_DARK_WITH_LINE = new CompoundBorder(new LineBorder(BG_COLOR_LESS_DARK, 1,
-            false), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9, BORDER_WIDE_WIDTH - 1, 9));
+    public static final Border BORDER_BUTTON_DARK_WITH_LINE =
+            new CompoundBorder(new LineBorder(BG_COLOR_LESS_DARK, 1, false),
+                    new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9, BORDER_WIDE_WIDTH - 1, 9));
 
-    public static final Border BORDER_BUTTON_DEFAULT = new CompoundBorder(
-            new LineBorder(BG_COLOR_LESS_BRIGHT, 1, false), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9,
-            BORDER_WIDE_WIDTH - 1, 9));
+    public static final Border BORDER_BUTTON_DEFAULT =
+            new CompoundBorder(new LineBorder(BG_COLOR_LESS_BRIGHT, 1, false),
+                    new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9, BORDER_WIDE_WIDTH - 1, 9));
     public static final Border BORDER_BUTTON_PRIMARY = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
 
     public static final Object BORDER_MENU_ITEM = new EmptyBorder(2, 2, 2, 2);
@@ -271,8 +275,8 @@ public final class WidgetUtils {
     /**
      * A highlighter for coloring odd/even rows in a table
      */
-    public static final Highlighter LIBERELLO_HIGHLIGHTER = HighlighterFactory.createAlternateStriping(
-            colorBetween(BG_COLOR_BRIGHTEST, BG_COLOR_BRIGHT), BG_COLOR_BRIGHTEST);
+    public static final Highlighter LIBERELLO_HIGHLIGHTER = HighlighterFactory
+            .createAlternateStriping(colorBetween(BG_COLOR_BRIGHTEST, BG_COLOR_BRIGHT), BG_COLOR_BRIGHTEST);
 
     /**
      * Slightly moderated version of COLOR.FACTOR
@@ -289,9 +293,10 @@ public final class WidgetUtils {
     public static final Insets INSETS_EMPTY = new Insets(0, 0, 0, 0);
 
     /**
-     * The 'carret' character used for "more options" symbol with the
+     * The 'caret' character used for "more options" symbol with the
      * {@link #FONT_FONTAWESOME} font.
      */
+    @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
     public static final String CHAR_CARET_DOWN = "\uf0d7";
 
     private WidgetUtils() {
@@ -347,13 +352,13 @@ public final class WidgetUtils {
      * @param height
      * @param anchor
      */
-    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int width, final int height,
-            final int anchor) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy,
+            final int width, final int height, final int anchor) {
         addToGridBag(comp, panel, gridx, gridy, width, height, anchor, DEFAULT_PADDING);
     }
 
-    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int width, final int height,
-            final int anchor, final int padding) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy,
+            final int width, final int height, final int anchor, final int padding) {
         addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, 0.0, 0.0);
     }
 
@@ -369,14 +374,16 @@ public final class WidgetUtils {
      * @param anchor
      * @param padding
      */
-    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int width, final int height,
-            final int anchor, final int padding, final double weightx, final double weighty) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy,
+            final int width, final int height, final int anchor, final int padding, final double weightx,
+            final double weighty) {
         addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, weightx, weighty,
                 GridBagConstraints.HORIZONTAL);
     }
 
-    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int width, final int height,
-            final int anchor, final int padding, final double weightx, final double weighty, final int fill) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy,
+            final int width, final int height, final int anchor, final int padding, final double weightx,
+            final double weighty, final int fill) {
         LayoutManager layout = panel.getLayout();
         if (!(layout instanceof GridBagLayout)) {
             layout = new GridBagLayout();
@@ -407,13 +414,14 @@ public final class WidgetUtils {
      * @param width
      * @param height
      */
-    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int width, final int height) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy,
+            final int width, final int height) {
         addToGridBag(comp, panel, gridx, gridy, width, height, DEFAULT_ANCHOR);
     }
 
-    public static void addToGridBag(final Component comp, final JPanel panel, final int x, final int y, final int anchor, final double weightx,
-            final double weighty) {
-        addToGridBag(comp, panel, x, y, 1, 1, anchor, DEFAULT_PADDING, weightx, weighty);
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy,
+            final int anchor, final double weightx, final double weighty) {
+        addToGridBag(comp, panel, gridx, gridy, 1, 1, anchor, DEFAULT_PADDING, weightx, weighty);
     }
 
     /**
@@ -428,8 +436,8 @@ public final class WidgetUtils {
         addToGridBag(comp, panel, gridx, gridy, 1, 1);
     }
 
-    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final double weightx,
-            final double weighty) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy,
+            final double weightx, final double weighty) {
         addToGridBag(comp, panel, gridx, gridy, 1, 1, DEFAULT_ANCHOR, DEFAULT_PADDING, weightx, weighty);
     }
 
@@ -442,7 +450,8 @@ public final class WidgetUtils {
      * @param gridy
      * @param anchor
      */
-    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy, final int anchor) {
+    public static void addToGridBag(final Component comp, final JPanel panel, final int gridx, final int gridy,
+            final int anchor) {
         addToGridBag(comp, panel, gridx, gridy, 1, 1, anchor);
     }
 
@@ -472,8 +481,8 @@ public final class WidgetUtils {
         final String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
         final String finalShortMessage = shortMessage == null ? "" : shortMessage;
 
-        final ErrorInfo info = new ErrorInfo(finalShortMessage, finalDetailedMessage, null, "error",
-                presentedException, ErrorLevel.SEVERE, null);
+        final ErrorInfo info = new ErrorInfo(finalShortMessage, finalDetailedMessage, null, "error", presentedException,
+                ErrorLevel.SEVERE, null);
         final JXErrorPane errorPane = new JXErrorPane();
         errorPane.setErrorInfo(info);
 
@@ -490,17 +499,17 @@ public final class WidgetUtils {
 
     public static void showErrorMessage(final String shortMessage, final Throwable exception) {
         final StringBuilder sb = new StringBuilder();
-        Throwable e = exception;
-        while (e != null) {
+        Throwable ex = exception;
+        while (ex != null) {
             if (sb.length() != 0) {
                 sb.append("\n\n");
             }
-            String message = e.getMessage();
+            String message = ex.getMessage();
             if (StringUtils.isNullOrEmpty(message)) {
-                message = "(" + e.getClass().getName() + ")";
+                message = "(" + ex.getClass().getName() + ")";
             }
             sb.append(message);
-            e = e.getCause();
+            ex = ex.getCause();
         }
         showErrorMessage(shortMessage, sb.toString(), exception);
     }
@@ -549,9 +558,9 @@ public final class WidgetUtils {
      * @return
      */
     public static Color slightlyDarker(final Color color) {
-        return new Color(Math.max((int) (color.getRed() * COLOR_SCALE_FACTOR), 0), Math.max(
-                (int) (color.getGreen() * COLOR_SCALE_FACTOR), 0), Math.max(
-                (int) (color.getBlue() * COLOR_SCALE_FACTOR), 0));
+        return new Color(Math.max((int) (color.getRed() * COLOR_SCALE_FACTOR), 0),
+                Math.max((int) (color.getGreen() * COLOR_SCALE_FACTOR), 0),
+                Math.max((int) (color.getBlue() * COLOR_SCALE_FACTOR), 0));
     }
 
     /**
@@ -560,6 +569,7 @@ public final class WidgetUtils {
      * @param color
      * @return
      */
+    @SuppressWarnings("checkstyle:LocalVariableName")
     public static Color slightlyBrighter(final Color color) {
         int r = color.getRed();
         int g = color.getGreen();
@@ -660,8 +670,9 @@ public final class WidgetUtils {
      * @return a font suitable for displaying the text
      */
     public static Font findCompatibleFont(final String text, final Font fallbackFont) {
-        final String[] searchFonts = new String[] { Font.SANS_SERIF, Font.SERIF, "Verdana", "Arial Unicode MS",
-                "MS UI Gothic", "MS Mincho", "MS Gothic", "Osaka" };
+        final String[] searchFonts =
+                new String[] { Font.SANS_SERIF, Font.SERIF, "Verdana", "Arial Unicode MS", "MS UI Gothic", "MS Mincho",
+                        "MS Gothic", "Osaka" };
         for (final String fontName : searchFonts) {
             Font font = fonts.get(fontName);
             if (font == null) {
@@ -697,23 +708,23 @@ public final class WidgetUtils {
         }
     }
 
-    public static void setPrimaryButtonStyle(final AbstractButton b) {
-        b.setUI(PrimaryButtonUI.get());
+    public static void setPrimaryButtonStyle(final AbstractButton button) {
+        button.setUI(PrimaryButtonUI.get());
     }
 
-    public static void setDarkButtonStyle(final AbstractButton b) {
-        if (b instanceof JToggleButton) {
-            b.setUI(DarkToggleButtonUI.get());
+    public static void setDarkButtonStyle(final AbstractButton button) {
+        if (button instanceof JToggleButton) {
+            button.setUI(DarkToggleButtonUI.get());
         } else {
-            b.setUI(DarkButtonUI.get());
+            button.setUI(DarkButtonUI.get());
         }
     }
 
-    public static void setDefaultButtonStyle(final AbstractButton b) {
-        if (b instanceof JToggleButton) {
-            b.setUI(DefaultToggleButtonUI.get());
+    public static void setDefaultButtonStyle(final AbstractButton button) {
+        if (button instanceof JToggleButton) {
+            button.setUI(DefaultToggleButtonUI.get());
         } else {
-            b.setUI(DefaultButtonUI.get());
+            button.setUI(DefaultButtonUI.get());
         }
     }
 

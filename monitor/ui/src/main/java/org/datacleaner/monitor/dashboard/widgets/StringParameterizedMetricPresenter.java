@@ -77,6 +77,7 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
             return _checkBox.getValue().booleanValue();
         }
     }
+
     private final MetricIdentifier _metricIdentifier;
     private final List<MetricIdentifier> _activeMetrics;
     private final FlowPanel _panel;
@@ -84,8 +85,9 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
     private final TenantIdentifier _tenantIdentifier;
     private final JobIdentifier _jobIdentifier;
 
-    public StringParameterizedMetricPresenter(final TenantIdentifier tenantIdentifier, final JobIdentifier jobIdentifier,
-            final MetricIdentifier metricIdentifier, final List<MetricIdentifier> activeMetrics, final DashboardServiceAsync service) {
+    public StringParameterizedMetricPresenter(final TenantIdentifier tenantIdentifier,
+            final JobIdentifier jobIdentifier, final MetricIdentifier metricIdentifier,
+            final List<MetricIdentifier> activeMetrics, final DashboardServiceAsync service) {
         _tenantIdentifier = tenantIdentifier;
         _jobIdentifier = jobIdentifier;
         _metricIdentifier = metricIdentifier;

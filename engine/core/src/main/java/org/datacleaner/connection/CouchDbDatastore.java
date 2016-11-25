@@ -25,8 +25,8 @@ import org.apache.metamodel.couchdb.CouchDbDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.ektorp.http.StdHttpClient;
 
-public class CouchDbDatastore extends UsageAwareDatastore<CouchDbDataContext> implements UpdateableDatastore,
-        UsernameDatastore {
+public class CouchDbDatastore extends UsageAwareDatastore<CouchDbDataContext>
+        implements UpdateableDatastore, UsernameDatastore {
 
     public static final int DEFAULT_PORT = CouchDbDataContext.DEFAULT_PORT;
     private static final long serialVersionUID = 1L;
@@ -44,8 +44,7 @@ public class CouchDbDatastore extends UsageAwareDatastore<CouchDbDataContext> im
     private final SimpleTableDef[] _tableDefs;
 
     public CouchDbDatastore(final String name, final String hostname, final Integer port, final String username,
-            final String password,
-            final boolean sslEnabled, final SimpleTableDef[] tableDefs) {
+            final String password, final boolean sslEnabled, final SimpleTableDef[] tableDefs) {
         super(name);
         _hostname = hostname;
         _port = port;

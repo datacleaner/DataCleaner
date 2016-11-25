@@ -76,8 +76,7 @@ public final class ForeignKey {
             if (table == null) {
                 return null;
             }
-            final Column column = table.getColumnByName(getForeignColumnName());
-            return column;
+            return table.getColumnByName(getForeignColumnName());
         }
     }
 }

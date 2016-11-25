@@ -19,7 +19,6 @@
  */
 package org.datacleaner.widgets.properties;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
 
@@ -44,7 +43,8 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 
     private transient int _updating;
 
-    public MinimalPropertyWidget(final ComponentBuilder componentBuilder, final ConfiguredPropertyDescriptor propertyDescriptor) {
+    public MinimalPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         _componentBuilder = componentBuilder;
         _propertyDescriptor = propertyDescriptor;
         _updating = 0;
@@ -74,12 +74,7 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
     }
 
     protected ActionListener fireValueChangedActionListener() {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                fireValueChanged();
-            }
-        };
+        return e -> fireValueChanged();
     }
 
     protected final AnalysisJobBuilder getAnalysisJobBuilder() {

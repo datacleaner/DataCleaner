@@ -33,20 +33,20 @@ public class HttpRequestTransformerTest {
 
     @Test
     public void testGetOutputColumns() throws Exception {
-        HttpRequestTransformer t = new HttpRequestTransformer();
-        OutputColumns outputColumns = t.getOutputColumns();
+        final HttpRequestTransformer t = new HttpRequestTransformer();
+        final OutputColumns outputColumns = t.getOutputColumns();
         assertEquals("OutputColumns[Response status code, Response body]", outputColumns.toString());
     }
 
     @Test
     public void testDefaultCharset() throws Exception {
-        HttpRequestTransformer t = new HttpRequestTransformer();
+        final HttpRequestTransformer t = new HttpRequestTransformer();
         assertEquals("ISO-8859-1", t.charset);
     }
 
     @Test
     public void testApplyVariablesToString() throws Exception {
-        HttpRequestTransformer t = new HttpRequestTransformer();
+        final HttpRequestTransformer t = new HttpRequestTransformer();
         t.setHttpClient(HttpClients.createSystem());
         t.setMethod(HttpMethod.GET);
         t.setRequestBody("Hello ${name}! Dear ${name} would you like some ${product}?");
@@ -71,7 +71,7 @@ public class HttpRequestTransformerTest {
     @Test
     @Ignore
     public void testIntegrationScenarioWithLocalTomcat() throws Exception {
-        HttpRequestTransformer t = new HttpRequestTransformer();
+        final HttpRequestTransformer t = new HttpRequestTransformer();
         t.setHttpClient(HttpClients.createSystem());
         t.setMethod(HttpMethod.GET);
         t.setRequestBody("Hello ${name}");
@@ -81,7 +81,7 @@ public class HttpRequestTransformerTest {
 
         t.init();
 
-        Object[] result = t.transform(new MockInputRow().put(col1, "world"));
+        final Object[] result = t.transform(new MockInputRow().put(col1, "world"));
         t.close();
 
         assertEquals("[200, Hello world!]", Arrays.toString(result));

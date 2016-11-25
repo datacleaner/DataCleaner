@@ -109,8 +109,8 @@ public class TextCaseTransformer implements Transformer {
             final String nextToken = tokenizer.nextToken();
             final String lowerCasedToken = nextToken.toLowerCase();
             if (capitalizeNext) {
-                final String capitalizedToken = Character.toUpperCase(lowerCasedToken.charAt(0))
-                        + lowerCasedToken.substring(1);
+                final String capitalizedToken =
+                        Character.toUpperCase(lowerCasedToken.charAt(0)) + lowerCasedToken.substring(1);
                 sb.append(capitalizedToken);
             } else {
                 sb.append(lowerCasedToken);

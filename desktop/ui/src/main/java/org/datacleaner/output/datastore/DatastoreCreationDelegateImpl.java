@@ -48,8 +48,8 @@ public class DatastoreCreationDelegateImpl implements DatastoreCreationDelegate 
                 if (_datastoreCatalog instanceof MutableDatastoreCatalog) {
                     ((MutableDatastoreCatalog) _datastoreCatalog).addDatastore(datastore);
                 } else {
-                    throw new IllegalStateException("Tried to create datastore '" + name
-                            + "', but the datastore catalog is not mutable");
+                    throw new IllegalStateException(
+                            "Tried to create datastore '" + name + "', but the datastore catalog is not mutable");
                 }
             }
         }

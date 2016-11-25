@@ -28,12 +28,12 @@ public class DefaultTokenizerTest extends TestCase {
     private TokenizerConfiguration conf = new TokenizerConfiguration(false, '.', ',', '-');
 
     public void testTokenizeEmptyString() throws Exception {
-        List<SimpleToken> tokens = DefaultTokenizer.preliminaryTokenize("", conf);
+        final List<SimpleToken> tokens = DefaultTokenizer.preliminaryTokenize("", conf);
         assertTrue(tokens.isEmpty());
     }
 
     public void testMinusSignAsDelimOrAsMinus() throws Exception {
-        List<SimpleToken> tokens = DefaultTokenizer.preliminaryTokenize("123-456", conf);
+        final List<SimpleToken> tokens = DefaultTokenizer.preliminaryTokenize("123-456", conf);
         assertEquals(3, tokens.size());
         assertEquals("Token['123' (NUMBER)]", tokens.get(0).toString());
         assertEquals("Token['-' (DELIM)]", tokens.get(1).toString());
@@ -70,7 +70,7 @@ public class DefaultTokenizerTest extends TestCase {
     }
 
     public void testNegativeNumbers() throws Exception {
-        List<SimpleToken> tokens = DefaultTokenizer.preliminaryTokenize("10 -4", conf);
+        final List<SimpleToken> tokens = DefaultTokenizer.preliminaryTokenize("10 -4", conf);
         assertEquals(3, tokens.size());
         assertEquals("Token['10' (NUMBER)]", tokens.get(0).toString());
         assertEquals("Token[' ' (WHITESPACE)]", tokens.get(1).toString());
@@ -124,8 +124,8 @@ public class DefaultTokenizerTest extends TestCase {
     }
 
     public void testNumberParsingWithoutSeparatorChars() throws Exception {
-        TokenizerConfiguration c = new TokenizerConfiguration(false, null, null, null);
-        List<SimpleToken> tokens = DefaultTokenizer.preliminaryTokenize("20,-632.20213", c);
+        final TokenizerConfiguration c = new TokenizerConfiguration(false, null, null, null);
+        final List<SimpleToken> tokens = DefaultTokenizer.preliminaryTokenize("20,-632.20213", c);
         assertEquals(5, tokens.size());
         assertEquals("Token['20' (NUMBER)]", tokens.get(0).toString());
         assertEquals("Token[',-' (DELIM)]", tokens.get(1).toString());

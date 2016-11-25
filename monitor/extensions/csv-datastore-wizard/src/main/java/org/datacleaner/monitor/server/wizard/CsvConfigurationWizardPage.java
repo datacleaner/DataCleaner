@@ -96,8 +96,8 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
 
         final String encoding = getString(formParameters, "encoding");
         final boolean multilines = getBoolean(formParameters, "multilinesValues");
-        final CsvConfiguration configuration = new CsvConfiguration(headerLineNumber, encoding, separator, quote,
-                escape, true, multilines);
+        final CsvConfiguration configuration =
+                new CsvConfiguration(headerLineNumber, encoding, separator, quote, escape, true, multilines);
 
         return nextPageController(configuration);
     }

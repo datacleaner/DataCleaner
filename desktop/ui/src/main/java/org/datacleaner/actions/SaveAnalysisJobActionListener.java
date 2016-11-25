@@ -70,8 +70,9 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
     public boolean _saved;
 
     @Inject
-    protected SaveAnalysisJobActionListener(final AnalysisJobBuilderWindow window, final AnalysisJobBuilder analysisJobBuilder,
-            final UserPreferences userPreferences, final DataCleanerConfiguration configuration) {
+    protected SaveAnalysisJobActionListener(final AnalysisJobBuilderWindow window,
+            final AnalysisJobBuilder analysisJobBuilder, final UserPreferences userPreferences,
+            final DataCleanerConfiguration configuration) {
         _window = window;
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
@@ -86,18 +87,16 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
         _window.setStatusLabelNotice();
         _window.setStatusLabelText(LABEL_TEXT_SAVING_JOB);
 
-        AnalysisJob analysisJob = null;
+        AnalysisJob analysisJob;
         try {
             _window.applyPropertyValues();
             analysisJob = _analysisJobBuilder.toAnalysisJob();
         } catch (final Exception e) {
             if (e instanceof NoResultProducingComponentsException) {
-                final int result = JOptionPane
-                        .showConfirmDialog(
-                                _window.toComponent(),
-                                "You job does not have any result-producing components in it, and is thus 'incomplete'. Do you want to save it anyway?",
-                                "No result producing components in job", JOptionPane.YES_NO_OPTION,
-                                JOptionPane.WARNING_MESSAGE);
+                final int result = JOptionPane.showConfirmDialog(_window.toComponent(),
+                        "You job does not have any result-producing components in it, and is thus 'incomplete'. "
+                                + "Do you want to save it anyway?", "No result producing components in job",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (result == JOptionPane.YES_OPTION) {
                     analysisJob = _analysisJobBuilder.toAnalysisJob(false);
                 } else {
@@ -183,15 +182,15 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
             jobDescription = existingMetadata.getJobDescription();
         }
 
-        final JaxbJobWriter writer = new JaxbJobWriter(_configuration, new JaxbJobMetadataFactoryImpl(author, jobName,
-                jobDescription, jobVersion));
+        final JaxbJobWriter writer = new JaxbJobWriter(_configuration,
+                new JaxbJobMetadataFactoryImpl(author, jobName, jobDescription, jobVersion));
 
         OutputStream outputStream = null;
         try {
             outputStream = file.getContent().getOutputStream();
             writer.write(analysisJob, outputStream);
-        } catch (final IOException e1) {
-            throw new IllegalStateException(e1);
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
         } finally {
             FileHelper.safeClose(outputStream);
         }
@@ -208,17 +207,19 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
                 if (monitorConnection.matchesURI(uri) && monitorConnection.isAuthenticationEnabled()
                         && monitorConnection.getEncodedPassword() == null) {
                     // password is not configured, ask for it.
-                    final MonitorConnectionDialog dialog = new MonitorConnectionDialog(_window.getWindowContext(),
-                            _userPreferences);
+                    final MonitorConnectionDialog dialog =
+                            new MonitorConnectionDialog(_window.getWindowContext(), _userPreferences);
                     dialog.openBlocking();
                 }
 
-                final PublishJobToMonitorActionListener publisher = new PublishJobToMonitorActionListener(
-                        delegateFileObject, _window.getWindowContext(), _userPreferences);
+                final PublishJobToMonitorActionListener publisher =
+                        new PublishJobToMonitorActionListener(delegateFileObject, _window.getWindowContext(),
+                                _userPreferences);
                 publisher.actionPerformed(event);
             } else {
-                throw new UnsupportedOperationException("Unexpected delegate file object: " + delegateFileObject
-                        + " (delegate: " + delegateFileObject.getDelegateFile() + ")");
+                throw new UnsupportedOperationException(
+                        "Unexpected delegate file object: " + delegateFileObject + " (delegate: " + delegateFileObject
+                                .getDelegateFile() + ")");
             }
         } else {
             _userPreferences.addRecentJobFile(file);

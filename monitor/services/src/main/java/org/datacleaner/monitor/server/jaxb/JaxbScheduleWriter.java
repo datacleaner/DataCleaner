@@ -99,10 +99,10 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
     private Alert createAlert(final AlertDefinition alertDefinition) {
         final Alert alert = new Alert();
         alert.setDescription(alertDefinition.getDescription());
-        alert.setMinimumValue((alertDefinition.getMinimumValue() == null ? null : alertDefinition.getMinimumValue()
-                .intValue()));
-        alert.setMaximumValue((alertDefinition.getMaximumValue() == null ? null : alertDefinition.getMaximumValue()
-                .intValue()));
+        alert.setMinimumValue(
+                (alertDefinition.getMinimumValue() == null ? null : alertDefinition.getMinimumValue().intValue()));
+        alert.setMaximumValue(
+                (alertDefinition.getMaximumValue() == null ? null : alertDefinition.getMaximumValue().intValue()));
         alert.setMetric(new JaxbMetricAdaptor().serialize(alertDefinition.getMetricIdentifier()));
         alert.setSeverity(createSeverity(alertDefinition.getSeverity()));
         return alert;

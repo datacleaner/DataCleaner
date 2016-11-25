@@ -76,7 +76,7 @@ public class ReferentialIntegrityAnalyzerReducerTest {
         // Assert what we have in the thrird partial result
         {
             final InputColumn<?> salesRepEmployeeNumber = jobBuilder3.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
-            int annotatedRowCount = partialResult3.getAnnotatedRowCount();
+            final int annotatedRowCount = partialResult3.getAnnotatedRowCount();
             assertEquals(1, annotatedRowCount);
 
             final List<InputRow> rows = partialResult3.getSampleRows();
@@ -109,8 +109,8 @@ public class ReferentialIntegrityAnalyzerReducerTest {
     private AnalysisJobBuilder getAnalysisJobBuilder() {
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
 
-        final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl()
-                .withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
+        final DataCleanerConfigurationImpl configuration =
+                new DataCleanerConfigurationImpl().withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
 
         jobBuilder.setDatastore(datastore);
@@ -120,8 +120,8 @@ public class ReferentialIntegrityAnalyzerReducerTest {
         return jobBuilder;
     }
 
-    private ReferentialIntegrityAnalyzerResult getPartialResult(AnalysisJobBuilder jobBuilder, Integer firstRow,
-            Integer maxRows) throws Throwable {
+    private ReferentialIntegrityAnalyzerResult getPartialResult(final AnalysisJobBuilder jobBuilder,
+            final Integer firstRow, final Integer maxRows) throws Throwable {
         final InputColumn<?> salesRepEmployeeNumber = jobBuilder.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
         final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilder.addFilter(MaxRowsFilter.class);
         maxRowsFilter.addInputColumn(salesRepEmployeeNumber);
@@ -132,8 +132,8 @@ public class ReferentialIntegrityAnalyzerReducerTest {
             maxRowsFilter.setConfiguredProperty("Max rows", maxRows);
         }
 
-        final AnalyzerComponentBuilder<ReferentialIntegrityAnalyzer> referentialIntegrityAnalyzer = jobBuilder
-                .addAnalyzer(ReferentialIntegrityAnalyzer.class);
+        final AnalyzerComponentBuilder<ReferentialIntegrityAnalyzer> referentialIntegrityAnalyzer =
+                jobBuilder.addAnalyzer(ReferentialIntegrityAnalyzer.class);
         referentialIntegrityAnalyzer.setRequirement(maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID));
         final ReferentialIntegrityAnalyzer referentialIntegrity = referentialIntegrityAnalyzer.getComponentInstance();
         referentialIntegrity.foreignKey = salesRepEmployeeNumber;
@@ -156,11 +156,7 @@ public class ReferentialIntegrityAnalyzerReducerTest {
             throw resultFuture.getErrors().get(0);
         }
 
-        final ReferentialIntegrityAnalyzerResult result =
-                resultFuture.getResults(ReferentialIntegrityAnalyzerResult.class)
-                        .get(0);
-
-        return result;
+        return resultFuture.getResults(ReferentialIntegrityAnalyzerResult.class).get(0);
     }
 
 }

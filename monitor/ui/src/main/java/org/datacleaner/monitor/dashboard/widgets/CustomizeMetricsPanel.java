@@ -85,8 +85,8 @@ public class CustomizeMetricsPanel extends FlowPanel {
         formulaMetricButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(final ClickEvent event) {
-                final DefineMetricPopup popup = new DefineMetricPopup(_tenantIdentifier, jobMetrics, true,
-                        new DefineMetricPopup.Handler() {
+                final DefineMetricPopup popup =
+                        new DefineMetricPopup(_tenantIdentifier, jobMetrics, true, new DefineMetricPopup.Handler() {
                             @Override
                             public void onMetricDefined(final MetricIdentifier metric) {
                                 addFormulaMetric(jobMetrics, metric);
@@ -97,8 +97,8 @@ public class CustomizeMetricsPanel extends FlowPanel {
         });
         add(formulaMetricButton);
 
-        final Label jobLabel = new Label("Showing available metrics from job '"
-                + _timelineDefinition.getJobIdentifier().getName() + "':");
+        final Label jobLabel = new Label(
+                "Showing available metrics from job '" + _timelineDefinition.getJobIdentifier().getName() + "':");
         jobLabel.setStyleName("JobInformationLabel");
         add(jobLabel);
 
@@ -132,8 +132,8 @@ public class CustomizeMetricsPanel extends FlowPanel {
         if (_formulaMetricsPanel == null) {
             _formulaMetricsPanel = new FlowPanel();
             _formulaMetricsPanel.addStyleName("FormulaMetricsPanel");
-            final FlowPanel metricGroupPanel = createMetricGroupPanel("Metric formulas", _formulaMetricsPanel, null,
-                    true);
+            final FlowPanel metricGroupPanel =
+                    createMetricGroupPanel("Metric formulas", _formulaMetricsPanel, null, true);
             metricGroupPanel.addStyleName("FormulaMetricsGroupPanel");
             add(metricGroupPanel);
         }
@@ -156,11 +156,10 @@ public class CustomizeMetricsPanel extends FlowPanel {
         final List<MetricIdentifier> activeMetrics = _timelineDefinition.getMetrics();
         final List<MetricIdentifier> availableMetrics = metricGroup.getMetrics();
         final MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics =
-                new MultipleColumnParameterizedMetricsPresenter(
-                        metricGroup);
+                new MultipleColumnParameterizedMetricsPresenter(metricGroup);
         for (final MetricIdentifier metricIdentifier : availableMetrics) {
-            final MetricPresenter presenter = createMetricPresenter(columnParameterizedMetrics, metricGroup,
-                    metricIdentifier, activeMetrics);
+            final MetricPresenter presenter =
+                    createMetricPresenter(columnParameterizedMetrics, metricGroup, metricIdentifier, activeMetrics);
             if (presenter != null) {
                 final List<MetricIdentifier> selectedMetrics = presenter.getSelectedMetrics();
                 if (selectedMetrics.size() > 0) {
@@ -215,8 +214,8 @@ public class CustomizeMetricsPanel extends FlowPanel {
             final MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics, final MetricGroup metricGroup,
             final MetricIdentifier metricIdentifier, final List<MetricIdentifier> activeMetrics) {
         if (metricIdentifier.isParameterizedByColumnName()) {
-            final ColumnParameterizedMetricPresenter presenter = new ColumnParameterizedMetricPresenter(
-                    metricIdentifier, activeMetrics, metricGroup);
+            final ColumnParameterizedMetricPresenter presenter =
+                    new ColumnParameterizedMetricPresenter(metricIdentifier, activeMetrics, metricGroup);
             columnParameterizedMetrics.add(presenter);
             // null will be treated as a presenter not added immediately
             return null;

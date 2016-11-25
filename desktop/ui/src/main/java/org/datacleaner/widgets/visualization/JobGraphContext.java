@@ -89,17 +89,15 @@ public class JobGraphContext {
     /**
      * Gets the vertex at a particular point, or null if it does not exist.
      *
-     * @param p
+     * @param point2D
      * @return
      */
-    public Object getVertex(final Point2D p) {
+    public Object getVertex(final Point2D point2D) {
         final GraphElementAccessor<?, ?> pickSupport = _visualizationViewer.getPickSupport();
 
-        @SuppressWarnings("rawtypes")
-        final Layout graphLayout = _visualizationViewer.getModel().getGraphLayout();
+        @SuppressWarnings("rawtypes") final Layout graphLayout = _visualizationViewer.getModel().getGraphLayout();
 
-        @SuppressWarnings("unchecked")
-        final Object vertex = pickSupport.getVertex(graphLayout, p.getX(), p.getY());
+        @SuppressWarnings("unchecked") final Object vertex = pickSupport.getVertex(graphLayout, point2D.getX(), point2D.getY());
 
         return vertex;
     }
@@ -117,8 +115,7 @@ public class JobGraphContext {
         if (pickedVertexState == null) {
             return null;
         }
-        final Set<Object> pickedVertices = pickedVertexState.getPicked();
-        return pickedVertices;
+        return pickedVertexState.getPicked();
     }
 
 }

@@ -96,8 +96,8 @@ public class LaunchDataCleanerController {
         final String jnlpHref = "datastores/" + encodedDatastoreName + ".analyze.jnlp";
         final String confPath = '/' + RESOURCES_FOLDER + "conf.xml?datastore=" + encodedDatastoreName;
 
-        writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, null,
-                datastoreName, confPath);
+        writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, null, datastoreName,
+                confPath);
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
@@ -146,10 +146,10 @@ public class LaunchDataCleanerController {
         return port;
     }
 
-    private void writeJnlpResponse(final HttpServletRequest request, final String tenant, final HttpServletResponse response,
-            final String scheme, final String hostname, final int port, final String contextPath,
-            final String jnlpHref, final String jobPath, final String datastoreName, final String confPath)
-            throws UnsupportedEncodingException, IOException {
+    private void writeJnlpResponse(final HttpServletRequest request, final String tenant,
+            final HttpServletResponse response, final String scheme, final String hostname, final int port,
+            final String contextPath, final String jnlpHref, final String jobPath, final String datastoreName,
+            final String confPath) throws UnsupportedEncodingException, IOException {
         response.setContentType("application/x-java-jnlp-file");
 
         final String baseUrl = createBaseUrl(scheme, hostname, port, contextPath, tenant);
@@ -172,8 +172,8 @@ public class LaunchDataCleanerController {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 line = line.replaceAll("\\$BASE_URL", baseUrl);
                 line = line.replaceAll("\\$JNLP_HREF", jnlpHref);
-                if (jobUrl == null
-                        && (line.indexOf("<argument>-job</argument>") != -1 || line.indexOf("$JOB_URL") != -1)) {
+                if (jobUrl == null && (line.indexOf("<argument>-job</argument>") != -1
+                        || line.indexOf("$JOB_URL") != -1)) {
                     // omit the JOB_URL argument lines
                     line = "";
                 } else {
@@ -215,7 +215,8 @@ public class LaunchDataCleanerController {
         }
     }
 
-    private void insertJarFiles(final ServletContext context, final Writer out, final String templateLine) throws IOException {
+    private void insertJarFiles(final ServletContext context, final Writer out, final String templateLine)
+            throws IOException {
         final List<String> jarFilenames = _launchArtifactProvider.getJarFilenames();
         for (final String filename : jarFilenames) {
             final String line;
@@ -229,7 +230,8 @@ public class LaunchDataCleanerController {
         }
     }
 
-    private String createBaseUrl(final String scheme, final String hostname, final int port, final String contextPath, final String tenant) {
+    private String createBaseUrl(final String scheme, final String hostname, final int port, final String contextPath,
+            final String tenant) {
         final StringBuilder baseUrl = new StringBuilder();
         baseUrl.append(scheme);
         baseUrl.append("://");

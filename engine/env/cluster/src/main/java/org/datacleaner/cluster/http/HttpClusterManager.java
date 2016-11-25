@@ -37,7 +37,6 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.cluster.ClusterManager;
@@ -122,12 +121,7 @@ public class HttpClusterManager implements ClusterManager {
         final String slaveJobUuid = UUID.randomUUID().toString();
 
         final LazyRef<AnalysisResult> resultRef = sendExecuteRequest(slaveEndpoint, bytes, errors, slaveJobUuid);
-        resultRef.requestLoad(new Action<Throwable>() {
-            @Override
-            public void run(final Throwable error) throws Exception {
-                errors.add(error);
-            }
-        });
+        resultRef.requestLoad(errors::add);
 
         return new LazyRefAnalysisResultFuture(resultRef, errors) {
             @Override
@@ -160,15 +154,14 @@ public class HttpClusterManager implements ClusterManager {
                 // handle the response
                 final StatusLine statusLine = response.getStatusLine();
                 if (statusLine.getStatusCode() != 200) {
-                    throw new IllegalStateException("Slave server '" + slaveEndpoint
-                            + "' responded with an error to 'run' request: " + statusLine.getReasonPhrase() + " ("
-                            + statusLine.getStatusCode() + ")");
+                    throw new IllegalStateException(
+                            "Slave server '" + slaveEndpoint + "' responded with an error to 'run' request: "
+                                    + statusLine.getReasonPhrase() + " (" + statusLine.getStatusCode() + ")");
                 }
 
                 final InputStream inputStream = response.getEntity().getContent();
                 try {
-                    final AnalysisResult result = readResult(inputStream, errors);
-                    return result;
+                    return readResult(inputStream, errors);
                 } finally {
                     FileHelper.safeClose(inputStream);
                 }
@@ -187,17 +180,18 @@ public class HttpClusterManager implements ClusterManager {
             // handle the response
             final StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode() != 200) {
-                throw new IllegalStateException("Slave server '" + slaveEndpoint
-                        + "' responded with an error to 'cancel' request: " + statusLine.getReasonPhrase() + " ("
-                        + statusLine.getStatusCode() + ")");
+                throw new IllegalStateException(
+                        "Slave server '" + slaveEndpoint + "' responded with an error to 'cancel' request: "
+                                + statusLine.getReasonPhrase() + " (" + statusLine.getStatusCode() + ")");
             }
 
         } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new IllegalStateException("Failed to fire cancel request to slave server '" + slaveEndpoint
-                    + "' for job id '" + slaveJobId + "'", e);
+            throw new IllegalStateException(
+                    "Failed to fire cancel request to slave server '" + slaveEndpoint + "' for job id '" + slaveJobId
+                            + "'", e);
         }
     }
 
@@ -210,8 +204,7 @@ public class HttpClusterManager implements ClusterManager {
             return (AnalysisResult) object;
         } else if (object instanceof List) {
             // response carries a list of errors
-            @SuppressWarnings("unchecked") final
-            List<Throwable> slaveErrors = (List<Throwable>) object;
+            @SuppressWarnings("unchecked") final List<Throwable> slaveErrors = (List<Throwable>) object;
             errors.addAll(slaveErrors);
             return null;
         } else {

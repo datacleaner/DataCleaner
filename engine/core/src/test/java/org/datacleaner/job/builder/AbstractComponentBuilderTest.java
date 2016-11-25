@@ -19,11 +19,8 @@
  */
 package org.datacleaner.job.builder;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
@@ -35,6 +32,8 @@ import org.datacleaner.test.MockDynamicOutputDataStreamAnalyzer;
 import org.datacleaner.test.MockJobEscalatingAnalyzer;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 
+import junit.framework.TestCase;
+
 public class AbstractComponentBuilderTest extends TestCase {
 
     private PojoDatastore dummyDatastore;
@@ -43,9 +42,9 @@ public class AbstractComponentBuilderTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        final List<TableDataProvider<?>> tableDataProviders = Arrays
-                .asList(new ArrayTableDataProvider(new SimpleTableDef("my table", new String[] {
-                        "col1", "col2" }), Collections.emptyList()));
+        final List<TableDataProvider<?>> tableDataProviders = Collections.singletonList(
+                new ArrayTableDataProvider(new SimpleTableDef("my table", new String[] { "col1", "col2" }),
+                        Collections.emptyList()));
         dummyDatastore = new PojoDatastore("my ds", tableDataProviders);
         configuration = new DataCleanerConfigurationImpl().withDatastores(dummyDatastore);
     }
@@ -57,36 +56,32 @@ public class AbstractComponentBuilderTest extends TestCase {
      * @throws Exception
      */
     public void testGetOutputDataStreamsWhenConsumingEscalateToMultipleJobs() throws Exception {
-        final AnalysisJobBuilder mainJobBuilder = new AnalysisJobBuilder(configuration);
-        try {
+        try (AnalysisJobBuilder mainJobBuilder = new AnalysisJobBuilder(configuration)) {
             mainJobBuilder.setDatastore(dummyDatastore);
             mainJobBuilder.addSourceColumns("col1", "col2");
-            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = mainJobBuilder
-                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 =
+                    mainJobBuilder.addAnalyzer(MockOutputDataStreamAnalyzer.class);
             analyzer1.addInputColumn(mainJobBuilder.getSourceColumns().get(0));
 
             final List<OutputDataStream> streams1 = analyzer1.getOutputDataStreams();
             final AnalysisJobBuilder childJobBuilder = analyzer1.getOutputDataStreamJobBuilder(streams1.get(0));
-            final AnalyzerComponentBuilder<MockJobEscalatingAnalyzer> analyzer2 = childJobBuilder
-                    .addAnalyzer(MockJobEscalatingAnalyzer.class);
+            final AnalyzerComponentBuilder<MockJobEscalatingAnalyzer> analyzer2 =
+                    childJobBuilder.addAnalyzer(MockJobEscalatingAnalyzer.class);
             analyzer2.addInputColumns(childJobBuilder.getSourceColumns());
 
             // this is the call that would provoke the failure before the fix to
             // #574
             analyzer2.getOutputDataStreams();
-        } finally {
-            mainJobBuilder.close();
         }
     }
 
     public void testGetOutputDataStreamsWithIncrementalChanges() throws Exception {
-        final AnalysisJobBuilder mainJobBuilder = new AnalysisJobBuilder(configuration);
-        try {
+        try (AnalysisJobBuilder mainJobBuilder = new AnalysisJobBuilder(configuration)) {
             mainJobBuilder.setDatastore(dummyDatastore);
             mainJobBuilder.addSourceColumns("col1", "col2");
 
-            final AnalyzerComponentBuilder<MockDynamicOutputDataStreamAnalyzer> analyzer = mainJobBuilder
-                    .addAnalyzer(MockDynamicOutputDataStreamAnalyzer.class);
+            final AnalyzerComponentBuilder<MockDynamicOutputDataStreamAnalyzer> analyzer =
+                    mainJobBuilder.addAnalyzer(MockDynamicOutputDataStreamAnalyzer.class);
             analyzer.setConfiguredProperty("Stream name", "my stream");
             analyzer.addInputColumn(mainJobBuilder.getSourceColumns().get(0));
 
@@ -110,8 +105,6 @@ public class AbstractComponentBuilderTest extends TestCase {
 
             // now we expect a completely new stream instance
             assertNotSame(streams1.get(0), streams3.get(0));
-        } finally {
-            mainJobBuilder.close();
         }
     }
 }

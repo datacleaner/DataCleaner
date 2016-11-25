@@ -96,8 +96,8 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
             }
             final int totalColumns = numConfiguredColumns + numConfiguredColumnArrays;
             if (totalColumns == 0) {
-                throw new DescriptorException(getComponentClass()
-                        + " does not define a @Configured InputColumn or InputColumn-array");
+                throw new DescriptorException(
+                        getComponentClass() + " does not define a @Configured InputColumn or InputColumn-array");
             }
         }
     }

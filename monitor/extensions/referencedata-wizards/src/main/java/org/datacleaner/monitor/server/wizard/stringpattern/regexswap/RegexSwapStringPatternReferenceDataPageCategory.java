@@ -34,7 +34,8 @@ final class RegexSwapStringPatternReferenceDataPageCategory extends AbstractFree
 
     private final RegexSwapStringPatternReferenceDataWizardSession _session;
 
-    public RegexSwapStringPatternReferenceDataPageCategory(final RegexSwapStringPatternReferenceDataWizardSession session) {
+    public RegexSwapStringPatternReferenceDataPageCategory(
+            final RegexSwapStringPatternReferenceDataWizardSession session) {
         _session = session;
     }
 

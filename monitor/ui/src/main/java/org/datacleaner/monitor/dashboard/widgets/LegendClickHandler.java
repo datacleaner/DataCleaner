@@ -41,8 +41,8 @@ public class LegendClickHandler implements ClickHandler {
     private Legend _legend;
     private Boolean _isDashboardEditor;
 
-    public LegendClickHandler(final String data, final MetricIdentifier metricIdentifier, final TimelinePanel timelinePanel,
-            final Legend legend, final boolean isDashboardEditor) {
+    public LegendClickHandler(final String data, final MetricIdentifier metricIdentifier,
+            final TimelinePanel timelinePanel, final Legend legend, final boolean isDashboardEditor) {
         _data = data;
         _metricIdentifier = metricIdentifier;
         _timeLinePanel = timelinePanel;

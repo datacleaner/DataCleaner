@@ -41,7 +41,7 @@ public class JobTestHelper {
 
     public static void testJob(final File repository, final String jobName,
             final Map<String, String[]> expectedResultSets, final String... extraCliArgs) throws Exception {
-        final String jobResult = runJob(repository, jobName, extraCLIArgs);
+        final String jobResult = runJob(repository, jobName, extraCliArgs);
 
         final InputStream resultInputStream = new ByteArrayInputStream(jobResult.getBytes());
         final InputStreamReader resultInputStreamReader = new InputStreamReader(resultInputStream);
@@ -52,6 +52,7 @@ public class JobTestHelper {
 
             // Read the output line by line until we see an indicator that the interesting part of the output
             // is coming up.
+            //noinspection StatementWithEmptyBody
             while ((resultLine = resultReader.readLine()) != null && !resultLine.equals("SUCCESS!")) {
                 // Ignore.
             }

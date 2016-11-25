@@ -92,7 +92,13 @@ public class ExecutionLogPanel extends Composite {
             updateContent(executionLog);
 
             if (pollForUpdates) {
-                final ExecutionLogPoller poller = new ExecutionLogPoller(_service, _tenant, this::updateContent);
+                final ExecutionLogPoller poller =
+                        new ExecutionLogPoller(_service, _tenant, new ExecutionLogPoller.Callback() {
+                            @Override
+                            public void updateExecutionLog(final ExecutionLog executionLog) {
+                                updateContent(executionLog);
+                            }
+                        });
                 poller.start(executionLog);
             }
         }

@@ -48,6 +48,7 @@ import org.datacleaner.widgets.Alignment;
 public class SourceTableConfigurationDialog extends AbstractDialog implements SourceColumnChangeListener {
 
     private static final long serialVersionUID = 1L;
+    private static final int MAX_HEIGHT = 800;
     private final Table _table;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final ColumnListTable _columnListTable;
@@ -108,7 +109,7 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
         panel.setLayout(new BorderLayout());
         panel.add(_columnListTable, BorderLayout.CENTER);
         panel.add(DCPanel.flow(Alignment.CENTER, closeButton), BorderLayout.SOUTH);
-        return panel;
+        return WidgetUtils.scrollable(panel, MAX_HEIGHT);
     }
 
     @Override

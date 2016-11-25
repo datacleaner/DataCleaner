@@ -23,7 +23,21 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ClientBundle;
@@ -86,51 +100,91 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
 
             setColor();
 
-            hueSaturation.addMouseDownHandler(event -> {
-                event.preventDefault();
-                setHueSaturation(event.getNativeEvent());
-                down = true;
-            });
+            hueSaturation.addMouseDownHandler(new MouseDownHandler() {
 
-            hueSaturation.addMouseUpHandler(event -> {
-                setHueSaturation(event.getNativeEvent());
-                down = false;
-            });
-
-            hueSaturation.addMouseMoveHandler(event -> {
-                if (down) {
+                @Override
+                public void onMouseDown(final MouseDownEvent event) {
+                    event.preventDefault();
                     setHueSaturation(event.getNativeEvent());
+                    down = true;
                 }
             });
 
-            hueSaturation.addMouseOutHandler(event -> down = false);
+            hueSaturation.addMouseUpHandler(new MouseUpHandler() {
+
+                @Override
+                public void onMouseUp(final MouseUpEvent event) {
+                    setHueSaturation(event.getNativeEvent());
+                    down = false;
+                }
+            });
+
+            hueSaturation.addMouseMoveHandler(new MouseMoveHandler() {
+
+                @Override
+                public void onMouseMove(final MouseMoveEvent event) {
+                    if (down) {
+                        setHueSaturation(event.getNativeEvent());
+                    }
+                }
+            });
+
+            hueSaturation.addMouseOutHandler(new MouseOutHandler() {
+
+                @Override
+                public void onMouseOut(final MouseOutEvent event) {
+                    down = false;
+                }
+            });
 
             /* --- */
 
-            lightness.addMouseDownHandler(event -> {
-                event.preventDefault();
-                setLightness(event.getNativeEvent());
-                down = true;
-            });
+            lightness.addMouseDownHandler(new MouseDownHandler() {
 
-            lightness.addMouseUpHandler(event -> {
-                setLightness(event.getNativeEvent());
-                down = false;
-            });
-
-            lightness.addMouseMoveHandler(event -> {
-                if (down) {
+                @Override
+                public void onMouseDown(final MouseDownEvent event) {
+                    event.preventDefault();
                     setLightness(event.getNativeEvent());
+                    down = true;
                 }
             });
 
-            lightness.addMouseOutHandler(event -> down = false);
+            lightness.addMouseUpHandler(new MouseUpHandler() {
+
+                @Override
+                public void onMouseUp(final MouseUpEvent event) {
+                    setLightness(event.getNativeEvent());
+                    down = false;
+                }
+            });
+
+            lightness.addMouseMoveHandler(new MouseMoveHandler() {
+
+                @Override
+                public void onMouseMove(final MouseMoveEvent event) {
+                    if (down) {
+                        setLightness(event.getNativeEvent());
+                    }
+                }
+            });
+
+            lightness.addMouseOutHandler(new MouseOutHandler() {
+
+                @Override
+                public void onMouseOut(final MouseOutEvent event) {
+                    down = false;
+                }
+            });
 
             /* --- */
 
-            preview.addMouseDownHandler(event -> {
-                clicked = false;
-                hide();
+            preview.addMouseDownHandler(new MouseDownHandler() {
+
+                @Override
+                public void onMouseDown(final MouseDownEvent event) {
+                    clicked = false;
+                    hide();
+                }
             });
         }
 
@@ -202,34 +256,52 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
         textbox.setText(colorString);
         popup.addAutoHidePartner(blotch.getElement());
 
-        textbox.addFocusHandler(event -> enterEditMode());
+        textbox.addFocusHandler(new FocusHandler() {
 
-        textbox.addKeyPressHandler(event -> {
-            keyPressed = true;
-            popup.setHex(getValue());
-            setStyleAttribute(blotch.getElement(), "backgroundColor", getValue());
-        });
-
-        blotch.addMouseDownHandler(event -> {
-            if (!popup.isShowing()) {
+            @Override
+            public void onFocus(final FocusEvent event) {
                 enterEditMode();
-            } else {
-
-                popup.hide();
             }
         });
 
-        popup.addCloseHandler(event -> {
-            if (!keyPressed) {
-                setValue(popup.getHex());
-                setStyleAttribute(blotch.getElement(), "backgroundColor", popup.getHex());
-            } else {
+        textbox.addKeyPressHandler(new KeyPressHandler() {
+
+            @Override
+            public void onKeyPress(final KeyPressEvent event) {
+                keyPressed = true;
                 popup.setHex(getValue());
                 setStyleAttribute(blotch.getElement(), "backgroundColor", getValue());
-                keyPressed = false;
-
             }
-            popup.clicked = false;
+        });
+
+        blotch.addMouseDownHandler(new MouseDownHandler() {
+
+            @Override
+            public void onMouseDown(final MouseDownEvent event) {
+                if (!popup.isShowing()) {
+                    enterEditMode();
+                } else {
+
+                    popup.hide();
+                }
+            }
+        });
+
+        popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+
+            @Override
+            public void onClose(final CloseEvent<PopupPanel> event) {
+                if (!keyPressed) {
+                    setValue(popup.getHex());
+                    setStyleAttribute(blotch.getElement(), "backgroundColor", popup.getHex());
+                } else {
+                    popup.setHex(getValue());
+                    setStyleAttribute(blotch.getElement(), "backgroundColor", getValue());
+                    keyPressed = false;
+
+                }
+                popup.clicked = false;
+            }
         });
 
         panel.add(textbox);
@@ -241,8 +313,8 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
     }
 
     private static void setStyleAttribute(
-            @SuppressWarnings("deprecation") final com.google.gwt.user.client.Element element, final String key,
-            final String value) {
+            @SuppressWarnings("deprecation") final com.google.gwt.user.client.Element element,
+            final String key, final String value) {
         element.getStyle().setProperty(key, value);
     }
 

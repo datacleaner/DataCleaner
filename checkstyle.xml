@@ -188,15 +188,13 @@
 
 		<module name="FinalLocalVariable"/>
 
-		<!-- Configured, but ignore for now. MUST be added before done with task
-		TODO: Make these viable checks by fixing our code SOON -->
+		<!-- Configured, but ignore for now. TODO: Make these viable checks by fixing our code  -->
 
 		<module name="FinalParameters">
+			<!-- Quite a bit of non-finals that can't be changed without changing behaviour. -->
 			<property name="severity" value="ignore"/>
 			<property name="tokens" value="METHOD_DEF, CTOR_DEF, LITERAL_CATCH, FOR_EACH_CLAUSE"/>
 		</module>
-
-		<!-- Configured, but ignore for now. TODO: Make these viable checks by fixing our code  -->
 
 		<module name="NoFinalizer">
 			<!-- Not sure this would ever work for us. Too much built around finalizers, even though terrible -->

@@ -17,8 +17,12 @@
 
 <module name="Checker">
 	<property name="charset" value="UTF-8"/>
-
 	<property name="severity" value="error"/>
+	<property name="fileExtensions" value="java, properties, xml"/>
+
+	<module name="SuppressionFilter">
+		<property name="file" value="checkstyle-suppressions.xml" />
+	</module>
 
 	<module name="SuppressionCommentFilter">
 		<property name="offCommentFormat" value="@checkstyle\:off" />
@@ -27,11 +31,14 @@
 
 	<module name="SuppressWarningsFilter" />
 
-	<property name="fileExtensions" value="java, properties, xml"/>
 	<!-- Checks for whitespace                               -->
 	<!-- See http://checkstyle.sf.net/config_whitespace.html -->
 	<module name="FileTabCharacter">
 		<property name="eachLine" value="true"/>
+	</module>
+
+	<module name="NewlineAtEndOfFile">
+		<property name="lineSeparator" value="lf_cr_crlf" />
 	</module>
 
 	<module name="TreeWalker">
@@ -183,7 +190,7 @@
 		<module name="CommentsIndentation"/>
 
 		<module name="RedundantModifier">
-			<property name="tokens" value=" METHOD_DEF, VARIABLE_DEF, ANNOTATION_FIELD_DEF, INTERFACE_DEF, CLASS_DEF, ENUM_DEF, RESOURCE"/>
+			<property name="tokens" value="METHOD_DEF, VARIABLE_DEF, ANNOTATION_FIELD_DEF, INTERFACE_DEF, CLASS_DEF, ENUM_DEF, RESOURCE"/>
 		</module>
 
 		<module name="FinalLocalVariable"/>

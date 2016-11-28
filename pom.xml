@@ -471,7 +471,6 @@
 							<configLocation>checkstyle.xml</configLocation>
 							<consoleOutput>true</consoleOutput>
 							<includeTestSourceDirectory>true</includeTestSourceDirectory>
-							<suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
 							<encoding>UTF-8</encoding>
 							<failsOnError>true</failsOnError>
 							<linkXRef>false</linkXRef>

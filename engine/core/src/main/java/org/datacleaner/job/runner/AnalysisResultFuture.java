@@ -32,14 +32,14 @@ import org.datacleaner.result.AnalysisResult;
  * which is why this interface contains the isDone(), await() and
  * await(long,TimeUnit) methods.
  *
- * When the result is done it may either be successful or errornous. Clients can
+ * When the result is done it may either be successful or erroneous. Clients can
  * find out using the isSuccessful() or isErrornous() methods.
  *
- * If succesful, the results can be retrieved like specified in the
+ * If successful, the results can be retrieved like specified in the
  * {@link AnalysisResult} interface - using the getResults() method. If
- * errornous the error messages can be retrieved using the getErrors() method.
- * If the analysis was only partly errornous, there may be both result and
- * errors, but isSuccesful() will return false.
+ * erroneous the error messages can be retrieved using the getErrors() method.
+ * If the analysis was only partly erroneous, there may be both result and
+ * errors, but isSuccessful() will return false.
  *
  *
  */
@@ -87,7 +87,7 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
      *
      * @return the results from the Analyzers in the executed job
      * @throws AnalysisJobFailedException
-     *             if the analysis did not go well (use isSuccesfull() or
+     *             if the analysis did not go well (use isSuccessful() or
      *             isErrornous() to check)
      */
     @Override
@@ -101,7 +101,7 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
      *            for
      * @return the result for a given component job
      * @throws AnalysisJobFailedException
-     *             if the analysis did not go well (use isSuccesfull() or
+     *             if the analysis did not go well (use isSuccessful() or
      *             isErrornous() to check)
      */
     @Override
@@ -113,7 +113,7 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
      * @return a map with ComponentJobs as keys to the corresponding
      *         AnalyzerResults.
      * @throws AnalysisJobFailedException
-     *             if the analysis did not go well (use isSuccesfull() or
+     *             if the analysis did not go well (use isSuccessful() or
      *             isErrornous() to check)
      */
     @Override

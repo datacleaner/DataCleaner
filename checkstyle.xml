@@ -18,7 +18,7 @@
 <module name="Checker">
 	<property name="charset" value="UTF-8"/>
 
-	<property name="severity" value="warning"/>
+	<property name="severity" value="error"/>
 
 	<module name="SuppressionCommentFilter">
 		<property name="offCommentFormat" value="@checkstyle\:off" />
@@ -199,16 +199,19 @@
 		<!-- Configured, but ignore for now. TODO: Make these viable checks by fixing our code  -->
 
 		<module name="NoFinalizer">
+			<!-- Not sure this would ever work for us. Too much built around finalizers, even though terrible -->
 			<property name="severity" value="ignore"/>
 		</module>
 
 		<module name="SummaryJavadoc">
+			<!-- Since JavaDoc has been neglected, this will require _a lot_ of work -->
 			<property name="severity" value="ignore"/>
 			<property name="forbiddenSummaryFragments"
 					  value="^@return the *|^This method returns |^A [{]@code [a-zA-Z0-9]+[}]( is a )"/>
 		</module>
 
 		<module name="JavadocMethod">
+			<!-- Since JavaDoc has been neglected, this will require _a lot_ of work -->
 			<property name="severity" value="ignore"/>
 			<property name="scope" value="public"/>
 			<property name="allowMissingParamTags" value="true"/>
@@ -219,7 +222,14 @@
 			<property name="allowThrowsTagsForSubclasses" value="true"/>
 		</module>
 
+
+		<module name="JavadocTagContinuationIndentation">
+			<!-- Since JavaDoc has been neglected, this will require _a lot_ of work -->
+			<property name="severity" value="ignore"/>
+		</module>
+
 		<module name="AbbreviationAsWordInName">
+			<!-- We have a bit too many currently, but we should try to slowly more here -->
 			<property name="severity" value="ignore"/>
 			<property name="ignoreFinal" value="false"/>
 			<property name="allowedAbbreviationLength" value="1"/>
@@ -239,7 +249,7 @@
 		</module>
 
 		<module name="CustomImportOrder">
-			<!-- Unfortunately have some problems with ordering in a few classes -->
+			<!-- Unfortunately has some problems with ordering in a few classes -->
 			<!-- TODO: Filter those classes specifically instead -->
 			<property name="severity" value="ignore"/>
 			<property name="customImportOrderRules"
@@ -250,15 +260,8 @@
 			<property name="separateLineBetweenGroups" value="true"/>
 		</module>
 
-		<module name="JavadocTagContinuationIndentation">
-			<property name="severity" value="ignore"/>
-		</module>
-
-		<module name="OverloadMethodsDeclarationOrder">
-			<property name="severity" value="ignore"/>
-		</module>
-
 		<module name="EmptyLineSeparator">
+			<!-- Can't really get Eclipse/IDEA and checkstyle to agree on these. TODO: Find cause -->
 			<property name="severity" value="ignore"/>
 			<property name="allowNoEmptyLineBetweenFields" value="true"/>
 			<property name="tokens"

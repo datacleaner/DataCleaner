@@ -36,7 +36,7 @@ import org.datacleaner.test.TestHelper;
 import junit.framework.TestCase;
 
 /**
- * Ticket #383: Error handling when a job has been errornously configured - the
+ * Ticket #383: Error handling when a job has been erroneously configured - the
  * input columns of a transformer originate from different tables
  */
 public class InputColumnsFromDifferentTablesTest extends TestCase {

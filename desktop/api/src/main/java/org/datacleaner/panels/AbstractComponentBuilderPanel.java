@@ -275,7 +275,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     /**
      * @param errorAware
      *            defines whether or not the method should throw an exception in
-     *            case some of the applied properties are missing or errornous
+     *            case some of the applied properties are missing or erroneous
      */
     public final void applyPropertyValues(final boolean errorAware) {
         for (final PropertyWidget<?> propertyWidget : getPropertyWidgetCollection().getWidgets()) {

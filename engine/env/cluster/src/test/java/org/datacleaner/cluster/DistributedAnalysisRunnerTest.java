@@ -168,7 +168,7 @@ public class DistributedAnalysisRunnerTest extends TestCase {
         final AnalysisResultFuture result = runner.run(job);
 
         if (result.isSuccessful()) {
-            fail("Expected result to be errornous. Got result: " + result.getResults());
+            fail("Expected result to be erroneous. Got result: " + result.getResults());
         }
 
         final List<Throwable> errors = result.getErrors();

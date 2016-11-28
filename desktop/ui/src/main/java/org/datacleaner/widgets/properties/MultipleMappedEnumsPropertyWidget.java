@@ -104,7 +104,7 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
      * @param componentBuilder
      *            the component builder containing the properties
      * @param inputColumnsProperty
-     *            the property represeting the columns to use for settig up
+     *            the property represeting the columns to use for setting up
      *            conditional lookup (InputColumn[])
      * @param mappedEnumsProperty
      *            the property representing the mapped enums

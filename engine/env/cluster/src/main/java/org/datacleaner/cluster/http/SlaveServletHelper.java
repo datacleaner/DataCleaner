@@ -145,11 +145,11 @@ public class SlaveServletHelper {
 
     /**
      * Completely handles a HTTP request and response. This method is
-     * functionally equivalent of calling these methods in sequence:
+     * functionally equivalent of calling these methods in sequence.
      *
      * {@link #readJob(HttpServletRequest)}
      *
-     * {@link #runJob(AnalysisJob, String, AnalysisListener...)
+     * {@link #runJob(AnalysisJob, String, AnalysisListener...)}
      *
      * {@link #serializeResult(AnalysisResultFuture, String)}
      *

@@ -326,7 +326,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                                         adaptor.createPojoTable(dataContext, sourceTable, usageColumns, maxRows);
                                 pojoTables.add(pojoTable);
                             } catch (final Exception e) {
-                                // allow omitting errornous tables here.
+                                // allow omitting erroneous tables here.
                                 logger.error("Failed to serialize table '" + sourceTable + "' of datastore '" + name
                                         + "' to POJO format: " + e.getMessage(), e);
                             }
@@ -339,7 +339,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
                     newDatastoreCatalog.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(pojoDatastoreType);
                 } catch (final Exception e) {
-                    // allow omitting errornous datastores here.
+                    // allow omitting erroneous datastores here.
                     logger.error("Failed to serialize datastore '" + name + "' to POJO format: " + e.getMessage(), e);
                 }
             }

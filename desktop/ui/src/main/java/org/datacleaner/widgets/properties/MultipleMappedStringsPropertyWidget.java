@@ -88,7 +88,7 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
      * @param componentBuilder
      *            the component builder for the table lookup
      * @param inputColumnsProperty
-     *            the property represeting the columns to use for settig up
+     *            the property represeting the columns to use for setting up
      *            conditional lookup (InputColumn[])
      * @param mappedStringsProperty
      *            the property representing the mapped strings (String[])

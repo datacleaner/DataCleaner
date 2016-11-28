@@ -187,6 +187,7 @@ public class SchedulePanel extends Composite {
         case HOTFOLDER:
             scheduleAnchor.setText(_schedule.getHotFolder());
             scheduleAnchor.removeStyleName("discrete");
+            break;
         default:
             // ignore
         }

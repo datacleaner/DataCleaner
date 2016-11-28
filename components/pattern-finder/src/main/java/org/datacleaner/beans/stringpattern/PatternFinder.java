@@ -57,7 +57,7 @@ public abstract class PatternFinder<R> {
     /**
      * This method should be invoked by the user of the PatternFinder. Invoke it
      * for each value in your dataset. Repeated values are handled correctly but
-     * if available it is more effecient to handle only the distinct values and
+     * if available it is more efficient to handle only the distinct values and
      * their corresponding distinct counts.
      *
      * @param row

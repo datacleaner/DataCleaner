@@ -10,5 +10,7 @@
 		http://checkstyle.sourceforge.net/config_filters.html
 	-->
 	<suppress files="[/\\]target[/\\]" checks=".*"/>
+	<suppress files=".*xml$" checks="FileTabCharacter" />
+	<suppress files=".*xml$" checks="FileTabCharacter" />
 </suppressions>
 

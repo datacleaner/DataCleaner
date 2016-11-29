@@ -459,7 +459,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.17</version>
 				<executions>
 					<execution>
 						<id>run-checkstyle</id>
@@ -469,6 +468,7 @@
 						</goals>
 						<configuration>
 							<configLocation>checkstyle.xml</configLocation>
+							<suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
 							<consoleOutput>true</consoleOutput>
 							<includeTestSourceDirectory>true</includeTestSourceDirectory>
 							<encoding>UTF-8</encoding>

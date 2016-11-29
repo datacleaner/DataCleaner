@@ -213,7 +213,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 
         final DescriptionLabel descriptionLabel = new DescriptionLabel(
                 "<p>Simple string patterns are tokenized patterns made up of these elements.</p>"
-                        + "<p>* A = upper case letters<br>* a = lower case letters<br>* 9 = digits</p>");
+                        + "<p>* A = upper case letter<br>* a = lower case letters<br>* 9 = digits</p>");
 
         final DCPanel mainPanel = new DCPanel();
         mainPanel.setLayout(new BorderLayout());

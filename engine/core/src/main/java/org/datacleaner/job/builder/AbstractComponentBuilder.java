@@ -50,6 +50,7 @@ import org.datacleaner.api.Renderable;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.connection.OutputDataStreamDatastore;
+import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.TransformedInputColumn;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -899,14 +900,34 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         AnalysisJobBuilder analysisJobBuilder = _outputDataStreamJobs.get(outputDataStream);
         if (analysisJobBuilder == null) {
             assert _outputDataStreams.contains(outputDataStream);
-
             final Table table = outputDataStream.getTable();
-
             analysisJobBuilder = new AnalysisJobBuilder(_analysisJobBuilder.getConfiguration(), _analysisJobBuilder);
             analysisJobBuilder.setDatastore(new OutputDataStreamDatastore(outputDataStream));
             analysisJobBuilder.addSourceColumns(table.getColumns());
 
             _outputDataStreamJobs.put(outputDataStream, analysisJobBuilder);
+        } else {
+            final List<MetaModelInputColumn> sourceColumns = analysisJobBuilder.getSourceColumns();
+            final String[] sourceColumnsNames = new String[sourceColumns.size()];
+            for (int i = 0; i < sourceColumns.size(); i++) {
+                sourceColumnsNames[i] = sourceColumns.get(i).getName();
+            }
+            // If the one of the components has had changed output columns names it won't be visible
+            // in the analysisJobBuilder's source columns represented by the outputStream. 
+            // Therefore, we check if there are any changes in the name of the columns. see issue #1616(github).
+            final Table table = outputDataStream.getTable();
+            final String[] outputStreamColumnNames = table.getColumnNames();
+            if (!Arrays.equals(sourceColumnsNames, outputStreamColumnNames)) {
+                //avoid triggering listeners when the outputstream is consumed
+                if (!isOutputDataStreamConsumed(outputDataStream)) {
+                    for (int i = 0; i < sourceColumns.size(); i++) {
+                        analysisJobBuilder.removeSourceColumn(sourceColumns.get(i));
+                    }
+                    //Add the new source columns
+                    final Column[] columns = table.getColumns();
+                    analysisJobBuilder.addSourceColumns(columns);
+                }
+            }
         }
         return analysisJobBuilder;
     }

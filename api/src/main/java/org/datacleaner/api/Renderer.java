@@ -24,35 +24,35 @@ package org.datacleaner.api;
  * Interface for renderers of analyzer results. Renderers are used to transform
  * the logical results into readable results such as HTML pages, Swing
  * components, Text or XML files.
- * 
+ *
  * @param <I>
  *            the input of the renderer, ie. the result type (or
  *            {@link Renderable} in general) to render
  * @param <O>
  *            the output type of the renderer. This should be the same as or a
  *            subclass of the output class of the matching RenderingFormat.
- * 
+ *
  * @see RendererBean
  * @see RenderingFormat
  */
 public interface Renderer<I extends Renderable, O> {
 
-	/**
-	 * Checks whether this renderer is capable of rendering a particular
-	 * renderable. This method allows renderers to respond to specific state
-	 * available in the renderables.
-	 * 
-	 * @param renderable
-	 * @return
-	 */
-	public RendererPrecedence getPrecedence(I renderable);
+    /**
+     * Checks whether this renderer is capable of rendering a particular
+     * renderable. This method allows renderers to respond to specific state
+     * available in the renderables.
+     *
+     * @param renderable
+     * @return
+     */
+    RendererPrecedence getPrecedence(I renderable);
 
-	/**
-	 * Renders an analyzer result.
-	 * 
-	 * @param renderable
-	 *            the {@link Renderable} to render.
-	 * @return the outcoming, rendered result.
-	 */
-	public O render(I renderable);
+    /**
+     * Renders an analyzer result.
+     *
+     * @param renderable
+     *            the {@link Renderable} to render.
+     * @return the outcoming, rendered result.
+     */
+    O render(I renderable);
 }

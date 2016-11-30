@@ -32,7 +32,7 @@ public class NumberAnalyzerResult extends CrosstabResult {
 
     private final InputColumn<? extends Number>[] _columns;
 
-    public NumberAnalyzerResult(InputColumn<? extends Number>[] columns, Crosstab<?> crosstab) {
+    public NumberAnalyzerResult(final InputColumn<? extends Number>[] columns, final Crosstab<?> crosstab) {
         super(crosstab);
         _columns = columns;
     }
@@ -42,97 +42,97 @@ public class NumberAnalyzerResult extends CrosstabResult {
     }
 
     @Metric(order = 1, value = NumberAnalyzer.MEASURE_ROW_COUNT)
-    public Number getRowCount(InputColumn<?> col) {
+    public Number getRowCount(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_ROW_COUNT).get();
     }
 
     @Metric(order = 2, value = NumberAnalyzer.MEASURE_NULL_COUNT)
-    public Number getNullCount(InputColumn<?> col) {
+    public Number getNullCount(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_NULL_COUNT).get();
     }
 
     @Metric(order = 3, value = NumberAnalyzer.MEASURE_HIGHEST_VALUE)
-    public Number getHighestValue(InputColumn<?> col) {
+    public Number getHighestValue(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_HIGHEST_VALUE).safeGet(null);
     }
 
     @Metric(order = 4, value = NumberAnalyzer.MEASURE_LOWEST_VALUE)
-    public Number getLowestValue(InputColumn<?> col) {
+    public Number getLowestValue(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_LOWEST_VALUE).safeGet(null);
     }
 
     @Metric(order = 5, value = NumberAnalyzer.MEASURE_SUM)
-    public Number getSum(InputColumn<?> col) {
+    public Number getSum(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_SUM).safeGet(null);
     }
 
     @Metric(order = 6, value = NumberAnalyzer.MEASURE_MEAN)
-    public Number getMean(InputColumn<?> col) {
+    public Number getMean(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_MEAN).safeGet(null);
     }
 
     @Metric(order = 7, value = NumberAnalyzer.MEASURE_GEOMETRIC_MEAN)
-    public Number getGeometricMean(InputColumn<?> col) {
+    public Number getGeometricMean(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_GEOMETRIC_MEAN).safeGet(null);
     }
 
     @Metric(order = 8, value = NumberAnalyzer.MEASURE_STANDARD_DEVIATION)
-    public Number getStandardDeviation(InputColumn<?> col) {
+    public Number getStandardDeviation(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_STANDARD_DEVIATION).safeGet(null);
     }
 
     @Metric(order = 9, value = NumberAnalyzer.MEASURE_VARIANCE)
-    public Number getVariance(InputColumn<?> col) {
+    public Number getVariance(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_VARIANCE).safeGet(null);
     }
 
     @Metric(order = 10, value = NumberAnalyzer.MEASURE_SECOND_MOMENT)
-    public Number getSecondMoment(InputColumn<?> col) {
+    public Number getSecondMoment(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_SECOND_MOMENT).safeGet(null);
     }
 
     @Metric(order = 11, value = NumberAnalyzer.MEASURE_SUM_OF_SQUARES)
-    public Number getSumOfSquares(InputColumn<?> col) {
+    public Number getSumOfSquares(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_SUM_OF_SQUARES).safeGet(null);
     }
 
     @Metric(order = 20, value = NumberAnalyzer.MEASURE_MEDIAN)
-    public Number getMedian(InputColumn<?> col) {
+    public Number getMedian(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_MEDIAN).safeGet(null);
     }
 
     @Metric(order = 21, value = NumberAnalyzer.MEASURE_PERCENTILE25)
-    public Number getPercentile25(InputColumn<?> col) {
+    public Number getPercentile25(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_PERCENTILE25).safeGet(null);
     }
 
     @Metric(order = 22, value = NumberAnalyzer.MEASURE_PERCENTILE75)
-    public Number getPercentile75(InputColumn<?> col) {
+    public Number getPercentile75(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_PERCENTILE75).safeGet(null);
     }
 
     @Metric(order = 23, value = NumberAnalyzer.MEASURE_KURTOSIS)
-    public Number getKurtosis(InputColumn<?> col) {
+    public Number getKurtosis(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_KURTOSIS).safeGet(null);
     }
 
     @Metric(order = 24, value = NumberAnalyzer.MEASURE_SKEWNESS)
-    public Number getSkewness(InputColumn<?> col) {
+    public Number getSkewness(final InputColumn<?> col) {
         return (Number) getCrosstab().where(NumberAnalyzer.DIMENSION_COLUMN, col.getName())
                 .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_SKEWNESS).safeGet(null);
     }

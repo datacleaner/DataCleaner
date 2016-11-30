@@ -29,7 +29,8 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 
 final class DatastoreSynonymCatalogReferenceDataPageDatastore extends DatastorePageDatastore {
 
-    public DatastoreSynonymCatalogReferenceDataPageDatastore(DatastoreSynonymCatalogReferenceDataWizardSession session) {
+    public DatastoreSynonymCatalogReferenceDataPageDatastore(
+            final DatastoreSynonymCatalogReferenceDataWizardSession session) {
         super(session);
     }
 
@@ -39,13 +40,13 @@ final class DatastoreSynonymCatalogReferenceDataPageDatastore extends DatastoreP
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final String name = getString(formParameters, PROPERTY_NAME);
         final String datastore = getString(formParameters, PROPERTY_DATASTORE);
-        ReferenceDataHelper.checkUniqueSynonymCatalog(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog());
-        
+        ReferenceDataHelper.checkUniqueSynonymCatalog(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
+
         _session.setName(name);
         _session.setDatastore(datastore);
 

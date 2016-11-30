@@ -39,19 +39,19 @@ public class CoalesceUnit {
     // transient cached view of columns
     private final InputColumn<?>[] _inputColumns;
 
-    public CoalesceUnit(List<? extends InputColumn<?>> inputColumns) {
+    public CoalesceUnit(final List<? extends InputColumn<?>> inputColumns) {
         this(inputColumns.toArray(new InputColumn[inputColumns.size()]));
     }
 
     /**
      * Create an uninitialized CoalesceUnit... The makes it into a pure factory.
      */
-    public CoalesceUnit(String... columnNames) {
+    public CoalesceUnit(final String... columnNames) {
         _inputColumnNames = columnNames;
         _inputColumns = null;
     }
 
-    public CoalesceUnit(InputColumn<?>... inputColumns) {
+    public CoalesceUnit(final InputColumn<?>... inputColumns) {
         if (inputColumns == null || inputColumns.length == 0) {
             throw new IllegalArgumentException("InputColumns cannot be null or empty");
         }
@@ -59,11 +59,19 @@ public class CoalesceUnit {
         _inputColumnNames = getInputColumnNames(inputColumns);
     }
 
-    private String[] getInputColumnNames(InputColumn<?>[] inputColumns) {
+    private static String getSimpleName(final String name) {
+        final int dotIndex = name.lastIndexOf('.');
+        if (dotIndex == -1) {
+            return name;
+        }
+        return name.substring(dotIndex + 1);
+    }
+
+    private String[] getInputColumnNames(final InputColumn<?>[] inputColumns) {
         final String[] result = new String[inputColumns.length];
         for (int i = 0; i < inputColumns.length; i++) {
             final InputColumn<?> inputColumn = inputColumns[i];
-            if(inputColumn.isPhysicalColumn()){
+            if (inputColumn.isPhysicalColumn()) {
                 result[i] = inputColumn.getPhysicalColumn().getQualifiedLabel();
             } else {
                 result[i] = inputColumn.getName();
@@ -86,7 +94,7 @@ public class CoalesceUnit {
      * @param newInputColumns List of new {@link InputColumn}s
      * @return New {@link CoalesceUnit} if {@link InputColumn}s has truly changed, otherwise this.
      */
-    public CoalesceUnit getUpdatedCoalesceUnit(InputColumn<?>[] newInputColumns) {
+    public CoalesceUnit getUpdatedCoalesceUnit(final InputColumn<?>[] newInputColumns) {
         if (Arrays.equals(_inputColumns, newInputColumns)) {
             return this;
         } else {
@@ -105,11 +113,12 @@ public class CoalesceUnit {
      *
      * @return A new CoalesceUnit containing the updated columns.
      */
-    public CoalesceUnit updateInputColumns(InputColumn<?>[] allInputColumns) {
+    public CoalesceUnit updateInputColumns(final InputColumn<?>[] allInputColumns) {
         return getUpdatedCoalesceUnit(getUpdatedInputColumns(allInputColumns, true));
     }
 
-    public InputColumn<?>[] getUpdatedInputColumns(InputColumn<?>[] allInputColumns, boolean exceptionOnMissing) {
+    public InputColumn<?>[] getUpdatedInputColumns(final InputColumn<?>[] allInputColumns,
+            final boolean exceptionOnMissing) {
         final String[] newInputColumnNames = getInputColumnNames();
         final List<InputColumn<?>> newInputColumns = new ArrayList<>(newInputColumnNames.length);
 
@@ -204,30 +213,26 @@ public class CoalesceUnit {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        CoalesceUnit other = (CoalesceUnit) obj;
-        if (!Arrays.equals(getInputColumnNames(), other.getInputColumnNames()))
+        }
+        final CoalesceUnit other = (CoalesceUnit) obj;
+        if (!Arrays.equals(getInputColumnNames(), other.getInputColumnNames())) {
             return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
         return "CoalesceUnit[inputColumnNames=" + Arrays.toString(getInputColumnNames()) + "]";
-    }
-
-    private static String getSimpleName(String name){
-        int dotIndex = name.lastIndexOf('.');
-        if(dotIndex == -1){
-            return name;
-        }
-        return name.substring(dotIndex + 1);
     }
 
     public String getSuggestedOutputColumnName() {

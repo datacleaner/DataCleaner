@@ -41,26 +41,26 @@ public class RunAnalysisActionListener implements ActionListener {
     private long _lastClickTime = 0;
 
     @Inject
-    public RunAnalysisActionListener(DCModule dcModule, AnalysisJobBuilder analysisJobBuilder) {
+    public RunAnalysisActionListener(final DCModule dcModule, final AnalysisJobBuilder analysisJobBuilder) {
         _dcModule = dcModule;
         _analysisJobBuilder = analysisJobBuilder;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         run();
     }
 
     public void run() {
         synchronized (RunAnalysisActionListener.class) {
-            long thisClickTime = System.currentTimeMillis();
+            final long thisClickTime = System.currentTimeMillis();
             if (thisClickTime - _lastClickTime < 1000) {
                 // prevent that double clicks fire two analysis runs!
                 return;
             }
             _lastClickTime = thisClickTime;
         }
-        
+
         final InjectorBuilder injectorBuilder = _dcModule.createInjectorBuilder();
         injectorBuilder.with(AnalysisJobBuilder.class, _analysisJobBuilder);
         injectorBuilder.with(DataCleanerConfiguration.class, _analysisJobBuilder.getConfiguration());

@@ -29,14 +29,14 @@ import java.lang.annotation.Target;
 /**
  * Annotation used for {@link Configured} properties that are mapped to another
  * {@link Configured} property.
- * 
+ *
  * Usually the way this works by indicating that two array properties are
  * connected/mapped together. One property would contain an array of
  * {@link InputColumn}s and the other would be an array of Strings, enums or
  * something else. The second would then be mapped to the first, making it
  * possible for each input column to "have" a String or a enum value mapped.
- * 
- * Another way that properties may be mapped is by hierarical structure or
+ *
+ * Another way that properties may be mapped is by hierarchical structure or
  * dependency. For instance, a {@link ColumnProperty} may be mapped to a
  * {@link TableProperty} which indicates that the column should exist within the
  * table.
@@ -49,8 +49,8 @@ public @interface MappedProperty {
 
     /**
      * Defines the name of the other property that this property is mapped to.
-     * 
+     *
      * @return
      */
-    public String value();
+    String value();
 }

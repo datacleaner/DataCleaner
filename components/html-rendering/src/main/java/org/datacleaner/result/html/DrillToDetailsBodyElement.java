@@ -36,7 +36,8 @@ public class DrillToDetailsBodyElement implements BodyElement {
     private final String _elementId;
     private final RendererFactory _rendererFactory;
 
-    public DrillToDetailsBodyElement(String elementId, RendererFactory rendererFactory, AnalyzerResult result) {
+    public DrillToDetailsBodyElement(final String elementId, final RendererFactory rendererFactory,
+            final AnalyzerResult result) {
         if (rendererFactory == null) {
             throw new IllegalArgumentException("RendererFactory cannot be null");
         }
@@ -49,9 +50,9 @@ public class DrillToDetailsBodyElement implements BodyElement {
     }
 
     @Override
-    public String toHtml(HtmlRenderingContext context) {
-        final Renderer<? super AnalyzerResult, ? extends HtmlFragment> renderer = _rendererFactory.getRenderer(_result,
-                HtmlRenderingFormat.class);
+    public String toHtml(final HtmlRenderingContext context) {
+        final Renderer<? super AnalyzerResult, ? extends HtmlFragment> renderer =
+                _rendererFactory.getRenderer(_result, HtmlRenderingFormat.class);
         if (renderer == null) {
             throw new IllegalStateException("No renderer found for: " + _result);
         }
@@ -65,14 +66,14 @@ public class DrillToDetailsBodyElement implements BodyElement {
         // Append head elements inline (because we cannot reach the head
         // elements from here)
         final List<HeadElement> headElements = htmlFragment.getHeadElements();
-        for (HeadElement headElement : headElements) {
+        for (final HeadElement headElement : headElements) {
             sb.append(headElement);
             sb.append('\n');
         }
 
         // Append body elements
         final List<BodyElement> bodyElements = htmlFragment.getBodyElements();
-        for (BodyElement bodyElement : bodyElements) {
+        for (final BodyElement bodyElement : bodyElements) {
             sb.append(bodyElement.toHtml(context));
             sb.append('\n');
         }

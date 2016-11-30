@@ -24,5 +24,5 @@ package org.datacleaner.job.builder;
  * or removed from a job that is being built.
  */
 public interface AnalyzerChangeListener extends ComponentChangeListener<AnalyzerComponentBuilder<?>> {
-	
+
 }

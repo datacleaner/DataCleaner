@@ -40,7 +40,7 @@ import freemarker.template.Version;
 public abstract class AbstractFreemarkerWizardPage extends AbstractWizardPage implements WizardPageController {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractFreemarkerWizardPage.class);
-    
+
     protected final Configuration _templateConfiguration;
 
     public AbstractFreemarkerWizardPage() {
@@ -48,7 +48,7 @@ public abstract class AbstractFreemarkerWizardPage extends AbstractWizardPage im
         _templateConfiguration = new Configuration(freeMarkerVersion);
         _templateConfiguration.setObjectWrapper(new DefaultObjectWrapper(freeMarkerVersion));
     }
-    
+
     @Override
     public final String getFormInnerHtml() {
         // load templates from the package of the (concrete) class.
@@ -66,11 +66,11 @@ public abstract class AbstractFreemarkerWizardPage extends AbstractWizardPage im
             final Template template = _templateConfiguration.getTemplate(templateFilename);
             template.process(formModel, out);
             out.flush();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            
+
             throw new IllegalStateException("Could not render freemarker template: " + templateFilename, e);
         }
 

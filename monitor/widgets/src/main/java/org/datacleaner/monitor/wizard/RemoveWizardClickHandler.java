@@ -28,15 +28,15 @@ public class RemoveWizardClickHandler implements ClickHandler {
     private JobWizardController _jobWizardController;
     private String _resultEntityName;
 
-    public RemoveWizardClickHandler(ClickHandler clickHandler, JobWizardController jobWizardController,
-            String resultEntityName) {
+    public RemoveWizardClickHandler(final ClickHandler clickHandler, final JobWizardController jobWizardController,
+            final String resultEntityName) {
         _clickHandler = clickHandler;
         _jobWizardController = jobWizardController;
         _resultEntityName = resultEntityName;
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(final ClickEvent event) {
         _jobWizardController.closeWizardAfterFinishing(_resultEntityName, null);
         _clickHandler.onClick(event);
     }

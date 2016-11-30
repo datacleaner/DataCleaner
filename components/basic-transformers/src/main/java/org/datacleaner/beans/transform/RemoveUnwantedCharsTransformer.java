@@ -32,7 +32,8 @@ import org.datacleaner.components.categories.TextCategory;
 import org.datacleaner.util.CharIterator;
 
 @Named("Remove unwanted characters")
-@Description("Removes characters from strings that are not wanted. Use it to cleanse codes and identifiers that may have additional dashes, punctuations, unwanted letters etc.")
+@Description( "Removes characters from strings that are not wanted. Use it to cleanse codes and identifiers "
+        + "that may have additional dashes, punctuations, unwanted letters etc.")
 @Categorized(TextCategory.class)
 public class RemoveUnwantedCharsTransformer implements Transformer {
 
@@ -55,7 +56,7 @@ public class RemoveUnwantedCharsTransformer implements Transformer {
     public RemoveUnwantedCharsTransformer() {
     }
 
-    public RemoveUnwantedCharsTransformer(InputColumn<String> inputColumn) {
+    public RemoveUnwantedCharsTransformer(final InputColumn<String> inputColumn) {
         column = inputColumn;
     }
 
@@ -65,12 +66,12 @@ public class RemoveUnwantedCharsTransformer implements Transformer {
     }
 
     @Override
-    public Object[] transform(InputRow row) {
+    public Object[] transform(final InputRow row) {
         final String value = row.getValue(column);
         return transform(value);
     }
 
-    public Object[] transform(String value) {
+    public Object[] transform(final String value) {
         if (value == null) {
             return new Object[1];
         }

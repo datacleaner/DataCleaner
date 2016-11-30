@@ -33,7 +33,7 @@ public class SwaggerInfo {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -41,7 +41,7 @@ public class SwaggerInfo {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(final String version) {
         this.version = version;
     }
 
@@ -49,7 +49,7 @@ public class SwaggerInfo {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -57,7 +57,7 @@ public class SwaggerInfo {
         return termsOfService;
     }
 
-    public void setTermsOfService(String termsOfService) {
+    public void setTermsOfService(final String termsOfService) {
         this.termsOfService = termsOfService;
     }
 
@@ -65,7 +65,7 @@ public class SwaggerInfo {
         return contact;
     }
 
-    public void setContact(SwaggerContact contact) {
+    public void setContact(final SwaggerContact contact) {
         this.contact = contact;
     }
 

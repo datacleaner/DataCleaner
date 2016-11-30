@@ -21,12 +21,12 @@ package org.datacleaner.util.convert;
 
 /**
  * Interface for dates expressed not absolutely, but as an expression.
- * 
+ *
  * @see TodayDate
  * @see YesterdayDate
  * @see NowDate
  */
 public interface ExpressionDate {
 
-    public String getExpression();
+    String getExpression();
 }

@@ -39,7 +39,7 @@ final class RegexStringPatternReferenceDataWizardSession extends AbstractReferen
     private String _expression;
     private String _matchEntireString;
 
-    public RegexStringPatternReferenceDataWizardSession(ReferenceDataWizardContext context) {
+    public RegexStringPatternReferenceDataWizardSession(final ReferenceDataWizardContext context) {
         super(context);
     }
 

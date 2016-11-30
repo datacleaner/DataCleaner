@@ -42,7 +42,8 @@ public class HtmlCrosstabRendererCallback implements CrosstabRendererCallback<Ht
 
     private int rowNumber;
 
-    public HtmlCrosstabRendererCallback(RendererFactory rendererFactory, HtmlRenderingContext htmlRenderingContext) {
+    public HtmlCrosstabRendererCallback(final RendererFactory rendererFactory,
+            final HtmlRenderingContext htmlRenderingContext) {
         this.rendererFactory = rendererFactory;
         this.htmlRenderingContext = htmlRenderingContext;
         this.sb = new StringBuilder();
@@ -51,8 +52,8 @@ public class HtmlCrosstabRendererCallback implements CrosstabRendererCallback<Ht
     }
 
     @Override
-    public void beginTable(Crosstab<?> crosstab, List<CrosstabDimension> horizontalDimensions,
-            List<CrosstabDimension> verticalDimensions) {
+    public void beginTable(final Crosstab<?> crosstab, final List<CrosstabDimension> horizontalDimensions,
+            final List<CrosstabDimension> verticalDimensions) {
         sb.append("<table class=\"crosstabTable\">");
     }
 
@@ -77,7 +78,7 @@ public class HtmlCrosstabRendererCallback implements CrosstabRendererCallback<Ht
     }
 
     @Override
-    public void horizontalHeaderCell(String category, CrosstabDimension dimension, int width) {
+    public void horizontalHeaderCell(final String category, final CrosstabDimension dimension, final int width) {
         if (width <= 0) {
             return;
         }
@@ -93,7 +94,7 @@ public class HtmlCrosstabRendererCallback implements CrosstabRendererCallback<Ht
     }
 
     @Override
-    public void verticalHeaderCell(String category, CrosstabDimension dimension, int height) {
+    public void verticalHeaderCell(final String category, final CrosstabDimension dimension, final int height) {
         if (height <= 0) {
             return;
         }
@@ -104,13 +105,13 @@ public class HtmlCrosstabRendererCallback implements CrosstabRendererCallback<Ht
         } else if (height == 1) {
             sb.append("<td class=\"crosstabVerticalHeader\">");
         }
-        
+
         sb.append(toHtml(category));
         sb.append("</td>");
     }
 
     @Override
-    public void valueCell(Object value, ResultProducer drillToDetailResultProducer) {
+    public void valueCell(final Object value, final ResultProducer drillToDetailResultProducer) {
         if (drillToDetailResultProducer == null) {
             simpleValueCell(value);
             return;
@@ -130,8 +131,8 @@ public class HtmlCrosstabRendererCallback implements CrosstabRendererCallback<Ht
 
         final String drillElementId = htmlRenderingContext.createElementId();
 
-        final DrillToDetailsBodyElement drillBodyElement = new DrillToDetailsBodyElement(drillElementId,
-                rendererFactory, drillResult);
+        final DrillToDetailsBodyElement drillBodyElement =
+                new DrillToDetailsBodyElement(drillElementId, rendererFactory, drillResult);
         htmlFragtment.addBodyElement(drillBodyElement);
 
         final String invocation = drillBodyElement.toJavaScriptInvocation();
@@ -143,31 +144,31 @@ public class HtmlCrosstabRendererCallback implements CrosstabRendererCallback<Ht
         sb.append("</td>");
     }
 
-    private void simpleValueCell(Object value) {
+    private void simpleValueCell(final Object value) {
         sb.append("<td class=\"value\">");
         sb.append(toHtml(value));
         sb.append("</td>");
     }
 
-    public String toHtml(Object value) {
+    public String toHtml(final Object value) {
         String valueLabel = LabelUtils.getValueLabel(value);
         valueLabel = htmlRenderingContext.escapeHtml(valueLabel);
         if (value instanceof Number) {
             // mark the decimal point
-            DecimalFormatSymbols decimalFormatSymbols = DecimalFormatSymbols.getInstance();
-            char decimalSeparator = decimalFormatSymbols.getDecimalSeparator();
-            int indexOfDecimalSeparator = valueLabel.lastIndexOf(decimalSeparator);
+            final DecimalFormatSymbols decimalFormatSymbols = DecimalFormatSymbols.getInstance();
+            final char decimalSeparator = decimalFormatSymbols.getDecimalSeparator();
+            final int indexOfDecimalSeparator = valueLabel.lastIndexOf(decimalSeparator);
             if (indexOfDecimalSeparator != -1) {
                 // add a <span class="decimal"></span> around the decimal part.
-                valueLabel = valueLabel.substring(0, indexOfDecimalSeparator) + "<span class=\"decimal\">"
-                        + valueLabel.substring(indexOfDecimalSeparator) + "</span>";
+                valueLabel = valueLabel.substring(0, indexOfDecimalSeparator) + "<span class=\"decimal\">" + valueLabel
+                        .substring(indexOfDecimalSeparator) + "</span>";
             }
         }
         return valueLabel;
     }
 
     @Override
-    public void emptyHeader(CrosstabDimension verticalDimension, CrosstabDimension horizontalDimension) {
+    public void emptyHeader(final CrosstabDimension verticalDimension, final CrosstabDimension horizontalDimension) {
         sb.append("<td class=\"empty\"></td>");
     }
 

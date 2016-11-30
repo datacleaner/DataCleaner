@@ -40,8 +40,8 @@ public class CustomHeaderColumnNamesAnalyzerJobPanel extends AnalyzerComponentBu
     private final ConfiguredPropertyDescriptor _inputColumnsProperty;
     private final ConfiguredPropertyDescriptor _mappedStringsProperty;
 
-    public CustomHeaderColumnNamesAnalyzerJobPanel(AnalyzerComponentBuilder<?> analyzerJobBuilder,
-            PropertyWidgetFactory propertyWidgetFactory) {
+    public CustomHeaderColumnNamesAnalyzerJobPanel(final AnalyzerComponentBuilder<?> analyzerJobBuilder,
+            final PropertyWidgetFactory propertyWidgetFactory) {
         super(analyzerJobBuilder, propertyWidgetFactory);
         
         _inputColumnsProperty = analyzerJobBuilder.getDescriptor()
@@ -51,15 +51,15 @@ public class CustomHeaderColumnNamesAnalyzerJobPanel extends AnalyzerComponentBu
         _mappedWidget = new MultipleMappedStringsPropertyWidget(analyzerJobBuilder, _inputColumnsProperty,
                 _mappedStringsProperty) {
             @Override
-            protected String getDefaultMappedString(InputColumn<?> inputColumn) {
+            protected String getDefaultMappedString(final InputColumn<?> inputColumn) {
                 return inputColumn.getName();
             }
         };
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (propertyDescriptor == _inputColumnsProperty) {
             return _mappedWidget;
         } else if (propertyDescriptor == _mappedStringsProperty) {
@@ -67,5 +67,5 @@ public class CustomHeaderColumnNamesAnalyzerJobPanel extends AnalyzerComponentBu
         }
         return super.createPropertyWidget(componentBuilder, propertyDescriptor);
     }
-    
+
 }

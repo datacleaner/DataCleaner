@@ -26,5 +26,5 @@ import java.util.Collection;
  */
 public interface HasFilterOutcomes {
 
-    public Collection<FilterOutcome> getFilterOutcomes();
+    Collection<FilterOutcome> getFilterOutcomes();
 }

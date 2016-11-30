@@ -27,11 +27,10 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.VFSUtils;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,28 +44,17 @@ public final class UserDatabaseDriver implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(UserDatabaseDriver.class);
-
+    private final File[] _files;
+    private final String _driverClassName;
     private transient Driver _driverInstance;
     private transient Driver _registeredDriver;
     private transient boolean _loaded = false;
-    private final File[] _files;
-    private final String _driverClassName;
 
-    public UserDatabaseDriver(FileObject[] files, String driverClassName) {
+    public UserDatabaseDriver(final FileObject[] files, final String driverClassName) {
         this(convert(files), driverClassName);
     }
 
-    private static File[] convert(FileObject[] files) {
-        return CollectionUtils.map(files, new Func<FileObject, File>() {
-            @Override
-            public File eval(FileObject arg) {
-                return VFSUtils.toFile(arg);
-            }
-        }).toArray(new File[0]);
-
-    }
-
-    public UserDatabaseDriver(File[] files, String driverClassName) {
+    public UserDatabaseDriver(final File[] files, final String driverClassName) {
         if (files == null) {
             throw new IllegalStateException("Driver file(s) cannot be null");
         }
@@ -75,6 +63,11 @@ public final class UserDatabaseDriver implements Serializable {
         }
         _files = files;
         _driverClassName = driverClassName;
+    }
+
+    private static File[] convert(final FileObject[] files) {
+        return CollectionUtils.map(files, VFSUtils::toFile).toArray(new File[0]);
+
     }
 
     public String getDriverClassName() {
@@ -87,12 +80,12 @@ public final class UserDatabaseDriver implements Serializable {
 
     public UserDatabaseDriver loadDriver() throws IllegalStateException {
         if (!_loaded) {
-            ClassLoader driverClassLoader = ClassLoaderUtils.createClassLoader(_files);
+            final ClassLoader driverClassLoader = ClassLoaderUtils.createClassLoader(_files);
 
             final Class<?> loadedClass;
             try {
                 loadedClass = Class.forName(_driverClassName, true, driverClassLoader);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 if (e instanceof RuntimeException) {
                     throw (RuntimeException) e;
                 }
@@ -105,7 +98,7 @@ public final class UserDatabaseDriver implements Serializable {
                 _registeredDriver = new DriverWrapper(_driverInstance);
                 try {
                     DriverManager.registerDriver(_registeredDriver);
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     throw new IllegalStateException("Could not register driver", e);
                 }
             } else {
@@ -122,7 +115,7 @@ public final class UserDatabaseDriver implements Serializable {
             _registeredDriver = null;
             _driverInstance = null;
             _loaded = false;
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             logger.error("Exception occurred while unloading driver: " + _driverClassName, e);
         }
     }

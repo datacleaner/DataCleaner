@@ -19,58 +19,59 @@
  */
 package org.datacleaner.configuration;
 
-import junit.framework.TestCase;
-
+import org.apache.metamodel.schema.MutableColumn;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.test.TestHelper;
 import org.datacleaner.test.mock.MockDatastore;
-import org.apache.metamodel.schema.MutableColumn;
+
+import junit.framework.TestCase;
 
 public class SourceColumnMappingTest extends TestCase {
 
-	public void testIsSatisfied() throws Exception {
-		SourceColumnMapping columnMapping = new SourceColumnMapping("foo.bar.col1", "foo.bar.col2");
-		assertFalse(columnMapping.isSatisfied());
+    public void testIsSatisfied() throws Exception {
+        final SourceColumnMapping columnMapping = new SourceColumnMapping("foo.bar.col1", "foo.bar.col2");
+        assertFalse(columnMapping.isSatisfied());
 
-		columnMapping.setDatastore(new MockDatastore());
-		assertFalse(columnMapping.isSatisfied());
-		
-		columnMapping.setColumn("foo.bar.col1", new MutableColumn("col1"));
-		assertFalse(columnMapping.isSatisfied());
+        columnMapping.setDatastore(new MockDatastore());
+        assertFalse(columnMapping.isSatisfied());
 
-		columnMapping.setColumn("foo.bar.col2", new MutableColumn("col2"));
-		assertTrue(columnMapping.isSatisfied());
-		
-		
-	}
+        columnMapping.setColumn("foo.bar.col1", new MutableColumn("col1"));
+        assertFalse(columnMapping.isSatisfied());
 
-	public void testAutoMapAllMatches() throws Exception {
-		Datastore datastore = TestHelper.createSampleDatabaseDatastore("testdb");
+        columnMapping.setColumn("foo.bar.col2", new MutableColumn("col2"));
+        assertTrue(columnMapping.isSatisfied());
 
-		SourceColumnMapping columnMapping = new SourceColumnMapping("PUBLIC.EMPLOYEES.FIRSTNAME",
-				"PUBLIC.EMPLOYEES.LASTNAME");
-		assertFalse(columnMapping.isSatisfied());
-		columnMapping.autoMap(datastore);
 
-		assertTrue(columnMapping.isSatisfied());
-	}
+    }
 
-	public void testAutoMapPartialMatches() throws Exception {
-		Datastore datastore = TestHelper.createSampleDatabaseDatastore("testdb");
+    public void testAutoMapAllMatches() throws Exception {
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("testdb");
 
-		SourceColumnMapping columnMapping = new SourceColumnMapping("PUBLIC.EMPLOYEES.FIRSTNAME", "foo.bar.col1",
-				"PUBLIC.EMPLOYEES.LASTNAME", "foo.bar.col2");
+        final SourceColumnMapping columnMapping =
+                new SourceColumnMapping("PUBLIC.EMPLOYEES.FIRSTNAME", "PUBLIC.EMPLOYEES.LASTNAME");
+        assertFalse(columnMapping.isSatisfied());
+        columnMapping.autoMap(datastore);
 
-		columnMapping.setColumn("foo.bar.col1", new MutableColumn("col1"));
-		assertFalse(columnMapping.isSatisfied());
-		assertEquals("[PUBLIC.EMPLOYEES.FIRSTNAME, PUBLIC.EMPLOYEES.LASTNAME, foo.bar.col2]", columnMapping
-				.getUnmappedPaths().toString());
+        assertTrue(columnMapping.isSatisfied());
+    }
 
-		columnMapping.autoMap(datastore);
-		assertFalse(columnMapping.isSatisfied());
-		assertEquals("[foo.bar.col2]", columnMapping.getUnmappedPaths().toString());
+    public void testAutoMapPartialMatches() throws Exception {
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("testdb");
 
-		columnMapping.setColumn("foo.bar.col2", new MutableColumn("col2"));
-		assertTrue(columnMapping.isSatisfied());
-	}
+        final SourceColumnMapping columnMapping =
+                new SourceColumnMapping("PUBLIC.EMPLOYEES.FIRSTNAME", "foo.bar.col1", "PUBLIC.EMPLOYEES.LASTNAME",
+                        "foo.bar.col2");
+
+        columnMapping.setColumn("foo.bar.col1", new MutableColumn("col1"));
+        assertFalse(columnMapping.isSatisfied());
+        assertEquals("[PUBLIC.EMPLOYEES.FIRSTNAME, PUBLIC.EMPLOYEES.LASTNAME, foo.bar.col2]",
+                columnMapping.getUnmappedPaths().toString());
+
+        columnMapping.autoMap(datastore);
+        assertFalse(columnMapping.isSatisfied());
+        assertEquals("[foo.bar.col2]", columnMapping.getUnmappedPaths().toString());
+
+        columnMapping.setColumn("foo.bar.col2", new MutableColumn("col2"));
+        assertTrue(columnMapping.isSatisfied());
+    }
 }

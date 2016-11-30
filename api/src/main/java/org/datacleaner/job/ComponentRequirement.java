@@ -33,7 +33,7 @@ public interface ComponentRequirement extends Serializable {
     /**
      * Determines if the requirement is satisfied or not, given the available
      * outcomes of previous components.
-     * 
+     *
      * @param row
      *            the current input row being processed. During flow process
      *            ordering, this parameter will be null.
@@ -42,33 +42,33 @@ public interface ComponentRequirement extends Serializable {
      *            in the flow.
      * @return
      */
-    public boolean isSatisfied(InputRow row, FilterOutcomes availableOutcomes);
+    boolean isSatisfied(InputRow row, FilterOutcomes availableOutcomes);
 
     /**
      * Gets the {@link FilterOutcome}s that this requirement depends on at
      * processing time. During processing, each {@link FilterOutcome} returned
      * from this method will have been evaluated before calling
      * {@link #isSatisfied(InputRow, FilterOutcomes)}.
-     * 
+     *
      * @return
      */
-    public Collection<FilterOutcome> getProcessingDependencies();
+    Collection<FilterOutcome> getProcessingDependencies();
 
     /**
      * Gets a simple representation of this {@link ComponentRequirement}'s name,
      * whereas {@link #toString()} will usually contain more context and
      * technical information.
-     * 
+     *
      * @return
      */
-    public String getSimpleName();
+    String getSimpleName();
 
     /**
      * Provides textual representation of context and technical information
      * about the {@link ComponentRequirement}
-     * 
+     *
      * @return
      */
     @Override
-    public String toString();
+    String toString();
 }

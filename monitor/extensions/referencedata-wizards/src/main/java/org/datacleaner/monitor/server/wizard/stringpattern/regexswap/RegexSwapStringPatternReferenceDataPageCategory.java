@@ -34,7 +34,8 @@ final class RegexSwapStringPatternReferenceDataPageCategory extends AbstractFree
 
     private final RegexSwapStringPatternReferenceDataWizardSession _session;
 
-    public RegexSwapStringPatternReferenceDataPageCategory(RegexSwapStringPatternReferenceDataWizardSession session) {
+    public RegexSwapStringPatternReferenceDataPageCategory(
+            final RegexSwapStringPatternReferenceDataWizardSession session) {
         _session = session;
     }
 
@@ -44,7 +45,7 @@ final class RegexSwapStringPatternReferenceDataPageCategory extends AbstractFree
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         _session.setCategory(getString(formParameters, PROPERTY_CATEGORY));
 
@@ -68,7 +69,7 @@ final class RegexSwapStringPatternReferenceDataPageCategory extends AbstractFree
     private String getCategoryOptions() {
         final StringBuilder builder = new StringBuilder();
 
-        for (Category category : _session.getClient().getCategories()) {
+        for (final Category category : _session.getClient().getCategories()) {
             final String option =
                     String.format("<option value=\"%s\">%s</option>", category.getName(), category.getName());
             builder.append(option);

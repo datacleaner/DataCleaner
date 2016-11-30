@@ -32,16 +32,17 @@ import org.datacleaner.util.WidgetUtils;
 public class DescriptionLabel extends DCLabel {
 
     private static final long serialVersionUID = 1L;
-    
+
     public DescriptionLabel() {
         this(null);
     }
 
-    public DescriptionLabel(String text) {
+    public DescriptionLabel(final String text) {
         super(true, text, WidgetUtils.BG_COLOR_DARK, null);
         setFont(WidgetUtils.FONT_SMALL);
         setOpaque(true);
         setBackground(WidgetUtils.BG_COLOR_PALE_YELLOW);
-        setBorder(new CompoundBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT), WidgetUtils.BORDER_EMPTY));
+        setBorder(new CompoundBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT),
+                WidgetUtils.BORDER_EMPTY));
     }
 }

@@ -20,8 +20,6 @@
 package org.datacleaner.widgets.tree;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -58,8 +56,8 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
     private final WindowContext _windowContext;
 
     @Inject
-    protected TableMouseListener(WindowContext windowContext, SchemaTree schemaTree,
-            AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder) {
+    protected TableMouseListener(final WindowContext windowContext, final SchemaTree schemaTree,
+            final AnalysisJobBuilder analysisJobBuilder, final InjectorBuilder injectorBuilder) {
         _windowContext = windowContext;
         _schemaTree = schemaTree;
         _analysisJobBuilder = analysisJobBuilder;
@@ -67,7 +65,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
         final TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
         if (path == null) {
             return;
@@ -77,7 +75,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
         if (userObject instanceof Table) {
             final Table table = (Table) userObject;
 
-            int button = e.getButton();
+            final int button = e.getButton();
 
             if (button == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
                 // double click = add table
@@ -89,7 +87,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 boolean enableRemoveTable = false;
 
                 final Column[] columns = table.getColumns();
-                for (Column column : columns) {
+                for (final Column column : columns) {
                     if (_analysisJobBuilder.containsSourceColumn(column)) {
                         enableRemoveTable = true;
                     } else {
@@ -100,8 +98,8 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                     }
                 }
 
-                final Injector injector = _injectorBuilder.with(Table.class, table).with(Column[].class, null)
-                        .createInjector();
+                final Injector injector =
+                        _injectorBuilder.with(Table.class, table).with(Column[].class, null).createInjector();
 
                 final JPopupMenu popup = new JPopupMenu();
                 popup.setLabel(table.getName());
@@ -127,67 +125,58 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
     private void addQueryTableMenuItem(final Table table, final JPopupMenu popup) {
         final JMenuItem queryMenuItem = WidgetFactory.createMenuItem("Ad-hoc query", IconUtils.MODEL_QUERY);
-        queryMenuItem.addActionListener(new QueryActionListener(_schemaTree.getWindowContext(), _analysisJobBuilder,
-                table));
+        queryMenuItem
+                .addActionListener(new QueryActionListener(_schemaTree.getWindowContext(), _analysisJobBuilder, table));
         popup.add(queryMenuItem);
     }
 
     private void addQuickAnalysisMenuItem(final Injector injector, final JPopupMenu popup) {
-        final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
-                IconUtils.MODEL_QUICK_ANALYSIS);
+        final JMenuItem quickAnalysisMenuItem =
+                WidgetFactory.createMenuItem("Quick analysis", IconUtils.MODEL_QUICK_ANALYSIS);
 
-        final QuickAnalysisActionListener quickAnalysisActionListener = injector
-                .getInstance(QuickAnalysisActionListener.class);
+        final QuickAnalysisActionListener quickAnalysisActionListener =
+                injector.getInstance(QuickAnalysisActionListener.class);
         quickAnalysisMenuItem.addActionListener(quickAnalysisActionListener);
         popup.add(quickAnalysisMenuItem);
     }
 
     private void addRemoveTableFromSourceMenuItem(final Table table, final JPopupMenu popup) {
-        final JMenuItem removeTableItem = WidgetFactory.createMenuItem("Remove table from source",
-                "images/actions/toggle-source-table.png");
-        removeTableItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removeTable(table);
-            }
-        });
+        final JMenuItem removeTableItem =
+                WidgetFactory.createMenuItem("Remove table from source", "images/actions/toggle-source-table.png");
+        removeTableItem.addActionListener(e -> removeTable(table));
         popup.add(removeTableItem);
     }
 
     private void addAddTableToSourceMenuItem(final Table table, final JPopupMenu popup) {
-        final JMenuItem addTableItem = WidgetFactory.createMenuItem("Add table to source",
-                "images/actions/toggle-source-table.png");
-        addTableItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addTable(table);
-            }
-        });
+        final JMenuItem addTableItem =
+                WidgetFactory.createMenuItem("Add table to source", "images/actions/toggle-source-table.png");
+        addTableItem.addActionListener(e -> addTable(table));
         popup.add(addTableItem);
     }
 
-    private void addSaveTableAsExcelMenuItem(final JPopupMenu popup, Injector injector) {
-        final JMenuItem saveAsExcelFileMenuItem = WidgetFactory.createMenuItem("Save table as Excel spreadsheet",
-                IconUtils.COMPONENT_TYPE_WRITE_DATA);
-        final SaveTableAsExcelSpreadsheetActionListener saveTableAsExcelSpreadsheetActionListener = injector
-                .getInstance(SaveTableAsExcelSpreadsheetActionListener.class);
+    private void addSaveTableAsExcelMenuItem(final JPopupMenu popup, final Injector injector) {
+        final JMenuItem saveAsExcelFileMenuItem =
+                WidgetFactory.createMenuItem("Save table as Excel spreadsheet", IconUtils.COMPONENT_TYPE_WRITE_DATA);
+        final SaveTableAsExcelSpreadsheetActionListener saveTableAsExcelSpreadsheetActionListener =
+                injector.getInstance(SaveTableAsExcelSpreadsheetActionListener.class);
         saveAsExcelFileMenuItem.addActionListener(saveTableAsExcelSpreadsheetActionListener);
         popup.add(saveAsExcelFileMenuItem);
     }
 
-    private void addSaveTableAsCsvMenuItem(final JPopupMenu popup, Injector injector) {
-        final JMenuItem saveAsCsvFileMenuItem = WidgetFactory.createMenuItem("Save table as CSV file",
-                IconUtils.COMPONENT_TYPE_WRITE_DATA);
-        final SaveTableAsCsvFileActionListener saveTableAsCsvFileActionListener = injector
-                .getInstance(SaveTableAsCsvFileActionListener.class);
+    private void addSaveTableAsCsvMenuItem(final JPopupMenu popup, final Injector injector) {
+        final JMenuItem saveAsCsvFileMenuItem =
+                WidgetFactory.createMenuItem("Save table as CSV file", IconUtils.COMPONENT_TYPE_WRITE_DATA);
+        final SaveTableAsCsvFileActionListener saveTableAsCsvFileActionListener =
+                injector.getInstance(SaveTableAsCsvFileActionListener.class);
         saveAsCsvFileMenuItem.addActionListener(saveTableAsCsvFileActionListener);
         popup.add(saveAsCsvFileMenuItem);
     }
 
     private void addPreviewTableMenuItem(final Column[] columns, final JPopupMenu popup) {
         final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table", IconUtils.ACTION_PREVIEW);
-        previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getWindowContext(),
-                _schemaTree.getDatastore(), columns));
+        previewMenuItem.addActionListener(
+                new PreviewSourceDataActionListener(_schemaTree.getWindowContext(), _schemaTree.getDatastore(),
+                        columns));
         popup.add(previewMenuItem);
     }
 
@@ -198,13 +187,10 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
             final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
             final JMenuItem dropTableMenuItem = WidgetFactory.createMenuItem("Drop table", IconUtils.ACTION_DROP_TABLE);
-            dropTableMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    final DropTableDialog dialog = new DropTableDialog(_windowContext, updateableDatastore, table,
-                            _schemaTree);
-                    dialog.open();
-                }
+            dropTableMenuItem.addActionListener(e -> {
+                final DropTableDialog dialog =
+                        new DropTableDialog(_windowContext, updateableDatastore, table, _schemaTree);
+                dialog.open();
             });
             popup.add(dropTableMenuItem);
         }
@@ -213,9 +199,9 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
     /**
      * toggles whether or not the column is in the source selection
      */
-    public void addTable(Table table) {
-        Column[] columns = table.getColumns();
-        for (Column column : columns) {
+    public void addTable(final Table table) {
+        final Column[] columns = table.getColumns();
+        for (final Column column : columns) {
             if (!_analysisJobBuilder.containsSourceColumn(column)) {
                 _analysisJobBuilder.addSourceColumn(column);
             }
@@ -225,9 +211,9 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
     /**
      * toggles whether or not the column is in the source selection
      */
-    public void removeTable(Table table) {
-        Column[] columns = table.getColumns();
-        for (Column column : columns) {
+    public void removeTable(final Table table) {
+        final Column[] columns = table.getColumns();
+        for (final Column column : columns) {
             _analysisJobBuilder.removeSourceColumn(column);
         }
     }

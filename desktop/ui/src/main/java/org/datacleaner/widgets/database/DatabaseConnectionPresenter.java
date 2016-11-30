@@ -31,23 +31,23 @@ import org.datacleaner.database.DatabaseDriverDescriptor;
  */
 public interface DatabaseConnectionPresenter {
 
-	/**
-	 * Initializes the presenter with data from a given datastore.
-	 * 
-	 * @param datastore
-	 * @return true if the datastore is accepted and presentable by this
-	 *         {@link DatabaseConnectionPresenter}, or false if the presenter is
-	 *         not able to present it.
-	 */
-	public boolean initialize(JdbcDatastore datastore);
+    /**
+     * Initializes the presenter with data from a given datastore.
+     *
+     * @param datastore
+     * @return true if the datastore is accepted and presentable by this
+     *         {@link DatabaseConnectionPresenter}, or false if the presenter is
+     *         not able to present it.
+     */
+    boolean initialize(JdbcDatastore datastore);
 
-	public JComponent getWidget();
+    JComponent getWidget();
 
-	public String getJdbcUrl();
+    String getJdbcUrl();
 
-	public String getUsername();
+    String getUsername();
 
-	public String getPassword();
+    String getPassword();
 
-	public void setSelectedDatabaseDriver(DatabaseDriverDescriptor driver);
+    void setSelectedDatabaseDriver(DatabaseDriverDescriptor driver);
 }

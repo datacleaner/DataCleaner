@@ -24,44 +24,44 @@ import org.datacleaner.job.AbstractOutputRowCollector;
 
 /**
  * Thread local implementation of the {@link OutputRowCollector} interface.
- * 
+ *
  * This implementation holds a listener which recieves the values that are put
  * to the collector. Consumers should register a listener and remove it after
  * invocation.
  */
 public class ThreadLocalOutputRowCollector extends AbstractOutputRowCollector {
 
-	/**
-	 * Listener interface to be implemented by users of the output row
-	 * collector.
-	 */
-	public static interface Listener {
+    /**
+     * Listener interface to be implemented by users of the output row
+     * collector.
+     */
+    public interface Listener {
 
-		public void onValues(Object[] values);
+        void onValues(Object[] values);
 
-	}
+    }
 
-	private final ThreadLocal<Listener> _listener;
+    private final ThreadLocal<Listener> _listener;
 
-	public ThreadLocalOutputRowCollector() {
-		_listener = new ThreadLocal<Listener>();
-	}
+    public ThreadLocalOutputRowCollector() {
+        _listener = new ThreadLocal<>();
+    }
 
-	public void setListener(Listener listener) {
-		_listener.set(listener);
-	}
+    public void setListener(final Listener listener) {
+        _listener.set(listener);
+    }
 
-	public void removeListener() {
-		_listener.remove();
-	}
+    public void removeListener() {
+        _listener.remove();
+    }
 
-	@Override
-	public void putValues(Object... values) {
-		Listener listener = _listener.get();
-		if (listener == null) {
-			throw new IllegalStateException("No thread local listener registered!");
-		}
-		listener.onValues(values);
-	}
+    @Override
+    public void putValues(final Object... values) {
+        final Listener listener = _listener.get();
+        if (listener == null) {
+            throw new IllegalStateException("No thread local listener registered!");
+        }
+        listener.onValues(values);
+    }
 
 }

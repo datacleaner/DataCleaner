@@ -25,7 +25,7 @@ import org.datacleaner.monitor.shared.model.DCUserInputException;
 
 final class FileDictionaryReferenceDataPage extends FilePage {
 
-    public FileDictionaryReferenceDataPage(FileDictionaryReferenceDataWizardSession session) {
+    public FileDictionaryReferenceDataPage(final FileDictionaryReferenceDataWizardSession session) {
         super(session);
     }
 
@@ -36,7 +36,7 @@ final class FileDictionaryReferenceDataPage extends FilePage {
 
     @Override
     protected void checkUniqueName(final String name) throws DCUserInputException {
-        ReferenceDataHelper.checkUniqueDictionary(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog());
+        ReferenceDataHelper.checkUniqueDictionary(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
     }
 }

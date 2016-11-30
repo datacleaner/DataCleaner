@@ -34,8 +34,8 @@ public final class SchemaMetadataImpl extends AbstractHasMetadataAnnotations imp
     private final ImmutableList<TableMetadata> _tableMetadata;
     private final String _schemaName;
 
-    public SchemaMetadataImpl(String schemaName, Collection<? extends TableMetadata> tableMetadata,
-            Collection<? extends MetadataAnnotation> annotations) {
+    public SchemaMetadataImpl(final String schemaName, final Collection<? extends TableMetadata> tableMetadata,
+            final Collection<? extends MetadataAnnotation> annotations) {
         super(annotations);
         _schemaName = schemaName;
         _tableMetadata = ImmutableList.copyOf(tableMetadata);
@@ -47,12 +47,12 @@ public final class SchemaMetadataImpl extends AbstractHasMetadataAnnotations imp
     }
 
     @Override
-    public TableMetadata getTableMetadataByName(String tableName) {
+    public TableMetadata getTableMetadataByName(final String tableName) {
         return getByName(tableName, _tableMetadata);
     }
 
     @Override
-    public TableMetadata getTableMetadata(Table table) {
+    public TableMetadata getTableMetadata(final Table table) {
         if (table == null) {
             return null;
         }

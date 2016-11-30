@@ -36,68 +36,69 @@ import org.datacleaner.util.StringUtils;
 @Categorized(TextCategory.class)
 public class WhitespaceTrimmerTransformer implements Transformer {
 
-	@Configured
-	InputColumn<String>[] columns;
+    @Configured
+    InputColumn<String>[] columns;
 
-	@Configured(order = 1)
-	boolean trimLeft = true;
+    @Configured(order = 1)
+    boolean trimLeft = true;
 
-	@Configured(order = 2)
-	boolean trimRight = true;
+    @Configured(order = 2)
+    boolean trimRight = true;
 
-	@Configured(order = 3)
-	boolean trimMultipleToSingleSpace = false;
+    @Configured(order = 3)
+    boolean trimMultipleToSingleSpace = false;
 
-	public WhitespaceTrimmerTransformer() {
-	}
+    public WhitespaceTrimmerTransformer() {
+    }
 
-	public WhitespaceTrimmerTransformer(boolean trimLeft, boolean trimRight, boolean trimMultipleToSingleSpace) {
-		this();
-		this.trimLeft = trimLeft;
-		this.trimRight = trimRight;
-		this.trimMultipleToSingleSpace = trimMultipleToSingleSpace;
-	}
+    public WhitespaceTrimmerTransformer(final boolean trimLeft, final boolean trimRight,
+            final boolean trimMultipleToSingleSpace) {
+        this();
+        this.trimLeft = trimLeft;
+        this.trimRight = trimRight;
+        this.trimMultipleToSingleSpace = trimMultipleToSingleSpace;
+    }
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		String[] names = new String[columns.length];
-		for (int i = 0; i < columns.length; i++) {
-			InputColumn<String> column = columns[i];
-			String name = column.getName() + " (trimmed)";
-			names[i] = name;
-		}
-		return new OutputColumns(String.class, names);
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        final String[] names = new String[columns.length];
+        for (int i = 0; i < columns.length; i++) {
+            final InputColumn<String> column = columns[i];
+            final String name = column.getName() + " (trimmed)";
+            names[i] = name;
+        }
+        return new OutputColumns(String.class, names);
+    }
 
-	@Override
-	public String[] transform(InputRow inputRow) {
-		String[] result = new String[columns.length];
-		for (int i = 0; i < columns.length; i++) {
-			InputColumn<String> column = columns[i];
-			String value = inputRow.getValue(column);
-			value = transform(value);
-			result[i] = value;
-		}
-		return result;
-	}
+    @Override
+    public String[] transform(final InputRow inputRow) {
+        final String[] result = new String[columns.length];
+        for (int i = 0; i < columns.length; i++) {
+            final InputColumn<String> column = columns[i];
+            String value = inputRow.getValue(column);
+            value = transform(value);
+            result[i] = value;
+        }
+        return result;
+    }
 
-	public String transform(String value) {
-		if (value == null) {
-			return null;
-		}
-		if (trimLeft && trimRight) {
-			value = value.trim();
-		} else {
-			if (trimLeft) {
-				value = StringUtils.leftTrim(value);
-			}
-			if (trimRight) {
-				value = StringUtils.rightTrim(value);
-			}
-		}
-		if (trimMultipleToSingleSpace) {
-			value = StringUtils.replaceWhitespaces(value, " ");
-		}
-		return value;
-	}
+    public String transform(String value) {
+        if (value == null) {
+            return null;
+        }
+        if (trimLeft && trimRight) {
+            value = value.trim();
+        } else {
+            if (trimLeft) {
+                value = StringUtils.leftTrim(value);
+            }
+            if (trimRight) {
+                value = StringUtils.rightTrim(value);
+            }
+        }
+        if (trimMultipleToSingleSpace) {
+            value = StringUtils.replaceWhitespaces(value, " ");
+        }
+        return value;
+    }
 }

@@ -45,13 +45,13 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
         super(Schedule.class);
     }
 
-    public ScheduleDefinition read(InputStream inputStream, JobIdentifier job, TenantIdentifier tenant, String groupName) {
+    public ScheduleDefinition read(final InputStream inputStream, final JobIdentifier job,
+            final TenantIdentifier tenant, final String groupName) {
         final Schedule schedule = unmarshal(inputStream);
-        final ScheduleDefinition scheduleDefinition = createSchedule(schedule, job, tenant, groupName, true);
-        return scheduleDefinition;
+        return createSchedule(schedule, job, tenant, groupName, true);
     }
 
-    public AlertDefinition createAlert(Alert alert) {
+    public AlertDefinition createAlert(final Alert alert) {
         final MetricType metricType = alert.getMetric();
 
         final MetricIdentifier metricIdentifier = new JaxbMetricAdaptor().deserialize(metricType);
@@ -62,7 +62,7 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
                 alert.getMaximumValue(), severity);
     }
 
-    private AlertSeverity createSeverity(AlertSeverityType severity) {
+    private AlertSeverity createSeverity(final AlertSeverityType severity) {
         if (severity == null) {
             return null;
         }
@@ -80,11 +80,11 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
         }
     }
 
-    public ScheduleDefinition createSchedule(Schedule schedule, JobIdentifier job, TenantIdentifier tenant,
-            String groupName, boolean includeAlerts) {
+    public ScheduleDefinition createSchedule(final Schedule schedule, final JobIdentifier job,
+            final TenantIdentifier tenant, final String groupName, final boolean includeAlerts) {
         final ScheduleDefinition scheduleDefinition = new ScheduleDefinition();
         if (schedule != null) {
-        	scheduleDefinition.setDateForOneTimeSchedule(schedule.getOneTime());
+            scheduleDefinition.setDateForOneTimeSchedule(schedule.getOneTime());
             scheduleDefinition.setCronExpression(schedule.getCronExpression());
             final String jaxbDependentJob = schedule.getDependentJob();
             if (jaxbDependentJob != null) {
@@ -101,14 +101,14 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
             scheduleDefinition.setHotFolder(schedule.getHotFolder());
 
             final Boolean runOnHadoop = schedule.isRunOnHadoop();
-            if (runOnHadoop != null && runOnHadoop.booleanValue()){
+            if (runOnHadoop != null && runOnHadoop.booleanValue()) {
                 scheduleDefinition.setRunOnHadoop(runOnHadoop);
             }
             final Boolean distributedExecution = schedule.isDistributedExecution();
             if (distributedExecution != null && distributedExecution.booleanValue()) {
                 scheduleDefinition.setDistributedExecution(distributedExecution.booleanValue());
             }
-            
+
         }
 
         scheduleDefinition.setJob(job);
@@ -118,9 +118,9 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
         if (includeAlerts && schedule != null) {
             final Alerts jaxbAlerts = schedule.getAlerts();
             if (jaxbAlerts != null) {
-                List<Alert> alertList = jaxbAlerts.getAlert();
-                for (Alert jaxbAlert : alertList) {
-                    AlertDefinition alert = createAlert(jaxbAlert);
+                final List<Alert> alertList = jaxbAlerts.getAlert();
+                for (final Alert jaxbAlert : alertList) {
+                    final AlertDefinition alert = createAlert(jaxbAlert);
                     scheduleDefinition.getAlerts().add(alert);
                 }
             }

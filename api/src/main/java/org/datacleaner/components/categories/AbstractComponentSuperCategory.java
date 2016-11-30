@@ -40,7 +40,7 @@ public abstract class AbstractComponentSuperCategory implements ComponentSuperCa
     }
 
     @Override
-    public final boolean equals(Object obj) {
+    public final boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -58,12 +58,12 @@ public abstract class AbstractComponentSuperCategory implements ComponentSuperCa
     }
 
     @Override
-    public int compareTo(ComponentSuperCategory o) {
+    public int compareTo(final ComponentSuperCategory o) {
         if (equals(o)) {
             return 0;
         }
-        int sortIndex1 = getSortIndex();
-        int sortIndex2 = o.getSortIndex();
+        final int sortIndex1 = getSortIndex();
+        final int sortIndex2 = o.getSortIndex();
         int diff = sortIndex1 - sortIndex2;
         if (diff == 0) {
             diff = getName().compareTo(o.getName());

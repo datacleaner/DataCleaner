@@ -28,8 +28,8 @@ public interface HasDistributionAdvice {
     /**
      * Determines if the component is distributable with its current
      * configuration.
-     * 
+     *
      * @return
      */
-    public boolean isDistributable();
+    boolean isDistributable();
 }

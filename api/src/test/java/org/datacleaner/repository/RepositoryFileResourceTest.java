@@ -22,12 +22,12 @@ package org.datacleaner.repository;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.InMemoryResource;
 import org.apache.metamodel.util.Resource;
+
+import junit.framework.TestCase;
 
 public class RepositoryFileResourceTest extends TestCase {
 
@@ -64,27 +64,27 @@ public class RepositoryFileResourceTest extends TestCase {
             }
 
             @Override
-            public void writeFile(Action<OutputStream> writeCallback) {
+            public void writeFile(final Action<OutputStream> writeCallback) {
                 writeFile(writeCallback, false);
             }
 
             @Override
-            public void writeFile(Action<OutputStream> writeCallback, boolean append) {
+            public void writeFile(final Action<OutputStream> writeCallback, final boolean append) {
                 final OutputStream out = writeFile(append);
                 try {
                     writeCallback.run(out);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new UnsupportedOperationException();
                 }
             }
 
             @Override
-            public void readFile(Action<InputStream> readCallback) {
+            public void readFile(final Action<InputStream> readCallback) {
                 _resource.read(readCallback);
             }
 
             @Override
-            public <E> E readFile(Func<InputStream, E> readCallback) {
+            public <E> E readFile(final Func<InputStream, E> readCallback) {
                 return _resource.read(readCallback);
             }
 
@@ -104,12 +104,12 @@ public class RepositoryFileResourceTest extends TestCase {
             }
 
             @Override
-            public int compareTo(RepositoryNode o) {
+            public int compareTo(final RepositoryNode o) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public OutputStream writeFile(boolean append) {
+            public OutputStream writeFile(final boolean append) {
                 if (append) {
                     return _resource.append();
                 }
@@ -122,27 +122,21 @@ public class RepositoryFileResourceTest extends TestCase {
             }
         };
 
-        RepositoryFileResource resource = new RepositoryFileResource(file);
-        resource.append(new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                out.write(4);
-                out.write(5);
-                out.write(6);
-            }
+        final RepositoryFileResource resource = new RepositoryFileResource(file);
+        resource.append(out -> {
+            out.write(4);
+            out.write(5);
+            out.write(6);
         });
 
-        file.readFile(new Action<InputStream>() {
-            @Override
-            public void run(InputStream in) throws Exception {
-                assertEquals(1, in.read());
-                assertEquals(2, in.read());
-                assertEquals(3, in.read());
-                assertEquals(4, in.read());
-                assertEquals(5, in.read());
-                assertEquals(6, in.read());
-                assertEquals(-1, in.read());
-            }
+        file.readFile(in -> {
+            assertEquals(1, in.read());
+            assertEquals(2, in.read());
+            assertEquals(3, in.read());
+            assertEquals(4, in.read());
+            assertEquals(5, in.read());
+            assertEquals(6, in.read());
+            assertEquals(-1, in.read());
         });
     }
 }

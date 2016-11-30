@@ -26,8 +26,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class SwaggerJSONControllerTest {
-    private final SwaggerJSONController controller = new SwaggerJSONController();
     private static final String url = "http://localhost/repository/swagger.json";
+    private final SwaggerJSONController controller = new SwaggerJSONController();
 
     @Test
     public void testGenerateSwaggerJSON() throws Exception {

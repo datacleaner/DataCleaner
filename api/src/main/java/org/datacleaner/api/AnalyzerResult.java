@@ -24,11 +24,11 @@ import java.io.Serializable;
 /**
  * An {@link AnalyzerResult} represents the result of an {@link Analyzer}s
  * execution.
- * 
+ *
  * It is advised that {@link AnalyzerResult} implementations expose a number of
  * result metrics. This is done by having getter methods annotated with the
  * {@link Metric} annotation.
- * 
+ *
  * @see Metric
  */
 public interface AnalyzerResult extends Renderable, Serializable {

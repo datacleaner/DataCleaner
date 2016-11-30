@@ -27,12 +27,12 @@ public class FileUploadServletTest extends TestCase {
         assertEquals("foo.csv", FileUploadServlet.toFilename("foo.csv"));
         assertEquals("foo.csv", FileUploadServlet.toFilename("folder/foo.csv"));
         assertEquals("foo.csv", FileUploadServlet.toFilename("folder\\foo.csv"));
-        
+
         assertEquals("foo.csv", FileUploadServlet.toFilename("/opt/Data/foo.csv"));
         assertEquals("foo.csv", FileUploadServlet.toFilename("/opt/Data\\foo.csv"));
         assertEquals("foo.csv", FileUploadServlet.toFilename("c:\\opt\\Data\\foo.csv"));
     }
-    
+
     public void testToFilenameCornerCases() throws Exception {
         assertEquals(null, FileUploadServlet.toFilename(null));
         assertEquals("", FileUploadServlet.toFilename(""));

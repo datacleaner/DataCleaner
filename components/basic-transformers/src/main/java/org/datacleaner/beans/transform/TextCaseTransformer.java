@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 
 import javax.inject.Named;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
@@ -31,7 +32,6 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.TextCategory;
-import org.apache.metamodel.util.HasName;
 
 @Named("Text case transformer")
 @Description("Modifies the text case/capitalization of Strings.")
@@ -41,7 +41,7 @@ public class TextCaseTransformer implements Transformer {
     /**
      * Enum depicting the modes of operation for the text case modifications.
      */
-    public static enum TransformationMode implements HasName {
+    public enum TransformationMode implements HasName {
 
         LOWER_CASE("Lower case"),
 
@@ -53,7 +53,7 @@ public class TextCaseTransformer implements Transformer {
 
         private final String _name;
 
-        private TransformationMode(String name) {
+        TransformationMode(final String name) {
             _name = name;
         }
 
@@ -76,14 +76,14 @@ public class TextCaseTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow row) {
+    public String[] transform(final InputRow row) {
         final String value = row.getValue(valueColumn);
         final String[] result = new String[1];
         result[0] = transform(value);
         return result;
     }
 
-    public String transform(String value) {
+    public String transform(final String value) {
         if (value == null) {
             return null;
         }
@@ -101,7 +101,7 @@ public class TextCaseTransformer implements Transformer {
         }
     }
 
-    private String capitalizeWords(String value) {
+    private String capitalizeWords(final String value) {
         final StringBuilder sb = new StringBuilder();
         final StringTokenizer tokenizer = new StringTokenizer(value, " -\t\n\r\f", true);
         boolean capitalizeNext = true;
@@ -109,8 +109,8 @@ public class TextCaseTransformer implements Transformer {
             final String nextToken = tokenizer.nextToken();
             final String lowerCasedToken = nextToken.toLowerCase();
             if (capitalizeNext) {
-                final String capitalizedToken = Character.toUpperCase(lowerCasedToken.charAt(0))
-                        + lowerCasedToken.substring(1);
+                final String capitalizedToken =
+                        Character.toUpperCase(lowerCasedToken.charAt(0)) + lowerCasedToken.substring(1);
                 sb.append(capitalizedToken);
             } else {
                 sb.append(lowerCasedToken);
@@ -122,7 +122,7 @@ public class TextCaseTransformer implements Transformer {
         return sb.toString();
     }
 
-    private boolean isCapitalizeTrigger(char c) {
+    private boolean isCapitalizeTrigger(final char c) {
         return c == '.' || c == '!' || c == '?' || c == ':';
     }
 }

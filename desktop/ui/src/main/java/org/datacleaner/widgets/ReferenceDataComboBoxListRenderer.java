@@ -41,62 +41,62 @@ import org.datacleaner.util.ImageManager;
 
 public class ReferenceDataComboBoxListRenderer extends DCListCellRenderer {
 
-	private static final long serialVersionUID = 1L;
-	private static final ImageManager imageManager = ImageManager.get();
+    private static final long serialVersionUID = 1L;
+    private static final ImageManager imageManager = ImageManager.get();
 
-	private String nullText = "- none -";
+    private String nullText = "- none -";
 
-	@Override
-	public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-			boolean cellHasFocus) {
-		JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    @Override
+    public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index,
+            final boolean isSelected, final boolean cellHasFocus) {
+        final JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-		if (value == null) {
-			result.setText(getNullText());
-		} else if (value instanceof ReferenceData) {
-			result.setText(((ReferenceData) value).getName());
+        if (value == null) {
+            result.setText(getNullText());
+        } else if (value instanceof ReferenceData) {
+            result.setText(((ReferenceData) value).getName());
 
-			String iconPath = null;
-			if (value instanceof Dictionary) {
-				iconPath = IconUtils.DICTIONARY_IMAGEPATH;
-				if (value instanceof SimpleDictionary) {
-					iconPath = IconUtils.DICTIONARY_SIMPLE_IMAGEPATH;
-				} else if (value instanceof TextFileDictionary) {
-					iconPath = IconUtils.DICTIONARY_TEXTFILE_IMAGEPATH;
-				} else if (value instanceof DatastoreDictionary) {
-					iconPath = IconUtils.DICTIONARY_DATASTORE_IMAGEPATH;
-				}
-			} else if (value instanceof SynonymCatalog) {
-				iconPath = IconUtils.SYNONYM_CATALOG_IMAGEPATH;
-				if (value instanceof TextFileSynonymCatalog) {
-					iconPath = IconUtils.SYNONYM_CATALOG_TEXTFILE_IMAGEPATH;
-				} else if (value instanceof DatastoreSynonymCatalog) {
-					iconPath = IconUtils.SYNONYM_CATALOG_DATASTORE_IMAGEPATH;
-				}
-			} else if (value instanceof StringPattern) {
-				iconPath = IconUtils.STRING_PATTERN_IMAGEPATH;
-				if (value instanceof SimpleStringPattern) {
-					iconPath = IconUtils.STRING_PATTERN_SIMPLE_IMAGEPATH;
-				} else if (value instanceof RegexStringPattern) {
-					iconPath = IconUtils.STRING_PATTERN_REGEX_IMAGEPATH;
-				} else if (value instanceof RegexSwapStringPattern) {
-					iconPath = IconUtils.STRING_PATTERN_REGEXSWAP_IMAGEPATH;
-				}
-			}
+            String iconPath = null;
+            if (value instanceof Dictionary) {
+                iconPath = IconUtils.DICTIONARY_IMAGEPATH;
+                if (value instanceof SimpleDictionary) {
+                    iconPath = IconUtils.DICTIONARY_SIMPLE_IMAGEPATH;
+                } else if (value instanceof TextFileDictionary) {
+                    iconPath = IconUtils.DICTIONARY_TEXTFILE_IMAGEPATH;
+                } else if (value instanceof DatastoreDictionary) {
+                    iconPath = IconUtils.DICTIONARY_DATASTORE_IMAGEPATH;
+                }
+            } else if (value instanceof SynonymCatalog) {
+                iconPath = IconUtils.SYNONYM_CATALOG_IMAGEPATH;
+                if (value instanceof TextFileSynonymCatalog) {
+                    iconPath = IconUtils.SYNONYM_CATALOG_TEXTFILE_IMAGEPATH;
+                } else if (value instanceof DatastoreSynonymCatalog) {
+                    iconPath = IconUtils.SYNONYM_CATALOG_DATASTORE_IMAGEPATH;
+                }
+            } else if (value instanceof StringPattern) {
+                iconPath = IconUtils.STRING_PATTERN_IMAGEPATH;
+                if (value instanceof SimpleStringPattern) {
+                    iconPath = IconUtils.STRING_PATTERN_SIMPLE_IMAGEPATH;
+                } else if (value instanceof RegexStringPattern) {
+                    iconPath = IconUtils.STRING_PATTERN_REGEX_IMAGEPATH;
+                } else if (value instanceof RegexSwapStringPattern) {
+                    iconPath = IconUtils.STRING_PATTERN_REGEXSWAP_IMAGEPATH;
+                }
+            }
 
-			if (iconPath != null) {
-				result.setIcon(imageManager.getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL));
-			}
-		}
+            if (iconPath != null) {
+                result.setIcon(imageManager.getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL));
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public void setNullText(String nullText) {
-		this.nullText = nullText;
-	}
+    public String getNullText() {
+        return nullText;
+    }
 
-	public String getNullText() {
-		return nullText;
-	}
+    public void setNullText(final String nullText) {
+        this.nullText = nullText;
+    }
 }

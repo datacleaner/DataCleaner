@@ -31,8 +31,8 @@ import org.apache.metamodel.util.FileHelper;
 final class WriteDefaultTenantConfigurationAction implements Action<OutputStream> {
 
     @Override
-    public void run(OutputStream out) throws Exception {
-        InputStream in = getClass().getResourceAsStream("default-conf.xml");
+    public void run(final OutputStream out) throws Exception {
+        final InputStream in = getClass().getResourceAsStream("default-conf.xml");
         try {
             FileHelper.copy(in, out);
         } finally {

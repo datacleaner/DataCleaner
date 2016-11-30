@@ -32,7 +32,6 @@ import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.csv.CsvWriter;
 import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.ToStringComparator;
@@ -57,7 +56,8 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
     InputColumn<?> column;
 
     @Configured
-    @Description("How many values to buffer before loading them to disk. For high volume data, consider increasing the buffer to minimize the amount of open disk handles.")
+    @Description( "How many values to buffer before loading them to disk. For high volume data, "
+            + "consider increasing the buffer to minimize the amount of open disk handles.")
     int _bufferSize = 20000;
 
     private WriteBuffer _writeBuffer;
@@ -68,7 +68,7 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
     public UniqueKeyCheckAnalyzer() {
     }
 
-    public UniqueKeyCheckAnalyzer(int bufferSize) {
+    public UniqueKeyCheckAnalyzer(final int bufferSize) {
         _bufferSize = bufferSize;
     }
 
@@ -80,13 +80,13 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
             private final CsvWriter csvWriter = new CsvWriter(CSV_CONFIGURATION);
 
             @Override
-            protected void writeHeader(Writer writer) throws IOException {
+            protected void writeHeader(final Writer writer) throws IOException {
                 final String line = csvWriter.buildLine(new String[] { "text", "count" });
                 writer.write(line);
             }
 
             @Override
-            protected void writeRow(Writer writer, String row, int count) throws IOException {
+            protected void writeRow(final Writer writer, final String row, final int count) throws IOException {
                 if (count > 1) {
                     final String line = csvWriter.buildLine(new String[] { row, "" + count });
                     writer.write(line);
@@ -95,23 +95,20 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
             }
 
             @Override
-            protected Writer createWriter(Resource file) {
+            protected Writer createWriter(final Resource file) {
                 return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
             }
         };
-        _writeBuffer = new WriteBuffer(_bufferSize, new Action<Iterable<Object[]>>() {
-            @Override
-            public void run(Iterable<Object[]> rows) throws Exception {
-                for (Object[] objects : rows) {
-                    final String string = (String) objects[0];
-                    _sorter.append(string);
-                }
+        _writeBuffer = new WriteBuffer(_bufferSize, rows -> {
+            for (final Object[] objects : rows) {
+                final String string = (String) objects[0];
+                _sorter.append(string);
             }
         });
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         final Object value = row.getValue(column);
 
         _rowCount.addAndGet(distinctCount);
@@ -119,7 +116,7 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
         if (value == null) {
             _nullCount.addAndGet(distinctCount);
         } else {
-            String str = value.toString();
+            final String str = value.toString();
 
             for (int i = 0; i < distinctCount; i++) {
                 _writeBuffer.addToBuffer(new Object[] { str });
@@ -134,8 +131,8 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
         File file;
         try {
             file = File.createTempFile("UniqueKeyCheckAnalyzer", ".txt");
-        } catch (Exception e) {
-            File tempDir = FileHelper.getTempDir();
+        } catch (final Exception e) {
+            final File tempDir = FileHelper.getTempDir();
             file = new File(tempDir, "UniqueKeyCheckAnalyzer-" + System.currentTimeMillis() + ".txt");
         }
 
@@ -143,10 +140,10 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
 
         final AtomicInteger nonUniques = new AtomicInteger();
 
-        final Map<String, Integer> samples = new LinkedHashMap<String, Integer>();
+        final Map<String, Integer> samples = new LinkedHashMap<>();
 
         final CsvDataContext dataContext = new CsvDataContext(file, CSV_CONFIGURATION);
-        try (final DataSet dataSet = dataContext.query().from(dataContext.getDefaultSchema().getTable(0))
+        try (DataSet dataSet = dataContext.query().from(dataContext.getDefaultSchema().getTable(0))
                 .select("text", "count").execute()) {
             int i = 0;
             while (dataSet.next()) {

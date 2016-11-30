@@ -25,13 +25,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class ComponentNotFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
-    private ComponentNotFoundException(String msg) {
+
+    private ComponentNotFoundException(final String msg) {
         super(msg);
     }
-    public static ComponentNotFoundException createTypeNotFound(String type) {
+
+    public static ComponentNotFoundException createTypeNotFound(final String type) {
         return new ComponentNotFoundException("Component type '" + type + "' does not exist.");
     }
-    public static ComponentNotFoundException createInstanceNotFound(String id) {
+
+    public static ComponentNotFoundException createInstanceNotFound(final String id) {
         return new ComponentNotFoundException("Component with ID " + id + " does not exist.");
     }
 }

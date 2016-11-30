@@ -34,9 +34,9 @@ final class OutputDataStreamBuilderImpl implements OutputDataStreamBuilder {
     private final String _name;
     private final MutableTable _table;
 
-    public OutputDataStreamBuilderImpl(String name) {
+    OutputDataStreamBuilderImpl(final String name) {
         _name = name;
-        MutableSchema schema = new MutableSchema();
+        final MutableSchema schema = new MutableSchema();
         schema.setName(null);
         _table = new MutableTable(name, schema);
         schema.addTable(_table);
@@ -51,34 +51,34 @@ final class OutputDataStreamBuilderImpl implements OutputDataStreamBuilder {
     }
 
     @Override
-    public OutputDataStreamBuilder likeTable(Table table) {
+    public OutputDataStreamBuilder likeTable(final Table table) {
         final Column[] existingColumns = _table.getColumns();
-        for (Column column : existingColumns) {
+        for (final Column column : existingColumns) {
             _table.removeColumn(column);
         }
         final Column[] newColumns = table.getColumns();
-        for (Column column : newColumns) {
+        for (final Column column : newColumns) {
             withColumn(column.getName(), column.getType());
         }
         return this;
     }
 
     @Override
-    public OutputDataStreamBuilder withColumn(String name, ColumnType type) {
+    public OutputDataStreamBuilder withColumn(final String name, final ColumnType type) {
         final int columnNumber = _table.getColumnCount() + 1;
         final MutableColumn column = new MutableColumn(name, type, _table, columnNumber, true);
         _table.addColumn(column);
         return this;
     }
-    
+
     @Override
-    public OutputDataStreamBuilder withColumnLike(Column column) {
+    public OutputDataStreamBuilder withColumnLike(final Column column) {
         return withColumn(column.getName(), column.getType());
     }
-    
+
     @Override
-    public OutputDataStreamBuilder withColumnLike(InputColumn<?> column) {
-        if(column.isPhysicalColumn()) {
+    public OutputDataStreamBuilder withColumnLike(final InputColumn<?> column) {
+        if (column.isPhysicalColumn()) {
             return withColumnLike(column.getPhysicalColumn());
         } else {
             final ColumnType columnType = ColumnTypeImpl.convertColumnType(column.getDataType());

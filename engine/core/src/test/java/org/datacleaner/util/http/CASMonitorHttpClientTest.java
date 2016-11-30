@@ -32,27 +32,7 @@ import org.apache.http.impl.client.HttpClients;
 
 public class CASMonitorHttpClientTest {
 
-    // A main method that can be used to manually test a CAS based HTTP request
-    public static void main(String[] args) throws Exception {
-        try (CASMonitorHttpClient client = new CASMonitorHttpClient(HttpClients.createSystem(),
-                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor")) {
-
-            doRequest(client, new HttpGet("https://localhost:8443/DataCleaner-monitor/repository/DC/ping"));
-            doRequest(
-                    client,
-                    new HttpGet(
-                            "https://localhost:8443/DataCleaner-monitor/repository/DC/launch-resources/conf.xml?job=Customer+completeness"));
-            client.close();
-        }
-
-        try (CASMonitorHttpClient client = new CASMonitorHttpClient(HttpClients.createSystem(),
-                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor")) {
-            doRequest(client, new HttpGet(
-                    "https://localhost:8443/DataCleaner-monitor/repository/DC/jobs/Customer+completeness.analysis.xml"));
-        }
-    }
-
-    private static void doRequest(CASMonitorHttpClient client, HttpUriRequest req) throws Exception {
+    private static void doRequest(final CASMonitorHttpClient client, final HttpUriRequest req) throws Exception {
         System.out.println("REQUESTING: " + req.getURI());
 
         final HttpResponse response = client.execute(req);
@@ -68,6 +48,24 @@ public class CASMonitorHttpClientTest {
         while (line != null) {
             System.out.println("\t" + line);
             line = reader.readLine();
+        }
+    }
+
+    // A main method that can be used to manually test a CAS based HTTP request
+    public static void main(final String[] args) throws Exception {
+        try (CASMonitorHttpClient client = new CASMonitorHttpClient(HttpClients.createSystem(),
+                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor")) {
+
+            doRequest(client, new HttpGet("https://localhost:8443/DataCleaner-monitor/repository/DC/ping"));
+            doRequest(client, new HttpGet(
+                    "https://localhost:8443/DataCleaner-monitor/repository/DC/launch-resources/conf.xml?job=Customer+completeness"));
+            client.close();
+        }
+
+        try (CASMonitorHttpClient client = new CASMonitorHttpClient(HttpClients.createSystem(),
+                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor")) {
+            doRequest(client, new HttpGet(
+                    "https://localhost:8443/DataCleaner-monitor/repository/DC/jobs/Customer+completeness.analysis.xml"));
         }
     }
 

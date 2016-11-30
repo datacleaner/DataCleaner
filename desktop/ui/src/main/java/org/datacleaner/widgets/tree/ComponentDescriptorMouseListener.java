@@ -20,8 +20,6 @@
 package org.datacleaner.widgets.tree;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -43,14 +41,15 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
     private final AnalysisJobBuilder _analysisJobBuilder;
 
     @Inject
-    protected ComponentDescriptorMouseListener(SchemaTree schemaTree, AnalysisJobBuilder analysisJobBuilder) {
+    protected ComponentDescriptorMouseListener(final SchemaTree schemaTree,
+            final AnalysisJobBuilder analysisJobBuilder) {
         _schemaTree = schemaTree;
         _analysisJobBuilder = analysisJobBuilder;
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
+    public void mouseClicked(final MouseEvent e) {
+        final TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
         if (path == null) {
             return;
         }
@@ -64,7 +63,7 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
         }
     }
 
-    private void showComponentPopupMenu(Object userObject, MouseEvent mouseEvent) {
+    private void showComponentPopupMenu(final Object userObject, final MouseEvent mouseEvent) {
         final ComponentDescriptor<?> componentDescriptor = (ComponentDescriptor<?>) userObject;
 
         if (SwingUtilities.isLeftMouseButton(mouseEvent) && mouseEvent.getClickCount() > 1) {
@@ -73,17 +72,13 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
 
             final JMenuItem addTableItem = WidgetFactory.createMenuItem("Add component",
                     IconUtils.getDescriptorIcon(componentDescriptor, IconUtils.ICON_SIZE_MENU_ITEM, false));
-            addTableItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    _analysisJobBuilder.addComponent(componentDescriptor);
-                }
-            });
+            addTableItem.addActionListener(e -> _analysisJobBuilder.addComponent(componentDescriptor));
 
-            final JMenuItem referenceDocumentationItem = WidgetFactory.createMenuItem("Documentation",
-                    IconUtils.MENU_DOCUMENTATION);
-            referenceDocumentationItem.addActionListener(new ComponentReferenceDocumentationActionListener(
-                    _analysisJobBuilder.getConfiguration(), componentDescriptor));
+            final JMenuItem referenceDocumentationItem =
+                    WidgetFactory.createMenuItem("Documentation", IconUtils.MENU_DOCUMENTATION);
+            referenceDocumentationItem.addActionListener(
+                    new ComponentReferenceDocumentationActionListener(_analysisJobBuilder.getConfiguration(),
+                            componentDescriptor));
 
             final JPopupMenu popup = new JPopupMenu(componentDescriptor.getDisplayName());
             popup.add(addTableItem);
@@ -92,15 +87,11 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
         }
     }
 
-    private void showLibraryPopupMenu(Object userObject, MouseEvent mouseEvent) {
+    private void showLibraryPopupMenu(final Object userObject, final MouseEvent mouseEvent) {
         final JMenuItem refreshLibraryMenuItem = WidgetFactory.createMenuItem("Refresh", IconUtils.MENU_REFRESH);
 
-        refreshLibraryMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider().refresh();
-            }
-        });
+        refreshLibraryMenuItem.addActionListener(
+                e -> _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider().refresh());
 
         final JPopupMenu popup = new JPopupMenu(userObject.toString());
         popup.add(refreshLibraryMenuItem);

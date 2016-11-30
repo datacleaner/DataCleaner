@@ -22,91 +22,89 @@ package org.datacleaner.beans.script;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 
+import junit.framework.TestCase;
+
 public class JavaScriptTransformerTest extends TestCase {
-	
-	public void testReturnNull() throws Exception {
-		JavaScriptTransformer t = new JavaScriptTransformer();
-		t.setSourceCode("function eval() {return null;}; eval();");
-		t.setColumns(new InputColumn[0]);
-		t.init();
-		Object object = t.transform(null)[0];	
-		assertNull(object);
-	}
 
-	public void testSimpleScriptExecution() throws Exception {
-		JavaScriptTransformer t = new JavaScriptTransformer();
-		t.setSourceCode("function eval() {return 1+1;}; eval();");
-		t.setColumns(new InputColumn[0]);
-		t.init();
-		Object object = t.transform(null)[0];
-		assertEquals("2", object.toString());
-		assertEquals(String.class, object.getClass());
+    public void testReturnNull() throws Exception {
+        final JavaScriptTransformer t = new JavaScriptTransformer();
+        t.setSourceCode("function eval() {return null;}; eval();");
+        t.setColumns(new InputColumn[0]);
+        t.init();
+        final Object object = t.transform(null)[0];
+        assertNull(object);
+    }
 
-		t.returnType = JavaScriptTransformer.ReturnType.NUMBER;
-		object = t.transform(null)[0];
-		assertEquals("2.0", object.toString());
-		assertEquals(Double.class, object.getClass());
-		
-		assertEquals(Number.class, t.getOutputColumns().getColumnType(0));
-	}
+    public void testSimpleScriptExecution() throws Exception {
+        final JavaScriptTransformer t = new JavaScriptTransformer();
+        t.setSourceCode("function eval() {return 1+1;}; eval();");
+        t.setColumns(new InputColumn[0]);
+        t.init();
+        Object object = t.transform(null)[0];
+        assertEquals("2", object.toString());
+        assertEquals(String.class, object.getClass());
 
-	/**
-	 * Tests that you can use the 'out' variable in JS to print to the console
-	 * 
-	 * @throws Exception
-	 */
-	public void testSharedScopedVariables() throws Exception {
-		JavaScriptTransformer t = new JavaScriptTransformer();
-		t.setSourceCode("function eval() {out.print(\"hello world\"); return 1+1;}; eval();");
-		t.setColumns(new InputColumn[0]);
+        t.returnType = JavaScriptTransformer.ReturnType.NUMBER;
+        object = t.transform(null)[0];
+        assertEquals("2.0", object.toString());
+        assertEquals(Double.class, object.getClass());
 
-		PrintStream oldOut = System.out;
+        assertEquals(Number.class, t.getOutputColumns().getColumnType(0));
+    }
 
-		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		PrintStream newOut = new PrintStream(byteArrayOutputStream);
-		System.setOut(newOut);
-		t.init();
-		t.transform(null);
-		System.setOut(oldOut);
+    /**
+     * Tests that you can use the 'out' variable in JS to print to the console
+     *
+     * @throws Exception
+     */
+    public void testSharedScopedVariables() throws Exception {
+        final JavaScriptTransformer t = new JavaScriptTransformer();
+        t.setSourceCode("function eval() {out.print(\"hello world\"); return 1+1;}; eval();");
+        t.setColumns(new InputColumn[0]);
 
-		newOut.flush();
-		newOut.close();
-		byte[] byteArray = byteArrayOutputStream.toByteArray();
-		assertEquals("hello world", new String(byteArray));
-	}
+        final PrintStream oldOut = System.out;
 
-	/**
-	 * Tests that adding two numbers will mathematicall add them and not concat
-	 * them as strings
-	 * 
-	 * @throws Exception
-	 */
-	public void testAddNumberTypes() throws Exception {
-		JavaScriptTransformer t = new JavaScriptTransformer();
-		t.setSourceCode("function eval() {return values[0] + 2;}; eval();");
-		InputColumn<Number> col = new MockInputColumn<Number>("my number",
-				Number.class);
-		t.setColumns(new InputColumn[] { col });
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final PrintStream newOut = new PrintStream(byteArrayOutputStream);
+        System.setOut(newOut);
+        t.init();
+        t.transform(null);
+        System.setOut(oldOut);
 
-		t.init();
+        newOut.flush();
+        newOut.close();
+        final byte[] byteArray = byteArrayOutputStream.toByteArray();
+        assertEquals("hello world", new String(byteArray));
+    }
 
-		assertEquals("125", t.transform(new MockInputRow().put(col, 123))[0]);
+    /**
+     * Tests that adding two numbers will mathematicall add them and not concat
+     * them as strings
+     *
+     * @throws Exception
+     */
+    public void testAddNumberTypes() throws Exception {
+        final JavaScriptTransformer t = new JavaScriptTransformer();
+        t.setSourceCode("function eval() {return values[0] + 2;}; eval();");
+        final InputColumn<Number> col = new MockInputColumn<>("my number", Number.class);
+        t.setColumns(new InputColumn[] { col });
 
-		assertEquals("3", t.transform(new MockInputRow().put(col, 1.0))[0]);
-		assertEquals("3.5", t.transform(new MockInputRow().put(col, 1.5))[0]);
-	}
-	
-	public void testSimpleScriptParseIntExecution() throws Exception {
-	    JavaScriptTransformer t = new JavaScriptTransformer();
+        t.init();
+
+        assertEquals("125", t.transform(new MockInputRow().put(col, 123))[0]);
+
+        assertEquals("3", t.transform(new MockInputRow().put(col, 1.0))[0]);
+        assertEquals("3.5", t.transform(new MockInputRow().put(col, 1.5))[0]);
+    }
+
+    public void testSimpleScriptParseIntExecution() throws Exception {
+        final JavaScriptTransformer t = new JavaScriptTransformer();
         t.setSourceCode("function eval() {return parseInt(values[0], 10)}; eval();");
-        InputColumn<String> col = new MockInputColumn<String>("my number",
-                String.class);
+        final InputColumn<String> col = new MockInputColumn<>("my number", String.class);
         t.setColumns(new InputColumn[] { col });
 
         t.init();
@@ -117,6 +115,6 @@ public class JavaScriptTransformerTest extends TestCase {
         assertEquals("1", t.transform(new MockInputRow().put(col, 1.5))[0]);
         assertEquals("10", t.transform(new MockInputRow().put(col, "010"))[0]);
         //the Number cannot be parsed because it starts with letter 'O'
-        assertEquals("NaN", t.transform(new MockInputRow().put(col,  "O10"))[0]);
+        assertEquals("NaN", t.transform(new MockInputRow().put(col, "O10"))[0]);
     }
 }

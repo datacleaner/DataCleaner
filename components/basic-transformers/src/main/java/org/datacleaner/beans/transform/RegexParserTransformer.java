@@ -30,12 +30,12 @@ import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.ExternalDocumentation;
-import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.TextCategory;
@@ -48,23 +48,26 @@ import org.datacleaner.components.categories.TextCategory;
         + "<blockquote>(\\w+) (\\w+)</blockquote></li>"
         + "<li>Match a hash-sign and 3 pairs of hexadecimal digits (using pseudo-characters of Java regular expressions):"
         + "<blockquote>\\#?(\\p{XDigit}{2})(\\p{XDigit}{2})(\\p{XDigit}{2})</blockquote></li>" + "</ul>")
-@ExternalDocumentation({
-        @DocumentationLink(title = "Regex parsing with DataCleaner", url = "https://www.youtube.com/watch?v=VA6dw5Nv2AM", type = DocumentationType.VIDEO, version = "3.0"),
-        @DocumentationLink(title = "Java Tutorials: Regular Expressions Lesson", url = "https://docs.oracle.com/javase/tutorial/essential/regex/", type = DocumentationType.TECH, version = "3.0") })
+@ExternalDocumentation({ @DocumentationLink(title = "Regex parsing with DataCleaner",
+        url = "https://www.youtube.com/watch?v=VA6dw5Nv2AM", type = DocumentationType.VIDEO, version = "3.0"),
+        @DocumentationLink(title = "Java Tutorials: Regular Expressions Lesson",
+                url = "https://docs.oracle.com/javase/tutorial/essential/regex/", type = DocumentationType.TECH,
+                version = "3.0") })
 @Categorized(TextCategory.class)
 public class RegexParserTransformer implements Transformer {
 
-    public static enum Mode implements HasName {
-        @Description("Find the first match within the value.") FIND_FIRST("Find first match"),
+    public enum Mode implements HasName {
+        @Description("Find the first match within the value.")FIND_FIRST("Find first match"),
 
-        @Description("Find all matches of the expression within the value. Each match yields a new row in the data stream.") FIND_ALL(
+        @Description(
+                "Find all matches of the expression within the value. Each match yields a new row in the data stream.")FIND_ALL(
                 "Find all matches"),
 
-        @Description("Match the complete value using the expression.") FULL_MATCH("Match the complete value");
+        @Description("Match the complete value using the expression.")FULL_MATCH("Match the complete value");
 
         private final String _name;
 
-        private Mode(String name) {
+        Mode(final String name) {
             _name = name;
         }
 
@@ -91,7 +94,7 @@ public class RegexParserTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        String[] columns = new String[pattern.matcher("").groupCount()];
+        final String[] columns = new String[pattern.matcher("").groupCount()];
         for (int i = 0; i < columns.length; i++) {
             columns[i] = column.getName() + " (group " + (i + 1) + ")";
         }
@@ -99,7 +102,7 @@ public class RegexParserTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow inputRow) {
+    public String[] transform(final InputRow inputRow) {
         final String value = inputRow.getValue(column);
         final Matcher matcher;
         final boolean match;

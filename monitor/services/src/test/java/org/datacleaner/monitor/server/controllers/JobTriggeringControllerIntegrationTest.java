@@ -52,11 +52,12 @@ public class JobTriggeringControllerIntegrationTest {
         final String tenantName = "tenant5";
         final String jobName = "countries";
 
-        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                "context/application-context.xml");
-        final Repository repository = applicationContext.getBean(FileRepository.class);;
-        final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new DefaultJobEngineManager(applicationContext));
+        final ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("context/application-context.xml");
+        final Repository repository = applicationContext.getBean(FileRepository.class);
+        final TenantContextFactory tenantContextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
+                        new DefaultJobEngineManager(applicationContext));
 
         final SchedulingServiceImpl schedulingService = new SchedulingServiceImpl(repository, tenantContextFactory);
         schedulingService.setApplicationContext(applicationContext);
@@ -68,8 +69,8 @@ public class JobTriggeringControllerIntegrationTest {
         final String propertiesFileName = repositoryName + "/" + tenantName + "/override.properties";
         final InputStream overrideProperties = getClass().getClassLoader().getResourceAsStream(propertiesFileName);
 
-        jobTriggeringController.handleMultipartFormData(tenantName, jobName, null, null, new MockMultipartFile(
-                propertiesFileName, overrideProperties));
+        jobTriggeringController.handleMultipartFormData(tenantName, jobName, null, null,
+                new MockMultipartFile(propertiesFileName, overrideProperties));
 
         // Spend a maximum of 10 seconds waiting for the execution to finish.
         final TenantIdentifier tenantIdentifier = new TenantIdentifier(tenantName);
@@ -79,8 +80,8 @@ public class JobTriggeringControllerIntegrationTest {
         for (int i = 0; i < 100; i++) {
             executionLog = schedulingService.getLatestExecution(tenantIdentifier, jobIdentifier);
 
-            if (executionLog.getExecutionStatus() == ExecutionStatus.RUNNING || executionLog
-                    .getExecutionStatus() == ExecutionStatus.PENDING) {
+            if (executionLog.getExecutionStatus() == ExecutionStatus.RUNNING
+                    || executionLog.getExecutionStatus() == ExecutionStatus.PENDING) {
                 Thread.sleep(100);
             }
         }

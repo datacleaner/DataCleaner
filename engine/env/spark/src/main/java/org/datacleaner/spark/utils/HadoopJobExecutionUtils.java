@@ -59,7 +59,7 @@ import com.google.common.collect.Iterators;
  */
 public class HadoopJobExecutionUtils {
 
-    public static boolean isValidSourceDatastore(Datastore datastore) {
+    public static boolean isValidSourceDatastore(final Datastore datastore) {
         if (isHdfsResourcedDatastore(datastore)) {
             if (datastore instanceof CsvDatastore) {
                 final CsvDatastore csvDatastore = (CsvDatastore) datastore;
@@ -73,7 +73,7 @@ public class HadoopJobExecutionUtils {
         }
     }
 
-    public static boolean isHdfsResourcedDatastore(Datastore datastore) {
+    public static boolean isHdfsResourcedDatastore(final Datastore datastore) {
         if (datastore instanceof CsvDatastore) {
             final CsvDatastore csvDatastore = (CsvDatastore) datastore;
             final Resource resource = csvDatastore.getResource();
@@ -100,7 +100,7 @@ public class HadoopJobExecutionUtils {
 
     }
 
-    public static boolean isValidEnconding(CsvDatastore datastore) {
+    public static boolean isValidEnconding(final CsvDatastore datastore) {
         final CsvConfiguration csvConfiguration = datastore.getCsvConfiguration();
         final String encoding = csvConfiguration.getEncoding();
         if (!encoding.equals(FileHelper.UTF_8_ENCODING)) {
@@ -109,7 +109,7 @@ public class HadoopJobExecutionUtils {
         return true;
     }
 
-    public static boolean isValidMultilines(CsvDatastore datastore) {
+    public static boolean isValidMultilines(final CsvDatastore datastore) {
         final CsvConfiguration csvConfiguration = datastore.getCsvConfiguration();
         if (csvConfiguration.isMultilineValues()) {
             return false;
@@ -117,7 +117,7 @@ public class HadoopJobExecutionUtils {
         return true;
     }
 
-    private static boolean isHdfsResource(Resource resource) {
+    private static boolean isHdfsResource(final Resource resource) {
         if (resource instanceof HdfsResource) {
             return true;
         }
@@ -149,8 +149,8 @@ public class HadoopJobExecutionUtils {
         // should also be added to the data stores which are externalized.
         dictionaries.forEach(dictionary -> {
             if (dictionary instanceof DatastoreDictionary) {
-                datastores.add(configuration.getDatastoreCatalog().getDatastore(((DatastoreDictionary) dictionary)
-                        .getDatastoreName()));
+                datastores.add(configuration.getDatastoreCatalog()
+                        .getDatastore(((DatastoreDictionary) dictionary).getDatastoreName()));
             }
         });
 
@@ -160,8 +160,8 @@ public class HadoopJobExecutionUtils {
         // externalized.
         synonymCatalogs.forEach(synonymCatalog -> {
             if (synonymCatalog instanceof DatastoreSynonymCatalog) {
-                datastores.add(configuration.getDatastoreCatalog().getDatastore(
-                        ((DatastoreSynonymCatalog) synonymCatalog).getDatastoreName()));
+                datastores.add(configuration.getDatastoreCatalog()
+                        .getDatastore(((DatastoreSynonymCatalog) synonymCatalog).getDatastoreName()));
             }
         });
 
@@ -170,8 +170,8 @@ public class HadoopJobExecutionUtils {
         datastores.stream().filter(configurationWriter::isExternalizable).forEach(configurationWriter::externalize);
         dictionaries.stream().filter(configurationWriter::isExternalizable).forEach(configurationWriter::externalize);
         stringPatterns.stream().filter(configurationWriter::isExternalizable).forEach(configurationWriter::externalize);
-        synonymCatalogs.stream().filter(configurationWriter::isExternalizable).forEach(
-                configurationWriter::externalize);
+        synonymCatalogs.stream().filter(configurationWriter::isExternalizable)
+                .forEach(configurationWriter::externalize);
 
         addRemoteServersConfiguration(configuration, configurationWriter);
 
@@ -182,12 +182,12 @@ public class HadoopJobExecutionUtils {
 
     private static void addRemoteServersConfiguration(final DataCleanerConfiguration configuration,
             final DomConfigurationWriter configurationWriter) {
-        final List<RemoteServerData> serverList = configuration.getEnvironment().getRemoteServerConfiguration()
-                .getServerList();
+        final List<RemoteServerData> serverList =
+                configuration.getEnvironment().getRemoteServerConfiguration().getServerList();
         if (serverList != null) {
-            for (RemoteServerData remoteServer : serverList) {
-                configurationWriter.addRemoteServer(remoteServer.getServerName(), remoteServer.getUrl(), remoteServer
-                        .getUsername(), remoteServer.getPassword());
+            for (final RemoteServerData remoteServer : serverList) {
+                configurationWriter.addRemoteServer(remoteServer.getServerName(), remoteServer.getUrl(),
+                        remoteServer.getUsername(), remoteServer.getPassword());
             }
         }
     }
@@ -197,31 +197,32 @@ public class HadoopJobExecutionUtils {
             final Set<SynonymCatalog> synonymCatalogs) {
         datastores.add(job.getDatastore());
 
-        Iterators.concat(job.getAnalyzerJobs().iterator(), job.getFilterJobs().iterator(), job.getTransformerJobs()
-                .iterator()).forEachRemaining(component -> {
-                    component.getDescriptor().getConfiguredProperties().forEach(descriptor -> {
-                        final Class<?> type = descriptor.getBaseType();
+        Iterators.concat(job.getAnalyzerJobs().iterator(), job.getFilterJobs().iterator(),
+                job.getTransformerJobs().iterator()).forEachRemaining(component -> {
+            component.getDescriptor().getConfiguredProperties().forEach(descriptor -> {
+                final Class<?> type = descriptor.getBaseType();
 
-                        if (type == Datastore.class) {
-                            datastores.addAll(getProperties(component, descriptor));
-                        } else if (type == Dictionary.class) {
-                            dictionaries.addAll(getProperties(component, descriptor));
-                        } else if (type == StringPattern.class) {
-                            stringPatterns.addAll(getProperties(component, descriptor));
-                        } else if (type == SynonymCatalog.class) {
-                            synonymCatalogs.addAll(getProperties(component, descriptor));
-                        }
-                    });
+                if (type == Datastore.class) {
+                    datastores.addAll(getProperties(component, descriptor));
+                } else if (type == Dictionary.class) {
+                    dictionaries.addAll(getProperties(component, descriptor));
+                } else if (type == StringPattern.class) {
+                    stringPatterns.addAll(getProperties(component, descriptor));
+                } else if (type == SynonymCatalog.class) {
+                    synonymCatalogs.addAll(getProperties(component, descriptor));
+                }
+            });
 
-                    for (OutputDataStreamJob outputDataStreamJob : component.getOutputDataStreamJobs()) {
-                        addJobConfigurations(outputDataStreamJob.getJob(), datastores, dictionaries, stringPatterns,
-                                synonymCatalogs);
-                    }
-                });
+            for (final OutputDataStreamJob outputDataStreamJob : component.getOutputDataStreamJobs()) {
+                addJobConfigurations(outputDataStreamJob.getJob(), datastores, dictionaries, stringPatterns,
+                        synonymCatalogs);
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> List<T> getProperties(ComponentJob component, ConfiguredPropertyDescriptor descriptor) {
+    private static <T> List<T> getProperties(final ComponentJob component,
+            final ConfiguredPropertyDescriptor descriptor) {
         if (descriptor.isArray()) {
             return Arrays.asList(((T[]) component.getConfiguration().getProperty(descriptor)));
         } else {
@@ -229,7 +230,7 @@ public class HadoopJobExecutionUtils {
         }
     }
 
-    public static String getUrlReadyJobName(String jobName) {
+    public static String getUrlReadyJobName(final String jobName) {
         return jobName.replace(" ", "%20");
     }
 

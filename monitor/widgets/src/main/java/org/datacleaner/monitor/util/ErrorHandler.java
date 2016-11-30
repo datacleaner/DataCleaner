@@ -64,13 +64,13 @@ public class ErrorHandler {
      * This method first call handleError method which is a native method to
      * call onError JS function, in case onError JS method is not present on
      * page it simply shows an error dialog as an alert.
-     * 
+     *
      * @param headerMessage
      * @param additionalDetails
      * @param t
      */
     public static void showErrorDialog(final String headerMessage, final String additionalDetails, final Throwable t) {
-        String oneLineMessage = buildOneLineMessage(headerMessage, additionalDetails, t);
+        final String oneLineMessage = buildOneLineMessage(headerMessage, additionalDetails, t);
 
         if (t instanceof DCUserInputException) {
             GWT.log("User input exception", t);
@@ -87,14 +87,14 @@ public class ErrorHandler {
         final String detailsMessage;
         if (t instanceof UmbrellaException) {
             // sometimes several exceptions are bundled in an UmbrellaException
-            Set<Throwable> causes = ((UmbrellaException) t).getCauses();
+            final Set<Throwable> causes = ((UmbrellaException) t).getCauses();
             if (causes.size() == 1) {
-                Throwable cause = causes.iterator().next();
+                final Throwable cause = causes.iterator().next();
                 showErrorDialog(cause.getMessage(), additionalDetails, cause);
                 return;
             }
-            StringBuilder messageBuilder = new StringBuilder();
-            for (Throwable cause : causes) {
+            final StringBuilder messageBuilder = new StringBuilder();
+            for (final Throwable cause : causes) {
                 if (messageBuilder.length() != 0) {
                     messageBuilder.append("\n");
                 }
@@ -115,7 +115,8 @@ public class ErrorHandler {
         showErrorDialog(headerMessage, details, additionalDetails);
     }
 
-    private static String buildOneLineMessage(String headerMessage, String additionalDetails, Throwable t) {
+    private static String buildOneLineMessage(final String headerMessage, final String additionalDetails,
+            final Throwable t) {
         final StringBuilder oneLineMessage = new StringBuilder();
         if (headerMessage != null && !"".equals(headerMessage)) {
             oneLineMessage.append(headerMessage);
@@ -128,8 +129,9 @@ public class ErrorHandler {
             oneLineMessage.append(additionalDetails);
         }
 
-        String exceptionMessage = t.getMessage();
-        if (exceptionMessage != null && !"".equals(exceptionMessage) && oneLineMessage.indexOf(exceptionMessage) == -1) {
+        final String exceptionMessage = t.getMessage();
+        if (exceptionMessage != null && !"".equals(exceptionMessage)
+                && oneLineMessage.indexOf(exceptionMessage) == -1) {
             if (oneLineMessage.length() != 0) {
                 oneLineMessage.append(": ");
             }
@@ -140,11 +142,11 @@ public class ErrorHandler {
 
     /**
      * Shows an error dialog
-     * 
+     *
      * @param message
      * @param res
      */
-    public static void showErrorDialog(String message, Response res) {
+    public static void showErrorDialog(final String message, final Response res) {
         final String mainMessage = message + ":\n" + res.getStatusCode() + ":" + res.getStatusText();
         final String details = res.getText();
         showErrorDialog(mainMessage, details, (String) null);
@@ -152,21 +154,22 @@ public class ErrorHandler {
 
     /**
      * Shows an error dialog
-     * 
+     *
      * @param message
      */
-    public static void showErrorDialog(String message) {
+    public static void showErrorDialog(final String message) {
         showErrorDialog(message, (String) null, (String) null);
     }
 
     /**
      * Shows an error dialog
-     * 
+     *
      * @param messageHeader
      * @param details
      * @param additionalDetails
      */
-    public static void showErrorDialog(String messageHeader, String details, String additionalDetails) {
+    public static void showErrorDialog(final String messageHeader, final String details,
+            final String additionalDetails) {
         final DialogBox dialogBox = getDialogBox();
 
         final FlowPanel panel = new FlowPanel();
@@ -195,7 +198,7 @@ public class ErrorHandler {
         final Button closeButton = DCButtons.primaryButton(null, "Close");
         closeButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 dialogBox.hide();
             }
         });
@@ -212,13 +215,13 @@ public class ErrorHandler {
     /**
      * Creates an {@link UncaughtExceptionHandler} for use by
      * {@link GWT#setUncaughtExceptionHandler(UncaughtExceptionHandler)}
-     * 
+     *
      * @return
      */
     public static UncaughtExceptionHandler getUncaughtExceptionHandler() {
         return new UncaughtExceptionHandler() {
             @Override
-            public void onUncaughtException(Throwable e) {
+            public void onUncaughtException(final Throwable e) {
                 showErrorDialog("Unexpected error occurred", (String) null, e);
             }
         };

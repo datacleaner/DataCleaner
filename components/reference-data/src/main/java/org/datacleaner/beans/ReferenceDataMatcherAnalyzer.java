@@ -50,7 +50,8 @@ import org.datacleaner.reference.SynonymCatalogConnection;
 @Named("Reference data matcher")
 @Alias("Matching analyzer")
 @Description("Check your data values against multiple forms of reference data in one simple analyzer step.\n"
-        + "This analyzer provides a handy shortcut for doing matching with dictionaries, synonym lookups or string patterns matching, retrieving matching matrices for all matches.")
+        + "This analyzer provides a handy shortcut for doing matching with dictionaries, synonym lookups or "
+        + "string patterns matching, retrieving matching matrices for all matches.")
 @Distributed(reducer = BooleanAnalyzerReducer.class)
 public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerResult> {
 
@@ -75,8 +76,9 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
     private SynonymCatalogConnection[] _synonymCatalogConnections;
     private List<InputColumn<Boolean>> _matchColumns;
 
-    public ReferenceDataMatcherAnalyzer(InputColumn<?>[] columns, Dictionary[] dictionaries,
-            SynonymCatalog[] synonymCatalogs, StringPattern[] stringPatterns, DataCleanerConfiguration configuration) {
+    public ReferenceDataMatcherAnalyzer(final InputColumn<?>[] columns, final Dictionary[] dictionaries,
+            final SynonymCatalog[] synonymCatalogs, final StringPattern[] stringPatterns,
+            final DataCleanerConfiguration configuration) {
         this();
         this.columns = columns;
         this.dictionaries = dictionaries;
@@ -100,14 +102,14 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
         _dictionaryMatchers = new DictionaryMatcherTransformer[columns.length];
         _stringPatternMatchers = new StringPatternMatcherTransformer[columns.length];
 
-        _matchColumns = new ArrayList<InputColumn<Boolean>>();
+        _matchColumns = new ArrayList<>();
 
         OutputColumns outputColumns;
         for (int i = 0; i < columns.length; i++) {
             if (isDictionaryMatchingEnabled()) {
                 // create matcher for dictionaries
-                DictionaryMatcherTransformer dictionaryMatcher = new DictionaryMatcherTransformer(columns[i],
-                        dictionaries, configuration);
+                final DictionaryMatcherTransformer dictionaryMatcher =
+                        new DictionaryMatcherTransformer(columns[i], dictionaries, configuration);
                 dictionaryMatcher.init();
                 outputColumns = dictionaryMatcher.getOutputColumns();
                 addMatchColumns(outputColumns);
@@ -118,7 +120,7 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
                 outputColumns = new OutputColumns(synonymCatalogs.length, Boolean.class);
                 _synonymCatalogConnections = new SynonymCatalogConnection[synonymCatalogs.length];
                 for (int j = 0; j < synonymCatalogs.length; j++) {
-                    SynonymCatalog synonymCatalog = synonymCatalogs[j];
+                    final SynonymCatalog synonymCatalog = synonymCatalogs[j];
                     _synonymCatalogConnections[j] = synonymCatalog.openConnection(configuration);
                     outputColumns.setColumnName(j, columns[i].getName() + " in " + synonymCatalog.getName());
                 }
@@ -127,8 +129,8 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
 
             if (isStringPatternMatchingEnabled()) {
                 // create matcher for string patterns
-                StringPatternMatcherTransformer stringPatternMatcher = new StringPatternMatcherTransformer(columns[i],
-                        stringPatterns, configuration);
+                final StringPatternMatcherTransformer stringPatternMatcher =
+                        new StringPatternMatcherTransformer(columns[i], stringPatterns, configuration);
                 stringPatternMatcher.init();
                 outputColumns = stringPatternMatcher.getOutputColumns();
                 addMatchColumns(outputColumns);
@@ -136,8 +138,8 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
             }
         }
 
-        @SuppressWarnings("unchecked")
-        InputColumn<Boolean>[] columnArray = _matchColumns.toArray(new InputColumn[_matchColumns.size()]);
+        @SuppressWarnings("unchecked") final InputColumn<Boolean>[] columnArray =
+                _matchColumns.toArray(new InputColumn[_matchColumns.size()]);
         _booleanAnalyzer = new BooleanAnalyzer(columnArray);
         _booleanAnalyzer.init();
     }
@@ -145,19 +147,19 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
     @Close
     public void close() {
         if (isDictionaryMatchingEnabled() && _dictionaryMatchers != null) {
-            for (DictionaryMatcherTransformer matcher : _dictionaryMatchers) {
+            for (final DictionaryMatcherTransformer matcher : _dictionaryMatchers) {
                 matcher.close();
             }
             _dictionaryMatchers = null;
         }
         if (isStringPatternMatchingEnabled() && _stringPatternMatchers != null) {
-            for (StringPatternMatcherTransformer matcher : _stringPatternMatchers) {
+            for (final StringPatternMatcherTransformer matcher : _stringPatternMatchers) {
                 matcher.close();
             }
             _stringPatternMatchers = null;
         }
         if (isSynonymCatalogLookupEnabled() && _synonymCatalogConnections != null) {
-            for (SynonymCatalogConnection connection : _synonymCatalogConnections) {
+            for (final SynonymCatalogConnection connection : _synonymCatalogConnections) {
                 connection.close();
             }
             _synonymCatalogConnections = null;
@@ -176,18 +178,18 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
         return dictionaries != null && dictionaries.length > 0;
     }
 
-    private void addMatchColumns(OutputColumns outputColumns) {
-        int count = outputColumns.getColumnCount();
+    private void addMatchColumns(final OutputColumns outputColumns) {
+        final int count = outputColumns.getColumnCount();
         for (int i = 0; i < count; i++) {
-            String columnName = outputColumns.getColumnName(i);
-            InputColumn<Boolean> col = new MockInputColumn<Boolean>(columnName, Boolean.class);
+            final String columnName = outputColumns.getColumnName(i);
+            final InputColumn<Boolean> col = new MockInputColumn<>(columnName, Boolean.class);
             _matchColumns.add(col);
         }
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
-        MockInputRow mockInputRow = new MockInputRow();
+    public void run(final InputRow row, final int distinctCount) {
+        final MockInputRow mockInputRow = new MockInputRow();
 
         int matchColumnIndex = 0;
         for (int i = 0; i < columns.length; i++) {
@@ -196,18 +198,18 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
             mockInputRow.put(columns[i], value);
 
             if (isDictionaryMatchingEnabled()) {
-                Object[] matches = _dictionaryMatchers[i].transform(row);
-                for (Object match : matches) {
+                final Object[] matches = _dictionaryMatchers[i].transform(row);
+                for (final Object match : matches) {
                     assert match instanceof Boolean;
 
-                    InputColumn<Boolean> matchColumn = _matchColumns.get(matchColumnIndex);
+                    final InputColumn<Boolean> matchColumn = _matchColumns.get(matchColumnIndex);
                     matchColumnIndex++;
                     mockInputRow.put(matchColumn, match);
                 }
             }
 
             if (isSynonymCatalogLookupEnabled()) {
-                for (SynonymCatalogConnection synonymCatalogConnection : _synonymCatalogConnections) {
+                for (final SynonymCatalogConnection synonymCatalogConnection : _synonymCatalogConnections) {
                     final InputColumn<Boolean> matchColumn = _matchColumns.get(matchColumnIndex);
                     matchColumnIndex++;
                     final String masterTerm = synonymCatalogConnection.getMasterTerm(stringValue);
@@ -221,10 +223,10 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
             }
 
             if (isStringPatternMatchingEnabled()) {
-                Object[] matches = _stringPatternMatchers[i].transform(row);
-                for (Object match : matches) {
+                final Object[] matches = _stringPatternMatchers[i].transform(row);
+                for (final Object match : matches) {
                     assert match instanceof Boolean;
-                    InputColumn<Boolean> matchColumn = _matchColumns.get(matchColumnIndex);
+                    final InputColumn<Boolean> matchColumn = _matchColumns.get(matchColumnIndex);
                     matchColumnIndex++;
                     mockInputRow.put(matchColumn, match);
                 }

@@ -22,13 +22,13 @@ package org.datacleaner.beans.valuedist;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.apache.metamodel.util.DateUtils;
+import org.apache.metamodel.util.Month;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
-import org.apache.metamodel.util.DateUtils;
-import org.apache.metamodel.util.Month;
 
 import junit.framework.TestCase;
 
@@ -38,8 +38,8 @@ public class DatePartDistributionResultReducerTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testReduce() throws Exception {
-        final InputColumn<Date> col1 = new MockInputColumn<Date>("from");
-        final InputColumn<Date> col2 = new MockInputColumn<Date>("to");
+        final InputColumn<Date> col1 = new MockInputColumn<>("from");
+        final InputColumn<Date> col2 = new MockInputColumn<>("to");
 
         YearDistributionAnalyzer analyzer;
 
@@ -71,7 +71,7 @@ public class DatePartDistributionResultReducerTest extends TestCase {
         assertEquals(5, lines.length);
     }
 
-    private Date getADate(int year) {
+    private Date getADate(final int year) {
         return DateUtils.get(year, Month.JANUARY, 31);
     }
 }

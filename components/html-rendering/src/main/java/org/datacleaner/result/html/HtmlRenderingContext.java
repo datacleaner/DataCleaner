@@ -32,26 +32,26 @@ public interface HtmlRenderingContext {
 
     /**
      * Escapes a string to make it ready for safely inserting into HTML
-     * 
+     *
      * @param str
      * @return
      */
-    public String escapeHtml(String str);
+    String escapeHtml(String str);
 
     /**
      * Escapes a string to make it ready for safely inserting into JSON
-     * 
+     *
      * @param str
      * @return
      */
-    public String escapeJson(String str);
+    String escapeJson(String str);
 
     /**
      * Generates a new unique element ID for this rendering context.
-     * 
+     *
      * @return
      */
-    public String createElementId();
+    String createElementId();
 
     /**
      * Gets the component job (if determinable), typically an
@@ -59,5 +59,5 @@ public interface HtmlRenderingContext {
      * {@link AnalyzerResult}. This method may return null if eg. a job is not
      * determinable by the orchestrating code.
      */
-    public ComponentJob getComponentJob();
+    ComponentJob getComponentJob();
 }

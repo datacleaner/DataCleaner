@@ -49,7 +49,7 @@ public class IndexDocumentationBuilder {
     private final Configuration _freemarkerConfiguration;
     private final Template _template;
 
-    public IndexDocumentationBuilder(DescriptorProvider descriptorProvider) {
+    public IndexDocumentationBuilder(final DescriptorProvider descriptorProvider) {
         _descriptorProvider = descriptorProvider;
         _freemarkerConfiguration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 
@@ -57,17 +57,17 @@ public class IndexDocumentationBuilder {
         _freemarkerConfiguration.setTemplateLoader(templateLoader);
         try {
             _template = _freemarkerConfiguration.getTemplate("template_index.html");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Failed to load template", e);
         }
     }
 
-    public void write(OutputStream outputStream) throws IOException {
+    public void write(final OutputStream outputStream) throws IOException {
         final Map<ComponentSuperCategory, SuperCategoryDocumentationWrapper> superCategories = new TreeMap<>();
 
         final MenuCallback callback = new MenuCallback() {
             @Override
-            public void addComponentDescriptor(ComponentDescriptor<?> descriptor) {
+            public void addComponentDescriptor(final ComponentDescriptor<?> descriptor) {
                 final ComponentSuperCategory superCategory = descriptor.getComponentSuperCategory();
                 SuperCategoryDocumentationWrapper superCategoryWrapper = superCategories.get(superCategory);
                 if (superCategoryWrapper == null) {
@@ -81,14 +81,14 @@ public class IndexDocumentationBuilder {
                 if (componentCategories.isEmpty()) {
                     superCategoryWrapper.addComponent(componentWrapper);
                 } else {
-                    for (ComponentCategory componentCategory : componentCategories) {
+                    for (final ComponentCategory componentCategory : componentCategories) {
                         superCategoryWrapper.addComponent(componentCategory, componentWrapper);
                     }
                 }
             }
 
             @Override
-            public void addCategory(ComponentCategory category) {
+            public void addCategory(final ComponentCategory category) {
             }
 
         };
@@ -104,14 +104,14 @@ public class IndexDocumentationBuilder {
             _template.process(data, out);
             out.flush();
             out.close();
-        } catch (TemplateException e) {
+        } catch (final TemplateException e) {
             throw new IllegalStateException("Unexpected templare exception", e);
         }
     }
 
     /**
      * Gets the freemarker configuration.
-     * 
+     *
      * @return
      */
     public Configuration getFreemarkerconfiguration() {

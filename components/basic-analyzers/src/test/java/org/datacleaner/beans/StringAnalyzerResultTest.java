@@ -21,48 +21,42 @@ package org.datacleaner.beans;
 
 import java.io.FileInputStream;
 
-import junit.framework.TestCase;
-
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.HasNameMapper;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.HasNameMapper;
+
+import junit.framework.TestCase;
 
 public class StringAnalyzerResultTest extends TestCase {
 
     public void testDeserializeOldVersion() throws Exception {
-        FileInputStream in = new FileInputStream(
-                "src/test/resources/string_analyzer_result_old.analysis.result.dat");
-        try {
-            ChangeAwareObjectInputStream ois = new ChangeAwareObjectInputStream(in);
-            try {
-                Object obj = ois.readObject();
+        try (FileInputStream in = new FileInputStream(
+                "src/test/resources/string_analyzer_result_old.analysis.result.dat")) {
+            try (ChangeAwareObjectInputStream ois = new ChangeAwareObjectInputStream(in)) {
+                final Object obj = ois.readObject();
                 assertNotNull(obj);
-                
-                AnalysisResult result = (AnalysisResult) obj;
-                
-                AnalyzerResult analyzerResult = result.getResults().get(0);
+
+                final AnalysisResult result = (AnalysisResult) obj;
+
+                final AnalyzerResult analyzerResult = result.getResults().get(0);
                 assertNotNull(analyzerResult);
-                
-                StringAnalyzerResult stringAnalyzerResult = (StringAnalyzerResult) analyzerResult;
-                
-                InputColumn<String>[] cols = stringAnalyzerResult.getColumns();
+
+                final StringAnalyzerResult stringAnalyzerResult = (StringAnalyzerResult) analyzerResult;
+
+                final InputColumn<String>[] cols = stringAnalyzerResult.getColumns();
                 assertEquals("[id, address1, address2]", CollectionUtils.map(cols, new HasNameMapper()).toString());
-                
+
                 assertNotNull(stringAnalyzerResult.getNullCount(cols[0]));
                 assertNotNull(stringAnalyzerResult.getNullCount(cols[1]));
                 assertNotNull(stringAnalyzerResult.getNullCount(cols[2]));
-                
+
                 assertNull(stringAnalyzerResult.getBlankCount(cols[0]));
                 assertNull(stringAnalyzerResult.getBlankCount(cols[1]));
                 assertNull(stringAnalyzerResult.getBlankCount(cols[2]));
-            } finally {
-                ois.close();
             }
-        } finally {
-            in.close();
         }
     }
 }

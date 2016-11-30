@@ -55,8 +55,8 @@ final class DistributedAnalysisResultReducer {
     private final AnalysisListener _analysisListener;
     private final AtomicBoolean _hasRun;
 
-    public DistributedAnalysisResultReducer(AnalysisJob masterJob, LifeCycleHelper lifeCycleHelper,
-            RowProcessingPublisher publisher, AnalysisListener analysisListener) {
+    public DistributedAnalysisResultReducer(final AnalysisJob masterJob, final LifeCycleHelper lifeCycleHelper,
+            final RowProcessingPublisher publisher, final AnalysisListener analysisListener) {
         _masterJob = masterJob;
         _lifeCycleHelper = lifeCycleHelper;
         _publisher = publisher;
@@ -82,7 +82,7 @@ final class DistributedAnalysisResultReducer {
 
     /**
      * Reduces all the analyzer results of an analysis
-     * 
+     *
      * @param results
      * @param resultMap
      * @param reductionErrors
@@ -95,10 +95,10 @@ final class DistributedAnalysisResultReducer {
             // already reduced
             return;
         }
-        
+
         _hasRun.set(true);
 
-        for (AnalysisResultFuture result : results) {
+        for (final AnalysisResultFuture result : results) {
             if (result.isErrornous()) {
                 logger.error("Encountered errorneous slave result. Result reduction will stop. Result={}", result);
                 final List<Throwable> errors = result.getErrors();
@@ -116,19 +116,20 @@ final class DistributedAnalysisResultReducer {
         }
 
         final Collection<AnalyzerJob> analyzerJobs = _masterJob.getAnalyzerJobs();
-        for (AnalyzerJob masterAnalyzerJob : analyzerJobs) {
-            final Collection<AnalyzerResult> slaveResults = new ArrayList<AnalyzerResult>();
+        for (final AnalyzerJob masterAnalyzerJob : analyzerJobs) {
+            final Collection<AnalyzerResult> slaveResults = new ArrayList<>();
             logger.info("Reducing {} slave results for component: {}", results.size(), masterAnalyzerJob);
-            for (AnalysisResultFuture result : results) {
+            for (final AnalysisResultFuture result : results) {
 
                 final Map<ComponentJob, AnalyzerResult> slaveResultMap = result.getResultMap();
-                final List<AnalyzerJob> slaveAnalyzerJobs = CollectionUtils2.filterOnClass(slaveResultMap.keySet(),
-                        AnalyzerJob.class);
+                final List<AnalyzerJob> slaveAnalyzerJobs =
+                        CollectionUtils2.filterOnClass(slaveResultMap.keySet(), AnalyzerJob.class);
                 final AnalyzerJobHelper analyzerJobHelper = new AnalyzerJobHelper(slaveAnalyzerJobs);
                 final AnalyzerJob slaveAnalyzerJob = analyzerJobHelper.getAnalyzerJob(masterAnalyzerJob);
                 if (slaveAnalyzerJob == null) {
-                    throw new IllegalStateException("Could not resolve slave component matching [" + masterAnalyzerJob
-                            + "] in slave result: " + result);
+                    throw new IllegalStateException(
+                            "Could not resolve slave component matching [" + masterAnalyzerJob + "] in slave result: "
+                                    + result);
                 }
 
                 final AnalyzerResult analyzerResult = result.getResult(slaveAnalyzerJob);
@@ -141,15 +142,16 @@ final class DistributedAnalysisResultReducer {
 
     /**
      * Reduces result for a single analyzer
-     * 
+     *
      * @param analyzerJob
      * @param slaveResults
      * @param resultMap
      * @param reductionErrors
      */
     @SuppressWarnings("unchecked")
-    private void reduce(AnalyzerJob analyzerJob, Collection<AnalyzerResult> slaveResults,
-            Map<ComponentJob, AnalyzerResult> resultMap, List<AnalysisResultReductionException> reductionErrors) {
+    private void reduce(final AnalyzerJob analyzerJob, final Collection<AnalyzerResult> slaveResults,
+            final Map<ComponentJob, AnalyzerResult> resultMap,
+            final List<AnalysisResultReductionException> reductionErrors) {
 
         if (slaveResults.size() == 1) {
             // special case where these was only 1 slave job
@@ -159,11 +161,11 @@ final class DistributedAnalysisResultReducer {
             return;
         }
 
-        final Class<? extends AnalyzerResultReducer<?>> reducerClass = analyzerJob.getDescriptor()
-                .getResultReducerClass();
+        final Class<? extends AnalyzerResultReducer<?>> reducerClass =
+                analyzerJob.getDescriptor().getResultReducerClass();
 
-        final ComponentDescriptor<? extends AnalyzerResultReducer<?>> reducerDescriptor = Descriptors
-                .ofComponent(reducerClass);
+        final ComponentDescriptor<? extends AnalyzerResultReducer<?>> reducerDescriptor =
+                Descriptors.ofComponent(reducerClass);
 
         AnalyzerResultReducer<AnalyzerResult> reducer = null;
         boolean success = false;
@@ -175,13 +177,13 @@ final class DistributedAnalysisResultReducer {
 
             final AnalyzerResult reducedResult = reducer.reduce(slaveResults);
             resultMap.put(analyzerJob, reducedResult);
-            
+
             success = true;
             _analysisListener.componentSuccess(_masterJob, analyzerJob, reducedResult);
 
-        } catch (Exception e) {
-            AnalysisResultReductionException reductionError = new AnalysisResultReductionException(analyzerJob,
-                    slaveResults, e);
+        } catch (final Exception e) {
+            final AnalysisResultReductionException reductionError =
+                    new AnalysisResultReductionException(analyzerJob, slaveResults, e);
             reductionErrors.add(reductionError);
 
             _analysisListener.errorInComponent(_masterJob, analyzerJob, null, e);

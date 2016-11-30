@@ -29,31 +29,31 @@ import org.datacleaner.util.ReflectionUtils;
 /**
  * Abstract implementation of the {@link HasAnalyzerResultComponentDescriptor}
  * interface. Convenient for implementing it's subclasses.
- * 
- * 
- * 
+ *
+ *
+ *
  * @param <B>
  */
-abstract class AbstractHasAnalyzerResultComponentDescriptor<B extends HasAnalyzerResult<?>> extends
-        AbstractComponentDescriptor<B> implements HasAnalyzerResultComponentDescriptor<B> {
+abstract class AbstractHasAnalyzerResultComponentDescriptor<B extends HasAnalyzerResult<?>>
+        extends AbstractComponentDescriptor<B> implements HasAnalyzerResultComponentDescriptor<B> {
 
     private static final long serialVersionUID = 1L;
 
     private final ResultDescriptor _resultDescriptor;
 
-    public AbstractHasAnalyzerResultComponentDescriptor(Class<B> beanClass, boolean requireInputColumns) {
+    AbstractHasAnalyzerResultComponentDescriptor(final Class<B> beanClass, final boolean requireInputColumns) {
         super(beanClass, requireInputColumns);
 
-        final Class<?> typeParameter = ReflectionUtils
-                .getTypeParameter(getComponentClass(), HasAnalyzerResult.class, 0);
+        final Class<?> typeParameter =
+                ReflectionUtils.getTypeParameter(getComponentClass(), HasAnalyzerResult.class, 0);
 
-        @SuppressWarnings("unchecked")
-        Class<? extends AnalyzerResult> resultClass = (Class<? extends AnalyzerResult>) typeParameter;
+        @SuppressWarnings("unchecked") final Class<? extends AnalyzerResult> resultClass =
+                (Class<? extends AnalyzerResult>) typeParameter;
         _resultDescriptor = Descriptors.ofResult(resultClass);
     }
 
     @Override
-    public MetricDescriptor getResultMetric(String name) {
+    public MetricDescriptor getResultMetric(final String name) {
         return _resultDescriptor.getResultMetric(name);
     }
 

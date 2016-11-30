@@ -46,26 +46,26 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
     private final String[] aliases;
     private final Enum<?> enumValue;
 
-    public EnumerationValue(String value, String name) {
+    public EnumerationValue(final String value, final String name) {
         this(value, name, null);
     }
 
-    public EnumerationValue(String enumValue, String enumName, String[] enumAliases){
+    public EnumerationValue(final String enumValue, final String enumName, final String[] enumAliases) {
         this.value = enumValue;
         this.name = enumName == null ? "" : enumName;
-        this.aliases = enumAliases == null ? new String[0]: enumAliases;
+        this.aliases = enumAliases == null ? new String[0] : enumAliases;
         this.enumValue = null;
     }
 
-    public EnumerationValue(String value) {
+    public EnumerationValue(final String value) {
         this(value, value);
     }
 
-    public EnumerationValue(Enum<?> value) {
+    public EnumerationValue(final Enum<?> value) {
         this.enumValue = value;
         this.value = enumValue.name();
         if (enumValue instanceof HasName) {
-            String nameCandidate = ((HasName) enumValue).getName();
+            final String nameCandidate = ((HasName) enumValue).getName();
             if (nameCandidate == null) {
                 name = "";
             } else {
@@ -81,6 +81,55 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
             aliases = new String[0];
         }
 
+    }
+
+    public static EnumerationValue[] fromArray(final Object value) {
+        if (value == null) {
+            return null;
+        }
+
+        if (value instanceof EnumerationValue[]) {
+            return (EnumerationValue[]) value;
+        }
+
+        // Array of java enums will be converted
+        if (value != null && value.getClass().isArray()) {
+            if (value.getClass().getComponentType().isEnum()) {
+                final Enum<?>[] values = (Enum[]) value;
+                final EnumerationValue[] result = new EnumerationValue[values.length];
+                for (int i = 0; i < result.length; i++) {
+                    result[i] = new EnumerationValue(values[i]);
+                }
+                return result;
+            }
+        }
+        throw new IllegalArgumentException(
+                "Unsupported enumeration value array: " + (value == null ? null : value.getClass()));
+    }
+
+    public static EnumerationProvider providerFromEnumClass(final Class<? extends Enum<?>> enumClass) {
+        final EnumerationValue[] values = EnumerationValue.fromArray(enumClass.getEnumConstants());
+        return new EnumerationProvider() {
+            @Override
+            public EnumerationValue[] values() {
+                return values;
+            }
+
+            @Override
+            public EnumerationValue forString(final String value) {
+                for (final EnumerationValue candidate : values) {
+                    if (value.equals(candidate.getValue()) || value.equals(candidate.getName())) {
+                        return candidate;
+                    }
+                    for (final String alias : candidate.getAliases()) {
+                        if (value.equals(alias)) {
+                            return candidate;
+                        }
+                    }
+                }
+                return null;
+            }
+        };
     }
 
     /** Available only if this object represents a Java enum value */
@@ -100,27 +149,31 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
     }
 
     @Override
-    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-        jgen.writeString(value);
-    }
-
-    @Override
-    public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer)
+    public void serialize(final JsonGenerator jgen, final SerializerProvider provider)
             throws IOException, JsonProcessingException {
         jgen.writeString(value);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public void serializeWithType(final JsonGenerator jgen, final SerializerProvider provider,
+            final TypeSerializer typeSer) throws IOException, JsonProcessingException {
+        jgen.writeString(value);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
 
-        EnumerationValue that = (EnumerationValue) o;
+        final EnumerationValue that = (EnumerationValue) o;
 
-        if (value != null ? !value.equals(that.value) : that.value != null)
+        if (value != null ? !value.equals(that.value) : that.value != null) {
             return false;
+        }
 
         return true;
     }
@@ -130,69 +183,19 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
         return value != null ? value.hashCode() : 0;
     }
 
-    public static EnumerationValue[] fromArray(Object value) {
-        if (value == null) {
-            return null;
-        }
-
-        if (value instanceof EnumerationValue[]) {
-            return (EnumerationValue[]) value;
-        }
-
-        // Array of java enums will be converted
-        if (value != null && value.getClass().isArray()) {
-            if (value.getClass().getComponentType().isEnum()) {
-                Enum<?>[] values = (Enum[]) value;
-                EnumerationValue[] result = new EnumerationValue[values.length];
-                for (int i = 0; i < result.length; i++) {
-                    result[i] = new EnumerationValue(values[i]);
-                }
-                return result;
-            }
-        }
-        throw new IllegalArgumentException("Unsupported enumeration value array: "
-                + (value == null ? null : value.getClass()));
-    }
-
     public String[] getAliases() {
         return aliases;
     }
 
-    public static EnumerationProvider providerFromEnumClass(Class<? extends Enum<?>> enumClass) {
-        final EnumerationValue[] values = EnumerationValue.fromArray(enumClass.getEnumConstants());
-        return new EnumerationProvider() {
-            @Override
-            public EnumerationValue[] values() {
-                return values;
-            }
-            @Override
-            public EnumerationValue forString(String value) {
-                for(EnumerationValue candidate: values) {
-                    if(value.equals(candidate.getValue()) || value.equals(candidate.getName())) {
-                        return candidate;
-                    }
-                    for(String alias: candidate.getAliases()) {
-                        if(value.equals(alias)) {
-                            return candidate;
-                        }
-                    }
-                }
-                return null;
-            }
-        };
-    }
-
     @Override
-    public int compareTo(EnumerationValue o) {
+    public int compareTo(final EnumerationValue o) {
         final Enum<?> javaEnum2 = o.asJavaEnum();
         if (enumValue != null && javaEnum2 != null) {
             try {
-                @SuppressWarnings("rawtypes")
-                final Enum javaEnum1 = (Enum<?>) asJavaEnum();
-                @SuppressWarnings("unchecked")
-                int result = javaEnum1.compareTo(javaEnum2);
+                @SuppressWarnings("rawtypes") final Enum javaEnum1 = (Enum<?>) asJavaEnum();
+                @SuppressWarnings("unchecked") final int result = javaEnum1.compareTo(javaEnum2);
                 return result;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // nothing to do
             }
         }

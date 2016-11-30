@@ -25,11 +25,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Comparator;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.ToStringComparator;
+
+import junit.framework.TestCase;
 
 public class SortMergeWriterTest extends TestCase {
 
@@ -50,22 +50,17 @@ public class SortMergeWriterTest extends TestCase {
     // test that the comparator is being used. Here we dedup string arrays but
     // only based on the string at index 0.
     public void testDedupArray() throws Exception {
-        Comparator<String[]> comparator = new Comparator<String[]>() {
-            @Override
-            public int compare(String[] o1, String[] o2) {
-                return o1[0].compareTo(o2[0]);
-            }
-        };
+        final Comparator<String[]> comparator = (o1, o2) -> o1[0].compareTo(o2[0]);
 
-        SortMergeWriter<String[], Writer> sorter = new SortMergeWriter<String[], Writer>(2, comparator) {
+        final SortMergeWriter<String[], Writer> sorter = new SortMergeWriter<String[], Writer>(2, comparator) {
 
             @Override
-            protected Writer createWriter(Resource file) {
+            protected Writer createWriter(final Resource file) {
                 return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
             }
 
             @Override
-            protected void writeRow(Writer writer, String[] row, int count) throws IOException {
+            protected void writeRow(final Writer writer, final String[] row, final int count) throws IOException {
                 if (row == null) {
                     writer.write("<null>," + count + "\n");
                 } else {
@@ -73,9 +68,10 @@ public class SortMergeWriterTest extends TestCase {
                 }
             }
 
-            protected void writeHeader(Writer writer) throws IOException {
+            protected void writeHeader(final Writer writer) throws IOException {
                 writer.write("text,count\n");
-            };
+            }
+
         };
 
         sorter.append(new String[] { "foo", "foo" });
@@ -91,10 +87,10 @@ public class SortMergeWriterTest extends TestCase {
         sorter.append(new String[] { "bar", "foo" });
         sorter.append(new String[] { "foobar", "bar" });
 
-        File file = sorter.write("target/sort_merge_arrays-deduped.csv");
+        final File file = sorter.write("target/sort_merge_arrays-deduped.csv");
         assertTrue(file.exists());
 
-        try (BufferedReader br = FileHelper.getBufferedReader(file);) {
+        try (BufferedReader br = FileHelper.getBufferedReader(file)) {
             assertEquals("text,count", br.readLine());
             assertEquals("bar,3", br.readLine());
             assertEquals("barfoo,3", br.readLine());
@@ -107,32 +103,32 @@ public class SortMergeWriterTest extends TestCase {
     }
 
     public void testUseAsUniquenessChecker() throws Exception {
-        SortMergeWriter<String, Writer> sorter = new SortMergeWriter<String, Writer>(2,
-                ToStringComparator.getComparator()) {
+        final SortMergeWriter<String, Writer> sorter =
+                new SortMergeWriter<String, Writer>(2, ToStringComparator.getComparator()) {
 
-            @Override
-            protected Writer createWriter(Resource file) {
-                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
-            }
+                    @Override
+                    protected Writer createWriter(final Resource file) {
+                        return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
+                    }
 
-            @Override
-            protected void writeRow(Writer writer, String row, int count) throws IOException {
-                if (count > 1) {
-                    writer.write(row + "," + count + "\n");
-                }
-            }
+                    @Override
+                    protected void writeRow(final Writer writer, final String row, final int count) throws IOException {
+                        if (count > 1) {
+                            writer.write(row + "," + count + "\n");
+                        }
+                    }
 
-            protected void writeHeader(Writer writer) throws IOException {
-                writer.write("text,count\n");
-            };
+                    protected void writeHeader(final Writer writer) throws IOException {
+                        writer.write("text,count\n");
+                    }
 
-            @Override
-            protected void writeNull(Writer writer, int nullCount) throws IOException {
-                if (nullCount > 1) {
-                    writeRow(writer, "<null>", nullCount);
-                }
-            }
-        };
+                    @Override
+                    protected void writeNull(final Writer writer, final int nullCount) throws IOException {
+                        if (nullCount > 1) {
+                            writeRow(writer, "<null>", nullCount);
+                        }
+                    }
+                };
 
         sorter.append("foo");
         sorter.append("bar");
@@ -145,35 +141,35 @@ public class SortMergeWriterTest extends TestCase {
         sorter.append("bar");
         sorter.append("foo");
 
-        File file = sorter.write("target/sort_merge_uniqueness.txt");
+        final File file = sorter.write("target/sort_merge_uniqueness.txt");
 
-        String str = FileHelper.readFileAsString(file);
+        final String str = FileHelper.readFileAsString(file);
         assertEquals("text,count\n" + "bar,2\n" + "foo,2", str);
     }
 
     public void testNullSafety() throws Exception {
-        SortMergeWriter<String, Writer> sorter = new SortMergeWriter<String, Writer>(2,
-                ToStringComparator.getComparator()) {
+        final SortMergeWriter<String, Writer> sorter =
+                new SortMergeWriter<String, Writer>(2, ToStringComparator.getComparator()) {
 
-            @Override
-            protected Writer createWriter(Resource file) {
-                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
-            }
+                    @Override
+                    protected Writer createWriter(final Resource file) {
+                        return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
+                    }
 
-            @Override
-            protected void writeRow(Writer writer, String row, int count) throws IOException {
-                writer.write(row + "," + count + "\n");
-            }
+                    @Override
+                    protected void writeRow(final Writer writer, final String row, final int count) throws IOException {
+                        writer.write(row + "," + count + "\n");
+                    }
 
-            protected void writeHeader(Writer writer) throws IOException {
-                writer.write("text,count\n");
-            };
+                    protected void writeHeader(final Writer writer) throws IOException {
+                        writer.write("text,count\n");
+                    }
 
-            @Override
-            protected void writeNull(Writer writer, int nullCount) throws IOException {
-                writeRow(writer, "<null>", nullCount);
-            }
-        };
+                    @Override
+                    protected void writeNull(final Writer writer, final int nullCount) throws IOException {
+                        writeRow(writer, "<null>", nullCount);
+                    }
+                };
 
         sorter.append("1234");
         sorter.append("acb");
@@ -185,10 +181,10 @@ public class SortMergeWriterTest extends TestCase {
         sorter.append("5678");
         sorter.append("1234");
 
-        File file = sorter.write("target/sort_merge_null_safety.txt");
+        final File file = sorter.write("target/sort_merge_null_safety.txt");
         assertTrue(file.exists());
 
-        BufferedReader br = FileHelper.getBufferedReader(file);
+        final BufferedReader br = FileHelper.getBufferedReader(file);
 
         assertEquals("text,count", br.readLine());
         assertEquals("<null>,1", br.readLine());
@@ -199,28 +195,28 @@ public class SortMergeWriterTest extends TestCase {
     }
 
     public void testNoUnnescesaryTempFiles() throws Exception {
-        SortMergeWriter<String, Writer> sorter = new SortMergeWriter<String, Writer>(10,
-                ToStringComparator.getComparator()) {
+        final SortMergeWriter<String, Writer> sorter =
+                new SortMergeWriter<String, Writer>(10, ToStringComparator.getComparator()) {
 
-            @Override
-            protected Writer createWriter(Resource file) {
-                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
-            }
+                    @Override
+                    protected Writer createWriter(final Resource file) {
+                        return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
+                    }
 
-            @Override
-            protected void writeRow(Writer writer, String row, int count) throws IOException {
-                writer.write(row + "," + count + "\n");
-            }
+                    @Override
+                    protected void writeRow(final Writer writer, final String row, final int count) throws IOException {
+                        writer.write(row + "," + count + "\n");
+                    }
 
-            protected void writeHeader(Writer writer) throws IOException {
-                writer.write("text,count\n");
-            };
+                    protected void writeHeader(final Writer writer) throws IOException {
+                        writer.write("text,count\n");
+                    }
 
-            @Override
-            protected File createTempFile() throws IOException {
-                throw new IllegalStateException("This test is not supposed to require temp files!");
-            }
-        };
+                    @Override
+                    protected File createTempFile() throws IOException {
+                        throw new IllegalStateException("This test is not supposed to require temp files!");
+                    }
+                };
 
         sorter.append("1234");
         sorter.append("acb");
@@ -228,7 +224,7 @@ public class SortMergeWriterTest extends TestCase {
         sorter.append("acb");
         sorter.append("5678");
 
-        File file = sorter.write("target/sort_merge_no_temp_file.txt");
+        final File file = sorter.write("target/sort_merge_no_temp_file.txt");
         assertTrue(file.exists());
 
         try (BufferedReader br = FileHelper.getBufferedReader(file)) {
@@ -241,24 +237,25 @@ public class SortMergeWriterTest extends TestCase {
         }
     }
 
-    private void doSortTests(int threshold) throws Exception {
-        SortMergeWriter<String, Writer> sorter = new SortMergeWriter<String, Writer>(threshold,
-                ToStringComparator.getComparator()) {
+    private void doSortTests(final int threshold) throws Exception {
+        final SortMergeWriter<String, Writer> sorter =
+                new SortMergeWriter<String, Writer>(threshold, ToStringComparator.getComparator()) {
 
-            @Override
-            protected Writer createWriter(Resource file) {
-                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
-            }
+                    @Override
+                    protected Writer createWriter(final Resource file) {
+                        return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
+                    }
 
-            @Override
-            protected void writeRow(Writer writer, String row, int count) throws IOException {
-                writer.write(row + "," + count + "\n");
-            }
+                    @Override
+                    protected void writeRow(final Writer writer, final String row, final int count) throws IOException {
+                        writer.write(row + "," + count + "\n");
+                    }
 
-            protected void writeHeader(Writer writer) throws IOException {
-                writer.write("number,count\n");
-            };
-        };
+                    protected void writeHeader(final Writer writer) throws IOException {
+                        writer.write("number,count\n");
+                    }
+
+                };
 
         sorter.append("02");
         sorter.append("01");
@@ -274,7 +271,7 @@ public class SortMergeWriterTest extends TestCase {
         sorter.append("12");
         sorter.append("11");
         sorter.append("14");
-        File file = sorter.write("target/sort_merge_sort_" + threshold + ".txt");
+        final File file = sorter.write("target/sort_merge_sort_" + threshold + ".txt");
 
         assertTrue(file.exists());
 
@@ -298,25 +295,25 @@ public class SortMergeWriterTest extends TestCase {
         }
     }
 
-    private void doDedupTests(int threshold) throws Exception {
-        SortMergeWriter<String, Writer> sorter = new SortMergeWriter<String, Writer>(threshold,
-                ToStringComparator.getComparator()) {
+    private void doDedupTests(final int threshold) throws Exception {
+        final SortMergeWriter<String, Writer> sorter =
+                new SortMergeWriter<String, Writer>(threshold, ToStringComparator.getComparator()) {
 
-            @Override
-            protected Writer createWriter(Resource file) {
-                return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
-            }
+                    @Override
+                    protected Writer createWriter(final Resource file) {
+                        return FileHelper.getWriter(file.write(), FileHelper.DEFAULT_ENCODING);
+                    }
 
-            @Override
-            protected void writeRow(Writer writer, String row, int count) throws IOException {
-                writer.write(row + "," + count + "\n");
-            }
+                    @Override
+                    protected void writeRow(final Writer writer, final String row, final int count) throws IOException {
+                        writer.write(row + "," + count + "\n");
+                    }
 
-            @Override
-            protected void writeHeader(Writer writer) throws IOException {
-                // do nothing
-            }
-        };
+                    @Override
+                    protected void writeHeader(final Writer writer) throws IOException {
+                        // do nothing
+                    }
+                };
 
         sorter.append("02");
         sorter.append("01");
@@ -339,7 +336,7 @@ public class SortMergeWriterTest extends TestCase {
         sorter.append("10");
         sorter.append("10");
         sorter.append("10");
-        File file = sorter.write("target/sort_merge_dedup_" + threshold + ".txt");
+        final File file = sorter.write("target/sort_merge_dedup_" + threshold + ".txt");
 
         assertTrue(file.exists());
 

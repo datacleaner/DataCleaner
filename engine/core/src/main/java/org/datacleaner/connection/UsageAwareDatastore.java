@@ -25,142 +25,139 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import org.datacleaner.util.ReadObjectBuilder;
-import org.datacleaner.util.ReadObjectBuilder.Moved;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.util.BaseObject;
+import org.datacleaner.util.ReadObjectBuilder;
+import org.datacleaner.util.ReadObjectBuilder.Moved;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Abstract datastore implementation that uses a shared
  * UsageAwareDataContextProvider when posssible.
- * 
+ *
  * @see UsageAwareDatastoreConnection
  */
 public abstract class UsageAwareDatastore<E extends DataContext> extends BaseObject implements Datastore {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LoggerFactory.getLogger(UsageAwareDatastore.class);
+    private static final Logger logger = LoggerFactory.getLogger(UsageAwareDatastore.class);
+    @Moved
+    private final String _name;
+    private transient volatile Reference<UsageAwareDatastoreConnection<E>> _datastoreConnectionRef;
+    private transient volatile UsageAwareDatastoreConnection<E> _datastoreConnection = null;
+    private String _description;
 
-	private transient volatile Reference<UsageAwareDatastoreConnection<E>> _datastoreConnectionRef;
-	private transient volatile UsageAwareDatastoreConnection<E> _datastoreConnection = null;
+    public UsageAwareDatastore(final String name) {
+        _name = name;
+    }
 
-	@Moved
-	private final String _name;
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, UsageAwareDatastore.class).readObject(stream);
+    }
 
-	private String _description;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return _name;
+    }
 
-	public UsageAwareDatastore(String name) {
-		_name = name;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String getDescription() {
+        return _description;
+    }
 
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		ReadObjectBuilder.create(this, UsageAwareDatastore.class).readObject(stream);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void setDescription(final String description) {
+        _description = description;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getName() {
-		return _name;
-	}
+    protected Reference<UsageAwareDatastoreConnection<E>> getDataContextProviderRef() {
+        return _datastoreConnectionRef;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final String getDescription() {
-		return _description;
-	}
+    protected void setDataContextProviderRef(final Reference<UsageAwareDatastoreConnection<E>> dataContextProviderRef) {
+        _datastoreConnectionRef = dataContextProviderRef;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void setDescription(String description) {
-		_description = description;
-	}
+    protected void setDataContextProvider(final UsageAwareDatastoreConnection<E> dataContextProvider) {
+        _datastoreConnection = dataContextProvider;
+    }
 
-	protected Reference<UsageAwareDatastoreConnection<E>> getDataContextProviderRef() {
-		return _datastoreConnectionRef;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    private synchronized UsageAwareDatastoreConnection<E> getDatastoreConnection() {
+        if (_datastoreConnection != null) {
+            return _datastoreConnection;
+        }
 
-	protected void setDataContextProviderRef(Reference<UsageAwareDatastoreConnection<E>> dataContextProviderRef) {
-		_datastoreConnectionRef = dataContextProviderRef;
-	}
+        UsageAwareDatastoreConnection<E> datastoreConnection;
+        if (_datastoreConnectionRef != null) {
+            datastoreConnection = _datastoreConnectionRef.get();
+            if (datastoreConnection != null && datastoreConnection.requestUsage()) {
+                // reuse existing data context provider
+                logger.debug("Reusing existing DatastoreConnection: {}", datastoreConnection);
+                return datastoreConnection;
+            }
+        }
 
-	protected void setDataContextProvider(UsageAwareDatastoreConnection<E> dataContextProvider) {
-		_datastoreConnection = dataContextProvider;
-	}
+        datastoreConnection = createDatastoreConnection();
+        if (datastoreConnection == null) {
+            throw new IllegalStateException("createDatastoreConnection() returned null");
+        }
+        _datastoreConnectionRef = new WeakReference<>(datastoreConnection);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	private synchronized final UsageAwareDatastoreConnection<E> getDatastoreConnection() {
-		if (_datastoreConnection != null) {
-			return _datastoreConnection;
-		}
+        return datastoreConnection;
+    }
 
-		UsageAwareDatastoreConnection<E> datastoreConnection;
-		if (_datastoreConnectionRef != null) {
-			datastoreConnection = _datastoreConnectionRef.get();
-			if (datastoreConnection != null && datastoreConnection.requestUsage()) {
-				// reuse existing data context provider
-				logger.debug("Reusing existing DatastoreConnection: {}", datastoreConnection);
-				return datastoreConnection;
-			}
-		}
+    @Override
+    public DatastoreConnection openConnection() {
+        final UsageAwareDatastoreConnection<E> connection = getDatastoreConnection();
+        if (connection instanceof UpdateableDatastoreConnection) {
+            return new UpdateableDatastoreConnectionLease((UpdateableDatastoreConnection) connection);
+        } else {
+            return new DatastoreConnectionLease(connection);
+        }
+    }
 
-		datastoreConnection = createDatastoreConnection();
-		if (datastoreConnection == null) {
-			throw new IllegalStateException("createDatastoreConnection() returned null");
-		}
-		_datastoreConnectionRef = new WeakReference<UsageAwareDatastoreConnection<E>>(datastoreConnection);
+    protected abstract UsageAwareDatastoreConnection<E> createDatastoreConnection();
 
-		return datastoreConnection;
-	}
+    @Override
+    protected void decorateIdentity(final List<Object> identifiers) {
+        identifiers.add(getName());
+        identifiers.add(_description);
+    }
 
-	@Override
-	public DatastoreConnection openConnection() {
-		UsageAwareDatastoreConnection<E> connection = getDatastoreConnection();
-		if (connection instanceof UpdateableDatastoreConnection) {
-			return new UpdateableDatastoreConnectionLease((UpdateableDatastoreConnection) connection);
-		} else {
-			return new DatastoreConnectionLease(connection);
-		}
-	}
+    /**
+     * Gets whether the datacontext provider is already open / ready or if it
+     * has to be created.
+     *
+     * @return a boolean indicating if the datacontext provider is open
+     */
+    public final boolean isDatastoreConnectionOpen() {
+        if (_datastoreConnectionRef == null) {
+            return false;
+        }
+        final UsageAwareDatastoreConnection<E> dataContextProvider = _datastoreConnectionRef.get();
+        return isDataContextProviderOpen(dataContextProvider);
+    }
 
-	protected abstract UsageAwareDatastoreConnection<E> createDatastoreConnection();
+    private boolean isDataContextProviderOpen(final UsageAwareDatastoreConnection<E> dataContextProvider) {
+        return dataContextProvider != null && !dataContextProvider.isClosed();
+    }
 
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		identifiers.add(getName());
-		identifiers.add(_description);
-	}
-
-	/**
-	 * Gets whether the datacontext provider is already open / ready or if it
-	 * has to be created.
-	 * 
-	 * @return a boolean indicating if the datacontext provider is open
-	 */
-	public final boolean isDatastoreConnectionOpen() {
-		if (_datastoreConnectionRef == null) {
-			return false;
-		}
-		UsageAwareDatastoreConnection<E> dataContextProvider = _datastoreConnectionRef.get();
-		return isDataContextProviderOpen(dataContextProvider);
-	}
-
-	private boolean isDataContextProviderOpen(UsageAwareDatastoreConnection<E> dataContextProvider) {
-		return dataContextProvider != null && !dataContextProvider.isClosed();
-	}
-
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + "[name=" + getName() + "]";
-	}
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[name=" + getName() + "]";
+    }
 }

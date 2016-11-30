@@ -25,8 +25,8 @@ import junit.framework.TestCase;
 
 public class DefaultTextRendererTest extends TestCase {
 
-	public void testSimpleRendering() throws Exception {
-		ToStringTextRenderer r = new ToStringTextRenderer();
-		assertEquals("1234", r.render(new NumberResult(1234)));
-	}
+    public void testSimpleRendering() throws Exception {
+        final ToStringTextRenderer r = new ToStringTextRenderer();
+        assertEquals("1234", r.render(new NumberResult(1234)));
+    }
 }

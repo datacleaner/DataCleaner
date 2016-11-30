@@ -23,28 +23,28 @@ import org.datacleaner.api.Converter;
 
 public class NullConverter implements Converter<Object> {
 
-	@Override
-	public Object fromString(Class<?> type, String serializedForm) {
-		if (!"<null>".equals(serializedForm)) {
-			throw new IllegalArgumentException("Null expected, but found: " + serializedForm);
-		}
-		return null;
-	}
+    @Override
+    public Object fromString(final Class<?> type, final String serializedForm) {
+        if (!"<null>".equals(serializedForm)) {
+            throw new IllegalArgumentException("Null expected, but found: " + serializedForm);
+        }
+        return null;
+    }
 
-	@Override
-	public String toString(Object instance) {
-		if (null != instance) {
-			throw new IllegalArgumentException("Null expected, but found: " + instance);
-		}
-		return "<null>";
-	}
+    @Override
+    public String toString(final Object instance) {
+        if (null != instance) {
+            throw new IllegalArgumentException("Null expected, but found: " + instance);
+        }
+        return "<null>";
+    }
 
-	@Override
-	public boolean isConvertable(Class<?> type) {
-		return null == type;
-	}
+    @Override
+    public boolean isConvertable(final Class<?> type) {
+        return null == type;
+    }
 
-	public boolean isNull(String serializedForm) {
-		return "<null>".equals(serializedForm);
-	}
+    public boolean isNull(final String serializedForm) {
+        return "<null>".equals(serializedForm);
+    }
 }

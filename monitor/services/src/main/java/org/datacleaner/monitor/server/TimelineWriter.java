@@ -28,5 +28,5 @@ import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
  */
 public interface TimelineWriter {
 
-    public void write(TimelineDefinition timeline, OutputStream outputStream);
+    void write(TimelineDefinition timeline, OutputStream outputStream);
 }

@@ -32,52 +32,52 @@ import org.datacleaner.util.StringUtils;
 @RendererBean(TextRenderingFormat.class)
 public class DateGapTextRenderer extends AbstractRenderer<DateGapAnalyzerResult, String> {
 
-	private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-	@Override
-	public String render(DateGapAnalyzerResult result) {
-		Set<String> names = result.getGroupNames();
-		if (names.isEmpty()) {
-			return "No timelines recorded";
-		}
+    @Override
+    public String render(final DateGapAnalyzerResult result) {
+        final Set<String> names = result.getGroupNames();
+        if (names.isEmpty()) {
+            return "No timelines recorded";
+        }
 
-		StringBuilder sb = new StringBuilder();
-		for (String name : names) {
-			if (!StringUtils.isNullOrEmpty(name)) {
-				sb.append("Timeline recorded for '");
-				sb.append(name);
-				sb.append('\'');
-				sb.append('\n');
-			}
+        final StringBuilder sb = new StringBuilder();
+        for (final String name : names) {
+            if (!StringUtils.isNullOrEmpty(name)) {
+                sb.append("Timeline recorded for '");
+                sb.append(name);
+                sb.append('\'');
+                sb.append('\n');
+            }
 
-			SortedSet<TimeInterval> gaps = result.getGaps(name);
-			if (gaps.isEmpty()) {
-				sb.append(" - no time gaps!\n");
-			} else {
-				for (TimeInterval timeInterval : gaps) {
-					sb.append(" - time gap: ");
-					sb.append(format(timeInterval));
-					sb.append('\n');
-				}
-			}
+            final SortedSet<TimeInterval> gaps = result.getGaps(name);
+            if (gaps.isEmpty()) {
+                sb.append(" - no time gaps!\n");
+            } else {
+                for (final TimeInterval timeInterval : gaps) {
+                    sb.append(" - time gap: ");
+                    sb.append(format(timeInterval));
+                    sb.append('\n');
+                }
+            }
 
-			SortedSet<TimeInterval> overlaps = result.getOverlaps(name);
-			if (overlaps.isEmpty()) {
-				sb.append(" - no time overlaps!\n");
-			} else {
-				for (TimeInterval timeInterval : overlaps) {
-					sb.append(" - time overlap: ");
-					sb.append(format(timeInterval));
-					sb.append('\n');
-				}
-			}
-		}
-		return sb.toString();
-	}
+            final SortedSet<TimeInterval> overlaps = result.getOverlaps(name);
+            if (overlaps.isEmpty()) {
+                sb.append(" - no time overlaps!\n");
+            } else {
+                for (final TimeInterval timeInterval : overlaps) {
+                    sb.append(" - time overlap: ");
+                    sb.append(format(timeInterval));
+                    sb.append('\n');
+                }
+            }
+        }
+        return sb.toString();
+    }
 
-	private String format(TimeInterval interval) {
-		Date from = new Date(interval.getFrom());
-		Date to = new Date(interval.getTo());
-		return df.format(from) + " to " + df.format(to);
-	}
+    private String format(final TimeInterval interval) {
+        final Date from = new Date(interval.getFrom());
+        final Date to = new Date(interval.getTo());
+        return df.format(from) + " to " + df.format(to);
+    }
 }

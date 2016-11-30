@@ -50,14 +50,14 @@ public final class DetailsResultWindow extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
 
-    private final static ImageManager imageManager = ImageManager.get();
+    private static final ImageManager imageManager = ImageManager.get();
     private final RendererFactory _rendererFactory;
     private final List<AnalyzerResult> _results;
     private final String _title;
     private final DCTaskPaneContainer _taskPaneContainer;
 
-    public DetailsResultWindow(String title, List<AnalyzerResult> results, WindowContext windowContext,
-            RendererFactory rendererFactory) {
+    public DetailsResultWindow(final String title, final List<AnalyzerResult> results,
+            final WindowContext windowContext, final RendererFactory rendererFactory) {
         super(windowContext);
         _title = title;
         _results = results;
@@ -89,10 +89,10 @@ public final class DetailsResultWindow extends AbstractWindow {
     @Override
     protected JComponent getWindowContent() {
         if (!_results.isEmpty()) {
-            for (AnalyzerResult analyzerResult : _results) {
-                Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(
-                        analyzerResult, SwingRenderingFormat.class);
-                JComponent component;
+            for (final AnalyzerResult analyzerResult : _results) {
+                final Renderer<? super AnalyzerResult, ? extends JComponent> renderer =
+                        _rendererFactory.getRenderer(analyzerResult, SwingRenderingFormat.class);
+                final JComponent component;
                 if (renderer == null) {
                     component = new JTextArea(analyzerResult.toString());
                 } else {
@@ -103,21 +103,22 @@ public final class DetailsResultWindow extends AbstractWindow {
             }
         }
 
-        DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 
-        Dimension preferredSize = panel.getPreferredSize();
-        int height = preferredSize.height < 400 ? preferredSize.height + 100 : preferredSize.height;
-        int width = preferredSize.width < 500 ? 500 : preferredSize.width;
+        final Dimension preferredSize = panel.getPreferredSize();
+        final int height = preferredSize.height < 400 ? preferredSize.height + 100 : preferredSize.height;
+        final int width = preferredSize.width < 500 ? 500 : preferredSize.width;
         panel.setPreferredSize(width, height);
 
         return panel;
     }
 
-    public void addRenderedResult(JComponent component) {
-        ImageIcon icon = imageManager.getImageIcon(IconUtils.ACTION_DRILL_TO_DETAIL, IconUtils.ICON_SIZE_TASK_PANE);
-        JXTaskPane taskPane = WidgetFactory.createTaskPane("Detailed results", icon);
+    public void addRenderedResult(final JComponent component) {
+        final ImageIcon icon =
+                imageManager.getImageIcon(IconUtils.ACTION_DRILL_TO_DETAIL, IconUtils.ICON_SIZE_TASK_PANE);
+        final JXTaskPane taskPane = WidgetFactory.createTaskPane("Detailed results", icon);
 
         final DCPanel taskPanePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         taskPanePanel.setBorder(new EmptyBorder(4, 4, 4, 4));

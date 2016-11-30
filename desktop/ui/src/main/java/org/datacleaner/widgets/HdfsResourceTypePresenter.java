@@ -58,7 +58,7 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HadoopRe
 
         final DCDocumentListener documentListener = new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 onInputChanged();
             }
         };
@@ -67,9 +67,11 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HadoopRe
         _panel = DCPanel.flow(Alignment.LEFT, 2, 0, _pathTextField);
     }
 
-    private HadoopClusterInformation getDefaultEnvironmentCluster(ServerInformationCatalog serverInformationCatalog) {
-        if(serverInformationCatalog.containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)){
-            return (HadoopClusterInformation) serverInformationCatalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
+    private HadoopClusterInformation getDefaultEnvironmentCluster(
+            final ServerInformationCatalog serverInformationCatalog) {
+        if (serverInformationCatalog.containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
+            return (HadoopClusterInformation) serverInformationCatalog
+                    .getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
         }
 
         return null;
@@ -94,8 +96,8 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HadoopRe
         }
 
         final URI uri = URI.create(path.replace(" ", "%20"));
-        if(_defaultCluster == null || uri.isAbsolute()) {
-            HadoopResourceBuilder builder = new HadoopResourceBuilder(_serverInformationCatalog, path);
+        if (_defaultCluster == null || uri.isAbsolute()) {
+            final HadoopResourceBuilder builder = new HadoopResourceBuilder(_serverInformationCatalog, path);
             return builder.build();
         }
         return new HadoopResource(uri, _defaultCluster);
@@ -108,7 +110,7 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HadoopRe
         }
 
         final String qualifiedPath = resource.getQualifiedPath();
-        if(resource.getClusterReferenceName() == null){
+        if (resource.getClusterReferenceName() == null) {
             _pathTextField.setText(qualifiedPath);
         } else {
             _pathTextField.setText(URI.create(qualifiedPath.replace(" ", "%20")).getPath());
@@ -116,27 +118,27 @@ public class HdfsResourceTypePresenter implements ResourceTypePresenter<HadoopRe
     }
 
     @Override
-    public void addListener(ResourceTypePresenter.Listener listener) {
+    public void addListener(final ResourceTypePresenter.Listener listener) {
         _listeners.add(listener);
     }
 
     @Override
-    public void removeListener(ResourceTypePresenter.Listener listener) {
+    public void removeListener(final ResourceTypePresenter.Listener listener) {
         _listeners.remove(listener);
     }
 
     @Override
-    public void addChoosableFileFilter(FileFilter fileFilter) {
+    public void addChoosableFileFilter(final FileFilter fileFilter) {
         _fileFilters.add(fileFilter);
     }
 
     @Override
-    public void removeChoosableFileFilter(FileFilter fileFilter) {
+    public void removeChoosableFileFilter(final FileFilter fileFilter) {
         _fileFilters.remove(fileFilter);
     }
 
     @Override
-    public void setSelectedFileFilter(FileFilter fileFilter) {
+    public void setSelectedFileFilter(final FileFilter fileFilter) {
         _fileFilters.remove(fileFilter);
         _fileFilters.add(0, fileFilter);
     }

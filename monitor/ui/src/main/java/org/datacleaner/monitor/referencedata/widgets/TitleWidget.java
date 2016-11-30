@@ -22,7 +22,7 @@ package org.datacleaner.monitor.referencedata.widgets;
 import com.google.gwt.user.client.ui.Label;
 
 public class TitleWidget extends Label {
-    public TitleWidget(String title) {
+    public TitleWidget(final String title) {
         super(title);
         addStyleName("title");
     }

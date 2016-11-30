@@ -27,8 +27,8 @@ public interface HasLabelAdvice {
 
     /**
      * The suggested label to use for this component.
-     * 
+     *
      * @return the suggested label, or null if no label can be suggested.
      */
-    public String getSuggestedLabel();
+    String getSuggestedLabel();
 }

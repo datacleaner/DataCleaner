@@ -1,15 +1,14 @@
 package org.datacleaner.monitor.jobwizard.movedata
-import scala.collection.JavaConversions._
-
-import org.easymock.EasyMock
 import org.datacleaner.configuration.DataCleanerConfigurationImpl
-import org.datacleaner.connection.DatastoreCatalogImpl
-import org.datacleaner.test.TestHelper
 import org.datacleaner.monitor.configuration.TenantContext
 import org.datacleaner.monitor.server.JobWizardContextImpl
+import org.datacleaner.test.TestHelper
+import org.easymock.EasyMock
 import org.junit.Assert._
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
+
+import scala.collection.JavaConversions._
 
 class CopyDataWizardTest extends AssertionsForJUnit {
 

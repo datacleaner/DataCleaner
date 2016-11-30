@@ -19,30 +19,30 @@
  */
 package org.datacleaner.test.mock;
 
+import org.apache.metamodel.DataContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
-import org.apache.metamodel.DataContext;
 
 public final class MockDatastoreConnection implements DatastoreConnection {
 
-	@Override
-	public DataContext getDataContext() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public DataContext getDataContext() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public SchemaNavigator getSchemaNavigator() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public SchemaNavigator getSchemaNavigator() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public Datastore getDatastore() {
-		return new MockDatastore();
-	}
+    @Override
+    public Datastore getDatastore() {
+        return new MockDatastore();
+    }
 
-	@Override
-	public void close() {
-	}
+    @Override
+    public void close() {
+    }
 
 }

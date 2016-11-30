@@ -37,7 +37,7 @@ public class SpringInjectionManagerFactory implements InjectionManagerFactory, A
 
     private ApplicationContext _applicationContext;
 
-    public SpringInjectionManagerFactory(ApplicationContext applicationContext) {
+    public SpringInjectionManagerFactory(final ApplicationContext applicationContext) {
         _applicationContext = applicationContext;
     }
 
@@ -45,17 +45,17 @@ public class SpringInjectionManagerFactory implements InjectionManagerFactory, A
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         _applicationContext = applicationContext;
     }
 
     @Override
-    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
+    public InjectionManager getInjectionManager(final DataCleanerConfiguration configuration, final AnalysisJob job) {
         return new SpringInjectionManager(configuration, job, _applicationContext);
     }
-    
+
     @Override
-    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
+    public InjectionManager getInjectionManager(final DataCleanerConfiguration configuration) {
         return getInjectionManager(configuration, null);
     }
 

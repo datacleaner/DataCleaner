@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -57,33 +55,33 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
     private static final ImageManager imageManager = ImageManager.get();
 
     private final JLabel _statusLabel;
-    private List<String> _columnNames;
     private final Map<String, JXTextField> _columnNamesTextFields;
     private final JButton _saveButton;
     private final JButton _cancelButton;
+    private List<String> _columnNames;
 
-    public ColumnNamesSetterDialog(WindowContext windowContext, List<String> defaultColumnNames) {
+    public ColumnNamesSetterDialog(final WindowContext windowContext, final List<String> defaultColumnNames) {
         super(windowContext, imageManager.getImage(AbstractDatastoreDialog.DEFAULT_BANNER_IMAGE));
         _statusLabel = DCLabel.bright("Please specify columns' names");
         _columnNames = defaultColumnNames;
-        _columnNamesTextFields = new LinkedHashMap<String, JXTextField>();
+        _columnNamesTextFields = new LinkedHashMap<>();
         for (int i = 0; i < defaultColumnNames.size(); i++) {
             final String columnName = defaultColumnNames.get(i);
             final JXTextField textField = WidgetFactory.createTextField(columnName);
             textField.getDocument().addDocumentListener(new DocumentListener() {
 
                 @Override
-                public void removeUpdate(DocumentEvent e) {
+                public void removeUpdate(final DocumentEvent e) {
                     checkNamesValidity();
                 }
 
                 @Override
-                public void insertUpdate(DocumentEvent e) {
+                public void insertUpdate(final DocumentEvent e) {
                     checkNamesValidity();
                 }
 
                 @Override
-                public void changedUpdate(DocumentEvent e) {
+                public void changedUpdate(final DocumentEvent e) {
                     checkNamesValidity();
                 }
             });
@@ -91,24 +89,14 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
         }
         _saveButton = WidgetFactory.createPrimaryButton("Save", IconUtils.ACTION_SAVE_BRIGHT);
         _cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
-        _saveButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Update the value of column names list
-                _columnNames = getNewColumnNames();
-                dispose();
-            }
+        _saveButton.addActionListener(e -> {
+            // Update the value of column names list
+            _columnNames = getNewColumnNames();
+            dispose();
         });
-        _cancelButton.addActionListener(new ActionListener() {
+        _cancelButton.addActionListener(e -> dispose());
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
-        
-        
+
     }
 
     @Override
@@ -133,19 +121,20 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
         int row = 0;
         WidgetUtils.addToGridBag(DCLabel.bright("<html><b>Original name </b></html>"), formPanel, 1, row, 1, 1,
                 GridBagConstraints.EAST, 20);
-        WidgetUtils.addToGridBag(DCLabel.bright("<html><b>New name </b></html>"), formPanel, 2, row, 1, 1, 
+        WidgetUtils.addToGridBag(DCLabel.bright("<html><b>New name </b></html>"), formPanel, 2, row, 1, 1,
                 GridBagConstraints.EAST, 20);
 
         row++;
         if (_columnNamesTextFields != null && !_columnNamesTextFields.isEmpty()) {
 
-            for (Entry<String, JXTextField> entry : _columnNamesTextFields.entrySet()) {
+            for (final Entry<String, JXTextField> entry : _columnNamesTextFields.entrySet()) {
                 row++;
-                String columnName = entry.getKey();
-                JXTextField textField = entry.getValue();
+                final String columnName = entry.getKey();
+                final JXTextField textField = entry.getValue();
 
-                WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon("images/model/variable.png",
-                        IconUtils.ICON_SIZE_SMALL)), formPanel, 0, row);
+                WidgetUtils.addToGridBag(
+                        new JLabel(imageManager.getImageIcon("images/model/variable.png", IconUtils.ICON_SIZE_SMALL)),
+                        formPanel, 0, row);
                 WidgetUtils.addToGridBag(DCLabel.bright(columnName), formPanel, 1, row, GridBagConstraints.WEST);
                 WidgetUtils.addToGridBag(textField, formPanel, 2, row, GridBagConstraints.WEST);
             }
@@ -167,7 +156,7 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
         final DescriptionLabel descriptionLabel = new DescriptionLabel();
         descriptionLabel.setText("Configure the datastore's column names");
-        
+
         final DCPanel outerPanel = new DCPanel();
         outerPanel.setLayout(new BorderLayout());
         outerPanel.add(descriptionLabel, BorderLayout.NORTH);
@@ -189,7 +178,7 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
 
     private List<String> getNewColumnNames() {
         final List<String> newColumnNames = new LinkedList<>();
-        final List<JXTextField> values = new ArrayList<JXTextField>(_columnNamesTextFields.values());
+        final List<JXTextField> values = new ArrayList<>(_columnNamesTextFields.values());
         for (int i = 0; i < values.size(); i++) {
             final JXTextField jxTextField = values.get(i);
             final String text;
@@ -204,7 +193,7 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
         return newColumnNames;
     }
 
-    private void setStatusError(String text) {
+    private void setStatusError(final String text) {
         _statusLabel.setText(text);
         _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
         _saveButton.setEnabled(false);

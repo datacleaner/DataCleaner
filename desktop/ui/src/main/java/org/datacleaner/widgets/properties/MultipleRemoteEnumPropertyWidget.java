@@ -34,20 +34,20 @@ public class MultipleRemoteEnumPropertyWidget extends AbstractMultipleCheckboxes
 
     @Inject
     @SuppressWarnings("unchecked")
-    public MultipleRemoteEnumPropertyWidget(ComponentBuilder componentBuilder,
-                                            ConfiguredPropertyDescriptor propertyDescriptor) {
+    public MultipleRemoteEnumPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor, (Class<EnumerationValue>) propertyDescriptor.getBaseType());
     }
 
     @Override
     protected EnumerationValue[] getAvailableValues() {
-        return ((EnumerationProvider)getPropertyDescriptor()).values();
+        return ((EnumerationProvider) getPropertyDescriptor()).values();
     }
 
     @Override
-    protected String getName(EnumerationValue item) {
+    protected String getName(final EnumerationValue item) {
         if (item instanceof HasName) {
-            return ((HasName)item).getName();
+            return ((HasName) item).getName();
         }
         return item.toString();
     }

@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is Empty implementation of RemoteServerConfiguration. Useful implementation is in DataCleaner-remote-components module
+ * This is Empty implementation of RemoteServerConfiguration.
+ * Useful implementation is in DataCleaner-remote-components module
  */
 public class EmptyRemoteServerConfigurationImpl implements RemoteServerConfiguration {
 

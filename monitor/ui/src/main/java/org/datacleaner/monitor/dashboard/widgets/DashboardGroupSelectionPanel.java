@@ -60,8 +60,8 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
     private final boolean _displayInfomercial;
     private DashboardGroupPanel _defaultGroupPanel;
 
-    public DashboardGroupSelectionPanel(ClientConfig clientConfig, DashboardServiceAsync service,
-            SimplePanel targetPanel) {
+    public DashboardGroupSelectionPanel(final ClientConfig clientConfig, final DashboardServiceAsync service,
+            final SimplePanel targetPanel) {
         super();
 
         _tenant = clientConfig.getTenant();
@@ -70,7 +70,7 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
         _isDashboardEditor = clientConfig.isDashboardEditor();
         _displayDefaultGroup = clientConfig.isDefaultDashboardGroupDisplayed();
         _displayInfomercial = clientConfig.isInformercialDisplayed();
-        _anchors = new HashMap<String, Anchor>();
+        _anchors = new HashMap<>();
         _anchorPanel = new FlowPanel();
         _anchorPanel.setStyleName("AnchorPanel");
 
@@ -91,10 +91,10 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
         // load all other groups
         _service.getDashboardGroups(_tenant, new DCAsyncCallback<List<DashboardGroup>>() {
             @Override
-            public void onSuccess(List<DashboardGroup> result) {
+            public void onSuccess(final List<DashboardGroup> result) {
 
                 sortDashboardGroups(result);
-                for (DashboardGroup group : result) {
+                for (final DashboardGroup group : result) {
                     addGroup(group);
                 }
                 initializeSelectedAnchor();
@@ -103,10 +103,10 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
                 initializeNewTimelineIfNeeded(historyToken);
             }
 
-            private void sortDashboardGroups(List<DashboardGroup> result) {
+            private void sortDashboardGroups(final List<DashboardGroup> result) {
                 Collections.sort(result, new Comparator<DashboardGroup>() {
                     @Override
-                    public int compare(DashboardGroup o1, DashboardGroup o2) {
+                    public int compare(final DashboardGroup o1, final DashboardGroup o2) {
                         return o1.getName().compareToIgnoreCase(o2.getName());
                     }
                 });
@@ -119,13 +119,13 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
         createNewGroupAnchor.setText("New group");
         createNewGroupAnchor.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
-                String name = Window.prompt("Name of the new group?", "");
-                boolean validName = name != null && name.trim().length() > 1;
+            public void onClick(final ClickEvent event) {
+                final String name = Window.prompt("Name of the new group?", "");
+                final boolean validName = name != null && name.trim().length() > 1;
                 if (validName) {
                     _service.addDashboardGroup(_tenant, name, new DCAsyncCallback<DashboardGroup>() {
                         @Override
-                        public void onSuccess(DashboardGroup result) {
+                        public void onSuccess(final DashboardGroup result) {
                             addGroup(result);
                         }
                     });
@@ -170,7 +170,7 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
         if (historyToken != null && historyToken.startsWith(prefix)) {
             String jobName = historyToken.substring(prefix.length());
             jobName = URL.decodeQueryString(jobName);
-            
+
             GWT.log("Showing new timeline popup for job: " + jobName);
 
             final CreateTimelineHandler handler = new CreateTimelineHandler(_service, _tenant, _defaultGroupPanel);
@@ -183,7 +183,7 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
     private Anchor getFirstAnchor() {
         final int widgetCount = _anchorPanel.getWidgetCount();
         for (int i = 0; i < widgetCount; i++) {
-            Widget widget = _anchorPanel.getWidget(i);
+            final Widget widget = _anchorPanel.getWidget(i);
             if (widget instanceof Anchor) {
                 return (Anchor) widget;
             }
@@ -208,8 +208,8 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
             private DashboardGroupPanel panel = groupPanel;
 
             @Override
-            public void onClick(ClickEvent event) {
-                for (Anchor anchor : _anchors.values()) {
+            public void onClick(final ClickEvent event) {
+                for (final Anchor anchor : _anchors.values()) {
                     anchor.removeStyleName("selected");
                 }
                 anchor.addStyleName("selected");

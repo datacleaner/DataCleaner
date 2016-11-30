@@ -25,10 +25,10 @@ import org.datacleaner.descriptors.RendererBeanDescriptor;
 /**
  * Callback interface allowing to initialize renderers before any actions are
  * performed on them.
- * 
- * 
+ *
+ *
  */
 public interface RendererInitializer {
 
-    public void initialize(RendererBeanDescriptor<?> descriptor, Renderer<?, ?> renderer);
+    void initialize(RendererBeanDescriptor<?> descriptor, Renderer<?, ?> renderer);
 }

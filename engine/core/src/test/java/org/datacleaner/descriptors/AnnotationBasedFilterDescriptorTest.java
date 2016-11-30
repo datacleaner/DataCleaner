@@ -22,23 +22,23 @@ package org.datacleaner.descriptors;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.components.maxrows.MaxRowsFilter;
+
+import junit.framework.TestCase;
 
 public class AnnotationBasedFilterDescriptorTest extends TestCase {
 
-	private FilterDescriptor<MaxRowsFilter, MaxRowsFilter.Category> desc = Descriptors.ofFilter(MaxRowsFilter.class);
+    private FilterDescriptor<MaxRowsFilter, MaxRowsFilter.Category> desc = Descriptors.ofFilter(MaxRowsFilter.class);
 
-	public void testGetCategoryEnum() throws Exception {
-		Class<MaxRowsFilter.Category> categoryEnum = desc.getOutcomeCategoryEnum();
+    public void testGetCategoryEnum() throws Exception {
+        final Class<MaxRowsFilter.Category> categoryEnum = desc.getOutcomeCategoryEnum();
 
-		assertEquals(MaxRowsFilter.Category.class, categoryEnum);
-	}
+        assertEquals(MaxRowsFilter.Category.class, categoryEnum);
+    }
 
-	public void testGetCategoryNames() throws Exception {
-		Set<String> categoryNames = desc.getOutcomeCategoryNames();
-		categoryNames = new TreeSet<String>(categoryNames);
-		assertEquals("[INVALID, VALID]", categoryNames.toString());
-	}
+    public void testGetCategoryNames() throws Exception {
+        Set<String> categoryNames = desc.getOutcomeCategoryNames();
+        categoryNames = new TreeSet<>(categoryNames);
+        assertEquals("[INVALID, VALID]", categoryNames.toString());
+    }
 }

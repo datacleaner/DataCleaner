@@ -28,7 +28,7 @@ import javax.net.ssl.SSLSession;
 public class NaiveHostnameVerifier implements HostnameVerifier {
 
     @Override
-    public boolean verify(String hostName, SSLSession session) {
+    public boolean verify(final String hostName, final SSLSession session) {
         return true;
     }
 }

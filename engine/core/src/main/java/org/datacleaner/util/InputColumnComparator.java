@@ -22,21 +22,21 @@ package org.datacleaner.util;
 import java.io.Serializable;
 import java.util.Comparator;
 
+import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.TransformedInputColumn;
-import org.apache.metamodel.schema.Column;
 
 /**
  * Comparator for input columns. Physical columns will be ordered first, sorted
  * by their column numbers.
- * 
- * 
+ *
+ *
  */
 public class InputColumnComparator implements Comparator<InputColumn<?>>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public static int compareInputColumns(InputColumn<?> o1, InputColumn<?> o2) {
+    public static int compareInputColumns(final InputColumn<?> o1, final InputColumn<?> o2) {
         if (o1 == null && o2 == null) {
             return 0;
         }
@@ -62,8 +62,8 @@ public class InputColumnComparator implements Comparator<InputColumn<?>>, Serial
                 final TransformedInputColumn<?> col1 = (TransformedInputColumn<?>) o1;
                 final TransformedInputColumn<?> col2 = (TransformedInputColumn<?>) o2;
 
-                String id1 = col1.getId();
-                String id2 = col2.getId();
+                final String id1 = col1.getId();
+                final String id2 = col2.getId();
                 return id1.compareTo(id2);
             }
             int result = o1.getName().compareTo(o2.getName());
@@ -81,7 +81,7 @@ public class InputColumnComparator implements Comparator<InputColumn<?>>, Serial
     }
 
     @Override
-    public int compare(InputColumn<?> o1, InputColumn<?> o2) {
+    public int compare(final InputColumn<?> o1, final InputColumn<?> o2) {
         return compareInputColumns(o1, o2);
     }
 

@@ -31,41 +31,41 @@ import java.io.Serializable;
  * <li>.</li>
  * <li>aa</li>
  * </ul>
- * 
+ *
  * The token pattern symbol is different from a pattern in the way that it is
  * more abstract. A symbol will not retain the concrete values of most tokens.
  * Thus the information stored in a symbol will often be limited to:
- * 
+ *
  * <ul>
  * <li>The TokenType</li>
  * <li>The length of the symbol</li>
  * <li>Metadata about the symbol such as: Is it a negativ number, is it
  * uppercase, does it contain decimals etc.</li>
  * </ul>
- * 
+ *
  * @see Token
- * 
- * 
+ *
+ *
  */
 public interface TokenPatternSymbol extends Serializable {
 
-	public String toSymbolicString();
+    String toSymbolicString();
 
-	public TokenType getTokenType();
+    TokenType getTokenType();
 
-	public boolean isUpperCaseOnly();
+    boolean isUpperCaseOnly();
 
-	public boolean isLowerCaseOnly();
+    boolean isLowerCaseOnly();
 
-	public boolean isDecimal();
+    boolean isDecimal();
 
-	public boolean isNegative();
+    boolean isNegative();
 
-	public boolean matches(Token token, TokenizerConfiguration configuration);
+    boolean matches(Token token, TokenizerConfiguration configuration);
 
-	public int length();
+    int length();
 
-	public void expandLenght(int amount);
+    void expandLenght(int amount);
 
-	public boolean isExpandable();
+    boolean isExpandable();
 }

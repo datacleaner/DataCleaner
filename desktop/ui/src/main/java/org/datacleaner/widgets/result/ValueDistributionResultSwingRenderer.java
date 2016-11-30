@@ -61,10 +61,10 @@ import com.google.inject.Injector;
 
 /**
  * Renderer for {@link GroupedValueDistributionResult}s as Swing components.
- * 
+ *
  * The results will be displayed using a chart and a table of values and their
  * counts.
- * 
+ *
  * @author Kasper Sørensen
  */
 @RendererBean(SwingRenderingFormat.class)
@@ -79,21 +79,22 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
     WindowContext _windowContext;
 
     @Override
-    public JComponent render(ValueCountingAnalyzerResult result) {
+    public JComponent render(final ValueCountingAnalyzerResult result) {
         if (result instanceof GroupedValueCountingAnalyzerResult) {
-            GroupedValueCountingAnalyzerResult groupedResult = (GroupedValueCountingAnalyzerResult) result;
+            final GroupedValueCountingAnalyzerResult groupedResult = (GroupedValueCountingAnalyzerResult) result;
             return renderGroupedResult(groupedResult);
         } else {
-            ValueDistributionResultSwingRendererGroupDelegate delegate = new ValueDistributionResultSwingRendererGroupDelegate(
-                    result.getName(), _rendererFactory, _windowContext);
+            final ValueDistributionResultSwingRendererGroupDelegate delegate =
+                    new ValueDistributionResultSwingRendererGroupDelegate(result.getName(), _rendererFactory,
+                            _windowContext);
             return delegate.renderGroupResult(result);
         }
     }
 
-    public JComponent renderGroupedResult(GroupedValueCountingAnalyzerResult groupedResult) {
+    public JComponent renderGroupedResult(final GroupedValueCountingAnalyzerResult groupedResult) {
         final DCPanel panel = new DCPanel();
         panel.setLayout(new VerticalLayout(0));
-        Collection<? extends ValueCountingAnalyzerResult> results = groupedResult.getGroupResults();
+        final Collection<? extends ValueCountingAnalyzerResult> results = groupedResult.getGroupResults();
         for (final ValueCountingAnalyzerResult res : results) {
             if (panel.getComponentCount() != 0) {
                 panel.add(Box.createVerticalStrut(10));
@@ -102,11 +103,11 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
             final Ref<JComponent> componentRef = new LazyRef<JComponent>() {
                 @Override
                 protected JComponent fetch() {
-                    ValueDistributionResultSwingRendererGroupDelegate delegate = new ValueDistributionResultSwingRendererGroupDelegate(
-                            res.getName(), _rendererFactory, _windowContext);
+                    final ValueDistributionResultSwingRendererGroupDelegate delegate =
+                            new ValueDistributionResultSwingRendererGroupDelegate(res.getName(), _rendererFactory,
+                                    _windowContext);
                     final JComponent renderedResult = delegate.renderGroupResult(res);
-                    final DCPanel decoratedPanel = createDecoration(renderedResult);
-                    return decoratedPanel;
+                    return createDecoration(renderedResult);
                 }
             };
 
@@ -117,8 +118,9 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
             if (distinctValue == null) {
                 collapsiblePanel = new DCCollapsiblePanel(label, label, false, componentRef);
             } else {
-                final String collapsedLabel = label + ": " + LabelUtils.getLabel(distinctValue.getValue()) + "="
-                        + distinctValue.getCount() + "";
+                final String collapsedLabel =
+                        label + ": " + LabelUtils.getLabel(distinctValue.getValue()) + "=" + distinctValue.getCount()
+                                + "";
                 collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, label, true, componentRef);
             }
             panel.add(collapsiblePanel.toPanel());
@@ -129,18 +131,18 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
     /**
      * Determines if a group result has just a single distinct value count. If
      * so, this value count is returned, or else null is returned.
-     * 
+     *
      * @param res
      * @return
      */
-    private ValueFrequency getDistinctValueCount(ValueCountingAnalyzerResult res) {
+    private ValueFrequency getDistinctValueCount(final ValueCountingAnalyzerResult res) {
         int distinctValueCounter = 0;
         ValueFrequency valueCount = null;
         if (res.getNullCount() > 0) {
             distinctValueCounter++;
             valueCount = new SingleValueFrequency(LabelUtils.NULL_LABEL, res.getNullCount());
         }
-        int uniqueCount = res.getUniqueCount();
+        final int uniqueCount = res.getUniqueCount();
         if (uniqueCount > 0) {
             if (uniqueCount > 1) {
                 // more than one distinct value
@@ -172,7 +174,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
         return valueCount;
     }
 
-    private DCPanel createDecoration(JComponent renderedResult) {
+    private DCPanel createDecoration(final JComponent renderedResult) {
         final DCPanel wrappingPanel = new DCPanel();
         wrappingPanel.setLayout(new BorderLayout());
         wrappingPanel.add(renderedResult, BorderLayout.CENTER);
@@ -183,32 +185,32 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
     /**
      * A main method that will display the results of a few example value
      * distributions. Useful for tweaking the charts and UI.
-     * 
+     *
      * @param args
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         LookAndFeelManager.get().init();
 
-        Injector injector = Guice.createInjector(new DCModuleImpl());
+        final Injector injector = Guice.createInjector(new DCModuleImpl());
 
         // run a small job
         final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
-        Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
-        DatastoreConnection con = ds.openConnection();
-        SchemaNavigator sn = con.getSchemaNavigator();
+        final Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
+        final DatastoreConnection con = ds.openConnection();
+        final SchemaNavigator sn = con.getSchemaNavigator();
         ajb.setDatastore(ds);
         ajb.addSourceColumns(sn.convertToTable("PUBLIC.CUSTOMERS").getColumns());
 
-        AnalyzerComponentBuilder<ValueDistributionAnalyzer> singleValueDist = ajb
-                .addAnalyzer(ValueDistributionAnalyzer.class);
+        final AnalyzerComponentBuilder<ValueDistributionAnalyzer> singleValueDist =
+                ajb.addAnalyzer(ValueDistributionAnalyzer.class);
         singleValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.ADDRESSLINE2"));
 
-        AnalyzerComponentBuilder<ValueDistributionAnalyzer> groupedValueDist = ajb
-                .addAnalyzer(ValueDistributionAnalyzer.class);
+        final AnalyzerComponentBuilder<ValueDistributionAnalyzer> groupedValueDist =
+                ajb.addAnalyzer(ValueDistributionAnalyzer.class);
         groupedValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.CITY"));
         groupedValueDist.setConfiguredProperty("Group column", ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));
 
-        ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
+        final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
         resultWindow.setVisible(true);
         resultWindow.startAnalysis();
     }

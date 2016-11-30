@@ -34,16 +34,16 @@ public interface ComponentContext {
     /**
      * Gets the {@link AnalysisJob} (if any) that the component is configured
      * in.
-     * 
+     *
      * @return
      */
-    public AnalysisJob getAnalysisJob();
-    
+    AnalysisJob getAnalysisJob();
+
     /**
      * Publishes a {@link ComponentMessage} containing information to any
      * appropriate listeners.
-     * 
+     *
      * @param message
      */
-    public void publishMessage(ComponentMessage message);
+    void publishMessage(ComponentMessage message);
 }

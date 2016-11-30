@@ -28,30 +28,30 @@ public interface FilterOutcomes extends Cloneable {
 
     /**
      * Adds a {@link FilterOutcome} to the set of active outcomes
-     * 
+     *
      * @param filterOutcome
      */
-    public void add(FilterOutcome filterOutcome);
+    void add(FilterOutcome filterOutcome);
 
     /**
      * Gets the currently active outcomes.
-     * 
+     *
      * @return
      */
-    public FilterOutcome[] getOutcomes();
+    FilterOutcome[] getOutcomes();
 
     /**
      * Determines if a particular outcome is active in the current state.
-     * 
+     *
      * @param outcome
      * @return
      */
-    public boolean contains(FilterOutcome outcome);
+    boolean contains(FilterOutcome outcome);
 
     /**
      * Clones the instance.
-     * 
+     *
      * @return
      */
-    public FilterOutcomes clone();
+    FilterOutcomes clone();
 }

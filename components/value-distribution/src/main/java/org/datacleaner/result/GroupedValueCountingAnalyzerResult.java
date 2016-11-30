@@ -27,7 +27,7 @@ import java.util.Collection;
  */
 public interface GroupedValueCountingAnalyzerResult extends ValueCountingAnalyzerResult {
 
-    public Collection<? extends ValueCountingAnalyzerResult> getGroupResults();
+    Collection<? extends ValueCountingAnalyzerResult> getGroupResults();
 
-    public String getGroupDiscriminatorName();
+    String getGroupDiscriminatorName();
 }

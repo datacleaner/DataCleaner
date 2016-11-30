@@ -31,7 +31,8 @@ public interface InputRewriter {
 
     /**
      * (Possibly) rewrites the input of
-     * @link org.datacleaner.monitor.server.controllers.ComponentControllerV1#processStateless(java.lang.String, java.lang.String, org.datacleaner.restclient.ProcessStatelessInput)}
+     * {@link org.datacleaner.monitor.server.controllers.ComponentControllerV1#processStateless(String,
+     * String, String, boolean, ProcessStatelessInput)}
      * method.
      *
      * @return true if the input rewriting should stop here (NO other rewriters will be processed).

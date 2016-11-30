@@ -26,8 +26,8 @@ import junit.framework.TestCase;
 public class JsonDatastoreTest extends TestCase {
 
     public void testGetters() throws Exception {
-        JsonDatastore ds = new JsonDatastore("foo", new FileResource("src/test/resources/example.json"));
-        PerformanceCharacteristics performanceCharacteristics = ds.getPerformanceCharacteristics();
+        final JsonDatastore ds = new JsonDatastore("foo", new FileResource("src/test/resources/example.json"));
+        final PerformanceCharacteristics performanceCharacteristics = ds.getPerformanceCharacteristics();
         assertTrue(performanceCharacteristics.isNaturalRecordOrderConsistent());
         assertFalse(performanceCharacteristics.isQueryOptimizationPreferred());
 

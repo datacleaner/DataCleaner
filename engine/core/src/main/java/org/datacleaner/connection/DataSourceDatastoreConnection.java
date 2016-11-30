@@ -28,23 +28,24 @@ import org.apache.metamodel.schema.TableType;
 /**
  * A {@link DatastoreConnection} based on a {@link DataSource}.
  */
-public class DataSourceDatastoreConnection extends UsageAwareDatastoreConnection<UpdateableDataContext> implements
-        UpdateableDatastoreConnection {
+public class DataSourceDatastoreConnection extends UsageAwareDatastoreConnection<UpdateableDataContext>
+        implements UpdateableDatastoreConnection {
 
     private final UpdateableDataContext _dataContext;
     private final SchemaNavigator _schemaNavigator;
 
-    public DataSourceDatastoreConnection(DataSource ds, Datastore datastore) {
+    public DataSourceDatastoreConnection(final DataSource ds, final Datastore datastore) {
         this(ds, TableType.DEFAULT_TABLE_TYPES, null, datastore);
     }
 
-    public DataSourceDatastoreConnection(DataSource ds, TableType[] tableTypes, String catalogName, Datastore datastore) {
+    public DataSourceDatastoreConnection(final DataSource ds, final TableType[] tableTypes, final String catalogName,
+            final Datastore datastore) {
         super(datastore);
         _dataContext = new JdbcDataContext(ds, tableTypes, catalogName);
         _schemaNavigator = new SchemaNavigator(_dataContext);
     }
-    
-    public DataSourceDatastoreConnection(UpdateableDataContext dataContext, Datastore datastore) {
+
+    public DataSourceDatastoreConnection(final UpdateableDataContext dataContext, final Datastore datastore) {
         super(datastore);
         _dataContext = dataContext;
         _schemaNavigator = new SchemaNavigator(_dataContext);

@@ -41,7 +41,8 @@ import org.slf4j.LoggerFactory;
  * Transformer for building lists based on values in a row.
  */
 @Named("Build list")
-@Description("Build a list containing a variable amount of elements. Adds the capability to save multiple values in a single field.")
+@Description("Build a list containing a variable amount of elements. "
+        + "Adds the capability to save multiple values in a single field.")
 @Categorized(DataStructuresCategory.class)
 public class BuildListTransformer implements Transformer {
 
@@ -60,19 +61,19 @@ public class BuildListTransformer implements Transformer {
     @Description("Add elements to this (optional) existing list")
     InputColumn<List<Object>> addToExistingList;
 
-    public void setIncludeNullValues(boolean includeNullValues) {
+    public void setIncludeNullValues(final boolean includeNullValues) {
         this.includeNullValues = includeNullValues;
     }
 
-    public void setValues(InputColumn<?>[] values) {
+    public void setValues(final InputColumn<?>[] values) {
         this.values = values;
     }
 
     @Override
     public OutputColumns getOutputColumns() {
-        StringBuilder sb = new StringBuilder("List: ");
+        final StringBuilder sb = new StringBuilder("List: ");
         for (int i = 0; i < values.length; i++) {
-            String key = values[i].getName();
+            final String key = values[i].getName();
             sb.append(key);
             if (sb.length() > 30) {
                 sb.append("...");
@@ -83,12 +84,11 @@ public class BuildListTransformer implements Transformer {
                 sb.append(",");
             }
         }
-        OutputColumns outputColumns = new OutputColumns(new String[] { sb.toString() }, new Class[] { List.class });
-        return outputColumns;
+        return new OutputColumns(new String[] { sb.toString() }, new Class[] { List.class });
     }
 
     @Override
-    public List<?>[] transform(InputRow row) {
+    public List<?>[] transform(final InputRow row) {
         final List<Object> existingList;
         if (addToExistingList != null) {
             existingList = row.getValue(addToExistingList);
@@ -96,9 +96,9 @@ public class BuildListTransformer implements Transformer {
             existingList = Collections.emptyList();
         }
 
-        final List<Object> list = new ArrayList<Object>(existingList);
+        final List<Object> list = new ArrayList<>(existingList);
 
-        for (InputColumn<?> column : values) {
+        for (final InputColumn<?> column : values) {
             final Object value = row.getValue(column);
             if (!includeNullValues && value == null) {
                 logger.debug("Ignoring null value for {} in row: {}", column.getName(), row);
@@ -107,8 +107,7 @@ public class BuildListTransformer implements Transformer {
             }
         }
 
-        final List<?>[] result = new List[] { list };
-        return result;
+        return (List<?>[]) new List[] { list };
     }
 
 }

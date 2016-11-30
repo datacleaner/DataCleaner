@@ -30,10 +30,9 @@ import junit.framework.TestCase;
 public class BooleanAnalyzerTest extends TestCase {
 
     public void testSimpleScenario() throws Exception {
-        @SuppressWarnings("unchecked")
-        final InputColumn<Boolean>[] c = new InputColumn[2];
-        c[0] = new MockInputColumn<Boolean>("b1", Boolean.class);
-        c[1] = new MockInputColumn<Boolean>("b2", Boolean.class);
+        @SuppressWarnings("unchecked") final InputColumn<Boolean>[] c = new InputColumn[2];
+        c[0] = new MockInputColumn<>("b1", Boolean.class);
+        c[1] = new MockInputColumn<>("b2", Boolean.class);
 
         final BooleanAnalyzer ba = new BooleanAnalyzer(c);
         ba.init();
@@ -63,10 +62,9 @@ public class BooleanAnalyzerTest extends TestCase {
     }
 
     public void testGetMetrics() throws Exception {
-        @SuppressWarnings("unchecked")
-        final InputColumn<Boolean>[] c = new InputColumn[2];
-        c[0] = new MockInputColumn<Boolean>("b1", Boolean.class);
-        c[1] = new MockInputColumn<Boolean>("b2", Boolean.class);
+        @SuppressWarnings("unchecked") final InputColumn<Boolean>[] c = new InputColumn[2];
+        c[0] = new MockInputColumn<>("b1", Boolean.class);
+        c[1] = new MockInputColumn<>("b2", Boolean.class);
 
         final BooleanAnalyzer ba = new BooleanAnalyzer(c);
         ba.init();
@@ -78,14 +76,15 @@ public class BooleanAnalyzerTest extends TestCase {
         ba.run(new MockInputRow().put(c[0], false).put(c[1], true), 1);
 
         final BooleanAnalyzerResult result = ba.getResult();
-        
+
         final ParameterizableMetric trueCountMetric = result.getTrueCount();
         assertEquals("[b1, b2]", trueCountMetric.getParameterSuggestions().toString());
         assertEquals(5, trueCountMetric.getValue("b1"));
         assertEquals(0, trueCountMetric.getValue("foobar"));
 
         final ParameterizableMetric combinationCountMetric = result.getCombinationCount();
-        assertEquals("[Most frequent, Least frequent, true,true, false,true, true,false]", combinationCountMetric.getParameterSuggestions().toString());
+        assertEquals("[Most frequent, Least frequent, true,true, false,true, true,false]",
+                combinationCountMetric.getParameterSuggestions().toString());
 
         assertEquals(4, combinationCountMetric.getValue("Most frequent").intValue());
         assertEquals(2, combinationCountMetric.getValue("Combination 1").intValue());
@@ -96,7 +95,7 @@ public class BooleanAnalyzerTest extends TestCase {
         assertEquals(2, combinationCountMetric.getValue("false,true").intValue());
         assertEquals(1, combinationCountMetric.getValue(" true , false ").intValue());
         assertEquals(0, combinationCountMetric.getValue("false,false").intValue());
-        
+
         assertEquals(0, combinationCountMetric.getValue("false,foobar").intValue());
     }
 }

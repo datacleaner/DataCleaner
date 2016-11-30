@@ -28,8 +28,6 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
@@ -47,19 +45,23 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import junit.framework.TestCase;
+
 public class JaxbPojoDatastoreAdaptorTest extends TestCase {
 
     public void testSerializeAndDeserialize() throws Exception {
-        final Object map1 = buildMap("{'some_number':1234, 'gender':'M','address':{'city':'Copenhagen','country':'DK','additional_info':null}}");
-        final Object map2 = buildMap("{'some_number':5678,'gender':'M','address':{'city':'Amsterdam','countries':['NL','IN']}}");
+        final Object map1 = buildMap(
+                "{'some_number':1234, 'gender':'M','address':{'city':'Copenhagen','country':'DK','additional_info':null}}");
+        final Object map2 =
+                buildMap("{'some_number':5678,'gender':'M','address':{'city':'Amsterdam','countries':['NL','IN']}}");
 
-        SimpleTableDef tableDef = new SimpleTableDef("bar", new String[] { "id", "name", "details", "bytes" },
+        final SimpleTableDef tableDef = new SimpleTableDef("bar", new String[] { "id", "name", "details", "bytes" },
                 new ColumnType[] { ColumnType.INTEGER, ColumnType.VARCHAR, ColumnType.MAP, ColumnType.BINARY });
-        Collection<Object[]> arrays = new ArrayList<Object[]>();
+        final Collection<Object[]> arrays = new ArrayList<>();
         arrays.add(new Object[] { 1, "Kasper Sørensen", map1, new byte[] { (byte) -40, (byte) -2 } });
         arrays.add(new Object[] { 2, "Ankit Kumar", map2, new byte[] { (byte) 1, (byte) 3, (byte) 3, (byte) 7 } });
-        TableDataProvider<?> tableProvider = new ArrayTableDataProvider(tableDef, arrays);
-        List<TableDataProvider<?>> tableProviders = new ArrayList<TableDataProvider<?>>();
+        final TableDataProvider<?> tableProvider = new ArrayTableDataProvider(tableDef, arrays);
+        final List<TableDataProvider<?>> tableProviders = new ArrayList<>();
         tableProviders.add(tableProvider);
 
         PojoDatastore datastore;
@@ -68,24 +70,24 @@ public class JaxbPojoDatastoreAdaptorTest extends TestCase {
         final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor(new DataCleanerConfigurationImpl());
         AbstractDatastoreType serializedDatastore = adaptor.createPojoDatastore(datastore, null, 20);
 
-        DatastoreCatalogType serializedDatastoreCatalogType = new DatastoreCatalogType();
+        final DatastoreCatalogType serializedDatastoreCatalogType = new DatastoreCatalogType();
         serializedDatastoreCatalogType.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(serializedDatastore);
         Configuration serializedConfiguration = new Configuration();
         serializedConfiguration.setDatastoreCatalog(serializedDatastoreCatalogType);
 
         // serialize and deserialize
-        JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
-                ObjectFactory.class.getClassLoader());
-        File file = new File("target/JaxbPojoDatastoreAdaptorTest_serialize_and_deserialize.xml");
+        final JAXBContext jaxbContext = JAXBContext
+                .newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class.getClassLoader());
+        final File file = new File("target/JaxbPojoDatastoreAdaptorTest_serialize_and_deserialize.xml");
         jaxbContext.createMarshaller().marshal(serializedConfiguration, file);
         serializedConfiguration = (Configuration) jaxbContext.createUnmarshaller().unmarshal(file);
 
-        serializedDatastore = serializedConfiguration.getDatastoreCatalog()
-                .getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().get(0);
+        serializedDatastore =
+                serializedConfiguration.getDatastoreCatalog().getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().get(0);
         datastore = adaptor.read((PojoDatastoreType) serializedDatastore);
 
-        UpdateableDatastoreConnection con = datastore.openConnection();
-        DataSet ds = con.getDataContext().query().from("bar").select("id", "name", "details").execute();
+        final UpdateableDatastoreConnection con = datastore.openConnection();
+        final DataSet ds = con.getDataContext().query().from("bar").select("id", "name", "details").execute();
         assertTrue(ds.next());
         assertTrue(ds.getRow().getValue(0) instanceof Integer);
         assertEquals(1, ds.getRow().getValue(0));
@@ -93,8 +95,7 @@ public class JaxbPojoDatastoreAdaptorTest extends TestCase {
         assertEquals("Kasper Sørensen", ds.getRow().getValue(1));
         assertTrue(ds.getRow().getValue(2) instanceof Map);
 
-        @SuppressWarnings("unchecked")
-        final Map<String, ?> map3 = (Map<String, ?>) ds.getRow().getValue(2);
+        @SuppressWarnings("unchecked") final Map<String, ?> map3 = (Map<String, ?>) ds.getRow().getValue(2);
         assertEquals("{some_number=1234, gender=M, address={city=Copenhagen, country=DK, additional_info=null}}",
                 map3.toString());
         assertEquals(Integer.class, map3.get("some_number").getClass());
@@ -106,8 +107,7 @@ public class JaxbPojoDatastoreAdaptorTest extends TestCase {
         assertEquals("Ankit Kumar", ds.getRow().getValue(1));
         assertTrue(ds.getRow().getValue(2) instanceof Map);
 
-        @SuppressWarnings("unchecked")
-        final Map<String, ?> map4 = (Map<String, ?>) ds.getRow().getValue(2);
+        @SuppressWarnings("unchecked") final Map<String, ?> map4 = (Map<String, ?>) ds.getRow().getValue(2);
         assertEquals("{some_number=5678, gender=M, address={city=Amsterdam, countries=[NL, IN]}}", map4.toString());
         assertEquals(Integer.class, map3.get("some_number").getClass());
 

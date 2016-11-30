@@ -23,7 +23,7 @@ import org.datacleaner.connection.Datastore;
 
 public interface DatastoreChangeListener {
 
-	public void onAdd(Datastore datastore);
-	
-	public void onRemove(Datastore datastore);
+    void onAdd(Datastore datastore);
+
+    void onRemove(Datastore datastore);
 }

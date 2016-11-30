@@ -25,5 +25,5 @@ package org.datacleaner.metamodel.datahub;
  *
  */
 public enum DataHubSecurityMode {
-    DEFAULT, CAS;
+    DEFAULT, CAS
 }

@@ -36,7 +36,7 @@ import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 /**
  * Alternative String property widget, specifically built for components that
  * need a {@link Schema} name drop down.
- * 
+ *
  * @author Kasper Sørensen
  */
 public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
@@ -44,38 +44,33 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
     private final DCComboBox<Schema> _comboBox;
     private final MutableRef<Datastore> _datastoreRef;
 
-    public SchemaNamePropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    public SchemaNamePropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
-        _comboBox = new DCComboBox<Schema>();
+        _comboBox = new DCComboBox<>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
         _comboBox.setEditable(false);
-        addComboListener(new Listener<Schema>() {
-            @Override
-            public void onItemSelected(Schema item) {
-                fireValueChanged();
-            }
-        });
+        addComboListener(item -> fireValueChanged());
         add(_comboBox);
-        _datastoreRef = new MutableRef<Datastore>();
+        _datastoreRef = new MutableRef<>();
 
         setValue(getCurrentValue());
     }
 
-    public void addComboListener(Listener<Schema> listener) {
+    public void addComboListener(final Listener<Schema> listener) {
         _comboBox.addListener(listener);
     }
 
-    public void setDatastore(Datastore datastore) {
-        String previousValue = getValue();
+    public void setDatastore(final Datastore datastore) {
+        final String previousValue = getValue();
         _datastoreRef.set(datastore);
         if (datastore == null) {
-            _comboBox.setModel(new DefaultComboBoxModel<Schema>(new Schema[1]));
+            _comboBox.setModel(new DefaultComboBoxModel<>(new Schema[1]));
         } else {
-            try (final DatastoreConnection con = datastore.openConnection()) {
+            try (DatastoreConnection con = datastore.openConnection()) {
                 Schema[] schemas = con.getSchemaNavigator().getSchemas();
                 schemas = CollectionUtils.array(new Schema[1], schemas);
-                _comboBox.setModel(new DefaultComboBoxModel<Schema>(schemas));
+                _comboBox.setModel(new DefaultComboBoxModel<>(schemas));
                 Schema newValue = null;
                 if (previousValue != null) {
                     newValue = con.getSchemaNavigator().getSchemaByName(previousValue);
@@ -90,16 +85,11 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 
     @Override
     public String getValue() {
-        Schema schema = getSchema();
+        final Schema schema = getSchema();
         if (schema == null) {
             return null;
         }
         return schema.getName();
-    }
-
-    public Schema getSchema() {
-        Schema schema = _comboBox.getSelectedItem();
-        return schema;
     }
 
     @Override
@@ -131,13 +121,14 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
         _comboBox.setEditable(false);
     }
 
+    public Schema getSchema() {
+        return _comboBox.getSelectedItem();
+    }
+
     public void connectToTableNamePropertyWidget(final SingleTableNamePropertyWidget tableNamePropertyWidget) {
-        addComboListener(new Listener<Schema>() {
-            @Override
-            public void onItemSelected(Schema item) {
-                // update the table name when schema is selected
-                tableNamePropertyWidget.setSchema(_datastoreRef.get(), item);
-            }
+        addComboListener(item -> {
+            // update the table name when schema is selected
+            tableNamePropertyWidget.setSchema(_datastoreRef.get(), item);
         });
     }
 

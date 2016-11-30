@@ -23,5 +23,5 @@ import javax.swing.JComponent;
 
 public interface DisplayChartCallback {
 
-	public void displayChart(JComponent chart);
+    void displayChart(JComponent chart);
 }

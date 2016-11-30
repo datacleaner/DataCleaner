@@ -37,40 +37,39 @@ public class SerializatorTest {
 
     @Test
     public void testComponentList() throws Exception {
-        ComponentList componentList = new ComponentList();
+        final ComponentList componentList = new ComponentList();
         componentList.add(getComponentInfo());
 
-        String serialization = intoString(componentList);
-        ComponentList componentList2 = Serializator.componentList(serialization);
-        String serialization2 = intoString(componentList2);
+        final String serialization = intoString(componentList);
+        final ComponentList componentList2 = Serializator.componentList(serialization);
+        final String serialization2 = intoString(componentList2);
 
         Assert.assertTrue(serialization != null);
         Assert.assertTrue(serialization.equals(serialization2));
     }
 
     private ComponentList.ComponentInfo getComponentInfo() {
-        ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo();
+        final ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo();
         componentInfo.setName("name");
         componentInfo.setCreateURL("http://create.url");
 
         return componentInfo;
     }
 
-    private String intoString(Object value) {
+    private String intoString(final Object value) {
         try {
             return objectMapper.writeValueAsString(value);
-        } catch (JsonProcessingException e) {
+        } catch (final JsonProcessingException e) {
             logger.error(e.getMessage());
 
             return "";
         }
     }
 
-    private Object fromString(String value, Class<?> type) {
+    private Object fromString(final String value, final Class<?> type) {
         try {
             return objectMapper.readValue(value, type);
-        }
-        catch (IOException e) {
+        } catch (final IOException e) {
             logger.error(e.getMessage());
 
             return null;
@@ -79,12 +78,12 @@ public class SerializatorTest {
 
     @Test
     public void testComponentInfo() throws Exception {
-        ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo();
+        final ComponentList.ComponentInfo componentInfo = new ComponentList.ComponentInfo();
         componentInfo.setName(componentName);
 
-        String serialization = intoString(componentInfo);
-        ComponentList.ComponentInfo componentInfo2 = Serializator.componentInfo(serialization);
-        String serialization2 = intoString(componentInfo2);
+        final String serialization = intoString(componentInfo);
+        final ComponentList.ComponentInfo componentInfo2 = Serializator.componentInfo(serialization);
+        final String serialization2 = intoString(componentInfo2);
 
         Assert.assertTrue(serialization != null);
         Assert.assertTrue(serialization.equals(serialization2));
@@ -92,20 +91,20 @@ public class SerializatorTest {
 
     @Test
     public void testStringProcessStatelessInput() throws Exception {
-        ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
+        final ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
         processStatelessInput.configuration = getComponentConfiguration();
         processStatelessInput.data = (JsonNode) fromString("data", JsonNode.class);
 
-        String serialization = intoString(processStatelessInput);
-        String serialization2 = Serializator.stringProcessStatelessInput(processStatelessInput);
+        final String serialization = intoString(processStatelessInput);
+        final String serialization2 = Serializator.stringProcessStatelessInput(processStatelessInput);
 
         Assert.assertTrue(serialization != null);
         Assert.assertTrue(serialization.equals(serialization2));
     }
 
     private ComponentConfiguration getComponentConfiguration() {
-        ComponentConfiguration componentConfiguration = new ComponentConfiguration();
-        JsonNode property = (JsonNode) fromString("propertyValue", JsonNode.class);
+        final ComponentConfiguration componentConfiguration = new ComponentConfiguration();
+        final JsonNode property = (JsonNode) fromString("propertyValue", JsonNode.class);
         componentConfiguration.getProperties().put("propertyKey", property);
 
         return componentConfiguration;
@@ -113,13 +112,13 @@ public class SerializatorTest {
 
     @Test
     public void testProcessStatelessOutput() throws Exception {
-        ProcessStatelessOutput processStatelessOutput = new ProcessStatelessOutput();
+        final ProcessStatelessOutput processStatelessOutput = new ProcessStatelessOutput();
         processStatelessOutput.result = (JsonNode) fromString("result", JsonNode.class);
         processStatelessOutput.rows = (JsonNode) fromString("rows", JsonNode.class);
 
-        String serialization = intoString(processStatelessOutput);
-        ProcessStatelessOutput processStatelessOutput2 = Serializator.processStatelessOutput(serialization);
-        String serialization2 = intoString(processStatelessOutput2);
+        final String serialization = intoString(processStatelessOutput);
+        final ProcessStatelessOutput processStatelessOutput2 = Serializator.processStatelessOutput(serialization);
+        final String serialization2 = intoString(processStatelessOutput2);
 
         Assert.assertTrue(serialization != null);
         Assert.assertTrue(serialization.equals(serialization2));
@@ -127,12 +126,12 @@ public class SerializatorTest {
 
     @Test
     public void testStringCreateInput() throws Exception {
-        CreateInput processInput = new CreateInput();
+        final CreateInput processInput = new CreateInput();
         processInput.configuration = getComponentConfiguration();
 
-        String serialization = Serializator.stringCreateInput(processInput);
-        CreateInput processInput2 = (CreateInput) fromString(serialization, CreateInput.class);
-        String serialization2 = intoString(processInput2);
+        final String serialization = Serializator.stringCreateInput(processInput);
+        final CreateInput processInput2 = (CreateInput) fromString(serialization, CreateInput.class);
+        final String serialization2 = intoString(processInput2);
 
         Assert.assertTrue(serialization != null);
         Assert.assertTrue(serialization.equals(serialization2));
@@ -140,12 +139,12 @@ public class SerializatorTest {
 
     @Test
     public void testStringProcessInput() throws Exception {
-        ProcessInput processInput = new ProcessInput();
+        final ProcessInput processInput = new ProcessInput();
         processInput.data = (JsonNode) fromString("data", JsonNode.class);
 
-        String serialization = Serializator.stringProcessInput(processInput);
-        ProcessInput processInput2 = (ProcessInput) fromString(serialization, ProcessInput.class);
-        String serialization2 = intoString(processInput2);
+        final String serialization = Serializator.stringProcessInput(processInput);
+        final ProcessInput processInput2 = (ProcessInput) fromString(serialization, ProcessInput.class);
+        final String serialization2 = intoString(processInput2);
 
         Assert.assertTrue(serialization != null);
         Assert.assertTrue(serialization.equals(serialization2));
@@ -153,12 +152,12 @@ public class SerializatorTest {
 
     @Test
     public void testProcessOutput() throws Exception {
-        ProcessOutput processOutput = new ProcessOutput();
+        final ProcessOutput processOutput = new ProcessOutput();
         processOutput.rows = fromString("rows", JsonNode.class);
 
-        String serialization = intoString(processOutput);
-        ProcessOutput processOutput2 = Serializator.processOutput(serialization);
-        String serialization2 = intoString(processOutput2);
+        final String serialization = intoString(processOutput);
+        final ProcessOutput processOutput2 = Serializator.processOutput(serialization);
+        final String serialization2 = intoString(processOutput2);
 
         Assert.assertTrue(serialization != null);
         Assert.assertTrue(serialization.equals(serialization2));
@@ -166,12 +165,12 @@ public class SerializatorTest {
 
     @Test
     public void testProcessResult() throws Exception {
-        ProcessResult processResult = new ProcessResult();
+        final ProcessResult processResult = new ProcessResult();
         processResult.result = fromString("result", JsonNode.class);
 
-        String serialization = intoString(processResult);
-        ProcessResult processResult2 = Serializator.processResult(serialization);
-        String serialization2 = intoString(processResult2);
+        final String serialization = intoString(processResult);
+        final ProcessResult processResult2 = Serializator.processResult(serialization);
+        final String serialization2 = intoString(processResult2);
 
         Assert.assertTrue(serialization != null);
         Assert.assertTrue(serialization.equals(serialization2));

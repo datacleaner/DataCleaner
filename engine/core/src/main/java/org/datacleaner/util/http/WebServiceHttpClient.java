@@ -29,8 +29,8 @@ import org.apache.http.client.methods.HttpUriRequest;
  */
 public interface WebServiceHttpClient extends Closeable {
 
-    public HttpResponse execute(HttpUriRequest request) throws Exception;
-    
+    HttpResponse execute(HttpUriRequest request) throws Exception;
+
     @Override
-    public void close();
+    void close();
 }

@@ -47,15 +47,15 @@ public class CategorizationResultSwingRenderer extends AbstractCategorizationRes
 
     @Override
     protected void addExtraValue(final Object extraData, final int row, final DefaultTableModel model,
-            final String desc, final int count, AnnotatedRowsResult sampleResult) {
+            final String desc, final int count, final AnnotatedRowsResult sampleResult) {
         ((DefaultPieDataset) extraData).setValue(desc, count);
     }
 
     @Override
-    public JComponent render(CategorizationResult analyzerResult) {
+    public JComponent render(final CategorizationResult analyzerResult) {
         final DefaultPieDataset dataset = new DefaultPieDataset();
         final Collection<String> categoryNames = analyzerResult.getCategoryNames();
-        for (String categoryName : categoryNames) {
+        for (final String categoryName : categoryNames) {
             final Number count = analyzerResult.getCategoryCount(categoryName);
             dataset.setValue(categoryName, count);
         }

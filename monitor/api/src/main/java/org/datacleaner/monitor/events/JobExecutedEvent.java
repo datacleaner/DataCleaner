@@ -19,8 +19,8 @@
  */
 package org.datacleaner.monitor.events;
 
-import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.result.AnalysisResult;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -33,7 +33,7 @@ public class JobExecutedEvent extends ApplicationEvent {
     private final ExecutionLog _executionLog;
     private final Object _result;
 
-    public JobExecutedEvent(Object source, ExecutionLog executionLog, Object result) {
+    public JobExecutedEvent(final Object source, final ExecutionLog executionLog, final Object result) {
         super(source);
         _executionLog = executionLog;
         _result = result;
@@ -41,7 +41,7 @@ public class JobExecutedEvent extends ApplicationEvent {
 
     /**
      * Gets the result of the execution.
-     * 
+     *
      * @return
      */
     public Object getResult() {

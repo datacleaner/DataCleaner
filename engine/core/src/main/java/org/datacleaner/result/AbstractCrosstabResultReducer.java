@@ -36,24 +36,120 @@ import org.datacleaner.api.AnalyzerResultReducer;
  */
 public abstract class AbstractCrosstabResultReducer<R extends CrosstabResult> implements AnalyzerResultReducer<R> {
 
+    /**
+     * Helper method to get a sum of values (values will be checked whether they
+     * are integers only, or else a double will be returned).
+     *
+     * @param slaveValues
+     * @return
+     */
+    protected static Number sum(final List<?> slaveValues) {
+        for (final Object slaveValue : slaveValues) {
+            if (slaveValue != null) {
+                final Class<? extends Object> cls = slaveValue.getClass();
+                if (!(cls == Integer.class || cls == Short.class || cls == Byte.class)) {
+                    return sumAsDouble(slaveValues);
+                }
+            }
+        }
+        return sumAsInteger(slaveValues);
+    }
+
+    /**
+     * Helper method to get a sum of values (sum will be calculated as an
+     * integer)
+     *
+     * @param slaveValues
+     * @return
+     */
+    protected static Integer sumAsInteger(final List<?> slaveValues) {
+        int sum = 0;
+        for (final Object slaveValue : slaveValues) {
+            final Number value = (Number) slaveValue;
+            if (value != null) {
+                sum += value.intValue();
+            }
+        }
+        return sum;
+    }
+
+    /**
+     * Helper method to get a sum of values (sum will be calculated as a double)
+     *
+     * @param slaveValues
+     * @return
+     */
+    protected static Double sumAsDouble(final List<?> slaveValues) {
+        double sum = 0;
+        for (final Object slaveValue : slaveValues) {
+            final Number value = (Number) slaveValue;
+            if (value != null) {
+                sum += value.doubleValue();
+            }
+        }
+        return sum;
+    }
+
+    /**
+     * Helper method to get the maximum of all values (must be numbers)
+     *
+     * @param slaveValues
+     * @return
+     */
+    protected static Number maximum(final List<?> slaveValues) {
+        Number max = null;
+        for (final Object slaveValue : slaveValues) {
+            if (max == null) {
+                max = (Number) slaveValue;
+            } else {
+                final Comparable<Object> comparable = NumberComparator.getComparable(max);
+                if (comparable.compareTo(slaveValue) < 0) {
+                    max = (Number) slaveValue;
+                }
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Helper method to get the minimum of all values (must be numbers)
+     *
+     * @param slaveValues
+     * @return
+     */
+    protected static Number minimum(final List<?> slaveValues) {
+        Number min = null;
+        for (final Object slaveValue : slaveValues) {
+            if (min == null) {
+                min = (Number) slaveValue;
+            } else {
+                final Comparable<Object> comparable = NumberComparator.getComparable(min);
+                if (comparable.compareTo(slaveValue) > 0) {
+                    min = (Number) slaveValue;
+                }
+            }
+        }
+        return min;
+    }
+
     @Override
-    public R reduce(Collection<? extends R> results) {
+    public R reduce(final Collection<? extends R> results) {
         final Crosstab<Serializable> masterCrosstab = createMasterCrosstab(results);
         final Class<?> valueClass = masterCrosstab.getValueClass();
         final CrosstabDimension dimension1 = masterCrosstab.getDimension(0);
         final CrosstabDimension dimension2 = masterCrosstab.getDimension(1);
 
         final CrosstabNavigator<Serializable> masterNav = masterCrosstab.navigate();
-        for (String category1 : dimension1) {
+        for (final String category1 : dimension1) {
             masterNav.where(dimension1.getName(), category1);
-            for (String category2 : dimension2) {
+            for (final String category2 : dimension2) {
                 masterNav.where(dimension2.getName(), category2);
 
                 final String[] categories = new String[] { category1, category2 };
 
-                final List<ResultProducer> slaveResultProducers = new ArrayList<ResultProducer>();
-                final List<Object> slaveValues = new ArrayList<Object>(results.size());
-                for (R result : results) {
+                final List<ResultProducer> slaveResultProducers = new ArrayList<>();
+                final List<Object> slaveValues = new ArrayList<>(results.size());
+                for (final R result : results) {
                     final Crosstab<?> slaveCrosstab = result.getCrosstab();
                     try {
                         final Object slaveValue = slaveCrosstab.getValue(categories);
@@ -63,7 +159,7 @@ public abstract class AbstractCrosstabResultReducer<R extends CrosstabResult> im
                         if (resultProducer != null) {
                             slaveResultProducers.add(resultProducer);
                         }
-                    } catch (IllegalArgumentException e) {
+                    } catch (final IllegalArgumentException e) {
                         // ignore this value - it was not present in one of the
                         // slaves
                     }
@@ -73,8 +169,8 @@ public abstract class AbstractCrosstabResultReducer<R extends CrosstabResult> im
                 masterNav.put(masterValue);
 
                 if (!slaveResultProducers.isEmpty()) {
-                    final ResultProducer masterResultProducer = reduceResultProducers(slaveResultProducers, category1,
-                            category2, valueClass, masterValue);
+                    final ResultProducer masterResultProducer =
+                            reduceResultProducers(slaveResultProducers, category1, category2, valueClass, masterValue);
                     if (masterResultProducer != null) {
                         masterNav.attach(masterResultProducer);
                     }
@@ -88,16 +184,16 @@ public abstract class AbstractCrosstabResultReducer<R extends CrosstabResult> im
     /**
      * Builds the master crosstab, including all dimensions and categories that
      * will be included in the final result.
-     * 
+     *
      * By default this method will use the first result's crosstab dimensions
      * and categories, assuming that they are all the same.
-     * 
+     *
      * Subclasses can override this method to build the other dimensions.
-     * 
+     *
      * @param results
      * @return
      */
-    protected Crosstab<Serializable> createMasterCrosstab(Collection<? extends R> results) {
+    protected Crosstab<Serializable> createMasterCrosstab(final Collection<? extends R> results) {
         final R firstResult = results.iterator().next();
         final Crosstab<?> firstCrosstab = firstResult.getCrosstab();
 
@@ -105,15 +201,15 @@ public abstract class AbstractCrosstabResultReducer<R extends CrosstabResult> im
         final CrosstabDimension dimension1 = firstCrosstab.getDimension(0);
         final CrosstabDimension dimension2 = firstCrosstab.getDimension(1);
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        final Crosstab<Serializable> masterCrosstab = new Crosstab(valueClass, dimension1, dimension2);
+        @SuppressWarnings({ "unchecked", "rawtypes" }) final Crosstab<Serializable> masterCrosstab =
+                new Crosstab(valueClass, dimension1, dimension2);
         return masterCrosstab;
     }
 
-    protected ResultProducer reduceResultProducers(List<ResultProducer> slaveResultProducers, String category1,
-            String category2, Class<?> valueClass, Serializable masterValue) {
-        for (ResultProducer resultProducer : slaveResultProducers) {
-            AnalyzerResult result = resultProducer.getResult();
+    protected ResultProducer reduceResultProducers(final List<ResultProducer> slaveResultProducers,
+            final String category1, final String category2, final Class<?> valueClass, final Serializable masterValue) {
+        for (final ResultProducer resultProducer : slaveResultProducers) {
+            final AnalyzerResult result = resultProducer.getResult();
             if (result instanceof AnnotatedRowsResult) {
                 if (((AnnotatedRowsResult) result).getAnnotatedRowCount() > 0) {
                     // just return the first annotated rows result - these are
@@ -128,101 +224,5 @@ public abstract class AbstractCrosstabResultReducer<R extends CrosstabResult> im
     protected abstract Serializable reduceValues(List<Object> slaveValues, String category1, String category2,
             Collection<? extends R> results, Class<?> valueClass);
 
-    protected abstract R buildResult(final Crosstab<?> crosstab, final Collection<? extends R> results);
-
-    /**
-     * Helper method to get a sum of values (values will be checked whether they
-     * are integers only, or else a double will be returned).
-     * 
-     * @param slaveValues
-     * @return
-     */
-    protected static Number sum(List<?> slaveValues) {
-        for (Object slaveValue : slaveValues) {
-            if (slaveValue != null) {
-                final Class<? extends Object> cls = slaveValue.getClass();
-                if (!(cls == Integer.class || cls == Short.class || cls == Byte.class)) {
-                    return sumAsDouble(slaveValues);
-                }
-            }
-        }
-        return sumAsInteger(slaveValues);
-    }
-
-    /**
-     * Helper method to get a sum of values (sum will be calculated as an
-     * integer)
-     * 
-     * @param slaveValues
-     * @return
-     */
-    protected static Integer sumAsInteger(List<?> slaveValues) {
-        int sum = 0;
-        for (Object slaveValue : slaveValues) {
-            Number value = (Number) slaveValue;
-            if (value != null) {
-                sum += value.intValue();
-            }
-        }
-        return sum;
-    }
-
-    /**
-     * Helper method to get a sum of values (sum will be calculated as a double)
-     * 
-     * @param slaveValues
-     * @return
-     */
-    protected static Double sumAsDouble(List<?> slaveValues) {
-        double sum = 0;
-        for (Object slaveValue : slaveValues) {
-            Number value = (Number) slaveValue;
-            if (value != null) {
-                sum += value.doubleValue();
-            }
-        }
-        return sum;
-    }
-
-    /**
-     * Helper method to get the maximum of all values (must be numbers)
-     * 
-     * @param slaveValues
-     * @return
-     */
-    protected static Number maximum(List<?> slaveValues) {
-        Number max = null;
-        for (Object slaveValue : slaveValues) {
-            if (max == null) {
-                max = (Number) slaveValue;
-            } else {
-                Comparable<Object> comparable = NumberComparator.getComparable(max);
-                if (comparable.compareTo(slaveValue) < 0) {
-                    max = (Number) slaveValue;
-                }
-            }
-        }
-        return max;
-    }
-
-    /**
-     * Helper method to get the minimum of all values (must be numbers)
-     * 
-     * @param slaveValues
-     * @return
-     */
-    protected static Number minimum(List<?> slaveValues) {
-        Number min = null;
-        for (Object slaveValue : slaveValues) {
-            if (min == null) {
-                min = (Number) slaveValue;
-            } else {
-                Comparable<Object> comparable = NumberComparator.getComparable(min);
-                if (comparable.compareTo(slaveValue) > 0) {
-                    min = (Number) slaveValue;
-                }
-            }
-        }
-        return min;
-    }
+    protected abstract R buildResult(Crosstab<?> crosstab, Collection<? extends R> results);
 }

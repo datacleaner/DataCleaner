@@ -48,11 +48,12 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
     private volatile Date _creationDate;
     private volatile boolean _cancelled;
 
-    public DistributedAnalysisResultFuture(List<AnalysisResultFuture> results, DistributedAnalysisResultReducer reducer) {
+    public DistributedAnalysisResultFuture(final List<AnalysisResultFuture> results,
+            final DistributedAnalysisResultReducer reducer) {
         _results = results;
         _reducer = reducer;
-        _resultMap = new HashMap<ComponentJob, AnalyzerResult>();
-        _reductionErrors = new ArrayList<AnalysisResultReductionException>();
+        _resultMap = new HashMap<>();
+        _reductionErrors = new ArrayList<>();
         _cancelled = false;
     }
 
@@ -64,7 +65,7 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
         }
 
         if (!_cancelled) {
-            for (AnalysisResultFuture result : _results) {
+            for (final AnalysisResultFuture result : _results) {
                 result.cancel();
             }
             _cancelled = true;
@@ -86,7 +87,7 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
 
     @Override
     public boolean isDone() {
-        for (AnalysisResultFuture result : _results) {
+        for (final AnalysisResultFuture result : _results) {
             if (!result.isDone()) {
                 return false;
             }
@@ -96,7 +97,7 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
 
     @Override
     public void await() {
-        for (AnalysisResultFuture result : _results) {
+        for (final AnalysisResultFuture result : _results) {
             result.await();
         }
         if (_resultMap.isEmpty()) {
@@ -109,10 +110,10 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
     }
 
     @Override
-    public void await(long timeout, TimeUnit timeUnit) {
+    public void await(final long timeout, final TimeUnit timeUnit) {
         final long offsetMillis = System.currentTimeMillis();
         final long millisToWait = timeUnit.convert(timeout, TimeUnit.MILLISECONDS);
-        for (AnalysisResultFuture result : _results) {
+        for (final AnalysisResultFuture result : _results) {
             if (!isDone()) {
                 result.await(timeout, TimeUnit.MILLISECONDS);
                 final long currentMillis = System.currentTimeMillis();
@@ -132,7 +133,7 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
     @Override
     public boolean isSuccessful() {
         await();
-        for (AnalysisResultFuture result : _results) {
+        for (final AnalysisResultFuture result : _results) {
             if (result.isErrornous()) {
                 return false;
             }
@@ -145,8 +146,8 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
         if (isCancelled()) {
             return JobStatus.ERRORNOUS;
         }
-        for (AnalysisResultFuture result : _results) {
-            JobStatus slaveStatus = result.getStatus();
+        for (final AnalysisResultFuture result : _results) {
+            final JobStatus slaveStatus = result.getStatus();
             if (slaveStatus == JobStatus.NOT_FINISHED) {
                 return JobStatus.NOT_FINISHED;
             }
@@ -167,7 +168,7 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
         }
 
         final Collection<AnalyzerResult> values = _resultMap.values();
-        return new ArrayList<AnalyzerResult>(values);
+        return new ArrayList<>(values);
     }
 
     @Override
@@ -182,8 +183,8 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
 
     @Override
     public List<Throwable> getErrors() {
-        final List<Throwable> errors = new ArrayList<Throwable>();
-        for (AnalysisResultFuture result : _results) {
+        final List<Throwable> errors = new ArrayList<>();
+        for (final AnalysisResultFuture result : _results) {
             final List<Throwable> slaveErrors = result.getErrors();
             if (slaveErrors != null) {
                 errors.addAll(slaveErrors);

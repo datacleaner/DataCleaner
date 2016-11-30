@@ -25,5 +25,5 @@ package org.datacleaner.util;
  */
 public interface HasGroupLiteral {
 
-    public String getGroupLiteral();
+    String getGroupLiteral();
 }

@@ -42,8 +42,8 @@ import org.slf4j.LoggerFactory;
  * Represents a value distribution within a {@link ValueDistributionAnalyzer}. A
  * {@link ValueDistributionGroup} contains the counted values within a single
  * group.
- * 
- * 
+ *
+ *
  */
 class ValueDistributionGroup {
 
@@ -57,14 +57,14 @@ class ValueDistributionGroup {
     private final InputColumn<?>[] _inputColumns;
     private final AtomicInteger _totalCount;
 
-    public ValueDistributionGroup(String groupName, RowAnnotationFactory annotationFactory, boolean recordAnnotations,
-            InputColumn<?>[] inputColumns) {
+    public ValueDistributionGroup(final String groupName, final RowAnnotationFactory annotationFactory,
+            final boolean recordAnnotations, final InputColumn<?>[] inputColumns) {
         _groupName = groupName;
         _annotationFactory = annotationFactory;
         _recordAnnotations = recordAnnotations;
         _inputColumns = inputColumns;
         _totalCount = new AtomicInteger();
-        _annotationMap = new HashMap<String, RowAnnotation>();
+        _annotationMap = new HashMap<>();
         if (recordAnnotations) {
             _nullValueAnnotation = _annotationFactory.createAnnotation();
         } else {
@@ -72,7 +72,7 @@ class ValueDistributionGroup {
         }
     }
 
-    public void run(InputRow row, String value, int distinctCount) {
+    public void run(final InputRow row, final String value, final int distinctCount) {
         if (value == null) {
             if (_recordAnnotations) {
                 _annotationFactory.annotate(row, distinctCount, _nullValueAnnotation);
@@ -102,12 +102,12 @@ class ValueDistributionGroup {
         _totalCount.addAndGet(distinctCount);
     }
 
-    public SingleValueDistributionResult createResult(boolean recordUniqueValues) {
+    public SingleValueDistributionResult createResult(final boolean recordUniqueValues) {
         final ValueCountListImpl topValues = ValueCountListImpl.createFullList();
 
         final List<String> uniqueValues;
         if (recordUniqueValues) {
-            uniqueValues = new ArrayList<String>();
+            uniqueValues = new ArrayList<>();
         } else {
             uniqueValues = null;
         }
@@ -117,7 +117,7 @@ class ValueDistributionGroup {
         final Set<Entry<String, RowAnnotation>> entrySet = _annotationMap.entrySet();
 
         int i = 0;
-        for (Entry<String, RowAnnotation> entry : entrySet) {
+        for (final Entry<String, RowAnnotation> entry : entrySet) {
             if (i % 100000 == 0 && i != 0) {
                 logger.info("Processing unique value entry no. {}", i);
             }
@@ -144,7 +144,7 @@ class ValueDistributionGroup {
         }
     }
 
-    private int countValue(boolean recordUniqueValues, ValueCountListImpl valueCountList,
+    private int countValue(final boolean recordUniqueValues, final ValueCountListImpl valueCountList,
             final List<String> uniqueValues, int uniqueCount, final String value, final int count) {
         if (count == 1) {
             if (recordUniqueValues) {
@@ -152,7 +152,7 @@ class ValueDistributionGroup {
             }
             uniqueCount++;
         } else {
-            ValueFrequency vc = new SingleValueFrequency(value, count);
+            final ValueFrequency vc = new SingleValueFrequency(value, count);
             valueCountList.register(vc);
         }
         return uniqueCount;

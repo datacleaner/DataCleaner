@@ -127,9 +127,7 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     ONLINE_FACEBOOK("Facebook ID", "Facebook", "Facebook account"),
 
-    ONLINE_LINKEDIN("LinkedIn ID", "LinkedIn", "LinkedIn account"),
-
-    ;
+    ONLINE_LINKEDIN("LinkedIn ID", "LinkedIn", "LinkedIn account"),;
 
     private static Map<String, ColumnMeaning> _matchingMap;
 
@@ -141,17 +139,9 @@ public enum ColumnMeaning implements HasName, HasAliases {
         for (final ColumnMeaning columnMeaning : values) {
             populateMatchMap(columnMeaning.getName(), columnMeaning);
             final String[] aliases = columnMeaning.getAliases();
-            for (String alias : aliases) {
+            for (final String alias : aliases) {
                 populateMatchMap(alias, columnMeaning);
             }
-        }
-    }
-
-    private static void populateMatchMap(String key, ColumnMeaning columnMeaning) {
-        key = standardizeForMatching(key);
-        ColumnMeaning oldValue = _matchingMap.put(key, columnMeaning);
-        if (oldValue != null) {
-            throw new IllegalStateException("Multiple ColumnMeanings with name/alias: " + key);
         }
     }
 
@@ -159,12 +149,20 @@ public enum ColumnMeaning implements HasName, HasAliases {
     private final String[] _aliases;
 
     // Used for all the fields that are also available for input
-    private ColumnMeaning(final String name, final String... aliases) {
+    ColumnMeaning(final String name, final String... aliases) {
         _name = name;
         if (aliases == null) {
             _aliases = new String[0];
         } else {
             _aliases = aliases;
+        }
+    }
+
+    private static void populateMatchMap(String key, final ColumnMeaning columnMeaning) {
+        key = standardizeForMatching(key);
+        final ColumnMeaning oldValue = _matchingMap.put(key, columnMeaning);
+        if (oldValue != null) {
+            throw new IllegalStateException("Multiple ColumnMeanings with name/alias: " + key);
         }
     }
 
@@ -182,17 +180,38 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     /**
      * Non-regex based replace-all method
-     * 
+     *
      * @param str
      * @param searchFor
      * @param replaceWith
      * @return
      */
-    private static String replaceAll(String str, String searchFor, String replaceWith) {
+    private static String replaceAll(String str, final String searchFor, final String replaceWith) {
         while (str.indexOf(searchFor) != -1) {
             str = str.replace(searchFor, replaceWith);
         }
         return str;
+    }
+
+    /**
+     * Attempts to find a match to a {@link ColumnMeaning} based on the given
+     * string.
+     *
+     * @param str
+     * @return
+     */
+    public static final ColumnMeaning find(final String str) {
+        if (str == null) {
+            return null;
+        }
+        try {
+            return valueOf(str);
+        } catch (final Exception e) {
+            // do nothing
+        }
+
+        final String key = standardizeForMatching(str);
+        return _matchingMap.get(key);
     }
 
     /**
@@ -223,26 +242,5 @@ public enum ColumnMeaning implements HasName, HasAliases {
     @Override
     public String[] getAliases() {
         return _aliases;
-    }
-
-    /**
-     * Attempts to find a match to a {@link ColumnMeaning} based on the given
-     * string.
-     * 
-     * @param str
-     * @return
-     */
-    public static final ColumnMeaning find(String str) {
-        if (str == null) {
-            return null;
-        }
-        try {
-            return valueOf(str);
-        } catch (Exception e) {
-            // do nothing
-        }
-
-        final String key = standardizeForMatching(str);
-        return _matchingMap.get(key);
     }
 }

@@ -35,19 +35,19 @@ public class JobFailedEventLoggerListener implements ApplicationListener<JobFail
     private static final Logger logger = LoggerFactory.getLogger(JobFailedEventLoggerListener.class);
 
     @Override
-    public void onApplicationEvent(JobFailedEvent event) {
+    public void onApplicationEvent(final JobFailedEvent event) {
         logger.warn("Job execution failed: {}", event.getExecutionLog());
 
         final Object data = event.getData();
         if (data != null) {
             logger.info("Failure input data: {}", data);
         }
-        
+
         final Object component = event.getComponent();
         if (component != null) {
             logger.info("Failure component: {}", component);
         }
-        
+
         final Throwable throwable = event.getThrowable();
         if (throwable != null) {
             logger.info("Failure stack trace:", throwable);

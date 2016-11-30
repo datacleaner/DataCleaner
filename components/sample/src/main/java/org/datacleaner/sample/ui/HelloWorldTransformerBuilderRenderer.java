@@ -36,13 +36,13 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 /**
  * A sample renderer which provides a presenter object for the configuration
  * panel of a transformer.
- * 
+ *
  * Renderers like this are optional, but allows for absolute control over the
  * User Interface which may be useful for certain types of extensions.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class HelloWorldTransformerBuilderRenderer implements
-        Renderer<TransformerComponentBuilder<?>, TransformerComponentBuilderPresenter> {
+public class HelloWorldTransformerBuilderRenderer
+        implements Renderer<TransformerComponentBuilder<?>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -54,7 +54,7 @@ public class HelloWorldTransformerBuilderRenderer implements
     AnalyzerBeansConfiguration configuration;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerComponentBuilder<?> renderable) {
+    public RendererPrecedence getPrecedence(final TransformerComponentBuilder<?> renderable) {
         if (renderable.getDescriptor().getComponentClass() == HelloWorldTransformer.class) {
             return RendererPrecedence.HIGHEST;
         }
@@ -62,9 +62,9 @@ public class HelloWorldTransformerBuilderRenderer implements
     }
 
     @Override
-    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<?> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
-                PropertyWidgetFactory.class);
+    public TransformerComponentBuilderPresenter render(final TransformerComponentBuilder<?> tjb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(tjb).getInstance(PropertyWidgetFactory.class);
         return new HelloWorldTransformerPresenter(tjb, windowContext, propertyWidgetFactory, configuration);
     }
 }

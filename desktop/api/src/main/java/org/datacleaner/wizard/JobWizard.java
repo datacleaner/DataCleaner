@@ -33,12 +33,12 @@ public interface JobWizard {
     /**
      * Text for next button in wizard.
      */
-    static final String BUTTON_NEXT_TEXT = "Next >";
+    String BUTTON_NEXT_TEXT = "Next >";
 
     /**
      * Icon for next button in wizard.
      */
-    static final String BUTTON_NEXT_ICON = IconUtils.ACTION_FORWARD;
+    String BUTTON_NEXT_ICON = IconUtils.ACTION_FORWARD;
 
     /**
      * Checks if all necessary components to use the wizard are available.

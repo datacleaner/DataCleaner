@@ -39,11 +39,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class ListWidget extends VerticalPanel {
     private final TenantIdentifier _tenant;
     private int _counter = 0;
-    
-    public ListWidget(TenantIdentifier tenant, Set<ReferenceDataItem> set) {
+
+    public ListWidget(final TenantIdentifier tenant, final Set<ReferenceDataItem> set) {
         _tenant = tenant;
-        
-        for (ReferenceDataItem item : set) {
+
+        for (final ReferenceDataItem item : set) {
             add(createLine(item.getType(), item.getName()));
         }
     }
@@ -55,7 +55,7 @@ public class ListWidget extends VerticalPanel {
         line.addStyleName(oddEvenClass);
         line.add(createNameLabel(itemName));
         line.add(createRemoveButton(itemType, itemName));
-        
+
         return line;
     }
 

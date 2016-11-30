@@ -27,11 +27,11 @@ import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.descriptors.MetricParameters;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.monitor.job.MetricJobContext;
 import org.datacleaner.monitor.job.MetricJobEngine;
 import org.datacleaner.monitor.job.MetricValues;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.datacleaner.result.AnalysisResult;
 
 /**
  * Default {@link MetricValues} implementation, calculates the metric values
@@ -46,8 +46,9 @@ public final class DefaultMetricValues implements MetricValues {
     private final AnalysisResult _analysisResult;
     private final AnalysisJob _analysisJob;
 
-    public DefaultMetricValues(MetricJobEngine<?> jobEngine, MetricJobContext job, List<MetricIdentifier> metricIdentifiers,
-            AnalysisResult analysisResult, AnalysisJob analysisJob) {
+    public DefaultMetricValues(final MetricJobEngine<?> jobEngine, final MetricJobContext job,
+            final List<MetricIdentifier> metricIdentifiers, final AnalysisResult analysisResult,
+            final AnalysisJob analysisJob) {
         _jobEngine = jobEngine;
         _job = job;
         _metricIdentifiers = metricIdentifiers;
@@ -56,8 +57,8 @@ public final class DefaultMetricValues implements MetricValues {
         _metricDate = analysisResult.getCreationDate();
     }
 
-    public DefaultMetricValues(MetricJobEngine<?> jobEngine, MetricJobContext job, List<MetricIdentifier> metricIdentifiers,
-            AnalysisResult analysisResult) {
+    public DefaultMetricValues(final MetricJobEngine<?> jobEngine, final MetricJobContext job,
+            final List<MetricIdentifier> metricIdentifiers, final AnalysisResult analysisResult) {
         _jobEngine = jobEngine;
         _job = job;
         _metricIdentifiers = metricIdentifiers;
@@ -74,33 +75,35 @@ public final class DefaultMetricValues implements MetricValues {
     @Override
     public List<Number> getValues() {
         final int metricCount = _metricIdentifiers.size();
-        final List<ComponentJob> componentJobs = new ArrayList<ComponentJob>(metricCount);
-        final List<MetricDescriptor> metricDescriptors = new ArrayList<MetricDescriptor>(metricCount);
-        final List<MetricParameters> metricParameters = new ArrayList<MetricParameters>(metricCount);
+        final List<ComponentJob> componentJobs = new ArrayList<>(metricCount);
+        final List<MetricDescriptor> metricDescriptors = new ArrayList<>(metricCount);
+        final List<MetricParameters> metricParameters = new ArrayList<>(metricCount);
         final MetricValueUtils metricValueUtils = new MetricValueUtils();
 
-        for (MetricIdentifier metricIdentifier : _metricIdentifiers) {
-            final ComponentJob analyzerJob = metricValueUtils.getComponentJob(metricIdentifier, _analysisJob, _analysisResult);
+        for (final MetricIdentifier metricIdentifier : _metricIdentifiers) {
+            final ComponentJob analyzerJob =
+                    metricValueUtils.getComponentJob(metricIdentifier, _analysisJob, _analysisResult);
             componentJobs.add(analyzerJob);
 
-            final MetricDescriptor metricDescriptor = metricValueUtils.getMetricDescriptor(metricIdentifier, _analysisJob,
-                    analyzerJob, _analysisResult);
+            final MetricDescriptor metricDescriptor =
+                    metricValueUtils.getMetricDescriptor(metricIdentifier, _analysisJob, analyzerJob, _analysisResult);
             metricDescriptors.add(metricDescriptor);
 
-            MetricParameters parameter = metricValueUtils.getParameters(_jobEngine, _job, metricIdentifier, metricDescriptor,
-                    analyzerJob);
+            final MetricParameters parameter =
+                    metricValueUtils.getParameters(_jobEngine, _job, metricIdentifier, metricDescriptor, analyzerJob);
             metricParameters.add(parameter);
         }
 
-        final List<Number> metricValuesList = new ArrayList<Number>(metricCount);
+        final List<Number> metricValuesList = new ArrayList<>(metricCount);
         for (int i = 0; i < metricCount; i++) {
             final MetricIdentifier metricIdentifier = _metricIdentifiers.get(i);
             final ComponentJob job = componentJobs.get(i);
             final MetricDescriptor metric = metricDescriptors.get(i);
             final MetricParameters parameters = metricParameters.get(i);
 
-            final Number metricValue = metricValueUtils.getMetricValue(_jobEngine, _job, metricIdentifier, metric, _analysisJob,
-                    job, _analysisResult, parameters);
+            final Number metricValue = metricValueUtils
+                    .getMetricValue(_jobEngine, _job, metricIdentifier, metric, _analysisJob, job, _analysisResult,
+                            parameters);
             metricValuesList.add(metricValue);
         }
 

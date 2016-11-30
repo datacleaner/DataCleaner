@@ -20,8 +20,6 @@
 package org.datacleaner.widgets;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
@@ -79,8 +77,9 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
     private volatile FileObject _file;
     private volatile AnalysisJobMetadata _metadata;
 
-    public OpenAnalysisJobFileChooserAccessory(WindowContext windowContext, DataCleanerConfiguration configuration,
-            DCFileChooser fileChooser, Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider) {
+    public OpenAnalysisJobFileChooserAccessory(final WindowContext windowContext,
+            final DataCleanerConfiguration configuration, final DCFileChooser fileChooser,
+            final Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider) {
         super();
         _windowContext = windowContext;
         _configuration = configuration;
@@ -124,16 +123,13 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 
     private JButton getOpenJobButton() {
         final JButton openJobButton = new JButton("Open analysis job");
-        openJobButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider
-                        .get();
-                final Injector injector = openAnalysisJobActionListener.openAnalysisJob(_file);
-                final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
-                window.open();
-                _fileChooser.cancelSelection();
-            }
+        openJobButton.addActionListener(e -> {
+            final OpenAnalysisJobActionListener openAnalysisJobActionListener =
+                    _openAnalysisJobActionListenerProvider.get();
+            final Injector injector = openAnalysisJobActionListener.openAnalysisJob(_file);
+            final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+            window.open();
+            _fileChooser.cancelSelection();
         });
         return openJobButton;
     }
@@ -142,20 +138,18 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
         final JButton openAsTemplateButton = new JButton("Open as template");
         openAsTemplateButton
                 .setToolTipText("Allows you to open the job with a different datastore and different source columns.");
-        openAsTemplateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_windowContext,
-                        _configuration, _file, _metadata, _openAnalysisJobActionListenerProvider);
-                _fileChooser.cancelSelection();
-                dialog.setVisible(true);
-            }
+        openAsTemplateButton.addActionListener(e -> {
+            final OpenAnalysisJobAsTemplateDialog dialog =
+                    new OpenAnalysisJobAsTemplateDialog(_windowContext, _configuration, _file, _metadata,
+                            _openAnalysisJobActionListenerProvider);
+            _fileChooser.cancelSelection();
+            dialog.setVisible(true);
         });
         return openAsTemplateButton;
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
+    public void propertyChange(final PropertyChangeEvent evt) {
         if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(evt.getPropertyName())) {
             _file = _fileChooser.getSelectedFileObject();
             if (_file != null && _file.getName().getBaseName().endsWith(FileFilters.ANALYSIS_XML.getExtension())) {
@@ -167,11 +161,11 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
     }
 
     private void showFileInformation() {
-        JaxbJobReader reader = new JaxbJobReader(_configuration);
+        final JaxbJobReader reader = new JaxbJobReader(_configuration);
 
         try {
             _metadata = reader.readMetadata(_file);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // metadata could not be produced so we cannot display the file
             // information
             logger.warn("An unexpected error occurred reading metadata from file", e);
@@ -194,7 +188,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
         final String jobDescription = _metadata.getJobDescription();
         if (jobDescription != null) {
             _centerPanel.add(new JLabel("<html><b>Job description:</b></html>"));
-            DCLabel descriptionLabel = DCLabel.darkMultiLine(jobDescription);
+            final DCLabel descriptionLabel = DCLabel.darkMultiLine(jobDescription);
             descriptionLabel.setMaximumWidth(WIDTH);
             _centerPanel.add(descriptionLabel);
             _centerPanel.add(Box.createVerticalStrut(separatorHeight));
@@ -229,7 +223,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
         _centerPanel.add(new JLabel("<html><b>Datastore:</b></html>"));
         final JLabel datastoreLabel = new JLabel(datastoreName);
 
-        Datastore datastore = _configuration.getDatastoreCatalog().getDatastore(datastoreName);
+        final Datastore datastore = _configuration.getDatastoreCatalog().getDatastore(datastoreName);
         if (datastore == null) {
             _openJobButton.setEnabled(false);
             datastoreLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL));
@@ -243,9 +237,9 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
         _centerPanel.add(datastoreLabel);
         _centerPanel.add(Box.createVerticalStrut(separatorHeight));
         _centerPanel.add(new JLabel("<html><b>Source columns:</b></html>"));
-        List<String> paths = _metadata.getSourceColumnPaths();
-        for (String path : paths) {
-            JLabel columnLabel = new JLabel(path);
+        final List<String> paths = _metadata.getSourceColumnPaths();
+        for (final String path : paths) {
+            final JLabel columnLabel = new JLabel(path);
             columnLabel.setIcon(imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL));
             _centerPanel.add(columnLabel);
         }

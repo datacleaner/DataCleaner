@@ -62,10 +62,10 @@ public class HtmlAnalysisResultWriterTest {
         final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
         descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(ListResultHtmlRenderer.class));
 
-        final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl()
-                .withDescriptorProvider(descriptorProvider);
-        final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
-                .withEnvironment(environment);
+        final DataCleanerEnvironment environment =
+                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider);
+        final DataCleanerConfigurationImpl configuration =
+                new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(environment);
         final AnalysisJob job;
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
             jobBuilder.setDatastore(datastore);
@@ -81,8 +81,8 @@ public class HtmlAnalysisResultWriterTest {
         writeAndCompareWithBenchmark(analysisResult, configuration);
     }
 
-    private void writeAndCompareWithBenchmark(AnalysisResult analysisResult, DataCleanerConfigurationImpl configuration)
-            throws IOException {
+    private void writeAndCompareWithBenchmark(final AnalysisResult analysisResult,
+            final DataCleanerConfigurationImpl configuration) throws IOException {
 
         final HtmlAnalysisResultWriter writer = new HtmlAnalysisResultWriter();
 
@@ -90,8 +90,9 @@ public class HtmlAnalysisResultWriterTest {
         writer.write(analysisResult, configuration, stringWriter);
         final String actual = stringWriter.toString();
 
-        final File benchmarkFile = new File("src/test/resources/benchmark-renderings/" + getClass().getSimpleName()
-                + "-" + testName.getMethodName() + ".html");
+        final File benchmarkFile = new File(
+                "src/test/resources/benchmark-renderings/" + getClass().getSimpleName() + "-" + testName.getMethodName()
+                        + ".html");
         if (!benchmarkFile.exists()) {
             Assert.assertEquals("File does not exist: " + benchmarkFile, actual);
         }

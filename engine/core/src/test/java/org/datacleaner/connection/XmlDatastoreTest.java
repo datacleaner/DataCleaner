@@ -35,8 +35,8 @@ public class XmlDatastoreTest extends TestCase {
     }
 
     public void testGetDatastoreConnection() throws Exception {
-        try (DatastoreConnection con = ds.openConnection();) {
-            String[] tableNames = con.getDataContext().getDefaultSchema().getTableNames();
+        try (DatastoreConnection con = ds.openConnection()) {
+            final String[] tableNames = con.getDataContext().getDefaultSchema().getTableNames();
             assertEquals("[greeting]", Arrays.toString(tableNames));
         }
     }
@@ -46,7 +46,7 @@ public class XmlDatastoreTest extends TestCase {
     }
 
     public void testCloneAndEquals() throws Exception {
-        Object clone = SerializationUtils.clone(ds);
+        final Object clone = SerializationUtils.clone(ds);
         assertEquals(ds, clone);
     }
 }

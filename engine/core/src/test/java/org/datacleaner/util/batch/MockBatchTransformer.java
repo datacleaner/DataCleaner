@@ -25,7 +25,6 @@ import java.util.List;
 import javax.inject.Named;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -47,22 +46,17 @@ public class MockBatchTransformer extends BatchTransformer {
     }
 
     @Override
-    public void map(BatchSource<InputRow> source, BatchSink<Object[]> sink) {
+    public void map(final BatchSource<InputRow> source, final BatchSink<Object[]> sink) {
         logger.info("map({} records)", source.size());
 
-        List<InputRow> list = source.toList();
-        List<String> values = CollectionUtils.map(list, new Func<InputRow, String>() {
-            @Override
-            public String eval(InputRow row) {
-                return row.getValue(input);
-            }
-        });
+        final List<InputRow> list = source.toList();
+        final List<String> values = CollectionUtils.map(list, row -> row.getValue(input));
 
         // sort the values
         Collections.sort(values);
 
         for (int i = 0; i < source.size(); i++) {
-            String value = values.get(i);
+            final String value = values.get(i);
             sink.setOutput(i, new Object[] { value });
             logger.info("setOutput({}, {})", i, value);
         }

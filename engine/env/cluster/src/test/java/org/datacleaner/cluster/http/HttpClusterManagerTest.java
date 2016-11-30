@@ -22,13 +22,13 @@ package org.datacleaner.cluster.http;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.cluster.ClusterTestHelper;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
+
+import junit.framework.TestCase;
 
 public class HttpClusterManagerTest extends TestCase {
 
@@ -45,7 +45,7 @@ public class HttpClusterManagerTest extends TestCase {
         server2 = createServer(8883, false);
         server3 = createServer(8884, true);
 
-        final List<String> slaveEndpoints = new ArrayList<String>();
+        final List<String> slaveEndpoints = new ArrayList<>();
         slaveEndpoints.add("http://localhost:8882/slave_endpoint");
         slaveEndpoints.add("http://localhost:8883/slave_endpoint");
         slaveEndpoints.add("http://localhost:8884/slave_endpoint");
@@ -63,26 +63,26 @@ public class HttpClusterManagerTest extends TestCase {
     }
 
     public void testConcatAndInsert() throws Throwable {
-        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
-                .getSimpleName() + "_" + getName(), false);
+        final DataCleanerConfiguration configuration =
+                ClusterTestHelper.createConfiguration(getClass().getSimpleName() + "_" + getName(), false);
         ClusterTestHelper.runConcatAndInsertJob(configuration, clusterManager);
     }
 
     public void testCancel() throws Throwable {
-        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
-                .getSimpleName() + "_" + getName(), false);
+        final DataCleanerConfiguration configuration =
+                ClusterTestHelper.createConfiguration(getClass().getSimpleName() + "_" + getName(), false);
         ClusterTestHelper.runCancelJobJob(configuration, clusterManager);
     }
 
     public void testErrorHandling() throws Exception {
-        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
-                .getSimpleName() + "_" + getName(), false);
+        final DataCleanerConfiguration configuration =
+                ClusterTestHelper.createConfiguration(getClass().getSimpleName() + "_" + getName(), false);
         final List<Throwable> errors = ClusterTestHelper.runErrorHandlingJob(configuration, clusterManager);
 
-        for (Throwable throwable : errors) {
-            String message = throwable.getMessage();
-            if (!"I am just a dummy transformer!".equals(message)
-                    && !"A previous exception has occurred".equals(message)) {
+        for (final Throwable throwable : errors) {
+            final String message = throwable.getMessage();
+            if (!"I am just a dummy transformer!".equals(message) && !"A previous exception has occurred"
+                    .equals(message)) {
                 fail("Unexpected exception: " + message + " (" + throwable.getClass().getName() + ")");
             }
         }
@@ -91,12 +91,12 @@ public class HttpClusterManagerTest extends TestCase {
     }
 
     public void testCompletenessAnalyzer() throws Throwable {
-        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
-                .getSimpleName() + "_" + getName(), false);
+        final DataCleanerConfiguration configuration =
+                ClusterTestHelper.createConfiguration(getClass().getSimpleName() + "_" + getName(), false);
         ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, clusterManager);
     }
 
-    private Server createServer(int port, boolean multiThreaded) throws Exception {
+    private Server createServer(final int port, final boolean multiThreaded) throws Exception {
         final String testName = getClass().getSimpleName() + "_" + getName();
         final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(testName, multiThreaded);
 

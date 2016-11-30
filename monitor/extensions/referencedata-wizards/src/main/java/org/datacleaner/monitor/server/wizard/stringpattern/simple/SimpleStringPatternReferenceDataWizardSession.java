@@ -34,7 +34,7 @@ final class SimpleStringPatternReferenceDataWizardSession extends AbstractRefere
     private String _name;
     private String _expression;
 
-    public SimpleStringPatternReferenceDataWizardSession(ReferenceDataWizardContext context) {
+    public SimpleStringPatternReferenceDataWizardSession(final ReferenceDataWizardContext context) {
         super(context);
     }
 

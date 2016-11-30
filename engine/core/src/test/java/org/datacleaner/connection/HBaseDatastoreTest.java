@@ -24,13 +24,13 @@ import junit.framework.TestCase;
 public class HBaseDatastoreTest extends TestCase {
 
     public void testGetters() throws Exception {
-        HBaseDatastore ds1 = new HBaseDatastore("hbase1", "localhost", 1234);
+        final HBaseDatastore ds1 = new HBaseDatastore("hbase1", "localhost", 1234);
         assertEquals("hbase1", ds1.getName());
         assertEquals("localhost", ds1.getZookeeperHostname());
         assertEquals(1234, ds1.getZookeeperPort());
         assertEquals(null, ds1.getTableDefs());
-        
-        PerformanceCharacteristics performanceCharacteristics = ds1.getPerformanceCharacteristics();
+
+        final PerformanceCharacteristics performanceCharacteristics = ds1.getPerformanceCharacteristics();
         assertEquals(false, performanceCharacteristics.isNaturalRecordOrderConsistent());
         assertEquals(true, performanceCharacteristics.isQueryOptimizationPreferred());
     }

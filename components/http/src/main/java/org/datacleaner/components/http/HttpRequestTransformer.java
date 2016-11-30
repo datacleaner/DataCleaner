@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -62,10 +61,10 @@ import com.google.common.base.Strings;
 @Named("HTTP request")
 @Categorized(value = ReferenceDataCategory.class, superCategory = ImproveSuperCategory.class)
 @Description("Sends a HTTP request for each record and retrieves the response as transformation output.\n"
-        + "For each request you can have dynamic elements in the URL or in the request body that is sent. Provide variable names that are unique to the URL and request body and reference them there. For instance:\n"
+        + "For each request you can have dynamic elements in the URL or in the request body that is sent. "
+        + "Provide variable names that are unique to the URL and request body and reference them there. For instance:\n"
         + "<table><tr><td>URL:</td><td>http://www.google.com/?q=${term}</td></tr>"
-        + "<tr><td>Input:</td><td>column1</td></tr>"
-        + "<tr><td>Variable:</td><td>${term}</td></tr></table>")
+        + "<tr><td>Input:</td><td>column1</td></tr>" + "<tr><td>Variable:</td><td>${term}</td></tr></table>")
 public class HttpRequestTransformer implements Transformer {
 
     public static final String PROPERTY_INPUT_COLUMNS = "Input";
@@ -74,7 +73,8 @@ public class HttpRequestTransformer implements Transformer {
 
     @Inject
     @Configured(value = PROPERTY_URL, order = 1)
-    @Description("The URL to invoke. The URL will be pre-processed by replacing any variable names in it with the corresponding dynamic values.")
+    @Description("The URL to invoke. The URL will be pre-processed by replacing any variable names in it with "
+            + "the corresponding dynamic values.")
     String url = "http://";
 
     @Inject
@@ -93,7 +93,9 @@ public class HttpRequestTransformer implements Transformer {
     @Inject
     @Configured(order = 5)
     @StringProperty(multiline = true, emptyString = true)
-    @Description("The body of the request to invoke. The request body will be pre-processed by replacing any variable names in it with the corresponding dynamic values.")
+    @Description(
+            "The body of the request to invoke. The request body will be pre-processed by replacing any variable names "
+                    + "in it with the corresponding dynamic values.")
     String requestBody = "";
 
     @Inject
@@ -133,7 +135,7 @@ public class HttpRequestTransformer implements Transformer {
     }
 
     @Override
-    public Object[] transform(InputRow inputRow) {
+    public Object[] transform(final InputRow inputRow) {
         final Charset usedCharset = Charset.forName(charset);
 
         final String requestBody = applyVariablesToString(this.requestBody, inputRow);
@@ -147,19 +149,16 @@ public class HttpRequestTransformer implements Transformer {
 
         if (headers != null) {
             final Set<Entry<String, String>> entries = headers.entrySet();
-            for (Entry<String, String> entry : entries) {
+            for (final Entry<String, String> entry : entries) {
                 request.setHeader(entry.getKey(), entry.getValue());
             }
         }
 
-        final ServiceResult<Object[]> result = _session.invokeService(new Callable<Object[]>() {
-            @Override
-            public Object[] call() throws Exception {
-                final HttpResponse response = _httpClient.execute(request);
-                final int statusCode = response.getStatusLine().getStatusCode();
-                final String body = EntityUtils.toString(response.getEntity(), usedCharset);
-                return new Object[] { statusCode, body };
-            }
+        final ServiceResult<Object[]> result = _session.invokeService(() -> {
+            final HttpResponse response = _httpClient.execute(request);
+            final int statusCode = response.getStatusLine().getStatusCode();
+            final String body = EntityUtils.toString(response.getEntity(), usedCharset);
+            return new Object[] { statusCode, body };
         });
 
         if (!result.isSuccesfull()) {
@@ -176,7 +175,7 @@ public class HttpRequestTransformer implements Transformer {
     /**
      * Creates a string with all variable names replaced with dynamic values
      * coming from the {@link InputRow}'s values.
-     * 
+     *
      * @param str
      *            the string to prepare with variables
      * @param inputRow
@@ -184,7 +183,7 @@ public class HttpRequestTransformer implements Transformer {
      *            string
      * @return
      */
-    protected String applyVariablesToString(String str, InputRow inputRow) {
+    protected String applyVariablesToString(final String str, final InputRow inputRow) {
         if (Strings.isNullOrEmpty(str)) {
             return null;
         }
@@ -203,31 +202,31 @@ public class HttpRequestTransformer implements Transformer {
         return result;
     }
 
-    public void setCharset(String charset) {
+    public void setCharset(final String charset) {
         this.charset = charset;
     }
 
-    public void setMaxConcurrentRequests(int maxConcurrentRequests) {
+    public void setMaxConcurrentRequests(final int maxConcurrentRequests) {
         this.maxConcurrentRequests = maxConcurrentRequests;
     }
 
-    public void setMethod(HttpMethod method) {
+    public void setMethod(final HttpMethod method) {
         this.method = method;
     }
 
-    public void setRequestBody(String requestBody) {
+    public void setRequestBody(final String requestBody) {
         this.requestBody = requestBody;
     }
 
-    public void setUrl(String url) {
+    public void setUrl(final String url) {
         this.url = url;
     }
 
-    public void setHttpClient(CloseableHttpClient httpClient) {
+    public void setHttpClient(final CloseableHttpClient httpClient) {
         _httpClient = httpClient;
     }
 
-    public void setInputAndVariables(InputColumn<?>[] input, String[] variableNames) {
+    public void setInputAndVariables(final InputColumn<?>[] input, final String[] variableNames) {
         this.input = input;
         this.variableNames = variableNames;
     }

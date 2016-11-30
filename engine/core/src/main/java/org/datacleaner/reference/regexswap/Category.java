@@ -26,33 +26,33 @@ import org.apache.metamodel.util.BaseObject;
 
 public final class Category extends BaseObject implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private final String _name;
-	private final String _description;
-	private final String _detailsUrl;
+    private static final long serialVersionUID = 1L;
+    private final String _name;
+    private final String _description;
+    private final String _detailsUrl;
 
-	public Category(String name, String description, String detailsUrl) {
-		_name = name;
-		_description = description;
-		_detailsUrl = detailsUrl;
-	}
+    public Category(final String name, final String description, final String detailsUrl) {
+        _name = name;
+        _description = description;
+        _detailsUrl = detailsUrl;
+    }
 
-	public String getName() {
-		return _name;
-	}
+    public String getName() {
+        return _name;
+    }
 
-	public String getDescription() {
-		return _description;
-	}
+    public String getDescription() {
+        return _description;
+    }
 
-	public String getDetailsUrl() {
-		return _detailsUrl;
-	}
+    public String getDetailsUrl() {
+        return _detailsUrl;
+    }
 
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		identifiers.add(_name);
-		identifiers.add(_description);
-		identifiers.add(_detailsUrl);
-	}
+    @Override
+    protected void decorateIdentity(final List<Object> identifiers) {
+        identifiers.add(_name);
+        identifiers.add(_description);
+        identifiers.add(_detailsUrl);
+    }
 }

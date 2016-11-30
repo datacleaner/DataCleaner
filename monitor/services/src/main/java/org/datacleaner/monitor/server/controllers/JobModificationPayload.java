@@ -28,19 +28,19 @@ public class JobModificationPayload implements Serializable {
     private String name;
     private Boolean overwrite;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setOverwrite(Boolean overwrite) {
-        this.overwrite = overwrite;
+    public void setName(final String name) {
+        this.name = name;
     }
 
     public Boolean getOverwrite() {
         return overwrite;
+    }
+
+    public void setOverwrite(final Boolean overwrite) {
+        this.overwrite = overwrite;
     }
 }

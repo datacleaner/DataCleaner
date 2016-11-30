@@ -34,7 +34,8 @@ public class JobCopyEvent extends ApplicationEvent {
     private final JobContext _targetJob;
     private final String _tenant;
 
-    public JobCopyEvent(Object source, String tenant, JobContext sourceJob, JobContext targetJob) {
+    public JobCopyEvent(final Object source, final String tenant, final JobContext sourceJob,
+            final JobContext targetJob) {
         super(source);
         _tenant = tenant;
         _sourceJob = sourceJob;

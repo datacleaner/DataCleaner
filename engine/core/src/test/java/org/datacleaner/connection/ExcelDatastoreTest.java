@@ -22,52 +22,52 @@ package org.datacleaner.connection;
 import java.util.Arrays;
 
 import org.apache.metamodel.schema.Column;
+
 import junit.framework.TestCase;
 
 public class ExcelDatastoreTest extends TestCase {
 
-	private static final String NR_ENTRIES_IN_SPREADSHEET2007 = "4";
+    private static final String NR_ENTRIES_IN_SPREADSHEET2007 = "4";
 
     public void testOpenSpreadsheetXls() throws Exception {
-		Datastore datastore = new ExcelDatastore("foobar", null, "src/test/resources/Spreadsheet2003.xls");
-		assertEquals("foobar", datastore.getName());
-		DatastoreConnection con = datastore.openConnection();
-		assertNotNull(con);
+        final Datastore datastore = new ExcelDatastore("foobar", null, "src/test/resources/Spreadsheet2003.xls");
+        assertEquals("foobar", datastore.getName());
+        final DatastoreConnection con = datastore.openConnection();
+        assertNotNull(con);
 
-		Column col1 = con.getSchemaNavigator().convertToColumn("string");
-		assertNotNull(col1);
+        final Column col1 = con.getSchemaNavigator().convertToColumn("string");
+        assertNotNull(col1);
 
-		Column col2 = con.getSchemaNavigator().convertToColumn("number");
-		assertNotNull(col2);
+        final Column col2 = con.getSchemaNavigator().convertToColumn("number");
+        assertNotNull(col2);
 
-		Column col3 = con.getSchemaNavigator().convertToColumn("date");
-		assertNotNull(col3);
-		assertEquals(
-				"Column[name=date,columnNumber=2,type=VARCHAR,nullable=true,nativeType=null,columnSize=null]",
-				col3.toString());
-	}
+        final Column col3 = con.getSchemaNavigator().convertToColumn("date");
+        assertNotNull(col3);
+        assertEquals("Column[name=date,columnNumber=2,type=VARCHAR,nullable=true,nativeType=null,columnSize=null]",
+                col3.toString());
+    }
 
-	public void testOpenSpreadsheetXlsx() throws Exception {
-		Datastore datastore = new ExcelDatastore("foobar", null, "src/test/resources/Spreadsheet2007.xlsx");
-		assertEquals("foobar", datastore.getName());
-		DatastoreConnection con = datastore.openConnection();
-		assertNotNull(con);
+    public void testOpenSpreadsheetXlsx() throws Exception {
+        final Datastore datastore = new ExcelDatastore("foobar", null, "src/test/resources/Spreadsheet2007.xlsx");
+        assertEquals("foobar", datastore.getName());
+        final DatastoreConnection con = datastore.openConnection();
+        assertNotNull(con);
 
-		Column col1 = con.getSchemaNavigator().convertToColumn("string");
-		assertNotNull(col1);
+        final Column col1 = con.getSchemaNavigator().convertToColumn("string");
+        assertNotNull(col1);
 
-		Column col2 = con.getSchemaNavigator().convertToColumn("number");
-		assertNotNull(col2);
+        final Column col2 = con.getSchemaNavigator().convertToColumn("number");
+        assertNotNull(col2);
 
-		Column col3 = con.getSchemaNavigator().convertToColumn("date");
-		assertNotNull(col3);
-		assertEquals(
-				"Column[name=date,columnNumber=2,type=STRING,nullable=true,nativeType=null,columnSize=null]",
-				col3.toString());
+        final Column col3 = con.getSchemaNavigator().convertToColumn("date");
+        assertNotNull(col3);
+        assertEquals("Column[name=date,columnNumber=2,type=STRING,nullable=true,nativeType=null,columnSize=null]",
+                col3.toString());
 
-        assertEquals(NR_ENTRIES_IN_SPREADSHEET2007, con.getDataContext().executeQuery(
-                "select count(string) from Sheet1").toRows().get(0).getValue(0).toString());
-	}
+        assertEquals(NR_ENTRIES_IN_SPREADSHEET2007,
+                con.getDataContext().executeQuery("select count(string) from Sheet1").toRows().get(0).getValue(0)
+                        .toString());
+    }
 
     public void testCustomColumnNaming() throws Exception {
         final DatastoreConnection con = new ExcelDatastore("foobar", null, "src/test/resources/Spreadsheet2007.xlsx",
@@ -78,16 +78,16 @@ public class ExcelDatastoreTest extends TestCase {
 
         final Column col3 = con.getSchemaNavigator().convertToColumn("third");
         assertNotNull(col3);
-        assertEquals(
-                "Column[name=third,columnNumber=2,type=STRING,nullable=true,nativeType=null,columnSize=null]",
+        assertEquals("Column[name=third,columnNumber=2,type=STRING,nullable=true,nativeType=null,columnSize=null]",
                 col3.toString());
 
-        assertEquals(NR_ENTRIES_IN_SPREADSHEET2007, con.getDataContext().executeQuery("select count(third) from Sheet1")
-                .toRows().get(0).getValue(0).toString());
+        assertEquals(NR_ENTRIES_IN_SPREADSHEET2007,
+                con.getDataContext().executeQuery("select count(third) from Sheet1").toRows().get(0).getValue(0)
+                        .toString());
     }
 
-	public void testToString() throws Exception {
-		Datastore datastore = new ExcelDatastore("foobar", null, "src/test/resources/Spreadsheet2007.xlsx");
-		assertEquals("ExcelDatastore[name=foobar]", datastore.toString());
-	}
+    public void testToString() throws Exception {
+        final Datastore datastore = new ExcelDatastore("foobar", null, "src/test/resources/Spreadsheet2007.xlsx");
+        assertEquals("ExcelDatastore[name=foobar]", datastore.toString());
+    }
 }

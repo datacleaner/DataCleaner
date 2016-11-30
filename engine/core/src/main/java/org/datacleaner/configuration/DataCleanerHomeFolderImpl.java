@@ -37,7 +37,7 @@ public class DataCleanerHomeFolderImpl implements DataCleanerHomeFolder {
     private final RepositoryFolder _repositoryFolder;
     private final File _file;
 
-    public DataCleanerHomeFolderImpl(RepositoryFolder repositoryFolder) {
+    public DataCleanerHomeFolderImpl(final RepositoryFolder repositoryFolder) {
         if (repositoryFolder == null) {
             throw new IllegalArgumentException("RepositoryFolder cannot be null");
         }

@@ -47,16 +47,15 @@ import com.google.gwt.user.client.ui.IsWidget;
  * It is the abstract implementation of panel builder. This class can create a
  * wizard panel of type {@link WizardPanel} based on user input. It also
  * provides controls for Wizard.
- * 
+ *
  * @param <S>
  */
 public abstract class AbstractWizardController<S extends WizardNavigationServiceAsync> {
 
+    protected final LoadingIndicator _loadingIndicator;
     private final S _wizardService;
     private final TenantIdentifier _tenant;
     private final WizardPanel _wizardPanel;
-
-    protected final LoadingIndicator _loadingIndicator;
     private final Button _nextStepButton;
     private final Button _previousStepButton;
 
@@ -71,8 +70,8 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
     private WizardIdentifier _wizardIdentifier;
     private WizardClientController _currentController;
 
-    public AbstractWizardController(WizardPanel wizardPanel, TenantIdentifier tenant,
-            WizardIdentifier wizardIdentifier, S wizardService) {
+    public AbstractWizardController(final WizardPanel wizardPanel, final TenantIdentifier tenant,
+            final WizardIdentifier wizardIdentifier, final S wizardService) {
         _wizardPanel = wizardPanel;
         _wizardIdentifier = wizardIdentifier;
         _wizardService = wizardService;
@@ -93,12 +92,12 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
         _nextStepButton.getElement().setId("wizardNextButton");
         _nextStepButton.addStyleName("wizard-navigation-button");
         _wizardPanel.getButtonPanel().addButton(_nextStepButton);
-        
+
         final Button cancelButton = DCButtons.defaultButton(null, "Cancel");
         cancelButton.getElement().setId("wizardCancelButton");
         cancelButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 cancelWizard();
             }
         });
@@ -141,14 +140,14 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
     /**
      * Gets the number of steps to add before the wizard pages' steps in the
      * {@link WizardProgressBar}.
-     * 
+     *
      * @return
      */
     protected abstract int getStepsBeforeWizardPages();
 
     /**
      * Invoked when the wizard has finished.
-     * 
+     *
      * @param resultEntityName
      *            the resulting string object of the wizard. Usually identifies
      *            the name/id of the thing that was built with the wizard.
@@ -159,23 +158,23 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
         setContent(_loadingIndicator);
     }
 
-    protected final void setProgress(int stepIndex) {
+    protected final void setProgress(final int stepIndex) {
         _wizardPanel.getProgressBar().setProgress(stepIndex);
     }
 
-    protected final void setSteps(int steps) {
+    protected final void setSteps(final int steps) {
         _wizardPanel.getProgressBar().setSteps(steps);
     }
 
-    protected final void setSteps(int steps, boolean indicateMore) {
+    protected final void setSteps(final int steps, final boolean indicateMore) {
         _wizardPanel.getProgressBar().setSteps(steps, indicateMore);
     }
 
-    protected final void setContent(IsWidget w) {
-        _wizardPanel.setContent(w);
+    protected final void setContent(final IsWidget widget) {
+        _wizardPanel.setContent(widget);
     }
 
-    protected final void setPreviousClickHandler(ClickHandler clickHandler) {
+    protected final void setPreviousClickHandler(final ClickHandler clickHandler) {
         if (_previousButtonClickRegistration != null) {
             _previousButtonClickRegistration.removeHandler();
         }
@@ -187,7 +186,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
         }
     }
 
-    protected final void setNextClickHandler(ClickHandler clickHandler) {
+    protected final void setNextClickHandler(final ClickHandler clickHandler) {
         if (_nextButtonClickRegistration != null) {
             _nextButtonClickRegistration.removeHandler();
         }
@@ -200,7 +199,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
             public void onSuccess(final WizardPage page) {
                 final String wizardDisplayName = _wizardIdentifier.getDisplayName();
                 if (page.isFinished()) {
-                	_wizardPanel.getButtonPanel().removeAllButtons();
+                    _wizardPanel.getButtonPanel().removeAllButtons();
                     final String resultEntityName = page.getWizardResult();
                     JavaScriptCallbacks.onWizardFinished(wizardDisplayName, resultEntityName);
                     wizardFinished(resultEntityName);
@@ -210,7 +209,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
                     final WizardProgressBar progressBar = _wizardPanel.getProgressBar();
                     progressBar.setSteps(steps);
                     progressBar.setProgress(stepIndex);
-                    
+
                     JavaScriptCallbacks.onWizardProgress(wizardDisplayName, stepIndex, steps);
                     _currentController = new FormWizardClientController(_wizardService, _tenant, page);
 
@@ -221,7 +220,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
                     if (page.getPageIndex() > 0) {
                         setPreviousClickHandler(new ClickHandler() {
                             @Override
-                            public void onClick(ClickEvent event) {
+                            public void onClick(final ClickEvent event) {
                                 setContent(_loadingIndicator);
                                 _currentController.requestPreviousPage(createNextPageCallback());
                             }
@@ -236,7 +235,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
             private void addNextClickHandler() {
                 setNextClickHandler(new ClickHandler() {
                     @Override
-                    public void onClick(ClickEvent event) {
+                    public void onClick(final ClickEvent event) {
                         _nextButtonClickRegistration.removeHandler();
                         setContent(_loadingIndicator);
                         _currentController.requestNextPage(createNextPageCallback());
@@ -245,7 +244,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
             }
 
             @Override
-            public void onFailure(Throwable e) {
+            public void onFailure(final Throwable e) {
                 addNextClickHandler();
                 if (e instanceof DCUserInputException) {
                     // restore the previous panel view
@@ -258,7 +257,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
 
     /**
      * Gets the {@link WizardIdentifier} of the wizard being controlled.
-     * 
+     *
      * @return
      */
     public WizardIdentifier getWizardIdentifier() {
@@ -267,16 +266,16 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
 
     /**
      * Sets the {@link WizardIdentifier} of the wizard being controlled.
-     * 
+     *
      * @param wizardIdentifier
      */
-    public void setWizardIdentifier(WizardIdentifier wizardIdentifier) {
+    public void setWizardIdentifier(final WizardIdentifier wizardIdentifier) {
         _wizardIdentifier = wizardIdentifier;
     }
 
     /**
      * Gets the wizard controlling service
-     * 
+     *
      * @return
      */
     public S getWizardService() {
@@ -285,18 +284,18 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
 
     /**
      * Gets the locale name for inclusion in many of the service requests.
-     * 
+     *
      * @return
      */
     protected String getLocaleName() {
-        LocaleInfo locale = LocaleInfo.getCurrentLocale();
-        String localeName = locale.getLocaleName();
+        final LocaleInfo locale = LocaleInfo.getCurrentLocale();
+        final String localeName = locale.getLocaleName();
         return localeName;
     }
 
     /**
      * Returns the wizard panel instance
-     * 
+     *
      * @return
      */
     public WizardPanel getWizardPanel() {
@@ -305,7 +304,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
 
     /**
      * Gets the current tenant id.
-     * 
+     *
      * @return
      */
     public TenantIdentifier getTenant() {
@@ -315,16 +314,16 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
     /**
      * Closes (and hides) the wizard after finishing. Call this method from any
      * events that should hide the wizard after the job has finished.
-     * 
+     *
      * @param string
      */
-    protected final void closeWizardAfterFinishing(String resultEntityName, String defaultUrlToGoTo) {
+    protected final void closeWizardAfterFinishing(final String resultEntityName, final String defaultUrlToGoTo) {
         getWizardPanel().hideWizard();
         final String displayName = getWizardIdentifier().getDisplayName();
-        boolean callbackExecuted = JavaScriptCallbacks.onWizardPanelClosing(displayName, resultEntityName);
+        final boolean callbackExecuted = JavaScriptCallbacks.onWizardPanelClosing(displayName, resultEntityName);
 
         if (!callbackExecuted && defaultUrlToGoTo != null) {
-            String url = Urls.createRelativeUrl(defaultUrlToGoTo);
+            final String url = Urls.createRelativeUrl(defaultUrlToGoTo);
             Urls.assign(url);
         }
     }

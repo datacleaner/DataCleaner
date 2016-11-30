@@ -74,15 +74,16 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     private final OutputDataStreamsViewer _outputDataStreamsViewer;
     private JXTaskPane _outputDataStreamsTaskPane;
 
-    protected AbstractComponentBuilderPanel(String watermarkImagePath, ComponentBuilder componentBuilder,
-            PropertyWidgetFactory propertyWidgetFactory) {
+    protected AbstractComponentBuilderPanel(final String watermarkImagePath, final ComponentBuilder componentBuilder,
+            final PropertyWidgetFactory propertyWidgetFactory) {
         this(ImageManager.get().getImage(watermarkImagePath), 95, 95, componentBuilder, propertyWidgetFactory);
     }
 
-    protected AbstractComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-            int watermarkVerticalPosition, ComponentBuilder componentBuilder,
-            PropertyWidgetFactory propertyWidgetFactory) {
-        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, WidgetUtils.COLOR_WELL_BACKGROUND);
+    protected AbstractComponentBuilderPanel(final Image watermarkImage, final int watermarkHorizontalPosition,
+            final int watermarkVerticalPosition, final ComponentBuilder componentBuilder,
+            final PropertyWidgetFactory propertyWidgetFactory) {
+        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition,
+                WidgetUtils.COLOR_WELL_BACKGROUND);
         _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
         _taskPaneContainer.setLayout(new VerticalLayout(4));
         _componentBuilder = componentBuilder;
@@ -100,7 +101,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         add(_buttonPanel, BorderLayout.NORTH);
     }
 
-    public void addToButtonPanel(JComponent component) {
+    public void addToButtonPanel(final JComponent component) {
         _buttonPanel.add(component);
     }
 
@@ -117,8 +118,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     @Override
     public final JComponent createJComponent() {
         init();
-        JComponent decorate = decorateMainPanel(this);
-        return decorate;
+        return decorateMainPanel(this);
     }
 
     @Override
@@ -129,15 +129,15 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     /**
      * Can be implemented by subclasses to intercept the created JComponent
      * before returning.
-     * 
+     *
      * @param panel
      * @return
      */
-    protected JComponent decorateMainPanel(DCPanel panel) {
+    protected JComponent decorateMainPanel(final DCPanel panel) {
         return panel;
     }
 
-    private final void init() {
+    private void init() {
         final ComponentBuilder componentBuilder = getComponentBuilder();
         addInformationPanelAboutDisable();
         final List<ConfiguredPropertyTaskPane> propertyTaskPanes = createPropertyTaskPanes();
@@ -145,16 +145,17 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         final Set<ConfiguredPropertyDescriptor> unconfiguredPropertyDescriptors = new HashSet<>();
         unconfiguredPropertyDescriptors.addAll(componentBuilder.getDescriptor().getConfiguredProperties());
 
-        for (ConfiguredPropertyTaskPane propertyTaskPane : propertyTaskPanes) {
-            buildTaskPane(propertyTaskPane.getProperties(), imageManager.getImageIcon(
-                    propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_TASK_PANE, getClass().getClassLoader()),
-                    propertyTaskPane.getTitle(), componentBuilder, propertyTaskPane.isExpanded());
+        for (final ConfiguredPropertyTaskPane propertyTaskPane : propertyTaskPanes) {
+            buildTaskPane(propertyTaskPane.getProperties(), imageManager
+                            .getImageIcon(propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_TASK_PANE,
+                                    getClass().getClassLoader()), propertyTaskPane.getTitle(), componentBuilder,
+                    propertyTaskPane.isExpanded());
 
             unconfiguredPropertyDescriptors.removeAll(propertyTaskPane.getProperties());
         }
 
         if (!unconfiguredPropertyDescriptors.isEmpty()) {
-            for (ConfiguredPropertyDescriptor property : unconfiguredPropertyDescriptors) {
+            for (final ConfiguredPropertyDescriptor property : unconfiguredPropertyDescriptors) {
                 logger.warn("No property widget was found in task panes for property: {}", property);
 
                 // add it to the property widget collection just to be sure
@@ -169,26 +170,26 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     private void addInformationPanelAboutDisable() {
         if (_descriptor instanceof Allowable && !((Allowable) _descriptor).isAllowed()) {
             final ImageIcon icon = imageManager.getImageIcon(IconUtils.STATUS_INFO, IconUtils.ICON_SIZE_TASK_PANE);
-            DCPanel panel = new DCPanel();
-            DCHtmlBox dcHtmlBox = new DCHtmlBox(
+            final DCPanel panel = new DCPanel();
+            final DCHtmlBox dcHtmlBox = new DCHtmlBox(
                     "<p>This service is not currently available for your DataCloud account.</p>"
-                            + "<p> Please check the Access Rights on your "
-                            + "<a href='" + RemoteDescriptorProvider.DATACLEANER_BASE_URL + "/userprofile#DataCloudAccessRights" + "'>DataCleaner profile</a>"
-                            + ".</p>");
+                            + "<p> Please check the Access Rights on your " + "<a href='"
+                            + RemoteDescriptorProvider.DATACLEANER_BASE_URL + "/userprofile#DataCloudAccessRights"
+                            + "'>DataCleaner profile</a>" + ".</p>");
             panel.add(dcHtmlBox);
             addTaskPane(icon, "Component is disabled", panel, true);
         }
     }
 
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-        final Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(
-                _descriptor.getConfiguredProperties());
+        final Set<ConfiguredPropertyDescriptor> configuredProperties =
+                new TreeSet<>(_descriptor.getConfiguredProperties());
 
-        final List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<ConfiguredPropertyDescriptor>();
-        final List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<ConfiguredPropertyDescriptor>();
-        final List<ConfiguredPropertyDescriptor> optionalProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+        final List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<>();
+        final List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<>();
+        final List<ConfiguredPropertyDescriptor> optionalProperties = new ArrayList<>();
 
-        for (ConfiguredPropertyDescriptor propertyDescriptor : configuredProperties) {
+        for (final ConfiguredPropertyDescriptor propertyDescriptor : configuredProperties) {
             final HiddenProperty hiddenProperty = propertyDescriptor.getAnnotation(HiddenProperty.class);
             if (hiddenProperty == null || !hiddenProperty.hiddenForLocalAccess()) {
                 final boolean required = propertyDescriptor.isRequired();
@@ -202,7 +203,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
             }
         }
 
-        final List<ConfiguredPropertyTaskPane> result = new ArrayList<ConfiguredPropertyTaskPane>();
+        final List<ConfiguredPropertyTaskPane> result = new ArrayList<>();
         result.add(new ConfiguredPropertyTaskPane("Input columns", IconUtils.MODEL_COLUMN, inputProperties));
         result.add(new ConfiguredPropertyTaskPane("Required properties", IconUtils.MENU_OPTIONS, requiredProperties));
         result.add(new ConfiguredPropertyTaskPane("Optional properties (" + optionalProperties.size() + ")",
@@ -211,22 +212,22 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         return result;
     }
 
-    protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
-            ComponentBuilder componentBuilder) {
+    protected void buildTaskPane(final List<ConfiguredPropertyDescriptor> properties, final Icon icon,
+            final String title, final ComponentBuilder componentBuilder) {
         buildTaskPane(properties, icon, title, componentBuilder, true);
     }
 
-    protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
-            ComponentBuilder componentBuilder, boolean expanded) {
+    protected void buildTaskPane(final List<ConfiguredPropertyDescriptor> properties, final Icon icon,
+            final String title, final ComponentBuilder componentBuilder, final boolean expanded) {
         if (!properties.isEmpty()) {
             final PropertyWidgetPanel panel = new PropertyWidgetPanel() {
 
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected PropertyWidget<?> getPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
-                    final PropertyWidget<?> propertyWidget = createPropertyWidget(getComponentBuilder(),
-                            propertyDescriptor);
+                protected PropertyWidget<?> getPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor) {
+                    final PropertyWidget<?> propertyWidget =
+                            createPropertyWidget(getComponentBuilder(), propertyDescriptor);
                     getPropertyWidgetCollection().registerWidget(propertyDescriptor, propertyWidget);
                     return propertyWidget;
                 }
@@ -239,25 +240,27 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         }
     }
 
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         return getPropertyWidgetFactory().create(propertyDescriptor);
     }
 
-    protected JXTaskPane addTaskPane(String iconImagePath, String title, JComponent content) {
+    protected JXTaskPane addTaskPane(final String iconImagePath, final String title, final JComponent content) {
         return addTaskPane(iconImagePath, title, content, true);
     }
 
-    protected JXTaskPane addTaskPane(String iconImagePath, String title, JComponent content, boolean expanded) {
+    protected JXTaskPane addTaskPane(final String iconImagePath, final String title, final JComponent content,
+            final boolean expanded) {
         final ImageIcon icon = imageManager.getImageIcon(iconImagePath, IconUtils.ICON_SIZE_TASK_PANE);
         return addTaskPane(icon, title, content, expanded);
     }
 
-    protected JXTaskPane addTaskPane(Icon icon, String title, JComponent content) {
+    protected JXTaskPane addTaskPane(final Icon icon, final String title, final JComponent content) {
         return addTaskPane(icon, title, content, true);
     }
 
-    protected JXTaskPane addTaskPane(Icon icon, String title, JComponent content, boolean expanded) {
+    protected JXTaskPane addTaskPane(final Icon icon, final String title, final JComponent content,
+            final boolean expanded) {
         final JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
         taskPane.setCollapsed(!expanded);
         taskPane.add(content);
@@ -272,13 +275,13 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     /**
      * @param errorAware
      *            defines whether or not the method should throw an exception in
-     *            case some of the applied properties are missing or errornous
+     *            case some of the applied properties are missing or erroneous
      */
-    public final void applyPropertyValues(boolean errorAware) {
-        for (PropertyWidget<?> propertyWidget : getPropertyWidgetCollection().getWidgets()) {
-            ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
+    public final void applyPropertyValues(final boolean errorAware) {
+        for (final PropertyWidget<?> propertyWidget : getPropertyWidgetCollection().getWidgets()) {
+            final ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
             if (propertyWidget.isSet()) {
-                Object value = propertyWidget.getValue();
+                final Object value = propertyWidget.getValue();
                 setConfiguredProperty(propertyDescriptor, value);
             } else {
                 if (errorAware && propertyDescriptor.isRequired()) {
@@ -300,7 +303,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         return getComponentBuilder().getAnalysisJobBuilder();
     }
 
-    protected void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value) {
+    protected void setConfiguredProperty(final ConfiguredPropertyDescriptor propertyDescriptor, final Object value) {
         getComponentBuilder().setConfiguredProperty(propertyDescriptor, value);
     }
 
@@ -318,8 +321,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         _taskPaneContainer.remove(_outputDataStreamsTaskPane);
         _outputDataStreamsViewer.refresh();
         if (_outputDataStreamsViewer.isEnabled()) {
-            _outputDataStreamsTaskPane = addTaskPane(IconUtils.OUTPUT_DATA_STREAM_PATH, "Output data streams",
-                    _outputDataStreamsViewer);
+            _outputDataStreamsTaskPane =
+                    addTaskPane(IconUtils.OUTPUT_DATA_STREAM_PATH, "Output data streams", _outputDataStreamsViewer);
             _taskPaneContainer.updateUI();
         }
     }
@@ -327,7 +330,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     /**
      * Convenience method made available to subclasses to inform that the
      * requirement on this component has changed
-     * 
+     *
      * @deprecated no longer has any effect since
      *             {@link ChangeRequirementButton} has been removed from this
      *             panel

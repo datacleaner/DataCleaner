@@ -30,7 +30,7 @@ public class SimpleSynonym implements Synonym, Serializable {
     private final String _masterTerm;
     private final String[] _synonyms;
 
-    public SimpleSynonym(String masterTerm, String... synonyms) {
+    public SimpleSynonym(final String masterTerm, final String... synonyms) {
         _masterTerm = masterTerm;
         _synonyms = synonyms;
     }

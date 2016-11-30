@@ -29,14 +29,12 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
 
+import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.api.StringProperty;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.WidgetFactory;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
-import org.apache.metamodel.util.Predicate;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
@@ -51,20 +49,20 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
     private final StringProperty _stringPropertyAnnotation;
 
     @Inject
-    public SingleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder) {
+    public SingleStringPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
 
         _stringPropertyAnnotation = propertyDescriptor.getAnnotation(StringProperty.class);
         _textComponent = getTextComponent(propertyDescriptor);
-        String currentValue = getCurrentValue();
+        final String currentValue = getCurrentValue();
         if (currentValue != null) {
             _textComponent.setText(currentValue);
         }
         add(_textComponent);
     }
 
-    protected JTextComponent getTextComponent(ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected JTextComponent getTextComponent(final ConfiguredPropertyDescriptor propertyDescriptor) {
         final boolean multiline;
         final boolean password;
         final String mimeType;
@@ -75,7 +73,7 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
             password = false;
         } else {
             multiline = _stringPropertyAnnotation.multiline();
-            String[] mimeTypes = _stringPropertyAnnotation.mimeType();
+            final String[] mimeTypes = _stringPropertyAnnotation.mimeType();
             mimeType = getTextAreaMimeType(mimeTypes);
             password = _stringPropertyAnnotation.password();
         }
@@ -83,7 +81,7 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
         final JTextComponent textComponent;
         if (multiline) {
             if (mimeType != null) {
-                RSyntaxTextArea syntaxArea = new RSyntaxTextArea(8, 17);
+                final RSyntaxTextArea syntaxArea = new RSyntaxTextArea(8, 17);
                 syntaxArea.setTabSize(2);
                 syntaxArea.setSyntaxEditingStyle(mimeType);
                 textComponent = syntaxArea;
@@ -100,7 +98,7 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
         textComponent.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent e) {
+            protected void onChange(final DocumentEvent e) {
                 fireValueChanged();
             }
         });
@@ -111,42 +109,36 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
     /**
      * Finds a mimetype that is supported by the {@link RSyntaxTextArea}. These
      * are defined in the {@link SyntaxConstants} class.
-     * 
+     *
      * @param mimeTypes
      * @return
      */
-    private String getTextAreaMimeType(String[] mimeTypes) {
+    private String getTextAreaMimeType(final String[] mimeTypes) {
         if (mimeTypes == null) {
             return null;
         }
 
         List<Field> fields = Arrays.asList(SyntaxConstants.class.getFields());
-        fields = CollectionUtils.filter(fields, new Predicate<Field>() {
-            @Override
-            public Boolean eval(Field f) {
-                if (f.getName().startsWith("SYNTAX_STYLE_")) {
-                    if (f.getType() == String.class) {
-                        final int modifiers = f.getModifiers();
-                        final boolean accessible = f.isAccessible() || Modifier.isPublic(modifiers);
-                        final boolean isStatic = Modifier.isStatic(modifiers);
-                        return accessible && isStatic;
-                    }
+        fields = CollectionUtils.filter(fields, f -> {
+            if (f.getName().startsWith("SYNTAX_STYLE_")) {
+                if (f.getType() == String.class) {
+                    final int modifiers = f.getModifiers();
+                    final boolean accessible = f.isAccessible() || Modifier.isPublic(modifiers);
+                    final boolean isStatic = Modifier.isStatic(modifiers);
+                    return accessible && isStatic;
                 }
-                return false;
             }
+            return false;
         });
-        List<String> acceptedMimeTypes = CollectionUtils.map(fields, new Func<Field, String>() {
-            @Override
-            public String eval(Field f) {
-                try {
-                    return (String) f.get(null);
-                } catch (Exception e) {
-                    return null;
-                }
+        final List<String> acceptedMimeTypes = CollectionUtils.map(fields, f -> {
+            try {
+                return (String) f.get(null);
+            } catch (final Exception e) {
+                return null;
             }
         });
 
-        for (String mimeType : mimeTypes) {
+        for (final String mimeType : mimeTypes) {
             if (acceptedMimeTypes.contains(mimeType)) {
                 return mimeType;
             }
@@ -179,7 +171,7 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
     }
 
     @Override
-    protected void setValue(String value) {
+    protected void setValue(final String value) {
         _textComponent.setText(value);
     }
 }

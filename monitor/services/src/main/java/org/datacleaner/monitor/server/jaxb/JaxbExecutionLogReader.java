@@ -40,14 +40,14 @@ public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.datacleaner.
         super(org.datacleaner.monitor.jaxb.ExecutionLog.class);
     }
 
-    public ExecutionLog read(InputStream inputStream, JobIdentifier jobIdentifier, TenantIdentifier tenant) {
-        org.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog = unmarshal(inputStream);
-        ExecutionLog executionLog = convert(jaxbExecutionLog, jobIdentifier, tenant);
-        return executionLog;
+    public ExecutionLog read(final InputStream inputStream, final JobIdentifier jobIdentifier,
+            final TenantIdentifier tenant) {
+        final org.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog = unmarshal(inputStream);
+        return convert(jaxbExecutionLog, jobIdentifier, tenant);
     }
 
-    private ExecutionLog convert(org.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog,
-            JobIdentifier jobIdentifier, TenantIdentifier tenant) {
+    private ExecutionLog convert(final org.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog,
+            final JobIdentifier jobIdentifier, final TenantIdentifier tenant) {
 
         final ExecutionLog executionLog = new ExecutionLog();
         executionLog.setResultId(jaxbExecutionLog.getResultId());
@@ -74,14 +74,14 @@ public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.datacleaner.
 
         executionLog.setTriggeredBy(jaxbExecutionLog.getTriggeredBy());
         executionLog.setLogOutput(jaxbExecutionLog.getLogOutput());
-        
+
         Boolean resultPersisted = jaxbExecutionLog.isResultPersisted();
         resultPersisted = (resultPersisted == null) ? true : resultPersisted;
         executionLog.setResultPersisted(resultPersisted.booleanValue());
 
         final JaxbScheduleReader reader = new JaxbScheduleReader();
-        final ScheduleDefinition schedule = reader.createSchedule(jaxbExecutionLog.getSchedule(), jobIdentifier, tenant, null,
-                false);
+        final ScheduleDefinition schedule =
+                reader.createSchedule(jaxbExecutionLog.getSchedule(), jobIdentifier, tenant, null, false);
         executionLog.setSchedule(schedule);
         executionLog.setJob(jobIdentifier);
 

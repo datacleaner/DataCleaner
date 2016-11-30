@@ -19,31 +19,31 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
+import static org.junit.Assert.*;
+
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class DatastoreDictionaryReferenceDataWizardTest {
     @Test
     public void testIsApplicableTo() {
         final DatastoreDictionaryReferenceDataWizard wizard = new DatastoreDictionaryReferenceDataWizard();
-        assertTrue(wizard.isApplicableTo(null)); 
+        assertTrue(wizard.isApplicableTo(null));
     }
-    
+
     @Test
     public void testGetExpectedPageCount() {
         final DatastoreDictionaryReferenceDataWizard wizard = new DatastoreDictionaryReferenceDataWizard();
         assertEquals(4, wizard.getExpectedPageCount());
     }
-    
+
     @Test
     public void testGetDisplayName() {
         final DatastoreDictionaryReferenceDataWizard wizard = new DatastoreDictionaryReferenceDataWizard();
         assertNotEquals("", wizard.getDisplayName());
     }
-    
+
     @Test
     public void testStart() {
         final DatastoreDictionaryReferenceDataWizard wizard = new DatastoreDictionaryReferenceDataWizard();

@@ -20,7 +20,6 @@
 package org.datacleaner.widgets;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,18 +61,15 @@ public class ComboButton extends JPanel {
      */
     public ComboButton() {
         super(new HorizontalLayout(0));
-        _buttons = new ArrayList<AbstractButton>(2);
-        _commonToggleButtonActionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (AbstractButton button : _buttons) {
-                    Object source = e.getSource();
-                    if (source != button) {
-                        button.setSelected(false);
-                    }
+        _buttons = new ArrayList<>(2);
+        _commonToggleButtonActionListener = e -> {
+            for (final AbstractButton button : _buttons) {
+                final Object source = e.getSource();
+                if (source != button) {
+                    button.setSelected(false);
                 }
-
             }
+
         };
 
         final Border border = new LineBorder(WidgetUtils.BG_COLOR_LESS_BRIGHT, 1, false);
@@ -82,7 +78,7 @@ public class ComboButton extends JPanel {
 
     /**
      * Adds a button to the {@link ComboButton}.
-     * 
+     *
      * @param text
      *            the text of the button
      * @param toggleButton
@@ -90,13 +86,13 @@ public class ComboButton extends JPanel {
      *            a regular button (false)
      * @return
      */
-    public AbstractButton addButton(String text, boolean toggleButton) {
+    public AbstractButton addButton(final String text, final boolean toggleButton) {
         return addButton(text, (Icon) null, toggleButton);
     }
 
     /**
      * Adds a button to this {@link ComboButton}
-     * 
+     *
      * @param text
      *            the text of the button
      * @param icon
@@ -106,8 +102,8 @@ public class ComboButton extends JPanel {
      *            a regular button (false)
      * @return
      */
-    public AbstractButton addButton(String text, Icon icon, boolean toggleButton) {
-        AbstractButton button;
+    public AbstractButton addButton(final String text, final Icon icon, final boolean toggleButton) {
+        final AbstractButton button;
         if (toggleButton) {
             button = new JToggleButton(text, icon);
             button.addActionListener(_commonToggleButtonActionListener);
@@ -123,13 +119,13 @@ public class ComboButton extends JPanel {
      * Adds a button to this {@link ComboButton}. Beware that this method does
      * change the styling (colors, borders etc.) of the button to make it fit
      * the {@link ComboButton}.
-     * 
+     *
      * @param button
      */
-    public void addButton(AbstractButton button) {
+    public void addButton(final AbstractButton button) {
         WidgetUtils.setDefaultButtonStyle(button);
-        final EmptyBorder baseBorder = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH - 1, 9,
-                WidgetUtils.BORDER_WIDE_WIDTH - 1, 9);
+        final EmptyBorder baseBorder =
+                new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH - 1, 9, WidgetUtils.BORDER_WIDE_WIDTH - 1, 9);
         if (getComponentCount() == 0) {
             button.setBorder(baseBorder);
         } else {
@@ -151,11 +147,11 @@ public class ComboButton extends JPanel {
 
     /**
      * Gets the currently selected toggle button, if any.
-     * 
+     *
      * @return
      */
     public JToggleButton getSelectedToggleButton() {
-        for (AbstractButton button : _buttons) {
+        for (final AbstractButton button : _buttons) {
             if (button instanceof JToggleButton) {
                 if (button.isSelected()) {
                     return (JToggleButton) button;
@@ -167,7 +163,7 @@ public class ComboButton extends JPanel {
 
     /**
      * Adds a button to this {@link ComboButton}
-     * 
+     *
      * @param text
      *            the text of the button
      * @param iconImagePath
@@ -177,13 +173,13 @@ public class ComboButton extends JPanel {
      *            a regular button (false)
      * @return
      */
-    public AbstractButton addButton(String text, String iconImagePath, boolean toggleButton) {
-        ImageIcon icon = ImageManager.get().getImageIcon(iconImagePath, IconUtils.ICON_SIZE_MEDIUM);
+    public AbstractButton addButton(final String text, final String iconImagePath, final boolean toggleButton) {
+        final ImageIcon icon = ImageManager.get().getImageIcon(iconImagePath, IconUtils.ICON_SIZE_MEDIUM);
         return addButton(text, icon, toggleButton);
     }
 
     // a simple test app
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         LookAndFeelManager.get().init();
 
         final ComboButton comboButton1 = new ComboButton();
@@ -200,7 +196,7 @@ public class ComboButton extends JPanel {
         panel.add(comboButton1);
         panel.add(comboButton2);
 
-        JButton regularButton = WidgetFactory.createDefaultButton("Regular button", IconUtils.ACTION_ADD_DARK);
+        final JButton regularButton = WidgetFactory.createDefaultButton("Regular button", IconUtils.ACTION_ADD_DARK);
         panel.add(regularButton);
 
         final JFrame frame = new JFrame("test");

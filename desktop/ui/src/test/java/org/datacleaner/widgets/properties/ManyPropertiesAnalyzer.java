@@ -41,98 +41,98 @@ import org.junit.Ignore;
 @Named("Many properties!!!")
 public class ManyPropertiesAnalyzer implements Analyzer<NumberResult> {
 
-	@Configured
-	int intProperty;
+    @Configured
+    int intProperty;
 
-	@Configured
-	int[] intArrayProperty;
+    @Configured
+    int[] intArrayProperty;
 
-	@Configured
-	Number numberProperty;
+    @Configured
+    Number numberProperty;
 
-	@Configured
-	Number[] numberArrayProperty;
-	
-	@Configured
-	double doubleProperty;
+    @Configured
+    Number[] numberArrayProperty;
 
-	@Configured
-	double[] doubleArrayProperty;
+    @Configured
+    double doubleProperty;
 
-	@Configured
-	boolean boolProperty;
+    @Configured
+    double[] doubleArrayProperty;
 
-	@Configured
-	boolean[] boolArrayProperty;
+    @Configured
+    boolean boolProperty;
 
-	@Configured
-	String stringProperty;
+    @Configured
+    boolean[] boolArrayProperty;
 
-	@Configured
-	String[] stringArrayProperty;
+    @Configured
+    String stringProperty;
 
-	@Configured
-	char charProperty;
+    @Configured
+    String[] stringArrayProperty;
 
-	@Configured
-	char[] charArrayProperty;
+    @Configured
+    char charProperty;
 
-	@Configured
-	ValidationCategory enumProperty;
+    @Configured
+    char[] charArrayProperty;
 
-	@Configured
-	ValidationCategory[] enumArrayProperty;
+    @Configured
+    ValidationCategory enumProperty;
 
-	@Configured
-	File fileProperty;
+    @Configured
+    ValidationCategory[] enumArrayProperty;
 
-	@Configured
-	File[] fileArrayProperty;
+    @Configured
+    File fileProperty;
 
-	@Configured
-	Pattern patternProperty;
+    @Configured
+    File[] fileArrayProperty;
 
-	@Configured
-	Pattern[] patternArrayProperty;
+    @Configured
+    Pattern patternProperty;
 
-	@Configured
-	InputColumn<String> inputColumnProperty;
+    @Configured
+    Pattern[] patternArrayProperty;
 
-	@Configured
-	InputColumn<String>[] inputColumnArrayProperty;
+    @Configured
+    InputColumn<String> inputColumnProperty;
 
-	@Configured
-	StringPattern stringPatternProperty;
+    @Configured
+    InputColumn<String>[] inputColumnArrayProperty;
 
-	@Configured
-	StringPattern[] stringPatternArrayProperty;
+    @Configured
+    StringPattern stringPatternProperty;
 
-	@Configured
-	Dictionary dictionaryProperty;
+    @Configured
+    StringPattern[] stringPatternArrayProperty;
 
-	@Configured
-	Dictionary[] dictionaryArrayProperty;
+    @Configured
+    Dictionary dictionaryProperty;
 
-	@Configured
-	SynonymCatalog synonymCatalogProperty;
+    @Configured
+    Dictionary[] dictionaryArrayProperty;
 
-	@Configured
-	SynonymCatalog[] synonymCatalogArrayProperty;
-	
-	@Configured
-	Datastore datastoreProperty;
-	
-	@Configured
-	UpdateableDatastore updateableDatastoreProperty;
+    @Configured
+    SynonymCatalog synonymCatalogProperty;
 
-	@Override
-	public NumberResult getResult() {
-		return new NumberResult(42);
-	}
+    @Configured
+    SynonymCatalog[] synonymCatalogArrayProperty;
 
-	@Override
-	public void run(InputRow row, int distinctCount) {
-		// do nothing
-	}
+    @Configured
+    Datastore datastoreProperty;
+
+    @Configured
+    UpdateableDatastore updateableDatastoreProperty;
+
+    @Override
+    public NumberResult getResult() {
+        return new NumberResult(42);
+    }
+
+    @Override
+    public void run(final InputRow row, final int distinctCount) {
+        // do nothing
+    }
 
 }

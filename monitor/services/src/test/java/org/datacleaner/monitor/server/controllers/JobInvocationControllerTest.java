@@ -19,9 +19,10 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.util.*;
-
-import junit.framework.TestCase;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -30,12 +31,14 @@ import org.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
 
+import junit.framework.TestCase;
+
 public class JobInvocationControllerTest extends TestCase {
 
     public void testInvokeDatabaseSchema() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final TenantContextFactory contextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
@@ -43,11 +46,11 @@ public class JobInvocationControllerTest extends TestCase {
         sourceRecords.addRow(new Object[] { "kasper@eobjects.dk" });
         sourceRecords.addRow(new Object[] { "kasper.sorensen@humaninference.com" });
 
-        JobInvocationPayload result = controller.invokeJob("tenant1", "email_standardizer", sourceRecords);
+        final JobInvocationPayload result = controller.invokeJob("tenant1", "email_standardizer", sourceRecords);
 
         assertEquals("[Username, Domain]", result.getColumns().toString());
 
-        List<JobInvocationRowData> rows = result.getRows();
+        final List<JobInvocationRowData> rows = result.getRows();
         assertEquals(2, rows.size());
 
         assertEquals("[kasper, eobjects.dk]", Arrays.toString(rows.get(0).getValues()));
@@ -56,8 +59,8 @@ public class JobInvocationControllerTest extends TestCase {
 
     public void testInvokeFileWithExtensionNameSchema() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final TenantContextFactory contextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
@@ -66,11 +69,11 @@ public class JobInvocationControllerTest extends TestCase {
         final int input = 123;
         sourceRecords.addRow(new Object[] { input });
 
-        JobInvocationPayload result = controller.invokeJob("tenant1", "random_number_generation", sourceRecords);
+        final JobInvocationPayload result = controller.invokeJob("tenant1", "random_number_generation", sourceRecords);
 
         assertEquals("[Random number]", result.getColumns().toString());
 
-        List<JobInvocationRowData> rows = result.getRows();
+        final List<JobInvocationRowData> rows = result.getRows();
         assertEquals(1, rows.size());
 
         final Object[] values = rows.get(0).getValues();
@@ -82,8 +85,8 @@ public class JobInvocationControllerTest extends TestCase {
 
     public void testInvokeFileWithoutAnalyzers() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final TenantContextFactory contextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
@@ -102,8 +105,8 @@ public class JobInvocationControllerTest extends TestCase {
 
     public void testInvokeFileWithShortColumnPaths() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final TenantContextFactory contextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
@@ -111,8 +114,8 @@ public class JobInvocationControllerTest extends TestCase {
 
         sourceRecords.addRow(new Object[] { "foo", "bar" });
 
-        final JobInvocationPayload result = controller.invokeJob("tenant1", "concat_job_short_column_paths",
-                sourceRecords);
+        final JobInvocationPayload result =
+                controller.invokeJob("tenant1", "concat_job_short_column_paths", sourceRecords);
 
         final List<JobInvocationRowData> rows = result.getRows();
         assertEquals(1, rows.size());
@@ -123,8 +126,8 @@ public class JobInvocationControllerTest extends TestCase {
 
     public void testInvokeFileWithoutDatastoreMatch() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final TenantContextFactory contextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
@@ -143,29 +146,29 @@ public class JobInvocationControllerTest extends TestCase {
 
     public void testInvokeJobMapped() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final TenantContextFactory contextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
-        Map<String, Object> value1 = new HashMap<>();
+        final Map<String, Object> value1 = new HashMap<>();
         value1.put("EMAIL", "kasper@eobjects.dk");
-        Map<String, Object> value2 = new HashMap<>();
+        final Map<String, Object> value2 = new HashMap<>();
         value2.put("EMAIL", "kasper.sorensen@humaninference.com");
-        List<Map<String, Object>> inputColumnValueMap = Arrays.asList(value1, value2);
+        final List<Map<String, Object>> inputColumnValueMap = Arrays.asList(value1, value2);
         final JobInvocationPayload sourceRecords = new JobInvocationPayload();
         sourceRecords.setColumnValueMap(inputColumnValueMap);
 
-        JobInvocationPayload result = controller.invokeJobMapped("tenant1", "email_standardizer", sourceRecords);
+        final JobInvocationPayload result = controller.invokeJobMapped("tenant1", "email_standardizer", sourceRecords);
 
         assertEquals("[Username, Domain]", result.getColumns().toString());
 
-        List<JobInvocationRowData> rows = result.getRows();
+        final List<JobInvocationRowData> rows = result.getRows();
         assertEquals(2, rows.size());
         assertEquals("[kasper, eobjects.dk]", Arrays.toString(rows.get(0).getValues()));
         assertEquals("[kasper.sorensen, humaninference.com]", Arrays.toString(rows.get(1).getValues()));
 
-        List<Map<String, Object>> columnValueMap = result.getColumnValueMap();
+        final List<Map<String, Object>> columnValueMap = result.getColumnValueMap();
         assertEquals(2, columnValueMap.size());
         assertEquals("kasper", columnValueMap.get(0).get("Username"));
         assertEquals("eobjects.dk", columnValueMap.get(0).get("Domain"));

@@ -19,6 +19,8 @@
  */
 package org.datacleaner.components.fuse;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.api.InputColumn;
@@ -28,24 +30,22 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.assertEquals;
-
 public class CoalesceUnitTest {
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void testGetOutputDataType() throws Exception {
-        MockInputColumn<?> numberCol1 = new MockInputColumn<>("num1", Number.class);
-        MockInputColumn<?> numberCol2 = new MockInputColumn<>("num1", Number.class);
-        MockInputColumn<?> integerCol1 = new MockInputColumn<>("int1", Integer.class);
-        MockInputColumn<?> integerCol2 = new MockInputColumn<>("int2", Integer.class);
-        MockInputColumn<?> stringCol1 = new MockInputColumn<>("str1", String.class);
-        MockInputColumn<?> stringCol2 = new MockInputColumn<>("str2", String.class);
-        MockInputColumn<?> objCol1 = new MockInputColumn<>("obj1", Object.class);
+        final MockInputColumn<?> numberCol1 = new MockInputColumn<>("num1", Number.class);
+        final MockInputColumn<?> numberCol2 = new MockInputColumn<>("num1", Number.class);
+        final MockInputColumn<?> integerCol1 = new MockInputColumn<>("int1", Integer.class);
+        final MockInputColumn<?> integerCol2 = new MockInputColumn<>("int2", Integer.class);
+        final MockInputColumn<?> stringCol1 = new MockInputColumn<>("str1", String.class);
+        final MockInputColumn<?> stringCol2 = new MockInputColumn<>("str2", String.class);
+        final MockInputColumn<?> objCol1 = new MockInputColumn<>("obj1", Object.class);
 
-        InputColumn<?>[] allColumns = new InputColumn[] { numberCol1, numberCol2, integerCol1, integerCol2, stringCol1,
-                stringCol2, objCol1 };
+        final InputColumn<?>[] allColumns =
+                new InputColumn[] { numberCol1, numberCol2, integerCol1, integerCol2, stringCol1, stringCol2, objCol1 };
 
         // common ancestors
         assertEquals(String.class,
@@ -60,22 +60,24 @@ public class CoalesceUnitTest {
                 .getOutputDataType());
 
         // no common ancestors
-        assertEquals(Object.class, new CoalesceUnit(stringCol1, stringCol1, integerCol1).updateInputColumns(allColumns).getOutputDataType());
-        assertEquals(Object.class, new CoalesceUnit(stringCol1, stringCol1, objCol1).updateInputColumns(allColumns).getOutputDataType());
+        assertEquals(Object.class, new CoalesceUnit(stringCol1, stringCol1, integerCol1).updateInputColumns(allColumns)
+                .getOutputDataType());
+        assertEquals(Object.class,
+                new CoalesceUnit(stringCol1, stringCol1, objCol1).updateInputColumns(allColumns).getOutputDataType());
         assertEquals(Object.class, new CoalesceUnit(objCol1).updateInputColumns(allColumns).getOutputDataType());
     }
 
     @Test
     public void testRefreshInputColumns() throws Exception {
         // original columns - col1 and col2
-        InputColumn<?> col1 = new MockInputColumn<>("foo1", String.class);
-        InputColumn<?> col2 = new MockInputColumn<>("foo2", String.class);
-        InputColumn<?>[] allInputColumns1 = new InputColumn[] { col1, col2 };
+        final InputColumn<?> col1 = new MockInputColumn<>("foo1", String.class);
+        final InputColumn<?> col2 = new MockInputColumn<>("foo2", String.class);
+        final InputColumn<?>[] allInputColumns1 = new InputColumn[] { col1, col2 };
 
         // cloned columns - col3 and col4
-        InputColumn<?> col3 = new MockInputColumn<>("foo1", String.class);
-        InputColumn<?> col4 = new MockInputColumn<>("foo2", String.class);
-        InputColumn<?>[] allInputColumns2 = new InputColumn[] { col3, col4 };
+        final InputColumn<?> col3 = new MockInputColumn<>("foo1", String.class);
+        final InputColumn<?> col4 = new MockInputColumn<>("foo2", String.class);
+        final InputColumn<?>[] allInputColumns2 = new InputColumn[] { col3, col4 };
 
         CoalesceUnit unit = new CoalesceUnit(allInputColumns1);
         Assert.assertArrayEquals(allInputColumns1, unit.getInputColumns());
@@ -84,20 +86,21 @@ public class CoalesceUnitTest {
         Assert.assertArrayEquals(allInputColumns2, unit.getInputColumns());
     }
 
-    private <E> MockInputColumn<? extends E> createColumn(String tableName, String columnName, Class<E> clazz){
+    private <E> MockInputColumn<? extends E> createColumn(final String tableName, final String columnName,
+            final Class<E> clazz) {
         return new MockInputColumn<>(columnName, clazz, new MutableColumn(columnName, new MutableTable(tableName)));
     }
 
     @Test
     public void testPathsVsNames() throws Exception {
-        InputColumn<?>[] colsA =
+        final InputColumn<?>[] colsA =
                 { createColumn("a", "foo1", String.class), createColumn("a", "foo2", String.class) };
-        InputColumn<?>[] colsB =
+        final InputColumn<?>[] colsB =
                 { createColumn("b", "foo1", String.class), createColumn("b", "foo2", String.class) };
-        InputColumn<?>[] mixedCols = { colsA[0], colsA[1], colsB[0], colsB[1]};
+        final InputColumn<?>[] mixedCols = { colsA[0], colsA[1], colsB[0], colsB[1] };
 
-        CoalesceUnit namesCoalesceUnit = new CoalesceUnit("foo1", "foo2");
-        CoalesceUnit pathsCoalesceUnit = new CoalesceUnit("b.foo1", "b.foo2");
+        final CoalesceUnit namesCoalesceUnit = new CoalesceUnit("foo1", "foo2");
+        final CoalesceUnit pathsCoalesceUnit = new CoalesceUnit("b.foo1", "b.foo2");
 
         // Pure legacy.
         Assert.assertArrayEquals(colsA, namesCoalesceUnit.updateInputColumns(colsA).getInputColumns());

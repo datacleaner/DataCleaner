@@ -36,8 +36,6 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface ComponentScope {
 
-    String ALL_COUNTRIES = "all";
-
     enum ServiceType {
         ENRICH, CORRECTION
     }
@@ -45,6 +43,8 @@ public @interface ComponentScope {
     enum EntityType {
         PERSON, COMPANY
     }
+
+    String ALL_COUNTRIES = "all";
 
     /**
      * Specifies the type of component. Enrich or correction

@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -75,9 +73,9 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
     private volatile boolean _nameAutomaticallySet = true;
 
     @Inject
-    protected DatastoreDictionaryDialog(@Nullable DatastoreDictionary dictionary,
-            MutableReferenceDataCatalog referenceDataCatalog, DatastoreCatalog datastoreCatalog,
-            WindowContext windowContext, InjectorBuilder injectorBuilder) {
+    protected DatastoreDictionaryDialog(@Nullable final DatastoreDictionary dictionary,
+            final MutableReferenceDataCatalog referenceDataCatalog, final DatastoreCatalog datastoreCatalog,
+            final WindowContext windowContext, final InjectorBuilder injectorBuilder) {
         super(windowContext, ImageManager.get().getImage(IconUtils.DICTIONARY_DATASTORE_IMAGEPATH));
         _originalDictionary = dictionary;
         _referenceDataCatalog = referenceDataCatalog;
@@ -87,15 +85,15 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
         _nameTextField = WidgetFactory.createTextField("Dictionary name");
         _nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent e) {
+            protected void onChange(final DocumentEvent e) {
                 _nameAutomaticallySet = false;
             }
         });
         _columnTextField = WidgetFactory.createTextField("Column name");
 
-        String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
+        final String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
 
-        _datastoreComboBox = new JComboBox<String>(comboBoxModel);
+        _datastoreComboBox = new JComboBox<>(comboBoxModel);
         _datastoreComboBox.setEditable(false);
 
         _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -106,43 +104,42 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
 
         _treePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _treePanel.setLayout(new BorderLayout());
-        _datastoreComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String datastoreName = (String) _datastoreComboBox.getSelectedItem();
-                if (datastoreName != null) {
-                    Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
-                    if (datastore != null) {
-                        _treePanel.removeAll();
+        _datastoreComboBox.addActionListener(e -> {
+            final String datastoreName = (String) _datastoreComboBox.getSelectedItem();
+            if (datastoreName != null) {
+                final Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
+                if (datastore != null) {
+                    _treePanel.removeAll();
 
-                        Injector injectorWithDatastore = _injectorBuilder.with(Datastore.class, datastore).with(
-                                AnalyzerComponentBuilder.class, null).createInjector();
+                    final Injector injectorWithDatastore =
+                            _injectorBuilder.with(Datastore.class, datastore).with(AnalyzerComponentBuilder.class, null)
+                                    .createInjector();
 
-                        final SchemaTree schemaTree = injectorWithDatastore.getInstance(SchemaTree.class);
-                        schemaTree.setIncludeLibraryNode(false);
-                        schemaTree.addMouseListener(new MouseAdapter() {
-                            public void mouseClicked(MouseEvent e) {
-                                TreePath path = schemaTree.getSelectionPath();
-                                if (path == null) {
-                                    return;
+                    final SchemaTree schemaTree = injectorWithDatastore.getInstance(SchemaTree.class);
+                    schemaTree.setIncludeLibraryNode(false);
+                    schemaTree.addMouseListener(new MouseAdapter() {
+                        public void mouseClicked(final MouseEvent e) {
+                            final TreePath path = schemaTree.getSelectionPath();
+                            if (path == null) {
+                                return;
+                            }
+
+                            final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                            if (node.getUserObject() instanceof Column) {
+                                final Column column = (Column) node.getUserObject();
+
+                                if (_nameAutomaticallySet || StringUtils.isNullOrEmpty(_nameTextField.getText())) {
+                                    _nameTextField.setText(column.getName());
+                                    _nameAutomaticallySet = true;
                                 }
 
-                                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                                if (node.getUserObject() instanceof Column) {
-                                    Column column = (Column) node.getUserObject();
+                                _columnTextField.setText(column.getQualifiedLabel());
+                            }
+                        }
 
-                                    if (_nameAutomaticallySet || StringUtils.isNullOrEmpty(_nameTextField.getText())) {
-                                        _nameTextField.setText(column.getName());
-                                        _nameAutomaticallySet = true;
-                                    }
-
-                                    _columnTextField.setText(column.getQualifiedLabel());
-                                }
-                            };
-                        });
-                        _treePanel.add(WidgetUtils.scrolleable(schemaTree), BorderLayout.CENTER);
-                        _treePanel.updateUI();
-                    }
+                    });
+                    _treePanel.add(WidgetUtils.scrolleable(schemaTree), BorderLayout.CENTER);
+                    _treePanel.updateUI();
                 }
             }
         });
@@ -185,44 +182,43 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("Lookup column:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_columnTextField, formPanel, 1, row);
 
-        final JButton createDictionaryButton = WidgetFactory.createPrimaryButton("Save dictionary",
-                IconUtils.ACTION_SAVE_BRIGHT);
-        createDictionaryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String name = _nameTextField.getText();
-                if (StringUtils.isNullOrEmpty(name)) {
-                    JOptionPane.showMessageDialog(DatastoreDictionaryDialog.this,
-                            "Please fill out the name of the dictionary");
-                    return;
-                }
-
-                String datastoreName = (String) _datastoreComboBox.getSelectedItem();
-                if (StringUtils.isNullOrEmpty(datastoreName)) {
-                    JOptionPane.showMessageDialog(DatastoreDictionaryDialog.this, "Please select a datastore");
-                    return;
-                }
-
-                String columnPath = _columnTextField.getText();
-                if (StringUtils.isNullOrEmpty(columnPath)) {
-                    JOptionPane.showMessageDialog(DatastoreDictionaryDialog.this, "Please select a lookup column");
-                    return;
-                }
-
-                final DatastoreDictionary dictionary = new DatastoreDictionary(name, datastoreName, columnPath);
-                if (_originalDictionary != null) {
-                    _referenceDataCatalog.changeDictionary(_originalDictionary, dictionary);
-                } else {
-                    _referenceDataCatalog.addDictionary(dictionary);
-                }
-                DatastoreDictionaryDialog.this.dispose();
+        final JButton createDictionaryButton =
+                WidgetFactory.createPrimaryButton("Save dictionary", IconUtils.ACTION_SAVE_BRIGHT);
+        createDictionaryButton.addActionListener(e -> {
+            final String name1 = _nameTextField.getText();
+            if (StringUtils.isNullOrEmpty(name1)) {
+                JOptionPane.showMessageDialog(DatastoreDictionaryDialog.this,
+                        "Please fill out the name of the dictionary");
+                return;
             }
+
+            final String datastoreName = (String) _datastoreComboBox.getSelectedItem();
+            if (StringUtils.isNullOrEmpty(datastoreName)) {
+                JOptionPane.showMessageDialog(DatastoreDictionaryDialog.this, "Please select a datastore");
+                return;
+            }
+
+            final String columnPath = _columnTextField.getText();
+            if (StringUtils.isNullOrEmpty(columnPath)) {
+                JOptionPane.showMessageDialog(DatastoreDictionaryDialog.this, "Please select a lookup column");
+                return;
+            }
+
+            final DatastoreDictionary dictionary = new DatastoreDictionary(name1, datastoreName, columnPath);
+            if (_originalDictionary != null) {
+                _referenceDataCatalog.changeDictionary(_originalDictionary, dictionary);
+            } else {
+                _referenceDataCatalog.addDictionary(dictionary);
+            }
+            DatastoreDictionaryDialog.this.dispose();
         });
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, createDictionaryButton);
 
-        final DescriptionLabel descriptionLabel = new DescriptionLabel(
-                "A datastore dictionary is a dictionary based on a column in one of your datastores. Please select a datastore in the form below and a tree of that datastore will appear. From here on you can select which column in the datastore to use for dictionary lookups.");
+        final DescriptionLabel descriptionLabel = new DescriptionLabel("A datastore dictionary is a dictionary based "
+                + "on a column in one of your datastores. Please select a datastore in the form below and a tree of "
+                + "that datastore will appear. From here on you can select which column in the datastore to "
+                + "use for dictionary lookups.");
 
         _splitPane.add(formPanel, BorderLayout.WEST);
         _splitPane.add(_treePanel, BorderLayout.CENTER);

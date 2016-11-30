@@ -68,7 +68,8 @@ import org.datacleaner.util.sort.SortMergeWriter;
 
 @Named("Create Excel spreadsheet")
 @Alias("Write to Excel spreadsheet")
-@Description("Write data to an Excel spreadsheet, useful for manually editing and inspecting the data in Microsoft Excel.")
+@Description(
+        "Write data to an Excel spreadsheet, useful for manually editing and inspecting the data in Microsoft Excel.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Distributed(false)
 public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
@@ -82,24 +83,19 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     // https://github.com/datacleaner/DataCleaner/issues/864
     private static final int SHEET_NAME_MAX_LENGTH = 31;
     private static final char[] SHEET_NAME_ILLEGAL_CHARS = new char[] { '.', ':' };
-
-    @Configured(PROPERTY_FILE)
-    @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "xls", "xlsx" })
-    File file = new File("DataCleaner-staging.xlsx");
-
-    @Configured(PROPERTY_SHEET_NAME)
-    String sheetName;
-
-    @Configured(PROPERTY_OVERWRITE_SHEET_IF_EXISTS)
-    boolean overwriteSheetIfExists;
-
-    @Configured(order = 1, required = false)
-    InputColumn<?> columnToBeSortedOn;
-
     private final Character separatorChar = ',';
     private final Character quoteChar = '"';
     private final Character escapeChar = '\\';
     private final boolean includeHeader = true;
+    @Configured(PROPERTY_FILE)
+    @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "xls", "xlsx" })
+    File file = new File("DataCleaner-staging.xlsx");
+    @Configured(PROPERTY_SHEET_NAME)
+    String sheetName;
+    @Configured(PROPERTY_OVERWRITE_SHEET_IF_EXISTS)
+    boolean overwriteSheetIfExists;
+    @Configured(order = 1, required = false)
+    InputColumn<?> columnToBeSortedOn;
     private File _targetFile;
     private int indexOfColumnToBeSortedOn = -1;
     private boolean isColumnToBeSortedOnPresentInInput = true;
@@ -131,20 +127,21 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
             throw new IllegalStateException("Sheet name must be maximum " + SHEET_NAME_MAX_LENGTH + " characters long");
         }
 
-        for (char c : SHEET_NAME_ILLEGAL_CHARS) {
+        for (final char c : SHEET_NAME_ILLEGAL_CHARS) {
             if (sheetName.indexOf(c) != -1) {
                 throw new IllegalStateException("Sheet name cannot contain '" + c + "'");
             }
         }
 
         if (!overwriteSheetIfExists && file.exists()) {
-            Datastore datastore = new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
-            try (final DatastoreConnection connection = datastore.openConnection()) {
+            final Datastore datastore =
+                    new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
+            try (DatastoreConnection connection = datastore.openConnection()) {
                 final String[] tableNames = connection.getDataContext().getDefaultSchema().getTableNames();
                 for (int i = 0; i < tableNames.length; i++) {
                     if (tableNames[i].equals(sheetName)) {
-                        throw new IllegalStateException("The sheet '" + sheetName
-                                + "' already exists. Please select another sheet name.");
+                        throw new IllegalStateException(
+                                "The sheet '" + sheetName + "' already exists. Please select another sheet name.");
                     }
                 }
             }
@@ -157,19 +154,20 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     }
 
     @Override
-    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterDescriptor<?, ?> descriptor, String categoryName) {
+    public void configureForFilterOutcome(final AnalysisJobBuilder ajb, final FilterDescriptor<?, ?> descriptor,
+            final String categoryName) {
         final String dsName = ajb.getDatastore().getName();
         sheetName = fixSheetName(dsName + "-" + descriptor.getDisplayName() + "-" + categoryName);
     }
 
     @Override
-    public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerDescriptor<?> descriptor) {
+    public void configureForTransformedData(final AnalysisJobBuilder ajb, final TransformerDescriptor<?> descriptor) {
         final String dsName = ajb.getDatastore().getName();
         sheetName = fixSheetName(dsName + "-" + descriptor.getDisplayName());
     }
 
     private String fixSheetName(String sheet) {
-        for (char c : SHEET_NAME_ILLEGAL_CHARS) {
+        for (final char c : SHEET_NAME_ILLEGAL_CHARS) {
             while (sheet.indexOf(c) != -1) {
                 sheet = sheet.replace(c, '-');
             }
@@ -183,9 +181,9 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     @Override
     public OutputWriter createOutputWriter() {
         if (file.exists()) {
-            ExcelDatastore datastore = new ExcelDatastore(file.getName(), new FileResource(file),
-                    file.getAbsolutePath());
-            try (final UpdateableDatastoreConnection connection = datastore.openConnection()) {
+            final ExcelDatastore datastore =
+                    new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
+            try (UpdateableDatastoreConnection connection = datastore.openConnection()) {
                 final DataContext dataContext = connection.getDataContext();
                 final String[] tableNames = dataContext.getDefaultSchema().getTableNames();
                 for (int i = 0; i < tableNames.length; i++) {
@@ -210,9 +208,9 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     }
 
     private OutputWriter createTemporaryCsvWriter() {
-        final List<String> headers = new ArrayList<String>();
+        final List<String> headers = new ArrayList<>();
         for (int i = 0; i < columns.length; i++) {
-            String columnName = getColumnHeader(i);
+            final String columnName = getColumnHeader(i);
             headers.add(columnName);
             if (columnToBeSortedOn != null) {
                 if (columns[i].getName().equals(columnToBeSortedOn.getName())) {
@@ -225,7 +223,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
             this.isColumnToBeSortedOnPresentInInput = false;
             indexOfColumnToBeSortedOn = columns.length;
             headers.add(columnToBeSortedOn.getName());
-            InputColumn<?>[] newColumns = new InputColumn<?>[columns.length + 1];
+            final InputColumn<?>[] newColumns = new InputColumn<?>[columns.length + 1];
             for (int i = 0; i < columns.length; i++) {
                 newColumns[i] = columns[i];
             }
@@ -236,24 +234,25 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         if (_targetFile == null) {
             try {
                 initTempFile();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
-        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar,
-                quoteChar, escapeChar, includeHeader, columns);
+        return CsvOutputWriterFactory
+                .getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar,
+                        includeHeader, columns);
     }
 
-    private String getColumnHeader(int i) {
+    private String getColumnHeader(final int index) {
         if (fields == null) {
-            return columns[i].getName();
+            return columns[index].getName();
         }
-        return fields[i];
+        return fields[index];
     }
 
     @Override
-    protected WriteDataResult getResultInternal(int rowCount) {
+    protected WriteDataResult getResultInternal(final int rowCount) {
         if (columnToBeSortedOn != null) {
             // Sorts the file using merge sort in the temporary file and then
             // write into the final file
@@ -261,70 +260,68 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         }
         final FileResource resource = new FileResource(file);
         final Datastore datastore = new ExcelDatastore(file.getName(), resource, file.getAbsolutePath());
-        final WriteDataResult result = new WriteDataResultImpl(rowCount, datastore, null, sheetName);
-        return result;
+        return new WriteDataResultImpl(rowCount, datastore, null, sheetName);
     }
 
     private void mergeSortFile() {
-        final CsvConfiguration csvConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
-                FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar, escapeChar, false, true);
+        final CsvConfiguration csvConfiguration =
+                new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, FileHelper.DEFAULT_ENCODING,
+                        separatorChar, quoteChar, escapeChar, false, true);
 
         final CsvDataContext tempDataContext = new CsvDataContext(_targetFile, csvConfiguration);
         final Table table = tempDataContext.getDefaultSchema().getTable(0);
 
-        final Comparator<? super Row> comparator = SortHelper.createComparator(columnToBeSortedOn,
-                indexOfColumnToBeSortedOn);
+        final Comparator<? super Row> comparator =
+                SortHelper.createComparator(columnToBeSortedOn, indexOfColumnToBeSortedOn);
 
-        final SortMergeWriter<Row, ExcelDataContextWriter> sortMergeWriter = new SortMergeWriter<Row, ExcelDataContextWriter>(
-                comparator) {
+        final SortMergeWriter<Row, ExcelDataContextWriter> sortMergeWriter =
+                new SortMergeWriter<Row, ExcelDataContextWriter>(comparator) {
 
-            @Override
-            protected ExcelDataContextWriter createWriter(Resource resource) {
-                assert resource instanceof FileResource;
-                final FileResource fileResource = (FileResource) resource;
-                return new ExcelDataContextWriter(fileResource.getFile(), sheetName);
-            }
-
-            @Override
-            protected void writeHeader(ExcelDataContextWriter writer) throws IOException {
-                List<String> headers = new ArrayList<String>(Arrays.asList(table.getColumnNames()));
-                if (!isColumnToBeSortedOnPresentInInput) {
-                    headers.remove(columnToBeSortedOn.getName());
-                }
-                writer.createTable(headers);
-            }
-
-            @Override
-            protected void writeRow(ExcelDataContextWriter writer, Row row, int count) throws IOException {
-                for (int i = 0; i < count; i++) {
-                    List<Object> valuesList = new ArrayList<Object>(Arrays.asList(row.getValues()));
-                    if (!isColumnToBeSortedOnPresentInInput) {
-                        valuesList.remove(indexOfColumnToBeSortedOn);
+                    @Override
+                    protected ExcelDataContextWriter createWriter(final Resource resource) {
+                        assert resource instanceof FileResource;
+                        final FileResource fileResource = (FileResource) resource;
+                        return new ExcelDataContextWriter(fileResource.getFile(), sheetName);
                     }
-                    final Object[] values = valuesList.toArray(new Object[0]);
-                    writer.insertValues(values);
-                }
-            }
-        };
+
+                    @Override
+                    protected void writeHeader(final ExcelDataContextWriter writer) throws IOException {
+                        final List<String> headers = new ArrayList<>(Arrays.asList(table.getColumnNames()));
+                        if (!isColumnToBeSortedOnPresentInInput) {
+                            headers.remove(columnToBeSortedOn.getName());
+                        }
+                        writer.createTable(headers);
+                    }
+
+                    @Override
+                    protected void writeRow(final ExcelDataContextWriter writer, final Row row, final int count)
+                            throws IOException {
+                        for (int i = 0; i < count; i++) {
+                            final List<Object> valuesList = new ArrayList<>(Arrays.asList(row.getValues()));
+                            if (!isColumnToBeSortedOnPresentInInput) {
+                                valuesList.remove(indexOfColumnToBeSortedOn);
+                            }
+                            final Object[] values = valuesList.toArray(new Object[0]);
+                            writer.insertValues(values);
+                        }
+                    }
+                };
 
         // read from the temp file and sort it into the final file
-        final DataSet dataSet = tempDataContext.query().from(table).selectAll().execute();
-        try {
+        try (DataSet dataSet = tempDataContext.query().from(table).selectAll().execute()) {
             while (dataSet.next()) {
                 final Row row = dataSet.getRow();
                 sortMergeWriter.append(row);
             }
-        } finally {
-            dataSet.close();
         }
         sortMergeWriter.write(file);
     }
 
-    public void setFile(File file) {
+    public void setFile(final File file) {
         this.file = file;
     }
 
-    public void setSheetName(String sheetName) {
+    public void setSheetName(final String sheetName) {
         this.sheetName = sheetName;
     }
 

@@ -37,11 +37,11 @@ public class MetricAnchor extends DropDownAnchor implements ClickHandler {
     private JobMetrics _jobMetrics;
     private MetricIdentifier _metric;
 
-    public MetricAnchor(TenantIdentifier tenant) {
+    public MetricAnchor(final TenantIdentifier tenant) {
         this(tenant, null, null);
     }
 
-    public MetricAnchor(TenantIdentifier tenant, JobMetrics jobMetrics, MetricIdentifier metric) {
+    public MetricAnchor(final TenantIdentifier tenant, final JobMetrics jobMetrics, final MetricIdentifier metric) {
         super();
         _tenant = tenant;
         addStyleName("MetricAnchor");
@@ -54,7 +54,7 @@ public class MetricAnchor extends DropDownAnchor implements ClickHandler {
         return _metric;
     }
 
-    public void setMetric(MetricIdentifier metric) {
+    public void setMetric(final MetricIdentifier metric) {
         _metric = metric;
         updateText();
     }
@@ -63,7 +63,7 @@ public class MetricAnchor extends DropDownAnchor implements ClickHandler {
         return _jobMetrics;
     }
 
-    public void setJobMetrics(JobMetrics jobMetrics) {
+    public void setJobMetrics(final JobMetrics jobMetrics) {
         _jobMetrics = jobMetrics;
     }
 
@@ -76,16 +76,16 @@ public class MetricAnchor extends DropDownAnchor implements ClickHandler {
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(final ClickEvent event) {
         if (_jobMetrics == null) {
             GWT.log("No JobMetrics available");
             return;
         }
 
-        final DefineMetricPopup popup = new DefineMetricPopup(_tenant, _jobMetrics, _metric, false,
-                new DefineMetricPopup.Handler() {
+        final DefineMetricPopup popup =
+                new DefineMetricPopup(_tenant, _jobMetrics, _metric, false, new DefineMetricPopup.Handler() {
                     @Override
-                    public void onMetricDefined(MetricIdentifier metric) {
+                    public void onMetricDefined(final MetricIdentifier metric) {
                         setMetric(metric);
                     }
                 });

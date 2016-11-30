@@ -21,8 +21,8 @@ package org.datacleaner.monitor.wizard;
 
 import java.util.Locale;
 
-import org.datacleaner.monitor.configuration.TenantContext;
 import org.apache.metamodel.util.Func;
+import org.datacleaner.monitor.configuration.TenantContext;
 
 /**
  * Context object which is shared throughout the wizard session
@@ -31,22 +31,22 @@ public interface WizardContext {
 
     /**
      * Gets the locale of the client that is accessing this wizard.
-     * 
+     *
      * @return
      */
-    public Locale getLocale();
+    Locale getLocale();
 
     /**
      * Gets the tenant context of the current wizard session
-     * 
+     *
      * @return
      */
-    public TenantContext getTenantContext();
+    TenantContext getTenantContext();
 
     /**
      * Gets a read-only view of the HTTP session of the user.
-     * 
+     *
      * @return
      */
-    public Func<String, Object> getHttpSession();
+    Func<String, Object> getHttpSession();
 }

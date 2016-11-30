@@ -36,20 +36,18 @@ public class DCComboBoxUI extends BasicComboBoxUI {
 
     /**
      * Factory method used by Swing to instantiate the {@link DCComboBoxUI}
-     * 
+     *
      * @param c
      *            the component
      * @return
      */
-    public static ComponentUI createUI(JComponent c) {
-        final DCComboBoxUI ui = new DCComboBoxUI();
-        return ui;
+    public static ComponentUI createUI(final JComponent c) {
+        return new DCComboBoxUI();
     }
 
     @Override
     protected JButton createArrowButton() {
-        final JButton arrowButton = WidgetFactory.createSmallButton(IconUtils.ACTION_SCROLLDOWN_DARK);
-        return arrowButton;
+        return WidgetFactory.createSmallButton(IconUtils.ACTION_SCROLLDOWN_DARK);
     }
 
     @SuppressWarnings("rawtypes")

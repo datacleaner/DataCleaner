@@ -27,19 +27,18 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 
+import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.beans.datastructures.SelectFromMapTransformer;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.properties.MinimalPropertyWidget;
 import org.datacleaner.widgets.properties.MultipleStringPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.SingleClassPropertyWidget;
-import org.apache.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.JXTextField;
 
 /**
@@ -55,10 +54,10 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
     private final MinimalPropertyWidget<Class[]> _typesPropertyWidget;
 
     @SuppressWarnings("rawtypes")
-    public KeysAndTypesPropertyWidget(ConfiguredPropertyDescriptor keysProperty,
-            ConfiguredPropertyDescriptor typesProperty, ComponentBuilder componentBuilder) {
+    public KeysAndTypesPropertyWidget(final ConfiguredPropertyDescriptor keysProperty,
+            final ConfiguredPropertyDescriptor typesProperty, final ComponentBuilder componentBuilder) {
         super(keysProperty, componentBuilder);
-        _comboBoxes = new ArrayList<DCComboBox<Class<?>>>();
+        _comboBoxes = new ArrayList<>();
         _typesProperty = typesProperty;
         _typesPropertyWidget = new MinimalPropertyWidget<Class[]>(getComponentBuilder(), _typesProperty) {
 
@@ -70,7 +69,7 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
             @Override
             public Class[] getValue() {
                 final String[] keys = KeysAndTypesPropertyWidget.this.getValue();
-                final List<Class<?>> result = new ArrayList<Class<?>>();
+                final List<Class<?>> result = new ArrayList<>();
                 for (int i = 0; i < keys.length; i++) {
                     if (!StringUtils.isNullOrEmpty(keys[i])) {
                         final DCComboBox<Class<?>> comboBox = _comboBoxes.get(i);
@@ -78,19 +77,6 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
                     }
                 }
                 return result.toArray(new Class[result.size()]);
-            }
-
-            @Override
-            public boolean isSet() {
-                if (_comboBoxes.isEmpty()) {
-                    return false;
-                }
-                for (DCComboBox<Class<?>> comboBox : _comboBoxes) {
-                    if (comboBox.getSelectedItem() == null) {
-                        return false;
-                    }
-                }
-                return true;
             }
 
             @Override
@@ -110,10 +96,23 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
                 }
 
                 for (int i = 0; i < keys.length; i++) {
-                    DCComboBox<Class<?>> comboBox = _comboBoxes.get(i);
-                    Class<?> selectedClass = value[i];
+                    final DCComboBox<Class<?>> comboBox = _comboBoxes.get(i);
+                    final Class<?> selectedClass = value[i];
                     comboBox.setSelectedItem(selectedClass);
                 }
+            }
+
+            @Override
+            public boolean isSet() {
+                if (_comboBoxes.isEmpty()) {
+                    return false;
+                }
+                for (final DCComboBox<Class<?>> comboBox : _comboBoxes) {
+                    if (comboBox.getSelectedItem() == null) {
+                        return false;
+                    }
+                }
+                return true;
             }
         };
 
@@ -132,7 +131,7 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
         }
     }
 
-    private DCComboBox<Class<?>> createComboBox(Class<?> type) {
+    private DCComboBox<Class<?>> createComboBox(final Class<?> type) {
         final DCComboBox<Class<?>> comboBox = SingleClassPropertyWidget.createClassComboBox(true);
         if (type != null) {
             comboBox.setSelectedItem(type);
@@ -142,7 +141,7 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
     }
 
     @Override
-    protected JComponent decorateTextField(JXTextField textField, int index) {
+    protected JComponent decorateTextField(final JXTextField textField, final int index) {
         final DCComboBox<Class<?>> comboBox;
 
         if (index < _comboBoxes.size()) {
@@ -151,25 +150,17 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
             comboBox = createComboBox(null);
         }
 
-        comboBox.addListener(new Listener<Class<?>>() {
-            @Override
-            public void onItemSelected(Class<?> item) {
-                _typesPropertyWidget.fireValueChanged();
-            }
-        });
+        comboBox.addListener(item -> _typesPropertyWidget.fireValueChanged());
 
         textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 // invoke later, because document events are fired before the
                 // textfield.getText() returns the new value
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        setUpdating(true);
-                        _typesPropertyWidget.fireValueChanged();
-                        setUpdating(false);
-                    }
+                SwingUtilities.invokeLater(() -> {
+                    setUpdating(true);
+                    _typesPropertyWidget.fireValueChanged();
+                    setUpdating(false);
                 });
             }
         });

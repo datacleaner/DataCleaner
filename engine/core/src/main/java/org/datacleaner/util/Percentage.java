@@ -22,108 +22,113 @@ package org.datacleaner.util;
 /**
  * Represents a percentage number, which has a range between 0 and 100 fractions
  * of 100.
- * 
- * 
- * 
- * 
+ *
+ *
+ *
+ *
  */
 public class Percentage extends Number {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private short percentage;
+    private short percentage;
 
-	public Percentage(int nominator) {
-		this((short) nominator);
-	}
+    public Percentage(final int nominator) {
+        this((short) nominator);
+    }
 
-	public Percentage(short nominator) {
-		if (nominator < 0 || nominator > 100) {
-			throw new IllegalArgumentException("Percentage nominator has to be between 0 and 100. Invalid: " + nominator);
-		}
-		this.percentage = nominator;
-	}
+    public Percentage(final short nominator) {
+        if (nominator < 0 || nominator > 100) {
+            throw new IllegalArgumentException(
+                    "Percentage nominator has to be between 0 and 100. Invalid: " + nominator);
+        }
+        this.percentage = nominator;
+    }
 
-	/**
-	 * @return the nominator of a percentage, eg. if the object represents 73%,
-	 *         this method will return 73.
-	 */
-	public int getNominator() {
-		return percentage;
-	}
+    public static Percentage parsePercentage(String str) throws NumberFormatException {
+        if (str == null) {
+            throw new NumberFormatException("cannot parse null");
+        }
+        str = str.trim();
 
-	/**
-	 * @return the denominator of a percentage, always 100.
-	 */
-	public int getDenominator() {
-		return 100;
-	}
+        if (str.length() == 0 || str.length() > 4) {
+            throw new NumberFormatException(str);
+        }
 
-	@Override
-	public int intValue() {
-		return percentage / 100;
-	}
+        final char percentageSymbol = str.charAt(str.length() - 1);
+        if (percentageSymbol != '%') {
+            throw new NumberFormatException(str);
+        }
 
-	@Override
-	public long longValue() {
-		return percentage / 100;
-	}
+        str = str.substring(0, str.length() - 1);
+        final short p = Short.parseShort(str);
 
-	@Override
-	public float floatValue() {
-		return percentage / 100.0f;
-	}
+        return new Percentage(p);
+    }
 
-	@Override
-	public double doubleValue() {
-		return percentage / 100.0d;
-	}
+    /**
+     * @return the nominator of a percentage, eg. if the object represents 73%,
+     *         this method will return 73.
+     */
+    public int getNominator() {
+        return percentage;
+    }
 
-	@Override
-	public String toString() {
-		return percentage + "%";
-	}
+    /**
+     * @return the denominator of a percentage, always 100.
+     */
+    public int getDenominator() {
+        return 100;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + percentage;
-		return result;
-	}
+    @Override
+    public int intValue() {
+        return percentage / 100;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Percentage other = (Percentage) obj;
-		if (percentage != other.percentage)
-			return false;
-		return true;
-	}
+    @Override
+    public long longValue() {
+        return percentage / 100;
+    }
 
-	public static Percentage parsePercentage(String str) throws NumberFormatException {
-		if (str == null) {
-			throw new NumberFormatException("cannot parse null");
-		}
-		str = str.trim();
+    @Override
+    public float floatValue() {
+        return percentage / 100.0f;
+    }
 
-		if (str.length() == 0 || str.length() > 4) {
-			throw new NumberFormatException(str);
-		}
+    @Override
+    public double doubleValue() {
+        return percentage / 100.0d;
+    }
 
-		char percentageSymbol = str.charAt(str.length() - 1);
-		if (percentageSymbol != '%') {
-			throw new NumberFormatException(str);
-		}
+    @Override
+    public String toString() {
+        return percentage + "%";
+    }
 
-		str = str.substring(0, str.length() - 1);
-		short p = Short.parseShort(str);
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + percentage;
+        return result;
+    }
 
-		return new Percentage(p);
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Percentage other = (Percentage) obj;
+        if (percentage != other.percentage) {
+            return false;
+        }
+        return true;
+    }
 }

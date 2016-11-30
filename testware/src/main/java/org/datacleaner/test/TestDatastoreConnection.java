@@ -19,19 +19,19 @@
  */
 package org.datacleaner.test;
 
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.SchemaNavigator;
-import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.UpdateableDataContext;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.SchemaNavigator;
+import org.datacleaner.connection.UpdateableDatastoreConnection;
 
 final class TestDatastoreConnection implements UpdateableDatastoreConnection {
 
     private final UpdateableDataContext _dataContext;
     private final Datastore _datastore;
 
-    public TestDatastoreConnection(TestDatastore datastore) throws Exception {
+    TestDatastoreConnection(final TestDatastore datastore) throws Exception {
         _datastore = datastore;
         _dataContext = DataContextFactory.createJdbcDataContext(datastore.getDataSource());
     }

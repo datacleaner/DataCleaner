@@ -35,12 +35,12 @@ public class ButtonPanel extends FlowPanel {
     }
 
     /**
-     * 
+     *
      * @param block
      *            whether or not to use "block"/"justify" mode where the buttons
      *            take up a complete block's space
      */
-    public ButtonPanel(boolean block) {
+    public ButtonPanel(final boolean block) {
         super();
         _block = block;
         addStyleName("btn-group");
@@ -51,10 +51,10 @@ public class ButtonPanel extends FlowPanel {
 
     /**
      * Adds a button to this {@link ButtonPanel}
-     * 
+     *
      * @param button
      */
-    public void addButton(Button button) {
+    public void addButton(final Button button) {
         if (_block) {
             // in this mode bootstrap wants all buttons wrapped in another
             // button group
@@ -68,10 +68,10 @@ public class ButtonPanel extends FlowPanel {
 
     /**
      * Removes a button from this {@link ButtonPanel}
-     * 
+     *
      * @param button
      */
-    public void removeButton(Button button) {
+    public void removeButton(final Button button) {
         if (_block) {
             final int widgetCount = getWidgetCount();
             for (int i = 0; i < widgetCount; i++) {
@@ -89,7 +89,7 @@ public class ButtonPanel extends FlowPanel {
         }
     }
 
-    private boolean hasButton(Button button) {
+    private boolean hasButton(final Button button) {
         // only checks direct children
         final int index = getWidgetIndex(button);
         return index != -1;

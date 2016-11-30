@@ -33,17 +33,16 @@ import org.datacleaner.api.Transformer;
 /**
  * Added by jakub on 20.10.15
  */
-public abstract class BatchRowCollectingTransformer implements Transformer, BatchTransformation<InputRow, Collection<Object[]>> {
+public abstract class BatchRowCollectingTransformer
+        implements Transformer, BatchTransformation<InputRow, Collection<Object[]>> {
 
+    private final BatchTransformationBuffer<InputRow, Collection<Object[]>> _batchTransformationBuffer;
     @Provided
     @Inject
     OutputRowCollector outputRowCollector;
 
-    private final BatchTransformationBuffer<InputRow, Collection<Object[]>> _batchTransformationBuffer;
-
     public BatchRowCollectingTransformer() {
-        _batchTransformationBuffer = new BatchTransformationBuffer<InputRow, Collection<Object[]>>(this, getMaxBatchSize(),
-                getFlushIntervalMillis());
+        _batchTransformationBuffer = new BatchTransformationBuffer<>(this, getMaxBatchSize(), getFlushIntervalMillis());
     }
 
     /**
@@ -76,9 +75,9 @@ public abstract class BatchRowCollectingTransformer implements Transformer, Batc
     }
 
     @Override
-    public final Object[] transform(InputRow inputRow) {
-        Collection<Object[]> outputRows = _batchTransformationBuffer.transform(inputRow);
-        for(Object[] row: outputRows) {
+    public final Object[] transform(final InputRow inputRow) {
+        final Collection<Object[]> outputRows = _batchTransformationBuffer.transform(inputRow);
+        for (final Object[] row : outputRows) {
             outputRowCollector.putValues(row);
         }
         return null;

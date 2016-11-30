@@ -29,13 +29,13 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
 final class SimpleStringPatternReferenceDataPage extends AbstractFreemarkerWizardPage {
-    
+
     private static final String PROPERTY_NAME = "name";
     private static final String PROPERTY_EXPRESSION = "expression";
 
     private final SimpleStringPatternReferenceDataWizardSession _session;
 
-    public SimpleStringPatternReferenceDataPage(SimpleStringPatternReferenceDataWizardSession session) {
+    public SimpleStringPatternReferenceDataPage(final SimpleStringPatternReferenceDataWizardSession session) {
         _session = session;
     }
 
@@ -45,12 +45,12 @@ final class SimpleStringPatternReferenceDataPage extends AbstractFreemarkerWizar
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final String name = getString(formParameters, PROPERTY_NAME);
         final String expression = getString(formParameters, PROPERTY_EXPRESSION);
-        ReferenceDataHelper.checkUniqueStringPattern(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog()); 
+        ReferenceDataHelper.checkUniqueStringPattern(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
 
         _session.setName(name);
         _session.setExpression(expression);
@@ -68,7 +68,7 @@ final class SimpleStringPatternReferenceDataPage extends AbstractFreemarkerWizar
         final Map<String, Object> model = new HashMap<>();
         model.put("name", _session.getName());
         model.put("expression", _session.getExpression());
-        
+
         return model;
     }
 }

@@ -37,21 +37,22 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 
 public class RenameJobCommand implements Command {
- 
-	private TenantIdentifier _tenant;
-	private JobIdentifier _job ; 
-	private DCPopupPanel _morePopup;
-	
-	public RenameJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier, DCPopupPanel morePopup) {
-		_tenant = tenant;
-		_job = jobIdentifier; 
-		_morePopup = morePopup;
-	}
-	
-	@Override
-	public void execute() {
-		_morePopup.hide();
-		final String newName = Window.prompt("Enter job name", _job.getName());
+
+    private TenantIdentifier _tenant;
+    private JobIdentifier _job;
+    private DCPopupPanel _morePopup;
+
+    public RenameJobCommand(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
+            final DCPopupPanel morePopup) {
+        _tenant = tenant;
+        _job = jobIdentifier;
+        _morePopup = morePopup;
+    }
+
+    @Override
+    public void execute() {
+        _morePopup.hide();
+        final String newName = Window.prompt("Enter job name", _job.getName());
         if (newName == null || newName.trim().length() == 0 || newName.equals(_job.getName())) {
             return;
         }
@@ -70,12 +71,13 @@ public class RenameJobCommand implements Command {
         requestBuilder.setHeader("Content-Type", "application/json");
         requestBuilder.send(payload.toString(), new DCRequestCallback() {
             @Override
-            protected void onSuccess(Request request, Response response) {
+            protected void onSuccess(final Request request, final Response response) {
                 Window.Location.reload();
             }
-            
+
             @Override
-            public void onNonSuccesfullStatusCode(Request request, Response response, int statusCode, String statusText) {
+            public void onNonSuccesfullStatusCode(final Request request, final Response response, final int statusCode,
+                    final String statusText) {
                 popup.hide();
                 ErrorHandler.showErrorDialog(response.getText());
             }

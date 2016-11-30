@@ -27,38 +27,38 @@ import java.util.Set;
 /**
  * Simple collection factory, which delegates to the storage provider for
  * everything.
- * 
- * 
- * 
+ *
+ *
+ *
  */
 public final class CollectionFactoryImpl implements CollectionFactory {
 
-	private final StorageProvider _storageProvider;
-	private final List<Object> _collections = new ArrayList<Object>();
+    private final StorageProvider _storageProvider;
+    private final List<Object> _collections = new ArrayList<>();
 
-	public CollectionFactoryImpl(StorageProvider storageProvider) {
-		super();
-		_storageProvider = storageProvider;
-	}
+    public CollectionFactoryImpl(final StorageProvider storageProvider) {
+        super();
+        _storageProvider = storageProvider;
+    }
 
-	@Override
-	public <E> List<E> createList(Class<E> elementClass) {
-		List<E> list = _storageProvider.createList(elementClass);
-		_collections.add(list);
-		return list;
-	}
+    @Override
+    public <E> List<E> createList(final Class<E> elementClass) {
+        final List<E> list = _storageProvider.createList(elementClass);
+        _collections.add(list);
+        return list;
+    }
 
-	@Override
-	public <E> Set<E> createSet(Class<E> elementClass) {
-		Set<E> set = _storageProvider.createSet(elementClass);
-		_collections.add(set);
-		return set;
-	}
+    @Override
+    public <E> Set<E> createSet(final Class<E> elementClass) {
+        final Set<E> set = _storageProvider.createSet(elementClass);
+        _collections.add(set);
+        return set;
+    }
 
-	@Override
-	public <K, V> Map<K, V> createMap(Class<K> keyClass, Class<V> valueClass) {
-		Map<K, V> map = _storageProvider.createMap(keyClass, valueClass);
-		_collections.add(map);
-		return map;
-	}
+    @Override
+    public <K, V> Map<K, V> createMap(final Class<K> keyClass, final Class<V> valueClass) {
+        final Map<K, V> map = _storageProvider.createMap(keyClass, valueClass);
+        _collections.add(map);
+        return map;
+    }
 }

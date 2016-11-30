@@ -30,7 +30,8 @@ public class CountryStandardizationResult extends CategorizationResult {
 
     private final int _unrecognizedCountries;
 
-    public CountryStandardizationResult(RowAnnotationFactory rowAnnotationFactory, Map<String, RowAnnotation> countryCountMap, int unrecognizedCountries) {
+    public CountryStandardizationResult(final RowAnnotationFactory rowAnnotationFactory,
+            final Map<String, RowAnnotation> countryCountMap, final int unrecognizedCountries) {
         super(rowAnnotationFactory, countryCountMap);
         _unrecognizedCountries = unrecognizedCountries;
     }

@@ -27,6 +27,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
@@ -35,8 +36,6 @@ import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabNavigator;
 import org.datacleaner.result.CrosstabResult;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.xml.DomUtils;
@@ -57,13 +56,13 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
     private final String _documentString;
     private transient Document _document;
 
-    public PentahoJobResult(String documentString) {
+    public PentahoJobResult(final String documentString) {
         super(null);
         _documentString = documentString;
     }
 
     @Override
-    public String toString(int maxEntries) {
+    public String toString(final int maxEntries) {
         return toString();
     }
 
@@ -73,78 +72,77 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
     }
 
     @Metric(order = 101, value = "Lines input")
-    public Number getLinesInput(InputColumn<?> step) {
-        Element stepElement = getStepStatusElement(step.getName());
+    public Number getLinesInput(final InputColumn<?> step) {
+        final Element stepElement = getStepStatusElement(step.getName());
         return getMeasure(stepElement, "linesInput");
     }
 
     @Metric(order = 102, value = "Lines output")
-    public Number getLinesOutput(InputColumn<?> step) {
-        Element stepElement = getStepStatusElement(step.getName());
+    public Number getLinesOutput(final InputColumn<?> step) {
+        final Element stepElement = getStepStatusElement(step.getName());
         return getMeasure(stepElement, "linesOutput");
     }
 
     @Metric(order = 103, value = "Lines written")
-    public Number getLinesWritten(InputColumn<?> step) {
-        Element stepElement = getStepStatusElement(step.getName());
+    public Number getLinesWritten(final InputColumn<?> step) {
+        final Element stepElement = getStepStatusElement(step.getName());
         return getMeasure(stepElement, "linesWritten");
     }
 
     @Metric(order = 104, value = "Lines updated")
-    public Number getLinesUpdated(InputColumn<?> step) {
-        Element stepElement = getStepStatusElement(step.getName());
+    public Number getLinesUpdated(final InputColumn<?> step) {
+        final Element stepElement = getStepStatusElement(step.getName());
         return getMeasure(stepElement, "linesUpdated");
     }
 
     @Metric(order = 105, value = "Lines rejected")
-    public Number getLinesRejected(InputColumn<?> step) {
-        Element stepElement = getStepStatusElement(step.getName());
+    public Number getLinesRejected(final InputColumn<?> step) {
+        final Element stepElement = getStepStatusElement(step.getName());
         return getMeasure(stepElement, "linesRejected");
     }
 
     @Metric(order = 106, value = "Seconds")
-    public Number getSeconds(InputColumn<?> step) {
-        Element stepElement = getStepStatusElement(step.getName());
+    public Number getSeconds(final InputColumn<?> step) {
+        final Element stepElement = getStepStatusElement(step.getName());
         return getMeasure(stepElement, "seconds");
     }
 
     @Metric(order = 107, value = "Speed")
-    public Number getSpeed(InputColumn<?> step) {
-        Element stepElement = getStepStatusElement(step.getName());
+    public Number getSpeed(final InputColumn<?> step) {
+        final Element stepElement = getStepStatusElement(step.getName());
         return getMeasure(stepElement, "speed");
     }
-    
+
     @Metric(order = 201, value = "First log line no.")
     public Number getFirstLogLine() {
-        Element transStatusElement = getTransStatusElement();
+        final Element transStatusElement = getTransStatusElement();
         return getMeasure(transStatusElement, "first_log_line_nr");
     }
-    
+
     @Metric(order = 202, value = "Last log line no.")
     public Number getLastLogLine() {
-        Element transStatusElement = getTransStatusElement();
+        final Element transStatusElement = getTransStatusElement();
         return getMeasure(transStatusElement, "last_log_line_nr");
     }
-    
+
     @Metric(order = 203, value = "Error count")
     public Number getErrorCount() {
-        Element resultStatusElement = getResultStatusElement();
+        final Element resultStatusElement = getResultStatusElement();
         return getMeasure(resultStatusElement, "nr_errors");
     }
-    
+
     @Metric(order = 204, value = "Files retrieved")
     public Number getFilesRetrieved() {
-        Element resultStatusElement = getResultStatusElement();
+        final Element resultStatusElement = getResultStatusElement();
         return getMeasure(resultStatusElement, "nr_files_retrieved");
     }
 
     private Element getResultStatusElement() {
         final Element transstatusElement = getTransStatusElement();
-        final Element resultStatusElement = DomUtils.getChildElementByTagName(transstatusElement, "result");
-        return resultStatusElement;
+        return DomUtils.getChildElementByTagName(transstatusElement, "result");
     }
 
-    protected Number getMeasure(Element parentElement, String measureKey) {
+    protected Number getMeasure(final Element parentElement, final String measureKey) {
         if (parentElement == null) {
             return null;
         }
@@ -153,29 +151,22 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
     }
 
     protected Collection<String> getStepNames() {
-        List<Element> elements = getStepStatusElements();
-        return CollectionUtils.map(elements, new Func<Element, String>() {
-            @Override
-            public String eval(Element element) {
-                final String stepName = DomUtils.getChildElementValueByTagName(element, "stepname");
-                return stepName;
-            }
-        });
+        final List<Element> elements = getStepStatusElements();
+        return CollectionUtils.map(elements, element -> DomUtils.getChildElementValueByTagName(element, "stepname"));
     }
 
     private List<Element> getStepStatusElements() {
         final Element transstatusElement = getTransStatusElement();
         final Element stepstatuslistElement = DomUtils.getChildElementByTagName(transstatusElement, "stepstatuslist");
-        final List<Element> stepstatusElements = DomUtils.getChildElements(stepstatuslistElement);
-        return stepstatusElements;
+        return DomUtils.getChildElements(stepstatuslistElement);
     }
 
-    private Element getStepStatusElement(String name) {
+    private Element getStepStatusElement(final String name) {
         if (name == null) {
             return null;
         }
-        List<Element> elements = getStepStatusElements();
-        for (Element element : elements) {
+        final List<Element> elements = getStepStatusElements();
+        for (final Element element : elements) {
             final String stepName = DomUtils.getChildElementValueByTagName(element, "stepname");
             if (name.equals(stepName)) {
                 return element;
@@ -186,17 +177,16 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
 
     public Element getTransStatusElement() {
         final Document document = getDocument();
-        final Element transstatusElement = document.getDocumentElement();
-        return transstatusElement;
+        return document.getDocumentElement();
     }
 
     @Override
     public Crosstab<?> getCrosstab() {
         // create the crosstab dynamically based on the document, it's more
         // flexible
-        final Crosstab<Serializable> crosstab = new Crosstab<Serializable>(Serializable.class, "Step", "Measure");
+        final Crosstab<Serializable> crosstab = new Crosstab<>(Serializable.class, "Step", "Measure");
 
-        for (Element stepstatusElement : getStepStatusElements()) {
+        for (final Element stepstatusElement : getStepStatusElements()) {
             final String stepName = DomUtils.getChildElementValueByTagName(stepstatusElement, "stepname");
 
             final CrosstabNavigator<Serializable> nav = crosstab.where("Step", stepName);
@@ -218,8 +208,8 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
         return crosstab;
     }
 
-    private void addCrosstabMeasure(CrosstabNavigator<Serializable> nav, Element stepstatusElement, String measureKey,
-            String measureName) {
+    private void addCrosstabMeasure(final CrosstabNavigator<Serializable> nav, final Element stepstatusElement,
+            final String measureKey, final String measureName) {
         final String measure = DomUtils.getChildElementValueByTagName(stepstatusElement, measureKey);
         nav.where("Measure", measureName).put(measure, true);
     }
@@ -227,9 +217,9 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
     private Document getDocument() {
         if (_document == null) {
             try {
-                DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                final DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
                 _document = documentBuilder.parse(new InputSource(new StringReader(_documentString)));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Failed to parse document XML: {}", _documentString);
                 throw new IllegalStateException(e);
             }

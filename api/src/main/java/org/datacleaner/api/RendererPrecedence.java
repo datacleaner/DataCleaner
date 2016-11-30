@@ -24,11 +24,11 @@ package org.datacleaner.api;
  * others. The precendence is used to allow renderers of the same type to have
  * different precedence properties based on eg. the state of the renderable to
  * be rendered.
- * 
+ *
  * A low precedence means that renderers with such precedence will only be
  * applied if no higher-ranked renderers are found.
  */
 public enum RendererPrecedence {
 
-	NOT_CAPABLE, LOWEST, LOW, MEDIUM, HIGH, HIGHEST;
+    NOT_CAPABLE, LOWEST, LOW, MEDIUM, HIGH, HIGHEST
 }

@@ -41,26 +41,26 @@ public class WriteDataResultHtmlRendererTest {
 
     @Test
     public void testRendering() {
-        WriteDataResult result = new WriteDataResultImpl(2, 3, "datastore", "schema", "table");
-        WriteDataResultHtmlRenderer renderer = new WriteDataResultHtmlRenderer();
-        HtmlFragment htmlFragment = renderer.render(result);
+        final WriteDataResult result = new WriteDataResultImpl(2, 3, "datastore", "schema", "table");
+        final WriteDataResultHtmlRenderer renderer = new WriteDataResultHtmlRenderer();
+        final HtmlFragment htmlFragment = renderer.render(result);
 
         Assert.assertEquals(0, htmlFragment.getHeadElements().size());
         Assert.assertEquals(1, htmlFragment.getBodyElements().size());
 
-        HtmlRenderingContext context = new DefaultHtmlRenderingContext();
+        final HtmlRenderingContext context = new DefaultHtmlRenderingContext();
 
-        Assert.assertEquals("<div>\n  <p>Executed 2 inserts</p>\n  <p>Executed 3 updates</p>\n</div>", htmlFragment
-                .getBodyElements().get(0).toHtml(context).replaceAll("\r\n", "\n"));
+        Assert.assertEquals("<div>\n  <p>Executed 2 inserts</p>\n  <p>Executed 3 updates</p>\n</div>",
+                htmlFragment.getBodyElements().get(0).toHtml(context).replaceAll("\r\n", "\n"));
     }
 
     @Test
     public void testClasspathDiscovery() {
-        final DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
-                "org.datacleaner.beans", true);
+        final DescriptorProvider descriptorProvider =
+                new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.beans", true);
 
-        final Collection<RendererBeanDescriptor<?>> htmlRenderers = descriptorProvider
-                .getRendererBeanDescriptorsForRenderingFormat(HtmlRenderingFormat.class);
+        final Collection<RendererBeanDescriptor<?>> htmlRenderers =
+                descriptorProvider.getRendererBeanDescriptorsForRenderingFormat(HtmlRenderingFormat.class);
         final TreeSet<RendererBeanDescriptor<?>> sorted = new TreeSet<>(htmlRenderers);
 
         Assert.assertEquals(
@@ -72,8 +72,8 @@ public class WriteDataResultHtmlRendererTest {
                 .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
         final RendererFactory rendererFactory = new RendererFactory(conf);
 
-        final Renderer<? super WriteDataResultImpl, ? extends HtmlFragment> renderer = rendererFactory.getRenderer(
-                new WriteDataResultImpl(2, 3, "datastore", "schema", "table"), HtmlRenderingFormat.class);
+        final Renderer<? super WriteDataResultImpl, ? extends HtmlFragment> renderer = rendererFactory
+                .getRenderer(new WriteDataResultImpl(2, 3, "datastore", "schema", "table"), HtmlRenderingFormat.class);
 
         Assert.assertEquals(WriteDataResultHtmlRenderer.class, renderer.getClass());
     }

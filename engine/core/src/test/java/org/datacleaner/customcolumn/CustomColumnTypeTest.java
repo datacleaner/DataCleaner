@@ -21,8 +21,6 @@ package org.datacleaner.customcolumn;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -35,6 +33,8 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
+
+import junit.framework.TestCase;
 
 public class CustomColumnTypeTest extends TestCase {
 
@@ -49,27 +49,28 @@ public class CustomColumnTypeTest extends TestCase {
             builder.setDatastore(new CsvDatastore("Names", "src/test/resources/month-strings.csv"));
             builder.addSourceColumns("month");
 
-            TransformerComponentBuilder<MockConvertToMonthObjectTransformer> convertTransformer = builder.addTransformer(
-                    MockConvertToMonthObjectTransformer.class).addInputColumn(builder.getSourceColumnByName("month"));
+            final TransformerComponentBuilder<MockConvertToMonthObjectTransformer> convertTransformer =
+                    builder.addTransformer(MockConvertToMonthObjectTransformer.class)
+                            .addInputColumn(builder.getSourceColumnByName("month"));
             monthObjectColumn = convertTransformer.getOutputColumns().get(0);
 
             builder.addAnalyzer(MockMonthConsumingAnalyzer.class).addInputColumns(monthObjectColumn);
             job = builder.toAnalysisJob();
         }
 
-        ListResult<InputRow> result;
+        final ListResult<InputRow> result;
 
         // run job
         {
-            AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
-            AnalysisResultFuture resultFuture = runner.run(job);
+            final AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
+            final AnalysisResultFuture resultFuture = runner.run(job);
             if (resultFuture.isErrornous()) {
                 throw resultFuture.getErrors().get(0);
             }
             result = (ListResult<InputRow>) resultFuture.getResults().get(0);
         }
 
-        List<InputRow> list = result.getValues();
+        final List<InputRow> list = result.getValues();
 
         assertEquals(9, list.size());
         Month value = (Month) list.get(0).getValue(monthObjectColumn);

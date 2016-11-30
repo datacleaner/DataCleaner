@@ -30,14 +30,14 @@ public class JnlpUrlLaunchArtifactProviderTest extends TestCase {
 
     public void testGetFilenames() throws Exception {
         Assume.assumeTrue(TestHelper.isInternetConnected());
-        
-        JnlpUrlLaunchArtifactProvider provider = new JnlpUrlLaunchArtifactProvider();
+
+        final JnlpUrlLaunchArtifactProvider provider = new JnlpUrlLaunchArtifactProvider();
 
         assertTrue(provider.isAvailable());
 
-        List<String> jarFilenames = provider.getJarFilenames();
+        final List<String> jarFilenames = provider.getJarFilenames();
         assertFalse(jarFilenames.isEmpty());
-        
+
         assertTrue(jarFilenames.toString().indexOf("MetaModel") != -1);
     }
 }

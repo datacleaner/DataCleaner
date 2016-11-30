@@ -19,29 +19,27 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class DatastoreSynonymCatalogReferenceDataWizardTest {
 
     @Test
     public void testIsApplicableTo() throws Exception {
-        DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
+        final DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
         assertTrue(wizard.isApplicableTo(null));
     }
 
     @Test
     public void testGetDisplayName() throws Exception {
-        DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
+        final DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
         assertNotEquals("", wizard.getDisplayName());
     }
 
     @Test
     public void testGetExpectedPageCount() throws Exception {
-        DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
+        final DatastoreSynonymCatalogReferenceDataWizard wizard = new DatastoreSynonymCatalogReferenceDataWizard();
         assertEquals(5, wizard.getExpectedPageCount());
     }
 }

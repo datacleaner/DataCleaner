@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.data.Row;
@@ -53,6 +51,8 @@ import org.datacleaner.test.TestHelper;
 import org.datacleaner.test.mock.EvenOddFilter;
 import org.datacleaner.test.mock.EvenOddFilter.Category;
 
+import junit.framework.TestCase;
+
 /**
  * A test case that simulates a "cleansing street", ie. a series of (two)
  * transformations with filters inbetween. There are two paths: A successful
@@ -69,11 +69,11 @@ public class CompoundComponentRequirementRejectionStreetTest extends TestCase {
     public void testScenario() throws Throwable {
         final AnalysisJob job;
 
-        try (DatastoreConnection connection = datastore.openConnection();) {
+        try (DatastoreConnection connection = datastore.openConnection()) {
             final DataContext dataContext = connection.getDataContext();
             final Table table = dataContext.getTableByQualifiedLabel("PUBLIC.CUSTOMERS");
-            final Row row = MetaModelHelper.executeSingleRowQuery(dataContext, dataContext.query().from(table)
-                    .selectCount().toQuery());
+            final Row row = MetaModelHelper
+                    .executeSingleRowQuery(dataContext, dataContext.query().from(table).selectCount().toQuery());
             assertEquals(recordsInTable, ((Number) row.getValue(0)).intValue());
 
             try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
@@ -88,24 +88,24 @@ public class CompoundComponentRequirementRejectionStreetTest extends TestCase {
                 final Category valid = org.datacleaner.test.mock.EvenOddFilter.Category.EVEN;
                 final Category invalid = org.datacleaner.test.mock.EvenOddFilter.Category.ODD;
 
-                final TransformerComponentBuilder<MockTransformer> trans1 = jobBuilder
-                        .addTransformer(MockTransformer.class);
+                final TransformerComponentBuilder<MockTransformer> trans1 =
+                        jobBuilder.addTransformer(MockTransformer.class);
                 trans1.setName("trans1");
                 trans1.addInputColumn(jobBuilder.getSourceColumns().get(0));
 
-                final FilterComponentBuilder<EvenOddFilter, org.datacleaner.test.mock.EvenOddFilter.Category> filter1 = jobBuilder
-                        .addFilter(EvenOddFilter.class);
+                final FilterComponentBuilder<EvenOddFilter, org.datacleaner.test.mock.EvenOddFilter.Category> filter1 =
+                        jobBuilder.addFilter(EvenOddFilter.class);
                 filter1.setName("filter1");
                 filter1.addInputColumn(trans1.getOutputColumns().get(0));
 
-                final TransformerComponentBuilder<MockTransformer> trans2 = jobBuilder
-                        .addTransformer(MockTransformer.class);
+                final TransformerComponentBuilder<MockTransformer> trans2 =
+                        jobBuilder.addTransformer(MockTransformer.class);
                 trans2.setName("trans2");
                 trans2.addInputColumn(jobBuilder.getSourceColumns().get(1));
                 trans2.setRequirement(filter1, valid);
 
-                final FilterComponentBuilder<EvenOddFilter, org.datacleaner.test.mock.EvenOddFilter.Category> filter2 = jobBuilder
-                        .addFilter(EvenOddFilter.class);
+                final FilterComponentBuilder<EvenOddFilter, org.datacleaner.test.mock.EvenOddFilter.Category> filter2 =
+                        jobBuilder.addFilter(EvenOddFilter.class);
                 filter2.setName("filter2");
                 filter2.addInputColumn(trans2.getOutputColumns().get(0));
 
@@ -140,10 +140,9 @@ public class CompoundComponentRequirementRejectionStreetTest extends TestCase {
         int recordsInResults = 0;
 
         final Map<ComponentJob, AnalyzerResult> map = resultFuture.getResultMap();
-        for (Entry<ComponentJob, AnalyzerResult> entry : map.entrySet()) {
+        for (final Entry<ComponentJob, AnalyzerResult> entry : map.entrySet()) {
             final ComponentJob componentJob = entry.getKey();
-            @SuppressWarnings("unchecked")
-            final ListResult<InputRow> result = (ListResult<InputRow>) entry.getValue();
+            @SuppressWarnings("unchecked") final ListResult<InputRow> result = (ListResult<InputRow>) entry.getValue();
             final List<InputRow> values = result.getValues();
             final int recordsInResult = values.size();
             recordsInResults += recordsInResult;

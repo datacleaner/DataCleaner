@@ -32,16 +32,16 @@ import org.datacleaner.widgets.table.DCTable;
 @RendererBean(SwingRenderingFormat.class)
 public class TableModelResultSwingRenderer implements Renderer<TableModelResult, JComponent> {
 
-	@Override
-	public JComponent render(TableModelResult result) {
-		TableModel tableModel = result.toTableModel();
-		DCTable table = new DCTable(tableModel);
-		return table.toPanel();
-	}
-	
-	@Override
-	public RendererPrecedence getPrecedence(TableModelResult renderable) {
-	    return RendererPrecedence.LOW;
-	}
+    @Override
+    public JComponent render(final TableModelResult result) {
+        final TableModel tableModel = result.toTableModel();
+        final DCTable table = new DCTable(tableModel);
+        return table.toPanel();
+    }
+
+    @Override
+    public RendererPrecedence getPrecedence(final TableModelResult renderable) {
+        return RendererPrecedence.LOW;
+    }
 
 }

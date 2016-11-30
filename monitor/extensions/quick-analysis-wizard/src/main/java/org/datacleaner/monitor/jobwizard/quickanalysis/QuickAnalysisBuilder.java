@@ -43,19 +43,20 @@ public class QuickAnalysisBuilder {
     private final boolean includeValueDistribution;
     private final boolean includePatternFinder;
 
-    public QuickAnalysisBuilder(int columnsPerAnalyzer, boolean includeValueDistribution, boolean includePatternFinder) {
+    public QuickAnalysisBuilder(final int columnsPerAnalyzer, final boolean includeValueDistribution,
+            final boolean includePatternFinder) {
         this.columnsPerAnalyzer = columnsPerAnalyzer;
         this.includeValueDistribution = includeValueDistribution;
         this.includePatternFinder = includePatternFinder;
     }
 
-    public void configureAnalysisJobBuilder(AnalysisJobBuilder ajb) {
-        final List<InputColumn<?>> booleanColumns = new ArrayList<InputColumn<?>>();
-        final List<InputColumn<?>> stringColumns = new ArrayList<InputColumn<?>>();
-        final List<InputColumn<?>> numberColumns = new ArrayList<InputColumn<?>>();
-        final List<InputColumn<?>> dateTimeColumns = new ArrayList<InputColumn<?>>();
+    public void configureAnalysisJobBuilder(final AnalysisJobBuilder ajb) {
+        final List<InputColumn<?>> booleanColumns = new ArrayList<>();
+        final List<InputColumn<?>> stringColumns = new ArrayList<>();
+        final List<InputColumn<?>> numberColumns = new ArrayList<>();
+        final List<InputColumn<?>> dateTimeColumns = new ArrayList<>();
 
-        for (InputColumn<?> inputColumn : ajb.getSourceColumns()) {
+        for (final InputColumn<?> inputColumn : ajb.getSourceColumns()) {
             final Class<?> dataType = inputColumn.getDataType();
             if (ReflectionUtils.isBoolean(dataType)) {
                 booleanColumns.add(inputColumn);
@@ -88,16 +89,16 @@ public class QuickAnalysisBuilder {
      * Registers analyzers and up to 4 columns per analyzer. This restriction is
      * to ensure that results will be nicely readable. A table might contain
      * hundreds of columns.
-     * 
+     *
      * @param ajb
      * @param analyzerClass
      * @param columns
      */
-    private void createAnalyzers(AnalysisJobBuilder ajb, Class<? extends Analyzer<?>> analyzerClass,
-            List<InputColumn<?>> columns) {
+    private void createAnalyzers(final AnalysisJobBuilder ajb, final Class<? extends Analyzer<?>> analyzerClass,
+            final List<InputColumn<?>> columns) {
         AnalyzerComponentBuilder<?> analyzerJobBuilder = ajb.addAnalyzer(analyzerClass);
         int columnCount = 0;
-        for (InputColumn<?> inputColumn : columns) {
+        for (final InputColumn<?> inputColumn : columns) {
             if (columnCount == columnsPerAnalyzer) {
                 analyzerJobBuilder = ajb.addAnalyzer(analyzerClass);
                 columnCount = 0;

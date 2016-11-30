@@ -21,8 +21,6 @@ package org.datacleaner.panels.fuse;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,12 +58,12 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link PropertyWidget} for two properties at one time: An array of
  * {@link InputColumn}s and an array of {@link CoalesceUnit}s.
- * 
+ *
  * This widget displays a list of {@link CoalesceUnit}s with {@link InputColumn}
  * s that the user can add an remove from.
  */
-public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
-        SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
+public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]>
+        implements SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
 
     private static final Logger logger = LoggerFactory.getLogger(ColumnListMultipleCoalesceUnitPropertyWidget.class);
 
@@ -74,8 +72,9 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     private final DCPanel _unitContainerPanel;
 
     private final Set<InputColumn<?>> _pickedInputColumns;
-    public ColumnListMultipleCoalesceUnitPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor inputProperty, ConfiguredPropertyDescriptor unitProperty) {
+
+    public ColumnListMultipleCoalesceUnitPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor inputProperty, final ConfiguredPropertyDescriptor unitProperty) {
         super(componentBuilder, inputProperty);
         _unitProperty = unitProperty;
         _pickedInputColumns = new HashSet<>();
@@ -88,20 +87,10 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         _unitPropertyWidget = createUnitPropertyWidget();
 
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addCoalesceUnit();
-            }
-        });
+        addButton.addActionListener(e -> addCoalesceUnit());
 
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removeCoalesceUnit();
-            }
-        });
+        removeButton.addActionListener(e -> removeCoalesceUnit());
 
         final DCPanel buttonPanel = new DCPanel();
         buttonPanel.setBorder(new EmptyBorder(0, 4, 0, 0));
@@ -121,12 +110,9 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         if (currentValue == null) {
             addCoalesceUnit();
         } else {
-            batchUpdateWidget(new Runnable() {
-                @Override
-                public void run() {
-                    for (CoalesceUnit unit : currentValue) {
-                        addCoalesceUnit(unit);
-                    }
+            batchUpdateWidget(() -> {
+                for (final CoalesceUnit unit : currentValue) {
+                    addCoalesceUnit(unit);
                 }
             });
         }
@@ -150,7 +136,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         updateUI();
     }
 
-    private void removeCoalesceUnitPanel(CoalesceUnitPanel coalesceUnitPanel) {
+    private void removeCoalesceUnitPanel(final CoalesceUnitPanel coalesceUnitPanel) {
         final int componentCount = _unitContainerPanel.getComponentCount();
         if (componentCount > 1) {
             _unitContainerPanel.remove(coalesceUnitPanel);
@@ -160,7 +146,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         updateUI();
     }
 
-    public void addCoalesceUnit(CoalesceUnit unit) {
+    public void addCoalesceUnit(final CoalesceUnit unit) {
         final CoalesceUnitPanel panel = new CoalesceUnitPanel(this, unit);
         _unitContainerPanel.add(panel);
         updateUI();
@@ -196,12 +182,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
             }
 
             @Override
-            public boolean isSet() {
-                return ColumnListMultipleCoalesceUnitPropertyWidget.this.isSet();
-            }
-
-            @Override
-            protected void setValue(CoalesceUnit[] value) {
+            protected void setValue(final CoalesceUnit[] value) {
                 if (value == null) {
                     return;
                 }
@@ -209,6 +190,11 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
                     return;
                 }
                 setCoalesceUnits(value);
+            }
+
+            @Override
+            public boolean isSet() {
+                return ColumnListMultipleCoalesceUnitPropertyWidget.this.isSet();
             }
         };
     }
@@ -219,7 +205,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         if (panels.isEmpty()) {
             return false;
         }
-        for (CoalesceUnitPanel panel : panels) {
+        for (final CoalesceUnitPanel panel : panels) {
             if (!panel.isSet()) {
                 return false;
             }
@@ -228,26 +214,14 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     }
 
     private List<CoalesceUnitPanel> getCoalesceUnitPanels() {
-        List<CoalesceUnitPanel> result = new ArrayList<>();
-        Component[] components = _unitContainerPanel.getComponents();
-        for (Component component : components) {
+        final List<CoalesceUnitPanel> result = new ArrayList<>();
+        final Component[] components = _unitContainerPanel.getComponents();
+        for (final Component component : components) {
             if (component instanceof CoalesceUnitPanel) {
                 result.add((CoalesceUnitPanel) component);
             }
         }
         return result;
-    }
-
-    public void setCoalesceUnits(final CoalesceUnit[] units) {
-        batchUpdateWidget(new Runnable() {
-            @Override
-            public void run() {
-                _unitContainerPanel.removeAll();
-                for (CoalesceUnit unit : units) {
-                    addCoalesceUnit(unit);
-                }
-            }
-        });
     }
 
     public CoalesceUnit[] getCoalesceUnits() {
@@ -262,12 +236,21 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         return result.toArray(new CoalesceUnit[result.size()]);
     }
 
+    public void setCoalesceUnits(final CoalesceUnit[] units) {
+        batchUpdateWidget(() -> {
+            _unitContainerPanel.removeAll();
+            for (final CoalesceUnit unit : units) {
+                addCoalesceUnit(unit);
+            }
+        });
+    }
+
     @Override
     public InputColumn<?>[] getValue() {
-        final List<InputColumn<?>> availableInputColumns = getAnalysisJobBuilder().getAvailableInputColumns(
-                Object.class);
-        final InputColumn<?>[] allInputColumns = availableInputColumns.toArray(new InputColumn[availableInputColumns
-                .size()]);
+        final List<InputColumn<?>> availableInputColumns =
+                getAnalysisJobBuilder().getAvailableInputColumns(Object.class);
+        final InputColumn<?>[] allInputColumns =
+                availableInputColumns.toArray(new InputColumn[availableInputColumns.size()]);
         final List<InputColumn<?>> resultList = new ArrayList<>();
 
         final CoalesceUnit[] units = getCoalesceUnits();
@@ -276,18 +259,17 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
             return null;
         }
 
-        for (CoalesceUnit unit : units) {
+        for (final CoalesceUnit unit : units) {
             final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(allInputColumns, true);
             Collections.addAll(resultList, updatedInputColumns);
         }
 
         logger.debug("Returning Input.value = {}", resultList);
-        final InputColumn<?>[] result = resultList.toArray(new InputColumn[resultList.size()]);
-        return result;
+        return resultList.toArray(new InputColumn[resultList.size()]);
     }
 
     @Override
-    protected void setValue(InputColumn<?>[] value) {
+    protected void setValue(final InputColumn<?>[] value) {
         // we ignore this setValue call since the setValue call of the
         // unitPropertyWidget will also contain the input column references.
     }
@@ -299,10 +281,10 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     /**
      * Called when an input column is picked (selected) by a child
      * CoalesceUnitPanel
-     * 
+     *
      * @param item
      */
-    public void onInputColumnPicked(InputColumn<?> item) {
+    public void onInputColumnPicked(final InputColumn<?> item) {
         _pickedInputColumns.add(item);
         updateAvailableInputColumns();
         fireBothValuesChanged();
@@ -311,27 +293,27 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     /**
      * Called when an input column is released (de-selected) by a child
      * CoalesceUnitPanel
-     * 
+     *
      * @param item
      */
-    public void onInputColumnReleased(InputColumn<?> item) {
+    public void onInputColumnReleased(final InputColumn<?> item) {
         _pickedInputColumns.remove(item);
         updateAvailableInputColumns();
         fireBothValuesChanged();
     }
 
     private void updateAvailableInputColumns() {
-        List<InputColumn<?>> availableInputColumns = getAvailableInputColumns();
+        final List<InputColumn<?>> availableInputColumns = getAvailableInputColumns();
 
-        List<CoalesceUnitPanel> panels = getCoalesceUnitPanels();
-        for (CoalesceUnitPanel panel : panels) {
+        final List<CoalesceUnitPanel> panels = getCoalesceUnitPanels();
+        for (final CoalesceUnitPanel panel : panels) {
             panel.setAvailableInputColumns(availableInputColumns);
         }
     }
 
     public List<InputColumn<?>> getAvailableInputColumns() {
-        final List<InputColumn<?>> availableInputColumns = getAnalysisJobBuilder().getAvailableInputColumns(
-                Object.class);
+        final List<InputColumn<?>> availableInputColumns =
+                getAnalysisJobBuilder().getAvailableInputColumns(Object.class);
 
         if (getComponentBuilder() instanceof TransformerComponentBuilder) {
             // remove all the columns that are generated by the transformer
@@ -346,36 +328,36 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     }
 
     @Override
-    public void onNameChanged(MutableInputColumn<?> inputColumn, String oldName, String newName) {
+    public void onNameChanged(final MutableInputColumn<?> inputColumn, final String oldName, final String newName) {
         updateAvailableInputColumns();
     }
 
     @Override
-    public void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden) {
+    public void onVisibilityChanged(final MutableInputColumn<?> inputColumn, final boolean hidden) {
     }
 
     @Override
-    public void onAdd(TransformerComponentBuilder<?> transformerJobBuilder) {
+    public void onAdd(final TransformerComponentBuilder<?> transformerJobBuilder) {
         updateAvailableInputColumns();
     }
 
     @Override
-    public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
+    public void onRemove(final TransformerComponentBuilder<?> transformerJobBuilder) {
         updateAvailableInputColumns();
     }
 
     @Override
-    public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
+    public void onConfigurationChanged(final TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override
-    public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
+    public void onRequirementChanged(final TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override
-    public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
-            List<MutableInputColumn<?>> outputColumns) {
-        for (MutableInputColumn<?> outputColumn : outputColumns) {
+    public void onOutputChanged(final TransformerComponentBuilder<?> transformerJobBuilder,
+            final List<MutableInputColumn<?>> outputColumns) {
+        for (final MutableInputColumn<?> outputColumn : outputColumns) {
             outputColumn.addListener(this);
         }
         updateAvailableInputColumns();
@@ -385,12 +367,12 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     public void onValueTouched(final InputColumn<?>[] value) {
         try {
             super.onValueTouched(value);
-        } catch (CoalesceUnitMissingColumnException e) {
+        } catch (final CoalesceUnitMissingColumnException e) {
             logger.warn("Missing input column for coalesce unit", e);
             final CoalesceUnit failingCoalesceUnit = e.getCoalesceUnit();
             final CoalesceUnit[] newCoalesceUnits =
                     (CoalesceUnit[]) ArrayUtils.removeElement(_unitPropertyWidget.getValue(), failingCoalesceUnit);
-            for (InputColumn<?> inputColumn : failingCoalesceUnit.getInputColumns()) {
+            for (final InputColumn<?> inputColumn : failingCoalesceUnit.getInputColumns()) {
                 _pickedInputColumns.remove(inputColumn);
             }
             getCoalesceUnitPanels().stream()
@@ -404,18 +386,18 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
     }
 
     @Override
-    public void onAdd(InputColumn<?> sourceColumn) {
+    public void onAdd(final InputColumn<?> sourceColumn) {
         updateAvailableInputColumns();
     }
 
     @Override
-    public void onRemove(InputColumn<?> sourceColumn) {
+    public void onRemove(final InputColumn<?> sourceColumn) {
         updateAvailableInputColumns();
     }
 
     private void fireBothValuesChanged() {
         if (!isUpdating() && !isBatchUpdating()) {
-            Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<>();
+            final Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<>();
             properties.put(getPropertyDescriptor(), getValue());
             properties.put(_unitProperty, _unitPropertyWidget.getValue());
             fireValuesChanged(properties);

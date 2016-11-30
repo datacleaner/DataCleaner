@@ -36,16 +36,17 @@ public class CompoundComponentRequirement implements ComponentRequirement {
 
     private final Set<FilterOutcome> _outcomes;
 
-    public CompoundComponentRequirement(Collection<? extends FilterOutcome> outcomes) {
+    public CompoundComponentRequirement(final Collection<? extends FilterOutcome> outcomes) {
         _outcomes = new LinkedHashSet<>(outcomes);
     }
 
-    public CompoundComponentRequirement(FilterOutcome... outcomes) {
+    public CompoundComponentRequirement(final FilterOutcome... outcomes) {
         _outcomes = new LinkedHashSet<>();
         Collections.addAll(_outcomes, outcomes);
     }
 
-    public CompoundComponentRequirement(ComponentRequirement existingRequirement, FilterOutcome filterOutcome) {
+    public CompoundComponentRequirement(final ComponentRequirement existingRequirement,
+            final FilterOutcome filterOutcome) {
         _outcomes = new LinkedHashSet<>();
         _outcomes.addAll(existingRequirement.getProcessingDependencies());
         _outcomes.add(filterOutcome);
@@ -61,9 +62,9 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         return _outcomes;
     }
 
-    public Set<FilterOutcome> getOutcomesFrom(HasFilterOutcomes producingComponent) {
-        Set<FilterOutcome> result = new LinkedHashSet<>();
-        for (FilterOutcome outcome : _outcomes) {
+    public Set<FilterOutcome> getOutcomesFrom(final HasFilterOutcomes producingComponent) {
+        final Set<FilterOutcome> result = new LinkedHashSet<>();
+        for (final FilterOutcome outcome : _outcomes) {
             final HasFilterOutcomes source = outcome.getSource();
             if (producingComponent.equals(source)) {
                 result.add(outcome);
@@ -72,9 +73,9 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         return result;
     }
 
-    public boolean hasMultipleRequirementsFrom(HasFilterOutcomes producingComponent) {
+    public boolean hasMultipleRequirementsFrom(final HasFilterOutcomes producingComponent) {
         int count = 0;
-        for (FilterOutcome outcome : _outcomes) {
+        for (final FilterOutcome outcome : _outcomes) {
             final HasFilterOutcomes source = outcome.getSource();
             if (producingComponent.equals(source)) {
                 count++;
@@ -89,8 +90,8 @@ public class CompoundComponentRequirement implements ComponentRequirement {
     }
 
     @Override
-    public boolean isSatisfied(InputRow row, FilterOutcomes outcomes) {
-        for (FilterOutcome outcome : outcomes.getOutcomes()) {
+    public boolean isSatisfied(final InputRow row, final FilterOutcomes outcomes) {
+        for (final FilterOutcome outcome : outcomes.getOutcomes()) {
             if (_outcomes.contains(outcome)) {
                 return true;
             }
@@ -101,7 +102,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
     @Override
     public String getSimpleName() {
         final StringBuilder sb = new StringBuilder();
-        for (FilterOutcome outcome : _outcomes) {
+        for (final FilterOutcome outcome : _outcomes) {
             if (sb.length() != 0) {
                 sb.append(" OR ");
             }
@@ -113,7 +114,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        for (FilterOutcome outcome : _outcomes) {
+        for (final FilterOutcome outcome : _outcomes) {
             if (sb.length() != 0) {
                 sb.append(" OR ");
             }
@@ -128,13 +129,16 @@ public class CompoundComponentRequirement implements ComponentRequirement {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final CompoundComponentRequirement other = (CompoundComponentRequirement) obj;
 
         return Objects.equals(_outcomes, other._outcomes);

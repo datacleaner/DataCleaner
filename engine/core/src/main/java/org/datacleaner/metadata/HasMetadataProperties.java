@@ -28,16 +28,16 @@ public interface HasMetadataProperties {
 
     /**
      * Gets metadata properties as a map.
-     * 
+     *
      * @return
      */
-    public Map<String, String> getMetadataProperties();
+    Map<String, String> getMetadataProperties();
 
     /**
      * Gets a metadata property by it's key
-     * 
+     *
      * @param key
      * @return
      */
-    public String getMetadataProperty(String key);
+    String getMetadataProperty(String key);
 }

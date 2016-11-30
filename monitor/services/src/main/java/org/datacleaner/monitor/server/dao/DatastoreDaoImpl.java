@@ -19,8 +19,6 @@
  */
 package org.datacleaner.monitor.server.dao;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -33,8 +31,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
@@ -62,7 +58,8 @@ public class DatastoreDaoImpl implements DatastoreDao {
     private static final Logger logger = LoggerFactory.getLogger(DatastoreDaoImpl.class);
 
     @Override
-    public void removeDatastore(TenantContext tenantContext, String datastoreName) throws IllegalArgumentException {
+    public void removeDatastore(final TenantContext tenantContext, final String datastoreName)
+            throws IllegalArgumentException {
         if (datastoreName == null) {
             throw new IllegalArgumentException("Datastore name cannot be null");
         }
@@ -70,19 +67,13 @@ public class DatastoreDaoImpl implements DatastoreDao {
         final JaxbConfigurationReader jaxbConfigurationAdaptor = new JaxbConfigurationReader();
 
         final RepositoryFile confFile = tenantContext.getConfigurationFile();
-        final Configuration configuration = confFile.readFile(new Func<InputStream, Configuration>() {
-            @Override
-            public Configuration eval(InputStream in) {
-                Configuration configuration = jaxbConfigurationAdaptor.unmarshall(in);
-                return configuration;
-            }
-        });
+        final Configuration configuration = confFile.readFile(jaxbConfigurationAdaptor::unmarshall);
 
         boolean found = false;
 
-        final List<AbstractDatastoreType> datastores = configuration.getDatastoreCatalog()
-                .getJdbcDatastoreOrAccessDatastoreOrCsvDatastore();
-        for (Iterator<AbstractDatastoreType> it = datastores.iterator(); it.hasNext();) {
+        final List<AbstractDatastoreType> datastores =
+                configuration.getDatastoreCatalog().getJdbcDatastoreOrAccessDatastoreOrCsvDatastore();
+        for (final Iterator<AbstractDatastoreType> it = datastores.iterator(); it.hasNext(); ) {
             final AbstractDatastoreType abstractDatastoreType = it.next();
             final String candidateName = abstractDatastoreType.getName();
             if (datastoreName.equals(candidateName)) {
@@ -97,16 +88,11 @@ public class DatastoreDaoImpl implements DatastoreDao {
             throw new IllegalArgumentException("Could not find datastore with name '" + datastoreName + "'");
         }
 
-        confFile.writeFile(new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                jaxbConfigurationAdaptor.marshall(configuration, out);
-            }
-        });
+        confFile.writeFile(out -> jaxbConfigurationAdaptor.marshall(configuration, out));
     }
 
     @Override
-    public Element parseDatastoreElement(Reader reader) {
+    public Element parseDatastoreElement(final Reader reader) {
         final DocumentBuilder documentBuilder = getDocumentBuilder();
 
         // parse the incoming datastore definition
@@ -114,7 +100,7 @@ public class DatastoreDaoImpl implements DatastoreDao {
         try {
             final Document datastoreDocument = documentBuilder.parse(inputSource);
             return datastoreDocument.getDocumentElement();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -123,26 +109,23 @@ public class DatastoreDaoImpl implements DatastoreDao {
     }
 
     @Override
-    public String addDatastore(TenantContext tenantContext, Datastore datastore) throws UnsupportedOperationException {
+    public String addDatastore(final TenantContext tenantContext, final Datastore datastore)
+            throws UnsupportedOperationException {
         final DomConfigurationWriter externalizer = new DomConfigurationWriter();
         final Element element = externalizer.externalize(datastore);
-        final String result = addDatastore(tenantContext, element);
-        return result;
+        return addDatastore(tenantContext, element);
     }
 
     @Override
-    public String addDatastore(TenantContext tenantContext, Element datastoreElement) {
+    public String addDatastore(final TenantContext tenantContext, final Element datastoreElement) {
 
         final RepositoryFile confFile = tenantContext.getConfigurationFile();
         // parse the configuration file
-        final Document configurationFileDocument = confFile.readFile(new Func<InputStream, Document>() {
-            @Override
-            public Document eval(InputStream in) {
-                try {
-                    return getDocumentBuilder().parse(in);
-                } catch (Exception e) {
-                    throw new IllegalStateException("Could not parse configuration file", e);
-                }
+        final Document configurationFileDocument = confFile.readFile(in -> {
+            try {
+                return getDocumentBuilder().parse(in);
+            } catch (final Exception e) {
+                throw new IllegalStateException("Could not parse configuration file", e);
             }
         });
 
@@ -150,8 +133,8 @@ public class DatastoreDaoImpl implements DatastoreDao {
         // configuration file
         final Element configurationFileDocumentElement = configurationFileDocument.getDocumentElement();
 
-        final Element datastoreCatalogElement = DomUtils.getChildElementByTagName(configurationFileDocumentElement,
-                "datastore-catalog");
+        final Element datastoreCatalogElement =
+                DomUtils.getChildElementByTagName(configurationFileDocumentElement, "datastore-catalog");
         if (datastoreCatalogElement == null) {
             throw new IllegalStateException("Could not find <datastore-catalog> element in configuration file");
         }
@@ -165,13 +148,10 @@ public class DatastoreDaoImpl implements DatastoreDao {
         final Transformer transformer = getTransformer();
         final Source source = new DOMSource(configurationFileDocument);
 
-        confFile.writeFile(new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                final Result outputTarget = new StreamResult(out);
-                transformer.transform(source, outputTarget);
-                out.flush();
-            }
+        confFile.writeFile(out -> {
+            final Result outputTarget = new StreamResult(out);
+            transformer.transform(source, outputTarget);
+            out.flush();
         });
 
         tenantContext.onConfigurationChanged();
@@ -179,11 +159,11 @@ public class DatastoreDaoImpl implements DatastoreDao {
         String datastoreName = datastoreElement.getAttribute("name");
         if (datastoreName == null) {
             // slightly more intricate way of getting datastore name by index
-            DatastoreCatalog datastoreCatalog = tenantContext.getConfiguration().getDatastoreCatalog();
-            String[] datastoreNames = datastoreCatalog.getDatastoreNames();
+            final DatastoreCatalog datastoreCatalog = tenantContext.getConfiguration().getDatastoreCatalog();
+            final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
             try {
                 datastoreName = datastoreNames[datastoreIndex];
-            } catch (IndexOutOfBoundsException e) {
+            } catch (final IndexOutOfBoundsException e) {
                 logger.warn("Failed to get index {} of datastore names: {}", datastoreCatalog,
                         Arrays.toString(datastoreNames));
             }

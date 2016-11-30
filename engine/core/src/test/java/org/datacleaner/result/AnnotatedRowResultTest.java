@@ -23,8 +23,6 @@ import java.util.Arrays;
 
 import javax.swing.table.TableModel;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.SerializationUtils;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
@@ -33,40 +31,42 @@ import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotations;
 
+import junit.framework.TestCase;
+
 public class AnnotatedRowResultTest extends TestCase {
 
-	public void testSerializeAndDeserialize() throws Exception {
-		RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
-		RowAnnotation annotation = annotationFactory.createAnnotation();
-		InputColumn<String> col1 = new MockInputColumn<String>("foo", String.class);
-		InputColumn<String> col2 = new MockInputColumn<String>("bar", String.class);
+    public void testSerializeAndDeserialize() throws Exception {
+        final RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
+        final RowAnnotation annotation = annotationFactory.createAnnotation();
+        final InputColumn<String> col1 = new MockInputColumn<>("foo", String.class);
+        final InputColumn<String> col2 = new MockInputColumn<>("bar", String.class);
 
-		annotationFactory.annotate(new MockInputRow().put(col1, "1").put(col2, "2"), 1, annotation);
-		annotationFactory.annotate(new MockInputRow().put(col1, "3").put(col2, "4"), 1, annotation);
+        annotationFactory.annotate(new MockInputRow().put(col1, "1").put(col2, "2"), 1, annotation);
+        annotationFactory.annotate(new MockInputRow().put(col1, "3").put(col2, "4"), 1, annotation);
 
-		AnnotatedRowsResult result1 = new AnnotatedRowsResult(annotation, annotationFactory, col1);
-		performAssertions(result1);
+        final AnnotatedRowsResult result1 = new AnnotatedRowsResult(annotation, annotationFactory, col1);
+        performAssertions(result1);
 
-		AnnotatedRowsResult result2 = (AnnotatedRowsResult) SerializationUtils.deserialize(SerializationUtils
-				.serialize(result1));
-		performAssertions(result2);
-	}
+        final AnnotatedRowsResult result2 =
+                (AnnotatedRowsResult) SerializationUtils.deserialize(SerializationUtils.serialize(result1));
+        performAssertions(result2);
+    }
 
-	private void performAssertions(AnnotatedRowsResult result) {
-		assertEquals(2, result.getAnnotatedRowCount());
-		assertEquals("[MockInputColumn[name=foo], MockInputColumn[name=bar]]", result.getInputColumns().toString());
-		assertEquals("[MockInputColumn[name=foo]]", Arrays.toString(result.getHighlightedColumns()));
-		assertNotNull(result.getSampleRows());
-		TableModel tableModel = result.toTableModel();
-		assertNotNull(tableModel);
-		assertEquals(2, tableModel.getColumnCount());
-		assertEquals("foo", tableModel.getColumnName(0));
-		assertEquals("bar", tableModel.getColumnName(1));
+    private void performAssertions(final AnnotatedRowsResult result) {
+        assertEquals(2, result.getAnnotatedRowCount());
+        assertEquals("[MockInputColumn[name=foo], MockInputColumn[name=bar]]", result.getInputColumns().toString());
+        assertEquals("[MockInputColumn[name=foo]]", Arrays.toString(result.getHighlightedColumns()));
+        assertNotNull(result.getSampleRows());
+        TableModel tableModel = result.toTableModel();
+        assertNotNull(tableModel);
+        assertEquals(2, tableModel.getColumnCount());
+        assertEquals("foo", tableModel.getColumnName(0));
+        assertEquals("bar", tableModel.getColumnName(1));
 
-		tableModel = result.toDistinctValuesTableModel(result.getHighlightedColumns()[0]);
-		assertNotNull(tableModel);
-		assertEquals(2, tableModel.getColumnCount());
-		assertEquals("foo", tableModel.getColumnName(0));
-		assertEquals("Count in dataset", tableModel.getColumnName(1));
-	}
+        tableModel = result.toDistinctValuesTableModel(result.getHighlightedColumns()[0]);
+        assertNotNull(tableModel);
+        assertEquals(2, tableModel.getColumnCount());
+        assertEquals("foo", tableModel.getColumnName(0));
+        assertEquals("Count in dataset", tableModel.getColumnName(1));
+    }
 }

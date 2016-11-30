@@ -36,7 +36,7 @@ public interface PrecedingComponentConsumer extends Component {
     /**
      * Subclasses should implement this method with any configuration logic when
      * it is configured with a preceding {@link Transformer}.
-     * 
+     *
      * @param analysisJobBuilder
      *            the {@link AnalysisJobBuilder} being used to build this
      *            component
@@ -44,13 +44,12 @@ public interface PrecedingComponentConsumer extends Component {
      *            the descriptor of the {@link Transformer} that succeeds this
      *            component
      */
-    public abstract void configureForTransformedData(AnalysisJobBuilder analysisJobBuilder,
-            TransformerDescriptor<?> descriptor);
+    void configureForTransformedData(AnalysisJobBuilder analysisJobBuilder, TransformerDescriptor<?> descriptor);
 
     /**
      * Subclasses should implement this method with any configuration logic when
      * it is configured with a preceding {@link Filter}.
-     * 
+     *
      * @param analysisJobBuilder
      *            the {@link AnalysisJobBuilder} being used to build this
      *            component
@@ -61,6 +60,6 @@ public interface PrecedingComponentConsumer extends Component {
      *            the outcome category of the filter that succeeds this
      *            component
      */
-    public abstract void configureForFilterOutcome(AnalysisJobBuilder analysisJobBuilder,
-            FilterDescriptor<?, ?> descriptor, String categoryName);
+    void configureForFilterOutcome(AnalysisJobBuilder analysisJobBuilder, FilterDescriptor<?, ?> descriptor,
+            String categoryName);
 }

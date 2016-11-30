@@ -49,7 +49,7 @@ public class SchedulingOverviewPanel extends Composite {
     private final ClientConfig _clientConfig;
     private final SchedulingServiceAsync _service;
 
-    public SchedulingOverviewPanel(ClientConfig clientConfig, SchedulingServiceAsync service) {
+    public SchedulingOverviewPanel(final ClientConfig clientConfig, final SchedulingServiceAsync service) {
         _clientConfig = clientConfig;
         _service = service;
     }
@@ -57,40 +57,42 @@ public class SchedulingOverviewPanel extends Composite {
     public void initialize(final Runnable listener) {
         _service.getSchedules(_clientConfig.getTenant(), false, new DCAsyncCallback<List<ScheduleDefinition>>() {
             @Override
-            public void onSuccess(List<ScheduleDefinition> result) {
+            public void onSuccess(final List<ScheduleDefinition> result) {
 
-                final Map<String, List<ScheduleDefinition>> categoryAndGroupMapForJobs = createCategoryAndGroupMapForJobs(result);
+                final Map<String, List<ScheduleDefinition>> categoryAndGroupMapForJobs =
+                        createCategoryAndGroupMapForJobs(result);
                 final String jobGroupingCategory = "Group";
 
                 final int categoryCount = categoryAndGroupMapForJobs.size();
                 GWT.log("Categories: " + categoryCount);
 
                 if (categoryCount == 0) {
-                    HorizontalPanel panel = new HorizontalPanel();
+                    final HorizontalPanel panel = new HorizontalPanel();
                     panel.add(new Label("There are no jobs available."));
                     initWidget(panel);
                 } else if (categoryCount == 1) {
-                    FlowPanel panel = new FlowPanel();
+                    final FlowPanel panel = new FlowPanel();
                     panel.add(createHeaderPanel());
                     panel.addStyleName("SchedulingOverviewPanel");
-                    Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<String, ScheduleGroupPanel>();
-                    for (ScheduleDefinition scheduleDefinition : result) {
+                    final Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<>();
+                    for (final ScheduleDefinition scheduleDefinition : result) {
                         addSchedule(scheduleDefinition, jobGroupingCategory, panel, scheduleGroupPanels);
                     }
                     initWidget(panel);
                 } else {
-                    DecoratedTabPanel tabPanel = new DecoratedTabPanel();
+                    final DecoratedTabPanel tabPanel = new DecoratedTabPanel();
                     tabPanel.setWidth("100%");
                     Collection<String> jobCategories = categoryAndGroupMapForJobs.keySet();
                     jobCategories = sortJobCategories(jobCategories);
 
-                    for (String jobCategory : jobCategories) {
-                        Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<String, ScheduleGroupPanel>();
-                        FlowPanel panel = new FlowPanel();
+                    for (final String jobCategory : jobCategories) {
+                        final Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<>();
+                        final FlowPanel panel = new FlowPanel();
                         panel.add(createHeaderPanel());
                         panel.addStyleName("SchedulingOverviewPanel");
                         tabPanel.add(panel, jobCategory);
-                        for (ScheduleDefinition scheduleDefinition : categoryAndGroupMapForJobs.get(jobCategory)) {
+                        for (final ScheduleDefinition scheduleDefinition : categoryAndGroupMapForJobs
+                                .get(jobCategory)) {
                             addSchedule(scheduleDefinition, jobGroupingCategory, panel, scheduleGroupPanels);
                         }
                     }
@@ -101,21 +103,21 @@ public class SchedulingOverviewPanel extends Composite {
                 listener.run();
             }
 
-            private Collection<String> sortJobCategories(Collection<String> jobCategories) {
-                List<String> result = new ArrayList<>(jobCategories);
+            private Collection<String> sortJobCategories(final Collection<String> jobCategories) {
+                final List<String> result = new ArrayList<>(jobCategories);
 
                 // move OTHERS to the end
-                boolean removed = result.remove(OTHERS);
+                final boolean removed = result.remove(OTHERS);
                 if (removed) {
                     result.add(OTHERS);
                 }
-                
+
                 return result;
             }
 
             private Map<String, List<ScheduleDefinition>> createCategoryAndGroupMapForJobs(
-                    List<ScheduleDefinition> result) {
-                final Map<String, List<ScheduleDefinition>> categoryAndGroupMap = new TreeMap<String, List<ScheduleDefinition>>();
+                    final List<ScheduleDefinition> result) {
+                final Map<String, List<ScheduleDefinition>> categoryAndGroupMap = new TreeMap<>();
 
                 for (final ScheduleDefinition scheduleDefinition : result) {
                     final Map<String, String> jobMetadataProperties = scheduleDefinition.getJobMetadataProperties();
@@ -126,7 +128,7 @@ public class SchedulingOverviewPanel extends Composite {
                     if (jobMetadataProperties == null) {
                         categoryName = OTHERS;
                     } else {
-                        String metadataValue = jobMetadataProperties.get(CATEGORY);
+                        final String metadataValue = jobMetadataProperties.get(CATEGORY);
                         if (metadataValue != null && !"".equals(metadataValue.trim())) {
                             categoryName = metadataValue;
                         } else {
@@ -138,7 +140,7 @@ public class SchedulingOverviewPanel extends Composite {
                     listOfJobWithSameCategory = categoryAndGroupMap.get(categoryName);
 
                     if (listOfJobWithSameCategory == null) {
-                        listOfJobWithSameCategory = new ArrayList<ScheduleDefinition>();
+                        listOfJobWithSameCategory = new ArrayList<>();
 
                         categoryAndGroupMap.put(categoryName, listOfJobWithSameCategory);
                     }
@@ -152,14 +154,14 @@ public class SchedulingOverviewPanel extends Composite {
         });
     }
 
-    public void addSchedule(ScheduleDefinition schedule, String jobGroupingCategory, FlowPanel panel,
-            Map<String, ScheduleGroupPanel> scheduleGroupPanels) {
+    public void addSchedule(final ScheduleDefinition schedule, final String jobGroupingCategory, final FlowPanel panel,
+            final Map<String, ScheduleGroupPanel> scheduleGroupPanels) {
         String groupName = null;
 
         if (jobGroupingCategory == null || jobGroupingCategory.trim().length() == 0) {
             groupName = schedule.getGroupName();
         } else {
-            Map<String, String> jobMetadataProperties = schedule.getJobMetadataProperties();
+            final Map<String, String> jobMetadataProperties = schedule.getJobMetadataProperties();
 
             if (jobMetadataProperties != null) {
                 groupName = jobMetadataProperties.get(jobGroupingCategory);
@@ -196,10 +198,10 @@ public class SchedulingOverviewPanel extends Composite {
         return panel;
     }
 
-    private Label createLabel(String text, String ... styleNames) {
+    private Label createLabel(final String text, final String... styleNames) {
         final Label label = new Label();
         label.setText(text);
-        for (String styleName : styleNames) {
+        for (final String styleName : styleNames) {
             label.addStyleName(styleName);
         }
         return label;

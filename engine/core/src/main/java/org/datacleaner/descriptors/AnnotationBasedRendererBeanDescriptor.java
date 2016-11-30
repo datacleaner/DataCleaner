@@ -41,17 +41,17 @@ final class AnnotationBasedRendererBeanDescriptor<R extends Renderer<?, ?>> exte
     private final Class<? extends Renderable> _rendererInputType;
     private final Class<?> _rendererOutputType;
 
-    protected AnnotationBasedRendererBeanDescriptor(Class<R> rendererClass) throws DescriptorException {
+    protected AnnotationBasedRendererBeanDescriptor(final Class<R> rendererClass) throws DescriptorException {
         super(rendererClass, true);
 
-        RendererBean rendererBeanAnnotation = ReflectionUtils.getAnnotation(rendererClass, RendererBean.class);
+        final RendererBean rendererBeanAnnotation = ReflectionUtils.getAnnotation(rendererClass, RendererBean.class);
         if (rendererBeanAnnotation == null) {
             throw new DescriptorException(rendererClass + " doesn't implement the RendererBean annotation");
         }
 
         _renderingFormat = rendererBeanAnnotation.value();
-        if (_renderingFormat == null || _renderingFormat.isInterface()
-                || Modifier.isAbstract(_renderingFormat.getModifiers())) {
+        if (_renderingFormat == null || _renderingFormat.isInterface() || Modifier
+                .isAbstract(_renderingFormat.getModifiers())) {
             throw new DescriptorException("Rendering format (" + _renderingFormat + ") is not a non-abstract class");
         }
 
@@ -62,9 +62,8 @@ final class AnnotationBasedRendererBeanDescriptor<R extends Renderer<?, ?>> exte
             throw new DescriptorException("Could not determine output type of rendering format: " + _renderingFormat);
         }
 
-        @SuppressWarnings("unchecked")
-        Class<? extends Renderable> rendererInputType = (Class<? extends Renderable>) ReflectionUtils.getTypeParameter(
-                rendererClass, Renderer.class, 0);
+        @SuppressWarnings("unchecked") final Class<? extends Renderable> rendererInputType =
+                (Class<? extends Renderable>) ReflectionUtils.getTypeParameter(rendererClass, Renderer.class, 0);
         _rendererInputType = rendererInputType;
 
         logger.debug("Found renderer input type: {}", _rendererInputType);
@@ -87,13 +86,13 @@ final class AnnotationBasedRendererBeanDescriptor<R extends Renderer<?, ?>> exte
     }
 
     @Override
-    public boolean isOutputApplicableFor(Class<?> requiredClass) {
+    public boolean isOutputApplicableFor(final Class<?> requiredClass) {
         if (!ReflectionUtils.is(requiredClass, _formatOutputType)) {
             logger.debug("{} is not applicable to the format output type: {}", requiredClass, _formatOutputType);
             return false;
         }
 
-        boolean result = ReflectionUtils.is(_rendererOutputType, requiredClass);
+        final boolean result = ReflectionUtils.is(_rendererOutputType, requiredClass);
 
         if (!result) {
             logger.debug("{} is not applicable to the renderer output type: {}", requiredClass, _rendererOutputType);

@@ -21,6 +21,6 @@ package org.datacleaner.components.categories;
 
 public class NumbersCategory extends AbstractComponentCategory {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 }

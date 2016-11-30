@@ -36,12 +36,12 @@ public abstract class RenameComponentActionListener implements ActionListener {
 
     private final ComponentBuilder _componentBuilder;
 
-    public RenameComponentActionListener(ComponentBuilder componentBuilder) {
+    public RenameComponentActionListener(final ComponentBuilder componentBuilder) {
         _componentBuilder = componentBuilder;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         actionPerformed();
     }
 

@@ -30,23 +30,23 @@ public class CrosstabDimension implements Serializable, Iterable<String> {
 
     private static final long serialVersionUID = 1L;
 
-    private List<String> categories = new ArrayList<String>();
+    private List<String> categories = new ArrayList<>();
     private String name;
 
-    public CrosstabDimension(String name) {
+    public CrosstabDimension(final String name) {
         if (name.contains("|")) {
             throw new IllegalArgumentException("Dimensions cannot contain the character '^'");
         }
         this.name = name;
     }
 
-    public void addCategories(Collection<String> categories) {
-        for (String category : categories) {
+    public void addCategories(final Collection<String> categories) {
+        for (final String category : categories) {
             addCategory(category);
         }
     }
 
-    public CrosstabDimension addCategory(String category) {
+    public CrosstabDimension addCategory(final String category) {
         if (!categories.contains(category)) {
             categories.add(category);
         }
@@ -57,7 +57,7 @@ public class CrosstabDimension implements Serializable, Iterable<String> {
         return name;
     }
 
-    public boolean containsCategory(String category) {
+    public boolean containsCategory(final String category) {
         return categories.contains(category);
     }
 
@@ -80,24 +80,31 @@ public class CrosstabDimension implements Serializable, Iterable<String> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        CrosstabDimension other = (CrosstabDimension) obj;
+        }
+        final CrosstabDimension other = (CrosstabDimension) obj;
         if (categories == null) {
-            if (other.categories != null)
+            if (other.categories != null) {
                 return false;
-        } else if (!categories.equals(other.categories))
+            }
+        } else if (!categories.equals(other.categories)) {
             return false;
+        }
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         return true;
     }
 

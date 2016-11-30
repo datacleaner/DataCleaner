@@ -42,8 +42,8 @@ public class SaxExecutionIdentifierReaderTest extends TestCase {
 
     public void testRead() throws Exception {
 
-        final ScheduleDefinition schedule = new ScheduleDefinition(new TenantIdentifier("DC"), new JobIdentifier(
-                "job1"), "my_ds");
+        final ScheduleDefinition schedule =
+                new ScheduleDefinition(new TenantIdentifier("DC"), new JobIdentifier("job1"), "my_ds");
         schedule.setDependentJob(new JobIdentifier("job2"));
         final ExecutionLog executionLog = new ExecutionLog();
         executionLog.setResultId("my-result");
@@ -55,7 +55,7 @@ public class SaxExecutionIdentifierReaderTest extends TestCase {
         executionLog.setExecutionStatus(ExecutionStatus.SUCCESS);
 
         final byte[] bytes;
-        try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             new JaxbExecutionLogWriter().write(executionLog, out);
             out.flush();
             bytes = out.toByteArray();

@@ -48,24 +48,23 @@ import org.datacleaner.user.UserPreferences;
 
 @Named("Create staging table")
 @Alias("Write to Datastore")
-@Description("Write data to DataCleaner's embedded staging database (based on H2), which provides a convenient location for staging data or simply storing data temporarily for further analysis.")
+@Description("Write data to DataCleaner's embedded staging database (based on H2), which provides a convenient "
+        + "location for staging data or simply storing data temporarily for further analysis.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Distributed(false)
 public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
-
-    static final String H2_DATABASE_CONNECTION_PROTOCOL = "jdbc:h2:";
-
-    static final String H2_DRIVER_CLASS_NAME = "org.h2.Driver";
 
     /**
      * Write mode for the datastore output analyzer. Determines if the datastore
      * will be truncated before writing data or if a new/separate table should
      * be created for this output.
      */
-    public static enum WriteMode {
+    public enum WriteMode {
         TRUNCATE, NEW_TABLE
     }
 
+    static final String H2_DATABASE_CONNECTION_PROTOCOL = "jdbc:h2:";
+    static final String H2_DRIVER_CLASS_NAME = "org.h2.Driver";
     @Configured(order = 1)
     String datastoreName = "DataCleaner-staging";
 
@@ -83,13 +82,14 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
     DatastoreCatalog datastoreCatalog;
 
     @Override
-    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterDescriptor<?, ?> descriptor, String categoryName) {
+    public void configureForFilterOutcome(final AnalysisJobBuilder ajb, final FilterDescriptor<?, ?> descriptor,
+            final String categoryName) {
         final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
         tableName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
     }
 
     @Override
-    public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerDescriptor<?> descriptor) {
+    public void configureForTransformedData(final AnalysisJobBuilder ajb, final TransformerDescriptor<?> descriptor) {
         final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
         tableName = "output-" + dsName + "-" + descriptor.getDisplayName();
     }
@@ -112,10 +112,10 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
         final boolean truncate = (writeMode == WriteMode.TRUNCATE);
         final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegateImpl(datastoreCatalog);
 
-        final File saveDatastoreDirectory = (userPreferences == null ? new File("datastores") : userPreferences
-                .getSaveDatastoreDirectory());
-        final OutputWriter outputWriter = DatastoreOutputWriterFactory.getWriter(saveDatastoreDirectory,
-                creationDelegate, datastoreName, tableName, truncate, columns);
+        final File saveDatastoreDirectory =
+                (userPreferences == null ? new File("datastores") : userPreferences.getSaveDatastoreDirectory());
+        final OutputWriter outputWriter = DatastoreOutputWriterFactory
+                .getWriter(saveDatastoreDirectory, creationDelegate, datastoreName, tableName, truncate, columns);
 
         // update the tablename property with the actual name (whitespace
         // escaped etc.)
@@ -124,16 +124,15 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
     }
 
     @Override
-    protected WriteDataResult getResultInternal(int rowCount) {
-        WriteDataResult result = new WriteDataResultImpl(rowCount, datastoreName, null, tableName);
-        return result;
+    protected WriteDataResult getResultInternal(final int rowCount) {
+        return new WriteDataResultImpl(rowCount, datastoreName, null, tableName);
     }
 
     public String getDatastoreName() {
         return datastoreName;
     }
 
-    public void setDatastoreName(String datastoreName) {
+    public void setDatastoreName(final String datastoreName) {
         this.datastoreName = datastoreName;
     }
 
@@ -146,22 +145,22 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
         if (datastoreCatalog != null) {
             // Validate that the datastoreName doesn't conflict with one of the
             // datastores in the datastoreCatalog.
-            Datastore datastore = datastoreCatalog.getDatastore(datastoreName);
-            
+            final Datastore datastore = datastoreCatalog.getDatastore(datastoreName);
+
             if (datastore != null) {
-                if (datastore instanceof JdbcDatastore 
-                        && ((JdbcDatastore) datastore).getDriverClass().equals(H2_DRIVER_CLASS_NAME)) {
-                    if (!((JdbcDatastore) datastore).getJdbcUrl().startsWith(H2_DATABASE_CONNECTION_PROTOCOL
-                            + userPreferences.getSaveDatastoreDirectory().getPath())) {
+                if (datastore instanceof JdbcDatastore && ((JdbcDatastore) datastore).getDriverClass()
+                        .equals(H2_DRIVER_CLASS_NAME)) {
+                    if (!((JdbcDatastore) datastore).getJdbcUrl().startsWith(
+                            H2_DATABASE_CONNECTION_PROTOCOL + userPreferences.getSaveDatastoreDirectory().getPath())) {
                         throw new IllegalStateException("Datastore \"" + datastoreName
                                 + "\" is not located in \"Written datastores\" directory \"" + userPreferences
-                                        .getSaveDatastoreDirectory().getPath() + "\".");
+                                .getSaveDatastoreDirectory().getPath() + "\".");
                     }
                 } else {
                     throw new IllegalStateException("Datastore \"" + datastoreName
                             + "\" is not an H2 database, so it can't be used as a staging database.");
                 }
             }
-        }        
+        }
     }
 }

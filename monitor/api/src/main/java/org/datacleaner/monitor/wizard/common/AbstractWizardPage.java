@@ -32,14 +32,15 @@ public abstract class AbstractWizardPage implements WizardPageController {
 
     /**
      * Gets the integer value of some form parameter
-     * 
+     *
      * @param formParameters
      * @param key
      * @return
      * @throws NumberFormatException
      */
-    protected static Integer getInteger(Map<String, List<String>> formParameters, String key) throws NumberFormatException {
-        String string = getString(formParameters, key);
+    protected static Integer getInteger(final Map<String, List<String>> formParameters, final String key)
+            throws NumberFormatException {
+        final String string = getString(formParameters, key);
         if (string == null) {
             return null;
         }
@@ -48,13 +49,13 @@ public abstract class AbstractWizardPage implements WizardPageController {
 
     /**
      * Gets the string value of some form parameter
-     * 
+     *
      * @param formParameters
      * @param key
      * @return
      */
-    protected static String getString(Map<String, List<String>> formParameters, String key) {
-        List<String> list = formParameters.get(key);
+    protected static String getString(final Map<String, List<String>> formParameters, final String key) {
+        final List<String> list = formParameters.get(key);
         if (list == null || list.isEmpty()) {
             return null;
         }
@@ -63,13 +64,13 @@ public abstract class AbstractWizardPage implements WizardPageController {
 
     /**
      * Gets the boolean value of some form parameter
-     * 
+     *
      * @param formParameters
      * @param key
      * @return
      */
-    protected static boolean getBoolean(Map<String, List<String>> formParameters, String key) {
-        List<String> list = formParameters.get(key);
+    protected static boolean getBoolean(final Map<String, List<String>> formParameters, final String key) {
+        final List<String> list = formParameters.get(key);
         if (list == null || list.isEmpty()) {
             return false;
         }

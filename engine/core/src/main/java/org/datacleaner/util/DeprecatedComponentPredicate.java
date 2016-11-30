@@ -21,7 +21,6 @@ package org.datacleaner.util;
 
 import org.apache.metamodel.util.Predicate;
 import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.util.ReflectionUtils;
 
 /**
  * Predicate that discards all {@link ComponentDescriptor} that represent a
@@ -30,9 +29,9 @@ import org.datacleaner.util.ReflectionUtils;
 public class DeprecatedComponentPredicate implements Predicate<ComponentDescriptor<?>> {
 
     @Override
-    public Boolean eval(ComponentDescriptor<?> descriptor) {
-        Class<?> componentClass = descriptor.getComponentClass();
-        boolean isDeprecated = ReflectionUtils.isAnnotationPresent(componentClass, Deprecated.class);
+    public Boolean eval(final ComponentDescriptor<?> descriptor) {
+        final Class<?> componentClass = descriptor.getComponentClass();
+        final boolean isDeprecated = ReflectionUtils.isAnnotationPresent(componentClass, Deprecated.class);
         return !isDeprecated;
     }
 

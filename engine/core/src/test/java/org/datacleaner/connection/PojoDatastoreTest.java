@@ -25,23 +25,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.pojo.MapTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.util.SimpleTableDef;
 
+import junit.framework.TestCase;
+
 public class PojoDatastoreTest extends TestCase {
 
     public void testSimpleInteractions() throws Exception {
         final SimpleTableDef tableDef = new SimpleTableDef("foo", new String[] { "col1", "col2" });
-        final Collection<Map<String, ?>> maps = new ArrayList<Map<String, ?>>();
+        final Collection<Map<String, ?>> maps = new ArrayList<>();
 
         final TableDataProvider<?> tableDataProvider = new MapTableDataProvider(tableDef, maps);
-        maps.add(new HashMap<String, Object>());
+        maps.add(new HashMap<>());
 
-        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<TableDataProvider<?>>();
+        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<>();
         tableDataProviders.add(tableDataProvider);
 
         final PojoDatastore ds = new PojoDatastore("foobar", tableDataProviders);
@@ -57,7 +57,7 @@ public class PojoDatastoreTest extends TestCase {
         assertNotNull(con);
 
         final Column col = con.getSchemaNavigator().convertToColumn("foo.col1");
-        assertEquals("Column[name=col1,columnNumber=0,type=VARCHAR,nullable=true,"
-                + "nativeType=null,columnSize=null]", col.toString());
+        assertEquals("Column[name=col1,columnNumber=0,type=VARCHAR,nullable=true," + "nativeType=null,columnSize=null]",
+                col.toString());
     }
 }

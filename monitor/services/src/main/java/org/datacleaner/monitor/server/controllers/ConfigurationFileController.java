@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.annotation.security.RolesAllowed;
 
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.WriteUpdatedConfigurationFileAction;
@@ -56,7 +55,8 @@ public class ConfigurationFileController {
     TenantContextFactory _contextFactory;
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadConfigurationFileHtml(@PathVariable("tenant") final String tenant,
             @RequestParam("file") final MultipartFile file) throws Exception {
         final Map<String, String> outcome = uploadConfigurationFileJson(tenant, file);
@@ -64,7 +64,8 @@ public class ConfigurationFileController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public Map<String, String> uploadConfigurationFileJson(@PathVariable("tenant") final String tenant,
             @RequestParam("file") final MultipartFile file) throws Exception {
@@ -81,8 +82,8 @@ public class ConfigurationFileController {
             final RepositoryFile configurationFile = context.getConfigurationFile();
 
             final InputStream inputStream = file.getInputStream();
-            final WriteUpdatedConfigurationFileAction writeAction = new WriteUpdatedConfigurationFileAction(inputStream,
-                    configurationFile);
+            final WriteUpdatedConfigurationFileAction writeAction =
+                    new WriteUpdatedConfigurationFileAction(inputStream, configurationFile);
 
             try {
                 configurationFile.writeFile(writeAction);
@@ -90,14 +91,14 @@ public class ConfigurationFileController {
                 FileHelper.safeClose(inputStream);
             }
 
-            final Map<String, String> result = new HashMap<String, String>();
+            final Map<String, String> result = new HashMap<>();
             result.put("status", "Success");
             result.put("file_type", configurationFile.getType().toString());
             result.put("filename", configurationFile.getName());
             result.put("repository_path", configurationFile.getQualifiedPath());
 
             return result;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("An error occurred while uploading new configuration file for tenant " + tenant, e);
             throw e;
         }
@@ -116,17 +117,12 @@ public class ConfigurationFileController {
             throw new IllegalStateException("Configuration file not found!");
         }
 
-        final byte[] documentBody = configurationFile.readFile(new Func<InputStream, byte[]>() {
-            @Override
-            public byte[] eval(InputStream in) {
-                return FileHelper.readAsBytes(in);
-            }
-        });
+        final byte[] documentBody = configurationFile.readFile(FileHelper::readAsBytes);
 
         final HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_XML);
         header.setContentLength(documentBody.length);
-        return new HttpEntity<byte[]>(documentBody, header);
+        return new HttpEntity<>(documentBody, header);
 
     }
 }

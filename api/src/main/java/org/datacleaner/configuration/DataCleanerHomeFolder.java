@@ -25,7 +25,7 @@ import org.datacleaner.repository.RepositoryFolder;
 
 /**
  * Represents the home folder of a user's {@link DataCleanerConfiguration}.
- * 
+ *
  * In most cases the home folder is based on a physical directory ({@link File})
  * but in certain deployments it may be a virtual directory represented as a
  * {@link RepositoryFolder}. Therefore it is recommended to use the
@@ -38,21 +38,21 @@ public interface DataCleanerHomeFolder {
     /**
      * Gets the {@link DataCleanerHomeFolder} represented as a {@link File}
      * object.
-     * 
+     *
      * Note that the {@link #toRepositoryFolder()} is recommended whenever the
      * {@link RepositoryFolder} return type can be meaningfully used. This
      * method is not guaranteed to return the actual home folder if it is a
      * non-physical directory location.
-     * 
+     *
      * @return
      */
-    public File toFile();
-    
+    File toFile();
+
     /**
      * Gets the {@link DataCleanerHomeFolder} represented as a
      * {@link RepositoryFolder} object.
-     * 
+     *
      * @return
      */
-    public RepositoryFolder toRepositoryFolder();
+    RepositoryFolder toRepositoryFolder();
 }

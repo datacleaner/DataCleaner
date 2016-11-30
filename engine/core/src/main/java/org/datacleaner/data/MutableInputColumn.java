@@ -23,7 +23,7 @@ import org.datacleaner.api.InputColumn;
 
 /**
  * Represents a column that is mutable (editable by the user).
- * 
+ *
  * Mutable columns have editable names but unique id's to identify them (whereas
  * the names identify the immutable columns).
  */
@@ -32,62 +32,62 @@ public interface MutableInputColumn<E> extends InputColumn<E> {
     /**
      * Listener interface for changes made to a {@link MutableInputColumn}.
      */
-    public static interface Listener {
+    interface Listener {
 
-        public void onNameChanged(MutableInputColumn<?> inputColumn, String oldName, String newName);
+        void onNameChanged(MutableInputColumn<?> inputColumn, String oldName, String newName);
 
-        public void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden);
+        void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden);
 
     }
 
     /**
      * Sets the name of the column
-     * 
+     *
      * @param name
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * Gets the initial name of the column
      */
-    public String getInitialName();
+    String getInitialName();
 
     /**
      * @return an id that is unique within the AnalysisJob that is being built
      *         or executed.
      */
-    public String getId();
+    String getId();
 
     /**
      * Determines if this input column is visible or hidden for the user.
-     * 
+     *
      * @return
      */
-    public boolean isHidden();
+    boolean isHidden();
 
     /**
      * Sets if 'hidden' flag to indicate if this input column is visibile or
      * hidden for the user.
-     * 
+     *
      * @param hidden
      */
-    public void setHidden(boolean hidden);
+    void setHidden(boolean hidden);
 
     /**
      * Adds a listener to this {@link MutableInputColumn}.
-     * 
+     *
      * @param listener
      * @return a boolean indicating if the listener was added (returns true) or
      *         if it already existed (return false).
      */
-    public boolean addListener(Listener listener);
+    boolean addListener(Listener listener);
 
     /**
      * Removes a listener from this {@link MutableInputColumn}
-     * 
+     *
      * @param listener
      * @return a boolean indicating if the listener was found and removed or
      *         not.
      */
-    public boolean removeListener(Listener listener);
+    boolean removeListener(Listener listener);
 }

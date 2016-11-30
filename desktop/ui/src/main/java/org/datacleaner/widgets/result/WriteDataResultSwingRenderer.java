@@ -22,8 +22,6 @@ package org.datacleaner.widgets.result;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -35,7 +33,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileResource;
@@ -83,18 +80,18 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
     MutableDatastoreCatalog _datastoreCatalog;
 
     @Override
-    public JComponent render(WriteDataResult result) {
+    public JComponent render(final WriteDataResult result) {
         final EmptyBorder border = new EmptyBorder(10, 10, 10, 10);
 
         final DCPanel panel = new DCPanel();
         panel.setBorder(border);
         panel.setLayout(new VerticalLayout(4));
 
-        int insertCount = result.getWrittenRowCount();
-        int updateCount = result.getUpdatesCount();
+        final int insertCount = result.getWrittenRowCount();
+        final int updateCount = result.getUpdatesCount();
         if (insertCount == 0 && updateCount == 0) {
-            final JLabel label = new JLabel("No rows written!", imageManager.getImageIcon(IconUtils.STATUS_WARNING),
-                    JLabel.LEFT);
+            final JLabel label =
+                    new JLabel("No rows written!", imageManager.getImageIcon(IconUtils.STATUS_WARNING), JLabel.LEFT);
             panel.add(label);
         } else {
 
@@ -119,21 +116,18 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                     final File file = fileResource.getFile();
                     if (file != null && file.exists()) {
                         final JXEditorPane editorPane = new JXEditorPane("text/html",
-                                "Data was written to file: <a href=\"https://datacleaner.org/open_file\">"
-                                        + file.getAbsolutePath() + "</a>.");
+                                "Data was written to file: <a href=\"https://datacleaner.org/open_file\">" + file
+                                        .getAbsolutePath() + "</a>.");
                         editorPane.setEditable(false);
                         editorPane.setOpaque(false);
-                        editorPane.addHyperlinkListener(new HyperlinkListener() {
-                            @Override
-                            public void hyperlinkUpdate(HyperlinkEvent event) {
-                                if (HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
-                                    final String href = event.getDescription();
-                                    if ("https://datacleaner.org/open_file".equals(href)) {
-                                        try {
-                                            Desktop.getDesktop().open(file);
-                                        } catch (IOException ex) {
-                                            logger.warn("Failed to open file: {}", file, ex);
-                                        }
+                        editorPane.addHyperlinkListener(event -> {
+                            if (HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
+                                final String href = event.getDescription();
+                                if ("https://datacleaner.org/open_file".equals(href)) {
+                                    try {
+                                        Desktop.getDesktop().open(file);
+                                    } catch (final IOException ex) {
+                                        logger.warn("Failed to open file: {}", file, ex);
                                     }
                                 }
                             }
@@ -156,7 +150,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
             if (errorDatastore != null) {
                 final JLabel icon = new JLabel(imageManager.getImageIcon(IconUtils.STATUS_ERROR));
                 errorRowsPanel.add(icon, BorderLayout.WEST);
-                
+
                 final JXEditorPane editorPane = new JXEditorPane("text/html", "<b>" + result.getErrorRowCount()
                         + " records</b> could <i>not</i> be written to the table!<br/>"
                         + "The records were written to <a href=\"https://datacleaner.org/preview_datastore\">"
@@ -164,31 +158,29 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                         + "</a> (<a href=\"https://datacleaner.org/register_datastore\">Register as datastore</a>).");
                 editorPane.setEditable(false);
                 editorPane.setOpaque(false);
-                editorPane.addHyperlinkListener(new HyperlinkListener() {
-                    @Override
-                    public void hyperlinkUpdate(HyperlinkEvent e) {
-                        if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
-                            final String href = e.getDescription();
-                            if ("https://datacleaner.org/register_datastore".equals(href)) {
-                                _datastoreCatalog.addDatastore(errorDatastore);
-                                JOptionPane.showMessageDialog(editorPane,
-                                        "Saved datastore: " + errorDatastore.getName());
-                            } else if ("https://datacleaner.org/preview_datastore".equals(href)) {
-                                try (DatastoreConnection errorCon = errorDatastore.openConnection()) {
-                                    Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];
-                                    PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
-                                            windowContext, errorDatastore, table);
-                                    actionListener.actionPerformed(null);
-                                }
-                            } else {
-                                logger.error("Unexpected href: " + href + ". Event was: " + e);
+                editorPane.addHyperlinkListener(e -> {
+                    if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
+                        final String href = e.getDescription();
+                        if ("https://datacleaner.org/register_datastore".equals(href)) {
+                            _datastoreCatalog.addDatastore(errorDatastore);
+                            JOptionPane.showMessageDialog(editorPane, "Saved datastore: " + errorDatastore.getName());
+                        } else if ("https://datacleaner.org/preview_datastore".equals(href)) {
+                            try (DatastoreConnection errorCon = errorDatastore.openConnection()) {
+                                final Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];
+                                final PreviewSourceDataActionListener actionListener =
+                                        new PreviewSourceDataActionListener(windowContext, errorDatastore, table);
+                                actionListener.actionPerformed(null);
                             }
+                        } else {
+                            logger.error("Unexpected href: " + href + ". Event was: " + e);
                         }
                     }
                 });
                 errorRowsPanel.add(editorPane, BorderLayout.CENTER);
             } else {
-                final JLabel icon = new JLabel(result.getErrorRowCount() + " records could not be written to the table!", imageManager.getImageIcon(IconUtils.STATUS_ERROR), JLabel.LEFT);
+                final JLabel icon =
+                        new JLabel(result.getErrorRowCount() + " records could not be written to the table!",
+                                imageManager.getImageIcon(IconUtils.STATUS_ERROR), JLabel.LEFT);
                 errorRowsPanel.add(icon, BorderLayout.WEST);
             }
 
@@ -206,19 +198,16 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
         if (datastore != null && datastore.getName() != null) {
 
             final JButton previewButton = WidgetFactory.createPrimaryButton("Preview table", IconUtils.ACTION_PREVIEW);
-            previewButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try (final DatastoreConnection con = datastore.openConnection()) {
-                        con.getSchemaNavigator().refreshSchemas();
-                        final Table previewTable = result.getPreviewTable(datastore);
-                        if (previewTable == null) {
-                            throw new IllegalStateException("Result did not return any preview table: " + result);
-                        } else {
-                            final PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
-                                    windowContext, datastore, previewTable);
-                            actionListener.actionPerformed(null);
-                        }
+            previewButton.addActionListener(e -> {
+                try (DatastoreConnection con = datastore.openConnection()) {
+                    con.getSchemaNavigator().refreshSchemas();
+                    final Table previewTable = result.getPreviewTable(datastore);
+                    if (previewTable == null) {
+                        throw new IllegalStateException("Result did not return any preview table: " + result);
+                    } else {
+                        final PreviewSourceDataActionListener actionListener =
+                                new PreviewSourceDataActionListener(windowContext, datastore, previewTable);
+                        actionListener.actionPerformed(null);
                     }
                 }
             });
@@ -227,29 +216,23 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
 
             final Datastore ds = _datastoreCatalog.getDatastore(datastore.getName());
             if (!datastore.equals(ds)) {
-                final JButton addDatastoreButton = WidgetFactory.createDefaultButton("Add to datastores",
-                        IconUtils.ACTION_ADD_DARK);
-                addDatastoreButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        _datastoreCatalog.addDatastore(datastore);
-                        addDatastoreButton.setEnabled(false);
-                    }
+                final JButton addDatastoreButton =
+                        WidgetFactory.createDefaultButton("Add to datastores", IconUtils.ACTION_ADD_DARK);
+                addDatastoreButton.addActionListener(e -> {
+                    _datastoreCatalog.addDatastore(datastore);
+                    addDatastoreButton.setEnabled(false);
                 });
                 panel.add(addDatastoreButton);
                 panel.add(Box.createHorizontalStrut(4));
             }
 
-            final JButton analyzeButton = WidgetFactory.createDefaultButton("Analyze this datastore",
-                    IconUtils.MODEL_JOB);
-            analyzeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, null));
-                    AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
-                    window.setDatastore(datastore);
-                    window.open();
-                }
+            final JButton analyzeButton =
+                    WidgetFactory.createDefaultButton("Analyze this datastore", IconUtils.MODEL_JOB);
+            analyzeButton.addActionListener(e -> {
+                final Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, null));
+                final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+                window.setDatastore(datastore);
+                window.open();
             });
             panel.add(analyzeButton);
         }

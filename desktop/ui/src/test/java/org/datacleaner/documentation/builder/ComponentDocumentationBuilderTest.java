@@ -43,7 +43,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of an analyzer
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -57,7 +57,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of an component with video link
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -71,7 +71,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of a pretty simple filter
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -85,7 +85,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of a pretty simple transformer
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -99,7 +99,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of an advanced transformer
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -113,7 +113,7 @@ public class ComponentDocumentationBuilderTest {
 
     /**
      * Test of an analyzer with mapped properties and enums
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -125,8 +125,8 @@ public class ComponentDocumentationBuilderTest {
         runBenchmarkTest(descriptor, benchmarkFile, outputFile);
     }
 
-    private void runBenchmarkTest(ComponentDescriptor<?> descriptor, File benchmarkFile, File outputFile)
-            throws Exception {
+    private void runBenchmarkTest(final ComponentDescriptor<?> descriptor, final File benchmarkFile,
+            final File outputFile) throws Exception {
         documentationCreator.write(descriptor, new FileOutputStream(outputFile));
         final String output = normalize(FileHelper.readFileAsString(outputFile));
 
@@ -146,7 +146,7 @@ public class ComponentDocumentationBuilderTest {
         assertEquals(benchmark, output);
     }
 
-    private String normalize(String str) {
+    private String normalize(final String str) {
         return StringUtils.replaceAll(str, "\r\n", "\n").trim();
     }
 }

@@ -19,7 +19,8 @@
  */
 package org.datacleaner.job;
 
-import junit.framework.TestCase;
+import java.util.List;
+
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -32,7 +33,7 @@ import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 
-import java.util.List;
+import junit.framework.TestCase;
 
 public class AnalyzerJobHelperTest extends TestCase {
 
@@ -56,7 +57,7 @@ public class AnalyzerJobHelperTest extends TestCase {
         // create a copy
         final AnalysisJob job2;
         final Datastore datastore2 = new CsvDatastore("ds", "src/test/resources/employees.csv");
-        try (final AnalysisJobBuilder ajb2 = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
+        try (AnalysisJobBuilder ajb2 = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
 
             ajb2.setDatastore(datastore2);
             ajb2.addSourceColumns("name", "email");
@@ -81,12 +82,12 @@ public class AnalyzerJobHelperTest extends TestCase {
     public void testGetAnalyzerJobFromChildScope() {
         final Datastore datastore = new CsvDatastore("ds", "src/test/resources/employees.csv");
         final AnalysisJob aj;
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
             ajb.setDatastore(datastore);
             ajb.addSourceColumns("name", "email");
 
-            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = ajb
-                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 =
+                    ajb.addAnalyzer(MockOutputDataStreamAnalyzer.class);
             final List<MetaModelInputColumn> sourceColumns = ajb.getSourceColumns();
             analyzer1.setName("analyzer1");
             analyzer1.addInputColumn(sourceColumns.get(0));
@@ -96,20 +97,20 @@ public class AnalyzerJobHelperTest extends TestCase {
                     analyzer1.getOutputDataStreamJobBuilder(outputDataStream);
             final List<MetaModelInputColumn> outputDataStreamColumns = outputDataStreamJobBuilder.getSourceColumns();
 
-            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 = outputDataStreamJobBuilder
-                    .addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 =
+                    outputDataStreamJobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer2.addInputColumns(outputDataStreamColumns);
             analyzer2.setName("analyzer2");
 
             aj = ajb.toAnalysisJob();
         }
 
-        AnalyzerJobHelper analyzerJobHelper = new AnalyzerJobHelper(aj);
-        assertEquals(2,analyzerJobHelper.getAnalyzerJobs().size());
+        final AnalyzerJobHelper analyzerJobHelper = new AnalyzerJobHelper(aj);
+        assertEquals(2, analyzerJobHelper.getAnalyzerJobs().size());
     }
 
     public void testGetIdentifyingInputColumn() throws Exception {
-        AnalyzerComponentBuilder<MockAnalyzer> analyzer = ajb.addAnalyzer(MockAnalyzer.class);
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = ajb.addAnalyzer(MockAnalyzer.class);
         analyzer.addInputColumns(ajb.getSourceColumns());
 
         AnalysisJob job = ajb.toAnalysisJob();

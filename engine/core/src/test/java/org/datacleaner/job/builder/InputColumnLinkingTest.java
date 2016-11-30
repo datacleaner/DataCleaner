@@ -19,9 +19,7 @@
  */
 package org.datacleaner.job.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
@@ -80,7 +78,7 @@ public class InputColumnLinkingTest {
 
     private ConfiguredPropertyDescriptor getPropertyDescriptor(final AnalyzerComponentBuilder<?> mockAnalyzer,
             final String name) {
-        for (ConfiguredPropertyDescriptor propertyDescriptor : mockAnalyzer.getDescriptor()
+        for (final ConfiguredPropertyDescriptor propertyDescriptor : mockAnalyzer.getDescriptor()
                 .getConfiguredPropertiesForInput()) {
             if (propertyDescriptor.getName().equals(name)) {
                 return propertyDescriptor;
@@ -91,8 +89,8 @@ public class InputColumnLinkingTest {
 
     @Test
     public void testRemovalWithTransformer() {
-        final TransformerComponentBuilder<ConvertToStringTransformer> stringTransformer = _jobBuilder.addTransformer(
-                ConvertToStringTransformer.class);
+        final TransformerComponentBuilder<ConvertToStringTransformer> stringTransformer =
+                _jobBuilder.addTransformer(ConvertToStringTransformer.class);
 
         stringTransformer.addInputColumn(_dateTransformer.getOutputColumns().get(0));
 
@@ -105,19 +103,20 @@ public class InputColumnLinkingTest {
 
     @Test
     public void testEscalateToMultipleJobs() {
-        final AnalyzerComponentBuilder<MultipleJobsAnalyzer> analyzer1 = _jobBuilder.addAnalyzer(
-                MultipleJobsAnalyzer.class);
+        final AnalyzerComponentBuilder<MultipleJobsAnalyzer> analyzer1 =
+                _jobBuilder.addAnalyzer(MultipleJobsAnalyzer.class);
         final ConfiguredPropertyDescriptor columnProperty1 = getPropertyDescriptor(analyzer1, "Column");
 
-        final AnalyzerComponentBuilder<MultipleJobsAnalyzer> analyzer2 = _jobBuilder.addAnalyzer(
-                MultipleJobsAnalyzer.class);
+        final AnalyzerComponentBuilder<MultipleJobsAnalyzer> analyzer2 =
+                _jobBuilder.addAnalyzer(MultipleJobsAnalyzer.class);
         final ConfiguredPropertyDescriptor columnProperty2 = getPropertyDescriptor(analyzer2, "Column");
 
         analyzer1.addInputColumn(_jobBuilder.getSourceColumnByName(SOURCE_COLUMN_NAME), columnProperty1);
         analyzer1.addInputColumn(_dateTransformer.getOutputColumns().get(0), columnProperty1);
 
-        analyzer2.setConfiguredProperty(columnProperty2, new InputColumn[] { _jobBuilder.getSourceColumnByName(
-                SOURCE_COLUMN_NAME), _dateTransformer.getOutputColumns().get(0) });
+        analyzer2.setConfiguredProperty(columnProperty2,
+                new InputColumn[] { _jobBuilder.getSourceColumnByName(SOURCE_COLUMN_NAME),
+                        _dateTransformer.getOutputColumns().get(0) });
 
         assertEquals(2, analyzer1.getInputColumns().size());
         assertEquals(2, analyzer2.getInputColumns().size());
@@ -133,8 +132,8 @@ public class InputColumnLinkingTest {
         final AnalyzerComponentBuilder<MockAnalyzer> analyzer = _jobBuilder.addAnalyzer(MockAnalyzer.class);
         final ConfiguredPropertyDescriptor columnsProperty = getPropertyDescriptor(analyzer, "Columns");
 
-        final TransformerComponentBuilder<ConvertToStringTransformer> stringTransformer = _jobBuilder.addTransformer(
-                ConvertToStringTransformer.class);
+        final TransformerComponentBuilder<ConvertToStringTransformer> stringTransformer =
+                _jobBuilder.addTransformer(ConvertToStringTransformer.class);
 
         stringTransformer.addInputColumn(_jobBuilder.getSourceColumnByName(SOURCE_COLUMN_NAME));
 
@@ -198,8 +197,8 @@ public class InputColumnLinkingTest {
         // Add and remove at transformer to make sure the id's for job copies are out of sync with the source job id's.
         _jobBuilder.removeTransformer(_jobBuilder.addTransformer(ConvertToStringTransformer.class));
 
-        final TransformerComponentBuilder<ConvertToStringTransformer> stringTransformer = _jobBuilder.addTransformer(
-                ConvertToStringTransformer.class);
+        final TransformerComponentBuilder<ConvertToStringTransformer> stringTransformer =
+                _jobBuilder.addTransformer(ConvertToStringTransformer.class);
         stringTransformer.addInputColumn(_dateTransformer.getOutputColumns().get(0));
 
         final AnalyzerComponentBuilder<MockAnalyzer> analyzer = _jobBuilder.addAnalyzer(MockAnalyzer.class);
@@ -208,8 +207,8 @@ public class InputColumnLinkingTest {
         analyzer.addInputColumn(stringTransformer.getOutputColumns().get(0), columnsProperty);
         analyzer.setConfiguredProperty("Column names", new String[] { "first" });
 
-        final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(_jobBuilder.getConfiguration(), _jobBuilder
-                .toAnalysisJob(false));
+        final AnalysisJobBuilder jobBuilderCopy =
+                new AnalysisJobBuilder(_jobBuilder.getConfiguration(), _jobBuilder.toAnalysisJob(false));
 
         assertNotNull(((MockAnalyzer) jobBuilderCopy.getAnalyzerComponentBuilders().get(0)
                 .getComponentInstance())._columnNames[0]);

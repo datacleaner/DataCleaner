@@ -30,12 +30,7 @@ import junit.framework.TestCase;
 public class LabelUtilsTest extends TestCase {
 
     public void testLabelAdvice() throws Exception {
-        HasLabelAdvice o = new HasLabelAdvice() {
-            @Override
-            public String getSuggestedLabel() {
-                return "foo";
-            }
-        };
+        final HasLabelAdvice o = () -> "foo";
 
         final String label = LabelUtils.getValueLabel(o);
         assertEquals("foo", label);
@@ -62,7 +57,7 @@ public class LabelUtilsTest extends TestCase {
     }
 
     public void testFormatDate() throws Exception {
-        Date d = new Date();
+        final Date d = new Date();
         assertEquals(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(d), LabelUtils.getValueLabel(d));
     }
 }

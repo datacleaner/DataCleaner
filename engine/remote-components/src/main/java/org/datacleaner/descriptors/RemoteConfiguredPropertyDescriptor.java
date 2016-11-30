@@ -24,13 +24,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Converter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.remote.RemoteTransformer;
 import org.datacleaner.restclient.Serializator;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * A Base class for property descriptors of remote transformers, implementing
@@ -49,9 +49,9 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
     private final Map<Class<? extends Annotation>, Annotation> annotations;
     private final JsonNode defaultValue;
 
-    RemoteConfiguredPropertyDescriptor(String name, String description, boolean required,
-            ComponentDescriptor<?> component, Map<Class<? extends Annotation>, Annotation> annotations,
-            JsonNode defaultValue) {
+    RemoteConfiguredPropertyDescriptor(final String name, final String description, final boolean required,
+            final ComponentDescriptor<?> component, final Map<Class<? extends Annotation>, Annotation> annotations,
+            final JsonNode defaultValue) {
         this.name = name;
         this.annotations = annotations;
         this.defaultValue = defaultValue;
@@ -77,7 +77,7 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
 
     @Override
     public String[] getAliases() {
-        Alias alias = getAnnotation(Alias.class);
+        final Alias alias = getAnnotation(Alias.class);
         if (alias == null) {
             return new String[0];
         }
@@ -90,11 +90,11 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
     }
 
     @Override
-    public void setValue(Object component, Object value) throws IllegalArgumentException {
+    public void setValue(final Object component, final Object value) throws IllegalArgumentException {
         ((RemoteTransformer) component).setPropertyValue(getName(), value);
     }
 
-    public void setDefaultValue(Object component) {
+    public void setDefaultValue(final Object component) {
         if (defaultValue != null) {
             setValue(component, createDefaultValue());
         }
@@ -115,7 +115,7 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
 
         try {
             return Serializator.getJacksonObjectMapper().treeToValue(defaultValue, getType());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -126,7 +126,7 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
     }
 
     @Override
-    public Object getValue(Object component) throws IllegalArgumentException {
+    public Object getValue(final Object component) throws IllegalArgumentException {
         return ((RemoteTransformer) component).getPropertyValue(getName());
     }
 
@@ -137,7 +137,7 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
 
     @SuppressWarnings("unchecked")
     @Override
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+    public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
         return (A) annotations.get(annotationClass);
     }
 
@@ -152,12 +152,12 @@ public abstract class RemoteConfiguredPropertyDescriptor implements ConfiguredPr
     }
 
     @Override
-    public Class<?> getTypeArgument(int i) throws IndexOutOfBoundsException {
+    public Class<?> getTypeArgument(final int i) throws IndexOutOfBoundsException {
         return Object.class;
     }
 
     @Override
-    public int compareTo(PropertyDescriptor o) {
+    public int compareTo(final PropertyDescriptor o) {
         return getName().compareTo(o.getName());
     }
 

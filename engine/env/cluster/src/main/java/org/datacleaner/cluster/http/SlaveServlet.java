@@ -40,36 +40,32 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
  */
 public class SlaveServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
-
     public static final String SERVLET_CONTEXT_ATTRIBUTE_CONFIGURATION = "org.datacleaner.configuration";
     public static final String SERVLET_CONTEXT_ATTRIBUTE_ANALYSIS_LISTENER = "org.datacleaner.analysislistener";
-
+    private static final long serialVersionUID = 1L;
+    private final ConcurrentMap<String, AnalysisResultFuture> _runningJobs;
     @Inject
     DataCleanerConfiguration _configuration;
-
     @Inject
     AnalysisListener _analysisListener;
-
-    private final ConcurrentMap<String, AnalysisResultFuture> _runningJobs;
 
     public SlaveServlet() {
         this(null);
     }
 
-    public SlaveServlet(DataCleanerConfiguration configuration) {
+    public SlaveServlet(final DataCleanerConfiguration configuration) {
         this(configuration, null);
     }
 
-    public SlaveServlet(DataCleanerConfiguration configuration, AnalysisListener analysisListener) {
+    public SlaveServlet(final DataCleanerConfiguration configuration, final AnalysisListener analysisListener) {
         super();
         _configuration = configuration;
         _analysisListener = analysisListener;
-        _runningJobs = new ConcurrentHashMap<String, AnalysisResultFuture>();
+        _runningJobs = new ConcurrentHashMap<>();
     }
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(final ServletConfig config) throws ServletException {
         super.init(config);
         final ServletContext servletContext = config.getServletContext();
         if (_configuration == null) {
@@ -79,8 +75,8 @@ public class SlaveServlet extends HttpServlet {
             }
         }
         if (_analysisListener == null) {
-            final Object analysisListenerAttribute = servletContext
-                    .getAttribute(SERVLET_CONTEXT_ATTRIBUTE_ANALYSIS_LISTENER);
+            final Object analysisListenerAttribute =
+                    servletContext.getAttribute(SERVLET_CONTEXT_ATTRIBUTE_ANALYSIS_LISTENER);
             if (analysisListenerAttribute != null && analysisListenerAttribute instanceof AnalysisListener) {
                 _analysisListener = (AnalysisListener) analysisListenerAttribute;
             }
@@ -88,7 +84,8 @@ public class SlaveServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
+            throws ServletException, IOException {
         final SlaveServletHelper helper = new SlaveServletHelper(_configuration, _runningJobs);
         if (_analysisListener == null) {
             helper.handleRequest(req, resp);

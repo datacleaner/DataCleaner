@@ -33,7 +33,6 @@ import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
@@ -54,30 +53,31 @@ import org.slf4j.LoggerFactory;
  */
 public final class SourceTableRowProcessingPublisher extends AbstractRowProcessingPublisher {
 
-    private final static Logger logger = LoggerFactory.getLogger(SourceTableRowProcessingPublisher.class);
+    private static final Logger logger = LoggerFactory.getLogger(SourceTableRowProcessingPublisher.class);
 
-    private final Set<Column> _physicalColumns = new LinkedHashSet<Column>();
+    private final Set<Column> _physicalColumns = new LinkedHashSet<>();
     private final LazyRef<RowProcessingQueryOptimizer> _queryOptimizerRef;
 
     /**
      * Constructor to use for creating a
      * {@link SourceTableRowProcessingPublisher} which feeds data from a source
      * datastore.
-     * 
+     *
      * @param publishers
      * @param stream
      */
-    public SourceTableRowProcessingPublisher(RowProcessingPublishers publishers, RowProcessingStream stream) {
+    public SourceTableRowProcessingPublisher(final RowProcessingPublishers publishers,
+            final RowProcessingStream stream) {
         super(publishers, stream);
 
         _queryOptimizerRef = createQueryOptimizerRef();
 
-        final boolean aggressiveOptimizeSelectClause = SystemProperties.getBoolean(
-                SystemProperties.QUERY_SELECTCLAUSE_OPTIMIZE, false);
+        final boolean aggressiveOptimizeSelectClause =
+                SystemProperties.getBoolean(SystemProperties.QUERY_SELECTCLAUSE_OPTIMIZE, false);
         if (!aggressiveOptimizeSelectClause) {
             final Collection<InputColumn<?>> sourceColumns = stream.getAnalysisJob().getSourceColumns();
-            final List<Column> columns = new ArrayList<Column>();
-            for (InputColumn<?> sourceColumn : sourceColumns) {
+            final List<Column> columns = new ArrayList<>();
+            for (final InputColumn<?> sourceColumn : sourceColumns) {
                 final Column column = sourceColumn.getPhysicalColumn();
                 if (column != null && getTable().equals(column.getTable())) {
                     columns.add(column);
@@ -96,7 +96,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
      * Inspects the row processed tables primary keys. If all primary keys are
      * in the source columns of the AnalysisJob, they will be added to the
      * physically queried columns.
-     * 
+     *
      * Adding the primary keys to the query is a trade-off: It helps a lot in
      * making eg. annotated rows referenceable to the source table, but it may
      * also potentially make the job heavier to execute since a lot of (unique)
@@ -110,14 +110,9 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
         }
 
         final Collection<InputColumn<?>> sourceInputColumns = getAnalysisJob().getSourceColumns();
-        final List<Column> sourceColumns = CollectionUtils.map(sourceInputColumns, new Func<InputColumn<?>, Column>() {
-            @Override
-            public Column eval(InputColumn<?> inputColumn) {
-                return inputColumn.getPhysicalColumn();
-            }
-        });
+        final List<Column> sourceColumns = CollectionUtils.map(sourceInputColumns, InputColumn::getPhysicalColumn);
 
-        for (Column primaryKeyColumn : primaryKeyColumns) {
+        for (final Column primaryKeyColumn : primaryKeyColumns) {
             if (!sourceColumns.contains(primaryKeyColumn)) {
                 logger.info("Primary key column {} not added to source columns, not pre-selecting primary keys");
                 return;
@@ -132,7 +127,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
             @Override
             protected RowProcessingQueryOptimizer fetch() {
                 final Datastore datastore = getAnalysisJob().getDatastore();
-                try (final DatastoreConnection con = datastore.openConnection()) {
+                try (DatastoreConnection con = datastore.openConnection()) {
                     final DataContext dataContext = con.getDataContext();
 
                     final Column[] columnArray = _physicalColumns.toArray(new Column[_physicalColumns.size()]);
@@ -141,11 +136,9 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
                     logger.debug("Base query for row processing: {}", baseQuery);
 
                     // try to optimize
-                    final RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore,
-                            getConsumersSorted(), baseQuery);
 
-                    return optimizer;
-                } catch (RuntimeException e) {
+                    return new RowProcessingQueryOptimizerImpl(datastore, getConsumersSorted(), baseQuery);
+                } catch (final RuntimeException e) {
                     logger.error("Failed to build query optimizer! {}", e.getMessage(), e);
                     throw e;
                 }
@@ -159,11 +152,12 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
         _queryOptimizerRef.requestLoad();
     }
 
-    public void addPhysicalColumns(Column... columns) {
-        for (Column column : columns) {
+    public void addPhysicalColumns(final Column... columns) {
+        for (final Column column : columns) {
             if (!getTable().equals(column.getTable())) {
-                throw new IllegalArgumentException("Column does not pertain to the correct table. Expected table: "
-                        + getTable() + ", actual table: " + column.getTable());
+                throw new IllegalArgumentException(
+                        "Column does not pertain to the correct table. Expected table: " + getTable()
+                                + ", actual table: " + column.getTable());
             }
             _physicalColumns.add(column);
         }
@@ -183,7 +177,8 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
     }
 
     @Override
-    protected boolean processRowsInternal(AnalysisListener analysisListener, RowProcessingMetrics rowProcessingMetrics) {
+    protected boolean processRowsInternal(final AnalysisListener analysisListener,
+            final RowProcessingMetrics rowProcessingMetrics) {
         final RowProcessingQueryOptimizer queryOptimizer = getQueryOptimizer();
         final Query finalQuery = queryOptimizer.getOptimizedQuery();
 
@@ -193,17 +188,17 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
         } else {
             idGenerator = new SimpleRowIdGenerator(finalQuery.getFirstRow());
         }
-        
+
         analysisListener.rowProcessingBegin(getAnalysisJob(), rowProcessingMetrics);
 
         final ConsumeRowHandler consumeRowHandler = createConsumeRowHandler();
 
-        final RowConsumerTaskListener taskListener = new RowConsumerTaskListener(getAnalysisJob(), analysisListener,
-                getTaskRunner());
+        final RowConsumerTaskListener taskListener =
+                new RowConsumerTaskListener(getAnalysisJob(), analysisListener, getTaskRunner());
 
         final Datastore datastore = getAnalysisJob().getDatastore();
 
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final DataContext dataContext = con.getDataContext();
 
             if (logger.isDebugEnabled()) {
@@ -222,7 +217,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
             // tasks to execute
             int numTasks = 0;
 
-            try (final DataSet dataSet = dataContext.executeQuery(finalQuery)) {
+            try (DataSet dataSet = dataContext.executeQuery(finalQuery)) {
                 while (dataSet.next()) {
                     if (taskListener.isErrornous()) {
                         break;
@@ -235,8 +230,9 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
 
                     final MetaModelInputRow inputRow = new MetaModelInputRow(rowId, metaModelRow);
 
-                    final ConsumeRowTask task = new ConsumeRowTask(consumeRowHandler, rowProcessingMetrics, inputRow,
-                            analysisListener, numTasks);
+                    final ConsumeRowTask task =
+                            new ConsumeRowTask(consumeRowHandler, rowProcessingMetrics, inputRow, analysisListener,
+                                    numTasks);
                     getTaskRunner().run(task, taskListener);
 
                 }
@@ -248,19 +244,19 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
     }
 
     @Override
-    protected boolean runRowProcessingInternal(List<TaskRunnable> postProcessingTasks) {
-        final TaskListener runCompletionListener = new ForkTaskListener("run row processing (" + getStream() + ")",
-                getTaskRunner(), postProcessingTasks);
+    protected boolean runRowProcessingInternal(final List<TaskRunnable> postProcessingTasks) {
+        final TaskListener runCompletionListener =
+                new ForkTaskListener("run row processing (" + getStream() + ")", getTaskRunner(), postProcessingTasks);
 
         final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
         final RunRowProcessingPublisherTask runTask = new RunRowProcessingPublisherTask(this, rowProcessingMetrics);
 
-        final TaskListener initFinishedListener = new RunNextTaskTaskListener(getTaskRunner(), runTask,
-                runCompletionListener);
+        final TaskListener initFinishedListener =
+                new RunNextTaskTaskListener(getTaskRunner(), runTask, runCompletionListener);
 
         // kick off the initialization
         initializeConsumers(initFinishedListener);
-        
+
         return true;
     }
 }

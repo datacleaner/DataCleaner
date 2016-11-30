@@ -19,22 +19,22 @@
  */
 package org.datacleaner.monitor.server.wizard.stringpattern.regex;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+
+import org.junit.Test;
 
 public class RegexStringPatternReferenceDataPageTest {
 
     @Test
     public void testGetPageIndex() throws Exception {
-        RegexStringPatternReferenceDataPage page = new RegexStringPatternReferenceDataPage(null);
+        final RegexStringPatternReferenceDataPage page = new RegexStringPatternReferenceDataPage(null);
         assertEquals(new Integer(0), page.getPageIndex());
     }
 
     @Test
     public void testGetTemplateFilename() throws Exception {
-        RegexStringPatternReferenceDataPage page = new RegexStringPatternReferenceDataPage(null);
+        final RegexStringPatternReferenceDataPage page = new RegexStringPatternReferenceDataPage(null);
         assertNotEquals("", page.getTemplateFilename());
     }
 }

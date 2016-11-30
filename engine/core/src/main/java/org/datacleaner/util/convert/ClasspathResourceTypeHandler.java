@@ -19,10 +19,10 @@
  */
 package org.datacleaner.util.convert;
 
-import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.apache.metamodel.util.ClasspathResource;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 
 /**
  * {@link ResourceTypeHandler} for {@link ClasspathResource}s.
@@ -30,7 +30,7 @@ import org.apache.metamodel.util.Resource;
 public class ClasspathResourceTypeHandler implements ResourceTypeHandler<ClasspathResource> {
 
     @Override
-    public boolean isParserFor(Class<? extends Resource> resourceType) {
+    public boolean isParserFor(final Class<? extends Resource> resourceType) {
         return ReflectionUtils.is(resourceType, ClasspathResource.class);
     }
 
@@ -40,12 +40,12 @@ public class ClasspathResourceTypeHandler implements ResourceTypeHandler<Classpa
     }
 
     @Override
-    public ClasspathResource parsePath(String path) {
+    public ClasspathResource parsePath(final String path) {
         return new ClasspathResource(path);
     }
 
     @Override
-    public String createPath(Resource resource) {
+    public String createPath(final Resource resource) {
         final ClasspathResource classpathResource = (ClasspathResource) resource;
         return classpathResource.getResourcePath();
     }

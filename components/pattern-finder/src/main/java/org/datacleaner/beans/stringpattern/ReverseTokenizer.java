@@ -34,7 +34,7 @@ public class ReverseTokenizer implements Tokenizer {
     private final String nullTokenString = NullToken.INSTANCE.getString();
     private final String blankTokenString = BlankToken.INSTANCE.getString();
 
-    public ReverseTokenizer(TokenizerConfiguration configuration) {
+    public ReverseTokenizer(final TokenizerConfiguration configuration) {
         _configuration = configuration;
     }
 
@@ -47,12 +47,12 @@ public class ReverseTokenizer implements Tokenizer {
             return Arrays.asList(BlankToken.INSTANCE);
         }
 
-        DefaultTokenizer delegate = new DefaultTokenizer(_configuration);
-        List<Token> tokens = delegate.tokenize(pattern);
+        final DefaultTokenizer delegate = new DefaultTokenizer(_configuration);
+        final List<Token> tokens = delegate.tokenize(pattern);
 
         if (_configuration.isTokenTypeEnabled(TokenType.MIXED)) {
-            for (ListIterator<Token> it = tokens.listIterator(); it.hasNext();) {
-                Token token = (Token) it.next();
+            for (final ListIterator<Token> it = tokens.listIterator(); it.hasNext(); ) {
+                final Token token = (Token) it.next();
                 if (token.getType() == TokenType.DELIM) {
                     final String string = token.getString();
                     if (string.indexOf("??") != -1) {

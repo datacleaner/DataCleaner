@@ -23,12 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.datacleaner.monitor.wizard.common.SelectTableWizardPage;
-import org.apache.metamodel.schema.Table;
 
 class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
 
@@ -36,8 +36,8 @@ class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final Table _sourceTable;
 
-    public SelectDatastoreWizardPage(CopyDataWizardSession session, AnalysisJobBuilder analysisJobBuilder,
-            Table sourceTable) {
+    public SelectDatastoreWizardPage(final CopyDataWizardSession session, final AnalysisJobBuilder analysisJobBuilder,
+            final Table sourceTable) {
         _session = session;
         _analysisJobBuilder = analysisJobBuilder;
         _sourceTable = sourceTable;
@@ -49,7 +49,7 @@ class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters) {
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters) {
         final String name = formParameters.get("datastoreName").get(0);
         final Datastore datastore = _session.getDatastore(name);
 
@@ -61,7 +61,7 @@ class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
             }
 
             @Override
-            protected WizardPageController nextPageController(Table selectedTable) {
+            protected WizardPageController nextPageController(final Table selectedTable) {
                 return new ColumnMappingPage(_session, _analysisJobBuilder, _sourceTable, datastore, selectedTable);
             }
         };
@@ -75,7 +75,7 @@ class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
     @Override
     protected Map<String, Object> getFormModel() {
         final String[] datastoreNames = _session.getDatastoreNames();
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("datastoreNames", datastoreNames);
         return map;
     }

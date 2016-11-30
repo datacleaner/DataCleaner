@@ -26,21 +26,21 @@ import org.datacleaner.components.categories.AnalyzeSuperCategory;
 /**
  * Simple and disposable implementation of
  * {@link HasAnalyzerResultComponentDescriptor}.
- * 
+ *
  * @param <C>
  *            the component type
  */
-public class SimpleHasAnalyzerResultComponentDescriptor<C extends HasAnalyzerResult<?>> extends
-        AbstractHasAnalyzerResultComponentDescriptor<C> {
+public class SimpleHasAnalyzerResultComponentDescriptor<C extends HasAnalyzerResult<?>>
+        extends AbstractHasAnalyzerResultComponentDescriptor<C> {
 
     private static final long serialVersionUID = 1L;
 
-    public SimpleHasAnalyzerResultComponentDescriptor(Class<C> beanClass) {
+    public SimpleHasAnalyzerResultComponentDescriptor(final Class<C> beanClass) {
         super(beanClass, false);
     }
 
     @Override
-    protected String getDisplayNameIfNotNamed(Class<?> componentClass) {
+    protected String getDisplayNameIfNotNamed(final Class<?> componentClass) {
         return componentClass.getSimpleName();
     }
 

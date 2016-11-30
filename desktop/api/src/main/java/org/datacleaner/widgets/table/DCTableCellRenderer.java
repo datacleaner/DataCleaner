@@ -53,16 +53,16 @@ public class DCTableCellRenderer implements TableCellRenderer {
     private final Map<Integer, Alignment> _alignmentOverrides;
     private final DefaultTableCellRenderer _delegate;
 
-    public DCTableCellRenderer(DCTable table) {
+    public DCTableCellRenderer(final DCTable table) {
         super();
         _table = table;
-        _alignmentOverrides = new HashMap<Integer, Alignment>();
+        _alignmentOverrides = new HashMap<>();
         _delegate = new DefaultTableCellRenderer();
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-            int row, int column) {
+    public Component getTableCellRendererComponent(final JTable table, Object value, final boolean isSelected,
+            final boolean hasFocus, final int row, final int column) {
         logger.debug("getTableCellRendererComponent({},{})", row, column);
 
         if (value != null && value.getClass().isArray()) {
@@ -82,7 +82,7 @@ public class DCTableCellRenderer implements TableCellRenderer {
             try {
                 final Reader reader = clob.getCharacterStream();
                 value = FileHelper.readAsString(reader);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Failed to read String from CLOB: {}", clob, e);
             }
         }
@@ -98,8 +98,8 @@ public class DCTableCellRenderer implements TableCellRenderer {
             if (component.getMouseListeners().length == 0) {
                 component.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mouseClicked(MouseEvent e) {
-                        MouseEvent newEvent = SwingUtilities.convertMouseEvent(component, e, _table);
+                    public void mouseClicked(final MouseEvent e) {
+                        final MouseEvent newEvent = SwingUtilities.convertMouseEvent(component, e, _table);
                         _table.consumeMouseClick(newEvent);
                     }
                 });
@@ -134,7 +134,7 @@ public class DCTableCellRenderer implements TableCellRenderer {
         return result;
     }
 
-    public void setAlignment(int column, Alignment alignment) {
+    public void setAlignment(final int column, final Alignment alignment) {
         _alignmentOverrides.put(column, alignment);
     }
 

@@ -19,13 +19,13 @@
  */
 package org.datacleaner.metadata;
 
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.connection.DatastoreConnection;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.connection.DatastoreConnection;
 
 /**
  * A metadata object representing a foreign key
@@ -37,8 +37,8 @@ public final class ForeignKey {
     private final String _foreignTableName;
     private final String _foreignColumnName;
 
-    public ForeignKey(String foreignDatastoreName, String foreignSchemaName, String foreignTableName,
-            String foreignColumnName) {
+    public ForeignKey(final String foreignDatastoreName, final String foreignSchemaName, final String foreignTableName,
+            final String foreignColumnName) {
         _foreignDatastoreName = foreignDatastoreName;
         _foreignSchemaName = foreignSchemaName;
         _foreignTableName = foreignTableName;
@@ -61,23 +61,22 @@ public final class ForeignKey {
         return _foreignTableName;
     }
 
-    public Column resolveForeignColumn(DatastoreCatalog datastoreCatalog) {
-        Datastore datastore = datastoreCatalog.getDatastore(getForeignDatastoreName());
+    public Column resolveForeignColumn(final DatastoreCatalog datastoreCatalog) {
+        final Datastore datastore = datastoreCatalog.getDatastore(getForeignDatastoreName());
         if (datastore == null) {
             return null;
         }
         try (DatastoreConnection connection = datastore.openConnection()) {
-            DataContext dataContext = connection.getDataContext();
-            Schema schema = dataContext.getSchemaByName(getForeignSchemaName());
+            final DataContext dataContext = connection.getDataContext();
+            final Schema schema = dataContext.getSchemaByName(getForeignSchemaName());
             if (schema == null) {
                 return null;
             }
-            Table table = schema.getTableByName(getForeignTableName());
+            final Table table = schema.getTableByName(getForeignTableName());
             if (table == null) {
                 return null;
             }
-            Column column = table.getColumnByName(getForeignColumnName());
-            return column;
+            return table.getColumnByName(getForeignColumnName());
         }
     }
 }

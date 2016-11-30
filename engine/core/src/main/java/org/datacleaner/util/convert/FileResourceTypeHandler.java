@@ -45,7 +45,7 @@ public class FileResourceTypeHandler implements ResourceTypeHandler<FileResource
 
     /**
      * Construct a {@link FileResourceTypeHandler} using defaults.
-     * 
+     *
      * @deprecated use another constructor instead
      */
     @Deprecated
@@ -53,39 +53,39 @@ public class FileResourceTypeHandler implements ResourceTypeHandler<FileResource
         this(DataCleanerConfigurationImpl.defaultHomeFolder());
     }
 
-    public FileResourceTypeHandler(DataCleanerConfiguration configuration) {
+    public FileResourceTypeHandler(final DataCleanerConfiguration configuration) {
         this(configuration.getHomeFolder());
     }
-    
-    public FileResourceTypeHandler(DataCleanerHomeFolder homeFolder) {
+
+    public FileResourceTypeHandler(final DataCleanerHomeFolder homeFolder) {
         this(homeFolder.toFile());
     }
 
     /**
      * Constructs a {@link FileResourceTypeHandler} using a specified parent
      * directory for relative paths.
-     * 
+     *
      * @param relativeParentDirectory
      */
-    public FileResourceTypeHandler(File relativeParentDirectory) {
+    public FileResourceTypeHandler(final File relativeParentDirectory) {
         this(DEFAULT_SCHEME, relativeParentDirectory);
     }
 
     /**
      * Constructs a {@link FileResourceTypeHandler} using a specified parent
      * directory for relative paths.
-     * 
+     *
      * @param scheme
      *            the scheme of this resource type, e.g. "file"
      * @param relativeParentDirectory
      */
-    public FileResourceTypeHandler(String scheme, File relativeParentDirectory) {
+    public FileResourceTypeHandler(final String scheme, final File relativeParentDirectory) {
         _scheme = scheme;
         _homeFolder = relativeParentDirectory;
     }
 
     @Override
-    public boolean isParserFor(Class<? extends Resource> resourceType) {
+    public boolean isParserFor(final Class<? extends Resource> resourceType) {
         return ReflectionUtils.is(resourceType, FileResource.class);
     }
 
@@ -95,14 +95,14 @@ public class FileResourceTypeHandler implements ResourceTypeHandler<FileResource
     }
 
     @Override
-    public FileResource parsePath(String path) {
+    public FileResource parsePath(final String path) {
         final FileResolver fileResolver = new FileResolver(_homeFolder);
         final File file = fileResolver.toFile(path);
         return new FileResource(file);
     }
 
     @Override
-    public String createPath(Resource resource) {
+    public String createPath(final Resource resource) {
         final File file = ((FileResource) resource).getFile();
         final FileResolver fileResolver = new FileResolver(_homeFolder);
         return fileResolver.toPath(file);

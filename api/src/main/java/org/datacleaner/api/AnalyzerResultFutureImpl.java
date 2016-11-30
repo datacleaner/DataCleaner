@@ -45,52 +45,47 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
 
     private static final long serialVersionUID = 1L;
 
-    private transient final CountDownLatch _countDownLatch;
-    private transient volatile List<Listener<? super R>> _listeners;
-
+    private final transient CountDownLatch _countDownLatch;
     private final String _name;
+    private transient volatile List<Listener<? super R>> _listeners;
     private volatile R _result;
     private volatile RuntimeException _error;
 
     /**
      * Constructs an {@link AnalyzerResultFutureImpl}
-     * 
+     *
      * @param name
      *            a name/label to use for presenting and distinguishing this
      *            result from others.
      * @param resultRef
      *            a reference for the result being processed.
      */
-    public AnalyzerResultFutureImpl(String name, final Ref<? extends R> resultRef) {
+    public AnalyzerResultFutureImpl(final String name, final Ref<? extends R> resultRef) {
         _name = name;
         _countDownLatch = new CountDownLatch(1);
         _result = null;
         _error = null;
 
-        SharedExecutorService.get().submit(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    _result = resultRef.get();
-                    if (_result == null && resultRef instanceof LazyRef) {
-                        // TODO: workaround - reported as MM bug, remove when
-                        // fixed.
-                        throw new RuntimeException(((LazyRef<?>) resultRef).getError());
-                    }
-                    onSuccess();
-                } catch (RuntimeException e) {
-                    _error = e;
-                    onError();
-                } finally {
-                    _countDownLatch.countDown();
+        SharedExecutorService.get().submit(() -> {
+            try {
+                _result = resultRef.get();
+                if (_result == null && resultRef instanceof LazyRef) {
+                    // TODO: workaround - reported as MM bug, remove when
+                    // fixed.
+                    throw new RuntimeException(((LazyRef<?>) resultRef).getError());
                 }
+                onSuccess();
+            } catch (final RuntimeException e) {
+                _error = e;
+                onError();
+            } finally {
+                _countDownLatch.countDown();
             }
         });
     }
 
     @Override
-    public synchronized void addListener(Listener<? super R> listener) {
+    public synchronized void addListener(final Listener<? super R> listener) {
         // it might be we add a listener AFTER the result is actually produced,
         // in which case we simply inform the listener immediately.
         if (isReady()) {
@@ -109,7 +104,7 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
     }
 
     @Override
-    public synchronized void removeListener(Listener<R> listener) {
+    public synchronized void removeListener(final Listener<R> listener) {
         if (_listeners == null) {
             return;
         }
@@ -124,11 +119,11 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
             for (final Listener<? super R> listener : _listeners) {
                 try {
                     listener.onSuccess(_result);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.warn("Unexpected exception while informing listener of success: {}", listener, e);
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Unexpected exception while iterating listeners on success", e);
         } finally {
             _listeners = null;
@@ -143,11 +138,11 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
             for (final Listener<? super R> listener : _listeners) {
                 try {
                     listener.onError(_error);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.warn("Unexpected exception while informing listener on error: {}", listener, e);
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Unexpected exception while iterating listeners on error", e);
         } finally {
             _listeners = null;
@@ -174,10 +169,11 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
                     iteration++;
                     finished = _countDownLatch.await(minutesToWaitPerIteration, TimeUnit.MINUTES);
                     if (!finished) {
-                        logger.info("Awaited completion for " + (iteration * minutesToWaitPerIteration) + " minutes...");
+                        logger.info(
+                                "Awaited completion for " + (iteration * minutesToWaitPerIteration) + " minutes...");
                     }
                 }
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 throw new IllegalStateException("Awaiting completion of AnalyzerResultFuture was interrupted!", e);
             }
         }
@@ -200,11 +196,11 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
     /**
      * Method invoked when serialization takes place. Makes sure that we await
      * the loading of the result reference before writing any data.
-     * 
+     *
      * @param out
      * @throws IOException
      */
-    private void writeObject(ObjectOutputStream out) throws IOException {
+    private void writeObject(final ObjectOutputStream out) throws IOException {
         logger.info("Serialization requested, awaiting reference to load.");
         get();
         out.defaultWriteObject();

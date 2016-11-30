@@ -20,8 +20,6 @@
 package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,37 +47,31 @@ import org.jdesktop.swingx.VerticalLayout;
  * entry as a set of text boxes and plus/minus buttons to add/remove entries.
  */
 public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<String, String>> {
-    
+
     private final DCPanel _textFieldPanel;
     private final List<MapEntryStringStringPanel> _entryPanels;
 
     @Inject
-    public MapStringToStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder) {
+    public MapStringToStringPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
         _entryPanels = new LinkedList<>();
         _textFieldPanel = new DCPanel();
         _textFieldPanel.setLayout(new VerticalLayout(2));
 
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addEntryPanel("", "", true);
-                fireValueChanged();
-            }
+        addButton.addActionListener(e -> {
+            addEntryPanel("", "", true);
+            fireValueChanged();
         });
 
         final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final int componentCount = _textFieldPanel.getComponentCount();
-                if (componentCount > 0) {
-                    removeEntryPanel();
-                    _textFieldPanel.updateUI();
-                    fireValueChanged();
-                }
+        removeButton.addActionListener(e -> {
+            final int componentCount = _textFieldPanel.getComponentCount();
+            if (componentCount > 0) {
+                removeEntryPanel();
+                _textFieldPanel.updateUI();
+                fireValueChanged();
             }
         });
 
@@ -98,36 +90,36 @@ public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<
         add(outerPanel);
     }
 
-    protected void addEntryPanel(String key, String value, boolean updateUI) {
-        final MapEntryStringStringPanel entryPanel = new MapEntryStringStringPanel(key  , value);
+    protected void addEntryPanel(final String key, final String value, final boolean updateUI) {
+        final MapEntryStringStringPanel entryPanel = new MapEntryStringStringPanel(key, value);
         entryPanel.addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent e) {
+            protected void onChange(final DocumentEvent e) {
                 fireValueChanged();
             }
         });
 
         _entryPanels.add(entryPanel);
         _textFieldPanel.add(entryPanel);
-        
+
         if (updateUI) {
             _textFieldPanel.updateUI();
         }
     }
 
     @Override
-    public void initialize(Map<String, String> value) {
+    public void initialize(final Map<String, String> value) {
         updateComponents(value);
     }
 
     /**
      * Creates the initial map type to use. Subclasses can override this if they
      * want to enforce a specific implementation of {@link Map}.
-     * 
+     *
      * By default a {@link LinkedHashMap} will be used since it has consistent
      * ordering of entries and thus provides the a consistent user experience
      * for most cases.
-     * 
+     *
      * @return
      */
     public Map<String, String> createEmptyMap() {
@@ -139,27 +131,24 @@ public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<
             updateComponents(createEmptyMap());
             return;
         }
-        batchUpdateWidget(new Runnable() {
-            @Override
-            public void run() {
-                while (_entryPanels.size() > value.size()) {
-                    // remove entry panels to make size equal
-                    removeEntryPanel();
-                }
-                
-                while (_entryPanels.size() < value.size()) {
-                    // remove entry panels to make size equal
-                    addEntryPanel("","", false);
-                }
-                
-                // update all the panels
-                int i = 0;
-                final Set<Entry<String, String>> entries = value.entrySet();
-                for (Entry<String, String> entry : entries) {
-                    final MapEntryStringStringPanel entryPanel = _entryPanels.get(i);
-                    entryPanel.setEntry(entry);
-                    i++;
-                }
+        batchUpdateWidget(() -> {
+            while (_entryPanels.size() > value.size()) {
+                // remove entry panels to make size equal
+                removeEntryPanel();
+            }
+
+            while (_entryPanels.size() < value.size()) {
+                // remove entry panels to make size equal
+                addEntryPanel("", "", false);
+            }
+
+            // update all the panels
+            int i = 0;
+            final Set<Entry<String, String>> entries = value.entrySet();
+            for (final Entry<String, String> entry : entries) {
+                final MapEntryStringStringPanel entryPanel = _entryPanels.get(i);
+                entryPanel.setEntry(entry);
+                i++;
             }
         });
         _textFieldPanel.updateUI();
@@ -175,14 +164,14 @@ public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<
         _textFieldPanel.remove(index);
     }
 
-    protected JComponent decorateTextField(JXTextField textField, int index) {
+    protected JComponent decorateTextField(final JXTextField textField, final int index) {
         return textField;
     }
 
     @Override
     public Map<String, String> getValue() {
         final Map<String, String> result = createEmptyMap();
-        for (MapEntryStringStringPanel panel : _entryPanels) {
+        for (final MapEntryStringStringPanel panel : _entryPanels) {
             if (panel.isSet()) {
                 result.put(panel.getEntryKey(), panel.getEntryValue());
             }
@@ -191,17 +180,17 @@ public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<
     }
 
     @Override
+    protected void setValue(final Map<String, String> value) {
+        updateComponents(value);
+    }
+
+    @Override
     public boolean isSet() {
-        Map<String, String> value = getValue();
+        final Map<String, String> value = getValue();
         if (value == null || value.isEmpty()) {
             return false;
         }
         return true;
-    }
-
-    @Override
-    protected void setValue(Map<String, String> value) {
-        updateComponents(value);
     }
 
 }

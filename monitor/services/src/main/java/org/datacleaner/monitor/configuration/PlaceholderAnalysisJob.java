@@ -50,7 +50,7 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
     private final Datastore _datastore;
     private final AnalysisJob _delegateJob;
 
-    public PlaceholderAnalysisJob(Datastore datastore, AnalysisJob delegateJob) {
+    public PlaceholderAnalysisJob(final Datastore datastore, final AnalysisJob delegateJob) {
         _datastore = datastore;
         _delegateJob = delegateJob;
     }
@@ -80,13 +80,13 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
         // create a single analyzer for picking up records
 
         final AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class);
-        final Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<ConfiguredPropertyDescriptor, Object>();
+        final Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<>();
 
-        final List<InputColumn<?>> columns = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> columns = new ArrayList<>();
         final Collection<TransformerJob> transformerJobs = getTransformerJobs();
-        for (TransformerJob transformerJob : transformerJobs) {
-            InputColumn<?>[] outputColumns = transformerJob.getOutput();
-            for (InputColumn<?> outputColumn : outputColumns) {
+        for (final TransformerJob transformerJob : transformerJobs) {
+            final InputColumn<?>[] outputColumns = transformerJob.getOutput();
+            for (final InputColumn<?> outputColumn : outputColumns) {
                 columns.add(outputColumn);
             }
         }
@@ -95,7 +95,8 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
                 columns.toArray(new InputColumn[columns.size()]));
         final ComponentConfiguration componentConfiguration = new ImmutableComponentConfiguration(properties);
 
-        final AnalyzerJob analyzerJob = new ImmutableAnalyzerJob("Record gatherer", descriptor, componentConfiguration, null, null, null);
+        final AnalyzerJob analyzerJob =
+                new ImmutableAnalyzerJob("Record gatherer", descriptor, componentConfiguration, null, null, null);
         return Arrays.asList(analyzerJob);
     }
 

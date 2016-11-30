@@ -47,8 +47,8 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
     private final Table _sourceTable;
     private final DataCleanerJobWizardSession _session;
 
-    public ColumnMappingPage(DataCleanerJobWizardSession session, AnalysisJobBuilder analysisJobBuilder,
-            Table sourceTable, Datastore targetDatastore, Table targetTable) {
+    public ColumnMappingPage(final DataCleanerJobWizardSession session, final AnalysisJobBuilder analysisJobBuilder,
+            final Table sourceTable, final Datastore targetDatastore, final Table targetTable) {
         _session = session;
         _analysisJobBuilder = analysisJobBuilder;
         _sourceTable = sourceTable;
@@ -68,19 +68,19 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("sourceColumns", _sourceTable.getColumns());
         map.put("targetColumns", _targetTable.getColumns());
         return map;
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters) {
-        final List<ColumnMapping> mappings = new ArrayList<ColumnMapping>();
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters) {
+        final List<ColumnMapping> mappings = new ArrayList<>();
 
         final Column[] sourceColumns = _sourceTable.getColumns();
         for (int i = 0; i < sourceColumns.length; i++) {
-            List<String> formParameter = formParameters.get("mapping_" + i);
+            final List<String> formParameter = formParameters.get("mapping_" + i);
             if (formParameter != null && !formParameter.isEmpty()) {
                 final String mapping = formParameter.get(0);
                 if (!StringUtils.isNullOrEmpty(mapping)) {
@@ -96,10 +96,10 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
             throw new IllegalStateException("No columns mapped!");
         }
 
-        AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = createAnalyzer(mappings);
+        final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = createAnalyzer(mappings);
 
-        return new SelectUpdateStrategyWizardPage(_session, _analysisJobBuilder, _targetDatastore, _targetTable,
-                insert, mappings);
+        return new SelectUpdateStrategyWizardPage(_session, _analysisJobBuilder, _targetDatastore, _targetTable, insert,
+                mappings);
     }
 
     private AnalyzerComponentBuilder<InsertIntoTableAnalyzer> createAnalyzer(final List<ColumnMapping> mappings) {
@@ -107,8 +107,7 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
             _analysisJobBuilder.addSourceColumn(mapping.getSourceColumn());
         }
 
-        final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = buildInsert(mappings);
-        return insert;
+        return buildInsert(mappings);
     }
 
     private AnalyzerComponentBuilder<InsertIntoTableAnalyzer> buildInsert(final List<ColumnMapping> mappings) {
@@ -121,8 +120,8 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
             columnNames[i] = mapping.getTargetColumn().getName();
         }
 
-        final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = _analysisJobBuilder
-                .addAnalyzer(InsertIntoTableAnalyzer.class);
+        final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert =
+                _analysisJobBuilder.addAnalyzer(InsertIntoTableAnalyzer.class);
         insert.setConfiguredProperty("Datastore", _targetDatastore);
         insert.setConfiguredProperty("Schema name", _targetTable.getSchema().getName());
         insert.setConfiguredProperty("Table name", _targetTable.getName());

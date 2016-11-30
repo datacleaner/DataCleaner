@@ -30,16 +30,16 @@ public interface JobEngineManager {
 
     /**
      * Gets all {@link JobEngine}s in the application.
-     * 
+     *
      * @return
      */
-    public Collection<JobEngine<?>> getJobEngines();
+    Collection<JobEngine<?>> getJobEngines();
 
-    public JobEngine<?> getJobEngine(TenantContext tenantContext, String jobName);
+    JobEngine<?> getJobEngine(TenantContext tenantContext, String jobName);
 
-    public <T extends JobContext> JobEngine<? extends T> getJobEngine(T jobContext);
+    <T extends JobContext> JobEngine<? extends T> getJobEngine(T jobContext);
 
-    public <T extends JobContext> JobEngine<? extends T> getJobEngine(Class<T> jobContext);
+    <T extends JobContext> JobEngine<? extends T> getJobEngine(Class<T> jobContext);
 
-    public <E extends JobEngine<?>> E getJobEngineOfType(Class<E> class1);
+    <E extends JobEngine<?>> E getJobEngineOfType(Class<E> class1);
 }

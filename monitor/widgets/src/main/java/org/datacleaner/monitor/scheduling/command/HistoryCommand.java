@@ -29,23 +29,24 @@ import org.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import com.google.gwt.user.client.Command;
 
 public class HistoryCommand implements Command {
- 
-	private ScheduleDefinition _schedule;
-	private SchedulingServiceAsync _service;
-	private TenantIdentifier _tenant;
-	private  DCPopupPanel _morePopup;
-	
-	public HistoryCommand(ScheduleDefinition schedule,SchedulingServiceAsync service , TenantIdentifier tenant, DCPopupPanel morePopup) {
-		_schedule = schedule;
-		_service = service;
-		_tenant = tenant;
-		_morePopup = morePopup;
-	}
-	
-	@Override
-	public void execute() {
-		_morePopup.hide();
-		final DCPopupPanel popup = new DCPopupPanel("Execution history: '" + _schedule.getJob().getName() + "'");
+
+    private ScheduleDefinition _schedule;
+    private SchedulingServiceAsync _service;
+    private TenantIdentifier _tenant;
+    private DCPopupPanel _morePopup;
+
+    public HistoryCommand(final ScheduleDefinition schedule, final SchedulingServiceAsync service,
+            final TenantIdentifier tenant, final DCPopupPanel morePopup) {
+        _schedule = schedule;
+        _service = service;
+        _tenant = tenant;
+        _morePopup = morePopup;
+    }
+
+    @Override
+    public void execute() {
+        _morePopup.hide();
+        final DCPopupPanel popup = new DCPopupPanel("Execution history: '" + _schedule.getJob().getName() + "'");
 
         popup.setWidget(new JobHistoryPanel(_schedule.getJob(), _service, _tenant));
         popup.addButton(new CancelPopupButton(popup, "Close", true));

@@ -73,7 +73,7 @@ public class SchemaTreePanel extends DCPanel {
     private SchemaTree _schemaTree;
 
     @Inject
-    protected SchemaTreePanel(InjectorBuilder injectorBuilder) {
+    protected SchemaTreePanel(final InjectorBuilder injectorBuilder) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _injectorBuilder = injectorBuilder;
         _searchTextField = createSearchTextField();
@@ -89,7 +89,7 @@ public class SchemaTreePanel extends DCPanel {
     /**
      * Method invoked when this panel is not longer shown to the user (typically
      * because there is no longer any open datastore / job).
-     * 
+     *
      * Note: This method is here because the {@link #removeNotify()} method is
      * not invoked by the layout manager of the parent window.
      */
@@ -115,8 +115,7 @@ public class SchemaTreePanel extends DCPanel {
             @Override
             protected SchemaTree doInBackground() throws Exception {
                 final Injector injector = _injectorBuilder.with(Datastore.class, datastore).createInjector();
-                final SchemaTree tree = injector.getInstance(SchemaTree.class);
-                return tree;
+                return injector.getInstance(SchemaTree.class);
             }
 
             protected void done() {
@@ -126,14 +125,14 @@ public class SchemaTreePanel extends DCPanel {
                     schemaTreeScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
                     _schemaTree.addComponentListener(new ComponentAdapter() {
                         @Override
-                        public void componentResized(ComponentEvent e) {
+                        public void componentResized(final ComponentEvent e) {
                             updateParentPanel();
                         }
                     });
                     _schemaTree.setFocusable(true);
                     _schemaTree.addKeyListener(new KeyAdapter() {
                         @Override
-                        public void keyPressed(KeyEvent e) {
+                        public void keyPressed(final KeyEvent e) {
                             if (_searchTextField.isFocusOwner()) {
                                 // let the normal search text work as it should
                                 return;
@@ -152,7 +151,7 @@ public class SchemaTreePanel extends DCPanel {
                                     if (index >= 0) {
                                         document.remove(index, 1);
                                     }
-                                } catch (BadLocationException ex) {
+                                } catch (final BadLocationException ex) {
                                     logger.debug("Document.remove() failed", ex);
                                 }
                                 break;
@@ -162,7 +161,7 @@ public class SchemaTreePanel extends DCPanel {
                                         final Document document = _searchTextField.getDocument();
                                         document.insertString(document.getLength(), "" + keyChar,
                                                 SimpleAttributeSet.EMPTY);
-                                    } catch (BadLocationException ex) {
+                                    } catch (final BadLocationException ex) {
                                         logger.debug("Document.insertString({}) failed", keyChar, ex);
                                     }
                                 }
@@ -183,10 +182,10 @@ public class SchemaTreePanel extends DCPanel {
                         _schemaTree.expandSelectedData();
                     }
                     updateParentPanel();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new RuntimeException(e);
                 }
-            };
+            }
 
         }.execute();
     }
@@ -197,7 +196,7 @@ public class SchemaTreePanel extends DCPanel {
         resetSearchFieldIcon.setBorder(WidgetUtils.BORDER_EMPTY);
         resetSearchFieldIcon.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e) {
+            public void mouseReleased(final MouseEvent e) {
                 resetSearch();
             }
         });
@@ -218,20 +217,20 @@ public class SchemaTreePanel extends DCPanel {
         final JXTextField searchTextField = new JXTextField(DEFAULT_SEARCH_FIELD_TEXT);
         searchTextField.addFocusListener(new FocusAdapter() {
             @Override
-            public void focusGained(FocusEvent e) {
+            public void focusGained(final FocusEvent e) {
                 final int length = searchTextField.getText().length();
                 searchTextField.select(length, length);
             }
         });
         searchTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 _schemaTree.filter(searchTextField.getText());
             }
         });
         searchTextField.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e) {
+            public void keyPressed(final KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
                     searchTextField.setText("");
                 }
@@ -247,7 +246,7 @@ public class SchemaTreePanel extends DCPanel {
         }
     }
 
-    public void setUpdatePanel(JComponent updatePanel) {
+    public void setUpdatePanel(final JComponent updatePanel) {
         _updatePanel = updatePanel;
     }
 }

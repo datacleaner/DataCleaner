@@ -51,12 +51,12 @@ public class UrlStandardizerTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow inputRow) {
-        String value = inputRow.getValue(inputColumn);
+    public String[] transform(final InputRow inputRow) {
+        final String value = inputRow.getValue(inputColumn);
         return transform(value);
     }
 
-    public String[] transform(String value) {
+    public String[] transform(final String value) {
         String protocol = null;
         String host = null;
         String port = null;
@@ -79,7 +79,7 @@ public class UrlStandardizerTransformer implements Transformer {
                 }
                 queryString = url.getRawQuery();
 
-            } catch (URISyntaxException e) {
+            } catch (final URISyntaxException e) {
                 logger.info("Throwing away illegal URL \"{}\"", value);
             }
         }

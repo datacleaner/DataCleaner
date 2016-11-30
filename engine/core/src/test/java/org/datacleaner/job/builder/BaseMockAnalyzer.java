@@ -26,7 +26,7 @@ import org.datacleaner.api.InputRow;
 public class BaseMockAnalyzer implements Analyzer<AnalyzerResult> {
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         // Do nothing.
     }
 

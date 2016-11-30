@@ -21,21 +21,21 @@ package org.datacleaner.test;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
+
+import junit.framework.TestCase;
 
 public class TestHelperTest extends TestCase {
 
     public void testCreateSampleDatabaseDatastore() throws Exception {
-        Datastore ds = TestHelper.createSampleDatabaseDatastore("foo");
+        final Datastore ds = TestHelper.createSampleDatabaseDatastore("foo");
         assertEquals("foo", ds.getName());
 
-        DatastoreConnection con = ds.openConnection();
-        String[] tableNames = con.getSchemaNavigator().getDefaultSchema().getTableNames();
-        assertEquals("[CUSTOMERS, EMPLOYEES, OFFICES, ORDERDETAILS, ORDERFACT, ORDERS, PAYMENTS, PRODUCTS]", Arrays
-                .toString(tableNames));
+        final DatastoreConnection con = ds.openConnection();
+        final String[] tableNames = con.getSchemaNavigator().getDefaultSchema().getTableNames();
+        assertEquals("[CUSTOMERS, EMPLOYEES, OFFICES, ORDERDETAILS, ORDERFACT, ORDERS, PAYMENTS, PRODUCTS]",
+                Arrays.toString(tableNames));
 
         con.close();
     }

@@ -28,23 +28,24 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 
 public class ShowLatestResultCommand implements Command {
- 
-	private TenantIdentifier tenant;
-	private JobIdentifier job ;
-	private DCPopupPanel popup;
-	
-	public ShowLatestResultCommand(TenantIdentifier tenantIdentifier,JobIdentifier jobIdentifier,DCPopupPanel popupPanel){
-		tenant = tenantIdentifier;
-		job = jobIdentifier;
-		popup = popupPanel;
-	}
-	
-	@Override
-	public void execute() {
-		 String url = Urls.createRepositoryUrl(tenant, "results/" + job.getName() + "-latest.analysis.result.dat");
-         Window.open(url, "datacleaner_job_details", null);
-         popup.hide();
-     }
+
+    private TenantIdentifier tenant;
+    private JobIdentifier job;
+    private DCPopupPanel popup;
+
+    public ShowLatestResultCommand(final TenantIdentifier tenantIdentifier, final JobIdentifier jobIdentifier,
+            final DCPopupPanel popupPanel) {
+        tenant = tenantIdentifier;
+        job = jobIdentifier;
+        popup = popupPanel;
+    }
+
+    @Override
+    public void execute() {
+        final String url = Urls.createRepositoryUrl(tenant, "results/" + job.getName() + "-latest.analysis.result.dat");
+        Window.open(url, "datacleaner_job_details", null);
+        popup.hide();
+    }
 }
  
 

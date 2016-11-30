@@ -26,9 +26,9 @@ public class ImmutableOutputDataStreamJob implements OutputDataStreamJob {
     private static final long serialVersionUID = 1L;
 
     private final OutputDataStream _outputDataStream;
-    private transient final AnalysisJob _job;
+    private final transient AnalysisJob _job;
 
-    public ImmutableOutputDataStreamJob(OutputDataStream outputDataStream, AnalysisJob job) {
+    public ImmutableOutputDataStreamJob(final OutputDataStream outputDataStream, final AnalysisJob job) {
         _outputDataStream = outputDataStream;
         _job = job;
     }

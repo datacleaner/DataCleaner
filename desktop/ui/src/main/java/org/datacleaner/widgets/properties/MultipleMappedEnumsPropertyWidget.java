@@ -41,7 +41,6 @@ import org.datacleaner.util.DefaultEnumMatcher;
 import org.datacleaner.util.EnumMatcher;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.EnumComboBoxListRenderer;
 
 /**
@@ -54,8 +53,8 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
 
     public class MappedEnumsPropertyWidget extends MinimalPropertyWidget<Object[]> {
 
-        public MappedEnumsPropertyWidget(ComponentBuilder componentBuilder,
-                ConfiguredPropertyDescriptor propertyDescriptor) {
+        public MappedEnumsPropertyWidget(final ComponentBuilder componentBuilder,
+                final ConfiguredPropertyDescriptor propertyDescriptor) {
             super(componentBuilder, propertyDescriptor);
         }
 
@@ -72,12 +71,13 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
 
         @Override
         public Object[] getValue() {
-            EnumerationValue[] values = getMappedEnums();
-            if(_mappedEnumsProperty instanceof EnumerationProvider) {
+            final EnumerationValue[] values = getMappedEnums();
+            if (_mappedEnumsProperty instanceof EnumerationProvider) {
                 return values;
             } else {
-                Object[] enumValues = (Object[]) Array.newInstance(_mappedEnumsProperty.getBaseType(), values.length);
-                for(int i = 0; i < values.length; i++) {
+                final Object[] enumValues =
+                        (Object[]) Array.newInstance(_mappedEnumsProperty.getBaseType(), values.length);
+                for (int i = 0; i < values.length; i++) {
                     enumValues[i] = values[i] == null ? null : values[i].asJavaEnum();
                 }
                 return enumValues;
@@ -100,17 +100,18 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
 
     /**
      * Constructs the property widget
-     * 
+     *
      * @param componentBuilder
      *            the component builder containing the properties
      * @param inputColumnsProperty
-     *            the property represeting the columns to use for settig up
+     *            the property represeting the columns to use for setting up
      *            conditional lookup (InputColumn[])
      * @param mappedEnumsProperty
      *            the property representing the mapped enums
      */
-    public MultipleMappedEnumsPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedEnumsProperty) {
+    public MultipleMappedEnumsPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor inputColumnsProperty,
+            final ConfiguredPropertyDescriptor mappedEnumsProperty) {
         super(componentBuilder, inputColumnsProperty);
         _mappedEnumComboBoxes = new WeakHashMap<>();
         _mappedEnumsProperty = mappedEnumsProperty;
@@ -124,7 +125,7 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
 
         final InputColumn<?>[] currentValue = getCurrentValue();
 
-        Object value = componentBuilder.getConfiguredProperty(mappedEnumsProperty);
+        final Object value = componentBuilder.getConfiguredProperty(mappedEnumsProperty);
         final EnumerationValue[] currentMappedEnums = EnumerationValue.fromArray(value);
         if (currentValue != null && currentMappedEnums != null) {
             final int minLength = Math.min(currentValue.length, currentMappedEnums.length);
@@ -146,7 +147,162 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
         return _mappedEnumsProperty;
     }
 
-    public void setMappedEnums(EnumerationValue[] value) {
+    /**
+     * Produces a list of available enum values for a particular input column.
+     *
+     * @param inputColumn
+     * @param mappedEnumsProperty
+     * @return
+     */
+    protected EnumerationValue[] getEnumConstants(final InputColumn<?> inputColumn,
+            final ConfiguredPropertyDescriptor mappedEnumsProperty) {
+        if (mappedEnumsProperty instanceof EnumerationProvider) {
+            return ((EnumerationProvider) mappedEnumsProperty).values();
+        } else {
+            return EnumerationValue.fromArray(mappedEnumsProperty.getBaseType().getEnumConstants());
+        }
+    }
+
+    @Override
+    protected boolean isAllInputColumnsSelectedIfNoValueExist() {
+        return false;
+    }
+
+    /**
+     * Creates a combobox for a particular input column.
+     *
+     * @param inputColumn
+     * @param mappedEnum
+     * @return
+     */
+    protected DCComboBox<EnumerationValue> createComboBox(final InputColumn<?> inputColumn,
+            EnumerationValue mappedEnum) {
+        if (mappedEnum == null && inputColumn != null) {
+            mappedEnum = getSuggestedValue(inputColumn);
+        }
+
+        final EnumerationValue[] enumConstants = getEnumConstants(inputColumn, _mappedEnumsProperty);
+        final DCComboBox<EnumerationValue> comboBox = new DCComboBox<>(enumConstants);
+        comboBox.setRenderer(getComboBoxRenderer(inputColumn, _mappedEnumComboBoxes, enumConstants));
+        _mappedEnumComboBoxes.put(inputColumn, comboBox);
+        if (mappedEnum != null) {
+            comboBox.setEditable(true);
+            comboBox.setSelectedItem(mappedEnum);
+            comboBox.setEditable(false);
+        }
+        comboBox.addListener(item -> _mappedEnumsPropertyWidget.fireValueChanged());
+        return comboBox;
+    }
+
+    /**
+     * Gets the renderer of items in the comboboxes presenting the enum values.
+     *
+     * @param enumConstants
+     * @param mappedEnumComboBoxes
+     * @param inputColumn
+     *
+     * @return
+     */
+    protected ListCellRenderer<? super EnumerationValue> getComboBoxRenderer(final InputColumn<?> inputColumn,
+            final Map<InputColumn<?>, DCComboBox<EnumerationValue>> mappedEnumComboBoxes,
+            final EnumerationValue[] enumConstants) {
+        return new EnumComboBoxListRenderer();
+    }
+
+    /**
+     * Gets the suggested/pre-filled value for a particular input column.
+     *
+     * @param inputColumn
+     * @return
+     */
+    protected EnumerationValue getSuggestedValue(final InputColumn<?> inputColumn) {
+        final EnumMatcher<EnumerationValue> matcher = _enumMatcherRef.get();
+        if (matcher == null) {
+            return null;
+        }
+        return matcher.suggestMatch(inputColumn.getName());
+    }
+
+    /**
+     * Creates an {@link EnumMatcher} for use by the suggested enum mappings in
+     * this widget
+     *
+     * @return
+     */
+    protected EnumMatcher<EnumerationValue> createEnumMatcher() {
+        if (_mappedEnumsProperty instanceof EnumerationProvider) {
+            return new DefaultEnumMatcher((EnumerationProvider) _mappedEnumsProperty);
+        } else {
+            @SuppressWarnings("unchecked") final Class<? extends Enum<?>> baseType =
+                    (Class<? extends Enum<?>>) _mappedEnumsProperty.getBaseType();
+            final EnumerationProvider prov = EnumerationValue.providerFromEnumClass(baseType);
+            return new DefaultEnumMatcher(prov);
+        }
+    }
+
+    @Override
+    protected JComponent decorateCheckBox(final DCCheckBox<InputColumn<?>> checkBox) {
+        final DCComboBox<EnumerationValue> comboBox;
+        final InputColumn<?> inputColumn = checkBox.getValue();
+        if (_mappedEnumComboBoxes.containsKey(inputColumn)) {
+            comboBox = _mappedEnumComboBoxes.get(inputColumn);
+        } else {
+            comboBox = createComboBox(inputColumn, null);
+        }
+        checkBox.addListener((item, selected) -> {
+            if (isBatchUpdating()) {
+                return;
+            }
+            comboBox.setVisible(selected);
+            _mappedEnumsPropertyWidget.fireValueChanged();
+        });
+
+        final boolean selected = checkBox.isSelected();
+        comboBox.setVisible(selected);
+
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(checkBox, BorderLayout.CENTER);
+        panel.add(comboBox, BorderLayout.EAST);
+        return panel;
+    }
+
+    @Override
+    protected void onValuesBatchSelected(final List<InputColumn<?>> values) {
+        final Collection<DCComboBox<EnumerationValue>> allComboBoxes = _mappedEnumComboBoxes.values();
+        for (final DCComboBox<EnumerationValue> comboBox : allComboBoxes) {
+            comboBox.setVisible(false);
+        }
+        for (final InputColumn<?> inputColumn : values) {
+            final DCComboBox<EnumerationValue> comboBox = _mappedEnumComboBoxes.get(inputColumn);
+            if (comboBox != null) {
+                comboBox.setVisible(true);
+            }
+        }
+    }
+
+    public MappedEnumsPropertyWidget getMappedEnumsPropertyWidget() {
+        return _mappedEnumsPropertyWidget;
+    }
+
+    private EnumerationValue[] getMappedEnums() {
+
+        final InputColumn<?>[] inputColumns = MultipleMappedEnumsPropertyWidget.this.getValue();
+        final List<EnumerationValue> result = new ArrayList<>();
+        for (final InputColumn<?> inputColumn : inputColumns) {
+            final DCComboBox<EnumerationValue> comboBox = _mappedEnumComboBoxes.get(inputColumn);
+            if (comboBox == null || !comboBox.isVisible()) {
+                result.add(null);
+            } else {
+                final EnumerationValue value = comboBox.getSelectedItem();
+                result.add(value);
+            }
+        }
+
+        return result.toArray(new EnumerationValue[result.size()]);
+    }
+
+    public void setMappedEnums(final EnumerationValue[] value) {
         final List<InputColumn<?>> inputColumns = MultipleMappedEnumsPropertyWidget.this.getSelectedInputColumns();
 
         for (int i = 0; i < inputColumns.size(); i++) {
@@ -169,167 +325,6 @@ public class MultipleMappedEnumsPropertyWidget extends MultipleInputColumnsPrope
         }
     }
 
-    /**
-     * Produces a list of available enum values for a particular input column.
-     * 
-     * @param inputColumn
-     * @param mappedEnumsProperty
-     * @return
-     */
-    protected EnumerationValue[] getEnumConstants(InputColumn<?> inputColumn, ConfiguredPropertyDescriptor mappedEnumsProperty) {
-        if(mappedEnumsProperty instanceof EnumerationProvider) {
-            return ((EnumerationProvider)mappedEnumsProperty).values();
-        } else {
-            return EnumerationValue.fromArray(mappedEnumsProperty.getBaseType().getEnumConstants());
-        }
-    }
-
-    @Override
-    protected boolean isAllInputColumnsSelectedIfNoValueExist() {
-        return false;
-    }
-
-    /**
-     * Creates a combobox for a particular input column.
-     * 
-     * @param inputColumn
-     * @param mappedEnum
-     * @return
-     */
-    protected DCComboBox<EnumerationValue> createComboBox(InputColumn<?> inputColumn, EnumerationValue mappedEnum) {
-        if (mappedEnum == null && inputColumn != null) {
-            mappedEnum = getSuggestedValue(inputColumn);
-        }
-
-        final EnumerationValue[] enumConstants = getEnumConstants(inputColumn, _mappedEnumsProperty);
-        final DCComboBox<EnumerationValue> comboBox = new DCComboBox<EnumerationValue>(enumConstants);
-        comboBox.setRenderer(getComboBoxRenderer(inputColumn, _mappedEnumComboBoxes, enumConstants));
-        _mappedEnumComboBoxes.put(inputColumn, comboBox);
-        if (mappedEnum != null) {
-            comboBox.setEditable(true);
-            comboBox.setSelectedItem(mappedEnum);
-            comboBox.setEditable(false);
-        }
-        comboBox.addListener(new Listener<EnumerationValue>() {
-            @Override
-            public void onItemSelected(EnumerationValue item) {
-                _mappedEnumsPropertyWidget.fireValueChanged();
-            }
-        });
-        return comboBox;
-    }
-
-    /**
-     * Gets the renderer of items in the comboboxes presenting the enum values.
-     * 
-     * @param enumConstants
-     * @param mappedEnumComboBoxes
-     * @param inputColumn
-     * 
-     * @return
-     */
-    protected ListCellRenderer<? super EnumerationValue> getComboBoxRenderer(InputColumn<?> inputColumn,
-            Map<InputColumn<?>, DCComboBox<EnumerationValue>> mappedEnumComboBoxes, EnumerationValue[] enumConstants) {
-        return new EnumComboBoxListRenderer();
-    }
-
-    /**
-     * Gets the suggested/pre-filled value for a particular input column.
-     * 
-     * @param inputColumn
-     * @return
-     */
-    protected EnumerationValue getSuggestedValue(InputColumn<?> inputColumn) {
-        final EnumMatcher<EnumerationValue> matcher = _enumMatcherRef.get();
-        if (matcher == null) {
-            return null;
-        }
-        final EnumerationValue suggestion = matcher.suggestMatch(inputColumn.getName());
-        return suggestion;
-    }
-
-    /**
-     * Creates an {@link EnumMatcher} for use by the suggested enum mappings in
-     * this widget
-     * 
-     * @return
-     */
-    protected EnumMatcher<EnumerationValue> createEnumMatcher() {
-        if(_mappedEnumsProperty instanceof EnumerationProvider) {
-            return new DefaultEnumMatcher((EnumerationProvider)_mappedEnumsProperty);
-        } else {
-            @SuppressWarnings("unchecked")
-            final Class<? extends Enum<?>> baseType = (Class<? extends Enum<?>>) _mappedEnumsProperty.getBaseType();
-            final EnumerationProvider prov = EnumerationValue.providerFromEnumClass(baseType);
-            return new DefaultEnumMatcher(prov);
-        }
-    }
-
-    @Override
-    protected JComponent decorateCheckBox(final DCCheckBox<InputColumn<?>> checkBox) {
-        final DCComboBox<EnumerationValue> comboBox;
-        final InputColumn<?> inputColumn = checkBox.getValue();
-        if (_mappedEnumComboBoxes.containsKey(inputColumn)) {
-            comboBox = _mappedEnumComboBoxes.get(inputColumn);
-        } else {
-            comboBox = createComboBox(inputColumn, null);
-        }
-        checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
-            @Override
-            public void onItemSelected(InputColumn<?> item, boolean selected) {
-                if (isBatchUpdating()) {
-                    return;
-                }
-                comboBox.setVisible(selected);
-                _mappedEnumsPropertyWidget.fireValueChanged();
-            }
-        });
-
-        final boolean selected = checkBox.isSelected();
-        comboBox.setVisible(selected);
-
-        final DCPanel panel = new DCPanel();
-        panel.setLayout(new BorderLayout());
-        panel.add(checkBox, BorderLayout.CENTER);
-        panel.add(comboBox, BorderLayout.EAST);
-        return panel;
-    }
-
-    @Override
-    protected void onValuesBatchSelected(List<InputColumn<?>> values) {
-        final Collection<DCComboBox<EnumerationValue>> allComboBoxes = _mappedEnumComboBoxes.values();
-        for (DCComboBox<EnumerationValue> comboBox : allComboBoxes) {
-            comboBox.setVisible(false);
-        }
-        for (InputColumn<?> inputColumn : values) {
-            final DCComboBox<EnumerationValue> comboBox = _mappedEnumComboBoxes.get(inputColumn);
-            if (comboBox != null) {
-                comboBox.setVisible(true);
-            }
-        }
-    }
-
-    public MappedEnumsPropertyWidget getMappedEnumsPropertyWidget() {
-        return _mappedEnumsPropertyWidget;
-    }
-
-    private EnumerationValue[] getMappedEnums() {
-
-        final InputColumn<?>[] inputColumns = MultipleMappedEnumsPropertyWidget.this.getValue();
-        final List<EnumerationValue> result = new ArrayList<EnumerationValue>();
-        for (final InputColumn<?> inputColumn : inputColumns) {
-            final DCComboBox<EnumerationValue> comboBox = _mappedEnumComboBoxes.get(inputColumn);
-            if (comboBox == null || !comboBox.isVisible()) {
-                result.add(null);
-            } else {
-                final EnumerationValue value = comboBox.getSelectedItem();
-                result.add(value);
-            }
-        }
-
-        return result.toArray(new EnumerationValue[result.size()]);
-    }
-    
     @Override
     protected void onBatchFinished() {
         super.onBatchFinished();

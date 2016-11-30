@@ -51,14 +51,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ClusterSlaveController {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterSlaveController.class);
-
+    private final ConcurrentMap<String, AnalysisResultFuture> _runningJobsMap = new ConcurrentHashMap<>();
     @Autowired
     TenantContextFactory _tenantContextFactory;
-
     @Autowired(required = false)
     SlaveJobInterceptor _slaveJobInterceptor;
-
-    private final ConcurrentMap<String, AnalysisResultFuture> _runningJobsMap = new ConcurrentHashMap<String, AnalysisResultFuture>();
 
     @RolesAllowed(SecurityRoles.TASK_SLAVE_EXECUTOR)
     @RequestMapping(method = RequestMethod.POST, produces = "application/octet-stream")
@@ -72,16 +69,16 @@ public class ClusterSlaveController {
                 _runningJobsMap.size());
 
         try {
-            final SlaveServletHelper slaveServletHelper = new SlaveServletHelper(configuration, _slaveJobInterceptor,
-                    _runningJobsMap);
+            final SlaveServletHelper slaveServletHelper =
+                    new SlaveServletHelper(configuration, _slaveJobInterceptor, _runningJobsMap);
             slaveServletHelper.handleRequest(request, response);
             logger.info("Succesfully handled slave job request for tenant: {}. Running slave jobs: {}", tenant,
                     _runningJobsMap.size());
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             logger.error("Unexpected runtime exception occurred during slave job execution. Running slave jobs: {}",
                     _runningJobsMap.size(), e);
             throw e;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.error("Unexpected I/O exception occurred during slave job execution. Running slave jobs: {}",
                     _runningJobsMap.size(), e);
             throw e;

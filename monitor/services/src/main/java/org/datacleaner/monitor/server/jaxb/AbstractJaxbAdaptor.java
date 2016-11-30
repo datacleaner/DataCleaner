@@ -42,10 +42,10 @@ public abstract class AbstractJaxbAdaptor<E> {
 
     private final JAXBContext _jaxbContext;
 
-    protected AbstractJaxbAdaptor(Class<E> clazz) {
+    protected AbstractJaxbAdaptor(final Class<E> clazz) {
         try {
             _jaxbContext = JAXBContext.newInstance(clazz.getPackage().getName(), clazz.getClassLoader());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
@@ -53,21 +53,21 @@ public abstract class AbstractJaxbAdaptor<E> {
     protected DatatypeFactory getDatatypeFactory() {
         try {
             return DatatypeFactory.newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
-    protected XMLGregorianCalendar createDate(Date date) {
+    protected XMLGregorianCalendar createDate(final Date date) {
         if (date == null) {
             return null;
         }
-        GregorianCalendar cal = new GregorianCalendar();
+        final GregorianCalendar cal = new GregorianCalendar();
         cal.setTime(date);
         return getDatatypeFactory().newXMLGregorianCalendar(cal);
     }
 
-    protected Date createDate(XMLGregorianCalendar gregorianCalendar) {
+    protected Date createDate(final XMLGregorianCalendar gregorianCalendar) {
         if (gregorianCalendar == null) {
             return null;
         }
@@ -75,7 +75,7 @@ public abstract class AbstractJaxbAdaptor<E> {
     }
 
     @SuppressWarnings("unchecked")
-    protected E unmarshal(InputStream in) {
+    protected E unmarshal(final InputStream in) {
         final Unmarshaller unmarshaller = createUnmarshaller();
         try {
             Object result = unmarshaller.unmarshal(in);
@@ -83,7 +83,7 @@ public abstract class AbstractJaxbAdaptor<E> {
                 result = ((JAXBElement<?>) result).getValue();
             }
             return (E) result;
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new JaxbException(e);
         }
     }
@@ -93,7 +93,7 @@ public abstract class AbstractJaxbAdaptor<E> {
             final Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
             unmarshaller.setEventHandler(new JaxbValidationEventHandler());
             return unmarshaller;
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new JaxbException(e);
         }
     }
@@ -104,25 +104,25 @@ public abstract class AbstractJaxbAdaptor<E> {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.setEventHandler(new JaxbValidationEventHandler());
             return marshaller;
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new JaxbException(e);
         }
     }
 
-    protected void marshal(JAXBElement<E> obj, OutputStream outputStream) {
-        Marshaller marshaller = createMarshaller();
+    protected void marshal(final JAXBElement<E> obj, final OutputStream outputStream) {
+        final Marshaller marshaller = createMarshaller();
         try {
             marshaller.marshal(obj, outputStream);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new JaxbException(e);
         }
     }
 
-    protected void marshal(E obj, OutputStream outputStream) {
-        Marshaller marshaller = createMarshaller();
+    protected void marshal(final E obj, final OutputStream outputStream) {
+        final Marshaller marshaller = createMarshaller();
         try {
             marshaller.marshal(obj, outputStream);
-        } catch (JAXBException e) {
+        } catch (final JAXBException e) {
             throw new JaxbException(e);
         }
     }

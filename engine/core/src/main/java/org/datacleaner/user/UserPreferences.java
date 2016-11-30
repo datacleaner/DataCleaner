@@ -37,89 +37,89 @@ import org.datacleaner.reference.SynonymCatalog;
  */
 public interface UserPreferences {
 
-    public void save();
+    void save();
 
-    public File getExtensionsDirectory();
-    
-    public void setExtensionsDirectory(File directory);
+    File getExtensionsDirectory();
 
-    public File getOpenDatastoreDirectory();
+    void setExtensionsDirectory(File directory);
 
-    public void setOpenDatastoreDirectory(File openFileDir);
+    File getOpenDatastoreDirectory();
 
-    public File getConfiguredFileDirectory();
+    void setOpenDatastoreDirectory(File openFileDir);
 
-    public void setConfiguredFileDirectory(File openPropertyFileDirectory);
+    File getConfiguredFileDirectory();
 
-    public File getAnalysisJobDirectory();
+    void setConfiguredFileDirectory(File openPropertyFileDirectory);
 
-    public void setAnalysisJobDirectory(File saveFileDirectory);
+    File getAnalysisJobDirectory();
 
-    public File getSaveDatastoreDirectory();
+    void setAnalysisJobDirectory(File saveFileDirectory);
 
-    public void setSaveDatastoreDirectory(File saveDatastoreDirectory);
+    File getSaveDatastoreDirectory();
 
-    public void addRecentJobFile(FileObject file);
+    void setSaveDatastoreDirectory(File saveDatastoreDirectory);
 
-    public List<FileObject> getRecentJobFiles();
+    void addRecentJobFile(FileObject file);
 
-    public List<Datastore> getUserDatastores();
+    List<FileObject> getRecentJobFiles();
 
-    public List<Dictionary> getUserDictionaries();
+    List<Datastore> getUserDatastores();
 
-    public List<SynonymCatalog> getUserSynonymCatalogs();
+    List<Dictionary> getUserDictionaries();
 
-    public List<UserDatabaseDriver> getDatabaseDrivers();
+    List<SynonymCatalog> getUserSynonymCatalogs();
 
-    public List<StringPattern> getUserStringPatterns();
+    List<UserDatabaseDriver> getDatabaseDrivers();
 
-    public boolean isProxyEnabled();
+    List<StringPattern> getUserStringPatterns();
 
-    public void setProxyEnabled(boolean proxyEnabled);
+    boolean isProxyEnabled();
 
-    public String getProxyHostname();
+    void setProxyEnabled(boolean proxyEnabled);
 
-    public void setProxyHostname(String proxyHostname);
+    String getProxyHostname();
 
-    public int getProxyPort();
+    void setProxyHostname(String proxyHostname);
 
-    public void setProxyPort(int proxyPort);
+    int getProxyPort();
 
-    public String getProxyUsername();
+    void setProxyPort(int proxyPort);
 
-    public void setProxyUsername(String proxyUsername);
+    String getProxyUsername();
 
-    public String getProxyPassword();
+    void setProxyUsername(String proxyUsername);
 
-    public void setProxyPassword(String proxyPassword);
+    String getProxyPassword();
 
-    public boolean isProxyAuthenticationEnabled();
+    void setProxyPassword(String proxyPassword);
 
-    public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled);
+    boolean isProxyAuthenticationEnabled();
+
+    void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled);
 
     /**
      * Creates a HTTP client based on the user preferences with regard to
      * proxying and more.
-     * 
+     *
      * @return a HTTP client
      */
-    public CloseableHttpClient createHttpClient();
+    CloseableHttpClient createHttpClient();
 
-    public MonitorConnection getMonitorConnection();
+    MonitorConnection getMonitorConnection();
 
-    public void setMonitorConnection(MonitorConnection connection);
+    void setMonitorConnection(MonitorConnection connection);
 
-    public List<ExtensionPackage> getExtensionPackages();
+    List<ExtensionPackage> getExtensionPackages();
 
-    public void setExtensionPackages(List<ExtensionPackage> extensionPackages);
+    void setExtensionPackages(List<ExtensionPackage> extensionPackages);
 
-    public Map<String, String> getAdditionalProperties();
+    Map<String, String> getAdditionalProperties();
 
-    public File getSaveDownloadedFilesDirectory();
+    File getSaveDownloadedFilesDirectory();
 
-    public void setSaveDownloadedFilesDirectory(File directory);
+    void setSaveDownloadedFilesDirectory(File directory);
 
-    public void addExtensionPackage(ExtensionPackage extensionPackage);
+    void addExtensionPackage(ExtensionPackage extensionPackage);
 
-    public void removeExtensionPackage(ExtensionPackage extensionPackage);
+    void removeExtensionPackage(ExtensionPackage extensionPackage);
 }

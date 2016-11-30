@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * Class ComponentsStoreHolder
  * Object for storing to component cache.
- * 
+ *
  * @since 11.8.15
  */
 public class ComponentStoreHolder implements Serializable {
@@ -45,7 +45,8 @@ public class ComponentStoreHolder implements Serializable {
     public ComponentStoreHolder() {
     }
 
-    public ComponentStoreHolder(long timeout, CreateInput createInput, String instanceId, String componentName) {
+    public ComponentStoreHolder(final long timeout, final CreateInput createInput, final String instanceId,
+            final String componentName) {
         this.timeout = timeout;
         this.createInput = createInput;
         this.instanceId = instanceId;
@@ -57,7 +58,7 @@ public class ComponentStoreHolder implements Serializable {
         return timeout;
     }
 
-    public void setTimeout(long timeout) {
+    public void setTimeout(final long timeout) {
         this.timeout = timeout;
     }
 
@@ -65,7 +66,7 @@ public class ComponentStoreHolder implements Serializable {
         return useTimestamp;
     }
 
-    public void setUseTimestamp(long useTimestamp) {
+    public void setUseTimestamp(final long useTimestamp) {
         this.useTimestamp = useTimestamp;
     }
 
@@ -73,7 +74,7 @@ public class ComponentStoreHolder implements Serializable {
         return createInput;
     }
 
-    public void setCreateInput(CreateInput createInput) {
+    public void setCreateInput(final CreateInput createInput) {
         this.createInput = createInput;
     }
 
@@ -81,7 +82,7 @@ public class ComponentStoreHolder implements Serializable {
         return instanceId;
     }
 
-    public void setInstanceId(String instanceId) {
+    public void setInstanceId(final String instanceId) {
         this.instanceId = instanceId;
     }
 
@@ -89,11 +90,11 @@ public class ComponentStoreHolder implements Serializable {
         return componentName;
     }
 
-    public void setComponentName(String componentName) {
+    public void setComponentName(final String componentName) {
         this.componentName = componentName;
     }
 
-    public void updateTimestamp(){
+    public void updateTimestamp() {
         useTimestamp = System.currentTimeMillis();
     }
 
@@ -104,7 +105,7 @@ public class ComponentStoreHolder implements Serializable {
      */
     @JsonIgnore
     public boolean isValid() {
-        long now = System.currentTimeMillis();
+        final long now = System.currentTimeMillis();
         return now < useTimestamp + timeout;
     }
 }

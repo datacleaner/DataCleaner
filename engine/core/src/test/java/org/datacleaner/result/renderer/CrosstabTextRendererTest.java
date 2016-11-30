@@ -28,38 +28,38 @@ import org.datacleaner.result.CrosstabResult;
 import junit.framework.TestCase;
 
 public class CrosstabTextRendererTest extends TestCase {
-    
+
     public void testEmptyCrosstab() throws Exception {
-        CrosstabDimension genderDimension = new CrosstabDimension("Gender");
+        final CrosstabDimension genderDimension = new CrosstabDimension("Gender");
         genderDimension.addCategory("Male");
         genderDimension.addCategory("Female");
-        CrosstabDimension regionDimension = new CrosstabDimension("Region");
+        final CrosstabDimension regionDimension = new CrosstabDimension("Region");
 
-        Crosstab<Integer> c = new Crosstab<Integer>(Integer.class, genderDimension, regionDimension);
-        
-        String s = new CrosstabTextRenderer().render(new CrosstabResult(c));
+        final Crosstab<Integer> c = new Crosstab<>(Integer.class, genderDimension, regionDimension);
+
+        final String s = new CrosstabTextRenderer().render(new CrosstabResult(c));
         assertEquals("   Male Female \n", s);
     }
 
     public void testSimpleCrosstab() throws Exception {
-        Crosstab<Integer> c = new Crosstab<Integer>(Integer.class, "Gender", "Region");
+        final Crosstab<Integer> c = new Crosstab<>(Integer.class, "Gender", "Region");
         c.where("Gender", "Male").where("Region", "EU").put(1, true);
         c.where("Gender", "Male").where("Region", "USA").put(2, true);
         c.where("Gender", "Female").where("Region", "EU").put(3, true);
         c.where("Gender", "Female").where("Region", "USA").put(4, true);
 
-        String s = new CrosstabTextRenderer().render(new CrosstabResult(c));
+        final String s = new CrosstabTextRenderer().render(new CrosstabResult(c));
         assertEquals("      Male Female \nEU       1      3 \nUSA      2      4 \n", s);
     }
 
     public void testOneDimension() throws Exception {
-        Crosstab<Integer> c = new Crosstab<Integer>(Integer.class, "Region");
+        final Crosstab<Integer> c = new Crosstab<>(Integer.class, "Region");
         c.where("Region", "EU").put(1, true);
         c.where("Region", "USA").put(2, true);
         c.where("Region", "Asia").put(3, true);
 
-        CrosstabTextRenderer crosstabRenderer = new CrosstabTextRenderer();
-        String result = crosstabRenderer.render(c);
+        final CrosstabTextRenderer crosstabRenderer = new CrosstabTextRenderer();
+        final String result = crosstabRenderer.render(c);
         assertEquals("    EU    USA   Asia \n" + "     1      2      3 \n", result.replaceAll("\"", "'"));
     }
 
@@ -69,17 +69,17 @@ public class CrosstabTextRendererTest extends TestCase {
         // USA), Age-group (children, teenagers and adult)
         // and Gender (male and female)
 
-        Crosstab<Integer> c = new Crosstab<Integer>(Integer.class, "Region", "Age-group", "Gender", "Native");
-        String[] genderValues = { "Male", "Female" };
-        String[] regionValues = { "EU", "USA" };
-        String[] ageGroupValues = { "Child", "Teenager", "Adult" };
-        String[] nativeValues = { "Yes", "No, immigrant", "No, second-generation" };
+        final Crosstab<Integer> c = new Crosstab<>(Integer.class, "Region", "Age-group", "Gender", "Native");
+        final String[] genderValues = { "Male", "Female" };
+        final String[] regionValues = { "EU", "USA" };
+        final String[] ageGroupValues = { "Child", "Teenager", "Adult" };
+        final String[] nativeValues = { "Yes", "No, immigrant", "No, second-generation" };
 
         int i = 0;
-        for (String gender : genderValues) {
-            for (String region : regionValues) {
-                for (String ageGroup : ageGroupValues) {
-                    for (String nativeValue : nativeValues) {
+        for (final String gender : genderValues) {
+            for (final String region : regionValues) {
+                for (final String ageGroup : ageGroupValues) {
+                    for (final String nativeValue : nativeValues) {
                         c.where("Region", region).where("Age-group", ageGroup).where("Gender", gender)
                                 .where("Native", nativeValue).put(i, true);
                         i++;
@@ -88,20 +88,20 @@ public class CrosstabTextRendererTest extends TestCase {
             }
         }
 
-        String[] dimensionNames = c.getDimensionNames();
+        final String[] dimensionNames = c.getDimensionNames();
         assertEquals("[Region, Age-group, Gender, Native]", Arrays.toString(dimensionNames));
 
-        CrosstabTextRenderer crosstabRenderer = new CrosstabTextRenderer();
+        final CrosstabTextRenderer crosstabRenderer = new CrosstabTextRenderer();
 
         // auto-assigned axises
         assertEquals("                                                   EU                      USA \n"
-                + "                                Child Teenager    Adult    Child Teenager    Adult \n"
-                + "Male   Yes                          0        3        6        9       12       15 \n"
-                + "No, immigrant                1        4        7       10       13       16 \n"
-                + "No, second-generation        2        5        8       11       14       17 \n"
-                + "Female Yes                         18       21       24       27       30       33 \n"
-                + "No, immigrant               19       22       25       28       31       34 \n"
-                + "No, second-generation       20       23       26       29       32       35 \n", crosstabRenderer
-                .render(c).replaceAll("\"", "'"));
+                        + "                                Child Teenager    Adult    Child Teenager    Adult \n"
+                        + "Male   Yes                          0        3        6        9       12       15 \n"
+                        + "No, immigrant                1        4        7       10       13       16 \n"
+                        + "No, second-generation        2        5        8       11       14       17 \n"
+                        + "Female Yes                         18       21       24       27       30       33 \n"
+                        + "No, immigrant               19       22       25       28       31       34 \n"
+                        + "No, second-generation       20       23       26       29       32       35 \n",
+                crosstabRenderer.render(c).replaceAll("\"", "'"));
     }
 }

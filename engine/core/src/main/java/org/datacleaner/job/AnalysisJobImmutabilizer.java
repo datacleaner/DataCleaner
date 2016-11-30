@@ -37,7 +37,7 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 /**
  * Class that will load mutable and lazy components into their immutable
  * variants. For instance {@link LazyFilterOutcome}.
- * 
+ *
  * This is important for serialization and decoupling of object graphs, to
  * ensure that the lazy references (to builder objects) become fixed on
  * immutable job objects.
@@ -49,10 +49,10 @@ public final class AnalysisJobImmutabilizer {
 
     public AnalysisJobImmutabilizer() {
         _outcomes = new HashMap<>();
-        _componentJobs = new IdentityHashMap<ComponentBuilder, ComponentJob>();
+        _componentJobs = new IdentityHashMap<>();
     }
 
-    public OutputDataStreamJob[] load(OutputDataStreamJob[] outputDataStreamJobs, boolean validate) {
+    public OutputDataStreamJob[] load(final OutputDataStreamJob[] outputDataStreamJobs, final boolean validate) {
         if (outputDataStreamJobs == null || outputDataStreamJobs.length == 0) {
             return outputDataStreamJobs;
         }
@@ -70,9 +70,9 @@ public final class AnalysisJobImmutabilizer {
         return result;
     }
 
-    public FilterOutcome load(FilterOutcome outcome) {
+    public FilterOutcome load(final FilterOutcome outcome) {
         if (outcome instanceof LazyFilterOutcome) {
-            LazyFilterOutcome lfo = (LazyFilterOutcome) outcome;
+            final LazyFilterOutcome lfo = (LazyFilterOutcome) outcome;
             ImmutableFilterOutcome result = _outcomes.get(lfo);
             if (result == null) {
                 result = new ImmutableFilterOutcome(lfo.getFilterJob(), lfo.getCategory());
@@ -83,7 +83,7 @@ public final class AnalysisJobImmutabilizer {
         return outcome;
     }
 
-    public ComponentRequirement load(ComponentRequirement req) {
+    public ComponentRequirement load(final ComponentRequirement req) {
         if (req instanceof SimpleComponentRequirement) {
             final FilterOutcome originalOutcome = ((SimpleComponentRequirement) req).getOutcome();
             final FilterOutcome loadedOutcome = load(originalOutcome);
@@ -115,20 +115,20 @@ public final class AnalysisJobImmutabilizer {
      * are subtypes of {@link Transformer} it is necesary to have this caching
      * mechanism in place in order to allow diamond-shaped component graphs
      * where multiple streams include the same component.
-     * 
+     *
      * @param validate
      * @param tjb
      * @return
      */
-    public TransformerJob getOrCreateTransformerJob(boolean validate, TransformerComponentBuilder<?> tjb) {
+    public TransformerJob getOrCreateTransformerJob(final boolean validate, final TransformerComponentBuilder<?> tjb) {
         TransformerJob componentJob = (TransformerJob) _componentJobs.get(tjb);
         if (componentJob == null) {
             try {
                 componentJob = tjb.toTransformerJob(validate, this);
                 _componentJobs.put(tjb, componentJob);
-            } catch (IllegalStateException e) {
-                throw new IllegalStateException("Could not create transformer job from builder: " + tjb + ", ("
-                        + e.getMessage() + ")", e);
+            } catch (final IllegalStateException e) {
+                throw new IllegalStateException(
+                        "Could not create transformer job from builder: " + tjb + ", (" + e.getMessage() + ")", e);
             }
         }
         return componentJob;

@@ -23,8 +23,6 @@ import java.awt.GraphicsEnvironment;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.VFS;
@@ -42,6 +40,8 @@ import org.datacleaner.windows.AnalysisJobBuilderWindow;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+
+import junit.framework.TestCase;
 
 public class MultipleMappedEnumsPropertyWidgetTest extends TestCase {
 
@@ -70,8 +70,8 @@ public class MultipleMappedEnumsPropertyWidgetTest extends TestCase {
                 .getConfiguredPropertiesByType(CompletenessAnalyzer.Condition[].class, false);
         assertEquals(1, enumProperties.size());
 
-        final Set<ConfiguredPropertyDescriptor> inputProperties = completenessAnalyzer.getDescriptor()
-                .getConfiguredPropertiesForInput(false);
+        final Set<ConfiguredPropertyDescriptor> inputProperties =
+                completenessAnalyzer.getDescriptor().getConfiguredPropertiesForInput(false);
         assertEquals(1, inputProperties.size());
 
         final ConfiguredPropertyDescriptor enumProperty = enumProperties.iterator().next();
@@ -79,11 +79,11 @@ public class MultipleMappedEnumsPropertyWidgetTest extends TestCase {
         assertEquals("{NOT_NULL,NOT_BLANK_OR_NULL}", ArrayUtils.toString(enumValue));
 
         final ConfiguredPropertyDescriptor inputProperty = inputProperties.iterator().next();
-        final InputColumn<?>[] inputValue = (InputColumn<?>[]) completenessAnalyzer
-                .getConfiguredProperty(inputProperty);
+        final InputColumn<?>[] inputValue =
+                (InputColumn<?>[]) completenessAnalyzer.getConfiguredProperty(inputProperty);
 
-        final MultipleMappedEnumsPropertyWidget inputWidget = new MultipleMappedEnumsPropertyWidget(
-                completenessAnalyzer, inputProperty, enumProperty);
+        final MultipleMappedEnumsPropertyWidget inputWidget =
+                new MultipleMappedEnumsPropertyWidget(completenessAnalyzer, inputProperty, enumProperty);
         final PropertyWidget<Object[]> enumWidget = inputWidget.getMappedEnumsPropertyWidget();
         enumWidget.initialize(EnumerationValue.fromArray(enumValue));
         inputWidget.initialize(inputValue);

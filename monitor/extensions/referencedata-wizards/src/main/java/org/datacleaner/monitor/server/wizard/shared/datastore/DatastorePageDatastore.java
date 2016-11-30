@@ -34,7 +34,7 @@ public abstract class DatastorePageDatastore extends AbstractFreemarkerWizardPag
 
     protected final DatastoreWizardSession _session;
 
-    public DatastorePageDatastore(DatastoreWizardSession session) {
+    public DatastorePageDatastore(final DatastoreWizardSession session) {
         _session = session;
     }
 

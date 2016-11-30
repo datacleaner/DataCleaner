@@ -28,7 +28,6 @@ import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.panels.TransformerComponentBuilderPanel;
 import org.datacleaner.panels.TransformerComponentBuilderPresenter;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.datacleaner.widgets.properties.SingleEnumPropertyWidget;
@@ -39,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link TokenizerTransformer}.
- * 
+ *
  * @author Kasper Sørensen
  */
 class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
@@ -51,37 +50,34 @@ class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
     private SingleNumberPropertyWidget _numTokensPropertyWidget;
     private SingleEnumPropertyWidget _tokenTargetPropertyWidget;
 
-    public TokenizerJobBuilderPresenter(TransformerComponentBuilder<?> transformerJobBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration) {
+    public TokenizerJobBuilderPresenter(final TransformerComponentBuilder<?> transformerJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         final PropertyWidget<?> propertyWidget = super.createPropertyWidget(componentBuilder, propertyDescriptor);
         final String propertyName = propertyDescriptor.getName();
         if ("Token target".equals(propertyName)) {
             _tokenTargetPropertyWidget = (SingleEnumPropertyWidget) propertyWidget;
-            _tokenTargetPropertyWidget.addComboListener(new Listener<Enum<?>>() {
-                @Override
-                public void onItemSelected(Enum<?> item) {
-                    if (_numTokensPropertyWidget == null) {
-                        logger.warn("No property widget for 'num tokens' found!");
-                        return;
+            _tokenTargetPropertyWidget.addComboListener(item -> {
+                if (_numTokensPropertyWidget == null) {
+                    logger.warn("No property widget for 'num tokens' found!");
+                    return;
+                }
+                if (item == TokenTarget.ROWS) {
+                    if (!_numTokensPropertyWidget.isSet()) {
+                        _numTokensPropertyWidget.onValueTouched(2);
                     }
-                    if (item == TokenTarget.ROWS) {
-                        if (!_numTokensPropertyWidget.isSet()) {
-                            _numTokensPropertyWidget.onValueTouched(2);
-                        }
-                        _numTokensPropertyWidget.setEnabled(false);
-                    } else {
-                        _numTokensPropertyWidget.setEnabled(true);
-                    }
+                    _numTokensPropertyWidget.setEnabled(false);
+                } else {
+                    _numTokensPropertyWidget.setEnabled(true);
                 }
             });
-            
+
             if (_numTokensPropertyWidget != null && _tokenTargetPropertyWidget.getValue() == TokenTarget.ROWS) {
                 _numTokensPropertyWidget.setEnabled(false);
             }

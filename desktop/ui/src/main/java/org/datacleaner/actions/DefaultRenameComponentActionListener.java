@@ -30,7 +30,8 @@ public final class DefaultRenameComponentActionListener extends RenameComponentA
 
     private final JobGraphContext _graphContext;
 
-    public DefaultRenameComponentActionListener(ComponentBuilder componentBuilder, JobGraphContext graphContext) {
+    public DefaultRenameComponentActionListener(final ComponentBuilder componentBuilder,
+            final JobGraphContext graphContext) {
         super(componentBuilder);
         _graphContext = graphContext;
     }

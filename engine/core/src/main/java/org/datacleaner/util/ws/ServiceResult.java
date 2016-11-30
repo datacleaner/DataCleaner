@@ -22,7 +22,7 @@ package org.datacleaner.util.ws;
 /**
  * Represents the result of invoking a web service using the
  * {@link OldServiceSession}.
- * 
+ *
  * @param <E>
  *            the result type
  */
@@ -32,7 +32,7 @@ public class ServiceResult<E> {
     private final boolean _succesfull;
     private final Throwable _error;
 
-    public ServiceResult(Throwable error) {
+    public ServiceResult(final Throwable error) {
         if (error == null) {
             throw new IllegalArgumentException("Error cannot be null");
         }
@@ -41,7 +41,7 @@ public class ServiceResult<E> {
         _error = error;
     }
 
-    public ServiceResult(E response) {
+    public ServiceResult(final E response) {
         if (response == null) {
             throw new IllegalArgumentException("Response cannot be null");
         }

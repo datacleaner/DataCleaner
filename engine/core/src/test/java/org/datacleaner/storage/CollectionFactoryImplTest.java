@@ -32,30 +32,30 @@ import junit.framework.TestCase;
 
 public class CollectionFactoryImplTest extends TestCase {
 
-	public void testFactoryMethods() throws Exception {
-		StorageProvider storageProvider = EasyMock.createMock(StorageProvider.class);
+    public void testFactoryMethods() throws Exception {
+        final StorageProvider storageProvider = EasyMock.createMock(StorageProvider.class);
 
-		List<String> list1 = new ArrayList<String>();
-		Set<String> set1 = new HashSet<String>();
-		Map<Integer, String> map1 = new HashMap<Integer, String>();
+        final List<String> list1 = new ArrayList<>();
+        final Set<String> set1 = new HashSet<>();
+        final Map<Integer, String> map1 = new HashMap<>();
 
-		EasyMock.expect(storageProvider.createList(String.class)).andReturn(list1);
-		EasyMock.expect(storageProvider.createSet(String.class)).andReturn(set1);
-		EasyMock.expect(storageProvider.createMap(Integer.class, String.class)).andReturn(map1);
+        EasyMock.expect(storageProvider.createList(String.class)).andReturn(list1);
+        EasyMock.expect(storageProvider.createSet(String.class)).andReturn(set1);
+        EasyMock.expect(storageProvider.createMap(Integer.class, String.class)).andReturn(map1);
 
-		CollectionFactory collectionFactory = new CollectionFactoryImpl(storageProvider);
+        final CollectionFactory collectionFactory = new CollectionFactoryImpl(storageProvider);
 
-		EasyMock.replay(storageProvider);
+        EasyMock.replay(storageProvider);
 
-		List<String> list2 = collectionFactory.createList(String.class);
-		assertSame(list1, list2);
+        final List<String> list2 = collectionFactory.createList(String.class);
+        assertSame(list1, list2);
 
-		Set<String> set2 = collectionFactory.createSet(String.class);
-		assertSame(set1, set2);
+        final Set<String> set2 = collectionFactory.createSet(String.class);
+        assertSame(set1, set2);
 
-		Map<Integer, String> map2 = collectionFactory.createMap(Integer.class, String.class);
-		assertSame(map1, map2);
+        final Map<Integer, String> map2 = collectionFactory.createMap(Integer.class, String.class);
+        assertSame(map1, map2);
 
-		EasyMock.verify(storageProvider);
-	}
+        EasyMock.verify(storageProvider);
+    }
 }

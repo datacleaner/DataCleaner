@@ -19,19 +19,16 @@
  */
 package org.datacleaner.util.batch;
 
-import org.datacleaner.util.batch.BatchSink;
-import org.datacleaner.util.batch.BatchSource;
-
 /**
  * Defines a batch transformation, to be implemented and supplied by the
  * consuming code.
- * 
+ *
  * @param <I>
  *            the transformation input type
  * @param <O>
  *            the transformation output type
  */
 public interface BatchTransformation<I, O> {
-    
-    public void map(BatchSource<I> source, BatchSink<O> sink);
+
+    void map(BatchSource<I> source, BatchSink<O> sink);
 }

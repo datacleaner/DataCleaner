@@ -21,15 +21,15 @@ package org.datacleaner.connection;
 
 /**
  * Interface for datastores that are based upon a file.
- * 
+ *
  * File datastores are often also {@link ResourceDatastore}s.
  */
 public interface FileDatastore extends Datastore {
 
     /**
      * Gets the filename that this datastore is based upon
-     * 
+     *
      * @return
      */
-    public String getFilename();
+    String getFilename();
 }

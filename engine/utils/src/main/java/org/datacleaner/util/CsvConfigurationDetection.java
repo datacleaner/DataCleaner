@@ -60,26 +60,26 @@ public class CsvConfigurationDetection {
     private static final int SAMPLE_BUFFER_SIZE = 128 * 1024;
 
     private final Resource _resource;
-    private List<String> _columnNames; 
+    private List<String> _columnNames;
 
-    public CsvConfigurationDetection(File file) {
+    public CsvConfigurationDetection(final File file) {
         _resource = new FileResource(file);
     }
 
-    public CsvConfigurationDetection(Resource resource) {
+    public CsvConfigurationDetection(final Resource resource) {
         _resource = resource;
     }
 
     protected byte[] getSampleBuffer() {
         byte[] bytes = new byte[SAMPLE_BUFFER_SIZE];
-        InputStream inputStream = _resource.read();
+        final InputStream inputStream = _resource.read();
         try {
-            int bufferSize = inputStream.read(bytes, 0, SAMPLE_BUFFER_SIZE);
+            final int bufferSize = inputStream.read(bytes, 0, SAMPLE_BUFFER_SIZE);
             if (bufferSize != -1 && bufferSize != SAMPLE_BUFFER_SIZE) {
                 bytes = Arrays.copyOf(bytes, bufferSize);
             }
             return bytes;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.error("IOException occurred while reading sample buffer", e);
             return new byte[0];
         } finally {
@@ -89,21 +89,21 @@ public class CsvConfigurationDetection {
 
     /**
      * Auto-detects the file encoding of a file
-     * 
+     *
      * @return
      */
     public String suggestEncoding() {
         return suggestEncoding(getSampleBuffer());
     }
 
-    protected String suggestEncoding(byte[] bytes) {
+    protected String suggestEncoding(final byte[] bytes) {
         final CharsetDetector cd = new CharsetDetector();
         cd.setText(bytes);
 
         final CharsetMatch charsetMatch = cd.detect();
         final String charSet = charsetMatch.getName();
 
-        int confidence = charsetMatch.getConfidence();
+        final int confidence = charsetMatch.getConfidence();
         logger.info("CharsetMatch: {} ({}% confidence)", charSet, confidence);
         return charSet;
     }
@@ -111,38 +111,40 @@ public class CsvConfigurationDetection {
     /**
      * Auto-detect the {@link CsvConfiguration} of a CSV style data file,
      * providing the encoding externally.
-     * 
+     *
      * @param encoding
      * @return
      * @throws IllegalStateException
      *             if an error occurs during auto-detection
      */
-    public CsvConfiguration suggestCsvConfiguration(String encoding, List<String> columnNames) throws IllegalStateException {
+    public CsvConfiguration suggestCsvConfiguration(final String encoding, final List<String> columnNames)
+            throws IllegalStateException {
         final byte[] sample = getSampleBuffer();
         return suggestCsvConfiguration(sample, encoding, columnNames);
     }
 
     /**
      * Auto-detects the {@link CsvConfiguration} of a CSV style data file.
-     * 
+     *
      * @return
      * @throws IllegalStateException
      *             if an error occurs during auto-detection
      */
     public CsvConfiguration suggestCsvConfiguration() throws IllegalStateException {
-        return suggestCsvConfiguration(null); 
+        return suggestCsvConfiguration(null);
     }
-    
-    public CsvConfiguration suggestCsvConfiguration(List<String> columnNames) throws IllegalStateException {
+
+    public CsvConfiguration suggestCsvConfiguration(final List<String> columnNames) throws IllegalStateException {
         final byte[] sample = getSampleBuffer();
         final String encoding = suggestEncoding(sample);
 
         return suggestCsvConfiguration(sample, encoding, columnNames);
     }
 
-    private CsvConfiguration suggestCsvConfiguration(byte[] sample, String encoding, List<String> columnNames) throws IllegalStateException {
+    private CsvConfiguration suggestCsvConfiguration(final byte[] sample, final String encoding,
+            final List<String> columnNames) throws IllegalStateException {
 
-        char[] sampleChars = readSampleBuffer(sample, encoding);
+        final char[] sampleChars = readSampleBuffer(sample, encoding);
 
         if (indexOf('\n', sampleChars) == -1 && indexOf('\r', sampleChars) == -1) {
             throw new IllegalStateException("No newline in first " + sampleChars.length + " chars");
@@ -158,7 +160,7 @@ public class CsvConfigurationDetection {
         int backslashes = 0;
 
         for (int i = 0; i < sampleChars.length; i++) {
-            char c = sampleChars[i];
+            final char c = sampleChars[i];
             if (c == '\n') {
                 newlines++;
             } else if (c == '\t') {
@@ -178,11 +180,11 @@ public class CsvConfigurationDetection {
             }
         }
 
-        char separatorChar;
-        char quoteChar;
-        char escapeChar;
+        final char separatorChar;
+        final char quoteChar;
+        final char escapeChar;
 
-        int detectedSeparator = Math.max(tabs, Math.max(commas, Math.max(semicolons, pipes)));
+        final int detectedSeparator = Math.max(tabs, Math.max(commas, Math.max(semicolons, pipes)));
         if (detectedSeparator == 0 || detectedSeparator < newlines) {
             separatorChar = ',';
         } else {
@@ -206,7 +208,7 @@ public class CsvConfigurationDetection {
             escapeChar = CsvConfiguration.NOT_A_CHAR;
         }
 
-        int detectedQuote = Math.max(singleQuotes, doubleQuotes);
+        final int detectedQuote = Math.max(singleQuotes, doubleQuotes);
         if (detectedQuote == 0 || detectedQuote < newlines) {
             quoteChar = '"';
         } else {
@@ -219,29 +221,31 @@ public class CsvConfigurationDetection {
                 quoteChar = '"';
             }
         }
-        final ColumnNamingStrategy columnNamingStategy;  
-        if (columnNames != null && columnNames.size() > 0){
-            columnNamingStategy =  new CustomColumnNamingStrategy(columnNames); 
-            _columnNames = columnNames; 
-        }else{
-            columnNamingStategy = null; 
+        final ColumnNamingStrategy columnNamingStategy;
+        if (columnNames != null && columnNames.size() > 0) {
+            columnNamingStategy = new CustomColumnNamingStrategy(columnNames);
+            _columnNames = columnNames;
+        } else {
+            columnNamingStategy = null;
         }
         // detect if multi line values occur
         boolean multiline = false;
-        final CsvConfiguration multiLineConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
-                columnNamingStategy, encoding, separatorChar, quoteChar, escapeChar, false, true);
+        final CsvConfiguration multiLineConfiguration =
+                new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, columnNamingStategy, encoding,
+                        separatorChar, quoteChar, escapeChar, false, true);
         try {
-            final CsvDataContext testDataContext = new CsvDataContext(new InMemoryResource("foo.txt", sample,
-                    System.currentTimeMillis()), multiLineConfiguration);
+            final CsvDataContext testDataContext =
+                    new CsvDataContext(new InMemoryResource("foo.txt", sample, System.currentTimeMillis()),
+                            multiLineConfiguration);
             final Table table = testDataContext.getDefaultSchema().getTable(0);
-             if (_columnNames == null){
-                 _columnNames = Arrays.asList(testDataContext.getDefaultSchema().getTable(0).getColumnNames()); 
-             }
-            try (final DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute()) {
+            if (_columnNames == null) {
+                _columnNames = Arrays.asList(testDataContext.getDefaultSchema().getTable(0).getColumnNames());
+            }
+            try (DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute()) {
                 while (dataSet.next()) {
                     final Row row = dataSet.getRow();
                     final Object[] values = row.getValues();
-                    for (Object value : values) {
+                    for (final Object value : values) {
                         if (value != null && value instanceof String) {
                             if (((String) value).indexOf('\n') != -1) {
                                 // found a multi line value
@@ -252,16 +256,16 @@ public class CsvConfigurationDetection {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Failed to detect multiline property of CsvConfiguration, defaulting to 'true'", e);
             return multiLineConfiguration;
         }
 
-        return new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, columnNamingStategy, encoding, separatorChar, quoteChar,
-                escapeChar, false, multiline);
+        return new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, columnNamingStategy, encoding,
+                separatorChar, quoteChar, escapeChar, false, multiline);
     }
 
-    private int indexOf(char c, char[] sampleChars) {
+    private int indexOf(final char c, final char[] sampleChars) {
         for (int i = 0; i < sampleChars.length; i++) {
             if (c == sampleChars[i]) {
                 return i;
@@ -270,18 +274,18 @@ public class CsvConfigurationDetection {
         return -1;
     }
 
-    protected char[] readSampleBuffer(byte[] bytes, final String charSet) throws IllegalStateException {
+    protected char[] readSampleBuffer(final byte[] bytes, final String charSet) throws IllegalStateException {
         char[] buffer = new char[bytes.length];
         Reader reader = null;
         try {
             reader = new InputStreamReader(new ByteArrayInputStream(bytes), charSet);
 
             // read a sample of the file to auto-detect quotes and separators
-            int bufferSize = reader.read(buffer);
+            final int bufferSize = reader.read(buffer);
             if (bufferSize != -1) {
                 buffer = Arrays.copyOf(buffer, bufferSize);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (logger.isWarnEnabled()) {
                 logger.warn("Error reading from file: " + e.getMessage(), e);
             }
@@ -290,13 +294,14 @@ public class CsvConfigurationDetection {
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (IOException ioe) {
+                } catch (final IOException ioe) {
                     logger.debug("Could not close reader", ioe);
                 }
             }
         }
         return buffer;
     }
+
     public List<String> getColumnNames() {
         return _columnNames;
     }

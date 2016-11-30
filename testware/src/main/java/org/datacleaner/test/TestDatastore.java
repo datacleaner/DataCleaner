@@ -32,7 +32,7 @@ final class TestDatastore implements UpdateableDatastore, PerformanceCharacteris
     private final DataSource _dataSource;
     private String _description;
 
-    public TestDatastore(String name, DataSource dataSource) {
+    TestDatastore(final String name, final DataSource dataSource) {
         _name = name;
         _dataSource = dataSource;
     }
@@ -52,7 +52,7 @@ final class TestDatastore implements UpdateableDatastore, PerformanceCharacteris
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         _description = description;
     }
 
@@ -60,7 +60,7 @@ final class TestDatastore implements UpdateableDatastore, PerformanceCharacteris
     public UpdateableDatastoreConnection openConnection() {
         try {
             return new TestDatastoreConnection(this);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }

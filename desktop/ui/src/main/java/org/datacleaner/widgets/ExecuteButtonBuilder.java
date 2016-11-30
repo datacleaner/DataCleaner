@@ -19,7 +19,6 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -49,7 +48,7 @@ public class ExecuteButtonBuilder {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final AnalysisJobBuilderWindow _window;
 
-    public ExecuteButtonBuilder(AnalysisJobBuilderWindow window) {
+    public ExecuteButtonBuilder(final AnalysisJobBuilderWindow window) {
         _window = window;
         _analysisJobBuilder = window.getAnalysisJobBuilder();
 
@@ -57,53 +56,40 @@ public class ExecuteButtonBuilder {
         _alternativesButton = WidgetFactory.createToolbarButton(WidgetUtils.CHAR_CARET_DOWN, null);
         _alternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME);
 
-        _mainButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                execute(_analysisJobBuilder);
-            }
-        });
+        _mainButton.addActionListener(e -> execute(_analysisJobBuilder));
 
-        _alternativesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final JPopupMenu menu = new JPopupMenu();
+        _alternativesButton.addActionListener(e -> {
+            final JPopupMenu menu = new JPopupMenu();
 
-                final Action<AnalysisJobBuilder> executeAction = new Action<AnalysisJobBuilder>() {
-                    @Override
-                    public void run(AnalysisJobBuilder jobBuilder) throws Exception {
-                        execute(jobBuilder);
-                    }
-                };
-                final List<ExecutionMenuItem> menuItems = ExecuteButtonOptions.getMenuItems();
-                for (ExecutionMenuItem item : menuItems) {
-                    if (item instanceof ExecuteButtonOptions.Separator) {
-                        menu.addSeparator();
+            final Action<AnalysisJobBuilder> executeAction = this::execute;
+            final List<ExecutionMenuItem> menuItems = ExecuteButtonOptions.getMenuItems();
+            for (final ExecutionMenuItem item : menuItems) {
+                if (item instanceof ExecuteButtonOptions.Separator) {
+                    menu.addSeparator();
+                } else {
+                    final JMenuItem menuItem = WidgetFactory.createMenuItem(item.getText(), item.getIconPath());
+                    final ActionListener actionListener =
+                            item.createActionListener(_analysisJobBuilder, executeAction, _window);
+                    if (actionListener == null) {
+                        menuItem.setEnabled(false);
                     } else {
-                        final JMenuItem menuItem = WidgetFactory.createMenuItem(item.getText(), item.getIconPath());
-                        final ActionListener actionListener = item.createActionListener(_analysisJobBuilder,
-                                executeAction, _window);
-                        if (actionListener == null) {
-                            menuItem.setEnabled(false);
-                        } else {
-                            menuItem.addActionListener(actionListener);
-                        }
-                        menu.add(menuItem);
+                        menuItem.addActionListener(actionListener);
                     }
+                    menu.add(menuItem);
                 }
-
-                final int horizontalPosition = -1 * menu.getPreferredSize().width + _alternativesButton.getWidth();
-                menu.show(_alternativesButton, horizontalPosition, _alternativesButton.getHeight());
             }
+
+            final int horizontalPosition = -1 * menu.getPreferredSize().width + _alternativesButton.getWidth();
+            menu.show(_alternativesButton, horizontalPosition, _alternativesButton.getHeight());
         });
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         _mainButton.setEnabled(enabled);
         _alternativesButton.setEnabled(enabled);
     }
 
-    public void addComponentsToToolbar(JToolBar toolBar) {
+    public void addComponentsToToolbar(final JToolBar toolBar) {
         toolBar.add(_mainButton);
         toolBar.add(DCLabel.bright("|"));
         toolBar.add(_alternativesButton);
@@ -115,8 +101,9 @@ public class ExecuteButtonBuilder {
             if (analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders().isEmpty()) {
                 // Present choices to user to write file somewhere,
                 // and then run a copy of the job based on that.
-                ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
-                        dcModule, _window.getWindowContext(), analysisJobBuilder, _window.getUserPreferences());
+                final ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel =
+                        new ExecuteJobWithoutAnalyzersDialog(dcModule, _window.getWindowContext(), analysisJobBuilder,
+                                _window.getUserPreferences());
                 executeJobWithoutAnalyzersPanel.open();
                 return;
             }

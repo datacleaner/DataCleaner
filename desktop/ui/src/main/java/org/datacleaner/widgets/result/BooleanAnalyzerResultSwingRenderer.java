@@ -26,13 +26,13 @@ import javax.swing.JLabel;
 
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.BooleanAnalyzerResult;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.table.CrosstabPanel;
 import org.jdesktop.swingx.VerticalLayout;
@@ -40,44 +40,44 @@ import org.jdesktop.swingx.VerticalLayout;
 @RendererBean(SwingRenderingFormat.class)
 public class BooleanAnalyzerResultSwingRenderer extends AbstractRenderer<BooleanAnalyzerResult, JComponent> {
 
-	@Inject
-	WindowContext _windowContext;
+    @Inject
+    WindowContext _windowContext;
 
-	@Inject
-	RendererFactory _rendererFactory;
+    @Inject
+    RendererFactory _rendererFactory;
 
-	@Override
-	public JComponent render(BooleanAnalyzerResult result) {
-		DefaultCrosstabResultSwingRenderer crosstabResultSwingRenderer = new DefaultCrosstabResultSwingRenderer(
-				_windowContext, _rendererFactory);
+    @Override
+    public JComponent render(final BooleanAnalyzerResult result) {
+        final DefaultCrosstabResultSwingRenderer crosstabResultSwingRenderer =
+                new DefaultCrosstabResultSwingRenderer(_windowContext, _rendererFactory);
 
-		Crosstab<Number> columnStatisticsCrosstab = result.getColumnStatisticsCrosstab();
-		Crosstab<Number> valueCombinationCrosstab = result.getValueCombinationCrosstab();
+        final Crosstab<Number> columnStatisticsCrosstab = result.getColumnStatisticsCrosstab();
+        final Crosstab<Number> valueCombinationCrosstab = result.getValueCombinationCrosstab();
 
-		CrosstabPanel columnStatisticsPanel = crosstabResultSwingRenderer.renderInternal(new CrosstabResult(
-				columnStatisticsCrosstab));
-		if (valueCombinationCrosstab == null) {
-			return columnStatisticsPanel;
-		}
+        final CrosstabPanel columnStatisticsPanel =
+                crosstabResultSwingRenderer.renderInternal(new CrosstabResult(columnStatisticsCrosstab));
+        if (valueCombinationCrosstab == null) {
+            return columnStatisticsPanel;
+        }
 
-		CrosstabPanel valueCombinationPanel = crosstabResultSwingRenderer.renderInternal(new CrosstabResult(
-				valueCombinationCrosstab));
+        final CrosstabPanel valueCombinationPanel =
+                crosstabResultSwingRenderer.renderInternal(new CrosstabResult(valueCombinationCrosstab));
 
-		DCPanel panel = new DCPanel();
-		panel.setLayout(new VerticalLayout(4));
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new VerticalLayout(4));
 
-		JLabel label = new JLabel("Column statistics:");
-		label.setFont(WidgetUtils.FONT_HEADER1);
-		panel.add(label);
-		panel.add(columnStatisticsPanel);
+        JLabel label = new JLabel("Column statistics:");
+        label.setFont(WidgetUtils.FONT_HEADER1);
+        panel.add(label);
+        panel.add(columnStatisticsPanel);
 
-		panel.add(Box.createVerticalStrut(4));
+        panel.add(Box.createVerticalStrut(4));
 
-		label = new JLabel("Frequency of combinations:");
-		label.setFont(WidgetUtils.FONT_HEADER1);
-		panel.add(label);
-		panel.add(valueCombinationPanel);
+        label = new JLabel("Frequency of combinations:");
+        label.setFont(WidgetUtils.FONT_HEADER1);
+        panel.add(label);
+        panel.add(valueCombinationPanel);
 
-		return panel;
-	}
+        return panel;
+    }
 }

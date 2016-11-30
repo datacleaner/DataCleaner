@@ -35,11 +35,11 @@ public class CsvConfigurationWizardPageTest extends TestCase {
 
     public void testBuildConfigurationFromParameters() throws Exception {
         final WizardPageController pageMock = EasyMock.createMock(WizardPageController.class);
-        
+
         final Resource file = null;
         final CsvConfigurationWizardPage page = new CsvConfigurationWizardPage(file) {
             @Override
-            protected WizardPageController nextPageController(CsvConfiguration configuration) {
+            protected WizardPageController nextPageController(final CsvConfiguration configuration) {
                 assertEquals("UTF8", configuration.getEncoding());
                 assertEquals(1, configuration.getColumnNameLineNumber());
                 assertEquals(CsvConfiguration.NOT_A_CHAR, configuration.getEscapeChar());
@@ -49,7 +49,7 @@ public class CsvConfigurationWizardPageTest extends TestCase {
             }
         };
 
-        final Map<String, List<String>> parameters = new HashMap<String, List<String>>();
+        final Map<String, List<String>> parameters = new HashMap<>();
         parameters.put("separator", Arrays.asList(";|;"));
         parameters.put("escape", Arrays.asList(""));
         parameters.put("quote", Arrays.asList("\""));
@@ -57,7 +57,7 @@ public class CsvConfigurationWizardPageTest extends TestCase {
         parameters.put("encoding", Arrays.asList("UTF8"));
 
         final WizardPageController result = page.nextPageController(parameters);
-        
+
         assertSame(result, pageMock);
     }
 }

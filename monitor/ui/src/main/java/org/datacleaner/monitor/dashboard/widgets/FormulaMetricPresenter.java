@@ -39,7 +39,8 @@ public class FormulaMetricPresenter implements MetricPresenter {
     private final MetricAnchor _anchor;
     private final CheckBox _checkBox;
 
-    public FormulaMetricPresenter(TenantIdentifier tenantIdentifier, JobMetrics jobMetrics, MetricIdentifier metric) {
+    public FormulaMetricPresenter(final TenantIdentifier tenantIdentifier, final JobMetrics jobMetrics,
+            final MetricIdentifier metric) {
         _checkBox = new CheckBox();
         _checkBox.setValue(true);
         _anchor = new MetricAnchor(tenantIdentifier, jobMetrics, metric);
@@ -56,7 +57,7 @@ public class FormulaMetricPresenter implements MetricPresenter {
 
     @Override
     public List<MetricIdentifier> getSelectedMetrics() {
-        final List<MetricIdentifier> metrics = new ArrayList<MetricIdentifier>();
+        final List<MetricIdentifier> metrics = new ArrayList<>();
         if (_checkBox.getValue().booleanValue()) {
             metrics.add(_anchor.getMetric());
         }

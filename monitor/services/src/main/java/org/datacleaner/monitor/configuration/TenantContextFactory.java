@@ -26,9 +26,9 @@ import org.datacleaner.monitor.shared.model.TenantIdentifier;
  */
 public interface TenantContextFactory {
 
-    public TenantContext getContext(TenantIdentifier tenant);
-    
-    public TenantContext getContext(String tenantId);
+    TenantContext getContext(TenantIdentifier tenant);
 
-    public Iterable<TenantContext> getActiveTenantContexts();
+    TenantContext getContext(String tenantId);
+
+    Iterable<TenantContext> getActiveTenantContexts();
 }

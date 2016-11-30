@@ -25,66 +25,68 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.windows.DataSetWindow;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.windows.DataSetWindow;
 
 public class PreviewSourceDataActionListener implements ActionListener {
 
-	private static final int PAGE_SIZE = 35;
-	private final Datastore _datastore;
-	private final Column[] _columns;
-	private final Collection<? extends InputColumn<?>> _inputColumns;
-	private final WindowContext _windowContext;
+    private static final int PAGE_SIZE = 35;
+    private final Datastore _datastore;
+    private final Column[] _columns;
+    private final Collection<? extends InputColumn<?>> _inputColumns;
+    private final WindowContext _windowContext;
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, Datastore datastore, Column... columns) {
-		_windowContext = windowContext;
-		_datastore = datastore;
-		_columns = columns;
-		_inputColumns = null;
-	}
+    public PreviewSourceDataActionListener(final WindowContext windowContext, final Datastore datastore,
+            final Column... columns) {
+        _windowContext = windowContext;
+        _datastore = datastore;
+        _columns = columns;
+        _inputColumns = null;
+    }
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, Datastore datastore, Table table) {
-		this(windowContext, datastore, table.getColumns());
-	}
+    public PreviewSourceDataActionListener(final WindowContext windowContext, final Datastore datastore,
+            final Table table) {
+        this(windowContext, datastore, table.getColumns());
+    }
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, Datastore datastore,
-			Collection<? extends InputColumn<?>> inputColumns) {
-		_windowContext = windowContext;
-		_datastore = datastore;
-		_inputColumns = inputColumns;
-		_columns = null;
-	}
+    public PreviewSourceDataActionListener(final WindowContext windowContext, final Datastore datastore,
+            final Collection<? extends InputColumn<?>> inputColumns) {
+        _windowContext = windowContext;
+        _datastore = datastore;
+        _inputColumns = inputColumns;
+        _columns = null;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Column[] columns = _columns;
-		if (columns == null) {
-			List<Column> cols = new ArrayList<Column>();
-			for (InputColumn<?> col : _inputColumns) {
-				if (col.isPhysicalColumn()) {
-					cols.add(col.getPhysicalColumn());
-				}
-			}
-			columns = cols.toArray(new Column[cols.size()]);
-		}
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        Column[] columns = _columns;
+        if (columns == null) {
+            final List<Column> cols = new ArrayList<>();
+            for (final InputColumn<?> col : _inputColumns) {
+                if (col.isPhysicalColumn()) {
+                    cols.add(col.getPhysicalColumn());
+                }
+            }
+            columns = cols.toArray(new Column[cols.size()]);
+        }
 
-		if (columns.length == 0) {
-			throw new IllegalStateException("No columns found - could not determine which columns to query");
-		}
+        if (columns.length == 0) {
+            throw new IllegalStateException("No columns found - could not determine which columns to query");
+        }
 
-		try (final DatastoreConnection con = _datastore.openConnection()) {
-		    final DataContext dc = con.getDataContext();
-			final Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
+        try (DatastoreConnection con = _datastore.openConnection()) {
+            final DataContext dc = con.getDataContext();
+            final Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
 
-			DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowContext);
-			window.open();
-		}
-	}
+            final DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowContext);
+            window.open();
+        }
+    }
 }

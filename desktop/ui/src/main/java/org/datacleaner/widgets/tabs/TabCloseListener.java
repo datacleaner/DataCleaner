@@ -25,9 +25,9 @@ package org.datacleaner.widgets.tabs;
  */
 public interface TabCloseListener {
 
-	/**
-	 * Called when a tabs close button has been pressed. The policy for when/how
-	 * to close tabs is left as an implementation detail of the listeners.
-	 */
-	public void tabClosed(TabCloseEvent ev);
+    /**
+     * Called when a tabs close button has been pressed. The policy for when/how
+     * to close tabs is left as an implementation detail of the listeners.
+     */
+    void tabClosed(TabCloseEvent ev);
 }

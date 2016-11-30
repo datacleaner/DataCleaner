@@ -23,32 +23,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 
+import junit.framework.TestCase;
+
 public class SelectFromListTransformerTest extends TestCase {
 
-	public void testTransform() throws Exception {
-		final SelectFromListTransformer trans = new SelectFromListTransformer();
-		final InputColumn<List<?>> col = new MockInputColumn<List<?>>("foo");
-		trans.listColumn = col;
-		trans.indices = new Number[] { 0, 3, 50, 1, -1 };
-		trans.elementType = Integer.class;
-		trans.verifyTypes = true;
+    public void testTransform() throws Exception {
+        final SelectFromListTransformer trans = new SelectFromListTransformer();
+        final InputColumn<List<?>> col = new MockInputColumn<>("foo");
+        trans.listColumn = col;
+        trans.indices = new Number[] { 0, 3, 50, 1, -1 };
+        trans.elementType = Integer.class;
+        trans.verifyTypes = true;
 
-		List<Number> list = new ArrayList<Number>();
-		list.add(1000);
-		list.add(1001);
-		list.add(1003);
-		list.add(1004);
+        final List<Number> list = new ArrayList<>();
+        list.add(1000);
+        list.add(1001);
+        list.add(1003);
+        list.add(1004);
 
-		Object[] result = trans.transform(new MockInputRow().put(col, list));
+        final Object[] result = trans.transform(new MockInputRow().put(col, list));
 
-		assertEquals(5, result.length);
-		assertEquals("[1000, 1004, null, 1001, null]", Arrays.toString(result));
-	}
+        assertEquals(5, result.length);
+        assertEquals("[1000, 1004, null, 1001, null]", Arrays.toString(result));
+    }
 
 }

@@ -49,26 +49,27 @@ final class DCClassVisitor extends ClassVisitor {
 
     private static final int API_VERSION = Opcodes.ASM4;
 
-    private final static Logger logger = LoggerFactory.getLogger(DCClassVisitor.class);
+    private static final Logger logger = LoggerFactory.getLogger(DCClassVisitor.class);
     private final ClassLoader _classLoader;
     private final Predicate<Class<? extends RenderingFormat<?>>> _renderingFormatPredicate;
     private Class<?> _beanClazz;
     private String _name;
 
-    public DCClassVisitor(ClassLoader classLoader,
-            Predicate<Class<? extends RenderingFormat<?>>> renderingFormatPredicate) {
+    DCClassVisitor(final ClassLoader classLoader,
+            final Predicate<Class<? extends RenderingFormat<?>>> renderingFormatPredicate) {
         super(API_VERSION);
         _classLoader = classLoader;
         _renderingFormatPredicate = renderingFormatPredicate;
     }
 
     @Override
-    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+    public void visit(final int version, final int access, final String name, final String signature,
+            final String superName, final String[] interfaces) {
         _name = name;
     }
 
     @Override
-    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+    public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
         if (isAnnotation(desc, RendererBean.class)) {
             if (_renderingFormatPredicate == null || _renderingFormatPredicate instanceof TruePredicate) {
                 initializeClass();
@@ -76,19 +77,19 @@ final class DCClassVisitor extends ClassVisitor {
             }
             return new AnnotationVisitor(API_VERSION) {
                 @Override
-                public void visit(String name, Object value) {
+                public void visit(final String name, final Object value) {
                     final Type valueType = (Type) value;
                     final String renderingFormatClassName = valueType.getClassName();
                     final Class<? extends RenderingFormat<?>> renderingFormatClass;
                     try {
-                        @SuppressWarnings("unchecked")
-                        final Class<? extends RenderingFormat<?>> cls = (Class<? extends RenderingFormat<?>>) Class
-                                .forName(renderingFormatClassName, false, _classLoader);
+                        @SuppressWarnings("unchecked") final Class<? extends RenderingFormat<?>> cls =
+                                (Class<? extends RenderingFormat<?>>) Class
+                                        .forName(renderingFormatClassName, false, _classLoader);
                         renderingFormatClass = cls;
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         if (logger.isWarnEnabled()) {
-                            logger.warn("Failed to read rendering format of renderer class '"
-                                    + renderingFormatClassName + "', ignoring: " + _name, e);
+                            logger.warn("Failed to read rendering format of renderer class '" + renderingFormatClassName
+                                    + "', ignoring: " + _name, e);
                         }
                         return;
                     }
@@ -113,25 +114,25 @@ final class DCClassVisitor extends ClassVisitor {
     }
 
     @SuppressWarnings("deprecation")
-    private boolean isLegacyAnnotation(String desc) {
-        return isAnnotation(desc, org.eobjects.analyzer.beans.api.AnalyzerBean.class)
-                || isAnnotation(desc, org.eobjects.analyzer.beans.api.TransformerBean.class)
-                || isAnnotation(desc, org.eobjects.analyzer.beans.api.FilterBean.class);
+    private boolean isLegacyAnnotation(final String desc) {
+        return isAnnotation(desc, org.eobjects.analyzer.beans.api.AnalyzerBean.class) || isAnnotation(desc,
+                org.eobjects.analyzer.beans.api.TransformerBean.class) || isAnnotation(desc,
+                org.eobjects.analyzer.beans.api.FilterBean.class);
     }
 
-    private boolean isAnnotation(String annotationDesc, Class<? extends Annotation> annotationClass) {
+    private boolean isAnnotation(final String annotationDesc, final Class<? extends Annotation> annotationClass) {
         return annotationDesc.indexOf(annotationClass.getName().replace('.', '/')) != -1;
     }
 
     private Class<?> initializeClass() {
         if (_beanClazz == null) {
-            String javaName = _name.replace('/', '.');
+            final String javaName = _name.replace('/', '.');
             try {
                 _beanClazz = Class.forName(javaName, true, _classLoader);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 // This happens when the class itself does not exist
                 logger.error("Could not find class to be loaded: " + javaName, e);
-            } catch (NoClassDefFoundError e) {
+            } catch (final NoClassDefFoundError e) {
                 // This happens if the class depends on a unsatisfied
                 // dependency. For instance when it is a renderer bean that
                 // depends on a particular rendering format. We will gracefully
@@ -142,7 +143,7 @@ final class DCClassVisitor extends ClassVisitor {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Failed to load class: " + javaName, e);
                 }
-            } catch (UnsupportedClassVersionError e) {
+            } catch (final UnsupportedClassVersionError e) {
                 logger.error("Failed to load class {} because of unsupported class version: {}", javaName,
                         e.getMessage());
                 if (logger.isDebugEnabled()) {
@@ -169,8 +170,8 @@ final class DCClassVisitor extends ClassVisitor {
 
     public boolean isRenderer() {
         if (_beanClazz != null) {
-            return ReflectionUtils.isAnnotationPresent(_beanClazz, RendererBean.class)
-                    && ReflectionUtils.is(_beanClazz, Renderer.class);
+            return ReflectionUtils.isAnnotationPresent(_beanClazz, RendererBean.class) && ReflectionUtils
+                    .is(_beanClazz, Renderer.class);
         }
         return false;
     }
@@ -187,7 +188,7 @@ final class DCClassVisitor extends ClassVisitor {
     }
 
     @Override
-    public void visitAttribute(Attribute arg0) {
+    public void visitAttribute(final Attribute arg0) {
     }
 
     @Override
@@ -195,24 +196,26 @@ final class DCClassVisitor extends ClassVisitor {
     }
 
     @Override
-    public FieldVisitor visitField(int arg0, String arg1, String arg2, String arg3, Object arg4) {
+    public FieldVisitor visitField(final int arg0, final String arg1, final String arg2, final String arg3,
+            final Object arg4) {
         return null;
     }
 
     @Override
-    public void visitInnerClass(String arg0, String arg1, String arg2, int arg3) {
+    public void visitInnerClass(final String arg0, final String arg1, final String arg2, final int arg3) {
     }
 
     @Override
-    public MethodVisitor visitMethod(int arg0, String arg1, String arg2, String arg3, String[] arg4) {
+    public MethodVisitor visitMethod(final int arg0, final String arg1, final String arg2, final String arg3,
+            final String[] arg4) {
         return null;
     }
 
     @Override
-    public void visitOuterClass(String arg0, String arg1, String arg2) {
+    public void visitOuterClass(final String arg0, final String arg1, final String arg2) {
     }
 
     @Override
-    public void visitSource(String arg0, String arg1) {
+    public void visitSource(final String arg0, final String arg1) {
     }
 }

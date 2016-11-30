@@ -19,19 +19,20 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSession;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-
 public class DatastoreDictionaryReferenceDataPageDatastoreTest {
     @Test
     public void testNextPage() throws Exception {
-        final DatastoreWizardSession sessionMock = new DatastoreDictionaryReferenceDataWizardSession(
-                TestHelper.getReferenceDataWizardContextMock());
-        final DatastoreDictionaryReferenceDataPageDatastore page = new DatastoreDictionaryReferenceDataPageDatastore(sessionMock);
+        final DatastoreWizardSession sessionMock =
+                new DatastoreDictionaryReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
+        final DatastoreDictionaryReferenceDataPageDatastore page =
+                new DatastoreDictionaryReferenceDataPageDatastore(sessionMock);
         assertNotEquals("", page.getNameLabel());
         assertNotNull(page.nextPageController(TestHelper.getFormParameters()));
     }

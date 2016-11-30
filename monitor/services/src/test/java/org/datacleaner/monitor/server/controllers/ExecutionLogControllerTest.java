@@ -25,8 +25,6 @@ import java.io.IOException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.server.job.DefaultJobEngineManager;
@@ -36,17 +34,20 @@ import org.easymock.EasyMock;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import junit.framework.TestCase;
+
 public class ExecutionLogControllerTest extends TestCase {
 
     private ExecutionLogController executionLogController;
 
     protected void setUp() throws Exception {
-        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                "context/application-context.xml");
+        final ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("context/application-context.xml");
         final Repository repository = applicationContext.getBean(FileRepository.class);
 
-        TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new DefaultJobEngineManager(applicationContext));
+        final TenantContextFactoryImpl tenantContextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
+                        new DefaultJobEngineManager(applicationContext));
 
         executionLogController = new ExecutionLogController();
         executionLogController._contextFactory = tenantContextFactory;
@@ -60,7 +61,7 @@ public class ExecutionLogControllerTest extends TestCase {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final ServletOutputStream out = new ServletOutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(final int b) throws IOException {
                 baos.write(b);
             }
         };
@@ -72,7 +73,7 @@ public class ExecutionLogControllerTest extends TestCase {
 
         EasyMock.verify(response);
 
-        String str = new String(baos.toByteArray());
+        final String str = new String(baos.toByteArray());
         assertTrue("Got: " + str, str.indexOf("<ns3:execution-status>SUCCESS</ns3:execution-status>") != -1);
     }
 }

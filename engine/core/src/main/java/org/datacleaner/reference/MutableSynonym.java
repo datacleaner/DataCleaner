@@ -31,12 +31,12 @@ public class MutableSynonym implements Synonym {
     private final String _masterTerm;
     private final Set<String> _synonyms;
 
-    public MutableSynonym(String masterTerm) {
+    public MutableSynonym(final String masterTerm) {
         _masterTerm = masterTerm;
-        _synonyms = new HashSet<String>();
+        _synonyms = new HashSet<>();
     }
 
-    public void addSynonym(String synonym) {
+    public void addSynonym(final String synonym) {
         _synonyms.add(synonym);
     }
 

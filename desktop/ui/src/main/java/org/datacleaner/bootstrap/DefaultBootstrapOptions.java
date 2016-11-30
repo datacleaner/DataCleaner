@@ -24,14 +24,14 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import org.apache.metamodel.DataContext;
 import org.datacleaner.cli.CliArguments;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.util.ResourceManager;
 import org.datacleaner.util.SystemProperties;
-import org.apache.metamodel.DataContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,73 +40,73 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultBootstrapOptions implements BootstrapOptions {
 
-	private static final Logger logger = LoggerFactory.getLogger(DefaultBootstrapOptions.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultBootstrapOptions.class);
 
-	private final String[] _args;
-	private final CliArguments _arguments;
-	private final boolean _commandLineMode;
-	private final String _embeddedClientName;
+    private final String[] _args;
+    private final CliArguments _arguments;
+    private final boolean _commandLineMode;
+    private final String _embeddedClientName;
 
-	public DefaultBootstrapOptions(String[] args) {
-		_args = args;
-		_arguments = CliArguments.parse(_args);
+    public DefaultBootstrapOptions(final String[] args) {
+        _args = args;
+        _arguments = CliArguments.parse(_args);
 
-		// command line mode determination
-		boolean commandLineMode = _arguments.isSet();
-		if (commandLineMode) {
-			if ("true".equalsIgnoreCase(System.getProperty(SystemProperties.UI_VISIBLE, "false"))) {
-				commandLineMode = false;
-			}
-		}
-		_commandLineMode = commandLineMode;
-		
-		_embeddedClientName = System.getProperty(SystemProperties.EMBED_CLIENT);
-	}
+        // command line mode determination
+        boolean commandLineMode = _arguments.isSet();
+        if (commandLineMode) {
+            if ("true".equalsIgnoreCase(System.getProperty(SystemProperties.UI_VISIBLE, "false"))) {
+                commandLineMode = false;
+            }
+        }
+        _commandLineMode = commandLineMode;
 
-	@Override
-	public boolean isCommandLineMode() {
-		return _commandLineMode;
-	}
+        _embeddedClientName = System.getProperty(SystemProperties.EMBED_CLIENT);
+    }
 
-	@Override
-	public CliArguments getCommandLineArguments() {
-		return _arguments;
-	}
+    @Override
+    public boolean isCommandLineMode() {
+        return _commandLineMode;
+    }
 
-	@Override
-	public ExitActionListener getExitActionListener() {
-		return new DCExitActionListener();
-	}
+    @Override
+    public CliArguments getCommandLineArguments() {
+        return _arguments;
+    }
 
-	@Override
-	public boolean isSingleDatastoreMode() {
-		return _arguments.getDatastoreName() != null;
-	}
+    @Override
+    public ExitActionListener getExitActionListener() {
+        return new DCExitActionListener();
+    }
 
-	@Override
-	public Datastore getSingleDatastore(DatastoreCatalog datastoreCatalog) {
-		String ds = _arguments.getDatastoreName();
-		return datastoreCatalog.getDatastore(ds);
-	}
+    @Override
+    public boolean isSingleDatastoreMode() {
+        return _arguments.getDatastoreName() != null;
+    }
 
-	@Override
-	public void initializeSingleDatastoreJob(AnalysisJobBuilder analysisJobBuilder, DataContext dataContext,
-			InjectorBuilder injectorBuilder) {
-		// do nothing
-	}
+    @Override
+    public Datastore getSingleDatastore(final DatastoreCatalog datastoreCatalog) {
+        final String ds = _arguments.getDatastoreName();
+        return datastoreCatalog.getDatastore(ds);
+    }
 
-	@Override
-	public Image getWelcomeImage() {
-		if (_arguments.getJobFile() != null) {
-			if ("Kettle".equals(_embeddedClientName)) {
-				try {
-					URL url = ResourceManager.get().getUrl("images/pdi_dc_banner.png");
-					return ImageIO.read(url);
-				} catch (Exception e) {
-					logger.warn("Could not load PDI DC banner", e);
-				}
-			}
-		}
-		return null;
-	}
+    @Override
+    public void initializeSingleDatastoreJob(final AnalysisJobBuilder analysisJobBuilder, final DataContext dataContext,
+            final InjectorBuilder injectorBuilder) {
+        // do nothing
+    }
+
+    @Override
+    public Image getWelcomeImage() {
+        if (_arguments.getJobFile() != null) {
+            if ("Kettle".equals(_embeddedClientName)) {
+                try {
+                    final URL url = ResourceManager.get().getUrl("images/pdi_dc_banner.png");
+                    return ImageIO.read(url);
+                } catch (final Exception e) {
+                    logger.warn("Could not load PDI DC banner", e);
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -1,23 +1,12 @@
 package org.datacleaner.result.renderer
 
-import java.lang.Integer
-import org.datacleaner.result.html.DefaultHtmlRenderingContext
-import org.datacleaner.result.Crosstab
-import org.junit.Test
-import org.junit.Assert
-import org.scalatest.junit.AssertionsForJUnit
-import org.datacleaner.result.ResultProducer
-import org.datacleaner.api.InputRow
-import org.datacleaner.data.MockInputRow
-import org.datacleaner.storage.RowAnnotationImpl
-import org.datacleaner.result.DefaultResultProducer
-import org.datacleaner.result.CrosstabResult
-import org.datacleaner.result.AnnotatedRowsResult
-import org.datacleaner.result.NumberResult
 import org.datacleaner.configuration.DataCleanerConfigurationImpl
-import org.datacleaner.api.InputColumn
-import org.datacleaner.data.MockInputColumn
-import org.datacleaner.storage.RowAnnotations
+import org.datacleaner.data.{MockInputColumn, MockInputRow}
+import org.datacleaner.result.{AnnotatedRowsResult, Crosstab, DefaultResultProducer, NumberResult}
+import org.datacleaner.result.html.DefaultHtmlRenderingContext
+import org.datacleaner.storage.{RowAnnotationImpl, RowAnnotations}
+import org.junit.{Assert, Test}
+import org.scalatest.junit.AssertionsForJUnit
 
 class CrosstabHtmlRendererCallbackTest extends AssertionsForJUnit {
   

@@ -34,13 +34,13 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ public class RepositoryZipController {
 
     @RequestMapping(method = RequestMethod.GET)
     @RolesAllowed(SecurityRoles.ADMIN)
-    public void downloadRepository(@PathVariable("tenant") final String tenant, HttpServletResponse resp)
+    public void downloadRepository(@PathVariable("tenant") final String tenant, final HttpServletResponse resp)
             throws IOException {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder rootFolder = context.getTenantRootFolder();
@@ -87,18 +87,18 @@ public class RepositoryZipController {
             @RequestParam("file") final MultipartFile file) throws IOException {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder rootFolder = context.getTenantRootFolder();
- 
-        if (file.getSize() == 0){
-            return "Failure. The file is empty"; 
-        } 
-        
+
+        if (file.getSize() == 0) {
+            return "Failure. The file is empty";
+        }
+
         final String contentType = file.getContentType().trim();
         if ((!contentType.equals("application/zip")) && (!contentType.equals("application/octet-stream"))) {
             return "Failure. The file isn't a .zip archive";
         }
-        
+
         logger.info("Uploading ZIP file for tenant repository: {}", tenant);
-        try (final InputStream inputStream = file.getInputStream()) {
+        try (InputStream inputStream = file.getInputStream()) {
             final ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             if (isValidRepository(zipInputStream)) {
                 final File oldRepositoryZipFile = createZipfolder(rootFolder);
@@ -111,7 +111,7 @@ public class RepositoryZipController {
         }
     }
 
-    private File createZipfolder(RepositoryFolder rootFolder) throws IOException {
+    private File createZipfolder(final RepositoryFolder rootFolder) throws IOException {
         final long timeInMillis = Calendar.getInstance().getTimeInMillis();
         final File tempfile = File.createTempFile("repository_" + rootFolder.getName() + "_" + timeInMillis, ".zip");
         final FileOutputStream fos = new FileOutputStream(tempfile);
@@ -121,7 +121,7 @@ public class RepositoryZipController {
         FileHelper.safeClose(zipOutput);
         return tempfile;
     }
-    
+
     /**
      * The repository is valid if it contains a conf.xml file 
      * @param zipInputStream
@@ -136,13 +136,14 @@ public class RepositoryZipController {
         }
         return false;
     }
+
     protected void decompress(final ZipInputStream zipInputStream, final RepositoryFolder rootFolder)
             throws IOException {
         deleteChildren(rootFolder);
 
         for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
             final String entryName = entry.getName();
-            int lastSlash = entryName.lastIndexOf('/');
+            final int lastSlash = entryName.lastIndexOf('/');
 
             if (entry.isDirectory()) {
                 if (entry.getSize() > 0L) {
@@ -161,12 +162,7 @@ public class RepositoryZipController {
                     folder = rootFolder;
                 }
                 final RepositoryFile existingFile = folder.getFile(filename);
-                final Action<OutputStream> writeCallback = new Action<OutputStream>() {
-                    @Override
-                    public void run(OutputStream fileOutput) throws Exception {
-                        FileHelper.copy(zipInputStream, fileOutput);
-                    }
-                };
+                final Action<OutputStream> writeCallback = fileOutput -> FileHelper.copy(zipInputStream, fileOutput);
                 if (existingFile == null) {
                     folder.createFile(filename, writeCallback);
                 } else {
@@ -177,23 +173,23 @@ public class RepositoryZipController {
         }
     }
 
-    private void deleteChildren(RepositoryFolder folder) {
-        List<RepositoryFile> files = folder.getFiles();
-        for (RepositoryFile file : files) {
+    private void deleteChildren(final RepositoryFolder folder) {
+        final List<RepositoryFile> files = folder.getFiles();
+        for (final RepositoryFile file : files) {
             file.delete();
         }
 
-        List<RepositoryFolder> folders = folder.getFolders();
-        for (RepositoryFolder subFolder : folders) {
+        final List<RepositoryFolder> folders = folder.getFolders();
+        for (final RepositoryFolder subFolder : folders) {
             deleteChildren(subFolder);
             subFolder.delete();
         }
     }
 
-    private RepositoryFolder getFolder(RepositoryFolder folder, String substring) {
-        String[] directoryNames = substring.split("/");
-        for (String directoryName : directoryNames) {
-            RepositoryFolder existingFolder = folder.getFolder(directoryName);
+    private RepositoryFolder getFolder(RepositoryFolder folder, final String substring) {
+        final String[] directoryNames = substring.split("/");
+        for (final String directoryName : directoryNames) {
+            final RepositoryFolder existingFolder = folder.getFolder(directoryName);
             if (existingFolder == null) {
                 folder = folder.createFolder(directoryName);
             } else {
@@ -212,31 +208,27 @@ public class RepositoryZipController {
         int itemsCount = 0;
 
         final List<RepositoryFile> files = folder.getFiles();
-        for (RepositoryFile file : files) {
+        for (final RepositoryFile file : files) {
             logger.info("File: " + path + file.getName());
             zipOutput.putNextEntry(new ZipEntry(path + file.getName()));
-            file.readFile(new Action<InputStream>() {
-                @Override
-                public void run(InputStream fileInput) throws Exception {
-                    FileHelper.copy(fileInput, zipOutput);
-                }
+            file.readFile(fileInput -> {
+                FileHelper.copy(fileInput, zipOutput);
             });
             zipOutput.closeEntry();
             itemsCount++;
         }
 
         final List<RepositoryFolder> folders = folder.getFolders();
-        for (RepositoryFolder subFolder : folders) {
-            String name = subFolder.getName();
+        for (final RepositoryFolder subFolder : folders) {
+            final String name = subFolder.getName();
             logger.info("Directory: " + path + name + "/");
             addToZipOutput(path + name + "/", subFolder, zipOutput);
             itemsCount++;
         }
 
         if (itemsCount == 0 && !path.equals("")) {
-            String relativePath = path;
-            logger.info("Empty: " + relativePath);
-            ZipEntry entry = new ZipEntry(relativePath);
+            logger.info("Empty: " + path);
+            final ZipEntry entry = new ZipEntry(path);
             zipOutput.putNextEntry(entry);
         }
     }

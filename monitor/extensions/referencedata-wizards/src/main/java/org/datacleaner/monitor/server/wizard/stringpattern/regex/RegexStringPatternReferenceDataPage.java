@@ -29,14 +29,14 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
 final class RegexStringPatternReferenceDataPage extends AbstractFreemarkerWizardPage {
-    
+
     private static final String PROPERTY_MATCH_ENTIRE_STRING = "matchEntireString";
     private static final String PROPERTY_NAME = "name";
     private static final String PROPERTY_EXPRESSION = "expression";
 
     private final RegexStringPatternReferenceDataWizardSession _session;
 
-    public RegexStringPatternReferenceDataPage(RegexStringPatternReferenceDataWizardSession session) {
+    public RegexStringPatternReferenceDataPage(final RegexStringPatternReferenceDataWizardSession session) {
         _session = session;
     }
 
@@ -46,18 +46,18 @@ final class RegexStringPatternReferenceDataPage extends AbstractFreemarkerWizard
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final String name = getString(formParameters, PROPERTY_NAME);
         final String expression = getString(formParameters, PROPERTY_EXPRESSION);
         final String matchEntireString = getString(formParameters, PROPERTY_MATCH_ENTIRE_STRING);
-        ReferenceDataHelper.checkUniqueStringPattern(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog()); 
-        
+        ReferenceDataHelper.checkUniqueStringPattern(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
+
         _session.setName(name);
         _session.setExpression(expression);
         _session.setMatchEntireString(matchEntireString);
-        
+
         return null;
     }
 
@@ -72,7 +72,7 @@ final class RegexStringPatternReferenceDataPage extends AbstractFreemarkerWizard
         model.put("name", _session.getName());
         model.put("expression", _session.getExpression());
         model.put("matchEntireString", _session.getMatchEntireString());
-        
+
         return model;
     }
 }

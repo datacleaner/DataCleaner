@@ -25,10 +25,10 @@ import javax.swing.Icon;
 
 /**
  * Object responsible for retrieving icons for a file or folder.
- * 
+ *
  * @author Kasper Sørensen
  */
 public interface FileIconFactory {
 
-	public Icon getIcon(File f);
+    Icon getIcon(File file);
 }

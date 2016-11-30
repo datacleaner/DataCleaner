@@ -26,7 +26,7 @@ public abstract class AbstractJobWizardSession implements JobWizardSession {
 
     private final JobWizardContext _wizardContext;
 
-    public AbstractJobWizardSession(JobWizardContext wizardContext) {
+    public AbstractJobWizardSession(final JobWizardContext wizardContext) {
         _wizardContext = wizardContext;
     }
 

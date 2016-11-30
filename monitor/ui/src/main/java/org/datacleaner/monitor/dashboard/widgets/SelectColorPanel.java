@@ -37,14 +37,15 @@ public class SelectColorPanel extends FlowPanel {
     private ColorBox _colorBox;
     private ListBox _predefinedListBox;
 
-    public SelectColorPanel(String colorString) {
+    public SelectColorPanel(final String colorString) {
         _colorString = colorString;
         renderColorPanel();
     }
 
     private void renderColorPanel() {
         addStyleName("SelectColorPanel");
-        HTML description = new HTML("<p>Please select one of the following approaches for determining the metric's color in the timeline.</p>");
+        final HTML description = new HTML(
+                "<p>Please select one of the following approaches for determining the metric's color in the timeline.</p>");
         description.setStyleName("alert alert-info");
         add(description);
         _rbAutoSelectColor = new RadioButton("colorGroup", "Automatically apply a color");
@@ -66,7 +67,7 @@ public class SelectColorPanel extends FlowPanel {
     }
 
     private void configureAutoSelectColorPanel() {
-        FlowPanel autoSelectPanel = new FlowPanel();
+        final FlowPanel autoSelectPanel = new FlowPanel();
         autoSelectPanel.add(_rbAutoSelectColor);
         autoSelectPanel.addStyleName("colorPanel");
 
@@ -74,20 +75,20 @@ public class SelectColorPanel extends FlowPanel {
     }
 
     private void configureManualSelectColorPanel() {
-        FlowPanel manualSelectPanel = new FlowPanel();
-        FlowPanel manualSelectColorPanel = new FlowPanel();
+        final FlowPanel manualSelectPanel = new FlowPanel();
+        final FlowPanel manualSelectColorPanel = new FlowPanel();
 
         manualSelectColorPanel.addStyleName("configurationPanel");
         _colorBox = new ColorBox(_colorString);
-        
+
         _colorBox.getTextBox().addClickHandler(new ClickHandler() {
-            
+
             @Override
-            public void onClick(ClickEvent arg0) {
+            public void onClick(final ClickEvent arg0) {
                 _rbManualSelectColor.setValue(true);
             }
         });
-        
+
         manualSelectColorPanel.add(_colorBox);
 
         manualSelectPanel.add(_rbManualSelectColor);
@@ -98,25 +99,26 @@ public class SelectColorPanel extends FlowPanel {
     }
 
     private void configurePredefinedColorPanel() {
-        FlowPanel predefinedPanel = new FlowPanel();
-        FlowPanel predefinedColorPanel = new FlowPanel();
+        final FlowPanel predefinedPanel = new FlowPanel();
+        final FlowPanel predefinedColorPanel = new FlowPanel();
 
         _predefinedListBox = new ListBox();
         for (int i = 0; i < PredefinedColors.values().length; i++) {
-            _predefinedListBox.addItem(PredefinedColors.values()[i].getName(), PredefinedColors.values()[i].getColor().toHexString());
+            _predefinedListBox.addItem(PredefinedColors.values()[i].getName(),
+                    PredefinedColors.values()[i].getColor().toHexString());
         }
-        _predefinedListBox.addClickHandler(new ClickHandler(){
+        _predefinedListBox.addClickHandler(new ClickHandler() {
 
             @Override
-            public void onClick(ClickEvent arg0) {
+            public void onClick(final ClickEvent arg0) {
                 _rbChoosePredefinedColor.setValue(true);
             }
-            
+
         });
-        
+
         predefinedColorPanel.addStyleName("configurationPanel");
         predefinedColorPanel.add(_predefinedListBox);
-        
+
         predefinedPanel.add(_rbChoosePredefinedColor);
         predefinedPanel.add(predefinedColorPanel);
         predefinedPanel.addStyleName("colorPanel");

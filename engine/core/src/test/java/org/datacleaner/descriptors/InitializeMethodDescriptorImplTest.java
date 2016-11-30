@@ -25,20 +25,21 @@ import junit.framework.TestCase;
 
 public class InitializeMethodDescriptorImplTest extends TestCase {
 
-	private boolean executed;
+    private boolean executed;
 
-	public void testInitialize() throws Exception {
-		executed = false;
-		Method m = getClass().getDeclaredMethod("doInitialize");
-		InitializeMethodDescriptorImpl initializeMethodDescriptorImpl = new InitializeMethodDescriptorImpl(m, null);
-		initializeMethodDescriptorImpl.initialize(this);
+    public void testInitialize() throws Exception {
+        executed = false;
+        final Method m = getClass().getDeclaredMethod("doInitialize");
+        final InitializeMethodDescriptorImpl initializeMethodDescriptorImpl =
+                new InitializeMethodDescriptorImpl(m, null);
+        initializeMethodDescriptorImpl.initialize(this);
 
-		assertTrue(executed);
+        assertTrue(executed);
 
-		assertEquals("InitializeMethodDescriptorImpl[method=doInitialize]", initializeMethodDescriptorImpl.toString());
-	}
+        assertEquals("InitializeMethodDescriptorImpl[method=doInitialize]", initializeMethodDescriptorImpl.toString());
+    }
 
-	public void doInitialize() {
-		executed = true;
-	}
+    public void doInitialize() {
+        executed = true;
+    }
 }

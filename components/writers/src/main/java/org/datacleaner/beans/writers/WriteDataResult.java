@@ -19,6 +19,7 @@
  */
 package org.datacleaner.beans.writers;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Metric;
@@ -26,47 +27,46 @@ import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
-import org.apache.metamodel.schema.Table;
 
 /**
  * Represents the result of a Writer analyzer (see {@link WriteDataCategory}).
  * The result will not be an analysis result as such, but a pointer to a written
  * dataset.
- * 
- * 
+ *
+ *
  */
 @Distributed(reducer = WriteDataResultReducer.class)
 public interface WriteDataResult extends AnalyzerResult {
-    
+
     /**
      * @return the amount of rows that was written.
      */
     @Metric("Inserts")
-    public int getWrittenRowCount();
+    int getWrittenRowCount();
 
     /**
      * @return the amount of updates that was executed.
      */
     @Metric("Updates")
-    public int getUpdatesCount();
+    int getUpdatesCount();
 
     /**
      * Gets the amount of rows that was errornuosly not written. This will only
      * be non-zero if a error handling strategy has been specified, typically
      * using {@link ErrorHandlingOption}.
-     * 
+     *
      * @return the amount of rows that was not written.
      */
     @Metric("Errornous rows")
-    public int getErrorRowCount();
+    int getErrorRowCount();
 
     /**
      * Gets a reference to a datastore containing error records. Note that the
      * datastore is not nescesarily registered in the {@link DatastoreCatalog}.
-     * 
+     *
      * @return a {@link FileDatastore} reference or null if no errors occurred.
      */
-    public FileDatastore getErrorDatastore();
+    FileDatastore getErrorDatastore();
 
     /**
      * @param datastoreCatalog
@@ -75,7 +75,7 @@ public interface WriteDataResult extends AnalyzerResult {
      *         null of it is not available (eg. destination not reachable or no
      *         rows written).
      */
-    public Datastore getDatastore(DatastoreCatalog datastoreCatalog);
+    Datastore getDatastore(DatastoreCatalog datastoreCatalog);
 
     /**
      * @param datastore
@@ -83,6 +83,6 @@ public interface WriteDataResult extends AnalyzerResult {
      *            {@link #getDatastore(DatastoreCatalog)}.
      * @return a table that can be used for previewing the data written.
      */
-    public Table getPreviewTable(Datastore datastore);
+    Table getPreviewTable(Datastore datastore);
 
 }

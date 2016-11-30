@@ -29,7 +29,7 @@ import org.apache.metamodel.util.HasName;
  * column can be either physical (based directly on a database column) or
  * virtual if the values yielded by this column are have been transformed (eg.
  * tokenized, sampled etc.)
- * 
+ *
  * @param <E>
  *            the data type of the column
  */
@@ -39,35 +39,35 @@ public interface InputColumn<E> extends HasName, Comparable<InputColumn<E>>, Ser
      * @return the name of this column
      */
     @Override
-    public String getName();
+    String getName();
 
     /**
      * @return true if this InputColumn is based on a physical column that can
      *         be natively queried.
      */
-    public boolean isPhysicalColumn();
+    boolean isPhysicalColumn();
 
     /**
      * @return true if this InputColumn is virtual (ie. the opposite of
      *         physical).
      */
-    public boolean isVirtualColumn();
+    boolean isVirtualColumn();
 
     /**
      * @return the underlying physical column.
      * @throws IllegalStateException
      *             if isPhysicalColumn() is false
      */
-    public Column getPhysicalColumn() throws IllegalStateException;
+    Column getPhysicalColumn() throws IllegalStateException;
 
     /**
      * The Data type stored in this column represented as a Java type. Notice
      * that for most purposes you should ud getDataTypeFamily as it is limited
      * to the actual supported families of data types (eg. File is not a
      * supported data type, but Integer, Float, String etc. are).
-     * 
+     *
      * @return the data type of this column.
      */
-    public Class<? extends E> getDataType();
+    Class<? extends E> getDataType();
 
 }

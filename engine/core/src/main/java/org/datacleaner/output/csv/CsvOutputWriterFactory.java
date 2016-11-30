@@ -34,17 +34,17 @@ import org.datacleaner.output.OutputWriter;
 
 public final class CsvOutputWriterFactory {
 
-    private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
-    private static final Map<String, CsvOutputWriter> outputWritersPerPath = new HashMap<String, CsvOutputWriter>();
+    private static final Map<String, AtomicInteger> counters = new HashMap<>();
+    private static final Map<String, CsvOutputWriter> outputWritersPerPath = new HashMap<>();
 
     /**
      * Creates a CSV output writer with default configuration
-     * 
+     *
      * @param filename
      * @param columns
      * @return
      */
-    public static OutputWriter getWriter(String filename, List<InputColumn<?>> columns) {
+    public static OutputWriter getWriter(final String filename, final List<InputColumn<?>> columns) {
         final InputColumn<?>[] columnArray = columns.toArray(new InputColumn<?>[columns.size()]);
         final String[] headers = new String[columnArray.length];
         for (int i = 0; i < headers.length; i++) {
@@ -55,7 +55,7 @@ public final class CsvOutputWriterFactory {
 
     /**
      * Creates a CSV output writer
-     * 
+     *
      * @param filename
      * @param headers
      * @param separatorChar
@@ -65,16 +65,17 @@ public final class CsvOutputWriterFactory {
      * @param columns
      * @return
      */
-    public static OutputWriter getWriter(String filename, final String[] headers, char separatorChar, char quoteChar,
-            char escapeChar, boolean includeHeader, final InputColumn<?>... columns) {
+    public static OutputWriter getWriter(final String filename, final String[] headers, final char separatorChar,
+            final char quoteChar, final char escapeChar, final boolean includeHeader, final InputColumn<?>... columns) {
         return getWriter(new FileResource(filename), headers, FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar,
                 escapeChar, includeHeader, columns);
     }
 
-    public static OutputWriter getWriter(Resource resource, final String[] headers, String encoding,
-            char separatorChar, char quoteChar, char escapeChar, boolean includeHeader, final InputColumn<?>... columns) {
-        final CsvConfiguration csvConfiguration = getConfiguration(encoding, separatorChar, quoteChar, escapeChar,
-                includeHeader);
+    public static OutputWriter getWriter(final Resource resource, final String[] headers, final String encoding,
+            final char separatorChar, final char quoteChar, final char escapeChar, final boolean includeHeader,
+            final InputColumn<?>... columns) {
+        final CsvConfiguration csvConfiguration =
+                getConfiguration(encoding, separatorChar, quoteChar, escapeChar, includeHeader);
 
         CsvOutputWriter outputWriter;
         final String qualifiedPath = resource.getQualifiedPath();
@@ -104,8 +105,8 @@ public final class CsvOutputWriterFactory {
         return outputWriter;
     }
 
-    private static CsvConfiguration getConfiguration(String encoding, char separatorChar, char quoteChar,
-            char escapeChar, boolean includeHeader) {
+    private static CsvConfiguration getConfiguration(final String encoding, final char separatorChar,
+            final char quoteChar, final char escapeChar, final boolean includeHeader) {
         final int headerLine;
         if (includeHeader) {
             headerLine = CsvConfiguration.DEFAULT_COLUMN_NAME_LINE;
@@ -115,7 +116,7 @@ public final class CsvOutputWriterFactory {
         return new CsvConfiguration(headerLine, encoding, separatorChar, quoteChar, escapeChar);
     }
 
-    protected static void release(String filename) {
+    protected static void release(final String filename) {
         final int count = counters.get(filename).decrementAndGet();
         if (count == 0) {
             synchronized (outputWritersPerPath) {

@@ -30,7 +30,7 @@ public class FixedDivisionsCountJobDivisionManager implements JobDivisionManager
 
     private final int _divisionCount;
 
-    public FixedDivisionsCountJobDivisionManager(int divisionCount) {
+    public FixedDivisionsCountJobDivisionManager(final int divisionCount) {
         if (divisionCount <= 0) {
             throw new IllegalArgumentException("Division count must be a positive integer");
         }
@@ -38,7 +38,7 @@ public class FixedDivisionsCountJobDivisionManager implements JobDivisionManager
     }
 
     @Override
-    public int calculateDivisionCount(AnalysisJob masterJob, int expectedRows) {
+    public int calculateDivisionCount(final AnalysisJob masterJob, final int expectedRows) {
         return _divisionCount;
     }
 

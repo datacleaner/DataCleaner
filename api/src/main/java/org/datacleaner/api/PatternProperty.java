@@ -43,5 +43,5 @@ public @interface PatternProperty {
     /**
      * @return true if an empty string value is acceptable
      */
-    public boolean emptyString() default false;
+    boolean emptyString() default false;
 }

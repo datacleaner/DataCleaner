@@ -21,8 +21,6 @@ package org.datacleaner.test.full.scenarios;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
@@ -35,32 +33,35 @@ import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.test.TestHelper;
 
+import junit.framework.TestCase;
+
 /**
- * Ticket #383: Error handling when a job has been errornously configured - the
+ * Ticket #383: Error handling when a job has been erroneously configured - the
  * input columns of a transformer originate from different tables
  */
 public class InputColumnsFromDifferentTablesTest extends TestCase {
 
     public void testScenario() throws Exception {
-        DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
-                "org.datacleaner.beans", true);
-        DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl()
-                .withDescriptorProvider(descriptorProvider);
-        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(
-                TestHelper.createSampleDatabaseDatastore("my database")).withEnvironment(environment);
+        final DescriptorProvider descriptorProvider =
+                new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.beans", true);
+        final DataCleanerEnvironment environment =
+                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider);
+        final DataCleanerConfiguration conf = new DataCleanerConfigurationImpl()
+                .withDatastores(TestHelper.createSampleDatabaseDatastore("my database")).withEnvironment(environment);
 
-        AnalysisRunner runner = new AnalysisRunnerImpl(conf);
+        final AnalysisRunner runner = new AnalysisRunnerImpl(conf);
 
-        AnalysisJobBuilder jobBuilder = new JaxbJobReader(conf).create(new File(
-                "src/test/resources/example-job-input-columns-from-different-tables.xml"));
+        final AnalysisJobBuilder jobBuilder = new JaxbJobReader(conf)
+                .create(new File("src/test/resources/example-job-input-columns-from-different-tables.xml"));
 
         try {
             runner.run(jobBuilder.toAnalysisJob());
             fail("exception expected");
-        } catch (IllegalStateException e) {
-            assertEquals(
-                    "Multiple originating tables (CUSTOMERS, EMPLOYEES) found for source: TransformerComponentBuilder[transformer=Concatenator,inputColumns=[MetaModelInputColumn[PUBLIC.EMPLOYEES.LASTNAME], MetaModelInputColumn[PUBLIC.CUSTOMERS.CONTACTLASTNAME]]]",
-                    e.getMessage());
+        } catch (final IllegalStateException e) {
+            assertEquals("Multiple originating tables (CUSTOMERS, EMPLOYEES) found for source: "
+                            + "TransformerComponentBuilder[transformer=Concatenator,inputColumns="
+                            + "[MetaModelInputColumn[PUBLIC.EMPLOYEES.LASTNAME], "
+                            + "MetaModelInputColumn[PUBLIC.CUSTOMERS.CONTACTLASTNAME]]]", e.getMessage());
         }
 
     }

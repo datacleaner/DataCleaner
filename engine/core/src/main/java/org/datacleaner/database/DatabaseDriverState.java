@@ -21,5 +21,5 @@ package org.datacleaner.database;
 
 public enum DatabaseDriverState {
 
-	NOT_INSTALLED, INSTALLED_WORKING, INSTALLED_NOT_WORKING;
+    NOT_INSTALLED, INSTALLED_WORKING, INSTALLED_NOT_WORKING
 }

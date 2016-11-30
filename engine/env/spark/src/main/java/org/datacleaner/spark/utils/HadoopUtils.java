@@ -30,7 +30,8 @@ import org.apache.metamodel.util.FileHelper;
 import com.google.common.base.Strings;
 
 public class HadoopUtils {
-    private static void addResourceIfExists(Configuration conf, File hadoopConfigurationDirectory, String filename) {
+    private static void addResourceIfExists(final Configuration conf, final File hadoopConfigurationDirectory,
+            final String filename) {
         final File file = new File(hadoopConfigurationDirectory, filename);
         if (file.exists()) {
             final InputStream inputStream = FileHelper.getInputStream(file);
@@ -49,7 +50,7 @@ public class HadoopUtils {
      *            the path of a directory
      * @return a candidate directory, or null if none was resolved.
      */
-    private static File getDirectoryIfExists(File existingCandidate, String path) {
+    private static File getDirectoryIfExists(final File existingCandidate, final String path) {
         if (existingCandidate != null) {
             return existingCandidate;
         }
@@ -63,7 +64,7 @@ public class HadoopUtils {
     }
 
     public static File getHadoopConfigurationDirectoryToUse() {
-        File candidate  = getDirectoryIfExists(null, System.getProperty("YARN_CONF_DIR"));
+        File candidate = getDirectoryIfExists(null, System.getProperty("YARN_CONF_DIR"));
         candidate = getDirectoryIfExists(candidate, System.getProperty("HADOOP_CONF_DIR"));
         candidate = getDirectoryIfExists(candidate, System.getenv("YARN_CONF_DIR"));
         candidate = getDirectoryIfExists(candidate, System.getenv("HADOOP_CONF_DIR"));
@@ -87,6 +88,6 @@ public class HadoopUtils {
     }
 
     public static FileSystem getFileSystem() throws IOException {
-        return  FileSystem.newInstance(HadoopUtils.getHadoopConfiguration(getHadoopConfigurationDirectoryToUse()));
+        return FileSystem.newInstance(HadoopUtils.getHadoopConfiguration(getHadoopConfigurationDirectoryToUse()));
     }
 }

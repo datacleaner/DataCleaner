@@ -25,13 +25,13 @@ package org.datacleaner.api;
  * also possible to roll your own. Simply create a class that implements this
  * interface and reference the class in the @RendererBean annotation when
  * implementing renderers.
- * 
+ *
  * @param <T>
- * 
+ *
  * @see RendererBean
  * @see Renderer
  */
 public interface RenderingFormat<T> {
 
-    public Class<T> getOutputClass();
+    Class<T> getOutputClass();
 }

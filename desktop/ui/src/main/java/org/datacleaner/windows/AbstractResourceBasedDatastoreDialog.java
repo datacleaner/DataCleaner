@@ -70,37 +70,33 @@ import org.slf4j.LoggerFactory;
 /**
  * Superclass for {@link Resource}-based datastores such as {@link CsvDatastore}
  * and {@link JsonDatastore} etc.
- * 
+ *
  * @param <D>
  *            the type of datastore
  */
-public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDatastore> extends
-        AbstractDatastoreDialog<D> {
-
-    private static final long serialVersionUID = 1L;
-
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDatastore>
+        extends AbstractDatastoreDialog<D> {
 
     /**
      * Amount of bytes to read for autodetection of encoding, separator and
      * quotes
      */
     protected static final int SAMPLE_BUFFER_SIZE = 128 * 1024;
-
+    private static final long serialVersionUID = 1L;
     /**
      * Max amount of columns to display in the preview table
      */
     private static final int PREVIEW_COLUMNS = 10;
     private static final int PREVIEW_ROWS = 7;
-
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     private final ResourceSelector _resourceSelector;
     private final DCPanel _previewTablePanel;
     private final DCTable _previewTable;
     private final LoadingIcon _loadingIcon;
 
-    protected AbstractResourceBasedDatastoreDialog(D originalDatastore,
-            MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
-            DataCleanerConfiguration configuration, UserPreferences userPreferences) {
+    protected AbstractResourceBasedDatastoreDialog(final D originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
         _statusLabel.setText("Please select source");
         _resourceSelector = new ResourceSelector(configuration, getUserPreferences(), true);
@@ -118,12 +114,12 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
         _resourceSelector.addListener(new ResourceTypePresenter.Listener() {
 
             @Override
-            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+            public void onPathEntered(final ResourceTypePresenter<?> presenter, final String path) {
                 onSelected(null);
             }
 
             @Override
-            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
+            public void onResourceSelected(final ResourceTypePresenter<?> presenter, final Resource resource) {
                 if (resource != null) {
                     if (StringUtils.isNullOrEmpty(_datastoreNameTextField.getText())) {
                         _datastoreNameTextField.setText(resource.getName());
@@ -152,10 +148,10 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
     /**
      * Can be overridden by subclasses in order to react to resource selection
      * events.
-     * 
+     *
      * @param resource
      */
-    protected void onSelected(Resource resource) {
+    protected void onSelected(final Resource resource) {
     }
 
     protected abstract D createDatastore(String name, Resource resource);
@@ -164,7 +160,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
 
     @Override
     protected final void validateAndUpdate() {
-        boolean valid = validateForm();
+        final boolean valid = validateForm();
         setSaveButtonEnabled(valid);
         if (valid) {
             updatePreviewTable();
@@ -212,8 +208,8 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
     }
 
     protected List<Entry<String, JComponent>> getFormElements() {
-        List<Entry<String, JComponent>> res = super.getFormElements();
-        res.add(new ImmutableEntry<String, JComponent>("Source", _resourceSelector));
+        final List<Entry<String, JComponent>> res = super.getFormElements();
+        res.add(new ImmutableEntry<>("Source", _resourceSelector));
         return res;
     }
 
@@ -243,14 +239,14 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
             @Override
             protected void done() {
                 try {
-                    DataSet dataSet = get();
+                    final DataSet dataSet = get();
                     if (dataSet == null) {
                         hidePreviewTable();
                     } else {
                         final TableModel tableModel = new DataSetTableModel(dataSet);
                         _previewTable.setModel(tableModel);
                     }
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     if (logger.isWarnEnabled()) {
                         logger.warn("Error creating preview data: " + e.getMessage(), e);
                     }
@@ -272,12 +268,12 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
         _previewTable.setModel(dummyTableModel);
     }
 
-    private final DataSet getPreviewData(Resource resource) {
+    private DataSet getPreviewData(final Resource resource) {
         if (!isPreviewDataAvailable()) {
             logger.info("Not displaying preview table because isPreviewDataAvailable() returned false");
             return null;
         }
-        
+
         logger.info("Attempting to fetch preview data from resource: {}", resource);
 
         final D datastore = getPreviewDatastore(resource);
@@ -297,24 +293,22 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
             final Query q = dc.query().from(table).select(columns).toQuery();
             q.setMaxRows(PREVIEW_ROWS);
 
-            final DataSet dataSet = dc.executeQuery(q);
-
-            return dataSet;
+            return dc.executeQuery(q);
         }
     }
 
     @Override
     protected final JComponent getDialogContent() {
         final DCPanel formPanel = new DCPanel();
-        GridBagLayout layout = new GridBagLayout();
+        final GridBagLayout layout = new GridBagLayout();
         layout.columnWidths = new int[] { 120, 450 };
         formPanel.setLayout(layout);
 
         final List<Entry<String, JComponent>> formElements = getFormElements();
         // temporary variable to make it easier to refactor the layout
         int row = 0;
-        for (Entry<String, JComponent> entry : formElements) {
-            String key = entry.getKey();
+        for (final Entry<String, JComponent> entry : formElements) {
+            final String key = entry.getKey();
             if (StringUtils.isNullOrEmpty(key)) {
                 WidgetUtils.addToGridBag(entry.getValue(), formPanel, 0, row, 2, 1);
             } else {
@@ -335,14 +329,14 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
                 GridBagConstraints.BOTH);
 
         if (isPreviewTableEnabled()) {
-            WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1,
-                    1.0, GridBagConstraints.BOTH);
+            WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1, 1.0,
+                    GridBagConstraints.BOTH);
         }
         WidgetUtils.addToGridBag(getButtonPanel(), centerPanel, 0, 2, 1, 1, GridBagConstraints.SOUTH, 4, 0, 0.1);
 
         centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
 
-        JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
         _outerPanel.setLayout(new BorderLayout());
         _outerPanel.add(centerPanel, BorderLayout.CENTER);
@@ -350,7 +344,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
 
         final String descriptionText = getDescriptionText();
         if (descriptionText != null) {
-            DescriptionLabel descriptionLabel = new DescriptionLabel();
+            final DescriptionLabel descriptionLabel = new DescriptionLabel();
             descriptionLabel.setText(descriptionText);
             _outerPanel.add(descriptionLabel, BorderLayout.NORTH);
         }
@@ -364,7 +358,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
         return true;
     }
 
-    protected Table getPreviewTable(DataContext dc) {
+    protected Table getPreviewTable(final DataContext dc) {
         final Table[] tables = dc.getDefaultSchema().getTables();
         if (tables.length == 0) {
             return null;
@@ -376,9 +370,8 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
         return PREVIEW_COLUMNS;
     }
 
-    protected D getPreviewDatastore(Resource resource) {
-        D datastore = createDatastore("Preview", resource);
-        return datastore;
+    protected D getPreviewDatastore(final Resource resource) {
+        return createDatastore("Preview", resource);
     }
 
     protected byte[] getSampleBuffer() {
@@ -387,12 +380,12 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
         final Resource resource = getResource();
         final InputStream in = resource.read();
         try {
-            int bufferSize = in.read(bytes, 0, SAMPLE_BUFFER_SIZE);
+            final int bufferSize = in.read(bytes, 0, SAMPLE_BUFFER_SIZE);
             if (bufferSize != -1 && bufferSize != SAMPLE_BUFFER_SIZE) {
                 bytes = Arrays.copyOf(bytes, bufferSize);
             }
             return bytes;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.error("IOException occurred while reading sample buffer", e);
             return new byte[0];
         } finally {
@@ -400,18 +393,18 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
         }
     }
 
-    protected char[] readSampleBuffer(byte[] bytes, final String charSet) {
+    protected char[] readSampleBuffer(final byte[] bytes, final String charSet) {
         char[] buffer = new char[bytes.length];
         Reader reader = null;
         try {
             reader = new InputStreamReader(new ByteArrayInputStream(bytes), charSet);
 
             // read a sample of the file to auto-detect quotes and separators
-            int bufferSize = reader.read(buffer);
+            final int bufferSize = reader.read(buffer);
             if (bufferSize != -1) {
                 buffer = Arrays.copyOf(buffer, bufferSize);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (logger.isWarnEnabled()) {
                 logger.warn("Error reading from source: " + e.getMessage(), e);
             }
@@ -421,7 +414,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (IOException ioe) {
+                } catch (final IOException ioe) {
                     logger.debug("Could not close reader", ioe);
                 }
             }

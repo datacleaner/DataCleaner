@@ -26,7 +26,6 @@ import java.util.TreeMap;
 import javax.annotation.security.RolesAllowed;
 
 import org.datacleaner.components.convert.ConvertToDateTransformer;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.configuration.ResultContext;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -36,6 +35,7 @@ import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +68,7 @@ public class ResultModificationController {
 
         resultName = resultName.replaceAll("\\+", " ");
 
-        final Map<String, String> response = new TreeMap<String, String>();
+        final Map<String, String> response = new TreeMap<>();
 
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
 
@@ -76,7 +76,7 @@ public class ResultModificationController {
         final RepositoryFile existingFile = result.getResultFile();
         final String oldFilename = existingFile.getName();
         response.put("old_result_name", oldFilename);
-        
+
         final String jobInput = input.getJob();
         final String dateInput = input.getDate();
 
@@ -89,7 +89,7 @@ public class ResultModificationController {
         } else {
             newTimestamp = null;
         }
-        
+
         final JobIdentifier newJob;
         if (!StringUtils.isNullOrEmpty(jobInput) && !oldFilename.startsWith(jobInput)) {
             final JobContext newJobContext = tenantContext.getJob(jobInput);
@@ -99,10 +99,11 @@ public class ResultModificationController {
             newJob = null;
         }
 
-        final ResultContext newResult = _resultDao.updateResult(new TenantIdentifier(tenant), result, newJob, newTimestamp);
+        final ResultContext newResult =
+                _resultDao.updateResult(new TenantIdentifier(tenant), result, newJob, newTimestamp);
 
         final String newFilename = newResult.getResultFile().getName();
-        
+
         response.put("new_result_name", newFilename);
         response.put("repository_url", "/" + tenant + "/results/" + newFilename);
 

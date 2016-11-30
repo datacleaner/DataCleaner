@@ -24,7 +24,7 @@ import org.apache.metamodel.util.Ref;
 
 /**
  * Represents an {@link AnalyzerResult} that is still being produced.
- * 
+ *
  * Usually {@link AnalyzerResult}s are produced immediately by the
  * {@link Analyzer#getResult()} method, but in cases where this may take a long
  * time, an {@link Analyzer} can instead return a result of this type and
@@ -42,53 +42,53 @@ public interface AnalyzerResultFuture<R extends AnalyzerResult> extends Analyzer
      *
      * @param <R>
      */
-    public static interface Listener<R extends AnalyzerResult> {
+    interface Listener<R extends AnalyzerResult> {
 
-        public void onSuccess(R result);
+        void onSuccess(R result);
 
-        public void onError(RuntimeException error);
+        void onError(RuntimeException error);
     }
 
     /**
      * Gets the name of the {@link AnalyzerResult} that is being waited on. This
      * is useful for presenting to the user what he is waiting for.
-     * 
+     *
      * @return the name of the result being waited for
      */
     @Override
-    public String getName();
+    String getName();
 
     /**
      * Adds a {@link Listener} to this {@link AnalyzerResultFuture}.
-     * 
+     *
      * @param listener
      */
-    public void addListener(Listener<? super R> listener);
+    void addListener(Listener<? super R> listener);
 
     /**
      * Removes a {@link Listener} from this {@link AnalyzerResultFuture}.
-     * 
+     *
      * @param listener
      */
-    public void removeListener(Listener<R> listener);
+    void removeListener(Listener<R> listener);
 
     /**
      * Determines if the wrapped {@link AnalyzerResult} is ready or if
      * processing is still going on to produce it.
-     * 
+     *
      * Once ready, call {@link #get()} to get it.
-     * 
+     *
      * @return true if the wrapped {@link AnalyzerResult} is ready or false if
      *         it is not.
      */
-    public boolean isReady();
+    boolean isReady();
 
     /**
      * Gets (and awaits the processing in a blocking fashion if necesary) the
      * wrapped {@link AnalyzerResult}.
-     * 
+     *
      * @return the wrapped {@link AnalyzerResult}
      */
     @Override
-    public R get();
+    R get();
 }

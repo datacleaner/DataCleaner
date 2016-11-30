@@ -51,28 +51,23 @@ import edu.uci.ics.jung.graph.DirectedGraph;
 public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphLayoutTransformer.class);
-
-    private final Comparator<Object> longestTrailComparator = new Comparator<Object>() {
-        @Override
-        public int compare(Object o1, Object o2) {
-            final int prerequisiteCount1 = getAccumulatedPrerequisiteCount(o1);
-            final int prerequisiteCount2 = getAccumulatedPrerequisiteCount(o2);
-            return prerequisiteCount2 - prerequisiteCount1;
-        }
-    };
-
     private static final int X_STEP = 160;
     private static final int X_OFFSET = 40;
     private static final int Y_STEP = 80;
     private static final int Y_OFFSET = 40;
-
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final DirectedGraph<Object, JobGraphLink> _graph;
-    private final Map<Object, Point> _points = new IdentityHashMap<Object, Point>();
-    private final Map<Integer, Integer> _yCount = new HashMap<Integer, Integer>();
+    private final Comparator<Object> longestTrailComparator = (o1, o2) -> {
+        final int prerequisiteCount1 = getAccumulatedPrerequisiteCount(o1);
+        final int prerequisiteCount2 = getAccumulatedPrerequisiteCount(o2);
+        return prerequisiteCount2 - prerequisiteCount1;
+    };
+    private final Map<Object, Point> _points = new IdentityHashMap<>();
+    private final Map<Integer, Integer> _yCount = new HashMap<>();
     private volatile boolean _transformed;
 
-    public JobGraphLayoutTransformer(AnalysisJobBuilder analysisJobBuilder, DirectedGraph<Object, JobGraphLink> graph) {
+    public JobGraphLayoutTransformer(final AnalysisJobBuilder analysisJobBuilder,
+            final DirectedGraph<Object, JobGraphLink> graph) {
         _analysisJobBuilder = analysisJobBuilder;
         _graph = graph;
         createPoints();
@@ -91,20 +86,19 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
         final int maxPrerequisiteCount = getAccumulatedPrerequisiteCount(vertices.get(0));
         logger.trace("Maximum prerequisite count: {}", maxPrerequisiteCount);
 
-        final int x = maxPrerequisiteCount;
-        for (Object vertex : vertices) {
-            final Point point = createPoint(vertex, x, true);
+        for (final Object vertex : vertices) {
+            final Point point = createPoint(vertex, maxPrerequisiteCount, true);
             if (point != null) {
                 _points.put(vertex, point);
             }
         }
-        for (Object vertex : vertices) {
+        for (final Object vertex : vertices) {
             if (!_points.containsKey(vertex)) {
-                final Point point = createPoint(vertex, x, false);
+                final Point point = createPoint(vertex, maxPrerequisiteCount, false);
                 _points.put(vertex, point);
             }
 
-            createPrerequisitePoints(vertex, x);
+            createPrerequisitePoints(vertex, maxPrerequisiteCount);
         }
     }
 
@@ -114,7 +108,7 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
         // sort so that the longest trails will be plotted first
         Collections.sort(prerequisites, longestTrailComparator);
 
-        for (Object prerequisiteVertex : prerequisites) {
+        for (final Object prerequisiteVertex : prerequisites) {
             if (!_points.containsKey(prerequisiteVertex)) {
                 final int x = Math.max(0, vertexX - 1);
                 final Point point = createPoint(prerequisiteVertex, x, false);
@@ -126,9 +120,9 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
     }
 
     private List<Object> getEndpointVertices() {
-        List<Object> result = new ArrayList<Object>();
-        for (Object vertex : _graph.getVertices()) {
-            Collection<JobGraphLink> outEdges = _graph.getOutEdges(vertex);
+        final List<Object> result = new ArrayList<>();
+        for (final Object vertex : _graph.getVertices()) {
+            final Collection<JobGraphLink> outEdges = _graph.getOutEdges(vertex);
             if (outEdges == null || outEdges.isEmpty()) {
                 result.add(vertex);
             }
@@ -136,7 +130,7 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
         return result;
     }
 
-    private Point createPoint(final Object vertex, int xIndex, boolean onlyIfCoordinatesDefined) {
+    private Point createPoint(final Object vertex, int xIndex, final boolean onlyIfCoordinatesDefined) {
         Point point = null;
         final Map<String, String> metadataProperties;
         if (vertex instanceof HasMetadataProperties) {
@@ -212,7 +206,7 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
     }
 
     @Override
-    public Point2D transform(Object vertex) {
+    public Point2D transform(final Object vertex) {
         Point point = _points.get(vertex);
         if (point == null) {
             logger.warn("Vertex {} has no assigned coordinate!", vertex);
@@ -226,30 +220,30 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
         return _transformed;
     }
 
-    private List<Object> getPrerequisites(Object vertex) {
-        Collection<JobGraphLink> edges = _graph.getInEdges(vertex);
+    private List<Object> getPrerequisites(final Object vertex) {
+        final Collection<JobGraphLink> edges = _graph.getInEdges(vertex);
         if (edges == null || edges.isEmpty()) {
             return Collections.emptyList();
         }
-        List<Object> result = new ArrayList<Object>();
-        for (JobGraphLink edge : edges) {
+        final List<Object> result = new ArrayList<>();
+        for (final JobGraphLink edge : edges) {
             result.add(edge.getFrom());
         }
         return result;
     }
 
-    private int getAccumulatedPrerequisiteCount(Object obj) {
+    private int getAccumulatedPrerequisiteCount(final Object obj) {
         final Set<JobGraphLink> visitedEdges = Sets.newSetFromMap(new IdentityHashMap<>());
         return getAccumulatedPrerequisiteCount(obj, visitedEdges);
     }
 
-    private int getAccumulatedPrerequisiteCount(Object obj, Set<JobGraphLink> visitedEdges) {
-        Collection<JobGraphLink> edges = _graph.getInEdges(obj);
+    private int getAccumulatedPrerequisiteCount(final Object obj, final Set<JobGraphLink> visitedEdges) {
+        final Collection<JobGraphLink> edges = _graph.getInEdges(obj);
         if (edges == null || edges.isEmpty()) {
             return 0;
         }
         int max = 0;
-        for (JobGraphLink edge : edges) {
+        for (final JobGraphLink edge : edges) {
             final boolean added = visitedEdges.add(edge);
             if (added) {
                 assert edge.getTo() == obj;
@@ -273,7 +267,7 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
         int maxY = 400;
 
         final Collection<Point> points = _points.values();
-        for (Point point : points) {
+        for (final Point point : points) {
             maxX = Math.max(maxX, point.x + IconUtils.ICON_SIZE_LARGE);
             maxY = Math.max(maxY, point.y + IconUtils.ICON_SIZE_LARGE);
         }

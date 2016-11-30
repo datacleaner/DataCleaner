@@ -19,10 +19,9 @@
  */
 package org.datacleaner.beans.codec;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
@@ -44,7 +43,7 @@ public class XmlDecoderTransformer implements Transformer {
     public XmlDecoderTransformer() {
     }
 
-    public XmlDecoderTransformer(MockInputColumn<String> column) {
+    public XmlDecoderTransformer(final MockInputColumn<String> column) {
         this();
         this.column = column;
     }
@@ -55,7 +54,7 @@ public class XmlDecoderTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow inputRow) {
+    public String[] transform(final InputRow inputRow) {
         final String value = inputRow.getValue(column);
         if (value == null) {
             return new String[1];

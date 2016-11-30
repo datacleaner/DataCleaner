@@ -21,22 +21,22 @@ package org.datacleaner.job.runner;
 
 /**
  * A throwable that will be thrown if a job should be cancelled.
- * 
- * 
+ *
+ *
  */
 public class AnalysisJobCancellation extends Throwable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public AnalysisJobCancellation() {
-		super();
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof AnalysisJobCancellation) {
-			return true;
-		}
-		return super.equals(obj);
-	}
+    public AnalysisJobCancellation() {
+        super();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof AnalysisJobCancellation) {
+            return true;
+        }
+        return super.equals(obj);
+    }
 }

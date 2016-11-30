@@ -21,8 +21,6 @@ package org.datacleaner.widgets.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,24 +47,20 @@ import org.jdesktop.swingx.VerticalLayout;
  */
 public class VerticalTabbedPane extends DCPanel {
 
+    public interface Listener {
+        void stateChanged(int newIndex, Tab<?> newTab);
+    }
+
     private static final long serialVersionUID = 1L;
-
     private static final ImageManager imageManager = ImageManager.get();
-
     private static final Color COLOR_SELECTED_FOREGROUND = WidgetUtils.BG_COLOR_BLUE_DARK;
     private static final Color COLOR_SELECTED_BACKGROUND = WidgetUtils.BG_COLOR_LESS_BRIGHT;
-    private static final Border BORDER_TABS = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(
-            10, 4, 10, 4));
-
+    private static final Border BORDER_TABS =
+            new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
     private final List<VerticalTab<?>> _tabs;
     private final DCPanel _leftPanel;
     private JComponent _currentContent;
-
-    public static interface Listener {
-        public void stateChanged(int newIndex, Tab<?> newTab);
-    }
-
-    private List<Listener> changeListeners = new ArrayList<Listener>();
+    private List<Listener> changeListeners = new ArrayList<>();
 
     public VerticalTabbedPane() {
         super();
@@ -78,7 +72,7 @@ public class VerticalTabbedPane extends DCPanel {
         setLayout(new BorderLayout());
         add(wrapInCollapsiblePane(wrapInScrollPane(_leftPanel)), BorderLayout.WEST);
     }
-    
+
     protected JComponent wrapInScrollPane(final JComponent panel) {
         final JScrollPane scroll = WidgetUtils.scrolleable(panel);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -91,24 +85,21 @@ public class VerticalTabbedPane extends DCPanel {
         collapsiblePane.add(panel);
         collapsiblePane.setAnimated(false);
 
-        final JButton toggleTabViewButton = new JButton(
-                imageManager.getImageIcon("images/widgets/vertical-tabs-collapse.png"));
+        final JButton toggleTabViewButton =
+                new JButton(imageManager.getImageIcon("images/widgets/vertical-tabs-collapse.png"));
         toggleTabViewButton.setBorder(null);
         toggleTabViewButton.setOpaque(false);
         toggleTabViewButton.setContentAreaFilled(false);
-        toggleTabViewButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean collapsed = collapsiblePane.isCollapsed();
-                if (collapsed) {
-                    toggleTabViewButton.setIcon(imageManager.getImageIcon("images/widgets/vertical-tabs-collapse.png"));
-                    toggleTabViewButton.setBorder(null);
-                } else {
-                    toggleTabViewButton.setIcon(imageManager.getImageIcon("images/widgets/vertical-tabs-expand.png"));
-                    toggleTabViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
-                }
-                collapsiblePane.setCollapsed(!collapsed);
+        toggleTabViewButton.addActionListener(e -> {
+            final boolean collapsed = collapsiblePane.isCollapsed();
+            if (collapsed) {
+                toggleTabViewButton.setIcon(imageManager.getImageIcon("images/widgets/vertical-tabs-collapse.png"));
+                toggleTabViewButton.setBorder(null);
+            } else {
+                toggleTabViewButton.setIcon(imageManager.getImageIcon("images/widgets/vertical-tabs-expand.png"));
+                toggleTabViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
             }
+            collapsiblePane.setCollapsed(!collapsed);
         });
 
         final DCPanel collapseButtonPanel = new DCPanel();
@@ -131,7 +122,7 @@ public class VerticalTabbedPane extends DCPanel {
 
     public int getSelectedIndex() {
         int i = 0;
-        for (VerticalTab<?> tab : _tabs) {
+        for (final VerticalTab<?> tab : _tabs) {
             final JButton button = tab.getButton();
             if (button.getForeground() == COLOR_SELECTED_FOREGROUND
                     && button.getBackground() == COLOR_SELECTED_BACKGROUND) {
@@ -143,9 +134,9 @@ public class VerticalTabbedPane extends DCPanel {
         return -1;
     }
 
-    public void setSelectedIndex(int index) {
+    public void setSelectedIndex(final int index) {
         // reset other components
-        for (VerticalTab<?> tab : _tabs) {
+        for (final VerticalTab<?> tab : _tabs) {
             final JButton button = tab.getButton();
             button.setForeground(null);
             button.setBackground(null);
@@ -171,27 +162,22 @@ public class VerticalTabbedPane extends DCPanel {
         add(scroll, BorderLayout.CENTER);
         _currentContent = scroll;
 
-        for (Listener listener : changeListeners) {
+        for (final Listener listener : changeListeners) {
             listener.stateChanged(index, tab);
         }
 
         updateUI();
     }
 
-    public <C extends JComponent> Tab<C> addTab(String title, Icon icon, C component) {
+    public <C extends JComponent> Tab<C> addTab(final String title, final Icon icon, final C component) {
         final int index = _tabs.size();
 
         final JButton button = WidgetFactory.createDefaultButton(title, icon);
         button.setHorizontalAlignment(SwingConstants.LEFT);
         button.setBorder(BORDER_TABS);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setSelectedIndex(index);
-            }
-        });
+        button.addActionListener(e -> setSelectedIndex(index));
         _leftPanel.add(button);
-        final VerticalTab<C> tab = new VerticalTab<C>(button, component);
+        final VerticalTab<C> tab = new VerticalTab<>(button, component);
         _tabs.add(tab);
 
         if (index == 0) {
@@ -202,7 +188,7 @@ public class VerticalTabbedPane extends DCPanel {
         return tab;
     }
 
-    public void addListener(Listener listener) {
+    public void addListener(final Listener listener) {
         changeListeners.add(listener);
     }
 }

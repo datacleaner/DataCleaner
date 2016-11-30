@@ -28,16 +28,16 @@ import org.datacleaner.api.InputRow;
 
 @Named("Mock filter")
 public class MockFilter implements Filter<MockFilter.Category> {
-    
+
+    public enum Category {
+        VALID, INVALID
+    }
+
     @Configured
     InputColumn<?> input;
 
-    public static enum Category {
-        VALID, INVALID
-    }
-    
     @Override
-    public Category categorize(InputRow inputRow) {
+    public Category categorize(final InputRow inputRow) {
         return Category.VALID;
     }
 }

@@ -32,15 +32,15 @@ import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class CreateStagingTableAnalyzerSwingRenderer implements
-        Renderer<AnalyzerComponentBuilder<CreateStagingTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
+public class CreateStagingTableAnalyzerSwingRenderer
+        implements Renderer<AnalyzerComponentBuilder<CreateStagingTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<CreateStagingTableAnalyzer> ajb) {
-        Class<CreateStagingTableAnalyzer> componentClass = ajb.getDescriptor().getComponentClass();
+    public RendererPrecedence getPrecedence(final AnalyzerComponentBuilder<CreateStagingTableAnalyzer> ajb) {
+        final Class<CreateStagingTableAnalyzer> componentClass = ajb.getDescriptor().getComponentClass();
         if (componentClass == CreateStagingTableAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -48,9 +48,9 @@ public class CreateStagingTableAnalyzerSwingRenderer implements
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<CreateStagingTableAnalyzer> ajb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
-                PropertyWidgetFactory.class);
+    public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<CreateStagingTableAnalyzer> ajb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
         return new CustomHeaderColumnNamesAnalyzerJobPanel(ajb, propertyWidgetFactory);
     }
 

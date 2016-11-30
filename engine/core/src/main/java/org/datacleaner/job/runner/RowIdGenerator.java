@@ -30,16 +30,16 @@ public interface RowIdGenerator {
 
     /**
      * Gets the next unique id, for a physical row.
-     * 
+     *
      * @return
      */
-    public int nextPhysicalRowId();
+    int nextPhysicalRowId();
 
     /**
      * Gets a new unique id, for a virtual/transformed row. This will only be
      * invoked in case of transformers that use the {@link OutputRowCollector}
-     * 
+     *
      * @return
      */
-    public int nextVirtualRowId();
+    int nextVirtualRowId();
 }

@@ -30,7 +30,7 @@ public abstract class DatastorePageTable extends AbstractFreemarkerWizardPage {
 
     protected final DatastoreWizardSession _session;
 
-    public DatastorePageTable(DatastoreWizardSession session) {
+    public DatastorePageTable(final DatastoreWizardSession session) {
         _session = session;
     }
 
@@ -49,9 +49,9 @@ public abstract class DatastorePageTable extends AbstractFreemarkerWizardPage {
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
         model.put(PROPERTY_TABLE, _session.getTable());
-        model.put(PROPERTY_TABLE_OPTIONS, 
-                DatastoreHelper.getTableOptions(_session.getWizardContext().getTenantContext(), 
-                        _session.getDatastore(), _session.getSchema()));
+        model.put(PROPERTY_TABLE_OPTIONS, DatastoreHelper
+                .getTableOptions(_session.getWizardContext().getTenantContext(), _session.getDatastore(),
+                        _session.getSchema()));
 
         return model;
     }

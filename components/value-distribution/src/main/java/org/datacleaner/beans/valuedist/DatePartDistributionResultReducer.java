@@ -40,26 +40,27 @@ import org.datacleaner.result.CrosstabResult;
 public class DatePartDistributionResultReducer extends AbstractCrosstabResultReducer<CrosstabResult> {
 
     @Override
-    protected Serializable reduceValues(List<Object> values, String arg1, String arg2,
-            Collection<? extends CrosstabResult> arg3, Class<?> arg4) {
+    protected Serializable reduceValues(final List<Object> values, final String arg1, final String arg2,
+            final Collection<? extends CrosstabResult> arg3, final Class<?> arg4) {
         // all measures in these crosstabs are summable.
         return sum(values);
     }
 
     @Override
-    protected CrosstabResult buildResult(Crosstab<?> crosstab, Collection<? extends CrosstabResult> results) {
+    protected CrosstabResult buildResult(final Crosstab<?> crosstab,
+            final Collection<? extends CrosstabResult> results) {
         return new CrosstabResult(crosstab);
     }
 
     @Override
-    protected Crosstab<Serializable> createMasterCrosstab(Collection<? extends CrosstabResult> results) {
+    protected Crosstab<Serializable> createMasterCrosstab(final Collection<? extends CrosstabResult> results) {
         final CrosstabResult firstResult = results.iterator().next();
         final Class<?> valueClass = firstResult.getCrosstab().getValueClass();
         final Set<String> categories1 = createColumnDimensionCategorySet();
         final Set<String> categories2 = createMeasureDimensionCategorySet();
 
-        for (CrosstabResult crosstabResult : results) {
-            Crosstab<?> crosstab = crosstabResult.getCrosstab();
+        for (final CrosstabResult crosstabResult : results) {
+            final Crosstab<?> crosstab = crosstabResult.getCrosstab();
             categories1.addAll(crosstab.getDimension(0).getCategories());
             categories2.addAll(crosstab.getDimension(1).getCategories());
         }
@@ -70,17 +71,17 @@ public class DatePartDistributionResultReducer extends AbstractCrosstabResultRed
         final CrosstabDimension dimension2 = new CrosstabDimension(firstResult.getCrosstab().getDimension(1).getName());
         dimension2.addCategories(categories2);
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        final Crosstab<Serializable> crosstab = new Crosstab(valueClass, dimension1, dimension2);
+        @SuppressWarnings({ "unchecked", "rawtypes" }) final Crosstab<Serializable> crosstab =
+                new Crosstab(valueClass, dimension1, dimension2);
         return crosstab;
     }
-    
+
 
     protected Set<String> createMeasureDimensionCategorySet() {
-        return new TreeSet<String>();
+        return new TreeSet<>();
     }
 
     protected Set<String> createColumnDimensionCategorySet() {
-        return new TreeSet<String>();
+        return new TreeSet<>();
     }
 }

@@ -56,13 +56,13 @@ public class DescriptorMenuItem extends JMenuItem implements ActionListener {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final Point2D _coordinate;
 
-    public DescriptorMenuItem(AnalysisJobBuilder analysisJobBuilder, Point2D coordinate,
-            ComponentDescriptor<?> descriptor) {
+    public DescriptorMenuItem(final AnalysisJobBuilder analysisJobBuilder, final Point2D coordinate,
+            final ComponentDescriptor<?> descriptor) {
         this(analysisJobBuilder, coordinate, descriptor, true);
     }
 
-    public DescriptorMenuItem(AnalysisJobBuilder analysisJobBuilder, Point2D coordinate,
-            ComponentDescriptor<?> descriptor, boolean addDefaultActionListener) {
+    public DescriptorMenuItem(final AnalysisJobBuilder analysisJobBuilder, final Point2D coordinate,
+            final ComponentDescriptor<?> descriptor, final boolean addDefaultActionListener) {
         super(descriptor.getDisplayName());
         _analysisJobBuilder = analysisJobBuilder;
         _coordinate = coordinate;
@@ -74,7 +74,7 @@ public class DescriptorMenuItem extends JMenuItem implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         final Map<String, String> metadata;
         if (_coordinate == null) {
             metadata = null;
@@ -97,33 +97,32 @@ public class DescriptorMenuItem extends JMenuItem implements ActionListener {
 
     @Override
     public JToolTip createToolTip() {
-        JToolTip toolTip = new DCToolTip(this, createToolTipPanel());
-        return toolTip;
+        return new DCToolTip(this, createToolTipPanel());
     }
 
     protected JComponent createToolTipPanel() {
-        DCPanel panel = new DCPanel();
+        final DCPanel panel = new DCPanel();
         panel.setOpaque(true);
         panel.setBackground(WidgetUtils.BG_COLOR_DARK);
 
-        JLabel iconLabel = new JLabel(IconUtils.getDescriptorIcon(_descriptor, IconUtils.ICON_SIZE_LARGE));
+        final JLabel iconLabel = new JLabel(IconUtils.getDescriptorIcon(_descriptor, IconUtils.ICON_SIZE_LARGE));
         iconLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
         iconLabel.setOpaque(false);
 
-        JLabel nameLabel = new JLabel(_descriptor.getDisplayName());
+        final JLabel nameLabel = new JLabel(_descriptor.getDisplayName());
         nameLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         nameLabel.setOpaque(false);
         nameLabel.setFont(WidgetUtils.FONT_HEADER1);
 
         // if the bean has a description, add it in the CENTER of the tooltip
-        String description = _descriptor.getDescription();
+        final String description = _descriptor.getDescription();
         if (StringUtils.isNullOrEmpty(description)) {
 
             WidgetUtils.addToGridBag(iconLabel, panel, 0, 0);
             WidgetUtils.addToGridBag(nameLabel, panel, 1, 0);
 
         } else {
-            String[] lines = description.split("\n");
+            final String[] lines = description.split("\n");
 
             WidgetUtils.addToGridBag(iconLabel, panel, 0, 0, 1, lines.length + 1, GridBagConstraints.WEST);
             WidgetUtils.addToGridBag(nameLabel, panel, 1, 0);
@@ -132,12 +131,12 @@ public class DescriptorMenuItem extends JMenuItem implements ActionListener {
             int height = 0;
 
             for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
+                final String line = lines[i];
 
-                DCLabel label = DCLabel.brightMultiLine(line);
+                final DCLabel label = DCLabel.brightMultiLine(line);
                 label.setMaximumWidth(350);
 
-                Dimension ps = label.getPreferredSize();
+                final Dimension ps = label.getPreferredSize();
                 height += ps.height + 8;
                 width = Math.max(ps.width, width);
 
@@ -150,7 +149,7 @@ public class DescriptorMenuItem extends JMenuItem implements ActionListener {
             panel.setPreferredSize(new Dimension(width, height));
         }
 
-        Border border = new CompoundBorder(WidgetUtils.BORDER_THIN, WidgetUtils.BORDER_EMPTY);
+        final Border border = new CompoundBorder(WidgetUtils.BORDER_THIN, WidgetUtils.BORDER_EMPTY);
         panel.setBorder(border);
         return panel;
     }

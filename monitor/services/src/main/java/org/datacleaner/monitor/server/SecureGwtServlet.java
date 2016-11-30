@@ -26,13 +26,13 @@ import java.security.Principal;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
-import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.server.security.TenantResolver;
 import org.datacleaner.monitor.server.security.User;
 import org.datacleaner.monitor.server.security.UserBean;
 import org.datacleaner.monitor.shared.model.DCSecurityException;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -45,9 +45,9 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 /**
  * Abstract {@link RemoteServiceServlet} which adds security on top of GWT-RPC
  * method calls.
- * 
+ *
  * The security is enforced by checking:
- * 
+ *
  * <ul>
  * <li>There is a valid {@link Principal} attached to the request/session.</li>
  * <li>If there is a {@link TenantIdentifier} in the payload of the RPC call, it
@@ -70,18 +70,18 @@ public class SecureGwtServlet extends RemoteServiceServlet {
     }
 
     @Override
-    protected void doUnexpectedFailure(Throwable exception) {
+    protected void doUnexpectedFailure(final Throwable exception) {
         if (exception instanceof DCSecurityException) {
             final HttpServletResponse response = getThreadLocalResponse();
             try {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
                 return;
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 getLogger().error("Failed to send error: " + exception.getMessage(), e);
             }
         } else {
-            getLogger().warn("Unexpected exception occurred in GWT servlet: " + exception.getClass().getName(),
-                    exception);
+            getLogger()
+                    .warn("Unexpected exception occurred in GWT servlet: " + exception.getClass().getName(), exception);
         }
         super.doUnexpectedFailure(exception);
     }
@@ -95,7 +95,7 @@ public class SecureGwtServlet extends RemoteServiceServlet {
         return LoggerFactory.getLogger(SecureGwtServlet.class);
     }
 
-    protected boolean hasRole(String roleName) {
+    protected boolean hasRole(final String roleName) {
         final Principal principal = getThreadLocalRequest().getUserPrincipal();
         if (principal == null) {
             return false;
@@ -110,7 +110,7 @@ public class SecureGwtServlet extends RemoteServiceServlet {
     }
 
     @Override
-    protected void onAfterRequestDeserialized(RPCRequest request) {
+    protected void onAfterRequestDeserialized(final RPCRequest request) {
         final Principal principal = getThreadLocalRequest().getUserPrincipal();
         if (principal == null || StringUtils.isNullOrEmpty(principal.getName())) {
             throw new DCSecurityException("No user principal - log in to use the system");
@@ -129,7 +129,7 @@ public class SecureGwtServlet extends RemoteServiceServlet {
 
         final RolesAllowed rolesAllowedAnnotation = ReflectionUtils.getAnnotation(method, RolesAllowed.class);
         if (rolesAllowedAnnotation != null) {
-            String[] rolesAllowed = rolesAllowedAnnotation.value();
+            final String[] rolesAllowed = rolesAllowedAnnotation.value();
             checkRoles(user, rolesAllowed, method);
         }
 
@@ -137,24 +137,25 @@ public class SecureGwtServlet extends RemoteServiceServlet {
         for (int i = 0; i < parameterTypes.length; i++) {
             final Class<?> cls = parameterTypes[i];
             if (cls == TenantIdentifier.class) {
-                TenantIdentifier tenantIdentifier = (TenantIdentifier) request.getParameters()[i];
+                final TenantIdentifier tenantIdentifier = (TenantIdentifier) request.getParameters()[i];
                 checkTenant(user, tenantIdentifier);
                 break;
             }
         }
     }
 
-    private void checkTenant(User user, TenantIdentifier tenantIdentifier) {
+    private void checkTenant(final User user, final TenantIdentifier tenantIdentifier) {
         final String authorizedTenant = user.getTenant();
         final String requestedTenant = tenantIdentifier.getId();
         if (!authorizedTenant.equals(requestedTenant)) {
-            throw new DCSecurityException("User " + user.getUsername() + " (" + authorizedTenant
-                    + ") is not authorized to access tenant: " + requestedTenant);
+            throw new DCSecurityException(
+                    "User " + user.getUsername() + " (" + authorizedTenant + ") is not authorized to access tenant: "
+                            + requestedTenant);
         }
     }
 
-    private void checkRoles(User user, String[] rolesAllowed, Method method) {
-        for (String role : rolesAllowed) {
+    private void checkRoles(final User user, final String[] rolesAllowed, final Method method) {
+        for (final String role : rolesAllowed) {
             if (user.hasRole(role)) {
                 // authorized
                 return;

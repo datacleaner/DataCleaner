@@ -36,11 +36,11 @@ import org.joda.time.Years;
 
 /**
  * A transformer for turning a date into age (both in years and in days).
- * 
+ *
  * The transformer and it's intended usage is depicted in this graph:
- * 
+ *
  * <img src="doc-files/DateToAgeTransformer.jpg" alt=""/>
- * 
+ *
  * <p>
  * The transformer has been more thouroughly explained at kasper's source, see:
  * <a href=
@@ -68,18 +68,18 @@ public class DateToAgeTransformer implements Transformer {
     }
 
     @Override
-    public Integer[] transform(InputRow inputRow) {
-        Integer[] result = new Integer[2];
-        Date date = inputRow.getValue(dateColumn);
+    public Integer[] transform(final InputRow inputRow) {
+        final Integer[] result = new Integer[2];
+        final Date date = inputRow.getValue(dateColumn);
 
         if (date != null) {
-            long diffMillis = today.getTime() - date.getTime();
-            int diffDays = (int) (diffMillis / (1000 * 60 * 60 * 24));
+            final long diffMillis = today.getTime() - date.getTime();
+            final int diffDays = (int) (diffMillis / (1000 * 60 * 60 * 24));
 
             result[0] = diffDays;
 
             // use Joda time to easily calculate the diff in years
-            int diffYears = Years.yearsBetween(new DateTime(date), new DateTime(today)).getYears();
+            final int diffYears = Years.yearsBetween(new DateTime(date), new DateTime(today)).getYears();
             result[1] = diffYears;
         }
 
@@ -87,12 +87,12 @@ public class DateToAgeTransformer implements Transformer {
     }
 
     // injection for testing purposes only
-    public void setToday(Date today) {
+    public void setToday(final Date today) {
         this.today = today;
     }
 
     // injection for testing purposes only
-    public void setDateColumn(InputColumn<Date> dateColumn) {
+    public void setDateColumn(final InputColumn<Date> dateColumn) {
         this.dateColumn = dateColumn;
     }
 }

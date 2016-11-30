@@ -21,8 +21,6 @@ package org.datacleaner.test.scenario;
 
 import java.awt.GraphicsEnvironment;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.vfs2.FileObject;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -36,6 +34,8 @@ import org.datacleaner.windows.AnalysisJobBuilderWindowImpl;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import junit.framework.TestCase;
+
 public class OpenAnalysisJobTest extends TestCase {
 
     @Override
@@ -47,7 +47,7 @@ public class OpenAnalysisJobTest extends TestCase {
     /**
      * A very broad integration test which opens a job with (more or less) all
      * built-in analyzers.
-     * 
+     *
      * @throws Exception
      */
     public void testOpenJobWithManyAnalyzers() throws Exception {
@@ -56,15 +56,16 @@ public class OpenAnalysisJobTest extends TestCase {
             return;
         }
 
-        DCModule module = new DCModuleImpl();
+        final DCModule module = new DCModuleImpl();
         Injector injector = Guice.createInjector(module);
-        DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
+        final DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
 
-        FileObject file = VFSUtils.getFileSystemManager().resolveFile("src/test/resources/all_analyzers.analysis.xml");
+        final FileObject file =
+                VFSUtils.getFileSystemManager().resolveFile("src/test/resources/all_analyzers.analysis.xml");
         assertTrue(file.exists());
 
         injector = OpenAnalysisJobActionListener.open(file, configuration, injector);
-        AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+        final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
 
         assertNotNull(window);
 

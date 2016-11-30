@@ -40,10 +40,10 @@ public class PropertyWidgetCollection {
     private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _widgets;
     private final Map<ConfiguredPropertyDescriptor, PropertyWidgetMapping> _propertyWidgetMappings;
 
-    public PropertyWidgetCollection(ComponentBuilder componentBuilder) {
+    public PropertyWidgetCollection(final ComponentBuilder componentBuilder) {
         _componentBuilder = componentBuilder;
-        _widgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
-        _propertyWidgetMappings = new IdentityHashMap<ConfiguredPropertyDescriptor, PropertyWidgetMapping>();
+        _widgets = new HashMap<>();
+        _propertyWidgetMappings = new IdentityHashMap<>();
 
         logger.debug("id={} - init", System.identityHashCode(this));
     }
@@ -52,19 +52,19 @@ public class PropertyWidgetCollection {
         return _widgets.values();
     }
 
-    public PropertyWidget<?> getWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
+    public PropertyWidget<?> getWidget(final ConfiguredPropertyDescriptor propertyDescriptor) {
         return _widgets.get(propertyDescriptor);
     }
 
-    public void putMappedPropertyWidget(ConfiguredPropertyDescriptor mappedProperty,
-            PropertyWidgetMapping propertyWidgetMapping) {
+    public void putMappedPropertyWidget(final ConfiguredPropertyDescriptor mappedProperty,
+            final PropertyWidgetMapping propertyWidgetMapping) {
         _propertyWidgetMappings.put(mappedProperty, propertyWidgetMapping);
     }
 
-    public PropertyWidget<?> getMappedPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
+    public PropertyWidget<?> getMappedPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor) {
         final PropertyWidgetMapping existingMapping = _propertyWidgetMappings.get(propertyDescriptor);
         if (existingMapping != null) {
-            PropertyWidget<?> propertyWidget = existingMapping.getMapping(propertyDescriptor);
+            final PropertyWidget<?> propertyWidget = existingMapping.getMapping(propertyDescriptor);
             if (propertyWidget != null) {
                 return propertyWidget;
             }
@@ -77,18 +77,17 @@ public class PropertyWidgetCollection {
      * used to actually instantiate the widget, but it is still needed to
      * register the widget for compliancy with eg. the onConfigurationChanged()
      * behaviour.
-     * 
+     *
      * @param propertyDescriptor
      * @param widget
      */
-    public void registerWidget(ConfiguredPropertyDescriptor propertyDescriptor, PropertyWidget<?> widget) {
+    public void registerWidget(final ConfiguredPropertyDescriptor propertyDescriptor, final PropertyWidget<?> widget) {
         if (widget == null) {
             _widgets.remove(propertyDescriptor);
         } else {
             _widgets.put(propertyDescriptor, widget);
-            @SuppressWarnings("unchecked")
-            PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
-            Object value = _componentBuilder.getConfiguredProperty(objectWidget.getPropertyDescriptor());
+            @SuppressWarnings("unchecked") final PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
+            final Object value = _componentBuilder.getConfiguredProperty(objectWidget.getPropertyDescriptor());
             objectWidget.initialize(value);
         }
     }
@@ -106,7 +105,7 @@ public class PropertyWidgetCollection {
             sb.append(System.identityHashCode(this));
             sb.append(" - onConfigurationChanged() - notifying widgets:");
             sb.append(widgets.size());
-            for (PropertyWidget<?> widget : widgets) {
+            for (final PropertyWidget<?> widget : widgets) {
                 final String propertyName = widget.getPropertyDescriptor().getName();
                 final String propertyWidgetClassName = widget.getClass().getSimpleName();
                 sb.append("\n - ");
@@ -118,9 +117,8 @@ public class PropertyWidgetCollection {
             logger.debug(sb.toString());
         }
 
-        for (PropertyWidget<?> widget : widgets) {
-            @SuppressWarnings("unchecked")
-            final PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
+        for (final PropertyWidget<?> widget : widgets) {
+            @SuppressWarnings("unchecked") final PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
             final ConfiguredPropertyDescriptor propertyDescriptor = objectWidget.getPropertyDescriptor();
             final Object value = _componentBuilder.getConfiguredProperty(propertyDescriptor);
             objectWidget.onValueTouched(value);

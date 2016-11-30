@@ -28,7 +28,7 @@ import java.util.List;
  */
 public interface MetricValues {
 
-    public Date getMetricDate();
+    Date getMetricDate();
 
-    public List<Number> getValues();
+    List<Number> getValues();
 }

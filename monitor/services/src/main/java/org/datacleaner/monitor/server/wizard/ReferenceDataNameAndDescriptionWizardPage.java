@@ -41,8 +41,8 @@ public abstract class ReferenceDataNameAndDescriptionWizardPage extends Abstract
     private final String _suggestedName;
     private final String _suggestedDescription;
 
-    public ReferenceDataNameAndDescriptionWizardPage(ReferenceDataWizardContext context, int pageIndex,
-            String suggestedName, String suggestedDescription) {
+    public ReferenceDataNameAndDescriptionWizardPage(final ReferenceDataWizardContext context, final int pageIndex,
+            final String suggestedName, final String suggestedDescription) {
         _context = context;
         _pageIndex = pageIndex;
         _suggestedName = (suggestedName == null ? "" : suggestedName);
@@ -55,7 +55,7 @@ public abstract class ReferenceDataNameAndDescriptionWizardPage extends Abstract
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final String name = formParameters.get("name").get(0);
 

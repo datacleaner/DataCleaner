@@ -32,13 +32,13 @@ public class LocalizedNameAnnotationAdaptor implements MetadataAnnotationAdaptor
     }
 
     @Override
-    public LocalizedName convertFromAnnotation(MetadataAnnotation annotation) {
+    public LocalizedName convertFromAnnotation(final MetadataAnnotation annotation) {
         final Map<String, String> parameters = annotation.getParameters();
         return new LocalizedName(parameters);
     }
 
     @Override
-    public MetadataAnnotation convertToAnnotation(LocalizedName object) {
+    public MetadataAnnotation convertToAnnotation(final LocalizedName object) {
         final Map<String, String> map = object.getDisplayNamesAsMap();
         return new MetadataAnnotationImpl(getAnnotationName(), map);
     }

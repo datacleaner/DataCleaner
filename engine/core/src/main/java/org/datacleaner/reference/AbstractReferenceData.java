@@ -32,14 +32,14 @@ public abstract class AbstractReferenceData implements ReferenceData {
 
     @Moved
     private final String _name;
-    
+
     private String _description;
 
-    public AbstractReferenceData(String name) {
+    public AbstractReferenceData(final String name) {
         _name = name;
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, AbstractReferenceData.class).readObject(stream);
     }
 
@@ -55,16 +55,16 @@ public abstract class AbstractReferenceData implements ReferenceData {
      * {@inheritDoc}
      */
     @Override
-    public final String getName() {
-        return _name;
+    public final void setDescription(final String description) {
+        _description = description;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final void setDescription(String description) {
-        _description = description;
+    public final String getName() {
+        return _name;
     }
 
     @Override
@@ -73,7 +73,7 @@ public abstract class AbstractReferenceData implements ReferenceData {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -20,8 +20,6 @@
 package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +31,6 @@ import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.MutableRef;
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
@@ -64,10 +61,10 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
 
     /**
      * Creates the property widget
-     * 
+     *
      * @param componentBuilder
      * @param propertyDescriptor
-     * 
+     *
      * @deprecated use
      *             {@link #SingleTableNamePropertyWidget(ComponentBuilder, ConfiguredPropertyDescriptor, WindowContext)}
      *             instead.
@@ -80,7 +77,7 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
 
     /**
      * Creates the property widget
-     * 
+     *
      * @param componentBuilder
      * @param propertyDescriptor
      * @param windowContext
@@ -89,43 +86,32 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
             final ConfiguredPropertyDescriptor propertyDescriptor, final WindowContext windowContext) {
         super(componentBuilder, propertyDescriptor);
 
-        _schemaRef = new MutableRef<Schema>();
-        _datastoreRef = new MutableRef<Datastore>();
+        _schemaRef = new MutableRef<>();
+        _datastoreRef = new MutableRef<>();
 
-        _comboBox = new DCComboBox<Table>();
+        _comboBox = new DCComboBox<>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
         _comboBox.setEditable(false);
-        addComboListener(new Listener<Table>() {
-            @Override
-            public void onItemSelected(Table item) {
-                fireValueChanged();
-            }
-        });
+        addComboListener(item -> fireValueChanged());
 
         final JButton createTableButton = WidgetFactory.createSmallButton(IconUtils.ACTION_CREATE_TABLE);
         createTableButton.setToolTipText("Create table");
-        createTableButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final Schema schema = _schemaRef.get();
-                final Datastore datastore = _datastoreRef.get();
-                if (datastore instanceof UpdateableDatastore) {
-                    final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
-                    final CreateTableDialog dialog = new CreateTableDialog(windowContext, updateableDatastore, schema,
-                            getCreateTableColumnSuggestions());
-                    dialog.addListener(new CreateTableDialog.Listener() {
-                        @Override
-                        public void onTableCreated(UpdateableDatastore datastore, Schema schema, String tableName) {
-                            try (UpdateableDatastoreConnection con = datastore.openConnection()) {
-                                con.getDataContext().refreshSchemas();
-                                final Schema newSchema = con.getDataContext().getSchemaByName(schema.getName());
-                                setSchema(datastore, newSchema);
-                                setValue(tableName);
-                            }
-                        }
-                    });
-                    dialog.open();
-                }
+        createTableButton.addActionListener(e -> {
+            final Schema schema = _schemaRef.get();
+            final Datastore datastore = _datastoreRef.get();
+            if (datastore instanceof UpdateableDatastore) {
+                final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
+                final CreateTableDialog dialog = new CreateTableDialog(windowContext, updateableDatastore, schema,
+                        getCreateTableColumnSuggestions());
+                dialog.addListener((datastore1, schema1, tableName) -> {
+                    try (UpdateableDatastoreConnection con = datastore1.openConnection()) {
+                        con.getDataContext().refreshSchemas();
+                        final Schema newSchema = con.getDataContext().getSchemaByName(schema1.getName());
+                        setSchema(datastore1, newSchema);
+                        setValue(tableName);
+                    }
+                });
+                dialog.open();
             }
         });
 
@@ -145,35 +131,32 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
 
     protected Collection<InputColumn<?>> getCreateTableColumnSuggestions() {
         final ComponentBuilder componentBuilder = getComponentBuilder();
-        List<InputColumn<?>> columns = componentBuilder.getAnalysisJobBuilder().getAvailableInputColumns(
-                componentBuilder);
-        columns = CollectionUtils.filter(columns, new Predicate<InputColumn<?>>() {
-            @Override
-            public Boolean eval(InputColumn<?> column) {
-                if (column instanceof MutableInputColumn) {
-                    return !((MutableInputColumn<?>) column).isHidden();
-                }
-                return true;
+        List<InputColumn<?>> columns =
+                componentBuilder.getAnalysisJobBuilder().getAvailableInputColumns(componentBuilder);
+        columns = CollectionUtils.filter(columns, column -> {
+            if (column instanceof MutableInputColumn) {
+                return !((MutableInputColumn<?>) column).isHidden();
             }
+            return true;
         });
         return columns;
     }
 
-    public void addComboListener(Listener<Table> listener) {
+    public void addComboListener(final Listener<Table> listener) {
         _comboBox.addListener(listener);
     }
 
     /**
      * @param schema
-     * 
+     *
      * @deprecated use {@link #setSchema(Datastore, Schema)} instead
      */
     @Deprecated
-    public void setSchema(Schema schema) {
+    public void setSchema(final Schema schema) {
         setSchema(null, schema);
     }
 
-    public void setSchema(Datastore datastore, Schema schema) {
+    public void setSchema(final Datastore datastore, final Schema schema) {
         _panelAroundButton.setVisible(CreateTableDialog.isCreateTableAppropriate(datastore, schema));
 
         final String previousValue = getValue();
@@ -181,21 +164,21 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         _datastoreRef.set(datastore);
 
         if (schema == null) {
-            _comboBox.setModel(new DefaultComboBoxModel<Table>(new Table[1]));
+            _comboBox.setModel(new DefaultComboBoxModel<>(new Table[1]));
         } else {
             Table[] tables = schema.getTables();
             tables = CollectionUtils.array(new Table[1], tables);
-            _comboBox.setModel(new DefaultComboBoxModel<Table>(tables));
+            _comboBox.setModel(new DefaultComboBoxModel<>(tables));
 
             if (previousValue == null) {
                 if (schema.getTableCount() == 1) {
                     // if there is only 1 table, select that
-                    Table table = schema.getTables()[0];
+                    final Table table = schema.getTables()[0];
                     _comboBox.setSelectedItem(table);
                 }
             } else {
                 // select table by name
-                Table table = schema.getTableByName(previousValue);
+                final Table table = schema.getTableByName(previousValue);
                 _comboBox.setSelectedItem(table);
             }
         }
@@ -203,7 +186,7 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
 
     /**
      * Gets the combo box containing the available {@link Table}s
-     * 
+     *
      * @return
      */
     public DCComboBox<Table> getComboBox() {
@@ -217,10 +200,6 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
             return null;
         }
         return table.getName();
-    }
-
-    public Table getTable() {
-        return (Table) _comboBox.getSelectedItem();
     }
 
     @Override
@@ -244,5 +223,9 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         _comboBox.setEditable(false);
 
         fireValueChanged();
+    }
+
+    public Table getTable() {
+        return (Table) _comboBox.getSelectedItem();
     }
 }

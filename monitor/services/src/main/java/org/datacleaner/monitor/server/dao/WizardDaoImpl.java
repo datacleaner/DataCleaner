@@ -55,29 +55,28 @@ import com.google.common.cache.CacheBuilder;
 @Component
 public class WizardDaoImpl implements WizardDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(WizardDaoImpl.class);
-
     private static class WizardState {
         WizardSession session;
         Deque<WizardPageController> pages;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(WizardDaoImpl.class);
     private final Cache<String, WizardState> _wizardStateCache;
     private final ApplicationContext _applicationContext;
 
     @Autowired
-    public WizardDaoImpl(ApplicationContext applicationContext) {
+    public WizardDaoImpl(final ApplicationContext applicationContext) {
         _applicationContext = applicationContext;
         _wizardStateCache = CacheBuilder.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
     }
 
     @Override
-    public <W extends Wizard<?, ?>> Collection<W> getWizardsOfType(Class<W> wizardClass) {
+    public <W extends Wizard<?, ?>> Collection<W> getWizardsOfType(final Class<W> wizardClass) {
         return _applicationContext.getBeansOfType(wizardClass).values();
     }
 
     @Override
-    public WizardPage previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier) {
+    public WizardPage previousPage(final TenantIdentifier tenant, final WizardSessionIdentifier sessionIdentifier) {
         final String sessionId = sessionIdentifier.getSessionId();
         final WizardState state = getWizardState(sessionId);
         final WizardSession session = state.session;
@@ -90,8 +89,8 @@ public class WizardDaoImpl implements WizardDao {
     }
 
     @Override
-    public WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
-            Map<String, List<String>> formParameters) throws DCUserInputException {
+    public WizardPage nextPage(final TenantIdentifier tenant, final WizardSessionIdentifier sessionIdentifier,
+            final Map<String, List<String>> formParameters) throws DCUserInputException {
         final String sessionId = sessionIdentifier.getSessionId();
         final WizardState state = getWizardState(sessionId);
         final WizardPageController controller = state.pages.getLast();
@@ -100,10 +99,11 @@ public class WizardDaoImpl implements WizardDao {
 
         try {
             nextPageController = controller.nextPageController(formParameters);
-        } catch (DCUserInputException e) {
-            logger.info("A user input exception was thrown by wizard controller - rethrowing to UI: {}", e.getMessage());
+        } catch (final DCUserInputException e) {
+            logger.info("A user input exception was thrown by wizard controller - rethrowing to UI: {}",
+                    e.getMessage());
             throw e;
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             logger.error("An unexpected error occurred in the wizard controller, wizard will be closed", e);
             closeSession(sessionId);
             throw e;
@@ -127,19 +127,19 @@ public class WizardDaoImpl implements WizardDao {
         }
     }
 
-    private WizardState getWizardState(String sessionId) {
+    private WizardState getWizardState(final String sessionId) {
         return _wizardStateCache.getIfPresent(sessionId);
     }
 
     @Override
-    public WizardPage startSession(WizardIdentifier wizardIdentifier, WizardSession session) {
+    public WizardPage startSession(final WizardIdentifier wizardIdentifier, final WizardSession session) {
         final String sessionId = createSessionId();
 
         final WizardPageController firstPage = session.firstPageController();
 
         final WizardState state = new WizardState();
         state.session = session;
-        state.pages = new ArrayDeque<WizardPageController>();
+        state.pages = new ArrayDeque<>();
         state.pages.add(firstPage);
 
         _wizardStateCache.put(sessionId, state);
@@ -150,7 +150,7 @@ public class WizardDaoImpl implements WizardDao {
     }
 
     @Override
-    public void closeSession(String sessionId) {
+    public void closeSession(final String sessionId) {
         if (sessionId == null) {
             return;
         }
@@ -159,39 +159,36 @@ public class WizardDaoImpl implements WizardDao {
 
     /**
      * Create a convenience function that wraps the http session.
-     * 
+     *
      * @return
      */
     @Override
     public Func<String, Object> createSessionFunc() {
-        return new Func<String, Object>() {
-            @Override
-            public Object eval(String key) {
-                ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
-                        .currentRequestAttributes();
-                HttpSession session = requestAttributes.getRequest().getSession(true);
-                return session.getAttribute(key);
-            }
+        return key -> {
+            final ServletRequestAttributes requestAttributes =
+                    (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+            final HttpSession session = requestAttributes.getRequest().getSession(true);
+            return session.getAttribute(key);
         };
     }
 
     /**
      * Creates a "page" that symbolizes a finished wizard.
-     * 
+     *
      * @param sessionId
      * @param wizardResult
      * @return
      */
-    private WizardPage createFinishPage(WizardSessionIdentifier sessionIdentifier, String wizardResult) {
-        WizardPage page = new WizardPage();
+    private WizardPage createFinishPage(final WizardSessionIdentifier sessionIdentifier, final String wizardResult) {
+        final WizardPage page = new WizardPage();
         page.setPageIndex(WizardPage.PAGE_INDEX_FINISHED);
         page.setSessionIdentifier(sessionIdentifier);
         page.setWizardResult(wizardResult);
         return page;
     }
 
-    private WizardPage createPage(WizardSessionIdentifier sessionIdentifier, WizardPageController pageController,
-            WizardSession session) {
+    private WizardPage createPage(final WizardSessionIdentifier sessionIdentifier,
+            final WizardPageController pageController, final WizardSession session) {
         final WizardPage page = new WizardPage();
         page.setSessionIdentifier(sessionIdentifier);
         page.setFormInnerHtml(pageController.getFormInnerHtml());

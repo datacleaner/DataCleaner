@@ -38,17 +38,17 @@ public class DefaultJobEngineManager extends SimpleJobEngineManager {
     private final ApplicationContext _applicationContext;
 
     @Autowired
-    public DefaultJobEngineManager(ApplicationContext applicationContext) {
+    public DefaultJobEngineManager(final ApplicationContext applicationContext) {
         super();
         _applicationContext = applicationContext;
     }
 
     @Override
     public Collection<JobEngine<?>> getJobEngines() {
-        @SuppressWarnings("rawtypes")
-        final Map<String, JobEngine> beans = _applicationContext.getBeansOfType(JobEngine.class);
-        final Collection<JobEngine<?>> result = new ArrayList<JobEngine<?>>(beans.size());
-        for (JobEngine<?> jobEngine : beans.values()) {
+        @SuppressWarnings("rawtypes") final Map<String, JobEngine> beans =
+                _applicationContext.getBeansOfType(JobEngine.class);
+        final Collection<JobEngine<?>> result = new ArrayList<>(beans.size());
+        for (final JobEngine<?> jobEngine : beans.values()) {
             result.add(jobEngine);
         }
         return result;

@@ -37,7 +37,7 @@ public class GenerateIdTransformerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         transformer = new GenerateIdTransformer();
-        col = new MockInputColumn<Number>("number");
+        col = new MockInputColumn<>("number");
         transformer.columnInScope = col;
     }
 
@@ -48,7 +48,7 @@ public class GenerateIdTransformerTest extends TestCase {
         assertEquals("[3]", Arrays.toString(transformer.transform(new MockInputRow().put(col, null))));
         assertEquals("[4]", Arrays.toString(transformer.transform(new MockInputRow().put(col, null))));
     }
-    
+
     public void testSequentialId() throws Exception {
         transformer.idType = IdType.SEQUENCE;
         assertEquals("[1]", Arrays.toString(transformer.transform(new MockInputRow().put(col, null))));
@@ -56,20 +56,20 @@ public class GenerateIdTransformerTest extends TestCase {
         assertEquals("[3]", Arrays.toString(transformer.transform(new MockInputRow().put(col, null))));
         assertEquals("[4]", Arrays.toString(transformer.transform(new MockInputRow().put(col, null))));
     }
-    
+
     public void testRowId() throws Exception {
         transformer.idType = IdType.ROW_NUMBER;
-        
+
         final Number[] result1 = transformer.transform(new MockInputRow().put(col, null));
         final Number[] result2 = transformer.transform(new MockInputRow().put(col, null));
         final Number[] result3 = transformer.transform(new MockInputRow().put(col, null));
         final Number[] result4 = transformer.transform(new MockInputRow().put(col, null));
-        
+
         final int id1 = result1[0].intValue();
         final int id2 = result2[0].intValue();
         final int id3 = result3[0].intValue();
         final int id4 = result4[0].intValue();
-        
+
         assertTrue(id1 < id2);
         assertTrue(id2 < id3);
         assertTrue(id3 < id4);

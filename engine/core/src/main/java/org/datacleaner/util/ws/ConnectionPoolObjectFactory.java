@@ -43,29 +43,29 @@ final class ConnectionPoolObjectFactory implements PoolableObjectFactory<Integer
 
     @Override
     public Integer makeObject() throws Exception {
-        Integer obj = _counter.incrementAndGet();
+        final Integer obj = _counter.incrementAndGet();
         logger.debug("makeObject: {}", obj);
         return obj;
     }
 
     @Override
-    public void destroyObject(Integer obj) throws Exception {
+    public void destroyObject(final Integer obj) throws Exception {
         logger.debug("destroyObject: {}", obj);
     }
 
     @Override
-    public boolean validateObject(Integer obj) {
+    public boolean validateObject(final Integer obj) {
         logger.debug("validateObject: {}", obj);
         return true;
     }
 
     @Override
-    public void activateObject(Integer obj) throws Exception {
+    public void activateObject(final Integer obj) throws Exception {
         logger.debug("activateObject: {}", obj);
     }
 
     @Override
-    public void passivateObject(Integer obj) throws Exception {
+    public void passivateObject(final Integer obj) throws Exception {
         logger.debug("passivateObject: {}", obj);
     }
 }

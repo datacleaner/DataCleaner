@@ -25,8 +25,6 @@ import java.util.Set;
 
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.AnalyzerResultReducer;
@@ -35,7 +33,32 @@ import org.datacleaner.components.mock.AnalyzerMock;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.result.NumberResult;
 
+import junit.framework.TestCase;
+
 public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
+
+    @Named("One more mock")
+    @Distributed(false)
+    public static class OneMoreMockAnalyzer extends AnalyzerMock {
+
+    }
+
+    public static class MockResultReducer implements AnalyzerResultReducer<AnalyzerResult> {
+        @Override
+        public AnalyzerResult reduce(final Collection<? extends AnalyzerResult> results) {
+            return results.iterator().next();
+        }
+    }
+
+    @Named("Third analyzer mock")
+    @Distributed(reducer = MockResultReducer.class)
+    public static class ThirdMockAnalyzer extends AnalyzerMock {
+
+    }
+
+    @Named("invalid analyzer")
+    public abstract class InvalidAnalyzer implements Analyzer<AnalyzerResult> {
+    }
 
     @Override
     protected void tearDown() throws Exception {
@@ -44,44 +67,25 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
     }
 
     public void testInheritedAnalyzer() throws Exception {
-        AnalyzerDescriptor<OneMoreMockAnalyzer> descriptor = Descriptors.ofAnalyzer(OneMoreMockAnalyzer.class);
+        final AnalyzerDescriptor<OneMoreMockAnalyzer> descriptor = Descriptors.ofAnalyzer(OneMoreMockAnalyzer.class);
         assertEquals("One more mock", descriptor.getDisplayName());
     }
 
-    @Named("One more mock")
-    @Distributed(false)
-    public static class OneMoreMockAnalyzer extends AnalyzerMock {
-
-    }
-    
-    public static class MockResultReducer implements AnalyzerResultReducer<AnalyzerResult> {
-        @Override
-        public AnalyzerResult reduce(Collection<? extends AnalyzerResult> results) {
-            return results.iterator().next();
-        }
-    }
-    
-    @Named("Third analyzer mock")
-    @Distributed(reducer = MockResultReducer.class)
-    public static class ThirdMockAnalyzer extends AnalyzerMock {
-
-    }
-    
     public void testIsDistributed() throws Exception {
         AnalyzerDescriptor<?> desc;
-        
+
         desc = Descriptors.ofAnalyzer(AnalyzerMock.class);
         assertFalse(desc.isDistributable());
-        
+
         desc = Descriptors.ofAnalyzer(OneMoreMockAnalyzer.class);
         assertFalse(desc.isDistributable());
-        
+
         desc = Descriptors.ofAnalyzer(ThirdMockAnalyzer.class);
         assertTrue(desc.isDistributable());
     }
 
     public void testGetConfiguredPropertiesOfType() throws Exception {
-        AnalyzerDescriptor<AnalyzerMock> desc = Descriptors.ofAnalyzer(AnalyzerMock.class);
+        final AnalyzerDescriptor<AnalyzerMock> desc = Descriptors.ofAnalyzer(AnalyzerMock.class);
 
         Set<ConfiguredPropertyDescriptor> properties = desc.getConfiguredPropertiesByType(Number.class, false);
         assertEquals(1, properties.size());
@@ -103,10 +107,10 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
     }
 
     public void testRowProcessingType() throws Exception {
-        AnalyzerDescriptor<AnalyzerMock> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
+        final AnalyzerDescriptor<AnalyzerMock> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
 
-        Set<ConfiguredPropertyDescriptor> configuredProperties = descriptor.getConfiguredProperties();
-        Iterator<ConfiguredPropertyDescriptor> it = configuredProperties.iterator();
+        final Set<ConfiguredPropertyDescriptor> configuredProperties = descriptor.getConfiguredProperties();
+        final Iterator<ConfiguredPropertyDescriptor> it = configuredProperties.iterator();
         assertTrue(it.hasNext());
         assertEquals("Columns", it.next().getName());
         assertTrue(it.hasNext());
@@ -117,30 +121,29 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
         assertEquals("Some string property", it.next().getName());
         assertFalse(it.hasNext());
 
-        AnalyzerMock analyzerBean = new AnalyzerMock();
-        ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty("Configured1");
+        final AnalyzerMock analyzerBean = new AnalyzerMock();
+        final ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty("Configured1");
         configuredProperty.setValue(analyzerBean, "foobar");
         assertEquals("foobar", analyzerBean.getConfigured1());
     }
 
     public void testGetResultMetrics() throws Exception {
-        AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
+        final AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
         assertEquals(NumberResult.class, descriptor.getResultClass());
 
-        Set<MetricDescriptor> resultMetrics = descriptor.getResultMetrics();
-        assertEquals("[MetricDescriptorImpl[name=Number]]",
-                resultMetrics.toString());
+        final Set<MetricDescriptor> resultMetrics = descriptor.getResultMetrics();
+        assertEquals("[MetricDescriptorImpl[name=Number]]", resultMetrics.toString());
 
         MetricDescriptor metric = descriptor.getResultMetric("Number");
         assertEquals("MetricDescriptorImpl[name=Number]", metric.toString());
         assertFalse(metric.isParameterizedByInputColumn());
         assertFalse(metric.isParameterizedByString());
-        
+
 
         metric = descriptor.getResultMetric("Foo bar");
         assertNull(metric);
-        
-        MetricDescriptor metric2 = descriptor.getResultMetric("Some nUMBer");
+
+        final MetricDescriptor metric2 = descriptor.getResultMetric("Some nUMBer");
         assertSame(metric, metric2);
     }
 
@@ -148,14 +151,10 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
         try {
             Descriptors.ofComponent(InvalidAnalyzer.class);
             fail("Exception expected");
-        } catch (DescriptorException e) {
-            assertEquals(
-                    "Component (class org.datacleaner.descriptors.AnnotationBasedAnalyzerComponentDescriptorTest$InvalidAnalyzer) is not a non-abstract class",
+        } catch (final DescriptorException e) {
+            assertEquals("Component (class org.datacleaner.descriptors"
+                            + ".AnnotationBasedAnalyzerComponentDescriptorTest$InvalidAnalyzer) is not a non-abstract class",
                     e.getMessage());
         }
-    }
-
-    @Named("invalid analyzer")
-    public abstract class InvalidAnalyzer implements Analyzer<AnalyzerResult> {
     }
 }

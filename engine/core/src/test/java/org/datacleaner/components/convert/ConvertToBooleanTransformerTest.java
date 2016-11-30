@@ -20,50 +20,49 @@
 package org.datacleaner.components.convert;
 
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.components.convert.ConvertToBooleanTransformer;
 import org.datacleaner.data.MockInputColumn;
 
 import junit.framework.TestCase;
 
 public class ConvertToBooleanTransformerTest extends TestCase {
 
-	public void testGetOutputColumns() throws Exception {
-		ConvertToBooleanTransformer t = new ConvertToBooleanTransformer();
-		t.setInput(new MockInputColumn<String>("my col", String.class));
-		OutputColumns outputColumns = t.getOutputColumns();
-		
-		assertEquals(1, outputColumns.getColumnCount());
-		assertEquals("my col (as boolean)", outputColumns.getColumnName(0));
-	}
+    public void testGetOutputColumns() throws Exception {
+        final ConvertToBooleanTransformer t = new ConvertToBooleanTransformer();
+        t.setInput(new MockInputColumn<>("my col", String.class));
+        final OutputColumns outputColumns = t.getOutputColumns();
 
-	public void testTransform() throws Exception {
-		String[] f = ConvertToBooleanTransformer.DEFAULT_FALSE_TOKENS;
-		String[] t = ConvertToBooleanTransformer.DEFAULT_TRUE_TOKENS;
-		
-		assertNull(ConvertToBooleanTransformer.transformValue(null, t, f));
+        assertEquals(1, outputColumns.getColumnCount());
+        assertEquals("my col (as boolean)", outputColumns.getColumnName(0));
+    }
 
-		assertNull(ConvertToBooleanTransformer.transformValue("hello", t, f));
-		assertNull(ConvertToBooleanTransformer.transformValue("", t, f));
-		assertNull(ConvertToBooleanTransformer.transformValue(-1, t, f));
-		assertNull(ConvertToBooleanTransformer.transformValue(5000, t, f));
+    public void testTransform() throws Exception {
+        final String[] f = ConvertToBooleanTransformer.DEFAULT_FALSE_TOKENS;
+        final String[] t = ConvertToBooleanTransformer.DEFAULT_TRUE_TOKENS;
 
-		assertTrue(ConvertToBooleanTransformer.transformValue(true, t, f));
-		assertTrue(ConvertToBooleanTransformer.transformValue(Boolean.TRUE, t, f));
-		assertTrue(ConvertToBooleanTransformer.transformValue("true", t, f));
-		assertTrue(ConvertToBooleanTransformer.transformValue(1, t, f));
-		assertTrue(ConvertToBooleanTransformer.transformValue("yes", t, f));
-		assertTrue(ConvertToBooleanTransformer.transformValue("y", t, f));
-		assertTrue(ConvertToBooleanTransformer.transformValue("Y", t, f));
-		assertTrue(ConvertToBooleanTransformer.transformValue("tRUe", t, f));
-		assertTrue(ConvertToBooleanTransformer.transformValue("1", t, f));
+        assertNull(ConvertToBooleanTransformer.transformValue(null, t, f));
 
-		assertFalse(ConvertToBooleanTransformer.transformValue(false, t, f));
-		assertFalse(ConvertToBooleanTransformer.transformValue("false", t, f));
-		assertFalse(ConvertToBooleanTransformer.transformValue(0, t, f));
-		assertFalse(ConvertToBooleanTransformer.transformValue("no", t, f));
-		assertFalse(ConvertToBooleanTransformer.transformValue("n", t, f));
-		assertFalse(ConvertToBooleanTransformer.transformValue("N", t, f));
-		assertFalse(ConvertToBooleanTransformer.transformValue("fALse", t, f));
-		assertFalse(ConvertToBooleanTransformer.transformValue("0", t, f));
-	}
+        assertNull(ConvertToBooleanTransformer.transformValue("hello", t, f));
+        assertNull(ConvertToBooleanTransformer.transformValue("", t, f));
+        assertNull(ConvertToBooleanTransformer.transformValue(-1, t, f));
+        assertNull(ConvertToBooleanTransformer.transformValue(5000, t, f));
+
+        assertTrue(ConvertToBooleanTransformer.transformValue(true, t, f));
+        assertTrue(ConvertToBooleanTransformer.transformValue(Boolean.TRUE, t, f));
+        assertTrue(ConvertToBooleanTransformer.transformValue("true", t, f));
+        assertTrue(ConvertToBooleanTransformer.transformValue(1, t, f));
+        assertTrue(ConvertToBooleanTransformer.transformValue("yes", t, f));
+        assertTrue(ConvertToBooleanTransformer.transformValue("y", t, f));
+        assertTrue(ConvertToBooleanTransformer.transformValue("Y", t, f));
+        assertTrue(ConvertToBooleanTransformer.transformValue("tRUe", t, f));
+        assertTrue(ConvertToBooleanTransformer.transformValue("1", t, f));
+
+        assertFalse(ConvertToBooleanTransformer.transformValue(false, t, f));
+        assertFalse(ConvertToBooleanTransformer.transformValue("false", t, f));
+        assertFalse(ConvertToBooleanTransformer.transformValue(0, t, f));
+        assertFalse(ConvertToBooleanTransformer.transformValue("no", t, f));
+        assertFalse(ConvertToBooleanTransformer.transformValue("n", t, f));
+        assertFalse(ConvertToBooleanTransformer.transformValue("N", t, f));
+        assertFalse(ConvertToBooleanTransformer.transformValue("fALse", t, f));
+        assertFalse(ConvertToBooleanTransformer.transformValue("0", t, f));
+    }
 }

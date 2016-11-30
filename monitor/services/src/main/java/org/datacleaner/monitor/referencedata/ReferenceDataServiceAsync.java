@@ -31,13 +31,13 @@ public interface ReferenceDataServiceAsync {
      * @param tenant
      */
     void getDictionaries(TenantIdentifier tenant, AsyncCallback<Set<ReferenceDataItem>> callback);
-    
+
     /**
      * Gets reference data -- synonym catalogs. 
      * @param tenant
      */
     void getSynonymCatalogs(TenantIdentifier tenant, AsyncCallback<Set<ReferenceDataItem>> callback);
-    
+
     /**
      * Gets reference data -- string patterns.
      * @param tenant

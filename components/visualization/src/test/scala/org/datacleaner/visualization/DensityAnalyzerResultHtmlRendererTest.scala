@@ -1,24 +1,16 @@
 package org.datacleaner.visualization
 
 import java.io.File
-import scala.collection.JavaConversions.mapAsJavaMap
-import org.datacleaner.configuration.DataCleanerConfigurationImpl
-import org.datacleaner.configuration.DataCleanerEnvironmentImpl
-import org.datacleaner.data.MockInputColumn
-import org.datacleaner.data.MockInputRow
-import org.datacleaner.descriptors.Descriptors
-import org.datacleaner.descriptors.SimpleDescriptorProvider
-import org.datacleaner.job.ComponentJob
-import org.datacleaner.job.ImmutableAnalyzerJob
-import org.datacleaner.result.SimpleAnalysisResult
-import org.datacleaner.result.html.HtmlAnalysisResultWriter
-import org.datacleaner.storage.InMemoryRowAnnotationFactory
+
 import org.apache.metamodel.util.FileHelper
+import org.datacleaner.configuration.{DataCleanerConfigurationImpl, DataCleanerEnvironmentImpl}
+import org.datacleaner.descriptors.{Descriptors, SimpleDescriptorProvider}
+import org.datacleaner.job.builder.AnalysisJobBuilder
+import org.datacleaner.job.runner.AnalysisRunnerImpl
+import org.datacleaner.result.html.HtmlAnalysisResultWriter
+import org.datacleaner.test.TestHelper
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
-import org.datacleaner.job.builder.AnalysisJobBuilder
-import org.datacleaner.test.TestHelper
-import org.datacleaner.job.runner.AnalysisRunnerImpl
 
 class DensityAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
 

@@ -37,13 +37,13 @@ import org.datacleaner.util.LabelUtils;
 public class TextAnalysisResultWriter implements AnalysisResultWriter {
 
     @Override
-    public void write(AnalysisResult result, DataCleanerConfiguration configuration, Ref<Writer> writerRef,
-            Ref<OutputStream> outputStreamRef) throws Exception {
+    public void write(final AnalysisResult result, final DataCleanerConfiguration configuration,
+            final Ref<Writer> writerRef, final Ref<OutputStream> outputStreamRef) throws Exception {
         final Writer writer = writerRef.get();
         writer.write("SUCCESS!\n");
 
         final RendererFactory rendererFactory = new RendererFactory(configuration);
-        for (Entry<ComponentJob, AnalyzerResult> entry : result.getResultMap().entrySet()) {
+        for (final Entry<ComponentJob, AnalyzerResult> entry : result.getResultMap().entrySet()) {
             final ComponentJob componentJob = entry.getKey();
             final AnalyzerResult analyzerResult = entry.getValue();
             final String name = LabelUtils.getLabel(componentJob);
@@ -52,14 +52,14 @@ public class TextAnalysisResultWriter implements AnalysisResultWriter {
             writer.write(name);
             writer.write('\n');
 
-            final Renderer<? super AnalyzerResult, ? extends CharSequence> renderer = rendererFactory.getRenderer(
-                    analyzerResult, TextRenderingFormat.class);
+            final Renderer<? super AnalyzerResult, ? extends CharSequence> renderer =
+                    rendererFactory.getRenderer(analyzerResult, TextRenderingFormat.class);
 
             if (renderer == null) {
                 throw new IllegalStateException("No text renderer found for result: " + analyzerResult);
             }
 
-            CharSequence renderedResult = renderer.render(analyzerResult);
+            final CharSequence renderedResult = renderer.render(analyzerResult);
             writer.write(renderedResult.toString());
             writer.write('\n');
         }

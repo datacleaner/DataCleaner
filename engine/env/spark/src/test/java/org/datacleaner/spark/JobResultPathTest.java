@@ -19,10 +19,7 @@
  */
 package org.datacleaner.spark;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.net.URI;
@@ -48,33 +45,29 @@ public class JobResultPathTest {
     @Test
     public void testResultPathAbolutePathSpecified() throws Exception {
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
-        final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
-        try {
+        try (JavaSparkContext sparkContext = new JavaSparkContext(sparkConf)) {
 
             final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
-                    URI.create("src/test/resources/vanilla-job.analysis.xml"), URI.create(
-                            "src/test/resources/jobProperties/jobAbsolutePath.properties"), sparkContext);
+                    URI.create("src/test/resources/vanilla-job.analysis.xml"),
+                    URI.create("src/test/resources/jobProperties/jobAbsolutePath.properties"), sparkContext);
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
-            assertEquals("file:///target/results/myresult.analysis.result.dat", sparkJobContext.getResultPath()
-                    .toString());
+            assertEquals("file:///target/results/myresult.analysis.result.dat",
+                    sparkJobContext.getResultPath().toString());
             assertEquals("vanilla-job", sparkJobContext.getJobName());
             assertTrue(ResultFilePathUtils.getResultResource(sparkContext, sparkJobContext).getQualifiedPath()
                     .endsWith("results" + File.separator + "myresult.analysis.result.dat"));
-        } finally {
-            sparkContext.close();
         }
     }
 
     @Test
     public void testResultPathSpecifiedEmptyPath() throws Exception {
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
-        final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
-        try {
+        try (JavaSparkContext sparkContext = new JavaSparkContext(sparkConf)) {
 
             final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
-                    URI.create("src/test/resources/vanilla-job.analysis.xml"), URI.create(
-                            "src/test/resources/jobProperties/jobEmptyPath.properties"), sparkContext);
+                    URI.create("src/test/resources/vanilla-job.analysis.xml"),
+                    URI.create("src/test/resources/jobProperties/jobEmptyPath.properties"), sparkContext);
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
             assertEquals(null, sparkJobContext.getResultPath());
@@ -84,20 +77,17 @@ public class JobResultPathTest {
             final Resource resultResource = ResultFilePathUtils.getResultResource(sparkContext, sparkJobContext);
             assertTrue(resultResource.getQualifiedPath().contains(analysisJobName));
 
-        } finally {
-            sparkContext.close();
         }
     }
 
     @Test
     public void testResultPathNameJustFolderSpecified() throws Exception {
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
-        final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
-        try {
+        try (JavaSparkContext sparkContext = new JavaSparkContext(sparkConf)) {
 
             final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
-                    URI.create("src/test/resources/vanilla-job.analysis.xml"), URI.create(
-                            "src/test/resources/jobProperties/jobRelativePath.properties"), sparkContext);
+                    URI.create("src/test/resources/vanilla-job.analysis.xml"),
+                    URI.create("src/test/resources/jobProperties/jobRelativePath.properties"), sparkContext);
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);
             assertEquals("target", sparkJobContext.getResultPath().toString());
@@ -106,16 +96,13 @@ public class JobResultPathTest {
 
             final Resource resultResource = ResultFilePathUtils.getResultResource(sparkContext, sparkJobContext);
             assertTrue(resultResource.getQualifiedPath().contains(analysisJobName));
-        } finally {
-            sparkContext.close();
         }
     }
 
     @Test
     public void testResultPathNameNoVariableSpecified() throws Exception {
         final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - " + name.getMethodName());
-        final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
-        try {
+        try (JavaSparkContext sparkContext = new JavaSparkContext(sparkConf)) {
 
             final SparkJobContext sparkJobContext = new SparkJobContext(URI.create("src/test/resources/conf_local.xml"),
                     URI.create("src/test/resources/vanilla-job.analysis.xml"), null, sparkContext);
@@ -129,8 +116,6 @@ public class JobResultPathTest {
             assertTrue(resultResource.getQualifiedPath().contains(analysisJobName));
             assertTrue(resultResource.getQualifiedPath().substring(0, lastIndexOfDash)
                     .endsWith("datacleaner" + File.separator + "results" + File.separator + "vanilla-job"));
-        } finally {
-            sparkContext.close();
         }
     }
 }

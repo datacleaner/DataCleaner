@@ -22,11 +22,11 @@ package org.datacleaner.restclient;
 public class RESTClientException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
-    
+
     private final int code;
     private final String reason;
 
-    public RESTClientException(int code, String reason) {
+    public RESTClientException(final int code, final String reason) {
         this.code = code;
         this.reason = reason == null ? "" : reason.trim();
     }
@@ -40,7 +40,7 @@ public class RESTClientException extends RuntimeException {
     }
 
     public String getMessage() {
-        if(reason.isEmpty()) {
+        if (reason.isEmpty()) {
             return "Error code " + code;
         } else {
             return reason + " (error code " + code + ")";

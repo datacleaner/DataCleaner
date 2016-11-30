@@ -48,8 +48,8 @@ public class DescriptorServiceServlet extends SecureGwtServlet implements Descri
         super.init();
 
         if (_delegate == null) {
-            WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            DescriptorService delegate = applicationContext.getBean(DescriptorService.class);
+            final WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final DescriptorService delegate = applicationContext.getBean(DescriptorService.class);
             if (delegate == null) {
                 throw new ServletException("No delegate found in application context!");
             }
@@ -57,22 +57,22 @@ public class DescriptorServiceServlet extends SecureGwtServlet implements Descri
         }
     }
 
-    public void setDelegate(DescriptorService delegate) {
-        _delegate = delegate;
-    }
-
     public DescriptorService getDelegate() {
         return _delegate;
     }
 
+    public void setDelegate(final DescriptorService delegate) {
+        _delegate = delegate;
+    }
+
     @Override
-    public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException {
+    public JobMetrics getJobMetrics(final TenantIdentifier tenant, final JobIdentifier job) throws DCSecurityException {
         return _delegate.getJobMetrics(tenant, job);
     }
 
     @Override
-    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier,
-            MetricIdentifier metric) throws DCSecurityException {
+    public Collection<String> getMetricParameterSuggestions(final TenantIdentifier tenant,
+            final JobIdentifier jobIdentifier, final MetricIdentifier metric) throws DCSecurityException {
         return _delegate.getMetricParameterSuggestions(tenant, jobIdentifier, metric);
     }
 }

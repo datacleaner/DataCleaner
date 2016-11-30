@@ -42,13 +42,13 @@ public class JobDeletionEventDeleteTimelinesListener implements ApplicationListe
     TimelineDao timelineDao;
 
     @Override
-    public void onApplicationEvent(JobDeletionEvent event) {
+    public void onApplicationEvent(final JobDeletionEvent event) {
         final TenantIdentifier tenantIdentifier = new TenantIdentifier(event.getTenant());
         final JobIdentifier jobIdentifier = new JobIdentifier(event.getJobName());
 
-        final Map<TimelineIdentifier, TimelineDefinition> timelines = timelineDao.getTimelinesForJob(tenantIdentifier,
-                jobIdentifier);
-        for (TimelineIdentifier timeline : timelines.keySet()) {
+        final Map<TimelineIdentifier, TimelineDefinition> timelines =
+                timelineDao.getTimelinesForJob(tenantIdentifier, jobIdentifier);
+        for (final TimelineIdentifier timeline : timelines.keySet()) {
             timelineDao.removeTimeline(timeline);
         }
     }

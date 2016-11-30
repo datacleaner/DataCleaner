@@ -36,12 +36,12 @@ import org.datacleaner.components.categories.DateAndTimeCategory;
 @Categorized(DateAndTimeCategory.class)
 public class GenerateTimestampTransformer implements Transformer {
 
-    public static enum Unit implements HasName {
+    public enum Unit implements HasName {
         SECOND("Second"), MILLISECOND("Millisecond"), NANOSECOND("Nanosecond");
 
         private final String _name;
 
-        private Unit(String name) {
+        Unit(final String name) {
             _name = name;
         }
 
@@ -66,7 +66,7 @@ public class GenerateTimestampTransformer implements Transformer {
     }
 
     @Override
-    public Long[] transform(InputRow inputRow) {
+    public Long[] transform(final InputRow inputRow) {
         final long result;
         if (unit == Unit.NANOSECOND) {
             result = System.nanoTime();

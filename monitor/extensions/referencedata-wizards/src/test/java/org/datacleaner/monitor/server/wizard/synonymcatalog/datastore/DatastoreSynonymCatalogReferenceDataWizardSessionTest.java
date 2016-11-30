@@ -19,25 +19,23 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 
+import static org.junit.Assert.*;
+
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 public class DatastoreSynonymCatalogReferenceDataWizardSessionTest {
 
     @Test
     public void testGetPageCount() throws Exception {
-        DatastoreSynonymCatalogReferenceDataWizardSession session =
+        final DatastoreSynonymCatalogReferenceDataWizardSession session =
                 new DatastoreSynonymCatalogReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertEquals(new Integer(5), session.getPageCount());
     }
 
     @Test
     public void testSynonymColumn() throws Exception {
-        DatastoreSynonymCatalogReferenceDataWizardSession session =
+        final DatastoreSynonymCatalogReferenceDataWizardSession session =
                 new DatastoreSynonymCatalogReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getSynonymColumn());
         session.setSynonymColumn("synonym-column-value");
@@ -46,7 +44,7 @@ public class DatastoreSynonymCatalogReferenceDataWizardSessionTest {
 
     @Test
     public void testSynonymColumnList() throws Exception {
-        DatastoreSynonymCatalogReferenceDataWizardSession session =
+        final DatastoreSynonymCatalogReferenceDataWizardSession session =
                 new DatastoreSynonymCatalogReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getSynonymColumnList());
         session.addToSynonymColumnList("synonym-column-1");
@@ -56,7 +54,7 @@ public class DatastoreSynonymCatalogReferenceDataWizardSessionTest {
 
     @Test
     public void testNextSynonymColumn() throws Exception {
-        DatastoreSynonymCatalogReferenceDataWizardSession session =
+        final DatastoreSynonymCatalogReferenceDataWizardSession session =
                 new DatastoreSynonymCatalogReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNull(session.getAddNextSynonymColumn());
         session.setAddNextSynonymColumn("on");

@@ -27,16 +27,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Factory that creates file monitors.
- * 
+ *
  * @deprecated use {@link WatchService} instead
  */
 @Deprecated
 public class FileMonitorFactory {
 
-	private static final Logger logger = LoggerFactory.getLogger(FileMonitorFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileMonitorFactory.class);
 
-	public static FileMonitor getFileMonitor(File file) {
-		logger.debug("getFileMonitor({})", file);
-		return new PollingBasedFileMonitor(file);
-	}
+    public static FileMonitor getFileMonitor(final File file) {
+        logger.debug("getFileMonitor({})", file);
+        return new PollingBasedFileMonitor(file);
+    }
 }

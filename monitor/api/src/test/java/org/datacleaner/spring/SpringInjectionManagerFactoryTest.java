@@ -21,14 +21,14 @@ package org.datacleaner.spring;
 
 import javax.inject.Inject;
 
-import junit.framework.TestCase;
-
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.configuration.InjectionPoint;
 import org.datacleaner.lifecycle.MemberInjectionPoint;
-import org.apache.metamodel.schema.Table;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import junit.framework.TestCase;
 
 public class SpringInjectionManagerFactoryTest extends TestCase {
 
@@ -42,16 +42,16 @@ public class SpringInjectionManagerFactoryTest extends TestCase {
         try (ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext(
                 "example-spring-injection-manager-context.xml")) {
 
-            InjectionManagerFactory injectionManagerFactory = appCtx.getBean(InjectionManagerFactory.class);
+            final InjectionManagerFactory injectionManagerFactory = appCtx.getBean(InjectionManagerFactory.class);
 
-            InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(null, null);
+            final InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(null, null);
 
             assertNull(uninjectableBean);
-            InjectionPoint<Table> injectionPoint = new MemberInjectionPoint<Table>(getClass().getDeclaredField(
-                    "uninjectableBean"), this);
+            final InjectionPoint<Table> injectionPoint =
+                    new MemberInjectionPoint<>(getClass().getDeclaredField("uninjectableBean"), this);
             assertNotNull(injectionManager);
 
-            Table value = injectionManager.getInstance(injectionPoint);
+            final Table value = injectionManager.getInstance(injectionPoint);
             assertNull(value);
             assertNull(uninjectableBean);
         }
@@ -59,18 +59,18 @@ public class SpringInjectionManagerFactoryTest extends TestCase {
 
     public void testInjectSpringBean() throws Exception {
         try (ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext(
-                "example-spring-injection-manager-context.xml");) {
+                "example-spring-injection-manager-context.xml")) {
 
-            InjectionManagerFactory injectionManagerFactory = appCtx.getBean(InjectionManagerFactory.class);
+            final InjectionManagerFactory injectionManagerFactory = appCtx.getBean(InjectionManagerFactory.class);
 
-            InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(null, null);
+            final InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(null, null);
 
             assertNull(injectedBean);
-            InjectionPoint<HelloBean> injectionPoint = new MemberInjectionPoint<HelloBean>(getClass().getDeclaredField(
-                    "injectedBean"), this);
+            final InjectionPoint<HelloBean> injectionPoint =
+                    new MemberInjectionPoint<>(getClass().getDeclaredField("injectedBean"), this);
             assertNotNull(injectionManager);
 
-            HelloBean value = injectionManager.getInstance(injectionPoint);
+            final HelloBean value = injectionManager.getInstance(injectionPoint);
             assertNotNull(value);
             assertNull(injectedBean);
 

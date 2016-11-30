@@ -23,22 +23,22 @@ import junit.framework.TestCase;
 
 public class AbstractComponentCategoryTest extends TestCase {
 
-	public void testGetName() throws Exception {
-		assertEquals("Scripting", new ScriptingCategory().getName());
-		assertEquals("Text", new TextCategory().getName());
-		assertEquals("Text", new TextCategory().toString());
-		
-		assertEquals("Conversion", new ConversionCategory().getName());
-		assertEquals("Data structures", new DataStructuresCategory().getName());
-		assertEquals("Date and time", new DateAndTimeCategory().getName());
-		assertEquals("Filter", new FilterCategory().getName());
-		assertEquals("Contact data", new ContactDataCategory().getName());
-		assertEquals("Numbers", new NumbersCategory().getName());
-		assertEquals("Scripting", new ScriptingCategory().getName());
-		assertEquals("Validation", new ValidationCategory().getName());
-	}
-	
-	public void testEquals() throws Exception {
+    public void testGetName() throws Exception {
+        assertEquals("Scripting", new ScriptingCategory().getName());
+        assertEquals("Text", new TextCategory().getName());
+        assertEquals("Text", new TextCategory().toString());
+
+        assertEquals("Conversion", new ConversionCategory().getName());
+        assertEquals("Data structures", new DataStructuresCategory().getName());
+        assertEquals("Date and time", new DateAndTimeCategory().getName());
+        assertEquals("Filter", new FilterCategory().getName());
+        assertEquals("Contact data", new ContactDataCategory().getName());
+        assertEquals("Numbers", new NumbersCategory().getName());
+        assertEquals("Scripting", new ScriptingCategory().getName());
+        assertEquals("Validation", new ValidationCategory().getName());
+    }
+
+    public void testEquals() throws Exception {
         assertEquals(new TextCategory(), new TextCategory());
         assertEquals(new TextCategory().hashCode(), new TextCategory().hashCode());
         assertFalse(new NumbersCategory().equals(new TextCategory()));

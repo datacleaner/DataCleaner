@@ -1,6 +1,7 @@
 package org.datacleaner.visualization
 
 import java.awt.Color
+
 import org.datacleaner.util.WidgetUtils
 
 object StackedAreaColors {

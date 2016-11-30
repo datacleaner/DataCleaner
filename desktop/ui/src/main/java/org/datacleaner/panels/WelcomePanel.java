@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -113,17 +111,16 @@ public class WelcomePanel extends DCSplashPanel {
     private JComponent createContentPanel() {
         JComponent result = null;
 
-        final String welcomePanelClassName = SystemProperties
-                .getString(SystemProperties.UI_DESKTOP_WELCOME_PANEL, null);
+        final String welcomePanelClassName =
+                SystemProperties.getString(SystemProperties.UI_DESKTOP_WELCOME_PANEL, null);
         if (!Strings.isNullOrEmpty(welcomePanelClassName)) {
             final Injector injector = _dcModule.createInjectorBuilder().with(WelcomePanel.class, this).createInjector();
             try {
-                @SuppressWarnings("unchecked")
-                final Class<? extends JComponent> componentClass = (Class<? extends JComponent>) Class
-                        .forName(welcomePanelClassName);
+                @SuppressWarnings("unchecked") final Class<? extends JComponent> componentClass =
+                        (Class<? extends JComponent>) Class.forName(welcomePanelClassName);
 
                 result = injector.getInstance(componentClass);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Failed to instantiate welcome panel class: {}", welcomePanelClassName, e);
             }
         }
@@ -142,17 +139,17 @@ public class WelcomePanel extends DCSplashPanel {
                 editorPane.setFont(WidgetUtils.FONT_HEADER2);
                 editorPane.setPreferredSize(new Dimension(DCSplashPanel.WIDTH_CONTENT, 120));
 
-                final JButton tryProfessionalButton = WidgetFactory.createDefaultButton("Try professional edition",
-                        IconUtils.APPLICATION_ICON);
+                final JButton tryProfessionalButton =
+                        WidgetFactory.createDefaultButton("Try professional edition", IconUtils.APPLICATION_ICON);
                 tryProfessionalButton
                         .addActionListener(new OpenBrowserAction("https://datacleaner.org/get_datacleaner"));
 
-                final JButton readMoreButton = WidgetFactory.createDefaultButton("Compare the editions",
-                        IconUtils.WEBSITE);
+                final JButton readMoreButton =
+                        WidgetFactory.createDefaultButton("Compare the editions", IconUtils.WEBSITE);
                 readMoreButton.addActionListener(new OpenBrowserAction("https://datacleaner.org/editions"));
 
-                final JButton discussionForumButton = WidgetFactory.createDefaultButton("Visit the discussion forum",
-                        "images/menu/forum.png");
+                final JButton discussionForumButton =
+                        WidgetFactory.createDefaultButton("Visit the discussion forum", "images/menu/forum.png");
                 discussionForumButton
                         .setToolTipText("Visit the online discussion forum for questions and answers in the community");
                 final OpenBrowserAction forumActionListener = new OpenBrowserAction("https://datacleaner.org/forum");
@@ -160,29 +157,30 @@ public class WelcomePanel extends DCSplashPanel {
 
                 final JButton twitterButton = WidgetFactory.createDefaultButton(null, "images/menu/twitter.png");
                 twitterButton.setToolTipText("Spread the message about #DataCleaner on Twitter");
-                twitterButton.addActionListener(new OpenBrowserAction("https://twitter.com/intent/tweet?text="
-                        + UrlEscapers.urlFormParameterEscaper().escape(
-                                "I'm using @DataCleaner (v. " + Version.getVersion()
+                twitterButton.addActionListener(new OpenBrowserAction(
+                        "https://twitter.com/intent/tweet?text=" + UrlEscapers.urlFormParameterEscaper()
+                                .escape("I'm using @DataCleaner (v. " + Version.getVersion()
                                         + ") for some really fancy #dataquality stuff!")));
 
                 final JButton linkedInButton = WidgetFactory.createDefaultButton(null, "images/menu/linkedin.png");
                 linkedInButton.setToolTipText("Join our LinkedIn group of users and professionals");
                 linkedInButton.addActionListener(new OpenBrowserAction("http://www.linkedin.com/groups?gid=3352784"));
 
-                final JLabel loveFeedbackAnimation = new JLabel(ImageManager.get().getImageIcon(
-                        "images/window/we_love_community_and_feedback.gif"), JLabel.LEFT);
+                final JLabel loveFeedbackAnimation =
+                        new JLabel(ImageManager.get().getImageIcon("images/window/we_love_community_and_feedback.gif"),
+                                JLabel.LEFT);
                 loveFeedbackAnimation.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 loveFeedbackAnimation.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mouseClicked(MouseEvent e) {
+                    public void mouseClicked(final MouseEvent e) {
                         forumActionListener.actionPerformed(null);
                     }
                 });
 
                 final DCPanel innerPanel = new DCPanel();
                 innerPanel.setLayout(new VerticalLayout());
-                innerPanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY, new EmptyBorder(0, 20,
-                        0, 0)));
+                innerPanel.setBorder(
+                        new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY, new EmptyBorder(0, 20, 0, 0)));
                 innerPanel.add(editorPane);
                 innerPanel.add(DCPanel.flow(tryProfessionalButton, readMoreButton));
                 innerPanel.add(Box.createVerticalStrut(80));
@@ -201,38 +199,21 @@ public class WelcomePanel extends DCSplashPanel {
     }
 
     private JComponent createButtonPanel() {
-        final String newJobText = SystemProperties.getString(SystemProperties.UI_DESKTOP_TEXT_NEW_JOB_BUTTON,
-                "Build new job");
+        final String newJobText =
+                SystemProperties.getString(SystemProperties.UI_DESKTOP_TEXT_NEW_JOB_BUTTON, "Build new job");
         final JButton newJobButton = WidgetFactory.createPrimaryButton(newJobText, IconUtils.MODEL_JOB);
-        newJobButton.addActionListener(new ActionListener() {
+        newJobButton.addActionListener(e -> getWindow().changePanel(AnalysisWindowPanelType.SELECT_DS));
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                getWindow().changePanel(AnalysisWindowPanelType.SELECT_DS);
-            }
-        });
-
-        final PopupButton recentJobsButton = WidgetFactory.createDefaultPopupButton("Recent jobs",
-                IconUtils.FILE_HOME_FOLDER);
+        final PopupButton recentJobsButton =
+                WidgetFactory.createDefaultPopupButton("Recent jobs", IconUtils.FILE_HOME_FOLDER);
         recentJobsButton.setMenuPosition(MenuPosition.TOP);
-        recentJobsButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                refreshRecentJobs(recentJobsButton);
-            }
-        });
+        recentJobsButton.addActionListener(e -> refreshRecentJobs(recentJobsButton));
         final JButton browseJobsButton = WidgetFactory.createDefaultButton("Browse jobs", IconUtils.FILE_FOLDER);
         browseJobsButton.addActionListener(_openAnalysisJobActionListener);
 
-        final JButton manageDatastoresButton = WidgetFactory.createDefaultButton("Manage datastores",
-                IconUtils.GENERIC_DATASTORE_IMAGEPATH);
-        manageDatastoresButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                getWindow().changePanel(AnalysisWindowPanelType.MANAGE_DS);
-            }
-        });
+        final JButton manageDatastoresButton =
+                WidgetFactory.createDefaultButton("Manage datastores", IconUtils.GENERIC_DATASTORE_IMAGEPATH);
+        manageDatastoresButton.addActionListener(e -> getWindow().changePanel(AnalysisWindowPanelType.MANAGE_DS));
 
         final DCPanel buttonPanel = new DCPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -267,7 +248,7 @@ public class WelcomePanel extends DCSplashPanel {
     private List<FileObject> getRecentJobFiles() {
         final List<FileObject> recentJobFiles = _userPreferences.getRecentJobFiles();
         final List<FileObject> result = new ArrayList<>();
-        for (FileObject fileObject : recentJobFiles) {
+        for (final FileObject fileObject : recentJobFiles) {
             try {
                 if (fileObject.exists()) {
                     result.add(fileObject);
@@ -275,7 +256,7 @@ public class WelcomePanel extends DCSplashPanel {
                         break;
                     }
                 }
-            } catch (FileSystemException ex) {
+            } catch (final FileSystemException ex) {
                 logger.debug("Skipping file {} because of unexpected error", ex);
             }
         }

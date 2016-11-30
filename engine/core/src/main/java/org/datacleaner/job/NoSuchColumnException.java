@@ -22,25 +22,25 @@ package org.datacleaner.job;
 /**
  * Exception thrown in case a job is being opened and it references an
  * unexisting column in the datastore.
- * 
- * 
+ *
+ *
  */
 public class NoSuchColumnException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
-	private final String _columnName;
+    private static final long serialVersionUID = 1L;
+    private final String _columnName;
 
-	public NoSuchColumnException(String columnName) {
-		super();
-		_columnName = columnName;
-	}
+    public NoSuchColumnException(final String columnName) {
+        super();
+        _columnName = columnName;
+    }
 
-	public String getColumnName() {
+    public String getColumnName() {
         return _columnName;
     }
 
-	@Override
-	public String getMessage() {
-		return "No such column: " + _columnName;
-	}
+    @Override
+    public String getMessage() {
+        return "No such column: " + _columnName;
+    }
 }

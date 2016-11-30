@@ -83,25 +83,26 @@ public class ConvertToDateTransformer implements Transformer {
     private DateTimeFormatter _numberBasedDateTimeFormatterLong;
     private DateTimeFormatter _numberBasedDateTimeFormatterShort;
 
+    public ConvertToDateTransformer() {
+        dateMasks = getDefaultDateMasks();
+    }
+
     public static ConvertToDateTransformer getInternalInstance() {
         if (internalInstance == null) {
-            // because we are not synchronized, cannot assign to internalInstance directly, to prevent usage of uninitialized instance.
-            ConvertToDateTransformer newInst = new ConvertToDateTransformer();
+            // because we are not synchronized, cannot assign to internalInstance directly,
+            // to prevent usage of uninitialized instance.
+            final ConvertToDateTransformer newInst = new ConvertToDateTransformer();
             newInst.init();
             internalInstance = newInst;
         }
         return internalInstance;
     }
 
-    public ConvertToDateTransformer() {
-        dateMasks = getDefaultDateMasks();
-    }
-
     @Validate
     public void validate() {
         try {
             TimeZone.getTimeZone(timeZone);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Time zone '" + timeZone + "' not recognized.");
         }
     }
@@ -126,7 +127,7 @@ public class ConvertToDateTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        String[] names = new String[input.length];
+        final String[] names = new String[input.length];
         for (int i = 0; i < names.length; i++) {
             names[i] = input[i].getName() + " (as date)";
         }
@@ -134,10 +135,10 @@ public class ConvertToDateTransformer implements Transformer {
     }
 
     @Override
-    public Date[] transform(InputRow inputRow) {
-        Date[] result = new Date[input.length];
+    public Date[] transform(final InputRow inputRow) {
+        final Date[] result = new Date[input.length];
         for (int i = 0; i < input.length; i++) {
-            Object value = inputRow.getValue(input[i]);
+            final Object value = inputRow.getValue(input[i]);
             Date d = transformValue(value);
             if (d == null) {
                 d = nullReplacement;
@@ -147,7 +148,7 @@ public class ConvertToDateTransformer implements Transformer {
         return result;
     }
 
-    public Date transformValue(Object value) {
+    public Date transformValue(final Object value) {
         Date d = null;
         if (value != null) {
             if (value instanceof Date) {
@@ -167,7 +168,7 @@ public class ConvertToDateTransformer implements Transformer {
         if (value == null) {
             return null;
         }
-        
+
         if ("now()".equalsIgnoreCase(value)) {
             return new NowDate();
         }
@@ -181,18 +182,18 @@ public class ConvertToDateTransformer implements Transformer {
             return new ShiftedToday(value);
         }
 
-        for (DateTimeFormatter formatter : _dateTimeFormatters) {
+        for (final DateTimeFormatter formatter : _dateTimeFormatters) {
             try {
                 return formatter.parseDateTime(value).toDate();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // proceed to next formatter
             }
         }
 
         try {
-            long longValue = Long.parseLong(value);
+            final long longValue = Long.parseLong(value);
             return convertFromNumber(longValue, false);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             // do nothing, proceed to dateFormat parsing
         }
 
@@ -202,18 +203,18 @@ public class ConvertToDateTransformer implements Transformer {
         format.setTimeZone(TimeZone.getTimeZone(timeZone));
         try {
             return format.parse(value);
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             // do nothing
         }
 
         return null;
     }
 
-    protected Date convertFromNumber(Number value) {
+    protected Date convertFromNumber(final Number value) {
         return convertFromNumber(value, true);
     }
 
-    protected Date convertFromNumber(Number value, boolean tryDateTimeFormatters) {
+    protected Date convertFromNumber(final Number value, final boolean tryDateTimeFormatters) {
         final long longValue = value.longValue();
 
         final String stringValue = Long.toString(longValue);
@@ -221,13 +222,13 @@ public class ConvertToDateTransformer implements Transformer {
         if (tryDateTimeFormatters) {
             for (int i = 0; i < _dateTimeFormatters.length; i++) {
                 final String dateMask = dateMasks[i];
-                final boolean isPotentialNumberDateMask = !dateMask.contains("-") && !dateMask.contains(".")
-                        && !dateMask.contains("/");
+                final boolean isPotentialNumberDateMask =
+                        !dateMask.contains("-") && !dateMask.contains(".") && !dateMask.contains("/");
                 if (isPotentialNumberDateMask) {
                     final DateTimeFormatter formatter = _dateTimeFormatters[i];
                     try {
                         return formatter.parseDateTime(stringValue).toDate();
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         // proceed to next formatter
                     }
                 }
@@ -238,7 +239,7 @@ public class ConvertToDateTransformer implements Transformer {
         if (stringValue.length() == 8 && (stringValue.startsWith("1") || stringValue.startsWith("2"))) {
             try {
                 return _numberBasedDateTimeFormatterLong.parseDateTime(stringValue).toDate();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // do nothing, proceed to next method of conversion
             }
         }
@@ -247,7 +248,7 @@ public class ConvertToDateTransformer implements Transformer {
         if (stringValue.length() == 6) {
             try {
                 return _numberBasedDateTimeFormatterShort.parseDateTime(stringValue).toDate();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // do nothing, proceed to next method of conversion
             }
         }
@@ -291,7 +292,7 @@ public class ConvertToDateTransformer implements Transformer {
         return nullReplacement;
     }
 
-    public void setNullReplacement(Date nullReplacement) {
+    public void setNullReplacement(final Date nullReplacement) {
         this.nullReplacement = nullReplacement;
     }
 }

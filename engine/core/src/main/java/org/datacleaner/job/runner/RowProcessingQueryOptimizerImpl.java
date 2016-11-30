@@ -59,11 +59,12 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
     private final List<RowProcessingConsumer> _consumers;
     private final Map<FilterConsumer, FilterOutcome> _optimizedFilters;
 
-    public RowProcessingQueryOptimizerImpl(Datastore datastore, List<RowProcessingConsumer> consumers, Query baseQuery) {
+    public RowProcessingQueryOptimizerImpl(final Datastore datastore, final List<RowProcessingConsumer> consumers,
+            final Query baseQuery) {
         _datastore = datastore;
         _consumers = consumers;
         _baseQuery = baseQuery;
-        _optimizedFilters = new HashMap<FilterConsumer, FilterOutcome>();
+        _optimizedFilters = new HashMap<>();
 
         init();
     }
@@ -109,14 +110,14 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
         }
     }
 
-    private boolean isOptimizable(FilterConsumer filterConsumer) {
+    private boolean isOptimizable(final FilterConsumer filterConsumer) {
         final FilterDescriptor<?, ?> descriptor = filterConsumer.getComponentJob().getDescriptor();
         if (!descriptor.isQueryOptimizable()) {
             logger.debug("FilterBeanDescriptor not optimizable: {}", descriptor);
             return false;
         }
         final InputColumn<?>[] input = filterConsumer.getRequiredInput();
-        for (InputColumn<?> inputColumn : input) {
+        for (final InputColumn<?> inputColumn : input) {
             if (inputColumn.isVirtualColumn()) {
                 logger.debug("InputColumn is virtual: {}, so filter is not optimizable: {}", inputColumn,
                         filterConsumer);
@@ -135,19 +136,18 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
 
         if (!_datastore.getPerformanceCharacteristics().isQueryOptimizationPreferred()) {
             // the datastore doesn't prefer query optimization
-            Class<?> filterClass = filterConsumer.getComponentJob().getDescriptor().getComponentClass();
+            final Class<?> filterClass = filterConsumer.getComponentJob().getDescriptor().getComponentClass();
             if (!ArrayUtils.contains(ALWAYS_OPTIMIZABLE, filterClass)) {
-                logger.debug(
-                        "Datastore performance characteristics indicate that query optimization will not improve performance for {}, stopping",
-                        filterConsumer);
+                logger.debug("Datastore performance characteristics indicate that query optimization will "
+                        + "not improve performance for {}, stopping", filterConsumer);
 
                 // the filter is not in the "always optimizable" set.
                 return false;
             }
         }
 
-        final Set<InputColumn<?>> satisfiedColumns = new HashSet<InputColumn<?>>();
-        final Set<FilterOutcome> satisfiedRequirements = new HashSet<FilterOutcome>();
+        final Set<InputColumn<?>> satisfiedColumns = new HashSet<>();
+        final Set<FilterOutcome> satisfiedRequirements = new HashSet<>();
         satisfiedRequirements.add(filterOutcome);
 
         for (int i = consumerIndex + 1; i < _consumers.size(); i++) {
@@ -172,13 +172,12 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
             }
 
             if (componentJob instanceof InputColumnSinkJob) {
-                InputColumn<?>[] requiredColumns = ((InputColumnSinkJob) componentJob).getInput();
-                for (InputColumn<?> column : requiredColumns) {
+                final InputColumn<?>[] requiredColumns = ((InputColumnSinkJob) componentJob).getInput();
+                for (final InputColumn<?> column : requiredColumns) {
                     if (column.isVirtualColumn()) {
                         if (!satisfiedColumns.contains(column)) {
-                            logger.debug(
-                                    "InputColumn {} is available at query time, and therefore not satisfied for query optimization of {}",
-                                    column, filterConsumer);
+                            logger.debug("InputColumn {} is available at query time, and therefore not satisfied "
+                                    + "for query optimization of {}", column, filterConsumer);
                             return false;
                         } else {
                             independentComponent = false;
@@ -189,9 +188,8 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
 
             if (independentComponent) {
                 // totally independent components prohibit optimization
-                logger.debug(
-                        "Component {} is completely independent. Position in chain is not determinable, so optimization cannot be done.",
-                        filterConsumer);
+                logger.debug("Component {} is completely independent. Position in chain is not determinable, "
+                        + "so optimization cannot be done.", filterConsumer);
                 return false;
             }
 
@@ -205,8 +203,8 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
             }
 
             if (componentJob instanceof InputColumnSourceJob) {
-                InputColumn<?>[] output = ((InputColumnSourceJob) componentJob).getOutput();
-                for (InputColumn<?> column : output) {
+                final InputColumn<?>[] output = ((InputColumnSourceJob) componentJob).getOutput();
+                for (final InputColumn<?> column : output) {
                     satisfiedColumns.add(column);
                 }
             }
@@ -217,36 +215,36 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
 
     @Override
     public Query getOptimizedQuery() {
-        Query q = _baseQuery;
+        Query query = _baseQuery;
 
         final Set<Entry<FilterConsumer, FilterOutcome>> entries = _optimizedFilters.entrySet();
         if (!entries.isEmpty()) {
             // create a copy/clone of the original query
-            q = q.clone();
+            query = query.clone();
 
-            for (Entry<FilterConsumer, FilterOutcome> entry : entries) {
+            for (final Entry<FilterConsumer, FilterOutcome> entry : entries) {
 
                 final FilterConsumer consumer = entry.getKey();
 
                 final FilterOutcome outcome = entry.getValue();
                 final Filter<?> filter = consumer.getComponent();
 
-                @SuppressWarnings("rawtypes")
-                final QueryOptimizedFilter queryOptimizedFilter = (QueryOptimizedFilter) filter;
+                @SuppressWarnings("rawtypes") final QueryOptimizedFilter queryOptimizedFilter =
+                        (QueryOptimizedFilter) filter;
 
-                @SuppressWarnings("unchecked")
-                final Query newQuery = queryOptimizedFilter.optimizeQuery(q, outcome.getCategory());
-                q = newQuery;
+                @SuppressWarnings("unchecked") final Query newQuery =
+                        queryOptimizedFilter.optimizeQuery(query, outcome.getCategory());
+                query = newQuery;
             }
         }
 
-        return q;
+        return query;
     }
 
     @Override
     public List<RowProcessingConsumer> getOptimizedConsumers() {
-        List<RowProcessingConsumer> result = new ArrayList<RowProcessingConsumer>(_consumers);
-        for (FilterConsumer filterConsumer : _optimizedFilters.keySet()) {
+        final List<RowProcessingConsumer> result = new ArrayList<>(_consumers);
+        for (final FilterConsumer filterConsumer : _optimizedFilters.keySet()) {
             if (filterConsumer.isRemoveableUponOptimization()) {
                 result.remove(filterConsumer);
             }
@@ -256,8 +254,7 @@ public class RowProcessingQueryOptimizerImpl implements RowProcessingQueryOptimi
 
     @Override
     public Set<? extends RowProcessingConsumer> getEliminatedConsumers() {
-        final Set<FilterConsumer> consumers = _optimizedFilters.keySet();
-        return consumers;
+        return _optimizedFilters.keySet();
     }
 
     @Override

@@ -24,5 +24,5 @@ import org.datacleaner.monitor.shared.model.TenantIdentifier;
 
 public interface ClusterManagerFactory {
 
-    public ClusterManager getClusterManager(TenantIdentifier tenant);
+    ClusterManager getClusterManager(TenantIdentifier tenant);
 }

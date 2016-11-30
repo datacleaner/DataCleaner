@@ -35,34 +35,34 @@ import org.datacleaner.components.categories.FilterCategory;
 @Categorized(FilterCategory.class)
 public class StringLengthRangeFilter implements Filter<RangeFilterCategory> {
 
-	@Configured(order = 1)
-	InputColumn<String> column;
+    @Configured(order = 1)
+    InputColumn<String> column;
 
-	@Configured(order = 2)
-	@NumberProperty(negative = false)
-	int minimumLength = 0;
+    @Configured(order = 2)
+    @NumberProperty(negative = false)
+    int minimumLength = 0;
 
-	@Configured(order = 3)
-	@NumberProperty(negative = false)
-	int maximumLength = 10;
+    @Configured(order = 3)
+    @NumberProperty(negative = false)
+    int maximumLength = 10;
 
-	@Override
-	public RangeFilterCategory categorize(InputRow inputRow) {
-		String value = inputRow.getValue(column);
-		if (value == null) {
-			return RangeFilterCategory.LOWER;
-		}
+    @Override
+    public RangeFilterCategory categorize(final InputRow inputRow) {
+        final String value = inputRow.getValue(column);
+        if (value == null) {
+            return RangeFilterCategory.LOWER;
+        }
 
-		int length = value.length();
-		if (length < minimumLength) {
-			return RangeFilterCategory.LOWER;
-		}
+        final int length = value.length();
+        if (length < minimumLength) {
+            return RangeFilterCategory.LOWER;
+        }
 
-		if (length > maximumLength) {
-			return RangeFilterCategory.HIGHER;
-		}
+        if (length > maximumLength) {
+            return RangeFilterCategory.HIGHER;
+        }
 
-		return RangeFilterCategory.VALID;
-	}
+        return RangeFilterCategory.VALID;
+    }
 
 }

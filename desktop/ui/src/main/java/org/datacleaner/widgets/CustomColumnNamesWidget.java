@@ -39,7 +39,7 @@ public class CustomColumnNamesWidget {
     private final DCPanel _outerPanel;
     private final List<JButton> _buttons;
 
-    public CustomColumnNamesWidget(List<String> columnNames) {
+    public CustomColumnNamesWidget(final List<String> columnNames) {
         _innerPanel = new DCPanel();
         _innerPanel.setLayout(new VerticalLayout(2));
 
@@ -73,7 +73,7 @@ public class CustomColumnNamesWidget {
         _outerPanel.add(buttonPanel, BorderLayout.EAST);
     }
 
-    private void addColumnName(String columnName, boolean updateUI) {
+    private void addColumnName(final String columnName, final boolean updateUI) {
         final JTextField columnNameField = WidgetFactory.createTextField();
         if (columnName != null) {
             columnNameField.setText(columnName);
@@ -98,8 +98,8 @@ public class CustomColumnNamesWidget {
     }
 
     public List<JTextField> getColumnNameFields() {
-        return Stream.of(_innerPanel.getComponents()).map(component -> (JTextField) component).collect(Collectors
-                .toList());
+        return Stream.of(_innerPanel.getComponents()).map(component -> (JTextField) component)
+                .collect(Collectors.toList());
     }
 
     public List<JButton> getButtons() {

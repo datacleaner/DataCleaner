@@ -37,13 +37,13 @@ public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.datacleaner.
         super(org.datacleaner.monitor.jaxb.ExecutionLog.class);
     }
 
-    public void write(ExecutionLog executionLog, OutputStream out) {
+    public void write(final ExecutionLog executionLog, final OutputStream out) {
         final org.datacleaner.monitor.jaxb.ExecutionLog jaxbObj = createExecutionLog(executionLog);
 
         marshal(jaxbObj, out);
     }
 
-    private org.datacleaner.monitor.jaxb.ExecutionLog createExecutionLog(ExecutionLog executionLog) {
+    private org.datacleaner.monitor.jaxb.ExecutionLog createExecutionLog(final ExecutionLog executionLog) {
         final org.datacleaner.monitor.jaxb.ExecutionLog result = new org.datacleaner.monitor.jaxb.ExecutionLog();
 
         result.setResultId(executionLog.getResultId());
@@ -62,7 +62,7 @@ public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.datacleaner.
         return result;
     }
 
-    private TriggerType createTriggerType(org.datacleaner.monitor.scheduling.model.TriggerType triggerType) {
+    private TriggerType createTriggerType(final org.datacleaner.monitor.scheduling.model.TriggerType triggerType) {
         switch (triggerType) {
         case PERIODIC:
             return TriggerType.PERIODIC;
@@ -70,16 +70,16 @@ public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.datacleaner.
             return TriggerType.DEPENDENT;
         case MANUAL:
             return TriggerType.MANUAL;
-        case ONETIME :
-        	return TriggerType.ONETIME; 
+        case ONETIME:
+            return TriggerType.ONETIME;
         case HOTFOLDER:
-            return TriggerType.HOTFOLDER; 
+            return TriggerType.HOTFOLDER;
         default:
             throw new UnsupportedOperationException("Unknown trigger type: " + triggerType);
         }
     }
 
-    private ExecutionType createExecutionStatus(ExecutionStatus executionStatus) {
+    private ExecutionType createExecutionStatus(final ExecutionStatus executionStatus) {
         switch (executionStatus) {
         case PENDING:
             return ExecutionType.PENDING;

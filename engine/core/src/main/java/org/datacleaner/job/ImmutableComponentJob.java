@@ -56,9 +56,9 @@ public class ImmutableComponentJob extends BaseObject implements ComponentJob {
 
     private final OutputDataStreamJob[] _outputDataStreamJobs;
 
-    public ImmutableComponentJob(String name, ComponentDescriptor<?> descriptor,
-            ComponentConfiguration componentConfiguration, ComponentRequirement componentRequirement,
-            Map<String, String> metadataProperties, OutputDataStreamJob[] outputDataStreamJobs) {
+    public ImmutableComponentJob(final String name, final ComponentDescriptor<?> descriptor,
+            final ComponentConfiguration componentConfiguration, final ComponentRequirement componentRequirement,
+            final Map<String, String> metadataProperties, final OutputDataStreamJob[] outputDataStreamJobs) {
         _name = name;
         _descriptor = descriptor;
         _beanConfiguration = componentConfiguration;
@@ -72,9 +72,9 @@ public class ImmutableComponentJob extends BaseObject implements ComponentJob {
         }
     }
 
-    public ImmutableComponentJob(String name, ComponentDescriptor<?> descriptor,
-            ComponentConfiguration componentConfiguration, ComponentRequirement componentRequirement,
-            Map<String, String> metadataProperties) {
+    public ImmutableComponentJob(final String name, final ComponentDescriptor<?> descriptor,
+            final ComponentConfiguration componentConfiguration, final ComponentRequirement componentRequirement,
+            final Map<String, String> metadataProperties) {
         this(name, descriptor, componentConfiguration, componentRequirement, metadataProperties, null);
     }
 
@@ -105,13 +105,13 @@ public class ImmutableComponentJob extends BaseObject implements ComponentJob {
 
     @Override
     public final InputColumn<?>[] getInput() {
-        List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
-        Set<ConfiguredPropertyDescriptor> propertiesForInput = _descriptor.getConfiguredPropertiesForInput();
-        for (ConfiguredPropertyDescriptor propertyDescriptor : propertiesForInput) {
-            Object property = _beanConfiguration.getProperty(propertyDescriptor);
-            InputColumn<?>[] inputs = CollectionUtils2.arrayOf(InputColumn.class, property);
+        final List<InputColumn<?>> result = new ArrayList<>();
+        final Set<ConfiguredPropertyDescriptor> propertiesForInput = _descriptor.getConfiguredPropertiesForInput();
+        for (final ConfiguredPropertyDescriptor propertyDescriptor : propertiesForInput) {
+            final Object property = _beanConfiguration.getProperty(propertyDescriptor);
+            final InputColumn<?>[] inputs = CollectionUtils2.arrayOf(InputColumn.class, property);
             if (inputs != null) {
-                for (InputColumn<?> inputColumn : inputs) {
+                for (final InputColumn<?> inputColumn : inputs) {
                     result.add(inputColumn);
                 }
             }
@@ -120,7 +120,7 @@ public class ImmutableComponentJob extends BaseObject implements ComponentJob {
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         identifiers.add(_name);
         identifiers.add(_beanConfiguration);
         identifiers.add(_descriptor);

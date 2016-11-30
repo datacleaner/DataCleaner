@@ -49,13 +49,13 @@ public class PreviewUtils {
             sourceColumnFinder.addSources(jobBuilder);
             final List<Table> sourceTables = jobBuilder.getSourceTables();
             final int maxRows = Double.valueOf(Math.ceil(((double) previewRows) / sourceTables.size())).intValue();
-            for (Table table : sourceTables) {
+            for (final Table table : sourceTables) {
                 final String filterName = PreviewUtils.class.getName() + "-" + table.getName() + "-MaxRows";
 
                 final FilterComponentBuilder<?, ?> maxRowFilter =
                         jobBuilder.getFilterComponentBuilderByName(filterName).orElseGet(() -> {
-                            final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter = jobBuilder
-                                    .addFilter(MaxRowsFilter.class);
+                            final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter =
+                                    jobBuilder.addFilter(MaxRowsFilter.class);
                             filter.setName(filterName);
                             filter.getComponentInstance().setMaxRows(maxRows);
                             filter.getComponentInstance().setApplyOrdering(false);
@@ -67,19 +67,18 @@ public class PreviewUtils {
                 componentBuilders.stream().filter(cb -> cb != maxRowFilter).forEach(componentBuilder -> {
                     final InputColumn<?>[] input = componentBuilder.getInput();
                     if (input.length > 0) {
-                        if (componentBuilder.getDescriptor().isMultiStreamComponent() || sourceColumnFinder
-                                .findOriginatingTable(input[0]) == table) {
-                            final ComponentRequirement existingRequirement = componentBuilder
-                                    .getComponentRequirement();
+                        if (componentBuilder.getDescriptor().isMultiStreamComponent()
+                                || sourceColumnFinder.findOriginatingTable(input[0]) == table) {
+                            final ComponentRequirement existingRequirement = componentBuilder.getComponentRequirement();
                             if (existingRequirement != null) {
                                 if (componentBuilder.getDescriptor().isMultiStreamComponent()) {
-                                    componentBuilder.setComponentRequirement(new CompoundComponentRequirement(
-                                            existingRequirement, maxRowFilter.getFilterOutcome(
-                                            MaxRowsFilter.Category.VALID)));
+                                    componentBuilder.setComponentRequirement(
+                                            new CompoundComponentRequirement(existingRequirement,
+                                                    maxRowFilter.getFilterOutcome(MaxRowsFilter.Category.VALID)));
                                 }
                             } else {
-                                componentBuilder.setComponentRequirement(new SimpleComponentRequirement(maxRowFilter
-                                        .getFilterOutcome(MaxRowsFilter.Category.VALID)));
+                                componentBuilder.setComponentRequirement(new SimpleComponentRequirement(
+                                        maxRowFilter.getFilterOutcome(MaxRowsFilter.Category.VALID)));
                             }
                         }
                     }
@@ -93,22 +92,23 @@ public class PreviewUtils {
         return new AnalysisJobBuilder(original.getConfiguration(), analysisJob);
     }
 
-    public static void sanitizeIrrelevantComponents(AnalysisJobBuilder ajb, TransformerComponentBuilder<?> tjb) {
+    public static void sanitizeIrrelevantComponents(final AnalysisJobBuilder ajb,
+            final TransformerComponentBuilder<?> tjb) {
         final List<AnalysisJobBuilder> relevantAnalysisJobBuilders = createRelevantAnalysisJobBuildersList(ajb);
 
-        for (AnalysisJobBuilder relevantAnalysisJobBuilder : relevantAnalysisJobBuilders) {
+        for (final AnalysisJobBuilder relevantAnalysisJobBuilder : relevantAnalysisJobBuilders) {
             final Collection<ComponentBuilder> componentBuilders = relevantAnalysisJobBuilder.getComponentBuilders();
-            for (ComponentBuilder componentBuilder : componentBuilders) {
+            for (final ComponentBuilder componentBuilder : componentBuilders) {
 
                 // flag to indicate if this component is directly involved in
                 // populating data for the previewed component
                 boolean importantComponent = componentBuilder == tjb;
 
                 final List<OutputDataStream> streams = componentBuilder.getOutputDataStreams();
-                for (OutputDataStream stream : streams) {
+                for (final OutputDataStream stream : streams) {
                     if (componentBuilder.isOutputDataStreamConsumed(stream)) {
-                        final AnalysisJobBuilder childJobBuilder = componentBuilder.getOutputDataStreamJobBuilder(
-                                stream);
+                        final AnalysisJobBuilder childJobBuilder =
+                                componentBuilder.getOutputDataStreamJobBuilder(stream);
                         if (relevantAnalysisJobBuilders.contains(childJobBuilder)) {
                             importantComponent = true;
                         } else {
@@ -152,15 +152,15 @@ public class PreviewUtils {
         return relevantAnalysisJobBuilders;
     }
 
-    public static AnalysisJobBuilder findAnalysisJobBuilder(AnalysisJobBuilder analysisJobBuilder,
-            String jobBuilderIdentifier) {
-        if (jobBuilderIdentifier.equals(analysisJobBuilder.getAnalysisJobMetadata().getProperties().get(
-                METADATA_PROPERTY_MARKER))) {
+    public static AnalysisJobBuilder findAnalysisJobBuilder(final AnalysisJobBuilder analysisJobBuilder,
+            final String jobBuilderIdentifier) {
+        if (jobBuilderIdentifier
+                .equals(analysisJobBuilder.getAnalysisJobMetadata().getProperties().get(METADATA_PROPERTY_MARKER))) {
             return analysisJobBuilder;
         }
 
         final List<AnalysisJobBuilder> childJobBuilders = analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders();
-        for (AnalysisJobBuilder childJobBuilder : childJobBuilders) {
+        for (final AnalysisJobBuilder childJobBuilder : childJobBuilders) {
             final AnalysisJobBuilder result = findAnalysisJobBuilder(childJobBuilder, jobBuilderIdentifier);
             if (result != null) {
                 return result;
@@ -171,7 +171,6 @@ public class PreviewUtils {
     }
 
     public static boolean hasFilterPresent(final SourceColumnFinder scf, final ComponentBuilder acb) {
-        return scf.findAllSourceJobs(acb).stream().filter(
-                o -> o instanceof HasFilterOutcomes).findAny().isPresent();
+        return scf.findAllSourceJobs(acb).stream().filter(o -> o instanceof HasFilterOutcomes).findAny().isPresent();
     }
 }

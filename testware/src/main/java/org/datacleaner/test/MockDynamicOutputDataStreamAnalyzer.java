@@ -36,36 +36,33 @@ import org.datacleaner.job.output.OutputDataStreamBuilder;
 import org.datacleaner.job.output.OutputDataStreams;
 
 @Named("Mock dynamic output data stream analyzer")
-public class MockDynamicOutputDataStreamAnalyzer implements Analyzer<MockDynamicOutputDataStreamAnalyzer>,
-        HasOutputDataStreams, AnalyzerResult {
+public class MockDynamicOutputDataStreamAnalyzer
+        implements Analyzer<MockDynamicOutputDataStreamAnalyzer>, HasOutputDataStreams, AnalyzerResult {
 
     private static final long serialVersionUID = 1L;
-
-    private transient OutputRowCollector collector;
-
     @Configured
     String streamName;
-
     @Configured
     InputColumn<?>[] columns;
+    private transient OutputRowCollector collector;
 
     @Override
     public OutputDataStream[] getOutputDataStreams() {
         final OutputDataStreamBuilder streamBuilder = OutputDataStreams.pushDataStream(streamName);
-        for (InputColumn<?> column : columns) {
+        for (final InputColumn<?> column : columns) {
             streamBuilder.withColumnLike(column);
         }
         return new OutputDataStream[] { streamBuilder.toOutputDataStream() };
     }
 
     @Override
-    public void initializeOutputDataStream(OutputDataStream outputDataStream, Query query,
-            OutputRowCollector outputRowCollector) {
+    public void initializeOutputDataStream(final OutputDataStream outputDataStream, final Query query,
+            final OutputRowCollector outputRowCollector) {
         collector = outputRowCollector;
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         if (row.getId() % 2 == 0) {
             final List<Object> values = row.getValues(columns);
             collector.putValues(values);

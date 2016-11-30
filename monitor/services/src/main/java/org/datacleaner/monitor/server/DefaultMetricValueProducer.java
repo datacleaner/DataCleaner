@@ -49,14 +49,15 @@ public class DefaultMetricValueProducer implements MetricValueProducer {
     private final JobEngineManager _jobEngineManager;
 
     @Autowired
-    public DefaultMetricValueProducer(TenantContextFactory tenantContextFactory, JobEngineManager jobEngineManager) {
+    public DefaultMetricValueProducer(final TenantContextFactory tenantContextFactory,
+            final JobEngineManager jobEngineManager) {
         _tenantContextFactory = tenantContextFactory;
         _jobEngineManager = jobEngineManager;
     }
 
     @Override
-    public MetricValues getMetricValues(List<MetricIdentifier> metricIdentifiers, RepositoryFile resultFile,
-            TenantIdentifier tenant, JobIdentifier jobIdentifier) {
+    public MetricValues getMetricValues(final List<MetricIdentifier> metricIdentifiers, final RepositoryFile resultFile,
+            final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final String resultFilename = resultFile.getName();
         final ResultContext resultContext = tenantContext.getResult(resultFilename);

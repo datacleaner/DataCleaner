@@ -19,6 +19,11 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.TestCase.assertTrue;
+import static org.easymock.EasyMock.*;
+
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -55,11 +60,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.easymock.EasyMock.*;
-
 public class ComponentControllerV1Test {
     private String tenant = "demo";
     private String id = "component-id";
@@ -72,9 +72,9 @@ public class ComponentControllerV1Test {
     @Before
     public void setUp() {
         taskRunner = new SingleThreadedTaskRunner();
-        RemoteComponentsConfiguration remoteCfg = new SimpleRemoteComponentsConfigurationImpl();
-        ComponentHandlerFactory compHandlerFac = new ComponentHandlerFactory(remoteCfg);
-        TenantContextFactory tenantCtxFac = getTenantContextFactoryMock();
+        final RemoteComponentsConfiguration remoteCfg = new SimpleRemoteComponentsConfigurationImpl();
+        final ComponentHandlerFactory compHandlerFac = new ComponentHandlerFactory(remoteCfg);
+        final TenantContextFactory tenantCtxFac = getTenantContextFactoryMock();
         componentCache = new ComponentCache(compHandlerFac, tenantCtxFac);
         componentControllerV1._tenantContextFactory = tenantCtxFac;
         componentControllerV1._remoteComponentsConfiguration = remoteCfg;
@@ -88,7 +88,7 @@ public class ComponentControllerV1Test {
     }
 
     private TenantContextFactory getTenantContextFactoryMock() {
-        TenantContextFactory tenantContextFactory = createNiceMock(TenantContextFactory.class);
+        final TenantContextFactory tenantContextFactory = createNiceMock(TenantContextFactory.class);
         expect(tenantContextFactory.getContext(tenant)).andReturn(getTenantContextMock()).anyTimes();
         replay(tenantContextFactory);
 
@@ -96,7 +96,7 @@ public class ComponentControllerV1Test {
     }
 
     private TenantContext getTenantContextMock() {
-        TenantContext tenantContext = createNiceMock(TenantContext.class);
+        final TenantContext tenantContext = createNiceMock(TenantContext.class);
         expect(tenantContext.getComponentStore()).andReturn(getComponentsStoreMock()).anyTimes();
         expect(tenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
         replay(tenantContext);
@@ -105,7 +105,7 @@ public class ComponentControllerV1Test {
     }
 
     private ComponentStore getComponentsStoreMock() {
-        ComponentStore componentStore = createNiceMock(ComponentStore.class);
+        final ComponentStore componentStore = createNiceMock(ComponentStore.class);
         expect(componentStore.get(id)).andReturn(getComponentsStoreHolder()).anyTimes();
         replay(componentStore);
 
@@ -113,17 +113,16 @@ public class ComponentControllerV1Test {
     }
 
     private ComponentStoreHolder getComponentsStoreHolder() {
-        CreateInput createInput = new CreateInput();
-        ProcessStatelessInput input = createSampleInput();
-        createInput.configuration =  input.configuration;
-        long timeoutMs = 1000L;
-        ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(timeoutMs, createInput, id, componentName);
+        final CreateInput createInput = new CreateInput();
+        final ProcessStatelessInput input = createSampleInput();
+        createInput.configuration = input.configuration;
+        final long timeoutMs = 1000L;
 
-        return componentStoreHolder;
+        return new ComponentStoreHolder(timeoutMs, createInput, id, componentName);
     }
 
     private DataCleanerConfiguration getDCConfigurationMock() {
-        DataCleanerConfiguration dataCleanerConfiguration = createNiceMock(DataCleanerConfiguration.class);
+        final DataCleanerConfiguration dataCleanerConfiguration = createNiceMock(DataCleanerConfiguration.class);
         expect(dataCleanerConfiguration.getEnvironment()).andReturn(getEnvironmentMock()).anyTimes();
         expect(dataCleanerConfiguration.getHomeFolder()).andReturn(DataCleanerConfigurationImpl.defaultHomeFolder())
                 .anyTimes();
@@ -133,7 +132,7 @@ public class ComponentControllerV1Test {
     }
 
     private DataCleanerEnvironment getEnvironmentMock() {
-        DataCleanerEnvironment dataCleanerEnvironment = createNiceMock(DataCleanerEnvironment.class);
+        final DataCleanerEnvironment dataCleanerEnvironment = createNiceMock(DataCleanerEnvironment.class);
         expect(dataCleanerEnvironment.getDescriptorProvider()).andReturn(getDescriptorProviderMock()).anyTimes();
         expect(dataCleanerEnvironment.getInjectionManagerFactory()).andReturn(getInjectionManagerFactoryMock())
                 .anyTimes();
@@ -144,7 +143,7 @@ public class ComponentControllerV1Test {
     }
 
     private InjectionManagerFactory getInjectionManagerFactoryMock() {
-        InjectionManagerFactory injectionManagerFactory = createNiceMock(InjectionManagerFactory.class);
+        final InjectionManagerFactory injectionManagerFactory = createNiceMock(InjectionManagerFactory.class);
         expect(injectionManagerFactory.getInjectionManager(null)).andReturn(null).anyTimes();
         replay(injectionManagerFactory);
 
@@ -159,70 +158,72 @@ public class ComponentControllerV1Test {
     }
 
     private ProcessStatelessInput createSampleInput() {
-        JsonNodeFactory json = Serializator.getJacksonObjectMapper().getNodeFactory();
-        ProcessStatelessInput input = new ProcessStatelessInput();
+        final JsonNodeFactory json = Serializator.getJacksonObjectMapper().getNodeFactory();
+        final ProcessStatelessInput input = new ProcessStatelessInput();
         input.configuration = new ComponentConfiguration();
-        ArrayNode cols = json.arrayNode().add("c1").add("c2");
+        final ArrayNode cols = json.arrayNode().add("c1").add("c2");
         input.configuration.getProperties().put("Columns", cols);
         input.configuration.getColumns().add(json.textNode("c1"));
         input.configuration.getColumns().add(json.textNode("c2"));
 
         input.data = json.arrayNode();
-        ArrayNode row = json.arrayNode();
+        final ArrayNode row = json.arrayNode();
         row.add(json.textNode("Hello"));
         row.add(json.textNode("World"));
-        ((ArrayNode)input.data).add(row);
+        ((ArrayNode) input.data).add(row);
         return input;
     }
 
     @Test
     public void testGetAllComponents() throws Exception {
-        ComponentList componentList = componentControllerV1.getAllComponents("1.0", tenant, false);
+        final ComponentList componentList = componentControllerV1.getAllComponents("1.0", tenant, false);
         assertTrue(componentList.getComponents().size() > 0);
         assertNull(componentList.getComponents().get(0).isEnabled());
 
-        ComponentList componentList2 = componentControllerV1.getAllComponents("55.0.0", tenant, false);
+        final ComponentList componentList2 = componentControllerV1.getAllComponents("55.0.0", tenant, false);
         assertTrue(componentList2.getComponents().size() > 0);
         assertNotNull(componentList2.getComponents().get(0).isEnabled());
     }
 
     @Test
     public void testProcessStateless() throws Exception {
-        ProcessStatelessInput input = createSampleInput();
-        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, null, false, input);
-        JsonNode rows = output.rows;
+        final ProcessStatelessInput input = createSampleInput();
+        final ProcessStatelessOutput output =
+                componentControllerV1.processStateless(tenant, componentName, null, false, input);
+        final JsonNode rows = output.rows;
         Assert.assertEquals("Output should have one row group", 1, rows.size());
         Assert.assertEquals("Output should have one row", 1, rows.get(0).size());
-        JsonNode row1 = rows.get(0).get(0);
+        final JsonNode row1 = rows.get(0).get(0);
         Assert.assertEquals("Wrong output value", "HelloWorld", row1.get(0).asText());
     }
 
     @Test
     public void testProcessStatelessOutputFormatColumnMap() throws Exception {
 
-        ProcessStatelessInput input = createSampleInput();
+        final ProcessStatelessInput input = createSampleInput();
 
-        ProcessStatelessOutput output = componentControllerV1.processStateless(tenant, componentName, "map", false, input);
-        JsonNode rows = output.rows;
+        final ProcessStatelessOutput output =
+                componentControllerV1.processStateless(tenant, componentName, "map", false, input);
+        final JsonNode rows = output.rows;
         Assert.assertEquals("Output should have one row group", 1, rows.size());
         Assert.assertEquals("Output should have one row", 1, rows.get(0).size());
-        JsonNode row1 = rows.get(0).get(0);
-        JsonNode value = row1.get("Concat of c1,c2");
+        final JsonNode row1 = rows.get(0).get(0);
+        final JsonNode value = row1.get("Concat of c1,c2");
         Assert.assertNotNull("Output column 'Concat of c1,c2' doesn't exist", value);
         Assert.assertEquals("Output column 'Concat of c1,c2' has wrong value", "HelloWorld", value.asText());
     }
 
     @Test
     public void testCreateComponent() throws Exception {
-        CreateInput createInput = new CreateInput();
+        final CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
         componentControllerV1.createComponent(tenant, componentName, timeout, createInput);
     }
 
     @Test
     public void testProcessComponent() throws Exception {
-        ProcessStatelessInput input = createSampleInput();
-        ProcessInput processInput = new ProcessInput();
+        final ProcessStatelessInput input = createSampleInput();
+        final ProcessInput processInput = new ProcessInput();
         processInput.data = input.data;
 
         componentControllerV1.processComponent(tenant, id, processInput);

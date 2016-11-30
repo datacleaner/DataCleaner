@@ -32,13 +32,13 @@ public class DCUserInputException extends RuntimeException {
     /**
      * Constructs a {@link DCUserInputException} with a particular message to
      * the user.
-     * 
+     *
      * @param message
      */
-    public DCUserInputException(String message) {
+    public DCUserInputException(final String message) {
         super(message);
     }
-    
+
     public DCUserInputException() {
         super();
     }

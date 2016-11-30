@@ -26,11 +26,11 @@ public interface Repository extends RepositoryFolder {
 
     /**
      * Gets a {@link RepositoryNode} by it's qualified path.
-     * 
+     *
      * @param qualifiedPath
      *            the path of the node
      * @return the {@link RepositoryNode} with the specified qualified path, or
      *         null if it does not exist.
      */
-    public RepositoryNode getRepositoryNode(String qualifiedPath);
+    RepositoryNode getRepositoryNode(String qualifiedPath);
 }

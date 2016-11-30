@@ -32,25 +32,25 @@ public interface TaskRunner {
     /**
      * Submits a {@link Task} and a {@link TaskListener} to the
      * {@link TaskRunner}, that will (eventually) execute it.
-     * 
+     *
      * @param task
      * @param listener
      */
-    public void run(Task task, TaskListener listener);
+    void run(Task task, TaskListener listener);
 
     /**
      * Submits a {@link TaskRunnable} to the {@link TaskRunner}, that will
      * (eventually) execute it.
-     * 
+     *
      * @param taskRunnable
      */
-    public void run(TaskRunnable taskRunnable);
+    void run(TaskRunnable taskRunnable);
 
     /**
      * Shuts down the {@link TaskRunner}, cleaning up allocated threads and
      * making it unusable for future use.
      */
-    public void shutdown();
+    void shutdown();
 
     /**
      * Offers to 'assist' the {@link TaskRunner} in executing tasks. This will
@@ -59,5 +59,5 @@ public interface TaskRunner {
      * the thread is anyways waiting for tasks in the {@link TaskRunner} to
      * complete.
      */
-    public void assistExecution();
+    void assistExecution();
 }

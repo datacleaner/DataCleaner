@@ -27,15 +27,15 @@ import junit.framework.TestCase;
 
 public class AccessDatastoreTest extends TestCase {
 
-	public void testGetDatastoreConnection() throws Exception {
-		AccessDatastore ds = new AccessDatastore("foobar", "src/test/resources/developers.mdb");
-		assertEquals("foobar", ds.getName());
+    public void testGetDatastoreConnection() throws Exception {
+        final AccessDatastore ds = new AccessDatastore("foobar", "src/test/resources/developers.mdb");
+        assertEquals("foobar", ds.getName());
 
-		DatastoreConnection con = ds.openConnection();
-		DataContext dataContext = con.getDataContext();
+        final DatastoreConnection con = ds.openConnection();
+        final DataContext dataContext = con.getDataContext();
 
-		assertEquals("[information_schema, developers.mdb]", Arrays.toString(dataContext.getSchemaNames()));
-		String[] tableNames = dataContext.getDefaultSchema().getTableNames();
-		assertEquals("[developer, product]", Arrays.toString(tableNames));
-	}
+        assertEquals("[information_schema, developers.mdb]", Arrays.toString(dataContext.getSchemaNames()));
+        final String[] tableNames = dataContext.getDefaultSchema().getTableNames();
+        assertEquals("[developer, product]", Arrays.toString(tableNames));
+    }
 }

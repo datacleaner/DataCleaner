@@ -33,7 +33,7 @@ public class DisplayNameComparator implements Comparator<ComponentDescriptor<?>>
     private static final long serialVersionUID = 1L;
 
     @Override
-    public int compare(ComponentDescriptor<?> o1, ComponentDescriptor<?> o2) {
+    public int compare(final ComponentDescriptor<?> o1, final ComponentDescriptor<?> o2) {
         return o1.getDisplayName().compareTo(o2.getDisplayName());
     }
 

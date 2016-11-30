@@ -30,13 +30,13 @@ import org.datacleaner.api.OutputDataStream;
  */
 public interface OutputDataStreamBuilder {
 
-    public OutputDataStream toOutputDataStream();
+    OutputDataStream toOutputDataStream();
 
-    public OutputDataStreamBuilder likeTable(Table table);
+    OutputDataStreamBuilder likeTable(Table table);
 
-    public OutputDataStreamBuilder withColumn(String name, ColumnType columnType);
+    OutputDataStreamBuilder withColumn(String name, ColumnType columnType);
 
-    public OutputDataStreamBuilder withColumnLike(InputColumn<?> column);
+    OutputDataStreamBuilder withColumnLike(InputColumn<?> column);
 
-    public OutputDataStreamBuilder withColumnLike(Column column);
+    OutputDataStreamBuilder withColumnLike(Column column);
 }

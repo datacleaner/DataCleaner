@@ -56,47 +56,52 @@ public class HadoopClustersOptionsPanel extends DCPanel implements ServerInforma
     private final PopupButton _addClusterButton;
 
     @Inject
-    public HadoopClustersOptionsPanel(WindowContext windowContext, DataCleanerConfiguration configuration,
-            UserPreferences userPreferences) {
+    public HadoopClustersOptionsPanel(final WindowContext windowContext, final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 
         _windowContext = windowContext;
         _connectionsConfigurationsPanel = new DCPanel();
         _connectionsConfigurationsPanel.setLayout(new BorderLayout());
         _serverInformationCatalog = (MutableServerInformationCatalog) configuration.getServerInformationCatalog();
-        
-        final JMenuItem directoryMenuItem = WidgetFactory.createMenuItem("Using configuration directory", IconUtils.FILE_HDFS);
-        final JMenuItem directConnectionMenuItem = WidgetFactory.createMenuItem("Using direct namenode connection", IconUtils.FILE_HDFS);
-        
+
+        final JMenuItem directoryMenuItem =
+                WidgetFactory.createMenuItem("Using configuration directory", IconUtils.FILE_HDFS);
+        final JMenuItem directConnectionMenuItem =
+                WidgetFactory.createMenuItem("Using direct namenode connection", IconUtils.FILE_HDFS);
+
         _addClusterButton = WidgetFactory.createDefaultPopupButton("Add Hadoop cluster", IconUtils.ACTION_ADD_DARK);
         _addClusterButton.getMenu().add(directoryMenuItem);
         _addClusterButton.getMenu().add(directConnectionMenuItem);
 
         directConnectionMenuItem.addActionListener(e -> {
-            final DirectConnectionHadoopClusterDialog hadoopConnectionToNamenodeDialog = new DirectConnectionHadoopClusterDialog(
-                    _windowContext, null, _serverInformationCatalog);
+            final DirectConnectionHadoopClusterDialog hadoopConnectionToNamenodeDialog =
+                    new DirectConnectionHadoopClusterDialog(_windowContext, null, _serverInformationCatalog);
             hadoopConnectionToNamenodeDialog.setVisible(true);
         });
 
         directoryMenuItem.addActionListener(e -> {
-            final DirectoryBasedHadoopClusterDialog hadoopDirectoryConfigurationDialog = new DirectoryBasedHadoopClusterDialog(
-                    _windowContext, null, _serverInformationCatalog);
+            final DirectoryBasedHadoopClusterDialog hadoopDirectoryConfigurationDialog =
+                    new DirectoryBasedHadoopClusterDialog(_windowContext, null, _serverInformationCatalog);
             hadoopDirectoryConfigurationDialog.setVisible(true);
         });
-        
+
         updateClusterList();
         setLayout(new BorderLayout());
-        add(new DescriptionLabel("For DataCleaner to connect to Apache Hadoop information is required about the cluster to connect and execute jobs on it. By default you can use the HADOOP_CONF_DIR and YARN_CONF_DIR environment variables, or you can register a custom cluster using the options available in this dialog."), BorderLayout.NORTH);
+        add(new DescriptionLabel( "For DataCleaner to connect to Apache Hadoop information is required about the "
+                + "cluster to connect and execute jobs on it. By default you can use the HADOOP_CONF_DIR and "
+                + "YARN_CONF_DIR environment variables, or you can register a custom cluster using the options "
+                + "available in this dialog."), BorderLayout.NORTH);
         add(WidgetUtils.scrolleable(_connectionsConfigurationsPanel), BorderLayout.CENTER);
     }
 
     @Override
-    public void onAdd(ServerInformation serverInformation) {
+    public void onAdd(final ServerInformation serverInformation) {
         SwingUtilities.invokeLater(this::updateClusterList);
     }
 
     @Override
-    public void onRemove(ServerInformation serverInformation) {
+    public void onRemove(final ServerInformation serverInformation) {
         SwingUtilities.invokeLater(this::updateClusterList);
     }
 
@@ -105,25 +110,26 @@ public class HadoopClustersOptionsPanel extends DCPanel implements ServerInforma
 
         final DCPanel panel = new DCPanel();
         panel.setLayout(new GridBagLayout());
-        
+
         WidgetUtils.addToGridBag(DCPanel.flow(Alignment.RIGHT, _addClusterButton), panel, 0, row);
         row++;
 
-        final ServerInformation defaultServer = _serverInformationCatalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE); 
+        final ServerInformation defaultServer =
+                _serverInformationCatalog.getServer(HadoopResource.DEFAULT_CLUSTERREFERENCE);
         if (defaultServer != null) {
-            final HadoopClusterPanel clusterPanel = new HadoopClusterPanel(_windowContext, defaultServer,
-                    _serverInformationCatalog);
+            final HadoopClusterPanel clusterPanel =
+                    new HadoopClusterPanel(_windowContext, defaultServer, _serverInformationCatalog);
             WidgetUtils.addToGridBag(clusterPanel, panel, 0, row + 1, 1.0, 0.0);
             row++;
         }
-        
+
         final String[] serverNames = _serverInformationCatalog.getServerNames();
         for (int i = 0; i < serverNames.length; i++) {
             final String serverName = serverNames[i];
             if (serverName != HadoopResource.DEFAULT_CLUSTERREFERENCE) {
                 final ServerInformation server = _serverInformationCatalog.getServer(serverName);
-                final HadoopClusterPanel clusterPanel = new HadoopClusterPanel(_windowContext, server,
-                        _serverInformationCatalog);
+                final HadoopClusterPanel clusterPanel =
+                        new HadoopClusterPanel(_windowContext, server, _serverInformationCatalog);
                 WidgetUtils.addToGridBag(clusterPanel, panel, 0, row + 1, 1.0, 0.0);
                 row++;
             }
@@ -143,7 +149,7 @@ public class HadoopClustersOptionsPanel extends DCPanel implements ServerInforma
         super.removeNotify();
         _serverInformationCatalog.removeListener(this);
     }
-    
+
     private void updateClusterList() {
         _connectionsConfigurationsPanel.removeAll();
         _connectionsConfigurationsPanel.add(getConnectionsConfigurationsPanel());

@@ -30,108 +30,108 @@ import org.jdesktop.swingx.HorizontalLayout;
 
 /**
  * A widget used to display/edit a single char.
- * 
+ *
  * @author Kasper Sørensen
  */
 public class CharTextField extends DCPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final JTextField _textField;
-	private final DCLabel _label;
+    private final JTextField _textField;
+    private final DCLabel _label;
 
-	public CharTextField() {
-		_textField = new JTextField(2);
-		_textField.setDocument(new SingleCharacterDocument());
-		_label = DCLabel.dark("");
+    public CharTextField() {
+        _textField = new JTextField(2);
+        _textField.setDocument(new SingleCharacterDocument());
+        _label = DCLabel.dark("");
 
-		addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent e) {
-				Character value = getValue();
-				if (value == null) {
-					_label.setText("");
-				} else {
-					char c = value.charValue();
-					if (c == ' ') {
-						_label.setText("[whitespace]");
-					} else if (c == '\t') {
-						_label.setText("[tab]");
-					} else if (c == '\n') {
-						_label.setText("[newline]");
-					} else if (c == '\r') {
-						_label.setText("[carriage return]");
-					} else if (c == '\f') {
-						_label.setText("[form feed]");
-					} else if (c == '\b') {
-						_label.setText("[backspace]");
-					} else if (c == '~') {
+        addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(final DocumentEvent e) {
+                final Character value = getValue();
+                if (value == null) {
+                    _label.setText("");
+                } else {
+                    final char c = value.charValue();
+                    if (c == ' ') {
+                        _label.setText("[whitespace]");
+                    } else if (c == '\t') {
+                        _label.setText("[tab]");
+                    } else if (c == '\n') {
+                        _label.setText("[newline]");
+                    } else if (c == '\r') {
+                        _label.setText("[carriage return]");
+                    } else if (c == '\f') {
+                        _label.setText("[form feed]");
+                    } else if (c == '\b') {
+                        _label.setText("[backspace]");
+                    } else if (c == '~') {
                         _label.setText("[tilde]");
-					} else {
-						_label.setText(value.toString());
-					}
-				}
-			}
-		});
+                    } else {
+                        _label.setText(value.toString());
+                    }
+                }
+            }
+        });
 
-		setLayout(new HorizontalLayout(2));
-		add(_textField);
-		add(_label);
-	}
+        setLayout(new HorizontalLayout(2));
+        add(_textField);
+        add(_label);
+    }
 
-	public void addDocumentListener(DocumentListener documentListener) {
-		_textField.getDocument().addDocumentListener(documentListener);
-	}
+    public void addDocumentListener(final DocumentListener documentListener) {
+        _textField.getDocument().addDocumentListener(documentListener);
+    }
 
-	public void removeDocumentListener(DocumentListener documentListener) {
-		_textField.getDocument().removeDocumentListener(documentListener);
-	}
+    public void removeDocumentListener(final DocumentListener documentListener) {
+        _textField.getDocument().removeDocumentListener(documentListener);
+    }
 
-	public void setValue(Character value) {
-		if (value == null) {
-			_textField.setText("");
-		} else {
-			char c = value.charValue();
+    public Character getValue() {
+        final String text = _textField.getText();
+        if (text == null || text.length() == 0) {
+            return null;
+        }
 
-			if ('\t' == c) {
-				_textField.setText("\\t");
-			} else if ('\n' == c) {
-				_textField.setText("\\n");
-			} else if ('\r' == c) {
-				_textField.setText("\\r");
-			} else if ('\f' == c) {
-				_textField.setText("\\f");
-			} else if ('\b' == c) {
-				_textField.setText("\\b");
-			} else {
-				_textField.setText(value.toString());
-			}
-		}
-	}
+        // check for common escaped conversions
+        if ("\\t".equals(text)) {
+            return '\t';
+        } else if ("\\n".equals(text)) {
+            return '\n';
+        } else if ("\\r".equals(text)) {
+            return '\r';
+        } else if ("\\f".equals(text)) {
+            return '\f';
+        } else if ("\\b".equals(text)) {
+            return '\b';
+        }
 
-	public Character getValue() {
-		String text = _textField.getText();
-		if (text == null || text.length() == 0) {
-			return null;
-		}
+        if (text.length() == 2) {
+            // first char is an escape char
+            return text.charAt(1);
+        }
+        return text.charAt(0);
+    }
 
-		// check for common escaped conversions
-		if ("\\t".equals(text)) {
-			return '\t';
-		} else if ("\\n".equals(text)) {
-			return '\n';
-		} else if ("\\r".equals(text)) {
-			return '\r';
-		} else if ("\\f".equals(text)) {
-			return '\f';
-		} else if ("\\b".equals(text)) {
-			return '\b';
-		}
+    public void setValue(final Character value) {
+        if (value == null) {
+            _textField.setText("");
+        } else {
+            final char c = value.charValue();
 
-		if (text.length() == 2) {
-			// first char is an escape char
-			return text.charAt(1);
-		}
-		return text.charAt(0);
-	}
+            if ('\t' == c) {
+                _textField.setText("\\t");
+            } else if ('\n' == c) {
+                _textField.setText("\\n");
+            } else if ('\r' == c) {
+                _textField.setText("\\r");
+            } else if ('\f' == c) {
+                _textField.setText("\\f");
+            } else if ('\b' == c) {
+                _textField.setText("\\b");
+            } else {
+                _textField.setText(value.toString());
+            }
+        }
+    }
 }

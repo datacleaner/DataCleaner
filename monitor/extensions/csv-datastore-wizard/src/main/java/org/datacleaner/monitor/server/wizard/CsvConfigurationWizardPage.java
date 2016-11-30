@@ -42,7 +42,7 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
 
     private final Resource _resource;
 
-    public CsvConfigurationWizardPage(Resource resource) {
+    public CsvConfigurationWizardPage(final Resource resource) {
         _resource = resource;
     }
 
@@ -58,7 +58,7 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
 
     protected Map<String, Object> getFormModel() {
         final CsvConfiguration detectedConfiguration = autoDetectConfiguration(_resource);
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("separator", detectedConfiguration.getSeparatorChar());
         map.put("quote", detectedConfiguration.getQuoteChar());
         map.put("escape", detectedConfiguration.getEscapeChar());
@@ -66,20 +66,20 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
         map.put("encoding", detectedConfiguration.getEncoding());
         map.put("multilinesValues", detectedConfiguration.isMultilineValues());
         return map;
-    };
+    }
 
-    private CsvConfiguration autoDetectConfiguration(Resource resource) {
+    private CsvConfiguration autoDetectConfiguration(final Resource resource) {
         try {
             final CsvConfigurationDetection detection = new CsvConfigurationDetection(resource);
             return detection.suggestCsvConfiguration();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Failed to detect CSV configuration for file: " + resource, e);
             return new CsvConfiguration();
         }
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final char separator = getChar(formParameters, "separator");
         final char quote = getChar(formParameters, "quote");
@@ -90,26 +90,26 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
         final String headerLineNumberStr = getString(formParameters, "headerLineNumber");
         try {
             headerLineNumber = Integer.parseInt(headerLineNumberStr);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new DCUserInputException("Not a valid header line number: " + headerLineNumberStr);
         }
 
         final String encoding = getString(formParameters, "encoding");
         final boolean multilines = getBoolean(formParameters, "multilinesValues");
-        final CsvConfiguration configuration = new CsvConfiguration(headerLineNumber, encoding, separator, quote,
-                escape, true, multilines);
+        final CsvConfiguration configuration =
+                new CsvConfiguration(headerLineNumber, encoding, separator, quote, escape, true, multilines);
 
         return nextPageController(configuration);
     }
 
-    private char getChar(Map<String, List<String>> formParameters, String charType) {
+    private char getChar(final Map<String, List<String>> formParameters, final String charType) {
         try {
-            String value = getString(formParameters, charType);
+            final String value = getString(formParameters, charType);
             if (value == null || value.length() == 0) {
                 return CsvConfiguration.NOT_A_CHAR;
             }
             return value.charAt(0);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new DCUserInputException("Please fill a " + charType + " character");
         }
     }

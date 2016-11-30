@@ -44,19 +44,19 @@ class RowProcessingConsumerSorter {
 
     private final Collection<? extends RowProcessingConsumer> _consumers;
 
-    public RowProcessingConsumerSorter(Collection<? extends RowProcessingConsumer> consumers) {
+    public RowProcessingConsumerSorter(final Collection<? extends RowProcessingConsumer> consumers) {
         _consumers = consumers;
     }
 
     public List<RowProcessingConsumer> createProcessOrderedConsumerList() {
-        final List<RowProcessingConsumer> orderedConsumers = new ArrayList<RowProcessingConsumer>();
-        final Collection<RowProcessingConsumer> remainingConsumers = new LinkedList<RowProcessingConsumer>(_consumers);
-        final Set<InputColumn<?>> availableVirtualColumns = new HashSet<InputColumn<?>>();
+        final List<RowProcessingConsumer> orderedConsumers = new ArrayList<>();
+        final Collection<RowProcessingConsumer> remainingConsumers = new LinkedList<>(_consumers);
+        final Set<InputColumn<?>> availableVirtualColumns = new HashSet<>();
         final FilterOutcomes availableOutcomes = new FilterOutcomesImpl();
 
         while (!remainingConsumers.isEmpty()) {
             boolean changed = false;
-            for (final Iterator<RowProcessingConsumer> it = remainingConsumers.iterator(); it.hasNext();) {
+            for (final Iterator<RowProcessingConsumer> it = remainingConsumers.iterator(); it.hasNext(); ) {
                 final RowProcessingConsumer consumer = it.next();
 
                 boolean accepted = true;
@@ -67,9 +67,9 @@ class RowProcessingConsumerSorter {
 
                 // make sure that all the required colums are present
                 if (accepted) {
-                    InputColumn<?>[] requiredInput = consumer.getRequiredInput();
+                    final InputColumn<?>[] requiredInput = consumer.getRequiredInput();
                     if (requiredInput != null) {
-                        for (InputColumn<?> inputColumn : requiredInput) {
+                        for (final InputColumn<?> inputColumn : requiredInput) {
                             if (!inputColumn.isPhysicalColumn()) {
                                 if (!(inputColumn instanceof ExpressionBasedInputColumn)) {
                                     if (!availableVirtualColumns.contains(inputColumn)) {
@@ -90,7 +90,7 @@ class RowProcessingConsumerSorter {
                     final ComponentJob componentJob = consumer.getComponentJob();
 
                     final InputColumn<?>[] requiredInput = consumer.getRequiredInput();
-                    for (InputColumn<?> inputColumn : requiredInput) {
+                    for (final InputColumn<?> inputColumn : requiredInput) {
                         if (inputColumn instanceof ExpressionBasedInputColumn) {
                             availableVirtualColumns.add(inputColumn);
                         }
@@ -98,15 +98,15 @@ class RowProcessingConsumerSorter {
 
                     if (componentJob instanceof InputColumnSourceJob) {
                         final InputColumn<?>[] output = ((InputColumnSourceJob) componentJob).getOutput();
-                        for (InputColumn<?> col : output) {
+                        for (final InputColumn<?> col : output) {
                             availableVirtualColumns.add(col);
                         }
                     }
 
                     if (componentJob instanceof HasFilterOutcomes) {
-                        final Collection<FilterOutcome> outcomes = ((HasFilterOutcomes) componentJob)
-                                .getFilterOutcomes();
-                        for (FilterOutcome outcome : outcomes) {
+                        final Collection<FilterOutcome> outcomes =
+                                ((HasFilterOutcomes) componentJob).getFilterOutcomes();
+                        for (final FilterOutcome outcome : outcomes) {
                             availableOutcomes.add(outcome);
                         }
                     }
@@ -116,7 +116,7 @@ class RowProcessingConsumerSorter {
             if (!changed) {
                 // handle special case where a multistream component has a
                 // requirement from another stream
-                for (final Iterator<RowProcessingConsumer> it = remainingConsumers.iterator(); it.hasNext();) {
+                for (final Iterator<RowProcessingConsumer> it = remainingConsumers.iterator(); it.hasNext(); ) {
                     final RowProcessingConsumer consumer = it.next();
                     if (consumer.getComponent() instanceof MultiStreamComponent) {
                         orderedConsumers.add(consumer);

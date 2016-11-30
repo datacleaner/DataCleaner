@@ -42,19 +42,19 @@ public class ToStringFutureTextRenderer implements Renderer<AnalyzerResultFuture
     RendererFactory _rendererFactory;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerResultFuture<? extends AnalyzerResult> renderable) {
+    public RendererPrecedence getPrecedence(final AnalyzerResultFuture<? extends AnalyzerResult> renderable) {
         return RendererPrecedence.MEDIUM;
     }
 
     @Override
-    public String render(AnalyzerResultFuture<? extends AnalyzerResult> renderable) {
+    public String render(final AnalyzerResultFuture<? extends AnalyzerResult> renderable) {
         final StringBuilder resultString = new StringBuilder();
-        
+
         try {
-            AnalyzerResult result = renderable.get();
-            
-            Renderer<? super AnalyzerResult, ? extends CharSequence> renderer = _rendererFactory.getRenderer(
-                    result, TextRenderingFormat.class);
+            final AnalyzerResult result = renderable.get();
+
+            final Renderer<? super AnalyzerResult, ? extends CharSequence> renderer =
+                    _rendererFactory.getRenderer(result, TextRenderingFormat.class);
             if (renderer != null) {
                 logger.debug("renderer.render({})", result);
                 final CharSequence component = renderer.render(result);
@@ -65,8 +65,8 @@ public class ToStringFutureTextRenderer implements Renderer<AnalyzerResultFuture
                 logger.error(message);
                 throw new IllegalStateException(message);
             }
-        } catch (RuntimeException error) {
-            String message = "Unable to fetch result";
+        } catch (final RuntimeException error) {
+            final String message = "Unable to fetch result";
             logger.error(message, error);
             throw new IllegalStateException(message, error);
         }

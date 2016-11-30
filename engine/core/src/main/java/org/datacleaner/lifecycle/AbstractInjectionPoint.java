@@ -26,20 +26,20 @@ import org.datacleaner.util.ReflectionUtils;
 
 public abstract class AbstractInjectionPoint<E> implements InjectionPoint<E> {
 
-	protected abstract Type getGenericType();
+    protected abstract Type getGenericType();
 
-	@Override
-	public boolean isGenericType() {
-		return getGenericTypeArgumentCount() > 0;
-	}
+    @Override
+    public boolean isGenericType() {
+        return getGenericTypeArgumentCount() > 0;
+    }
 
-	public int getGenericTypeArgumentCount() {
-		return ReflectionUtils.getTypeParameterCount(getGenericType());
-	}
+    public int getGenericTypeArgumentCount() {
+        return ReflectionUtils.getTypeParameterCount(getGenericType());
+    }
 
-	@Override
-	public Class<?> getGenericTypeArgument(int i) throws IndexOutOfBoundsException {
-		return ReflectionUtils.getTypeParameter(getGenericType(), i);
-	}
+    @Override
+    public Class<?> getGenericTypeArgument(final int i) throws IndexOutOfBoundsException {
+        return ReflectionUtils.getTypeParameter(getGenericType(), i);
+    }
 
 }

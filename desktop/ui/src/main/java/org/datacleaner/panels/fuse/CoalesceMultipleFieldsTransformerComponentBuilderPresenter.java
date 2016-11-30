@@ -42,21 +42,22 @@ final class CoalesceMultipleFieldsTransformerComponentBuilderPresenter extends T
     private final ConfiguredPropertyDescriptor _inputProperty;
     private final ConfiguredPropertyDescriptor _unitsProperty;
 
-    public CoalesceMultipleFieldsTransformerComponentBuilderPresenter(
-            TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> transformerJobBuilder,
-            PropertyWidgetFactory propertyWidgetFactory, WindowContext windowContext,
-            DataCleanerConfiguration configuration) {
+    CoalesceMultipleFieldsTransformerComponentBuilderPresenter(
+            final TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> transformerJobBuilder,
+            final PropertyWidgetFactory propertyWidgetFactory, final WindowContext windowContext,
+            final DataCleanerConfiguration configuration) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
 
         _inputProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty("Input");
         _unitsProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty("Units");
 
-        _propertyWidget = new ColumnListMultipleCoalesceUnitPropertyWidget(transformerJobBuilder, _inputProperty, _unitsProperty);
+        _propertyWidget =
+                new ColumnListMultipleCoalesceUnitPropertyWidget(transformerJobBuilder, _inputProperty, _unitsProperty);
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (propertyDescriptor == _inputProperty) {
             return _propertyWidget;
         } else if (propertyDescriptor == _unitsProperty) {

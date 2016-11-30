@@ -67,28 +67,30 @@ public class CreateStagingTableAnalyzerTest {
     @Test
     public void testValidateNonExistingDatastore() {
         when(datastoreCatalog.getDatastore(DATASTORE_NAME)).thenReturn(null);
-        
+
         createStagingTableAnalyzer.validate();
     }
 
     @Test
     public void testValidateCorrectH2Datastore() {
-        when(datastore.getJdbcUrl()).thenReturn(CreateStagingTableAnalyzer.H2_DATABASE_CONNECTION_PROTOCOL
-                + SAVE_DATASTORE_DIRECTORY + "\\" + DATASTORE_NAME + ";FILE_LOCK=FS");
+        when(datastore.getJdbcUrl()).thenReturn(
+                CreateStagingTableAnalyzer.H2_DATABASE_CONNECTION_PROTOCOL + SAVE_DATASTORE_DIRECTORY + "\\"
+                        + DATASTORE_NAME + ";FILE_LOCK=FS");
 
         createStagingTableAnalyzer.validate();
     }
 
     @Test
     public void testValidateIncorrectH2Datastore() {
-        when(datastore.getJdbcUrl()).thenReturn(CreateStagingTableAnalyzer.H2_DATABASE_CONNECTION_PROTOCOL
-                + SAVE_DATASTORE_DIRECTORY.replace("5.0", "4.5") + "\\" + DATASTORE_NAME + ";FILE_LOCK=FS");
+        when(datastore.getJdbcUrl()).thenReturn(
+                CreateStagingTableAnalyzer.H2_DATABASE_CONNECTION_PROTOCOL + SAVE_DATASTORE_DIRECTORY
+                        .replace("5.0", "4.5") + "\\" + DATASTORE_NAME + ";FILE_LOCK=FS");
 
         expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage("Datastore \"" + DATASTORE_NAME
-                + "\" is not located in \"Written datastores\" directory \"" + userPreferences
-                .getSaveDatastoreDirectory().getPath() + "\".");
-        
+        expectedException.expectMessage(
+                "Datastore \"" + DATASTORE_NAME + "\" is not located in \"Written datastores\" directory \""
+                        + userPreferences.getSaveDatastoreDirectory().getPath() + "\".");
+
         createStagingTableAnalyzer.validate();
     }
 

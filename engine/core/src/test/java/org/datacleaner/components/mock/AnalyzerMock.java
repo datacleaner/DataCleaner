@@ -25,8 +25,6 @@ import java.util.Map;
 
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
@@ -36,10 +34,36 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.Provided;
 import org.datacleaner.result.NumberResult;
 
+import junit.framework.TestCase;
+
 @Named("Row-processing mock")
 public class AnalyzerMock implements Analyzer<NumberResult> {
 
-    private static List<AnalyzerMock> instances = new LinkedList<AnalyzerMock>();
+    private static List<AnalyzerMock> instances = new LinkedList<>();
+    @Configured
+    InputColumn<?>[] columns;
+    @Configured
+    String[] someStringProperty = new String[] { "foobar" };
+    // A field-level @Configured property
+    @Configured
+    private String configured1;
+    @Configured
+    private Integer configured2;
+    // A field-level @Provided property
+    @Provided
+    private Map<String, Long> providedMap;
+    @Provided
+    private List<Boolean> providedList;
+    private boolean init1 = false;
+    private boolean init2 = false;
+    private int runCount;
+    private long rowCount;
+    private boolean close1 = false;
+    private boolean close2 = false;
+
+    public AnalyzerMock() {
+        instances.add(this);
+    }
 
     public static List<AnalyzerMock> getInstances() {
         return instances;
@@ -49,52 +73,25 @@ public class AnalyzerMock implements Analyzer<NumberResult> {
         instances.clear();
     }
 
-    public AnalyzerMock() {
-        instances.add(this);
-    }
-
-    @Configured
-    InputColumn<?>[] columns;
-
-    @Configured
-    String[] someStringProperty = new String[] { "foobar" };
-
     public InputColumn<?>[] getColumns() {
         return columns;
     }
-
-    // A field-level @Configured property
-    @Configured
-    private String configured1;
 
     public String getConfigured1() {
         return configured1;
     }
 
-    @Configured
-    private Integer configured2;
-
     public Integer getConfigured2() {
         return configured2;
     }
-
-    // A field-level @Provided property
-    @Provided
-    private Map<String, Long> providedMap;
 
     public Map<String, Long> getProvidedMap() {
         return providedMap;
     }
 
-    @Provided
-    private List<Boolean> providedList;
-
     public List<Boolean> getProvidedList() {
         return providedList;
     }
-
-    private boolean init1 = false;
-    private boolean init2 = false;
 
     @Initialize
     public void init1() {
@@ -114,11 +111,8 @@ public class AnalyzerMock implements Analyzer<NumberResult> {
         return init2;
     }
 
-    private int runCount;
-    private long rowCount;
-
     @Override
-    public void run(InputRow row, int count) {
+    public void run(final InputRow row, final int count) {
         TestCase.assertNotNull(row);
         TestCase.assertNotNull(count);
         this.runCount++;
@@ -132,9 +126,6 @@ public class AnalyzerMock implements Analyzer<NumberResult> {
     public int getRunCount() {
         return runCount;
     }
-
-    private boolean close1 = false;
-    private boolean close2 = false;
 
     @Close
     public void close1() {

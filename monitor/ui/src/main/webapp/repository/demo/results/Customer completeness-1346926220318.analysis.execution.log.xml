@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns4:execution-log xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
+<ns4:execution-log xmlns="http://eobjects.org/datacleaner/schedule/1.0"
+				   xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
     <ns4:result-id>Customer completeness-1346926220318</ns4:result-id>
     <ns4:job-begin-date>2012-09-06T12:10:20.523+02:00</ns4:job-begin-date>
     <ns4:job-end-date>2012-09-06T12:10:20.692+02:00</ns4:job-end-date>

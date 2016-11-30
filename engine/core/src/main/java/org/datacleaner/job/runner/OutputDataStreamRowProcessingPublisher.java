@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class OutputDataStreamRowProcessingPublisher extends AbstractRowProcessingPublisher {
 
-    private final static Logger logger = LoggerFactory.getLogger(OutputDataStreamRowProcessingPublisher.class);
+    private static final Logger logger = LoggerFactory.getLogger(OutputDataStreamRowProcessingPublisher.class);
 
     private final RowProcessingConsumer _parentConsumer;
 
@@ -47,13 +47,13 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
      * consumer exists the execution flow is adapted since records will be
      * dispatched by a (component within the) parent instead of sourced by the
      * {@link OutputDataStreamRowProcessingPublisher} itself.
-     * 
+     *
      * @param publishers
      * @param parentConsumer
      * @param stream
      */
-    public OutputDataStreamRowProcessingPublisher(RowProcessingPublishers publishers,
-            RowProcessingConsumer parentConsumer, RowProcessingStream stream) {
+    public OutputDataStreamRowProcessingPublisher(final RowProcessingPublishers publishers,
+            final RowProcessingConsumer parentConsumer, final RowProcessingStream stream) {
         super(publishers, stream);
         if (parentConsumer == null) {
             throw new IllegalArgumentException("Parent RowProcessingConsumer cannot be null");
@@ -67,12 +67,13 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
     }
 
     @Override
-    protected boolean processRowsInternal(AnalysisListener listener, RowProcessingMetrics rowProcessingMetrics) {
+    protected boolean processRowsInternal(final AnalysisListener listener,
+            final RowProcessingMetrics rowProcessingMetrics) {
         final Collection<ActiveOutputDataStream> activeOutputDataStreams = _parentConsumer.getActiveOutputDataStreams();
-        for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
+        for (final ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
             try {
                 activeOutputDataStream.await();
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 logger.error("Unexpected error awaiting output data stream", e);
                 listener.errorUnknown(getAnalysisJob(), e);
                 return false;
@@ -88,9 +89,9 @@ public final class OutputDataStreamRowProcessingPublisher extends AbstractRowPro
     }
 
     @Override
-    protected boolean runRowProcessingInternal(List<TaskRunnable> postProcessingTasks) {
-        final TaskListener runCompletionListener = new ForkTaskListener("run row processing (" + getStream() + ")",
-                getTaskRunner(), postProcessingTasks);
+    protected boolean runRowProcessingInternal(final List<TaskRunnable> postProcessingTasks) {
+        final TaskListener runCompletionListener =
+                new ForkTaskListener("run row processing (" + getStream() + ")", getTaskRunner(), postProcessingTasks);
 
         final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
         final RunRowProcessingPublisherTask runTask = new RunRowProcessingPublisherTask(this, rowProcessingMetrics);

@@ -28,8 +28,8 @@ public interface ResourceDatastore extends Datastore {
 
     /**
      * Gets the resource that this datastore is based upon.
-     * 
+     *
      * @return
      */
-    public Resource getResource();
+    Resource getResource();
 }

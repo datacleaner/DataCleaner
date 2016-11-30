@@ -51,7 +51,7 @@ public class ComposeJsonTransformer implements Transformer {
     public ComposeJsonTransformer() {
     }
 
-    public ComposeJsonTransformer(InputColumn<?> data) {
+    public ComposeJsonTransformer(final InputColumn<?> data) {
         this.data = data;
     }
 
@@ -67,12 +67,12 @@ public class ComposeJsonTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow row) {
+    public String[] transform(final InputRow row) {
         try {
-            Object value = row.getValue(data);
+            final Object value = row.getValue(data);
             final String json = writer.writeValueAsString(value);
             return new String[] { json };
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Exception while creating JSON representation", e);
         }
     }

@@ -26,8 +26,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -81,7 +79,7 @@ public class Dropzone extends DCPanel {
 
     public Dropzone(final DatastoreCatalog datastoreCatalog, final ServerInformationCatalog serverInformationCatalog,
             final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences,
-            WindowContext windowContext, Provider<OptionsDialog> optionsDialogProvider) {
+            final WindowContext windowContext, final Provider<OptionsDialog> optionsDialogProvider) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT);
         _datastoreCatalog = datastoreCatalog;
         _datastoreSelectListener = datastoreSelectListener;
@@ -89,37 +87,36 @@ public class Dropzone extends DCPanel {
         setLayout(new GridBagLayout());
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        setBorder(new CompoundBorder(BorderFactory.createDashedBorder(WidgetUtils.BG_COLOR_MEDIUM, 3f, 3.0f, 3.0f,
-                false), new EmptyBorder(30, 30, 30, 30)));
+        setBorder(
+                new CompoundBorder(BorderFactory.createDashedBorder(WidgetUtils.BG_COLOR_MEDIUM, 3f, 3.0f, 3.0f, false),
+                        new EmptyBorder(30, 30, 30, 30)));
 
         final DCLabel dropFileLabel = DCLabel.dark("<html><b>Drop file</b> here</html>");
         dropFileLabel.setFont(WidgetUtils.FONT_BANNER);
-        add(dropFileLabel, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+        add(dropFileLabel,
+                new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                        new Insets(0, 0, 10, 0), 0, 0));
 
         // orclick button
         final JButton orClickButton = WidgetFactory.createPrimaryButton("(Click to browse)", IconUtils.FILE_FILE);
         orClickButton.setFont(WidgetUtils.FONT_HEADER2);
         orClickButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(orClickButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.EAST,
-                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
-        orClickButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showFileChooser();
-            }
-        });
+        add(orClickButton,
+                new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+                        new Insets(0, 0, 10, 0), 0, 0));
+        orClickButton.addActionListener(e -> showFileChooser());
         // select hadoop file button
-        final JButton selectHadoopButton = WidgetFactory.createPrimaryButton("Select Hadoop HDFS file",
-                IconUtils.FILE_HDFS);
+        final JButton selectHadoopButton =
+                WidgetFactory.createPrimaryButton("Select Hadoop HDFS file", IconUtils.FILE_HDFS);
         selectHadoopButton.setFont(WidgetUtils.FONT_HEADER2);
         selectHadoopButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(selectHadoopButton, new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST,
-                GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
+        add(selectHadoopButton,
+                new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+                        new Insets(0, 10, 10, 0), 0, 0));
 
         selectHadoopButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(final MouseEvent e) {
 
                 String selectedServer = null;
                 final String[] serverNames = serverInformationCatalog.getServerNames();
@@ -133,27 +130,28 @@ public class Dropzone extends DCPanel {
                     if (EnvironmentBasedHadoopClusterInformation.isConfigurationDirectoriesSpecified()) {
                         selectedServer = serverNames[0];
                     }
-                } 
-                
+                }
+
                 if (selectedServer == null) {
-                    final SelectHadoopClusterDialog selectHadoopConfigurationDialog = new SelectHadoopClusterDialog(
-                            windowContext, serverInformationCatalog, optionsDialogProvider);
+                    final SelectHadoopClusterDialog selectHadoopConfigurationDialog =
+                            new SelectHadoopClusterDialog(windowContext, serverInformationCatalog,
+                                    optionsDialogProvider);
                     selectHadoopConfigurationDialog.setVisible(true);
                     selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration();
                 }
 
                 if (selectedServer != null) {
-                    final URI selectedFile = HdfsUrlChooser.showDialog(Dropzone.this, serverInformationCatalog,
-                            selectedServer, null, OpenType.LOAD);
+                    final URI selectedFile = HdfsUrlChooser
+                            .showDialog(Dropzone.this, serverInformationCatalog, selectedServer, null, OpenType.LOAD);
                     logger.info("Selected HDFS file: " + selectedFile);
 
                     if (selectedFile != null) {
-                        final HadoopClusterInformation server = (HadoopClusterInformation) serverInformationCatalog
-                                .getServer(selectedServer);
-                        final HdfsResource resource = new HadoopResource(selectedFile, server.getConfiguration(),
-                               selectedServer);
-                        final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(
-                                _datastoreCatalog, resource);
+                        final HadoopClusterInformation server =
+                                (HadoopClusterInformation) serverInformationCatalog.getServer(selectedServer);
+                        final HdfsResource resource =
+                                new HadoopResource(selectedFile, server.getConfiguration(), selectedServer);
+                        final Datastore datastore = DatastoreCreationUtil
+                                .createAndAddUniqueDatastoreFromResource(_datastoreCatalog, resource);
                         _datastoreSelectListener.datastoreSelected(datastore);
                     }
                 }
@@ -163,7 +161,7 @@ public class Dropzone extends DCPanel {
 
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(final MouseEvent e) {
                 showFileChooser();
             }
         });
@@ -188,7 +186,7 @@ public class Dropzone extends DCPanel {
                 for (int i = 0; i < datastoreNames.length; i++) {
                     final Datastore existingDatastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
                     if (existingDatastore instanceof FileDatastore) {
-                        FileDatastore fileDatastore = (FileDatastore) existingDatastore;
+                        final FileDatastore fileDatastore = (FileDatastore) existingDatastore;
                         final String datastoreFilename = fileDatastore.getFilename();
                         if (filename.equals(datastoreFilename) || filePath.equals(datastoreFilename)) {
                             datastore = _datastoreCatalog.getDatastore(filename);
@@ -196,8 +194,8 @@ public class Dropzone extends DCPanel {
                     }
                 }
                 if (datastore == null) {
-                    datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(_datastoreCatalog,
-                            new FileResource(file));
+                    datastore = DatastoreCreationUtil
+                            .createAndAddUniqueDatastoreFromResource(_datastoreCatalog, new FileResource(file));
                 }
                 _datastoreSelectListener.datastoreSelected(datastore);
 
@@ -215,11 +213,11 @@ public class Dropzone extends DCPanel {
     }
 
     private void makeDroppable() {
-        TransferHandler handler = new TransferHandler() {
+        final TransferHandler handler = new TransferHandler() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public boolean canImport(TransferHandler.TransferSupport info) {
+            public boolean canImport(final TransferHandler.TransferSupport info) {
                 // we only import FileList
                 if (!info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                     return false;
@@ -229,7 +227,7 @@ public class Dropzone extends DCPanel {
 
             @SuppressWarnings("unchecked")
             @Override
-            public boolean importData(TransferHandler.TransferSupport info) {
+            public boolean importData(final TransferHandler.TransferSupport info) {
                 if (!info.isDrop()) {
                     return false;
                 }
@@ -241,24 +239,24 @@ public class Dropzone extends DCPanel {
                 }
 
                 // Get the fileList that is being dropped.
-                Transferable t = info.getTransferable();
-                List<File> data;
+                final Transferable t = info.getTransferable();
+                final List<File> data;
                 try {
                     data = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     return false;
                 }
                 if (data.size() != 1) {
                     logger.warn("Only one file/directory supported.");
                     return false;
                 }
-                File file = data.get(0);
+                final File file = data.get(0);
                 if (!file.exists()) {
                     return false;
                 }
 
-                Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromResource(_datastoreCatalog,
-                        new FileResource(file));
+                final Datastore datastore = DatastoreCreationUtil
+                        .createAndAddUniqueDatastoreFromResource(_datastoreCatalog, new FileResource(file));
                 _datastoreSelectListener.datastoreSelected(datastore);
                 return true;
             }

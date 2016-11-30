@@ -28,8 +28,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableSchema;
 import org.apache.metamodel.schema.MutableTable;
@@ -43,79 +41,14 @@ import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
 import org.datacleaner.reference.SimpleDictionary;
 import org.datacleaner.reference.SimpleSynonymCatalog;
-import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.util.Percentage;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.convert.MyConvertable.SecondaryConverter;
 
+import junit.framework.TestCase;
+
 public class StringConverterTest extends TestCase {
-
-    private final Dictionary dictionary = new SimpleDictionary("my dict");
-    private final SynonymCatalog synonymCatalog = new SimpleSynonymCatalog("my synonyms");
-    private final ReferenceDataCatalogImpl referenceDataCatalog = new ReferenceDataCatalogImpl(
-            Arrays.asList(dictionary), Arrays.asList(synonymCatalog), new ArrayList<StringPattern>());
-
-    private StringConverter stringConverter;
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl()
-                .withReferenceDataCatalog(referenceDataCatalog);
-
-        stringConverter = new StringConverter(conf, null);
-    }
-
-    public void testConvertConvertableType() throws Exception {
-        MyConvertable convertable = new MyConvertable();
-        convertable.setName("foo");
-        convertable.setDescription("bar");
-
-        String serializedForm1 = stringConverter.serialize(convertable);
-        assertEquals("foo:bar", serializedForm1);
-        String serializedForm2 = stringConverter.serialize(convertable, SecondaryConverter.class.newInstance());
-        assertEquals("foo|bar", serializedForm2);
-
-        {
-            MyConvertable copy1 = stringConverter.deserialize(serializedForm1, MyConvertable.class);
-            assertTrue(convertable != copy1);
-            assertEquals("foo", copy1.getName());
-            assertEquals("bar", copy1.getDescription());
-        }
-
-        {
-            MyConvertable copy2 = stringConverter.deserialize(serializedForm2, MyConvertable.class,
-                    new SecondaryConverter());
-            assertTrue(convertable != copy2);
-            assertEquals("foo", copy2.getName());
-            assertEquals("bar", copy2.getDescription());
-        }
-    }
-
-    public void testConvertSimpleTypes() throws Exception {
-        runTests("hello, [world]", "hello&#44; &#91;world&#93;");
-        runTests("hello", "hello");
-        runTests(1337, "1337");
-        runTests(12l, "12");
-        runTests('a', "a");
-        runTests(true, "true");
-        runTests(false, "false");
-        runTests((short) 12, "12");
-        runTests((byte) 12, "12");
-        runTests(String.class, "java.lang.String");
-        runTests(1337.0, "1337.0");
-        runTests(1337.0f, "1337.0");
-
-        // this is needed to make sure the unittest is runnable in all locales.
-        TimeZone timeZone = TimeZone.getDefault();
-        int localeOffset = timeZone.getRawOffset();
-
-        runTests(new Date(1234 - localeOffset), "1970-01-01T00:00:01 234");
-        runTests(Calendar.getInstance(), null);
-        runTests(new java.sql.Date(1234 - localeOffset), "1970-01-01T00:00:01 234");
-    }
 
     public static class MySerializable implements Serializable {
 
@@ -124,7 +57,7 @@ public class StringConverterTest extends TestCase {
         private final String myString;
         private final int myInt;
 
-        public MySerializable(String myString, int myInt) {
+        public MySerializable(final String myString, final int myInt) {
             this.myString = myString;
             this.myInt = myInt;
         }
@@ -138,8 +71,73 @@ public class StringConverterTest extends TestCase {
         }
     }
 
+    private final Dictionary dictionary = new SimpleDictionary("my dict");
+    private final SynonymCatalog synonymCatalog = new SimpleSynonymCatalog("my synonyms");
+    private final ReferenceDataCatalogImpl referenceDataCatalog =
+            new ReferenceDataCatalogImpl(Arrays.asList(dictionary), Arrays.asList(synonymCatalog), new ArrayList<>());
+    private StringConverter stringConverter;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        final DataCleanerConfiguration conf =
+                new DataCleanerConfigurationImpl().withReferenceDataCatalog(referenceDataCatalog);
+
+        stringConverter = new StringConverter(conf, null);
+    }
+
+    public void testConvertConvertableType() throws Exception {
+        final MyConvertable convertable = new MyConvertable();
+        convertable.setName("foo");
+        convertable.setDescription("bar");
+
+        final String serializedForm1 = stringConverter.serialize(convertable);
+        assertEquals("foo:bar", serializedForm1);
+        final String serializedForm2 = stringConverter.serialize(convertable, SecondaryConverter.class.newInstance());
+        assertEquals("foo|bar", serializedForm2);
+
+        {
+            final MyConvertable copy1 = stringConverter.deserialize(serializedForm1, MyConvertable.class);
+            assertTrue(convertable != copy1);
+            assertEquals("foo", copy1.getName());
+            assertEquals("bar", copy1.getDescription());
+        }
+
+        {
+            final MyConvertable copy2 =
+                    stringConverter.deserialize(serializedForm2, MyConvertable.class, new SecondaryConverter());
+            assertTrue(convertable != copy2);
+            assertEquals("foo", copy2.getName());
+            assertEquals("bar", copy2.getDescription());
+        }
+    }
+
+    public void testConvertSimpleTypes() throws Exception {
+        runTests("hello, [world]", "hello&#44; &#91;world&#93;");
+        runTests("hello", "hello");
+        runTests(1337, "1337");
+        runTests(12L, "12");
+        runTests('a', "a");
+        runTests(true, "true");
+        runTests(false, "false");
+        runTests((short) 12, "12");
+        runTests((byte) 12, "12");
+        runTests(String.class, "java.lang.String");
+        runTests(1337.0, "1337.0");
+        runTests(1337.0f, "1337.0");
+
+        // this is needed to make sure the unittest is runnable in all locales.
+        final TimeZone timeZone = TimeZone.getDefault();
+        final int localeOffset = timeZone.getRawOffset();
+
+        runTests(new Date(1234 - localeOffset), "1970-01-01T00:00:01 234");
+        runTests(Calendar.getInstance(), null);
+        runTests(new java.sql.Date(1234 - localeOffset), "1970-01-01T00:00:01 234");
+    }
+
     public void testConvertList() throws Exception {
-        List<?> list = stringConverter.deserialize("[foo,bar]", List.class);
+        final List<?> list = stringConverter.deserialize("[foo,bar]", List.class);
         assertEquals(2, list.size());
         assertEquals(String.class, list.get(0).getClass());
         assertEquals(String.class, list.get(1).getClass());
@@ -152,12 +150,20 @@ public class StringConverterTest extends TestCase {
     }
 
     public void testConvertSerializable() throws Exception {
-        String serialized = stringConverter.serialize(new MySerializable("foobar", 1337));
-        assertEquals(
-                "&#91;-84&#44;-19&#44;0&#44;5&#44;115&#44;114&#44;0&#44;63&#44;111&#44;114&#44;103&#44;46&#44;100&#44;97&#44;116&#44;97&#44;99&#44;108&#44;101&#44;97&#44;110&#44;101&#44;114&#44;46&#44;117&#44;116&#44;105&#44;108&#44;46&#44;99&#44;111&#44;110&#44;118&#44;101&#44;114&#44;116&#44;46&#44;83&#44;116&#44;114&#44;105&#44;110&#44;103&#44;67&#44;111&#44;110&#44;118&#44;101&#44;114&#44;116&#44;101&#44;114&#44;84&#44;101&#44;115&#44;116&#44;36&#44;77&#44;121&#44;83&#44;101&#44;114&#44;105&#44;97&#44;108&#44;105&#44;122&#44;97&#44;98&#44;108&#44;101&#44;0&#44;0&#44;0&#44;0&#44;0&#44;0&#44;0&#44;1&#44;2&#44;0&#44;2&#44;73&#44;0&#44;5&#44;109&#44;121&#44;73&#44;110&#44;116&#44;76&#44;0&#44;8&#44;109&#44;121&#44;83&#44;116&#44;114&#44;105&#44;110&#44;103&#44;116&#44;0&#44;18&#44;76&#44;106&#44;97&#44;118&#44;97&#44;47&#44;108&#44;97&#44;110&#44;103&#44;47&#44;83&#44;116&#44;114&#44;105&#44;110&#44;103&#44;59&#44;120&#44;112&#44;0&#44;0&#44;5&#44;57&#44;116&#44;0&#44;6&#44;102&#44;111&#44;111&#44;98&#44;97&#44;114&#93;",
-                serialized);
+        final String serialized = stringConverter.serialize(new MySerializable("foobar", 1337));
+        assertEquals("&#91;-84&#44;-19&#44;0&#44;5&#44;115&#44;114&#44;0&#44;63&#44;111&#44;114&#44;103&#44;"
+                + "46&#44;100&#44;97&#44;116&#44;97&#44;99&#44;108&#44;101&#44;97&#44;110&#44;101&#44;114&#44;"
+                + "46&#44;117&#44;116&#44;105&#44;108&#44;46&#44;99&#44;111&#44;110&#44;118&#44;101&#44;114&#44;"
+                + "116&#44;46&#44;83&#44;116&#44;114&#44;105&#44;110&#44;103&#44;67&#44;111&#44;110&#44;118&#44;"
+                + "101&#44;114&#44;116&#44;101&#44;114&#44;84&#44;101&#44;115&#44;116&#44;36&#44;77&#44;121&#44;"
+                + "83&#44;101&#44;114&#44;105&#44;97&#44;108&#44;105&#44;122&#44;97&#44;98&#44;108&#44;101&#44;0&#44;"
+                + "0&#44;0&#44;0&#44;0&#44;0&#44;0&#44;1&#44;2&#44;0&#44;2&#44;73&#44;0&#44;5&#44;109&#44;121&#44;"
+                + "73&#44;110&#44;116&#44;76&#44;0&#44;8&#44;109&#44;121&#44;83&#44;116&#44;114&#44;105&#44;110&#44;"
+                + "103&#44;116&#44;0&#44;18&#44;76&#44;106&#44;97&#44;118&#44;97&#44;47&#44;108&#44;97&#44;110&#44;"
+                + "103&#44;47&#44;83&#44;116&#44;114&#44;105&#44;110&#44;103&#44;59&#44;120&#44;112&#44;0&#44;0&#44;"
+                + "5&#44;57&#44;116&#44;0&#44;6&#44;102&#44;111&#44;111&#44;98&#44;97&#44;114&#93;", serialized);
 
-        MySerializable deserialized = stringConverter.deserialize(serialized, MySerializable.class);
+        final MySerializable deserialized = stringConverter.deserialize(serialized, MySerializable.class);
         assertEquals("foobar", deserialized.getMyString());
         assertEquals(1337, deserialized.getMyInt());
     }
@@ -180,8 +186,8 @@ public class StringConverterTest extends TestCase {
         Object deserialized = stringConverter.deserialize(serialized, MaxRowsFilter.Category.class);
         assertEquals(MaxRowsFilter.Category.VALID, deserialized);
 
-        MaxRowsFilter.Category[] array = new MaxRowsFilter.Category[] { MaxRowsFilter.Category.VALID,
-                MaxRowsFilter.Category.INVALID };
+        final MaxRowsFilter.Category[] array =
+                new MaxRowsFilter.Category[] { MaxRowsFilter.Category.VALID, MaxRowsFilter.Category.INVALID };
         serialized = stringConverter.serialize(array);
         assertEquals("[VALID,INVALID]", serialized);
 
@@ -192,14 +198,14 @@ public class StringConverterTest extends TestCase {
     public void testEnumWithAlias() throws Exception {
         // TableLookupTransformer has multiple aliased enum values
 
-        Object deserialized = stringConverter.deserialize("LEFT", TableLookupTransformer.JoinSemantic.class);
+        final Object deserialized = stringConverter.deserialize("LEFT", TableLookupTransformer.JoinSemantic.class);
         assertEquals(TableLookupTransformer.JoinSemantic.LEFT_JOIN_MAX_ONE, deserialized);
     }
 
     public void testFile() throws Exception {
-        File file1 = new File("pom.xml");
-        File fileAbs = file1.getAbsoluteFile();
-        File dir1 = new File("src");
+        final File file1 = new File("pom.xml");
+        final File fileAbs = file1.getAbsoluteFile();
+        final File dir1 = new File("src");
 
         String serialized = stringConverter.serialize(file1);
         assertEquals("pom.xml", serialized);
@@ -210,7 +216,7 @@ public class StringConverterTest extends TestCase {
         serialized = stringConverter.serialize(fileAbs);
         assertEquals(fileAbs.getAbsolutePath(), new File(serialized).getAbsolutePath());
 
-        File[] arr = new File[] { file1, dir1 };
+        final File[] arr = new File[] { file1, dir1 };
 
         serialized = stringConverter.serialize(arr);
         assertEquals("[pom.xml,src]", serialized);
@@ -223,46 +229,46 @@ public class StringConverterTest extends TestCase {
         assertEquals("my dict", stringConverter.serialize(dictionary));
         assertEquals("my synonyms", stringConverter.serialize(synonymCatalog));
 
-        Dictionary dictionaryResult = stringConverter.deserialize("my dict", Dictionary.class);
+        final Dictionary dictionaryResult = stringConverter.deserialize("my dict", Dictionary.class);
         assertSame(dictionaryResult, dictionary);
 
         try {
             stringConverter.deserialize("foo", Dictionary.class);
             fail("Exception expected");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals("Dictionary not found: foo", e.getMessage());
         }
 
-        SynonymCatalog synonymCatalogResult = stringConverter.deserialize("my synonyms", SynonymCatalog.class);
+        final SynonymCatalog synonymCatalogResult = stringConverter.deserialize("my synonyms", SynonymCatalog.class);
         assertSame(synonymCatalogResult, synonymCatalog);
         try {
             stringConverter.deserialize("bar", SynonymCatalog.class);
             fail("Exception expected");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals("Synonym catalog not found: bar", e.getMessage());
         }
     }
 
     public void testSerializeUnknownTypes() throws Exception {
-        String result = stringConverter.serialize(new Percentage(50));
+        final String result = stringConverter.serialize(new Percentage(50));
         assertEquals("50%", result);
     }
 
     public void testSerializeSchemaElements() throws Exception {
-        Schema schema = new MutableSchema("s1");
+        final Schema schema = new MutableSchema("s1");
         assertEquals("s1", stringConverter.serialize(schema));
 
-        MutableTable table = new MutableTable("t1");
+        final MutableTable table = new MutableTable("t1");
         table.setSchema(schema);
         assertEquals("s1.t1", stringConverter.serialize(table));
 
-        MutableColumn column = new MutableColumn("c1");
+        final MutableColumn column = new MutableColumn("c1");
         column.setTable(table);
         assertEquals("s1.t1.c1", stringConverter.serialize(column));
     }
 
     public void testNullArgument() throws Exception {
-        String s = stringConverter.serialize(null);
+        final String s = stringConverter.serialize(null);
         assertEquals("<null>", s);
         assertNull(stringConverter.deserialize(s, String.class));
         assertNull(stringConverter.deserialize(s, Integer.class));
@@ -279,9 +285,9 @@ public class StringConverterTest extends TestCase {
         runTests(new String[0], "[]");
         runTests(new String[3], "[<null>,<null>,<null>]");
 
-        Long[] result = stringConverter.deserialize("123", Long[].class);
+        final Long[] result = stringConverter.deserialize("123", Long[].class);
         assertEquals(1, result.length);
-        assertEquals(123l, result[0].longValue());
+        assertEquals(123L, result[0].longValue());
     }
 
     public void testDoubleSidedArray() throws Exception {
@@ -296,16 +302,16 @@ public class StringConverterTest extends TestCase {
         runTests(new Integer[][][][] { { { { 1, 2 }, { 3, 4 } }, { { 5, 6 } } } }, "[[[[1,2],[3,4]],[[5,6]]]]");
     }
 
-    private void runTests(final Object o, String expectedStringRepresentation) {
-        String s = stringConverter.serialize(o);
+    private void runTests(final Object o, final String expectedStringRepresentation) {
+        final String s = stringConverter.serialize(o);
         if (expectedStringRepresentation != null) {
             assertEquals(expectedStringRepresentation, s);
         }
-        Object o2 = stringConverter.deserialize(s, o.getClass());
+        final Object o2 = stringConverter.deserialize(s, o.getClass());
         if (ReflectionUtils.isArray(o)) {
-            boolean equals = EqualsBuilder.equals(o, o2);
+            final boolean equals = EqualsBuilder.equals(o, o2);
             if (!equals) {
-                StringBuilder sb = new StringBuilder();
+                final StringBuilder sb = new StringBuilder();
                 sb.append("Not equals!");
                 sb.append("\n expected: " + o + ": " + Arrays.toString((Object[]) o));
                 sb.append("\n actual:   " + o2 + ": " + Arrays.toString((Object[]) o2));
@@ -317,7 +323,7 @@ public class StringConverterTest extends TestCase {
     }
 
     public void testSerializeList() throws Exception {
-        ArrayList<Object> o = new ArrayList<Object>();
+        final ArrayList<Object> o = new ArrayList<>();
         o.add("foo");
         o.add("bar");
         o.add(Arrays.asList("baz", "foobar"));

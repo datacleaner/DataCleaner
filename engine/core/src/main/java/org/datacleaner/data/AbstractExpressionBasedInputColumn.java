@@ -22,33 +22,34 @@ package org.datacleaner.data;
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.ExpressionBasedInputColumn;
 
-abstract class AbstractExpressionBasedInputColumn<E> extends AbstractInputColumn<E> implements ExpressionBasedInputColumn<E> {
-	
-	private static final long serialVersionUID = 1L;
+abstract class AbstractExpressionBasedInputColumn<E> extends AbstractInputColumn<E>
+        implements ExpressionBasedInputColumn<E> {
 
-	@Override
-	public final String getName() {
-		return '"' + getExpression() + '"';
-	}
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	protected final int hashCodeInternal() {
-		return getExpression().hashCode();
-	}
+    @Override
+    public final String getName() {
+        return '"' + getExpression() + '"';
+    }
 
-	@Override
-	protected final Column getPhysicalColumnInternal() {
-		return null;
-	}
+    @Override
+    protected final int hashCodeInternal() {
+        return getExpression().hashCode();
+    }
 
-	@Override
-	protected final boolean equalsInternal(AbstractInputColumn<?> that) {
-		AbstractExpressionBasedInputColumn<?> t = (AbstractExpressionBasedInputColumn<?>) that;
-		return getExpression().equals(t.getExpression());
-	}
+    @Override
+    protected final Column getPhysicalColumnInternal() {
+        return null;
+    }
 
-	@Override
-	public final String toString() {
-		return getClass().getSimpleName() + "[" + getExpression() + "]";
-	}
+    @Override
+    protected final boolean equalsInternal(final AbstractInputColumn<?> that) {
+        final AbstractExpressionBasedInputColumn<?> t = (AbstractExpressionBasedInputColumn<?>) that;
+        return getExpression().equals(t.getExpression());
+    }
+
+    @Override
+    public final String toString() {
+        return getClass().getSimpleName() + "[" + getExpression() + "]";
+    }
 }

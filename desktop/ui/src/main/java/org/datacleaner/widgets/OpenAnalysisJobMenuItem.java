@@ -40,12 +40,12 @@ public class OpenAnalysisJobMenuItem extends JMenuItem implements ActionListener
 
     private static final long serialVersionUID = 1L;
 
-    private static final Icon ICON_JOB = ImageManager.get()
-            .getImageIcon(IconUtils.MODEL_JOB, IconUtils.ICON_SIZE_SMALL);
-    private static final Icon ICON_RESULT = ImageManager.get().getImageIcon(IconUtils.MODEL_RESULT,
-            IconUtils.ICON_SIZE_SMALL);
-    private static final Icon ICON_FILE = ImageManager.get().getImageIcon(IconUtils.FILE_FILE,
-            IconUtils.ICON_SIZE_SMALL);
+    private static final Icon ICON_JOB =
+            ImageManager.get().getImageIcon(IconUtils.MODEL_JOB, IconUtils.ICON_SIZE_SMALL);
+    private static final Icon ICON_RESULT =
+            ImageManager.get().getImageIcon(IconUtils.MODEL_RESULT, IconUtils.ICON_SIZE_SMALL);
+    private static final Icon ICON_FILE =
+            ImageManager.get().getImageIcon(IconUtils.FILE_FILE, IconUtils.ICON_SIZE_SMALL);
 
     private final OpenAnalysisJobActionListener _openAnalysisJobActionListener;
     private final FileObject _file;
@@ -78,7 +78,7 @@ public class OpenAnalysisJobMenuItem extends JMenuItem implements ActionListener
     }
 
     @Override
-    public void actionPerformed(ActionEvent event) {
+    public void actionPerformed(final ActionEvent event) {
         _openAnalysisJobActionListener.openFile(_file);
     }
 }

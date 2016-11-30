@@ -29,86 +29,86 @@ import com.sleepycat.je.Environment;
 
 final class BerkeleyDbSet<E> implements Set<E> {
 
-	private final Set<E> _wrappedSet;
-	private final Environment _environment;
-	private final Database _database;
+    private final Set<E> _wrappedSet;
+    private final Environment _environment;
+    private final Database _database;
 
-	@SuppressWarnings("unchecked")
-	public BerkeleyDbSet(Environment environment, Database database, StoredKeySet set) {
-		_environment = environment;
-		_database = database;
-		_wrappedSet = set;
-	}
+    @SuppressWarnings("unchecked")
+    public BerkeleyDbSet(final Environment environment, final Database database, final StoredKeySet set) {
+        _environment = environment;
+        _database = database;
+        _wrappedSet = set;
+    }
 
-	public Set<E> getWrappedSet() {
-		return _wrappedSet;
-	}
+    public Set<E> getWrappedSet() {
+        return _wrappedSet;
+    }
 
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		String name = _database.getDatabaseName();
-		_database.close();
-		_environment.removeDatabase(null, name);
-	}
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        final String name = _database.getDatabaseName();
+        _database.close();
+        _environment.removeDatabase(null, name);
+    }
 
-	public int size() {
-		return _wrappedSet.size();
-	}
+    public int size() {
+        return _wrappedSet.size();
+    }
 
-	public boolean isEmpty() {
-		return _wrappedSet.isEmpty();
-	}
+    public boolean isEmpty() {
+        return _wrappedSet.isEmpty();
+    }
 
-	public boolean contains(Object o) {
-		return _wrappedSet.contains(o);
-	}
+    public boolean contains(final Object o) {
+        return _wrappedSet.contains(o);
+    }
 
-	public Iterator<E> iterator() {
-		return _wrappedSet.iterator();
-	}
+    public Iterator<E> iterator() {
+        return _wrappedSet.iterator();
+    }
 
-	public Object[] toArray() {
-		return _wrappedSet.toArray();
-	}
+    public Object[] toArray() {
+        return _wrappedSet.toArray();
+    }
 
-	public <T> T[] toArray(T[] a) {
-		return _wrappedSet.toArray(a);
-	}
+    public <T> T[] toArray(final T[] a) {
+        return _wrappedSet.toArray(a);
+    }
 
-	public boolean add(E e) {
-		return _wrappedSet.add(e);
-	}
+    public boolean add(final E e) {
+        return _wrappedSet.add(e);
+    }
 
-	public boolean remove(Object o) {
-		return _wrappedSet.remove(o);
-	}
+    public boolean remove(final Object o) {
+        return _wrappedSet.remove(o);
+    }
 
-	public boolean containsAll(Collection<?> c) {
-		return _wrappedSet.containsAll(c);
-	}
+    public boolean containsAll(final Collection<?> c) {
+        return _wrappedSet.containsAll(c);
+    }
 
-	public boolean addAll(Collection<? extends E> c) {
-		return _wrappedSet.addAll(c);
-	}
+    public boolean addAll(final Collection<? extends E> c) {
+        return _wrappedSet.addAll(c);
+    }
 
-	public boolean retainAll(Collection<?> c) {
-		return _wrappedSet.retainAll(c);
-	}
+    public boolean retainAll(final Collection<?> c) {
+        return _wrappedSet.retainAll(c);
+    }
 
-	public boolean removeAll(Collection<?> c) {
-		return _wrappedSet.removeAll(c);
-	}
+    public boolean removeAll(final Collection<?> c) {
+        return _wrappedSet.removeAll(c);
+    }
 
-	public void clear() {
-		_wrappedSet.clear();
-	}
+    public void clear() {
+        _wrappedSet.clear();
+    }
 
-	public boolean equals(Object o) {
-		return _wrappedSet.equals(o);
-	}
+    public boolean equals(final Object o) {
+        return _wrappedSet.equals(o);
+    }
 
-	public int hashCode() {
-		return _wrappedSet.hashCode();
-	}
+    public int hashCode() {
+        return _wrappedSet.hashCode();
+    }
 }

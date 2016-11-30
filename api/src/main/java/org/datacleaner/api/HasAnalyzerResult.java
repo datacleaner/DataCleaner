@@ -26,10 +26,10 @@ package org.datacleaner.api;
  */
 public interface HasAnalyzerResult<R extends AnalyzerResult> {
 
-	/**
-	 * Gets the analyzer result of this instance.
-	 * 
-	 * @return an analyzer result object.
-	 */
-	public R getResult();
+    /**
+     * Gets the analyzer result of this instance.
+     *
+     * @return an analyzer result object.
+     */
+    R getResult();
 }

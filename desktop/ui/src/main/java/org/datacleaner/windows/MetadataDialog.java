@@ -34,10 +34,10 @@ import org.datacleaner.util.WidgetUtils;
 public class MetadataDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
-    private static final int MAX_HEIGHT = 800; 
+    private static final int MAX_HEIGHT = 800;
     private final AnalysisJobBuilder _jobBuilder;
 
-    public MetadataDialog(WindowContext windowContext, AnalysisJobBuilder jobBuilder) {
+    public MetadataDialog(final WindowContext windowContext, final AnalysisJobBuilder jobBuilder) {
         super(windowContext, ImageManager.get().getImage(IconUtils.MODEL_METADATA));
         _jobBuilder = jobBuilder;
     }

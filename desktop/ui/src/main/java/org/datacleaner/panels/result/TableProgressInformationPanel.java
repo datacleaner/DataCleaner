@@ -56,7 +56,7 @@ public class TableProgressInformationPanel extends DCPanel {
     private final DCLabel _progressStatusLabel;
     private final DCLabel _progressExpectationLabel;
 
-    public TableProgressInformationPanel(Table table, int expectedRows) {
+    public TableProgressInformationPanel(final Table table, final int expectedRows) {
         _table = table;
         _progressBar = new DCProgressBar(0, expectedRows);
         _progressStatusLabel = DCLabel.bright("");
@@ -67,7 +67,7 @@ public class TableProgressInformationPanel extends DCPanel {
         _progressCountLabel.setFont(FONT);
         _progressExpectationLabel.setFont(FONT);
 
-        GridBagLayout layout = new GridBagLayout();
+        final GridBagLayout layout = new GridBagLayout();
         layout.columnWidths = new int[] { 150 };
         setLayout(layout);
 
@@ -118,12 +118,12 @@ public class TableProgressInformationPanel extends DCPanel {
 
     /**
      * Sets the progress of the processing of the table.
-     * 
+     *
      * @param currentRow
      * @return
      */
-    public boolean setProgress(int currentRow) {
-        boolean result = _progressBar.setValueIfGreater(currentRow);
+    public boolean setProgress(final int currentRow) {
+        final boolean result = _progressBar.setValueIfGreater(currentRow);
 
         if (result) {
             _progressCountLabel.setText(formatNumber(currentRow));
@@ -132,7 +132,7 @@ public class TableProgressInformationPanel extends DCPanel {
         return result;
     }
 
-    public void setProgressMaximum(int maximum) {
+    public void setProgressMaximum(final int maximum) {
         if (maximum != -1) {
             _progressBar.setMaximum(maximum);
             _progressBar.setIndeterminate(false);
@@ -143,7 +143,7 @@ public class TableProgressInformationPanel extends DCPanel {
         }
     }
 
-    public void setProgressStopped(boolean failure) {
+    public void setProgressStopped(final boolean failure) {
         _progressStatusLabel.setText("Stopped! - ");
         _progressBar.setEnabled(false);
         if (failure) {
@@ -156,7 +156,7 @@ public class TableProgressInformationPanel extends DCPanel {
         setProgressFinished(maximum);
     }
 
-    public void setProgressFinished(int finalNumberOfRows) {
+    public void setProgressFinished(final int finalNumberOfRows) {
         _progressStatusLabel.setText("Finished! - ");
         _progressBar.setShowAsFull(true);
         _progressBar.setIndeterminate(false);
@@ -167,8 +167,8 @@ public class TableProgressInformationPanel extends DCPanel {
         _progressStatusLabel.setText("Cancelled! - ");
     }
 
-    private String formatNumber(int number) {
-        NumberFormat nf = NumberFormat.getInstance();
+    private String formatNumber(final int number) {
+        final NumberFormat nf = NumberFormat.getInstance();
         return nf.format(number);
     }
 }

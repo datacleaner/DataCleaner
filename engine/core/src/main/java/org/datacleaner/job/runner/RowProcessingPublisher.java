@@ -35,38 +35,38 @@ public interface RowProcessingPublisher {
      * Gets metrics for this row processing session. Note that consumers are
      * assumed to be initialized at this point. See
      * {@link #initializeConsumers(TaskListener)}.
-     * 
+     *
      * @return
      */
-    public RowProcessingMetrics getRowProcessingMetrics();
+    RowProcessingMetrics getRowProcessingMetrics();
 
-    public RowProcessingStream getStream();
+    RowProcessingStream getStream();
 
-    public Query getQuery();
+    Query getQuery();
 
-    public void registerConsumer(final RowProcessingConsumer consumer);
+    void registerConsumer(RowProcessingConsumer consumer);
 
-    public RowProcessingConsumer getConsumer(ComponentJob componentJob);
+    RowProcessingConsumer getConsumer(ComponentJob componentJob);
 
-    public List<RowProcessingConsumer> getConsumers();
+    List<RowProcessingConsumer> getConsumers();
 
-    public RowProcessingPublishers getPublishers();
+    RowProcessingPublishers getPublishers();
 
-    public void onAllConsumersRegistered();
+    void onAllConsumersRegistered();
 
     /**
      * Fires the actual row processing. This method assumes that consumers have
      * been initialized and the publisher is ready to start processing.
-     * 
+     *
      * @see #runRowProcessing(Queue, TaskListener)
      */
-    public void processRows(RowProcessingMetrics rowProcessingMetrics);
+    void processRows(RowProcessingMetrics rowProcessingMetrics);
 
     /**
      * Runs the whole row processing logic, start to finish, including
      * initialization, process rows, result collection and cleanup/closing
      * resources.
-     * 
+     *
      * @param resultQueue
      *            a queue on which to append results
      * @param finishedTaskListener
@@ -78,40 +78,40 @@ public interface RowProcessingPublisher {
      *         {@link RowProcessingPublisher}s should be run first in which case
      *         the call to {@link #runRowProcessing(Queue, TaskListener)} should
      *         be repeated again when other publishers have run.
-     * 
+     *
      * @see #processRows(RowProcessingMetrics)
      * @see #initializeConsumers(TaskListener)
      */
-    public boolean runRowProcessing(Queue<JobAndResult> resultQueue, TaskListener finishedTaskListener);
+    boolean runRowProcessing(Queue<JobAndResult> resultQueue, TaskListener finishedTaskListener);
 
     /**
      * Initializes consumers of this {@link RowProcessingPublisher}.
-     * 
+     *
      * This method will not initialize consumers containing
      * {@link MultiStreamComponent}s. Ensure that
      * {@link #initializeMultiStreamConsumers(Set)} is also invoked.
-     * 
+     *
      * Once consumers are initialized, row processing can begin, expected rows
      * can be calculated and more.
-     * 
+     *
      * @param finishedListener
      */
-    public void initializeConsumers(TaskListener finishedListener);
+    void initializeConsumers(TaskListener finishedListener);
 
     /**
      * Closes consumers of this {@link RowProcessingPublisher}. Usually this
      * will be done automatically when
      * {@link #runRowProcessing(Queue, TaskListener)} is invoked.
      */
-    public void closeConsumers();
+    void closeConsumers();
 
-    public SourceColumnFinder getSourceColumnFinder();
+    SourceColumnFinder getSourceColumnFinder();
 
-    public AnalysisJob getAnalysisJob();
+    AnalysisJob getAnalysisJob();
 
-    public AnalysisListener getAnalysisListener();
+    AnalysisListener getAnalysisListener();
 
-    public ConsumeRowHandler createConsumeRowHandler();
+    ConsumeRowHandler createConsumeRowHandler();
 
-    public ErrorAware getErrorAware();
+    ErrorAware getErrorAware();
 }

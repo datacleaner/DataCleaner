@@ -32,7 +32,7 @@ public class JobDeletionEvent extends ApplicationEvent {
     private final String _tenant;
     private final String _jobName;
 
-    public JobDeletionEvent(Object source, String tenant, String jobName) {
+    public JobDeletionEvent(final Object source, final String tenant, final String jobName) {
         super(source);
         _tenant = tenant;
         _jobName = jobName;

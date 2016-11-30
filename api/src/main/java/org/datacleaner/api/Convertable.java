@@ -34,5 +34,5 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Convertable {
 
-	public Class<? extends Converter<?>> value();
+    Class<? extends Converter<?>> value();
 }

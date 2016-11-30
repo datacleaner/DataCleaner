@@ -19,9 +19,9 @@
  */
 package org.datacleaner.monitor.server.ui;
 
+import org.datacleaner.Version;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.Version;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.server.security.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,14 +48,13 @@ public class JsfHelper {
     }
 
     public DatastoreBeanWrapper[] getDatastores() {
-        final DatastoreCatalog datastoreCatalog = tenantContextFactory.getContext(user.getTenant()).getConfiguration()
-                .getDatastoreCatalog();
+        final DatastoreCatalog datastoreCatalog =
+                tenantContextFactory.getContext(user.getTenant()).getConfiguration().getDatastoreCatalog();
 
-        DatastoreBeanWrapper[] datastoreBeanWrapper = prepareDatastoreWrappers(datastoreCatalog);
-        return datastoreBeanWrapper;
+        return prepareDatastoreWrappers(datastoreCatalog);
     }
 
-    private DatastoreBeanWrapper[] prepareDatastoreWrappers(DatastoreCatalog datastoreCatalog) {
+    private DatastoreBeanWrapper[] prepareDatastoreWrappers(final DatastoreCatalog datastoreCatalog) {
         final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
 
         final DatastoreBeanWrapper[] beanWrapperArray = new DatastoreBeanWrapper[datastoreNames.length];

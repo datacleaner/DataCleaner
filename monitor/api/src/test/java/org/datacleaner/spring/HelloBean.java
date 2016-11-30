@@ -22,12 +22,12 @@ package org.datacleaner.spring;
 public class HelloBean {
 
     private String message;
-    
+
     public String getMessage() {
         return message;
     }
-    
-    public void setMessage(String message) {
+
+    public void setMessage(final String message) {
         this.message = message;
     }
 }

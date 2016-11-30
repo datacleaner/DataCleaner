@@ -34,7 +34,7 @@ public class NumberTextBox extends TextBox {
      */
     private static class NumbersOnly implements KeyPressHandler {
         @Override
-        public void onKeyPress(KeyPressEvent event) {
+        public void onKeyPress(final KeyPressEvent event) {
             if (!Character.isDigit(event.getCharCode())) {
                 ((TextBox) event.getSource()).cancelKey();
             }
@@ -46,19 +46,19 @@ public class NumberTextBox extends TextBox {
         addKeyPressHandler(new NumbersOnly());
     }
 
-    public void setNumberValue(Number value) {
-        if (value == null) {
-            setValue("");
-        } else {
-            setValue(value + "");
-        }
-    }
-
     public Integer getNumberValue() {
         final String value = getValue();
         if (value == null || value.trim().length() == 0) {
             return null;
         }
         return Integer.parseInt(value);
+    }
+
+    public void setNumberValue(final Number value) {
+        if (value == null) {
+            setValue("");
+        } else {
+            setValue(value + "");
+        }
     }
 }

@@ -21,12 +21,12 @@ package org.datacleaner.bootstrap;
 
 /**
  * Represents the action listener invoked when the user quits DataCleaner.
- * 
+ *
  * Typically the exit call will stop the process completely, but for embedded
  * use it might instead simply change the state of the surrounding application
  * or similar.
  */
 public interface ExitActionListener {
 
-	public void exit(int statusCode);
+    void exit(int statusCode);
 }

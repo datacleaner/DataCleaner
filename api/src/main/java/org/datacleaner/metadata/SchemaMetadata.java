@@ -32,26 +32,26 @@ public interface SchemaMetadata extends HasName, HasMetadataAnnotations {
 
     /**
      * Gets {@link TableMetadata} about a particular {@link Table}.
-     * 
+     *
      * @param tableName
      * @return a {@link TableMetadata} object, or null if no metadata is defined
      *         about the table
      */
-    public TableMetadata getTableMetadataByName(String tableName);
+    TableMetadata getTableMetadataByName(String tableName);
 
     /**
      * Gets {@link TableMetadata} about a particular {@link Table}.
-     * 
+     *
      * @param table
      * @return a {@link TableMetadata} object, or null if no metadata is defined
      *         about the table
      */
-    public TableMetadata getTableMetadata(Table table);
+    TableMetadata getTableMetadata(Table table);
 
     /**
      * Gets all available {@link TableMetadata} objects.
-     * 
+     *
      * @return
      */
-    public List<TableMetadata> getTableMetadata();
+    List<TableMetadata> getTableMetadata();
 }

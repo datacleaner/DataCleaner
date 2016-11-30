@@ -33,8 +33,9 @@ public class MonitorRestEndpoint extends ExternalResource {
         final Properties dockerProperties = new Properties();
         dockerProperties.load(getClass().getClassLoader().getResourceAsStream("docker.properties"));
 
-        RestAssured.baseURI = "http://" + determineHostName() + ":" + dockerProperties
-                .getProperty("monitor.portnumber") + "/" + dockerProperties.getProperty("monitor.contextpath");
+        RestAssured.baseURI =
+                "http://" + determineHostName() + ":" + dockerProperties.getProperty("monitor.portnumber") + "/"
+                        + dockerProperties.getProperty("monitor.contextpath");
         RestAssured.basePath = "/repository/demo";
     }
 

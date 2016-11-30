@@ -48,14 +48,14 @@ public class SchemaStructureComboBoxListRenderer extends DCListCellRenderer {
         this(true);
     }
 
-    public SchemaStructureComboBoxListRenderer(boolean indentsEnabled) {
+    public SchemaStructureComboBoxListRenderer(final boolean indentsEnabled) {
         indentEnabled = indentsEnabled;
     }
 
     @Override
-    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-            boolean cellHasFocus) {
-        JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    public Component getListCellRendererComponent(final JList<?> list, final Object value, final int index,
+            final boolean isSelected, final boolean cellHasFocus) {
+        final JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
         int indent = 0;
         Icon icon = null;
@@ -79,7 +79,7 @@ public class SchemaStructureComboBoxListRenderer extends DCListCellRenderer {
                 indent = 20;
             }
         } else if (value instanceof Datastore) {
-            Datastore datastore = (Datastore) value;
+            final Datastore datastore = (Datastore) value;
             icon = IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_SMALL);
             result.setText(datastore.getName());
         } else if (value instanceof InputColumn<?>) {
@@ -97,19 +97,19 @@ public class SchemaStructureComboBoxListRenderer extends DCListCellRenderer {
         return result;
     }
 
-    public void setIndentEnabled(boolean indent) {
-        this.indentEnabled = indent;
-    }
-
     public boolean isIndentEnabled() {
         return indentEnabled;
     }
 
-    public void setNullText(String nullText) {
-        this.nullText = nullText;
+    public void setIndentEnabled(final boolean indent) {
+        this.indentEnabled = indent;
     }
 
     public String getNullText() {
         return nullText;
+    }
+
+    public void setNullText(final String nullText) {
+        this.nullText = nullText;
     }
 }

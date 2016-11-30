@@ -19,11 +19,11 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.simple;
 
+import static org.junit.Assert.*;
+
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class SimpleDictionaryReferenceDataWizardTest {
     @Test

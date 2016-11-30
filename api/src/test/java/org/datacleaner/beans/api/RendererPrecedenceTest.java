@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 
 public class RendererPrecedenceTest extends TestCase {
 
-	public void testEnumAccess() throws Exception {
-		assertEquals("HIGH", RendererPrecedence.HIGH.name());
-	}
+    public void testEnumAccess() throws Exception {
+        assertEquals("HIGH", RendererPrecedence.HIGH.name());
+    }
 }

@@ -38,11 +38,11 @@ package org.datacleaner.util;
 /**
  * Utility class for building an average from the values added using the
  * addValue(Number) method.
- * 
+ *
  * Note that this class is NOT thread-safe, so do not share an instance between
  * threads (or at least make sure to synchronize).
- * 
- * 
+ *
+ *
  */
 public class AverageBuilder {
 
@@ -56,12 +56,12 @@ public class AverageBuilder {
 
     /**
      * Adds a value to the average that is being built.
-     * 
+     *
      * @param number
      * @return
      */
-    public AverageBuilder addValue(Number number) {
-        double total = _average * _numValues + number.doubleValue();
+    public AverageBuilder addValue(final Number number) {
+        final double total = _average * _numValues + number.doubleValue();
         _numValues++;
         _average = total / _numValues;
         return this;
@@ -70,13 +70,13 @@ public class AverageBuilder {
     /**
      * Adds the same value [count] number of times to the average that is being
      * built.
-     * 
+     *
      * @param number
      * @param count
      * @return
      */
-    public AverageBuilder addValue(Number number, int count) {
-        double total = _average * _numValues + number.doubleValue() * count;
+    public AverageBuilder addValue(final Number number, final int count) {
+        final double total = _average * _numValues + number.doubleValue() * count;
         _numValues = _numValues + count;
         _average = total / _numValues;
         return this;

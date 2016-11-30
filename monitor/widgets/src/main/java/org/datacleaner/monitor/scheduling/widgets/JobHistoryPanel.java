@@ -68,7 +68,8 @@ public class JobHistoryPanel extends Composite {
     @UiField(provided = true)
     CellList<ExecutionIdentifier> executionList;
 
-    public JobHistoryPanel(JobIdentifier job, SchedulingServiceAsync service, TenantIdentifier tenant) {
+    public JobHistoryPanel(final JobIdentifier job, final SchedulingServiceAsync service,
+            final TenantIdentifier tenant) {
         super();
         _job = job;
         _service = service;
@@ -76,20 +77,20 @@ public class JobHistoryPanel extends Composite {
 
         _callback = new DCAsyncCallback<ExecutionLog>() {
             @Override
-            public void onSuccess(ExecutionLog result) {
+            public void onSuccess(final ExecutionLog result) {
                 executionLogPanelTarget.setWidget(new ExecutionLogPanel(_service, _tenant, result, true));
             }
         };
 
         executionLogPanelTarget = new SimplePanel();
         executionLogPanelTarget.setStyleName("ExecutionLogPanelTarget");
-        executionList = new CellList<ExecutionIdentifier>(new ExecutionIdentifierCell());
+        executionList = new CellList<>(new ExecutionIdentifierCell());
         executionList.setEmptyListWidget(new Label("(none)"));
 
-        final SingleSelectionModel<ExecutionIdentifier> selectionModel = new SingleSelectionModel<ExecutionIdentifier>();
+        final SingleSelectionModel<ExecutionIdentifier> selectionModel = new SingleSelectionModel<>();
         selectionModel.addSelectionChangeHandler(new Handler() {
             @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
+            public void onSelectionChange(final SelectionChangeEvent event) {
                 final ExecutionIdentifier executionIdentifier = selectionModel.getSelectedObject();
                 if (executionIdentifier != null) {
                     _service.getExecution(_tenant, executionIdentifier, _callback);
@@ -106,13 +107,13 @@ public class JobHistoryPanel extends Composite {
         _callback.onSuccess(null);
         _service.getAllExecutions(_tenant, _job, new DCAsyncCallback<List<ExecutionIdentifier>>() {
             @Override
-            public void onSuccess(List<ExecutionIdentifier> executions) {
+            public void onSuccess(final List<ExecutionIdentifier> executions) {
                 executionList.setRowData(executions);
 
                 if (!executions.isEmpty()) {
                     // build a map of active executions, to be polled for
                     // updates
-                    final Map<Integer, ExecutionIdentifier> activeExecutions = new HashMap<Integer, ExecutionIdentifier>();
+                    final Map<Integer, ExecutionIdentifier> activeExecutions = new HashMap<>();
                     for (int i = 0; i < executions.size(); i++) {
                         final ExecutionIdentifier execution = executions.get(i);
                         if (!execution.isFinished()) {
@@ -125,7 +126,7 @@ public class JobHistoryPanel extends Composite {
                     ExecutionIdentifier selected = executions.get(executions.size() - 1);
                     if (!activeExecutions.isEmpty()) {
                         // Select the last one that is running
-                        for (ExecutionIdentifier execution : executions) {
+                        for (final ExecutionIdentifier execution : executions) {
                             if (execution.getExecutionStatus() == ExecutionStatus.RUNNING) {
                                 selected = execution;
                             }
@@ -135,21 +136,21 @@ public class JobHistoryPanel extends Composite {
 
                     // Start polling for updates
                     final Set<Entry<Integer, ExecutionIdentifier>> activeExecutionEntries = activeExecutions.entrySet();
-                    for (Entry<Integer, ExecutionIdentifier> entry : activeExecutionEntries) {
+                    for (final Entry<Integer, ExecutionIdentifier> entry : activeExecutionEntries) {
                         final int index = entry.getKey().intValue();
                         final ExecutionIdentifier execution = entry.getValue();
                         final Callback callback = new Callback() {
                             @Override
-                            public void updateExecutionLog(ExecutionLog executionLog) {
+                            public void updateExecutionLog(final ExecutionLog executionLog) {
                                 if (executionLog == null) {
                                     return;
                                 }
-                                final List<ExecutionIdentifier> list = new ArrayList<ExecutionIdentifier>(1);
+                                final List<ExecutionIdentifier> list = new ArrayList<>(1);
                                 list.add(executionLog);
                                 executionList.setRowData(index, list);
                             }
                         };
-                        ExecutionLogPoller poller = new ExecutionLogPoller(_service, _tenant, callback);
+                        final ExecutionLogPoller poller = new ExecutionLogPoller(_service, _tenant, callback);
                         poller.schedulePoll(execution);
                     }
                 }

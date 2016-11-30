@@ -30,29 +30,29 @@ import junit.framework.TestCase;
 public class CsvConfigurationDetectionTest extends TestCase {
 
     public void testDetectMultiLine() throws Exception {
-        CsvConfigurationDetection detection = new CsvConfigurationDetection(new File(
-                "src/test/resources/csv-detect/csv_multi_line.csv"));
-        CsvConfiguration configuration = detection.suggestCsvConfiguration();
+        final CsvConfigurationDetection detection =
+                new CsvConfigurationDetection(new File("src/test/resources/csv-detect/csv_multi_line.csv"));
+        final CsvConfiguration configuration = detection.suggestCsvConfiguration();
         assertTrue(configuration.isMultilineValues());
     }
 
     public void testDetectSingleLine() throws Exception {
-        CsvConfigurationDetection detection = new CsvConfigurationDetection(new File(
-                "src/test/resources/csv-detect/csv_single_line.csv"));
-        CsvConfiguration configuration = detection.suggestCsvConfiguration();
+        final CsvConfigurationDetection detection =
+                new CsvConfigurationDetection(new File("src/test/resources/csv-detect/csv_single_line.csv"));
+        final CsvConfiguration configuration = detection.suggestCsvConfiguration();
         assertFalse(configuration.isMultilineValues());
     }
 
     public void testColumnNames() throws Exception {
-        CsvConfigurationDetection detection = new CsvConfigurationDetection(new File(
-                "src/test/resources/csv-detect/csv_single_line.csv"));
+        final CsvConfigurationDetection detection =
+                new CsvConfigurationDetection(new File("src/test/resources/csv-detect/csv_single_line.csv"));
         final List<String> list = new ArrayList<>();
-        list.add("myId"); 
-        list.add("MyName"); 
-        
-        CsvConfiguration configuration = detection.suggestCsvConfiguration(list);
+        list.add("myId");
+        list.add("MyName");
+
+        final CsvConfiguration configuration = detection.suggestCsvConfiguration(list);
         assertFalse(configuration.isMultilineValues());
-        assertNotNull(configuration.getColumnNamingStrategy()); 
+        assertNotNull(configuration.getColumnNamingStrategy());
     }
 
 }

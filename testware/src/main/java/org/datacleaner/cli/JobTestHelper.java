@@ -36,12 +36,12 @@ import org.apache.commons.lang3.ArrayUtils;
 
 public class JobTestHelper {
     private static final String DATACLEANER_MAIN_CLASS_NAME = "org.datacleaner.Main";
-    private static final String JAVA_EXECUTABLE = System.getProperty("java.home") + File.separator + "bin"
-            + File.separator + "java";
+    private static final String JAVA_EXECUTABLE =
+            System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
 
-    public static void testJob(final File repository, final String jobName, final Map<String, String[]> expectedResultSets,
-            final String... extraCLIArgs) throws Exception {
-        final String jobResult = runJob(repository, jobName, extraCLIArgs);
+    public static void testJob(final File repository, final String jobName,
+            final Map<String, String[]> expectedResultSets, final String... extraCliArgs) throws Exception {
+        final String jobResult = runJob(repository, jobName, extraCliArgs);
 
         final InputStream resultInputStream = new ByteArrayInputStream(jobResult.getBytes());
         final InputStreamReader resultInputStreamReader = new InputStreamReader(resultInputStream);
@@ -52,6 +52,7 @@ public class JobTestHelper {
 
             // Read the output line by line until we see an indicator that the interesting part of the output
             // is coming up.
+            //noinspection StatementWithEmptyBody
             while ((resultLine = resultReader.readLine()) != null && !resultLine.equals("SUCCESS!")) {
                 // Ignore.
             }
@@ -60,11 +61,11 @@ public class JobTestHelper {
             while ((resultLine = resultReader.readLine()) != null) {
                 final String resultKey = resultLine.trim();
                 if (!"".equals(resultKey)) {
-                    String[] expectedResultSet = expectedResultSets.get(resultKey);
+                    final String[] expectedResultSet = expectedResultSets.get(resultKey);
 
                     assertNotNull(expectedResultSet);
 
-                    for (String expectedResult : expectedResultSet) {
+                    for (final String expectedResult : expectedResultSet) {
                         // Only check the first part of the line, because numbers at the end may differ based
                         // on the moment in time the test runs at.
                         assertThat(resultReader.readLine(), containsString(expectedResult));
@@ -81,12 +82,14 @@ public class JobTestHelper {
         }
     }
 
-    private static String runJob(final File repository, final String jobName, final String... extraCLIArgs) throws Exception {
+    private static String runJob(final File repository, final String jobName, final String... extraCliArgs)
+            throws Exception {
         final String jobFileName = getAbsoluteFilename(repository, "jobs/" + jobName + ".analysis.xml");
         final String confFileName = getAbsoluteFilename(repository, "conf.xml");
 
-        final String[] processBuilderArguments = ArrayUtils.addAll(new String[] { JAVA_EXECUTABLE, DATACLEANER_MAIN_CLASS_NAME,
-                "-job", jobFileName, "-conf", confFileName }, extraCLIArgs);
+        final String[] processBuilderArguments = ArrayUtils
+                .addAll(new String[] { JAVA_EXECUTABLE, DATACLEANER_MAIN_CLASS_NAME, "-job", jobFileName, "-conf",
+                        confFileName }, extraCliArgs);
         final ProcessBuilder builder = new ProcessBuilder(processBuilderArguments);
         builder.environment().put("CLASSPATH", System.getProperty("java.class.path"));
 
@@ -96,9 +99,9 @@ public class JobTestHelper {
         new Thread(() -> {
             try {
                 final InputStream is = process.getInputStream();
-                int c;
-                while ((c = is.read()) != -1) {
-                    result.append((char) c);
+                int character;
+                while ((character = is.read()) != -1) {
+                    result.append((char) character);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -110,7 +113,8 @@ public class JobTestHelper {
         return result.toString();
     }
 
-    private static String getAbsoluteFilename(final File repository, String childPath) throws UnsupportedEncodingException {
+    private static String getAbsoluteFilename(final File repository, final String childPath)
+            throws UnsupportedEncodingException {
         return URLDecoder.decode(new File(repository, childPath).getPath(), "UTF-8");
     }
 }

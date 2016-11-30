@@ -46,20 +46,20 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
     private final Set<ProvidedPropertyDescriptor> _outputRowCollectorProperties;
     private RowIdGenerator _idGenerator;
 
-    public TransformerConsumer(Transformer transformer, TransformerJob transformerJob, InputColumn<?>[] inputColumns,
-            RowProcessingPublisher publisher) {
+    public TransformerConsumer(final Transformer transformer, final TransformerJob transformerJob,
+            final InputColumn<?>[] inputColumns, final RowProcessingPublisher publisher) {
         super(publisher, transformerJob, transformerJob);
         _transformer = transformer;
         _transformerJob = transformerJob;
         _inputColumns = inputColumns;
         _concurrent = determineConcurrent();
 
-        _outputRowCollectorProperties = _transformerJob.getDescriptor().getProvidedPropertiesByType(
-                OutputRowCollector.class);
+        _outputRowCollectorProperties =
+                _transformerJob.getDescriptor().getProvidedPropertiesByType(OutputRowCollector.class);
     }
 
     private boolean determineConcurrent() {
-        Concurrent concurrent = _transformerJob.getDescriptor().getAnnotation(Concurrent.class);
+        final Concurrent concurrent = _transformerJob.getDescriptor().getAnnotation(Concurrent.class);
         if (concurrent == null) {
             // transformers are by default concurrent
             return true;
@@ -69,10 +69,10 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
 
     /**
      * Sets the row id generator to use, when creating new transformed records.
-     * 
+     *
      * @param idGenerator
      */
-    public void setRowIdGenerator(RowIdGenerator idGenerator) {
+    public void setRowIdGenerator(final RowIdGenerator idGenerator) {
         _idGenerator = idGenerator;
     }
 
@@ -116,9 +116,9 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
         }
     }
 
-    private void unregisterListener(Transformer transformer) {
-        for (ProvidedPropertyDescriptor descriptor : _outputRowCollectorProperties) {
-            OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(transformer);
+    private void unregisterListener(final Transformer transformer) {
+        for (final ProvidedPropertyDescriptor descriptor : _outputRowCollectorProperties) {
+            final OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(transformer);
             if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
                 ((ThreadLocalOutputRowCollector) outputRowCollector).removeListener();
             }
@@ -136,7 +136,7 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
             private AtomicInteger recordNumber = new AtomicInteger(0);
 
             @Override
-            public void onValues(Object[] values) {
+            public void onValues(final Object[] values) {
                 final int recordNo = recordNumber.incrementAndGet();
                 final boolean isFirst = recordNo == 1;
                 final TransformedInputRow resultRow;
@@ -154,7 +154,7 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
             }
         };
 
-        for (ProvidedPropertyDescriptor descriptor : _outputRowCollectorProperties) {
+        for (final ProvidedPropertyDescriptor descriptor : _outputRowCollectorProperties) {
             final OutputRowCollector outputRowCollector = (OutputRowCollector) descriptor.getValue(transformer);
             if (outputRowCollector instanceof ThreadLocalOutputRowCollector) {
                 ((ThreadLocalOutputRowCollector) outputRowCollector).setListener(listener);
@@ -164,20 +164,21 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
         }
     }
 
-    private long getNextVirtualRowId(InputRow row, int recordNo) {
+    private long getNextVirtualRowId(final InputRow row, final int recordNo) {
         if (_idGenerator == null) {
             // this can more or less never happen, except in test cases or in
             // cases where the consumers are programmatically being used outside
             // of an AnalysisRunner. There's a risk then here that we get the
             // same row ID twice, but that's life :-P
-            long offset = Long.MAX_VALUE;
-            long hiLoIntervalOffset = row.getId() * 10000;
+            final long offset = Long.MAX_VALUE;
+            final long hiLoIntervalOffset = row.getId() * 10000;
             return offset - hiLoIntervalOffset + recordNo;
         }
         return _idGenerator.nextVirtualRowId();
     }
 
-    private void addValuesToRow(TransformedInputRow resultRow, final InputColumn<?>[] outputColumns, Object[] values) {
+    private void addValuesToRow(final TransformedInputRow resultRow, final InputColumn<?>[] outputColumns,
+            final Object[] values) {
         assert outputColumns.length == values.length;
 
         // add output values to row.

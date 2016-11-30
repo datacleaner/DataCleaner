@@ -33,8 +33,8 @@ import org.datacleaner.util.ReadObjectBuilder;
  * There are two basic modes of matching when using a regex string pattern:
  * Using entire string matching or subsequence matching. This mode is determined
  * using the <code>matchEntireString</code> property.
- * 
- * 
+ *
+ *
  */
 public final class RegexStringPattern extends AbstractReferenceData implements StringPattern {
 
@@ -43,18 +43,18 @@ public final class RegexStringPattern extends AbstractReferenceData implements S
     private final String _expression;
     private final boolean _matchEntireString;
 
-    public RegexStringPattern(String name, String expression, boolean matchEntireString) {
+    public RegexStringPattern(final String name, final String expression, final boolean matchEntireString) {
         super(name);
         _expression = expression;
         _matchEntireString = matchEntireString;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final RegexStringPattern other = (RegexStringPattern) obj;
-            return Objects.equals(_expression, other._expression)
-                    && Objects.equals(_matchEntireString, other._matchEntireString);
+            return Objects.equals(_expression, other._expression) && Objects
+                    .equals(_matchEntireString, other._matchEntireString);
         }
         return false;
     }
@@ -66,8 +66,8 @@ public final class RegexStringPattern extends AbstractReferenceData implements S
     public String getExpression() {
         return _expression;
     }
-    
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, RegexStringPattern.class).readObject(stream);
     }
 
@@ -78,13 +78,13 @@ public final class RegexStringPattern extends AbstractReferenceData implements S
     }
 
     @Override
-    public StringPatternConnection openConnection(DataCleanerConfiguration configuration) {
+    public StringPatternConnection openConnection(final DataCleanerConfiguration configuration) {
         return new StringPatternConnection() {
 
             private final Pattern _pattern = Pattern.compile(_expression);
 
             @Override
-            public boolean matches(String string) {
+            public boolean matches(final String string) {
                 if (string == null) {
                     return false;
                 }
@@ -92,9 +92,9 @@ public final class RegexStringPattern extends AbstractReferenceData implements S
 
                 if (matcher.find()) {
                     if (_matchEntireString) {
-                        int s = matcher.start();
+                        final int s = matcher.start();
                         if (s == 0) {
-                            int e = matcher.end();
+                            final int e = matcher.end();
                             if (e == string.length()) {
                                 return true;
                             }

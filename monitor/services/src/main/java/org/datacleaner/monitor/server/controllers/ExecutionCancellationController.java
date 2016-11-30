@@ -65,8 +65,8 @@ public class ExecutionCancellationController {
 
         final TenantIdentifier tenantIdentifier = new TenantIdentifier(tenantContext.getTenantId());
 
-        ExecutionLog executionLog = _schedulingService.getExecution(tenantIdentifier, new ExecutionIdentifier(
-                resultName));
+        ExecutionLog executionLog =
+                _schedulingService.getExecution(tenantIdentifier, new ExecutionIdentifier(resultName));
 
         if (executionLog == null) {
             throw new IllegalArgumentException("The execution '" + resultName + "' does not exist.");
@@ -76,7 +76,7 @@ public class ExecutionCancellationController {
 
         executionLog = _schedulingService.getExecution(tenantIdentifier, new ExecutionIdentifier(resultName));
 
-        final Map<String, String> response = new TreeMap<String, String>();
+        final Map<String, String> response = new TreeMap<>();
         response.put("cancelled", cancelled + "");
         response.put("status", toString(executionLog.getExecutionStatus()));
         logger.debug("Response payload: {}", response);
@@ -84,7 +84,7 @@ public class ExecutionCancellationController {
         return response;
     }
 
-    private String toString(Object obj) {
+    private String toString(final Object obj) {
         if (obj == null) {
             return null;
         }

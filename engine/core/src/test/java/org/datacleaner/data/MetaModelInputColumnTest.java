@@ -19,10 +19,10 @@
  */
 package org.datacleaner.data;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
+
+import junit.framework.TestCase;
 
 public class MetaModelInputColumnTest extends TestCase {
 
@@ -30,7 +30,7 @@ public class MetaModelInputColumnTest extends TestCase {
         try {
             new MetaModelInputColumn(null);
             fail("Exception expected");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals("column cannot be null", e.getMessage());
         }
     }
@@ -38,7 +38,9 @@ public class MetaModelInputColumnTest extends TestCase {
     public void testGetDataTypeWhenClob() throws Exception {
         assertEquals(String.class,
                 new MetaModelInputColumn(new MutableColumn("foobar", ColumnType.VARCHAR)).getDataType());
-        assertEquals(String.class, new MetaModelInputColumn(new MutableColumn("foobar", ColumnType.CLOB)).getDataType());
-        assertEquals(byte[].class, new MetaModelInputColumn(new MutableColumn("foobar", ColumnType.BLOB)).getDataType());
+        assertEquals(String.class,
+                new MetaModelInputColumn(new MutableColumn("foobar", ColumnType.CLOB)).getDataType());
+        assertEquals(byte[].class,
+                new MetaModelInputColumn(new MutableColumn("foobar", ColumnType.BLOB)).getDataType());
     }
 }

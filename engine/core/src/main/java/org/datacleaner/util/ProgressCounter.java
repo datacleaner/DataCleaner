@@ -38,12 +38,12 @@ public class ProgressCounter implements Serializable {
 
     /**
      * Constructs the counter
-     * 
+     *
      * @param significantUpdateIntervalMillis
      *            the number of milliseconds that are considered a minimum
      *            between significant updates
      */
-    public ProgressCounter(int significantUpdateIntervalMillis) {
+    public ProgressCounter(final int significantUpdateIntervalMillis) {
         _value = new AtomicInteger(0);
         _lastUpdate = -1;
         _significantUpdateIntervalMillis = significantUpdateIntervalMillis;
@@ -58,7 +58,7 @@ public class ProgressCounter implements Serializable {
 
     /**
      * Gets the value of the counter.
-     * 
+     *
      * @return
      */
     public int get() {
@@ -69,11 +69,11 @@ public class ProgressCounter implements Serializable {
      * Sets the value of the counter if the new value is considered significant
      * to the user. In order to be 'significant' we require two circumstances to
      * be true:
-     * 
+     *
      * 1) The new value is greater than the previous value.
-     * 
+     *
      * 2) The value was not updated within the last significant update interval.
-     * 
+     *
      * @param newValue
      * @return
      */

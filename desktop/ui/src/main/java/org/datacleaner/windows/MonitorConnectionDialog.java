@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -54,7 +52,6 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCCheckBox;
-import org.datacleaner.widgets.DCCheckBox.Listener;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.jdesktop.swingx.JXTextField;
@@ -88,7 +85,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
     private final DCLabel _urlLabel;
 
     @Inject
-    public MonitorConnectionDialog(WindowContext windowContext, UserPreferences userPreferences) {
+    public MonitorConnectionDialog(final WindowContext windowContext, final UserPreferences userPreferences) {
         super(windowContext, imageManager.getImage("images/window/banner-dq-monitor.png"));
         _userPreferences = userPreferences;
 
@@ -98,19 +95,14 @@ public class MonitorConnectionDialog extends AbstractDialog {
         _urlLabel.setForeground(WidgetUtils.BG_COLOR_LESS_BRIGHT);
         _urlLabel.setBorder(new EmptyBorder(0, 0, 25, 0));
 
-        _httpsCheckBox = new DCCheckBox<Void>("Use HTTPS?", false);
+        _httpsCheckBox = new DCCheckBox<>("Use HTTPS?", false);
         if (monitorConnection != null && monitorConnection.isHttps()) {
             _httpsCheckBox.setSelected(true);
         }
         _httpsCheckBox.setBorderPainted(false);
         _httpsCheckBox.setOpaque(false);
         _httpsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _httpsCheckBox.addListener(new Listener<Void>() {
-            @Override
-            public void onItemSelected(Void item, boolean selected) {
-                updateUrlLabel();
-            }
-        });
+        _httpsCheckBox.addListener((item, selected) -> updateUrlLabel());
 
         _hostnameTextField = WidgetFactory.createTextField("Hostname");
         if (monitorConnection != null && monitorConnection.getHostname() != null) {
@@ -120,7 +112,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         }
         _hostnameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 updateUrlLabel();
             }
         });
@@ -134,7 +126,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         }
         _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 updateUrlLabel();
             }
         });
@@ -147,7 +139,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         }
         _contextPathTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 updateUrlLabel();
             }
         });
@@ -160,7 +152,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         }
         _tenantTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 updateUrlLabel();
             }
         });
@@ -168,16 +160,13 @@ public class MonitorConnectionDialog extends AbstractDialog {
         _usernameTextField = WidgetFactory.createTextField("Username");
         _passwordTextField = WidgetFactory.createPasswordField();
 
-        _authenticationCheckBox = new DCCheckBox<Void>("Use authentication?", true);
+        _authenticationCheckBox = new DCCheckBox<>("Use authentication?", true);
         _authenticationCheckBox.setBorderPainted(false);
         _authenticationCheckBox.setOpaque(false);
         _authenticationCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _authenticationCheckBox.addListener(new Listener<Void>() {
-            @Override
-            public void onItemSelected(Void item, boolean selected) {
-                _usernameTextField.setEnabled(selected);
-                _passwordTextField.setEnabled(selected);
-            }
+        _authenticationCheckBox.addListener((item, selected) -> {
+            _usernameTextField.setEnabled(selected);
+            _passwordTextField.setEnabled(selected);
         });
 
         if (monitorConnection != null && monitorConnection.isAuthenticationEnabled()) {
@@ -199,7 +188,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         int port = 8080;
         try {
             port = Integer.parseInt(_portTextField.getText());
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             // do nothing, fall back to 8080.
         }
 
@@ -283,61 +272,53 @@ public class MonitorConnectionDialog extends AbstractDialog {
         formPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
         final JButton testButton = WidgetFactory.createDefaultButton("Test connection", IconUtils.ACTION_REFRESH);
-        testButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                final MonitorConnection connection = createMonitorConnection();
-                final String pingUrl = connection.getRepositoryUrl() + "/ping";
-                final HttpGet request = new HttpGet(pingUrl);
-                try (final MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
-                    final HttpResponse response = monitorHttpClient.execute(request);
+        testButton.addActionListener(event -> {
+            final MonitorConnection connection = createMonitorConnection();
+            final String pingUrl = connection.getRepositoryUrl() + "/ping";
+            final HttpGet request = new HttpGet(pingUrl);
+            try (MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
+                final HttpResponse response = monitorHttpClient.execute(request);
 
-                    final StatusLine statusLine = response.getStatusLine();
+                final StatusLine statusLine = response.getStatusLine();
 
-                    if (statusLine.getStatusCode() == 200 || statusLine.getStatusCode() == 201) {
-                        // read response as JSON.
-                        final InputStream content = response.getEntity().getContent();
-                        final Map<?, ?> map;
-                        try {
-                            map = new ObjectMapper().readValue(content, Map.class);
-                        } finally {
-                            FileHelper.safeClose(content);
-                        }
-                        logger.info("Ping request responded: {}", map);
-                        JOptionPane.showMessageDialog(MonitorConnectionDialog.this, "Connection successful!");
-                    } else {
-                        final String reasonPhrase = statusLine.getReasonPhrase();
-                        WidgetUtils.showErrorMessage("Server reported error", "Server replied with status "
-                                + statusLine.getStatusCode() + ":\n" + reasonPhrase);
+                if (statusLine.getStatusCode() == 200 || statusLine.getStatusCode() == 201) {
+                    // read response as JSON.
+                    final InputStream content = response.getEntity().getContent();
+                    final Map<?, ?> map;
+                    try {
+                        map = new ObjectMapper().readValue(content, Map.class);
+                    } finally {
+                        FileHelper.safeClose(content);
                     }
-                } catch (Exception e) {
-                    // TODO: This dialog is shown behind the modal dialog
-                    WidgetUtils
-                            .showErrorMessage(
-                                    "Connection failed",
-                                    "Connecting to DataCleaner monitor failed. Did you remember to fill in all the nescesary fields?",
-                                    e);
+                    logger.info("Ping request responded: {}", map);
+                    JOptionPane.showMessageDialog(MonitorConnectionDialog.this, "Connection successful!");
+                } else {
+                    final String reasonPhrase = statusLine.getReasonPhrase();
+                    WidgetUtils.showErrorMessage("Server reported error",
+                            "Server replied with status " + statusLine.getStatusCode() + ":\n" + reasonPhrase);
                 }
+            } catch (final Exception e) {
+                // TODO: This dialog is shown behind the modal dialog
+                WidgetUtils.showErrorMessage("Connection failed",
+                        "Connecting to DataCleaner monitor failed. Did you remember to fill in all the nescesary fields?",
+                        e);
             }
         });
 
         final JButton saveButton = WidgetFactory.createPrimaryButton("Save connection", IconUtils.ACTION_SAVE_BRIGHT);
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final MonitorConnection monitorConnection = createMonitorConnection();
-                _userPreferences.setMonitorConnection(monitorConnection);
+        saveButton.addActionListener(e -> {
+            final MonitorConnection monitorConnection = createMonitorConnection();
+            _userPreferences.setMonitorConnection(monitorConnection);
 
-                MonitorConnectionDialog.this.close();
-            }
+            MonitorConnectionDialog.this.close();
         });
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, saveButton, testButton);
         buttonPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
         final DescriptionLabel descriptionLabel = new DescriptionLabel();
-        descriptionLabel
-                .setText("The DataCleaner monitor is a separate web application that is part of the DataCleaner eco-system. "
+        descriptionLabel.setText(
+                "The DataCleaner monitor is a separate web application that is part of the DataCleaner eco-system. "
                         + "In this dialog you can configure your connection to it. "
                         + "With the monitor you can create, share, monitor and govern current and historic data quality metrics. "
                         + "You can also set up alerts to react when certain metrics are out of their expected ranges.");
@@ -360,24 +341,15 @@ public class MonitorConnectionDialog extends AbstractDialog {
         if (!StringUtils.isNullOrEmpty(_usernameTextField.getText())) {
             _passwordTextField.setBorder(WidgetUtils.BORDER_EMPHASIZE_FIELD);
 
-            boolean focused = _passwordTextField.requestFocusInWindow();
+            final boolean focused = _passwordTextField.requestFocusInWindow();
             assert focused;
         }
-    }
-
-    public static void main(String[] args) {
-        LookAndFeelManager.get().init();
-        UserPreferences userPreferences = new UserPreferencesImpl(null);
-        WindowContext windowContext = new DCWindowContext(null, userPreferences, null);
-        MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext, userPreferences);
-
-        dialog.open();
     }
 
     /**
      * Shows a dialog in blocking mode. Only to be used for very
      * important/blocking behaviour.
-     * 
+     *
      * Note that this way of displaying a dialog is not preferred since
      * unexpected exceptions cannot be caught for modal dialogs.
      */
@@ -387,5 +359,14 @@ public class MonitorConnectionDialog extends AbstractDialog {
         setModal(true);
         setAlwaysOnTop(true);
         open();
+    }
+
+    public static void main(final String[] args) {
+        LookAndFeelManager.get().init();
+        final UserPreferences userPreferences = new UserPreferencesImpl(null);
+        final WindowContext windowContext = new DCWindowContext(null, userPreferences, null);
+        final MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext, userPreferences);
+
+        dialog.open();
     }
 }

@@ -19,22 +19,24 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+
+import org.junit.Test;
 
 public class DatastoreSynonymCatalogReferenceDataPageSynonymTest {
 
     @Test
     public void testGetPageIndex() throws Exception {
-        DatastoreSynonymCatalogReferenceDataPageSynonym page = new DatastoreSynonymCatalogReferenceDataPageSynonym(null);
+        final DatastoreSynonymCatalogReferenceDataPageSynonym page =
+                new DatastoreSynonymCatalogReferenceDataPageSynonym(null);
         assertEquals(new Integer(4), page.getPageIndex());
     }
 
     @Test
     public void testGetTemplateFilename() throws Exception {
-        DatastoreSynonymCatalogReferenceDataPageSynonym page = new DatastoreSynonymCatalogReferenceDataPageSynonym(null);
+        final DatastoreSynonymCatalogReferenceDataPageSynonym page =
+                new DatastoreSynonymCatalogReferenceDataPageSynonym(null);
         assertNotEquals("", page.getTemplateFilename());
     }
 }

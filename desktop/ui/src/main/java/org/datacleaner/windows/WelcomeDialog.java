@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -46,7 +44,7 @@ public class WelcomeDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
 
-    public WelcomeDialog(AnalysisJobBuilderWindow window, Image welcomeImage) {
+    public WelcomeDialog(final AnalysisJobBuilderWindow window, final Image welcomeImage) {
         super((Window) window, "Welcome to DataCleaner");
 
         final JLabel banner = new JLabel(new ImageIcon(welcomeImage));
@@ -57,15 +55,10 @@ public class WelcomeDialog extends JDialog {
         panel.add(banner, BorderLayout.CENTER);
 
         final JButton continueButton = WidgetFactory.createDefaultButton("Continue", IconUtils.ACTION_FORWARD);
-        continueButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                WelcomeDialog.this.setVisible(false);
-            }
-        });
+        continueButton.addActionListener(e -> WelcomeDialog.this.setVisible(false));
 
-        final JButton websiteButton = WidgetFactory.createDefaultButton("Visit the DataCleaner website",
-                IconUtils.WEBSITE);
+        final JButton websiteButton =
+                WidgetFactory.createDefaultButton("Visit the DataCleaner website", IconUtils.WEBSITE);
         websiteButton.addActionListener(new OpenBrowserAction("https://datacleaner.org"));
 
         panel.add(DCPanel.flow(Alignment.CENTER, continueButton, websiteButton), BorderLayout.SOUTH);

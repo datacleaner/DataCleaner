@@ -34,7 +34,7 @@ public class CategoryDocumentationWrapper {
     private final List<ComponentDocumentationWrapper> _components;
     private final ComponentCategory _componentCategory;
 
-    public CategoryDocumentationWrapper(ComponentCategory componentCategory) {
+    public CategoryDocumentationWrapper(final ComponentCategory componentCategory) {
         _componentCategory = componentCategory;
         _components = new ArrayList<>();
     }
@@ -43,7 +43,7 @@ public class CategoryDocumentationWrapper {
         return _componentCategory.getName();
     }
 
-    public void addComponent(ComponentDocumentationWrapper component) {
+    public void addComponent(final ComponentDocumentationWrapper component) {
         _components.add(component);
     }
 

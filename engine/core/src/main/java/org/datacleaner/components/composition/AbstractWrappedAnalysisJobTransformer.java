@@ -42,7 +42,7 @@ import org.datacleaner.job.runner.ConsumeRowHandler;
 /**
  * An abstract transformer that wraps another {@link AnalysisJob}'s
  * transformation section and applies it as a single transformation.
- * 
+ *
  * This class is abstract since the logic of how the wrapped {@link AnalysisJob}
  * is configured/set might differ. Some implementations might simply have a
  * hardcoded job configured, others might dynamically load it from a file.
@@ -64,7 +64,7 @@ public abstract class AbstractWrappedAnalysisJobTransformer implements Transform
 
     /**
      * Provides the analysis job to wrap.
-     * 
+     *
      * @return
      */
     protected abstract AnalysisJob createWrappedAnalysisJob();
@@ -73,9 +73,9 @@ public abstract class AbstractWrappedAnalysisJobTransformer implements Transform
      * Provides the conversion map for input columns. Keys are expected to be
      * columns of the parent/owning job, and values are expected to be columns
      * of the embedded/wrapped job.
-     * 
+     *
      * @param wrappedAnalysisJob
-     * 
+     *
      * @return
      */
     protected abstract Map<InputColumn<?>, InputColumn<?>> getInputColumnConversion(AnalysisJob wrappedAnalysisJob);
@@ -103,15 +103,15 @@ public abstract class AbstractWrappedAnalysisJobTransformer implements Transform
      * Determines if the transformer should reinitialize it's
      * {@link ConsumeRowHandler}, output columns etc. based on a set of existing
      * values.
-     * 
+     *
      * The default implementation returns false when non-null values are
      * available
-     * 
+     *
      * @param wrappedAnalysisJob
      * @param outputColumns
      * @return
      */
-    protected boolean reInitialize(AnalysisJob wrappedAnalysisJob, List<InputColumn<?>> outputColumns) {
+    protected boolean reInitialize(final AnalysisJob wrappedAnalysisJob, final List<InputColumn<?>> outputColumns) {
         if (wrappedAnalysisJob != null && outputColumns != null && !outputColumns.isEmpty()) {
             return false;
         }
@@ -128,7 +128,7 @@ public abstract class AbstractWrappedAnalysisJobTransformer implements Transform
     @Override
     public OutputColumns getOutputColumns() {
         init();
-        
+
         final int size = _outputColumns.size();
         final String[] names = new String[size];
         final Class<?>[] types = new Class[size];
@@ -152,27 +152,27 @@ public abstract class AbstractWrappedAnalysisJobTransformer implements Transform
         }
 
         final List<InputRow> outputRows = _consumeRowHandler.consumeRow(wrappedInputRow).getRows();
-        for (InputRow wrappedOutputRow : outputRows) {
+        for (final InputRow wrappedOutputRow : outputRows) {
             final Object[] outputValues = convertToOutputValues(wrappedOutputRow);
             _outputRowCollector.putValues(outputValues);
         }
         return null;
     }
 
-    private Object[] convertToOutputValues(InputRow wrappedOutputRow) {
-        Object[] result = new Object[_outputColumns.size()];
+    private Object[] convertToOutputValues(final InputRow wrappedOutputRow) {
+        final Object[] result = new Object[_outputColumns.size()];
         for (int i = 0; i < result.length; i++) {
-            InputColumn<?> outputColumn = _outputColumns.get(i);
-            Object value = wrappedOutputRow.getValue(outputColumn);
+            final InputColumn<?> outputColumn = _outputColumns.get(i);
+            final Object value = wrappedOutputRow.getValue(outputColumn);
             result[i] = value;
         }
         return result;
     }
-    
+
     public DataCleanerConfiguration getDataCleanerConfiguration() {
         return _configuration;
     }
-    
+
     public OutputRowCollector getOutputRowCollector() {
         return _outputRowCollector;
     }

@@ -27,16 +27,18 @@ import org.junit.Test;
 public class ComponentNotFoundExceptionTest {
     @Test
     public void testCreateTypeNotFound() throws Exception {
-        String type = "myComponentType";
-        ComponentNotFoundException componentNotFoundException = ComponentNotFoundException.createTypeNotFound(type);
+        final String type = "myComponentType";
+        final ComponentNotFoundException componentNotFoundException =
+                ComponentNotFoundException.createTypeNotFound(type);
         assertTrue(componentNotFoundException.getMessage().contains("type"));
         assertTrue(componentNotFoundException.getMessage().contains(type));
     }
 
     @Test
     public void testCreateInstanceNotFound() throws Exception {
-        String id = "myId";
-        ComponentNotFoundException componentNotFoundException = ComponentNotFoundException.createInstanceNotFound(id);
+        final String id = "myId";
+        final ComponentNotFoundException componentNotFoundException =
+                ComponentNotFoundException.createInstanceNotFound(id);
         assertTrue(componentNotFoundException.getMessage().contains("ID"));
         assertTrue(componentNotFoundException.getMessage().contains(id));
     }

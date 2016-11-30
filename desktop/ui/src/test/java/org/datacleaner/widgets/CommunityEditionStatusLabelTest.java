@@ -19,20 +19,20 @@
  */
 package org.datacleaner.widgets;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
 import org.datacleaner.Version;
 import org.datacleaner.panels.RightInformationPanel;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class CommunityEditionStatusLabelTest {
     CommunityEditionStatusLabel _label;
 
     @Before
     public void setup() {
-        RightInformationPanel rightInformationPanel = mock(RightInformationPanel.class);
+        final RightInformationPanel rightInformationPanel = mock(RightInformationPanel.class);
 
         _label = new CommunityEditionStatusLabel(rightInformationPanel);
     }

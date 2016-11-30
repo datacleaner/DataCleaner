@@ -39,11 +39,11 @@ public abstract class AbstractValueFrequency implements ValueFrequency {
     }
 
     @Override
-    public final boolean equals(Object obj) {
+    public final boolean equals(final Object obj) {
         if (obj instanceof ValueFrequency) {
-            int count = ((ValueFrequency) obj).getCount();
+            final int count = ((ValueFrequency) obj).getCount();
             if (count == getCount()) {
-                String name = ((ValueFrequency) obj).getName();
+                final String name = ((ValueFrequency) obj).getName();
                 if (name != null && name.equals(getName())) {
                     return true;
                 }
@@ -53,11 +53,11 @@ public abstract class AbstractValueFrequency implements ValueFrequency {
     }
 
     @Override
-    public final int compareTo(ValueFrequency o) {
+    public final int compareTo(final ValueFrequency o) {
         int diff = o.getCount() - getCount();
         if (diff == 0) {
-            int c1 = isComposite() ? 1 : 0;
-            int c2 = o.isComposite() ? 1 : 0;
+            final int c1 = isComposite() ? 1 : 0;
+            final int c2 = o.isComposite() ? 1 : 0;
             diff = c1 - c2;
             if (diff == 0) {
                 diff = NullTolerableComparator.get(String.class).compare(getName(), o.getName());

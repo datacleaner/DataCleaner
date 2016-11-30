@@ -24,44 +24,44 @@ import org.slf4j.LoggerFactory;
 
 public class JavaScriptLogger {
     private static final Logger logger = LoggerFactory.getLogger(JavaScriptLogger.class);
-            
+
     public boolean isTraceEnabled() {
         return logger.isTraceEnabled();
     }
-    
-    public void trace(String format, Object... argv) {
+
+    public void trace(final String format, final Object... argv) {
         logger.trace(format, argv);
     }
-    
+
     public boolean isDebugEnabled() {
         return logger.isDebugEnabled();
     }
- 
-    public void debug(String format, Object... argv) {
+
+    public void debug(final String format, final Object... argv) {
         logger.debug(format, argv);
     }
-    
+
     public boolean isInfoEnabled() {
         return logger.isInfoEnabled();
     }
- 
-    public void info(String format, Object... argv) {
+
+    public void info(final String format, final Object... argv) {
         logger.info(format, argv);
     }
-    
+
     public boolean isWarnEnabled() {
         return logger.isWarnEnabled();
     }
-    
-    public void warn(String format, Object... argv) {
+
+    public void warn(final String format, final Object... argv) {
         logger.warn(format, argv);
     }
-    
+
     public boolean isErrorEnabled() {
         return logger.isErrorEnabled();
     }
-    
-    public void error(String format, Object... argv) {
+
+    public void error(final String format, final Object... argv) {
         logger.error(format, argv);
     }
 }

@@ -19,9 +19,6 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import org.apache.metamodel.util.HdfsResource;
 import org.datacleaner.windows.HdfsUrlChooser;
 
@@ -31,18 +28,14 @@ public class HdfsResourceTextField extends AbstractResourceTextField<HdfsResourc
 
     private String _hdfsUri;
 
-    public HdfsResourceTextField(String uri, final HdfsUrlChooser.OpenType openType) {
+    public HdfsResourceTextField(final String uri, final HdfsUrlChooser.OpenType openType) {
         _hdfsUri = uri;
 
-        getBrowseButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                HdfsUrlChooser.showDialog(HdfsResourceTextField.this, null, null, null, openType);
-            }
-        });
+        getBrowseButton().addActionListener(
+                e -> HdfsUrlChooser.showDialog(HdfsResourceTextField.this, null, null, null, openType));
     }
 
-    HdfsResourceTextField(HdfsUrlChooser.OpenType openType) {
+    HdfsResourceTextField(final HdfsUrlChooser.OpenType openType) {
         this("", openType);
     }
 
@@ -52,7 +45,7 @@ public class HdfsResourceTextField extends AbstractResourceTextField<HdfsResourc
     }
 
     @Override
-    public void setResource(HdfsResource resource) {
+    public void setResource(final HdfsResource resource) {
         if (resource == null) {
             return;
         }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns5:execution-log xmlns="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns2="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns3="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns4="http://eobjects.org/datacleaner/custom-job/1.0" xmlns:ns5="http://eobjects.org/datacleaner/execution-log/1.0">
+<ns5:execution-log xmlns:ns3="http://eobjects.org/datacleaner/schedule/1.0"
+				   xmlns:ns5="http://eobjects.org/datacleaner/execution-log/1.0">
     <ns5:result-id>Sample Pentaho job-1364292609710</ns5:result-id>
     <ns5:job-begin-date>2013-03-26T11:10:09.992+01:00</ns5:job-begin-date>
     <ns5:job-end-date>2013-03-26T11:10:53.203+01:00</ns5:job-end-date>

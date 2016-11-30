@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -49,8 +47,8 @@ public class DropTableDialog extends AbstractDialog {
     private final Table _table;
     private final SchemaTree _schemaTree;
 
-    public DropTableDialog(WindowContext windowContext, UpdateableDatastore datastore, Table table,
-            SchemaTree schemaTree) {
+    public DropTableDialog(final WindowContext windowContext, final UpdateableDatastore datastore, final Table table,
+            final SchemaTree schemaTree) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
 
         _datastore = datastore;
@@ -75,37 +73,28 @@ public class DropTableDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        final DCLabel label = DCLabel
-                .darkMultiLine("Warning! You are about to <b>drop</b> (delete) the table with name '<b>"
-                        + _table.getName()
-                        + "</b>'. This operation cannot be undone.<br/><br/>"
-                        + "As a precaution to avoid unintended loss of data, please enter the name of the table below and click the 'Drop table' button to confirm the operation.");
-
+        final DCLabel label = DCLabel.darkMultiLine(
+                "Warning! You are about to <b>drop</b> (delete) the table with " + "name '<b>" + _table.getName()
+                        + "</b>'. This operation cannot be undone.<br/><br/>As a precaution "
+                        + "to avoid unintended loss of data, please enter the name of the table below and click the "
+                        + "'Drop table' button to confirm the operation.");
         final JXTextField confirmTextField = WidgetFactory.createTextField("Enter the table's name to confirm");
 
         final JButton dropTableButton = WidgetFactory.createPrimaryButton("Drop table", IconUtils.ACTION_DROP_TABLE);
-        dropTableButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!confirmTextField.getText().trim().equalsIgnoreCase(_table.getName().trim())) {
-                    WidgetUtils.showErrorMessage("Enter the table's name to confirm",
-                            "The names do not match. Please enter '" + _table.getName()
-                                    + "' if you wish to drop the table.");
-                    return;
-                }
-                doDropTable();
-                _schemaTree.refreshDatastore();
-                DropTableDialog.this.close();
+        dropTableButton.addActionListener(e -> {
+            if (!confirmTextField.getText().trim().equalsIgnoreCase(_table.getName().trim())) {
+                WidgetUtils.showErrorMessage("Enter the table's name to confirm",
+                        "The names do not match. Please enter '" + _table.getName()
+                                + "' if you wish to drop the table.");
+                return;
             }
+            doDropTable();
+            _schemaTree.refreshDatastore();
+            DropTableDialog.this.close();
         });
 
         final JButton cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                DropTableDialog.this.close();
-            }
-        });
+        cancelButton.addActionListener(e -> DropTableDialog.this.close());
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_WELL_BACKGROUND);
         int row = 0;
@@ -115,7 +104,7 @@ public class DropTableDialog extends AbstractDialog {
         row++;
         WidgetUtils.addToGridBag(dropTableButton, panel, 0, row, 0.5, 0.1);
         WidgetUtils.addToGridBag(cancelButton, panel, 1, row, 0.5, 0.1);
-        
+
         panel.setPreferredSize(getDialogWidth(), 300);
 
         return panel;
@@ -123,16 +112,13 @@ public class DropTableDialog extends AbstractDialog {
 
     protected boolean isWindowResizable() {
         return true;
-    };
+    }
 
     protected void doDropTable() {
-        final UpdateableDatastoreConnection con = _datastore.openConnection();
-        try {
+        try (UpdateableDatastoreConnection con = _datastore.openConnection()) {
             final DropTable dropTable = new DropTable(_table);
             final UpdateableDataContext dataContext = con.getUpdateableDataContext();
             dataContext.executeUpdate(dropTable);
-        } finally {
-            con.close();
         }
     }
 

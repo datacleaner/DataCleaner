@@ -45,11 +45,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An analyzer for various typical String measures.
- * 
- * 
+ *
+ *
  */
 @Named("String analyzer")
-@Description("The String analyzer is used to collect a variety of typical metrics on string values.\nMetrics include statistics on character case, words, diacritics, white-spaces and more...")
+@Description("The String analyzer is used to collect a variety of typical metrics on string values.\n"
+        + "Metrics include statistics on character case, words, diacritics, white-spaces and more...")
 @Concurrent(true)
 public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
 
@@ -80,7 +81,7 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
 
     private static final Logger logger = LoggerFactory.getLogger(StringAnalyzer.class);
 
-    private final Map<InputColumn<String>, StringAnalyzerColumnDelegate> _columnDelegates = new HashMap<InputColumn<String>, StringAnalyzerColumnDelegate>();
+    private final Map<InputColumn<String>, StringAnalyzerColumnDelegate> _columnDelegates = new HashMap<>();
 
     @Configured
     InputColumn<String>[] _columns;
@@ -92,7 +93,7 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
     }
 
     @SafeVarargs
-    public StringAnalyzer(InputColumn<String>... columns) {
+    public StringAnalyzer(final InputColumn<String>... columns) {
         _columns = columns;
         _annotationFactory = RowAnnotations.getDefaultFactory();
         init();
@@ -100,17 +101,17 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
 
     @Initialize
     public void init() {
-        for (InputColumn<String> column : _columns) {
+        for (final InputColumn<String> column : _columns) {
             _columnDelegates.put(column, new StringAnalyzerColumnDelegate(_annotationFactory));
         }
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
-        for (InputColumn<String> column : _columns) {
-            String value = row.getValue(column);
+    public void run(final InputRow row, final int distinctCount) {
+        for (final InputColumn<String> column : _columns) {
+            final String value = row.getValue(column);
 
-            StringAnalyzerColumnDelegate delegate = _columnDelegates.get(column);
+            final StringAnalyzerColumnDelegate delegate = _columnDelegates.get(column);
             delegate.run(row, value, distinctCount);
         }
     }
@@ -118,7 +119,7 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
     @Override
     public StringAnalyzerResult getResult() {
         logger.info("getResult()");
-        CrosstabDimension measureDimension = new CrosstabDimension(DIMENSION_MEASURES);
+        final CrosstabDimension measureDimension = new CrosstabDimension(DIMENSION_MEASURES);
         measureDimension.addCategory(MEASURE_ROW_COUNT);
         measureDimension.addCategory(MEASURE_NULL_COUNT);
         measureDimension.addCategory(MEASURE_BLANK_COUNT);
@@ -141,14 +142,14 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
         measureDimension.addCategory(MEASURE_MAX_WORDS);
         measureDimension.addCategory(MEASURE_MIN_WORDS);
 
-        CrosstabDimension columnDimension = new CrosstabDimension(DIMENSION_COLUMN);
+        final CrosstabDimension columnDimension = new CrosstabDimension(DIMENSION_COLUMN);
 
-        Crosstab<Number> crosstab = new Crosstab<Number>(Number.class, columnDimension, measureDimension);
+        final Crosstab<Number> crosstab = new Crosstab<>(Number.class, columnDimension, measureDimension);
 
-        for (InputColumn<String> column : _columns) {
-            String columnName = column.getName();
+        for (final InputColumn<String> column : _columns) {
+            final String columnName = column.getName();
 
-            StringAnalyzerColumnDelegate delegate = _columnDelegates.get(column);
+            final StringAnalyzerColumnDelegate delegate = _columnDelegates.get(column);
 
             columnDimension.addCategory(columnName);
 
@@ -184,7 +185,7 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
             }
 
             // begin entering numbers into the crosstab
-            CrosstabNavigator<Number> nav = crosstab.where(columnDimension, columnName);
+            final CrosstabNavigator<Number> nav = crosstab.where(columnDimension, columnName);
 
             nav.where(measureDimension, MEASURE_ROW_COUNT).put(numRows);
 
@@ -266,7 +267,8 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
         return new StringAnalyzerResult(_columns, crosstab);
     }
 
-    private void addAttachment(CrosstabNavigator<Number> nav, RowAnnotation annotation, InputColumn<?> column) {
+    private void addAttachment(final CrosstabNavigator<Number> nav, final RowAnnotation annotation,
+            final InputColumn<?> column) {
         nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(annotation, _annotationFactory, column));
     }
 }

@@ -36,7 +36,7 @@ public class DirectoryBasedHadoopClusterInformation extends AbstractServerInform
     private static final long serialVersionUID = 1L;
     private final String[] _directories;
 
-    public DirectoryBasedHadoopClusterInformation(final String name, final String description, String... paths) {
+    public DirectoryBasedHadoopClusterInformation(final String name, final String description, final String... paths) {
         super(name, description);
         _directories = paths;
     }
@@ -55,8 +55,7 @@ public class DirectoryBasedHadoopClusterInformation extends AbstractServerInform
         });
 
         if (configurationFiles.size() == 0) {
-            throw new IllegalStateException(
-                    "Specified directories does not contain any Hadoop configuration files");
+            throw new IllegalStateException("Specified directories does not contain any Hadoop configuration files");
         }
 
         configurationFiles.values().stream().map(File::toURI).map(Path::new).forEach(configuration::addResource);

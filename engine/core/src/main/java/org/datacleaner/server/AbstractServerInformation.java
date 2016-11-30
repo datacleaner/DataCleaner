@@ -30,7 +30,7 @@ public abstract class AbstractServerInformation implements ServerInformation {
     private final String _name;
     private final String _description;
 
-    public AbstractServerInformation(String name, String description) {
+    public AbstractServerInformation(final String name, final String description) {
         _name = name;
         _description = description;
     }

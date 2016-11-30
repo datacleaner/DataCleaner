@@ -28,7 +28,7 @@ import org.datacleaner.api.Provided;
  * and thus provide a convenient storage mechanism for situations where a
  * component needs to manage a set of labels but where storing them in
  * collections would be too complicated and would fill up memory.
- * 
+ *
  * The RowAnnotationFactory is injectable into any {@link Component} (analyzer,
  * transformer, filter) using the {@link Provided} annotation.
  */
@@ -36,9 +36,9 @@ public interface RowAnnotationFactory extends RowAnnotationSampleContainer, RowA
 
     /**
      * Creates a new annotation
-     * 
+     *
      * @return a new annotation
      */
-    public RowAnnotation createAnnotation();
+    RowAnnotation createAnnotation();
 
 }

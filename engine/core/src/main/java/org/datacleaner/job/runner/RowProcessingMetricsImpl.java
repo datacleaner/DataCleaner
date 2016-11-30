@@ -39,7 +39,7 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
     private final RowProcessingPublisher _publisher;
     private final Ref<Integer> _expectedRows;
 
-    public RowProcessingMetricsImpl(RowProcessingPublishers publishers, RowProcessingPublisher publisher) {
+    public RowProcessingMetricsImpl(final RowProcessingPublishers publishers, final RowProcessingPublisher publisher) {
         _publishers = publishers;
         _publisher = publisher;
         _expectedRows = createExpectedRowsRef();
@@ -73,8 +73,8 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
 
     @Override
     public ComponentJob[] getResultProducers() {
-        final List<ComponentJob> resultProducers = new ArrayList<ComponentJob>();
-        for (RowProcessingConsumer consumer : _publisher.getConsumers()) {
+        final List<ComponentJob> resultProducers = new ArrayList<>();
+        for (final RowProcessingConsumer consumer : _publisher.getConsumers()) {
             if (consumer.isResultProducer()) {
                 resultProducers.add(consumer.getComponentJob());
             }
@@ -84,10 +84,10 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
 
     @Override
     public AnalyzerJob[] getAnalyzerJobs() {
-        final List<AnalyzerJob> analyzerJobs = new ArrayList<AnalyzerJob>();
-        for (RowProcessingConsumer consumer : _publisher.getConsumers()) {
+        final List<AnalyzerJob> analyzerJobs = new ArrayList<>();
+        for (final RowProcessingConsumer consumer : _publisher.getConsumers()) {
             if (consumer instanceof AnalyzerConsumer) {
-                AnalyzerJob analyzerJob = ((AnalyzerConsumer) consumer).getComponentJob();
+                final AnalyzerJob analyzerJob = ((AnalyzerConsumer) consumer).getComponentJob();
                 analyzerJobs.add(analyzerJob);
             }
         }
@@ -112,11 +112,11 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
                     countQuery.getSelectClause().getItem(0).setFunctionApproximationAllowed(true);
 
                     final Datastore datastore = _publisher.getStream().getAnalysisJob().getDatastore();
-                    try (final DatastoreConnection connection = datastore.openConnection()) {
-                        try (final DataSet countDataSet = connection.getDataContext().executeQuery(countQuery)) {
+                    try (DatastoreConnection connection = datastore.openConnection()) {
+                        try (DataSet countDataSet = connection.getDataContext().executeQuery(countQuery)) {
                             if (countDataSet.next()) {
-                                final Number count = ConvertToNumberTransformer.transformValue(countDataSet.getRow()
-                                        .getValue(0));
+                                final Number count =
+                                        ConvertToNumberTransformer.transformValue(countDataSet.getRow().getValue(0));
                                 if (count != null) {
                                     expectedRows = count.intValue();
                                 }

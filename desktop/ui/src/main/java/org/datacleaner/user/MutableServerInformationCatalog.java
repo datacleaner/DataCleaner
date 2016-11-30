@@ -42,24 +42,25 @@ public class MutableServerInformationCatalog implements ServerInformationCatalog
     private final List<ServerInformationChangeListener> _listeners = new LinkedList<>();
     private final List<ServerInformation> _updatedServerInformationList;
 
-    public MutableServerInformationCatalog(ServerInformationCatalog immutableDelegate, DomConfigurationWriter configurationWriter) {
+    public MutableServerInformationCatalog(final ServerInformationCatalog immutableDelegate,
+            final DomConfigurationWriter configurationWriter) {
         _configurationWriter = configurationWriter;
         _updatedServerInformationList = new ArrayList<>();
 
-        String[] serverNames = immutableDelegate.getServerNames();
+        final String[] serverNames = immutableDelegate.getServerNames();
 
-        for (String name : serverNames) {
+        for (final String name : serverNames) {
             addServerInformation(immutableDelegate.getServer(name), false);
         }
     }
 
-    public void removeServer(ServerInformation ds) {
+    public void removeServer(final ServerInformation ds) {
         removeServer(ds, true);
     }
 
-    private synchronized void removeServer(ServerInformation serverInformation, boolean externalize) {
+    private synchronized void removeServer(final ServerInformation serverInformation, final boolean externalize) {
         if (_updatedServerInformationList.remove(serverInformation)) {
-            for (ServerInformationChangeListener listener : _listeners) {
+            for (final ServerInformationChangeListener listener : _listeners) {
                 listener.onRemove(serverInformation);
             }
         }
@@ -70,23 +71,23 @@ public class MutableServerInformationCatalog implements ServerInformationCatalog
         }
     }
 
-    public void addServerInformation(ServerInformation serverInformation) {
+    public void addServerInformation(final ServerInformation serverInformation) {
         addServerInformation(serverInformation, true);
     }
 
-    private synchronized void addServerInformation(ServerInformation sI, boolean externalize) {
+    private synchronized void addServerInformation(final ServerInformation sI, final boolean externalize) {
         final String name = sI.getName();
         if (StringUtils.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Server has no name!");
         }
-        for (ServerInformation serverInformation : _updatedServerInformationList) {
+        for (final ServerInformation serverInformation : _updatedServerInformationList) {
             if (name.equals(serverInformation.getName())) {
                 throw new IllegalArgumentException("A server with the name '" + name + "' already exists!");
             }
         }
 
         _updatedServerInformationList.add(sI);
-        for (ServerInformationChangeListener listener : _listeners) {
+        for (final ServerInformationChangeListener listener : _listeners) {
             listener.onAdd(sI);
         }
 
@@ -99,7 +100,7 @@ public class MutableServerInformationCatalog implements ServerInformationCatalog
 
     @Override
     public String[] getServerNames() {
-        String[] names = new String[_updatedServerInformationList.size()];
+        final String[] names = new String[_updatedServerInformationList.size()];
         for (int i = 0; i < names.length; i++) {
             names[i] = _updatedServerInformationList.get(i).getName();
         }
@@ -112,7 +113,7 @@ public class MutableServerInformationCatalog implements ServerInformationCatalog
             return null;
         }
 
-        for (ServerInformation serverInformation : _updatedServerInformationList) {
+        for (final ServerInformation serverInformation : _updatedServerInformationList) {
             if (name.equals(serverInformation.getName())) {
                 return serverInformation;
             }
@@ -120,10 +121,11 @@ public class MutableServerInformationCatalog implements ServerInformationCatalog
         return null;
     }
 
-    public void addListener(ServerInformationChangeListener listener) {
+    public void addListener(final ServerInformationChangeListener listener) {
         _listeners.add(listener);
     }
-    public void removeListener(ServerInformationChangeListener listener) {
+
+    public void removeListener(final ServerInformationChangeListener listener) {
         _listeners.remove(listener);
     }
 }

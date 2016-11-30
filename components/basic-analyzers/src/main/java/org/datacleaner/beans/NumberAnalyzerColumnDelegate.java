@@ -32,82 +32,83 @@ import org.datacleaner.storage.RowAnnotationFactory;
  */
 final class NumberAnalyzerColumnDelegate {
 
-	private final RowAnnotationFactory _annotationFactory;
-	private final StatisticalSummary _statistics;
-	private volatile int _numRows;
-	private final RowAnnotation _nullAnnotation;
-	private final RowAnnotation _maxAnnotation;
-	private final RowAnnotation _minAnnotation;
+    private final RowAnnotationFactory _annotationFactory;
+    private final StatisticalSummary _statistics;
+    private final RowAnnotation _nullAnnotation;
+    private final RowAnnotation _maxAnnotation;
+    private final RowAnnotation _minAnnotation;
+    private volatile int _numRows;
 
-	public NumberAnalyzerColumnDelegate(boolean descriptiveStatistics, RowAnnotationFactory annotationFactory) {
-		_annotationFactory = annotationFactory;
-		_nullAnnotation = _annotationFactory.createAnnotation();
-		_maxAnnotation = _annotationFactory.createAnnotation();
-		_minAnnotation = _annotationFactory.createAnnotation();
-		if (descriptiveStatistics) {
-		    _statistics = new DescriptiveStatistics();
-		} else {
-		    _statistics = new SummaryStatistics();
-		}
-	}
+    public NumberAnalyzerColumnDelegate(final boolean descriptiveStatistics,
+            final RowAnnotationFactory annotationFactory) {
+        _annotationFactory = annotationFactory;
+        _nullAnnotation = _annotationFactory.createAnnotation();
+        _maxAnnotation = _annotationFactory.createAnnotation();
+        _minAnnotation = _annotationFactory.createAnnotation();
+        if (descriptiveStatistics) {
+            _statistics = new DescriptiveStatistics();
+        } else {
+            _statistics = new SummaryStatistics();
+        }
+    }
 
-	public synchronized void run(InputRow row, Number value, int distinctCount) {
-		_numRows += distinctCount;
-		if (value != null) {
-			double doubleValue = value.doubleValue();
-			double max = _statistics.getMax();
-			double min = _statistics.getMin();
+    public synchronized void run(final InputRow row, final Number value, final int distinctCount) {
+        _numRows += distinctCount;
+        if (value != null) {
+            final double doubleValue = value.doubleValue();
+            double max = _statistics.getMax();
+            double min = _statistics.getMin();
 
-			if (max < doubleValue) {
-				_annotationFactory.resetAnnotation(_maxAnnotation);
-			}
-			if (min > doubleValue) {
-				_annotationFactory.resetAnnotation(_minAnnotation);
-			}
+            if (max < doubleValue) {
+                _annotationFactory.resetAnnotation(_maxAnnotation);
+            }
+            if (min > doubleValue) {
+                _annotationFactory.resetAnnotation(_minAnnotation);
+            }
 
-			for (int i = 0; i < distinctCount; i++) {
-			    if (_statistics instanceof DescriptiveStatistics) {
-			        ((DescriptiveStatistics)_statistics).addValue(doubleValue);
-			    } else {
-			        ((SummaryStatistics)_statistics).addValue(doubleValue);
-			    }
-			}
+            for (int i = 0; i < distinctCount; i++) {
+                if (_statistics instanceof DescriptiveStatistics) {
+                    ((DescriptiveStatistics) _statistics).addValue(doubleValue);
+                } else {
+                    ((SummaryStatistics) _statistics).addValue(doubleValue);
+                }
+            }
 
-			max = _statistics.getMax();
-			min = _statistics.getMin();
+            max = _statistics.getMax();
+            min = _statistics.getMin();
 
-			if (max == doubleValue) {
-				_annotationFactory.annotate(row, distinctCount, _maxAnnotation);
-			}
-			if (min == doubleValue) {
-				_annotationFactory.annotate(row, distinctCount, _minAnnotation);
-			}
-		} else {
-			_annotationFactory.annotate(row, distinctCount, _nullAnnotation);
-		}
-	}
+            if (max == doubleValue) {
+                _annotationFactory.annotate(row, distinctCount, _maxAnnotation);
+            }
+            if (min == doubleValue) {
+                _annotationFactory.annotate(row, distinctCount, _minAnnotation);
+            }
+        } else {
+            _annotationFactory.annotate(row, distinctCount, _nullAnnotation);
+        }
+    }
 
-	public RowAnnotation getNullAnnotation() {
-		return _nullAnnotation;
-	}
+    public RowAnnotation getNullAnnotation() {
+        return _nullAnnotation;
+    }
 
-	public StatisticalSummary getStatistics() {
-		return _statistics;
-	}
+    public StatisticalSummary getStatistics() {
+        return _statistics;
+    }
 
-	public int getNullCount() {
-		return _nullAnnotation.getRowCount();
-	}
+    public int getNullCount() {
+        return _nullAnnotation.getRowCount();
+    }
 
-	public RowAnnotation getMaxAnnotation() {
-		return _maxAnnotation;
-	}
+    public RowAnnotation getMaxAnnotation() {
+        return _maxAnnotation;
+    }
 
-	public RowAnnotation getMinAnnotation() {
-		return _minAnnotation;
-	}
+    public RowAnnotation getMinAnnotation() {
+        return _minAnnotation;
+    }
 
-	public int getNumRows() {
-		return _numRows;
-	}
+    public int getNumRows() {
+        return _numRows;
+    }
 }

@@ -44,7 +44,7 @@ public class SampleCustomJob implements CustomJob {
     }
 
     @Override
-    public Serializable execute(CustomJobCallback callback) throws Exception {
+    public Serializable execute(final CustomJobCallback callback) throws Exception {
         callback.log("Starting count to " + count + "...");
         for (int i = 0; i < count; i++) {
             Thread.sleep(sleep);

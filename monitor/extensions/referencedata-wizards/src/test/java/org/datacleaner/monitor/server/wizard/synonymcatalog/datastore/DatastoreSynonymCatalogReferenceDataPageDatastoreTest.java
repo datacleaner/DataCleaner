@@ -19,15 +19,16 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.datastore;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertNotEquals;
+
+import org.junit.Test;
 
 public class DatastoreSynonymCatalogReferenceDataPageDatastoreTest {
 
     @Test
     public void testGetNameLabel() throws Exception {
-        DatastoreSynonymCatalogReferenceDataPageDatastore page = new DatastoreSynonymCatalogReferenceDataPageDatastore(null);
+        final DatastoreSynonymCatalogReferenceDataPageDatastore page =
+                new DatastoreSynonymCatalogReferenceDataPageDatastore(null);
         assertNotEquals("", page.getNameLabel());
     }
 }

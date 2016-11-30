@@ -20,8 +20,6 @@
 package org.datacleaner.panels.fuse;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.IdentityHashMap;
@@ -42,8 +40,6 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 import org.jdesktop.swingx.VerticalLayout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Panel that presents and edits a single {@link CoalesceUnit}.
@@ -58,23 +54,20 @@ public class CoalesceUnitPanel extends DCPanel {
     private final DCPanel _columnListPanel;
     private final DCPanel _outerPanel;
 
-    public CoalesceUnitPanel(ColumnListMultipleCoalesceUnitPropertyWidget parent, CoalesceUnit unit) {
+    public CoalesceUnitPanel(final ColumnListMultipleCoalesceUnitPropertyWidget parent, final CoalesceUnit unit) {
         _parent = parent;
         _inputColumns = new ArrayList<>();
         _inputColumnPanels = new IdentityHashMap<>();
 
         _comboBox = new DCComboBox<>();
-        SchemaStructureComboBoxListRenderer renderer = new SchemaStructureComboBoxListRenderer();
+        final SchemaStructureComboBoxListRenderer renderer = new SchemaStructureComboBoxListRenderer();
         renderer.setNullText("- Add input column -");
         _comboBox.setRenderer(renderer);
-        _comboBox.addListener(new DCComboBox.Listener<InputColumn<?>>() {
-            @Override
-            public void onItemSelected(InputColumn<?> item) {
-                if (item == null) {
-                    return;
-                }
-                addInputColumn(item);
+        _comboBox.addListener(item -> {
+            if (item == null) {
+                return;
             }
+            addInputColumn(item);
         });
 
         _columnListPanel = new DCPanel();
@@ -92,27 +85,31 @@ public class CoalesceUnitPanel extends DCPanel {
         setLayout(new BorderLayout());
         add(WidgetUtils.decorateWithShadow(_outerPanel), BorderLayout.CENTER);
 
-        List<InputColumn<?>> availableInputColumns = _parent.getAvailableInputColumns();
+        final List<InputColumn<?>> availableInputColumns = _parent.getAvailableInputColumns();
         setAvailableInputColumns(availableInputColumns);
 
         if (unit != null) {
-            final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(availableInputColumns
-                    .toArray(new InputColumn[availableInputColumns.size()]), false);
-            for (InputColumn<?> inputColumn : updatedInputColumns) {
+            final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(
+                    availableInputColumns.toArray(new InputColumn[availableInputColumns.size()]), false);
+            for (final InputColumn<?> inputColumn : updatedInputColumns) {
                 addInputColumn(inputColumn);
             }
         }
     }
 
+    public CoalesceUnitPanel(final ColumnListMultipleCoalesceUnitPropertyWidget parent) {
+        this(parent, null);
+    }
+
     /**
      * Called by the parent widget to update the list of available columns
-     * 
+     *
      * @param inputColumns
      */
-    public void setAvailableInputColumns(Collection<InputColumn<?>> inputColumns) {
+    public void setAvailableInputColumns(final Collection<InputColumn<?>> inputColumns) {
         final InputColumn<?>[] items = new InputColumn<?>[inputColumns.size() + 1];
         int index = 1;
-        for (InputColumn<?> inputColumn : inputColumns) {
+        for (final InputColumn<?> inputColumn : inputColumns) {
             items[index] = inputColumn;
             index++;
         }
@@ -120,7 +117,7 @@ public class CoalesceUnitPanel extends DCPanel {
         _comboBox.setModel(model);
     }
 
-    public void addInputColumn(InputColumn<?> item) {
+    public void addInputColumn(final InputColumn<?> item) {
         final DCPanel panel = createInputColumnPanel(item);
         _columnListPanel.add(panel);
 
@@ -128,8 +125,8 @@ public class CoalesceUnitPanel extends DCPanel {
         _parent.onInputColumnPicked(item);
     }
 
-    public void removeInputColumn(InputColumn<?> item) {
-        DCPanel panel = _inputColumnPanels.get(item);
+    public void removeInputColumn(final InputColumn<?> item) {
+        final DCPanel panel = _inputColumnPanels.get(item);
         if (panel == null) {
             return;
         }
@@ -140,25 +137,16 @@ public class CoalesceUnitPanel extends DCPanel {
     }
 
     private DCPanel createInputColumnPanel(final InputColumn<?> item) {
-        DCPanel panel = new DCPanel();
+        final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());
         panel.add(new JLabel(item.getName(), IconUtils.getColumnIcon(item, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT),
                 BorderLayout.CENTER);
-        JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
-        removeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removeInputColumn(item);
-            }
-        });
+        final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
+        removeButton.addActionListener(e -> removeInputColumn(item));
         panel.add(removeButton, BorderLayout.EAST);
 
         _inputColumnPanels.put(item, panel);
         return panel;
-    }
-
-    public CoalesceUnitPanel(ColumnListMultipleCoalesceUnitPropertyWidget parent) {
-        this(parent, null);
     }
 
     public boolean isSet() {

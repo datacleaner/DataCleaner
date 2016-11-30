@@ -26,41 +26,41 @@ import junit.framework.TestCase;
 
 /**
  * TestCase for the {@link HelloWorldTransformer} class.
- * 
+ *
  * Testing a transformer is pretty much straight-forward. You will typically
  * need to use {@link MockInputColumn} and {@link MockInputRow} to represent the
  * data that you feed to the transformer.
- * 
+ *
  * @author Kasper Sørensen
- * 
+ *
  */
 public class HelloWorldTransformerTest extends TestCase {
 
-	public void testSingleGreeting() throws Exception {
-		MockInputColumn<String> col = new MockInputColumn<String>("Name", String.class);
+    public void testSingleGreeting() throws Exception {
+        final MockInputColumn<String> col = new MockInputColumn<>("Name", String.class);
 
-		HelloWorldTransformer transformer = new HelloWorldTransformer();
-		transformer.nameColumn = col;
-		transformer.greetings = new String[] { "Hello" };
+        final HelloWorldTransformer transformer = new HelloWorldTransformer();
+        transformer.nameColumn = col;
+        transformer.greetings = new String[] { "Hello" };
 
-		assertEquals("Name (greeting)", transformer.getOutputColumns().getColumnName(0));
+        assertEquals("Name (greeting)", transformer.getOutputColumns().getColumnName(0));
 
-		assertEquals("Hello Tom", transformer.transform(new MockInputRow().put(col, "Tom"))[0]);
-		assertEquals("Hello Martin", transformer.transform(new MockInputRow().put(col, "Martin"))[0]);
-		assertEquals("Hello Jesse", transformer.transform(new MockInputRow().put(col, "Jesse"))[0]);
-	}
+        assertEquals("Hello Tom", transformer.transform(new MockInputRow().put(col, "Tom"))[0]);
+        assertEquals("Hello Martin", transformer.transform(new MockInputRow().put(col, "Martin"))[0]);
+        assertEquals("Hello Jesse", transformer.transform(new MockInputRow().put(col, "Jesse"))[0]);
+    }
 
-	public void testRandomGreeting() throws Exception {
-		MockInputColumn<String> col = new MockInputColumn<String>("Name", String.class);
+    public void testRandomGreeting() throws Exception {
+        final MockInputColumn<String> col = new MockInputColumn<>("Name", String.class);
 
-		HelloWorldTransformer transformer = new HelloWorldTransformer();
-		transformer.nameColumn = col;
-		transformer.greetings = new String[] { "Hello", "Hi" };
+        final HelloWorldTransformer transformer = new HelloWorldTransformer();
+        transformer.nameColumn = col;
+        transformer.greetings = new String[] { "Hello", "Hi" };
 
-		assertEquals("Name (greeting)", transformer.getOutputColumns().getColumnName(0));
+        assertEquals("Name (greeting)", transformer.getOutputColumns().getColumnName(0));
 
-		String greetingLine = transformer.transform(new MockInputRow().put(col, "Tom"))[0];
-		assertTrue(greetingLine.endsWith(" Tom"));
-		assertTrue(greetingLine.startsWith("Hello") || greetingLine.startsWith("Hi"));
-	}
+        final String greetingLine = transformer.transform(new MockInputRow().put(col, "Tom"))[0];
+        assertTrue(greetingLine.endsWith(" Tom"));
+        assertTrue(greetingLine.startsWith("Hello") || greetingLine.startsWith("Hi"));
+    }
 }

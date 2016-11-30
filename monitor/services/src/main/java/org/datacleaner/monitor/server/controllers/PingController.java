@@ -55,7 +55,7 @@ public class PingController {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
 
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("tenant", tenant);
         map.put("version", Version.getVersion());
         map.put("edition", Version.getEdition());

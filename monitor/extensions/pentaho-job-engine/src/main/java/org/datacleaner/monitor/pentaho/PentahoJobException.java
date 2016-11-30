@@ -27,11 +27,11 @@ public class PentahoJobException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public PentahoJobException(String message) {
+    public PentahoJobException(final String message) {
         super(message);
     }
 
-    public PentahoJobException(String message, Throwable cause) {
+    public PentahoJobException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

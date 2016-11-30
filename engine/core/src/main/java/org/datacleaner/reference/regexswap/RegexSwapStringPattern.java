@@ -37,7 +37,7 @@ public final class RegexSwapStringPattern extends AbstractReferenceData implemen
     private final Regex _regex;
     private transient RegexStringPattern _delegate;
 
-    public RegexSwapStringPattern(Regex regex) {
+    public RegexSwapStringPattern(final Regex regex) {
         super(regex.getName());
         setDescription(regex.getDescription());
         _regex = regex;
@@ -49,7 +49,7 @@ public final class RegexSwapStringPattern extends AbstractReferenceData implemen
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final RegexSwapStringPattern other = (RegexSwapStringPattern) obj;
             return Objects.equals(_regex, other._regex);
@@ -58,7 +58,7 @@ public final class RegexSwapStringPattern extends AbstractReferenceData implemen
     }
 
     @Override
-    public StringPatternConnection openConnection(DataCleanerConfiguration configuration) {
+    public StringPatternConnection openConnection(final DataCleanerConfiguration configuration) {
         if (_delegate == null) {
             _delegate = new RegexStringPattern(getName(), _regex.getExpression(), true);
         }

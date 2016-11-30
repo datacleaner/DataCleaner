@@ -51,8 +51,8 @@ public class ExecutionStatusPanel extends FlowPanel {
     private ExecutionLog _result;
     private ExecutionLogPanel _logPanel;
 
-    public ExecutionStatusPanel(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule,
-            DCPopupPanel popupPanel) {
+    public ExecutionStatusPanel(final SchedulingServiceAsync service, final TenantIdentifier tenant,
+            final ScheduleDefinition schedule, final DCPopupPanel popupPanel) {
         super();
         _service = service;
         _tenant = tenant;
@@ -69,24 +69,24 @@ public class ExecutionStatusPanel extends FlowPanel {
         _detailsLink = new Anchor("Show execution details");
         _detailsLink.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 showLogPanel();
             }
         });
         add(_detailsLink);
     }
 
-    public void jobStarted(ExecutionLog execution) {
+    public void jobStarted(final ExecutionLog execution) {
         final ExecutionLogPoller poller = new ExecutionLogPoller(_service, _tenant, new Callback() {
             @Override
-            public void updateExecutionLog(ExecutionLog executionLog) {
+            public void updateExecutionLog(final ExecutionLog executionLog) {
                 jobStatusUpdated(executionLog);
             }
         });
         poller.start(execution);
     }
 
-    public void jobStatusUpdated(ExecutionLog executionLog) {
+    public void jobStatusUpdated(final ExecutionLog executionLog) {
         _result = executionLog;
         if (_logPanel != null) {
             _logPanel.updateContent(executionLog);

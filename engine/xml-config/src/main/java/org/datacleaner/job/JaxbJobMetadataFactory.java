@@ -27,6 +27,6 @@ import org.datacleaner.job.jaxb.JobMetadataType;
  */
 public interface JaxbJobMetadataFactory {
 
-    public JobMetadataType create(AnalysisJob analysisJob) throws Exception;
+    JobMetadataType create(AnalysisJob analysisJob) throws Exception;
 
 }

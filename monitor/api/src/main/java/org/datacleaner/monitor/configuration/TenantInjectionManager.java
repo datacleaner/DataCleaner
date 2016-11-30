@@ -38,7 +38,7 @@ import org.datacleaner.util.convert.VfsResourceTypeHandler;
 
 /**
  * A {@link InjectionManager} wrapper that is tenant-aware.
- * 
+ *
  * TODO: This class only services to fix issues with resource loading of
  * {@link RepositoryFileResource}s. That stuff should be generalized since
  * {@link RepositoryFolder} is now a generally used thing.
@@ -49,7 +49,8 @@ public class TenantInjectionManager implements InjectionManager {
     private final TenantContext _tenantContext;
     private final Repository _repository;
 
-    public TenantInjectionManager(InjectionManager delegate, Repository repository, TenantContext tenantContext) {
+    public TenantInjectionManager(final InjectionManager delegate, final Repository repository,
+            final TenantContext tenantContext) {
         _delegate = delegate;
         _repository = repository;
         _tenantContext = tenantContext;
@@ -61,7 +62,7 @@ public class TenantInjectionManager implements InjectionManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E> E getInstance(InjectionPoint<E> injectionPoint) {
+    public <E> E getInstance(final InjectionPoint<E> injectionPoint) {
         final Class<E> baseType = injectionPoint.getBaseType();
         if (baseType == ResourceConverter.class) {
             return (E) createResourceConverter();
@@ -70,13 +71,13 @@ public class TenantInjectionManager implements InjectionManager {
     }
 
     private ResourceConverter createResourceConverter() {
-        List<ResourceTypeHandler<?>> handlers = new ArrayList<ResourceTypeHandler<?>>();
+        final List<ResourceTypeHandler<?>> handlers = new ArrayList<>();
         handlers.add(new FileResourceTypeHandler(getRelativeParentDirectory()));
         handlers.add(new UrlResourceTypeHandler());
         handlers.add(new ClasspathResourceTypeHandler());
         handlers.add(new VfsResourceTypeHandler());
 
-        String tenantId = _tenantContext.getTenantId();
+        final String tenantId = _tenantContext.getTenantId();
 
         handlers.add(new RepositoryFileResourceTypeHandler(_repository, tenantId));
 

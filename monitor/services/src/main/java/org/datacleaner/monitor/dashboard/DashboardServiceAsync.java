@@ -35,29 +35,26 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface DashboardServiceAsync {
 
-    public void getTimelines(TenantIdentifier tenant, DashboardGroup group,
-            AsyncCallback<List<TimelineIdentifier>> callback);
+    void getTimelines(TenantIdentifier tenant, DashboardGroup group, AsyncCallback<List<TimelineIdentifier>> callback);
 
-    public void getTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier identifier,
+    void getTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier identifier,
             AsyncCallback<TimelineDefinition> callback);
 
-    public void getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline,
-            AsyncCallback<TimelineData> callback);
+    void getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline, AsyncCallback<TimelineData> callback);
 
-    public void getJobs(TenantIdentifier tenant, AsyncCallback<List<JobIdentifier>> callback);
+    void getJobs(TenantIdentifier tenant, AsyncCallback<List<JobIdentifier>> callback);
 
-    public void updateTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
+    void updateTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
             TimelineDefinition timelineDefinition, AsyncCallback<TimelineIdentifier> callback);
 
-    public void createTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
+    void createTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
             TimelineDefinition timelineDefinition, AsyncCallback<TimelineIdentifier> callback);
 
-    public void removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline, AsyncCallback<Boolean> callback);
+    void removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline, AsyncCallback<Boolean> callback);
 
-    public void getDashboardGroups(TenantIdentifier tenant, AsyncCallback<List<DashboardGroup>> callback);
+    void getDashboardGroups(TenantIdentifier tenant, AsyncCallback<List<DashboardGroup>> callback);
 
-    public void addDashboardGroup(TenantIdentifier tenant, String name, AsyncCallback<DashboardGroup> callback);
+    void addDashboardGroup(TenantIdentifier tenant, String name, AsyncCallback<DashboardGroup> callback);
 
-    public void removeDashboardGroup(TenantIdentifier tenant, DashboardGroup timelineGroup,
-            AsyncCallback<Boolean> callback);
+    void removeDashboardGroup(TenantIdentifier tenant, DashboardGroup timelineGroup, AsyncCallback<Boolean> callback);
 }

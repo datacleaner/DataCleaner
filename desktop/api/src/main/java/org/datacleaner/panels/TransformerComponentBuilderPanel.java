@@ -22,8 +22,6 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +52,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Specialization of {@link AbstractComponentBuilderPanel} for
  * {@link Transformer}s.
- * 
+ *
  * This panel will show the transformers configuration properties as well as
  * output columns, a "write data" button, a preview button and a context
  * visualization.
@@ -72,16 +70,16 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
     private final JButton _writeDataButton;
     private final WindowContext _windowContext;
 
-    public TransformerComponentBuilderPanel(TransformerComponentBuilder<?> transformerJobBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration) {
+    public TransformerComponentBuilderPanel(final TransformerComponentBuilder<?> transformerJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration) {
         this(null, 95, 95, transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
     }
 
-    protected TransformerComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-            int watermarkVerticalPosition, TransformerComponentBuilder<?> transformerJobBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration) {
+    protected TransformerComponentBuilderPanel(final Image watermarkImage, final int watermarkHorizontalPosition,
+            final int watermarkVerticalPosition, final TransformerComponentBuilder<?> transformerJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration) {
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, transformerJobBuilder,
                 propertyWidgetFactory);
         _componentBuilder = transformerJobBuilder;
@@ -103,41 +101,34 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         _previewButton.setBorder(WidgetUtils.BORDER_EMPTY);
         _previewAlternativesButton = WidgetFactory.createDefaultButton(WidgetUtils.CHAR_CARET_DOWN);
         final int defaultPreviewRows = getPreviewRows();
-        final PreviewTransformedDataActionListener defaultPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(
-                _windowContext, this, _componentBuilder, defaultPreviewRows);
+        final PreviewTransformedDataActionListener defaultPreviewTransformedDataActionListener =
+                new PreviewTransformedDataActionListener(_windowContext, this, _componentBuilder, defaultPreviewRows);
         final TransformerComponentBuilderPanel transformerComponentBuilderPanel = this;
         _previewButton.addActionListener(defaultPreviewTransformedDataActionListener);
-        _previewAlternativesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final JMenuItem defaultPreviewMenutItem = WidgetFactory
-                        .createMenuItem("Preview " + defaultPreviewRows + " records", IconUtils.ACTION_PREVIEW);
-                defaultPreviewMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
+        _previewAlternativesButton.addActionListener(e -> {
+            final JMenuItem defaultPreviewMenutItem = WidgetFactory
+                    .createMenuItem("Preview " + defaultPreviewRows + " records", IconUtils.ACTION_PREVIEW);
+            defaultPreviewMenutItem.addActionListener(defaultPreviewTransformedDataActionListener);
 
-                final JMenuItem maxRowsPreviewMenuItem = WidgetFactory.createMenuItem("Preview N records",
-                        IconUtils.ACTION_PREVIEW);
-                maxRowsPreviewMenuItem.addActionListener(new ActionListener() {
+            final JMenuItem maxRowsPreviewMenuItem =
+                    WidgetFactory.createMenuItem("Preview N records", IconUtils.ACTION_PREVIEW);
+            maxRowsPreviewMenuItem.addActionListener(e1 -> {
+                final Integer maxRows = WidgetFactory.showMaxRowsDialog(defaultPreviewRows);
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Integer maxRows = WidgetFactory.showMaxRowsDialog(defaultPreviewRows);
+                if (maxRows != null) {
+                    final PreviewTransformedDataActionListener maxRowsPreviewTransformedDataActionListener =
+                            new PreviewTransformedDataActionListener(_windowContext, transformerComponentBuilderPanel,
+                                    _componentBuilder, maxRows);
+                    maxRowsPreviewTransformedDataActionListener.actionPerformed(e1);
+                }
+            });
 
-                        if (maxRows != null) {
-                            final PreviewTransformedDataActionListener maxRowsPreviewTransformedDataActionListener = new PreviewTransformedDataActionListener(
-                                    _windowContext, transformerComponentBuilderPanel, _componentBuilder, maxRows);
-                            maxRowsPreviewTransformedDataActionListener.actionPerformed(e);
-                        }
-                    }
-                });
+            final JPopupMenu menu = new JPopupMenu();
+            menu.add(defaultPreviewMenutItem);
+            menu.add(maxRowsPreviewMenuItem);
 
-                final JPopupMenu menu = new JPopupMenu();
-                menu.add(defaultPreviewMenutItem);
-                menu.add(maxRowsPreviewMenuItem);
-
-                final int horizontalPosition = -1 * menu.getPreferredSize().width
-                        + _previewAlternativesButton.getWidth();
-                menu.show(_previewAlternativesButton, horizontalPosition, _previewAlternativesButton.getHeight());
-            }
+            final int horizontalPosition = -1 * menu.getPreferredSize().width + _previewAlternativesButton.getWidth();
+            menu.show(_previewAlternativesButton, horizontalPosition, _previewAlternativesButton.getHeight());
         });
     }
 
@@ -145,7 +136,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
             final TransformerComponentBuilder<?> transformerJobBuilder) {
         try {
             return _componentBuilder.getOutputColumns();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Could not get outputColumns for transformer {}", transformerJobBuilder.getName(), e);
             return Collections.emptyList();
         }
@@ -164,7 +155,9 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
     }
 
     protected int getPreviewRows() {
-        if(_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) return 10;
+        if (_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
+            return 10;
+        }
         return PreviewTransformedDataActionListener.DEFAULT_PREVIEW_ROWS;
     }
 
@@ -173,8 +166,8 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
     }
 
     @Override
-    protected JComponent decorateMainPanel(DCPanel panel) {
-        JComponent result = super.decorateMainPanel(panel);
+    protected JComponent decorateMainPanel(final DCPanel panel) {
+        final JComponent result = super.decorateMainPanel(panel);
 
         final DCPanel bottomButtonPanel = new DCPanel();
         bottomButtonPanel.setBorder(WidgetUtils.BORDER_EMPTY);
@@ -185,7 +178,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         previewButtonPanel.addButton(_previewButton);
         previewButtonPanel.add(new JLabel("|"));
         previewButtonPanel.addButton(_previewAlternativesButton);
-        
+
         _previewAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME);
 
         bottomButtonPanel.add(previewButtonPanel);
@@ -201,30 +194,31 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         return result;
     }
 
-    public void setOutputColumns(List<? extends InputColumn<?>> outputColumns) {
+    public void setOutputColumns(final List<? extends InputColumn<?>> outputColumns) {
         _outputColumnsTable.setColumns(outputColumns);
     }
 
     @Override
-    public void onAdd(TransformerComponentBuilder<?> tjb) {
+    public void onAdd(final TransformerComponentBuilder<?> tjb) {
     }
 
     @Override
-    public void onConfigurationChanged(TransformerComponentBuilder<?> tjb) {
+    public void onConfigurationChanged(final TransformerComponentBuilder<?> tjb) {
         onConfigurationChanged();
     }
 
     @Override
-    public void onOutputChanged(TransformerComponentBuilder<?> tjb, List<MutableInputColumn<?>> outputColumns) {
+    public void onOutputChanged(final TransformerComponentBuilder<?> tjb,
+            final List<MutableInputColumn<?>> outputColumns) {
         _outputColumnsTable.setColumns(outputColumns);
     }
 
     @Override
-    public void onRemove(TransformerComponentBuilder<?> tjb) {
+    public void onRemove(final TransformerComponentBuilder<?> tjb) {
     }
 
     @Override
-    public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
+    public void onRequirementChanged(final TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override

@@ -19,29 +19,27 @@
  */
 package org.datacleaner.monitor.server.wizard.synonymcatalog.file;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class FileSynonymCatalogReferenceDataWizardTest {
 
     @Test
     public void testIsApplicableTo() throws Exception {
-        FileSynonymCatalogReferenceDataWizard wizard = new FileSynonymCatalogReferenceDataWizard();
+        final FileSynonymCatalogReferenceDataWizard wizard = new FileSynonymCatalogReferenceDataWizard();
         assertTrue(wizard.isApplicableTo(null));
     }
 
     @Test
     public void testGetDisplayName() throws Exception {
-        FileSynonymCatalogReferenceDataWizard wizard = new FileSynonymCatalogReferenceDataWizard();
+        final FileSynonymCatalogReferenceDataWizard wizard = new FileSynonymCatalogReferenceDataWizard();
         assertNotEquals("", wizard.getDisplayName());
     }
 
     @Test
     public void testGetExpectedPageCount() throws Exception {
-        FileSynonymCatalogReferenceDataWizard wizard = new FileSynonymCatalogReferenceDataWizard();
+        final FileSynonymCatalogReferenceDataWizard wizard = new FileSynonymCatalogReferenceDataWizard();
         assertEquals(1, wizard.getExpectedPageCount());
     }
 }

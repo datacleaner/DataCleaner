@@ -48,21 +48,21 @@ import org.datacleaner.components.categories.FilterCategory;
 @Distributed(true)
 public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.NullCheckCategory>, HasLabelAdvice {
 
-    public static enum NullCheckCategory {
+    public enum NullCheckCategory {
         @Alias("INVALID")
         NULL,
 
         @Alias("VALID")
-        NOT_NULL;
+        NOT_NULL
     }
 
-    public static enum EvaluationMode implements HasName {
-        ALL_FIELDS("When all fields are NULL, the record is considered NULL"), ANY_FIELD(
-                "When any field is NULL, the record is considered NULL");
+    public enum EvaluationMode implements HasName {
+        ALL_FIELDS("When all fields are NULL, the record is considered NULL"),
+        ANY_FIELD("When any field is NULL, the record is considered NULL");
 
         private final String _name;
 
-        private EvaluationMode(String name) {
+        EvaluationMode(final String name) {
             _name = name;
         }
 
@@ -82,24 +82,25 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
     boolean considerEmptyStringAsNull = false;
 
     @Configured("Evaluation mode")
-    EvaluationMode evaluationMode = EvaluationMode.ANY_FIELD;;
+    EvaluationMode evaluationMode = EvaluationMode.ANY_FIELD;
 
     public NullCheckFilter() {
     }
 
-    public NullCheckFilter(InputColumn<?>[] columns, boolean considerEmptyStringAsNull) {
+    public NullCheckFilter(final InputColumn<?>[] columns, final boolean considerEmptyStringAsNull) {
         this();
         this.columns = columns;
         this.considerEmptyStringAsNull = considerEmptyStringAsNull;
     }
-    
-    public NullCheckFilter(InputColumn<?>[] columns, boolean considerEmptyStringAsNull, EvaluationMode evaluationMode) {
+
+    public NullCheckFilter(final InputColumn<?>[] columns, final boolean considerEmptyStringAsNull,
+            final EvaluationMode evaluationMode) {
         this();
         this.columns = columns;
         this.considerEmptyStringAsNull = considerEmptyStringAsNull;
         this.evaluationMode = evaluationMode;
     }
-    
+
     @Override
     public String getSuggestedLabel() {
         if (columns == null || columns.length != 1) {
@@ -109,12 +110,12 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
         return column.getName() + " is null?";
     }
 
-    public void setConsiderEmptyStringAsNull(boolean considerEmptyStringAsNull) {
+    public void setConsiderEmptyStringAsNull(final boolean considerEmptyStringAsNull) {
         this.considerEmptyStringAsNull = considerEmptyStringAsNull;
     }
 
     @Override
-    public boolean isOptimizable(NullCheckCategory category) {
+    public boolean isOptimizable(final NullCheckCategory category) {
         if (evaluationMode == EvaluationMode.ANY_FIELD) {
             return true;
         }
@@ -123,10 +124,10 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
     }
 
     @Override
-    public Query optimizeQuery(Query q, NullCheckCategory category) {
+    public Query optimizeQuery(final Query q, final NullCheckCategory category) {
         if (category == NullCheckCategory.NOT_NULL) {
-            for (InputColumn<?> col : columns) {
-                Column column = col.getPhysicalColumn();
+            for (final InputColumn<?> col : columns) {
+                final Column column = col.getPhysicalColumn();
                 if (column == null) {
                     throw new IllegalStateException("Cannot optimize on non-physical column: " + col);
                 }
@@ -137,18 +138,18 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
             }
         } else {
             // if NULL all filter items will be OR'ed.
-            List<FilterItem> filterItems = new ArrayList<FilterItem>();
-            for (InputColumn<?> col : columns) {
-                Column column = col.getPhysicalColumn();
+            final List<FilterItem> filterItems = new ArrayList<>();
+            for (final InputColumn<?> col : columns) {
+                final Column column = col.getPhysicalColumn();
                 if (column == null) {
                     throw new IllegalStateException("Cannot optimize on non-physical column: " + col);
                 }
 
-                SelectItem selectItem = new SelectItem(column);
-                FilterItem fi1 = new FilterItem(selectItem, OperatorType.EQUALS_TO, null);
+                final SelectItem selectItem = new SelectItem(column);
+                final FilterItem fi1 = new FilterItem(selectItem, OperatorType.EQUALS_TO, null);
                 filterItems.add(fi1);
                 if (considerEmptyStringAsNull && col.getDataType() == String.class) {
-                    FilterItem fi2 = new FilterItem(selectItem, OperatorType.EQUALS_TO, "");
+                    final FilterItem fi2 = new FilterItem(selectItem, OperatorType.EQUALS_TO, "");
                     filterItems.add(fi2);
                 }
             }
@@ -158,7 +159,7 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
     }
 
     @Override
-    public NullCheckCategory categorize(InputRow inputRow) {
+    public NullCheckCategory categorize(final InputRow inputRow) {
         if (evaluationMode.equals(EvaluationMode.ANY_FIELD)) {
             return categorizeAnyFieldMode(inputRow);
         } else {
@@ -166,9 +167,9 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
         }
     }
 
-    private NullCheckCategory categorizeAnyFieldMode(InputRow inputRow) {
-        for (InputColumn<?> col : columns) {
-            Object value = inputRow.getValue(col);
+    private NullCheckCategory categorizeAnyFieldMode(final InputRow inputRow) {
+        for (final InputColumn<?> col : columns) {
+            final Object value = inputRow.getValue(col);
             if (value == null) {
                 return NullCheckCategory.NULL;
             }
@@ -179,11 +180,11 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
         }
         return NullCheckCategory.NOT_NULL;
     }
-    
-    private NullCheckCategory categorizeAllFieldMode(InputRow inputRow) {
+
+    private NullCheckCategory categorizeAllFieldMode(final InputRow inputRow) {
         NullCheckCategory result = NullCheckCategory.NULL;
-        for (InputColumn<?> col : columns) {
-            Object value = inputRow.getValue(col);
+        for (final InputColumn<?> col : columns) {
+            final Object value = inputRow.getValue(col);
             if (value != null) {
                 if (considerEmptyStringAsNull) {
                     if (!"".equals(value)) {
@@ -195,7 +196,7 @@ public class NullCheckFilter implements QueryOptimizedFilter<NullCheckFilter.Nul
                     break;
                 }
             }
-            
+
         }
         return result;
     }

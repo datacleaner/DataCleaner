@@ -26,75 +26,76 @@ import java.util.List;
 
 public final class TokenPatternImpl implements TokenPattern {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final TokenizerConfiguration _configuration;
-	private final List<TokenPatternSymbol> _symbols;
-	private final String _sampleString;
+    private final TokenizerConfiguration _configuration;
+    private final List<TokenPatternSymbol> _symbols;
+    private final String _sampleString;
 
-	public TokenPatternImpl(String sampleString, List<Token> tokens, TokenizerConfiguration configuration) {
-		if (tokens == null) {
-			throw new IllegalArgumentException("tokens cannot be null");
-		}
-		_symbols = new ArrayList<TokenPatternSymbol>(tokens.size());
-		for (Token token : tokens) {
-			_symbols.add(new TokenPatternSymbolImpl(token, configuration));
-		}
-		_configuration = configuration;
-		_sampleString = sampleString;
-	}
+    public TokenPatternImpl(final String sampleString, final List<Token> tokens,
+            final TokenizerConfiguration configuration) {
+        if (tokens == null) {
+            throw new IllegalArgumentException("tokens cannot be null");
+        }
+        _symbols = new ArrayList<>(tokens.size());
+        for (final Token token : tokens) {
+            _symbols.add(new TokenPatternSymbolImpl(token, configuration));
+        }
+        _configuration = configuration;
+        _sampleString = sampleString;
+    }
 
-	@Override
-	public boolean match(List<Token> tokens) {
-		if (_symbols.size() != tokens.size()) {
-			return false;
-		}
+    @Override
+    public boolean match(final List<Token> tokens) {
+        if (_symbols.size() != tokens.size()) {
+            return false;
+        }
 
-		Iterator<TokenPatternSymbol> it1 = _symbols.iterator();
-		Iterator<Token> it2 = tokens.iterator();
-		while (it1.hasNext()) {
-			TokenPatternSymbol tokenSymbol = it1.next();
-			Token token = it2.next();
-			if (!tokenSymbol.matches(token, _configuration)) {
-				return false;
-			}
-		}
+        Iterator<TokenPatternSymbol> it1 = _symbols.iterator();
+        Iterator<Token> it2 = tokens.iterator();
+        while (it1.hasNext()) {
+            final TokenPatternSymbol tokenSymbol = it1.next();
+            final Token token = it2.next();
+            if (!tokenSymbol.matches(token, _configuration)) {
+                return false;
+            }
+        }
 
-		// it's a match. now expand sizes of tokens if needed
-		it1 = _symbols.iterator();
-		it2 = tokens.iterator();
-		while (it1.hasNext()) {
-			TokenPatternSymbol tokenSymbol = it1.next();
-			Token token2 = it2.next();
-			if (tokenSymbol.isExpandable()) {
-				int length1 = tokenSymbol.length();
-				int length2 = token2.length();
-				if (length1 < length2) {
-					int diff = length2 - length1;
-					tokenSymbol.expandLenght(diff);
-				}
-			}
-		}
+        // it's a match. now expand sizes of tokens if needed
+        it1 = _symbols.iterator();
+        it2 = tokens.iterator();
+        while (it1.hasNext()) {
+            final TokenPatternSymbol tokenSymbol = it1.next();
+            final Token token2 = it2.next();
+            if (tokenSymbol.isExpandable()) {
+                final int length1 = tokenSymbol.length();
+                final int length2 = token2.length();
+                if (length1 < length2) {
+                    final int diff = length2 - length1;
+                    tokenSymbol.expandLenght(diff);
+                }
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public List<TokenPatternSymbol> getSymbols() {
-		return Collections.unmodifiableList(_symbols);
-	}
+    @Override
+    public List<TokenPatternSymbol> getSymbols() {
+        return Collections.unmodifiableList(_symbols);
+    }
 
-	@Override
-	public String toSymbolicString() {
-		StringBuilder sb = new StringBuilder();
-		for (TokenPatternSymbol symbol : _symbols) {
-			sb.append(symbol.toSymbolicString());
-		}
-		return sb.toString();
-	}
+    @Override
+    public String toSymbolicString() {
+        final StringBuilder sb = new StringBuilder();
+        for (final TokenPatternSymbol symbol : _symbols) {
+            sb.append(symbol.toSymbolicString());
+        }
+        return sb.toString();
+    }
 
-	@Override
-	public String getSampleString() {
-		return _sampleString;
-	}
+    @Override
+    public String getSampleString() {
+        return _sampleString;
+    }
 }

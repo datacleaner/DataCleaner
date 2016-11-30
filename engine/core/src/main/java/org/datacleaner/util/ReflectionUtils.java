@@ -46,8 +46,8 @@ import com.googlecode.gentyref.GenericTypeReflector;
 
 /**
  * Various static methods for reflection related tasks.
- * 
- * 
+ *
+ *
  */
 public final class ReflectionUtils {
 
@@ -68,11 +68,11 @@ public final class ReflectionUtils {
      * @return true if thisType is a valid type ofThatType, either as a single
      *         instance or as an array of ofThatType
      */
-    public static boolean is(Type thisType, Class<?> ofThatType) {
+    public static boolean is(final Type thisType, final Class<?> ofThatType) {
         return is(thisType, ofThatType, true);
     }
 
-    public static boolean is(Type thisType, Class<?> ofThatType, boolean includeArray) {
+    public static boolean is(final Type thisType, final Class<?> ofThatType, final boolean includeArray) {
         Class<?> thisClass = null;
         if (thisType instanceof Class<?>) {
             thisClass = (Class<?>) thisType;
@@ -118,78 +118,78 @@ public final class ReflectionUtils {
         return ofThatType.isAssignableFrom(thisClass);
     }
 
-    public static boolean isCharacter(Type type) {
+    public static boolean isCharacter(final Type type) {
         return (type == char.class || type == Character.class);
     }
 
-    public static boolean isInputColumn(Class<?> type) {
+    public static boolean isInputColumn(final Class<?> type) {
         return is(type, InputColumn.class);
     }
 
-    public static boolean isColumn(Class<?> type) {
+    public static boolean isColumn(final Class<?> type) {
         return is(type, Column.class);
     }
 
-    public static boolean isTable(Class<?> type) {
+    public static boolean isTable(final Class<?> type) {
         return is(type, Table.class);
     }
 
-    public static boolean isSchema(Class<?> type) {
+    public static boolean isSchema(final Class<?> type) {
         return is(type, Schema.class);
     }
 
-    public static boolean isCloseable(Class<?> type) {
+    public static boolean isCloseable(final Class<?> type) {
         return is(type, Closeable.class);
     }
 
-    public static boolean isBoolean(Type type) {
+    public static boolean isBoolean(final Type type) {
         return (type == Boolean.class || type == boolean.class);
     }
 
-    public static boolean isString(Type type) {
+    public static boolean isString(final Type type) {
         return is(type, String.class);
     }
 
-    public static boolean isShort(Type type) {
+    public static boolean isShort(final Type type) {
         return (type == Short.class || type == short.class);
     }
 
-    public static boolean isDouble(Type type) {
+    public static boolean isDouble(final Type type) {
         return (type == Double.class || type == double.class);
     }
 
-    public static boolean isLong(Type type) {
+    public static boolean isLong(final Type type) {
         return (type == Long.class || type == long.class);
     }
 
-    public static boolean isInteger(Type type) {
+    public static boolean isInteger(final Type type) {
         return (type == Integer.class || type == int.class);
     }
 
-    public static boolean isFloat(Type type) {
+    public static boolean isFloat(final Type type) {
         return (type == Float.class || type == float.class);
     }
 
-    public static boolean isMap(Type type) {
+    public static boolean isMap(final Type type) {
         return type == Map.class;
     }
 
-    public static boolean isSet(Type type) {
+    public static boolean isSet(final Type type) {
         return type == Set.class;
     }
 
-    public static boolean isList(Type type) {
+    public static boolean isList(final Type type) {
         return type == List.class;
     }
 
-    public static boolean isDate(Type type) {
+    public static boolean isDate(final Type type) {
         return is(type, Date.class, false);
     }
 
-    public static boolean isNumber(Type type) {
+    public static boolean isNumber(final Type type) {
         if (type instanceof Class<?>) {
-            Class<?> clazz = (Class<?>) type;
-            boolean numberClass = is(clazz, Number.class, false);
+            final Class<?> clazz = (Class<?>) type;
+            final boolean numberClass = is(clazz, Number.class, false);
             if (numberClass) {
                 return true;
             }
@@ -199,56 +199,57 @@ public final class ReflectionUtils {
         return false;
     }
 
-    public static boolean isByte(Type type) {
+    public static boolean isByte(final Type type) {
         return type == byte.class || type == Byte.class;
     }
 
-    public static boolean isByteArray(Type type) {
+    public static boolean isByteArray(final Type type) {
         if (type == byte[].class || type == Byte[].class) {
             return true;
         }
         return false;
     }
 
-    public static String explodeCamelCase(String str, boolean excludeGetOrSet) {
-      return ApiStringUtils.explodeCamelCase(str, excludeGetOrSet);
+    public static String explodeCamelCase(final String str, final boolean excludeGetOrSet) {
+        return ApiStringUtils.explodeCamelCase(str, excludeGetOrSet);
     }
 
-    public static int getTypeParameterCount(Field field) {
-        Type genericType = field.getGenericType();
+    public static int getTypeParameterCount(final Field field) {
+        final Type genericType = field.getGenericType();
         return getTypeParameterCount(genericType);
     }
 
     public static int getTypeParameterCount(Type genericType) {
         if (genericType instanceof GenericArrayType) {
-            GenericArrayType gaType = (GenericArrayType) genericType;
+            final GenericArrayType gaType = (GenericArrayType) genericType;
             genericType = gaType.getGenericComponentType();
         }
         if (genericType instanceof ParameterizedType) {
-            ParameterizedType pType = (ParameterizedType) genericType;
-            Type[] typeArguments = pType.getActualTypeArguments();
+            final ParameterizedType pType = (ParameterizedType) genericType;
+            final Type[] typeArguments = pType.getActualTypeArguments();
             return typeArguments.length;
         }
         return 0;
     }
 
-    public static Class<?> getTypeParameter(Class<?> clazz, Class<?> genericInterface, int parameterIndex) {
-        Type baseType = GenericTypeReflector.getExactSuperType(clazz, genericInterface);
-        ParameterizedType pBaseType = (ParameterizedType) baseType;
-        Type typeParameterForBaseInterface = pBaseType.getActualTypeArguments()[parameterIndex];
+    public static Class<?> getTypeParameter(final Class<?> clazz, final Class<?> genericInterface,
+            final int parameterIndex) {
+        final Type baseType = GenericTypeReflector.getExactSuperType(clazz, genericInterface);
+        final ParameterizedType pBaseType = (ParameterizedType) baseType;
+        final Type typeParameterForBaseInterface = pBaseType.getActualTypeArguments()[parameterIndex];
         return getSafeClassToUse(typeParameterForBaseInterface);
     }
 
-    public static Class<?> getTypeParameter(Type genericType, int parameterIndex) {
+    public static Class<?> getTypeParameter(Type genericType, final int parameterIndex) {
         if (genericType instanceof GenericArrayType) {
-            GenericArrayType gaType = (GenericArrayType) genericType;
+            final GenericArrayType gaType = (GenericArrayType) genericType;
             genericType = gaType.getGenericComponentType();
         }
         if (genericType instanceof ParameterizedType) {
-            ParameterizedType ptype = (ParameterizedType) genericType;
-            Type[] typeArguments = ptype.getActualTypeArguments();
+            final ParameterizedType ptype = (ParameterizedType) genericType;
+            final Type[] typeArguments = ptype.getActualTypeArguments();
             if (typeArguments.length > parameterIndex) {
-                Type argument = typeArguments[parameterIndex];
+                final Type argument = typeArguments[parameterIndex];
                 return getSafeClassToUse(argument);
             } else {
                 throw new IllegalArgumentException("Only " + typeArguments.length + " parameters available");
@@ -257,51 +258,52 @@ public final class ReflectionUtils {
         return null;
     }
 
-    public static Class<?> getTypeParameter(Field field, int parameterIndex) {
-        Type genericType = field.getGenericType();
+    public static Class<?> getTypeParameter(final Field field, final int parameterIndex) {
+        final Type genericType = field.getGenericType();
         return getTypeParameter(genericType, parameterIndex);
     }
 
-    public static boolean isWildcard(Type type) {
+    public static boolean isWildcard(final Type type) {
         return type instanceof WildcardType;
     }
 
     private static Class<?> getSafeClassToUse(Type someType) {
         if (someType instanceof GenericArrayType) {
-            GenericArrayType gaType = (GenericArrayType) someType;
+            final GenericArrayType gaType = (GenericArrayType) someType;
             someType = gaType.getGenericComponentType();
             return Array.newInstance((Class<?>) someType, 0).getClass();
         }
 
         if (someType instanceof WildcardType) {
-            WildcardType wildcardType = (WildcardType) someType;
+            final WildcardType wildcardType = (WildcardType) someType;
 
-            Type[] upperBounds = wildcardType.getUpperBounds();
+            final Type[] upperBounds = wildcardType.getUpperBounds();
             if (upperBounds != null && upperBounds.length > 0) {
                 return (Class<?>) upperBounds[0];
             }
 
-            Type[] lowerBounds = wildcardType.getLowerBounds();
+            final Type[] lowerBounds = wildcardType.getLowerBounds();
             if (lowerBounds != null && lowerBounds.length > 0) {
                 return (Class<?>) lowerBounds[0];
             }
         } else if (someType instanceof Class) {
             return (Class<?>) someType;
         } else if (someType instanceof ParameterizedType) {
-            ParameterizedType pType = (ParameterizedType) someType;
+            final ParameterizedType pType = (ParameterizedType) someType;
             return (Class<?>) pType.getRawType();
         }
 
         throw new UnsupportedOperationException("Parameter type not supported: " + someType);
     }
 
-    public static int getHierarchyDistance(Class<?> subtype, Class<?> supertype) throws IllegalArgumentException {
+    public static int getHierarchyDistance(final Class<?> subtype, final Class<?> supertype)
+            throws IllegalArgumentException {
         assert subtype != null;
         assert supertype != null;
 
         if (!ReflectionUtils.is(subtype, supertype)) {
-            throw new IllegalArgumentException("Not a valid subtype of " + supertype.getName() + ": " + subtype
-                    .getName());
+            throw new IllegalArgumentException(
+                    "Not a valid subtype of " + supertype.getName() + ": " + subtype.getName());
         }
 
         if (supertype.isInterface()) {
@@ -333,7 +335,7 @@ public final class ReflectionUtils {
         }
 
         final Class<?>[] interfaces = subtype.getInterfaces();
-        for (Class<?> i : interfaces) {
+        for (final Class<?> i : interfaces) {
             if (i == supertype) {
                 return 1;
             }
@@ -352,10 +354,10 @@ public final class ReflectionUtils {
             }
         }
 
-        for (Class<?> i : interfaces) {
+        for (final Class<?> i : interfaces) {
             final Class<?>[] subInterfaces = i.getInterfaces();
             if (subInterfaces != null && subInterfaces.length > 0) {
-                for (Class<?> subInterface : subInterfaces) {
+                for (final Class<?> subInterface : subInterfaces) {
                     final int distance = getInterfaceHierarchyDistance(subInterface, supertype);
                     if (distance != Integer.MAX_VALUE) {
                         final int candidate = 1 + distance;
@@ -368,18 +370,18 @@ public final class ReflectionUtils {
         return bestCandidate;
     }
 
-    public static boolean isArray(Object o) {
-        if (o == null) {
+    public static boolean isArray(final Object obj) {
+        if (obj == null) {
             return false;
         }
-        return o.getClass().isArray();
+        return obj.getClass().isArray();
     }
 
-    public static Method[] getMethods(Class<?> clazz, Class<? extends Annotation> withAnnotation) {
-        List<Method> result = new ArrayList<Method>();
+    public static Method[] getMethods(final Class<?> clazz, final Class<? extends Annotation> withAnnotation) {
+        final List<Method> result = new ArrayList<>();
 
-        Method[] methods = getMethods(clazz);
-        for (Method method : methods) {
+        final Method[] methods = getMethods(clazz);
+        for (final Method method : methods) {
             if (isAnnotationPresent(method, withAnnotation)) {
                 result.add(method);
             }
@@ -388,11 +390,11 @@ public final class ReflectionUtils {
         return result.toArray(new Method[result.size()]);
     }
 
-    public static Field[] getAllFields(Class<?> clazz, Class<? extends Annotation> withAnnotation) {
-        List<Field> result = new ArrayList<Field>();
+    public static Field[] getAllFields(final Class<?> clazz, final Class<? extends Annotation> withAnnotation) {
+        final List<Field> result = new ArrayList<>();
 
-        Field[] fields = getAllFields(clazz);
-        for (Field field : fields) {
+        final Field[] fields = getAllFields(clazz);
+        for (final Field field : fields) {
             if (isAnnotationPresent(field, withAnnotation)) {
                 result.add(field);
             }
@@ -403,39 +405,38 @@ public final class ReflectionUtils {
 
     /**
      * Gets a method of a class by name.
-     * 
+     *
      * @param clazz
      * @param name
      * @return
      */
-    public static Method getMethod(Class<?> clazz, String name) {
+    public static Method getMethod(final Class<?> clazz, final String name) {
         return getMethod(clazz, name, false);
     }
 
     /**
      * Gets a method of a class by name.
-     * 
+     *
      * @param clazz
      * @param name
      * @param withParameters
      *            whether or not to include methods with parameters
      * @return
      */
-    public static Method getMethod(Class<?> clazz, String name, boolean withParameters) {
+    public static Method getMethod(final Class<?> clazz, final String name, final boolean withParameters) {
         if (clazz == Object.class || clazz == null) {
             return null;
         }
 
         try {
             // first try without parameters
-            Method method = clazz.getDeclaredMethod(name);
-            return method;
-        } catch (SecurityException e) {
+            return clazz.getDeclaredMethod(name);
+        } catch (final SecurityException e) {
             throw new IllegalStateException(e);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             if (withParameters) {
-                Method[] methods = getMethods(clazz);
-                for (Method method : methods) {
+                final Method[] methods = getMethods(clazz);
+                for (final Method method : methods) {
                     if (name.equals(method.getName())) {
                         return method;
                     }
@@ -446,24 +447,24 @@ public final class ReflectionUtils {
         }
     }
 
-    public static Field getField(Class<?> clazz, String fieldName) {
+    public static Field getField(final Class<?> clazz, final String fieldName) {
         if (clazz == Object.class || clazz == null) {
             return null;
         }
         try {
             return clazz.getDeclaredField(fieldName);
-        } catch (SecurityException e) {
+        } catch (final SecurityException e) {
             throw new IllegalStateException(e);
-        } catch (NoSuchFieldException e) {
+        } catch (final NoSuchFieldException e) {
             return getField(clazz.getSuperclass(), fieldName);
         }
     }
 
     /**
      * Tells which approach {@link #getMethods(Class)} is being implemented with
-     * 
+     *
      * @return
-     * 
+     *
      * @deprecated since DataCleaner 5.0 we no longer support Java 7 or older,
      *             so there is no longer a "legacy approach". This method always
      *             returns false.
@@ -475,11 +476,11 @@ public final class ReflectionUtils {
 
     /**
      * Gets all methods of a class, excluding those from Object.
-     * 
+     *
      * @param clazz
      * @return
      */
-    public static Method[] getMethods(Class<?> clazz) {
+    public static Method[] getMethods(final Class<?> clazz) {
         final List<Method> allMethods = new ArrayList<>();
         addMethods(allMethods, clazz);
 
@@ -502,12 +503,12 @@ public final class ReflectionUtils {
 
     /**
      * Gets all fields of a class, including private fields in super-classes.
-     * 
+     *
      * @param clazz
      * @return
      */
-    public static Field[] getAllFields(Class<?> clazz) {
-        List<Field> allFields = new ArrayList<>();
+    public static Field[] getAllFields(final Class<?> clazz) {
+        final List<Field> allFields = new ArrayList<>();
         addFields(allFields, clazz);
         return allFields.toArray(new Field[allFields.size()]);
     }
@@ -519,25 +520,25 @@ public final class ReflectionUtils {
      * @param clazz
      * @return
      */
-    public static Field[] getNonSyntheticFields(Class<?> clazz) {
-        List<Field> fieldList = new ArrayList<>();
+    public static Field[] getNonSyntheticFields(final Class<?> clazz) {
+        final List<Field> fieldList = new ArrayList<>();
         addFields(fieldList, clazz, true);
 
         return fieldList.toArray(new Field[fieldList.size()]);
     }
 
-    private static void addFields(List<Field> allFields, Class<?> clazz) {
+    private static void addFields(final List<Field> allFields, final Class<?> clazz) {
         addFields(allFields, clazz, false);
     }
 
-    private static void addFields(List<Field> allFields, Class<?> clazz, boolean excludeSynthetic) {
+    private static void addFields(final List<Field> allFields, final Class<?> clazz, final boolean excludeSynthetic) {
         if (clazz == Object.class) {
             return;
         }
 
-        Field[] f = clazz.getDeclaredFields();
+        final Field[] f = clazz.getDeclaredFields();
 
-        for (Field field : f) {
+        for (final Field field : f) {
             if (excludeSynthetic && field.isSynthetic()) {
                 continue;
             }
@@ -545,14 +546,14 @@ public final class ReflectionUtils {
             allFields.add(field);
         }
 
-        Class<?> superclass = clazz.getSuperclass();
+        final Class<?> superclass = clazz.getSuperclass();
         addFields(allFields, superclass, excludeSynthetic);
     }
 
-    public static <E> E newInstance(Class<? extends E> clazz) {
+    public static <E> E newInstance(final Class<? extends E> clazz) {
         try {
             return clazz.newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Could not instantiate {}: {}", clazz, e);
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
@@ -561,16 +562,17 @@ public final class ReflectionUtils {
         }
     }
 
-    public static <A extends Annotation> A getAnnotation(Enum<?> enumConstant, Class<A> annotationClass) {
+    public static <A extends Annotation> A getAnnotation(final Enum<?> enumConstant, final Class<A> annotationClass) {
         try {
-            Field field = enumConstant.getClass().getDeclaredField(enumConstant.name());
+            final Field field = enumConstant.getClass().getDeclaredField(enumConstant.name());
             return getAnnotation(field, annotationClass);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public static <A extends Annotation> A getAnnotation(AnnotatedElement element, Class<A> annotationClass) {
+    public static <A extends Annotation> A getAnnotation(final AnnotatedElement element,
+            final Class<A> annotationClass) {
         synchronized (ANNOTATION_REFLECTION_LOCK) {
             final A annotation = element.getAnnotation(annotationClass);
             if (annotation == null && element instanceof Method) {
@@ -585,18 +587,18 @@ public final class ReflectionUtils {
                     try {
                         final Method overriddenMethod = superClass.getMethod(methodName, methodParameterTypes);
                         return getAnnotation(overriddenMethod, annotationClass);
-                    } catch (NoSuchMethodException e) {
+                    } catch (final NoSuchMethodException e) {
                         logger.debug("Failed to get overridden method '{}' from {}", methodName, superClass);
                     }
                 }
 
                 // check for annotations on interface methods too.
                 final Class<?>[] interfaces = declaringClass.getInterfaces();
-                for (Class<?> interfaceClass : interfaces) {
+                for (final Class<?> interfaceClass : interfaces) {
                     try {
                         final Method overriddenMethod = interfaceClass.getMethod(methodName, methodParameterTypes);
                         return getAnnotation(overriddenMethod, annotationClass);
-                    } catch (NoSuchMethodException e) {
+                    } catch (final NoSuchMethodException e) {
                         logger.debug("Failed to get overridden method '{}' from {}", methodName, interfaceClass);
                     }
                 }
@@ -605,16 +607,18 @@ public final class ReflectionUtils {
         }
     }
 
-    public static boolean isAnnotationPresent(Enum<?> enumConstant, Class<? extends Annotation> annotationClass) {
+    public static boolean isAnnotationPresent(final Enum<?> enumConstant,
+            final Class<? extends Annotation> annotationClass) {
         try {
-            Field field = enumConstant.getClass().getDeclaredField(enumConstant.name());
+            final Field field = enumConstant.getClass().getDeclaredField(enumConstant.name());
             return isAnnotationPresent(field, annotationClass);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public static boolean isAnnotationPresent(AnnotatedElement element, Class<? extends Annotation> annotationClass) {
+    public static boolean isAnnotationPresent(final AnnotatedElement element,
+            final Class<? extends Annotation> annotationClass) {
         return getAnnotation(element, annotationClass) != null;
     }
 }

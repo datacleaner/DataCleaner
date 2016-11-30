@@ -21,5 +21,5 @@ package org.datacleaner.beans.filter;
 
 public enum RangeFilterCategory {
 
-	HIGHER, VALID, LOWER
+    HIGHER, VALID, LOWER
 }

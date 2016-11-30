@@ -24,27 +24,27 @@ import org.apache.metamodel.util.HasName;
 /**
  * Defines a type of matching output, which can be either true/false or the
  * matched input (if correct) or null (if incorrect).
- * 
- * 
+ *
+ *
  */
 public enum MatchOutputType implements HasName {
 
-	TRUE_FALSE("True or false", Boolean.class), INPUT_OR_NULL("Corrected value or null", String.class);
+    TRUE_FALSE("True or false", Boolean.class), INPUT_OR_NULL("Corrected value or null", String.class);
 
-	private final String _name;
-	private final Class<?> _outputClass;
+    private final String _name;
+    private final Class<?> _outputClass;
 
-	private MatchOutputType(String name, Class<?> outputClass) {
-		_name = name;
-		_outputClass = outputClass;
-	}
+    MatchOutputType(final String name, final Class<?> outputClass) {
+        _name = name;
+        _outputClass = outputClass;
+    }
 
-	@Override
-	public String getName() {
-		return _name;
-	}
+    @Override
+    public String getName() {
+        return _name;
+    }
 
-	public Class<?> getOutputClass() {
-		return _outputClass;
-	}
+    public Class<?> getOutputClass() {
+        return _outputClass;
+    }
 }

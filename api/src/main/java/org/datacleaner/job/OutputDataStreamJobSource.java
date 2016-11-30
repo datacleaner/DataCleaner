@@ -24,5 +24,5 @@ package org.datacleaner.job;
  */
 public interface OutputDataStreamJobSource {
 
-    public OutputDataStreamJob[] getOutputDataStreamJobs();
+    OutputDataStreamJob[] getOutputDataStreamJobs();
 }

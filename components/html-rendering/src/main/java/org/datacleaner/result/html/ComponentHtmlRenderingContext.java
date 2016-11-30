@@ -30,7 +30,7 @@ public class ComponentHtmlRenderingContext implements HtmlRenderingContext {
     private final HtmlRenderingContext _delegate;
     private final ComponentJob _componentJob;
 
-    public ComponentHtmlRenderingContext(HtmlRenderingContext delegate, ComponentJob componentJob) {
+    public ComponentHtmlRenderingContext(final HtmlRenderingContext delegate, final ComponentJob componentJob) {
         _delegate = delegate;
         _componentJob = componentJob;
     }
@@ -41,12 +41,12 @@ public class ComponentHtmlRenderingContext implements HtmlRenderingContext {
     }
 
     @Override
-    public String escapeHtml(String str) {
+    public String escapeHtml(final String str) {
         return _delegate.escapeHtml(str);
     }
 
     @Override
-    public String escapeJson(String str) {
+    public String escapeJson(final String str) {
         return _delegate.escapeJson(str);
     }
 

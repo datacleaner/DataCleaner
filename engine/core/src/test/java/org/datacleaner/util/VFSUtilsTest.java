@@ -26,23 +26,23 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileType;
 import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
 
+import junit.framework.TestCase;
+
 public class VFSUtilsTest extends TestCase {
 
     public void test1VfsAssumptions() throws Exception {
-        FileSystemManager manager = VFS.getManager();
+        final FileSystemManager manager = VFS.getManager();
 
         FileObject baseFile = manager.getBaseFile();
         assertTrue(baseFile == null || "core".equals(baseFile.getName().getBaseName()));
 
-        File file = new File("src/main/java");
+        final File file = new File("src/main/java");
         assertNotNull(manager.resolveFile(file.getAbsolutePath()));
 
         ((DefaultFileSystemManager) manager).setBaseFile(new File("."));
@@ -51,14 +51,14 @@ public class VFSUtilsTest extends TestCase {
 
         assertEquals("core", baseFile.getName().getBaseName());
 
-        FileObject javaFolder = manager.resolveFile("src/main/java");
+        final FileObject javaFolder = manager.resolveFile("src/main/java");
         assertTrue(javaFolder.getType() == FileType.FOLDER);
 
-        FileObject rootFolder = manager.resolveFile(".");
+        final FileObject rootFolder = manager.resolveFile(".");
         assertTrue(rootFolder.getType() == FileType.FOLDER);
         assertEquals("core", rootFolder.getName().getBaseName());
 
-        File javaFolderFile = VFSUtils.toFile(javaFolder);
+        final File javaFolderFile = VFSUtils.toFile(javaFolder);
         assertNotNull(javaFolderFile);
         assertTrue(javaFolderFile.exists());
         assertTrue(javaFolderFile.isDirectory());
@@ -68,17 +68,17 @@ public class VFSUtilsTest extends TestCase {
         // first check if we have a connection
         try {
             InetAddress.getByName("eobjects.org");
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             System.err.println("Skipping test " + getClass().getSimpleName() + "." + getName()
                     + " since we don't seem to be able to reach eobjects.org");
             e.printStackTrace();
             return;
         }
 
-        FileObject file = VFSUtils.getFileSystemManager().resolveFile("http://eobjects.org");
+        final FileObject file = VFSUtils.getFileSystemManager().resolveFile("http://eobjects.org");
         try (InputStream in = file.getContent().getInputStream()) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String readLine = reader.readLine();
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            final String readLine = reader.readLine();
             assertNotNull(readLine);
         }
     }

@@ -43,7 +43,7 @@ final class MockWizardSession extends DataCleanerJobWizardSession {
 
     private final AnalysisJobBuilder _analysisJobBuilder;
 
-    public MockWizardSession(JobWizardContext context) {
+    public MockWizardSession(final JobWizardContext context) {
         super(context);
         _analysisJobBuilder = new AnalysisJobBuilder(getWizardContext().getTenantContext().getConfiguration());
         _analysisJobBuilder.setDatastore(getWizardContext().getSourceDatastore());
@@ -53,14 +53,14 @@ final class MockWizardSession extends DataCleanerJobWizardSession {
     public WizardPageController firstPageController() {
         return new SelectTableWizardPage(getWizardContext(), 0) {
             @Override
-            protected WizardPageController nextPageController(Table selectedTable) {
+            protected WizardPageController nextPageController(final Table selectedTable) {
                 return new SelectColumnsWizardPage(1, selectedTable) {
                     @Override
-                    protected WizardPageController nextPageController(List<Column> selectedColumns) {
+                    protected WizardPageController nextPageController(final List<Column> selectedColumns) {
                         _analysisJobBuilder.addSourceColumns(selectedColumns);
                         return new JobNameWizardPage(getWizardContext(), 2) {
                             @Override
-                            protected WizardPageController nextPageController(String name) {
+                            protected WizardPageController nextPageController(final String name) {
                                 setJobName(name);
                                 return null;
                             }

@@ -41,35 +41,34 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataHubDeleteBuilderTest {
-    
+
     private static final String DATASOURCE_NAME = "datasource_name";
 
     private static final String DATASOURCE_RECORD_ID = "datasource_record_id";
 
     @Rule
-    public ExpectedException thrown= ExpectedException.none();
-    
+    public ExpectedException thrown = ExpectedException.none();
+
     @Mock
     DataHubUpdateCallback callback;
-    
+
     @Mock
     Table table;
-    
+
     RowDeletionBuilder sut;
 
-    
+
     @Before
     public void init() {
         Mockito.when(table.getName()).thenReturn("person");
         sut = new DataHubDeleteBuilder(callback, table);
     }
-    
-    
+
+
     @Test
     public void shouldCallExecuteGoldenRecord() {
-        Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
-        final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
-                OperatorType.EQUALS_TO, "123");
+        final Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
+        final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn), OperatorType.EQUALS_TO, "123");
         sut = sut.where(grIdFilter);
         sut.execute();
         verify(callback, times(1)).executeDeleteGoldenRecord("123");
@@ -77,14 +76,13 @@ public class DataHubDeleteBuilderTest {
 
     @Test
     public void shouldCallExecuteSourceRecordForPerson() {
-        Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
-        final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn),
-                OperatorType.EQUALS_TO, "456");
+        final Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
+        final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn), OperatorType.EQUALS_TO, "456");
         sut = sut.where(sourceIdFilter);
 
-        Column sourceNameColumn = new MutableColumn(DATASOURCE_NAME, ColumnType.CHAR);
-        final FilterItem sourceNameFilter = new FilterItem(new SelectItem(sourceNameColumn),
-                OperatorType.EQUALS_TO, "testSource");
+        final Column sourceNameColumn = new MutableColumn(DATASOURCE_NAME, ColumnType.CHAR);
+        final FilterItem sourceNameFilter =
+                new FilterItem(new SelectItem(sourceNameColumn), OperatorType.EQUALS_TO, "testSource");
         sut = sut.where(sourceNameFilter);
         sut.execute();
         verify(callback, times(1)).executeDeleteSourceRecord("testSource", "456", "person");
@@ -93,33 +91,32 @@ public class DataHubDeleteBuilderTest {
     @Test
     public void shouldCallExecuteSourceRecordForOrganization() {
         Mockito.when(table.getName()).thenReturn("organization");
-        Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
-        final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn),
-                OperatorType.EQUALS_TO, "456");
+        final Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
+        final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn), OperatorType.EQUALS_TO, "456");
         sut = sut.where(sourceIdFilter);
 
-        Column sourceNameColumn = new MutableColumn(DATASOURCE_NAME, ColumnType.CHAR);
-        final FilterItem sourceNameFilter = new FilterItem(new SelectItem(sourceNameColumn),
-                OperatorType.EQUALS_TO, "testSource");
+        final Column sourceNameColumn = new MutableColumn(DATASOURCE_NAME, ColumnType.CHAR);
+        final FilterItem sourceNameFilter =
+                new FilterItem(new SelectItem(sourceNameColumn), OperatorType.EQUALS_TO, "testSource");
         sut = sut.where(sourceNameFilter);
         sut.execute();
         verify(callback, times(1)).executeDeleteSourceRecord("testSource", "456", "organization");
     }
-     
+
     @Test
     public void shouldThrowForMissingWhereClause() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Delete requires a condition");        
+        thrown.expectMessage("Delete requires a condition");
         sut.execute();
     }
 
     @Test
     public void shouldThrowForInvalidColumnInWhereClause() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Delete condition is not valid");        
-        Column illegalColumn = new MutableColumn("illegal", ColumnType.CHAR);
-        final FilterItem illegalFilter = new FilterItem(new SelectItem(illegalColumn),
-                OperatorType.EQUALS_TO, "nonsense");
+        thrown.expectMessage("Delete condition is not valid");
+        final Column illegalColumn = new MutableColumn("illegal", ColumnType.CHAR);
+        final FilterItem illegalFilter =
+                new FilterItem(new SelectItem(illegalColumn), OperatorType.EQUALS_TO, "nonsense");
         sut = sut.where(illegalFilter);
         sut.execute();
     }
@@ -127,14 +124,13 @@ public class DataHubDeleteBuilderTest {
     @Test
     public void shouldThrowForTooManyColumnsInGoldenRecordWhereClause() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Delete requires the gr_id as the sole condition value.");        
-        Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
-        final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn),
-                OperatorType.EQUALS_TO, "123");
+        thrown.expectMessage("Delete requires the gr_id as the sole condition value.");
+        final Column grIdColumn = new MutableColumn("gr_id", ColumnType.CHAR);
+        final FilterItem grIdFilter = new FilterItem(new SelectItem(grIdColumn), OperatorType.EQUALS_TO, "123");
         sut = sut.where(grIdFilter);
-        Column illegalColumn = new MutableColumn("illegal", ColumnType.CHAR);
-        final FilterItem illegalFilter = new FilterItem(new SelectItem(illegalColumn),
-                OperatorType.EQUALS_TO, "nonsense");
+        final Column illegalColumn = new MutableColumn("illegal", ColumnType.CHAR);
+        final FilterItem illegalFilter =
+                new FilterItem(new SelectItem(illegalColumn), OperatorType.EQUALS_TO, "nonsense");
         sut = sut.where(illegalFilter);
         sut.execute();
     }
@@ -142,16 +138,16 @@ public class DataHubDeleteBuilderTest {
     @Test
     public void shouldThrowForInvalidColumnsInSourceRecordWhereClause() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Delete must be executed on a SourceRecordsGoldenRecordFormat table using datasource_record_id and datasource_name as condition values.");        
-        
-        Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
-        final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn),
-                OperatorType.EQUALS_TO, "456");
+        thrown.expectMessage("Delete must be executed on a SourceRecordsGoldenRecordFormat table using "
+                + "datasource_record_id and datasource_name as condition values.");
+
+        final Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
+        final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn), OperatorType.EQUALS_TO, "456");
         sut = sut.where(sourceIdFilter);
 
-        Column illegalColumn = new MutableColumn("illegal", ColumnType.CHAR);
-        final FilterItem illegalFilter = new FilterItem(new SelectItem(illegalColumn),
-                OperatorType.EQUALS_TO, "nonsense");
+        final Column illegalColumn = new MutableColumn("illegal", ColumnType.CHAR);
+        final FilterItem illegalFilter =
+                new FilterItem(new SelectItem(illegalColumn), OperatorType.EQUALS_TO, "nonsense");
         sut = sut.where(illegalFilter);
         sut.execute();
     }
@@ -159,21 +155,21 @@ public class DataHubDeleteBuilderTest {
     @Test
     public void shouldThrowForTooManyColumnsInSourceRecordWhereClause() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Delete must be executed on a SourceRecordsGoldenRecordFormat table using datasource_record_id and datasource_name as condition values.");        
-        
-        Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
-        final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn),
-                OperatorType.EQUALS_TO, "456");
+        thrown.expectMessage("Delete must be executed on a SourceRecordsGoldenRecordFormat table using "
+                + "datasource_record_id and datasource_name as condition values.");
+
+        final Column sourceIdColumn = new MutableColumn(DATASOURCE_RECORD_ID, ColumnType.CHAR);
+        final FilterItem sourceIdFilter = new FilterItem(new SelectItem(sourceIdColumn), OperatorType.EQUALS_TO, "456");
         sut = sut.where(sourceIdFilter);
 
-        Column sourceNameColumn = new MutableColumn(DATASOURCE_NAME, ColumnType.CHAR);
-        final FilterItem sourceNameFilter = new FilterItem(new SelectItem(sourceNameColumn),
-                OperatorType.EQUALS_TO, "testSource");
+        final Column sourceNameColumn = new MutableColumn(DATASOURCE_NAME, ColumnType.CHAR);
+        final FilterItem sourceNameFilter =
+                new FilterItem(new SelectItem(sourceNameColumn), OperatorType.EQUALS_TO, "testSource");
         sut = sut.where(sourceNameFilter);
 
-        Column illegalColumn = new MutableColumn("illegal", ColumnType.CHAR);
-        final FilterItem illegalFilter = new FilterItem(new SelectItem(illegalColumn),
-                OperatorType.EQUALS_TO, "nonsense");
+        final Column illegalColumn = new MutableColumn("illegal", ColumnType.CHAR);
+        final FilterItem illegalFilter =
+                new FilterItem(new SelectItem(illegalColumn), OperatorType.EQUALS_TO, "nonsense");
         sut = sut.where(illegalFilter);
         sut.execute();
     }

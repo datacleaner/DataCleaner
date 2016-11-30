@@ -24,9 +24,9 @@ package org.datacleaner.job;
  */
 public interface HasComponentRequirement {
 
-     /** Gets the requirement (if any) for running this component.
-     * 
+    /** Gets the requirement (if any) for running this component.
+     *
      * @return
      */
-    public ComponentRequirement getComponentRequirement();
+    ComponentRequirement getComponentRequirement();
 }

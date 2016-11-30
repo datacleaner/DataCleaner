@@ -34,7 +34,7 @@ abstract class AbstractRowNumberAwareAggregateBuilder<T> implements AggregateBui
     private final Object _values;
     private final boolean _skipNulls;
 
-    public AbstractRowNumberAwareAggregateBuilder(SortationType sortationType, boolean skipNulls) {
+    public AbstractRowNumberAwareAggregateBuilder(final SortationType sortationType, final boolean skipNulls) {
         _sortationType = sortationType;
         _skipNulls = skipNulls;
 
@@ -57,11 +57,11 @@ abstract class AbstractRowNumberAwareAggregateBuilder<T> implements AggregateBui
     }
 
     @Override
-    public final void add(Object o) {
+    public final void add(final Object o) {
         throw new UnsupportedOperationException();
     }
 
-    public final void add(Object o, long rowNumber) {
+    public final void add(final Object o, final long rowNumber) {
         if (_skipNulls && o == null) {
             return;
         }
@@ -72,15 +72,15 @@ abstract class AbstractRowNumberAwareAggregateBuilder<T> implements AggregateBui
             break;
         case NATURAL_SORT_ASC:
         case NATURAL_SORT_DESC:
-            @SuppressWarnings("unchecked")
-            final Collection<Object> collection = (Collection<Object>) _values;
+            @SuppressWarnings("unchecked") final Collection<Object> collection = (Collection<Object>) _values;
             collection.add(o);
             break;
         case RECORD_ORDER:
-            @SuppressWarnings("unchecked")
-            final Map<Long, Object> map = (Map<Long, Object>) _values;
+            @SuppressWarnings("unchecked") final Map<Long, Object> map = (Map<Long, Object>) _values;
             map.put(rowNumber, o);
             break;
+        default:
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -91,20 +91,20 @@ abstract class AbstractRowNumberAwareAggregateBuilder<T> implements AggregateBui
             break;
         case NATURAL_SORT_ASC:
         case NATURAL_SORT_DESC:
-            @SuppressWarnings("unchecked")
-            final Collection<Object> collection = (Collection<Object>) _values;
-            for (Object o : collection) {
+            @SuppressWarnings("unchecked") final Collection<Object> collection = (Collection<Object>) _values;
+            for (final Object o : collection) {
                 addSorted(o);
             }
             break;
         case RECORD_ORDER:
-            @SuppressWarnings("unchecked")
-            final Map<Integer, Object> map = (Map<Integer, Object>) _values;
+            @SuppressWarnings("unchecked") final Map<Integer, Object> map = (Map<Integer, Object>) _values;
             final Collection<Object> objects = map.values();
-            for (Object o : objects) {
+            for (final Object o : objects) {
                 addSorted(o);
             }
             break;
+        default:
+            throw new UnsupportedOperationException();
         }
 
         return getAggregateSorted();

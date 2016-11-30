@@ -19,6 +19,8 @@
  */
 package org.datacleaner.widgets.visualization;
 
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
+
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Set;
@@ -38,25 +40,11 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
-
 /**
  * Key-bindings manager for the {@link JobGraph}.
  */
 public class JobGraphBindingsManager {
-    private static final Logger logger = LoggerFactory.getLogger(JobGraphBindingsManager.class);
-    private static final int INPUT_MAP_CONDITION = WHEN_IN_FOCUSED_WINDOW;
-    private static final String KEY_DELETE = "DELETE";
-    private static final String KEY_BACKSPACE = "BACK_SPACE";
-    private static final String KEY_F2 = "F2";
-    private static final String KEY_F5 = "F5";
-    private static final String KEY_ENTER = "ENTER";
-
-    private final JobGraphContext _graphContext;
-    private final JobGraphActions _actions;
-    private final JComponent _component;
-
-    private static abstract class JobGraphBindingAction implements Action {
+    private abstract static class JobGraphBindingAction implements Action {
         private boolean _enabled = true;
 
         @Override
@@ -69,13 +57,13 @@ public class JobGraphBindingsManager {
         }
 
         @Override
-        public void setEnabled(final boolean enabled) {
-            _enabled = enabled;
+        public boolean isEnabled() {
+            return _enabled;
         }
 
         @Override
-        public boolean isEnabled() {
-            return _enabled;
+        public void setEnabled(final boolean enabled) {
+            _enabled = enabled;
         }
 
         @Override
@@ -87,7 +75,19 @@ public class JobGraphBindingsManager {
         }
     }
 
-    public JobGraphBindingsManager(JobGraphContext graphContext, JobGraphActions actions, JComponent component) {
+    private static final Logger logger = LoggerFactory.getLogger(JobGraphBindingsManager.class);
+    private static final int INPUT_MAP_CONDITION = WHEN_IN_FOCUSED_WINDOW;
+    private static final String KEY_DELETE = "DELETE";
+    private static final String KEY_BACKSPACE = "BACK_SPACE";
+    private static final String KEY_F2 = "F2";
+    private static final String KEY_F5 = "F5";
+    private static final String KEY_ENTER = "ENTER";
+    private final JobGraphContext _graphContext;
+    private final JobGraphActions _actions;
+    private final JComponent _component;
+
+    public JobGraphBindingsManager(final JobGraphContext graphContext, final JobGraphActions actions,
+            final JComponent component) {
         _graphContext = graphContext;
         _actions = actions;
         _component = component;
@@ -164,7 +164,7 @@ public class JobGraphBindingsManager {
                     return;
                 }
 
-                for (Object vertex : vertices) {
+                for (final Object vertex : vertices) {
                     final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder(vertex);
 
                     if (vertex instanceof TransformerComponentBuilder) {
@@ -190,7 +190,7 @@ public class JobGraphBindingsManager {
         _component.getInputMap(INPUT_MAP_CONDITION).put(KeyStroke.getKeyStroke(KEY_BACKSPACE), KEY_DELETE);
     }
 
-    private void registerAction(String actionKey, KeyStroke keyStroke, Action action) {
+    private void registerAction(final String actionKey, final KeyStroke keyStroke, final Action action) {
         _component.getInputMap(INPUT_MAP_CONDITION).put(keyStroke, actionKey);
         _component.getActionMap().put(actionKey, action);
     }

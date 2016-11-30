@@ -28,18 +28,18 @@ import org.datacleaner.job.ComponentJob;
  */
 public interface AnalysisJobMetrics {
 
-	/**
-	 * Gets the analysis job being executed.
-	 * 
-	 * @return the analysis job being executed.
-	 */
-	public AnalysisJob getAnalysisJob();
+    /**
+     * Gets the analysis job being executed.
+     *
+     * @return the analysis job being executed.
+     */
+    AnalysisJob getAnalysisJob();
 
-	public ComponentMetrics getComponentMetrics(ComponentJob componentJob);
+    ComponentMetrics getComponentMetrics(ComponentJob componentJob);
 
-	public Table getRowProcessingTable(ComponentJob componentJob);
+    Table getRowProcessingTable(ComponentJob componentJob);
 
-	public Table[] getRowProcessingTables();
+    Table[] getRowProcessingTables();
 
-	public RowProcessingMetrics getRowProcessingMetrics(Table table);
+    RowProcessingMetrics getRowProcessingMetrics(Table table);
 }

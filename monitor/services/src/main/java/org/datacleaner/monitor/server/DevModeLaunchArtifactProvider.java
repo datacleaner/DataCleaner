@@ -26,11 +26,11 @@ import java.util.List;
 
 /**
  * {@link LaunchArtifactProvider} implementation for development mode.
- * 
+ *
  * This implementation assumes that a signed version of all DataCleaner jar
  * files are available in the packaging module's target. To produce this, run
  * the maven build with the 'jnlp' profile:
- * 
+ *
  * <pre>
  * mvn install -P jnlp
  * </pre>
@@ -48,8 +48,8 @@ public class DevModeLaunchArtifactProvider implements LaunchArtifactProvider {
 
         // if being run from any of the module folders
         final File candidate3 = new File("../../packaging/jnlp/target/jnlp");
-        
-       // if being run from self-extracting war in target folder
+
+        // if being run from self-extracting war in target folder
         final File candidate4 = new File("../../../packaging/jnlp/target/jnlp");
 
         if (candidate1.exists()) {
@@ -79,7 +79,7 @@ public class DevModeLaunchArtifactProvider implements LaunchArtifactProvider {
     }
 
     @Override
-    public InputStream readJarFile(String filename) {
+    public InputStream readJarFile(final String filename) {
         return _delegate.readJarFile(filename);
     }
 

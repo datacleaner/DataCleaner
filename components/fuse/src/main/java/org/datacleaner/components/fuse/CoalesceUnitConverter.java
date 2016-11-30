@@ -32,26 +32,26 @@ public class CoalesceUnitConverter implements Converter<CoalesceUnit> {
     private final ArrayConverter delegate = new ArrayConverter(new StandardTypeConverter());
 
     @Override
-    public CoalesceUnit fromString(Class<?> type, String serializedForm) {
-        String[] columnNames = (String[]) delegate.fromString(String[].class, serializedForm);
-        for(int i=0;i<columnNames.length; i++){
+    public CoalesceUnit fromString(final Class<?> type, final String serializedForm) {
+        final String[] columnNames = (String[]) delegate.fromString(String[].class, serializedForm);
+        for (int i = 0; i < columnNames.length; i++) {
             columnNames[i] = SerializationStringEscaper.unescape(columnNames[i]);
         }
-        
+
         return new CoalesceUnit(columnNames);
     }
 
     @Override
-    public String toString(CoalesceUnit instance) {
-        String[] inputColumnNames = instance.getInputColumnNames();
-        for(int i=0;i<inputColumnNames.length; i++){
+    public String toString(final CoalesceUnit instance) {
+        final String[] inputColumnNames = instance.getInputColumnNames();
+        for (int i = 0; i < inputColumnNames.length; i++) {
             inputColumnNames[i] = SerializationStringEscaper.escape(inputColumnNames[i]);
         }
         return delegate.toString(inputColumnNames);
     }
 
     @Override
-    public boolean isConvertable(Class<?> type) {
+    public boolean isConvertable(final Class<?> type) {
         return type == CoalesceUnit.class;
     }
 }

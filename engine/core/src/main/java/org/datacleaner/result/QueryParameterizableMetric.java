@@ -29,7 +29,7 @@ import org.datacleaner.util.convert.StringConverter;
 /**
  * An abstract parser of metric parameters which supports IN [...] and NOT IN
  * [...] expressions.
- * 
+ *
  * @see Metric#supportsInClause()
  */
 public abstract class QueryParameterizableMetric implements ParameterizableMetric {
@@ -49,7 +49,7 @@ public abstract class QueryParameterizableMetric implements ParameterizableMetri
             final StringConverter conv = StringConverter.simpleInstance();
             final String[] values = conv.deserialize(group, String[].class);
             int sum = 0;
-            for (String value : values) {
+            for (final String value : values) {
                 sum += getInstanceCount(value);
             }
             if (trimmedParameter.toUpperCase().startsWith("NOT IN")) {
@@ -65,7 +65,7 @@ public abstract class QueryParameterizableMetric implements ParameterizableMetri
     /**
      * Returns the abstract "total count" of which all "NOT IN" elements will be
      * subtracted.
-     * 
+     *
      * @return
      */
     protected abstract int getTotalCount();
@@ -74,7 +74,7 @@ public abstract class QueryParameterizableMetric implements ParameterizableMetri
      * Returns the metric count of a single value, either because it was queried
      * stand-alone or because it was a part of an IN [...] or NOT IN [...]
      * expression.
-     * 
+     *
      * @param instance
      * @return
      */

@@ -41,7 +41,33 @@ public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) throws Exception {
+    private static void saveResult(final AnalysisResultFuture result, final Resource resultResource) {
+        final AnalysisResultSaveHandler analysisResultSaveHandler =
+                new AnalysisResultSaveHandler(result, resultResource);
+        try {
+            analysisResultSaveHandler.saveOrThrow();
+        } catch (final SerializationException e) {
+            // attempt to save what we can - and then rethrow
+            final AnalysisResult safeAnalysisResult = analysisResultSaveHandler.createSafeAnalysisResult();
+            if (safeAnalysisResult == null) {
+                logger.error("Serialization of result failed without any safe result elements to persist");
+            } else {
+                final Map<ComponentJob, AnalyzerResult> unsafeResultElements =
+                        analysisResultSaveHandler.getUnsafeResultElements();
+                logger.error("Serialization of result failed with the following unsafe elements: {}",
+                        unsafeResultElements);
+                logger.warn("Partial AnalysisResult will be persisted to filename '{}'",
+                        resultResource.getQualifiedPath());
+
+                analysisResultSaveHandler.saveWithoutUnsafeResultElements();
+            }
+
+            // rethrow the exception regardless
+            throw e;
+        }
+    }
+
+    public static void main(final String[] args) throws Exception {
         if (args.length < 2) {
             throw new IllegalArgumentException("The number of arguments is incorrect. Usage:\n"
                     + " <configuration file (conf.xml) path> <job file (.analysis.xml) path> [properties file path]\n"
@@ -61,13 +87,13 @@ public class Main {
             propertiesPath = null;
         }
 
-        final SparkJobContext sparkJobContext = new SparkJobContext(confXmlPath, analysisJobXmlPath, propertiesPath,
-                sparkContext);
+        final SparkJobContext sparkJobContext =
+                new SparkJobContext(confXmlPath, analysisJobXmlPath, propertiesPath, sparkContext);
 
         final ServiceLoader<SparkJobLifeCycleListener> listenerLoaders =
                 ServiceLoader.load(SparkJobLifeCycleListener.class);
 
-        for (SparkJobLifeCycleListener listener : listenerLoaders) {
+        for (final SparkJobLifeCycleListener listener : listenerLoaders) {
             sparkJobContext.addSparkJobLifeCycleListener(listener);
         }
 
@@ -86,32 +112,6 @@ public class Main {
             }
         } finally {
             sparkContext.stop();
-        }
-    }
-
-    private static void saveResult(AnalysisResultFuture result, Resource resultResource) {
-        final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler(result,
-                resultResource);
-        try {
-            analysisResultSaveHandler.saveOrThrow();
-        } catch (SerializationException e) {
-            // attempt to save what we can - and then rethrow
-            final AnalysisResult safeAnalysisResult = analysisResultSaveHandler.createSafeAnalysisResult();
-            if (safeAnalysisResult == null) {
-                logger.error("Serialization of result failed without any safe result elements to persist");
-            } else {
-                final Map<ComponentJob, AnalyzerResult> unsafeResultElements = analysisResultSaveHandler
-                        .getUnsafeResultElements();
-                logger.error("Serialization of result failed with the following unsafe elements: {}",
-                        unsafeResultElements);
-                logger.warn("Partial AnalysisResult will be persisted to filename '{}'",
-                        resultResource.getQualifiedPath());
-
-                analysisResultSaveHandler.saveWithoutUnsafeResultElements();
-            }
-
-            // rethrow the exception regardless
-            throw e;
         }
     }
 }

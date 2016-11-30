@@ -20,7 +20,6 @@
 package org.datacleaner.user;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -65,7 +64,7 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
      * Gets the configuration file, if any. Note that in embedded mode or during
      * tests etc. there might not be a configuration file, and this method may
      * return null!
-     * 
+     *
      * @return
      */
     public FileObject getConfigurationFile() {
@@ -77,18 +76,18 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
         // load user preferences first, since we need it while reading
         // the configuration (some custom elements may refer to classes
         // within the extensions)
-        UserPreferences userPreferences = _userPreferencesRef.get();
+        final UserPreferences userPreferences = _userPreferencesRef.get();
 
         loadExtensions(userPreferences);
 
         // load the configuration file
-        final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(
-                new DesktopConfigurationReaderInterceptor(_dataCleanerHome));
+        final JaxbConfigurationReader configurationReader =
+                new JaxbConfigurationReader(new DesktopConfigurationReaderInterceptor(_dataCleanerHome));
 
         boolean exists;
         try {
             exists = _configurationFile != null && _configurationFile.exists();
-        } catch (FileSystemException e1) {
+        } catch (final FileSystemException e) {
             logger.debug("Could not determine if configuration file exists");
             exists = false;
         }
@@ -101,22 +100,22 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
 
                 c = configurationReader.create(inputStream);
                 logger.info("Succesfully read configuration from {}", _configurationFile.getName().getPath());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 FileHelper.safeClose(inputStream);
                 try {
                     inputStream = _configurationFile.getContent().getInputStream();
-                    String content = FileHelper.readInputStreamAsString(inputStream, FileHelper.DEFAULT_ENCODING);
+                    final String content = FileHelper.readInputStreamAsString(inputStream, FileHelper.DEFAULT_ENCODING);
                     logger.error("Failed to read configuration file {}. File contents was:", _configurationFile);
                     logger.error(content);
-                } catch (Throwable t) {
+                } catch (final Throwable t) {
                     logger.debug("Failed to re-open configuration file to determine file contents", e);
                 }
 
                 if (e instanceof RuntimeException) {
                     throw (RuntimeException) e;
                 }
-                throw new IllegalStateException("Unexpected error while reading configuration file: "
-                        + _configurationFile, e);
+                throw new IllegalStateException(
+                        "Unexpected error while reading configuration file: " + _configurationFile, e);
             } finally {
                 FileHelper.safeClose(inputStream);
             }
@@ -128,13 +127,13 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
         return c;
     }
 
-    private void loadExtensions(UserPreferences userPreferences) {
+    private void loadExtensions(final UserPreferences userPreferences) {
         final String dumpInstallKey = "org.datacleaner.extension.dumpinstall";
         final File extensionsDirectory = userPreferences.getExtensionsDirectory();
 
-        final Set<String> extensionFilenames = new HashSet<String>();
+        final Set<String> extensionFilenames = new HashSet<>();
         final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
-        for (Iterator<ExtensionPackage> it = extensionPackages.iterator(); it.hasNext();) {
+        for (final Iterator<ExtensionPackage> it = extensionPackages.iterator(); it.hasNext(); ) {
             final ExtensionPackage extensionPackage = (ExtensionPackage) it.next();
 
             // some extensions may be installed simply by "dumping" a JAR in the
@@ -143,7 +142,7 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
             boolean remove = false;
 
             final File[] files = extensionPackage.getFiles();
-            for (File file : files) {
+            for (final File file : files) {
                 if (dumpInstalled && !file.exists()) {
                     // file has been removed, we'll remove this extension
                     remove = true;
@@ -167,12 +166,12 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
         // that are not already loaded.
         final File[] jarFiles = extensionsDirectory.listFiles(FileFilters.JAR);
         if (jarFiles != null) {
-            for (File file : jarFiles) {
+            for (final File file : jarFiles) {
                 final String filename = file.getName();
                 if (!extensionFilenames.contains(filename)) {
                     logger.info("Adding extension from 'extension' folder: {}", file.getName());
-                    ExtensionReader reader = new ExtensionReader();
-                    ExtensionPackage extension = reader.readExternalExtension(file);
+                    final ExtensionReader reader = new ExtensionReader();
+                    final ExtensionPackage extension = reader.readExternalExtension(file);
                     userPreferences.addExtensionPackage(extension);
                     extension.getAdditionalProperties().put(dumpInstallKey, "true");
                     extension.loadExtension();
@@ -182,19 +181,14 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
 
         // List directories and treat each sub directory with JAR files as
         // an extension
-        final File[] subDirectories = extensionsDirectory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return file.isDirectory();
-            }
-        });
+        final File[] subDirectories = extensionsDirectory.listFiles(File::isDirectory);
         if (subDirectories != null) {
-            for (File subDirectory : subDirectories) {
+            for (final File subDirectory : subDirectories) {
                 final String directoryName = subDirectory.getName();
                 if (!extensionFilenames.contains(directoryName)) {
                     logger.info("Adding extension from 'extension' folder: {}", directoryName);
-                    ExtensionReader reader = new ExtensionReader();
-                    ExtensionPackage extension = reader.readExternalExtension(subDirectory);
+                    final ExtensionReader reader = new ExtensionReader();
+                    final ExtensionPackage extension = reader.readExternalExtension(subDirectory);
                     if (extension != null) {
                         userPreferences.addExtensionPackage(extension);
                         extension.getAdditionalProperties().put(dumpInstallKey, "true");
@@ -205,12 +199,12 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
         }
     }
 
-    private DataCleanerConfiguration getConfigurationFromClasspath(JaxbConfigurationReader configurationReader) {
+    private DataCleanerConfiguration getConfigurationFromClasspath(final JaxbConfigurationReader configurationReader) {
         logger.info("Reading conf.xml from classpath");
         try {
             return configurationReader.create(ResourceManager.get().getUrl("datacleaner-home/conf.xml").openStream());
-        } catch (Exception ex2) {
-            logger.warn("Unexpected error while reading conf.xml from classpath!", ex2);
+        } catch (final Exception e) {
+            logger.warn("Unexpected error while reading conf.xml from classpath!", e);
             logger.warn("Creating a bare-minimum configuration because of previous errors!");
             return new DataCleanerConfigurationImpl();
         }

@@ -26,9 +26,9 @@ import junit.framework.TestCase;
 
 public class IconUtilsTest extends TestCase {
 
-	public void testGetBundledIconForDescriptor() throws Exception {
-		String imagePath = IconUtils.getDescriptorImagePath(Descriptors.ofAnalyzer(InsertIntoTableAnalyzer.class),
-				getClass().getClassLoader(), false);
-		assertEquals("org/datacleaner/beans/writers/InsertIntoTableAnalyzer.png", imagePath);
-	}
+    public void testGetBundledIconForDescriptor() throws Exception {
+        final String imagePath = IconUtils.getDescriptorImagePath(Descriptors.ofAnalyzer(InsertIntoTableAnalyzer.class),
+                getClass().getClassLoader(), false);
+        assertEquals("org/datacleaner/beans/writers/InsertIntoTableAnalyzer.png", imagePath);
+    }
 }

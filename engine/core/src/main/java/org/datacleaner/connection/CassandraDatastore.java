@@ -30,10 +30,8 @@ import com.datastax.driver.core.Cluster.Builder;
  */
 public class CassandraDatastore extends UsageAwareDatastore<CassandraDataContext> {
 
-    private static final long serialVersionUID = 1L;
-
     public static final int DEFAULT_PORT = 9042;
-
+    private static final long serialVersionUID = 1L;
     private final String _keyspace;
     private final SimpleTableDef[] _tableDefs;
     private final String _hostname;
@@ -42,16 +40,16 @@ public class CassandraDatastore extends UsageAwareDatastore<CassandraDataContext
     private final String _password;
     private final boolean _ssl;
 
-    public CassandraDatastore(String name, String hostname, String keyspace) {
+    public CassandraDatastore(final String name, final String hostname, final String keyspace) {
         this(name, hostname, DEFAULT_PORT, keyspace);
     }
 
-    public CassandraDatastore(String name, String hostname, int port, String keyspace) {
+    public CassandraDatastore(final String name, final String hostname, final int port, final String keyspace) {
         this(name, hostname, port, keyspace, null, null, false, null);
     }
 
-    public CassandraDatastore(String name, String hostname, int port, String keyspace, String username,
-            String password, boolean ssl, SimpleTableDef[] tableDefs) {
+    public CassandraDatastore(final String name, final String hostname, final int port, final String keyspace,
+            final String username, final String password, final boolean ssl, final SimpleTableDef[] tableDefs) {
         super(name);
         _hostname = hostname;
         _port = port;
@@ -86,7 +84,7 @@ public class CassandraDatastore extends UsageAwareDatastore<CassandraDataContext
         } else {
             dataContext = new CassandraDataContext(cluster, _keyspace, _tableDefs);
         }
-        return new DatastoreConnectionImpl<CassandraDataContext>(dataContext, this);
+        return new DatastoreConnectionImpl<>(dataContext, this);
     }
 
     public String getHostname() {

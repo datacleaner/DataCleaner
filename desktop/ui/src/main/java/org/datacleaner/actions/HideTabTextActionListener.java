@@ -26,27 +26,27 @@ import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 
 /**
  * Listener used to switch between shown/hidden titles of tabs
- * 
+ *
  * @author Kasper Sørensen
  */
 public final class HideTabTextActionListener implements ActionListener {
 
-	private final CloseableTabbedPane _tabbedPane;
-	private final String _title;
+    private final CloseableTabbedPane _tabbedPane;
+    private final String _title;
 
-	public HideTabTextActionListener(CloseableTabbedPane tabbedPane, int tabIndex) {
-		_tabbedPane = tabbedPane;
-		_title = tabbedPane.getTitleAt(tabIndex);
-	}
+    public HideTabTextActionListener(final CloseableTabbedPane tabbedPane, final int tabIndex) {
+        _tabbedPane = tabbedPane;
+        _title = tabbedPane.getTitleAt(tabIndex);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    int tabIndex = e.getID();
-		if (_title.equals(_tabbedPane.getTitleAt(tabIndex))) {
-			_tabbedPane.setTitleAt(tabIndex, "");
-		} else {
-			_tabbedPane.setTitleAt(tabIndex, _title);
-		}
-	}
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        final int tabIndex = e.getID();
+        if (_title.equals(_tabbedPane.getTitleAt(tabIndex))) {
+            _tabbedPane.setTitleAt(tabIndex, "");
+        } else {
+            _tabbedPane.setTitleAt(tabIndex, _title);
+        }
+    }
 
 }

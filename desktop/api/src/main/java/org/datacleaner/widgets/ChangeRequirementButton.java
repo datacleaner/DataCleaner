@@ -49,12 +49,12 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ChangeRequirementButton.class);
     private static final ImageManager imageManager = ImageManager.get();
-    private static final Icon filterIcon = imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH,
-            IconUtils.ICON_SIZE_MEDIUM);
+    private static final Icon filterIcon =
+            imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);
 
     private final ComponentBuilder _componentBuilder;
 
-    public ChangeRequirementButton(ComponentBuilder componentBuilder) {
+    public ChangeRequirementButton(final ComponentBuilder componentBuilder) {
         super(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT, filterIcon);
         _componentBuilder = componentBuilder;
         addActionListener(this);
@@ -63,7 +63,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         final JPopupMenu popup = new JPopupMenu();
 
         final ChangeRequirementMenuBuilder menuBuilder = new ChangeRequirementMenuBuilder(_componentBuilder) {
@@ -73,7 +73,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
             }
         };
         final List<JMenuItem> menuItems = menuBuilder.createMenuItems();
-        for (JMenuItem menuItem : menuItems) {
+        for (final JMenuItem menuItem : menuItems) {
             popup.add(menuItem);
         }
 
@@ -83,17 +83,14 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     public void updateText() {
         logger.debug("updateText()");
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                final ComponentRequirement requirement = _componentBuilder.getComponentRequirement();
-                if (requirement == null) {
-                    setText(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT);
-                } else if (AnyComponentRequirement.get().equals(requirement)) {
-                    setText(ChangeRequirementMenuBuilder.ANY_REQUIREMENT_TEXT);
-                } else {
-                    setText(requirement.getSimpleName());
-                }
+        final Runnable runnable = () -> {
+            final ComponentRequirement requirement = _componentBuilder.getComponentRequirement();
+            if (requirement == null) {
+                setText(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT);
+            } else if (AnyComponentRequirement.get().equals(requirement)) {
+                setText(ChangeRequirementMenuBuilder.ANY_REQUIREMENT_TEXT);
+            } else {
+                setText(requirement.getSimpleName());
             }
         };
         try {
@@ -102,7 +99,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
             } else {
                 SwingUtilities.invokeAndWait(runnable);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Failed to update ChangeRequirementButton", e);
         }
     }

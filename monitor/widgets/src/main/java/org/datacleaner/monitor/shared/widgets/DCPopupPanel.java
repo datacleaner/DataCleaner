@@ -38,18 +38,18 @@ public class DCPopupPanel extends PopupPanel {
     private final ButtonPanel _buttonPanel;
     private FlowPanel _outerPanel;
 
-    public DCPopupPanel(String heading) {
+    public DCPopupPanel(final String heading) {
         super();
         addStyleName("DCPopupPanel");
         setGlassEnabled(true);
         setAutoHideEnabled(false);
         setModal(false);
         _buttonPanel = new ButtonPanel();
-        
+
         final int clientHeight = Window.getClientHeight();
         final int heightMargin = 100; // represents slack for buttons, border and header
         final int maxHeight = (int) ((clientHeight - heightMargin) * 0.90);
-        
+
         _panel = new ScrollPanel();
         _panel.getElement().getStyle().setProperty("maxHeight", maxHeight + "px");
         _panel.setStyleName("DCPopupPanelContent");
@@ -64,22 +64,22 @@ public class DCPopupPanel extends PopupPanel {
         super.setWidget(_outerPanel);
     }
 
-    public void setHeader(String header) {
+    public void setHeader(final String header) {
         final Widget firstWidget = _outerPanel.getWidget(0);
         if (firstWidget instanceof HeadingLabel) {
-            HeadingLabel headingLabel = (HeadingLabel) firstWidget;
+            final HeadingLabel headingLabel = (HeadingLabel) firstWidget;
             headingLabel.setText(header);
         } else {
-            HeadingLabel headingLabel = new HeadingLabel(header);
+            final HeadingLabel headingLabel = new HeadingLabel(header);
             _outerPanel.insert(headingLabel, 0);
         }
     }
 
-    public void addButton(Button button) {
+    public void addButton(final Button button) {
         getButtonPanel().addButton(button);
     }
 
-    public void removeButton(Button button) {
+    public void removeButton(final Button button) {
         getButtonPanel().removeButton(button);
     }
 
@@ -92,12 +92,12 @@ public class DCPopupPanel extends PopupPanel {
     }
 
     @Override
-    public void setWidget(Widget w) {
+    public void setWidget(final Widget w) {
         _panel.setWidget(w);
     }
 
     @Override
-    public void setWidget(IsWidget w) {
+    public void setWidget(final IsWidget w) {
         _panel.setWidget(w);
     }
 }

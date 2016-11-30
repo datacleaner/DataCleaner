@@ -30,7 +30,7 @@ class SimpleRowIdGenerator implements RowIdGenerator {
     private final AtomicInteger _physicalCounter;
     private final AtomicInteger _virtualCounter;
 
-    public SimpleRowIdGenerator(int offset) {
+    public SimpleRowIdGenerator(final int offset) {
         _physicalCounter = new AtomicInteger(offset);
         _virtualCounter = new AtomicInteger(Integer.MIN_VALUE + (offset * 3));
     }

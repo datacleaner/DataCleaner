@@ -21,7 +21,6 @@ package org.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,7 +30,6 @@ import java.util.Map.Entry;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Predicate;
 import org.apache.metamodel.util.TruePredicate;
@@ -77,7 +75,7 @@ public class ResultFileController {
     @RolesAllowed(SecurityRoles.RESULT_EDITOR)
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public Map<String, String> uploadAnalysisResult(@PathVariable("tenant") String tenant,
+    public Map<String, String> uploadAnalysisResult(@PathVariable("tenant") final String tenant,
             @PathVariable("result") String resultName, @RequestParam("file") final MultipartFile file) {
         if (file == null) {
             throw new IllegalArgumentException(
@@ -98,19 +96,16 @@ public class ResultFileController {
             filename = resultName + "-" + timestamp + EXTENSION;
         }
 
-        final RepositoryFile resultFile = resultsFolder.createFile(filename, new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                final InputStream in = file.getInputStream();
-                try {
-                    FileHelper.copy(in, out);
-                } finally {
-                    FileHelper.safeClose(in);
-                }
+        final RepositoryFile resultFile = resultsFolder.createFile(filename, out -> {
+            final InputStream in = file.getInputStream();
+            try {
+                FileHelper.copy(in, out);
+            } finally {
+                FileHelper.safeClose(in);
             }
         });
 
-        final Map<String, String> result = new HashMap<String, String>();
+        final Map<String, String> result = new HashMap<>();
         result.put("status", "Success");
         result.put("file_type", resultFile.getType().toString());
         result.put("filename", resultFile.getName());
@@ -122,9 +117,9 @@ public class ResultFileController {
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(method = RequestMethod.GET, produces = "text/html")
     public void resultHtml(@PathVariable("tenant") final String tenant, @PathVariable("result") String resultName,
-            @RequestParam(value = "tabs", required = false) Boolean tabsParam,
-            @RequestParam(value = "comp_name", required = false) String componentParamName,
-            @RequestParam(value = "comp_index", required = false) Integer componentIndexParam,
+            @RequestParam(value = "tabs", required = false) final Boolean tabsParam,
+            @RequestParam(value = "comp_name", required = false) final String componentParamName,
+            @RequestParam(value = "comp_index", required = false) final Integer componentIndexParam,
             final HttpServletResponse response) throws IOException {
 
         resultName = resultName.replaceAll("\\+", " ");
@@ -142,7 +137,7 @@ public class ResultFileController {
             final String jobName = resultName.substring(0, resultName.length() - ("-latest" + EXTENSION).length());
             resultFile = resultsFolder.getLatestFile(jobName, EXTENSION);
             if (resultFile == null) {
-                JobContext job = context.getJob(jobName);
+                final JobContext job = context.getJob(jobName);
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "No results for job: " + job.getName());
                 return;
             }
@@ -158,10 +153,10 @@ public class ResultFileController {
         final AnalysisResult analysisResult;
         try {
             analysisResult = resultContext.getAnalysisResult();
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             logger.error("Failed to read AnalysisResult in file: " + resultFile, e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to read result file: "
-                    + resultFile.getName() + ". See server logs for details.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Failed to read result file: " + resultFile.getName() + ". See server logs for details.");
             return;
         }
         final DataCleanerConfiguration configuration = context.getConfiguration();
@@ -170,20 +165,20 @@ public class ResultFileController {
         final boolean headers;
         final Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate;
         if (org.datacleaner.util.StringUtils.isNullOrEmpty(componentParamName)) {
-            jobInclusionPredicate = new TruePredicate<Entry<ComponentJob, AnalyzerResult>>();
+            jobInclusionPredicate = new TruePredicate<>();
             headers = true;
         } else {
             jobInclusionPredicate = createInclusionPredicate(componentParamName, componentIndexParam);
             headers = false;
         }
 
-        final HtmlAnalysisResultWriter htmlWriter = _htmlAnalysisResultWriterFactory.create(tabs,
-                jobInclusionPredicate, headers);
+        final HtmlAnalysisResultWriter htmlWriter =
+                _htmlAnalysisResultWriterFactory.create(tabs, jobInclusionPredicate, headers);
         final PrintWriter out = response.getWriter();
 
         try {
             htmlWriter.write(analysisResult, configuration, out);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -195,13 +190,13 @@ public class ResultFileController {
             private int index = 0;
 
             @Override
-            public Boolean eval(Entry<ComponentJob, AnalyzerResult> entry) {
-                ComponentJob component = entry.getKey();
-                String name = component.getName();
+            public Boolean eval(final Entry<ComponentJob, AnalyzerResult> entry) {
+                final ComponentJob component = entry.getKey();
+                final String name = component.getName();
                 if (name != null && name.equals(componentParamName)) {
                     return matchesIndex();
                 }
-                String displayName = component.getDescriptor().getDisplayName();
+                final String displayName = component.getDescriptor().getDisplayName();
                 if (displayName != null && displayName.equals(componentParamName)) {
                     return matchesIndex();
                 }
@@ -212,7 +207,7 @@ public class ResultFileController {
                 if (componentIndexParam == null) {
                     return true;
                 } else {
-                    boolean result = (index == componentIndexParam.intValue());
+                    final boolean result = (index == componentIndexParam.intValue());
                     index++;
                     return result;
                 }

@@ -20,16 +20,16 @@
 package org.datacleaner.util.convert;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.VfsResource;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
-import org.apache.metamodel.util.Resource;
 
 public class VfsResourceTypeHandler implements ResourceTypeHandler<VfsResource> {
 
     @Override
-    public boolean isParserFor(Class<? extends Resource> resourceType) {
+    public boolean isParserFor(final Class<? extends Resource> resourceType) {
         return ReflectionUtils.is(resourceType, VfsResource.class);
     }
 
@@ -39,17 +39,17 @@ public class VfsResourceTypeHandler implements ResourceTypeHandler<VfsResource> 
     }
 
     @Override
-    public VfsResource parsePath(String path) {
+    public VfsResource parsePath(final String path) {
         try {
             final FileObject fileObject = VFSUtils.getFileSystemManager().resolveFile(path);
             return new VfsResource(fileObject);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public String createPath(Resource resource) {
+    public String createPath(final Resource resource) {
         final VfsResource vfsResource = (VfsResource) resource;
         return vfsResource.getFileObject().getName().getFriendlyURI();
     }

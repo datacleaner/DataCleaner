@@ -37,8 +37,8 @@ final class CsvOutputWriter implements OutputWriter {
     private final InputColumn<?>[] _columns;
     private final CsvConfiguration _csvConfiguration;
 
-    public CsvOutputWriter(final Resource resource, final CsvConfiguration csvConfiguration,
-            final String[] columnNames, final InputColumn<?>[] columns) {
+    public CsvOutputWriter(final Resource resource, final CsvConfiguration csvConfiguration, final String[] columnNames,
+            final InputColumn<?>[] columns) {
         _csvConfiguration = csvConfiguration;
         _columns = columns;
         _outputStreamRef = new LazyRef<OutputStream>() {

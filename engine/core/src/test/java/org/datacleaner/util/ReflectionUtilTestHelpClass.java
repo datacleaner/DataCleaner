@@ -22,6 +22,7 @@ package org.datacleaner.util;
 import org.junit.Ignore;
 
 @Ignore
+@SuppressWarnings("checkstyle:MemberName")
 public class ReflectionUtilTestHelpClass {
 
     public static class ClassA {
@@ -45,7 +46,7 @@ public class ReflectionUtilTestHelpClass {
             return super.getA() + 0;
         }
     }
-    
+
     public static class ClassC extends ClassA {
         private boolean c;
 

@@ -33,7 +33,7 @@ final class CopyDataWizardSession extends DataCleanerJobWizardSession {
 
     private final AnalysisJobBuilder _analysisJobBuilder;
 
-    public CopyDataWizardSession(JobWizardContext context) {
+    public CopyDataWizardSession(final JobWizardContext context) {
         super(context);
 
         _analysisJobBuilder = new AnalysisJobBuilder(context.getTenantContext().getConfiguration());
@@ -44,7 +44,7 @@ final class CopyDataWizardSession extends DataCleanerJobWizardSession {
     public WizardPageController firstPageController() {
         return new SelectTableWizardPage(getWizardContext(), 0) {
             @Override
-            protected WizardPageController nextPageController(Table selectedTable) {
+            protected WizardPageController nextPageController(final Table selectedTable) {
                 return new SelectDatastoreWizardPage(CopyDataWizardSession.this, _analysisJobBuilder, selectedTable);
             }
         };
@@ -52,7 +52,7 @@ final class CopyDataWizardSession extends DataCleanerJobWizardSession {
 
     @Override
     public AnalysisJobBuilder createJob() {
-        boolean configured = _analysisJobBuilder.isConfigured(true);
+        final boolean configured = _analysisJobBuilder.isConfigured(true);
         assert configured;
         return _analysisJobBuilder;
     }
@@ -63,7 +63,7 @@ final class CopyDataWizardSession extends DataCleanerJobWizardSession {
         return configuration.getDatastoreCatalog().getDatastoreNames();
     }
 
-    public Datastore getDatastore(String name) {
+    public Datastore getDatastore(final String name) {
         final TenantContext tenantContext = getWizardContext().getTenantContext();
         final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
         return configuration.getDatastoreCatalog().getDatastore(name);

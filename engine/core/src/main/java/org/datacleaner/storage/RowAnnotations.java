@@ -29,7 +29,7 @@ public class RowAnnotations {
         return getInMemoryFactory(500, 500);
     }
 
-    public static RowAnnotationFactory getInMemoryFactory(int maxSampleSets, int maxSampledRecords) {
+    public static RowAnnotationFactory getInMemoryFactory(final int maxSampleSets, final int maxSampledRecords) {
         return new InMemoryRowAnnotationFactory2(maxSampleSets, maxSampledRecords);
     }
 }

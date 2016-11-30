@@ -18,42 +18,47 @@
  * Boston, MA  02110-1301  USA
  */
 package org.datacleaner.customcolumn;
- 
+
 public class Month {
-	
-	private String monthNameFull;
-	private String monthShortCut;
-	private int monthAsNumber;
-	
-	public Month(String monthNameFull, String monthShortCut, int monthAsNumber) {
-		super();
-		this.monthNameFull = monthNameFull;
-		this.monthShortCut = monthShortCut;
-		this.monthAsNumber = monthAsNumber;
-	}
-	
-	public String getMonthNameFull() {
-		return monthNameFull;
-	}
-	public void setMonthNameFull(String monthNameFull) {
-		this.monthNameFull = monthNameFull;
-	}
-	public String getMonthShortCut() {
-		return monthShortCut;
-	}
-	public void setMonthShortCut(String monthShortCut) {
-		this.monthShortCut = monthShortCut;
-	}
-	public int getMonthAsNumber() {
-		return monthAsNumber;
-	}
-	public void setMonthAsNumber(int monthAsNumber) {
-		this.monthAsNumber = monthAsNumber;
-	}
-	
-	@Override
-	public String toString() {
-		return "Month [monthNameFull=" + monthNameFull + ", monthShortCut=" + monthShortCut + ", monthAsNumber="
-				+ monthAsNumber + "]";
-	}
+
+    private String monthNameFull;
+    private String monthShortCut;
+    private int monthAsNumber;
+
+    public Month(final String monthNameFull, final String monthShortCut, final int monthAsNumber) {
+        super();
+        this.monthNameFull = monthNameFull;
+        this.monthShortCut = monthShortCut;
+        this.monthAsNumber = monthAsNumber;
+    }
+
+    public String getMonthNameFull() {
+        return monthNameFull;
+    }
+
+    public void setMonthNameFull(final String monthNameFull) {
+        this.monthNameFull = monthNameFull;
+    }
+
+    public String getMonthShortCut() {
+        return monthShortCut;
+    }
+
+    public void setMonthShortCut(final String monthShortCut) {
+        this.monthShortCut = monthShortCut;
+    }
+
+    public int getMonthAsNumber() {
+        return monthAsNumber;
+    }
+
+    public void setMonthAsNumber(final int monthAsNumber) {
+        this.monthAsNumber = monthAsNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Month [monthNameFull=" + monthNameFull + ", monthShortCut=" + monthShortCut + ", monthAsNumber="
+                + monthAsNumber + "]";
+    }
 }

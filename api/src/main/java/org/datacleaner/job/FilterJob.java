@@ -24,11 +24,11 @@ import org.datacleaner.descriptors.FilterDescriptor;
 
 /**
  * Represents a job that filters/categorizes incoming rows.
- * 
+ *
  * @see Filter
  */
 public interface FilterJob extends ComponentJob, HasFilterOutcomes {
-    
+
     @Override
-    public FilterDescriptor<?,?> getDescriptor();
+    FilterDescriptor<?, ?> getDescriptor();
 }

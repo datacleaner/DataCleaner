@@ -22,26 +22,26 @@ package org.datacleaner.job.builder;
 import org.datacleaner.job.ComponentRequirement;
 
 public interface ComponentChangeListener<C extends ComponentBuilder> extends ComponentRemovalListener<C> {
-    
+
     /**
      * Invoked when a component is added to the {@link AnalysisJobBuilder}.
-     * 
+     *
      * @param builder
      */
-    public void onAdd(C builder);
+    void onAdd(C builder);
 
     /**
      * Invoked when the configuration of a {@link ComponentBuilder} is changed.
-     * 
+     *
      * @param builder
      */
-    public void onConfigurationChanged(C builder);
+    void onConfigurationChanged(C builder);
 
     /**
      * Invoked when the {@link ComponentRequirement} of a
      * {@link ComponentBuilder} is changed.
-     * 
+     *
      * @param builder
      */
-    public void onRequirementChanged(C builder);
+    void onRequirementChanged(C builder);
 }

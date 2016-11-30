@@ -34,8 +34,8 @@ final class SimpleDictionaryReferenceDataPage extends AbstractFreemarkerWizardPa
     private static final String PROPERTY_CASE_SENSITIVE = "caseSensitive";
 
     private final SimpleDictionaryReferenceDataWizardSession _session;
-    
-    public SimpleDictionaryReferenceDataPage(SimpleDictionaryReferenceDataWizardSession session) {
+
+    public SimpleDictionaryReferenceDataPage(final SimpleDictionaryReferenceDataWizardSession session) {
         _session = session;
     }
 
@@ -45,22 +45,22 @@ final class SimpleDictionaryReferenceDataPage extends AbstractFreemarkerWizardPa
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final String caseSensitive = getBoolean(formParameters, PROPERTY_CASE_SENSITIVE) ? "on" : "";
         final String name = getString(formParameters, PROPERTY_NAME);
         final String values = getString(formParameters, PROPERTY_VALUES);
 
-        ReferenceDataHelper.checkUniqueDictionary(name, _session.getWizardContext().getTenantContext()
-                .getConfiguration().getReferenceDataCatalog());
-        
+        ReferenceDataHelper.checkUniqueDictionary(name,
+                _session.getWizardContext().getTenantContext().getConfiguration().getReferenceDataCatalog());
+
         _session.setName(name);
         _session.setValues(values);
         _session.setCaseSensitive(caseSensitive);
-        
+
         return null;
     }
-    
+
     @Override
     protected String getTemplateFilename() {
         return "SimpleDictionaryReferenceDataPage.html";

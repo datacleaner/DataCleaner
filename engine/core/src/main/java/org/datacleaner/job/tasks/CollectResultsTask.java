@@ -44,8 +44,9 @@ public final class CollectResultsTask implements Task {
     private final AnalysisJob _job;
     private final ComponentJob _componentJob;
 
-    public CollectResultsTask(HasAnalyzerResult<?> hasResult, AnalysisJob job, ComponentJob componentJob,
-            Collection<JobAndResult> results, AnalysisListener analysisListener) {
+    public CollectResultsTask(final HasAnalyzerResult<?> hasResult, final AnalysisJob job,
+            final ComponentJob componentJob, final Collection<JobAndResult> results,
+            final AnalysisListener analysisListener) {
         _hasResult = hasResult;
         _job = job;
         _componentJob = componentJob;
@@ -66,7 +67,7 @@ public final class CollectResultsTask implements Task {
 
             if (result instanceof AnalyzerResultFuture) {
                 // block the task from finishing
-                AnalyzerResultFuture<?> analyzerResult = (AnalyzerResultFuture<?>) result;
+                final AnalyzerResultFuture<?> analyzerResult = (AnalyzerResultFuture<?>) result;
                 analyzerResult.get();
             }
         }

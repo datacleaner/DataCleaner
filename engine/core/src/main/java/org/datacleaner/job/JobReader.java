@@ -25,9 +25,9 @@ import org.datacleaner.descriptors.DescriptorProvider;
 
 /**
  * An object that is capable of reading an AnalysisJob from a source.
- * 
- * 
- * 
+ *
+ *
+ *
  * @param <E>
  *            The source type, typically an InputStream, but could be another
  *            type of source as well.
@@ -36,7 +36,7 @@ public interface JobReader<E> {
 
     /**
      * Reads a job from the source.
-     * 
+     *
      * @param source
      * @return
      * @throws NoSuchDatastoreException
@@ -53,7 +53,7 @@ public interface JobReader<E> {
      *             if the source has syntactical or formatting errors, or if the
      *             reading of the source was not possible.
      */
-    public AnalysisJob read(E source) throws NoSuchDatastoreException, NoSuchColumnException, NoSuchComponentException,
+    AnalysisJob read(E source) throws NoSuchDatastoreException, NoSuchColumnException, NoSuchComponentException,
             ComponentConfigurationException;
 
     /**
@@ -61,7 +61,7 @@ public interface JobReader<E> {
      * column mappings. Using this method a job can be used as a "template" for
      * other jobs, since it can be loaded with a different source (and
      * variables).
-     * 
+     *
      * @param source
      * @param sourceColumnMapping
      * @return
@@ -74,19 +74,19 @@ public interface JobReader<E> {
      *             if the source has syntactical or formatting errors, or if the
      *             reading of the source was not possible.
      */
-    public AnalysisJob read(E source, SourceColumnMapping sourceColumnMapping) throws NoSuchComponentException,
-            ComponentConfigurationException, IllegalStateException;
+    AnalysisJob read(E source, SourceColumnMapping sourceColumnMapping)
+            throws NoSuchComponentException, ComponentConfigurationException, IllegalStateException;
 
     /**
      * Reads metadata about the job from the source. Typically this does not
      * involve materializing the whole job, and therefore is good for giving a
      * quick insight into the basic properties of the job.
-     * 
+     *
      * @param source
      * @return
      * @throws IllegalStateException
      *             if the source has syntactical or formatting errors, or if the
      *             reading of the source was not possible.
      */
-    public AnalysisJobMetadata readMetadata(E source) throws IllegalStateException;
+    AnalysisJobMetadata readMetadata(E source) throws IllegalStateException;
 }

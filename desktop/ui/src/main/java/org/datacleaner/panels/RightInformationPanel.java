@@ -48,7 +48,7 @@ public class RightInformationPanel extends JPanel {
 
     private String openedCard = "";
 
-    public RightInformationPanel(DCGlassPane glassPane) {
+    public RightInformationPanel(final DCGlassPane glassPane) {
         super();
         _glassPane = glassPane;
 
@@ -58,11 +58,11 @@ public class RightInformationPanel extends JPanel {
         setLayout(_carLayout);
     }
 
-    public void addTabToPane(String panelTitle, JComponent panel) {
+    public void addTabToPane(final String panelTitle, final JComponent panel) {
         add(panel, panelTitle);
     }
 
-    public  void toggleWindow(String tabTitle) {
+    public void toggleWindow(final String tabTitle) {
         if (openedCard.equals(tabTitle)) {
             closeWindow();
         } else {
@@ -70,8 +70,8 @@ public class RightInformationPanel extends JPanel {
         }
     }
 
-    private void openWindow(String tabTitle) {
-        if(!openedCard.equals(tabTitle)) {
+    private void openWindow(final String tabTitle) {
+        if (!openedCard.equals(tabTitle)) {
             moveOut();
         }
         _carLayout.show(this, tabTitle);
@@ -112,7 +112,7 @@ public class RightInformationPanel extends JPanel {
         final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, getXWhenOut(), POSITION_Y, 40) {
             @Override
             protected void done() {
-                RightInformationPanel me = RightInformationPanel.this;
+                final RightInformationPanel me = RightInformationPanel.this;
                 _glassPane.remove(me);
             }
         });

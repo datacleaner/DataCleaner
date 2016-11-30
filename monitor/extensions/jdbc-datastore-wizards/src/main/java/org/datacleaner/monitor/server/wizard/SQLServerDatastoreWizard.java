@@ -42,15 +42,14 @@ public class SQLServerDatastoreWizard implements DatastoreWizard {
     }
 
     @Override
-    public DatastoreWizardSession start(DatastoreWizardContext context) {
+    public DatastoreWizardSession start(final DatastoreWizardContext context) {
         final String url = "jdbc:jtds:sqlserver://<hostname>/<database>;useUnicode=true;characterEncoding=UTF-8";
         return new JdbcDatastoreWizardSession(context, "net.sourceforge.jtds.jdbc.Driver", url);
     }
 
     @Override
-    public boolean isApplicableTo(DatastoreWizardContext context) {
+    public boolean isApplicableTo(final DatastoreWizardContext context) {
         final DatabaseDriverCatalog catalog = new DatabaseDriverCatalog(null);
-        final boolean installed = catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS);
-        return installed;
+        return catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS);
     }
 }

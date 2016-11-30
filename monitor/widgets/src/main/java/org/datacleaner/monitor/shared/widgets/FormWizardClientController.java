@@ -47,7 +47,8 @@ public final class FormWizardClientController implements WizardClientController 
     private final WizardPage _wizardPage;
     private final Element _form;
 
-    public FormWizardClientController(WizardNavigationServiceAsync service, TenantIdentifier tenant, WizardPage wizardPage) {
+    public FormWizardClientController(final WizardNavigationServiceAsync service, final TenantIdentifier tenant,
+            final WizardPage wizardPage) {
         _service = service;
         _tenant = tenant;
         _wizardPage = wizardPage;
@@ -70,7 +71,7 @@ public final class FormWizardClientController implements WizardClientController 
         final HTMLPanel htmlPanel = HTMLPanel.wrap(_form);
         return htmlPanel;
     }
-    
+
 
     @Override
     public void requestPreviousPage(final AsyncCallback<WizardPage> nextPageCallback) {
@@ -79,7 +80,7 @@ public final class FormWizardClientController implements WizardClientController 
 
     @Override
     public void requestNextPage(final AsyncCallback<WizardPage> callback) {
-        final Map<String, List<String>> formParameters = new HashMap<String, List<String>>();
+        final Map<String, List<String>> formParameters = new HashMap<>();
 
         final FormElement formElement = FormElement.as(_form);
 
@@ -93,11 +94,11 @@ public final class FormWizardClientController implements WizardClientController 
 
             final String tagName = element.getTagName();
             if (tagName.equalsIgnoreCase("input")) {
-                InputElement inputElement = InputElement.as(element);
+                final InputElement inputElement = InputElement.as(element);
                 name = inputElement.getName();
                 value = inputElement.getValue();
 
-                String type = inputElement.getType();
+                final String type = inputElement.getType();
                 if ("checkbox".equals(type) || "radio".equals(type)) {
                     included = inputElement.isChecked();
                 } else {
@@ -113,7 +114,7 @@ public final class FormWizardClientController implements WizardClientController 
             if (included) {
                 List<String> valueList = formParameters.get(name);
                 if (valueList == null) {
-                    valueList = new ArrayList<String>();
+                    valueList = new ArrayList<>();
                     formParameters.put(name, valueList);
                 }
                 valueList.add(value);

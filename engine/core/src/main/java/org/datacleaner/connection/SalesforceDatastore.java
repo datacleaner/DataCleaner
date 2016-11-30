@@ -26,8 +26,8 @@ import com.google.common.base.Strings;
 /**
  * A datastore that uses a Salesforce.com account as it's source.
  */
-public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataContext> implements UpdateableDatastore,
-        UsernameDatastore {
+public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataContext>
+        implements UpdateableDatastore, UsernameDatastore {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,11 +36,13 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
     private final String _securityToken;
     private final String _endpointUrl;
 
-    public SalesforceDatastore(String name, String username, String password, String securityToken) {
+    public SalesforceDatastore(final String name, final String username, final String password,
+            final String securityToken) {
         this(name, username, password, securityToken, null);
     }
 
-    public SalesforceDatastore(String name, String username, String password, String securityToken, String endpointUrl) {
+    public SalesforceDatastore(final String name, final String username, final String password,
+            final String securityToken, final String endpointUrl) {
         super(name);
         _username = username;
         _password = password;
@@ -50,7 +52,7 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
 
     /**
      * Gets the username of the salesforce account
-     * 
+     *
      * @return
      */
     @Override
@@ -60,7 +62,7 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
 
     /**
      * Gets the password of the salesforce account
-     * 
+     *
      * @return
      */
     public String getPassword() {
@@ -69,7 +71,7 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
 
     /**
      * Gets the security token of the salesforce account
-     * 
+     *
      * @return
      */
     public String getSecurityToken() {
@@ -79,7 +81,7 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
     /**
      * Gets the endpoint URL to use for Salesforce.com web services, or null if
      * the default/production URL should be used.
-     * 
+     *
      * @return
      */
     public String getEndpointUrl() {
@@ -88,7 +90,7 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
 
     @Override
     public UpdateableDatastoreConnection openConnection() {
-        DatastoreConnection connection = super.openConnection();
+        final DatastoreConnection connection = super.openConnection();
         return (UpdateableDatastoreConnection) connection;
     }
 
@@ -105,7 +107,7 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
         } else {
             dataContext = new SalesforceDataContext(_endpointUrl, _username, _password, _securityToken);
         }
-        return new UpdateableDatastoreConnectionImpl<SalesforceDataContext>(dataContext, this);
+        return new UpdateableDatastoreConnectionImpl<>(dataContext, this);
     }
 
     @Override

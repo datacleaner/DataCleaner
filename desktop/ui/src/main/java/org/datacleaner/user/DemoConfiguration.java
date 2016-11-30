@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.SalesforceDatastore;
 
@@ -42,15 +41,17 @@ public class DemoConfiguration implements InitialConfiguration {
     public static final String JOB_CUSTOMER_AGE_ANALYSIS = addFile("jobs/Customer age analysis.analysis.xml");
     public static final String JOB_CUSTOMER_JOB_TITLE_ANALYTICS = addFile("jobs/Job title analytics.analysis.xml");
     public static final String JOB_EXPORT_ORDERS_DATA = addFile("jobs/Export of Orders data mart.analysis.xml");
-    public static final String JOB_COPY_EMPLOYEES_TO_CUSTOMERS = addFile("jobs/Copy employees to customer table.analysis.xml");
+    public static final String JOB_COPY_EMPLOYEES_TO_CUSTOMERS =
+            addFile("jobs/Copy employees to customer table.analysis.xml");
     public static final String JOB_ORDERDB_UNION = addFile("jobs/OrderDB Customers and Employees union.analysis.xml");
     public static final String JOB_US_CUSTOMER_STATE_ANALYSIS = addFile("jobs/US Customer STATE check.analysis.xml");
     public static final String JOB_CUSTOMER_AGE_FILTERING = addFile("jobs/Customer filtering.analysis.xml");
-    public static final String JOB_DENORMALIZE_STACKED_AREA = addFile("jobs/Denormalize order totals and present as stacked area chart.analysis.xml");
+    public static final String JOB_DENORMALIZE_STACKED_AREA =
+            addFile("jobs/Denormalize order totals and present as stacked area chart.analysis.xml");
 
     public static final String OTHER_SYNONYM_CATALOG_JOB_TITLES = addFile("datastores/job_title_synonyms.txt");
 
-    public static boolean isUnconfiguredDemoDatastore(Datastore ds) {
+    public static boolean isUnconfiguredDemoDatastore(final Datastore ds) {
         if (ds instanceof SalesforceDatastore) {
             final SalesforceDatastore sfdcDatastore = (SalesforceDatastore) ds;
             if ("username".equals(sfdcDatastore.getUsername())) {
@@ -71,11 +72,6 @@ public class DemoConfiguration implements InitialConfiguration {
     }
 
     public List<String> getAllJobFilePaths() {
-        return CollectionUtils.filter(ALL_FILES, new Predicate<String>() {
-            @Override
-            public Boolean eval(String path) {
-                return path.startsWith("jobs/") && path.endsWith(".analysis.xml");
-            }
-        });
+        return CollectionUtils.filter(ALL_FILES, path -> path.startsWith("jobs/") && path.endsWith(".analysis.xml"));
     }
 }

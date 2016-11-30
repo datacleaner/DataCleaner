@@ -22,9 +22,9 @@ package org.datacleaner.monitor.scheduling.model;
 /**
  * Represents the severity of an {@link AlertDefinition}. Such severity is used
  * to categorize and determine appropriate actions in case an alert is raised.
- * 
+ *
  * The available severities are (in order of increasing severity):
- * 
+ *
  * <ul>
  * <li>INTELLIGENCE - for mostly informational and reporting oriented alerts.
  * This is the least severe type of alert.</li>
@@ -36,7 +36,7 @@ package org.datacleaner.monitor.scheduling.model;
  * <li>FATAL - Alerts that are raised in cases of fatal data issues in the
  * monitored system</li>
  * </ul>
- * 
+ *
  */
 public enum AlertSeverity {
 

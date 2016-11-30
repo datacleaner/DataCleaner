@@ -26,8 +26,8 @@ import org.datacleaner.monitor.wizard.WizardContext;
  * Context object which is shared throughout the wizard session
  */
 public interface JobWizardContext extends WizardContext {
-    
-    public JobWizard getJobWizard();
 
-    public Datastore getSourceDatastore();
+    JobWizard getJobWizard();
+
+    Datastore getSourceDatastore();
 }

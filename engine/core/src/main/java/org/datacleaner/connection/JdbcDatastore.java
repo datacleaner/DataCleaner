@@ -35,11 +35,11 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.datacleaner.util.ReadObjectBuilder;
-import org.datacleaner.util.StringUtils;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.jdbc.JdbcDataContext;
 import org.apache.metamodel.schema.TableType;
+import org.datacleaner.util.ReadObjectBuilder;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,15 +47,15 @@ import org.slf4j.LoggerFactory;
  * Datastore implementation for JDBC based connections. Connections can either
  * be based on JDBC urls or JNDI urls.
  */
-public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> implements UpdateableDatastore,
-        UsernameDatastore {
-
-    private static final long serialVersionUID = 1L;
+public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext>
+        implements UpdateableDatastore, UsernameDatastore {
 
     public static final String SYSTEM_PROPERTY_CONNECTION_POOL_MAX_SIZE = "datastore.jdbc.connection.pool.max.size";
-    public static final String SYSTEM_PROPERTY_CONNECTION_POOL_MIN_EVICTABLE_IDLE_TIME_MILLIS = "datastore.jdbc.connection.pool.idle.timeout";
-    public static final String SYSTEM_PROPERTY_CONNECTION_POOL_TIME_BETWEEN_EVICTION_RUNS_MILLIS = "datastore.jdbc.connection.pool.eviction.period.millis";
-
+    public static final String SYSTEM_PROPERTY_CONNECTION_POOL_MIN_EVICTABLE_IDLE_TIME_MILLIS =
+            "datastore.jdbc.connection.pool.idle.timeout";
+    public static final String SYSTEM_PROPERTY_CONNECTION_POOL_TIME_BETWEEN_EVICTION_RUNS_MILLIS =
+            "datastore.jdbc.connection.pool.eviction.period.millis";
+    private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(JdbcDatastore.class);
 
     private final String _jdbcUrl;
@@ -67,8 +67,9 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
     private final TableType[] _tableTypes;
     private final String _catalogName;
 
-    private JdbcDatastore(String name, String jdbcUrl, String driverClass, String username, String password,
-            String datasourceJndiUrl, boolean multipleConnections, TableType[] tableTypes, String catalogName) {
+    private JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username,
+            final String password, final String datasourceJndiUrl, final boolean multipleConnections,
+            final TableType[] tableTypes, final String catalogName) {
         super(name);
         _jdbcUrl = jdbcUrl;
         _driverClass = driverClass;
@@ -80,53 +81,55 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
         _catalogName = catalogName;
     }
 
-    public JdbcDatastore(String name, String jdbcUrl, String driverClass) {
+    public JdbcDatastore(final String name, final String jdbcUrl, final String driverClass) {
         this(name, jdbcUrl, driverClass, null, null, true);
     }
 
-    public JdbcDatastore(String name, String jdbcUrl, String driverClass, String username, String password,
-            boolean multipleConnections, TableType[] tableTypes, String catalogName) {
+    public JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username,
+            final String password, final boolean multipleConnections, final TableType[] tableTypes,
+            final String catalogName) {
         this(name, jdbcUrl, driverClass, username, password, null, multipleConnections, tableTypes, catalogName);
     }
 
-    public JdbcDatastore(String name, String jdbcUrl, String driverClass, String username, String password,
-            boolean multipleConnections) {
+    public JdbcDatastore(final String name, final String jdbcUrl, final String driverClass, final String username,
+            final String password, final boolean multipleConnections) {
         this(name, jdbcUrl, driverClass, username, password, multipleConnections, null, null);
     }
 
-    public JdbcDatastore(String name, String datasourceJndiUrl) {
+    public JdbcDatastore(final String name, final String datasourceJndiUrl) {
         this(name, datasourceJndiUrl, (TableType[]) null, null);
     }
 
-    public JdbcDatastore(String name, String datasourceJndiUrl, TableType[] tableTypes, String catalogName) {
+    public JdbcDatastore(final String name, final String datasourceJndiUrl, final TableType[] tableTypes,
+            final String catalogName) {
         this(name, null, null, null, null, datasourceJndiUrl, false, tableTypes, catalogName);
-    }
-
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        ReadObjectBuilder.create(this, JdbcDatastore.class).readObject(stream);
-    }
-
-    @Override
-    public UpdateableDatastoreConnection openConnection() {
-        DatastoreConnection connection = super.openConnection();
-        return (UpdateableDatastoreConnection) connection;
     }
 
     /**
      * Alternative constructor usable only for in-memory (ie. non-persistent)
      * datastores, because the datastore will not be able to create new
      * connections.
-     * 
+     *
      * @param name
      * @param dc
      */
-    public JdbcDatastore(String name, UpdateableDataContext dc) {
+    public JdbcDatastore(final String name, final UpdateableDataContext dc) {
         this(name, null, null, null, null, null, false, null, null);
-        setDataContextProvider(new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dc, this));
+        setDataContextProvider(new UpdateableDatastoreConnectionImpl<>(dc, this));
+    }
+
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, JdbcDatastore.class).readObject(stream);
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    public UpdateableDatastoreConnection openConnection() {
+        final DatastoreConnection connection = super.openConnection();
+        return (UpdateableDatastoreConnection) connection;
+    }
+
+    @Override
+    protected void decorateIdentity(final List<Object> identifiers) {
         super.decorateIdentity(identifiers);
         identifiers.add(_driverClass);
         identifiers.add(_jdbcUrl);
@@ -185,7 +188,7 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
             } else {
                 return DriverManager.getConnection(_jdbcUrl);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new IllegalStateException("Could not create connection", e);
         }
     }
@@ -193,15 +196,15 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
     public DataSource createDataSource() {
         initializeDriver();
 
-        BasicDataSource ds = new BasicDataSource();
+        final BasicDataSource ds = new BasicDataSource();
         ds.setDefaultAutoCommit(false);
         ds.setUrl(_jdbcUrl);
 
         ds.setMaxActive(getSystemPropertyValue(SYSTEM_PROPERTY_CONNECTION_POOL_MAX_SIZE, -1));
-        ds.setMinEvictableIdleTimeMillis(getSystemPropertyValue(
-                SYSTEM_PROPERTY_CONNECTION_POOL_MIN_EVICTABLE_IDLE_TIME_MILLIS, 500));
-        ds.setTimeBetweenEvictionRunsMillis(getSystemPropertyValue(
-                SYSTEM_PROPERTY_CONNECTION_POOL_TIME_BETWEEN_EVICTION_RUNS_MILLIS, 1000));
+        ds.setMinEvictableIdleTimeMillis(
+                getSystemPropertyValue(SYSTEM_PROPERTY_CONNECTION_POOL_MIN_EVICTABLE_IDLE_TIME_MILLIS, 500));
+        ds.setTimeBetweenEvictionRunsMillis(
+                getSystemPropertyValue(SYSTEM_PROPERTY_CONNECTION_POOL_TIME_BETWEEN_EVICTION_RUNS_MILLIS, 1000));
 
         if (_username != null && _password != null) {
             ds.setUsername(_username);
@@ -210,14 +213,14 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
         return ds;
     }
 
-    private int getSystemPropertyValue(String property, int defaultValue) {
-        String str = System.getProperty(property);
+    private int getSystemPropertyValue(final String property, final int defaultValue) {
+        final String str = System.getProperty(property);
         if (str == null) {
             return defaultValue;
         }
         try {
             return Integer.parseInt(str);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             logger.debug("Failed to parse system property '{}': '{}'", property, str);
             return defaultValue;
         }
@@ -235,15 +238,15 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
         // not always work if the driver is in a different classloader
         boolean installDriver = true;
 
-        Enumeration<Driver> drivers = DriverManager.getDrivers();
+        final Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
-            Driver driver = drivers.nextElement();
+            final Driver driver = drivers.nextElement();
             try {
                 if (driver.acceptsURL(_jdbcUrl)) {
                     installDriver = false;
                     break;
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Driver threw exception when acceptURL(...) was invoked", e);
             }
         }
@@ -251,7 +254,7 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
         if (installDriver) {
             try {
                 Class.forName(_driverClass);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw new IllegalStateException("Could not initialize JDBC driver", e);
             }
         }
@@ -267,19 +270,20 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
                 final Connection connection = createConnection();
                 try {
                     connection.setAutoCommit(false);
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     logger.error("Could not set autocommit false '{}'", _datasourceJndiUrl);
                     throw new IllegalStateException(e);
                 }
-                final UpdateableDataContext dataContext = new JdbcDataContext(connection, getTableTypes(), _catalogName);
-                return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dataContext, this);
+                final UpdateableDataContext dataContext =
+                        new JdbcDataContext(connection, getTableTypes(), _catalogName);
+                return new UpdateableDatastoreConnectionImpl<>(dataContext, this);
             }
         } else {
             try {
-                Context initialContext = getJndiNamingContext();
-                DataSource dataSource = (DataSource) initialContext.lookup(_datasourceJndiUrl);
+                final Context initialContext = getJndiNamingContext();
+                final DataSource dataSource = (DataSource) initialContext.lookup(_datasourceJndiUrl);
                 return new DataSourceDatastoreConnection(dataSource, getTableTypes(), _catalogName, this);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Could not retrieve DataSource '{}'", _datasourceJndiUrl);
                 throw new IllegalStateException(e);
             }
@@ -297,7 +301,7 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext> im
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("JdbcDatastore[name=");
         sb.append(getName());
         if (_jdbcUrl != null) {

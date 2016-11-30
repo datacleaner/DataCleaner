@@ -19,19 +19,18 @@
  */
 package org.datacleaner.job;
 
-import org.apache.metamodel.util.Predicate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.util.CollectionUtils2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Helper class that wraps a collection of {@link AnalyzerJob}s and provides
@@ -44,13 +43,44 @@ public class AnalyzerJobHelper {
 
     private final Collection<AnalyzerJob> _jobs;
 
-    public AnalyzerJobHelper(Collection<AnalyzerJob> jobs) {
+    public AnalyzerJobHelper(final Collection<AnalyzerJob> jobs) {
         _jobs = jobs;
     }
 
-    public AnalyzerJobHelper(AnalysisJob analysisJob) {
+    public AnalyzerJobHelper(final AnalysisJob analysisJob) {
         this(analysisJob.flattened().flatMap(analysisJob1 -> analysisJob1.getAnalyzerJobs().stream())
                 .collect(Collectors.toList()));
+    }
+
+    /**
+     * Gets the identifying input column of an {@link ComponentJob}, if there is
+     * such a column. With an identifying input column, a externalizable
+     * reference to the {@link ComponentJob} can be build, based on the
+     * descriptor name, component name and the identifying column.
+     *
+     * @param componentJob
+     * @return
+     */
+    public static InputColumn<?> getIdentifyingInputColumn(final ComponentJob componentJob) {
+        final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
+        final Set<ConfiguredPropertyDescriptor> inputProperties = descriptor.getConfiguredPropertiesForInput(false);
+        if (inputProperties.size() != 1) {
+            return null;
+        }
+
+        final ConfiguredPropertyDescriptor inputProperty = inputProperties.iterator().next();
+        final Object input = componentJob.getConfiguration().getProperty(inputProperty);
+
+        if (input instanceof InputColumn) {
+            return (InputColumn<?>) input;
+        } else if (input instanceof InputColumn[]) {
+            final InputColumn<?>[] inputColumns = (InputColumn[]) input;
+            if (inputColumns.length != 1) {
+                return null;
+            }
+            return inputColumns[0];
+        }
+        return null;
     }
 
     public Collection<AnalyzerJob> getAnalyzerJobs() {
@@ -60,7 +90,7 @@ public class AnalyzerJobHelper {
     /**
      * Gets the "best candidate" to be the same (or a copy of) the analyzer job
      * provided in parameter.
-     * 
+     *
      * @param analyzerJob
      * @return
      */
@@ -82,7 +112,7 @@ public class AnalyzerJobHelper {
     /**
      * Gets the "best candidate" analyzer job based on search criteria offered
      * in parameters.
-     * 
+     *
      * @param descriptorName
      * @param analyzerName
      * @param analyzerInputName
@@ -90,40 +120,31 @@ public class AnalyzerJobHelper {
      */
     public AnalyzerJob getAnalyzerJob(final String descriptorName, final String analyzerName,
             final String analyzerInputName) {
-        List<AnalyzerJob> candidates = new ArrayList<AnalyzerJob>(_jobs);
+        List<AnalyzerJob> candidates = new ArrayList<>(_jobs);
 
         // filter analyzers of the corresponding type
-        candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-            @Override
-            public Boolean eval(AnalyzerJob o) {
-                final String actualDescriptorName = o.getDescriptor().getDisplayName();
-                return descriptorName.equals(actualDescriptorName);
-            }
+        candidates = CollectionUtils2.refineCandidates(candidates, o -> {
+            final String actualDescriptorName = o.getDescriptor().getDisplayName();
+            return descriptorName.equals(actualDescriptorName);
         });
 
         if (analyzerName != null) {
             // filter analyzers with a particular name
-            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                @Override
-                public Boolean eval(AnalyzerJob o) {
-                    final String actualAnalyzerName = o.getName();
-                    return analyzerName.equals(actualAnalyzerName);
-                }
+            candidates = CollectionUtils2.refineCandidates(candidates, o -> {
+                final String actualAnalyzerName = o.getName();
+                return analyzerName.equals(actualAnalyzerName);
             });
         }
 
         if (analyzerInputName != null) {
             // filter analyzers with a particular input
-            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                @Override
-                public Boolean eval(AnalyzerJob o) {
-                    final InputColumn<?> inputColumn = getIdentifyingInputColumn(o);
-                    if (inputColumn == null) {
-                        return false;
-                    }
-
-                    return analyzerInputName.equals(inputColumn.getName());
+            candidates = CollectionUtils2.refineCandidates(candidates, o -> {
+                final InputColumn<?> inputColumn = getIdentifyingInputColumn(o);
+                if (inputColumn == null) {
+                    return false;
                 }
+
+                return analyzerInputName.equals(inputColumn.getName());
             });
         }
 
@@ -134,39 +155,6 @@ public class AnalyzerJobHelper {
             logger.warn("Multiple ({}) AnalyzerJob candidates to choose from, picking first");
         }
 
-        AnalyzerJob analyzerJob = candidates.iterator().next();
-        return analyzerJob;
-    }
-
-    /**
-     * Gets the identifying input column of an {@link ComponentJob}, if there is
-     * such a column. With an identifying input column, a externalizable
-     * reference to the {@link ComponentJob} can be build, based on the
-     * descriptor name, component name and the identifying column.
-     * 
-     * @param o
-     * @return
-     */
-    public static InputColumn<?> getIdentifyingInputColumn(final ComponentJob o) {
-        final ComponentDescriptor<?> descriptor = o.getDescriptor();
-        final Set<ConfiguredPropertyDescriptor> inputProperties = descriptor.getConfiguredPropertiesForInput(false);
-        if (inputProperties.size() != 1) {
-            return null;
-        }
-
-        final ConfiguredPropertyDescriptor inputProperty = inputProperties.iterator().next();
-        final Object input = o.getConfiguration().getProperty(inputProperty);
-
-        if (input instanceof InputColumn) {
-            final InputColumn<?> inputColumn = (InputColumn<?>) input;
-            return inputColumn;
-        } else if (input instanceof InputColumn[]) {
-            final InputColumn<?>[] inputColumns = (InputColumn[]) input;
-            if (inputColumns.length != 1) {
-                return null;
-            }
-            return inputColumns[0];
-        }
-        return null;
+        return candidates.iterator().next();
     }
 }

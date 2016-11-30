@@ -104,7 +104,7 @@ public class TextCaseTransformerTest2 {
         assertEquals("I have a good day.", result);
     }
 
-    private void putData(String name) {
+    private void putData(final String name) {
         _inputRow.put(_nameColumn, name);
     }
 }

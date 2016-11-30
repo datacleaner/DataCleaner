@@ -32,214 +32,216 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultTokenizer implements Serializable, Tokenizer {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LoggerFactory.getLogger(DefaultTokenizer.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultTokenizer.class);
 
-	private final TokenizerConfiguration _configuration;
-	private final boolean _predefinedTokens;
+    private final TokenizerConfiguration _configuration;
+    private final boolean _predefinedTokens;
 
-	public DefaultTokenizer() {
-		this(new TokenizerConfiguration());
-	}
+    public DefaultTokenizer() {
+        this(new TokenizerConfiguration());
+    }
 
-	public DefaultTokenizer(TokenizerConfiguration configuration) {
-		if (configuration == null) {
-			throw new NullPointerException("configuration argument cannot be null");
-		}
-		_configuration = configuration;
+    public DefaultTokenizer(final TokenizerConfiguration configuration) {
+        if (configuration == null) {
+            throw new NullPointerException("configuration argument cannot be null");
+        }
+        _configuration = configuration;
 
-		final List<PredefinedTokenDefinition> predefinedTokens = _configuration.getPredefinedTokens();
-		_predefinedTokens = !predefinedTokens.isEmpty() && _configuration.isTokenTypeEnabled(TokenType.PREDEFINED);
+        final List<PredefinedTokenDefinition> predefinedTokens = _configuration.getPredefinedTokens();
+        _predefinedTokens = !predefinedTokens.isEmpty() && _configuration.isTokenTypeEnabled(TokenType.PREDEFINED);
 
-		if (_predefinedTokens) {
-			logger.debug("Predefined tokens are turned ON, using PredefinedTokenTokenizer");
-		} else {
-			logger.debug("Predefined tokens are turned OFF, using tokenizeInternal");
-		}
-	}
+        if (_predefinedTokens) {
+            logger.debug("Predefined tokens are turned ON, using PredefinedTokenTokenizer");
+        } else {
+            logger.debug("Predefined tokens are turned OFF, using tokenizeInternal");
+        }
+    }
 
-	public List<Token> tokenize(String string) {
-		if (string == null) {
-			return Arrays.asList(NullToken.INSTANCE);
-		}
-		
-		if ("".equals(string)) {
-		    return Arrays.asList(BlankToken.INSTANCE);
-		}
+    protected static List<SimpleToken> preliminaryTokenize(final String string,
+            final TokenizerConfiguration configuration) {
+        final LinkedList<SimpleToken> result = new LinkedList<>();
+        SimpleToken lastToken = null;
 
-		List<Token> tokens;
+        final CharIterator ci = new CharIterator(string);
+        while (ci.hasNext()) {
+            final char c = ci.next();
 
-		if (_predefinedTokens) {
-			final List<PredefinedTokenDefinition> predefinedTokens = _configuration.getPredefinedTokens();
-			PredefinedTokenTokenizer tokenizer = new PredefinedTokenTokenizer(predefinedTokens);
-			tokens = tokenizer.tokenize(string);
-			for (ListIterator<Token> it = tokens.listIterator(); it.hasNext();) {
-				Token token = it.next();
-				TokenType tokenType = token.getType();
-				logger.debug("Next token type is: {}", tokenType);
-				if (tokenType == TokenType.UNDEFINED) {
-					List<SimpleToken> replacementTokens = tokenizeInternal(token.getString());
-					boolean replace = true;
-					if (replacementTokens.size() == 1) {
-						if (token.equals(replacementTokens.get(0))) {
-							replace = false;
-						}
-					}
+            if (ci.is(configuration.getThousandsSeparator()) || ci.is(configuration.getDecimalSeparator())) {
+                boolean treatAsSeparator = false;
+                if (lastToken != null && lastToken.getType() == TokenType.NUMBER) {
+                    // there's a previous NUMBER token
 
-					if (replace) {
-						it.remove();
-						for (SimpleToken replacementToken : replacementTokens) {
-							it.add(replacementToken);
-						}
-					}
-				}
-			}
-		} else {
-			tokens = new ArrayList<Token>();
-			tokens.addAll(tokenizeInternal(string));
-		}
+                    if (ci.hasNext()) {
+                        final char next = ci.next();
+                        if (ci.isDigit()) {
+                            // the next token is also a NUMBER
 
-		return tokens;
-	}
+                            // now we're ready to assume that this is a
+                            // separator
+                            treatAsSeparator = true;
+                            lastToken = registerChar(result, lastToken, c, TokenType.NUMBER);
+                            lastToken = registerChar(result, lastToken, next, TokenType.NUMBER);
+                        } else {
+                            ci.previous();
+                        }
+                    }
+                }
 
-	private List<SimpleToken> tokenizeInternal(String string) {
-		List<SimpleToken> tokens = preliminaryTokenize(string, _configuration);
+                if (!treatAsSeparator) {
+                    // the thousand separator is treated as a delim
+                    lastToken = registerChar(result, lastToken, c, TokenType.DELIM);
+                }
+            } else if (ci.is(configuration.getMinusSign())) {
+                // the meaning of minus sign is dependent on the next token
+                // (maybe it's the negative number operator)
+                boolean treatAsMinus = false;
 
-		if (_configuration.isTokenTypeEnabled(TokenType.MIXED)) {
-			tokens = flattenMixedTokens(tokens);
-		}
+                if (lastToken == null || lastToken.getType() != TokenType.NUMBER) {
+                    if (ci.hasNext()) {
+                        final char next = ci.next();
+                        if (ci.isDigit()) {
+                            // the minus sign was the number operator
+                            treatAsMinus = true;
+                            lastToken = registerChar(result, null, c, TokenType.NUMBER);
+                            lastToken = registerChar(result, lastToken, next, TokenType.NUMBER);
+                        } else {
+                            ci.previous();
+                        }
+                    }
+                }
 
-		return tokens;
-	}
+                if (!treatAsMinus) {
+                    // the minus sign is treated as a delim
+                    lastToken = registerChar(result, lastToken, c, TokenType.DELIM);
+                }
+            } else if (ci.isDigit()) {
+                lastToken = registerChar(result, lastToken, c, TokenType.NUMBER);
+            } else if (ci.isLetter()) {
+                if (configuration.isDiscriminateTextCase()) {
+                    if (lastToken != null && lastToken.getType() == TokenType.TEXT) {
+                        // if we need to discriminate on case then we should
+                        // check the previous token and make sure that we only
+                        // append to that if they share the same case.
+                        final char charFromPreviousToken = lastToken.getString().charAt(0);
+                        if (Character.isUpperCase(charFromPreviousToken) != Character.isUpperCase(c)) {
+                            lastToken = null;
+                        }
+                    }
+                }
+                lastToken = registerChar(result, lastToken, c, TokenType.TEXT);
+            } else if (ci.isWhitespace()) {
+                lastToken = registerChar(result, lastToken, c, TokenType.WHITESPACE);
+            } else {
+                lastToken = registerChar(result, lastToken, c, TokenType.DELIM);
+            }
+        }
 
-	protected static List<SimpleToken> preliminaryTokenize(final String string, final TokenizerConfiguration configuration) {
-		LinkedList<SimpleToken> result = new LinkedList<SimpleToken>();
-		SimpleToken lastToken = null;
+        return result;
+    }
 
-		CharIterator ci = new CharIterator(string);
-		while (ci.hasNext()) {
-			char c = ci.next();
+    private static SimpleToken registerChar(final List<SimpleToken> result, SimpleToken lastToken, final char c,
+            final TokenType tokenType) {
+        if (lastToken == null) {
+            logger.debug("Creating new {} token", tokenType);
+            lastToken = new SimpleToken(tokenType, c);
+            result.add(lastToken);
+        } else if (lastToken.getType() == tokenType) {
+            logger.debug("Appending to previous token", tokenType);
+            lastToken.appendChar(c);
+        } else {
+            logger.debug("Creating new {} token", tokenType);
+            lastToken = new SimpleToken(tokenType, c);
+            result.add(lastToken);
+        }
+        logger.debug("{} registered as {}", c, tokenType);
+        return lastToken;
+    }
 
-			if (ci.is(configuration.getThousandsSeparator()) || ci.is(configuration.getDecimalSeparator())) {
-				boolean treatAsSeparator = false;
-				if (lastToken != null && lastToken.getType() == TokenType.NUMBER) {
-					// there's a previous NUMBER token
+    public static List<SimpleToken> flattenMixedTokens(final List<SimpleToken> tokens) {
+        SimpleToken previousToken = null;
+        for (final ListIterator<SimpleToken> it = tokens.listIterator(); it.hasNext(); ) {
+            final SimpleToken token = it.next();
+            if (previousToken == null) {
+                previousToken = token;
+            } else {
+                boolean mix = false;
 
-					if (ci.hasNext()) {
-						char next = ci.next();
-						if (ci.isDigit()) {
-							// the next token is also a NUMBER
+                final TokenType previousType = previousToken.getType();
+                final TokenType currentType = token.getType();
+                if (previousType != currentType) {
+                    if (isMixedCandidate(previousType) && isMixedCandidate(currentType)) {
+                        mix = true;
+                        previousToken.appendString(token.getString());
+                        previousToken.setType(TokenType.MIXED);
+                        it.remove();
+                    }
+                }
 
-							// now we're ready to assume that this is a
-							// separator
-							treatAsSeparator = true;
-							lastToken = registerChar(result, lastToken, c, TokenType.NUMBER);
-							lastToken = registerChar(result, lastToken, next, TokenType.NUMBER);
-						} else {
-							ci.previous();
-						}
-					}
-				}
+                if (!mix) {
+                    previousToken = token;
+                }
+            }
+        }
+        return tokens;
+    }
 
-				if (!treatAsSeparator) {
-					// the thousand separator is treated as a delim
-					lastToken = registerChar(result, lastToken, c, TokenType.DELIM);
-				}
-			} else if (ci.is(configuration.getMinusSign())) {
-				// the meaning of minus sign is dependent on the next token
-				// (maybe it's the negative number operator)
-				boolean treatAsMinus = false;
+    private static boolean isMixedCandidate(final TokenType type) {
+        return type == TokenType.MIXED || type == TokenType.NUMBER || type == TokenType.TEXT;
+    }
 
-				if (lastToken == null || lastToken.getType() != TokenType.NUMBER) {
-					if (ci.hasNext()) {
-						char next = ci.next();
-						if (ci.isDigit()) {
-							// the minus sign was the number operator
-							treatAsMinus = true;
-							lastToken = registerChar(result, null, c, TokenType.NUMBER);
-							lastToken = registerChar(result, lastToken, next, TokenType.NUMBER);
-						} else {
-							ci.previous();
-						}
-					}
-				}
+    public List<Token> tokenize(final String pattern) {
+        if (pattern == null) {
+            return Arrays.asList(NullToken.INSTANCE);
+        }
 
-				if (!treatAsMinus) {
-					// the minus sign is treated as a delim
-					lastToken = registerChar(result, lastToken, c, TokenType.DELIM);
-				}
-			} else if (ci.isDigit()) {
-				lastToken = registerChar(result, lastToken, c, TokenType.NUMBER);
-			} else if (ci.isLetter()) {
-				if (configuration.isDiscriminateTextCase()) {
-					if (lastToken != null && lastToken.getType() == TokenType.TEXT) {
-						// if we need to discriminate on case then we should
-						// check the previous token and make sure that we only
-						// append to that if they share the same case.
-						char charFromPreviousToken = lastToken.getString().charAt(0);
-						if (Character.isUpperCase(charFromPreviousToken) != Character.isUpperCase(c)) {
-							lastToken = null;
-						}
-					}
-				}
-				lastToken = registerChar(result, lastToken, c, TokenType.TEXT);
-			} else if (ci.isWhitespace()) {
-				lastToken = registerChar(result, lastToken, c, TokenType.WHITESPACE);
-			} else {
-				lastToken = registerChar(result, lastToken, c, TokenType.DELIM);
-			}
-		}
+        if ("".equals(pattern)) {
+            return Arrays.asList(BlankToken.INSTANCE);
+        }
 
-		return result;
-	}
+        final List<Token> tokens;
 
-	private static SimpleToken registerChar(List<SimpleToken> result, SimpleToken lastToken, char c, TokenType tokenType) {
-		if (lastToken == null) {
-			logger.debug("Creating new {} token", tokenType);
-			lastToken = new SimpleToken(tokenType, c);
-			result.add(lastToken);
-		} else if (lastToken.getType() == tokenType) {
-			logger.debug("Appending to previous token", tokenType);
-			lastToken.appendChar(c);
-		} else {
-			logger.debug("Creating new {} token", tokenType);
-			lastToken = new SimpleToken(tokenType, c);
-			result.add(lastToken);
-		}
-		logger.debug("{} registered as {}", c, tokenType);
-		return lastToken;
-	}
+        if (_predefinedTokens) {
+            final List<PredefinedTokenDefinition> predefinedTokens = _configuration.getPredefinedTokens();
+            final PredefinedTokenTokenizer tokenizer = new PredefinedTokenTokenizer(predefinedTokens);
+            tokens = tokenizer.tokenize(pattern);
+            for (final ListIterator<Token> it = tokens.listIterator(); it.hasNext(); ) {
+                final Token token = it.next();
+                final TokenType tokenType = token.getType();
+                logger.debug("Next token type is: {}", tokenType);
+                if (tokenType == TokenType.UNDEFINED) {
+                    final List<SimpleToken> replacementTokens = tokenizeInternal(token.getString());
+                    boolean replace = true;
+                    if (replacementTokens.size() == 1) {
+                        if (token.equals(replacementTokens.get(0))) {
+                            replace = false;
+                        }
+                    }
 
-	public static List<SimpleToken> flattenMixedTokens(List<SimpleToken> tokens) {
-		SimpleToken previousToken = null;
-		for (ListIterator<SimpleToken> it = tokens.listIterator(); it.hasNext();) {
-			SimpleToken token = it.next();
-			if (previousToken == null) {
-				previousToken = token;
-			} else {
-				boolean mix = false;
+                    if (replace) {
+                        it.remove();
+                        for (final SimpleToken replacementToken : replacementTokens) {
+                            it.add(replacementToken);
+                        }
+                    }
+                }
+            }
+        } else {
+            tokens = new ArrayList<>();
+            tokens.addAll(tokenizeInternal(pattern));
+        }
 
-				TokenType previousType = previousToken.getType();
-				TokenType currentType = token.getType();
-				if (previousType != currentType) {
-					if (isMixedCandidate(previousType) && isMixedCandidate(currentType)) {
-						mix = true;
-						previousToken.appendString(token.getString());
-						previousToken.setType(TokenType.MIXED);
-						it.remove();
-					}
-				}
+        return tokens;
+    }
 
-				if (!mix) {
-					previousToken = token;
-				}
-			}
-		}
-		return tokens;
-	}
+    private List<SimpleToken> tokenizeInternal(final String string) {
+        List<SimpleToken> tokens = preliminaryTokenize(string, _configuration);
 
-	private static boolean isMixedCandidate(TokenType type) {
-		return type == TokenType.MIXED || type == TokenType.NUMBER || type == TokenType.TEXT;
-	}
+        if (_configuration.isTokenTypeEnabled(TokenType.MIXED)) {
+            tokens = flattenMixedTokens(tokens);
+        }
+
+        return tokens;
+    }
 }

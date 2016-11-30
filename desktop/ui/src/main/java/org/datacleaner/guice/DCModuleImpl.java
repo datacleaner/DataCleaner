@@ -19,14 +19,12 @@
  */
 package org.datacleaner.guice;
 
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.MutableRef;
@@ -103,20 +101,20 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
      * Creates a DCModule based on a parent module. This constructor is
      * convenient when you want to create a module with overridden getter
      * methods.
-     * 
+     *
      * @param parent
      * @param analysisJobBuilder
      *            the AnalysisJobBuilder to use within this module, or null if a
      *            new AnalysisJobBuilder should be created.
      */
-    public DCModuleImpl(DCModule parent, final AnalysisJobBuilder analysisJobBuilder) {
+    public DCModuleImpl(final DCModule parent, final AnalysisJobBuilder analysisJobBuilder) {
         final DCModuleImpl p = (DCModuleImpl) parent;
         _undecoratedConfigurationRef = p._undecoratedConfigurationRef;
         _userPreferencesRef = p._userPreferencesRef;
         _configuration = p._configuration;
         _windowContext = p._windowContext;
         if (analysisJobBuilder == null) {
-            _analysisJobBuilderRef = new MutableRef<AnalysisJobBuilder>();
+            _analysisJobBuilderRef = new MutableRef<>();
         } else {
             _analysisJobBuilderRef = ImmutableRef.of(analysisJobBuilder);
         }
@@ -124,14 +122,6 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
 
     public DCModuleImpl() {
         this(defaultDataCleanerHome());
-    }
-
-    private static FileObject defaultDataCleanerHome() {
-        try {
-            return VFSUtils.getFileSystemManager().resolveFile(".");
-        } catch (FileSystemException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     public DCModuleImpl(final FileObject dataCleanerHome) {
@@ -143,28 +133,37 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
      * window contexts and analysis job builder will be created. Thus this
      * constructor should only be used to create a completely new environment
      * (at bootstrap time).
-     * 
+     *
      * @param dataCleanerHome
      * @param configurationFile
      *            a configuration file override, or null if not requested
      */
-    public DCModuleImpl(final FileObject dataCleanerHome, FileObject configurationFile) {
+    public DCModuleImpl(final FileObject dataCleanerHome, final FileObject configurationFile) {
         _userPreferencesRef = createUserPreferencesRef(dataCleanerHome);
-        _undecoratedConfigurationRef = new DataCleanerConfigurationReader(dataCleanerHome, configurationFile,
-                _userPreferencesRef);
-        _analysisJobBuilderRef = new MutableRef<AnalysisJobBuilder>();
+        _undecoratedConfigurationRef =
+                new DataCleanerConfigurationReader(dataCleanerHome, configurationFile, _userPreferencesRef);
+        _analysisJobBuilderRef = new MutableRef<>();
         _configuration = null;
         _windowContext = null;
     }
 
-    private final Ref<UserPreferences> createUserPreferencesRef(final FileObject dataCleanerHome) {
+    private static FileObject defaultDataCleanerHome() {
+        try {
+            return VFSUtils.getFileSystemManager().resolveFile(".");
+        } catch (final FileSystemException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private Ref<UserPreferences> createUserPreferencesRef(final FileObject dataCleanerHome) {
         try {
             if ("true".equalsIgnoreCase(System.getProperty(SystemProperties.SANDBOX))) {
-                return new ImmutableRef<UserPreferences>(new UserPreferencesImpl(null));
+                return new ImmutableRef<>(new UserPreferencesImpl(null));
             }
             if (dataCleanerHome == null || !dataCleanerHome.exists()) {
-                logger.info("DataCleaner home was not set or does not exist. Non-persistent user preferences will be applied.");
-                return new ImmutableRef<UserPreferences>(new UserPreferencesImpl(null));
+                logger.info(
+                        "DataCleaner home was not set or does not exist. Non-persistent user preferences will be applied.");
+                return new ImmutableRef<>(new UserPreferencesImpl(null));
             }
 
             final FileObject userPreferencesFile = dataCleanerHome.resolveFile(UserPreferencesImpl.DEFAULT_FILENAME);
@@ -175,7 +174,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     return UserPreferencesImpl.load(userPreferencesFile, true);
                 }
             };
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new IllegalStateException("Not able to resolve files in DataCleaner home: " + dataCleanerHome, e);
         }
     }
@@ -188,8 +187,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public final WindowContext getWindowContext(DataCleanerConfiguration configuration,
-            UserPreferences userPreferences, UsageLogger usageLogger) {
+    public final WindowContext getWindowContext(final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences, final UsageLogger usageLogger) {
         if (_windowContext == null) {
             synchronized (DCModuleImpl.class) {
                 if (_windowContext == null) {
@@ -201,48 +200,49 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public final DataCleanerEnvironment getDataCleanerEnvironment(DataCleanerConfiguration conf) {
+    public final DataCleanerEnvironment getDataCleanerEnvironment(final DataCleanerConfiguration conf) {
         return conf.getEnvironment();
     }
 
     @Provides
-    public final TaskRunner getTaskRunner(DataCleanerEnvironment environment) {
+    public final TaskRunner getTaskRunner(final DataCleanerEnvironment environment) {
         return environment.getTaskRunner();
     }
 
     @Provides
-    public final DescriptorProvider getDescriptorProvider(DataCleanerEnvironment environment) {
+    public final DescriptorProvider getDescriptorProvider(final DataCleanerEnvironment environment) {
         return environment.getDescriptorProvider();
     }
 
     @Provides
-    public final ReferenceDataCatalog getReferenceDataCatalog(DataCleanerConfiguration conf) {
+    public final ReferenceDataCatalog getReferenceDataCatalog(final DataCleanerConfiguration conf) {
         return conf.getReferenceDataCatalog();
     }
 
     @Provides
-    public final InjectionManager getInjectionManager(InjectionManagerFactory injectionManagerFactory,
-            DataCleanerConfiguration configuration, @Nullable AnalysisJob job) {
+    public final InjectionManager getInjectionManager(final InjectionManagerFactory injectionManagerFactory,
+            final DataCleanerConfiguration configuration, @Nullable final AnalysisJob job) {
         return injectionManagerFactory.getInjectionManager(configuration, job);
     }
 
     @Provides
-    public final LifeCycleHelper getLifeCycleHelper(InjectionManager injectionManager) {
+    public final LifeCycleHelper getLifeCycleHelper(final InjectionManager injectionManager) {
         return new LifeCycleHelper(injectionManager, true);
     }
 
     @Provides
-    public final DatastoreCatalog getDatastoreCatalog(DataCleanerConfiguration conf) {
+    public final DatastoreCatalog getDatastoreCatalog(final DataCleanerConfiguration conf) {
         return conf.getDatastoreCatalog();
     }
 
     @Provides
-    public final MutableReferenceDataCatalog getMutableReferenceDataCatalog(ReferenceDataCatalog referenceDataCatalog) {
+    public final MutableReferenceDataCatalog getMutableReferenceDataCatalog(
+            final ReferenceDataCatalog referenceDataCatalog) {
         return (MutableReferenceDataCatalog) referenceDataCatalog;
     }
 
     @Provides
-    public final MutableDatastoreCatalog getMutableDatastoreCatalog(DatastoreCatalog datastoreCatalog) {
+    public final MutableDatastoreCatalog getMutableDatastoreCatalog(final DatastoreCatalog datastoreCatalog) {
         return (MutableDatastoreCatalog) datastoreCatalog;
     }
 
@@ -255,10 +255,10 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     @Deprecated
     @Provides
     public final org.datacleaner.configuration.AnalyzerBeansConfiguration getAnalyzerBeansConfiguration(
-            @Undecorated DataCleanerConfiguration undecoratedConfiguration, UserPreferences userPreferences,
-            InjectionManagerFactory injectionManagerFactory) {
-        final DataCleanerConfiguration c = getDataCleanerConfiguration(undecoratedConfiguration, userPreferences,
-                injectionManagerFactory);
+            @Undecorated final DataCleanerConfiguration undecoratedConfiguration, final UserPreferences userPreferences,
+            final InjectionManagerFactory injectionManagerFactory) {
+        final DataCleanerConfiguration c =
+                getDataCleanerConfiguration(undecoratedConfiguration, userPreferences, injectionManagerFactory);
         final DatastoreCatalog datastoreCatalog = c.getDatastoreCatalog();
         final ReferenceDataCatalog referenceDataCatalog = c.getReferenceDataCatalog();
         final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
@@ -270,30 +270,31 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public final DataCleanerConfiguration getDataCleanerConfiguration(@Undecorated DataCleanerConfiguration c,
-            UserPreferences userPreferences, InjectionManagerFactory injectionManagerFactory) {
+    public final DataCleanerConfiguration getDataCleanerConfiguration(@Undecorated final DataCleanerConfiguration c,
+            final UserPreferences userPreferences, final InjectionManagerFactory injectionManagerFactory) {
         if (_configuration == null) {
             synchronized (DCModuleImpl.class) {
                 if (_configuration == null) {
                     // make the configuration mutable
                     final DomConfigurationWriter configurationWriter = createConfigurationWriter();
-                    final MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(
-                            c.getDatastoreCatalog(), configurationWriter, userPreferences);
-                    final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
-                            c.getReferenceDataCatalog(), configurationWriter, userPreferences, new LifeCycleHelper(
-                                    injectionManagerFactory.getInjectionManager(c, null), true));
+                    final MutableDatastoreCatalog datastoreCatalog =
+                            new MutableDatastoreCatalog(c.getDatastoreCatalog(), configurationWriter, userPreferences);
+                    final MutableReferenceDataCatalog referenceDataCatalog =
+                            new MutableReferenceDataCatalog(c.getReferenceDataCatalog(), configurationWriter,
+                                    userPreferences,
+                                    new LifeCycleHelper(injectionManagerFactory.getInjectionManager(c, null), true));
                     final MutableServerInformationCatalog serverInformationCatalog =
                             new MutableServerInformationCatalog(c.getServerInformationCatalog(), configurationWriter);
                     final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
 
                     final ExtensionReader extensionReader = new ExtensionReader();
                     final List<ExtensionPackage> internalExtensions = extensionReader.getInternalExtensions();
-                    for (ExtensionPackage extensionPackage : internalExtensions) {
+                    for (final ExtensionPackage extensionPackage : internalExtensions) {
                         extensionPackage.loadDescriptors(descriptorProvider);
                     }
 
                     final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
-                    for (ExtensionPackage extensionPackage : extensionPackages) {
+                    for (final ExtensionPackage extensionPackage : extensionPackages) {
                         extensionPackage.loadDescriptors(descriptorProvider);
                     }
 
@@ -302,16 +303,17 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
                     RemoteServerConfiguration remoteServerConfiguration =
                             c.getEnvironment().getRemoteServerConfiguration();
-                    remoteServerConfiguration = new MutableRemoteServerConfigurationImpl(
-                            remoteServerConfiguration, taskRunner, configurationWriter);
+                    remoteServerConfiguration =
+                            new MutableRemoteServerConfigurationImpl(remoteServerConfiguration, taskRunner,
+                                    configurationWriter);
 
-                    final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl(taskRunner,
-                            descriptorProvider, storageProvider, injectionManagerFactory,
-                            remoteServerConfiguration);
+                    final DataCleanerEnvironment environment =
+                            new DataCleanerEnvironmentImpl(taskRunner, descriptorProvider, storageProvider,
+                                    injectionManagerFactory, remoteServerConfiguration);
 
-                    _configuration = new DataCleanerConfigurationImpl(environment,
-                            DataCleanerHome.getAsDataCleanerHomeFolder(), datastoreCatalog, referenceDataCatalog,
-                            serverInformationCatalog);
+                    _configuration =
+                            new DataCleanerConfigurationImpl(environment, DataCleanerHome.getAsDataCleanerHomeFolder(),
+                                    datastoreCatalog, referenceDataCatalog, serverInformationCatalog);
                 }
             }
         }
@@ -339,19 +341,14 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         return new DomConfigurationWriter(resource) {
             @Override
             protected void onDocumentChanged(final Document document) {
-                resource.write(new Action<OutputStream>() {
-                    @Override
-                    public void run(final OutputStream out) throws Exception {
-                        XmlUtils.writeDocument(document, out);
-                    }
-                });
+                resource.write(out -> XmlUtils.writeDocument(document, out));
 
             }
         };
     }
 
     @Provides
-    public AnalysisJob getAnalysisJob(@Nullable AnalysisJobBuilder builder) {
+    public AnalysisJob getAnalysisJob(@Nullable final AnalysisJobBuilder builder) {
         if (builder == null) {
             return null;
         }
@@ -359,16 +356,16 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public final RendererFactory getRendererFactory(DataCleanerConfiguration configuration) {
+    public final RendererFactory getRendererFactory(final DataCleanerConfiguration configuration) {
         return new RendererFactory(configuration);
     }
 
     @Provides
-    public AnalysisJobBuilder getAnalysisJobBuilder(DataCleanerConfiguration configuration) {
+    public AnalysisJobBuilder getAnalysisJobBuilder(final DataCleanerConfiguration configuration) {
         AnalysisJobBuilder ajb = _analysisJobBuilderRef.get();
         if (ajb == null && _analysisJobBuilderRef instanceof MutableRef) {
             ajb = new AnalysisJobBuilder(configuration);
-            MutableRef<AnalysisJobBuilder> ref = (MutableRef<AnalysisJobBuilder>) _analysisJobBuilderRef;
+            final MutableRef<AnalysisJobBuilder> ref = (MutableRef<AnalysisJobBuilder>) _analysisJobBuilderRef;
             ref.set(ajb);
         }
         return ajb;
@@ -396,7 +393,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public CloseableHttpClient getHttpClient(UserPreferences userPreferences) {
+    public CloseableHttpClient getHttpClient(final UserPreferences userPreferences) {
         return userPreferences.createHttpClient();
     }
 
@@ -412,15 +409,15 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Override
-    public Injector createChildInjectorForComponent(ComponentBuilder componentBuilder) {
+    public Injector createChildInjectorForComponent(final ComponentBuilder componentBuilder) {
         final ComponentBuilderModule componentBuilderModule = new ComponentBuilderModule(componentBuilder);
         final Module module = Modules.override(this).with(componentBuilderModule);
         return Guice.createInjector(module);
     }
 
     @Override
-    public Injector createChildInjectorForProperty(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    public Injector createChildInjectorForProperty(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         final AdHocModule adHocModule = new AdHocModule();
         adHocModule.bind(PropertyDescriptor.class, propertyDescriptor);
         adHocModule.bind(ConfiguredPropertyDescriptor.class, propertyDescriptor);

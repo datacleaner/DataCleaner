@@ -32,8 +32,8 @@ import org.datacleaner.result.SimpleAnalysisResult;
 public class SerializedAnalysisResultWriter implements AnalysisResultWriter {
 
     @Override
-    public void write(AnalysisResult result, DataCleanerConfiguration configuration, Ref<Writer> writerRef,
-            Ref<OutputStream> outputStreamRef) {
+    public void write(final AnalysisResult result, final DataCleanerConfiguration configuration,
+            final Ref<Writer> writerRef, final Ref<OutputStream> outputStreamRef) {
         final SimpleAnalysisResult simpleAnalysisResult;
 
         if (result instanceof SimpleAnalysisResult) {

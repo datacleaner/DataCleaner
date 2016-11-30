@@ -19,16 +19,16 @@
  */
 package org.datacleaner.monitor.server.wizard.shared.datastore;
 
+import static org.junit.Assert.assertNotEquals;
+
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotEquals;
 
 public class DatastoreHelperTest {
     private static final String DATASTORE = "orderdb";
     private static final String SCHEMA = "PUBLIC";
     private static final String TABLE = "CUSTOMERS";
-    
+
     @Test
     public void testGetDatastoreOptions() throws Exception {
         assertNotEquals("", DatastoreHelper.getDatastoreOptions(TestHelper.getTenantContext()));

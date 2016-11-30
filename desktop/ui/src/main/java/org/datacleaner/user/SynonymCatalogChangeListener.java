@@ -28,8 +28,8 @@ import org.datacleaner.reference.SynonymCatalog;
 public interface SynonymCatalogChangeListener {
 
     @Deprecated
-	public void onAdd(SynonymCatalog synonymCatalog);
-	
+    void onAdd(SynonymCatalog synonymCatalog);
+
     @Deprecated
-	public void onRemove(SynonymCatalog synonymCatalog);
+    void onRemove(SynonymCatalog synonymCatalog);
 }

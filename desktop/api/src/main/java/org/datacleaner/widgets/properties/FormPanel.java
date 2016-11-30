@@ -38,7 +38,7 @@ import org.jdesktop.swingx.JXLabel;
  * A panel that lays out inputs of in a vertical form-like manner
  */
 public class FormPanel extends DCPanel {
-    
+
     private static final long serialVersionUID = 1L;
 
     private static final int FIELD_LABEL_WIDTH = 240;
@@ -47,7 +47,7 @@ public class FormPanel extends DCPanel {
 
     public FormPanel() {
         super();
-        GridBagLayout layout = new GridBagLayout();
+        final GridBagLayout layout = new GridBagLayout();
         layout.columnWidths = new int[] { FIELD_LABEL_WIDTH };
         setLayout(layout);
         _rowCounter = 0;
@@ -59,18 +59,17 @@ public class FormPanel extends DCPanel {
 
     /**
      * Adds a form entry to the panel
-     * 
+     *
      * @param mainLabelText
      * @param minorLabelText
      * @param component
      */
-    public void addFormEntry(String mainLabelText, String minorLabelText, JComponent component) {
+    public void addFormEntry(String mainLabelText, final String minorLabelText, final JComponent component) {
         if (!mainLabelText.endsWith(":")) {
             mainLabelText += ":";
         }
 
         final DCLabel mainLabel = DCLabel.dark(mainLabelText);
-//        mainLabel.setFont(WidgetUtils.FONT_SMALL);
         mainLabel.setFont(WidgetUtils.FONT_NORMAL);
         mainLabel.setBorder(new EmptyBorder(6, 0, 0, 0));
 
@@ -93,12 +92,12 @@ public class FormPanel extends DCPanel {
 
     /**
      * Adds a form entry to the panel
-     * 
+     *
      * @param mainLabel
      * @param minorLabel
      * @param component
      */
-    public void addFormEntry(JLabel mainLabel, JLabel minorLabel, JComponent component) {
+    public void addFormEntry(final JLabel mainLabel, final JLabel minorLabel, final JComponent component) {
         add(mainLabel, new GridBagConstraints(0, _rowCounter, 1, 1, 0d, 0d, GridBagConstraints.NORTHWEST,
                 GridBagConstraints.BOTH, INSETS, 0, 0));
 

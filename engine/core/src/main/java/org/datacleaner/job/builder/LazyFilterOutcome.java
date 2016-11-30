@@ -33,7 +33,7 @@ public final class LazyFilterOutcome extends AbstractFilterOutcome {
     private final FilterComponentBuilder<?, ?> _filterJobBuilder;
     private final Enum<?> _category;
 
-    protected LazyFilterOutcome(FilterComponentBuilder<?, ?> filterJobBuilder, Enum<?> category) {
+    protected LazyFilterOutcome(final FilterComponentBuilder<?, ?> filterJobBuilder, final Enum<?> category) {
         _filterJobBuilder = filterJobBuilder;
         _category = category;
     }
@@ -50,8 +50,8 @@ public final class LazyFilterOutcome extends AbstractFilterOutcome {
         } else {
             // Create an incomplete job. This representation is typically used
             // for comparison, not execution.
-            final ComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(
-                    _filterJobBuilder.getConfiguredProperties());
+            final ComponentConfiguration beanConfiguration =
+                    new ImmutableComponentConfiguration(_filterJobBuilder.getConfiguredProperties());
             return new ImmutableFilterJob(_filterJobBuilder.getName(), _filterJobBuilder.getDescriptor(),
                     beanConfiguration, _filterJobBuilder.getComponentRequirement(),
                     _filterJobBuilder.getMetadataProperties(), _filterJobBuilder.getOutputDataStreamJobs());

@@ -27,22 +27,22 @@ import org.datacleaner.result.ResultProducer;
 
 public interface CrosstabRendererCallback<E> {
 
-	public void beginTable(Crosstab<?> crosstab, List<CrosstabDimension> horizontalDimensions,
-			List<CrosstabDimension> verticalDimensions);
+    void beginTable(Crosstab<?> crosstab, List<CrosstabDimension> horizontalDimensions,
+            List<CrosstabDimension> verticalDimensions);
 
-	public void endTable();
+    void endTable();
 
-	public void beginRow();
+    void beginRow();
 
-	public void endRow();
+    void endRow();
 
-	public void horizontalHeaderCell(String category, CrosstabDimension dimension, int width);
+    void horizontalHeaderCell(String category, CrosstabDimension dimension, int width);
 
-	public void verticalHeaderCell(String category, CrosstabDimension dimension, int height);
+    void verticalHeaderCell(String category, CrosstabDimension dimension, int height);
 
-	public void valueCell(Object value, ResultProducer drillToDetailResultProducer);
+    void valueCell(Object value, ResultProducer drillToDetailResultProducer);
 
-	public E getResult();
+    E getResult();
 
-	public void emptyHeader(CrosstabDimension verticalDimension, CrosstabDimension horizontalDimension);
+    void emptyHeader(CrosstabDimension verticalDimension, CrosstabDimension horizontalDimension);
 }

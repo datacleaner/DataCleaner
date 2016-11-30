@@ -39,49 +39,49 @@ abstract class AbstractJdbcDatastoreWizardSession extends AbstractDatastoreWizar
     private String _description;
     private String _name;
 
-    public AbstractJdbcDatastoreWizardSession(DatastoreWizardContext context) {
+    public AbstractJdbcDatastoreWizardSession(final DatastoreWizardContext context) {
         super(context);
-    }
-
-    public void setUrl(String url) {
-        _url = url;
     }
 
     public String getUrl() {
         return _url;
     }
 
-    public void setCredentials(String username, String password) {
-        _username = username;
-        _password = password;
+    public void setUrl(final String url) {
+        _url = url;
     }
 
-    public void setDescription(String description) {
-        _description = description;
+    public void setCredentials(final String username, final String password) {
+        _username = username;
+        _password = password;
     }
 
     public String getDescription() {
         return _description;
     }
 
-    public void setName(String name) {
-        _name = name;
+    public void setDescription(final String description) {
+        _description = description;
     }
 
     public String getName() {
         return _name;
     }
 
-    public void setDriverClassName(String driverClassName) {
-        _driverClassName = driverClassName;
+    public void setName(final String name) {
+        _name = name;
     }
 
     public String getDriverClassName() {
         return _driverClassName;
     }
 
+    public void setDriverClassName(final String driverClassName) {
+        _driverClassName = driverClassName;
+    }
+
     @Override
-    public final Element createDatastoreElement(DocumentBuilder documentBuilder) {
+    public final Element createDatastoreElement(final DocumentBuilder documentBuilder) {
         final Document document = documentBuilder.newDocument();
 
         final Element datastore = document.createElement("jdbc-datastore");

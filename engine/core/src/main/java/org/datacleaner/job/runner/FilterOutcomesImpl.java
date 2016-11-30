@@ -39,22 +39,22 @@ public final class FilterOutcomesImpl implements FilterOutcomes {
         this(Collections.EMPTY_LIST);
     }
 
-    public FilterOutcomesImpl(Collection<? extends FilterOutcome> availableOutcomes) {
+    public FilterOutcomesImpl(final Collection<? extends FilterOutcome> availableOutcomes) {
         if (availableOutcomes == null) {
-            _outcomes = new HashSet<FilterOutcome>();
+            _outcomes = new HashSet<>();
         } else {
             // always take a copy of the collection argument
-            _outcomes = new HashSet<FilterOutcome>(availableOutcomes);
+            _outcomes = new HashSet<>(availableOutcomes);
         }
     }
 
     @Override
-    public void add(FilterOutcome filterOutcome) {
+    public void add(final FilterOutcome filterOutcome) {
         _outcomes.add(filterOutcome);
     }
 
     @Override
-    public boolean contains(FilterOutcome outcome) {
+    public boolean contains(final FilterOutcome outcome) {
         return _outcomes.contains(outcome);
     }
 

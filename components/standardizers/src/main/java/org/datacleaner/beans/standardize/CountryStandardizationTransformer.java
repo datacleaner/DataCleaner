@@ -47,19 +47,20 @@ import org.datacleaner.util.LabelUtils;
 @Categorized(superCategory = ImproveSuperCategory.class, value = LocationCategory.class)
 public class CountryStandardizationTransformer implements Transformer, HasAnalyzerResult<CountryStandardizationResult> {
 
-    public static enum OutputFormat implements HasName {
+    public enum OutputFormat implements HasName {
 
         ISO2("2-letter ISO code"), ISO3("3-letter ISO code"), NAME("Country name");
 
         private final String _name;
 
-        private OutputFormat(String name) {
+        OutputFormat(final String name) {
             _name = name;
         }
 
         public String getName() {
             return _name;
-        };
+        }
+
     }
 
     public static final String PROPERTY_COUNTRY_COLUMN = "Country column";
@@ -90,7 +91,7 @@ public class CountryStandardizationTransformer implements Transformer, HasAnalyz
     }
 
     @Override
-    public String[] transform(InputRow inputRow) {
+    public String[] transform(final InputRow inputRow) {
         final String value = inputRow.getValue(countryColumn);
         Country country = Country.find(value);
 

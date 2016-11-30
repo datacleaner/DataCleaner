@@ -39,11 +39,11 @@ public class WizardSessionIdentifier implements Serializable {
 
     /**
      * Constructor with all arguments
-     * 
+     *
      * @param sessionId
      * @param wizardIdentifier
      */
-    public WizardSessionIdentifier(String sessionId, WizardIdentifier wizardIdentifier) {
+    public WizardSessionIdentifier(final String sessionId, final WizardIdentifier wizardIdentifier) {
         this.sessionId = sessionId;
         this.wizardIdentifier = wizardIdentifier;
     }
@@ -52,7 +52,7 @@ public class WizardSessionIdentifier implements Serializable {
         return wizardIdentifier;
     }
 
-    public void setWizardIdentifier(WizardIdentifier wizardIdentifier) {
+    public void setWizardIdentifier(final WizardIdentifier wizardIdentifier) {
         this.wizardIdentifier = wizardIdentifier;
     }
 
@@ -60,7 +60,7 @@ public class WizardSessionIdentifier implements Serializable {
         return sessionId;
     }
 
-    public void setSessionId(String sessionId) {
+    public void setSessionId(final String sessionId) {
         this.sessionId = sessionId;
     }
 }

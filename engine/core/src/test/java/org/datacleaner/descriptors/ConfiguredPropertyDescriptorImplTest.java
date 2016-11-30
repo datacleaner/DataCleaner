@@ -24,108 +24,104 @@ import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.mock.AnalyzerMock;
 import org.datacleaner.test.MockFilter;
 
+import junit.framework.TestCase;
+
 public class ConfiguredPropertyDescriptorImplTest extends TestCase {
 
-	private FilterDescriptor<MockFilter, MockFilter.Category> _descriptor;
+    @Configured
+    String str1;
+    @Configured
+    String str2;
+    @Configured
+    InputColumn<byte[]> someBytes;
+    @Configured
+    InputColumn<String>[] stringColumns;
+    private FilterDescriptor<MockFilter, MockFilter.Category> _descriptor;
 
-	@Configured
-	String str1;
-
-	@Configured
-	String str2;
-
-	@Configured
-	InputColumn<byte[]> someBytes;
-
-	@Configured
-	InputColumn<String>[] stringColumns;
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		_descriptor = Descriptors.ofFilter(MockFilter.class);
-	}
-
-	public void testGetTypeParameterOfArrayType1() throws Exception {
-		ConfiguredPropertyDescriptor descriptor = new ConfiguredPropertyDescriptorImpl(getClass().getDeclaredField(
-				"someBytes"), null);
-		assertEquals(1, descriptor.getTypeArgumentCount());
-		Class<?> typeArgument = descriptor.getTypeArgument(0);
-		assertEquals(byte[].class, typeArgument);
-	}
-
-	public void testGetTypeParameterOfArrayType2() throws Exception {
-		ConfiguredPropertyDescriptor descriptor = new ConfiguredPropertyDescriptorImpl(getClass().getDeclaredField(
-				"stringColumns"), null);
-		assertEquals(1, descriptor.getTypeArgumentCount());
-		Class<?> typeArgument = descriptor.getTypeArgument(0);
-		assertEquals(String.class, typeArgument);
-	}
-
-	public void testCompareTo() throws Exception {
-		Set<ConfiguredPropertyDescriptor> properties = Descriptors.ofAnalyzer(AnalyzerMock.class)
-				.getConfiguredProperties();
-		assertEquals(4, properties.size());
-		Iterator<ConfiguredPropertyDescriptor> it = properties.iterator();
-		assertTrue(it.hasNext());
-		assertEquals("Columns", it.next().getName());
-		assertTrue(it.hasNext());
-		assertEquals("Configured1", it.next().getName());
-		assertTrue(it.hasNext());
-		assertEquals("Configured2", it.next().getName());
-		assertTrue(it.hasNext());
-		assertEquals("Some string property", it.next().getName());
-		assertFalse(it.hasNext());
-
-		Field f1 = getClass().getDeclaredField("str1");
-		Field f2 = getClass().getDeclaredField("str2");
-
-		ConfiguredPropertyDescriptorImpl d1 = new ConfiguredPropertyDescriptorImpl(f1, null);
-		ConfiguredPropertyDescriptorImpl d2 = new ConfiguredPropertyDescriptorImpl(f2, null);
-		assertTrue(d1.compareTo(d2) < 0);
-	}
-	
-	public void testToString() throws Exception {
-	    ConfiguredPropertyDescriptor cp = _descriptor.getConfiguredProperty("Some enum");
-	    assertEquals("ConfiguredPropertyDescriptorImpl[name=Some enum]", cp.toString());
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        _descriptor = Descriptors.ofFilter(MockFilter.class);
     }
 
-	public void testEnum() throws Exception {
-		Set<ConfiguredPropertyDescriptor> properties = _descriptor.getConfiguredProperties();
-		assertEquals(3, properties.size());
+    public void testGetTypeParameterOfArrayType1() throws Exception {
+        final ConfiguredPropertyDescriptor descriptor =
+                new ConfiguredPropertyDescriptorImpl(getClass().getDeclaredField("someBytes"), null);
+        assertEquals(1, descriptor.getTypeArgumentCount());
+        final Class<?> typeArgument = descriptor.getTypeArgument(0);
+        assertEquals(byte[].class, typeArgument);
+    }
 
-		ConfiguredPropertyDescriptor cp = _descriptor.getConfiguredProperty("Some enum");
-		assertFalse(cp.isArray());
-		assertTrue(cp.getType().isEnum());
+    public void testGetTypeParameterOfArrayType2() throws Exception {
+        final ConfiguredPropertyDescriptor descriptor =
+                new ConfiguredPropertyDescriptorImpl(getClass().getDeclaredField("stringColumns"), null);
+        assertEquals(1, descriptor.getTypeArgumentCount());
+        final Class<?> typeArgument = descriptor.getTypeArgument(0);
+        assertEquals(String.class, typeArgument);
+    }
 
-		MockFilter filter = new MockFilter();
-		assertNull(filter.getSomeEnum());
-		cp.setValue(filter, MockFilter.Category.VALID);
-		assertEquals(MockFilter.Category.VALID, filter.getSomeEnum());
-	}
+    public void testCompareTo() throws Exception {
+        final Set<ConfiguredPropertyDescriptor> properties =
+                Descriptors.ofAnalyzer(AnalyzerMock.class).getConfiguredProperties();
+        assertEquals(4, properties.size());
+        final Iterator<ConfiguredPropertyDescriptor> it = properties.iterator();
+        assertTrue(it.hasNext());
+        assertEquals("Columns", it.next().getName());
+        assertTrue(it.hasNext());
+        assertEquals("Configured1", it.next().getName());
+        assertTrue(it.hasNext());
+        assertEquals("Configured2", it.next().getName());
+        assertTrue(it.hasNext());
+        assertEquals("Some string property", it.next().getName());
+        assertFalse(it.hasNext());
 
-	public void testFile() throws Exception {
-		ConfiguredPropertyDescriptor cp = _descriptor.getConfiguredProperty("Some file");
-		assertFalse(cp.isArray());
-		assertTrue(cp.getType() == File.class);
+        final Field f1 = getClass().getDeclaredField("str1");
+        final Field f2 = getClass().getDeclaredField("str2");
 
-		MockFilter filter = new MockFilter();
-		assertNull(filter.getSomeFile());
-		cp.setValue(filter, new File("."));
-		assertEquals(new File("."), filter.getSomeFile());
-	}
+        final ConfiguredPropertyDescriptorImpl d1 = new ConfiguredPropertyDescriptorImpl(f1, null);
+        final ConfiguredPropertyDescriptorImpl d2 = new ConfiguredPropertyDescriptorImpl(f2, null);
+        assertTrue(d1.compareTo(d2) < 0);
+    }
 
-	public void testGetConfiguredPropertyByAlias() throws Exception {
-		ConfiguredPropertyDescriptor cp1 = _descriptor.getConfiguredProperty("Some file");
-		ConfiguredPropertyDescriptor cp2 = _descriptor.getConfiguredProperty("a file");
-		assertSame(cp1, cp2);
-	}
+    public void testToString() throws Exception {
+        final ConfiguredPropertyDescriptor cp = _descriptor.getConfiguredProperty("Some enum");
+        assertEquals("ConfiguredPropertyDescriptorImpl[name=Some enum]", cp.toString());
+    }
+
+    public void testEnum() throws Exception {
+        final Set<ConfiguredPropertyDescriptor> properties = _descriptor.getConfiguredProperties();
+        assertEquals(3, properties.size());
+
+        final ConfiguredPropertyDescriptor cp = _descriptor.getConfiguredProperty("Some enum");
+        assertFalse(cp.isArray());
+        assertTrue(cp.getType().isEnum());
+
+        final MockFilter filter = new MockFilter();
+        assertNull(filter.getSomeEnum());
+        cp.setValue(filter, MockFilter.Category.VALID);
+        assertEquals(MockFilter.Category.VALID, filter.getSomeEnum());
+    }
+
+    public void testFile() throws Exception {
+        final ConfiguredPropertyDescriptor cp = _descriptor.getConfiguredProperty("Some file");
+        assertFalse(cp.isArray());
+        assertTrue(cp.getType() == File.class);
+
+        final MockFilter filter = new MockFilter();
+        assertNull(filter.getSomeFile());
+        cp.setValue(filter, new File("."));
+        assertEquals(new File("."), filter.getSomeFile());
+    }
+
+    public void testGetConfiguredPropertyByAlias() throws Exception {
+        final ConfiguredPropertyDescriptor cp1 = _descriptor.getConfiguredProperty("Some file");
+        final ConfiguredPropertyDescriptor cp2 = _descriptor.getConfiguredProperty("a file");
+        assertSame(cp1, cp2);
+    }
 
 }

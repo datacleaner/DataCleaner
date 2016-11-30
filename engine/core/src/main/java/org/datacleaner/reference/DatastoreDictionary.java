@@ -38,12 +38,12 @@ import org.datacleaner.util.ReadObjectBuilder;
 
 /**
  * A dictionary backed by a column in a datastore.
- * 
+ *
  * Note that even though this datastore <i>is</i> serializable it is not
  * entirely able to gracefully deserialize. The user of the dictionary will have
  * to inject the DatastoreCatalog using the setter method for this.
- * 
- * 
+ *
+ *
  */
 public final class DatastoreDictionary extends AbstractReferenceData implements Dictionary {
 
@@ -53,33 +53,34 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
     private final String _qualifiedColumnName;
     private final boolean _loadIntoMemory;
 
-    public DatastoreDictionary(String name, String datastoreName, String qualifiedColumnName) {
+    public DatastoreDictionary(final String name, final String datastoreName, final String qualifiedColumnName) {
         this(name, datastoreName, qualifiedColumnName, true);
     }
 
-    public DatastoreDictionary(String name, String datastoreName, String qualifiedColumnName, boolean loadIntoMemory) {
+    public DatastoreDictionary(final String name, final String datastoreName, final String qualifiedColumnName,
+            final boolean loadIntoMemory) {
         super(name);
         _datastoreName = datastoreName;
         _qualifiedColumnName = qualifiedColumnName;
         _loadIntoMemory = loadIntoMemory;
     }
-    
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, DatastoreDictionary.class).readObject(stream);
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final DatastoreDictionary other = (DatastoreDictionary) obj;
-            return Objects.equals(_datastoreName, other._datastoreName)
-                    && Objects.equals(_qualifiedColumnName, other._qualifiedColumnName)
-                    && Objects.equals(_loadIntoMemory, other._loadIntoMemory);
+            return Objects.equals(_datastoreName, other._datastoreName) && Objects
+                    .equals(_qualifiedColumnName, other._qualifiedColumnName) && Objects
+                    .equals(_loadIntoMemory, other._loadIntoMemory);
         }
         return false;
     }
 
-    public SimpleDictionary loadIntoMemory(DatastoreConnection datastoreConnection) {
+    public SimpleDictionary loadIntoMemory(final DatastoreConnection datastoreConnection) {
         final DataContext dataContext = datastoreConnection.getDataContext();
         final Column column = getColumn(datastoreConnection);
 
@@ -90,7 +91,7 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
 
         final Set<String> values = new HashSet<>();
 
-        try (final DataSet dataSet = dataContext.executeQuery(query)) {
+        try (DataSet dataSet = dataContext.executeQuery(query)) {
             while (dataSet.next()) {
                 final Object value = dataSet.getRow().getValue(0);
                 if (value != null) {
@@ -103,7 +104,7 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
     }
 
     @Override
-    public DictionaryConnection openConnection(DataCleanerConfiguration configuration) {
+    public DictionaryConnection openConnection(final DataCleanerConfiguration configuration) {
         final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(_datastoreName);
         if (datastore == null) {
             throw new NoSuchDatastoreException(_datastoreName);
@@ -123,14 +124,14 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
         return new DatastoreDictionaryConnection(this, datastoreConnection);
     }
 
-    public Column getColumn(DatastoreConnection datastoreConnection) {
+    public Column getColumn(final DatastoreConnection datastoreConnection) {
         try {
             final Column column = datastoreConnection.getDataContext().getColumnByQualifiedLabel(_qualifiedColumnName);
             if (column == null) {
                 throw new NoSuchColumnException(_qualifiedColumnName);
             }
             return column;
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             datastoreConnection.close();
             throw e;
         }

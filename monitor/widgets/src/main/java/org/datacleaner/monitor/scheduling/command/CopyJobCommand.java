@@ -36,21 +36,22 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 
 public class CopyJobCommand implements Command {
- 
-	private TenantIdentifier _tenant;
-	private JobIdentifier _job ; 
-	private DCPopupPanel _morePopup;
-	
-	public CopyJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier, DCPopupPanel morePopup) {
-		_tenant = tenant;
-		_job = jobIdentifier; 
-		_morePopup = morePopup;
-	}
-	
-	@Override
-	public void execute() {
-		_morePopup.hide();
-		final String newJobName = Window.prompt("Enter new job name", _job.getName() + " (Copy)");
+
+    private TenantIdentifier _tenant;
+    private JobIdentifier _job;
+    private DCPopupPanel _morePopup;
+
+    public CopyJobCommand(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
+            final DCPopupPanel morePopup) {
+        _tenant = tenant;
+        _job = jobIdentifier;
+        _morePopup = morePopup;
+    }
+
+    @Override
+    public void execute() {
+        _morePopup.hide();
+        final String newJobName = Window.prompt("Enter new job name", _job.getName() + " (Copy)");
 
         if (newJobName == null || newJobName.trim().length() == 0 || newJobName.equals(_job.getName())) {
             return;
@@ -70,7 +71,7 @@ public class CopyJobCommand implements Command {
         requestBuilder.setHeader("Content-Type", "application/json");
         requestBuilder.send(payload.toString(), new DCRequestCallback() {
             @Override
-            protected void onSuccess(Request request, Response response) {
+            protected void onSuccess(final Request request, final Response response) {
                 Window.Location.reload();
             }
         });

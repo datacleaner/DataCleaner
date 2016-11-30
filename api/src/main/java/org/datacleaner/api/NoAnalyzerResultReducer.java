@@ -32,7 +32,7 @@ public final class NoAnalyzerResultReducer implements AnalyzerResultReducer<Anal
     }
 
     @Override
-    public AnalyzerResult reduce(Collection<? extends AnalyzerResult> results) {
+    public AnalyzerResult reduce(final Collection<? extends AnalyzerResult> results) {
         throw new UnsupportedOperationException();
     }
 

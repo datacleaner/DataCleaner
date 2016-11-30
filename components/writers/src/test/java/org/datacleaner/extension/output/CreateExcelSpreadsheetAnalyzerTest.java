@@ -23,8 +23,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
@@ -42,10 +40,12 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
+import junit.framework.TestCase;
+
 public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
-    
+
     private File generatedFile;
-    
+
     @Override
     protected void tearDown() throws Exception {
         if (generatedFile != null) {
@@ -56,7 +56,7 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
     @Test
     public void testValidateSheetName() throws Exception {
-        CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+        final CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
         analyzer.sheetName = "foo";
         analyzer.validate();
 
@@ -64,7 +64,7 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         try {
             analyzer.validate();
             fail("Exception expected");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertEquals("Sheet name cannot contain '.'", e.getMessage());
         }
     }
@@ -94,7 +94,7 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
     @Test
     public void testValidateOverwriteFile() throws Exception {
 
-        CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+        final CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
         analyzer.sheetName = "foo";
         analyzer.overwriteSheetIfExists = false;
@@ -117,7 +117,7 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
             analyzer.sheetName = "Sheet1";
             analyzer.validate();
             fail("Exception expected");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertEquals("The sheet 'Sheet1' already exists. Please select another sheet name.", e.getMessage());
         }
 
@@ -134,21 +134,21 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         assertFalse(analyzer.overwriteSheetIfExists);
         analyzer.validate();
     }
-    
+
     @Test
     public void testSortNumerical() throws Exception {
         final String filename = "target/exceltest-sortnumerical.xlsx";
-        
-        CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
-        final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
+        final CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+
+        final InputColumn<String> testColumn = new MockInputColumn<>("TestColumn");
         // Point of focus: MockInputColumn is of type Input, so it should be sorted as numbers
-        final InputColumn<Integer> idColumn = new MockInputColumn<Integer>("IdToSort", Integer.class);
+        final InputColumn<Integer> idColumn = new MockInputColumn<>("IdToSort", Integer.class);
 
         generatedFile = new File(filename);
         analyzer.file = generatedFile;
         assertNotNull(analyzer.file);
-        
+
         analyzer.sheetName = "foo";
 
         analyzer.columns = new InputColumn<?>[2];
@@ -158,10 +158,10 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         analyzer.columnToBeSortedOn = idColumn;
 
         analyzer.validate();
-        
+
         analyzer.init();
 
-        InputRow[] rows = new InputRow[13];
+        final InputRow[] rows = new InputRow[13];
         rows[0] = new MockInputRow().put(testColumn, "row00").put(idColumn, 7);
         rows[1] = new MockInputRow().put(testColumn, "row01").put(idColumn, 9);
         rows[2] = new MockInputRow().put(testColumn, "row02").put(idColumn, 2);
@@ -183,13 +183,14 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         analyzer.getResult();
 
         final List<Integer> resultIds = new ArrayList<>(13);
-        ExcelDatastore outputDatastore = new ExcelDatastore(filename, new FileResource(analyzer.file), analyzer.file.getAbsolutePath());
+        final ExcelDatastore outputDatastore =
+                new ExcelDatastore(filename, new FileResource(analyzer.file), analyzer.file.getAbsolutePath());
         try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
-            DataContext dataContext = outputDatastoreConnection.getDataContext();
+            final DataContext dataContext = outputDatastoreConnection.getDataContext();
             try (DataSet dataSet = dataContext.query().from("foo").selectAll().execute()) {
                 while (dataSet.next()) {
-                    Row row = dataSet.getRow();
-                    Integer idValue = Integer.parseInt((String) row.getValue(1));
+                    final Row row = dataSet.getRow();
+                    final Integer idValue = Integer.parseInt((String) row.getValue(1));
                     resultIds.add(idValue);
                 }
             }
@@ -202,16 +203,16 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
     public void testSortLexicographic() throws Exception {
         final String filename = "target/exceltest-sortlexicographic.xlsx";
 
-        CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+        final CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
-        final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
+        final InputColumn<String> testColumn = new MockInputColumn<>("TestColumn");
         // Point of focus: MockInputColumn is of type String, so it should be sorted alphabetically
-        final InputColumn<String> idColumn = new MockInputColumn<String>("IdToSort", String.class);
+        final InputColumn<String> idColumn = new MockInputColumn<>("IdToSort", String.class);
 
         generatedFile = new File(filename);
         analyzer.file = generatedFile;
         assertNotNull(analyzer.file);
-        
+
         analyzer.sheetName = "foo";
 
         analyzer.columns = new InputColumn<?>[2];
@@ -221,10 +222,10 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         analyzer.columnToBeSortedOn = idColumn;
 
         analyzer.validate();
-        
+
         analyzer.init();
 
-        InputRow[] rows = new InputRow[13];
+        final InputRow[] rows = new InputRow[13];
         rows[0] = new MockInputRow().put(testColumn, "row00").put(idColumn, 7);
         rows[1] = new MockInputRow().put(testColumn, "row01").put(idColumn, 9);
         rows[2] = new MockInputRow().put(testColumn, "row02").put(idColumn, 2);
@@ -246,13 +247,14 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         analyzer.getResult();
 
         final List<Integer> resultIds = new ArrayList<>(13);
-        ExcelDatastore outputDatastore = new ExcelDatastore(filename, new FileResource(analyzer.file), analyzer.file.getAbsolutePath());
+        final ExcelDatastore outputDatastore =
+                new ExcelDatastore(filename, new FileResource(analyzer.file), analyzer.file.getAbsolutePath());
         try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
-            DataContext dataContext = outputDatastoreConnection.getDataContext();
+            final DataContext dataContext = outputDatastoreConnection.getDataContext();
             try (DataSet dataSet = dataContext.query().from("foo").selectAll().execute()) {
                 while (dataSet.next()) {
-                    Row row = dataSet.getRow();
-                    Integer idValue = Integer.parseInt((String) row.getValue(1));
+                    final Row row = dataSet.getRow();
+                    final Integer idValue = Integer.parseInt((String) row.getValue(1));
                     resultIds.add(idValue);
                 }
             }
@@ -260,22 +262,22 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
         assertEquals("[0, 1, 10, 11, 12, 2, 3, 4, 5, 6, 7, 8, 9]", resultIds.toString());
     }
-    
+
     @Test
     public void testSortLexicographicCaseSensitivity() throws Exception {
         final String filename = "target/exceltest-sortlexicographiccasesensitivity.xlsx";
 
-        CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+        final CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
-        final InputColumn<String> sortColumn = new MockInputColumn<String>("SortColumn");
-        final InputColumn<String> someColumn = new MockInputColumn<String>("SomeColumn", String.class);
-        
+        final InputColumn<String> sortColumn = new MockInputColumn<>("SortColumn");
+        final InputColumn<String> someColumn = new MockInputColumn<>("SomeColumn", String.class);
+
         generatedFile = new File(filename);
         analyzer.file = generatedFile;
         assertNotNull(analyzer.file);
-        
+
         analyzer.sheetName = "foo";
-        
+
         assertNotNull(analyzer.file);
 
         analyzer.columns = new InputColumn<?>[2];
@@ -285,10 +287,10 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         analyzer.columnToBeSortedOn = sortColumn;
 
         analyzer.validate();
-        
+
         analyzer.init();
 
-        InputRow[] rows = new InputRow[8];
+        final InputRow[] rows = new InputRow[8];
         rows[0] = new MockInputRow().put(sortColumn, "Claudia").put(someColumn, 1);
         rows[1] = new MockInputRow().put(sortColumn, "Dennis").put(someColumn, 2);
         rows[2] = new MockInputRow().put(sortColumn, "Kasper").put(someColumn, 3);
@@ -305,13 +307,14 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         analyzer.getResult();
 
         final List<String> resultIds = new ArrayList<>(13);
-        ExcelDatastore outputDatastore = new ExcelDatastore(filename, new FileResource(analyzer.file), analyzer.file.getAbsolutePath());
+        final ExcelDatastore outputDatastore =
+                new ExcelDatastore(filename, new FileResource(analyzer.file), analyzer.file.getAbsolutePath());
         try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
-            DataContext dataContext = outputDatastoreConnection.getDataContext();
+            final DataContext dataContext = outputDatastoreConnection.getDataContext();
             try (DataSet dataSet = dataContext.query().from("foo").selectAll().execute()) {
                 while (dataSet.next()) {
-                    Row row = dataSet.getRow();
-                    String value = (String) row.getValue(0);
+                    final Row row = dataSet.getRow();
+                    final String value = (String) row.getValue(0);
                     resultIds.add(value);
                 }
             }
@@ -319,34 +322,34 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
         assertEquals("[Claudia, claudia, Dennis, dennis, Kasper, kasper, Tomasz, tomasz]", resultIds.toString());
     }
-    
+
     @Test
     public void testCustomColumnHeaders() throws Exception {
         final String filename = "target/exceltest-customcolumnheaders.xlsx";
 
-        CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+        final CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
-        final InputColumn<String> stringColumn = new MockInputColumn<String>("StringColumn");
-        final InputColumn<Integer> integerColumn = new MockInputColumn<Integer>("IntegerColumn");
+        final InputColumn<String> stringColumn = new MockInputColumn<>("StringColumn");
+        final InputColumn<Integer> integerColumn = new MockInputColumn<>("IntegerColumn");
 
         generatedFile = new File(filename);
         analyzer.file = generatedFile;
         analyzer.initTempFile();
         assertNotNull(analyzer.file);
-        
+
         analyzer.sheetName = "foo";
 
         analyzer.columns = new InputColumn<?>[2];
         analyzer.columns[0] = stringColumn;
         analyzer.columns[1] = integerColumn;
-        
+
         analyzer.fields = new String[2];
         analyzer.fields[0] = "CustomNameForStringColumn";
         analyzer.fields[1] = "CustomNameForIntegerColumn";
 
         analyzer.init();
 
-        InputRow[] rows = new InputRow[13];
+        final InputRow[] rows = new InputRow[13];
         rows[0] = new MockInputRow().put(stringColumn, "row00").put(integerColumn, 7);
         rows[1] = new MockInputRow().put(stringColumn, "row01").put(integerColumn, 9);
         rows[2] = new MockInputRow().put(stringColumn, "row02").put(integerColumn, 2);
@@ -367,13 +370,16 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
         analyzer.getResult();
 
-        ExcelDatastore outputDatastore = new ExcelDatastore(filename, new FileResource(analyzer.file), analyzer.file.getAbsolutePath());
+        final ExcelDatastore outputDatastore =
+                new ExcelDatastore(filename, new FileResource(analyzer.file), analyzer.file.getAbsolutePath());
         try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
-            String[] columnNames = outputDatastoreConnection.getSchemaNavigator().getDefaultSchema().getTableByName(analyzer.sheetName).getColumnNames();
+            final String[] columnNames =
+                    outputDatastoreConnection.getSchemaNavigator().getDefaultSchema().getTableByName(analyzer.sheetName)
+                            .getColumnNames();
             assertEquals(2, columnNames.length);
             assertEquals("CustomNameForStringColumn", columnNames[0]);
             assertEquals("CustomNameForIntegerColumn", columnNames[1]);
         }
     }
-    
+
 }

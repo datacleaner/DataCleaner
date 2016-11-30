@@ -39,16 +39,16 @@ import org.datacleaner.util.http.MonitorHttpClient;
  * retrieve the tenant name {@link getUserInfoUrl} .
  */
 public class DataHubRepoConnection {
-    private final static String DATASTORES_PATH = "/datastores";
-    private final static String CONTEXT_PATH = "/ui";
-    private final static String REPOSITORY_PATH = "/repository";
-    private final static String SCHEMA_EXTENSION = ".schemas";
-    private final static String QUERY_EXTENSION = ".query?";
-    private final static String USERINFO_PATH = "/_user";
+    private static final String DATASTORES_PATH = "/datastores";
+    private static final String CONTEXT_PATH = "/ui";
+    private static final String REPOSITORY_PATH = "/repository";
+    private static final String SCHEMA_EXTENSION = ".schemas";
+    private static final String QUERY_EXTENSION = ".query?";
+    private static final String USERINFO_PATH = "/_user";
 
     DataHubConnection _connection;
 
-    public DataHubRepoConnection(DataHubConnection connection) {
+    public DataHubRepoConnection(final DataHubConnection connection) {
         _connection = connection;
     }
 
@@ -62,12 +62,12 @@ public class DataHubRepoConnection {
     }
 
     private String getContextUrl() {
-        URIBuilder uriBuilder = _connection.getBaseUrlBuilder();
+        final URIBuilder uriBuilder = _connection.getBaseUrlBuilder();
         appendToPath(uriBuilder, CONTEXT_PATH);
 
         try {
             return uriBuilder.build().toString();
-        } catch (URISyntaxException uriSyntaxException) {
+        } catch (final URISyntaxException uriSyntaxException) {
             throw new IllegalStateException(uriSyntaxException);
         }
     }
@@ -75,14 +75,14 @@ public class DataHubRepoConnection {
     /**
      * Returns the URL to a service to retrieve the user and tenant name of the
      * user.
-     * 
+     *
      * @return URL to REST service.
      */
     public String getUserInfoUrl() {
         return getContextUrl() + REPOSITORY_PATH + USERINFO_PATH;
     }
 
-    private URIBuilder appendToPath(URIBuilder uriBuilder, String pathSegment) {
+    private URIBuilder appendToPath(final URIBuilder uriBuilder, final String pathSegment) {
         if (uriBuilder.getPath() != null) {
             uriBuilder.setPath(uriBuilder.getPath() + pathSegment);
         }
@@ -93,53 +93,51 @@ public class DataHubRepoConnection {
     /**
      * Returns the schema of a specific datastore, including column
      * descriptions, key information.
-     * 
+     *
      * @param tenantName
      *            The tenant
      * @param datastoreName
      *            The datastore name.
      * @return URL to REST service
      */
-    public String getSchemaUrl(String tenantName, String datastoreName) {
-        final String uri = getRepoUrlWithTenant(tenantName) + DATASTORES_PATH + "/"
-                + urlPathSegmentEscaper().escape(datastoreName) + SCHEMA_EXTENSION;
-        return uri;
+    public String getSchemaUrl(final String tenantName, final String datastoreName) {
+        return getRepoUrlWithTenant(tenantName) + DATASTORES_PATH + "/" + urlPathSegmentEscaper().escape(datastoreName)
+                + SCHEMA_EXTENSION;
     }
 
     /**
      * Returns the URL to retrieve the datastore schemas
-     * 
+     *
      * @param tenantName
      *            The tenant name
      * @return URL to REST service
      */
-    public String getDatastoreUrl(String tenantName) {
-        String uri = getRepoUrlWithTenant(tenantName) + DATASTORES_PATH;
-        return uri;
+    public String getDatastoreUrl(final String tenantName) {
+        return getRepoUrlWithTenant(tenantName) + DATASTORES_PATH;
     }
 
     /**
      * Returns the URL to execute queries on the given datastore.
-     * 
+     *
      * @param tenantName
      *            The tenant name
      * @param datastoreName
      *            The datastore name
      * @return URL to REST service
      */
-    public String getQueryUrl(String tenantName, String datastoreName) {
+    public String getQueryUrl(final String tenantName, final String datastoreName) {
         return getRepoUrlWithTenant(tenantName) + DATASTORES_PATH + "/" + urlPathSegmentEscaper().escape(datastoreName)
                 + QUERY_EXTENSION;
     }
 
-    private String getRepoUrlWithTenant(String tenantName) {
+    private String getRepoUrlWithTenant(final String tenantName) {
         return getContextUrl() + REPOSITORY_PATH + "/" + urlPathSegmentEscaper().escape(tenantName);
     }
 
     /**
      * Returns the base URL of the DataCleaner monitor, e.g.
-     * <code>http://<base-url>/repository</code>.
-     * 
+     * <code>http://&lt;base-url&gt;/repository</code>.
+     *
      * @return
      */
     public String getRepoUrl() {

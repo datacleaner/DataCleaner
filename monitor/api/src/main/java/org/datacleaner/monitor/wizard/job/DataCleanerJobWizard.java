@@ -25,17 +25,17 @@ package org.datacleaner.monitor.wizard.job;
 public abstract class DataCleanerJobWizard implements JobWizard {
 
     @Override
-    public final DataCleanerJobWizardSession start(JobWizardContext context) {
+    public final DataCleanerJobWizardSession start(final JobWizardContext context) {
         return startInternal(context);
     }
-    
+
     @Override
     public final boolean isDatastoreConsumer() {
         return true;
     }
-    
+
     @Override
-    public boolean isApplicableTo(JobWizardContext context) {
+    public boolean isApplicableTo(final JobWizardContext context) {
         return true;
     }
 

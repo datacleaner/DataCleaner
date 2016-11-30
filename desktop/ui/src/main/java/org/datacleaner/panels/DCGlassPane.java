@@ -23,8 +23,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -38,79 +36,74 @@ import org.datacleaner.util.WidgetUtils;
  * Encapsulated Swing glass pane, ensures correct access to it.
  */
 public class DCGlassPane {
-	private final JRootPane _rootPane;
-	private final Container _glassPane;
-	
-	public DCGlassPane(JFrame frame) {
-	    this(frame.getRootPane());
-	}
+    private final JRootPane _rootPane;
+    private final Container _glassPane;
 
-	public DCGlassPane(JDialog dialog) {
-		this(dialog.getRootPane());
-	}
-	
-	public DCGlassPane(JRootPane rootpane){
-	    _rootPane = rootpane;
-	    _glassPane = (Container) rootpane.getGlassPane();
+    public DCGlassPane(final JFrame frame) {
+        this(frame.getRootPane());
+    }
+
+    public DCGlassPane(final JDialog dialog) {
+        this(dialog.getRootPane());
+    }
+
+    public DCGlassPane(final JRootPane rootpane) {
+        _rootPane = rootpane;
+        _glassPane = (Container) rootpane.getGlassPane();
         _glassPane.setLayout(null);
         _glassPane.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-	}
-	
-	public void showTooltip(final JComponent comp, int timeoutMillis) {
-		add(comp);
+    }
 
-		new Timer(timeoutMillis, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				remove(comp);
-			}
-		}).start();
-	}
+    public void showTooltip(final JComponent comp, final int timeoutMillis) {
+        add(comp);
 
-	public void add(JComponent comp) {
-		_glassPane.add(comp);
-		_glassPane.setVisible(true);
-	}
+        new Timer(timeoutMillis, e -> remove(comp)).start();
+    }
 
-	public void remove(JComponent comp) {
-		Component[] components = _glassPane.getComponents();
-		for (int i = 0; i < components.length; i++) {
-			Component component = components[i];
-			if (component.equals(comp)) {
-				_glassPane.remove(i);
-				break;
-			}
-		}
-		if (_glassPane.getComponentCount() == 0) {
-			_glassPane.setVisible(false);
-		}
-	}
+    public void add(final JComponent comp) {
+        _glassPane.add(comp);
+        _glassPane.setVisible(true);
+    }
 
-	public Dimension getSize() {
-		return getContentPaneInternal().getSize();
-	}
+    public void remove(final JComponent comp) {
+        final Component[] components = _glassPane.getComponents();
+        for (int i = 0; i < components.length; i++) {
+            final Component component = components[i];
+            if (component.equals(comp)) {
+                _glassPane.remove(i);
+                break;
+            }
+        }
+        if (_glassPane.getComponentCount() == 0) {
+            _glassPane.setVisible(false);
+        }
+    }
 
-	public void addCentered(JComponent comp) {
-		Dimension compSize = comp.getSize();
-		Dimension totalSize = getSize();
-		int x = (totalSize.width - compSize.width) / 2;
-		int y = (totalSize.height - compSize.height) / 2;
-		comp.setLocation(x, y);
-		add(comp);
-	}
+    public Dimension getSize() {
+        return getContentPaneInternal().getSize();
+    }
 
-	private Container getContentPaneInternal() {
-	    return _rootPane.getContentPane();
-	}
+    public void addCentered(final JComponent comp) {
+        final Dimension compSize = comp.getSize();
+        final Dimension totalSize = getSize();
+        final int x = (totalSize.width - compSize.width) / 2;
+        final int y = (totalSize.height - compSize.height) / 2;
+        comp.setLocation(x, y);
+        add(comp);
+    }
 
-	public boolean isEmpty() {
-		return _glassPane.getComponentCount() == 0;
-	}
+    private Container getContentPaneInternal() {
+        return _rootPane.getContentPane();
+    }
 
-	public Point getLocationOnScreen() {
-		Point contentPaneLocation = getContentPaneInternal().getLocationOnScreen();
-		int x = contentPaneLocation.x;
-		int y = contentPaneLocation.y;
-		return new Point(x, y);
-	}
+    public boolean isEmpty() {
+        return _glassPane.getComponentCount() == 0;
+    }
+
+    public Point getLocationOnScreen() {
+        final Point contentPaneLocation = getContentPaneInternal().getLocationOnScreen();
+        final int x = contentPaneLocation.x;
+        final int y = contentPaneLocation.y;
+        return new Point(x, y);
+    }
 }

@@ -19,13 +19,13 @@
  */
 package org.datacleaner.sample;
 
+import org.apache.metamodel.DataContext;
 import org.datacleaner.api.Configured;
 import org.datacleaner.connection.DatastoreConnectionImpl;
 import org.datacleaner.connection.PerformanceCharacteristics;
 import org.datacleaner.connection.PerformanceCharacteristicsImpl;
 import org.datacleaner.connection.UsageAwareDatastore;
 import org.datacleaner.connection.UsageAwareDatastoreConnection;
-import org.apache.metamodel.DataContext;
 
 public class SampleDatastore extends UsageAwareDatastore<DataContext> {
 
@@ -50,8 +50,8 @@ public class SampleDatastore extends UsageAwareDatastore<DataContext> {
 
     @Override
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
-        DataContext dataContext = new SampleDataContext();
-        return new DatastoreConnectionImpl<DataContext>(dataContext, this);
+        final DataContext dataContext = new SampleDataContext();
+        return new DatastoreConnectionImpl<>(dataContext, this);
     }
 
 }

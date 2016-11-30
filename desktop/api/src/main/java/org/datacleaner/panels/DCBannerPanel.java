@@ -56,19 +56,19 @@ public class DCBannerPanel extends JPanel {
         this((String) null);
     }
 
-    public DCBannerPanel(String title) {
+    public DCBannerPanel(final String title) {
         this(DEFAULT_LEFT_IMAGE, title);
     }
 
-    public DCBannerPanel(Image bannerImage) {
+    public DCBannerPanel(final Image bannerImage) {
         this(bannerImage, null);
     }
 
-    public DCBannerPanel(Image bannerImage, String title) {
+    public DCBannerPanel(final Image bannerImage, final String title) {
         this(bannerImage, DEFAULT_BG_IMAGE, DEFAULT_RIGHT_IMAGE, title);
     }
 
-    public DCBannerPanel(Image leftImage, Image bgImage, Image rightImage, String title) {
+    public DCBannerPanel(final Image leftImage, final Image bgImage, final Image rightImage, final String title) {
         _leftImage = leftImage;
         _bgImage = bgImage;
         _rightImage = rightImage;
@@ -76,7 +76,7 @@ public class DCBannerPanel extends JPanel {
             _title1 = null;
             _title2 = null;
         } else {
-            int linebreak = title.indexOf('\n');
+            final int linebreak = title.indexOf('\n');
             if (linebreak == -1) {
                 _title1 = title;
                 _title2 = null;
@@ -105,7 +105,7 @@ public class DCBannerPanel extends JPanel {
         return _title2;
     }
 
-    public void setTitle2(String title2) {
+    public void setTitle2(final String title2) {
         _title2 = title2;
     }
 
@@ -125,12 +125,11 @@ public class DCBannerPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        Dimension dimension = new Dimension(400, getHeight());
-        return dimension;
+        return new Dimension(400, getHeight());
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(final Graphics g) {
         final int x = getX();
         final int y = 0;
         final int w = getWidth();
@@ -143,12 +142,12 @@ public class DCBannerPanel extends JPanel {
 
         if (_leftImage != null) {
             final int imageHeight = _leftImage.getHeight(this);
-            int imageY = (getHeight() - imageHeight) / 2;
+            final int imageY = (getHeight() - imageHeight) / 2;
             g.drawImage(_leftImage, x + 5, imageY, this);
         }
 
         if (_rightImage != null) {
-            int rightImageWidth = _rightImage.getWidth(this);
+            final int rightImageWidth = _rightImage.getWidth(this);
             g.drawImage(_rightImage, x + w - rightImageWidth, y, this);
         }
 

@@ -59,29 +59,8 @@ public class ParseJsonTransformer implements Transformer {
 
     }
 
-    public ParseJsonTransformer(InputColumn<String> json) {
+    public ParseJsonTransformer(final InputColumn<String> json) {
         this.json = json;
-    }
-
-    @Initialize
-    public void init() {
-        this.mapper = new ObjectMapper();
-        this.reader = mapper.reader().withType(dataType);
-    }
-
-    @Override
-    public OutputColumns getOutputColumns() {
-        String[] names = new String[] { json.getName() + " (as Map)" };
-        Class<?>[] types = new Class[] { dataType };
-        return new OutputColumns(names, types);
-    }
-
-    @Override
-    public Object[] transform(InputRow inputRow) {
-        final String jsonString = inputRow.getValue(json);
-        final Object result = parse(jsonString, dataType, reader);
-
-        return new Object[] { result };
     }
 
     public static <E> E parse(final String jsonString, final Class<E> dataType, final ObjectMapper objectMapper) {
@@ -93,14 +72,14 @@ public class ParseJsonTransformer implements Transformer {
         return parse(jsonString, dataType, reader);
     }
 
-    public static <E> E parse(final String jsonString, final Class<E> dataType, ObjectReader reader) {
+    public static <E> E parse(final String jsonString, final Class<E> dataType, final ObjectReader reader) {
         if (StringUtils.isNullOrEmpty(jsonString)) {
             return null;
         }
 
         try {
             return reader.readValue(jsonString);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -108,11 +87,32 @@ public class ParseJsonTransformer implements Transformer {
         }
     }
 
-    public void setDataType(Class<?> dataType) {
+    @Initialize
+    public void init() {
+        this.mapper = new ObjectMapper();
+        this.reader = mapper.reader().withType(dataType);
+    }
+
+    @Override
+    public OutputColumns getOutputColumns() {
+        final String[] names = new String[] { json.getName() + " (as Map)" };
+        final Class<?>[] types = new Class[] { dataType };
+        return new OutputColumns(names, types);
+    }
+
+    @Override
+    public Object[] transform(final InputRow inputRow) {
+        final String jsonString = inputRow.getValue(json);
+        final Object result = parse(jsonString, dataType, reader);
+
+        return new Object[] { result };
+    }
+
+    public void setDataType(final Class<?> dataType) {
         this.dataType = dataType;
     }
 
-    public void setJson(InputColumn<String> json) {
+    public void setJson(final InputColumn<String> json) {
         this.json = json;
     }
 }

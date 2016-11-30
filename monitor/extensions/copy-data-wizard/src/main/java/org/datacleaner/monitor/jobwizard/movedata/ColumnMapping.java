@@ -29,7 +29,7 @@ final class ColumnMapping {
     private final Column _sourceColumn;
     private final Column _targetColumn;
 
-    public ColumnMapping(Column sourceColumn, Column targetColumn) {
+    public ColumnMapping(final Column sourceColumn, final Column targetColumn) {
         _sourceColumn = sourceColumn;
         _targetColumn = targetColumn;
     }

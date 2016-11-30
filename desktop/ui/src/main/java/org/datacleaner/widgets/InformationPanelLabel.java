@@ -41,7 +41,7 @@ public class InformationPanelLabel extends JLabel {
     private final RightInformationPanel _rightPanel;
     private final String _labelName;
 
-    public InformationPanelLabel(RightInformationPanel rightPanel, InformationPanelDescriptor labelPanel) {
+    public InformationPanelLabel(final RightInformationPanel rightPanel, final InformationPanelDescriptor labelPanel) {
         super(labelPanel.getLabelText());
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
@@ -50,13 +50,13 @@ public class InformationPanelLabel extends JLabel {
         final JComponent createInformationComponent = labelPanel.createInformationComponent(null);
         _rightPanel.addTabToPane(_labelName, createInformationComponent);
 
-        final ImageIcon imageIcon = ImageManager.get().getImageIcon(labelPanel.getLabelImagePath(),
-                IconUtils.ICON_SIZE_SMALL);
+        final ImageIcon imageIcon =
+                ImageManager.get().getImageIcon(labelPanel.getLabelImagePath(), IconUtils.ICON_SIZE_SMALL);
         setIcon(imageIcon);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(final MouseEvent e) {
                 onMouseClick();
             }
         });

@@ -26,7 +26,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
@@ -42,7 +41,6 @@ import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.MutableRef;
@@ -64,11 +62,12 @@ public class ApplicationDriver {
     private final String _jarDirectoryPath;
     private final String _sparkHome;
 
-    public ApplicationDriver(URI uri, String jarDirectoryPath) throws IOException {
+    public ApplicationDriver(final URI uri, final String jarDirectoryPath) throws IOException {
         this(uri, jarDirectoryPath, determineSparkHome());
     }
 
-    public ApplicationDriver(URI defaultFs, String jarDirectoryPath, String sparkHome) throws IOException {
+    public ApplicationDriver(final URI defaultFs, final String jarDirectoryPath, final String sparkHome)
+            throws IOException {
         _defaultFs = defaultFs;
         _fileSystem = (DistributedFileSystem) FileSystem.newInstance(_defaultFs, new Configuration());
         _jarDirectoryPath = jarDirectoryPath;
@@ -101,7 +100,7 @@ public class ApplicationDriver {
      * @return the exit code of the spark-submit process
      * @throws Exception
      */
-    public int launch(String configurationHdfsPath, String jobHdfsPath) throws Exception {
+    public int launch(final String configurationHdfsPath, final String jobHdfsPath) throws Exception {
         // create hadoop configuration directory
         final File hadoopConfDir = createTemporaryHadoopConfDir();
 
@@ -111,7 +110,7 @@ public class ApplicationDriver {
         return launch(sparkLauncher);
     }
 
-    public int launch(SparkLauncher sparkLauncher) throws Exception {
+    public int launch(final SparkLauncher sparkLauncher) throws Exception {
         final Process process = launchProcess(sparkLauncher);
 
         return process.waitFor();
@@ -131,34 +130,32 @@ public class ApplicationDriver {
     private void startLogger(final InputStream stream) {
         new Thread() {
             public void run() {
-                try (final BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
                     String line = br.readLine();
                     while (line != null) {
                         logger.info(line);
                         line = br.readLine();
                     }
                     br.close();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.warn("Logger thread failure: " + e.getMessage(), e);
                 }
             }
         }.start();
     }
 
-    public HdfsResource createResource(String hdfsPath) {
+    public HdfsResource createResource(final String hdfsPath) {
         return new HdfsResource(_defaultFs.resolve(hdfsPath).toString());
     }
 
-    public SparkLauncher createSparkLauncher(File hadoopConfDir, URI configurationHdfsUri, URI jobHdfsUri,
-            URI resultHdfsUri)
-            throws Exception {
+    public SparkLauncher createSparkLauncher(final File hadoopConfDir, final URI configurationHdfsUri,
+            final URI jobHdfsUri, final URI resultHdfsUri) throws Exception {
         return createSparkLauncher(hadoopConfDir, configurationHdfsUri.toString(), jobHdfsUri.toString(),
                 resultHdfsUri == null ? null : resultHdfsUri.toString());
     }
 
-    public SparkLauncher createSparkLauncher(File hadoopConfDir, String configurationHdfsPath, String jobHdfsPath,
-            String resultHdfsPath)
-            throws Exception {
+    public SparkLauncher createSparkLauncher(final File hadoopConfDir, final String configurationHdfsPath,
+            final String jobHdfsPath, final String resultHdfsPath) throws Exception {
         // mimic env. variables
         final Map<String, String> env = new HashMap<>();
         env.put("HADOOP_CONF_DIR", hadoopConfDir.getAbsolutePath());
@@ -188,19 +185,19 @@ public class ApplicationDriver {
         sparkLauncher.addAppArgs(toHadoopPath(jobHdfsPath));
 
         if (!StringUtils.isNullOrEmpty(resultHdfsPath)) {
-            Properties properties = new Properties();
+            final Properties properties = new Properties();
             properties.setProperty("datacleaner.result.hdfs.path", resultHdfsPath);
-            File tempFile = File.createTempFile("job-", ".properties");
+            final File tempFile = File.createTempFile("job-", ".properties");
             properties.store(new FileWriter(tempFile), "DataCleaner Spark runner properties");
-            final URI uri = copyFileToHdfs(tempFile, _fileSystem.getHomeDirectory().toUri().resolve("temp/" + tempFile
-                    .getName()).toString());
+            final URI uri = copyFileToHdfs(tempFile,
+                    _fileSystem.getHomeDirectory().toUri().resolve("temp/" + tempFile.getName()).toString());
             sparkLauncher.addAppArgs(uri.toString());
         }
 
         return sparkLauncher;
     }
 
-    private String toHadoopPath(String path) {
+    private String toHadoopPath(final String path) {
         if (URI.create(path).getScheme() != null) {
             return path;
         }
@@ -208,39 +205,40 @@ public class ApplicationDriver {
         return _defaultFs.resolve(path).toString();
     }
 
-    private List<String> buildJarFiles(MutableRef<String> primaryJarRef) throws IOException {
+    private List<String> buildJarFiles(final MutableRef<String> primaryJarRef) throws IOException {
         final List<String> list = new ArrayList<>();
 
-            final Path directoryPath = new Path(_jarDirectoryPath);
-            final RemoteIterator<LocatedFileStatus> files = _fileSystem.listFiles(directoryPath, false);
-            while (files.hasNext()) {
-                final LocatedFileStatus file = files.next();
-                final Path path = file.getPath();
-                final String filename = path.getName();
-                boolean primaryJar = false;
-                for (String prefix : PRIMARY_JAR_FILENAME_PREFIXES) {
-                    if (filename.startsWith(prefix)) {
-                        primaryJarRef.set(path.toString());
-                        primaryJar = true;
-                        break;
-                    }
-                }
-                if (!primaryJar) {
-                    list.add(path.toString());
+        final Path directoryPath = new Path(_jarDirectoryPath);
+        final RemoteIterator<LocatedFileStatus> files = _fileSystem.listFiles(directoryPath, false);
+        while (files.hasNext()) {
+            final LocatedFileStatus file = files.next();
+            final Path path = file.getPath();
+            final String filename = path.getName();
+            boolean primaryJar = false;
+            for (final String prefix : PRIMARY_JAR_FILENAME_PREFIXES) {
+                if (filename.startsWith(prefix)) {
+                    primaryJarRef.set(path.toString());
+                    primaryJar = true;
+                    break;
                 }
             }
+            if (!primaryJar) {
+                list.add(path.toString());
+            }
+        }
 
         if (primaryJarRef.get() == null) {
-            throw new IllegalArgumentException("Failed to find primary jar (starting with '"
-                    + PRIMARY_JAR_FILENAME_PREFIXES[0] + "') in JAR file directory: " + _jarDirectoryPath);
+            throw new IllegalArgumentException(
+                    "Failed to find primary jar (starting with '" + PRIMARY_JAR_FILENAME_PREFIXES[0]
+                            + "') in JAR file directory: " + _jarDirectoryPath);
         }
 
         return list;
     }
 
     public File createTemporaryHadoopConfDir() throws IOException {
-        final File hadoopConfDir = new File(FileHelper.getTempDir(), "datacleaner_hadoop_conf_"
-                + UUID.randomUUID().toString());
+        final File hadoopConfDir =
+                new File(FileHelper.getTempDir(), "datacleaner_hadoop_conf_" + UUID.randomUUID().toString());
         final boolean dirCreated = hadoopConfDir.mkdirs();
         assert dirCreated;
 
@@ -252,12 +250,12 @@ public class ApplicationDriver {
         return hadoopConfDir;
     }
 
-    private void createTemporaryHadoopConfFile(File hadoopConfDir, String filename, String templateName)
-            throws IOException {
+    private void createTemporaryHadoopConfFile(final File hadoopConfDir, final String filename,
+            final String templateName) throws IOException {
         final File coreSiteFile = new File(hadoopConfDir, filename);
-        try (final InputStream inputStream = getClass().getResourceAsStream(templateName)) {
+        try (InputStream inputStream = getClass().getResourceAsStream(templateName)) {
             final BufferedReader reader = FileHelper.getBufferedReader(inputStream, FileHelper.UTF_8_ENCODING);
-            try (final Writer writer = FileHelper.getWriter(coreSiteFile)) {
+            try (Writer writer = FileHelper.getWriter(coreSiteFile)) {
                 String line = reader.readLine();
                 while (line != null) {
                     line = StringUtils.replaceAll(line, "${HDFS_HOSTNAME}", _defaultFs.getHost());
@@ -271,7 +269,7 @@ public class ApplicationDriver {
         }
     }
 
-    public URI copyFileToHdfs(File file, String hdfsPath) {
+    public URI copyFileToHdfs(final File file, final String hdfsPath) {
         return copyFileToHdfs(file, hdfsPath, true);
     }
 
@@ -291,13 +289,10 @@ public class ApplicationDriver {
             logger.debug("Copying file to HDFS: {}", hdfsPath);
         }
 
-        hdfsResource.write(new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                final FileInputStream in = new FileInputStream(file);
-                FileHelper.copy(in, out);
-                in.close();
-            }
+        hdfsResource.write(out -> {
+            final FileInputStream in = new FileInputStream(file);
+            FileHelper.copy(in, out);
+            in.close();
         });
 
         return uri;

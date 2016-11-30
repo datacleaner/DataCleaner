@@ -67,18 +67,18 @@ public class JobDeletionController {
 
         final JobContext job = tenantContext.getJob(jobName);
 
-        RepositoryFile file = job.getJobFile();
+        final RepositoryFile file = job.getJobFile();
         file.delete();
-        
-        final RepositoryFile scheduleFile = tenantContext.getJobFolder().getFile(
-                jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
+
+        final RepositoryFile scheduleFile =
+                tenantContext.getJobFolder().getFile(jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
         if (scheduleFile != null) {
             scheduleFile.delete();
         }
 
         _eventPublisher.publishEvent(new JobDeletionEvent(this, tenant, jobName));
 
-        final Map<String, String> response = new TreeMap<String, String>();
+        final Map<String, String> response = new TreeMap<>();
         response.put("job", jobName);
         response.put("action", "delete");
         logger.debug("Response payload: {}", response);

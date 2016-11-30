@@ -34,11 +34,11 @@ import org.w3c.dom.Element;
 
 final class RegexSwapStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
 
+    private final RegexSwapClient _client;
     private String _category;
     private String _name;
-    private final RegexSwapClient _client;
 
-    public RegexSwapStringPatternReferenceDataWizardSession(ReferenceDataWizardContext context) {
+    public RegexSwapStringPatternReferenceDataWizardSession(final ReferenceDataWizardContext context) {
         super(context);
         _client = new RegexSwapClient(HttpClients.createSystem());
     }

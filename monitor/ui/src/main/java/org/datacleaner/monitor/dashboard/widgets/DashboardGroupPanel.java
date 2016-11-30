@@ -51,8 +51,8 @@ public class DashboardGroupPanel extends FlowPanel {
     private final boolean _isDashboardEditor;
     private int _dashboardWidgetCount;
 
-    public DashboardGroupPanel(DashboardServiceAsync service, TenantIdentifier tenant, DashboardGroup group,
-            boolean isDashboardEditor, boolean displayInfomercial) {
+    public DashboardGroupPanel(final DashboardServiceAsync service, final TenantIdentifier tenant, DashboardGroup group,
+            final boolean isDashboardEditor, final boolean displayInfomercial) {
         super();
         _tenant = tenant;
         _service = service;
@@ -66,12 +66,12 @@ public class DashboardGroupPanel extends FlowPanel {
         _removeGroupButton.setVisible(false);
         _removeGroupButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 final boolean confirmation = Window.confirm("Are you sure you wish to remove this group?");
                 if (confirmation) {
                     _service.removeDashboardGroup(_tenant, _group, new DCAsyncCallback<Boolean>() {
                         @Override
-                        public void onSuccess(Boolean result) {
+                        public void onSuccess(final Boolean result) {
                             if (result != null && result.booleanValue()) {
                                 Window.Location.reload();
                             } else {
@@ -102,7 +102,7 @@ public class DashboardGroupPanel extends FlowPanel {
 
             _welcomePanel = null;
             newTimelineButton = DCButtons.defaultButton("glyphicon-plus", "New timeline chart");
-            
+
             final ButtonPanel buttonPanel = new ButtonPanel(false);
             buttonPanel.add(newTimelineButton);
             buttonPanel.add(_removeGroupButton);
@@ -114,8 +114,8 @@ public class DashboardGroupPanel extends FlowPanel {
 
         _service.getTimelines(_tenant, _group, new DCAsyncCallback<List<TimelineIdentifier>>() {
             @Override
-            public void onSuccess(List<TimelineIdentifier> result) {
-                for (TimelineIdentifier identifier : result) {
+            public void onSuccess(final List<TimelineIdentifier> result) {
+                for (final TimelineIdentifier identifier : result) {
                     addTimelinePanel(identifier);
                 }
 
@@ -126,12 +126,12 @@ public class DashboardGroupPanel extends FlowPanel {
         });
     }
 
-    public void addTimelinePanel(TimelineIdentifier identifier) {
+    public void addTimelinePanel(final TimelineIdentifier identifier) {
         final TimelinePanel timelinePanel = new TimelinePanel(_tenant, _service, identifier, this, _isDashboardEditor);
         addTimelinePanel(timelinePanel);
     }
 
-    public void addTimelinePanel(TimelinePanel timelinePanel) {
+    public void addTimelinePanel(final TimelinePanel timelinePanel) {
         add(timelinePanel);
         if (_welcomePanel != null) {
             _welcomePanel.setWelcomeTextVisible(false);
@@ -140,7 +140,7 @@ public class DashboardGroupPanel extends FlowPanel {
         _removeGroupButton.setVisible(false);
     }
 
-    public void removeTimelinePanel(TimelinePanel timelinePanel) {
+    public void removeTimelinePanel(final TimelinePanel timelinePanel) {
         remove(timelinePanel);
         _dashboardWidgetCount--;
         if (_dashboardWidgetCount == 0) {

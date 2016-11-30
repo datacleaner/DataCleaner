@@ -30,7 +30,7 @@ import org.datacleaner.result.ListResult;
 public class MockResultReducerThatWillFail implements AnalyzerResultReducer<ListResult<?>> {
 
     @Override
-    public ListResult<?> reduce(Collection<? extends ListResult<?>> arg0) {
+    public ListResult<?> reduce(final Collection<? extends ListResult<?>> arg0) {
         throw new UnsupportedOperationException("Damn, I failed during reduction phase");
     }
 

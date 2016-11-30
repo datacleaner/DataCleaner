@@ -19,8 +19,6 @@
  */
 package org.datacleaner.monitor.server.dao;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.monitor.configuration.TenantContext;
@@ -31,18 +29,21 @@ import org.datacleaner.repository.file.FileRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import junit.framework.TestCase;
+
 public class DatastoreDaoImplTest extends TestCase {
 
     public void testRemoveDatastore() throws Exception {
-        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                "context/application-context.xml");
+        final ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("context/application-context.xml");
         final Repository repository = applicationContext.getBean(FileRepository.class);
 
-        final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), new DefaultJobEngineManager(applicationContext));
-        DatastoreDao dao = new DatastoreDaoImpl();
+        final TenantContextFactoryImpl tenantContextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
+                        new DefaultJobEngineManager(applicationContext));
+        final DatastoreDao dao = new DatastoreDaoImpl();
 
-        TenantContext tenantContext = tenantContextFactory.getContext("tenant1");
+        final TenantContext tenantContext = tenantContextFactory.getContext("tenant1");
 
         Datastore orderdb = tenantContext.getConfiguration().getDatastoreCatalog().getDatastore("orderdb");
         assertNotNull(orderdb);

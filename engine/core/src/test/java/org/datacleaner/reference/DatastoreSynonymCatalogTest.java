@@ -37,11 +37,11 @@ public class DatastoreSynonymCatalogTest {
 
     @Before
     public void createCsvDataStore() {
-        final CsvDatastore csvDatastore = new CsvDatastore("region datastore",
-                "src/test/resources/datastore-synonym-countries.csv");
+        final CsvDatastore csvDatastore =
+                new CsvDatastore("region datastore", "src/test/resources/datastore-synonym-countries.csv");
         final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(csvDatastore);
-        _synonymCatalog = new DatastoreSynonymCatalog("my synonym catalog", "region datastore", "region", new String[] {
-                "firstsynonym", "secondsynonym", "thirdsynonym" });
+        _synonymCatalog = new DatastoreSynonymCatalog("my synonym catalog", "region datastore", "region",
+                new String[] { "firstsynonym", "secondsynonym", "thirdsynonym" });
         _configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog);
     }
 

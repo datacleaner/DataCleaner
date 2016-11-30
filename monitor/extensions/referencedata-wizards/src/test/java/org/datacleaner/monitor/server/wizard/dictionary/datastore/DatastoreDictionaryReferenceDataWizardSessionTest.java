@@ -19,15 +19,15 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.datastore;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
 
 public class DatastoreDictionaryReferenceDataWizardSessionTest {
     @Test
     public void testFirstPageController() {
-        DatastoreDictionaryReferenceDataWizardSession session =
+        final DatastoreDictionaryReferenceDataWizardSession session =
                 new DatastoreDictionaryReferenceDataWizardSession(TestHelper.getReferenceDataWizardContextMock());
         assertNotNull(session.firstPageController());
     }

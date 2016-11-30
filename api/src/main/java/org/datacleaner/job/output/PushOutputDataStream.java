@@ -31,7 +31,7 @@ public class PushOutputDataStream implements OutputDataStream {
     private final String _name;
     private final Table _table;
 
-    public PushOutputDataStream(String name, Table table) {
+    public PushOutputDataStream(final String name, final Table table) {
         _name = name;
         _table = table;
     }
@@ -66,24 +66,31 @@ public class PushOutputDataStream implements OutputDataStream {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        PushOutputDataStream other = (PushOutputDataStream) obj;
+        }
+        final PushOutputDataStream other = (PushOutputDataStream) obj;
         if (_name == null) {
-            if (other._name != null)
+            if (other._name != null) {
                 return false;
-        } else if (!_name.equals(other._name))
+            }
+        } else if (!_name.equals(other._name)) {
             return false;
+        }
         if (_table == null) {
-            if (other._table != null)
+            if (other._table != null) {
                 return false;
-        } else if (!_table.equals(other._table))
+            }
+        } else if (!_table.equals(other._table)) {
             return false;
+        }
         return true;
     }
 

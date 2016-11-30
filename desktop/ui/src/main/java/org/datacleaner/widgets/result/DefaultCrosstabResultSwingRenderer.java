@@ -19,30 +19,31 @@
  */
 package org.datacleaner.widgets.result;
 
+import org.datacleaner.api.RendererBean;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
-import org.datacleaner.api.RendererBean;
-import org.datacleaner.bootstrap.WindowContext;
 
 @RendererBean(SwingRenderingFormat.class)
 public class DefaultCrosstabResultSwingRenderer extends AbstractCrosstabResultSwingRenderer<CrosstabResult> {
 
-	/**
-	 * Constructor used for programmatic composition
-	 * 
-	 * @param windowContext
-	 * @param rendererFactory 
-	 */
-	public DefaultCrosstabResultSwingRenderer(WindowContext windowContext, RendererFactory rendererFactory) {
-		super(windowContext, rendererFactory);
-	}
+    /**
+     * Constructor used for programmatic composition
+     *
+     * @param windowContext
+     * @param rendererFactory
+     */
+    public DefaultCrosstabResultSwingRenderer(final WindowContext windowContext,
+            final RendererFactory rendererFactory) {
+        super(windowContext, rendererFactory);
+    }
 
-	/**
-	 * Default constructor, used by {@link RendererFactory}.
-	 */
-	public DefaultCrosstabResultSwingRenderer() {
-		super();
-	}
+    /**
+     * Default constructor, used by {@link RendererFactory}.
+     */
+    public DefaultCrosstabResultSwingRenderer() {
+        super();
+    }
 
 }

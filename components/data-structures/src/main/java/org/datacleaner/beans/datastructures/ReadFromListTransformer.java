@@ -43,57 +43,57 @@ import org.datacleaner.components.categories.DataStructuresCategory;
 @Categorized(DataStructuresCategory.class)
 public class ReadFromListTransformer implements Transformer {
 
-	@Inject
-	@Configured
-	InputColumn<List<?>> listColumn;
+    @Inject
+    @Configured
+    InputColumn<List<?>> listColumn;
 
-	@Inject
-	@Configured
-	Class<?> elementType;
+    @Inject
+    @Configured
+    Class<?> elementType;
 
-	@Inject
-	@Configured
-	@Description("Verify that expected element type and actual type are the same")
-	boolean verifyTypes = false;
+    @Inject
+    @Configured
+    @Description("Verify that expected element type and actual type are the same")
+    boolean verifyTypes = false;
 
-	@Inject
-	@Provided
-	OutputRowCollector outputRowCollector;
+    @Inject
+    @Provided
+    OutputRowCollector outputRowCollector;
 
-	public void setElementType(Class<?> elementType) {
-		this.elementType = elementType;
-	}
+    public void setElementType(final Class<?> elementType) {
+        this.elementType = elementType;
+    }
 
-	public void setListColumn(InputColumn<List<?>> listColumn) {
-		this.listColumn = listColumn;
-	}
+    public void setListColumn(final InputColumn<List<?>> listColumn) {
+        this.listColumn = listColumn;
+    }
 
-	public void setVerifyTypes(boolean verifyTypes) {
-		this.verifyTypes = verifyTypes;
-	}
+    public void setVerifyTypes(final boolean verifyTypes) {
+        this.verifyTypes = verifyTypes;
+    }
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		String[] columnNames = new String[] { listColumn.getName() + " (element)" };
-		Class<?>[] columnTypes = new Class[] { elementType };
-		return new OutputColumns(columnNames, columnTypes);
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        final String[] columnNames = new String[] { listColumn.getName() + " (element)" };
+        final Class<?>[] columnTypes = new Class[] { elementType };
+        return new OutputColumns(columnNames, columnTypes);
+    }
 
-	@Override
-	public Object[] transform(InputRow row) {
-		List<?> list = row.getValue(listColumn);
-		if (list == null || list.isEmpty()) {
-			return new Object[1];
-		}
+    @Override
+    public Object[] transform(final InputRow row) {
+        final List<?> list = row.getValue(listColumn);
+        if (list == null || list.isEmpty()) {
+            return new Object[1];
+        }
 
-		for (Object value : list) {
-			if (verifyTypes) {
-				value = elementType.cast(value);
-			}
-			outputRowCollector.putValues(value);
-		}
+        for (Object value : list) {
+            if (verifyTypes) {
+                value = elementType.cast(value);
+            }
+            outputRowCollector.putValues(value);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

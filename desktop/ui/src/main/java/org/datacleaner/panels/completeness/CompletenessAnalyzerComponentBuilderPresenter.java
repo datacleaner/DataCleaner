@@ -21,8 +21,8 @@ package org.datacleaner.panels.completeness;
 
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
 import org.datacleaner.panels.AnalyzerComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.MultipleMappedEnumsPropertyWidget;
@@ -41,20 +41,20 @@ final class CompletenessAnalyzerComponentBuilderPresenter extends AnalyzerCompon
     private final ConfiguredPropertyDescriptor _conditionEnumProperty;
     private final MultipleMappedEnumsPropertyWidget _inputColumnMappingPropertyWidget;
 
-    public CompletenessAnalyzerComponentBuilderPresenter(AnalyzerComponentBuilder<?> analyzerJobBuilder,
-            PropertyWidgetFactory propertyWidgetFactory) {
+    public CompletenessAnalyzerComponentBuilderPresenter(final AnalyzerComponentBuilder<?> analyzerJobBuilder,
+            final PropertyWidgetFactory propertyWidgetFactory) {
         super(analyzerJobBuilder, propertyWidgetFactory);
 
         _inputColumnProperty = analyzerJobBuilder.getDescriptor().getConfiguredProperty("Values");
         _conditionEnumProperty = analyzerJobBuilder.getDescriptor().getConfiguredProperty("Conditions");
 
-        _inputColumnMappingPropertyWidget = new MultipleMappedEnumsPropertyWidget(analyzerJobBuilder,
-                _inputColumnProperty, _conditionEnumProperty);
+        _inputColumnMappingPropertyWidget =
+                new MultipleMappedEnumsPropertyWidget(analyzerJobBuilder, _inputColumnProperty, _conditionEnumProperty);
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (propertyDescriptor == _inputColumnProperty) {
             return _inputColumnMappingPropertyWidget;
         } else if (propertyDescriptor == _conditionEnumProperty) {

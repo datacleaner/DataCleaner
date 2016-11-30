@@ -12,7 +12,7 @@
 		<module>cluster</module>
 		<module>spark</module>
 	</modules>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>

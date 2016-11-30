@@ -44,8 +44,8 @@ public class SampleDataContext extends QueryPostprocessDataContext {
 
     @Override
     protected Schema getMainSchema() throws MetaModelException {
-        MutableSchema schema = new MutableSchema("sample_schema");
-        MutableTable table = new MutableTable("sample_table", TableType.TABLE, schema);
+        final MutableSchema schema = new MutableSchema("sample_schema");
+        final MutableTable table = new MutableTable("sample_table", TableType.TABLE, schema);
         schema.addTable(table);
 
         table.addColumn(new MutableColumn("foo", ColumnType.INTEGER, table, 0, true));
@@ -59,14 +59,14 @@ public class SampleDataContext extends QueryPostprocessDataContext {
     }
 
     @Override
-    protected DataSet materializeMainSchemaTable(Table table, Column[] columns, int maxRows) {
-        SelectItem[] tableSelectItems = MetaModelHelper.createSelectItems(table.getColumns());
-        SelectItem[] selectItems = MetaModelHelper.createSelectItems(columns);
-        SimpleDataSetHeader header = new SimpleDataSetHeader(tableSelectItems);
+    protected DataSet materializeMainSchemaTable(final Table table, final Column[] columns, final int maxRows) {
+        final SelectItem[] tableSelectItems = MetaModelHelper.createSelectItems(table.getColumns());
+        final SelectItem[] selectItems = MetaModelHelper.createSelectItems(columns);
+        final SimpleDataSetHeader header = new SimpleDataSetHeader(tableSelectItems);
 
-        List<Row> rows = new ArrayList<Row>();
+        final List<Row> rows = new ArrayList<>();
 
-		rows.add(new DefaultRow(header, new Object[] { 1, "hello" }).getSubSelection(selectItems));
+        rows.add(new DefaultRow(header, new Object[] { 1, "hello" }).getSubSelection(selectItems));
         rows.add(new DefaultRow(header, new Object[] { 2, "there" }).getSubSelection(selectItems));
         rows.add(new DefaultRow(header, new Object[] { 3, "big" }).getSubSelection(selectItems));
         rows.add(new DefaultRow(header, new Object[] { 4, "wide" }).getSubSelection(selectItems));

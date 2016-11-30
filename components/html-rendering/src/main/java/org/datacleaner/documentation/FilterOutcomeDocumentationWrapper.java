@@ -33,7 +33,7 @@ public class FilterOutcomeDocumentationWrapper {
 
     private final Enum<?> _outcome;
 
-    public FilterOutcomeDocumentationWrapper(Enum<?> outcome) {
+    public FilterOutcomeDocumentationWrapper(final Enum<?> outcome) {
         _outcome = outcome;
     }
 

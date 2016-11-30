@@ -28,7 +28,7 @@ public class ColumnMetadataImpl extends AbstractHasMetadataAnnotations implement
 
     private final String _columnName;
 
-    public ColumnMetadataImpl(String columnName, Collection<? extends MetadataAnnotation> annotations) {
+    public ColumnMetadataImpl(final String columnName, final Collection<? extends MetadataAnnotation> annotations) {
         super(annotations);
         _columnName = columnName;
     }

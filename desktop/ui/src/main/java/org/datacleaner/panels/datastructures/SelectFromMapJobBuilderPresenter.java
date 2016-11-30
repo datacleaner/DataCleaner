@@ -40,32 +40,33 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  */
 final class SelectFromMapJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
-	private static final long serialVersionUID = 1L;
-	
-	private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _overriddenPropertyWidgets;
+    private static final long serialVersionUID = 1L;
 
-	public SelectFromMapJobBuilderPresenter(TransformerComponentBuilder<SelectFromMapTransformer> tjb,
-			WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-			DataCleanerConfiguration configuration) {
-		super(tjb, windowContext, propertyWidgetFactory, configuration);
-		
-		_overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
-		
-		final TransformerDescriptor<SelectFromMapTransformer> descriptor = tjb.getDescriptor();
-		final ConfiguredPropertyDescriptor keysProperty = descriptor.getConfiguredProperty("Keys");
-		final ConfiguredPropertyDescriptor typesProperty = descriptor.getConfiguredProperty("Types");
-		
-		KeysAndTypesPropertyWidget propertyWidget = new KeysAndTypesPropertyWidget(keysProperty, typesProperty, tjb);
-		_overriddenPropertyWidgets.put(keysProperty, propertyWidget);
-		_overriddenPropertyWidgets.put(typesProperty, propertyWidget.getTypesPropertyWidget());
-	}
+    private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _overriddenPropertyWidgets;
 
-	@Override
-	protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor) {
-		if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
-			return _overriddenPropertyWidgets.get(propertyDescriptor);
-		}
-		return super.createPropertyWidget(componentBuilder, propertyDescriptor);
-	}
+    public SelectFromMapJobBuilderPresenter(final TransformerComponentBuilder<SelectFromMapTransformer> tjb,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration) {
+        super(tjb, windowContext, propertyWidgetFactory, configuration);
+
+        _overriddenPropertyWidgets = new HashMap<>();
+
+        final TransformerDescriptor<SelectFromMapTransformer> descriptor = tjb.getDescriptor();
+        final ConfiguredPropertyDescriptor keysProperty = descriptor.getConfiguredProperty("Keys");
+        final ConfiguredPropertyDescriptor typesProperty = descriptor.getConfiguredProperty("Types");
+
+        final KeysAndTypesPropertyWidget propertyWidget =
+                new KeysAndTypesPropertyWidget(keysProperty, typesProperty, tjb);
+        _overriddenPropertyWidgets.put(keysProperty, propertyWidget);
+        _overriddenPropertyWidgets.put(typesProperty, propertyWidget.getTypesPropertyWidget());
+    }
+
+    @Override
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
+        if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
+            return _overriddenPropertyWidgets.get(propertyDescriptor);
+        }
+        return super.createPropertyWidget(componentBuilder, propertyDescriptor);
+    }
 }

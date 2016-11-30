@@ -1,8 +1,7 @@
 package org.datacleaner.result.html
 
+import org.junit.{Assert, Test}
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Test
-import org.junit.Assert
 
 class FlotChartLocatorTest extends AssertionsForJUnit {
 

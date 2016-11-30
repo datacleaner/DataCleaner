@@ -29,36 +29,36 @@ import org.datacleaner.api.InputRow;
  */
 final class MetaModelOutputRow implements OutputRow {
 
-	private final Object[] _values;
-	private final AbstractMetaModelOutputWriter _outputWriter;
-	private final InputColumn<?>[] _columns;
+    private final Object[] _values;
+    private final AbstractMetaModelOutputWriter _outputWriter;
+    private final InputColumn<?>[] _columns;
 
-	public MetaModelOutputRow(AbstractMetaModelOutputWriter outputWriter, InputColumn<?>[] columns) {
-		_outputWriter = outputWriter;
-		_columns = columns;
-		_values = new Object[columns.length];
-	}
+    public MetaModelOutputRow(final AbstractMetaModelOutputWriter outputWriter, final InputColumn<?>[] columns) {
+        _outputWriter = outputWriter;
+        _columns = columns;
+        _values = new Object[columns.length];
+    }
 
-	@Override
-	public <E> OutputRow setValue(InputColumn<? super E> inputColumn, E value) {
-		int index = ArrayUtils.indexOf(_columns, inputColumn);
-		if (index != -1) {
-			_values[index] = value;
-		}
-		return this;
-	}
+    @Override
+    public <E> OutputRow setValue(final InputColumn<? super E> inputColumn, final E value) {
+        final int index = ArrayUtils.indexOf(_columns, inputColumn);
+        if (index != -1) {
+            _values[index] = value;
+        }
+        return this;
+    }
 
-	@Override
-	public OutputRow setValues(InputRow row) {
-		for (int i = 0; i < _columns.length; i++) {
-			Object value = row.getValue(_columns[i]);
-			_values[i] = value;
-		}
-		return this;
-	}
+    @Override
+    public OutputRow setValues(final InputRow row) {
+        for (int i = 0; i < _columns.length; i++) {
+            final Object value = row.getValue(_columns[i]);
+            _values[i] = value;
+        }
+        return this;
+    }
 
-	@Override
-	public void write() {
-		_outputWriter.addToBuffer(_values);
-	}
+    @Override
+    public void write() {
+        _outputWriter.addToBuffer(_values);
+    }
 }

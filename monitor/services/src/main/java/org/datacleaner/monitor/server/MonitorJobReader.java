@@ -46,7 +46,7 @@ public class MonitorJobReader {
     private final DataCleanerConfiguration _configuration;
     private final RepositoryFile _jobFile;
 
-    public MonitorJobReader(DataCleanerConfiguration configuration, RepositoryFile jobFile) {
+    public MonitorJobReader(final DataCleanerConfiguration configuration, final RepositoryFile jobFile) {
         _configuration = configuration;
         _jobFile = jobFile;
     }
@@ -59,45 +59,37 @@ public class MonitorJobReader {
         final JaxbJobReader jobReader = new JaxbJobReader(_configuration);
 
         // read metadata
-        final AnalysisJobMetadata metadata = _jobFile.readFile(new Func<InputStream, AnalysisJobMetadata>() {
-            @Override
-            public AnalysisJobMetadata eval(InputStream in) {
-                return jobReader.readMetadata(in);
-            }
-        });
+        final AnalysisJobMetadata metadata =
+                _jobFile.readFile((Func<InputStream, AnalysisJobMetadata>) jobReader::readMetadata);
 
         final String datastoreName = metadata.getDatastoreName();
         final Datastore datastore = _configuration.getDatastoreCatalog().getDatastore(datastoreName);
 
         // read job
-        final Func<InputStream, AnalysisJobBuilder> readCallback = new Func<InputStream, AnalysisJobBuilder>() {
-            @Override
-            public AnalysisJobBuilder eval(InputStream inputStream) {
-                if (datastore == null) {
-                    final List<String> sourceColumnPaths = metadata.getSourceColumnPaths();
-                    final List<ColumnType> sourceColumnTypes = metadata.getSourceColumnTypes();
-                    final PlaceholderDatastore placeholderDatastore = new PlaceholderDatastore(datastoreName,
-                            sourceColumnPaths, sourceColumnTypes);
+        final Func<InputStream, AnalysisJobBuilder> readCallback = inputStream -> {
+            if (datastore == null) {
+                final List<String> sourceColumnPaths = metadata.getSourceColumnPaths();
+                final List<ColumnType> sourceColumnTypes = metadata.getSourceColumnTypes();
+                final PlaceholderDatastore placeholderDatastore =
+                        new PlaceholderDatastore(datastoreName, sourceColumnPaths, sourceColumnTypes);
 
-                    final SourceColumnMapping sourceColumnMapping = new SourceColumnMapping(sourceColumnPaths);
-                    sourceColumnMapping.setDatastore(placeholderDatastore);
-                    sourceColumnMapping.autoMap(placeholderDatastore);
+                final SourceColumnMapping sourceColumnMapping = new SourceColumnMapping(sourceColumnPaths);
+                sourceColumnMapping.setDatastore(placeholderDatastore);
+                sourceColumnMapping.autoMap(placeholderDatastore);
 
-                    if (!sourceColumnMapping.isSatisfied()) {
-                        throw new IllegalStateException("Not all column mapping satisfied. Missing: "
-                                + sourceColumnMapping.getUnmappedPaths());
-                    }
-
-                    return jobReader.create(inputStream, sourceColumnMapping, variableOverrides);
-                } else {
-                    return jobReader.create(inputStream, variableOverrides);
+                if (!sourceColumnMapping.isSatisfied()) {
+                    throw new IllegalStateException(
+                            "Not all column mapping satisfied. Missing: " + sourceColumnMapping.getUnmappedPaths());
                 }
+
+                return jobReader.create(inputStream, sourceColumnMapping, variableOverrides);
+            } else {
+                return jobReader.create(inputStream, variableOverrides);
             }
         };
 
-        try (final AnalysisJobBuilder jobBuilder = _jobFile.readFile(readCallback)) {
-            final AnalysisJob job = jobBuilder.toAnalysisJob(false);
-            return job;
+        try (AnalysisJobBuilder jobBuilder = _jobFile.readFile(readCallback)) {
+            return jobBuilder.toAnalysisJob(false);
         }
     }
 }

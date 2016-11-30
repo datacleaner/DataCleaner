@@ -36,10 +36,10 @@ public class TypeConverterTest {
     private final Date dateValue = createDate();
 
     private Date createDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
             return sdf.parse("21/12/2012");
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             e.printStackTrace();
         }
         return null;
@@ -47,7 +47,7 @@ public class TypeConverterTest {
 
     @Test
     public void shouldReturnAStringTypeForLiteralColumn() {
-        Column literalColumn = new MutableColumn("foo", ColumnType.CHAR);
+        final Column literalColumn = new MutableColumn("foo", ColumnType.CHAR);
 
         Object result = TypeConverter.convertType("bla", literalColumn);
         assertTrue(result instanceof String);
@@ -69,7 +69,7 @@ public class TypeConverterTest {
 
     @Test
     public void shouldReturnNumberForNumberColumn() {
-        Column numberColumn = new MutableColumn("foo", ColumnType.NUMERIC);
+        final Column numberColumn = new MutableColumn("foo", ColumnType.NUMERIC);
 
         Object result = TypeConverter.convertType(24, numberColumn);
         assertTrue(result instanceof Number);
@@ -81,7 +81,7 @@ public class TypeConverterTest {
 
         result = TypeConverter.convertType("33", numberColumn);
         assertTrue(result instanceof Number);
-        assertEquals(33l, result);
+        assertEquals(33L, result);
 
         result = TypeConverter.convertType("33.3", numberColumn);
         assertTrue(result instanceof Number);
@@ -99,7 +99,7 @@ public class TypeConverterTest {
 
     @Test
     public void shouldReturnBooleanForBooleanColumn() {
-        Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
+        final Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
 
         Object result = TypeConverter.convertType(true, booleanColumn);
         assertTrue(result instanceof Boolean);
@@ -113,9 +113,9 @@ public class TypeConverterTest {
 
     @Test
     public void shouldNotConvertBooleanForLiteralColumn() {
-        Column literalColumn = new MutableColumn("foo", ColumnType.CHAR);
+        final Column literalColumn = new MutableColumn("foo", ColumnType.CHAR);
 
-        Object result = TypeConverter.convertType(false, literalColumn);
+        final Object result = TypeConverter.convertType(false, literalColumn);
         assertTrue(result instanceof Boolean);
         assertEquals(false, result);
 
@@ -123,38 +123,38 @@ public class TypeConverterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowForStringAndNumberColumn() {
-        Column numberColumn = new MutableColumn("foo", ColumnType.NUMERIC);
+        final Column numberColumn = new MutableColumn("foo", ColumnType.NUMERIC);
         TypeConverter.convertType("bla", numberColumn);
     }
 
     public void shouldThrowForDataAndNumberColumn() {
-        Column numberColumn = new MutableColumn("foo", ColumnType.NUMERIC);
+        final Column numberColumn = new MutableColumn("foo", ColumnType.NUMERIC);
         TypeConverter.convertType(dateValue, numberColumn);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowForIntegerAndBooleanColumn() {
-        Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
+        final Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
         TypeConverter.convertType(42, booleanColumn);
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowForDoubleAndBooleanColumn() {
-        Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
+        final Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
         TypeConverter.convertType(42.3d, booleanColumn);
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowForStringAndBooleanColumn() {
-        Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
+        final Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
         TypeConverter.convertType("bla", booleanColumn);
 
     }
 
     public void shouldThrowForDataAndBooleanColumn() {
-        Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
+        final Column booleanColumn = new MutableColumn("foo", ColumnType.BOOLEAN);
         TypeConverter.convertType(dateValue, booleanColumn);
     }
 

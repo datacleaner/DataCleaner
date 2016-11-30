@@ -19,15 +19,15 @@
  */
 package org.datacleaner.util;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.metadata.ColumnMeaning;
 
+import junit.framework.TestCase;
+
 public class DefaultEnumMatcherTest extends TestCase {
 
-    public static enum TestEnum implements HasName, HasAliases {
+    public enum TestEnum implements HasName, HasAliases {
         FOO, BAR, BAZ;
 
         @Override
@@ -47,7 +47,8 @@ public class DefaultEnumMatcherTest extends TestCase {
         }
     }
 
-    private final DefaultEnumMatcher matcher = new DefaultEnumMatcher(EnumerationValue.providerFromEnumClass(TestEnum.class));
+    private final DefaultEnumMatcher matcher =
+            new DefaultEnumMatcher(EnumerationValue.providerFromEnumClass(TestEnum.class));
 
     public void testSuggestByAlias() throws Exception {
         assertEquals(TestEnum.FOO, matcher.suggestMatch("fu").asJavaEnum());

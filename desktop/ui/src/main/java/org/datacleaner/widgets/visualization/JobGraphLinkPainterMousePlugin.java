@@ -37,15 +37,15 @@ import edu.uci.ics.jung.visualization.control.GraphMousePlugin;
  * support the creation of new links between parts of a visualized DataCleaner
  * job.
  */
-public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin implements MouseListener,
-        MouseMotionListener {
+public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin
+        implements MouseListener, MouseMotionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainterMousePlugin.class);
 
     private final JobGraphLinkPainter _linkPainter;
     private final JobGraphContext _graphContext;
 
-    public JobGraphLinkPainterMousePlugin(JobGraphLinkPainter linkPainter, JobGraphContext graphContext) {
+    public JobGraphLinkPainterMousePlugin(final JobGraphLinkPainter linkPainter, final JobGraphContext graphContext) {
         super(MouseEvent.BUTTON1_MASK + MouseEvent.SHIFT_MASK);
         _graphContext = graphContext;
         _linkPainter = linkPainter;
@@ -53,17 +53,17 @@ public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin imp
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(final MouseEvent e) {
         _linkPainter.moveCursor(e);
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(final MouseEvent e) {
         _linkPainter.moveCursor(e);
     }
 
     @Override
-    public void mouseClicked(MouseEvent me) {
+    public void mouseClicked(final MouseEvent me) {
         logger.debug("mouseClicked({})", me);
         final boolean ended = _linkPainter.endLink(me);
         if (ended) {
@@ -72,21 +72,22 @@ public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin imp
     }
 
     @Override
-    public void mousePressed(MouseEvent me) {
+    public void mousePressed(final MouseEvent me) {
         final boolean mods = checkModifiers(me);
         logger.debug("mousePressed({}) (mods={})", me, mods);
         if (mods) {
             final Object vertex = _graphContext.getVertex(me);
             if (vertex != null) {
                 me.consume();
-                _linkPainter.startLink(new JobGraphLinkPainter.VertexContext(vertex,
-                        _graphContext.getAnalysisJobBuilder(vertex), null));
+                _linkPainter.startLink(
+                        new JobGraphLinkPainter.VertexContext(vertex, _graphContext.getAnalysisJobBuilder(vertex),
+                                null));
             }
         }
     }
 
     @Override
-    public void mouseReleased(MouseEvent me) {
+    public void mouseReleased(final MouseEvent me) {
         final boolean mods = checkModifiers(me);
         logger.debug("mouseReleased({}) (mods={})", me, mods);
         if (mods) {
@@ -100,10 +101,10 @@ public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin imp
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public void mouseEntered(final MouseEvent e) {
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(final MouseEvent e) {
     }
 }

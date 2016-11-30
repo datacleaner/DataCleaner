@@ -21,17 +21,16 @@ package org.datacleaner.monitor.configuration;
 
 import java.util.List;
 
+import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
+import org.datacleaner.util.StringUtils;
 
 /**
  * Abstract helper-implementation of {@link TenantContext}. Provides the methods
@@ -48,12 +47,12 @@ public abstract class AbstractTenantContext implements TenantContext {
     protected abstract ResultContext getResult(RepositoryFile resultFile);
 
     @Override
-    public final JobContext getJob(String jobName) {
+    public final JobContext getJob(final String jobName) {
         return getJob(new JobIdentifier(jobName));
     }
 
     @Override
-    public final ResultContext getLatestResult(JobContext job) {
+    public final ResultContext getLatestResult(final JobContext job) {
         final String jobName = job.getName();
         final RepositoryFolder resultFolder = getResultFolder();
         final RepositoryFile resultFile = resultFolder.getLatestFile(jobName, EXTENSION_RESULT);
@@ -73,8 +72,8 @@ public abstract class AbstractTenantContext implements TenantContext {
 
         final RepositoryFile resultFile;
         if (resultFilename.endsWith("-latest" + EXTENSION_RESULT)) {
-            final String jobName = resultFilename.substring(0,
-                    resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
+            final String jobName =
+                    resultFilename.substring(0, resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
             resultFile = resultFolder.getLatestFile(jobName, EXTENSION_RESULT);
         } else {
             resultFile = resultFolder.getFile(resultFilename);
@@ -86,36 +85,33 @@ public abstract class AbstractTenantContext implements TenantContext {
     @Override
     public final RepositoryFolder getJobFolder() {
         final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder jobsFolder = tenantFolder.getOrCreateFolder(PATH_JOBS);
-        return jobsFolder;
+        return tenantFolder.getOrCreateFolder(PATH_JOBS);
     }
 
     @Override
     public final RepositoryFolder getResultFolder() {
         final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder resultsFolder = tenantFolder.getOrCreateFolder(PATH_RESULTS);
-        return resultsFolder;
+        return tenantFolder.getOrCreateFolder(PATH_RESULTS);
     }
 
     @Override
     public final RepositoryFolder getTimelineFolder() {
         final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder timelinesFolder = tenantFolder.getOrCreateFolder(PATH_TIMELINES);
-        return timelinesFolder;
+        return tenantFolder.getOrCreateFolder(PATH_TIMELINES);
     }
 
     @Override
-    public final boolean containsJob(String jobName) {
+    public final boolean containsJob(final String jobName) {
         try {
-            JobContext job = getJob(jobName);
+            final JobContext job = getJob(jobName);
             return job != null;
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return false;
         }
     }
 
     @Override
-    public final Datastore getDatastore(DatastoreIdentifier datastoreIdentifier) {
+    public final Datastore getDatastore(final DatastoreIdentifier datastoreIdentifier) {
         if (datastoreIdentifier == null) {
             return null;
         }
@@ -132,11 +128,6 @@ public abstract class AbstractTenantContext implements TenantContext {
         final DatastoreCatalog datastoreCatalog = getConfiguration().getDatastoreCatalog();
         final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
 
-        return CollectionUtils.map(datastoreNames, new Func<String, DatastoreIdentifier>() {
-            @Override
-            public DatastoreIdentifier eval(String name) {
-                return new DatastoreIdentifier(name);
-            }
-        });
+        return CollectionUtils.map(datastoreNames, DatastoreIdentifier::new);
     }
 }

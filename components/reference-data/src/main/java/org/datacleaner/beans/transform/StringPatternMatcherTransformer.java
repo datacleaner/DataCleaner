@@ -39,7 +39,8 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.StringPatternConnection;
 
 @Named("String pattern matcher")
-@Description("Matches string values against a set of string patterns, producing a corresponding set of output columns specifying whether or not the values matched those string patterns")
+@Description("Matches string values against a set of string patterns, producing a corresponding set "
+        + "of output columns specifying whether or not the values matched those string patterns")
 @Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class StringPatternMatcherTransformer implements Transformer {
 
@@ -57,7 +58,8 @@ public class StringPatternMatcherTransformer implements Transformer {
 
     private StringPatternConnection[] stringPatternConnections;
 
-    public StringPatternMatcherTransformer(InputColumn<?> column, StringPattern[] stringPatterns, DataCleanerConfiguration configuration) {
+    public StringPatternMatcherTransformer(final InputColumn<?> column, final StringPattern[] stringPatterns,
+            final DataCleanerConfiguration configuration) {
         this();
         _column = column;
         _stringPatterns = stringPatterns;
@@ -78,7 +80,7 @@ public class StringPatternMatcherTransformer implements Transformer {
     @Close
     public void close() {
         if (stringPatternConnections != null) {
-            for (StringPatternConnection stringPatternConnection : stringPatternConnections) {
+            for (final StringPatternConnection stringPatternConnection : stringPatternConnections) {
                 stringPatternConnection.close();
             }
             stringPatternConnections = null;
@@ -87,12 +89,12 @@ public class StringPatternMatcherTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        String columnName = _column.getName();
-        String[] names = new String[_stringPatterns.length];
+        final String columnName = _column.getName();
+        final String[] names = new String[_stringPatterns.length];
         for (int i = 0; i < names.length; i++) {
             names[i] = columnName + " '" + _stringPatterns[i].getName() + "'";
         }
-        Class<?>[] types = new Class[_stringPatterns.length];
+        final Class<?>[] types = new Class[_stringPatterns.length];
         for (int i = 0; i < types.length; i++) {
             types[i] = _outputType.getOutputClass();
         }
@@ -100,18 +102,17 @@ public class StringPatternMatcherTransformer implements Transformer {
     }
 
     @Override
-    public Object[] transform(InputRow inputRow) {
-        Object value = inputRow.getValue(_column);
-        Object[] result = doMatching(value);
-        return result;
+    public Object[] transform(final InputRow inputRow) {
+        final Object value = inputRow.getValue(_column);
+        return doMatching(value);
     }
 
-    public Object[] doMatching(Object value) {
-        Object[] result = new Object[stringPatternConnections.length];
-        String stringValue = ConvertToStringTransformer.transformValue(value);
+    public Object[] doMatching(final Object value) {
+        final Object[] result = new Object[stringPatternConnections.length];
+        final String stringValue = ConvertToStringTransformer.transformValue(value);
 
         for (int i = 0; i < result.length; i++) {
-            boolean matches = stringPatternConnections[i].matches(stringValue);
+            final boolean matches = stringPatternConnections[i].matches(stringValue);
             if (_outputType == MatchOutputType.TRUE_FALSE) {
                 result[i] = matches;
             } else if (_outputType == MatchOutputType.INPUT_OR_NULL) {
@@ -125,11 +126,11 @@ public class StringPatternMatcherTransformer implements Transformer {
         return result;
     }
 
-    public void setStringPatterns(StringPattern[] stringPatterns) {
+    public void setStringPatterns(final StringPattern[] stringPatterns) {
         _stringPatterns = stringPatterns;
     }
 
-    public void setColumn(InputColumn<?> column) {
+    public void setColumn(final InputColumn<?> column) {
         _column = column;
     }
 }

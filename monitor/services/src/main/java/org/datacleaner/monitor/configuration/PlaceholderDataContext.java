@@ -21,7 +21,6 @@ package org.datacleaner.monitor.configuration;
 
 import java.util.List;
 
-import org.datacleaner.util.StringUtils;
 import org.apache.metamodel.AbstractDataContext;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelException;
@@ -33,6 +32,7 @@ import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableSchema;
 import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.Schema;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class PlaceholderDataContext extends AbstractDataContext {
 
     private final ImmutableSchema _schema;
 
-    public PlaceholderDataContext(List<String> sourceColumnPaths, List<ColumnType> sourceColumnTypes) {
+    public PlaceholderDataContext(final List<String> sourceColumnPaths, final List<ColumnType> sourceColumnTypes) {
         final String prefix;
         if (sourceColumnPaths.size() == 1) {
             final String columnPath = sourceColumnPaths.get(0);
@@ -78,8 +78,8 @@ public class PlaceholderDataContext extends AbstractDataContext {
 
         logger.info("Using schema name '{}' and table name '{}'", schemaName, tableName);
 
-        MutableSchema schema = new MutableSchema(schemaName);
-        MutableTable table = new MutableTable(tableName).setSchema(schema);
+        final MutableSchema schema = new MutableSchema(schemaName);
+        final MutableTable table = new MutableTable(tableName).setSchema(schema);
         schema.addTable(table);
 
         for (int i = 0; i < sourceColumnPaths.size(); i++) {
@@ -102,7 +102,7 @@ public class PlaceholderDataContext extends AbstractDataContext {
     }
 
     @Override
-    public DataSet executeQuery(Query arg0) throws MetaModelException {
+    public DataSet executeQuery(final Query arg0) throws MetaModelException {
         throw new UnsupportedOperationException();
     }
 
@@ -112,7 +112,7 @@ public class PlaceholderDataContext extends AbstractDataContext {
     }
 
     @Override
-    protected Schema getSchemaByNameInternal(String schemaName) {
+    protected Schema getSchemaByNameInternal(final String schemaName) {
         if (!getDefaultSchemaName().equals(schemaName)) {
             return null;
         }

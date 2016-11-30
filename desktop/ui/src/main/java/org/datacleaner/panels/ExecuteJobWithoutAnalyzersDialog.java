@@ -19,7 +19,6 @@
  */
 package org.datacleaner.panels;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -66,8 +65,8 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
     private final UserPreferences _userPreferences;
     private final DCModule _dcModule;
 
-    public ExecuteJobWithoutAnalyzersDialog(DCModule dcModule, WindowContext windowContext,
-            AnalysisJobBuilder analysisJobBuilder, UserPreferences userPreferences) {
+    public ExecuteJobWithoutAnalyzersDialog(final DCModule dcModule, final WindowContext windowContext,
+            final AnalysisJobBuilder analysisJobBuilder, final UserPreferences userPreferences) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-execute.png"));
         setBackgroundColor(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _dcModule = dcModule;
@@ -99,8 +98,8 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
     protected JComponent getDialogContent() {
         final DCLabel text1 = DCLabel.darkMultiLine("Your job does not contain any analysis components!");
 
-        final DCLabel text2 = DCLabel
-                .darkMultiLine("Would you like to run the current job and write the output data somewhere?");
+        final DCLabel text2 =
+                DCLabel.darkMultiLine("Would you like to run the current job and write the output data somewhere?");
 
         final JButton writeCsvButton = createButton("Write a CSV file", IconUtils.CSV_IMAGEPATH);
         writeCsvButton.addActionListener(createWriteDataActionListener(CreateCsvFileAnalyzer.class, ".csv"));
@@ -112,12 +111,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
         final DCLabel text3 = DCLabel.darkMultiLine("... Or cancel and modify the job?");
 
         final JButton cancelButton = createButton("Cancel", IconUtils.ACTION_REMOVE_DARK);
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                close();
-            }
-        });
+        cancelButton.addActionListener(e -> close());
 
         final DCPanel panel = new DCPanel();
         panel.setLayout(new VerticalLayout(10));
@@ -135,49 +129,44 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
 
     private ActionListener createWriteDataActionListener(final Class<? extends Analyzer<?>> analyzerClass,
             final String filenameExtension) {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final AnalysisJob copyAnalysisJob = _analysisJobBuilder.toAnalysisJob(false);
-                final AnalysisJobBuilder copyAnalysisJobBuilder = new AnalysisJobBuilder(
-                        _analysisJobBuilder.getConfiguration(), copyAnalysisJob);
+        return e -> {
+            final AnalysisJob copyAnalysisJob = _analysisJobBuilder.toAnalysisJob(false);
+            final AnalysisJobBuilder copyAnalysisJobBuilder =
+                    new AnalysisJobBuilder(_analysisJobBuilder.getConfiguration(), copyAnalysisJob);
 
-                final AnalyzerComponentBuilder<? extends Analyzer<?>> analyzer = copyAnalysisJobBuilder
-                        .addAnalyzer(analyzerClass);
+            final AnalyzerComponentBuilder<? extends Analyzer<?>> analyzer =
+                    copyAnalysisJobBuilder.addAnalyzer(analyzerClass);
 
-                analyzer.addInputColumns(copyAnalysisJobBuilder.getAvailableInputColumns(Object.class));
+            analyzer.addInputColumns(copyAnalysisJobBuilder.getAvailableInputColumns(Object.class));
 
-                final String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            final String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-                final FileResource resource = createResource("datacleaner-" + formattedDate + "-output",
-                        filenameExtension);
-                if (analyzerClass == CreateExcelSpreadsheetAnalyzer.class) {
-                    final File file = resource.getFile();
-                    analyzer.setConfiguredProperty("File", file);
-                } else {
-                    analyzer.setConfiguredProperty("File", resource);
-                }
-
-                final ConfiguredPropertyDescriptor sheetNameProperty = analyzer.getDescriptor().getConfiguredProperty(
-                        "Sheet name");
-                if (sheetNameProperty != null) {
-                    analyzer.setConfiguredProperty(sheetNameProperty, "data");
-                }
-
-                final RunAnalysisActionListener runAnalysis = new RunAnalysisActionListener(_dcModule,
-                        copyAnalysisJobBuilder);
-                ExecuteJobWithoutAnalyzersDialog.this.close();
-                runAnalysis.run();
+            final FileResource resource = createResource("datacleaner-" + formattedDate + "-output", filenameExtension);
+            if (analyzerClass == CreateExcelSpreadsheetAnalyzer.class) {
+                final File file = resource.getFile();
+                analyzer.setConfiguredProperty("File", file);
+            } else {
+                analyzer.setConfiguredProperty("File", resource);
             }
+
+            final ConfiguredPropertyDescriptor sheetNameProperty =
+                    analyzer.getDescriptor().getConfiguredProperty("Sheet name");
+            if (sheetNameProperty != null) {
+                analyzer.setConfiguredProperty(sheetNameProperty, "data");
+            }
+
+            final RunAnalysisActionListener runAnalysis =
+                    new RunAnalysisActionListener(_dcModule, copyAnalysisJobBuilder);
+            ExecuteJobWithoutAnalyzersDialog.this.close();
+            runAnalysis.run();
         };
     }
 
-    private JButton createButton(String text, String imagePath) {
-        JButton button = WidgetFactory.createDefaultButton(text, imagePath);
-        return button;
+    private JButton createButton(final String text, final String imagePath) {
+        return WidgetFactory.createDefaultButton(text, imagePath);
     }
 
-    private FileResource createResource(String filenamePrefix, String extension) {
+    private FileResource createResource(final String filenamePrefix, final String extension) {
         final File directory = _userPreferences.getSaveDatastoreDirectory();
         int attempt = 0;
         while (true) {
@@ -197,15 +186,15 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         LookAndFeelManager.get().init();
 
-        DCWindowContext windowContext = new DCWindowContext(new DataCleanerConfigurationImpl(),
-                new UserPreferencesImpl(null), null);
+        final DCWindowContext windowContext =
+                new DCWindowContext(new DataCleanerConfigurationImpl(), new UserPreferencesImpl(null), null);
 
-        UserPreferences userPreferences = new UserPreferencesImpl(null);
-        ExecuteJobWithoutAnalyzersDialog dialog = new ExecuteJobWithoutAnalyzersDialog(new DCModuleImpl(),
-                windowContext, null, userPreferences);
+        final UserPreferences userPreferences = new UserPreferencesImpl(null);
+        final ExecuteJobWithoutAnalyzersDialog dialog =
+                new ExecuteJobWithoutAnalyzersDialog(new DCModuleImpl(), windowContext, null, userPreferences);
         dialog.open();
     }
 }

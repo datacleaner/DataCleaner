@@ -23,10 +23,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.create.TableCreationBuilder;
 import org.apache.metamodel.data.DataSet;
@@ -60,6 +56,8 @@ import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.easymock.EasyMock;
 
+import junit.framework.TestCase;
+
 public class InsertIntoTableAnalyzerTest extends TestCase {
 
     private JdbcDatastore jdbcDatastore;
@@ -68,31 +66,25 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         if (jdbcDatastore == null) {
-            jdbcDatastore = new JdbcDatastore("my datastore",
-                    "jdbc:hsqldb:mem:InsertIntoTable_testErrorHandlingOption", "org.hsqldb.jdbcDriver");
+            jdbcDatastore = new JdbcDatastore("my datastore", "jdbc:hsqldb:mem:InsertIntoTable_testErrorHandlingOption",
+                    "org.hsqldb.jdbcDriver");
             final UpdateableDatastoreConnection con = jdbcDatastore.openConnection();
             final UpdateableDataContext dc = con.getUpdateableDataContext();
             if (dc.getDefaultSchema().getTableByName("test_table") == null) {
-                dc.executeUpdate(new UpdateScript() {
-                    @Override
-                    public void run(UpdateCallback cb) {
-                        cb.createTable(dc.getDefaultSchema(), "test_table").withColumn("foo")
-                                .ofType(ColumnType.VARCHAR).withColumn("bar").ofType(ColumnType.INTEGER).execute();
-                    }
-                });
+                dc.executeUpdate(cb -> cb.createTable(dc.getDefaultSchema(), "test_table").withColumn("foo")
+                        .ofType(ColumnType.VARCHAR).withColumn("bar").ofType(ColumnType.INTEGER).execute());
             }
             con.close();
         }
     }
 
     public void testMetricDescriptors() throws Exception {
-        AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(InsertIntoTableAnalyzer.class);
-        Set<MetricDescriptor> metrics = descriptor.getResultMetrics();
-        assertEquals(
-                "[MetricDescriptorImpl[name=Errornous rows], MetricDescriptorImpl[name=Inserts], MetricDescriptorImpl[name=Updates]]",
-                metrics.toString());
+        final AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(InsertIntoTableAnalyzer.class);
+        final Set<MetricDescriptor> metrics = descriptor.getResultMetrics();
+        assertEquals("[MetricDescriptorImpl[name=Errornous rows], MetricDescriptorImpl[name=Inserts], "
+                        + "MetricDescriptorImpl[name=Updates]]", metrics.toString());
 
-        WriteDataResult result = new WriteDataResultImpl(10, 5, null, null, null);
+        final WriteDataResult result = new WriteDataResultImpl(10, 5, null, null, null);
         assertEquals(10, descriptor.getResultMetric("Inserts").getValue(result, null).intValue());
         assertEquals(5, descriptor.getResultMetric("Updates").getValue(result, null).intValue());
         assertEquals(0, descriptor.getResultMetric("Errornous rows").getValue(result, null).intValue());
@@ -106,8 +98,8 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         insertIntoTable.errorLogFile = new File("src/test/resources/invalid-error-handling-file.csv");
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
+        final InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        final InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
 
         insertIntoTable.values = new InputColumn[] { col1, col2 };
 
@@ -116,7 +108,7 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         try {
             insertIntoTable.init();
             fail("Exception expected");
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             assertEquals("Error log file does not have required column header: foo", e.getMessage());
         }
     }
@@ -132,8 +124,8 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         insertIntoTable.errorLogFile = file;
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
+        final InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        final InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
 
         insertIntoTable.values = new InputColumn[] { col1, col2 };
 
@@ -142,14 +134,14 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
 
         insertIntoTable.run(new MockInputRow().put(col1, "blabla").put(col2, "hello int"), 2);
 
-        WriteDataResult result = insertIntoTable.getResult();
+        final WriteDataResult result = insertIntoTable.getResult();
         assertEquals(0, result.getWrittenRowCount());
         assertEquals(2, result.getErrorRowCount());
 
         assertEquals("foo,bar,extra1,insert_into_table_error_message,extra2[newline]" + "f,b,e1,m,e2[newline]"
-                + "\"blabla\",\"hello int\",\"\",\"Could not convert hello int to number\",\"\"[newline]"
-                + "\"blabla\",\"hello int\",\"\",\"Could not convert hello int to number\",\"\"", FileHelper
-                .readFileAsString(file).replaceAll("\n", "\\[newline\\]"));
+                        + "\"blabla\",\"hello int\",\"\",\"Could not convert hello int to number\",\"\"[newline]"
+                        + "\"blabla\",\"hello int\",\"\",\"Could not convert hello int to number\",\"\"",
+                FileHelper.readFileAsString(file).replaceAll("\n", "\\[newline\\]"));
     }
 
     public void testErrorHandlingWithAdditionalErrorColumns() throws Exception {
@@ -161,13 +153,13 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.errorLogFile = null;
         insertIntoTable._componentContext = EasyMock.createMock(ComponentContext.class);
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
-        InputColumn<Object> col3 = new MockInputColumn<Object>("in3", Object.class);
+        final InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        final InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
+        final InputColumn<Object> col3 = new MockInputColumn<>("in3", Object.class);
 
         // the name of this additional column will clash with one of the
         // target column names.
-        InputColumn<Object> col4 = new MockInputColumn<Object>("foo", Object.class);
+        final InputColumn<Object> col4 = new MockInputColumn<>("foo", Object.class);
 
         insertIntoTable.values = new InputColumn[] { col1, col2 };
         insertIntoTable.additionalErrorLogValues = new InputColumn[] { col3, col4 };
@@ -176,24 +168,23 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.init();
 
         // valid row
-        insertIntoTable.run(
-                new MockInputRow().put(col1, "hello world").put(col2, 123).put(col3, "addition 3")
-                        .put(col4, "addition 4"), 1);
+        insertIntoTable.run(new MockInputRow().put(col1, "hello world").put(col2, 123).put(col3, "addition 3")
+                .put(col4, "addition 4"), 1);
 
         // invalid row
-        insertIntoTable.run(new MockInputRow().put(col1, "hello world")
-                .put(col2, "hey I am a string in a number field").put(col3, "addition 3").put(col4, "addition 4"), 1);
+        insertIntoTable.run(new MockInputRow().put(col1, "hello world").put(col2, "hey I am a string in a number field")
+                .put(col3, "addition 3").put(col4, "addition 4"), 1);
 
-        WriteDataResult result = insertIntoTable.getResult();
+        final WriteDataResult result = insertIntoTable.getResult();
         assertEquals(1, result.getWrittenRowCount());
         assertEquals(1, result.getErrorRowCount());
-        FileDatastore errorDatastore = result.getErrorDatastore();
-        DatastoreConnection con = errorDatastore.openConnection();
-        Table table = con.getDataContext().getDefaultSchema().getTables()[0];
+        final FileDatastore errorDatastore = result.getErrorDatastore();
+        final DatastoreConnection con = errorDatastore.openConnection();
+        final Table table = con.getDataContext().getDefaultSchema().getTables()[0];
         assertEquals("[foo, bar, in3, foo_add, insert_into_table_error_message]",
                 Arrays.toString(table.getColumnNames()));
 
-        DataSet ds = con.getDataContext().query().from(table).select(table.getColumns()).execute();
+        final DataSet ds = con.getDataContext().query().from(table).select(table.getColumns()).execute();
         assertTrue(ds.next());
         assertEquals("Row[values=[hello world, hey I am a string in a number field, " + "addition 3, addition 4, "
                 + "Could not convert hey I am a string in a number field to number]]", ds.getRow().toString());
@@ -211,8 +202,8 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         insertIntoTable._componentContext = EasyMock.createMock(ComponentContext.class);
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
+        final InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        final InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
 
         insertIntoTable.values = new InputColumn[] { col1, col2 };
 
@@ -234,25 +225,25 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         // another valid row (after the failing one)
         insertIntoTable.run(new MockInputRow().put(col1, "foo bar").put(col2, 3123), 1);
 
-        WriteDataResult result = insertIntoTable.getResult();
+        final WriteDataResult result = insertIntoTable.getResult();
 
         // assertions about succes rows
         assertEquals(4, result.getWrittenRowCount());
         assertEquals(jdbcDatastore, result.getDatastore(null));
-        Table table = result.getPreviewTable(jdbcDatastore);
+        final Table table = result.getPreviewTable(jdbcDatastore);
         assertEquals("TEST_TABLE", table.getName());
 
         // make assertions about error rows
         assertEquals(1, result.getErrorRowCount());
-        FileDatastore errorDatastore = result.getErrorDatastore();
+        final FileDatastore errorDatastore = result.getErrorDatastore();
         assertNotNull(errorDatastore);
 
-        DatastoreConnection errorCon = errorDatastore.openConnection();
-        Schema errorSchema = errorCon.getDataContext().getDefaultSchema();
+        final DatastoreConnection errorCon = errorDatastore.openConnection();
+        final Schema errorSchema = errorCon.getDataContext().getDefaultSchema();
         assertEquals(1, errorSchema.getTableCount());
-        Table errorTable = errorSchema.getTables()[0];
+        final Table errorTable = errorSchema.getTables()[0];
         assertEquals("[foo, bar, insert_into_table_error_message]", Arrays.toString(errorTable.getColumnNames()));
-        DataSet ds = errorCon.getDataContext().query().from(errorTable).select("foo").and("bar")
+        final DataSet ds = errorCon.getDataContext().query().from(errorTable).select("foo").and("bar")
                 .and("insert_into_table_error_message").execute();
         assertTrue(ds.next());
         assertEquals("Row[values=[, hey I am a string in a number field, "
@@ -260,7 +251,7 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         assertFalse(ds.next());
         errorCon.close();
 
-        String filename = errorDatastore.getFilename();
+        final String filename = errorDatastore.getFilename();
         assertEquals("4 inserts executed\n" + " - WARNING! 1 record failed, written to file: " + filename,
                 result.toString());
     }
@@ -277,12 +268,12 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         final Column[] columns;
         final Number countIn;
         {
-            DatastoreConnection con = datastoreIn.openConnection();
-            Table table = con.getDataContext().getDefaultSchema().getTables()[0];
+            final DatastoreConnection con = datastoreIn.openConnection();
+            final Table table = con.getDataContext().getDefaultSchema().getTables()[0];
 
             columns = table.getColumns();
 
-            DataSet ds = con.getDataContext().query().from(table).selectCount().execute();
+            final DataSet ds = con.getDataContext().query().from(table).selectCount().execute();
             assertTrue(ds.next());
             countIn = (Number) ds.getRow().getValue(0);
             assertFalse(ds.next());
@@ -293,17 +284,14 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
 
         // create output file
         {
-            DatastoreConnection con = datastoreOut.openConnection();
+            final DatastoreConnection con = datastoreOut.openConnection();
             final UpdateableDataContext dc = (UpdateableDataContext) con.getDataContext();
-            dc.executeUpdate(new UpdateScript() {
-                @Override
-                public void run(UpdateCallback callback) {
-                    TableCreationBuilder createTableBuilder = callback.createTable(dc.getDefaultSchema(), "mytable");
-                    for (Column column : columns) {
-                        createTableBuilder = createTableBuilder.withColumn(column.getName()).ofType(column.getType());
-                    }
-                    createTableBuilder.execute();
+            dc.executeUpdate(callback -> {
+                TableCreationBuilder createTableBuilder = callback.createTable(dc.getDefaultSchema(), "mytable");
+                for (final Column column : columns) {
+                    createTableBuilder = createTableBuilder.withColumn(column.getName()).ofType(column.getType());
                 }
+                createTableBuilder.execute();
             });
             con.close();
         }
@@ -312,42 +300,39 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         {
             final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastoreIn);
 
-            DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(
-                    new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(4)))
+            final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
+                    .withEnvironment(new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(4)))
                     .withDatastoreCatalog(datastoreCatalog);
 
-            final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
-            try {
+            try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
 
                 ajb.setDatastore(datastoreIn);
 
                 ajb.addSourceColumns(columns);
 
-                AnalyzerComponentBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder = ajb
-                        .addAnalyzer(InsertIntoTableAnalyzer.class);
+                final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder =
+                        ajb.addAnalyzer(InsertIntoTableAnalyzer.class);
                 analyzerJobBuilder.addInputColumns(ajb.getSourceColumns());
                 analyzerJobBuilder.setConfiguredProperty("Datastore", datastoreOut);
                 analyzerJobBuilder.setConfiguredProperty("Column names", "col0,col1,col2,col3,col4".split(","));
 
                 assertTrue(analyzerJobBuilder.isConfigured());
 
-                AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
-                AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
+                final AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
+                final AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
 
                 if (resultFuture.isErrornous()) {
                     throw resultFuture.getErrors().get(0);
                 }
                 assertTrue(resultFuture.isSuccessful());
-            } finally {
-                ajb.close();
             }
         }
 
         // count output file lines
         final Number countOut;
         {
-            DatastoreConnection con = datastoreOut.openConnection();
-            DataSet ds = con.getDataContext().query().from(con.getDataContext().getDefaultSchema().getTables()[0])
+            final DatastoreConnection con = datastoreOut.openConnection();
+            final DataSet ds = con.getDataContext().query().from(con.getDataContext().getDefaultSchema().getTables()[0])
                     .selectCount().execute();
             assertTrue(ds.next());
             countOut = (Number) ds.getRow().getValue(0);

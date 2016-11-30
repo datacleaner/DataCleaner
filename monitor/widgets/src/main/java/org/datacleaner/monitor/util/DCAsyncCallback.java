@@ -28,20 +28,20 @@ import com.google.gwt.user.client.rpc.StatusCodeException;
 /**
  * Convenient abstract implementation of the {@link AsyncCallback} which handles
  * error situations.
- * 
+ *
  * @see AsyncCallback
- * 
+ *
  * @param <T>
  *            the payload of the response.
  */
 public abstract class DCAsyncCallback<T> implements AsyncCallback<T> {
 
     @Override
-    public void onFailure(Throwable e) {
+    public void onFailure(final Throwable e) {
         GWT.log("Error occurred", e);
 
         if (e instanceof InvocationException) {
-            String message = e.getMessage();
+            final String message = e.getMessage();
             if (message != null && message.indexOf("j_spring_security_check") != -1) {
                 // user has been logged out, reload the page!
                 Window.Location.reload();

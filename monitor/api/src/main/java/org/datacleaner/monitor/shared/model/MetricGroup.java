@@ -38,7 +38,7 @@ public class MetricGroup implements Serializable {
         return _name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         _name = name;
     }
 
@@ -46,7 +46,7 @@ public class MetricGroup implements Serializable {
         return _metrics;
     }
 
-    public void setMetrics(List<MetricIdentifier> metrics) {
+    public void setMetrics(final List<MetricIdentifier> metrics) {
         _metrics = metrics;
     }
 
@@ -54,7 +54,7 @@ public class MetricGroup implements Serializable {
         return _columnNames;
     }
 
-    public void setColumnNames(List<String> columnNames) {
+    public void setColumnNames(final List<String> columnNames) {
         _columnNames = columnNames;
     }
 
@@ -63,8 +63,8 @@ public class MetricGroup implements Serializable {
         return "MetricGroup[" + getName() + "]";
     }
 
-    public MetricIdentifier getMetric(String metricDescriptorName) {
-        for (MetricIdentifier metric : _metrics) {
+    public MetricIdentifier getMetric(final String metricDescriptorName) {
+        for (final MetricIdentifier metric : _metrics) {
             if (metricDescriptorName.equals(metric.getMetricDescriptorName())) {
                 return metric;
             }
@@ -72,8 +72,8 @@ public class MetricGroup implements Serializable {
         return null;
     }
 
-    public boolean containsMetric(MetricIdentifier metricIdentifier) {
-        for (MetricIdentifier metric : _metrics) {
+    public boolean containsMetric(final MetricIdentifier metricIdentifier) {
+        for (final MetricIdentifier metric : _metrics) {
             if (metric.equalsIgnoreParameterValues(metricIdentifier)) {
                 return true;
             }

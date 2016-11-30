@@ -21,10 +21,10 @@ package org.datacleaner.util.convert;
 
 import java.net.URI;
 
-import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.UrlResource;
+import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 
 /**
  * {@link ResourceTypeHandler} for {@link UrlResource}s.
@@ -32,7 +32,7 @@ import org.apache.metamodel.util.UrlResource;
 public class UrlResourceTypeHandler implements ResourceTypeHandler<UrlResource> {
 
     @Override
-    public boolean isParserFor(Class<? extends Resource> resourceType) {
+    public boolean isParserFor(final Class<? extends Resource> resourceType) {
         return ReflectionUtils.is(resourceType, UrlResource.class);
     }
 
@@ -42,12 +42,12 @@ public class UrlResourceTypeHandler implements ResourceTypeHandler<UrlResource> 
     }
 
     @Override
-    public UrlResource parsePath(String path) {
+    public UrlResource parsePath(final String path) {
         return new UrlResource(path);
     }
 
     @Override
-    public String createPath(Resource resource) {
+    public String createPath(final Resource resource) {
         final UrlResource urlResource = (UrlResource) resource;
         final URI uri = urlResource.getUri();
         return uri.toString();

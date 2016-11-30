@@ -29,59 +29,60 @@ import org.mozilla.javascript.ScriptableObject;
 
 /**
  * Various utility methods for dealing with JavaScript (Mozilla Rhino)
- * 
- * 
+ *
+ *
  */
 final class JavaScriptUtils {
 
-	private JavaScriptUtils() {
-		// prevent instantiation
-	}
+    private JavaScriptUtils() {
+        // prevent instantiation
+    }
 
-	/**
-	 * Adds an object to the JavaScript scope with a set of variable names
-	 * 
-	 * @param scope
-	 * @param object
-	 * @param names
-	 */
-	public static void addToScope(Scriptable scope, Object object, String... names) {
-		Object jsObject = Context.javaToJS(object, scope);
-		for (String name : names) {
-			name = name.replaceAll(" ", "_");
-			ScriptableObject.putProperty(scope, name, jsObject);
-		}
-	}
+    /**
+     * Adds an object to the JavaScript scope with a set of variable names
+     *
+     * @param scope
+     * @param object
+     * @param names
+     */
+    public static void addToScope(final Scriptable scope, final Object object, final String... names) {
+        final Object jsObject = Context.javaToJS(object, scope);
+        for (String name : names) {
+            name = name.replaceAll(" ", "_");
+            ScriptableObject.putProperty(scope, name, jsObject);
+        }
+    }
 
-	/**
-	 * Adds the values of a row to the JavaScript scope
-	 * 
-	 * @param scope
-	 * @param inputRow
-	 * @param columns
-	 * @param arrayName
-	 */
-	public static void addToScope(Scriptable scope, InputRow inputRow, InputColumn<?>[] columns, String arrayName) {
-		NativeArray values = new NativeArray(columns.length * 2);
-		for (int i = 0; i < columns.length; i++) {
-			InputColumn<?> column = columns[i];
-			Object value = inputRow.getValue(column);
+    /**
+     * Adds the values of a row to the JavaScript scope
+     *
+     * @param scope
+     * @param inputRow
+     * @param columns
+     * @param arrayName
+     */
+    public static void addToScope(final Scriptable scope, final InputRow inputRow, final InputColumn<?>[] columns,
+            final String arrayName) {
+        final NativeArray values = new NativeArray(columns.length * 2);
+        for (int i = 0; i < columns.length; i++) {
+            final InputColumn<?> column = columns[i];
+            Object value = inputRow.getValue(column);
 
-			if (value != null) {
-				Class<?> dataType = column.getDataType();
-				if (ReflectionUtils.isNumber(dataType)) {
-					value = Context.toNumber(value);
-				} else if (ReflectionUtils.isBoolean(dataType)) {
-					value = Context.toBoolean(value);
-				}
-			}
+            if (value != null) {
+                final Class<?> dataType = column.getDataType();
+                if (ReflectionUtils.isNumber(dataType)) {
+                    value = Context.toNumber(value);
+                } else if (ReflectionUtils.isBoolean(dataType)) {
+                    value = Context.toBoolean(value);
+                }
+            }
 
-			values.put(i, values, value);
-			values.put(column.getName(), values, value);
+            values.put(i, values, value);
+            values.put(column.getName(), values, value);
 
-			addToScope(scope, value, column.getName(), column.getName().toLowerCase(), column.getName().toUpperCase());
-		}
+            addToScope(scope, value, column.getName(), column.getName().toLowerCase(), column.getName().toUpperCase());
+        }
 
-		addToScope(scope, values, arrayName);
-	}
+        addToScope(scope, values, arrayName);
+    }
 }

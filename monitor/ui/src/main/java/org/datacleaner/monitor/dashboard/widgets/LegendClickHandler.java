@@ -35,13 +35,14 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class LegendClickHandler implements ClickHandler {
 
+    private final TimelinePanel _timeLinePanel;
     private String _data;
     private MetricIdentifier _metricIdentifier;
-    private final TimelinePanel _timeLinePanel;
     private Legend _legend;
     private Boolean _isDashboardEditor;
 
-    public LegendClickHandler(String data, MetricIdentifier metricIdentifier, TimelinePanel timelinePanel, Legend legend, boolean isDashboardEditor) {
+    public LegendClickHandler(final String data, final MetricIdentifier metricIdentifier,
+            final TimelinePanel timelinePanel, final Legend legend, final boolean isDashboardEditor) {
         _data = data;
         _metricIdentifier = metricIdentifier;
         _timeLinePanel = timelinePanel;
@@ -50,18 +51,18 @@ public class LegendClickHandler implements ClickHandler {
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(final ClickEvent event) {
         if (_isDashboardEditor) {
             final PopupPanel popupPanel = new PopupPanel(true);
-            MenuBar popupMenuBar = populateLegendMenu(popupPanel);
+            final MenuBar popupMenuBar = populateLegendMenu(popupPanel);
             popupPanel.setWidget(popupMenuBar);
             popupPanel.showRelativeTo(_legend);
         }
     }
 
     private MenuBar populateLegendMenu(final PopupPanel popupPanel) {
-        MenuBar popupMenuBar = new MenuBar(true);
-        MenuItem editMetricNameItem = new MenuItem("Edit metric name", true, new Command() {
+        final MenuBar popupMenuBar = new MenuBar(true);
+        final MenuItem editMetricNameItem = new MenuItem("Edit metric name", true, new Command() {
             @Override
             public void execute() {
                 popupPanel.hide();
@@ -70,7 +71,7 @@ public class LegendClickHandler implements ClickHandler {
         });
         popupMenuBar.addItem(editMetricNameItem);
 
-        MenuItem editLegendColorItem = new MenuItem("Change color", true, new Command() {
+        final MenuItem editLegendColorItem = new MenuItem("Change color", true, new Command() {
             @Override
             public void execute() {
                 popupPanel.hide();
@@ -85,8 +86,8 @@ public class LegendClickHandler implements ClickHandler {
     protected void configureEditLegendColorPopup() {
         final DCPopupPanel popup = new DCPopupPanel("Change color");
         popup.addStyleName("CreateTimelinePopupPanel");
-        SelectColorPanel selectColorPanel = new SelectColorPanel(_metricIdentifier.getMetricColor());
-        Button saveButton = configureSaveColorButton(popup, selectColorPanel);
+        final SelectColorPanel selectColorPanel = new SelectColorPanel(_metricIdentifier.getMetricColor());
+        final Button saveButton = configureSaveColorButton(popup, selectColorPanel);
         popup.setWidget(selectColorPanel);
         popup.addButton(saveButton);
         popup.addButton(new CancelPopupButton(popup));
@@ -95,15 +96,15 @@ public class LegendClickHandler implements ClickHandler {
     }
 
     private Button configureSaveColorButton(final DCPopupPanel popUp, final SelectColorPanel selectColorPanel) {
-        Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
+        final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.setVisible(true);
         saveButton.setTitle("Save");
         saveButton.addStyleName("SaveButton");
         saveButton.addClickHandler(new ClickHandler() {
 
             @Override
-            public void onClick(ClickEvent event) {
-                String selectedColor = selectColorPanel.getSelectedColor();
+            public void onClick(final ClickEvent event) {
+                final String selectedColor = selectColorPanel.getSelectedColor();
                 popUp.hide();
                 boolean isSaveTimelineActive = false;
                 _metricIdentifier.setMetricColor(selectedColor);
@@ -118,7 +119,7 @@ public class LegendClickHandler implements ClickHandler {
         final DCPopupPanel editMetricPopUp = new DCPopupPanel("Edit Metric Name");
         final TextBox textBox = new TextBox();
         textBox.setText(_data);
-        Button saveButton = configureSaveButton(editMetricPopUp, textBox);
+        final Button saveButton = configureSaveButton(editMetricPopUp, textBox);
         editMetricPopUp.setWidget(textBox);
         editMetricPopUp.removeButtons();
         editMetricPopUp.addButton(saveButton);
@@ -128,14 +129,14 @@ public class LegendClickHandler implements ClickHandler {
     }
 
     private Button configureSaveButton(final DCPopupPanel popUp, final TextBox textBox) {
-        Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
+        final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.setVisible(true);
         saveButton.setTitle("Save");
         saveButton.addClickHandler(new ClickHandler() {
 
             @Override
-            public void onClick(ClickEvent event) {
-                String text = textBox.getText();
+            public void onClick(final ClickEvent event) {
+                final String text = textBox.getText();
                 _metricIdentifier.setMetricDisplayName(text);
                 popUp.hide();
                 _timeLinePanel.refreshTimelineDefiniton(true);

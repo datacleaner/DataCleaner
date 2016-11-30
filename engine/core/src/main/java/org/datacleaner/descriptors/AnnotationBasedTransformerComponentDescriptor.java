@@ -29,7 +29,8 @@ final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer>
 
     private static final long serialVersionUID = 1L;
 
-    protected AnnotationBasedTransformerComponentDescriptor(Class<T> transformerClass) throws DescriptorException {
+    protected AnnotationBasedTransformerComponentDescriptor(final Class<T> transformerClass)
+            throws DescriptorException {
         super(transformerClass, false);
 
         if (!ReflectionUtils.is(transformerClass, Transformer.class)) {
@@ -41,9 +42,9 @@ final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer>
 
     @Override
     @SuppressWarnings("deprecation")
-    protected String getDisplayNameIfNotNamed(Class<?> cls) {
-        org.eobjects.analyzer.beans.api.TransformerBean annotation = ReflectionUtils.getAnnotation(cls,
-                org.eobjects.analyzer.beans.api.TransformerBean.class);
+    protected String getDisplayNameIfNotNamed(final Class<?> cls) {
+        final org.eobjects.analyzer.beans.api.TransformerBean annotation =
+                ReflectionUtils.getAnnotation(cls, org.eobjects.analyzer.beans.api.TransformerBean.class);
         if (annotation == null) {
             return null;
         }

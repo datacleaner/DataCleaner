@@ -34,32 +34,32 @@ public final class ImmutableFilterJob extends ImmutableComponentJob implements F
 
     private static final long serialVersionUID = 1L;
 
-    public ImmutableFilterJob(String name, FilterDescriptor<?, ?> descriptor,
-            ComponentConfiguration componentConfiguration, ComponentRequirement componentRequirement,
-            Map<String, String> metadataProperties, OutputDataStreamJob[] outputDataStreamJobs) {
+    public ImmutableFilterJob(final String name, final FilterDescriptor<?, ?> descriptor,
+            final ComponentConfiguration componentConfiguration, final ComponentRequirement componentRequirement,
+            final Map<String, String> metadataProperties, final OutputDataStreamJob[] outputDataStreamJobs) {
         super(name, descriptor, componentConfiguration, componentRequirement, metadataProperties, outputDataStreamJobs);
     }
 
     /**
-     * 
+     *
      * @param name
      * @param descriptor
      * @param componentConfiguration
      * @param requirement
      * @param metadataProperties
-     * 
+     *
      * @deprecated use
-     *             {@link #ImmutableFilterJob(String, FilterDescriptor, ComponentConfiguration, ComponentRequirement, Map, OutputDataStreamJob[])}
-     *             instead
+     *             {@link #ImmutableFilterJob(String, FilterDescriptor, ComponentConfiguration,
+     *             ComponentRequirement, Map, OutputDataStreamJob[])} instead
      */
     @Deprecated
-    public ImmutableFilterJob(String name, FilterDescriptor<?, ?> descriptor,
-            ComponentConfiguration componentConfiguration, ComponentRequirement requirement,
-            Map<String, String> metadataProperties) {
+    public ImmutableFilterJob(final String name, final FilterDescriptor<?, ?> descriptor,
+            final ComponentConfiguration componentConfiguration, final ComponentRequirement requirement,
+            final Map<String, String> metadataProperties) {
         super(name, descriptor, componentConfiguration, requirement, metadataProperties);
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, ImmutableFilterJob.class).readObject(stream);
     }
 

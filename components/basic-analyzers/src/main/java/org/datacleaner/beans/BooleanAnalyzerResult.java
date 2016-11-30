@@ -36,7 +36,8 @@ public class BooleanAnalyzerResult implements AnalyzerResult {
     private final Crosstab<Number> _columnStatisticsCrosstab;
     private final Crosstab<Number> _valueCombinationCrosstab;
 
-    public BooleanAnalyzerResult(Crosstab<Number> columnStatisticsCrosstab, Crosstab<Number> valueCombinationCrosstab) {
+    public BooleanAnalyzerResult(final Crosstab<Number> columnStatisticsCrosstab,
+            final Crosstab<Number> valueCombinationCrosstab) {
         _columnStatisticsCrosstab = columnStatisticsCrosstab;
         _valueCombinationCrosstab = valueCombinationCrosstab;
     }
@@ -55,19 +56,19 @@ public class BooleanAnalyzerResult implements AnalyzerResult {
      * metrics here based on string names instead of {@link InputColumn}
      * objects. This method is used to provide suggestions for all these string
      * column names.
-     * 
+     *
      * @return
      */
     private List<String> getColumnNameSuggestions() {
-        final CrosstabDimension columnDimension = _columnStatisticsCrosstab
-                .getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
+        final CrosstabDimension columnDimension =
+                _columnStatisticsCrosstab.getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
         return columnDimension.getCategories();
     }
 
     @Metric(order = 1, value = "Row count")
     public Number getRowCount() {
-        final CrosstabDimension columnDimension = _columnStatisticsCrosstab
-                .getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
+        final CrosstabDimension columnDimension =
+                _columnStatisticsCrosstab.getDimension(BooleanAnalyzer.DIMENSION_COLUMN);
         return _columnStatisticsCrosstab.where(BooleanAnalyzer.DIMENSION_MEASURE, BooleanAnalyzer.MEASURE_ROW_COUNT)
                 .where(columnDimension, columnDimension.getCategories().get(0)).get();
     }
@@ -76,7 +77,7 @@ public class BooleanAnalyzerResult implements AnalyzerResult {
     public ParameterizableMetric getNullCount() {
         return new ParameterizableMetric() {
             @Override
-            public Number getValue(String parameter) {
+            public Number getValue(final String parameter) {
                 return _columnStatisticsCrosstab
                         .where(BooleanAnalyzer.DIMENSION_MEASURE, BooleanAnalyzer.MEASURE_NULL_COUNT)
                         .where(BooleanAnalyzer.DIMENSION_COLUMN, parameter).safeGet(0);
@@ -93,7 +94,7 @@ public class BooleanAnalyzerResult implements AnalyzerResult {
     public ParameterizableMetric getTrueCount() {
         return new ParameterizableMetric() {
             @Override
-            public Number getValue(String parameter) {
+            public Number getValue(final String parameter) {
                 return _columnStatisticsCrosstab
                         .where(BooleanAnalyzer.DIMENSION_MEASURE, BooleanAnalyzer.MEASURE_TRUE_COUNT)
                         .where(BooleanAnalyzer.DIMENSION_COLUMN, parameter).safeGet(0);
@@ -110,7 +111,7 @@ public class BooleanAnalyzerResult implements AnalyzerResult {
     public ParameterizableMetric getFalseCount() {
         return new ParameterizableMetric() {
             @Override
-            public Number getValue(String parameter) {
+            public Number getValue(final String parameter) {
                 return _columnStatisticsCrosstab
                         .where(BooleanAnalyzer.DIMENSION_MEASURE, BooleanAnalyzer.MEASURE_FALSE_COUNT)
                         .where(BooleanAnalyzer.DIMENSION_COLUMN, parameter).safeGet(0);

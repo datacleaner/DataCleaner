@@ -21,8 +21,8 @@ package org.datacleaner.util;
 
 import java.util.Comparator;
 
-import org.datacleaner.job.ComponentJob;
 import org.apache.metamodel.util.ToStringComparator;
+import org.datacleaner.job.ComponentJob;
 
 /**
  * Compares and sorts {@link ComponentJob}s for visual presentation
@@ -30,7 +30,7 @@ import org.apache.metamodel.util.ToStringComparator;
 public class ComponentJobComparator implements Comparator<ComponentJob> {
 
     @Override
-    public int compare(ComponentJob o1, ComponentJob o2) {
+    public int compare(final ComponentJob o1, final ComponentJob o2) {
         int diff = o1.getDescriptor().compareTo(o2.getDescriptor());
         if (diff == 0) {
             diff = ToStringComparator.getComparator().compare(o1.getName(), o2.getName());

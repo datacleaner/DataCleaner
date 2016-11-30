@@ -18,7 +18,8 @@
  * Boston, MA  02110-1301  USA
  */
 /**
- * Various utilities for making web service (HTTP, SOAP, REST etc.) integrations easier. While not used directly by any built-in DataCleaner components, these classes may very well be handy when integrating with third party services.
+ * Various utilities for making web service (HTTP, SOAP, REST etc.) integrations easier. While not used directly by
+ * any built-in DataCleaner components, these classes may very well be handy when integrating with third party services.
  */
 package org.datacleaner.util.ws;
 

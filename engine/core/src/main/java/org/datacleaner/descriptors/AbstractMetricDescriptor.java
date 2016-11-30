@@ -28,7 +28,7 @@ public abstract class AbstractMetricDescriptor implements MetricDescriptor {
 
     @Override
     public final String getDescription() {
-        Description desc = getAnnotation(Description.class);
+        final Description desc = getAnnotation(Description.class);
         if (desc == null) {
             return null;
         }
@@ -36,17 +36,17 @@ public abstract class AbstractMetricDescriptor implements MetricDescriptor {
     }
 
     @Override
-    public final int compareTo(MetricDescriptor o) {
-        Metric metric1 = getAnnotation(Metric.class);
+    public final int compareTo(final MetricDescriptor o) {
+        final Metric metric1 = getAnnotation(Metric.class);
         final int order1 = metric1.order();
-        Metric metric2 = o.getAnnotation(Metric.class);
+        final Metric metric2 = o.getAnnotation(Metric.class);
         final int order2;
         if (metric2 == null) {
             order2 = Integer.MAX_VALUE;
         } else {
             order2 = metric2.order();
         }
-        int diff = order1 - order2;
+        final int diff = order1 - order2;
         if (diff == 0) {
             return getName().compareTo(o.getName());
         }
@@ -54,7 +54,7 @@ public abstract class AbstractMetricDescriptor implements MetricDescriptor {
     }
 
     @Override
-    public final  String toString() {
+    public final String toString() {
         return getClass().getSimpleName() + "[name=" + getName() + "]";
     }
 }

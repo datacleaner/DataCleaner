@@ -73,20 +73,19 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
     private static final ObjectMapper mapper = Serializator.getJacksonObjectMapper();
 
     private final RemoteServerData serverData;
+    private final AtomicBoolean failed = new AtomicBoolean(false);
     private String componentDisplayName;
-
     private ComponentRESTClient client;
+    private final SingleValueErrorAwareCache<CreateInput, OutputColumns> cachedOutputColumns =
+            new SingleValueErrorAwareCache<CreateInput, OutputColumns>() {
+                @Override
+                protected OutputColumns fetch(final CreateInput input) throws Exception {
+                    return getOutputColumnsInternal(input);
+                }
+            };
     private Map<String, Object> configuredProperties = new TreeMap<>();
 
-    private final AtomicBoolean failed = new AtomicBoolean(false);
-    private final SingleValueErrorAwareCache<CreateInput, OutputColumns> cachedOutputColumns = new SingleValueErrorAwareCache<CreateInput, OutputColumns>() {
-        @Override
-        protected OutputColumns fetch(CreateInput input) throws Exception {
-            return getOutputColumnsInternal(input);
-        }
-    };
-
-    public RemoteTransformer(RemoteServerData serverData, String componentDisplayName) {
+    public RemoteTransformer(final RemoteServerData serverData, final String componentDisplayName) {
         this.serverData = serverData;
         this.componentDisplayName = componentDisplayName;
     }
@@ -97,7 +96,7 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
             logger.debug("Initializing '{}' @{}", componentDisplayName, this.hashCode());
             client = new ComponentRESTClient(serverData.getUrl(), serverData.getUsername(), serverData.getPassword(),
                     Version.getVersion());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RemoteComponentException(
                     "Remote component '" + componentDisplayName + "' is temporarily unavailable. \n" + e.getMessage());
         }
@@ -111,12 +110,12 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
 
     @Validate
     public void validate() throws Exception {
-        CreateInput createInput = new CreateInput();
+        final CreateInput createInput = new CreateInput();
         createInput.configuration = getConfiguration(getUsedInputColumns());
         try {
             cachedOutputColumns.getCachedValue(createInput);
-        } catch(RESTClientException e) {
-            if(e.getCode() == 422) {
+        } catch (final RESTClientException e) {
+            if (e.getCode() == 422) {
                 // Validation failed - simplify the error message
                 throw new RuntimeException(e.getReason());
             }
@@ -125,22 +124,22 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        CreateInput createInput = new CreateInput();
+        final CreateInput createInput = new CreateInput();
         createInput.configuration = getConfiguration(getUsedInputColumns());
         try {
             return cachedOutputColumns.getCachedValue(createInput);
-        } catch(Exception e) {
+        } catch (final Exception e) {
             logger.debug("Error retrieving columns of transformer '" + componentDisplayName + "': " + e.toString());
             return OutputColumns.NO_OUTPUT_COLUMNS;
         }
     }
 
-    private boolean isOutputColumnEnumeration(JsonSchema schema) {
-        if(schema == null){
+    private boolean isOutputColumnEnumeration(final JsonSchema schema) {
+        if (schema == null) {
             return false;
         }
-        boolean isArray = schema.isArraySchema();
-        JsonSchema baseSchema;
+        final boolean isArray = schema.isArraySchema();
+        final JsonSchema baseSchema;
         if (isArray) {
             baseSchema = ((ArraySchema) schema).getItems().asSingleItems().getSchema();
         } else {
@@ -148,7 +147,7 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         }
 
         if (baseSchema instanceof ValueTypeSchema) {
-            Set<String> enums = ((ValueTypeSchema) baseSchema).getEnums();
+            final Set<String> enums = ((ValueTypeSchema) baseSchema).getEnums();
             if (enums != null && !enums.isEmpty()) {
                 return true;
             }
@@ -156,35 +155,33 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         return false;
     }
 
-    private ComponentConfiguration getConfiguration(List<InputColumn<?>> inputColumns) {
-        ComponentConfiguration configuration = new ComponentConfiguration();
-        for(Map.Entry<String, Object> propertyE: configuredProperties.entrySet()) {
+    private ComponentConfiguration getConfiguration(final List<InputColumn<?>> inputColumns) {
+        final ComponentConfiguration configuration = new ComponentConfiguration();
+        for (final Map.Entry<String, Object> propertyE : configuredProperties.entrySet()) {
             configuration.getProperties().put(propertyE.getKey(), mapper.valueToTree(propertyE.getValue()));
         }
 
-        for(InputColumn<?> col: inputColumns) {
-            configuration.getColumns().add(ComponentsRestClientUtils.createInputColumnSpecification(
-                    col.getName(),
-                    col.getDataType(),
-                    ColumnTypeImpl.convertColumnType(col.getDataType()).getName(),
-                    mapper.getNodeFactory()));
+        for (final InputColumn<?> col : inputColumns) {
+            configuration.getColumns().add(ComponentsRestClientUtils
+                    .createInputColumnSpecification(col.getName(), col.getDataType(),
+                            ColumnTypeImpl.convertColumnType(col.getDataType()).getName(), mapper.getNodeFactory()));
         }
         return configuration;
     }
 
     private List<InputColumn<?>> getUsedInputColumns() {
-        ArrayList<InputColumn<?>> columns = new ArrayList<>();
-        for(Object propValue: configuredProperties.values()) {
-            if(propValue instanceof InputColumn) {
+        final ArrayList<InputColumn<?>> columns = new ArrayList<>();
+        for (final Object propValue : configuredProperties.values()) {
+            if (propValue instanceof InputColumn) {
                 columns.add((InputColumn<?>) propValue);
-            } else if(propValue instanceof InputColumn[]) {
-                for(InputColumn<?> col: ((InputColumn[])propValue)) {
+            } else if (propValue instanceof InputColumn[]) {
+                for (final InputColumn<?> col : ((InputColumn[]) propValue)) {
                     columns.add(col);
                 }
-            } else if(propValue instanceof Collection) {
-                for(Object value: ((Collection<?>)propValue)) {
-                    if(value instanceof InputColumn) {
-                        columns.add((InputColumn<?>)value);
+            } else if (propValue instanceof Collection) {
+                for (final Object value : ((Collection<?>) propValue)) {
+                    if (value instanceof InputColumn) {
+                        columns.add((InputColumn<?>) value);
                     } else {
                         // don't iterate the rest if the first item is not an input column.
                         break;
@@ -196,22 +193,25 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         return columns;
     }
 
-    private void convertOutputRows(JsonNode rowSets, BatchSink<Collection<Object[]>> sink, int sinkSize) {
-        OutputColumns outCols = getOutputColumns();
-        if(rowSets == null || rowSets.size() < 1) { throw new RuntimeException("Expected exactly 1 row in response"); }
+    private void convertOutputRows(final JsonNode rowSets, final BatchSink<Collection<Object[]>> sink,
+            final int sinkSize) {
+        final OutputColumns outCols = getOutputColumns();
+        if (rowSets == null || rowSets.size() < 1) {
+            throw new RuntimeException("Expected exactly 1 row in response");
+        }
 
         int rowI = 0;
-        for(JsonNode rowSet: rowSets) {
-            if(rowI >= sinkSize) {
+        for (final JsonNode rowSet : rowSets) {
+            if (rowI >= sinkSize) {
                 throw new RuntimeException("Expected " + sinkSize + " rows, but got more");
             }
 
-            List<Object[]> outRowSet = new ArrayList<>();
+            final List<Object[]> outRowSet = new ArrayList<>();
 
-            for(JsonNode row: rowSet) {
+            for (final JsonNode row : rowSet) {
                 final List<Object> values = new ArrayList<>();
                 int i = 0;
-                for (JsonNode value : row) {
+                for (final JsonNode value : row) {
                     // TODO: should JsonNode be the default?
                     Class<?> cl = String.class;
                     if (i < outCols.getColumnCount()) {
@@ -225,59 +225,57 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
             sink.setOutput(rowI, outRowSet);
             rowI++;
         }
-        if(rowI < sinkSize) {
+        if (rowI < sinkSize) {
             throw new RuntimeException("Expected " + sinkSize + " rows, but got only " + rowI);
         }
     }
 
-    private Object convertOutputValue(JsonNode value, Class<?> cl) {
+    private Object convertOutputValue(final JsonNode value, final Class<?> cl) {
         try {
-            if(cl == JsonNode.class) {
+            if (cl == JsonNode.class) {
                 return value;
             }
-            if(cl == File.class) {
+            if (cl == File.class) {
                 return StringConverter.simpleInstance().deserialize(value.asText(), cl);
             }
             return mapper.readValue(value.traverse(), cl);
-        } catch(Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Cannot convert table value of type '" + cl + "': " + value.toString(), e);
         }
     }
 
-    public void setPropertyValue(String propertyName, Object value) {
-        if(EqualsBuilder.equals(value, configuredProperties.get(propertyName))) {
+    public void setPropertyValue(final String propertyName, final Object value) {
+        if (EqualsBuilder.equals(value, configuredProperties.get(propertyName))) {
             return;
         }
         logger.debug("Setting '{}'.'{}' = {}", componentDisplayName, propertyName, value);
 
-        if(value == null) {
+        if (value == null) {
             configuredProperties.remove(propertyName);
         } else {
             configuredProperties.put(propertyName, value);
         }
     }
 
-    public Object getPropertyValue(String propertyName) {
+    public Object getPropertyValue(final String propertyName) {
         return configuredProperties.get(propertyName);
     }
 
     @Override
-    public void map(BatchSource<InputRow> source, BatchSink<Collection<Object[]>> sink) {
-        List<InputColumn<?>> cols = getUsedInputColumns();
-        int size = source.size();
-        Object[] rows = new Object[size];
-        for(int i = 0; i < size; i++) {
-            InputRow inputRow = source.getInput(i);
-            Object[] values = new Object[cols.size()];
-            int j = 0;
-            for(InputColumn<?> col: cols) {
-                values[j] = inputRow.getValue(col);
-                j++;
+    public void map(final BatchSource<InputRow> source, final BatchSink<Collection<Object[]>> sink) {
+        final List<InputColumn<?>> cols = getUsedInputColumns();
+        final int size = source.size();
+        final Object[] rows = new Object[size];
+        for (int i = 0; i < size; i++) {
+            final InputRow inputRow = source.getInput(i);
+            final Object[] values = new Object[cols.size()];
+            for (int j = 0; j < cols.size(); j++) {
+                values[j] = inputRow.getValue(cols.get(j));
             }
             rows[i] = values;
         }
 
-        ProcessStatelessInput input = new ProcessStatelessInput();
+        final ProcessStatelessInput input = new ProcessStatelessInput();
         input.configuration = getConfiguration(cols);
         input.data = mapper.valueToTree(rows);
 
@@ -289,11 +287,11 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
             }
             throw new RuntimeException("Remote transformer's connection has already been closed. ");
         }
-        ProcessStatelessOutput out;
+        final ProcessStatelessOutput out;
         try {
             out = client.processStateless(componentDisplayName, input);
-        } catch (RuntimeException e) {
-            boolean alreadyFailed = failed.getAndSet(true);
+        } catch (final RuntimeException e) {
+            final boolean alreadyFailed = failed.getAndSet(true);
             if (!alreadyFailed) {
                 throw new RuntimeException("Remote transformer failed: " + e.getMessage(), e);
             } else {
@@ -303,7 +301,7 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
         convertOutputRows(out.rows, sink, size);
     }
 
-    private OutputColumns getOutputColumnsInternal(CreateInput createInput) throws Exception {
+    private OutputColumns getOutputColumnsInternal(final CreateInput createInput) throws Exception {
         logger.debug("Getting output columns from server");
         boolean wasInit = false;
         if (client == null) {
@@ -311,15 +309,16 @@ public class RemoteTransformer extends BatchRowCollectingTransformer {
             initClient();
         }
         try {
-            org.datacleaner.restclient.OutputColumns columnsSpec = client.getOutputColumns(componentDisplayName, createInput);
+            final org.datacleaner.restclient.OutputColumns columnsSpec =
+                    client.getOutputColumns(componentDisplayName, createInput);
 
-            OutputColumns outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
+            final OutputColumns outCols = new OutputColumns(columnsSpec.getColumns().size(), Object.class);
             int i = 0;
-            for (org.datacleaner.restclient.OutputColumns.OutputColumn colSpec : columnsSpec.getColumns()) {
+            for (final org.datacleaner.restclient.OutputColumns.OutputColumn colSpec : columnsSpec.getColumns()) {
                 outCols.setColumnName(i, colSpec.name);
                 try {
                     outCols.setColumnType(i, Class.forName(colSpec.type));
-                } catch (ClassNotFoundException e) {
+                } catch (final ClassNotFoundException e) {
                     final Class<?> type;
                     if (isOutputColumnEnumeration(colSpec.schema)) {
                         type = String.class;

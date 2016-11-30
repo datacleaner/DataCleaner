@@ -43,22 +43,22 @@ public @interface StringProperty {
     /**
      * @return true if the input field is multiline
      */
-    public boolean multiline() default false;
+    boolean multiline() default false;
 
     /**
      * @return the mime type (and optionally aliases/alternative mime types) of
      *         the property
      */
-    public String[] mimeType() default {};
+    String[] mimeType() default {};
 
     /**
      * @return true if the input field represents a password (or other similar
      *         security token), not shown literally to the user.
      */
-    public boolean password() default false;
+    boolean password() default false;
 
     /**
      * @return true if an empty string value is acceptable
      */
-    public boolean emptyString() default false;
+    boolean emptyString() default false;
 }

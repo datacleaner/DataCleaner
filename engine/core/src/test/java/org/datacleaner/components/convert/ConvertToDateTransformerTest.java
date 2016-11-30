@@ -25,12 +25,11 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+
+import junit.framework.TestCase;
 
 public class ConvertToDateTransformerTest extends TestCase {
 
@@ -44,18 +43,18 @@ public class ConvertToDateTransformerTest extends TestCase {
         realTimeZone = TimeZone.getDefault();
         TimeZone.setDefault(TimeZone.getTimeZone(TEST_TIMEZONE));
         dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-    };
-    
+    }
+
     @Override
     protected void tearDown() throws Exception {
         TimeZone.setDefault(realTimeZone);
     }
 
     public void testConvertWithNumberOnlyDateMask() throws Exception {
-        ConvertToDateTransformer transformer = new ConvertToDateTransformer();
+        final ConvertToDateTransformer transformer = new ConvertToDateTransformer();
         transformer.timeZone = TEST_TIMEZONE;
         transformer.dateMasks = new String[] { "ddMMyyyy" };
-        InputColumn<?> col = new MockInputColumn<Object>("datestr");
+        final InputColumn<?> col = new MockInputColumn<>("datestr");
         transformer.input = new InputColumn[] { col };
         transformer.init();
 
@@ -69,7 +68,7 @@ public class ConvertToDateTransformerTest extends TestCase {
     }
 
     public void testConvertFromNumber() throws Exception {
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, 1971);
         cal.set(Calendar.MONTH, Calendar.JANUARY);
         cal.set(Calendar.DATE, 1);
@@ -77,21 +76,21 @@ public class ConvertToDateTransformerTest extends TestCase {
 
         assertTrue(cal.getTime().getTime() > 5000000);
 
-        ConvertToDateTransformer transformer = new ConvertToDateTransformer();
+        final ConvertToDateTransformer transformer = new ConvertToDateTransformer();
         transformer.timeZone = TEST_TIMEZONE;
         transformer.init();
 
         assertEquals("1971-01-01", format(transformer.transformValue(cal)));
         assertEquals("1971-01-01", format(transformer.transformValue(cal.getTime())));
 
-        assertEquals("1970-04-03", format(transformer.convertFromNumber(8000000000l)));
+        assertEquals("1970-04-03", format(transformer.convertFromNumber(8000000000L)));
         assertEquals("1997-05-19", format(transformer.convertFromNumber(10000)));
         assertEquals("1997-05-19", format(transformer.convertFromNumber(19970519)));
         assertEquals("1997-05-19", format(transformer.convertFromNumber(970519)));
     }
 
     public void testConvertFromString() throws Exception {
-        ConvertToDateTransformer transformer = new ConvertToDateTransformer();
+        final ConvertToDateTransformer transformer = new ConvertToDateTransformer();
         transformer.timeZone = TEST_TIMEZONE;
         transformer.init();
 
@@ -101,14 +100,14 @@ public class ConvertToDateTransformerTest extends TestCase {
         assertEquals("2008-07-11", format(transformer.convertFromString("2008-07-11 00:00:00")));
         assertEquals("2012-04-26", format(transformer.convertFromString("2012-04-26 19:12:19.792012")));
 
-        Date result = transformer.convertFromString("2008-07-11 14:05:13");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final Date result = transformer.convertFromString("2008-07-11 14:05:13");
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone(TEST_TIMEZONE));
         assertEquals("2008-07-11 14:05:13", format.format(result));
     }
 
     public void testConvertFromExpression() throws Exception {
-        ConvertToDateTransformer transformer = new ConvertToDateTransformer();
+        final ConvertToDateTransformer transformer = new ConvertToDateTransformer();
         transformer.timeZone = TEST_TIMEZONE;
         transformer.init();
 
@@ -123,7 +122,7 @@ public class ConvertToDateTransformerTest extends TestCase {
     }
 
     public void testConvertSingleHourDigit() throws Exception {
-        ConvertToDateTransformer transformer = new ConvertToDateTransformer();
+        final ConvertToDateTransformer transformer = new ConvertToDateTransformer();
         transformer.timeZone = TEST_TIMEZONE;
         transformer.dateMasks = new String[] { "dd/MM/yyyy HH:mm" };
         transformer.init();
@@ -135,7 +134,7 @@ public class ConvertToDateTransformerTest extends TestCase {
         assertNotNull(date);
     }
 
-    private String format(Date date) {
+    private String format(final Date date) {
         assertNotNull("date is null", date);
         return dateFormat.format(date);
     }

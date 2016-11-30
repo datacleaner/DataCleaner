@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
  * invocations will be {@link ServiceResult}, which allows for explicit error
  * handling, and for implicit aspects like retrying, pooling/limiting of
  * requests etc.
- * 
+ *
  * @param <R>
  *            the type of result to expect from service invocations in this
  *            session.
@@ -36,26 +36,26 @@ public interface ServiceSession<R> extends Closeable {
 
     /**
      * Invokes the main service that this session pertains to.
-     * 
+     *
      * @param callable
      * @return
      */
-    public ServiceResult<R> invokeService(Callable<R> callable);
+    ServiceResult<R> invokeService(Callable<R> callable);
 
     /**
      * Invokes an adhoc/additional service which yields a different response
      * type than the main service. This method is useful in cases of eg. session
      * handling or cleanup tasks on the server side etc.
-     * 
+     *
      * When calling adhoc services it is assumed that the response HAS TO BE
      * SUCCESSFUL. Therefore the method returns the result type, not a service
      * result.
-     * 
+     *
      * @param callable
      * @return
      */
-    public <E> E invokeAdhocService(Callable<E> callable) throws RuntimeException, IllegalStateException;
-    
+    <E> E invokeAdhocService(Callable<E> callable) throws RuntimeException, IllegalStateException;
+
     @Override
-    public void close();
+    void close();
 }

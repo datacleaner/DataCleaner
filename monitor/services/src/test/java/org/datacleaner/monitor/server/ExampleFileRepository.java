@@ -42,7 +42,7 @@ public class ExampleFileRepository extends FileRepository {
         tempDir.deleteOnExit();
         try {
             FileUtils.copyDirectory(new File("src/test/resources/example_repo"), tempDir);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.error("Could not generate test folder", e);
         }
 

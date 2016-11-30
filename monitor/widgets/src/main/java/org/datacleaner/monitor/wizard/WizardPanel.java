@@ -33,74 +33,74 @@ public interface WizardPanel {
     /**
      * Gets the ID of the HTML element of this WizardPanel, if it can be
      * referenced and reused for other wizard panel locations.
-     * 
+     *
      * @return
      */
-    public String getCustomHtmlDivId();
+    String getCustomHtmlDivId();
 
     /**
      * Adds a style class to the {@link WizardPanel}.
-     * 
+     *
      * @param styleClass
      */
-    public void addStyleClass(String styleClass);
+    void addStyleClass(String styleClass);
 
     /**
      * Sets header for the wizard on the top of the panel
-     * 
+     *
      * @param header
      */
-    public void setHeader(String header);
+    void setHeader(String header);
 
     /**
      * Gets the {@link WizardProgressBar} of this wizard panel.
-     * 
+     *
      * @return
      */
-    public WizardProgressBar getProgressBar();
+    WizardProgressBar getProgressBar();
 
     /**
      * Get button panel
-     * 
+     *
      * @return ButtonPanel
      */
-    public ButtonPanel getButtonPanel();
+    ButtonPanel getButtonPanel();
 
     /**
      * Add a widget on the wizard panel
-     * 
-     * @param w
+     *
+     * @param widget
      */
-    public void setContent(IsWidget w);
+    void setContent(IsWidget widget);
 
     /**
      * Gets the widget representing the complete wizard panel.
-     * 
+     *
      * Mostly this should not be called. Rather simply use methods
      * {@link #setContent(IsWidget)}, {@link #setHeader(String)},
      * {@link #getButtonPanel()}, {@link #showWizard()} or {@link #hideWizard()}
      * .
-     * 
+     *
      * @return
      */
-    public Widget getWizardWidget();
+    Widget getWizardWidget();
 
     /**
      * Shows the wizard on the screen
-     * 
+     *
      * @param b
      */
-    public void showWizard();
+    void showWizard();
 
     /**
      * Hides the wizard
      */
-    public void hideWizard();
+    void hideWizard();
 
     /**
      * Requests the wizard panel to refresh it's UI. This is typically called
      * because some of the existing content has changed, and the UI may need to
      * adapt (center dialogs, repack frames etc.)
      */
-    public void refreshUI();
+    void refreshUI();
 }

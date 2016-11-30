@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.transform;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -37,8 +37,9 @@ import org.junit.Test;
 public class RemoveDictionaryMatchesTransformerTest {
 
     private final InputColumn<String> col = new MockInputColumn<>("Job title");
-    private final Dictionary dictionary = new SimpleDictionary("Title adjectives", "Junior", "Senior", "Lead",
-            "Principal", "Assistant to", "Assistant to the");
+    private final Dictionary dictionary =
+            new SimpleDictionary("Title adjectives", "Junior", "Senior", "Lead", "Principal", "Assistant to",
+                    "Assistant to the");
     private RemoveDictionaryMatchesTransformer transformer;
 
     @Before
@@ -54,8 +55,9 @@ public class RemoveDictionaryMatchesTransformerTest {
 
     @Test
     public void testCaseInsensitiveRemoval() throws Exception {
-        final Dictionary dictionary = new SimpleDictionary("Title adjectives", false, "Junior", "Senior", "Lead",
-                "Principal", "Assistant to", "Assistant to the");
+        final Dictionary dictionary =
+                new SimpleDictionary("Title adjectives", false, "Junior", "Senior", "Lead", "Principal", "Assistant to",
+                        "Assistant to the");
 
         transformer = new RemoveDictionaryMatchesTransformer(col, dictionary, new DataCleanerConfigurationImpl());
         transformer.init();
@@ -66,8 +68,8 @@ public class RemoveDictionaryMatchesTransformerTest {
         // single-word) the result will vary a bit here. Multi-word matches will
         // represent the sentence as it is in the dictionary. Single-word
         // matches will represent the match found in the string.
-        assertEquals("assistant to the LEAD JUNIOR", transformer.transform(
-                "ASSISTANT TO THE LEAD GURU OF JUNIOR EMPLOYEES")[1]);
+        assertEquals("assistant to the LEAD JUNIOR",
+                transformer.transform("ASSISTANT TO THE LEAD GURU OF JUNIOR EMPLOYEES")[1]);
 
         transformer.close();
     }
@@ -80,11 +82,11 @@ public class RemoveDictionaryMatchesTransformerTest {
         assertEquals(String.class, outputColumns.getColumnType(1));
 
         transformer._removedMatchesType = RemovedMatchesType.LIST;
-        assertEquals("OutputColumns[Job title (Title adjectives removed), Removed matches]", transformer
-                .getOutputColumns().toString());
+        assertEquals("OutputColumns[Job title (Title adjectives removed), Removed matches]",
+                transformer.getOutputColumns().toString());
         assertEquals(List.class, transformer.getOutputColumns().getColumnType(1));
     }
-    
+
     @Test
     public void testWordBoundarySplitting() throws Throwable {
         transformer._removedMatchesType = RemovedMatchesType.STRING;
@@ -113,10 +115,10 @@ public class RemoveDictionaryMatchesTransformerTest {
         assertEquals("Software  Engineer", transformer.transform("Software  Engineer")[0]);
         assertEquals("", transformer.transform("Software  Engineer")[1]);
 
-        assertEquals("   Guru of  employees", transformer.transform(
-                "Principal Senior Lead Guru of Junior employees")[0]);
-        assertEquals("Principal Senior Lead Junior", transformer.transform(
-                "Principal Senior Lead Guru of Junior employees")[1]);
+        assertEquals("   Guru of  employees",
+                transformer.transform("Principal Senior Lead Guru of Junior employees")[0]);
+        assertEquals("Principal Senior Lead Junior",
+                transformer.transform("Principal Senior Lead Guru of Junior employees")[1]);
     }
 
     @Test
@@ -132,10 +134,10 @@ public class RemoveDictionaryMatchesTransformerTest {
         assertEquals("Software  Engineer", transformer.transform("Software  Engineer")[0]);
         assertEquals("[]", transformer.transform("Software  Engineer")[1].toString());
 
-        assertEquals("   Guru of  employees", transformer.transform(
-                "Principal Senior Lead Guru of Junior employees")[0]);
-        assertEquals("[Principal, Senior, Lead, Junior]", transformer.transform(
-                "Principal Senior Lead Guru of Junior employees")[1].toString());
+        assertEquals("   Guru of  employees",
+                transformer.transform("Principal Senior Lead Guru of Junior employees")[0]);
+        assertEquals("[Principal, Senior, Lead, Junior]",
+                transformer.transform("Principal Senior Lead Guru of Junior employees")[1].toString());
 
         assertEquals("", transformer.transform("")[0]);
         assertEquals("[]", transformer.transform("")[1].toString());

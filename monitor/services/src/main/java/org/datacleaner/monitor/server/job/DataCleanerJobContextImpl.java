@@ -19,15 +19,12 @@
  */
 package org.datacleaner.monitor.server.job;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalysisJobMetadata;
@@ -58,7 +55,8 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
     private volatile List<String> _sourceColumnPaths;
     private volatile Map<String, String> _variables;
 
-    public DataCleanerJobContextImpl(DataCleanerJobEngine engine, TenantContext tenantContext, RepositoryFile file) {
+    public DataCleanerJobContextImpl(final DataCleanerJobEngine engine, final TenantContext tenantContext,
+            final RepositoryFile file) {
         _tenantContext = tenantContext;
         _engine = engine;
         _file = file;
@@ -87,12 +85,13 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
     }
 
     @Override
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides) {
+    public AnalysisJob getAnalysisJob(final Map<String, String> variableOverrides) {
         return getAnalysisJob(variableOverrides, null);
     }
-    
+
     @Override
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides, Map<String, String> overrideProperties) {
+    public AnalysisJob getAnalysisJob(final Map<String, String> variableOverrides,
+            final Map<String, String> overrideProperties) {
         if ((variableOverrides == null || variableOverrides.isEmpty()) && overrideProperties == null) {
             // cached job definition may be used, if not outdated
             final long configurationLastModified = _tenantContext.getConfigurationFile().getLastModified();
@@ -150,7 +149,7 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
 
     /**
      * Checks if the current copy of the metadata object is recent.
-     * 
+     *
      * @param metadataObject
      *            the object to look for.
      */
@@ -161,13 +160,9 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
                 lastModified = _file.getLastModified();
                 if (_sourceDatastoreName == null || lastModified != _lastModifiedCache) {
                     final DataCleanerConfiguration configuration = _tenantContext.getConfiguration();
-                    final AnalysisJobMetadata metadata = _file.readFile(new Func<InputStream, AnalysisJobMetadata>() {
-                        @Override
-                        public AnalysisJobMetadata eval(InputStream in) {
-                            final JaxbJobReader jobReader = new JaxbJobReader(configuration);
-                            AnalysisJobMetadata metadata = jobReader.readMetadata(in);
-                            return metadata;
-                        }
+                    final AnalysisJobMetadata metadata = _file.readFile(in -> {
+                        final JaxbJobReader jobReader = new JaxbJobReader(configuration);
+                        return jobReader.readMetadata(in);
                     });
                     _sourceDatastoreName = metadata.getDatastoreName();
                     _sourceColumnPaths = metadata.getSourceColumnPaths();
@@ -179,11 +174,8 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
 
     @Override
     public void toXml(final OutputStream out) {
-        _file.readFile(new Action<InputStream>() {
-            @Override
-            public void run(InputStream in) throws Exception {
-                FileHelper.copy(in, out);
-            }
+        _file.readFile(in -> {
+            FileHelper.copy(in, out);
         });
     }
 
@@ -210,15 +202,11 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
         final RepositoryFile file = getJobFile();
 
         final DataCleanerConfiguration configuration = _tenantContext.getConfiguration();
-        final AnalysisJobMetadata jobMetadata = file.readFile(new Func<InputStream, AnalysisJobMetadata>() {
-            @Override
-            public AnalysisJobMetadata eval(InputStream in) {
-                final JaxbJobReader jobReader = new JaxbJobReader(configuration);
-                AnalysisJobMetadata metadata = jobReader.readMetadata(in);
-                return metadata;
-            }
+        final AnalysisJobMetadata jobMetadata = file.readFile(in -> {
+            final JaxbJobReader jobReader = new JaxbJobReader(configuration);
+            return jobReader.readMetadata(in);
         });
-        
+
         if (jobMetadata == null) {
             return Collections.emptyMap();
         }

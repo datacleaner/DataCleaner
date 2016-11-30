@@ -35,8 +35,8 @@ public class ComposeJsonTransformerTest {
 
     @Test
     public void testCreateSimpleJsonOfDataTypes() throws Exception {
-        InputColumn<Object> col = new MockInputColumn<Object>("obj", Object.class);
-        ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
+        final InputColumn<Object> col = new MockInputColumn<>("obj", Object.class);
+        final ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
         jsonTransformer.init();
 
         assertEquals("OutputColumns[obj (as JSON)]", jsonTransformer.getOutputColumns().toString());
@@ -53,50 +53,50 @@ public class ComposeJsonTransformerTest {
 
     @Test
     public void testSimpleMapToJson() {
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        final Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", "shekhar");
         map.put("country", "India");
 
-        InputColumn<Map<?, ?>> col = new MockInputColumn<Map<?, ?>>("map");
-        ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
+        final InputColumn<Map<?, ?>> col = new MockInputColumn<>("map");
+        final ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
         jsonTransformer.init();
         assertEquals(1, jsonTransformer.getOutputColumns().getColumnCount());
 
-        String[] jsonDocs = jsonTransformer.transform(new MockInputRow().put(col, map));
+        final String[] jsonDocs = jsonTransformer.transform(new MockInputRow().put(col, map));
         assertEquals(1, jsonDocs.length);
         assertEquals("{\"name\":\"shekhar\",\"country\":\"India\"}", jsonDocs[0]);
     }
 
     @Test
     public void testSimpleList() throws Exception {
-        List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         list.add("hello");
         list.add("world");
 
-        InputColumn<List<?>> col = new MockInputColumn<List<?>>("list");
+        final InputColumn<List<?>> col = new MockInputColumn<>("list");
 
-        ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
+        final ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
         jsonTransformer.init();
         assertEquals(1, jsonTransformer.getOutputColumns().getColumnCount());
 
-        String[] jsonDocs = jsonTransformer.transform(new MockInputRow().put(col, list));
+        final String[] jsonDocs = jsonTransformer.transform(new MockInputRow().put(col, list));
         assertEquals(1, jsonDocs.length);
         assertEquals("[\"hello\",\"world\"]", jsonDocs[0]);
     }
 
     @Test
     public void testComplexCollectionColumnsToJson() throws Exception {
-        Map<String, String> namesMap = new LinkedHashMap<String, String>();
+        final Map<String, String> namesMap = new LinkedHashMap<>();
         namesMap.put("GivenName", "Ankit");
         namesMap.put("FamilyName", "Kumar");
-        List<Map<String, String>> addresses = new ArrayList<Map<String, String>>();
-        Map<String, String> addressMap1 = new LinkedHashMap<String, String>();
+        final List<Map<String, String>> addresses = new ArrayList<>();
+        final Map<String, String> addressMap1 = new LinkedHashMap<>();
         addressMap1.put("Street", "Utrechtseweg");
         addressMap1.put("HouseNumber", "310");
         addressMap1.put("City", "Arnhem");
         addressMap1.put("Postcode", "6812AR");
         addressMap1.put("Country", "Netherlands");
-        Map<String, String> addressMap2 = new LinkedHashMap<String, String>();
+        final Map<String, String> addressMap2 = new LinkedHashMap<>();
         addressMap2.put("Street", "Silversteyn");
         addressMap2.put("HouseNumber", "893");
         addressMap2.put("City", "Arnhem");
@@ -105,23 +105,22 @@ public class ComposeJsonTransformerTest {
         addresses.add(addressMap1);
         addresses.add(addressMap2);
 
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        final Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", namesMap);
         map.put("addresses", addresses);
         map.put("country", "India");
 
-        InputColumn<Map<?, ?>> col = new MockInputColumn<Map<?, ?>>("name");
-        ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
+        final InputColumn<Map<?, ?>> col = new MockInputColumn<>("name");
+        final ComposeJsonTransformer jsonTransformer = new ComposeJsonTransformer(col);
         jsonTransformer.init();
         assertEquals(1, jsonTransformer.getOutputColumns().getColumnCount());
 
-        String[] jsonDocs = jsonTransformer.transform(new MockInputRow().put(col, map));
+        final String[] jsonDocs = jsonTransformer.transform(new MockInputRow().put(col, map));
         assertEquals(1, jsonDocs.length);
-        assertEquals(
-                "{'name':{'GivenName':'Ankit','FamilyName':'Kumar'},"
-                        + "'addresses':[{'Street':'Utrechtseweg','HouseNumber':'310','City':'Arnhem','Postcode':'6812AR','Country':'Netherlands'},"
-                        + "{'Street':'Silversteyn','HouseNumber':'893','City':'Arnhem','Postcode':'6812AB','Country':'Netherlands'}],'country':'India'}",
-                jsonDocs[0].replaceAll("\"", "'"));
+        assertEquals("{'name':{'GivenName':'Ankit','FamilyName':'Kumar'},'addresses':[{'Street':'Utrechtseweg',"
+                + "'HouseNumber':'310','City':'Arnhem','Postcode':'6812AR','Country':'Netherlands'},"
+                + "{'Street':'Silversteyn','HouseNumber':'893','City':'Arnhem','Postcode':'6812AB',"
+                + "'Country':'Netherlands'}],'country':'India'}", jsonDocs[0].replaceAll("\"", "'"));
     }
 
 }

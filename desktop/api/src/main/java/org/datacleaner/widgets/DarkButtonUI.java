@@ -38,15 +38,15 @@ public class DarkButtonUI extends MetalButtonUI {
 
     private static final DarkButtonUI INSTANCE = new DarkButtonUI();
 
+    private DarkButtonUI() {
+    }
+
     public static DarkButtonUI get() {
         return INSTANCE;
     }
 
-    private DarkButtonUI() {
-    }
-
     @Override
-    public void installDefaults(AbstractButton b) {
+    public void installDefaults(final AbstractButton b) {
         super.installDefaults(b);
         b.setFont(WidgetUtils.FONT_BUTTON);
         b.setBackground(COLOR_BG_DEFAULT);
@@ -55,7 +55,7 @@ public class DarkButtonUI extends MetalButtonUI {
         b.setBorder(WidgetUtils.BORDER_BUTTON_DARK);
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
-    
+
     @Override
     protected Color getSelectColor() {
         return COLOR_BG_SELECT;

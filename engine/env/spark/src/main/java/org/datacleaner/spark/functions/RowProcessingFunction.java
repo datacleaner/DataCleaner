@@ -66,14 +66,14 @@ import scala.Tuple2;
 /**
  * The main Spark function which applies the DataCleaner row processing
  * framework onto RDDs of InputRows.
- * 
+ *
  * The main vehicle used to do this is the {@link ConsumeRowHandler}.
- * 
+ *
  * This class implements two interfaces because it has two (quite similar)
  * styles of usages in the {@link SparkAnalysisRunner}.
  */
-public final class RowProcessingFunction implements
-        Function2<Integer, Iterator<InputRow>, Iterator<Tuple2<String, NamedAnalyzerResult>>>,
+public final class RowProcessingFunction
+        implements Function2<Integer, Iterator<InputRow>, Iterator<Tuple2<String, NamedAnalyzerResult>>>,
         PairFlatMapFunction<Iterator<InputRow>, String, NamedAnalyzerResult> {
 
     private static final Logger logger = LoggerFactory.getLogger(RowProcessingFunction.class);
@@ -86,12 +86,13 @@ public final class RowProcessingFunction implements
     }
 
     @Override
-    public Iterable<Tuple2<String, NamedAnalyzerResult>> call(Iterator<InputRow> inputRowIterator) throws Exception {
+    public Iterable<Tuple2<String, NamedAnalyzerResult>> call(final Iterator<InputRow> inputRowIterator)
+            throws Exception {
         logger.info("call(Iterator) invoked");
 
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
-        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = executePartition(inputRowIterator,
-                analysisJob);
+        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults =
+                executePartition(inputRowIterator, analysisJob);
 
         logger.info("call(Iterator) finished, returning {} results", analyzerResults.size());
 
@@ -99,8 +100,8 @@ public final class RowProcessingFunction implements
     }
 
     @Override
-    public Iterator<Tuple2<String, NamedAnalyzerResult>> call(Integer partitionNumber,
-            Iterator<InputRow> inputRowIterator) throws Exception {
+    public Iterator<Tuple2<String, NamedAnalyzerResult>> call(final Integer partitionNumber,
+            final Iterator<InputRow> inputRowIterator) throws Exception {
         logger.info("call({}, Iterator) invoked", partitionNumber);
 
         final AnalysisJobBuilder jobBuilder = _sparkJobContext.getAnalysisJobBuilder();
@@ -109,8 +110,8 @@ public final class RowProcessingFunction implements
 
         final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
 
-        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = executePartition(inputRowIterator,
-                analysisJob);
+        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults =
+                executePartition(inputRowIterator, analysisJob);
 
         logger.info("call({}, Iterator) finished, returning {} results", partitionNumber, analyzerResults.size());
 
@@ -120,19 +121,19 @@ public final class RowProcessingFunction implements
     /**
      * Applies any partition-specific configuration to the job builder before
      * building it.
-     * 
+     *
      * @param jobBuilder
      * @param partitionNumber
      */
-    private void configureComponentsBeforeBuilding(AnalysisJobBuilder jobBuilder, int partitionNumber) {
+    private void configureComponentsBeforeBuilding(final AnalysisJobBuilder jobBuilder, final int partitionNumber) {
         // update datastores and resource properties to point to node-specific
         // targets if possible. This way parallel writing to files on HDFS does
         // not cause any inconsistencies because each node is writing to a
         // separate file.
         for (final ComponentBuilder cb : jobBuilder.getComponentBuilders()) {
             // find any datastore properties that point to HDFS files
-            final Set<ConfiguredPropertyDescriptor> targetDatastoreProperties = cb.getDescriptor()
-                    .getConfiguredPropertiesByType(UpdateableDatastore.class, false);
+            final Set<ConfiguredPropertyDescriptor> targetDatastoreProperties =
+                    cb.getDescriptor().getConfiguredPropertiesByType(UpdateableDatastore.class, false);
             for (final ConfiguredPropertyDescriptor targetDatastoreProperty : targetDatastoreProperties) {
                 final Object datastoreObject = cb.getConfiguredProperty(targetDatastoreProperty);
                 if (datastoreObject instanceof ResourceDatastore) {
@@ -140,8 +141,8 @@ public final class RowProcessingFunction implements
                     final Resource resource = resourceDatastore.getResource();
                     final Resource replacementResource = createReplacementResource(resource, partitionNumber);
                     if (replacementResource != null) {
-                        final ResourceDatastore replacementDatastore = createReplacementDatastore(cb, resourceDatastore,
-                                replacementResource);
+                        final ResourceDatastore replacementDatastore =
+                                createReplacementDatastore(cb, resourceDatastore, replacementResource);
                         if (replacementDatastore != null) {
                             cb.setConfiguredProperty(targetDatastoreProperty, replacementDatastore);
                         }
@@ -149,8 +150,8 @@ public final class RowProcessingFunction implements
                 }
             }
 
-            final Set<ConfiguredPropertyDescriptor> resourceProperties = cb.getDescriptor()
-                    .getConfiguredPropertiesByType(Resource.class, false);
+            final Set<ConfiguredPropertyDescriptor> resourceProperties =
+                    cb.getDescriptor().getConfiguredPropertiesByType(Resource.class, false);
             for (final ConfiguredPropertyDescriptor resourceProperty : resourceProperties) {
                 final Resource resource = (Resource) cb.getConfiguredProperty(resourceProperty);
                 final Resource replacementResource = createReplacementResource(resource, partitionNumber);
@@ -170,25 +171,24 @@ public final class RowProcessingFunction implements
 
         // recursively apply this function also on output data stream jobs
         final List<AnalysisJobBuilder> children = jobBuilder.getConsumedOutputDataStreamsJobBuilders();
-        for (AnalysisJobBuilder childJobBuilder : children) {
+        for (final AnalysisJobBuilder childJobBuilder : children) {
             configureComponentsBeforeBuilding(childJobBuilder, partitionNumber);
         }
     }
 
     /**
      * Creates a {@link Resource} replacement to use for configured properties.
-     * 
+     *
      * @param resource
      * @param partitionNumber
      * @return a replacement resource, or null if it shouldn't be replaced
      */
-    private Resource createReplacementResource(final Resource resource, int partitionNumber) {
+    private Resource createReplacementResource(final Resource resource, final int partitionNumber) {
         final String formattedPartitionNumber = String.format("%05d", partitionNumber);
         if (resource instanceof HdfsResource || resource instanceof HadoopResource) {
             final String path = resource.getQualifiedPath() + "/part-" + formattedPartitionNumber;
             final URI uri = URI.create(path);
-            final Resource replacementResource = HdfsHelper.createHelper().getResourceToUse(uri);
-            return replacementResource;
+            return HdfsHelper.createHelper().getResourceToUse(uri);
         }
         if (resource instanceof FileResource) {
             final File file = ((FileResource) resource).getFile();
@@ -200,23 +200,21 @@ public final class RowProcessingFunction implements
             if (!file.exists()) {
                 file.mkdirs();
             }
-            final FileResource fileResource = new FileResource(resource.getQualifiedPath() + "/part-"
-                    + formattedPartitionNumber);
-            return fileResource;
+            return new FileResource(resource.getQualifiedPath() + "/part-" + formattedPartitionNumber);
         }
         return null;
     }
 
     /**
      * Creates a {@link Datastore} replacement to use for configured properties
-     * 
+     *
      * @param cb
      * @param datastore
      * @param replacementResource
      * @return a replacement datastore, or null if it shouldn't be replaced
      */
-    private ResourceDatastore createReplacementDatastore(ComponentBuilder cb, ResourceDatastore datastore,
-            Resource replacementResource) {
+    private ResourceDatastore createReplacementDatastore(final ComponentBuilder cb, final ResourceDatastore datastore,
+            final Resource replacementResource) {
         final String name = datastore.getName();
         if (datastore instanceof CsvDatastore) {
             final CsvConfiguration csvConfiguration = ((CsvDatastore) datastore).getCsvConfiguration();
@@ -226,12 +224,12 @@ public final class RowProcessingFunction implements
             return new JsonDatastore(name, replacementResource, ((JsonDatastore) datastore).getSchemaBuilder());
         }
 
-        logger.warn("Could not replace datastore '{}' because it is of an unsupported type: ", name, datastore
-                .getClass().getSimpleName());
+        logger.warn("Could not replace datastore '{}' because it is of an unsupported type: ", name,
+                datastore.getClass().getSimpleName());
         return datastore;
     }
 
-    private List<Tuple2<String, NamedAnalyzerResult>> executePartition(Iterator<InputRow> inputRowIterator,
+    private List<Tuple2<String, NamedAnalyzerResult>> executePartition(final Iterator<InputRow> inputRowIterator,
             final AnalysisJob analysisJob) {
         _sparkJobContext.triggerOnPartitionProcessingStart();
         final DataCleanerConfiguration configuration = _sparkJobContext.getConfiguration();
@@ -254,25 +252,26 @@ public final class RowProcessingFunction implements
         logger.info("Row processing complete - continuing to fetching results");
 
         // collect results
-        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = getAnalyzerResults(consumeRowHandler
-                .getConsumers());
+        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults =
+                getAnalyzerResults(consumeRowHandler.getConsumers());
 
         // await any future results
-        for (ListIterator<Tuple2<String, NamedAnalyzerResult>> it = analyzerResults.listIterator(); it.hasNext();) {
+        for (final ListIterator<Tuple2<String, NamedAnalyzerResult>> it = analyzerResults.listIterator();
+             it.hasNext(); ) {
             final Tuple2<String, NamedAnalyzerResult> tuple = it.next();
             final NamedAnalyzerResult namedAnalyzerResult = tuple._2;
             final AnalyzerResult analyzerResult = namedAnalyzerResult.getAnalyzerResult();
             if (analyzerResult instanceof AnalyzerResultFuture) {
                 final AnalyzerResult awaitedResult = ((AnalyzerResultFuture<?>) analyzerResult).get();
-                final NamedAnalyzerResult awaitedResultTuple = new NamedAnalyzerResult(namedAnalyzerResult.getName(),
-                        awaitedResult);
+                final NamedAnalyzerResult awaitedResultTuple =
+                        new NamedAnalyzerResult(namedAnalyzerResult.getName(), awaitedResult);
                 it.set(new Tuple2<>(tuple._1, awaitedResultTuple));
             }
         }
 
         // close components
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration, analysisJob, false);
-        for (RowProcessingConsumer consumer : consumeRowHandler.getConsumers()) {
+        for (final RowProcessingConsumer consumer : consumeRowHandler.getConsumers()) {
             lifeCycleHelper.close(consumer.getComponentJob().getDescriptor(), consumer.getComponent(), true);
         }
         _sparkJobContext.triggerOnPartitionProcessingEnd();
@@ -280,10 +279,10 @@ public final class RowProcessingFunction implements
     }
 
     private List<Tuple2<String, NamedAnalyzerResult>> getAnalyzerResults(
-            Collection<RowProcessingConsumer> rowProcessingConsumers) {
+            final Collection<RowProcessingConsumer> rowProcessingConsumers) {
         final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = new ArrayList<>();
 
-        for (RowProcessingConsumer consumer : rowProcessingConsumers) {
+        for (final RowProcessingConsumer consumer : rowProcessingConsumers) {
             if (consumer.isResultProducer()) {
                 final HasAnalyzerResult<?> resultProducer = (HasAnalyzerResult<?>) consumer.getComponent();
                 final AnalyzerResult analyzerResult = resultProducer.getResult();
@@ -293,11 +292,11 @@ public final class RowProcessingFunction implements
                 analyzerResults.add(tuple);
             }
 
-            for (ActiveOutputDataStream activeOutputDataStream : consumer.getActiveOutputDataStreams()) {
-                List<RowProcessingConsumer> outputDataStreamConsumers = activeOutputDataStream.getPublisher()
-                        .getConsumers();
-                List<Tuple2<String, NamedAnalyzerResult>> outputDataStreamsAnalyzerResults = getAnalyzerResults(
-                        outputDataStreamConsumers);
+            for (final ActiveOutputDataStream activeOutputDataStream : consumer.getActiveOutputDataStreams()) {
+                final List<RowProcessingConsumer> outputDataStreamConsumers =
+                        activeOutputDataStream.getPublisher().getConsumers();
+                final List<Tuple2<String, NamedAnalyzerResult>> outputDataStreamsAnalyzerResults =
+                        getAnalyzerResults(outputDataStreamConsumers);
                 analyzerResults.addAll(outputDataStreamsAnalyzerResults);
             }
         }

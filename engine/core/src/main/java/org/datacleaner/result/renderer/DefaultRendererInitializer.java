@@ -36,16 +36,16 @@ public class DefaultRendererInitializer implements RendererInitializer {
 
     private final InjectionManager _injectionManager;
 
-    public DefaultRendererInitializer(InjectionManager injectionManager) {
+    public DefaultRendererInitializer(final InjectionManager injectionManager) {
         _injectionManager = injectionManager;
     }
 
     @Override
-    public void initialize(RendererBeanDescriptor<?> descriptor, Renderer<?, ?> renderer) {
-        Set<ProvidedPropertyDescriptor> providedProperties = descriptor.getProvidedProperties();
-        for (ProvidedPropertyDescriptor providedPropertyDescriptor : providedProperties) {
-            InjectionPoint<?> injectionPoint = new PropertyInjectionPoint(providedPropertyDescriptor, renderer);
-            Object value = _injectionManager.getInstance(injectionPoint);
+    public void initialize(final RendererBeanDescriptor<?> descriptor, final Renderer<?, ?> renderer) {
+        final Set<ProvidedPropertyDescriptor> providedProperties = descriptor.getProvidedProperties();
+        for (final ProvidedPropertyDescriptor providedPropertyDescriptor : providedProperties) {
+            final InjectionPoint<?> injectionPoint = new PropertyInjectionPoint(providedPropertyDescriptor, renderer);
+            final Object value = _injectionManager.getInstance(injectionPoint);
             providedPropertyDescriptor.setValue(renderer, value);
         }
     }

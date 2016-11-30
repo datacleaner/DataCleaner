@@ -25,30 +25,30 @@ package org.datacleaner.monitor.job;
  */
 public interface ExecutionLogger {
 
-    public void setStatusRunning();
+    void setStatusRunning();
 
-    public void setStatusFailed(Object component, Object data, Throwable error);
+    void setStatusFailed(Object component, Object data, Throwable error);
 
     /**
      * Notifies the logger that the job has finished successfully, optionally
      * with a persistent result as payload.
-     * 
+     *
      * @param result
      */
-    public void setStatusSuccess(Object result);
+    void setStatusSuccess(Object result);
 
     /**
      * Explicitly flushes the log to the file/user view. When log statements are
      * not explicitly flushed, the writer may decide to postpone flushing.
-     * 
+     *
      * The methods {@link #setStatusRunning()},
      * {@link #setStatusSuccess(Object)} and {@link #setStatusFailed(Throwable)}
      * will automatically flush the logs, so no explicit flushes are needed for
      * these operations.
      */
-    public void flushLog();
+    void flushLog();
 
-    public void log(String message);
+    void log(String message);
 
-    public void log(String message, Throwable throwable);
+    void log(String message, Throwable throwable);
 }

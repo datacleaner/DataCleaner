@@ -19,10 +19,10 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.file;
 
+import static org.junit.Assert.*;
+
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class FileDictionaryReferenceDataWizardTest {
     @Test

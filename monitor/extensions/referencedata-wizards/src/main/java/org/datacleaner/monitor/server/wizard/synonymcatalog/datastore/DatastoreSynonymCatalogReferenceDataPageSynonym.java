@@ -35,8 +35,9 @@ final class DatastoreSynonymCatalogReferenceDataPageSynonym extends AbstractFree
 
     private final DatastoreSynonymCatalogReferenceDataWizardSession _session;
 
-    public DatastoreSynonymCatalogReferenceDataPageSynonym(DatastoreSynonymCatalogReferenceDataWizardSession session) {
-       _session = session;
+    public DatastoreSynonymCatalogReferenceDataPageSynonym(
+            final DatastoreSynonymCatalogReferenceDataWizardSession session) {
+        _session = session;
     }
 
     @Override
@@ -50,29 +51,29 @@ final class DatastoreSynonymCatalogReferenceDataPageSynonym extends AbstractFree
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         _session.setSynonymColumn(getString(formParameters, PROPERTY_SYNONYM_COLUMN));
         _session.addToSynonymColumnList(_session.getSynonymColumn());
         _session.setAddNextSynonymColumn(getString(formParameters, PROPERTY_ADD_NEXT_SYNONYM_COLUMN));
-        final boolean addNextSynonym = (_session.getAddNextSynonymColumn() != null && 
-                _session.getAddNextSynonymColumn().equals("on"));
-        
+        final boolean addNextSynonym =
+                (_session.getAddNextSynonymColumn() != null && _session.getAddNextSynonymColumn().equals("on"));
+
         if (_session.getAddNextSynonymColumn() != null && addNextSynonym) {
             return new DatastoreSynonymCatalogReferenceDataPageSynonym(_session);
         } else {
             return null;
         }
     }
-    
+
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
         model.put(PROPERTY_SYNONYM_COLUMN, _session.getSynonymColumn());
         model.put(PROPERTY_ADD_NEXT_SYNONYM_COLUMN, _session.getAddNextSynonymColumn());
-        model.put(PROPERTY_COLUMN_OPTIONS, 
-                DatastoreHelper.getColumnOptions(_session.getWizardContext().getTenantContext(), 
-                        _session.getDatastore(), _session.getSchema(), _session.getTable()));
+        model.put(PROPERTY_COLUMN_OPTIONS, DatastoreHelper
+                .getColumnOptions(_session.getWizardContext().getTenantContext(), _session.getDatastore(),
+                        _session.getSchema(), _session.getTable()));
 
         return model;
     }

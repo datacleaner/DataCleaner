@@ -40,13 +40,13 @@ public class CategorizationResultReducer implements AnalyzerResultReducer<Catego
     RowAnnotationFactory _rowAnnotationFactory;
 
     @Override
-    public CategorizationResult reduce(Collection<? extends CategorizationResult> results) {
-        RowAnnotationFactory annotationFactory = null;
-        Map<String, RowAnnotation> reducedCategories = new LinkedHashMap<>();
-        for (CategorizationResult result : results) {
+    public CategorizationResult reduce(final Collection<? extends CategorizationResult> results) {
+        final RowAnnotationFactory annotationFactory = null;
+        final Map<String, RowAnnotation> reducedCategories = new LinkedHashMap<>();
+        for (final CategorizationResult result : results) {
 
             final Collection<String> categoryNames = result.getCategoryNames();
-            for (String categoryName : categoryNames) {
+            for (final String categoryName : categoryNames) {
                 final RowAnnotation partialAnnotation = result.getCategoryRowAnnotation(categoryName);
 
                 final RowAnnotation reducedAnnotation = reducedCategories.get(categoryName);

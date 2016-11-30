@@ -41,14 +41,14 @@ public class CustomizeScheduleClickHandler implements ClickHandler {
     private final ScheduleDefinition _schedule;
     private final SchedulePanel _schedulePanel;
 
-    public CustomizeScheduleClickHandler(SchedulePanel schedulePanel, SchedulingServiceAsync service,
-            TenantIdentifier tenant, ScheduleDefinition schedule) {
+    public CustomizeScheduleClickHandler(final SchedulePanel schedulePanel, final SchedulingServiceAsync service,
+            final TenantIdentifier tenant, final ScheduleDefinition schedule) {
         _schedulePanel = schedulePanel;
         _service = service;
         _tenant = tenant;
         _schedule = schedule;
     }
-    
+
     public void showSchedulingPopup() {
         final DCPopupPanel popup = new DCPopupPanel("Customize schedule");
 
@@ -57,20 +57,20 @@ public class CustomizeScheduleClickHandler implements ClickHandler {
         final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save schedule");
         saveButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
-                ScheduleDefinition updatedSchedule = customizeSchedulePanel.getUpdatedSchedule();
+            public void onClick(final ClickEvent event) {
+                final ScheduleDefinition updatedSchedule = customizeSchedulePanel.getUpdatedSchedule();
                 _service.updateSchedule(_tenant, updatedSchedule, new DCAsyncCallback<ScheduleDefinition>() {
                     @Override
-                    public void onSuccess(ScheduleDefinition result) {
-                    	if(_schedulePanel!=null) {
-                    		_schedulePanel.updateScheduleWidgets();
-                    	}
+                    public void onSuccess(final ScheduleDefinition result) {
+                        if (_schedulePanel != null) {
+                            _schedulePanel.updateScheduleWidgets();
+                        }
                         popup.hide();
                     }
                 });
             }
         });
-     
+
         popup.setWidget(customizeSchedulePanel);
 
         popup.addButton(saveButton);
@@ -81,7 +81,7 @@ public class CustomizeScheduleClickHandler implements ClickHandler {
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(final ClickEvent event) {
         showSchedulingPopup();
     }
 }

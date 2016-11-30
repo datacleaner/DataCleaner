@@ -38,11 +38,11 @@ public class TransformerMock implements Transformer {
     @Configured
     InputColumn<?>[] input;
 
-    private AtomicInteger i;
+    private AtomicInteger _atomicInteger;
 
     @Initialize
     public void init() {
-        i = new AtomicInteger(0);
+        _atomicInteger = new AtomicInteger(0);
     }
 
     @Override
@@ -51,9 +51,9 @@ public class TransformerMock implements Transformer {
     }
 
     @Override
-    public Integer[] transform(InputRow inputRow) {
-        Integer[] res = new Integer[input.length];
-        res[0] = i.incrementAndGet();
+    public Integer[] transform(final InputRow inputRow) {
+        final Integer[] res = new Integer[input.length];
+        res[0] = _atomicInteger.incrementAndGet();
         return res;
     }
 }

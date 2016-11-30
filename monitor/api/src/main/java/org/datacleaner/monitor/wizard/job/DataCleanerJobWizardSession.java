@@ -19,9 +19,6 @@
  */
 package org.datacleaner.monitor.wizard.job;
 
-import java.io.OutputStream;
-
-import org.apache.metamodel.util.Action;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobWriter;
@@ -40,15 +37,15 @@ public abstract class DataCleanerJobWizardSession extends AbstractJobWizardSessi
 
     private String _jobName;
 
-    public DataCleanerJobWizardSession(JobWizardContext context) {
+    public DataCleanerJobWizardSession(final JobWizardContext context) {
         super(context);
     }
-    
+
     public String getJobName() {
         return _jobName;
     }
-    
-    public void setJobName(String jobName) {
+
+    public void setJobName(final String jobName) {
         _jobName = jobName;
     }
 
@@ -60,17 +57,14 @@ public abstract class DataCleanerJobWizardSession extends AbstractJobWizardSessi
         if (StringUtils.isNullOrEmpty(jobName)) {
             throw new DCUserInputException("No job name provided");
         }
-        jobFolder.createFile(jobName + FileFilters.ANALYSIS_XML.getExtension(), new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
+        jobFolder.createFile(jobName + FileFilters.ANALYSIS_XML.getExtension(), out -> {
 
-                final AnalysisJobBuilder jobBuilder = createJob();
-                final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
+            final AnalysisJobBuilder jobBuilder = createJob();
+            final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
 
-                final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
-                final JaxbJobWriter writer = new JaxbJobWriter(configuration);
-                writer.write(analysisJob, out);
-            }
+            final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
+            final JaxbJobWriter writer = new JaxbJobWriter(configuration);
+            writer.write(analysisJob, out);
         });
         return jobName;
     }
@@ -79,7 +73,7 @@ public abstract class DataCleanerJobWizardSession extends AbstractJobWizardSessi
      * Creates the final analysis job as prescribed by the wizard. This method
      * will be invoked when no more pages are available and the wizard has
      * ended.
-     * 
+     *
      * @return
      */
     public abstract AnalysisJobBuilder createJob();

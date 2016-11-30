@@ -23,12 +23,12 @@ package org.datacleaner.api;
  * Interface for input columns that contain an expression that is evaluated when
  * the a value is extracted from the row, as opposed to being written to the row
  * in advance.
- * 
+ *
  * @param <E>
  */
 public interface ExpressionBasedInputColumn<E> extends InputColumn<E> {
 
-	public E evaluate(InputRow row);
-	
-	public String getExpression();
+    E evaluate(InputRow row);
+
+    String getExpression();
 }

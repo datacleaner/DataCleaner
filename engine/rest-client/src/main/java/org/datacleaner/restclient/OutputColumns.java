@@ -30,11 +30,20 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
  */
 public class OutputColumns {
 
+    public static class OutputColumn {
+        @JsonProperty
+        public String name;
+        @JsonProperty
+        public String type;
+        @JsonProperty
+        public JsonSchema schema;
+    }
+
     @JsonProperty
     List<OutputColumn> columns = new ArrayList<>();
 
-    public void add(String columnName, Class<?> columnClass, JsonSchema schema) {
-        OutputColumn col = new OutputColumn();
+    public void add(final String columnName, final Class<?> columnClass, final JsonSchema schema) {
+        final OutputColumn col = new OutputColumn();
         col.name = columnName;
         col.type = columnClass.getName();
         col.schema = schema;
@@ -43,15 +52,6 @@ public class OutputColumns {
 
     public List<OutputColumn> getColumns() {
         return columns;
-    }
-
-    public static class OutputColumn {
-        @JsonProperty
-        public String name;
-        @JsonProperty
-        public String type;
-        @JsonProperty
-        public JsonSchema schema;
     }
 
 }

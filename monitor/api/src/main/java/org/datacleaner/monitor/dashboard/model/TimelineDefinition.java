@@ -39,31 +39,31 @@ public class TimelineDefinition implements Serializable {
     private JobIdentifier _jobIdentifier;
     private ChartOptions _chartOptions;
     private boolean _changed;
-    
-    public TimelineDefinition(boolean changed) {
+
+    public TimelineDefinition(final boolean changed) {
         _changed = changed;
     }
-    
+
     public TimelineDefinition() {
         this(false);
     }
 
-    public void setChanged(boolean changed) {
-        _changed = changed;
-    }
-    
     public boolean isChanged() {
         return _changed;
     }
-    
+
+    public void setChanged(final boolean changed) {
+        _changed = changed;
+    }
+
     public List<MetricIdentifier> getMetrics() {
         if (_metrics == null) {
-            return new ArrayList<MetricIdentifier>(0);
+            return new ArrayList<>(0);
         }
         return _metrics;
     }
-    
-    public void setMetrics(List<MetricIdentifier> metrics) {
+
+    public void setMetrics(final List<MetricIdentifier> metrics) {
         _metrics = metrics;
     }
 
@@ -71,7 +71,7 @@ public class TimelineDefinition implements Serializable {
         return _jobIdentifier;
     }
 
-    public void setJobIdentifier(JobIdentifier jobIdentifier) {
+    public void setJobIdentifier(final JobIdentifier jobIdentifier) {
         _jobIdentifier = jobIdentifier;
     }
 
@@ -82,7 +82,7 @@ public class TimelineDefinition implements Serializable {
         return _chartOptions;
     }
 
-    public void setChartOptions(ChartOptions chartOptions) {
+    public void setChartOptions(final ChartOptions chartOptions) {
         _chartOptions = chartOptions;
     }
 

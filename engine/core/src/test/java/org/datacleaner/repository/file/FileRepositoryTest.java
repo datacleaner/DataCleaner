@@ -33,12 +33,12 @@ import junit.framework.TestCase;
 public class FileRepositoryTest extends TestCase {
 
     public void testSimpleNavigation() throws Exception {
-        Repository repository = new FileRepository(new File("src/test/resources/example_folders"));
+        final Repository repository = new FileRepository(new File("src/test/resources/example_folders"));
 
         assertEquals("", repository.getName());
         assertEquals("/", repository.getQualifiedPath());
 
-        List<RepositoryFolder> folders = repository.getFolders();
+        final List<RepositoryFolder> folders = repository.getFolders();
         Collections.sort(folders);
         assertEquals("/folder1", folders.get(0).getQualifiedPath());
 
@@ -48,7 +48,7 @@ public class FileRepositoryTest extends TestCase {
         assertEquals("/folder2/sub2", node.getQualifiedPath());
         assertTrue(node instanceof RepositoryFolder);
 
-        List<RepositoryFile> files = ((RepositoryFolder) node).getFiles();
+        final List<RepositoryFile> files = ((RepositoryFolder) node).getFiles();
         assertEquals(2, files.size());
         assertEquals("/folder2/sub2/file1.xml", files.get(0).getQualifiedPath());
         assertEquals("/folder2/sub2/file2.xml", files.get(1).getQualifiedPath());
@@ -61,15 +61,15 @@ public class FileRepositoryTest extends TestCase {
     }
 
     public void testCreateFileWithoutContents() throws Exception {
-        File rootFile = new File("target/example_repo");
+        final File rootFile = new File("target/example_repo");
         rootFile.mkdirs();
-        
+
         if (new File(rootFile, "foo.bar").exists()) {
             new File(rootFile, "foo.bar").delete();
         }
-        
-        Repository repository = new FileRepository(rootFile);
-        RepositoryFile file = repository.createFile("foo.bar", null);
+
+        final Repository repository = new FileRepository(rootFile);
+        final RepositoryFile file = repository.createFile("foo.bar", null);
         assertEquals("/foo.bar", file.getQualifiedPath());
         file.delete();
     }

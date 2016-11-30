@@ -45,20 +45,20 @@ public class CreateTimelineHandler implements ClickHandler {
     private final DashboardServiceAsync _service;
     private final TenantIdentifier _tenant;
 
-    public CreateTimelineHandler(DashboardServiceAsync service, TenantIdentifier tenant,
-            DashboardGroupPanel groupPanel) {
+    public CreateTimelineHandler(final DashboardServiceAsync service, final TenantIdentifier tenant,
+            final DashboardGroupPanel groupPanel) {
         _service = service;
         _tenant = tenant;
         _groupPanel = groupPanel;
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(final ClickEvent event) {
         final DCPopupPanel popup = createPopup();
 
         final SelectJobPanel selectJobPanel = new SelectJobPanel(_service, _tenant) {
             @Override
-            public void onJobSelected(JobIdentifier job) {
+            public void onJobSelected(final JobIdentifier job) {
                 setJob(popup, job);
             }
         };
@@ -83,19 +83,19 @@ public class CreateTimelineHandler implements ClickHandler {
         final TimelinePanel timelinePanel = new TimelinePanel(_tenant, _service, null, _groupPanel, true);
         timelinePanel.setTimelineDefinition(timelineDefinition, false);
 
-        final CustomizeMetricsPanel customizeMetricsPanel = new CustomizeMetricsPanel(_service, _tenant,
-                timelineDefinition) {
-            @Override
-            protected void onMetricsLoaded() {
-                super.onMetricsLoaded();
-                popup.center();
-            }
-        };
+        final CustomizeMetricsPanel customizeMetricsPanel =
+                new CustomizeMetricsPanel(_service, _tenant, timelineDefinition) {
+                    @Override
+                    protected void onMetricsLoaded() {
+                        super.onMetricsLoaded();
+                        popup.center();
+                    }
+                };
 
         final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 final List<MetricIdentifier> selectedMetrics = customizeMetricsPanel.getSelectedMetrics();
                 timelineDefinition.setMetrics(selectedMetrics);
                 timelinePanel.setTimelineDefinition(timelineDefinition);

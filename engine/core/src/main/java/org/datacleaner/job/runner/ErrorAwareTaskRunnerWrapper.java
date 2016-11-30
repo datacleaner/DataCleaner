@@ -35,64 +35,64 @@ import org.slf4j.LoggerFactory;
  * reported.
  */
 final class ErrorAwareTaskRunnerWrapper implements TaskRunner, ErrorAware {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(ErrorAwareTaskRunnerWrapper.class);
 
-	// A per-job exception is used if previous exceptions have been
-	// reported. This is to make sure that the error message
-	// ("A previous exception has occurred") will only be saved once.
-	private final PreviousErrorsExistException _previousErrorsExistException = new PreviousErrorsExistException(
-			"A previous exception has occurred");
+    // A per-job exception is used if previous exceptions have been
+    // reported. This is to make sure that the error message
+    // ("A previous exception has occurred") will only be saved once.
+    private final PreviousErrorsExistException _previousErrorsExistException =
+            new PreviousErrorsExistException("A previous exception has occurred");
 
-	private final TaskRunner _taskRunner;
-	private final ErrorAware _errorAware;
+    private final TaskRunner _taskRunner;
+    private final ErrorAware _errorAware;
 
-	public ErrorAwareTaskRunnerWrapper(ErrorAware errorAware, TaskRunner taskRunner) {
-		_taskRunner = taskRunner;
-		_errorAware = errorAware;
-	}
+    public ErrorAwareTaskRunnerWrapper(final ErrorAware errorAware, final TaskRunner taskRunner) {
+        _taskRunner = taskRunner;
+        _errorAware = errorAware;
+    }
 
-	@Override
-	public void run(Task task, TaskListener taskListener) {
-		if (isErrornous()) {
-			taskListener.onError(task, _previousErrorsExistException);
-		} else if (isCancelled()) {
-		    logger.info("Ignoring task because job has been cancelled: {}", task);
-		    taskListener.onError(task, _previousErrorsExistException);
-		} else {
-			_taskRunner.run(task, taskListener);
-		}
-	}
+    @Override
+    public void run(final Task task, final TaskListener taskListener) {
+        if (isErrornous()) {
+            taskListener.onError(task, _previousErrorsExistException);
+        } else if (isCancelled()) {
+            logger.info("Ignoring task because job has been cancelled: {}", task);
+            taskListener.onError(task, _previousErrorsExistException);
+        } else {
+            _taskRunner.run(task, taskListener);
+        }
+    }
 
-	@Override
-	public void run(TaskRunnable taskRunnable) {
-		run(taskRunnable.getTask(), taskRunnable.getListener());
-	}
+    @Override
+    public void run(final TaskRunnable taskRunnable) {
+        run(taskRunnable.getTask(), taskRunnable.getListener());
+    }
 
-	@Override
-	public void shutdown() {
-		_taskRunner.shutdown();
-	}
+    @Override
+    public void shutdown() {
+        _taskRunner.shutdown();
+    }
 
-	@Override
-	public boolean isErrornous() {
-		return _errorAware.isErrornous();
-	}
+    @Override
+    public boolean isErrornous() {
+        return _errorAware.isErrornous();
+    }
 
-	@Override
-	public List<Throwable> getErrors() {
-		return _errorAware.getErrors();
-	}
+    @Override
+    public List<Throwable> getErrors() {
+        return _errorAware.getErrors();
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return _errorAware.isCancelled();
-	}
+    @Override
+    public boolean isCancelled() {
+        return _errorAware.isCancelled();
+    }
 
-	@Override
-	public void assistExecution() {
-		if (!isErrornous() && !isCancelled()) {
-			_taskRunner.assistExecution();
-		}
-	}
+    @Override
+    public void assistExecution() {
+        if (!isErrornous() && !isCancelled()) {
+            _taskRunner.assistExecution();
+        }
+    }
 }

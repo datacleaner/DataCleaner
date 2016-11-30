@@ -23,8 +23,6 @@ import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.vfs2.FileObject;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -35,14 +33,17 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.util.VFSUtils;
 
+import junit.framework.TestCase;
+
 public class UserPreferencesImplTest extends TestCase {
 
     public void testDeserialize21preferences() throws Exception {
-        FileObject file = VFSUtils.getFileSystemManager().resolveFile("src/test/resources/userpreferences-2.1.dat");
-        UserPreferences preferences = UserPreferencesImpl.load(file, false);
+        final FileObject file =
+                VFSUtils.getFileSystemManager().resolveFile("src/test/resources/userpreferences-2.1.dat");
+        final UserPreferences preferences = UserPreferencesImpl.load(file, false);
         assertNotNull(preferences);
 
-        List<Datastore> datastores = preferences.getUserDatastores();
+        final List<Datastore> datastores = preferences.getUserDatastores();
         assertEquals(2, datastores.size());
 
         Datastore datastore;
@@ -51,20 +52,19 @@ public class UserPreferencesImplTest extends TestCase {
         assertEquals(null, datastore.getDescription());
 
         datastore = datastores.get(1);
-        assertEquals(
-                "CsvDatastore[name=foobar, filename=C:\\foobar.txt, quoteChar='\"', separatorChar=',', encoding=UTF-8, headerLineNumber=0]",
-                datastore.toString());
+        assertEquals("CsvDatastore[name=foobar, filename=C:\\foobar.txt, quoteChar='\"', separatorChar=',', "
+                + "encoding=UTF-8, headerLineNumber=0]", datastore.toString());
         assertEquals("C:\\foobar.txt", ((CsvDatastore) datastore).getFilename());
         assertEquals(null, datastore.getDescription());
 
-        List<Dictionary> dictionaries = preferences.getUserDictionaries();
+        final List<Dictionary> dictionaries = preferences.getUserDictionaries();
         assertEquals(1, dictionaries.size());
 
         assertEquals("SimpleDictionary[name=my dictionary]", dictionaries.get(0).toString());
     }
 
     public void testCreateHttpClientWithoutNtCredentials() throws Exception {
-        UserPreferencesImpl up = new UserPreferencesImpl(null);
+        final UserPreferencesImpl up = new UserPreferencesImpl(null);
         up.setProxyHostname("host");
         up.setProxyPort(1234);
         up.setProxyUsername("bar");
@@ -72,9 +72,9 @@ public class UserPreferencesImplTest extends TestCase {
         up.setProxyEnabled(true);
         up.setProxyAuthenticationEnabled(true);
 
-        CloseableHttpClient httpClient = up.createHttpClient();
+        final CloseableHttpClient httpClient = up.createHttpClient();
 
-        String computername = InetAddress.getLocalHost().getHostName();
+        final String computername = InetAddress.getLocalHost().getHostName();
         assertNotNull(computername);
         assertTrue(computername.length() > 1);
 
@@ -95,7 +95,7 @@ public class UserPreferencesImplTest extends TestCase {
     }
 
     public void testCreateHttpClientWithNtCredentials() throws Exception {
-        UserPreferencesImpl up = new UserPreferencesImpl(null);
+        final UserPreferencesImpl up = new UserPreferencesImpl(null);
         up.setProxyHostname("host");
         up.setProxyPort(1234);
         up.setProxyUsername("FOO\\bar");
@@ -103,9 +103,9 @@ public class UserPreferencesImplTest extends TestCase {
         up.setProxyEnabled(true);
         up.setProxyAuthenticationEnabled(true);
 
-        CloseableHttpClient httpClient = up.createHttpClient();
+        final CloseableHttpClient httpClient = up.createHttpClient();
 
-        String computername = InetAddress.getLocalHost().getHostName();
+        final String computername = InetAddress.getLocalHost().getHostName();
         assertNotNull(computername);
         assertTrue(computername.length() > 1);
 
@@ -114,8 +114,8 @@ public class UserPreferencesImplTest extends TestCase {
 
         authScope = new AuthScope("host", 1234, AuthScope.ANY_REALM, "ntlm");
         credentials = getCredentialsProvider(httpClient).getCredentials(authScope);
-        assertEquals("[principal: FOO/bar][workstation: " + computername.toUpperCase() + "]", credentials.toString()
-                .replaceAll("\\\\", "/"));
+        assertEquals("[principal: FOO/bar][workstation: " + computername.toUpperCase() + "]",
+                credentials.toString().replaceAll("\\\\", "/"));
 
         authScope = new AuthScope("host", 1234);
         credentials = getCredentialsProvider(httpClient).getCredentials(authScope);
@@ -126,12 +126,12 @@ public class UserPreferencesImplTest extends TestCase {
         assertNull(credentials);
     }
 
-    private CredentialsProvider getCredentialsProvider(CloseableHttpClient httpClient) {
+    private CredentialsProvider getCredentialsProvider(final CloseableHttpClient httpClient) {
         try {
-            Field field = httpClient.getClass().getDeclaredField("credentialsProvider");
+            final Field field = httpClient.getClass().getDeclaredField("credentialsProvider");
             field.setAccessible(true);
             return (CredentialsProvider) field.get(httpClient);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }

@@ -24,25 +24,21 @@ import junit.framework.TestCase;
 public class BatchTransformationBufferTest extends TestCase {
 
     public void testSingleThreadedScenario() throws Exception {
-        final BatchTransformation<Integer, String> batchTransformation = new BatchTransformation<Integer, String>() {
-            @Override
-            public void map(BatchSource<Integer> source, BatchSink<String> sink) {
-                for (int i = 0; i < source.size(); i++) {
-                    Integer input = source.getInput(i);
-                    String output = input + "bar";
-                    sink.setOutput(i, output);
-                }
+        final BatchTransformation<Integer, String> batchTransformation = (source, sink) -> {
+            for (int i = 0; i < source.size(); i++) {
+                final Integer input = source.getInput(i);
+                final String output = input + "bar";
+                sink.setOutput(i, output);
             }
         };
 
-        final BatchTransformationBuffer<Integer, String> buffer = new BatchTransformationBuffer<Integer, String>(
-                batchTransformation);
+        final BatchTransformationBuffer<Integer, String> buffer = new BatchTransformationBuffer<>(batchTransformation);
         buffer.start();
         try {
             final String[] results = new String[2];
 
             for (int i = 0; i < 2; i++) {
-                String result = buffer.transform(i);
+                final String result = buffer.transform(i);
                 results[i] = result;
             }
 
@@ -66,23 +62,20 @@ public class BatchTransformationBufferTest extends TestCase {
         runScenario(1000, 100, 100);
     }
 
-    public int runScenario(int numThreads, int maxBatchSize, int flushInterval) {
-        System.out.println("Running scenario with " + numThreads + ", maxBatchSize=" + maxBatchSize
-                + ", flushInterval=" + flushInterval + "ms");
+    public int runScenario(final int numThreads, final int maxBatchSize, final int flushInterval) {
+        System.out.println("Running scenario with " + numThreads + ", maxBatchSize=" + maxBatchSize + ", flushInterval="
+                + flushInterval + "ms");
 
-        final BatchTransformation<Integer, String> batchTransformation = new BatchTransformation<Integer, String>() {
-            @Override
-            public void map(BatchSource<Integer> source, BatchSink<String> sink) {
-                for (int i = 0; i < source.size(); i++) {
-                    Integer input = source.getInput(i);
-                    String output = input + "bar";
-                    sink.setOutput(i, output);
-                }
+        final BatchTransformation<Integer, String> batchTransformation = (source, sink) -> {
+            for (int i = 0; i < source.size(); i++) {
+                final Integer input = source.getInput(i);
+                final String output = input + "bar";
+                sink.setOutput(i, output);
             }
         };
 
-        final BatchTransformationBuffer<Integer, String> buffer = new BatchTransformationBuffer<Integer, String>(
-                batchTransformation, maxBatchSize, flushInterval);
+        final BatchTransformationBuffer<Integer, String> buffer =
+                new BatchTransformationBuffer<>(batchTransformation, maxBatchSize, flushInterval);
         buffer.start();
         try {
             final String[] results = new String[numThreads];
@@ -93,7 +86,7 @@ public class BatchTransformationBufferTest extends TestCase {
                 threads[i] = new Thread() {
                     @Override
                     public void run() {
-                        String result = buffer.transform(index);
+                        final String result = buffer.transform(index);
                         results[index] = result;
                     }
                 };
@@ -103,7 +96,7 @@ public class BatchTransformationBufferTest extends TestCase {
             for (int i = 0; i < threads.length; i++) {
                 try {
                     threads[i].join();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     e.printStackTrace();
                 }
             }

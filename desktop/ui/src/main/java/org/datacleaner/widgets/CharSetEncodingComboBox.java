@@ -32,64 +32,64 @@ import com.ibm.icu.text.CharsetMatch;
 
 /**
  * An editable combobox with a default set of available character set encodings
- * 
+ *
  * @author Kasper Sørensen
  */
 public class CharSetEncodingComboBox extends DCComboBox<String> {
 
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LoggerFactory.getLogger(CharSetEncodingComboBox.class);
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(CharSetEncodingComboBox.class);
 
-	private static final String[] encodings;
-	
-	private static final String EBCDIC_POSTFIX = " (EBCDIC)";
-	
+    private static final String[] encodings;
 
-	static {
-		List<String> list = new ArrayList<>();
-		list.add("UTF-8");
-		list.add("UTF-16");
-		list.add("UTF-16BE");
-		list.add("UTF-16LE");
-		list.add("ASCII");
+    private static final String EBCDIC_POSTFIX = " (EBCDIC)";
 
-		for (int i = 1; i <= 16; i++) {
-			list.add("ISO-8859-" + i);
-		}
 
-		for (int i = 1250; i <= 1258; i++) {
-			list.add("Windows-" + i);
-		}
+    static {
+        final List<String> list = new ArrayList<>();
+        list.add("UTF-8");
+        list.add("UTF-16");
+        list.add("UTF-16BE");
+        list.add("UTF-16LE");
+        list.add("ASCII");
 
-		for (int i = 1140; i <= 1149; i++) {
-			list.add(FixedWidthDatastore.EBCDIC_PREFIX + i + EBCDIC_POSTFIX);
-		}
+        for (int i = 1; i <= 16; i++) {
+            list.add("ISO-8859-" + i);
+        }
 
-		encodings = list.toArray(new String[list.size()]);
-	}
+        for (int i = 1250; i <= 1258; i++) {
+            list.add("Windows-" + i);
+        }
 
-	public CharSetEncodingComboBox() {
-		super(encodings);
-		setEditable(true);
+        for (int i = 1140; i <= 1149; i++) {
+            list.add(FixedWidthDatastore.EBCDIC_PREFIX + i + EBCDIC_POSTFIX);
+        }
 
-		String defaultCharset = Charset.defaultCharset().name();
-		setSelectedItem(defaultCharset);
-	}
+        encodings = list.toArray(new String[list.size()]);
+    }
 
-	public String autoDetectEncoding(byte[] bytes) {
-		CharsetDetector cd = new CharsetDetector();
-		cd.setText(bytes);
-		CharsetMatch charsetMatch = cd.detect();
-		String charSet = charsetMatch.getName();
+    public CharSetEncodingComboBox() {
+        super(encodings);
+        setEditable(true);
 
-		int confidence = charsetMatch.getConfidence();
-		logger.info("CharsetMatch: {} ({}% confidence)", charSet, confidence);
-		setSelectedItem(charSet);
-		return charSet;
-	}
+        final String defaultCharset = Charset.defaultCharset().name();
+        setSelectedItem(defaultCharset);
+    }
 
-	@Override
-	public String getSelectedItem() {
-		return super.getSelectedItem().replace(EBCDIC_POSTFIX, "");
-	}
+    public String autoDetectEncoding(final byte[] bytes) {
+        final CharsetDetector cd = new CharsetDetector();
+        cd.setText(bytes);
+        final CharsetMatch charsetMatch = cd.detect();
+        final String charSet = charsetMatch.getName();
+
+        final int confidence = charsetMatch.getConfidence();
+        logger.info("CharsetMatch: {} ({}% confidence)", charSet, confidence);
+        setSelectedItem(charSet);
+        return charSet;
+    }
+
+    @Override
+    public String getSelectedItem() {
+        return super.getSelectedItem().replace(EBCDIC_POSTFIX, "");
+    }
 }

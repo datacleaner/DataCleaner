@@ -59,10 +59,10 @@ public class SchedulePanel extends Composite {
 
     @UiField
     Label jobLabel;
-    
+
     @UiField
     Button moreButton;
-    
+
     @UiField
     Anchor scheduleAnchor;
 
@@ -72,7 +72,8 @@ public class SchedulePanel extends Composite {
     @UiField
     FlowPanel alertsPanel;
 
-    public SchedulePanel(final ClientConfig clientConfig, final ScheduleDefinition schedule, final SchedulingServiceAsync service) {
+    public SchedulePanel(final ClientConfig clientConfig, final ScheduleDefinition schedule,
+            final SchedulingServiceAsync service) {
         super();
 
         _clientConfig = clientConfig;
@@ -97,7 +98,8 @@ public class SchedulePanel extends Composite {
         }
 
         if (_clientConfig.isScheduleEditor()) {
-            CustomizeScheduleClickHandler handler = new CustomizeScheduleClickHandler(this, service, tenant, schedule);
+            final CustomizeScheduleClickHandler handler =
+                    new CustomizeScheduleClickHandler(this, service, tenant, schedule);
             scheduleAnchor.addClickHandler(handler);
 
             final String token = History.getToken();
@@ -113,7 +115,7 @@ public class SchedulePanel extends Composite {
         }
 
         if (_clientConfig.isScheduleEditor()) {
-            TriggerJobClickHandler handler = new TriggerJobClickHandler(service, tenant, schedule);
+            final TriggerJobClickHandler handler = new TriggerJobClickHandler(service, tenant, schedule);
             executeButton.addClickHandler(handler);
 
             final String token = History.getToken();
@@ -124,31 +126,31 @@ public class SchedulePanel extends Composite {
         }
 
         final List<AlertDefinition> alerts = schedule.getAlerts();
-        if(alerts.size() > 0) {
-        	
-        	final Anchor expandAlertsAnchor = new Anchor(alerts.size() + " alert(s)");
-        	if (alerts.isEmpty()) {
-        		expandAlertsAnchor.addStyleName("discrete");
-        	}
-        	
-        	expandAlertsAnchor.addClickHandler(new ClickHandler() {
-        		@Override
-        		public void onClick(ClickEvent event) {
-        			final FlowPanel alertListPanel = new FlowPanel();
-        			alertListPanel.setStyleName("AlertListPanel");
-        			
-        			for (AlertDefinition alert : alerts) {
-        				AlertPanel alertPanel = new AlertPanel(service, schedule, alert);
-        				alertListPanel.add(alertPanel);
-        			}
-        			
-        			alertsPanel.clear();
-        			alertsPanel.add(alertListPanel);
-        		}
-        	});
-        	alertsPanel.add(expandAlertsAnchor);
+        if (alerts.size() > 0) {
+
+            final Anchor expandAlertsAnchor = new Anchor(alerts.size() + " alert(s)");
+            if (alerts.isEmpty()) {
+                expandAlertsAnchor.addStyleName("discrete");
+            }
+
+            expandAlertsAnchor.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(final ClickEvent event) {
+                    final FlowPanel alertListPanel = new FlowPanel();
+                    alertListPanel.setStyleName("AlertListPanel");
+
+                    for (final AlertDefinition alert : alerts) {
+                        final AlertPanel alertPanel = new AlertPanel(service, schedule, alert);
+                        alertListPanel.add(alertPanel);
+                    }
+
+                    alertsPanel.clear();
+                    alertsPanel.add(alertListPanel);
+                }
+            });
+            alertsPanel.add(expandAlertsAnchor);
         }
-        }
+    }
 
     public ScheduleDefinition getSchedule() {
         return _schedule;
@@ -157,10 +159,10 @@ public class SchedulePanel extends Composite {
     public void updateScheduleWidgets() {
         DCButtons.applyPrimaryStyle(executeButton);
         executeButton.addStyleName("btn-sm");
-        
+
         DCButtons.applyDefaultStyle(moreButton);
         moreButton.addStyleName("btn-sm");
-        
+
         final JobIdentifier job = _schedule.getJob();
         jobLabel.setText(job.getName());
 
@@ -178,13 +180,16 @@ public class SchedulePanel extends Composite {
             scheduleAnchor.setText("Manually triggered");
             scheduleAnchor.addStyleName("discrete");
             break;
-        case ONETIME :
-        	scheduleAnchor.setText(_schedule.getDateForOneTimeSchedule());
-        	scheduleAnchor.removeStyleName("discrete");
-        	break;
+        case ONETIME:
+            scheduleAnchor.setText(_schedule.getDateForOneTimeSchedule());
+            scheduleAnchor.removeStyleName("discrete");
+            break;
         case HOTFOLDER:
             scheduleAnchor.setText(_schedule.getHotFolder());
             scheduleAnchor.removeStyleName("discrete");
+            break;
+        default:
+            // ignore
         }
     }
 

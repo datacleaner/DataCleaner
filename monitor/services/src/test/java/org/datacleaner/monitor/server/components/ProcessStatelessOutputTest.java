@@ -24,11 +24,12 @@ import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.datacleaner.restclient.ProcessStatelessOutput;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ProcessStatelessOutputTest {
     private ProcessStatelessOutput processStatelessOutput = new ProcessStatelessOutput();
@@ -55,7 +56,7 @@ public class ProcessStatelessOutputTest {
         assertEquals(rows, processStatelessOutput.rows);
     }
 
-    private JsonNode getJsonNode(Object value) {
+    private JsonNode getJsonNode(final Object value) {
         return objectMapper.convertValue(value, JsonNode.class);
     }
 }

@@ -40,18 +40,18 @@ public class SuperCategoryDocumentationWrapper implements Comparable<SuperCatego
     private final List<ComponentDocumentationWrapper> _components;
     private final Map<ComponentCategory, CategoryDocumentationWrapper> _categories;
 
-    public SuperCategoryDocumentationWrapper(ComponentSuperCategory superCategory) {
+    public SuperCategoryDocumentationWrapper(final ComponentSuperCategory superCategory) {
         _superCategory = superCategory;
         _components = new ArrayList<>();
         _categories = new TreeMap<>(new HasNameComparator());
     }
 
     @Override
-    public int compareTo(SuperCategoryDocumentationWrapper o) {
+    public int compareTo(final SuperCategoryDocumentationWrapper o) {
         return _superCategory.compareTo(o._superCategory);
     }
 
-    public void addComponent(ComponentDocumentationWrapper component) {
+    public void addComponent(final ComponentDocumentationWrapper component) {
         _components.add(component);
     }
 
@@ -67,7 +67,7 @@ public class SuperCategoryDocumentationWrapper implements Comparable<SuperCatego
         return _categories.values();
     }
 
-    public void addComponent(ComponentCategory componentCategory, ComponentDocumentationWrapper component) {
+    public void addComponent(final ComponentCategory componentCategory, final ComponentDocumentationWrapper component) {
         CategoryDocumentationWrapper categoryWrapper = _categories.get(componentCategory);
         if (categoryWrapper == null) {
             categoryWrapper = new CategoryDocumentationWrapper(componentCategory);

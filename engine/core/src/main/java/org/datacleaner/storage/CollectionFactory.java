@@ -28,37 +28,37 @@ import java.util.Set;
  * collections are provided by the framework an are implemented using some
  * persistent storage strategy, making them safe to fill with even millions of
  * elements without running out of memory.
- * 
- * 
+ *
+ *
  */
 public interface CollectionFactory {
 
-	/**
-	 * Creates a potentially large list
-	 * 
-	 * @param <E>
-	 * @param elementClass
-	 * @return
-	 */
-	public <E> List<E> createList(Class<E> elementClass);
+    /**
+     * Creates a potentially large list
+     *
+     * @param <E>
+     * @param elementClass
+     * @return
+     */
+    <E> List<E> createList(Class<E> elementClass);
 
-	/**
-	 * Creates a potentially large set
-	 * 
-	 * @param <E>
-	 * @param elementClass
-	 * @return
-	 */
-	public <E> Set<E> createSet(Class<E> elementClass);
+    /**
+     * Creates a potentially large set
+     *
+     * @param <E>
+     * @param elementClass
+     * @return
+     */
+    <E> Set<E> createSet(Class<E> elementClass);
 
-	/**
-	 * Creates a potentially large map
-	 * 
-	 * @param <K>
-	 * @param <V>
-	 * @param keyClass
-	 * @param valueClass
-	 * @return
-	 */
-	public <K, V> Map<K, V> createMap(Class<K> keyClass, Class<V> valueClass);
+    /**
+     * Creates a potentially large map
+     *
+     * @param <K>
+     * @param <V>
+     * @param keyClass
+     * @param valueClass
+     * @return
+     */
+    <K, V> Map<K, V> createMap(Class<K> keyClass, Class<V> valueClass);
 }

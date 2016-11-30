@@ -36,7 +36,7 @@ final class RegexSwapStringPatternReferenceDataPageName extends AbstractFreemark
 
     private final RegexSwapStringPatternReferenceDataWizardSession _session;
 
-    public RegexSwapStringPatternReferenceDataPageName(RegexSwapStringPatternReferenceDataWizardSession session) {
+    public RegexSwapStringPatternReferenceDataPageName(final RegexSwapStringPatternReferenceDataWizardSession session) {
         _session = session;
     }
 
@@ -46,7 +46,7 @@ final class RegexSwapStringPatternReferenceDataPageName extends AbstractFreemark
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         _session.setName(getString(formParameters, PROPERTY_NAME));
 
@@ -70,9 +70,8 @@ final class RegexSwapStringPatternReferenceDataPageName extends AbstractFreemark
     private String getNameOptions() {
         final StringBuilder builder = new StringBuilder();
 
-        for (Regex regex : _session.getClient().getRegexes(createCategory())) {
-            final String option =
-                    String.format("<option value=\"%s\">%s</option>", regex.getName(), regex.getName());
+        for (final Regex regex : _session.getClient().getRegexes(createCategory())) {
+            final String option = String.format("<option value=\"%s\">%s</option>", regex.getName(), regex.getName());
             builder.append(option);
         }
 

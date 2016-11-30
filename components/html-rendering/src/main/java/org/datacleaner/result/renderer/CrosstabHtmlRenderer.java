@@ -38,16 +38,16 @@ public class CrosstabHtmlRenderer extends AbstractRenderer<CrosstabResult, HtmlF
         this(null);
     }
 
-    public CrosstabHtmlRenderer(RendererFactory rendererFactory) {
+    public CrosstabHtmlRenderer(final RendererFactory rendererFactory) {
         this.rendererFactory = rendererFactory;
     }
 
     @Override
-    public HtmlFragment render(CrosstabResult result) {
+    public HtmlFragment render(final CrosstabResult result) {
         return render(result.getCrosstab());
     }
 
-    public HtmlFragment render(Crosstab<?> crosstab) {
+    public HtmlFragment render(final Crosstab<?> crosstab) {
         return new CrosstabHtmlFragment(crosstab, rendererFactory);
 
     }

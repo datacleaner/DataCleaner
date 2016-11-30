@@ -20,8 +20,6 @@
 package org.datacleaner.panels;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -54,32 +52,25 @@ public class DataCloudInformationPanel extends JPanel {
 
     private final DCLabel text;
     private final JButton optionButton;
-    final private DCHtmlBox htmlBoxDataCloud =
-            new DCHtmlBox("More information on <a href=\"http://datacleaner.org\">datacleaner.org</a>");
 
-    public DataCloudInformationPanel(RightInformationPanel rightPanel, final DataCleanerConfiguration configuration,
-            final UserPreferences userPreferences, WindowContext windowContext, AbstractWindow owner) {
+    public DataCloudInformationPanel(final RightInformationPanel rightPanel,
+            final DataCleanerConfiguration configuration, final UserPreferences userPreferences,
+            final WindowContext windowContext, final AbstractWindow owner) {
         super();
         optionButton = WidgetFactory.createDefaultButton("Sign in to DataCloud", IconUtils.MENU_OPTIONS);
-        optionButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                rightPanel.toggleWindow(DataCloudStatusLabel.PANEL_NAME);
-                WidgetUtils.invokeSwingAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration, false)) {
-                            final DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(configuration,
-                                    userPreferences, windowContext, owner);
-                            dataCloudLogInWindow.open();
-                        }
-                    }
-                });
-            }
+        optionButton.addActionListener(e -> {
+            rightPanel.toggleWindow(DataCloudStatusLabel.PANEL_NAME);
+            WidgetUtils.invokeSwingAction(() -> {
+                if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration, false)) {
+                    final DataCloudLogInWindow dataCloudLogInWindow =
+                            new DataCloudLogInWindow(configuration, userPreferences, windowContext, owner);
+                    dataCloudLogInWindow.open();
+                }
+            });
         });
         setLayout(new VerticalLayout(10));
 
-        DCLabel header = DCLabel.darkMultiLine("DataCloud status");
+        final DCLabel header = DCLabel.darkMultiLine("DataCloud status");
         header.setFont(WidgetUtils.FONT_HEADER1);
         header.setIcon(ImageManager.get().getImageIcon("images/menu/datacloud.png"));
         add(header);
@@ -89,21 +80,22 @@ public class DataCloudInformationPanel extends JPanel {
         add(Box.createVerticalBox());
         add(optionButton);
         add(Box.createVerticalBox());
+        final DCHtmlBox htmlBoxDataCloud =
+                new DCHtmlBox("More information on <a href=\"http://datacleaner.org\">datacleaner.org</a>");
         add(htmlBoxDataCloud);
     }
 
-    public void setInformationStatus(RemoteServerState remoteServerState) {
+    public void setInformationStatus(final RemoteServerState remoteServerState) {
         optionButton.setVisible(false);
         text.setText("");
         String panelContent = "";
-        if (remoteServerState.getActualState() == RemoteServerState.State.OK ||
-                remoteServerState.getActualState() == RemoteServerState.State.NO_CREDIT) {
+        if (remoteServerState.getActualState() == RemoteServerState.State.OK
+                || remoteServerState.getActualState() == RemoteServerState.State.NO_CREDIT) {
             panelContent = addLine(panelContent, "Connected as " + remoteServerState.getRealName());
             panelContent = addLine(panelContent, "(email: " + remoteServerState.getEmail() + ")");
             if (remoteServerState.getCredit() > 0) {
-                panelContent =
-                        addLine(panelContent,
-                                "Your credit balance: " + String.format("%,d", remoteServerState.getCredit()));
+                panelContent = addLine(panelContent,
+                        "Your credit balance: " + String.format("%,d", remoteServerState.getCredit()));
             } else {
                 panelContent = addLine(panelContent,
                         "Your credit: <font color=\"red\">" + String.format("%,d", remoteServerState.getCredit())
@@ -139,7 +131,7 @@ public class DataCloudInformationPanel extends JPanel {
         return _foreground;
     }
 
-    private String addLine(String text, String newLine) {
+    private String addLine(final String text, final String newLine) {
         return text + "<p>" + newLine + "</p>";
     }
 }

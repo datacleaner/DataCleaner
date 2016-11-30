@@ -22,13 +22,13 @@ package org.datacleaner.beans.valuedist;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.apache.metamodel.util.DateUtils;
+import org.apache.metamodel.util.Month;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
-import org.apache.metamodel.util.DateUtils;
-import org.apache.metamodel.util.Month;
 
 import junit.framework.TestCase;
 
@@ -38,8 +38,8 @@ public class WeekdayDistributionResultReducerTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testReduce() throws Exception {
-        final InputColumn<Date> col1 = new MockInputColumn<Date>("from");
-        final InputColumn<Date> col2 = new MockInputColumn<Date>("to");
+        final InputColumn<Date> col1 = new MockInputColumn<>("from");
+        final InputColumn<Date> col2 = new MockInputColumn<>("to");
 
         WeekdayDistributionAnalyzer analyzer;
 
@@ -61,7 +61,7 @@ public class WeekdayDistributionResultReducerTest extends TestCase {
         final CrosstabResult finalResult = reducer.reduce(Arrays.asList(result1, result2));
 
         final String text = new CrosstabTextRenderer().render(finalResult);
-        
+
         final String[] lines = text.split("\n");
         assertEquals("            from     to ", lines[0]);
         assertEquals("Sunday         2      2 ", lines[1]);
@@ -75,7 +75,7 @@ public class WeekdayDistributionResultReducerTest extends TestCase {
         assertEquals(8, lines.length);
     }
 
-    private Date getADate(Month month) {
+    private Date getADate(final Month month) {
         return DateUtils.get(2013, month, 31);
     }
 }

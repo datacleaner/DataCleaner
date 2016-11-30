@@ -59,20 +59,20 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
     private final Integer _minPartitions;
 
-    public SparkAnalysisRunner(JavaSparkContext sparkContext, SparkJobContext sparkJobContext) {
+    public SparkAnalysisRunner(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext) {
         this(sparkContext, sparkJobContext, null);
     }
 
-    public SparkAnalysisRunner(JavaSparkContext sparkContext, SparkJobContext sparkJobContext, Integer minPartitions) {
+    public SparkAnalysisRunner(final JavaSparkContext sparkContext, final SparkJobContext sparkJobContext,
+            final Integer minPartitions) {
         _sparkContext = sparkContext;
         _sparkJobContext = sparkJobContext;
         if (minPartitions != null) {
             if (minPartitions > 0) {
                 _minPartitions = minPartitions;
             } else {
-                logger.warn(
-                        "Minimum number of partitions needs to be a positive number, but specified: {}. Disregarding the value and inferring the number of partitions automatically",
-                        minPartitions);
+                logger.warn("Minimum number of partitions needs to be a positive number, but specified: {}. "
+                        + "Disregarding the value and inferring the number of partitions automatically", minPartitions);
                 _minPartitions = null;
             }
         } else {
@@ -81,7 +81,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
     }
 
     @Override
-    public AnalysisResultFuture run(AnalysisJob job) {
+    public AnalysisResultFuture run(final AnalysisJob job) {
         return run();
     }
 
@@ -102,13 +102,13 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final JavaRDD<Tuple2<String, NamedAnalyzerResult>> processedTuplesRdd = inputRowsRDD
                     .mapPartitionsWithIndex(new RowProcessingFunction(_sparkJobContext), preservePartitions);
-            
+
             if (_sparkJobContext.isResultEnabled()) {
-                final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = processedTuplesRdd
-                        .mapPartitionsToPair(new TuplesToTuplesFunction<String, NamedAnalyzerResult>(), preservePartitions);
-                
-                namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(
-                        _sparkJobContext));
+                final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD =
+                        processedTuplesRdd.mapPartitionsToPair(new TuplesToTuplesFunction<>(), preservePartitions);
+
+                namedAnalyzerResultsRDD =
+                        partialNamedAnalyzerResultsRDD.reduceByKey(new AnalyzerResultReduceFunction(_sparkJobContext));
             } else {
                 // call count() to block and wait for RDD to be fully processed
                 processedTuplesRdd.count();
@@ -117,29 +117,29 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         } else {
             logger.warn("Running the job in non-distributed mode");
             final JavaRDD<InputRow> coalescedInputRowsRDD = inputRowsRDD.coalesce(1);
-            namedAnalyzerResultsRDD = coalescedInputRowsRDD.mapPartitionsToPair(new RowProcessingFunction(
-                    _sparkJobContext));
-            
+            namedAnalyzerResultsRDD =
+                    coalescedInputRowsRDD.mapPartitionsToPair(new RowProcessingFunction(_sparkJobContext));
+
             if (!_sparkJobContext.isResultEnabled()) {
                 // call count() to block and wait for RDD to be fully processed
                 namedAnalyzerResultsRDD.count();
             }
         }
-        
+
         if (!_sparkJobContext.isResultEnabled()) {
             final List<Tuple2<String, AnalyzerResult>> results = Collections.emptyList();
             return new SparkAnalysisResultFuture(results, _sparkJobContext);
         }
 
         assert namedAnalyzerResultsRDD != null;
-        final JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD = namedAnalyzerResultsRDD
-                .mapValues(new ExtractAnalyzerResultFunction());
+        final JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD =
+                namedAnalyzerResultsRDD.mapValues(new ExtractAnalyzerResultFunction());
 
         // log analyzer results
         final List<Tuple2<String, AnalyzerResult>> results = finalAnalyzerResultsRDD.collect();
 
         logger.info("Finished! Number of AnalyzerResult objects: {}", results.size());
-        for (Tuple2<String, AnalyzerResult> analyzerResultTuple : results) {
+        for (final Tuple2<String, AnalyzerResult> analyzerResultTuple : results) {
             final String key = analyzerResultTuple._1;
             final AnalyzerResult result = analyzerResultTuple._2;
             logger.info("AnalyzerResult (" + key + "):\n\n" + result + "\n");
@@ -149,7 +149,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         return new SparkAnalysisResultFuture(results, _sparkJobContext);
     }
 
-    private JavaRDD<InputRow> openSourceDatastore(Datastore datastore) {
+    private JavaRDD<InputRow> openSourceDatastore(final Datastore datastore) {
         if (datastore instanceof CsvDatastore) {
             final CsvDatastore csvDatastore = (CsvDatastore) datastore;
             final Resource resource = csvDatastore.getResource();
@@ -169,13 +169,11 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();
 
             if (csvConfiguration.getColumnNameLineNumber() != CsvConfiguration.NO_COLUMN_NAME_LINE) {
-                zipWithIndex = zipWithIndex.filter(new SkipHeaderLineFunction(csvConfiguration
-                        .getColumnNameLineNumber()));
+                zipWithIndex =
+                        zipWithIndex.filter(new SkipHeaderLineFunction(csvConfiguration.getColumnNameLineNumber()));
             }
 
-            final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
-
-            return inputRowsRDD;
+            return zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
         } else if (datastore instanceof JsonDatastore) {
             final JsonDatastore jsonDatastore = (JsonDatastore) datastore;
             final String datastorePath = jsonDatastore.getResource().getQualifiedPath();
@@ -188,8 +186,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final JavaRDD<Object[]> parsedInput = rawInput.map(new JsonParserFunction(jsonDatastore));
             final JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();
-            final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
-            return inputRowsRDD;
+            return zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
         } else if (datastore instanceof FixedWidthDatastore) {
 
             final FixedWidthDatastore fixedWidthDatastore = (FixedWidthDatastore) datastore;
@@ -209,12 +206,11 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();
 
             if (fixedWidthConfiguration.getColumnNameLineNumber() != FixedWidthConfiguration.NO_COLUMN_NAME_LINE) {
-                zipWithIndex = zipWithIndex.filter(new SkipHeaderLineFunction(fixedWidthConfiguration
-                        .getColumnNameLineNumber()));
+                zipWithIndex = zipWithIndex
+                        .filter(new SkipHeaderLineFunction(fixedWidthConfiguration.getColumnNameLineNumber()));
             }
 
-            final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
-            return inputRowsRDD;
+            return zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
         }
 
         throw new UnsupportedOperationException("Unsupported datastore type or configuration: " + datastore);

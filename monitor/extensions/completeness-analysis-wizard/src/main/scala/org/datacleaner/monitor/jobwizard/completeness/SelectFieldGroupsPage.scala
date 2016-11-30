@@ -1,7 +1,7 @@
 package org.datacleaner.monitor.jobwizard.completeness
 
-import org.datacleaner.monitor.wizard.WizardPageController
 import org.datacleaner.monitor.shared.model.DCUserInputException
+import org.datacleaner.monitor.wizard.WizardPageController
 
 abstract class SelectFieldGroupsPage(pageIndex: Int) extends WizardPageController {
 

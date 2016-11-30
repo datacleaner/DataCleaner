@@ -23,12 +23,12 @@ public class SimpleHeadElement implements HeadElement {
 
     private final String _html;
 
-    public SimpleHeadElement(String html) {
+    public SimpleHeadElement(final String html) {
         _html = html;
     }
 
     @Override
-    public String toHtml(HtmlRenderingContext context) {
+    public String toHtml(final HtmlRenderingContext context) {
         return _html;
     }
 
@@ -46,19 +46,24 @@ public class SimpleHeadElement implements HeadElement {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        SimpleHeadElement other = (SimpleHeadElement) obj;
+        }
+        final SimpleHeadElement other = (SimpleHeadElement) obj;
         if (_html == null) {
-            if (other._html != null)
+            if (other._html != null) {
                 return false;
-        } else if (!_html.equals(other._html))
+            }
+        } else if (!_html.equals(other._html)) {
             return false;
+        }
         return true;
     }
 

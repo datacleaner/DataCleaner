@@ -50,12 +50,12 @@ public class ReferenceDataEntryPoint implements EntryPoint {
         render(service, clientConfig);
     }
 
-    protected void render(ReferenceDataServiceAsync service, ClientConfig clientConfig) {
+    protected void render(final ReferenceDataServiceAsync service, final ClientConfig clientConfig) {
         final TenantIdentifier tenantId = clientConfig.getTenant();
         RootPanel.get(DICTIONARIES_HTML_ID).add(new LoadingIndicator());
         RootPanel.get(SYNONYMS_HTML_ID).add(new LoadingIndicator());
         RootPanel.get(PATTERNS_HTML_ID).add(new LoadingIndicator());
-        
+
         service.getDictionaries(tenantId, new DCAsyncCallback<Set<ReferenceDataItem>>() {
             @Override
             public void onSuccess(final Set<ReferenceDataItem> set) {

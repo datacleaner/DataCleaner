@@ -19,13 +19,13 @@
  */
 package org.datacleaner.monitor.configuration;
 
+import static org.easymock.EasyMock.*;
+
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.easymock.EasyMock.*;
 
 public class ComponentStoreImplTest {
     private ComponentStoreImpl componentsStoreImpl = null;
@@ -38,7 +38,7 @@ public class ComponentStoreImplTest {
     }
 
     private Repository getRepositoryMock() {
-        Repository repository = createNiceMock(Repository.class);
+        final Repository repository = createNiceMock(Repository.class);
         expect(repository.getFolder(tenantId)).andReturn(getRepositoryFolderMock()).anyTimes();
         replay(repository);
 
@@ -46,15 +46,16 @@ public class ComponentStoreImplTest {
     }
 
     private RepositoryFolder getRepositoryFolderMock() {
-        RepositoryFolder repositoryFolder = createNiceMock(RepositoryFolder.class);
-        expect(repositoryFolder.getOrCreateFolder(ComponentStoreImpl.FOLDER_NAME)).andReturn(getComponentsFolderMock()).anyTimes();
+        final RepositoryFolder repositoryFolder = createNiceMock(RepositoryFolder.class);
+        expect(repositoryFolder.getOrCreateFolder(ComponentStoreImpl.FOLDER_NAME)).andReturn(getComponentsFolderMock())
+                .anyTimes();
         replay(repositoryFolder);
 
         return repositoryFolder;
     }
 
     private RepositoryFolder getComponentsFolderMock() {
-        RepositoryFolder repositoryFolder = createNiceMock(RepositoryFolder.class);
+        final RepositoryFolder repositoryFolder = createNiceMock(RepositoryFolder.class);
         expect(repositoryFolder.getFile(instanceId)).andReturn(getRepositoryFileMock()).anyTimes();
         replay(repositoryFolder);
 
@@ -62,7 +63,7 @@ public class ComponentStoreImplTest {
     }
 
     private RepositoryFile getRepositoryFileMock() {
-        RepositoryFile repositoryFile = createNiceMock(RepositoryFile.class);
+        final RepositoryFile repositoryFile = createNiceMock(RepositoryFile.class);
         replay(repositoryFile);
 
         return repositoryFile;
@@ -79,7 +80,7 @@ public class ComponentStoreImplTest {
     }
 
     private ComponentStoreHolder getComponentsStoreHolderMock() {
-        ComponentStoreHolder componentStoreHolder = createNiceMock(ComponentStoreHolder.class);
+        final ComponentStoreHolder componentStoreHolder = createNiceMock(ComponentStoreHolder.class);
         expect(componentStoreHolder.getInstanceId()).andReturn(instanceId).anyTimes();
         replay(componentStoreHolder);
 

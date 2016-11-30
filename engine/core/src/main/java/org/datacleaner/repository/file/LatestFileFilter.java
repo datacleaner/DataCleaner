@@ -32,13 +32,13 @@ public class LatestFileFilter implements FileFilter {
     private File _candidate;
     private long _latestModified;
 
-    public LatestFileFilter(FileFilter delegate) {
+    public LatestFileFilter(final FileFilter delegate) {
         _delegate = delegate;
         _latestModified = Long.MIN_VALUE;
     }
 
     @Override
-    public boolean accept(File candidate) {
+    public boolean accept(final File candidate) {
         if (candidate.lastModified() > _latestModified && _delegate.accept(candidate)) {
             _latestModified = candidate.lastModified();
             _candidate = candidate;

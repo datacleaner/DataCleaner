@@ -36,8 +36,8 @@ import org.datacleaner.spark.SparkJobContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class AnalyzerResultReduceFunction implements
-        Function2<NamedAnalyzerResult, NamedAnalyzerResult, NamedAnalyzerResult> {
+public final class AnalyzerResultReduceFunction
+        implements Function2<NamedAnalyzerResult, NamedAnalyzerResult, NamedAnalyzerResult> {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,13 +45,13 @@ public final class AnalyzerResultReduceFunction implements
 
     private final SparkJobContext _sparkJobContext;
 
-    public AnalyzerResultReduceFunction(SparkJobContext sparkJobContext) {
+    public AnalyzerResultReduceFunction(final SparkJobContext sparkJobContext) {
         _sparkJobContext = sparkJobContext;
     }
 
     @Override
-    public NamedAnalyzerResult call(NamedAnalyzerResult namedAnalyzerResult1, NamedAnalyzerResult namedAnalyzerResult2)
-            throws Exception {
+    public NamedAnalyzerResult call(final NamedAnalyzerResult namedAnalyzerResult1,
+            final NamedAnalyzerResult namedAnalyzerResult2) throws Exception {
 
         assert namedAnalyzerResult1.getName().equals(namedAnalyzerResult2.getName());
 
@@ -76,8 +76,7 @@ public final class AnalyzerResultReduceFunction implements
 
         final AnalyzerResult reducedAnalyzerResult = reducer.reduce(Arrays.asList(analyzerResult1, analyzerResult2));
 
-        final NamedAnalyzerResult reducedTuple = new NamedAnalyzerResult(key, reducedAnalyzerResult);
-        return reducedTuple;
+        return new NamedAnalyzerResult(key, reducedAnalyzerResult);
     }
 
     private AnalyzerResultReducer<AnalyzerResult> initializeReducer(
@@ -88,12 +87,11 @@ public final class AnalyzerResultReduceFunction implements
                 .getInjectionManager(configuration, _sparkJobContext.getAnalysisJob());
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, false);
 
-        final ComponentDescriptor<? extends AnalyzerResultReducer<?>> reducerDescriptor = Descriptors
-                .ofComponent(resultReducerClass);
+        final ComponentDescriptor<? extends AnalyzerResultReducer<?>> reducerDescriptor =
+                Descriptors.ofComponent(resultReducerClass);
 
-        @SuppressWarnings("unchecked")
-        final AnalyzerResultReducer<AnalyzerResult> reducer = (AnalyzerResultReducer<AnalyzerResult>) reducerDescriptor
-                .newInstance();
+        @SuppressWarnings("unchecked") final AnalyzerResultReducer<AnalyzerResult> reducer =
+                (AnalyzerResultReducer<AnalyzerResult>) reducerDescriptor.newInstance();
 
         lifeCycleHelper.assignProvidedProperties(reducerDescriptor, reducer);
         lifeCycleHelper.initialize(reducerDescriptor, reducer);
@@ -101,7 +99,8 @@ public final class AnalyzerResultReduceFunction implements
         return reducer;
     }
 
-    protected ResultDescriptor getResultDescriptor(ComponentJob componentJob, AnalyzerResult analyzerResult) {
+    protected ResultDescriptor getResultDescriptor(final ComponentJob componentJob,
+            final AnalyzerResult analyzerResult) {
         final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
         if (descriptor instanceof ResultDescriptor) {
             return (ResultDescriptor) descriptor;

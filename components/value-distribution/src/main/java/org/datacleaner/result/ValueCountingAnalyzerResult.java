@@ -30,16 +30,16 @@ import org.datacleaner.api.AnalyzerResult;
  */
 public interface ValueCountingAnalyzerResult extends AnalyzerResult {
 
-    public String getName();
+    String getName();
 
-    public Collection<ValueFrequency> getValueCounts();
+    Collection<ValueFrequency> getValueCounts();
 
     /**
      * Gets a {@link ValueFrequency} list similar to that of
      * {@link #getValueCounts()}, but allowing the underlying implementation to
      * reduce the list by building {@link CompositeValueFrequency} objects if
      * necesary to reach the preferred maximum number of elements.
-     * 
+     *
      * @param preferredMaximum
      *            the preferred maximum number of elements. Note that this is a
      *            hint, but depending on the implementation and the data, it
@@ -47,28 +47,28 @@ public interface ValueCountingAnalyzerResult extends AnalyzerResult {
      *            maximum.
      * @return
      */
-    public Collection<ValueFrequency> getReducedValueFrequencies(int preferredMaximum);
+    Collection<ValueFrequency> getReducedValueFrequencies(int preferredMaximum);
 
-    public int getNullCount();
+    int getNullCount();
 
-    public int getTotalCount();
+    int getTotalCount();
 
-    public Integer getCount(String value);
+    Integer getCount(String value);
 
-    public Integer getDistinctCount();
+    Integer getDistinctCount();
 
-    public Integer getUniqueCount();
+    Integer getUniqueCount();
 
-    public Integer getUnexpectedValueCount();
+    Integer getUnexpectedValueCount();
 
-    public boolean hasAnnotatedRows(String value);
+    boolean hasAnnotatedRows(String value);
 
-    public AnnotatedRowsResult getAnnotatedRowsForValue(String value);
+    AnnotatedRowsResult getAnnotatedRowsForValue(String value);
 
-    public AnnotatedRowsResult getAnnotatedRowsForNull();
+    AnnotatedRowsResult getAnnotatedRowsForNull();
 
-    public AnnotatedRowsResult getAnnotatedRowsForUnexpectedValues();
+    AnnotatedRowsResult getAnnotatedRowsForUnexpectedValues();
 
-    public Collection<String> getUniqueValues();
+    Collection<String> getUniqueValues();
 
 }

@@ -22,8 +22,6 @@ package org.datacleaner.beans;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -46,25 +44,27 @@ import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.StorageProvider;
 import org.datacleaner.test.TestHelper;
 
+import junit.framework.TestCase;
+
 public class DateAndTimeAnalyzerTest extends TestCase {
     public void testOrderFactTable() throws Throwable {
-        StorageProvider storageProvider = new InMemoryStorageProvider(20, 1000);
-        DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withStorageProvider(storageProvider);
-        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withEnvironment(environment)
+        final StorageProvider storageProvider = new InMemoryStorageProvider(20, 1000);
+        final DataCleanerEnvironment environment =
+                new DataCleanerEnvironmentImpl().withStorageProvider(storageProvider);
+        final DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withEnvironment(environment)
                 .withDatastoreCatalog(new DatastoreCatalogImpl(TestHelper.createSampleDatabaseDatastore("orderdb")));
-        AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 
-        try {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
             ajb.setDatastore("orderdb");
 
             ajb.addSourceColumns("ORDERFACT.ORDERDATE", "ORDERFACT.REQUIREDDATE", "ORDERFACT.SHIPPEDDATE");
 
-            AnalyzerComponentBuilder<DateAndTimeAnalyzer> analyzer = ajb.addAnalyzer(DateAndTimeAnalyzer.class);
+            final AnalyzerComponentBuilder<DateAndTimeAnalyzer> analyzer = ajb.addAnalyzer(DateAndTimeAnalyzer.class);
             analyzer.addInputColumns(ajb.getSourceColumns());
 
-            AnalysisJob job = ajb.toAnalysisJob();
+            final AnalysisJob job = ajb.toAnalysisJob();
 
-            AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(conf).run(job);
+            final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(conf).run(job);
             resultFuture.await();
 
             if (!resultFuture.isSuccessful()) {
@@ -72,12 +72,12 @@ public class DateAndTimeAnalyzerTest extends TestCase {
             }
             assertTrue(resultFuture.isSuccessful());
 
-            List<AnalyzerResult> results = resultFuture.getResults();
+            final List<AnalyzerResult> results = resultFuture.getResults();
             assertEquals(1, results.size());
 
-            DateAndTimeAnalyzerResult result = (DateAndTimeAnalyzerResult) results.get(0);
+            final DateAndTimeAnalyzerResult result = (DateAndTimeAnalyzerResult) results.get(0);
 
-            String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
+            final String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
             assertEquals(8, resultLines.length);
 
             assertEquals("             ORDERDATE    REQUIREDDATE SHIPPEDDATE  ", resultLines[0]);
@@ -88,13 +88,13 @@ public class DateAndTimeAnalyzerTest extends TestCase {
             assertEquals("Highest time 00:00:00.000 00:00:00.000 00:00:00.000 ", resultLines[5]);
             assertEquals("Lowest time  00:00:00.000 00:00:00.000 00:00:00.000 ", resultLines[6]);
 
-            String meanResultLine = resultLines[7];
+            final String meanResultLine = resultLines[7];
             // due to timezone diffs, this line will have slight variants on
             // different machines
             assertTrue(meanResultLine.startsWith("Mean         2004-05-14"));
 
-            CrosstabNavigator<?> nav = result.getCrosstab().where("Column", "ORDERDATE");
-            InputColumn<?> column = ajb.getSourceColumnByName("ORDERDATE");
+            final CrosstabNavigator<?> nav = result.getCrosstab().where("Column", "ORDERDATE");
+            final InputColumn<?> column = ajb.getSourceColumnByName("ORDERDATE");
 
             ResultProducer resultProducer = nav.where("Measure", "Highest date").explore();
             assertAnnotatedRowResult(resultProducer.getResult(), column, 19, 19);
@@ -112,8 +112,6 @@ public class DateAndTimeAnalyzerTest extends TestCase {
             assertEquals(0, result.getNullCount(new MockInputColumn<Date>("ORDERDATE")));
             assertEquals(12934, result.getHighestDate(new MockInputColumn<Date>("ORDERDATE")));
             assertEquals(12058, result.getLowestDate(new MockInputColumn<Date>("ORDERDATE")));
-        } finally {
-            ajb.close();
         }
     }
 
@@ -124,10 +122,11 @@ public class DateAndTimeAnalyzerTest extends TestCase {
         assertEquals(12934, DateAndTimeAnalyzerResult.convertToDaysSinceEpoch("2005-05-31"));
     }
 
-    private void assertAnnotatedRowResult(AnalyzerResult result, InputColumn<?> col, int rowCount, int distinctRowCount) {
+    private void assertAnnotatedRowResult(final AnalyzerResult result, final InputColumn<?> col, final int rowCount,
+            final int distinctRowCount) {
         assertTrue("Unexpected result type: " + result.getClass(), result instanceof AnnotatedRowsResult);
-        AnnotatedRowsResult res = (AnnotatedRowsResult) result;
-        InputColumn<?>[] highlightedColumns = res.getHighlightedColumns();
+        final AnnotatedRowsResult res = (AnnotatedRowsResult) result;
+        final InputColumn<?>[] highlightedColumns = res.getHighlightedColumns();
         assertEquals(1, highlightedColumns.length);
         assertEquals(col, highlightedColumns[0]);
 

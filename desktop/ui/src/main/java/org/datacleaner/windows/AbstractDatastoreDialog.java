@@ -24,8 +24,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -62,26 +60,21 @@ import org.jdesktop.swingx.JXTextField;
  */
 public abstract class AbstractDatastoreDialog<D extends Datastore> extends AbstractDialog {
 
-    static final String DEFAULT_BANNER_IMAGE = "images/window/banner-datastores.png";
-
-    private static final long serialVersionUID = 1L;
-
     protected static final ImageManager imageManager = ImageManager.get();
-
+    static final String DEFAULT_BANNER_IMAGE = "images/window/banner-datastores.png";
+    private static final long serialVersionUID = 1L;
     protected final JLabel _statusLabel;
+    protected final DCPanel _outerPanel = new DCPanel();
+    protected final JXTextField _datastoreNameTextField;
     private final MutableDatastoreCatalog _mutableDatastoreCatalog;
     private final D _originalDatastore;
-    private D _savedDatastore = null;
     private final JButton _saveButton;
     private final JButton _cancelButton;
     private final UserPreferences _userPreferences;
+    private D _savedDatastore = null;
 
-    protected final DCPanel _outerPanel = new DCPanel();
-
-    protected final JXTextField _datastoreNameTextField;
-
-    public AbstractDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-            WindowContext windowContext, UserPreferences userPreferences) {
+    public AbstractDatastoreDialog(final D originalDatastore, final MutableDatastoreCatalog mutableDatastoreCatalog,
+            final WindowContext windowContext, final UserPreferences userPreferences) {
         super(windowContext, imageManager.getImage(DEFAULT_BANNER_IMAGE));
         _statusLabel = DCLabel.bright("Please specify datastore name");
         _originalDatastore = originalDatastore;
@@ -92,27 +85,19 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
 
         final String saveButtonText = originalDatastore == null ? "Register datastore" : "Save datastore";
         _saveButton = WidgetFactory.createPrimaryButton(saveButtonText, IconUtils.ACTION_SAVE_BRIGHT);
-        _saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final Datastore datastore = _savedDatastore = createDatastore();
+        _saveButton.addActionListener(e -> {
+            final Datastore datastore = _savedDatastore = createDatastore();
 
-                if (_originalDatastore != null) {
-                    _mutableDatastoreCatalog.removeDatastore(_originalDatastore);
-                }
-
-                _mutableDatastoreCatalog.addDatastore(datastore);
-                dispose();
+            if (_originalDatastore != null) {
+                _mutableDatastoreCatalog.removeDatastore(_originalDatastore);
             }
+
+            _mutableDatastoreCatalog.addDatastore(datastore);
+            dispose();
         });
 
         _cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
-        _cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AbstractDatastoreDialog.this.close();
-            }
-        });
+        _cancelButton.addActionListener(e -> AbstractDatastoreDialog.this.close());
 
         if (!DEFAULT_BANNER_IMAGE.equals(getDatastoreIconPath())) {
             final Image image = imageManager.getImage(getDatastoreIconPath());
@@ -127,7 +112,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
         // add listeners after setting initial values.
         _datastoreNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdateInternal();
             }
         });
@@ -138,7 +123,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
     }
 
     private void validateAndUpdateInternal() {
-        boolean valid = validateForm();
+        final boolean valid = validateForm();
         setSaveButtonEnabled(valid);
     }
 
@@ -153,7 +138,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
         return true;
     }
 
-    protected void setStatusWarning(String text) {
+    protected void setStatusWarning(final String text) {
         _statusLabel.setText(text);
         _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL));
     }
@@ -163,7 +148,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
         setStatusError(error.getMessage());
     }
 
-    protected void setStatusError(String text) {
+    protected void setStatusError(final String text) {
         _statusLabel.setText(text);
         _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
     }
@@ -177,7 +162,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
      * Gets the existing/original datastore definition. If this dialog is in
      * "edit existing datastore" mode then the existing datastore will be
      * returned, otherwise this method will return null.
-     * 
+     *
      */
     public D getOriginalDatastore() {
         return _originalDatastore;
@@ -199,9 +184,9 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
     /**
      * Method for subclasses to invoke for setting the enabled state of the save
      * button
-     * 
+     *
      */
-    protected void setSaveButtonEnabled(boolean enabled) {
+    protected void setSaveButtonEnabled(final boolean enabled) {
         _saveButton.setEnabled(enabled);
     }
 
@@ -230,13 +215,13 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
 
     @Override
     protected JComponent getDialogContent() {
-        DCPanel formPanel = new DCPanel();
+        final DCPanel formPanel = new DCPanel();
 
-        List<Entry<String, JComponent>> formElements = getFormElements();
+        final List<Entry<String, JComponent>> formElements = getFormElements();
         // temporary variable to make it easier to refactor the layout
         int row = 0;
-        for (Entry<String, JComponent> entry : formElements) {
-            String key = entry.getKey();
+        for (final Entry<String, JComponent> entry : formElements) {
+            final String key = entry.getKey();
             if (StringUtils.isNullOrEmpty(key)) {
                 WidgetUtils.addToGridBag(entry.getValue(), formPanel, 0, row, 2, 1);
             } else {
@@ -254,7 +239,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
 
         centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
 
-        JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
         _outerPanel.setLayout(new BorderLayout());
         _outerPanel.add(centerPanel, BorderLayout.CENTER);
@@ -262,7 +247,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
 
         final String descriptionText = getDescriptionText();
         if (descriptionText != null) {
-            DescriptionLabel descriptionLabel = new DescriptionLabel();
+            final DescriptionLabel descriptionLabel = new DescriptionLabel();
             descriptionLabel.setText(descriptionText);
             _outerPanel.add(descriptionLabel, BorderLayout.NORTH);
         }
@@ -273,8 +258,8 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
     }
 
     protected List<Entry<String, JComponent>> getFormElements() {
-        ArrayList<Entry<String, JComponent>> res = new ArrayList<>();
-        res.add(new ImmutableEntry<String, JComponent>("Datastore name", _datastoreNameTextField));
+        final ArrayList<Entry<String, JComponent>> res = new ArrayList<>();
+        res.add(new ImmutableEntry<>("Datastore name", _datastoreNameTextField));
         return res;
     }
 

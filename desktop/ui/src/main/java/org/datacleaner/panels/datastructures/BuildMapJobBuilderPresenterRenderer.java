@@ -38,8 +38,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * {@link BuildMapTransformer}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class BuildMapJobBuilderPresenterRenderer implements
-        Renderer<TransformerComponentBuilder<BuildMapTransformer>, TransformerComponentBuilderPresenter> {
+public class BuildMapJobBuilderPresenterRenderer
+        implements Renderer<TransformerComponentBuilder<BuildMapTransformer>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -51,7 +51,7 @@ public class BuildMapJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerComponentBuilder<BuildMapTransformer> tjb) {
+    public RendererPrecedence getPrecedence(final TransformerComponentBuilder<BuildMapTransformer> tjb) {
         if (tjb.getDescriptor().getComponentClass() == BuildMapTransformer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -59,9 +59,9 @@ public class BuildMapJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<BuildMapTransformer> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
-                PropertyWidgetFactory.class);
+    public TransformerComponentBuilderPresenter render(final TransformerComponentBuilder<BuildMapTransformer> tjb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(tjb).getInstance(PropertyWidgetFactory.class);
 
         return new BuildMapJobBuilderPresenter(tjb, windowContext, propertyWidgetFactory, configuration);
     }

@@ -27,19 +27,19 @@ import java.io.Serializable;
  */
 public interface DatabaseDriverDescriptor extends Serializable, Comparable<DatabaseDriverDescriptor> {
 
-	public String getDisplayName();
+    String getDisplayName();
 
-	public String getIconImagePath();
+    String getIconImagePath();
 
-	public String getDriverClassName();
+    String getDriverClassName();
 
-	/**
-	 * @return an array of URLs for the files needed to download to use this
-	 *         driver. Typically this will just be a single file (a driver JAR),
-	 *         but in some cases the driver has additional dependencies, which
-	 *         also needs to be downloaded.
-	 */
-	public String[] getDownloadUrls();
+    /**
+     * @return an array of URLs for the files needed to download to use this
+     *         driver. Typically this will just be a single file (a driver JAR),
+     *         but in some cases the driver has additional dependencies, which
+     *         also needs to be downloaded.
+     */
+    String[] getDownloadUrls();
 
-	public String[] getConnectionUrlTemplates();
+    String[] getConnectionUrlTemplates();
 }

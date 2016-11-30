@@ -25,7 +25,6 @@ import org.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.datacleaner.monitor.scheduling.model.TriggerType;
-import org.datacleaner.monitor.scheduling.widgets.ExecutionLogPoller.Callback;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.widgets.LoadingIndicator;
 
@@ -75,8 +74,8 @@ public class ExecutionLogPanel extends Composite {
     @UiField(provided = true)
     LoadingIndicator loadingIndicator;
 
-    public ExecutionLogPanel(SchedulingServiceAsync service, TenantIdentifier tenant, ExecutionLog executionLog,
-            boolean pollForUpdates) {
+    public ExecutionLogPanel(final SchedulingServiceAsync service, final TenantIdentifier tenant,
+            final ExecutionLog executionLog, final boolean pollForUpdates) {
         super();
 
         _service = service;
@@ -91,14 +90,15 @@ public class ExecutionLogPanel extends Composite {
             loadingIndicator.setVisible(false);
         } else {
             updateContent(executionLog);
-            
+
             if (pollForUpdates) {
-                final ExecutionLogPoller poller = new ExecutionLogPoller(_service, _tenant, new Callback() {
-                    @Override
-                    public void updateExecutionLog(ExecutionLog executionLog) {
-                        updateContent(executionLog);
-                    }
-                });
+                final ExecutionLogPoller poller =
+                        new ExecutionLogPoller(_service, _tenant, new ExecutionLogPoller.Callback() {
+                            @Override
+                            public void updateExecutionLog(final ExecutionLog executionLog) {
+                                updateContent(executionLog);
+                            }
+                        });
                 poller.start(executionLog);
             }
         }
@@ -134,27 +134,32 @@ public class ExecutionLogPanel extends Composite {
             if (triggerType != null) {
                 switch (triggerType) {
                 case PERIODIC:
-                    triggerLabel.setText("Scheduled: Periodic '" + executionLog.getSchedule().getCronExpression() + "'");
+                    triggerLabel
+                            .setText("Scheduled: Periodic '" + executionLog.getSchedule().getCronExpression() + "'");
                     break;
                 case DEPENDENT:
-                    triggerLabel.setText("Scheduled: After '" + executionLog.getSchedule().getDependentJob().getName()
-                            + "'");
+                    triggerLabel.setText(
+                            "Scheduled: After '" + executionLog.getSchedule().getDependentJob().getName() + "'");
                     break;
                 case MANUAL:
                     triggerLabel.setText("Manually triggered");
                     break;
                 case ONETIME:
-                	triggerLabel.setText("Scheduled: OneTime '" + executionLog.getSchedule().getDateForOneTimeSchedule() + "'");
-                	break;
+                    triggerLabel.setText(
+                            "Scheduled: OneTime '" + executionLog.getSchedule().getDateForOneTimeSchedule() + "'");
+                    break;
                 case HOTFOLDER:
                     triggerLabel.setText("Hot folder '" + executionLog.getSchedule().getHotFolder() + "' triggered");
+                    break;
+                default:
+                    throw new UnsupportedOperationException();
                 }
             }
 
             triggeredByLabel.setText(executionLog.getTriggeredBy());
 
             logOutputLabel.setText(executionLog.getLogOutput());
-            
+
             resultAnchor.setResult(executionLog);
         }
 

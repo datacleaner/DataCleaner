@@ -19,34 +19,34 @@
  */
 package org.datacleaner.monitor.server.wizard.stringpattern.regex;
 
+import static org.junit.Assert.*;
+
 import org.datacleaner.monitor.server.wizard.shared.TestHelper;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class RegexStringPatternReferenceDataWizardTest {
 
     @Test
     public void testIsApplicableTo() throws Exception {
-        RegexStringPatternReferenceDataWizard wizard = new RegexStringPatternReferenceDataWizard();
+        final RegexStringPatternReferenceDataWizard wizard = new RegexStringPatternReferenceDataWizard();
         assertTrue(wizard.isApplicableTo(null));
     }
 
     @Test
     public void testGetDisplayName() throws Exception {
-        RegexStringPatternReferenceDataWizard wizard = new RegexStringPatternReferenceDataWizard();
+        final RegexStringPatternReferenceDataWizard wizard = new RegexStringPatternReferenceDataWizard();
         assertNotEquals("", wizard.getDisplayName());
     }
 
     @Test
     public void testGetExpectedPageCount() throws Exception {
-        RegexStringPatternReferenceDataWizard wizard = new RegexStringPatternReferenceDataWizard();
+        final RegexStringPatternReferenceDataWizard wizard = new RegexStringPatternReferenceDataWizard();
         assertEquals(1, wizard.getExpectedPageCount());
     }
 
     @Test
     public void testStart() throws Exception {
-        RegexStringPatternReferenceDataWizard wizard = new RegexStringPatternReferenceDataWizard();
+        final RegexStringPatternReferenceDataWizard wizard = new RegexStringPatternReferenceDataWizard();
         assertNotNull(wizard.start(TestHelper.getReferenceDataWizardContextMock()));
     }
 }

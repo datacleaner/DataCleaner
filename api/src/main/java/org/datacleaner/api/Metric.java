@@ -29,11 +29,11 @@ import java.lang.annotation.Target;
 /**
  * Annotation used to mark a getter-method as a retrieval mechanism for
  * {@link AnalyzerResult} metrics.
- * 
+ *
  * A metric is an exposed number value which can be used to get summary
  * statistics of a particular result. This mechanism is used to allow
  * applications to compare results over time, by comparing their metrics.
- * 
+ *
  * This annotation should be used for methods that conform to these
  * restrictions:
  * <ul>
@@ -48,7 +48,7 @@ import java.lang.annotation.Target;
  * <li>Except for the above mentioned exceptions, the method must not have any
  * parameters.</li>
  * </ul>
- * 
+ *
  * @since AnalyzerBeans 0.16
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -60,25 +60,25 @@ public @interface Metric {
     /**
      * Defines the name of the metric. A metric name must be unique for any
      * particular {@link AnalyzerResult} class.
-     * 
+     *
      * @return the name of the metric.
      */
-    public String value();
+    String value();
 
     /**
      * Defines the display order of this metric, relative to other metrics.
-     * 
+     *
      * @return the order (if any) of this metric when sorting metrics of a
      *         result type. A low order will place the metric before higher
      *         order metric.
      */
-    public int order() default Integer.MAX_VALUE;
+    int order() default Integer.MAX_VALUE;
 
     /**
      * Defines if the string parameter of this metric (if any) supports IN and
      * NOT INT expressions.
-     * 
+     *
      * @return
      */
-    public boolean supportsInClause() default false;
+    boolean supportsInClause() default false;
 }

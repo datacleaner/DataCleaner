@@ -35,20 +35,20 @@ public class TenantInjectionManagerFactory implements InjectionManagerFactory {
     private final TenantContext _tenantContext;
     private final Repository _repository;
 
-    public TenantInjectionManagerFactory(InjectionManagerFactory delegate, Repository repository,
-            TenantContext tenantContext) {
+    public TenantInjectionManagerFactory(final InjectionManagerFactory delegate, final Repository repository,
+            final TenantContext tenantContext) {
         _delegate = delegate;
         _repository = repository;
         _tenantContext = tenantContext;
     }
-    
+
     @Override
-    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
+    public InjectionManager getInjectionManager(final DataCleanerConfiguration configuration) {
         return getInjectionManager(configuration, null);
     }
 
     @Override
-    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
+    public InjectionManager getInjectionManager(final DataCleanerConfiguration configuration, final AnalysisJob job) {
         final InjectionManager delegateInjectionManager = _delegate.getInjectionManager(configuration, job);
         return new TenantInjectionManager(delegateInjectionManager, _repository, _tenantContext);
     }

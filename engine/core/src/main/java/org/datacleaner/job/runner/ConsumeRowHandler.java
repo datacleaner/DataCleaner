@@ -49,11 +49,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ConsumeRowHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConsumeRowHandler.class);
-
-    private final List<RowProcessingConsumer> _consumers;
-    private final Collection<? extends FilterOutcome> _alwaysSatisfiedOutcomes;
-
     public static class Configuration {
         public boolean includeNonDistributedTasks = true;
         public AnalysisListener analysisListener = new InfoLoggingAnalysisListener();
@@ -62,45 +57,49 @@ public class ConsumeRowHandler {
         public Table table;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(ConsumeRowHandler.class);
+    private final List<RowProcessingConsumer> _consumers;
+    private final Collection<? extends FilterOutcome> _alwaysSatisfiedOutcomes;
+
     /**
      * Builds a {@link ConsumeRowHandler} based on a job, and the configuration
      * to read the job's consumers
-     * 
+     *
      * @param job
      * @param configuration
      * @param rowConsumerConfiguration
      */
-    public ConsumeRowHandler(AnalysisJob job, DataCleanerConfiguration configuration,
-            Configuration rowConsumerConfiguration) {
+    public ConsumeRowHandler(final AnalysisJob job, final DataCleanerConfiguration configuration,
+            final Configuration rowConsumerConfiguration) {
         _consumers = extractConsumers(job, configuration, rowConsumerConfiguration);
         _alwaysSatisfiedOutcomes = rowConsumerConfiguration.alwaysSatisfiedOutcomes;
     }
 
     /**
      * Builds a {@link ConsumeRowHandler} based on a list of consumers.
-     * 
+     *
      * @param consumers
      */
-    public ConsumeRowHandler(List<RowProcessingConsumer> consumers) {
+    public ConsumeRowHandler(final List<RowProcessingConsumer> consumers) {
         this(consumers, null);
     }
 
     /**
      * Builds a {@link ConsumeRowHandler} based on a list of consumers as well
      * as a collection of always-satisfied outcomes.
-     * 
+     *
      * @param consumers
      * @param alwaysSatisfiedOutcomes
      */
-    public ConsumeRowHandler(List<RowProcessingConsumer> consumers,
-            Collection<? extends FilterOutcome> alwaysSatisfiedOutcomes) {
+    public ConsumeRowHandler(final List<RowProcessingConsumer> consumers,
+            final Collection<? extends FilterOutcome> alwaysSatisfiedOutcomes) {
         _consumers = consumers;
         _alwaysSatisfiedOutcomes = alwaysSatisfiedOutcomes;
     }
 
     /**
      * Gets the {@link RowProcessingConsumer}s that this handler is working on.
-     * 
+     *
      * @return
      */
     public List<RowProcessingConsumer> getConsumers() {
@@ -110,11 +109,11 @@ public class ConsumeRowHandler {
     /**
      * Gets the output columns produced by all the consumers of this
      * {@link ConsumeRowHandler}.
-     * 
+     *
      * @return
      */
     public List<InputColumn<?>> getOutputColumns() {
-        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> result = new ArrayList<>();
         for (final RowProcessingConsumer consumer : _consumers) {
             final InputColumn<?>[] outputColumns = consumer.getOutputColumns();
             for (final InputColumn<?> outputColumn : outputColumns) {
@@ -136,25 +135,24 @@ public class ConsumeRowHandler {
     /**
      * Consumes a {@link InputRow} by applying all transformations etc. to it,
      * returning a result of transformed rows and their {@link FilterOutcomes}s.
-     * 
+     *
      * @param row
      * @return
      */
     public ConsumeRowResult consumeRow(final InputRow row) {
         final FilterOutcomes outcomes = new FilterOutcomesImpl(_alwaysSatisfiedOutcomes);
         final ConsumeRowHandlerDelegate delegate = new ConsumeRowHandlerDelegate(_consumers, row, 0, outcomes);
-        final ConsumeRowResult result = delegate.consume();
-        return result;
+        return delegate.consume();
     }
 
-    private List<RowProcessingConsumer> extractConsumers(AnalysisJob analysisJob,
-            DataCleanerConfiguration configuration, Configuration rowConsumeConfiguration) {
-        final InjectionManagerFactory injectionManagerFactory = configuration.getEnvironment()
-                .getInjectionManagerFactory();
-        final InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(configuration,
-                analysisJob);
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager,
-                rowConsumeConfiguration.includeNonDistributedTasks);
+    private List<RowProcessingConsumer> extractConsumers(final AnalysisJob analysisJob,
+            final DataCleanerConfiguration configuration, final Configuration rowConsumeConfiguration) {
+        final InjectionManagerFactory injectionManagerFactory =
+                configuration.getEnvironment().getInjectionManagerFactory();
+        final InjectionManager injectionManager =
+                injectionManagerFactory.getInjectionManager(configuration, analysisJob);
+        final LifeCycleHelper lifeCycleHelper =
+                new LifeCycleHelper(injectionManager, rowConsumeConfiguration.includeNonDistributedTasks);
 
         /**
          * Use a single threaded task runner since this handler is invoked in a
@@ -164,51 +162,52 @@ public class ConsumeRowHandler {
         final SingleThreadedTaskRunner taskRunner = new SingleThreadedTaskRunner();
 
         final ErrorAwareAnalysisListener errorAwareAnalysisListener = new ErrorAwareAnalysisListener();
-        final AnalysisListener analysisListener = new CompositeAnalysisListener(
-                rowConsumeConfiguration.analysisListener, errorAwareAnalysisListener);
+        final AnalysisListener analysisListener =
+                new CompositeAnalysisListener(rowConsumeConfiguration.analysisListener, errorAwareAnalysisListener);
 
-        final RowProcessingPublishers rowProcessingPublishers = new RowProcessingPublishers(analysisJob,
-                analysisListener, errorAwareAnalysisListener, taskRunner, lifeCycleHelper);
+        final RowProcessingPublishers rowProcessingPublishers =
+                new RowProcessingPublishers(analysisJob, analysisListener, errorAwareAnalysisListener, taskRunner,
+                        lifeCycleHelper);
 
         final RowProcessingPublisher publisher;
         if (rowConsumeConfiguration.table != null) {
-            @SuppressWarnings("deprecation")
-            final RowProcessingPublisher tablePublisher = rowProcessingPublishers
-                    .getRowProcessingPublisher(rowConsumeConfiguration.table);
+            @SuppressWarnings("deprecation") final RowProcessingPublisher tablePublisher =
+                    rowProcessingPublishers.getRowProcessingPublisher(rowConsumeConfiguration.table);
             if (tablePublisher == null) {
-                throw new IllegalArgumentException("Job does not consume records from table: "
-                        + rowConsumeConfiguration.table);
+                throw new IllegalArgumentException(
+                        "Job does not consume records from table: " + rowConsumeConfiguration.table);
             }
             publisher = tablePublisher;
         } else {
-            Collection<RowProcessingPublisher> publishers = rowProcessingPublishers.getRowProcessingPublishers();
+            final Collection<RowProcessingPublisher> publishers = rowProcessingPublishers.getRowProcessingPublishers();
             publisher = publishers.iterator().next();
-            for (RowProcessingPublisher aPublisher : publishers) {
-                if (aPublisher != publisher) {
-                    if (aPublisher.getStream().isSourceTable()) {
+            for (final RowProcessingPublisher thisPublisher : publishers) {
+                if (thisPublisher != publisher) {
+                    if (thisPublisher.getStream().isSourceTable()) {
                         throw new IllegalArgumentException(
-                                "Job consumes multiple source tables, but ConsumeRowHandler can only handle a single table's components. Please specify a Table constructor argument.");
+                                "Job consumes multiple source tables, but ConsumeRowHandler can only handle a single "
+                                        + "table's components. Please specify a Table constructor argument.");
                     }
                 }
             }
         }
 
-        final AtomicReference<Throwable> errorReference = new AtomicReference<Throwable>();
+        final AtomicReference<Throwable> errorReference = new AtomicReference<>();
 
         publisher.initializeConsumers(new TaskListener() {
             @Override
-            public void onError(Task task, Throwable throwable) {
+            public void onError(final Task task, final Throwable throwable) {
                 logger.error("Exception thrown while initializing consumers.", throwable);
                 errorReference.compareAndSet(null, throwable);
             }
 
             @Override
-            public void onComplete(Task task) {
+            public void onComplete(final Task task) {
                 logger.info("Consumers initialized successfully.");
             }
 
             @Override
-            public void onBegin(Task task) {
+            public void onBegin(final Task task) {
                 logger.info("Beginning the process of initializing consumers.");
             }
         });
@@ -216,7 +215,7 @@ public class ConsumeRowHandler {
         final Throwable throwable = errorReference.get();
         if (throwable != null) {
             if (throwable instanceof RuntimeException) {
-
+                logger.warn("A consumer failed", throwable);
             }
         }
 
@@ -230,9 +229,9 @@ public class ConsumeRowHandler {
         return consumers;
     }
 
-    private List<RowProcessingConsumer> removeAnalyzers(List<RowProcessingConsumer> consumers) {
-        final List<RowProcessingConsumer> result = new ArrayList<RowProcessingConsumer>();
-        for (RowProcessingConsumer rowProcessingConsumer : consumers) {
+    private List<RowProcessingConsumer> removeAnalyzers(final List<RowProcessingConsumer> consumers) {
+        final List<RowProcessingConsumer> result = new ArrayList<>();
+        for (final RowProcessingConsumer rowProcessingConsumer : consumers) {
             final Object component = rowProcessingConsumer.getComponent();
             if (!(component instanceof Analyzer<?>)) {
                 result.add(rowProcessingConsumer);

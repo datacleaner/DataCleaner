@@ -27,22 +27,22 @@ import org.datacleaner.bootstrap.WindowContext;
 /**
  * Defines a common interface for windows in DataCleaner. Windows are registered
  * in the windowContext class.
- * 
+ *
  * @see WindowContext
  */
 public interface DCWindow {
-	
-	public WindowContext getWindowContext();
 
-	public String getWindowTitle();
+    WindowContext getWindowContext();
 
-	public Image getWindowIcon();
+    String getWindowTitle();
 
-	public void toFront();
-	
-	public void open();
+    Image getWindowIcon();
 
-	public void close();
-	
-	public Component toComponent();
+    void toFront();
+
+    void open();
+
+    void close();
+
+    Component toComponent();
 }

@@ -21,35 +21,35 @@ package org.datacleaner.monitor.server.controllers;
 
 import java.io.Serializable;
 
-public class ResultModificationPayload implements Serializable  {
+public class ResultModificationPayload implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String job;
     private String date;
     private Boolean overwrite;
-    
+
     public String getDate() {
         return date;
     }
-    
-    public void setDate(String date) {
+
+    public void setDate(final String date) {
         this.date = date;
     }
-    
+
     public String getJob() {
         return job;
     }
-    
-    public void setJob(String job) {
+
+    public void setJob(final String job) {
         this.job = job;
     }
-    
+
     public Boolean getOverwrite() {
         return overwrite;
     }
-    
-    public void setOverwrite(Boolean overwrite) {
+
+    public void setOverwrite(final Boolean overwrite) {
         this.overwrite = overwrite;
     }
 }

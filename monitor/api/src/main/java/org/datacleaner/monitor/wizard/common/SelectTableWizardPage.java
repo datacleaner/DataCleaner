@@ -27,7 +27,6 @@ import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.monitor.wizard.WizardPageController;
@@ -44,11 +43,11 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
 
     private String _selectedTableName = "";
 
-    public SelectTableWizardPage(JobWizardContext context, Integer pageIndex) {
+    public SelectTableWizardPage(final JobWizardContext context, final Integer pageIndex) {
         this(context.getSourceDatastore(), pageIndex);
     }
 
-    public SelectTableWizardPage(Datastore datastore, Integer pageIndex) {
+    public SelectTableWizardPage(final Datastore datastore, final Integer pageIndex) {
         _datastore = datastore;
         _pageIndex = pageIndex;
     }
@@ -57,7 +56,7 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
         return _selectedTableName;
     }
 
-    public void setSelectedTableName(String selectedTableName) {
+    public void setSelectedTableName(final String selectedTableName) {
         _selectedTableName = selectedTableName;
     }
 
@@ -82,19 +81,16 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("promptText", getPromptText());
         map.put("selectedTableName", _selectedTableName);
-        try (final DatastoreConnection con = _datastore.openConnection()) {
+        try (DatastoreConnection con = _datastore.openConnection()) {
             final Schema[] schemas = con.getSchemaNavigator().getSchemas();
-            final List<Schema> schemaList = CollectionUtils.filter(schemas, new Predicate<Schema>() {
-                @Override
-                public Boolean eval(Schema schema) {
-                    final boolean isInformationSchema = MetaModelHelper.isInformationSchema(schema);
-                    return !isInformationSchema;
-                }
+            final List<Schema> schemaList = CollectionUtils.filter(schemas, schema -> {
+                final boolean isInformationSchema = MetaModelHelper.isInformationSchema(schema);
+                return !isInformationSchema;
             });
-            for (Schema schema : schemaList) {
+            for (final Schema schema : schemaList) {
                 // make sure all table names are cached.
                 schema.getTableNames();
             }
@@ -104,9 +100,9 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters) {
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters) {
         _selectedTableName = getString(formParameters, "tableName");
-        try (final DatastoreConnection con = _datastore.openConnection()) {
+        try (DatastoreConnection con = _datastore.openConnection()) {
             final Table selectedTable = con.getSchemaNavigator().convertToTable(_selectedTableName);
             return nextPageController(selectedTable);
         }

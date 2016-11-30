@@ -19,6 +19,9 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -39,9 +42,6 @@ import org.datacleaner.restclient.ComponentList.ComponentInfo;
 import org.easymock.IExpectationSetters;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
-
 @SuppressWarnings("rawtypes")
 public class ComponentListTest {
     private static final int COMPONENTS_COUNT = 5;
@@ -53,14 +53,13 @@ public class ComponentListTest {
     @Test
     public void testUrl() {
         try {
-            String encoding = "UTF-8";
-            String url = "a/b.net";
-            String encoded = URLEncoder.encode(url, encoding);
+            final String encoding = "UTF-8";
+            final String url = "a/b.net";
+            final String encoded = URLEncoder.encode(url, encoding);
             assertFalse(encoded.contains("/"));
-            String decoded = URLDecoder.decode(encoded, encoding);
+            final String decoded = URLDecoder.decode(encoded, encoding);
             assertTrue(decoded.equals(url));
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             fail();
         }
     }
@@ -68,7 +67,7 @@ public class ComponentListTest {
     @Test
     public void testAdd() throws Exception {
         assertTrue(componentList.getComponents().isEmpty());
-        ComponentDescriptor descriptorMock = getDescriptorMock();
+        final ComponentDescriptor descriptorMock = getDescriptorMock();
 
         componentList.add(ComponentControllerV1.createComponentInfo(tenant, descriptorMock, false, true));
         assertTrue(componentList.getComponents().size() == 1);
@@ -81,7 +80,8 @@ public class ComponentListTest {
         componentDescriptorMock = createNiceMock(ComponentDescriptor.class);
         expect(componentDescriptorMock.getConfiguredProperties()).andReturn(getConfiguredPropertiesMock()).anyTimes();
         expect(componentDescriptorMock.getDisplayName()).andReturn("descriptor display name").anyTimes();
-        expect(componentDescriptorMock.getComponentSuperCategory()).andReturn(getComponentSuperCategoryMock()).anyTimes();
+        expect(componentDescriptorMock.getComponentSuperCategory()).andReturn(getComponentSuperCategoryMock())
+                .anyTimes();
         expect(componentDescriptorMock.getComponentCategories()).andReturn(Collections.EMPTY_SET).anyTimes();
         replay(componentDescriptorMock);
 
@@ -89,7 +89,8 @@ public class ComponentListTest {
     }
 
     private ComponentSuperCategory getComponentSuperCategoryMock() {
-        ComponentSuperCategory componentSuperCategory = new ComponentSuperCategory() {
+
+        return new ComponentSuperCategory() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -108,12 +109,10 @@ public class ComponentListTest {
             }
 
             @Override
-            public int compareTo(ComponentSuperCategory o) {
+            public int compareTo(final ComponentSuperCategory o) {
                 return 0;
             }
         };
-
-        return componentSuperCategory;
     }
 
     @SuppressWarnings("unchecked")
@@ -123,12 +122,12 @@ public class ComponentListTest {
         expect(configuredPropertyDescriptorMock.isInputColumn()).andReturn(true).anyTimes();
         expect(configuredPropertyDescriptorMock.getDescription()).andReturn("property description").anyTimes();
         expect(configuredPropertyDescriptorMock.isRequired()).andReturn(true).anyTimes();
-        Class baseType = String.class;
+        final Class baseType = String.class;
         expect(configuredPropertyDescriptorMock.getBaseType()).andReturn(baseType).anyTimes();
-        IExpectationSetters getTypeExpectation = expect(configuredPropertyDescriptorMock.getType());
+        final IExpectationSetters getTypeExpectation = expect(configuredPropertyDescriptorMock.getType());
         getTypeExpectation.andReturn(String.class).anyTimes();
 
-        Set<ConfiguredPropertyDescriptor> propertiesSet = new HashSet<>();
+        final Set<ConfiguredPropertyDescriptor> propertiesSet = new HashSet<>();
         propertiesSet.add(configuredPropertyDescriptorMock);
         replay(configuredPropertyDescriptorMock);
 
@@ -143,7 +142,7 @@ public class ComponentListTest {
     }
 
     private List<ComponentInfo> getComponentList() {
-        List<ComponentInfo> componentInfoList = new ArrayList<>();
+        final List<ComponentInfo> componentInfoList = new ArrayList<>();
 
         for (int i = 0; i < ComponentListTest.COMPONENTS_COUNT; i++) {
             componentInfoList.add(getComponentInfo(i));
@@ -152,12 +151,12 @@ public class ComponentListTest {
         return componentInfoList;
     }
 
-    private ComponentInfo getComponentInfo(int id) {
-        ComponentInfo componentInfo = new ComponentInfo();
+    private ComponentInfo getComponentInfo(final int id) {
+        final ComponentInfo componentInfo = new ComponentInfo();
         componentInfo.setName("name" + id);
         componentInfo.setCreateURL("create URL" + id);
-        Map<String, ComponentList.PropertyInfo> props = new HashMap<>();
-        ComponentList.PropertyInfo prop = new ComponentList.PropertyInfo();
+        final Map<String, ComponentList.PropertyInfo> props = new HashMap<>();
+        final ComponentList.PropertyInfo prop = new ComponentList.PropertyInfo();
         prop.setName("propertyName" + id);
         prop.setDescription("propertyDescription" + id);
         prop.setRequired(true);

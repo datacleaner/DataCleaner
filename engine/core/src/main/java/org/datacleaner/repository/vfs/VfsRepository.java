@@ -25,7 +25,7 @@ import org.datacleaner.util.VFSUtils;
 
 /**
  * Repository implementation based of commons VFS.
- * 
+ *
  * TODO: For now this is a really simple implementation that will only work on
  * local file based {@link FileObject}s. A proper implementation would be much
  * better but this is sufficient for current initial needs.
@@ -34,7 +34,7 @@ public class VfsRepository extends FileRepository {
 
     private static final long serialVersionUID = 1L;
 
-    public VfsRepository(FileObject rootFolder) {
+    public VfsRepository(final FileObject rootFolder) {
         super(VFSUtils.toFile(rootFolder));
     }
 }

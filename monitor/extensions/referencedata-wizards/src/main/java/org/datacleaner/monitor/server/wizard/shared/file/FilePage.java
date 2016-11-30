@@ -31,7 +31,7 @@ import org.datacleaner.util.StringUtils;
 
 public abstract class FilePage extends AbstractFreemarkerWizardPage {
     public static final String TEMPLATE_PACKAGE = "/org/datacleaner/monitor/server/wizard/shared/file/";
-    
+
     private static final String PROPERTY_NAME = "name";
     private static final String PROPERTY_NAME_LABEL = "nameLabel";
     private static final String PROPERTY_ENCODING = "encoding";
@@ -41,23 +41,23 @@ public abstract class FilePage extends AbstractFreemarkerWizardPage {
     private static final String PROPERTY_FILE_NAME = "file_name";
     private static final String PROPERTY_SESSION_KEY = "session_key";
 
-    protected final FileWizardSession _session; 
-    
-    public FilePage(FileWizardSession session) {
+    protected final FileWizardSession _session;
+
+    public FilePage(final FileWizardSession session) {
         _session = session;
     }
-    
+
     @Override
     public Integer getPageIndex() {
         return 0;
     }
-    
+
     @Override
     protected String getTemplateFilename() {
         _templateConfiguration.setClassForTemplateLoading(this.getClass(), TEMPLATE_PACKAGE);
         return "FilePage.html";
-    } 
-    
+    }
+
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> model = new HashMap<>();
@@ -69,24 +69,25 @@ public abstract class FilePage extends AbstractFreemarkerWizardPage {
 
         return model;
     }
-    
-    protected abstract String getNameLabel(); 
-    
+
+    protected abstract String getNameLabel();
+
     protected abstract void checkUniqueName(String name) throws DCUserInputException;
-    
+
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         storeFileProperties(formParameters, _session);
 
         return null;
-    } 
-    
-    protected void storeFileProperties(Map<String, List<String>> formParameters, FileWizardSession session) {
+    }
+
+    protected void storeFileProperties(final Map<String, List<String>> formParameters,
+            final FileWizardSession session) {
         final String caseSensitive = getBoolean(formParameters, PROPERTY_CASE_SENSITIVE) ? "on" : "";
         final String name = getString(formParameters, PROPERTY_NAME);
         final String encoding = getString(formParameters, PROPERTY_ENCODING);
-        
+
         checkUniqueName(name);
 
         session.setName(name);
@@ -106,12 +107,12 @@ public abstract class FilePage extends AbstractFreemarkerWizardPage {
         session.setFilePath(fileName);
     }
 
-    private Map<String, String> parseJson(String fileJsonString) {
+    private Map<String, String> parseJson(final String fileJsonString) {
         try {
-            @SuppressWarnings("unchecked")
-            Map<String, String> map = new ObjectMapper().readValue(fileJsonString, Map.class);
+            @SuppressWarnings("unchecked") final Map<String, String> map =
+                    new ObjectMapper().readValue(fileJsonString, Map.class);
             return map;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (fileJsonString.indexOf('\n') != -1) {
                 throw new IllegalStateException(e);
             }

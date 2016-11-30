@@ -36,19 +36,19 @@ public enum WriteBufferSizeOption implements HasName {
     SMALL("Small (1000 values)", 1000),
 
     TINY("Tiny (100 values)", 100);
-    
+
     private final String _name;
     private final int _values;
 
-    private WriteBufferSizeOption(String name, int values) {
+    WriteBufferSizeOption(final String name, final int values) {
         _name = name;
         _values = values;
     }
-    
+
     /**
      * Gets the number of values (rows x columns) that this buffer size
      * recommends
-     * 
+     *
      * @return the number of values (rows x columns) that this buffer size
      *         recommends
      */
@@ -58,20 +58,20 @@ public enum WriteBufferSizeOption implements HasName {
 
     /**
      * Gets the display name of this buffer size
-     * 
+     *
      * @return the display name of this buffer size
      */
     @Override
     public String getName() {
         return _name;
     }
-    
-    public int calculateBufferSize(int numColumns) {
+
+    public int calculateBufferSize(final int numColumns) {
         // add one, because there is a small "per record" overhead
         final int objectsPerRow = numColumns + 1;
 
         final int bufferSize = _values / objectsPerRow;
-        
+
         return Math.max(1, bufferSize);
     }
 }

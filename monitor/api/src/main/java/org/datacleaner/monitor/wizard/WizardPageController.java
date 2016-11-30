@@ -28,28 +28,27 @@ import org.datacleaner.monitor.shared.model.DCUserInputException;
  * A controller interface for wizard pages
  */
 public interface WizardPageController {
-    
+
     /**
      * Gets a (0-based) page index.
-     * 
+     *
      * @return
      */
-    public Integer getPageIndex();
+    Integer getPageIndex();
 
     /**
      * Gets a HTML form element which represents this page rendered for the
      * user.
-     * 
+     *
      * @return
      */
-    public String getFormInnerHtml();
+    String getFormInnerHtml();
 
     /**
      * Submits the presented form and requests the next page in the wizard.
-     * 
+     *
      * @param formParameters
      * @return
      */
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
-            throws DCUserInputException;
+    WizardPageController nextPageController(Map<String, List<String>> formParameters) throws DCUserInputException;
 }

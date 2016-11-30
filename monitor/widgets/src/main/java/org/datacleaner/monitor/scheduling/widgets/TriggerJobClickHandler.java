@@ -41,7 +41,8 @@ public class TriggerJobClickHandler implements ClickHandler {
     private final TenantIdentifier _tenant;
     private final ScheduleDefinition _schedule;
 
-    public TriggerJobClickHandler(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
+    public TriggerJobClickHandler(final SchedulingServiceAsync service, final TenantIdentifier tenant,
+            final ScheduleDefinition schedule) {
         _service = service;
         _tenant = tenant;
         _schedule = schedule;
@@ -51,16 +52,16 @@ public class TriggerJobClickHandler implements ClickHandler {
         final DCPopupPanel popupPanel = new DCPopupPanel("");
 
         final ExecutionStatusPanel panel = new ExecutionStatusPanel(_service, _tenant, _schedule, popupPanel);
-        
+
         popupPanel.setAutoHideEnabled(false);
         popupPanel.setWidget(panel);
         popupPanel.addButton(new CancelPopupButton(popupPanel, "Close", true) {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 super.onClick(event);
                 JavaScriptCallbacks.onExecutionStatusPanelClosing();
             }
-        }) ;
+        });
         popupPanel.center();
         popupPanel.show();
 
@@ -73,7 +74,7 @@ public class TriggerJobClickHandler implements ClickHandler {
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(final ClickEvent event) {
         showExecutionPopup();
     }
 

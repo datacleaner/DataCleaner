@@ -34,30 +34,30 @@ public interface PerformanceCharacteristics extends Serializable {
      * have poor query engines or very good IO metrics, which makes it better to
      * fire just a simple query and do filtering etc. on the client. This method
      * can be used to determine which mode is preferred.
-     * 
+     *
      * @return true if it is plausible to optimize the usage of this datastore
      *         by intelligent querying, or false if complex querying will not be
      *         of large benefit (typically because the datastore does
      *         client-side query handling).
      */
-    public boolean isQueryOptimizationPreferred();
+    boolean isQueryOptimizationPreferred();
 
     /**
      * Determines if the datastore's natural order of records is consistent
      * across queries. This is typically used for paginated queries where LIMIT
      * and OFFSET clauses may be added to a query without any additional ORDER
      * BY clause.
-     * 
+     *
      * Some datastores will always return the same ordering of records when no
      * ORDER BY clause is provided. These datastores will return true on this
      * call.
-     * 
+     *
      * Other datastores will not have a guaranteed natural ordering, except if
      * an ORDER BY clause is specified. These datastores will return false on
      * this call.
-     * 
+     *
      * @return true if this datastore has a consistent natural ordering of
      *         records when no ORDER BY clause is specified.
      */
-    public boolean isNaturalRecordOrderConsistent();
+    boolean isNaturalRecordOrderConsistent();
 }

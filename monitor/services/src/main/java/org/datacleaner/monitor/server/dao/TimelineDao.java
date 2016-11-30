@@ -32,14 +32,14 @@ import org.datacleaner.monitor.shared.model.TenantIdentifier;
  * repository.
  */
 public interface TimelineDao {
-    
-    public Map<TimelineIdentifier, TimelineDefinition> getTimelinesForJob(TenantIdentifier tenant, JobIdentifier job);
-    
-    public List<TimelineIdentifier> getTimelinesForTenant(TenantIdentifier tenant);
-    
-    public TimelineIdentifier updateTimeline(TimelineIdentifier identifier, TimelineDefinition definition);
 
-    public TimelineDefinition getTimelineDefinition(TimelineIdentifier timeline);
+    Map<TimelineIdentifier, TimelineDefinition> getTimelinesForJob(TenantIdentifier tenant, JobIdentifier job);
 
-    public boolean removeTimeline(TimelineIdentifier timeline);
+    List<TimelineIdentifier> getTimelinesForTenant(TenantIdentifier tenant);
+
+    TimelineIdentifier updateTimeline(TimelineIdentifier identifier, TimelineDefinition definition);
+
+    TimelineDefinition getTimelineDefinition(TimelineIdentifier timeline);
+
+    boolean removeTimeline(TimelineIdentifier timeline);
 }

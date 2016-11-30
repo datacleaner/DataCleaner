@@ -26,15 +26,16 @@ import java.util.List;
 
 import org.apache.metamodel.schema.AbstractSchema;
 import org.apache.metamodel.schema.MutableTable;
+import org.apache.metamodel.schema.Table;
+
 /**
  *  implementation of Datahub schema, final must be implemented in metamodel
  */
-import org.apache.metamodel.schema.Table;
 
 public class DataHubSchema extends AbstractSchema {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private String _name;
@@ -43,7 +44,7 @@ public class DataHubSchema extends AbstractSchema {
 
     public DataHubSchema() {
         _name = EMPTY;
-        _tables = new ArrayList<Table>();
+        _tables = new ArrayList<>();
 
     }
 
@@ -52,8 +53,16 @@ public class DataHubSchema extends AbstractSchema {
         return _name;
     }
 
+    public void setName(final String name) {
+        _name = name;
+    }
+
     public String getDatastoreName() {
         return _datastoreName;
+    }
+
+    public void setDatastoreName(final String name) {
+        _datastoreName = name;
     }
 
     @Override
@@ -66,19 +75,11 @@ public class DataHubSchema extends AbstractSchema {
         return null;
     }
 
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public void setDatastoreName(String name) {
-        _datastoreName = name;
-    }
-
-    public void addTable(MutableTable table) {
+    public void addTable(final MutableTable table) {
         _tables.add(table);
     }
 
-    public void addTables(Table[] tables) {
+    public void addTables(final Table[] tables) {
         for (int i = 0; i < tables.length; ++i) {
             _tables.add(tables[i]);
         }

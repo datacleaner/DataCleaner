@@ -34,55 +34,55 @@ import org.datacleaner.util.IconUtils;
  */
 public class DescriptorMenu extends JMenu implements Comparable<DescriptorMenu> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final ComponentCategory _componentCategory;
-	private final Set<Class<?>> _componentClasses;
+    private final ComponentCategory _componentCategory;
+    private final Set<Class<?>> _componentClasses;
 
-	public DescriptorMenu(ComponentCategory componentCategory) {
-		super(componentCategory.getName());
-		_componentCategory = componentCategory;
-		_componentClasses = new HashSet<Class<?>>();
-	}
+    public DescriptorMenu(final ComponentCategory componentCategory) {
+        super(componentCategory.getName());
+        _componentCategory = componentCategory;
+        _componentClasses = new HashSet<>();
+    }
 
-	@Override
-	public Icon getIcon() {
-		return IconUtils.getComponentCategoryIcon(_componentCategory, IconUtils.ICON_SIZE_MENU_ITEM);
-	}
+    @Override
+    public Icon getIcon() {
+        return IconUtils.getComponentCategoryIcon(_componentCategory, IconUtils.ICON_SIZE_MENU_ITEM);
+    }
 
-	public ComponentCategory getComponentCategory() {
-		return _componentCategory;
-	}
+    public ComponentCategory getComponentCategory() {
+        return _componentCategory;
+    }
 
-	public DescriptorMenu addComponentClass(Class<?> clazz) {
-		_componentClasses.add(clazz);
-		return this;
-	}
+    public DescriptorMenu addComponentClass(final Class<?> clazz) {
+        _componentClasses.add(clazz);
+        return this;
+    }
 
-	public DescriptorMenu addComponentClasses(Class<?>... classes) {
-		for (Class<?> clazz : classes) {
-			addComponentClass(clazz);
-		}
-		return this;
-	}
+    public DescriptorMenu addComponentClasses(final Class<?>... classes) {
+        for (final Class<?> clazz : classes) {
+            addComponentClass(clazz);
+        }
+        return this;
+    }
 
-	public int getComponentClassCount() {
-		return _componentClasses.size();
-	}
+    public int getComponentClassCount() {
+        return _componentClasses.size();
+    }
 
-	public boolean containsComponentClass(Class<?> clazz) {
-		return _componentClasses.contains(clazz);
-	}
+    public boolean containsComponentClass(final Class<?> clazz) {
+        return _componentClasses.contains(clazz);
+    }
 
-	@Override
-	public int compareTo(DescriptorMenu o) {
-		int diff = getText().compareTo(o.getText());
-		if (diff == 0) {
-			if (getComponentCategory().equals(o.getComponentCategory())) {
-				return 0;
-			}
-			return -1;
-		}
-		return diff;
-	}
+    @Override
+    public int compareTo(final DescriptorMenu o) {
+        final int diff = getText().compareTo(o.getText());
+        if (diff == 0) {
+            if (getComponentCategory().equals(o.getComponentCategory())) {
+                return 0;
+            }
+            return -1;
+        }
+        return diff;
+    }
 }

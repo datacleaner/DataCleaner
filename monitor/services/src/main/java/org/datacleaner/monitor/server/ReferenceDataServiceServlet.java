@@ -40,8 +40,8 @@ public class ReferenceDataServiceServlet extends SecureGwtServlet implements Ref
         super.init();
 
         if (_delegate == null) {
-            WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            ReferenceDataService delegate = applicationContext.getBean(ReferenceDataServiceImpl.class);
+            final WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final ReferenceDataService delegate = applicationContext.getBean(ReferenceDataServiceImpl.class);
 
             if (delegate == null) {
                 throw new ServletException("No delegate found in application context!");
@@ -51,31 +51,31 @@ public class ReferenceDataServiceServlet extends SecureGwtServlet implements Ref
         }
     }
 
-    public void setDelegate(ReferenceDataService delegate) {
-        _delegate = delegate;
-    }
-
     public ReferenceDataService getDelegate() {
         return _delegate;
     }
 
+    public void setDelegate(final ReferenceDataService delegate) {
+        _delegate = delegate;
+    }
+
     @Override
-    public Set<ReferenceDataItem> getDictionaries(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getDictionaries(final TenantIdentifier tenant) {
         return _delegate.getDictionaries(tenant);
     }
 
     @Override
-    public Set<ReferenceDataItem> getSynonymCatalogs(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getSynonymCatalogs(final TenantIdentifier tenant) {
         return _delegate.getSynonymCatalogs(tenant);
     }
 
     @Override
-    public Set<ReferenceDataItem> getStringPatterns(TenantIdentifier tenant) {
+    public Set<ReferenceDataItem> getStringPatterns(final TenantIdentifier tenant) {
         return _delegate.getStringPatterns(tenant);
     }
 
     @Override
-    public boolean removeItem(TenantIdentifier tenant, ReferenceDataItem.Type type, String name) {
+    public boolean removeItem(final TenantIdentifier tenant, final ReferenceDataItem.Type type, final String name) {
         return _delegate.removeItem(tenant, type, name);
     }
 }

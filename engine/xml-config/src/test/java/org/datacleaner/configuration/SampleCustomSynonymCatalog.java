@@ -52,24 +52,24 @@ public class SampleCustomSynonymCatalog implements SynonymCatalog {
     }
 
     @Override
-    public SynonymCatalogConnection openConnection(DataCleanerConfiguration arg0) {
+    public SynonymCatalogConnection openConnection(final DataCleanerConfiguration arg0) {
         return new SynonymCatalogConnection() {
 
             @Override
             public Collection<Synonym> getSynonyms() {
-                List<Synonym> result = new ArrayList<>();
-                for (String[] strings : values) {
+                final List<Synonym> result = new ArrayList<>();
+                for (final String[] strings : values) {
                     result.add(new SimpleSynonym(strings[0], strings));
                 }
                 return result;
             }
 
             @Override
-            public String getMasterTerm(String term) {
+            public String getMasterTerm(final String term) {
                 if (StringUtils.isNullOrEmpty(term)) {
                     return null;
                 }
-                for (Synonym synonym : getSynonyms()) {
+                for (final Synonym synonym : getSynonyms()) {
                     if (synonym.getMasterTerm().equals(term)) {
                         return term;
                     }
@@ -100,7 +100,7 @@ public class SampleCustomSynonymCatalog implements SynonymCatalog {
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 }

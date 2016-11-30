@@ -54,12 +54,13 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
     private ResourceTypePresenter<?> _currentPresenter;
     private ServerInformationCatalog _serverInformationCatalog;
 
-    public ResourceSelector(DataCleanerConfiguration configuration, UserPreferences userPreferences, boolean openMode) {
+    public ResourceSelector(final DataCleanerConfiguration configuration, final UserPreferences userPreferences,
+            final boolean openMode) {
         this(configuration, new ResourceConverter(configuration), userPreferences, openMode);
     }
 
-    public ResourceSelector(DataCleanerConfiguration configuration, ResourceConverter resourceConverter,
-            UserPreferences userPreferences, boolean openMode) {
+    public ResourceSelector(final DataCleanerConfiguration configuration, final ResourceConverter resourceConverter,
+            final UserPreferences userPreferences, final boolean openMode) {
         _resourceConverter = resourceConverter;
         _userPreferences = userPreferences;
         _openMode = openMode;
@@ -68,7 +69,7 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
 
         final List<String> schemes = new ArrayList<>();
         final Collection<ResourceTypeHandler<?>> resourceTypeHandlers = _resourceConverter.getResourceTypeHandlers();
-        for (ResourceTypeHandler<?> resourceTypeHandler : resourceTypeHandlers) {
+        for (final ResourceTypeHandler<?> resourceTypeHandler : resourceTypeHandlers) {
             final String scheme = resourceTypeHandler.getScheme();
             schemes.add(scheme);
 
@@ -77,25 +78,20 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         }
 
         _resourceTypeComboBox = new DCComboBox<>(schemes);
-        _resourceTypeComboBox.addListener(new DCComboBox.Listener<String>() {
-            @Override
-            public void onItemSelected(String item) {
-                onSchemeSelected(item);
-            }
-        });
+        _resourceTypeComboBox.addListener(this::onSchemeSelected);
 
         setScheme("file");
 
         setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 0));
         add(_resourceTypeComboBox);
         add(Box.createHorizontalStrut(4));
-        for (ResourceTypePresenter<?> presenter : getResourceTypePresenters()) {
+        for (final ResourceTypePresenter<?> presenter : getResourceTypePresenters()) {
             add(presenter.getWidget());
         }
     }
 
-    protected ResourceTypePresenter<?> createResourceTypePresenter(String scheme,
-            ResourceTypeHandler<?> resourceTypeHandler) {
+    protected ResourceTypePresenter<?> createResourceTypePresenter(final String scheme,
+            final ResourceTypeHandler<?> resourceTypeHandler) {
         final ResourceTypePresenter<?> presenter;
         switch (scheme) {
         case "file":
@@ -111,32 +107,19 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         return presenter;
     }
 
-    public void setScheme(String scheme) {
+    public void setScheme(final String scheme) {
         _resourceTypeComboBox.setSelectedItem(scheme);
     }
 
-    private void onSchemeSelected(String item) {
+    private void onSchemeSelected(final String item) {
         final Collection<ResourceTypePresenter<?>> presenters = _resourceTypePresenters.values();
-        for (ResourceTypePresenter<?> presenter : presenters) {
+        for (final ResourceTypePresenter<?> presenter : presenters) {
             presenter.getWidget().setVisible(false);
         }
         final ResourceTypePresenter<?> presenter = _resourceTypePresenters.get(item);
         presenter.getWidget().setVisible(true);
         updateUI();
         _currentPresenter = presenter;
-    }
-
-    public void setResource(Resource resource) {
-        final String stringRepresentation = _resourceConverter.toString(resource);
-        final ResourceStructure structure = _resourceConverter.parseStructure(stringRepresentation);
-        final String scheme = structure.getScheme();
-        setScheme(scheme);
-
-        // we need to do this ugly cast in order to call setResource(...) with a
-        // generic argument
-        @SuppressWarnings("unchecked")
-        final ResourceTypePresenter<Resource> presenter = (ResourceTypePresenter<Resource>) _currentPresenter;
-        presenter.setResource(resource);
     }
 
     public Resource getResource() {
@@ -146,7 +129,20 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         return _currentPresenter.getResource();
     }
 
-    public ResourceTypePresenter<?> getResourceTypePresenter(String scheme) {
+    public void setResource(final Resource resource) {
+        final String stringRepresentation = _resourceConverter.toString(resource);
+        final ResourceStructure structure = _resourceConverter.parseStructure(stringRepresentation);
+        final String scheme = structure.getScheme();
+        setScheme(scheme);
+
+        // we need to do this ugly cast in order to call setResource(...) with a
+        // generic argument
+        @SuppressWarnings("unchecked") final ResourceTypePresenter<Resource> presenter =
+                (ResourceTypePresenter<Resource>) _currentPresenter;
+        presenter.setResource(resource);
+    }
+
+    public ResourceTypePresenter<?> getResourceTypePresenter(final String scheme) {
         return _resourceTypePresenters.get(scheme);
     }
 
@@ -160,49 +156,42 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
     }
 
     @Override
-    public void addListener(Listener listener) {
+    public void addListener(final Listener listener) {
         final Collection<ResourceTypePresenter<?>> presenters = getResourceTypePresenters();
-        for (ResourceTypePresenter<?> presenter : presenters) {
+        for (final ResourceTypePresenter<?> presenter : presenters) {
             presenter.addListener(listener);
         }
     }
 
     @Override
-    public void removeListener(Listener listener) {
+    public void removeListener(final Listener listener) {
         final Collection<ResourceTypePresenter<?>> presenters = getResourceTypePresenters();
-        for (ResourceTypePresenter<?> presenter : presenters) {
+        for (final ResourceTypePresenter<?> presenter : presenters) {
             presenter.removeListener(listener);
         }
     }
 
     @Override
-    public void addChoosableFileFilter(FileFilter fileFilter) {
+    public void addChoosableFileFilter(final FileFilter fileFilter) {
         final Collection<ResourceTypePresenter<?>> presenters = getResourceTypePresenters();
-        for (ResourceTypePresenter<?> presenter : presenters) {
+        for (final ResourceTypePresenter<?> presenter : presenters) {
             presenter.addChoosableFileFilter(fileFilter);
         }
     }
 
     @Override
-    public void removeChoosableFileFilter(FileFilter fileFilter) {
+    public void removeChoosableFileFilter(final FileFilter fileFilter) {
         final Collection<ResourceTypePresenter<?>> presenters = getResourceTypePresenters();
-        for (ResourceTypePresenter<?> presenter : presenters) {
+        for (final ResourceTypePresenter<?> presenter : presenters) {
             presenter.removeChoosableFileFilter(fileFilter);
         }
     }
 
     @Override
-    public void setSelectedFileFilter(FileFilter fileFilter) {
+    public void setSelectedFileFilter(final FileFilter fileFilter) {
         final Collection<ResourceTypePresenter<?>> presenters = getResourceTypePresenters();
-        for (ResourceTypePresenter<?> presenter : presenters) {
+        for (final ResourceTypePresenter<?> presenter : presenters) {
             presenter.setSelectedFileFilter(fileFilter);
-        }
-    }
-
-    public void setResourcePath(String path) {
-        final Resource resource = _resourceConverter.fromString(Resource.class, path);
-        if (resource != null) {
-            setResource(resource);
         }
     }
 
@@ -214,11 +203,18 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         return _resourceConverter.toString(resource);
     }
 
-    public void setCurrentPresenter(ResourceTypePresenter<?> currentPresenter) {
+    public void setResourcePath(final String path) {
+        final Resource resource = _resourceConverter.fromString(Resource.class, path);
+        if (resource != null) {
+            setResource(resource);
+        }
+    }
+
+    public void setCurrentPresenter(final ResourceTypePresenter<?> currentPresenter) {
         _currentPresenter = currentPresenter;
     }
 
-    public void setVisibleResourceTypeCombox(boolean isVisible) {
+    public void setVisibleResourceTypeCombox(final boolean isVisible) {
         _resourceTypeComboBox.setVisible(isVisible);
     }
 

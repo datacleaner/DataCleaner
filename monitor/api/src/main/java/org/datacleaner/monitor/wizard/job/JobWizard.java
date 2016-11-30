@@ -33,5 +33,5 @@ public interface JobWizard extends Wizard<JobWizardContext, JobWizardSession> {
      * command line scripts or third party applications do not, so they are
      * presented differently to the user.
      */
-    public boolean isDatastoreConsumer();
+    boolean isDatastoreConsumer();
 }

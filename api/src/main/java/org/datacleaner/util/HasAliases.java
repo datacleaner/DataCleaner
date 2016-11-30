@@ -29,10 +29,10 @@ import org.apache.metamodel.util.HasName;
  */
 public interface HasAliases {
 
-	/**
-	 * Gets alias names for this object
-	 * 
-	 * @return
-	 */
-	public String[] getAliases();
+    /**
+     * Gets alias names for this object
+     *
+     * @return
+     */
+    String[] getAliases();
 }

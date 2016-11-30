@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.api.InputColumn;
@@ -45,6 +44,7 @@ import org.jdesktop.swingx.JXTextField;
  * fields.
  */
 public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPropertyWidget {
+
     public class MappedStringsPropertyWidget extends MinimalPropertyWidget<String[]> {
 
         public MappedStringsPropertyWidget(final ComponentBuilder componentBuilder,
@@ -139,7 +139,11 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
         textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(final DocumentEvent event) {
-                updateMappedStrings();
+                if (isBatchUpdating()) {
+                    return;
+                }
+                fireValueChanged();
+                _mappedStringsPropertyWidget.fireValueChanged();
             }
         });
         return textField;
@@ -168,7 +172,16 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
             textField.setVisible(selected);
             updateUI();
         });
-        checkBox.addListener((item, selected) -> updateMappedStrings());
+        checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
+            @Override
+            public void onItemSelected(InputColumn<?> item, boolean selected) {
+                if (isBatchUpdating()) {
+                    return;
+                }
+                _mappedStringsPropertyWidget.fireValueChanged();
+            }
+        });
+
         textField.setVisible(checkBox.isSelected());
 
         final DCPanel panel = new DCPanel();
@@ -200,20 +213,6 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
             }
         }
         return result.toArray(new InputColumn[result.size()]);
-    }
-
-    public void updateMappedStrings() {
-        if (_alreadyUpdating) {
-            return;
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            _alreadyUpdating = true;
-            onConfigurationChanged(null);
-            setMappedStrings(null);
-            _mappedStringsPropertyWidget.fireValueChanged();
-            _alreadyUpdating = false;
-        });
     }
 
     public String[] getMappedStrings() {

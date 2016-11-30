@@ -32,34 +32,43 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class HashTransformerTest {
+    private static final String INPUT = "This is the input value...";
 
-    private HashTransformer _transformer;
     private MockInputColumn<String> _column;
 
     @Before
     public void before() throws Exception {
         _column = new MockInputColumn<>("mock", String.class);
-        _transformer = new HashTransformer(new InputColumn[] { _column }, HashTransformer.Algorithm.SHA_512);
+    }
+
+    @Test
+    public void testCrc() throws Exception {
+        compare(HashTransformer.Algorithm.CRC_32, INPUT, "1544153596");
     }
 
     @Test
     public void testSampleOutput() throws Exception {
+        compare(HashTransformer.Algorithm.SHA_512, INPUT,
+                "6E7380FF452E4A0CB7DE10132EE9DC266D17D27C2DE1A90BDDD34BF3EF6838FDDF7B96CBD962AF802471BDD5326802F9F2D7427F253CDF9D2E47ACB27E68A6C");
+    }
+
+    private void compare(final HashTransformer.Algorithm algorithm, final String input, final String expectedOutput) {
+        final HashTransformer transformer = new HashTransformer(new InputColumn[] { _column }, algorithm);
         final Map<InputColumn<?>, Object> values = new HashMap<>();
-        final String input = "This is the input value...";
         values.put(_column, input);
         final MockInputRow row = new MockInputRow(values);
-        final String[] output = _transformer.transform(row);
+        final String[] output = transformer.transform(row);
         assertEquals(""+input.length(), output[1]);
-        assertEquals(
-                "6E7380FF452E4A0CB7DE10132EE9DC266D17D27C2DE1A90BDDD34BF3EF6838FDDF7B96CBD962AF802471BDD5326802F9F2D7427F253CDF9D2E47ACB27E68A6C",
-                output[0]);
+        assertEquals(expectedOutput, output[0]);
     }
 
     @Test
     public void testGetOutputColumns() throws Exception {
-        assertEquals(2, _transformer.getOutputColumns().getColumnCount());
-        assertEquals(String.class, _transformer.getOutputColumns().getColumnType(0));
-        assertEquals("Input length", _transformer.getOutputColumns().getColumnName(1));
-        assertTrue(_transformer.getOutputColumns().getColumnName(0).startsWith("Hash of"));
+        final HashTransformer transformer = new HashTransformer(new InputColumn[] { _column },
+                HashTransformer.Algorithm.SHA_512);
+        assertEquals(2, transformer.getOutputColumns().getColumnCount());
+        assertEquals(String.class, transformer.getOutputColumns().getColumnType(0));
+        assertEquals("Input length", transformer.getOutputColumns().getColumnName(1));
+        assertTrue(transformer.getOutputColumns().getColumnName(0).startsWith("Hash of"));
     }
 }

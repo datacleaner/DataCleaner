@@ -22,6 +22,7 @@ package org.datacleaner.beans.codec;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.zip.CRC32;
 
 import javax.inject.Named;
 
@@ -54,6 +55,7 @@ public class HashTransformer implements Transformer {
         SHA_256,
         SHA_384,
         SHA_512,
+        CRC_32,
         ;
 
         public String toString() {
@@ -110,11 +112,18 @@ public class HashTransformer implements Transformer {
 
     private String hash(final byte[] input) {
         try {
-            final MessageDigest messageDigest = MessageDigest.getInstance(_algorithm.toString());
-            messageDigest.update(input);
-            final byte[] hash = messageDigest.digest();
+            if (_algorithm == Algorithm.CRC_32) {
+                final CRC32 crc = new CRC32();
+                crc.update(input);
 
-            return String.format("%032X", new BigInteger(1, hash));
+                return ""+crc.getValue();
+            } else {
+                final MessageDigest messageDigest = MessageDigest.getInstance(_algorithm.toString());
+                messageDigest.update(input);
+                final byte[] hash = messageDigest.digest();
+
+                return String.format("%032X", new BigInteger(1, hash));
+            }
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Algorithm used for hashing was not recognized. " + e.getMessage());
         }

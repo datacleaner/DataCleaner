@@ -81,7 +81,7 @@ public class HashTransformer implements Transformer {
 
     @Override
     public String[] transform(final InputRow inputRow) {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         int length = 0;
 
         for (final InputColumn<?> column : _columns) {

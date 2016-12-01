@@ -43,8 +43,8 @@ public class HashTransformerTest {
 
     @Test
     public void testSampleOutput() throws Exception {
-        compare(HashTransformer.Algorithm.SHA_512, INPUT,
-                "06E7380FF452E4A0CB7DE10132EE9DC266D17D27C2DE1A90BDDD34BF3EF6838FDDF7B96CBD962AF802471BDD5326802F9F2D7427F253CDF9D2E47ACB27E68A6C");
+        compare(HashTransformer.Algorithm.SHA_512, INPUT, "06E7380FF452E4A0CB7DE10132EE9DC266D17D27C2DE1A90BDDD34BF3"
+                + "EF6838FDDF7B96CBD962AF802471BDD5326802F9F2D7427F253CDF9D2E47ACB27E68A6C");
     }
 
     private void compare(final HashTransformer.Algorithm algorithm, final String input, final String expectedOutput) {

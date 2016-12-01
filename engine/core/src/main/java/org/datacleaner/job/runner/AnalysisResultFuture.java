@@ -76,7 +76,7 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
     boolean isSuccessful();
 
     /**
-     * @return SUCCESSFUL if the job is finished and successful, ERRONEOUS if
+     * @return SUCCESSFUL if the job is finished and successful, ERRORNOUS if
      *         errors have been reported and NOT_FINISHED if no errors have been
      *         reported but the job is not done yet
      */
@@ -88,7 +88,7 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
      * @return the results from the Analyzers in the executed job
      * @throws AnalysisJobFailedException
      *             if the analysis did not go well (use isSuccessful() or
-     *             isErroneous() to check)
+     *             isErrornous() to check)
      */
     @Override
     List<AnalyzerResult> getResults() throws AnalysisJobFailedException;
@@ -102,7 +102,7 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
      * @return the result for a given component job
      * @throws AnalysisJobFailedException
      *             if the analysis did not go well (use isSuccessful() or
-     *             isErroneous() to check)
+     *             isErrornous() to check)
      */
     @Override
     AnalyzerResult getResult(ComponentJob componentJob) throws AnalysisJobFailedException;
@@ -114,7 +114,7 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
      *         AnalyzerResults.
      * @throws AnalysisJobFailedException
      *             if the analysis did not go well (use isSuccessful() or
-     *             isErroneous() to check)
+     *             isErrornous() to check)
      */
     @Override
     Map<ComponentJob, AnalyzerResult> getResultMap() throws AnalysisJobFailedException;

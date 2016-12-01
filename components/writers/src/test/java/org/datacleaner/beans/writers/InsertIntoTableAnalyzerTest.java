@@ -81,13 +81,13 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
     public void testMetricDescriptors() throws Exception {
         final AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(InsertIntoTableAnalyzer.class);
         final Set<MetricDescriptor> metrics = descriptor.getResultMetrics();
-        assertEquals("[MetricDescriptorImpl[name=Errornous rows], MetricDescriptorImpl[name=Inserts], "
+        assertEquals("[MetricDescriptorImpl[name=Erroneous rows], MetricDescriptorImpl[name=Inserts], "
                         + "MetricDescriptorImpl[name=Updates]]", metrics.toString());
 
         final WriteDataResult result = new WriteDataResultImpl(10, 5, null, null, null);
         assertEquals(10, descriptor.getResultMetric("Inserts").getValue(result, null).intValue());
         assertEquals(5, descriptor.getResultMetric("Updates").getValue(result, null).intValue());
-        assertEquals(0, descriptor.getResultMetric("Errornous rows").getValue(result, null).intValue());
+        assertEquals(0, descriptor.getResultMetric("Erroneous rows").getValue(result, null).intValue());
     }
 
     public void testErrorHandlingToInvalidFile() throws Exception {
@@ -321,7 +321,7 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
                 final AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
                 final AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
 
-                if (resultFuture.isErrornous()) {
+                if (resultFuture.isErroneous()) {
                     throw resultFuture.getErrors().get(0);
                 }
                 assertTrue(resultFuture.isSuccessful());

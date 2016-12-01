@@ -85,7 +85,7 @@ public class SimpleMainAppForManualTesting {
 
         final AnalysisResultFuture result = new DistributedAnalysisRunner(configuration, clusterManager).run(job);
 
-        if (result.isErrornous()) {
+        if (result.isErroneous()) {
             throw result.getErrors().get(0);
         }
 

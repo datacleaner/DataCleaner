@@ -197,7 +197,7 @@ public class TokenPatternSymbolImpl implements TokenPatternSymbol {
 
             // if 'discriminateTextCase' is true then we can assume that all the
             // characters are either upper or lower case. Thus it is only
-            // nescesary to check a single character from each string
+            // necessary to check a single character from each string
             final String str2 = token.getString();
             final char char2 = str2.charAt(0);
             final boolean upperCase = Character.isUpperCase(char2);

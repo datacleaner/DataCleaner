@@ -32,7 +32,7 @@ public interface ErrorAware {
      *
      * @return
      */
-    boolean isErrornous();
+    boolean isErroneous();
 
     /**
      * Determines if the job has been cancelled.
@@ -46,7 +46,7 @@ public interface ErrorAware {
      *
      * @return a list of errors (Throwables) if errors was reported.
      *
-     * @see #isErrornous()
+     * @see #isErroneous()
      */
     List<Throwable> getErrors();
 }

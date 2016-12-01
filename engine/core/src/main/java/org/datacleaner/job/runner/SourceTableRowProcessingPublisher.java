@@ -219,7 +219,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
 
             try (DataSet dataSet = dataContext.executeQuery(finalQuery)) {
                 while (dataSet.next()) {
-                    if (taskListener.isErrornous()) {
+                    if (taskListener.isErroneous()) {
                         break;
                     }
 
@@ -240,7 +240,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
             taskListener.awaitTasks(numTasks);
         }
 
-        return !taskListener.isErrornous();
+        return !taskListener.isErroneous();
     }
 
     @Override

@@ -194,7 +194,7 @@ public class SortMergeWriterTest extends TestCase {
         assertNull(br.readLine());
     }
 
-    public void testNoUnnescesaryTempFiles() throws Exception {
+    public void testNoUnnecessaryTempFiles() throws Exception {
         final SortMergeWriter<String, Writer> sorter =
                 new SortMergeWriter<String, Writer>(10, ToStringComparator.getComparator()) {
 

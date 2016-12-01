@@ -124,7 +124,7 @@ public class AnalysisRunnerImplTest extends TestCase {
         final AnalysisResultFuture analysisResultFuture = runner.run(job);
         analysisResultFuture.await();
 
-        if (analysisResultFuture.isErrornous()) {
+        if (analysisResultFuture.isErroneous()) {
             throw analysisResultFuture.getErrors().get(0);
         }
 

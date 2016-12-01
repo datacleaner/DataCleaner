@@ -154,7 +154,7 @@ public class ClusterTestHelper {
 
         switch (resultFuture.getStatus()) {
         case NOT_FINISHED:
-        case ERRORNOUS:
+        case ERRONEOUS:
             break;
         default:
             Assert.fail("Unexpected job status: " + resultFuture.getStatus());
@@ -166,7 +166,7 @@ public class ClusterTestHelper {
             Assert.fail("Job that was supposed to fail was succesful! Results: " + resultFuture.getResultMap());
         }
 
-        Assert.assertEquals(JobStatus.ERRORNOUS, resultFuture.getStatus());
+        Assert.assertEquals(JobStatus.ERRONEOUS, resultFuture.getStatus());
 
         final List<Throwable> errors = resultFuture.getErrors();
 
@@ -205,7 +205,7 @@ public class ClusterTestHelper {
 
         resultFuture.await();
 
-        if (resultFuture.isErrornous()) {
+        if (resultFuture.isErroneous()) {
             final List<Throwable> errors = resultFuture.getErrors();
             throw errors.get(0);
         }
@@ -294,7 +294,7 @@ public class ClusterTestHelper {
         if (resultFuture.getStatus() == JobStatus.NOT_FINISHED) {
             resultFuture.await();
 
-            if (resultFuture.isErrornous()) {
+            if (resultFuture.isErroneous()) {
                 final List<Throwable> errors = resultFuture.getErrors();
                 throw errors.get(0);
             }
@@ -436,7 +436,7 @@ public class ClusterTestHelper {
             if (resultFuture.getStatus() == JobStatus.NOT_FINISHED) {
                 resultFuture.await();
 
-                if (resultFuture.isErrornous()) {
+                if (resultFuture.isErroneous()) {
                     final List<Throwable> errors = resultFuture.getErrors();
                     throw errors.get(0);
                 }
@@ -514,7 +514,7 @@ public class ClusterTestHelper {
 
         final AnalysisResultFuture resultFuture = analysisRunner.run(job);
         resultFuture.await();
-        if (resultFuture.isErrornous()) {
+        if (resultFuture.isErroneous()) {
             throw resultFuture.getErrors().get(0);
         }
 

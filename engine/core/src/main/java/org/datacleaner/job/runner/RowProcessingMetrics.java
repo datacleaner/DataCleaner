@@ -77,7 +77,7 @@ public interface RowProcessingMetrics {
 
     /**
      * Gets the expected amount of rows to process. Use this method only if
-     * nescesary, since it may query the database to find the record count.
+     * necessary, since it may query the database to find the record count.
      *
      * @return an expected count of records to process, or -1 if the expected
      *         count could not be determined.

@@ -54,7 +54,7 @@ final class ErrorAwareTaskRunnerWrapper implements TaskRunner, ErrorAware {
 
     @Override
     public void run(final Task task, final TaskListener taskListener) {
-        if (isErrornous()) {
+        if (isErroneous()) {
             taskListener.onError(task, _previousErrorsExistException);
         } else if (isCancelled()) {
             logger.info("Ignoring task because job has been cancelled: {}", task);
@@ -75,8 +75,8 @@ final class ErrorAwareTaskRunnerWrapper implements TaskRunner, ErrorAware {
     }
 
     @Override
-    public boolean isErrornous() {
-        return _errorAware.isErrornous();
+    public boolean isErroneous() {
+        return _errorAware.isErroneous();
     }
 
     @Override
@@ -91,7 +91,7 @@ final class ErrorAwareTaskRunnerWrapper implements TaskRunner, ErrorAware {
 
     @Override
     public void assistExecution() {
-        if (!isErrornous() && !isCancelled()) {
+        if (!isErroneous() && !isCancelled()) {
             _taskRunner.assistExecution();
         }
     }

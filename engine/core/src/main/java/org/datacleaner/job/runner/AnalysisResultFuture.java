@@ -33,7 +33,7 @@ import org.datacleaner.result.AnalysisResult;
  * await(long,TimeUnit) methods.
  *
  * When the result is done it may either be successful or erroneous. Clients can
- * find out using the isSuccessful() or isErrornous() methods.
+ * find out using the isSuccessful() or isErroneous() methods.
  *
  * If successful, the results can be retrieved like specified in the
  * {@link AnalysisResult} interface - using the getResults() method. If
@@ -76,25 +76,25 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
     boolean isSuccessful();
 
     /**
-     * @return SUCCESSFUL if the job is finished and successful, ERRORNOUS if
+     * @return SUCCESSFUL if the job is finished and successful, ERRONEOUS if
      *         errors have been reported and NOT_FINISHED if no errors have been
      *         reported but the job is not done yet
      */
     JobStatus getStatus();
 
     /**
-     * Finds (and waits if nescesary) the results of this analysis.
+     * Finds (and waits if necessary) the results of this analysis.
      *
      * @return the results from the Analyzers in the executed job
      * @throws AnalysisJobFailedException
      *             if the analysis did not go well (use isSuccessful() or
-     *             isErrornous() to check)
+     *             isErroneous() to check)
      */
     @Override
     List<AnalyzerResult> getResults() throws AnalysisJobFailedException;
 
     /**
-     * Finds (and waits if nescesary) the results of a single Analyzer.
+     * Finds (and waits if necessary) the results of a single Analyzer.
      *
      * @param componentJob
      *            the component job (typically AnalyzerJob) to find the result
@@ -102,19 +102,19 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
      * @return the result for a given component job
      * @throws AnalysisJobFailedException
      *             if the analysis did not go well (use isSuccessful() or
-     *             isErrornous() to check)
+     *             isErroneous() to check)
      */
     @Override
     AnalyzerResult getResult(ComponentJob componentJob) throws AnalysisJobFailedException;
 
     /**
-     * Finds (and waits if nescesary) the results mapped to the Analyzer jobs
+     * Finds (and waits if necessary) the results mapped to the Analyzer jobs
      *
      * @return a map with ComponentJobs as keys to the corresponding
      *         AnalyzerResults.
      * @throws AnalysisJobFailedException
      *             if the analysis did not go well (use isSuccessful() or
-     *             isErrornous() to check)
+     *             isErroneous() to check)
      */
     @Override
     Map<ComponentJob, AnalyzerResult> getResultMap() throws AnalysisJobFailedException;

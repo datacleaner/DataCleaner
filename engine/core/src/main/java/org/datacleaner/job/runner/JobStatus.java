@@ -21,5 +21,5 @@ package org.datacleaner.job.runner;
 
 public enum JobStatus {
 
-    SUCCESSFUL, ERRORNOUS, NOT_FINISHED
+    SUCCESSFUL, ERRONEOUS, NOT_FINISHED
 }

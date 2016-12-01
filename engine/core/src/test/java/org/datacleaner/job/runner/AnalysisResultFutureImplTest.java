@@ -40,8 +40,8 @@ public class AnalysisResultFutureImplTest extends TestCase {
         final ErrorAware errorAware = EasyMock.createMock(ErrorAware.class);
 
         EasyMock.expect(jobCompletionListener.isDone()).andReturn(true);
-        EasyMock.expect(errorAware.isErrornous()).andReturn(false);
-        EasyMock.expect(errorAware.isErrornous()).andReturn(true);
+        EasyMock.expect(errorAware.isErroneous()).andReturn(false);
+        EasyMock.expect(errorAware.isErroneous()).andReturn(true);
 
         EasyMock.replay(jobCompletionListener, errorAware);
 
@@ -67,7 +67,7 @@ public class AnalysisResultFutureImplTest extends TestCase {
         final StatusAwareTaskListener jobCompletionListener = EasyMock.createMock(StatusAwareTaskListener.class);
         final ErrorAware errorAware = EasyMock.createMock(ErrorAware.class);
         EasyMock.expect(jobCompletionListener.isDone()).andReturn(true);
-        EasyMock.expect(errorAware.isErrornous()).andReturn(false).times(4);
+        EasyMock.expect(errorAware.isErroneous()).andReturn(false).times(4);
 
         EasyMock.replay(jobCompletionListener, errorAware);
 

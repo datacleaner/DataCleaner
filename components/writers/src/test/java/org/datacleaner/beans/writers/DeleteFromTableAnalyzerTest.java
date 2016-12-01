@@ -84,7 +84,7 @@ public class DeleteFromTableAnalyzerTest {
         final WriteDataResult result = new WriteDataResultImpl(10, 5, null, null, null);
         assertThat(descriptor.getResultMetric("Inserts").getValue(result, null).intValue(), is(10));
         assertThat(descriptor.getResultMetric("Updates").getValue(result, null).intValue(), is(5));
-        assertThat(descriptor.getResultMetric("Errornous rows").getValue(result, null).intValue(), is(0));
+        assertThat(descriptor.getResultMetric("Erroneous rows").getValue(result, null).intValue(), is(0));
     }
 
     @Test

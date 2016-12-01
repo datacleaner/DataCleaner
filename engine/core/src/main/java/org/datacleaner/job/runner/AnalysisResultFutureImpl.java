@@ -98,7 +98,7 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
     @Override
     public List<AnalyzerResult> getResults() throws IllegalStateException {
         await();
-        if (isErrornous()) {
+        if (isErroneous()) {
             throw new AnalysisJobFailedException(getErrors());
         }
         final ArrayList<JobAndResult> resultQueueCopy = new ArrayList<>(_resultQueue);
@@ -112,7 +112,7 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
     @Override
     public AnalyzerResult getResult(final ComponentJob componentJob) throws AnalysisJobFailedException {
         await();
-        if (isErrornous()) {
+        if (isErroneous()) {
             throw new AnalysisJobFailedException(getErrors());
         }
         final ArrayList<JobAndResult> resultQueueCopy = new ArrayList<>(_resultQueue);
@@ -127,7 +127,7 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
     @Override
     public Map<ComponentJob, AnalyzerResult> getResultMap() throws IllegalStateException {
         await();
-        if (isErrornous()) {
+        if (isErroneous()) {
             throw new AnalysisJobFailedException(getErrors());
         }
         final ArrayList<JobAndResult> resultQueueCopy = new ArrayList<>(_resultQueue);
@@ -143,7 +143,7 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
     @Override
     public boolean isSuccessful() {
         await();
-        return !_errorAware.isErrornous();
+        return !_errorAware.isErroneous();
     }
 
     @Override
@@ -152,7 +152,7 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
     }
 
     @Override
-    public boolean isErrornous() {
+    public boolean isErroneous() {
         return !isSuccessful();
     }
 
@@ -162,12 +162,12 @@ public final class AnalysisResultFutureImpl extends AbstractAnalysisResult imple
             if (isSuccessful()) {
                 return JobStatus.SUCCESSFUL;
             }
-            return JobStatus.ERRORNOUS;
+            return JobStatus.ERRONEOUS;
         }
-        if (!_errorAware.isErrornous()) {
+        if (!_errorAware.isErroneous()) {
             return JobStatus.NOT_FINISHED;
         }
-        return JobStatus.ERRORNOUS;
+        return JobStatus.ERRONEOUS;
     }
 
     @Override

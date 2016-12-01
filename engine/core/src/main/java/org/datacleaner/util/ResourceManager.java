@@ -101,7 +101,7 @@ public final class ResourceManager {
             logger.error("IOException when investigating classloader resources", e);
         }
 
-        // when running in eclipse this file-based hack is nescesary
+        // when running in eclipse this file-based hack is necessary
         final File file = new File("src/main/resources/" + path);
         if (file.exists()) {
             try {

@@ -84,7 +84,7 @@ public final class ClassLoaderUtils {
     }
 
     public static ClassLoader createClassLoader(final URL[] urls, final ClassLoader parentClassLoader) {
-        // removing the security manager is nescesary for classes in external jar files to have privileges to do
+        // removing the security manager is necessary for classes in external jar files to have privileges to do
         // eg. system property lookups etc.
         System.setSecurityManager(null);
         return AccessController

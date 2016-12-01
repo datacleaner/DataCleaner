@@ -85,7 +85,7 @@ public class DateRangeFilterTest extends TestCase {
         final AnalysisRunnerImpl runner = new AnalysisRunnerImpl(conf);
         final AnalysisJob job = ajb.toAnalysisJob();
         final AnalysisResultFuture resultFuture = runner.run(job);
-        if (resultFuture.isErrornous()) {
+        if (resultFuture.isErroneous()) {
             throw resultFuture.getErrors().get(0);
         }
 

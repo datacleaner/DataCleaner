@@ -32,7 +32,7 @@ import junit.framework.TestCase;
 
 public class SasDatastoreTest extends TestCase {
 
-    // This is an integration test. it is pretty nescesary since release cycles
+    // This is an integration test. it is pretty necessary since release cycles
     // of MetaModel and SassyReader are not synced.
     public void testConnectAndExplore() throws Exception {
         final SasDatastore ds = new SasDatastore("my sas ds", new File("src/test/resources/sas"));

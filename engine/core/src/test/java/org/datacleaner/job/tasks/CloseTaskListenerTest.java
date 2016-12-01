@@ -72,7 +72,7 @@ public class CloseTaskListenerTest {
 
         resultFuture.await();
 
-        assertTrue(resultFuture.isErrornous());
+        assertTrue(resultFuture.isErroneous());
         assertEquals(OnCloseFailingMockAnalyzer.OUCH_ON_CLOSE, resultFuture.getErrors().get(0).getMessage());
     }
 
@@ -82,7 +82,7 @@ public class CloseTaskListenerTest {
 
         resultFuture.await();
 
-        assertTrue(resultFuture.isErrornous());
+        assertTrue(resultFuture.isErroneous());
         final List<Throwable> errors = resultFuture.getErrors();
         assertEquals(OnExecutionAndCloseFailingMockAnalyzer.OUCH_IN_RUN, errors.get(0).getMessage());
 

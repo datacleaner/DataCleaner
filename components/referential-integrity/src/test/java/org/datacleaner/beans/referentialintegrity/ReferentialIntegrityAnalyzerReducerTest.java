@@ -152,7 +152,7 @@ public class ReferentialIntegrityAnalyzerReducerTest {
 
         resultFuture.await();
 
-        if (resultFuture.isErrornous()) {
+        if (resultFuture.isErroneous()) {
             throw resultFuture.getErrors().get(0);
         }
 

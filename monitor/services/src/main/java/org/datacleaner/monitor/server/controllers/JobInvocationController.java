@@ -128,7 +128,7 @@ public class JobInvocationController {
 
         final AnalysisResultFuture resultFuture = runner.run(placeholderAnalysisJob);
 
-        if (resultFuture.isErrornous()) {
+        if (resultFuture.isErroneous()) {
             throw resultFuture.getErrors().get(0);
         }
 

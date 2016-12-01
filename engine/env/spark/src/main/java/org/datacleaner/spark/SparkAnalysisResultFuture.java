@@ -50,7 +50,7 @@ public class SparkAnalysisResultFuture extends AbstractAnalysisResult implements
     }
 
     @Override
-    public boolean isErrornous() {
+    public boolean isErroneous() {
         return false;
     }
 

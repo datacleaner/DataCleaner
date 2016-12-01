@@ -65,12 +65,12 @@ public final class RowConsumerTaskListener implements TaskListener {
         _counter.incrementAndGet();
     }
 
-    public boolean isErrornous() {
+    public boolean isErroneous() {
         return _errorsReported.get();
     }
 
     public void awaitTasks(final int numTasks) {
-        while (numTasks > _counter.get() && !isErrornous()) {
+        while (numTasks > _counter.get() && !isErroneous()) {
             _taskRunner.assistExecution();
         }
     }

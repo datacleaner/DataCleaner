@@ -104,7 +104,7 @@ public class FuseStreamsComponentIntegrationTest {
         Assert.assertNotNull(resultFuture);
 
         resultFuture.await();
-        if (resultFuture.isErrornous()) {
+        if (resultFuture.isErroneous()) {
             throw resultFuture.getErrors().get(0);
         }
 
@@ -186,7 +186,7 @@ public class FuseStreamsComponentIntegrationTest {
         final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
         resultFuture.await();
 
-        if (resultFuture.isErrornous()) {
+        if (resultFuture.isErroneous()) {
             throw resultFuture.getErrors().get(0);
         }
 

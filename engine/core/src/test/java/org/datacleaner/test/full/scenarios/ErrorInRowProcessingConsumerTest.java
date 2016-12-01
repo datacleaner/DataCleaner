@@ -59,8 +59,8 @@ import junit.framework.TestCase;
  */
 public class ErrorInRowProcessingConsumerTest extends TestCase {
 
-    @Named("Errornous analyzer")
-    public static class ErrornousAnalyzer implements Analyzer<NumberResult> {
+    @Named("Erroneous analyzer")
+    public static class ErroneousAnalyzer implements Analyzer<NumberResult> {
 
         private final AtomicInteger counter = new AtomicInteger(0);
 
@@ -113,16 +113,16 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
             assertNotNull(column);
 
             ajb.addSourceColumn(column);
-            ajb.addAnalyzer(ErrornousAnalyzer.class).addInputColumn(ajb.getSourceColumns().get(0));
+            ajb.addAnalyzer(ErroneousAnalyzer.class).addInputColumn(ajb.getSourceColumns().get(0));
 
             job = ajb.toAnalysisJob();
         }
 
         final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(conf).run(job);
 
-        assertTrue(resultFuture.isErrornous());
+        assertTrue(resultFuture.isErroneous());
 
-        // isErrornous should be blocking
+        // isErroneous should be blocking
         assertTrue(resultFuture.isDone());
 
         try {

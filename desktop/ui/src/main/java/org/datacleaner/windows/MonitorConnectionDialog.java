@@ -300,7 +300,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
             } catch (final Exception e) {
                 // TODO: This dialog is shown behind the modal dialog
                 WidgetUtils.showErrorMessage("Connection failed",
-                        "Connecting to DataCleaner monitor failed. Did you remember to fill in all the nescesary fields?",
+                        "Connecting to DataCleaner monitor failed. Did you remember to fill in all the necessary fields?",
                         e);
             }
         });

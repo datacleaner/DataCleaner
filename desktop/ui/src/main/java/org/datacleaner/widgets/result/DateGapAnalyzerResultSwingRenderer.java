@@ -302,7 +302,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 
         final AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
 
-        if (resultFuture.isErrornous()) {
+        if (resultFuture.isErroneous()) {
             throw resultFuture.getErrors().get(0);
         }
 

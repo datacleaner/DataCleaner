@@ -217,7 +217,7 @@ public class BooleanAnalyzerReducerTest {
         final AnalysisResultFuture resultFuture =
                 new AnalysisRunnerImpl(jobBuilder.getConfiguration()).run(analysisJob);
         resultFuture.await();
-        if (resultFuture.isErrornous()) {
+        if (resultFuture.isErroneous()) {
             throw resultFuture.getErrors().get(0);
         }
 

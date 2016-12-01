@@ -129,7 +129,7 @@ public class DataStructuresIntegrationTest extends TestCase {
 
         final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
 
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 

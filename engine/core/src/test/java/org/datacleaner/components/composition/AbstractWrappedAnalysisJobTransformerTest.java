@@ -136,7 +136,7 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
         final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(_configuration).run(job);
         resultFuture.await();
 
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 

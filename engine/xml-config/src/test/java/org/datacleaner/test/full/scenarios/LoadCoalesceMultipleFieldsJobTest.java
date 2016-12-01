@@ -89,7 +89,7 @@ public class LoadCoalesceMultipleFieldsJobTest extends TestCase {
 
         final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
         resultFuture.await();
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 

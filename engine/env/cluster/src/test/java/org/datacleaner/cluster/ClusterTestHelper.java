@@ -126,7 +126,7 @@ public class ClusterTestHelper {
      * correctly from the slave nodes.
      *
      * @param configuration
-     * @param virtualClusterManager
+     * @param clusterManager
      * @return the list of errors returned, to perform further assertions
      */
     public static List<Throwable> runErrorHandlingJob(final DataCleanerConfiguration configuration,
@@ -154,7 +154,7 @@ public class ClusterTestHelper {
 
         switch (resultFuture.getStatus()) {
         case NOT_FINISHED:
-        case ERRONEOUS:
+        case ERRORNOUS:
             break;
         default:
             Assert.fail("Unexpected job status: " + resultFuture.getStatus());
@@ -166,7 +166,7 @@ public class ClusterTestHelper {
             Assert.fail("Job that was supposed to fail was succesful! Results: " + resultFuture.getResultMap());
         }
 
-        Assert.assertEquals(JobStatus.ERRONEOUS, resultFuture.getStatus());
+        Assert.assertEquals(JobStatus.ERRORNOUS, resultFuture.getStatus());
 
         final List<Throwable> errors = resultFuture.getErrors();
 
@@ -205,7 +205,7 @@ public class ClusterTestHelper {
 
         resultFuture.await();
 
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             final List<Throwable> errors = resultFuture.getErrors();
             throw errors.get(0);
         }
@@ -294,7 +294,7 @@ public class ClusterTestHelper {
         if (resultFuture.getStatus() == JobStatus.NOT_FINISHED) {
             resultFuture.await();
 
-            if (resultFuture.isErroneous()) {
+            if (resultFuture.isErrornous()) {
                 final List<Throwable> errors = resultFuture.getErrors();
                 throw errors.get(0);
             }
@@ -436,7 +436,7 @@ public class ClusterTestHelper {
             if (resultFuture.getStatus() == JobStatus.NOT_FINISHED) {
                 resultFuture.await();
 
-                if (resultFuture.isErroneous()) {
+                if (resultFuture.isErrornous()) {
                     final List<Throwable> errors = resultFuture.getErrors();
                     throw errors.get(0);
                 }
@@ -514,7 +514,7 @@ public class ClusterTestHelper {
 
         final AnalysisResultFuture resultFuture = analysisRunner.run(job);
         resultFuture.await();
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 

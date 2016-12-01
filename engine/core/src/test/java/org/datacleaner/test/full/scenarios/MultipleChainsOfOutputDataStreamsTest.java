@@ -78,7 +78,7 @@ public class MultipleChainsOfOutputDataStreamsTest extends TestCase {
         final AnalysisResultFuture resultFuture = runner.run(job);
         resultFuture.await();
 
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 

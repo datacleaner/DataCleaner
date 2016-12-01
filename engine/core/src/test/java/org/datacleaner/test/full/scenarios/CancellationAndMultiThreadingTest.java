@@ -105,7 +105,7 @@ public class CancellationAndMultiThreadingTest extends TestCase {
 
             assertFalse(resultFuture.isSuccessful());
             assertTrue(resultFuture.isCancelled());
-            assertTrue(resultFuture.isErroneous());
+            assertTrue(resultFuture.isErrornous());
 
             try {
                 Thread.sleep(400);

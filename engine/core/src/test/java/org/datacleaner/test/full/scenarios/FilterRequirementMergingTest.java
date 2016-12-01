@@ -116,7 +116,7 @@ public class FilterRequirementMergingTest extends TestCase {
 
         resultFuture.await();
 
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 
@@ -176,7 +176,7 @@ public class FilterRequirementMergingTest extends TestCase {
 
         resultFuture.await();
 
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 
@@ -230,7 +230,7 @@ public class FilterRequirementMergingTest extends TestCase {
 
         resultFuture.await();
 
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 
@@ -292,7 +292,7 @@ public class FilterRequirementMergingTest extends TestCase {
 
         resultFuture.await();
 
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 

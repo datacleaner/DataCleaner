@@ -63,7 +63,7 @@ public class OutputDataStreamRowCollector implements OutputRowCollector {
     @Override
     public void putRow(final Row row) {
         final ErrorAware errorAware = _publisher.getErrorAware();
-        if (errorAware.isCancelled() || errorAware.isErroneous()) {
+        if (errorAware.isCancelled() || errorAware.isErrornous()) {
             throw new PreviousErrorsExistException();
         }
         final int rowNumber = _rowCounter.incrementAndGet();

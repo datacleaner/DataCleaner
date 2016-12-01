@@ -66,7 +66,7 @@ public class ReferentialIntegrityAnalyzerTest extends TestCase {
 
         resultFuture.await();
 
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 

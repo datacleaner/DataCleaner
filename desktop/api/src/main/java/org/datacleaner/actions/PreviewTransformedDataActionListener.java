@@ -213,7 +213,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
         resultFuture.await();
 
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             final List<Throwable> errors = resultFuture.getErrors();
             final Throwable firstError = errors.get(0);
             logger.error("Error occurred while running preview data job: {}", firstError.getMessage());

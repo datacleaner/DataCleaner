@@ -45,7 +45,7 @@ public class FailedAnalysisResultFuture implements AnalysisResultFuture {
     }
 
     @Override
-    public boolean isErroneous() {
+    public boolean isErrornous() {
         return true;
     }
 
@@ -83,7 +83,7 @@ public class FailedAnalysisResultFuture implements AnalysisResultFuture {
 
     @Override
     public JobStatus getStatus() {
-        return JobStatus.ERRONEOUS;
+        return JobStatus.ERRORNOUS;
     }
 
     @Override

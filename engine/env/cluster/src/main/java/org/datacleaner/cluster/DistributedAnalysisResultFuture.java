@@ -126,7 +126,7 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
     }
 
     @Override
-    public boolean isErroneous() {
+    public boolean isErrornous() {
         return !isSuccessful();
     }
 
@@ -134,7 +134,7 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
     public boolean isSuccessful() {
         await();
         for (final AnalysisResultFuture result : _results) {
-            if (result.isErroneous()) {
+            if (result.isErrornous()) {
                 return false;
             }
         }
@@ -144,7 +144,7 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
     @Override
     public JobStatus getStatus() {
         if (isCancelled()) {
-            return JobStatus.ERRONEOUS;
+            return JobStatus.ERRORNOUS;
         }
         for (final AnalysisResultFuture result : _results) {
             final JobStatus slaveStatus = result.getStatus();
@@ -157,13 +157,13 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
             return JobStatus.SUCCESSFUL;
         }
 
-        return JobStatus.ERRONEOUS;
+        return JobStatus.ERRORNOUS;
     }
 
     @Override
     public List<AnalyzerResult> getResults() throws AnalysisJobFailedException {
         await();
-        if (isErroneous()) {
+        if (isErrornous()) {
             throw new AnalysisJobFailedException(getErrors());
         }
 
@@ -174,7 +174,7 @@ public final class DistributedAnalysisResultFuture extends AbstractAnalysisResul
     @Override
     public Map<ComponentJob, AnalyzerResult> getResultMap() throws AnalysisJobFailedException {
         await();
-        if (isErroneous()) {
+        if (isErrornous()) {
             throw new AnalysisJobFailedException(getErrors());
         }
 

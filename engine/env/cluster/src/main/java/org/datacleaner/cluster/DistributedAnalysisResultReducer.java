@@ -99,7 +99,7 @@ final class DistributedAnalysisResultReducer {
         _hasRun.set(true);
 
         for (final AnalysisResultFuture result : results) {
-            if (result.isErroneous()) {
+            if (result.isErrornous()) {
                 logger.error("Encountered errorneous slave result. Result reduction will stop. Result={}", result);
                 final List<Throwable> errors = result.getErrors();
                 if (!errors.isEmpty()) {

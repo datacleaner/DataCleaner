@@ -57,7 +57,7 @@ public interface WriteDataResult extends AnalyzerResult {
      *
      * @return the amount of rows that was not written.
      */
-    @Metric("Erroneous rows")
+    @Metric("Errornous rows")
     int getErrorRowCount();
 
     /**

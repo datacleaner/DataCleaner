@@ -90,7 +90,7 @@ public class InvokeChildAnalysisJobTransformerTest {
         final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
         resultFuture.await();
 
-        if (resultFuture.isErroneous()) {
+        if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 

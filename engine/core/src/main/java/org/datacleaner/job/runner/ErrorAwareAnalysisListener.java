@@ -87,7 +87,7 @@ public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor im
     }
 
     @Override
-    public boolean isErroneous() {
+    public boolean isErrornous() {
         synchronized (_errors) {
             return !_errors.isEmpty();
         }

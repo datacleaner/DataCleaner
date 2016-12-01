@@ -85,7 +85,7 @@ public class ConsumeRowTaskTest extends TestCase {
         {
             final AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
             final AnalysisResultFuture resultFuture = runner.run(job);
-            if (resultFuture.isErroneous()) {
+            if (resultFuture.isErrornous()) {
                 throw resultFuture.getErrors().get(0);
             }
             result = (ListResult<InputRow>) resultFuture.getResults().get(0);
@@ -149,7 +149,7 @@ public class ConsumeRowTaskTest extends TestCase {
         {
             final AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
             final AnalysisResultFuture resultFuture = runner.run(job);
-            if (resultFuture.isErroneous()) {
+            if (resultFuture.isErrornous()) {
                 throw resultFuture.getErrors().get(0);
             }
             result = (ListResult<InputRow>) resultFuture.getResults().get(0);
@@ -158,8 +158,6 @@ public class ConsumeRowTaskTest extends TestCase {
         final List<InputRow> list = result.getValues();
 
         assertEquals(10, list.size());
-
-        // assertEquals(1, list.get(0).getValue(countingColumn));
     }
 
 }

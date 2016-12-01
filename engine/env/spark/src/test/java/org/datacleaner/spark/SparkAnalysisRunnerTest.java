@@ -97,7 +97,7 @@ public class SparkAnalysisRunnerTest {
                 runAnalysisJob("DCTest - " + getName(), URI.create("src/test/resources/vanilla-job.analysis.xml"),
                         "vanilla-job", false);
 
-        if (result.isErroneous()) {
+        if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
         }
 
@@ -121,7 +121,7 @@ public class SparkAnalysisRunnerTest {
         final AnalysisResultFuture result =
                 runAnalysisJob("DCTest - " + getName(), URI.create("src/test/resources/fixed-width-job.analysis.xml"),
                         "fixed-width-job", false);
-        if (result.isErroneous()) {
+        if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
         }
     }
@@ -132,7 +132,7 @@ public class SparkAnalysisRunnerTest {
                 runAnalysisJob("DCTest - " + getName(), URI.create("src/test/resources/escalated-job.analysis.xml"),
                         "escalated-job", false);
 
-        if (result.isErroneous()) {
+        if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
         }
 
@@ -199,7 +199,7 @@ public class SparkAnalysisRunnerTest {
             result = sparkAnalysisRunner.run(job);
         }
 
-        if (result.isErroneous()) {
+        if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
         }
 
@@ -255,7 +255,7 @@ public class SparkAnalysisRunnerTest {
         result = runAnalysisJob("DCTest - testOutputDataStreamsNonDistributableScenario",
                 URI.create("src/test/resources/non-dist-melon-job.analysis.xml"), "non-dist-melon-job", true);
 
-        if (result.isErroneous()) {
+        if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
         }
 
@@ -289,7 +289,7 @@ public class SparkAnalysisRunnerTest {
                 URI.create("src/test/resources/distributable-value-dist.analysis.xml"), "distributable-value-dist",
                 true);
 
-        if (result.isErroneous()) {
+        if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
         }
 
@@ -310,7 +310,7 @@ public class SparkAnalysisRunnerTest {
                 URI.create("src/test/resources/distributable-grouped-value-dist.analysis.xml"),
                 "distributable-grouped-value-dist", true);
 
-        if (result.isErroneous()) {
+        if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
         }
 
@@ -429,7 +429,7 @@ public class SparkAnalysisRunnerTest {
             result = sparkAnalysisRunner.run(job);
         }
 
-        if (result.isErroneous()) {
+        if (result.isErrornous()) {
             throw (Exception) result.getErrors().get(0);
         }
 

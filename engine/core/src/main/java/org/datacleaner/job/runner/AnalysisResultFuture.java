@@ -33,7 +33,7 @@ import org.datacleaner.result.AnalysisResult;
  * await(long,TimeUnit) methods.
  *
  * When the result is done it may either be successful or erroneous. Clients can
- * find out using the isSuccessful() or isErroneous() methods.
+ * find out using the isSuccessful() or isErrornous() methods.
  *
  * If successful, the results can be retrieved like specified in the
  * {@link AnalysisResult} interface - using the getResults() method. If

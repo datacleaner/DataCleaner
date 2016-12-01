@@ -103,7 +103,7 @@ public class AnalyzeDateGapsCompareSchemasAndSerializeResultsTest extends TestCa
         }
 
         final AnalysisResultFuture future = new AnalysisRunnerImpl(configuration).run(job);
-        if (future.isErroneous()) {
+        if (future.isErrornous()) {
             throw future.getErrors().get(0);
         }
         assertTrue(future.isSuccessful());

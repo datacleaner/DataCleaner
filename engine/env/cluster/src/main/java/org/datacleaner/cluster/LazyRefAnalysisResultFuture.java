@@ -48,8 +48,8 @@ public class LazyRefAnalysisResultFuture implements AnalysisResultFuture {
     }
 
     @Override
-    public boolean isErroneous() {
-        return getStatus() == JobStatus.ERRONEOUS;
+    public boolean isErrornous() {
+        return getStatus() == JobStatus.ERRORNOUS;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class LazyRefAnalysisResultFuture implements AnalysisResultFuture {
             return JobStatus.SUCCESSFUL;
         }
 
-        return JobStatus.ERRONEOUS;
+        return JobStatus.ERRORNOUS;
     }
 
     @Override

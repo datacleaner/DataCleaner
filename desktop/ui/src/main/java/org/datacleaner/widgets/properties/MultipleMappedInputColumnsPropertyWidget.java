@@ -91,7 +91,7 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
     /**
      * Constructs the property widget
      *
-     * @param beanJobBuilder
+     * @param componentBuilder
      *            the transformer job builder for the table lookup
      * @param inputColumnsProperty
      *            the property representing the columns to use for setting up

@@ -158,8 +158,6 @@ public class ConsumeRowTaskTest extends TestCase {
         final List<InputRow> list = result.getValues();
 
         assertEquals(10, list.size());
-
-        // assertEquals(1, list.get(0).getValue(countingColumn));
     }
 
 }

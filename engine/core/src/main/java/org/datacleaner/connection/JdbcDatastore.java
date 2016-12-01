@@ -231,7 +231,7 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext>
             throw new IllegalStateException("JDBC URL is null, cannot create connection!");
         }
 
-        logger.debug("Determining if driver initialization is nescesary");
+        logger.debug("Determining if driver initialization is necessary");
 
         // it's best to avoid initializing the driver, so we do this check.
         // It may already have been initialized and Class.forName(...) does

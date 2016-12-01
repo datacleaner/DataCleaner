@@ -126,7 +126,7 @@ public class ClusterTestHelper {
      * correctly from the slave nodes.
      *
      * @param configuration
-     * @param virtualClusterManager
+     * @param clusterManager
      * @return the list of errors returned, to perform further assertions
      */
     public static List<Throwable> runErrorHandlingJob(final DataCleanerConfiguration configuration,

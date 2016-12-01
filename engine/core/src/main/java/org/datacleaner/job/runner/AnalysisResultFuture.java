@@ -83,7 +83,7 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
     JobStatus getStatus();
 
     /**
-     * Finds (and waits if nescesary) the results of this analysis.
+     * Finds (and waits if necessary) the results of this analysis.
      *
      * @return the results from the Analyzers in the executed job
      * @throws AnalysisJobFailedException
@@ -94,7 +94,7 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
     List<AnalyzerResult> getResults() throws AnalysisJobFailedException;
 
     /**
-     * Finds (and waits if nescesary) the results of a single Analyzer.
+     * Finds (and waits if necessary) the results of a single Analyzer.
      *
      * @param componentJob
      *            the component job (typically AnalyzerJob) to find the result
@@ -108,7 +108,7 @@ public interface AnalysisResultFuture extends ErrorAware, AnalysisResult {
     AnalyzerResult getResult(ComponentJob componentJob) throws AnalysisJobFailedException;
 
     /**
-     * Finds (and waits if nescesary) the results mapped to the Analyzer jobs
+     * Finds (and waits if necessary) the results mapped to the Analyzer jobs
      *
      * @return a map with ComponentJobs as keys to the corresponding
      *         AnalyzerResults.

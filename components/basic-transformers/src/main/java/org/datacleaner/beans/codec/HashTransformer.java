@@ -22,8 +22,8 @@ package org.datacleaner.beans.codec;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.zip.CRC32;
-
+import java.util.StringJoiner;
+import javax.xml.bind.DatatypeConverter;
 import javax.inject.Named;
 
 import org.datacleaner.api.Categorized;
@@ -39,8 +39,6 @@ import org.datacleaner.components.categories.EncodingCategory;
 @Description("It creates a hash from specified input. ")
 @Categorized(EncodingCategory.class)
 public class HashTransformer implements Transformer {
-    private static final int COLUMNS_LIMIT = 4;
-
     @Configured
     InputColumn<?>[] _columns;
 
@@ -54,9 +52,7 @@ public class HashTransformer implements Transformer {
         SHA_224,
         SHA_256,
         SHA_384,
-        SHA_512,
-        CRC_32,
-        ;
+        SHA_512;
 
         public String toString() {
             return name().replace('_', '-');
@@ -74,22 +70,13 @@ public class HashTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        StringBuilder builder = new StringBuilder("Hash of ");
+        final StringJoiner joiner = new StringJoiner(", ");
 
-        for (int i = 0; i < _columns.length; i++) {
-            if (i != 0) {
-                builder.append(", ");
-            }
-
-            builder.append(_columns[i].getName());
-
-            if (i == COLUMNS_LIMIT) {
-                builder.append("...");
-                break;
-            }
+        for (InputColumn<?> column : _columns) {
+            joiner.add(column.getName());
         }
 
-        return new OutputColumns(String.class, builder.toString(), "Input length");
+        return new OutputColumns(String.class, "Hash of " + joiner.toString(), "Input length");
     }
 
     @Override
@@ -107,24 +94,17 @@ public class HashTransformer implements Transformer {
             }
         }
 
-        return new String[] { hash(builder.toString().getBytes()), ""+length };
+        return new String[] { hash(builder.toString().getBytes()), String.valueOf(length) };
     }
 
     private String hash(final byte[] input) {
         try {
-            if (_algorithm == Algorithm.CRC_32) {
-                final CRC32 crc = new CRC32();
-                crc.update(input);
+            final MessageDigest messageDigest = MessageDigest.getInstance(_algorithm.toString());
+            messageDigest.update(input);
+            final byte[] hash = messageDigest.digest();
 
-                return ""+crc.getValue();
-            } else {
-                final MessageDigest messageDigest = MessageDigest.getInstance(_algorithm.toString());
-                messageDigest.update(input);
-                final byte[] hash = messageDigest.digest();
-
-                return String.format("%032X", new BigInteger(1, hash));
-            }
-        } catch (NoSuchAlgorithmException e) {
+            return DatatypeConverter.printHexBinary(hash);
+        } catch (final NoSuchAlgorithmException e) {
             throw new RuntimeException("Algorithm used for hashing was not recognized. " + e.getMessage());
         }
     }

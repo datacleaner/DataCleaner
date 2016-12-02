@@ -27,6 +27,8 @@ import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.JobContext;
@@ -35,8 +37,6 @@ import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,11 +61,12 @@ public class JobFileController {
 
     @Autowired
     TenantContextFactory _contextFactory;
-    
+
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadAnalysisJobHtml(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName, @RequestParam("file") final MultipartFile file) {
+            @PathVariable("job") final String jobName, @RequestParam("file") final MultipartFile file) {
         final Map<String, String> outcome = uploadAnalysisJobJson(tenant, jobName, file);
         final String status = outcome.get("status");
         final String filename = UrlEscapers.urlFormParameterEscaper().escape(outcome.get("filename"));
@@ -73,7 +74,8 @@ public class JobFileController {
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public Map<String, String> uploadAnalysisJobJson(@PathVariable("tenant") final String tenant,
             @PathVariable("job") String jobName, @RequestParam("file") final MultipartFile file) {
@@ -84,15 +86,12 @@ public class JobFileController {
 
         jobName = jobName.replaceAll("\\+", " ");
 
-        final Action<OutputStream> writeCallback = new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                final InputStream in = file.getInputStream();
-                try {
-                    FileHelper.copy(in, out);
-                } finally {
-                    FileHelper.safeClose(in);
-                }
+        final Action<OutputStream> writeCallback = out -> {
+            final InputStream in = file.getInputStream();
+            try {
+                FileHelper.copy(in, out);
+            } finally {
+                FileHelper.safeClose(in);
             }
         };
 
@@ -117,7 +116,7 @@ public class JobFileController {
             jobFile.writeFile(writeCallback);
         }
 
-        final Map<String, String> result = new HashMap<String, String>();
+        final Map<String, String> result = new HashMap<>();
         result.put("status", "Success");
         result.put("file_type", jobFile.getType().toString());
         result.put("filename", jobFile.getName());
@@ -129,7 +128,7 @@ public class JobFileController {
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(method = RequestMethod.GET, produces = "application/xml")
     public void jobXml(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
-            OutputStream out) throws IOException {
+            final OutputStream out) throws IOException {
 
         jobName = jobName.replaceAll("\\+", " ");
 
@@ -140,7 +139,7 @@ public class JobFileController {
             throw new UnsupportedOperationException("Job not compatible with operation: " + job);
         }
 
-        XmlJobContext xmlJob = (XmlJobContext) job;
+        final XmlJobContext xmlJob = (XmlJobContext) job;
         xmlJob.toXml(out);
     }
 }

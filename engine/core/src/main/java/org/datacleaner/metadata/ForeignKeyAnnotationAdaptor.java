@@ -33,7 +33,7 @@ public class ForeignKeyAnnotationAdaptor implements MetadataAnnotationAdaptor<Fo
     }
 
     @Override
-    public ForeignKey convertFromAnnotation(MetadataAnnotation annotation) {
+    public ForeignKey convertFromAnnotation(final MetadataAnnotation annotation) {
         final Map<String, String> parameters = annotation.getParameters();
         final String datastoreName = parameters.get("ForeignDatastoreName");
         final String schemaName = parameters.get("ForeignSchemaName");
@@ -43,8 +43,8 @@ public class ForeignKeyAnnotationAdaptor implements MetadataAnnotationAdaptor<Fo
     }
 
     @Override
-    public MetadataAnnotation convertToAnnotation(ForeignKey object) {
-        final Map<String, String> map = new HashMap<String, String>();
+    public MetadataAnnotation convertToAnnotation(final ForeignKey object) {
+        final Map<String, String> map = new HashMap<>();
         map.put("ForeignDatastoreName", object.getForeignDatastoreName());
         map.put("ForeignSchemaName", object.getForeignSchemaName());
         map.put("ForeignTableName", object.getForeignTableName());

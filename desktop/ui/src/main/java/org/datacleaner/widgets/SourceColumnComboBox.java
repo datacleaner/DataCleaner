@@ -60,12 +60,12 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
         setEditable(false);
     }
 
-    public SourceColumnComboBox(Datastore datastore) {
+    public SourceColumnComboBox(final Datastore datastore) {
         this();
         setModel(datastore);
     }
 
-    public SourceColumnComboBox(Datastore datastore, Table table) {
+    public SourceColumnComboBox(final Datastore datastore, final Table table) {
         this();
         setModel(datastore, table);
     }
@@ -74,7 +74,7 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
         setModel(null, null);
     }
 
-    public void setModel(Datastore datastore, Table table) {
+    public void setModel(final Datastore datastore, final Table table) {
         final String previousColumnName;
         final Column previousItem = getSelectedItem();
         if (previousItem == null) {
@@ -94,71 +94,71 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
             setDatastoreConnection(datastore.openConnection());
         }
         if (table == null) {
-            setModel(new DefaultComboBoxModel<Object>(new String[1]));
+            setModel(new DefaultComboBoxModel<>(new String[1]));
         } else {
             int selectedIndex = 0;
 
-            List<Column> comboBoxList = new ArrayList<Column>();
+            final List<Column> comboBoxList = new ArrayList<>();
             comboBoxList.add(null);
 
-            Column[] columns = table.getColumns();
-            for (Column column : columns) {
+            final Column[] columns = table.getColumns();
+            for (final Column column : columns) {
                 comboBoxList.add(column);
                 if (column.getName().equals(previousColumnName)) {
                     selectedIndex = comboBoxList.size() - 1;
                 }
             }
-            final ComboBoxModel<Object> model = new DefaultComboBoxModel<Object>(comboBoxList.toArray());
+            final ComboBoxModel<Object> model = new DefaultComboBoxModel<>(comboBoxList.toArray());
             setModel(model);
             setSelectedIndex(selectedIndex);
         }
     }
 
-    public void setModel(Datastore datastore) {
+    public void setModel(final Datastore datastore) {
         setModel(datastore, true);
     }
 
-    public void setModel(Table table) {
+    public void setModel(final Table table) {
         setModel(null, table);
     }
 
-    public void setModel(Datastore datastore, boolean retainSelection) {
+    public void setModel(final Datastore datastore, final boolean retainSelection) {
         final Column previousItem = getSelectedItem();
 
         setTable(null);
 
         if (datastore == null) {
             setDatastoreConnection(null);
-            setModel(new DefaultComboBoxModel<Object>(new String[1]));
+            setModel(new DefaultComboBoxModel<>(new String[1]));
         } else {
 
-            DatastoreConnection con = setDatastoreConnection(datastore.openConnection());
+            final DatastoreConnection con = setDatastoreConnection(datastore.openConnection());
 
             int selectedIndex = 0;
 
-            List<Object> comboBoxList = new ArrayList<Object>();
+            final List<Object> comboBoxList = new ArrayList<>();
             comboBoxList.add(null);
 
-            Schema[] schemas = con.getSchemaNavigator().getSchemas();
+            final Schema[] schemas = con.getSchemaNavigator().getSchemas();
             Arrays.sort(schemas, new SchemaComparator());
 
-            for (Schema schema : schemas) {
+            for (final Schema schema : schemas) {
                 comboBoxList.add(schema);
                 if (!MetaModelHelper.isInformationSchema(schema)) {
-                    Table[] tables = schema.getTables();
-                    for (Table table : tables) {
+                    final Table[] tables = schema.getTables();
+                    for (final Table table : tables) {
                         try {
-                            Column[] columns = table.getColumns();
+                            final Column[] columns = table.getColumns();
                             if (columns != null && columns.length > 0) {
                                 comboBoxList.add(table);
-                                for (Column column : columns) {
+                                for (final Column column : columns) {
                                     comboBoxList.add(column);
                                     if (column == previousItem) {
                                         selectedIndex = comboBoxList.size() - 1;
                                     }
                                 }
                             }
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             // errors can occur for experimental datastores (or
                             // something like SAS datastores where not all SAS
                             // files are supported). Ignore.
@@ -168,12 +168,52 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
                 }
             }
 
-            final ComboBoxModel<Object> model = new DefaultComboBoxModel<Object>(comboBoxList.toArray());
+            final ComboBoxModel<Object> model = new DefaultComboBoxModel<>(comboBoxList.toArray());
             setModel(model);
             if (retainSelection) {
                 setSelectedIndex(selectedIndex);
             }
         }
+    }
+
+    private void setIndentation() {
+        _renderer.setIndentEnabled(_table == null && _datastoreConnection != null);
+    }
+
+    public Table getTable() {
+        return _table;
+    }
+
+    private void setTable(final Table table) {
+        _table = table;
+        setIndentation();
+    }
+
+    public void addColumnSelectedListener(final DCComboBox.Listener<Column> listener) {
+        super.addListener(item -> {
+            if (item instanceof Column) {
+                listener.onItemSelected((Column) item);
+            }
+        });
+    }
+
+    private DatastoreConnection setDatastoreConnection(final DatastoreConnection datastoreConnection) {
+        if (_datastoreConnection != null) {
+            // close the previous data context provider
+            _datastoreConnection.close();
+        }
+        _datastoreConnection = datastoreConnection;
+        setIndentation();
+        return _datastoreConnection;
+    }
+
+    @Override
+    public Column getSelectedItem() {
+        final Object selectedItem = super.getSelectedItem();
+        if (selectedItem instanceof Column) {
+            return (Column) selectedItem;
+        }
+        return null;
     }
 
     @Override
@@ -187,49 +227,6 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
             }
         }
         super.setSelectedItem(value);
-    }
-
-    private void setTable(Table table) {
-        _table = table;
-        setIndentation();
-    }
-
-    private void setIndentation() {
-        _renderer.setIndentEnabled(_table == null && _datastoreConnection != null);
-    }
-
-    public Table getTable() {
-        return _table;
-    }
-
-    public void addColumnSelectedListener(final DCComboBox.Listener<Column> listener) {
-        super.addListener(new DCComboBox.Listener<Object>() {
-            @Override
-            public void onItemSelected(Object item) {
-                if (item instanceof Column) {
-                    listener.onItemSelected((Column) item);
-                }
-            }
-        });
-    }
-
-    private DatastoreConnection setDatastoreConnection(DatastoreConnection datastoreConnection) {
-        if (_datastoreConnection != null) {
-            // close the previous data context provider
-            _datastoreConnection.close();
-        }
-        _datastoreConnection = datastoreConnection;
-        setIndentation();
-        return _datastoreConnection;
-    }
-
-    @Override
-    public Column getSelectedItem() {
-        Object selectedItem = super.getSelectedItem();
-        if (selectedItem instanceof Column) {
-            return (Column) selectedItem;
-        }
-        return null;
     }
 
     @Override

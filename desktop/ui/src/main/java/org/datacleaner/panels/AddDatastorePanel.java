@@ -22,8 +22,6 @@ package org.datacleaner.panels;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
@@ -78,11 +76,12 @@ public class AddDatastorePanel extends DCPanel {
         _databaseDriverCatalog = databaseDriverCatalog;
         _dcModule = dcModule;
         _datastoreSelectedListener = datastoreSelectedListener;
-        
+
         final Injector injector = dcModule.createInjectorBuilder().createInjector();
         final WindowContext windowContext = injector.getInstance(WindowContext.class);
         final Provider<OptionsDialog> optionsDialogProvider = injector.getProvider(OptionsDialog.class);
-        _dropzone = new Dropzone(datastoreCatalog, serverInformationCatalog, datastoreSelectedListener, userPreferences, windowContext, optionsDialogProvider);
+        _dropzone = new Dropzone(datastoreCatalog, serverInformationCatalog, datastoreSelectedListener, userPreferences,
+                windowContext, optionsDialogProvider);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -99,7 +98,7 @@ public class AddDatastorePanel extends DCPanel {
 
         final DCPanel buttonPanel;
         if (showExistingDatastoresButton) {
-            PopupButton existingDatastoresButton = createExistingDatastoresButton();
+            final PopupButton existingDatastoresButton = createExistingDatastoresButton();
             buttonPanel = DCPanel.flow(Alignment.CENTER, databaseButton, cloudButton, existingDatastoresButton);
         } else {
             buttonPanel = DCPanel.flow(Alignment.CENTER, databaseButton, cloudButton);
@@ -117,20 +116,15 @@ public class AddDatastorePanel extends DCPanel {
     }
 
     private PopupButton createExistingDatastoresButton() {
-        final PopupButton existingDatastoresButton = WidgetFactory.createDefaultPopupButton("Existing datastores",
-                IconUtils.FILE_FOLDER);
+        final PopupButton existingDatastoresButton =
+                WidgetFactory.createDefaultPopupButton("Existing datastores", IconUtils.FILE_FOLDER);
         final JPopupMenu menu = existingDatastoresButton.getMenu();
         final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
-        for (String datastoreName : datastoreNames) {
+        for (final String datastoreName : datastoreNames) {
             final Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
             final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreName,
                     IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_MENU_ITEM));
-            menuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    _datastoreSelectedListener.datastoreSelected(datastore);
-                }
-            });
+            menuItem.addActionListener(e -> _datastoreSelectedListener.datastoreSelected(datastore));
 
             menu.add(menuItem);
         }
@@ -138,37 +132,36 @@ public class AddDatastorePanel extends DCPanel {
     }
 
     private PopupButton createCloudButton() {
-        final PopupButton cloudButton = WidgetFactory.createDefaultPopupButton("Cloud service",
-                IconUtils.CLOUD_IMAGEPATH);
+        final PopupButton cloudButton =
+                WidgetFactory.createDefaultPopupButton("Cloud service", IconUtils.CLOUD_IMAGEPATH);
         cloudButton.setFont(WidgetUtils.FONT_HEADER2);
-        List<DatastoreDescriptor> cloudDatastores = new DatastoreDescriptors(_databaseDriverCatalog)
-                .getAvailableCloudBasedDatastoreDescriptors();
+        final List<DatastoreDescriptor> cloudDatastores =
+                new DatastoreDescriptors(_databaseDriverCatalog).getAvailableCloudBasedDatastoreDescriptors();
 
-        for (DatastoreDescriptor datastoreDescriptor : cloudDatastores) {
-            cloudButton.getMenu().add(
-                    createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
+        for (final DatastoreDescriptor datastoreDescriptor : cloudDatastores) {
+            cloudButton.getMenu()
+                    .add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
                             datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(),
                             datastoreDescriptor.getDatastoreDialogClass()));
         }
         return cloudButton;
     }
-    
+
     private PopupButton createDatabaseButton() {
-        final PopupButton databaseButton = WidgetFactory.createDefaultPopupButton("Database",
-                IconUtils.GENERIC_DATASTORE_IMAGEPATH);
+        final PopupButton databaseButton =
+                WidgetFactory.createDefaultPopupButton("Database", IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         databaseButton.setFont(WidgetUtils.FONT_HEADER2);
 
-        List<DatastoreDescriptor> databaseBasedDatastores = new DatastoreDescriptors(_databaseDriverCatalog)
-                .getAvailableDatabaseBasedDatastoreDescriptors();
+        final List<DatastoreDescriptor> databaseBasedDatastores =
+                new DatastoreDescriptors(_databaseDriverCatalog).getAvailableDatabaseBasedDatastoreDescriptors();
 
-        for (DatastoreDescriptor datastoreDescriptor : databaseBasedDatastores) {
+        for (final DatastoreDescriptor datastoreDescriptor : databaseBasedDatastores) {
             if (datastoreDescriptor.getDatastoreClass().equals(JdbcDatastore.class)) {
                 databaseButton.getMenu().add(createNewJdbcDatastoreButton(datastoreDescriptor.getName()));
             } else {
-                databaseButton.getMenu().add(
-                        createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
-                                datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(),
-                                datastoreDescriptor.getDatastoreDialogClass()));
+                databaseButton.getMenu().add(createNewDatastoreButton(datastoreDescriptor.getName(),
+                        datastoreDescriptor.getDescription(), datastoreDescriptor.getIconPath(),
+                        datastoreDescriptor.getDatastoreClass(), datastoreDescriptor.getDatastoreDialogClass()));
             }
         }
 
@@ -177,29 +170,26 @@ public class AddDatastorePanel extends DCPanel {
 
     private JMenuItem createNewJdbcDatastoreButton(final String databaseName) {
 
-        DatabaseDriverDescriptor driverDescriptor = DatabaseDriverCatalog
-                .getDatabaseDriverByDriverDatabaseName(databaseName);
+        final DatabaseDriverDescriptor driverDescriptor =
+                DatabaseDriverCatalog.getDatabaseDriverByDriverDatabaseName(databaseName);
 
         final JMenuItem item = WidgetFactory.createMenuItem(databaseName, driverDescriptor.getIconImagePath());
         item.setToolTipText("Connect to " + databaseName);
 
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                Injector injectorWithDatastore = _dcModule.createInjectorBuilder().with(JdbcDatastore.class, null)
-                        .createInjector();
-                final JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
-                dialog.setSelectedDatabase(databaseName);
-                dialog.setVisible(true);
-                dialog.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        if (dialog.getSavedDatastore() != null) {
-                            _datastoreSelectedListener.datastoreSelected(dialog.getSavedDatastore());
-                        }
+        item.addActionListener(event -> {
+            final Injector injectorWithDatastore =
+                    _dcModule.createInjectorBuilder().with(JdbcDatastore.class, null).createInjector();
+            final JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
+            dialog.setSelectedDatabase(databaseName);
+            dialog.setVisible(true);
+            dialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(final WindowEvent e) {
+                    if (dialog.getSavedDatastore() != null) {
+                        _datastoreSelectedListener.datastoreSelected(dialog.getSavedDatastore());
                     }
-                });
-            }
+                }
+            });
         });
         return item;
     }
@@ -210,25 +200,22 @@ public class AddDatastorePanel extends DCPanel {
         final JMenuItem item = WidgetFactory.createMenuItem(title, imagePath);
         item.setToolTipText(description);
 
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null)
-                        .createInjector();
-                final AbstractDatastoreDialog<? extends Datastore> dialog = injectorWithNullDatastore
-                        .getInstance(dialogClass);
+        item.addActionListener(event -> {
+            final Injector injectorWithNullDatastore =
+                    _dcModule.createInjectorBuilder().with(datastoreClass, null).createInjector();
+            final AbstractDatastoreDialog<? extends Datastore> dialog =
+                    injectorWithNullDatastore.getInstance(dialogClass);
 
-                dialog.setVisible(true);
+            dialog.setVisible(true);
 
-                dialog.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        if (dialog.getSavedDatastore() != null) {
-                            _datastoreSelectedListener.datastoreSelected(dialog.getSavedDatastore());
-                        }
+            dialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(final WindowEvent e) {
+                    if (dialog.getSavedDatastore() != null) {
+                        _datastoreSelectedListener.datastoreSelected(dialog.getSavedDatastore());
                     }
-                });
-            }
+                }
+            });
         });
         return item;
     }

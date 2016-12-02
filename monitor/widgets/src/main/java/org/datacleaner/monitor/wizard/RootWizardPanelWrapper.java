@@ -37,13 +37,13 @@ public class RootWizardPanelWrapper implements WizardPanel {
     private final String _htmlDivId;
     private Widget _childWidget;
 
-    public RootWizardPanelWrapper(WizardPanel wizardPanel, String htmlDivId) {
+    public RootWizardPanelWrapper(final WizardPanel wizardPanel, final String htmlDivId) {
         _childWizardPanel = wizardPanel;
         _htmlDivId = htmlDivId;
     }
 
     @Override
-    public void setHeader(String header) {
+    public void setHeader(final String header) {
         _childWizardPanel.setHeader(header);
     }
 
@@ -53,7 +53,7 @@ public class RootWizardPanelWrapper implements WizardPanel {
     }
 
     @Override
-    public void setContent(IsWidget w) {
+    public void setContent(final IsWidget w) {
         _childWizardPanel.setContent(w);
     }
 
@@ -68,7 +68,7 @@ public class RootWizardPanelWrapper implements WizardPanel {
     @Override
     public void showWizard() {
         _childWizardPanel.showWizard();
-        RootPanel rootPanel = RootPanel.get(_htmlDivId);
+        final RootPanel rootPanel = RootPanel.get(_htmlDivId);
         rootPanel.clear();
         GWT.log("RootWizardPanelWrapper.show(): Found div by id '" + _htmlDivId + "': " + rootPanel);
         rootPanel.add(getWizardWidget());
@@ -77,7 +77,7 @@ public class RootWizardPanelWrapper implements WizardPanel {
     @Override
     public void hideWizard() {
         _childWizardPanel.hideWizard();
-        RootPanel rootPanel = RootPanel.get(_htmlDivId);
+        final RootPanel rootPanel = RootPanel.get(_htmlDivId);
         rootPanel.remove(getWizardWidget());
     }
 
@@ -92,7 +92,7 @@ public class RootWizardPanelWrapper implements WizardPanel {
     }
 
     @Override
-    public void addStyleClass(String styleClass) {
+    public void addStyleClass(final String styleClass) {
         _childWizardPanel.addStyleClass(styleClass);
     }
 

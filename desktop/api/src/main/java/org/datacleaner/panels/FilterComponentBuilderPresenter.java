@@ -31,6 +31,6 @@ public interface FilterComponentBuilderPresenter extends ComponentBuilderPresent
      * {@inheritDoc}
      */
     @Override
-    public FilterComponentBuilder<?, ?> getComponentBuilder();
+    FilterComponentBuilder<?, ?> getComponentBuilder();
 
 }

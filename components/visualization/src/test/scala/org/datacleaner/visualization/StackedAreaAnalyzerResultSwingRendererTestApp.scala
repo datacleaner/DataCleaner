@@ -1,19 +1,10 @@
 package org.datacleaner.visualization
 
-import java.lang.Number
-
-import org.datacleaner.api.Categorized
-import org.datacleaner.api.Description
-import org.datacleaner.api.Initialize
-import org.datacleaner.api.RendererBean
-import org.datacleaner.api.Validate
-import org.datacleaner.api.InputColumn
-import org.datacleaner.data.MockInputColumn
-import org.datacleaner.data.MockInputRow
-import org.datacleaner.result.renderer.SwingRenderingFormat
-import org.datacleaner.util.LookAndFeelManager
-
 import javax.swing.JFrame
+
+import org.datacleaner.api.InputColumn
+import org.datacleaner.data.{MockInputColumn, MockInputRow}
+import org.datacleaner.util.LookAndFeelManager
 
 object StackedAreaAnalyzerResultSwingRendererTestApp {
 

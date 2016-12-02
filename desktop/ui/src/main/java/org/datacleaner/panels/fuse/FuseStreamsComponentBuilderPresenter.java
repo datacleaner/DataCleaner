@@ -44,22 +44,24 @@ final class FuseStreamsComponentBuilderPresenter extends TransformerComponentBui
     private final ConfiguredPropertyDescriptor _unitsProperty;
 
     public FuseStreamsComponentBuilderPresenter(
-            TransformerComponentBuilder<FuseStreamsComponent> transformerJobBuilder,
-            PropertyWidgetFactory propertyWidgetFactory, WindowContext windowContext,
-            DataCleanerConfiguration configuration) {
+            final TransformerComponentBuilder<FuseStreamsComponent> transformerJobBuilder,
+            final PropertyWidgetFactory propertyWidgetFactory, final WindowContext windowContext,
+            final DataCleanerConfiguration configuration) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
 
-        _inputProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty(
-                FuseStreamsComponent.PROPERTY_INPUTS);
-        _unitsProperty = transformerJobBuilder.getDescriptor().getConfiguredProperty(
-                FuseStreamsComponent.PROPERTY_UNITS);
+        _inputProperty =
+                transformerJobBuilder.getDescriptor().getConfiguredProperty(FuseStreamsComponent.PROPERTY_INPUTS);
+        _unitsProperty =
+                transformerJobBuilder.getDescriptor().getConfiguredProperty(FuseStreamsComponent.PROPERTY_UNITS);
 
-        _propertyWidget = new StreamColumnMatrixMultipleCoalesceUnitPropertyWidget(transformerJobBuilder, _inputProperty, _unitsProperty);
+        _propertyWidget =
+                new StreamColumnMatrixMultipleCoalesceUnitPropertyWidget(transformerJobBuilder, _inputProperty,
+                        _unitsProperty);
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (propertyDescriptor == _inputProperty) {
             return _propertyWidget;
         } else if (propertyDescriptor == _unitsProperty) {

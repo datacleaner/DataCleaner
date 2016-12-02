@@ -30,7 +30,7 @@ public interface TransformerComponentBuilderPresenter extends ComponentBuilderPr
     /**
      * {@inheritDoc}
      */
-	@Override
-	public TransformerComponentBuilder<?> getComponentBuilder();
+    @Override
+    TransformerComponentBuilder<?> getComponentBuilder();
 
 }

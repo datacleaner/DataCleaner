@@ -19,12 +19,10 @@
  */
 package org.datacleaner.monitor.pentaho.wizard;
 
-import java.io.OutputStream;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 
-import org.apache.metamodel.util.Action;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.pentaho.JaxbPentahoJobTypeAdaptor;
 import org.datacleaner.monitor.pentaho.PentahoCarteClient;
@@ -47,7 +45,7 @@ final class PentahoJobWizardSession extends AbstractJobWizardSession {
     private final PentahoJobType _pentahoJobType;
     private String _jobName;
 
-    public PentahoJobWizardSession(JobWizardContext context) {
+    public PentahoJobWizardSession(final JobWizardContext context) {
         super(context);
         _pentahoJobType = new PentahoJobType();
     }
@@ -56,39 +54,38 @@ final class PentahoJobWizardSession extends AbstractJobWizardSession {
     public WizardPageController firstPageController() {
         return new PentahoCarteConfigurationPage(0) {
             @Override
-            protected WizardPageController nextPageController(String hostname, int port, String username,
-                    String password) {
+            protected WizardPageController nextPageController(final String hostname, final int port,
+                    final String username, final String password) {
                 return jobSelectionPage(hostname, port, username, password);
             }
         };
     }
 
-    public PentahoJobSelectionPage jobSelectionPage(String hostname, int port, String username, String password) {
+    public PentahoJobSelectionPage jobSelectionPage(final String hostname, final int port, final String username,
+            final String password) {
         _pentahoJobType.setCarteHostname(hostname);
         _pentahoJobType.setCartePort(port);
         _pentahoJobType.setCarteUsername(username);
         _pentahoJobType.setCartePassword(password);
 
         final List<PentahoTransformation> availableTransformations;
-        final PentahoCarteClient carteClient = new PentahoCarteClient(_pentahoJobType);
-        try {
+        try (PentahoCarteClient carteClient = new PentahoCarteClient(_pentahoJobType)) {
             availableTransformations = carteClient.getAvailableTransformations();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new DCUserInputException(e.getMessage());
-        } finally {
-            carteClient.close();
         }
 
         return new PentahoJobSelectionPage(1, availableTransformations) {
             @Override
-            protected WizardPageController nextPageController(PentahoTransformation transformation, String groupName) {
+            protected WizardPageController nextPageController(final PentahoTransformation transformation,
+                    final String groupName) {
                 _pentahoJobType.setTransformationId(transformation.getId());
                 _pentahoJobType.setTransformationName(transformation.getName());
                 _pentahoJobType.setGroupName(groupName);
 
                 return new JobNameWizardPage(getWizardContext(), 2, transformation.getName()) {
                     @Override
-                    protected WizardPageController nextPageController(String name) {
+                    protected WizardPageController nextPageController(final String name) {
                         _jobName = name;
                         return null;
                     }
@@ -104,12 +101,9 @@ final class PentahoJobWizardSession extends AbstractJobWizardSession {
 
         final JAXBElement<PentahoJobType> pentahoJob = new ObjectFactory().createPentahoJob(_pentahoJobType);
 
-        jobFolder.createFile(_jobName + PentahoJobEngine.EXTENSION, new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                JaxbPentahoJobTypeAdaptor adaptor = new JaxbPentahoJobTypeAdaptor();
-                adaptor.marshal(pentahoJob, out);
-            }
+        jobFolder.createFile(_jobName + PentahoJobEngine.EXTENSION, out -> {
+            final JaxbPentahoJobTypeAdaptor adaptor = new JaxbPentahoJobTypeAdaptor();
+            adaptor.marshal(pentahoJob, out);
         });
 
         return _jobName;

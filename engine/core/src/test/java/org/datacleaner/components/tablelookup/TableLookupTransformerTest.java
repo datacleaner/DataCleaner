@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.components.tablelookup.TableLookupTransformer.JoinSemantic;
@@ -37,19 +35,21 @@ import org.datacleaner.job.AbstractOutputRowCollector;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotations;
 
+import junit.framework.TestCase;
+
 public class TableLookupTransformerTest extends TestCase {
 
     private final RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
 
     public void testScenario() throws Exception {
-        TableLookupTransformer trans = createTransformer();
+        final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
         trans.conditionColumns = new String[] { "email" };
-        InputColumn<String> col1 = new MockInputColumn<String>("my email col", String.class);
+        final InputColumn<String> col1 = new MockInputColumn<>("my email col", String.class);
         trans.conditionValues = new InputColumn[] { col1 };
 
-        OutputColumns outputColumns = trans.getOutputColumns();
+        final OutputColumns outputColumns = trans.getOutputColumns();
         assertEquals("OutputColumns[name (lookup)]", outputColumns.toString());
         assertEquals(String.class, outputColumns.getColumnType(0));
 
@@ -64,7 +64,7 @@ public class TableLookupTransformerTest extends TestCase {
     }
 
     private TableLookupTransformer createTransformer() {
-        TableLookupTransformer t = new TableLookupTransformer();
+        final TableLookupTransformer t = new TableLookupTransformer();
         t._annotationFactory = annotationFactory;
         t._cached = annotationFactory.createAnnotation();
         t._matches = annotationFactory.createAnnotation();
@@ -73,7 +73,7 @@ public class TableLookupTransformerTest extends TestCase {
     }
 
     public void testGetOutputColumnsClearCache() throws Exception {
-        TableLookupTransformer trans = createTransformer();
+        final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name", "email" };
         trans.conditionColumns = new String[] { "email" };
@@ -95,29 +95,29 @@ public class TableLookupTransformerTest extends TestCase {
         try {
             trans.getOutputColumns();
             fail("Exception expected");
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             // OK!
         }
     }
 
     public void testInnerJoinMinOneRecordSemantics() throws Exception {
-        final List<Object[]> result = new ArrayList<Object[]>();
+        final List<Object[]> result = new ArrayList<>();
 
         final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
         trans.outputRowCollector = new AbstractOutputRowCollector() {
             @Override
-            public void putValues(Object... values) {
+            public void putValues(final Object... values) {
                 result.add(values);
             }
         };
         trans.joinSemantic = JoinSemantic.LEFT_JOIN;
         trans.conditionColumns = new String[] { "email" };
-        InputColumn<String> col1 = new MockInputColumn<String>("my email col", String.class);
+        final InputColumn<String> col1 = new MockInputColumn<>("my email col", String.class);
         trans.conditionValues = new InputColumn[] { col1 };
 
-        OutputColumns outputColumns = trans.getOutputColumns();
+        final OutputColumns outputColumns = trans.getOutputColumns();
         assertEquals("OutputColumns[name (lookup)]", outputColumns.toString());
         assertEquals(String.class, outputColumns.getColumnType(0));
 
@@ -136,23 +136,23 @@ public class TableLookupTransformerTest extends TestCase {
     }
 
     public void testInnerJoinSemantics() throws Exception {
-        final List<Object[]> result = new ArrayList<Object[]>();
+        final List<Object[]> result = new ArrayList<>();
 
         final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
         trans.outputRowCollector = new AbstractOutputRowCollector() {
             @Override
-            public void putValues(Object... values) {
+            public void putValues(final Object... values) {
                 result.add(values);
             }
         };
         trans.joinSemantic = JoinSemantic.INNER_JOIN;
         trans.conditionColumns = new String[] { "email" };
-        InputColumn<String> col1 = new MockInputColumn<String>("my email col", String.class);
+        final InputColumn<String> col1 = new MockInputColumn<>("my email col", String.class);
         trans.conditionValues = new InputColumn[] { col1 };
 
-        OutputColumns outputColumns = trans.getOutputColumns();
+        final OutputColumns outputColumns = trans.getOutputColumns();
         assertEquals("OutputColumns[name (lookup)]", outputColumns.toString());
         assertEquals(String.class, outputColumns.getColumnType(0));
 
@@ -171,21 +171,21 @@ public class TableLookupTransformerTest extends TestCase {
     }
 
     public void testCarthesianJoin() throws Exception {
-        final List<Object[]> result = new ArrayList<Object[]>();
+        final List<Object[]> result = new ArrayList<>();
 
         final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
         trans.outputRowCollector = new AbstractOutputRowCollector() {
             @Override
-            public void putValues(Object... values) {
+            public void putValues(final Object... values) {
                 result.add(values);
             }
         };
         trans.joinSemantic = JoinSemantic.INNER_JOIN;
-        InputColumn<String> col1 = new MockInputColumn<String>("my email col", String.class);
+        final InputColumn<String> col1 = new MockInputColumn<>("my email col", String.class);
 
-        OutputColumns outputColumns = trans.getOutputColumns();
+        final OutputColumns outputColumns = trans.getOutputColumns();
         assertEquals("OutputColumns[name (lookup)]", outputColumns.toString());
         assertEquals(String.class, outputColumns.getColumnType(0));
 
@@ -209,9 +209,10 @@ public class TableLookupTransformerTest extends TestCase {
 
         trans.close();
     }
-    
+
     public void testIsDistributable() throws Exception {
-        final TransformerDescriptor<TableLookupTransformer> descriptor = Descriptors.ofTransformer(TableLookupTransformer.class);
+        final TransformerDescriptor<TableLookupTransformer> descriptor =
+                Descriptors.ofTransformer(TableLookupTransformer.class);
         assertTrue(descriptor.isDistributable());
     }
 }

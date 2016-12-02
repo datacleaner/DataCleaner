@@ -23,20 +23,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
-import org.apache.metamodel.util.Action;
-
 public class WriteBufferTest extends TestCase {
 
     public void testFlushOnBufferSizeReached() throws Exception {
         final AtomicInteger counter = new AtomicInteger();
 
-        final WriteBuffer buffer = new WriteBuffer(5, new Action<Iterable<Object[]>>() {
-            @SuppressWarnings("unused")
-            @Override
-            public void run(Iterable<Object[]> rows) throws Exception {
-                for (Object[] row : rows) {
-                    counter.incrementAndGet();
-                }
+        final WriteBuffer buffer = new WriteBuffer(5, rows -> {
+            for (final Object[] row : rows) {
+                counter.incrementAndGet();
             }
         });
 

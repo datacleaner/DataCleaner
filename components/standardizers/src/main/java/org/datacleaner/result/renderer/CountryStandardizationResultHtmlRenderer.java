@@ -43,19 +43,19 @@ public class CountryStandardizationResultHtmlRenderer implements Renderer<Countr
     RendererFactory _rendererFactory;
 
     @Override
-    public RendererPrecedence getPrecedence(CountryStandardizationResult renderable) {
+    public RendererPrecedence getPrecedence(final CountryStandardizationResult renderable) {
         return RendererPrecedence.HIGH;
     }
 
     @Override
-    public HtmlFragment render(CountryStandardizationResult result) {
+    public HtmlFragment render(final CountryStandardizationResult result) {
         final AtomicInteger _elementCounter = new AtomicInteger(0);
         final SimpleHtmlFragment htmlFragment = new SimpleHtmlFragment();
         final Collection<String> categoryNames = result.getCategoryNames();
         final StringBuilder sb = new StringBuilder();
         sb.append("<div><table class=\"countryStandardization\">");
 
-        for (String category : categoryNames) {
+        for (final String category : categoryNames) {
 
             final Integer categoryCount = result.getCategoryCount(category);
             final AnnotatedRowsResult categoryRowSample = result.getCategoryRowSample(category);
@@ -63,8 +63,9 @@ public class CountryStandardizationResultHtmlRenderer implements Renderer<Countr
             sb.append("<td>");
             sb.append(StringEscapeUtils.escapeHtml(category));
             sb.append("</td>");
-            final DrillToDetailsBodyElement countryFrangment = new DrillToDetailsBodyElement(createElementId(_elementCounter),
-                    _rendererFactory, categoryRowSample);
+            final DrillToDetailsBodyElement countryFrangment =
+                    new DrillToDetailsBodyElement(createElementId(_elementCounter), _rendererFactory,
+                            categoryRowSample);
             final String javaScriptInvocation = countryFrangment.toJavaScriptInvocation();
             htmlFragment.addBodyElement(countryFrangment);
             final String link = "<a class=\"drillToDetailsLink\" onclick=\"" + javaScriptInvocation + " \" href=\"#\">"
@@ -80,7 +81,7 @@ public class CountryStandardizationResultHtmlRenderer implements Renderer<Countr
         return htmlFragment;
     }
 
-    private String createElementId(AtomicInteger elementCounter) {
+    private String createElementId(final AtomicInteger elementCounter) {
         return "country_stand_" + elementCounter.incrementAndGet();
     }
 }

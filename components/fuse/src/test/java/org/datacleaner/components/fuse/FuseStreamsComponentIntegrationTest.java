@@ -58,41 +58,16 @@ public class FuseStreamsComponentIntegrationTest {
     private static final int COUNT_CUSTOMERS = 214;
 
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-    private final DataCleanerConfigurationImpl singleThreadedConfiguration = new DataCleanerConfigurationImpl()
-            .withDatastores(datastore);
-    private final DataCleanerConfigurationImpl multiThreadedConfiguration = new DataCleanerConfigurationImpl()
-            .withDatastores(datastore).withEnvironment(
-                    new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(4)));
-    
+    private final DataCleanerConfigurationImpl singleThreadedConfiguration =
+            new DataCleanerConfigurationImpl().withDatastores(datastore);
+    private final DataCleanerConfigurationImpl multiThreadedConfiguration =
+            new DataCleanerConfigurationImpl().withDatastores(datastore)
+                    .withEnvironment(new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(4)));
+
     @Rule
     public Timeout globalTimeout = Timeout.seconds(20);
 
-    @Test
-    public void testAssumptionsAboutOrderdb() throws Exception {
-        try (final DatastoreConnection connection = datastore.openConnection()) {
-            final DataContext dataContext = connection.getDataContext();
-
-            final Row countCustomers = MetaModelHelper.executeSingleRowQuery(dataContext,
-                    dataContext.query().from("customers").selectCount().toQuery());
-            Assert.assertEquals(COUNT_CUSTOMERS, countCustomers.getValue(0));
-
-            final Row countEmployees = MetaModelHelper.executeSingleRowQuery(dataContext,
-                    dataContext.query().from("employees").selectCount().toQuery());
-            Assert.assertEquals(COUNT_EMPLOYEES, countEmployees.getValue(0));
-        }
-    }
-
-    @Test
-    public void testUnionTablesSingleThreaded() throws Throwable {
-        testUnionTables(singleThreadedConfiguration);
-    }
-
-    @Test
-    public void testUnionTablesMultiThreaded() throws Throwable {
-        testUnionTables(multiThreadedConfiguration);
-    }
-
-    private static void testUnionTables(DataCleanerConfiguration configuration) throws Throwable {
+    private static void testUnionTables(final DataCleanerConfiguration configuration) throws Throwable {
         final AnalysisJob job;
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore("orderdb");
@@ -103,19 +78,19 @@ public class FuseStreamsComponentIntegrationTest {
             final CoalesceUnit unit2 = new CoalesceUnit("lastname", "contactlastname");
             final CoalesceUnit[] units = new CoalesceUnit[] { unit1, unit2 };
 
-            final TransformerComponentBuilder<FuseStreamsComponent> fuse = ajb
-                    .addTransformer(FuseStreamsComponent.class);
+            final TransformerComponentBuilder<FuseStreamsComponent> fuse =
+                    ajb.addTransformer(FuseStreamsComponent.class);
             fuse.addInputColumns(ajb.getSourceColumns());
             fuse.setConfiguredProperty(FuseStreamsComponent.PROPERTY_UNITS, units);
 
-            final AnalysisJobBuilder fusedStreamJobBuilder = fuse
-                    .getOutputDataStreamJobBuilder(FuseStreamsComponent.OUTPUT_DATA_STREAM_NAME);
+            final AnalysisJobBuilder fusedStreamJobBuilder =
+                    fuse.getOutputDataStreamJobBuilder(FuseStreamsComponent.OUTPUT_DATA_STREAM_NAME);
             final List<MetaModelInputColumn> fusedColumns = fusedStreamJobBuilder.getSourceColumns();
             Assert.assertEquals("[MetaModelInputColumn[output.FIRSTNAME], MetaModelInputColumn[output.LASTNAME]]",
                     fusedColumns.toString());
 
-            final AnalyzerComponentBuilder<MockAnalyzer> analyzer = fusedStreamJobBuilder
-                    .addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer =
+                    fusedStreamJobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer.addInputColumns(fusedColumns);
 
             job = ajb.toAnalysisJob();
@@ -142,35 +117,25 @@ public class FuseStreamsComponentIntegrationTest {
         Assert.assertEquals(COUNT_CUSTOMERS + COUNT_EMPLOYEES, result.getValues().size());
     }
 
-    @Test
-    public void testFuseOutputDataStreamsSingleThreaded() throws Throwable {
-        testFuseOutputDataStreams(singleThreadedConfiguration);
-    }
-
-    @Test
-    public void testFuseOutputDataStreamsMultiThreaded() throws Throwable {
-        testFuseOutputDataStreams(multiThreadedConfiguration);
-    }
-
-    private static void testFuseOutputDataStreams(DataCleanerConfiguration configuration) throws Throwable {
+    private static void testFuseOutputDataStreams(final DataCleanerConfiguration configuration) throws Throwable {
         final AnalysisJob job;
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore("orderdb");
             ajb.addSourceColumns("customers.customernumber");
 
             // add an analyzer to create two streams
-            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = ajb
-                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 =
+                    ajb.addAnalyzer(MockOutputDataStreamAnalyzer.class);
             analyzer1.addInputColumns(ajb.getSourceColumns());
 
-            final AnalysisJobBuilder streamJobBuilder1 = analyzer1
-                    .getOutputDataStreamJobBuilder(MockOutputDataStreamAnalyzer.STREAM_NAME1);
-            final AnalysisJobBuilder streamJobBuilder2 = analyzer1
-                    .getOutputDataStreamJobBuilder(MockOutputDataStreamAnalyzer.STREAM_NAME2);
+            final AnalysisJobBuilder streamJobBuilder1 =
+                    analyzer1.getOutputDataStreamJobBuilder(MockOutputDataStreamAnalyzer.STREAM_NAME1);
+            final AnalysisJobBuilder streamJobBuilder2 =
+                    analyzer1.getOutputDataStreamJobBuilder(MockOutputDataStreamAnalyzer.STREAM_NAME2);
 
             // add fuse streams component to both streams
-            final TransformerComponentBuilder<FuseStreamsComponent> fuse1 = streamJobBuilder1
-                    .addTransformer(FuseStreamsComponent.class);
+            final TransformerComponentBuilder<FuseStreamsComponent> fuse1 =
+                    streamJobBuilder1.addTransformer(FuseStreamsComponent.class);
             final TransformerComponentBuilder<FuseStreamsComponent> fuse2 = streamJobBuilder2.addTransformer(fuse1);
             Assert.assertSame(fuse1, fuse2);
 
@@ -178,16 +143,16 @@ public class FuseStreamsComponentIntegrationTest {
             fuse1.addInputColumns(streamJobBuilder1.getSourceColumns());
             fuse1.addInputColumns(streamJobBuilder2.getSourceColumns());
 
-            final CoalesceUnit unit = new CoalesceUnit(streamJobBuilder1.getSourceColumns().get(0), streamJobBuilder2
-                    .getSourceColumns().get(0));
+            final CoalesceUnit unit = new CoalesceUnit(streamJobBuilder1.getSourceColumns().get(0),
+                    streamJobBuilder2.getSourceColumns().get(0));
             final CoalesceUnit[] units = new CoalesceUnit[] { unit };
             fuse1.setConfiguredProperty(FuseStreamsComponent.PROPERTY_UNITS, units);
 
             // now consume the fused output
-            final AnalysisJobBuilder fusedStreamJobBuilder = fuse1
-                    .getOutputDataStreamJobBuilder(FuseStreamsComponent.OUTPUT_DATA_STREAM_NAME);
-            final AnalyzerComponentBuilder<MockAnalyzer> mockAnalyzerBuilder = fusedStreamJobBuilder
-                    .addAnalyzer(MockAnalyzer.class);
+            final AnalysisJobBuilder fusedStreamJobBuilder =
+                    fuse1.getOutputDataStreamJobBuilder(FuseStreamsComponent.OUTPUT_DATA_STREAM_NAME);
+            final AnalyzerComponentBuilder<MockAnalyzer> mockAnalyzerBuilder =
+                    fusedStreamJobBuilder.addAnalyzer(MockAnalyzer.class);
             mockAnalyzerBuilder.addInputColumns(fusedStreamJobBuilder.getSourceColumns());
 
             job = ajb.toAnalysisJob();
@@ -233,6 +198,41 @@ public class FuseStreamsComponentIntegrationTest {
         final int expectedValues = 2 * (COUNT_CUSTOMERS - (COUNT_CUSTOMERS / 3)) + 2;
 
         Assert.assertEquals(expectedValues, result.getValues().size());
+    }
+
+    @Test
+    public void testAssumptionsAboutOrderdb() throws Exception {
+        try (DatastoreConnection connection = datastore.openConnection()) {
+            final DataContext dataContext = connection.getDataContext();
+
+            final Row countCustomers = MetaModelHelper
+                    .executeSingleRowQuery(dataContext, dataContext.query().from("customers").selectCount().toQuery());
+            Assert.assertEquals(COUNT_CUSTOMERS, countCustomers.getValue(0));
+
+            final Row countEmployees = MetaModelHelper
+                    .executeSingleRowQuery(dataContext, dataContext.query().from("employees").selectCount().toQuery());
+            Assert.assertEquals(COUNT_EMPLOYEES, countEmployees.getValue(0));
+        }
+    }
+
+    @Test
+    public void testUnionTablesSingleThreaded() throws Throwable {
+        testUnionTables(singleThreadedConfiguration);
+    }
+
+    @Test
+    public void testUnionTablesMultiThreaded() throws Throwable {
+        testUnionTables(multiThreadedConfiguration);
+    }
+
+    @Test
+    public void testFuseOutputDataStreamsSingleThreaded() throws Throwable {
+        testFuseOutputDataStreams(singleThreadedConfiguration);
+    }
+
+    @Test
+    public void testFuseOutputDataStreamsMultiThreaded() throws Throwable {
+        testFuseOutputDataStreams(multiThreadedConfiguration);
     }
 
     @Test

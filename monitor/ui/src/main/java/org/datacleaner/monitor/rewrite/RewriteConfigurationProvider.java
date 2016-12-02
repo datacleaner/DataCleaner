@@ -36,23 +36,25 @@ import org.ocpsoft.rewrite.servlet.config.rule.Join;
 public class RewriteConfigurationProvider extends HttpConfigurationProvider {
 
     @Override
-    public Configuration getConfiguration(ServletContext servletContext) {
+    public Configuration getConfiguration(final ServletContext servletContext) {
         ConfigurationBuilder builder = ConfigurationBuilder.begin();
 
-        builder.addRule().when(Path.matches("/").or(Path.matches(""))).perform(Redirect.temporary(servletContext
-                .getContextPath() + "/login"));
+        builder.addRule().when(Path.matches("/").or(Path.matches("")))
+                .perform(Redirect.temporary(servletContext.getContextPath() + "/login"));
 
         builder = addJoinRule(builder, "/login", "/login.jsf");
         builder = addJoinRule(builder, "/dashboard", "/dashboard.jsf");
         builder = addJoinRule(builder, "/scheduling", "/scheduling.jsf");
         builder = addJoinRule(builder, "/repository", "/repository.jsf");
         builder = addJoinRule(builder, "/datastores", "/datastores.jsf");
+        builder = addJoinRule(builder, "/referencedata", "/referencedata.jsf");
         builder = addJoinRule(builder, "/query", "/query.jsf");
 
         return builder;
     }
 
-    private ConfigurationBuilder addJoinRule(ConfigurationBuilder builder, String fromPath, String toPath) {
+    private ConfigurationBuilder addJoinRule(final ConfigurationBuilder builder, final String fromPath,
+            final String toPath) {
         return builder.addRule(Join.path(fromPath).to(toPath));
     }
 

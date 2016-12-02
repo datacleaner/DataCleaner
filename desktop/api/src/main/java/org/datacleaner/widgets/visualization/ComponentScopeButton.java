@@ -49,31 +49,31 @@ public class ComponentScopeButton extends JButton implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ComponentScopeButton.class);
     private static final ImageManager imageManager = ImageManager.get();
-    private static final Icon scopeIcon = imageManager.getImageIcon(IconUtils.OUTPUT_DATA_STREAM_PATH,
-            IconUtils.ICON_SIZE_MEDIUM);
+    private static final Icon scopeIcon =
+            imageManager.getImageIcon(IconUtils.OUTPUT_DATA_STREAM_PATH, IconUtils.ICON_SIZE_MEDIUM);
 
     private final ComponentBuilder _componentBuilder;
     private final AnalysisJobBuilder _topLevelJobBuilder;
     private final ComponentScopeMenuBuilder _menuBuilder;
 
-    public ComponentScopeButton(final ComponentBuilder componentBuilder,
-            final ComponentScopeMenuBuilder menuBuilder) {
+    public ComponentScopeButton(final ComponentBuilder componentBuilder, final ComponentScopeMenuBuilder menuBuilder) {
         super(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT, scopeIcon);
         _componentBuilder = componentBuilder;
         _menuBuilder = menuBuilder;
         _topLevelJobBuilder = componentBuilder.getAnalysisJobBuilder().getRootJobBuilder();
         addActionListener(this);
-        updateText(_componentBuilder.getAnalysisJobBuilder(), _menuBuilder.findComponentBuilder(_componentBuilder.getAnalysisJobBuilder()));
+        updateText(_componentBuilder.getAnalysisJobBuilder(),
+                _menuBuilder.findComponentBuilder(_componentBuilder.getAnalysisJobBuilder()));
         WidgetUtils.setDefaultButtonStyle(this);
     }
 
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         final JPopupMenu popup = new JPopupMenu();
 
         final List<JMenuItem> menuItems = _menuBuilder.createMenuItems();
-        for (JMenuItem menuItem : menuItems) {
+        for (final JMenuItem menuItem : menuItems) {
             popup.add(menuItem);
         }
 
@@ -83,14 +83,11 @@ public class ComponentScopeButton extends JButton implements ActionListener {
     public void updateText(final AnalysisJobBuilder osJobBuilder, final ComponentBuilder osComponentBuilder) {
         logger.debug("updateText()");
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (osJobBuilder == _topLevelJobBuilder) {
-                    setText(ComponentScopeMenuBuilder.DEFAULT_SCOPE_TEXT);
-                } else {
-                    setText(LabelUtils.getLabel(osComponentBuilder) + ": " + osJobBuilder.getDatastore().getName());
-                }
+        final Runnable runnable = () -> {
+            if (osJobBuilder == _topLevelJobBuilder) {
+                setText(ComponentScopeMenuBuilder.DEFAULT_SCOPE_TEXT);
+            } else {
+                setText(LabelUtils.getLabel(osComponentBuilder) + ": " + osJobBuilder.getDatastore().getName());
             }
         };
         try {
@@ -99,7 +96,7 @@ public class ComponentScopeButton extends JButton implements ActionListener {
             } else {
                 SwingUtilities.invokeAndWait(runnable);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Failed to update ComponentScopeButton", e);
         }
     }

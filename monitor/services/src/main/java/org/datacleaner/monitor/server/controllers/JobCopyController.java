@@ -19,13 +19,12 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.events.JobCopyEvent;
@@ -33,8 +32,6 @@ import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +58,8 @@ public class JobCopyController {
     @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed({ SecurityRoles.JOB_EDITOR })
-    public Map<String, String> copyJob(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName, @RequestBody final JobCopyPayload input) {
+    public Map<String, String> copyJob(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
+            @RequestBody final JobCopyPayload input) {
 
         logger.info("Request payload: {} - {}", jobName, input);
 
@@ -71,7 +68,7 @@ public class JobCopyController {
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
         final JobContext sourceJob = tenantContext.getJob(jobName);
         final RepositoryFile existingFile = sourceJob.getJobFile();
-        
+
         if (existingFile == null) {
             throw new UnsupportedOperationException("Job not compatible with operation: " + jobName);
         }
@@ -89,23 +86,15 @@ public class JobCopyController {
         }
 
 
-        final RepositoryFile newJobFile = jobFolder.createFile(newJobFilename, new Action<OutputStream>() {
-            @Override
-            public void run(final OutputStream out) throws Exception {
-                existingFile.readFile(new Action<InputStream>() {
-                    @Override
-                    public void run(final InputStream in) throws Exception {
-                        FileHelper.copy(in, out);
-                    }
-                });
-            }
-        });
+        final RepositoryFile newJobFile = jobFolder.createFile(newJobFilename, out -> existingFile.readFile(in -> {
+            FileHelper.copy(in, out);
+        }));
 
         final JobContext newJob = tenantContext.getJob(newJobFilename);
 
         _eventPublisher.publishEvent(new JobCopyEvent(this, tenant, sourceJob, newJob));
 
-        final Map<String, String> response = new TreeMap<String, String>();
+        final Map<String, String> response = new TreeMap<>();
         response.put("source_job", sourceJob.getName());
         response.put("target_job", newJob.getName());
         response.put("repository_url", "/" + tenant + "/jobs/" + newJobFile.getName());

@@ -19,38 +19,31 @@
  */
 package org.datacleaner.connection;
 
-import java.sql.Connection;
-
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import junit.framework.TestCase;
-
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
-import org.datacleaner.test.TestHelper;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.test.TestHelper;
+import org.easymock.EasyMock;
 import org.springframework.mock.jndi.SimpleNamingContext;
+
+import junit.framework.TestCase;
 
 public class DataSourceDatastoreConnectionTest extends TestCase {
 
     public void testConstruction() throws Exception {
-        DataSource dataSource = EasyMock.createMock(DataSource.class);
+        final DataSource dataSource = EasyMock.createMock(DataSource.class);
 
-        EasyMock.expect(dataSource.getConnection()).andAnswer(new IAnswer<Connection>() {
-            @Override
-            public Connection answer() throws Throwable {
-                return TestHelper.createSampleDatabaseDataSource().getConnection();
-            }
-        }).times(4);
+        EasyMock.expect(dataSource.getConnection())
+                .andAnswer(() -> TestHelper.createSampleDatabaseDataSource().getConnection()).times(4);
 
         EasyMock.replay(dataSource);
 
         final SimpleNamingContext context = new SimpleNamingContext();
         context.bind("jdbc/mydatasource", dataSource);
 
-        JdbcDatastore datastore = new JdbcDatastore("mydatasource", "jdbc/mydatasource") {
+        final JdbcDatastore datastore = new JdbcDatastore("mydatasource", "jdbc/mydatasource") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -61,13 +54,13 @@ public class DataSourceDatastoreConnectionTest extends TestCase {
 
         assertEquals("jdbc/mydatasource", datastore.getDatasourceJndiUrl());
 
-        DatastoreConnection con = datastore.openConnection();
+        final DatastoreConnection con = datastore.openConnection();
 
         assertEquals("mydatasource", con.getDatastore().getName());
-        SchemaNavigator schemaNavigator = con.getSchemaNavigator();
+        final SchemaNavigator schemaNavigator = con.getSchemaNavigator();
         assertNotNull(schemaNavigator);
         assertEquals("PUBLIC", con.getDataContext().getDefaultSchema().getName());
-        Table table = schemaNavigator.convertToTable("PUBLIC.EMPLOYEES");
+        final Table table = schemaNavigator.convertToTable("PUBLIC.EMPLOYEES");
         assertNotNull(table);
         assertEquals("EMPLOYEES", table.getName());
 

@@ -36,7 +36,7 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 /**
  * Specialized {@link Renderer} for a {@link TransformerComponentBuilder} for the
  * {@link SelectFromMapTransformer}.
- * 
+ *
  * @author Kasper Sørensen
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
@@ -53,7 +53,7 @@ public class SelectFromMapJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerComponentBuilder<SelectFromMapTransformer> tjb) {
+    public RendererPrecedence getPrecedence(final TransformerComponentBuilder<SelectFromMapTransformer> tjb) {
         if (tjb.getDescriptor().getComponentClass() == SelectFromMapTransformer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -61,9 +61,10 @@ public class SelectFromMapJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<SelectFromMapTransformer> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
-                PropertyWidgetFactory.class);
+    public TransformerComponentBuilderPresenter render(
+            final TransformerComponentBuilder<SelectFromMapTransformer> tjb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(tjb).getInstance(PropertyWidgetFactory.class);
 
         return new SelectFromMapJobBuilderPresenter(tjb, windowContext, propertyWidgetFactory, configuration);
     }

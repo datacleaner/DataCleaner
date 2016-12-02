@@ -52,28 +52,15 @@ public class TextFieldResourceTypePresenter implements ResourceTypePresenter<Res
     private final List<Listener> _listeners = new ArrayList<>();
     private final List<FileFilter> _fileFilters = new ArrayList<>();
 
-    public TextFieldResourceTypePresenter(ResourceTypeHandler<?> resourceTypeHandler) {
+    public TextFieldResourceTypePresenter(final ResourceTypeHandler<?> resourceTypeHandler) {
         _resourceTypeHandler = resourceTypeHandler;
         _pathTextField = WidgetFactory.createTextField("Path");
         _pathTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 onPathChanged();
             }
         });
-    }
-
-    private void onPathChanged() {
-        final Resource resource;
-
-        final String path = _pathTextField.getText();
-        if (Strings.isNullOrEmpty(path)) {
-            resource = null;
-        } else {
-            resource = getResource();
-        }
-
-        handleResourceCandidate(resource, this, _listeners, _fileFilters);
     }
 
     protected static void handleResourceCandidate(final Resource resource,
@@ -113,7 +100,7 @@ public class TextFieldResourceTypePresenter implements ResourceTypePresenter<Res
                 Resource resource;
                 try {
                     resource = get();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     resource = null;
                 }
 
@@ -126,9 +113,22 @@ public class TextFieldResourceTypePresenter implements ResourceTypePresenter<Res
     private static void notifyListeners(final Resource resource, final ResourceTypePresenter<?> resourceTypePresenter,
             final List<ResourceTypePresenter.Listener> listeners) {
 
-        for (ResourceTypePresenter.Listener resourceSelectionListener : listeners) {
+        for (final ResourceTypePresenter.Listener resourceSelectionListener : listeners) {
             resourceSelectionListener.onResourceSelected(resourceTypePresenter, resource);
         }
+    }
+
+    private void onPathChanged() {
+        final Resource resource;
+
+        final String path = _pathTextField.getText();
+        if (Strings.isNullOrEmpty(path)) {
+            resource = null;
+        } else {
+            resource = getResource();
+        }
+
+        handleResourceCandidate(resource, this, _listeners, _fileFilters);
     }
 
     @Override
@@ -141,40 +141,40 @@ public class TextFieldResourceTypePresenter implements ResourceTypePresenter<Res
         final String path = _pathTextField.getText();
         try {
             return _resourceTypeHandler.parsePath(path);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.debug("Failed to parse path '{}', returning null", path, e);
             return null;
         }
     }
 
     @Override
-    public void setResource(Resource resource) {
+    public void setResource(final Resource resource) {
         final String path = _resourceTypeHandler.createPath(resource);
         _pathTextField.setText(path);
     }
 
     @Override
-    public void addListener(Listener listener) {
+    public void addListener(final Listener listener) {
         _listeners.add(listener);
     }
 
     @Override
-    public void removeListener(Listener listener) {
+    public void removeListener(final Listener listener) {
         _listeners.remove(listener);
     }
 
     @Override
-    public void addChoosableFileFilter(FileFilter fileFilter) {
+    public void addChoosableFileFilter(final FileFilter fileFilter) {
         _fileFilters.add(fileFilter);
     }
 
     @Override
-    public void removeChoosableFileFilter(FileFilter fileFilter) {
+    public void removeChoosableFileFilter(final FileFilter fileFilter) {
         _fileFilters.remove(fileFilter);
     }
 
     @Override
-    public void setSelectedFileFilter(FileFilter fileFilter) {
+    public void setSelectedFileFilter(final FileFilter fileFilter) {
         _fileFilters.remove(fileFilter);
         _fileFilters.add(0, fileFilter);
     }

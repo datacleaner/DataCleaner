@@ -36,7 +36,8 @@ public class JavaStackedAreaAnalyzerResult implements IStackedAreaAnalyzerResult
     private final InputColumn<Number>[] _measureColumns;
     private final Map<Object, List<Number>> _measureMap = new HashMap<>();
 
-    public JavaStackedAreaAnalyzerResult(InputColumn<?> categoryColumn, InputColumn<Number>[] measureColumns) {
+    public JavaStackedAreaAnalyzerResult(final InputColumn<?> categoryColumn,
+            final InputColumn<Number>[] measureColumns) {
         _categoryColumn = categoryColumn;
         _measureColumns = measureColumns;
     }
@@ -74,7 +75,7 @@ public class JavaStackedAreaAnalyzerResult implements IStackedAreaAnalyzerResult
     }
 
     @Override
-    public Number[] getMeasures(Object category) {
+    public Number[] getMeasures(final Object category) {
         final List<Number> list = _measureMap.get(category);
         if (list != null) {
             return list.toArray(new Number[list.size()]);
@@ -84,7 +85,7 @@ public class JavaStackedAreaAnalyzerResult implements IStackedAreaAnalyzerResult
     }
 
     @Override
-    public void addMeasures(Object category, Number[] measures) {
+    public void addMeasures(final Object category, final Number[] measures) {
         final List<Number> oldMeasures = _measureMap.get(category);
         if (oldMeasures != null) {
             for (int i = 0; i < oldMeasures.size(); i++) {
@@ -99,7 +100,7 @@ public class JavaStackedAreaAnalyzerResult implements IStackedAreaAnalyzerResult
     }
 
     @Override
-    public Number sum(Number x, Number y) {
+    public Number sum(final Number x, final Number y) {
         if (x == null) {
             return y;
         }

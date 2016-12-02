@@ -63,7 +63,6 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
-import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.table.DCTable;
@@ -74,33 +73,30 @@ import org.slf4j.LoggerFactory;
 /**
  * Superclass for rather simple file-based datastores such as Excel-datastores,
  * Access-datastores, dBase-datastores etc.
- * 
+ *
  * @param <D>
  *            the type of datastore
  */
 public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> extends AbstractDatastoreDialog<D> {
 
-    private static final long serialVersionUID = 1L;
-
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-
     /**
      * Amount of bytes to read for autodetection of encoding, separator and quotes
      */
     protected static final int SAMPLE_BUFFER_SIZE = 128 * 1024;
-
+    private static final long serialVersionUID = 1L;
     /**
      * Max amount of columns to display in the preview table
      */
     private static final int PREVIEW_COLUMNS = 10;
-
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     private final FilenameTextField _filenameField;
     private final DCPanel _previewTablePanel;
     private final DCTable _previewTable;
     private final LoadingIcon _loadingIcon;
 
-    protected AbstractFileBasedDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-            WindowContext windowContext, UserPreferences userPreferences) {
+    protected AbstractFileBasedDatastoreDialog(final D originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
         _statusLabel.setText("Please select file");
         _filenameField = new FilenameTextField(getUserPreferences().getOpenDatastoreDirectory(), true);
@@ -162,7 +158,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
      *
      * @param file selected file
      */
-    protected void onFileSelected(File file) {
+    protected void onFileSelected(final File file) {
     }
 
     protected abstract D createDatastore(String name, String filename);
@@ -171,7 +167,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
     @Override
     protected final void validateAndUpdate() {
-        boolean valid = validateForm();
+        final boolean valid = validateForm();
         setSaveButtonEnabled(valid);
         if (valid) {
             updatePreviewTable();
@@ -231,7 +227,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     }
 
     protected List<Entry<String, JComponent>> getFormElements() {
-        List<Entry<String, JComponent>> res = super.getFormElements();
+        final List<Entry<String, JComponent>> res = super.getFormElements();
         if (isDirectoryBased()) {
             res.add(new ImmutableEntry<>("Directory", _filenameField));
         } else {
@@ -270,9 +266,9 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
             @Override
             protected void done() {
                 try {
-                    DataSet dataSet = get();
+                    final DataSet dataSet = get();
                     if (dataSet != null) {
-                        TableModel tableModel = new DataSetTableModel(dataSet);
+                        final TableModel tableModel = new DataSetTableModel(dataSet);
                         _previewTable.setModel(tableModel);
                     }
                 } catch (Throwable e) {
@@ -296,7 +292,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         }.execute();
     }
 
-    private DataSet getPreviewData(String filename) {
+    private DataSet getPreviewData(final String filename) {
         if (!isPreviewDataAvailable()) {
             logger.info("Not displaying preview table because isPreviewDataAvailable() returned false");
             return null;
@@ -321,13 +317,13 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
     @Override
     protected final JComponent getDialogContent() {
-        DCPanel formPanel = new DCPanel();
+        final DCPanel formPanel = new DCPanel();
 
-        List<Entry<String, JComponent>> formElements = getFormElements();
+        final List<Entry<String, JComponent>> formElements = getFormElements();
         // temporary variable to make it easier to refactor the layout
         int row = 0;
-        for (Entry<String, JComponent> entry : formElements) {
-            String key = entry.getKey();
+        for (final Entry<String, JComponent> entry : formElements) {
+            final String key = entry.getKey();
             if (StringUtils.isNullOrEmpty(key)) {
                 WidgetUtils.addToGridBag(entry.getValue(), formPanel, 0, row, 2, 1);
             } else {
@@ -347,14 +343,14 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         WidgetUtils.addToGridBag(formPanel, centerPanel, 0, 0, 1, 1, GridBagConstraints.NORTH, 4, 0, 0);
 
         if (isPreviewTableEnabled()) {
-            WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1,
-                    1.0, GridBagConstraints.BOTH);
+            WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1, 1.0,
+                    GridBagConstraints.BOTH);
         }
         WidgetUtils.addToGridBag(getButtonPanel(), centerPanel, 0, 2, 1, 1, GridBagConstraints.SOUTH, 4, 0, 0.1);
 
         centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
 
-        JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
         _outerPanel.setLayout(new BorderLayout());
         _outerPanel.add(centerPanel, BorderLayout.CENTER);
@@ -362,7 +358,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
         final String descriptionText = getDescriptionText();
         if (descriptionText != null) {
-            DescriptionLabel descriptionLabel = new DescriptionLabel();
+            final DescriptionLabel descriptionLabel = new DescriptionLabel();
             descriptionLabel.setText(descriptionText);
             _outerPanel.add(descriptionLabel, BorderLayout.NORTH);
         }
@@ -376,7 +372,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         return true;
     }
 
-    protected Table getPreviewTable(DataContext dc) {
+    protected Table getPreviewTable(final DataContext dc) {
         return dc.getDefaultSchema().getTables()[0];
     }
 
@@ -384,7 +380,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         return PREVIEW_COLUMNS;
     }
 
-    protected D getPreviewDatastore(String filename) {
+    protected D getPreviewDatastore(final String filename) {
         return createDatastore("Preview", filename);
     }
 
@@ -394,12 +390,12 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(file);
-            int bufferSize = fileInputStream.read(bytes, 0, SAMPLE_BUFFER_SIZE);
+            final int bufferSize = fileInputStream.read(bytes, 0, SAMPLE_BUFFER_SIZE);
             if (bufferSize != -1 && bufferSize != SAMPLE_BUFFER_SIZE) {
                 bytes = Arrays.copyOf(bytes, bufferSize);
             }
             return bytes;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.error("IOException occurred while reading sample buffer", e);
             return new byte[0];
         } finally {
@@ -407,18 +403,18 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         }
     }
 
-    protected char[] readSampleBuffer(byte[] bytes, final String charSet) {
+    protected char[] readSampleBuffer(final byte[] bytes, final String charSet) {
         char[] buffer = new char[bytes.length];
         Reader reader = null;
         try {
             reader = new InputStreamReader(new ByteArrayInputStream(bytes), charSet);
 
             // read a sample of the file to auto-detect quotes and separators
-            int bufferSize = reader.read(buffer);
+            final int bufferSize = reader.read(buffer);
             if (bufferSize != -1) {
                 buffer = Arrays.copyOf(buffer, bufferSize);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (logger.isWarnEnabled()) {
                 logger.warn("Error reading from file: " + e.getMessage(), e);
             }
@@ -428,7 +424,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (IOException ioe) {
+                } catch (final IOException ioe) {
                     logger.debug("Could not close reader", ioe);
                 }
             }

@@ -37,11 +37,12 @@ public class HBaseDatastore extends UsageAwareDatastore<HBaseDataContext> {
     private final String _zookeeperHostname;
     private final SimpleTableDef[] _tableDefs;
 
-    public HBaseDatastore(String name, String zookeeperHostname, int zookeeperPort) {
+    public HBaseDatastore(final String name, final String zookeeperHostname, final int zookeeperPort) {
         this(name, zookeeperHostname, zookeeperPort, null);
     }
 
-    public HBaseDatastore(String name, String zookeeperHostname, int zookeeperPort, SimpleTableDef[] tableDefs) {
+    public HBaseDatastore(final String name, final String zookeeperHostname, final int zookeeperPort,
+            final SimpleTableDef[] tableDefs) {
         super(name);
         _zookeeperHostname = zookeeperHostname;
         _zookeeperPort = zookeeperPort;
@@ -60,12 +61,10 @@ public class HBaseDatastore extends UsageAwareDatastore<HBaseDataContext> {
 
     @Override
     protected UsageAwareDatastoreConnection<HBaseDataContext> createDatastoreConnection() {
-        final HBaseConfiguration hBaseConfiguration = new HBaseConfiguration("HBase", _zookeeperHostname,
-                _zookeeperPort, _tableDefs, ColumnType.STRING);
+        final HBaseConfiguration hBaseConfiguration =
+                new HBaseConfiguration("HBase", _zookeeperHostname, _zookeeperPort, _tableDefs, ColumnType.STRING);
         final HBaseDataContext hBaseDataContext = new HBaseDataContext(hBaseConfiguration);
-        final DatastoreConnectionImpl<HBaseDataContext> connection = new DatastoreConnectionImpl<HBaseDataContext>(
-                hBaseDataContext, this);
-        return connection;
+        return new DatastoreConnectionImpl<>(hBaseDataContext, this);
     }
 
     public String getZookeeperHostname() {
@@ -81,7 +80,7 @@ public class HBaseDatastore extends UsageAwareDatastore<HBaseDataContext> {
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         super.decorateIdentity(identifiers);
         identifiers.add(_zookeeperHostname);
         identifiers.add(_zookeeperPort);

@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.ResultContext;
@@ -41,49 +39,52 @@ import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
 
+import junit.framework.TestCase;
+
 public class PentahoJobEngineTest extends TestCase {
 
     TenantContextFactory tenantContextFactory;
     TenantContext tenantContext;
     PentahoJobEngine jobEngine;
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         jobEngine = new PentahoJobEngine();
-        Repository repository = new FileRepository("src/test/resources/repo");
-        JobEngineManager jobEngineManager = new SimpleJobEngineManager(jobEngine);
-        tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), jobEngineManager);
+        final Repository repository = new FileRepository("src/test/resources/repo");
+        final JobEngineManager jobEngineManager = new SimpleJobEngineManager(jobEngine);
+        tenantContextFactory =
+                new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), jobEngineManager);
         tenantContext = tenantContextFactory.getContext("dc");
     }
 
     public void testWorkingWithMetrics() throws Exception {
-        PentahoJobContext job = jobEngine.getJobContext(tenantContext, new JobIdentifier("Sample Pentaho job"));
-        
-        JobMetrics metrics = job.getJobMetrics();
+        final PentahoJobContext job = jobEngine.getJobContext(tenantContext, new JobIdentifier("Sample Pentaho job"));
+
+        final JobMetrics metrics = job.getJobMetrics();
         assertNotNull(metrics);
-        
-        List<MetricGroup> groups = metrics.getMetricGroups();
+
+        final List<MetricGroup> groups = metrics.getMetricGroups();
         assertEquals("[MetricGroup[Sample Pentaho job]]", groups.toString());
-        
-        MetricIdentifier metric = groups.get(0).getMetric("Lines written");
+
+        final MetricIdentifier metric = groups.get(0).getMetric("Lines written");
         assertEquals("MetricIdentifier[analyzerInputName=null,metricDescriptorName=Lines written]", metric.toString());
-        
-        ResultContext result = tenantContext.getResult("Sample Pentaho job-1364228636342");
-        
-        Collection<InputColumn<?>> columns = jobEngine.getMetricParameterColumns(job, null);
-        
+
+        final ResultContext result = tenantContext.getResult("Sample Pentaho job-1364228636342");
+
+        final Collection<InputColumn<?>> columns = jobEngine.getMetricParameterColumns(job, null);
+
         assertEquals("[MockInputColumn[name=A], MockInputColumn[name=dummy]]", columns.toString());
-        
-        List<MetricIdentifier> metricIdentifiers = new ArrayList<MetricIdentifier>();
-        MetricIdentifier copy1 = metric.copy();
+
+        final List<MetricIdentifier> metricIdentifiers = new ArrayList<>();
+        final MetricIdentifier copy1 = metric.copy();
         copy1.setParamColumnName("dummy");
         metricIdentifiers.add(copy1);
-        MetricIdentifier copy2 = metric.copy();
+        final MetricIdentifier copy2 = metric.copy();
         copy2.setParamColumnName("A");
         metricIdentifiers.add(copy2);
-        
-        MetricValues metricValues = jobEngine.getMetricValues(job, result, metricIdentifiers);
+
+        final MetricValues metricValues = jobEngine.getMetricValues(job, result, metricIdentifiers);
         assertEquals(result.getResultFile().getLastModified(), metricValues.getMetricDate().getTime());
         assertEquals("[100000000, 100000000]", metricValues.getValues().toString());
     }

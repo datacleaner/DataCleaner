@@ -90,7 +90,7 @@ public final class Bootstrap {
 
     private final BootstrapOptions _options;
 
-    public Bootstrap(BootstrapOptions options) {
+    public Bootstrap(final BootstrapOptions options) {
         if (options == null) {
             throw new IllegalArgumentException("Bootstrap options cannot be null");
         }
@@ -100,7 +100,7 @@ public final class Bootstrap {
     public void run() {
         try {
             runInternal();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("An unexpected error has occurred during bootstrap. Exiting with status code -2.", e);
             exitCommandLine(null, -2);
         }
@@ -125,7 +125,7 @@ public final class Bootstrap {
                         splashScreen.close();
                     }
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // ignore this condition - may happen rarely on e.g. X windows
                 // systems when the user is not authorized to access the
                 // graphics environment.
@@ -143,7 +143,7 @@ public final class Bootstrap {
                 exitCommandLine(null, 1);
                 return;
             }
-            
+
             if (arguments.isVersionMode()) {
                 final PrintWriter out = new PrintWriter(System.out);
                 try {
@@ -153,7 +153,7 @@ public final class Bootstrap {
                 }
 
                 exitCommandLine(null, 1);
-                return;                
+                return;
             }
         }
 
@@ -177,8 +177,9 @@ public final class Bootstrap {
         final UserPreferences initialUserPreferences = new UserPreferencesImpl(null);
 
         final String configurationFilePath = arguments.getConfigurationFile();
-        final FileObject configurationFile = resolveFile(configurationFilePath,
-                DataCleanerConfigurationImpl.DEFAULT_FILENAME, initialUserPreferences);
+        final FileObject configurationFile =
+                resolveFile(configurationFilePath, DataCleanerConfigurationImpl.DEFAULT_FILENAME,
+                        initialUserPreferences);
 
         Injector injector = Guice.createInjector(new DCModuleImpl(DataCleanerHome.get(), configurationFile));
 
@@ -212,7 +213,7 @@ public final class Bootstrap {
 
             final Datastore singleDatastore;
             if (_options.isSingleDatastoreMode()) {
-                DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
+                final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
                 singleDatastore = _options.getSingleDatastore(datastoreCatalog);
                 if (singleDatastore == null) {
                     logger.info("Single datastore mode was enabled, but datastore was null!");
@@ -232,7 +233,7 @@ public final class Bootstrap {
                 // this part has to be done after displaying the window (a lot
                 // of initialization goes on there)
                 final AnalysisJobBuilder analysisJobBuilder = analysisJobBuilderWindow.getAnalysisJobBuilder();
-                try (final DatastoreConnection con = singleDatastore.openConnection()) {
+                try (DatastoreConnection con = singleDatastore.openConnection()) {
                     final InjectorBuilder injectorBuilder = injector.getInstance(InjectorBuilder.class);
                     _options.initializeSingleDatastoreJob(analysisJobBuilder, con.getDataContext(), injectorBuilder);
                 }
@@ -242,26 +243,21 @@ public final class Bootstrap {
             if (welcomeImage != null) {
                 // Ticket #834: make sure to show welcome dialog in swing's
                 // dispatch thread.
-                WidgetUtils.invokeSwingAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        final WelcomeDialog welcomeDialog = new WelcomeDialog(analysisJobBuilderWindow, welcomeImage);
-                        welcomeDialog.setVisible(true);
-                    }
+                WidgetUtils.invokeSwingAction(() -> {
+                    final WelcomeDialog welcomeDialog = new WelcomeDialog(analysisJobBuilderWindow, welcomeImage);
+                    welcomeDialog.setVisible(true);
                 });
             }
 
-            WidgetUtils.invokeSwingAction(new Runnable() {
-                @Override
-                public void run() {
-                    if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration)) {
-                        final DataCloudLogInWindow dataCloudLogInWindow = new DataCloudLogInWindow(configuration,
-                                userPreferences, windowContext, (AbstractWindow) analysisJobBuilderWindow);
-                        dataCloudLogInWindow.open();
-                    }
+            WidgetUtils.invokeSwingAction(() -> {
+                if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration, true)) {
+                    final DataCloudLogInWindow dataCloudLogInWindow =
+                            new DataCloudLogInWindow(configuration, userPreferences, windowContext,
+                                    (AbstractWindow) analysisJobBuilderWindow);
+                    dataCloudLogInWindow.open();
                 }
             });
-            
+
             // set up HTTP service for ExtensionSwap installation
             loadExtensionSwapService(userPreferences, windowContext, configuration, usageLogger);
 
@@ -276,9 +272,9 @@ public final class Bootstrap {
         // run in CLI mode
 
         int exitCode = 0;
-        try (final CliRunner runner = new CliRunner(arguments)) {
+        try (CliRunner runner = new CliRunner(arguments)) {
             runner.run(configuration);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             logger.error("Error occurred while running DataCleaner command line mode", e);
             exitCode = 1;
         } finally {
@@ -290,7 +286,7 @@ public final class Bootstrap {
      * Looks up a file, either based on a user requested filename (typically a
      * CLI parameter, may be a URL) or by a relative filename defined in the
      * system-
-     * 
+     *
      * @param userRequestedFilename
      *            the user requested filename, may be null
      * @param localFilename
@@ -300,18 +296,18 @@ public final class Bootstrap {
      * @throws FileSystemException
      */
     private FileObject resolveFile(final String userRequestedFilename, final String localFilename,
-            UserPreferences userPreferences) throws FileSystemException {
+            final UserPreferences userPreferences) throws FileSystemException {
         final File dataCleanerHome = DataCleanerHome.getAsFile();
         if (userRequestedFilename == null) {
-            File file = new File(dataCleanerHome, localFilename);
+            final File file = new File(dataCleanerHome, localFilename);
             return VFSUtils.toFileObject(file);
         } else {
-            String lowerCaseFilename = userRequestedFilename.toLowerCase();
+            final String lowerCaseFilename = userRequestedFilename.toLowerCase();
             if (lowerCaseFilename.startsWith("http://") || lowerCaseFilename.startsWith("https://")) {
                 if (!GraphicsEnvironment.isHeadless()) {
                     // download to a RAM file.
-                    final FileObject targetDirectory = VFSUtils.getFileSystemManager().resolveFile(
-                            "ram:///datacleaner/temp");
+                    final FileObject targetDirectory =
+                            VFSUtils.getFileSystemManager().resolveFile("ram:///datacleaner/temp");
                     if (!targetDirectory.exists()) {
                         targetDirectory.createFolder();
                     }
@@ -319,7 +315,7 @@ public final class Bootstrap {
                     final URI uri;
                     try {
                         uri = new URI(userRequestedFilename);
-                    } catch (URISyntaxException e) {
+                    } catch (final URISyntaxException e) {
                         throw new IllegalArgumentException("Illegal URI: " + userRequestedFilename, e);
                     }
 
@@ -334,8 +330,8 @@ public final class Bootstrap {
                         if (monitorConnection.matchesURI(uri)) {
                             if (monitorConnection.isAuthenticationEnabled()) {
                                 if (monitorConnection.getEncodedPassword() == null) {
-                                    final MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext,
-                                            userPreferences);
+                                    final MonitorConnectionDialog dialog =
+                                            new MonitorConnectionDialog(windowContext, userPreferences);
                                     dialog.openBlocking();
                                 }
                                 monitorConnection = userPreferences.getMonitorConnection();
@@ -348,8 +344,9 @@ public final class Bootstrap {
                         final String[] urls = new String[] { userRequestedFilename };
                         final String[] targetFilenames = DownloadFilesActionListener.createTargetFilenames(urls);
 
-                        final FileObject[] files = downloadFiles(urls, targetDirectory, targetFilenames, windowContext,
-                                httpClient, monitorConnection);
+                        final FileObject[] files =
+                                downloadFiles(urls, targetDirectory, targetFilenames, windowContext, httpClient,
+                                        monitorConnection);
 
                         assert files.length == 1;
 
@@ -358,8 +355,8 @@ public final class Bootstrap {
                         if (logger.isInfoEnabled()) {
                             final InputStream in = ramFile.getContent().getInputStream();
                             try {
-                                final String str = FileHelper.readInputStreamAsString(ramFile.getContent()
-                                        .getInputStream(), "UTF8");
+                                final String str = FileHelper
+                                        .readInputStreamAsString(ramFile.getContent().getInputStream(), "UTF8");
                                 logger.info("Downloaded file contents: {}\n{}", userRequestedFilename, str);
                             } finally {
                                 FileHelper.safeClose(in);
@@ -374,10 +371,11 @@ public final class Bootstrap {
                             defaultPort = 443;
                         }
 
-                        final UrlFileName fileName = new UrlFileName(scheme, uri.getHost(), uri.getPort(), defaultPort,
-                                null, null, uri.getPath(), FileType.FILE, uri.getQuery());
-                        
-                        AbstractFileSystem fileSystem = (AbstractFileSystem) VFSUtils.getBaseFileSystem();
+                        final UrlFileName fileName =
+                                new UrlFileName(scheme, uri.getHost(), uri.getPort(), defaultPort, null, null,
+                                        uri.getPath(), FileType.FILE, uri.getQuery());
+
+                        final AbstractFileSystem fileSystem = (AbstractFileSystem) VFSUtils.getBaseFileSystem();
                         return new DelegateFileObject(fileName, fileSystem, ramFile);
                     } finally {
                         userPreferences.setMonitorConnection(monitorConnection);
@@ -390,7 +388,7 @@ public final class Bootstrap {
         }
     }
 
-    private MonitorHttpClient getHttpClient(MonitorConnection monitorConnection) {
+    private MonitorHttpClient getHttpClient(final MonitorConnection monitorConnection) {
         if (monitorConnection == null) {
             return new SimpleWebServiceHttpClient();
         } else {
@@ -398,18 +396,20 @@ public final class Bootstrap {
         }
     }
 
-    private FileObject[] downloadFiles(String[] urls, FileObject targetDirectory, String[] targetFilenames,
-            WindowContext windowContext, MonitorHttpClient httpClient, MonitorConnection monitorConnection) {
-        final DownloadFilesActionListener downloadAction = new DownloadFilesActionListener(urls, targetDirectory,
-                targetFilenames, null, windowContext, httpClient);
+    private FileObject[] downloadFiles(final String[] urls, final FileObject targetDirectory,
+            final String[] targetFilenames, final WindowContext windowContext, MonitorHttpClient httpClient,
+            final MonitorConnection monitorConnection) {
+        final DownloadFilesActionListener downloadAction =
+                new DownloadFilesActionListener(urls, targetDirectory, targetFilenames, null, windowContext,
+                        httpClient);
         try {
             downloadAction.actionPerformed(null);
-            FileObject[] files = downloadAction.getFiles();
+            final FileObject[] files = downloadAction.getFiles();
             if (logger.isInfoEnabled()) {
                 logger.info("Succesfully downloaded urls: {}", Arrays.toString(urls));
             }
             return files;
-        } catch (SSLPeerUnverifiedException e) {
+        } catch (final SSLPeerUnverifiedException e) {
             downloadAction.cancelDownload(true);
             if (monitorConnection == null || monitorConnection.isAcceptUnverifiedSslPeers()) {
                 throw new IllegalStateException("Failed to verify SSL peer", e);
@@ -418,9 +418,9 @@ public final class Bootstrap {
                 logger.info("SSL peer not verified. Asking user for confirmation to accept urls: {}",
                         Arrays.toString(urls));
             }
-            int confirmation = JOptionPane.showConfirmDialog(null, "Unverified SSL peer.\n\n"
-                    + "The certificate presented by the server could not be verified.\n\n"
-                    + "Do you want to continue, accepting the unverified certificate?", "Unverified SSL peer",
+            final int confirmation = JOptionPane.showConfirmDialog(null,
+                    "Unverified SSL peer.\n\n" + "The certificate presented by the server could not be verified.\n\n"
+                            + "Do you want to continue, accepting the unverified certificate?", "Unverified SSL peer",
                     JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
             if (confirmation != JOptionPane.YES_OPTION) {
                 throw new IllegalStateException(e);
@@ -432,23 +432,23 @@ public final class Bootstrap {
         }
     }
 
-    private void exitCommandLine(DataCleanerConfiguration configuration, int statusCode) {
+    private void exitCommandLine(final DataCleanerConfiguration configuration, final int statusCode) {
         if (configuration != null) {
             logger.debug("Shutting down task runner");
             try {
                 configuration.getEnvironment().getTaskRunner().shutdown();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Shutting down TaskRunner threw unexpected exception", e);
             }
         }
-        ExitActionListener exitActionListener = _options.getExitActionListener();
+        final ExitActionListener exitActionListener = _options.getExitActionListener();
         if (exitActionListener != null) {
             exitActionListener.exit(statusCode);
         }
     }
 
-    private void loadExtensionSwapService(UserPreferences userPreferences, WindowContext windowContext,
-            DataCleanerConfiguration configuration, UsageLogger usageLogger) {
+    private void loadExtensionSwapService(final UserPreferences userPreferences, final WindowContext windowContext,
+            final DataCleanerConfiguration configuration, final UsageLogger usageLogger) {
         String websiteHostname = userPreferences.getAdditionalProperties().get("extensionswap.hostname");
         if (StringUtils.isNullOrEmpty(websiteHostname)) {
             websiteHostname = System.getProperty("extensionswap.hostname");
@@ -460,20 +460,15 @@ public final class Bootstrap {
             extensionSwapClient = new ExtensionSwapClient(windowContext, userPreferences, configuration);
         } else {
             logger.info("Using custom ExtensionSwap website hostname: {}", websiteHostname);
-            extensionSwapClient = new ExtensionSwapClient(websiteHostname, windowContext, userPreferences,
-                    configuration);
+            extensionSwapClient =
+                    new ExtensionSwapClient(websiteHostname, windowContext, userPreferences, configuration);
         }
-        ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(
-                extensionSwapClient, usageLogger);
+        final ExtensionSwapInstallationHttpContainer container =
+                new ExtensionSwapInstallationHttpContainer(extensionSwapClient, usageLogger);
 
         final Closeable closeableConnection = container.initialize();
         if (closeableConnection != null) {
-            windowContext.addExitActionListener(new ExitActionListener() {
-                @Override
-                public void exit(int statusCode) {
-                    FileHelper.safeClose(closeableConnection);
-                }
-            });
+            windowContext.addExitActionListener(statusCode -> FileHelper.safeClose(closeableConnection));
         }
     }
 }

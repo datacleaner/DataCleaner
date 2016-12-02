@@ -44,7 +44,7 @@ public class HttpClusterManagerFactory implements ClusterManagerFactory {
     private String password;
 
     @Override
-    public ClusterManager getClusterManager(TenantIdentifier tenant) {
+    public ClusterManager getClusterManager(final TenantIdentifier tenant) {
         final HttpClient httpClient = HttpClients.custom().useSystemProperties()
                 .setConnectionManager(new PoolingHttpClientConnectionManager()).build();
 
@@ -55,12 +55,12 @@ public class HttpClusterManagerFactory implements ClusterManagerFactory {
 
             final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
             credentialsProvider.setCredentials(new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), credentials);
-            
+
             context.setCredentialsProvider(credentialsProvider);
         }
 
         // use the server list
-        final List<String> finalEndpoints = new ArrayList<String>();
+        final List<String> finalEndpoints = new ArrayList<>();
         for (String endpoint : slaveServerUrls) {
             if (!endpoint.endsWith("/")) {
                 endpoint = endpoint + "/";
@@ -72,15 +72,15 @@ public class HttpClusterManagerFactory implements ClusterManagerFactory {
         return new HttpClusterManager(httpClient, context, finalEndpoints);
     }
 
-    public void setSlaveServerUrls(List<String> slaveServerUrls) {
+    public void setSlaveServerUrls(final List<String> slaveServerUrls) {
         this.slaveServerUrls = slaveServerUrls;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 }

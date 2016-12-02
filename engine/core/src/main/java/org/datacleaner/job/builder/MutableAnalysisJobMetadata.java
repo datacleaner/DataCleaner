@@ -46,14 +46,14 @@ public class MutableAnalysisJobMetadata implements AnalysisJobMetadata {
         this(AnalysisJobMetadata.EMPTY_METADATA);
     }
 
-    public MutableAnalysisJobMetadata(AnalysisJobMetadata metadata) {
+    public MutableAnalysisJobMetadata(final AnalysisJobMetadata metadata) {
         _jobName = metadata.getJobName();
         _jobVersion = metadata.getJobVersion();
         _jobDescription = metadata.getJobDescription();
         _author = metadata.getAuthor();
         _createdDate = metadata.getCreatedDate();
         _updatedDate = metadata.getUpdatedDate();
-        Map<String, String> variables = metadata.getVariables();
+        final Map<String, String> variables = metadata.getVariables();
         if (variables == null) {
             _variables = new HashMap<>();
         } else {
@@ -72,7 +72,7 @@ public class MutableAnalysisJobMetadata implements AnalysisJobMetadata {
         return _jobName;
     }
 
-    public void setJobName(String jobName) {
+    public void setJobName(final String jobName) {
         _jobName = jobName;
     }
 
@@ -81,7 +81,7 @@ public class MutableAnalysisJobMetadata implements AnalysisJobMetadata {
         return _jobVersion;
     }
 
-    public void setJobVersion(String jobVersion) {
+    public void setJobVersion(final String jobVersion) {
         _jobVersion = jobVersion;
     }
 
@@ -90,7 +90,7 @@ public class MutableAnalysisJobMetadata implements AnalysisJobMetadata {
         return _jobDescription;
     }
 
-    public void setJobDescription(String jobDescription) {
+    public void setJobDescription(final String jobDescription) {
         _jobDescription = jobDescription;
     }
 
@@ -99,7 +99,7 @@ public class MutableAnalysisJobMetadata implements AnalysisJobMetadata {
         return _author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(final String author) {
         _author = author;
     }
 
@@ -108,7 +108,7 @@ public class MutableAnalysisJobMetadata implements AnalysisJobMetadata {
         return _createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(final Date createdDate) {
         _createdDate = createdDate;
     }
 
@@ -117,7 +117,7 @@ public class MutableAnalysisJobMetadata implements AnalysisJobMetadata {
         return _updatedDate;
     }
 
-    public void setUpdatedDate(Date updatedDate) {
+    public void setUpdatedDate(final Date updatedDate) {
         _updatedDate = updatedDate;
     }
 

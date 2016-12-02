@@ -19,7 +19,7 @@
  */
 package org.datacleaner.util.convert;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,30 +34,27 @@ public class MapConverterTest {
         map1.put("foo", "bar");
         map1.put("hello", "");
         map1.put("lorem", "ipsum");
-        
+
         final MapStringToStringConverter c = new MapStringToStringConverter();
         final String str = c.toString(map1);
         final Map<?, ?> map2 = c.fromString(Map.class, str);
-        
+
         assertEquals(map1, map2);
-        
-        assertEquals("\"foo\"=\"bar\"\n" + 
-                "\"hello\"=\"\"\n" + 
-                "\"lorem\"=\"ipsum\"\n" + 
-                "", str);
+
+        assertEquals("\"foo\"=\"bar\"\n" + "\"hello\"=\"\"\n" + "\"lorem\"=\"ipsum\"\n" + "", str);
     }
-    
+
     @Test
     public void testEscapedCharacters() throws Exception {
         final Map<String, String> map1 = new LinkedHashMap<>();
         map1.put("foo", "bar,baz=foo");
-        
+
         final MapStringToStringConverter c = new MapStringToStringConverter();
         final String str = c.toString(map1);
         assertEquals("\"foo\"=\"bar,baz=foo\"\n", str);
 
         final Map<?, ?> map2 = c.fromString(Map.class, str);
-        
+
         assertEquals(map1, map2);
     }
 
@@ -67,16 +64,16 @@ public class MapConverterTest {
         map1.put("foo", "bar");
         map1.put("hello", null);
         map1.put("lorem", "ipsum");
-        
+
         final MapStringToStringConverter c = new MapStringToStringConverter();
         final String str = c.toString(map1);
         final Map<?, ?> map2 = c.fromString(Map.class, str);
-        
+
         assertEquals(map1, map2);
     }
-    
+
     @Test
     public void testHandleEmptyMap() throws Exception {
-        
+
     }
 }

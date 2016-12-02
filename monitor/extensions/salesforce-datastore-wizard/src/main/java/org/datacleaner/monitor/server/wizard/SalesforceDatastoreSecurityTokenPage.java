@@ -34,7 +34,7 @@ final class SalesforceDatastoreSecurityTokenPage extends AbstractFreemarkerWizar
 
     private final SalesforceDatastoreWizardSession _session;
 
-    public SalesforceDatastoreSecurityTokenPage(SalesforceDatastoreWizardSession session) {
+    public SalesforceDatastoreSecurityTokenPage(final SalesforceDatastoreWizardSession session) {
         _session = session;
     }
 
@@ -44,9 +44,10 @@ final class SalesforceDatastoreSecurityTokenPage extends AbstractFreemarkerWizar
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters) throws DCUserInputException {
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
+            throws DCUserInputException {
 
-        String securityToken = formParameters.get("sfdc_security_token").get(0);
+        final String securityToken = formParameters.get("sfdc_security_token").get(0);
         _session.setSecurityToken(securityToken);
 
         final boolean verifyConnection = getBoolean(formParameters, "verify_connection");
@@ -54,11 +55,11 @@ final class SalesforceDatastoreSecurityTokenPage extends AbstractFreemarkerWizar
             _session.testConnection();
         }
 
-        return new DatastoreNameAndDescriptionWizardPage(_session.getWizardContext(), getPageIndex() + 1, "Salesforce.com",
-                "Connects to the web services of Salesforce.com") {
+        return new DatastoreNameAndDescriptionWizardPage(_session.getWizardContext(), getPageIndex() + 1,
+                "Salesforce.com", "Connects to the web services of Salesforce.com") {
 
             @Override
-            protected WizardPageController nextPageController(String name, String description) {
+            protected WizardPageController nextPageController(final String name, final String description) {
                 _session.setName(name);
                 _session.setDescription(description);
 
@@ -74,7 +75,7 @@ final class SalesforceDatastoreSecurityTokenPage extends AbstractFreemarkerWizar
 
     @Override
     protected Map<String, Object> getFormModel() {
-        return new HashMap<String, Object>();
+        return new HashMap<>();
     }
 
 }

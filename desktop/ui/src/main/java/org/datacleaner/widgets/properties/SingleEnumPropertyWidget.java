@@ -21,55 +21,50 @@ package org.datacleaner.widgets.properties;
 
 import javax.inject.Inject;
 
+import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.EnumComboBoxListRenderer;
-import org.apache.metamodel.util.CollectionUtils;
 
 public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>> {
 
-	private final DCComboBox<Enum<?>> _comboBox;
+    private final DCComboBox<Enum<?>> _comboBox;
 
-	@Inject
-	public SingleEnumPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			ComponentBuilder componentBuilder) {
-		super(componentBuilder, propertyDescriptor);
+    @Inject
+    public SingleEnumPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder) {
+        super(componentBuilder, propertyDescriptor);
 
-		Enum<?>[] enumConstants = (Enum<?>[]) propertyDescriptor.getType().getEnumConstants();
+        Enum<?>[] enumConstants = (Enum<?>[]) propertyDescriptor.getType().getEnumConstants();
 
-		if (!propertyDescriptor.isRequired()) {
-			enumConstants = CollectionUtils.array(new Enum<?>[] { null }, enumConstants);
-		}
+        if (!propertyDescriptor.isRequired()) {
+            enumConstants = CollectionUtils.array(new Enum<?>[] { null }, enumConstants);
+        }
 
-		_comboBox = new DCComboBox<Enum<?>>(enumConstants);
-		_comboBox.setRenderer(new EnumComboBoxListRenderer());
+        _comboBox = new DCComboBox<>(enumConstants);
+        _comboBox.setRenderer(new EnumComboBoxListRenderer());
 
-		Enum<?> currentValue = getCurrentValue();
-		_comboBox.setSelectedItem(currentValue);
+        final Enum<?> currentValue = getCurrentValue();
+        _comboBox.setSelectedItem(currentValue);
 
-		addComboListener(new Listener<Enum<?>>() {
-			@Override
-			public void onItemSelected(Enum<?> item) {
-				fireValueChanged();
-			}
-		});
-		add(_comboBox);
-	}
-	
-	public void addComboListener(Listener<Enum<?>> listener) {
-		_comboBox.addListener(listener);
-	}
+        addComboListener(item -> fireValueChanged());
+        add(_comboBox);
+    }
 
-	@Override
-	public Enum<?> getValue() {
-		return (Enum<?>) _comboBox.getSelectedItem();
-	}
+    public void addComboListener(final Listener<Enum<?>> listener) {
+        _comboBox.addListener(listener);
+    }
 
-	@Override
-	protected void setValue(Enum<?> value) {
-		_comboBox.setSelectedItem(value);
-	}
+    @Override
+    public Enum<?> getValue() {
+        return (Enum<?>) _comboBox.getSelectedItem();
+    }
+
+    @Override
+    protected void setValue(final Enum<?> value) {
+        _comboBox.setSelectedItem(value);
+    }
 
 }

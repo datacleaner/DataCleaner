@@ -32,114 +32,114 @@ import org.apache.metamodel.util.HasNameMapper;
 
 public class ReferenceDataCatalogImpl implements ReferenceDataCatalog {
 
-	private static final long serialVersionUID = 1L;
-	private final Collection<Dictionary> _dictionaries;
-	private final Collection<SynonymCatalog> _synonymCatalogs;
-	private final Collection<StringPattern> _stringPatterns;
+    private static final long serialVersionUID = 1L;
+    private final Collection<Dictionary> _dictionaries;
+    private final Collection<SynonymCatalog> _synonymCatalogs;
+    private final Collection<StringPattern> _stringPatterns;
 
-	public ReferenceDataCatalogImpl() {
-		this(new ArrayList<Dictionary>(), new ArrayList<SynonymCatalog>(), new ArrayList<StringPattern>());
-	}
+    public ReferenceDataCatalogImpl() {
+        this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    }
 
-	public ReferenceDataCatalogImpl(Collection<Dictionary> dictionaries, Collection<SynonymCatalog> synonymCatalogs,
-			Collection<StringPattern> stringPatterns) {
-		if (dictionaries == null) {
-			throw new IllegalArgumentException("dictionaries cannot be null");
-		}
-		Set<String> uniqueNames = new HashSet<String>();
-		for (Dictionary dictionary : dictionaries) {
-			String name = dictionary.getName();
-			if (uniqueNames.contains(name)) {
-				throw new IllegalStateException("Duplicate dictionary names: " + name);
-			} else {
-				uniqueNames.add(name);
-			}
-		}
+    public ReferenceDataCatalogImpl(final Collection<Dictionary> dictionaries,
+            final Collection<SynonymCatalog> synonymCatalogs, final Collection<StringPattern> stringPatterns) {
+        if (dictionaries == null) {
+            throw new IllegalArgumentException("dictionaries cannot be null");
+        }
+        final Set<String> uniqueNames = new HashSet<>();
+        for (final Dictionary dictionary : dictionaries) {
+            final String name = dictionary.getName();
+            if (uniqueNames.contains(name)) {
+                throw new IllegalStateException("Duplicate dictionary names: " + name);
+            } else {
+                uniqueNames.add(name);
+            }
+        }
 
-		if (synonymCatalogs == null) {
-			throw new IllegalArgumentException("synonymCatalogs cannot be null");
-		}
-		uniqueNames.clear();
-		for (SynonymCatalog synonymCatalog : synonymCatalogs) {
-			String name = synonymCatalog.getName();
-			if (uniqueNames.contains(name)) {
-				throw new IllegalStateException("Duplicate synonym catalog names: " + name);
-			} else {
-				uniqueNames.add(name);
-			}
-		}
+        if (synonymCatalogs == null) {
+            throw new IllegalArgumentException("synonymCatalogs cannot be null");
+        }
+        uniqueNames.clear();
+        for (final SynonymCatalog synonymCatalog : synonymCatalogs) {
+            final String name = synonymCatalog.getName();
+            if (uniqueNames.contains(name)) {
+                throw new IllegalStateException("Duplicate synonym catalog names: " + name);
+            } else {
+                uniqueNames.add(name);
+            }
+        }
 
-		if (stringPatterns == null) {
-			throw new IllegalArgumentException("stringPatterns cannot be null");
-		}
-		uniqueNames.clear();
-		for (StringPattern stringPattern : stringPatterns) {
-			String name = stringPattern.getName();
-			if (uniqueNames.contains(name)) {
-				throw new IllegalStateException("Duplicate string pattern names: " + name);
-			} else {
-				uniqueNames.add(name);
-			}
-		}
-		_dictionaries = dictionaries;
-		_synonymCatalogs = synonymCatalogs;
-		_stringPatterns = stringPatterns;
-	}
+        if (stringPatterns == null) {
+            throw new IllegalArgumentException("stringPatterns cannot be null");
+        }
+        uniqueNames.clear();
+        for (final StringPattern stringPattern : stringPatterns) {
+            final String name = stringPattern.getName();
+            if (uniqueNames.contains(name)) {
+                throw new IllegalStateException("Duplicate string pattern names: " + name);
+            } else {
+                uniqueNames.add(name);
+            }
+        }
+        _dictionaries = dictionaries;
+        _synonymCatalogs = synonymCatalogs;
+        _stringPatterns = stringPatterns;
+    }
 
-	@Override
-	public String[] getDictionaryNames() {
-		return getNames(_dictionaries);
-	}
+    @Override
+    public String[] getDictionaryNames() {
+        return getNames(_dictionaries);
+    }
 
-	private String[] getNames(Collection<? extends HasName> items) {
-		List<String> names = CollectionUtils.map(items, new HasNameMapper());
-		Collections.sort(names);
-		return names.toArray(new String[names.size()]);
-	}
+    private String[] getNames(final Collection<? extends HasName> items) {
+        final List<String> names = CollectionUtils.map(items, new HasNameMapper());
+        Collections.sort(names);
+        return names.toArray(new String[names.size()]);
+    }
 
-	@Override
-	public Dictionary getDictionary(String name) {
-		if (name != null) {
-			for (Dictionary d : _dictionaries) {
-				if (name.equals(d.getName())) {
-					return d;
-				}
-			}
-		}
-		return null;
-	}
+    @Override
+    public Dictionary getDictionary(final String name) {
+        if (name != null) {
+            for (final Dictionary d : _dictionaries) {
+                if (name.equals(d.getName())) {
+                    return d;
+                }
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public String[] getSynonymCatalogNames() {
-		return getNames(_synonymCatalogs);
-	}
+    @Override
+    public String[] getSynonymCatalogNames() {
+        return getNames(_synonymCatalogs);
+    }
 
-	@Override
-	public SynonymCatalog getSynonymCatalog(String name) {
-		if (name != null) {
-			for (SynonymCatalog sc : _synonymCatalogs) {
-				if (name.equals(sc.getName())) {
-					return sc;
-				}
-			}
-		}
-		return null;
-	}
+    @Override
+    public SynonymCatalog getSynonymCatalog(final String name) {
+        if (name != null) {
+            for (final SynonymCatalog sc : _synonymCatalogs) {
+                if (name.equals(sc.getName())) {
+                    return sc;
+                }
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public StringPattern getStringPattern(String name) {
-		if (name != null) {
-			for (StringPattern sp : _stringPatterns) {
-				if (name.equals(sp.getName())) {
-					return sp;
-				}
-			}
-		}
-		return null;
-	}
+    @Override
+    public StringPattern getStringPattern(final String name) {
+        if (name != null) {
+            for (final StringPattern sp : _stringPatterns) {
+                if (name.equals(sp.getName())) {
+                    return sp;
+                }
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public String[] getStringPatternNames() {
-		return getNames(_stringPatterns);
-	}
+    @Override
+    public String[] getStringPatternNames() {
+        return getNames(_stringPatterns);
+    }
 }

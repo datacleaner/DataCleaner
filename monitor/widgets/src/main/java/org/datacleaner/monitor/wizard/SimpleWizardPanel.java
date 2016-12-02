@@ -41,7 +41,7 @@ public class SimpleWizardPanel implements WizardPanel {
     private final WizardProgressBar _progressBar;
     private FlowPanel _wizardFlowPanel;
 
-    public SimpleWizardPanel(String htmlDivId) {
+    public SimpleWizardPanel(final String htmlDivId) {
         super();
         _htmlDivId = htmlDivId;
         _buttonPanel = new ButtonPanel();
@@ -51,7 +51,7 @@ public class SimpleWizardPanel implements WizardPanel {
     }
 
     private FlowPanel getWizardFlowPanel() {
-        FlowPanel wizardFlowPanel = new FlowPanel();
+        final FlowPanel wizardFlowPanel = new FlowPanel();
         wizardFlowPanel.add(_progressBar);
         wizardFlowPanel.add(_contentPanel);
         wizardFlowPanel.add(_buttonPanel);
@@ -61,18 +61,18 @@ public class SimpleWizardPanel implements WizardPanel {
     }
 
     private SimplePanel getContentPanel() {
-        SimplePanel contentPanel = new ScrollPanel();
+        final SimplePanel contentPanel = new ScrollPanel();
         contentPanel.setStyleName("SimpleWizardPanelContent");
         return contentPanel;
     }
 
-    public void setHeader(String header) {
+    public void setHeader(final String header) {
         final Widget firstWidget = _wizardFlowPanel.getWidget(0);
         if (firstWidget instanceof HeadingLabel) {
-            HeadingLabel headingLabel = (HeadingLabel) firstWidget;
+            final HeadingLabel headingLabel = (HeadingLabel) firstWidget;
             headingLabel.setText(header);
         } else {
-            HeadingLabel headingLabel = new HeadingLabel(header);
+            final HeadingLabel headingLabel = new HeadingLabel(header);
             _wizardFlowPanel.insert(headingLabel, 0);
         }
     }
@@ -83,7 +83,7 @@ public class SimpleWizardPanel implements WizardPanel {
     }
 
     @Override
-    public void setContent(IsWidget w) {
+    public void setContent(final IsWidget w) {
         _contentPanel.setWidget(w);
     }
 
@@ -106,14 +106,14 @@ public class SimpleWizardPanel implements WizardPanel {
     public WizardProgressBar getProgressBar() {
         return _progressBar;
     }
-    
+
     @Override
     public void refreshUI() {
         // do nothing
     }
 
     @Override
-    public void addStyleClass(String styleClass) {
+    public void addStyleClass(final String styleClass) {
         getWizardWidget().addStyleName(styleClass);
     }
 

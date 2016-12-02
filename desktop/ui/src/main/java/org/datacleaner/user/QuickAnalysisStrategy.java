@@ -39,7 +39,7 @@ import org.datacleaner.util.ReflectionUtils;
 
 /**
  * Defines the strategy and rules for doing quick analysis.
- * 
+ *
  * @see QuickAnalysisActionListener
  */
 public class QuickAnalysisStrategy implements Serializable {
@@ -52,14 +52,26 @@ public class QuickAnalysisStrategy implements Serializable {
     private final boolean includeValueDistribution;
     private final boolean includePatternFinder;
 
+    public QuickAnalysisStrategy() {
+        this(5, false, false);
+    }
+
+    public QuickAnalysisStrategy(final int columnsPerAnalyzer, final boolean includeValueDistribution,
+            final boolean includePatternFinder) {
+        this.columnsPerAnalyzer = columnsPerAnalyzer;
+        this.includeValueDistribution = includeValueDistribution;
+        this.includePatternFinder = includePatternFinder;
+    }
+
     /**
      * Saves a {@link QuickAnalysisStrategy} to a {@link UserPreferences}
      * object.
-     * 
+     *
      * @param strategy
      * @param userPreferences
      */
-    public static void saveToUserPreferences(QuickAnalysisStrategy strategy, UserPreferences userPreferences) {
+    public static void saveToUserPreferences(final QuickAnalysisStrategy strategy,
+            final UserPreferences userPreferences) {
         final Map<String, String> properties = userPreferences.getAdditionalProperties();
 
         properties.put(USER_PREFERENCES_NAMESPACE + ".columnsPerAnalyzer", "" + strategy.columnsPerAnalyzer);
@@ -71,31 +83,21 @@ public class QuickAnalysisStrategy implements Serializable {
     /**
      * Loads {@link QuickAnalysisStrategy} from a {@link UserPreferences}
      * object.
-     * 
+     *
      * @param userPreferences
      * @return
      */
-    public static QuickAnalysisStrategy loadFromUserPreferences(UserPreferences userPreferences) {
+    public static QuickAnalysisStrategy loadFromUserPreferences(final UserPreferences userPreferences) {
         final Map<String, String> properties = userPreferences.getAdditionalProperties();
 
-        final int columnsPerAnalyzer = MapUtils.getIntValue(properties, USER_PREFERENCES_NAMESPACE
-                + ".columnsPerAnalyzer", 5);
-        final boolean includeValueDistribution = MapUtils.getBooleanValue(properties, USER_PREFERENCES_NAMESPACE
-                + ".includeValueDistribution", false);
-        final boolean includePatternFinder = MapUtils.getBooleanValue(properties, USER_PREFERENCES_NAMESPACE
-                + ".includePatternFinder", false);
+        final int columnsPerAnalyzer =
+                MapUtils.getIntValue(properties, USER_PREFERENCES_NAMESPACE + ".columnsPerAnalyzer", 5);
+        final boolean includeValueDistribution =
+                MapUtils.getBooleanValue(properties, USER_PREFERENCES_NAMESPACE + ".includeValueDistribution", false);
+        final boolean includePatternFinder =
+                MapUtils.getBooleanValue(properties, USER_PREFERENCES_NAMESPACE + ".includePatternFinder", false);
 
         return new QuickAnalysisStrategy(columnsPerAnalyzer, includeValueDistribution, includePatternFinder);
-    }
-
-    public QuickAnalysisStrategy() {
-        this(5, false, false);
-    }
-
-    public QuickAnalysisStrategy(int columnsPerAnalyzer, boolean includeValueDistribution, boolean includePatternFinder) {
-        this.columnsPerAnalyzer = columnsPerAnalyzer;
-        this.includeValueDistribution = includeValueDistribution;
-        this.includePatternFinder = includePatternFinder;
     }
 
     public boolean isIncludePatternFinder() {
@@ -110,13 +112,13 @@ public class QuickAnalysisStrategy implements Serializable {
         return columnsPerAnalyzer;
     }
 
-    public void configureAnalysisJobBuilder(AnalysisJobBuilder ajb) {
-        final List<InputColumn<?>> booleanColumns = new ArrayList<InputColumn<?>>();
-        final List<InputColumn<?>> stringColumns = new ArrayList<InputColumn<?>>();
-        final List<InputColumn<?>> numberColumns = new ArrayList<InputColumn<?>>();
-        final List<InputColumn<?>> dateTimeColumns = new ArrayList<InputColumn<?>>();
+    public void configureAnalysisJobBuilder(final AnalysisJobBuilder ajb) {
+        final List<InputColumn<?>> booleanColumns = new ArrayList<>();
+        final List<InputColumn<?>> stringColumns = new ArrayList<>();
+        final List<InputColumn<?>> numberColumns = new ArrayList<>();
+        final List<InputColumn<?>> dateTimeColumns = new ArrayList<>();
 
-        for (InputColumn<?> inputColumn : ajb.getSourceColumns()) {
+        for (final InputColumn<?> inputColumn : ajb.getSourceColumns()) {
             final Class<?> dataType = inputColumn.getDataType();
             if (ReflectionUtils.isBoolean(dataType)) {
                 booleanColumns.add(inputColumn);
@@ -149,18 +151,18 @@ public class QuickAnalysisStrategy implements Serializable {
      * Registers analyzers and up to 4 columns per analyzer. This restriction is
      * to ensure that results will be nicely readable. A table might contain
      * hundreds of columns.
-     * 
+     *
      * @param ajb
      * @param analyzerClass
      * @param columns
      */
-    private void createAnalyzers(AnalysisJobBuilder ajb, Class<? extends Analyzer<?>> analyzerClass,
-            List<InputColumn<?>> columns) {
+    private void createAnalyzers(final AnalysisJobBuilder ajb, final Class<? extends Analyzer<?>> analyzerClass,
+            final List<InputColumn<?>> columns) {
         final int columnsPerAnalyzer = getColumnsPerAnalyzer();
 
         AnalyzerComponentBuilder<?> analyzerJobBuilder = ajb.addAnalyzer(analyzerClass);
         int columnCount = 0;
-        for (InputColumn<?> inputColumn : columns) {
+        for (final InputColumn<?> inputColumn : columns) {
             if (columnCount == columnsPerAnalyzer) {
                 analyzerJobBuilder = ajb.addAnalyzer(analyzerClass);
                 columnCount = 0;

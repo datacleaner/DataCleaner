@@ -19,29 +19,29 @@
  */
 package org.datacleaner.connection;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.Resource;
 
+import junit.framework.TestCase;
+
 public class CsvDatastoreTest extends TestCase {
 
     public void testConvertToColumnWithNoSchema() throws Exception {
-        CsvDatastore datastore = new CsvDatastore("foo", "src/test/resources/projects.csv");
-        SchemaNavigator schemaNavigator = datastore.openConnection().getSchemaNavigator();
+        final CsvDatastore datastore = new CsvDatastore("foo", "src/test/resources/projects.csv");
+        final SchemaNavigator schemaNavigator = datastore.openConnection().getSchemaNavigator();
         Column col = schemaNavigator.convertToColumn("product");
         assertNotNull(col);
 
-        Table table = datastore.openConnection().getDataContext().getDefaultSchema().getTables()[0];
+        final Table table = datastore.openConnection().getDataContext().getDefaultSchema().getTables()[0];
         assertEquals("projects.csv", table.getName());
         col = schemaNavigator.convertToColumn("projects.csv.product");
         assertNotNull(col);
     }
-    
+
     public void testGetResourceBasedOnString() throws Exception {
-        CsvDatastore datastore = new CsvDatastore("foo", "src/test/resources/projects.csv");
-        Resource resource = datastore.getResource();
+        final CsvDatastore datastore = new CsvDatastore("foo", "src/test/resources/projects.csv");
+        final Resource resource = datastore.getResource();
         assertNotNull(resource);
         assertEquals("projects.csv", resource.getName());
     }

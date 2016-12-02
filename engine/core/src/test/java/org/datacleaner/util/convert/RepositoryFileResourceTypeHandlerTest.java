@@ -23,7 +23,6 @@ import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFileResource;
 import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.util.convert.RepositoryFileResourceTypeHandler;
 import org.easymock.EasyMock;
 
 import junit.framework.TestCase;
@@ -31,26 +30,26 @@ import junit.framework.TestCase;
 public class RepositoryFileResourceTypeHandlerTest extends TestCase {
 
     public void testConvertFromAndToString() throws Exception {
-        RepositoryFile mockFile = EasyMock.createMock(RepositoryFile.class);
-        RepositoryFolder mockFolder = EasyMock.createMock(RepositoryFolder.class);
-        Repository mockRepo = EasyMock.createMock(Repository.class);
-        
+        final RepositoryFile mockFile = EasyMock.createMock(RepositoryFile.class);
+        final RepositoryFolder mockFolder = EasyMock.createMock(RepositoryFolder.class);
+        final Repository mockRepo = EasyMock.createMock(Repository.class);
+
         EasyMock.expect(mockRepo.getFolder("ten1")).andReturn(mockFolder);
         EasyMock.expect(mockFolder.getQualifiedPath()).andReturn("/ten1").times(2);
         EasyMock.expect(mockFile.getQualifiedPath()).andReturn("/ten1/foo/bar.txt");
         EasyMock.expect(mockRepo.getRepositoryNode("/ten1/foo/bar.txt")).andReturn(mockFile);
-        
+
         EasyMock.replay(mockFile, mockFolder, mockRepo);
-        
-        RepositoryFileResourceTypeHandler handler = new RepositoryFileResourceTypeHandler(mockRepo, "ten1");
-        
-        String path = handler.createPath(new RepositoryFileResource(mockFile));
+
+        final RepositoryFileResourceTypeHandler handler = new RepositoryFileResourceTypeHandler(mockRepo, "ten1");
+
+        final String path = handler.createPath(new RepositoryFileResource(mockFile));
         assertEquals("foo/bar.txt", path);
-        
-        RepositoryFileResource resource = handler.parsePath(path);
-        RepositoryFile returnedFile = resource.getRepositoryFile();
+
+        final RepositoryFileResource resource = handler.parsePath(path);
+        final RepositoryFile returnedFile = resource.getRepositoryFile();
         assertSame(mockFile, returnedFile);
-        
+
         EasyMock.verify(mockFile, mockFolder, mockRepo);
     }
 }

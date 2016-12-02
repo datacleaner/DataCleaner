@@ -35,7 +35,7 @@ final class DatastoreOutputUtils {
             throw new IllegalArgumentException("Cannot create safe name from empty/null string: " + str);
         }
 
-        CharIterator ci = new CharIterator(str);
+        final CharIterator ci = new CharIterator(str);
         while (ci.hasNext()) {
             ci.next();
             if (!ci.isLetter() && !ci.isDigit()) {
@@ -51,7 +51,7 @@ final class DatastoreOutputUtils {
         return str;
     }
 
-    public static String getJdbcUrl(File directory, String dbName) {
+    public static String getJdbcUrl(final File directory, final String dbName) {
         final String urlSuffix = directory.getPath() + File.separatorChar + safeName(dbName);
         return "jdbc:h2:" + urlSuffix + ";FILE_LOCK=FS";
     }

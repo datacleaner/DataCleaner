@@ -25,8 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import junit.framework.TestCase;
+import java.util.stream.Collectors;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
@@ -54,23 +53,24 @@ import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
 import org.easymock.IArgumentMatcher;
 
+import junit.framework.TestCase;
+
 @SuppressWarnings("deprecation")
 public class AnalysisJobBuilderTest extends TestCase {
 
     private AnalysisJobBuilder analysisJobBuilder;
-    private DataCleanerConfiguration configuration;
     private Datastore datastore;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        Collection<Datastore> datastores = new LinkedList<Datastore>();
+        final Collection<Datastore> datastores = new LinkedList<>();
 
         datastore = TestHelper.createSampleDatabaseDatastore("my db");
         datastores.add(datastore);
 
-        configuration = new DataCleanerConfigurationImpl().withDatastores(datastores);
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastores);
 
         analysisJobBuilder = new AnalysisJobBuilder(configuration);
         analysisJobBuilder.setDatastore("my db");
@@ -78,33 +78,33 @@ public class AnalysisJobBuilderTest extends TestCase {
 
     public void testValidate() throws Exception {
         analysisJobBuilder.addSourceColumns("PUBLIC.EMPLOYEES.REPORTSTO");
-        MetaModelInputColumn reportsToColumn = analysisJobBuilder.getSourceColumns().get(0);
+        final MetaModelInputColumn reportsToColumn = analysisJobBuilder.getSourceColumns().get(0);
 
-        FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter = analysisJobBuilder
-                .addFilter(MaxRowsFilter.class);
+        final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter =
+                analysisJobBuilder.addFilter(MaxRowsFilter.class);
         filter.setConfiguredProperty("Max rows", -1);
         analysisJobBuilder.addAnalyzer(NumberAnalyzer.class).addInputColumn(reportsToColumn);
 
         try {
             analysisJobBuilder.isConfigured(true);
             fail("Exception expected");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertEquals("Max rows value must be a positive integer", e.getMessage());
         }
     }
 
     public void testPreventCyclicFilterDependencies() throws Exception {
         analysisJobBuilder.addSourceColumns("PUBLIC.EMPLOYEES.REPORTSTO");
-        FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter1 = analysisJobBuilder
-                .addFilter(MaxRowsFilter.class);
-        FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter2 = analysisJobBuilder
-                .addFilter(MaxRowsFilter.class);
+        final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter1 =
+                analysisJobBuilder.addFilter(MaxRowsFilter.class);
+        final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter2 =
+                analysisJobBuilder.addFilter(MaxRowsFilter.class);
         filter1.setRequirement(filter2.getFilterOutcome(MaxRowsFilter.Category.INVALID));
 
         try {
             filter2.setRequirement(filter1.getFilterOutcome(MaxRowsFilter.Category.VALID));
             fail("Exception expected");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals("Cyclic dependency detected when setting requirement: FilterOutcome[category=VALID]",
                     e.getMessage());
         }
@@ -116,20 +116,20 @@ public class AnalysisJobBuilderTest extends TestCase {
     }
 
     public void testToString() throws Exception {
-        AnalyzerComponentBuilder<StringAnalyzer> ajb = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
-        TransformerComponentBuilder<ConvertToStringTransformer> tjb = analysisJobBuilder
-                .addTransformer(ConvertToStringTransformer.class);
+        final AnalyzerComponentBuilder<StringAnalyzer> ajb = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
+        final TransformerComponentBuilder<ConvertToStringTransformer> tjb =
+                analysisJobBuilder.addTransformer(ConvertToStringTransformer.class);
 
         assertEquals("AnalyzerComponentBuilder[analyzer=String analyzer,inputColumns=[]]", ajb.toString());
         assertEquals("TransformerComponentBuilder[transformer=Convert to string,inputColumns=[]]", tjb.toString());
     }
 
     public void testToAnalysisJob() throws Exception {
-        Table employeeTable = datastore.openConnection().getDataContext().getDefaultSchema()
-                .getTableByName("EMPLOYEES");
+        final Table employeeTable =
+                datastore.openConnection().getDataContext().getDefaultSchema().getTableByName("EMPLOYEES");
         assertNotNull(employeeTable);
 
-        Column emailColumn = employeeTable.getColumnByName("EMAIL");
+        final Column emailColumn = employeeTable.getColumnByName("EMAIL");
         analysisJobBuilder.addSourceColumns(employeeTable.getColumnByName("EMPLOYEENUMBER"),
                 employeeTable.getColumnByName("FIRSTNAME"), emailColumn);
 
@@ -137,10 +137,10 @@ public class AnalysisJobBuilderTest extends TestCase {
         assertFalse(analysisJobBuilder.containsSourceColumn(null));
         assertFalse(analysisJobBuilder.containsSourceColumn(employeeTable.getColumnByName("LASTNAME")));
 
-        TransformerComponentBuilder<ConvertToStringTransformer> transformerJobBuilder = analysisJobBuilder
-                .addTransformer(ConvertToStringTransformer.class);
+        final TransformerComponentBuilder<ConvertToStringTransformer> transformerJobBuilder =
+                analysisJobBuilder.addTransformer(ConvertToStringTransformer.class);
 
-        Collection<InputColumn<?>> numberColumns = analysisJobBuilder.getAvailableInputColumns(Number.class);
+        final Collection<InputColumn<?>> numberColumns = analysisJobBuilder.getAvailableInputColumns(Number.class);
         assertEquals(1, numberColumns.size());
         assertEquals("[MetaModelInputColumn[PUBLIC.EMPLOYEES.EMPLOYEENUMBER]]",
                 Arrays.toString(numberColumns.toArray()));
@@ -151,13 +151,12 @@ public class AnalysisJobBuilderTest extends TestCase {
         // the AnalyzerJob has no Analyzers yet, so it is not "configured".
         assertFalse(analysisJobBuilder.isConfigured());
 
-        AnalyzerComponentBuilder<StringAnalyzer> analyzerJobBuilder = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
+        final AnalyzerComponentBuilder<StringAnalyzer> analyzerJobBuilder =
+                analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
 
-        List<InputColumn<?>> stringInputColumns = analysisJobBuilder.getAvailableInputColumns(String.class);
-        Set<String> columnNames = new TreeSet<String>();
-        for (InputColumn<?> inputColumn : stringInputColumns) {
-            columnNames.add(inputColumn.getName());
-        }
+        final List<InputColumn<?>> stringInputColumns = analysisJobBuilder.getAvailableInputColumns(String.class);
+        final Set<String> columnNames =
+                stringInputColumns.stream().map(InputColumn::getName).collect(Collectors.toCollection(TreeSet::new));
         assertEquals("[EMAIL, EMPLOYEENUMBER (as string), FIRSTNAME]", columnNames.toString());
 
         analyzerJobBuilder.addInputColumns(stringInputColumns);
@@ -167,7 +166,7 @@ public class AnalysisJobBuilderTest extends TestCase {
         // transformers.
         assertTrue(analysisJobBuilder.isConfigured());
 
-        AnalysisJob analysisJob = analysisJobBuilder.toAnalysisJob();
+        final AnalysisJob analysisJob = analysisJobBuilder.toAnalysisJob();
 
         assertEquals("ImmutableAnalysisJob[sourceColumns=3,filterJobs=0,transformerJobs=1,analyzerJobs=1]",
                 analysisJob.toString());
@@ -177,50 +176,52 @@ public class AnalysisJobBuilderTest extends TestCase {
         assertEquals(analysisJobBuilder.toAnalysisJob(), analysisJob);
         assertEquals(analysisJobBuilder.toAnalysisJob().hashCode(), analysisJob.hashCode());
 
-        Collection<InputColumn<?>> sourceColumns = analysisJob.getSourceColumns();
+        final Collection<InputColumn<?>> sourceColumns = analysisJob.getSourceColumns();
         assertEquals(3, sourceColumns.size());
 
         try {
-            sourceColumns.add(new MockInputColumn<Boolean>("bla", Boolean.class));
+            sourceColumns.add(new MockInputColumn<>("bla", Boolean.class));
             fail("Exception expected");
-        } catch (UnsupportedOperationException e) {
+        } catch (final UnsupportedOperationException e) {
             // do nothing
         }
 
-        Collection<TransformerJob> transformerJobs = analysisJob.getTransformerJobs();
+        final Collection<TransformerJob> transformerJobs = analysisJob.getTransformerJobs();
         assertEquals(1, transformerJobs.size());
 
-        TransformerJob transformerJob = transformerJobs.iterator().next();
+        final TransformerJob transformerJob = transformerJobs.iterator().next();
         assertEquals("ImmutableTransformerJob[name=null,transformer=Convert to string]", transformerJob.toString());
 
         assertEquals("[MetaModelInputColumn[PUBLIC.EMPLOYEES.EMPLOYEENUMBER]]",
                 Arrays.toString(transformerJob.getInput()));
 
-        Collection<AnalyzerJob> analyzerJobs = analysisJob.getAnalyzerJobs();
+        final Collection<AnalyzerJob> analyzerJobs = analysisJob.getAnalyzerJobs();
         assertEquals(1, analyzerJobs.size());
 
-        AnalyzerJob analyzerJob = analyzerJobs.iterator().next();
+        final AnalyzerJob analyzerJob = analyzerJobs.iterator().next();
         assertEquals("ImmutableAnalyzerJob[name=null,analyzer=String analyzer]", analyzerJob.toString());
     }
 
     public void testGetAvailableUnfilteredBeans() throws Exception {
-        Table customersTable = datastore.openConnection().getDataContext().getDefaultSchema()
-                .getTableByName("CUSTOMERS");
+        final Table customersTable =
+                datastore.openConnection().getDataContext().getDefaultSchema().getTableByName("CUSTOMERS");
         assertNotNull(customersTable);
 
         analysisJobBuilder.addSourceColumns(customersTable.getColumnByName("ADDRESSLINE1"),
                 customersTable.getColumnByName("ADDRESSLINE2"));
 
-        AnalyzerComponentBuilder<StringAnalyzer> saAjb = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
+        final AnalyzerComponentBuilder<StringAnalyzer> saAjb = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
         saAjb.addInputColumns(analysisJobBuilder.getSourceColumns());
 
-        FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb = analysisJobBuilder.addFilter(MaxRowsFilter.class);
+        final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb =
+                analysisJobBuilder.addFilter(MaxRowsFilter.class);
 
         List<ComponentBuilder> result = analysisJobBuilder.getAvailableUnfilteredBeans(fjb);
         assertEquals(1, result.size());
         assertEquals(result.get(0), saAjb);
 
-        AnalyzerComponentBuilder<PatternFinderAnalyzer> pfAjb = analysisJobBuilder.addAnalyzer(PatternFinderAnalyzer.class);
+        final AnalyzerComponentBuilder<PatternFinderAnalyzer> pfAjb =
+                analysisJobBuilder.addAnalyzer(PatternFinderAnalyzer.class);
         pfAjb.addInputColumns(analysisJobBuilder.getSourceColumns());
 
         result = analysisJobBuilder.getAvailableUnfilteredBeans(fjb);
@@ -237,18 +238,18 @@ public class AnalysisJobBuilderTest extends TestCase {
 
     public void testRemoveFilter() throws Exception {
         try (DatastoreConnection con = datastore.openConnection()) {
-            FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter1 = analysisJobBuilder
-                    .addFilter(MaxRowsFilter.class);
+            final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter1 =
+                    analysisJobBuilder.addFilter(MaxRowsFilter.class);
             analysisJobBuilder.setDefaultRequirement(filter1, MaxRowsFilter.Category.VALID);
 
-            TransformerComponentBuilder<EmailStandardizerTransformer> emailStdTransformer = analysisJobBuilder
-                    .addTransformer(EmailStandardizerTransformer.class);
-            ComponentRequirement componentRequirement = emailStdTransformer.getComponentRequirement();
-            assertSame(filter1.getFilterOutcome(MaxRowsFilter.Category.VALID), componentRequirement
-                    .getProcessingDependencies().iterator().next());
+            final TransformerComponentBuilder<EmailStandardizerTransformer> emailStdTransformer =
+                    analysisJobBuilder.addTransformer(EmailStandardizerTransformer.class);
+            final ComponentRequirement componentRequirement = emailStdTransformer.getComponentRequirement();
+            assertSame(filter1.getFilterOutcome(MaxRowsFilter.Category.VALID),
+                    componentRequirement.getProcessingDependencies().iterator().next());
 
-            FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter2 = analysisJobBuilder
-                    .addFilter(MaxRowsFilter.class);
+            final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter2 =
+                    analysisJobBuilder.addFilter(MaxRowsFilter.class);
             filter2.setRequirement(null);
             filter1.setRequirement(filter2.getFilterOutcome(MaxRowsFilter.Category.VALID));
 
@@ -257,33 +258,34 @@ public class AnalysisJobBuilderTest extends TestCase {
             analysisJobBuilder.addSourceColumn(con.getSchemaNavigator().convertToColumn("EMPLOYEES.EMAIL"));
             emailStdTransformer.addInputColumn(analysisJobBuilder.getSourceColumnByName("email"));
 
-            AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzer = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
+            final AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzer =
+                    analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
             stringAnalyzer.addInputColumns(emailStdTransformer.getOutputColumns());
 
-            assertSame(filter1.getFilterOutcome(MaxRowsFilter.Category.VALID), stringAnalyzer.getComponentRequirement()
-                    .getProcessingDependencies().iterator().next());
+            assertSame(filter1.getFilterOutcome(MaxRowsFilter.Category.VALID),
+                    stringAnalyzer.getComponentRequirement().getProcessingDependencies().iterator().next());
 
             analysisJobBuilder.removeFilter(filter1);
 
             assertNull(analysisJobBuilder.getDefaultRequirement());
-            assertSame(filter2.getFilterOutcome(MaxRowsFilter.Category.VALID), stringAnalyzer.getComponentRequirement()
-                    .getProcessingDependencies().iterator().next());
-            assertSame(filter2.getFilterOutcome(MaxRowsFilter.Category.VALID), emailStdTransformer.getComponentRequirement()
-                    .getProcessingDependencies().iterator().next());
+            assertSame(filter2.getFilterOutcome(MaxRowsFilter.Category.VALID),
+                    stringAnalyzer.getComponentRequirement().getProcessingDependencies().iterator().next());
+            assertSame(filter2.getFilterOutcome(MaxRowsFilter.Category.VALID),
+                    emailStdTransformer.getComponentRequirement().getProcessingDependencies().iterator().next());
         }
     }
 
     public void testSourceColumnListeners() throws Exception {
-        Datastore datastore = TestHelper.createSampleDatabaseDatastore("mydb");
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("mydb");
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
 
             ajb.setDatastore(datastore);
 
-            SourceColumnChangeListener listener1 = EasyMock.createMock(SourceColumnChangeListener.class);
+            final SourceColumnChangeListener listener1 = EasyMock.createMock(SourceColumnChangeListener.class);
             ajb.addSourceColumnChangeListener(listener1);
 
-            Column column = ajb.getDatastoreConnection().getSchemaNavigator().convertToColumn("EMPLOYEES.EMAIL");
-            MetaModelInputColumn inputColumn = new MetaModelInputColumn(column);
+            final Column column = ajb.getDatastoreConnection().getSchemaNavigator().convertToColumn("EMPLOYEES.EMAIL");
+            final MetaModelInputColumn inputColumn = new MetaModelInputColumn(column);
 
             // scene 1: add source column
             listener1.onAdd(inputColumn);
@@ -300,20 +302,20 @@ public class AnalysisJobBuilderTest extends TestCase {
             EasyMock.reset(listener1);
 
             // scene 2: add transformer
-            TransformerChangeListener listener2 = EasyMock.createMock(TransformerChangeListener.class);
+            final TransformerChangeListener listener2 = EasyMock.createMock(TransformerChangeListener.class);
             ajb.addTransformerChangeListener(listener2);
 
-            final TransformerDescriptor<EmailStandardizerTransformer> descriptor = Descriptors
-                    .ofTransformer(EmailStandardizerTransformer.class);
-            IArgumentMatcher tjbMatcher = new IArgumentMatcher() {
+            final TransformerDescriptor<EmailStandardizerTransformer> descriptor =
+                    Descriptors.ofTransformer(EmailStandardizerTransformer.class);
+            final IArgumentMatcher tjbMatcher = new IArgumentMatcher() {
                 @Override
-                public boolean matches(Object argument) {
-                    TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) argument;
+                public boolean matches(final Object argument) {
+                    final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) argument;
                     return tjb.getDescriptor() == descriptor;
                 }
 
                 @Override
-                public void appendTo(StringBuffer buffer) {
+                public void appendTo(final StringBuffer buffer) {
                     buffer.append("transformer job builder");
                 }
             };
@@ -325,9 +327,9 @@ public class AnalysisJobBuilderTest extends TestCase {
             EasyMock.reportMatcher(new IArgumentMatcher() {
 
                 @Override
-                public boolean matches(Object argument) {
-                    @SuppressWarnings("unchecked")
-                    List<MutableInputColumn<?>> list = (List<MutableInputColumn<?>>) argument;
+                public boolean matches(final Object argument) {
+                    @SuppressWarnings("unchecked") final List<MutableInputColumn<?>> list =
+                            (List<MutableInputColumn<?>>) argument;
                     if (list.size() == 2) {
                         if (list.get(0).getName().equals("Username")) {
                             if (list.get(1).getName().equals("Domain")) {
@@ -339,7 +341,7 @@ public class AnalysisJobBuilderTest extends TestCase {
                 }
 
                 @Override
-                public void appendTo(StringBuffer buffer) {
+                public void appendTo(final StringBuffer buffer) {
                     buffer.append("list of output columns");
                 }
             });
@@ -354,14 +356,14 @@ public class AnalysisJobBuilderTest extends TestCase {
             EasyMock.reportMatcher(new IArgumentMatcher() {
 
                 @Override
-                public boolean matches(Object argument) {
-                    @SuppressWarnings("unchecked")
-                    List<MutableInputColumn<?>> list = (List<MutableInputColumn<?>>) argument;
+                public boolean matches(final Object argument) {
+                    @SuppressWarnings("unchecked") final List<MutableInputColumn<?>> list =
+                            (List<MutableInputColumn<?>>) argument;
                     return list.isEmpty();
                 }
 
                 @Override
-                public void appendTo(StringBuffer buffer) {
+                public void appendTo(final StringBuffer buffer) {
                     buffer.append("empty list of output columns");
                 }
             });
@@ -369,7 +371,7 @@ public class AnalysisJobBuilderTest extends TestCase {
 
             EasyMock.reportMatcher(tjbMatcher);
             listener2.onRemove(null);
-            
+
             EasyMock.reportMatcher(tjbMatcher);
             listener2.onConfigurationChanged(null);
 

@@ -28,8 +28,8 @@ package org.datacleaner.monitor.shared;
 public class DescriptorNotFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
-    
-    public DescriptorNotFoundException(String message) {
+
+    public DescriptorNotFoundException(final String message) {
         super(message);
     }
 

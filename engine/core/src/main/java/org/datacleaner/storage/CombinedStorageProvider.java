@@ -26,53 +26,54 @@ import java.util.Set;
 /**
  * A storage provider that delegates to different backing storage providers,
  * depending on which type of storage entity to use.
- * 
- * 
+ *
+ *
  */
 public final class CombinedStorageProvider implements StorageProvider {
 
-	private final StorageProvider _collectionsStorageProvider;
-	private final StorageProvider _rowAnnotationStorageProvider;
+    private final StorageProvider _collectionsStorageProvider;
+    private final StorageProvider _rowAnnotationStorageProvider;
 
-	/**
-	 * 
-	 * @param collectionsStorageProvider
-	 *            the StorageProvider to use for provided Collections
-	 * @param rowAnnotationStorageProvider
-	 *            the StorageProvider to use for provided RowAnnotations and
-	 *            RowAnnotationFactories.
-	 */
-	public CombinedStorageProvider(StorageProvider collectionsStorageProvider, StorageProvider rowAnnotationStorageProvider) {
-		_collectionsStorageProvider = collectionsStorageProvider;
-		_rowAnnotationStorageProvider = rowAnnotationStorageProvider;
-	}
-	
-	public StorageProvider getCollectionsStorageProvider() {
-		return _collectionsStorageProvider;
-	}
-	
-	public StorageProvider getRowAnnotationsStorageProvider() {
-		return _rowAnnotationStorageProvider;
-	}
+    /**
+     *
+     * @param collectionsStorageProvider
+     *            the StorageProvider to use for provided Collections
+     * @param rowAnnotationStorageProvider
+     *            the StorageProvider to use for provided RowAnnotations and
+     *            RowAnnotationFactories.
+     */
+    public CombinedStorageProvider(final StorageProvider collectionsStorageProvider,
+            final StorageProvider rowAnnotationStorageProvider) {
+        _collectionsStorageProvider = collectionsStorageProvider;
+        _rowAnnotationStorageProvider = rowAnnotationStorageProvider;
+    }
 
-	@Override
-	public <E> List<E> createList(Class<E> valueType) throws IllegalStateException {
-		return _collectionsStorageProvider.createList(valueType);
-	}
+    public StorageProvider getCollectionsStorageProvider() {
+        return _collectionsStorageProvider;
+    }
 
-	@Override
-	public <E> Set<E> createSet(Class<E> valueType) throws IllegalStateException {
-		return _collectionsStorageProvider.createSet(valueType);
-	}
+    public StorageProvider getRowAnnotationsStorageProvider() {
+        return _rowAnnotationStorageProvider;
+    }
 
-	@Override
-	public <K, V> Map<K, V> createMap(Class<K> keyType, Class<V> valueType) throws IllegalStateException {
-		return _collectionsStorageProvider.createMap(keyType, valueType);
-	}
+    @Override
+    public <E> List<E> createList(final Class<E> valueType) throws IllegalStateException {
+        return _collectionsStorageProvider.createList(valueType);
+    }
 
-	@Override
-	public RowAnnotationFactory createRowAnnotationFactory() {
-		return _rowAnnotationStorageProvider.createRowAnnotationFactory();
-	}
+    @Override
+    public <E> Set<E> createSet(final Class<E> valueType) throws IllegalStateException {
+        return _collectionsStorageProvider.createSet(valueType);
+    }
+
+    @Override
+    public <K, V> Map<K, V> createMap(final Class<K> keyType, final Class<V> valueType) throws IllegalStateException {
+        return _collectionsStorageProvider.createMap(keyType, valueType);
+    }
+
+    @Override
+    public RowAnnotationFactory createRowAnnotationFactory() {
+        return _rowAnnotationStorageProvider.createRowAnnotationFactory();
+    }
 
 }

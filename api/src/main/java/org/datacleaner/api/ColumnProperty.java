@@ -45,5 +45,5 @@ public @interface ColumnProperty {
      * column-array where each array-item represents a new analyzer job with an
      * otherwise duplicated configuration.
      */
-    public boolean escalateToMultipleJobs() default false;
+    boolean escalateToMultipleJobs() default false;
 }

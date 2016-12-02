@@ -19,8 +19,6 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,9 +43,8 @@ import org.datacleaner.util.WidgetUtils;
 public final class FilenameTextField extends AbstractResourceTextField<FileResource> {
 
     private static final long serialVersionUID = 1L;
-
-    private volatile File _directory;
     protected final List<FileSelectionListener> _fileSelectionListeners = new ArrayList<>();
+    private volatile File _directory;
 
     /**
      *
@@ -56,68 +53,64 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
      *            true if browse dialog should be an "open file" dialog or false
      *            if it should be a "save file" dialog.
      */
-    public FilenameTextField(File directory, final boolean fileOpenDialog) {
+    public FilenameTextField(final File directory, final boolean fileOpenDialog) {
         _directory = directory;
 
-        _browseButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final DCFileChooser fileChooser;
-                if (_directory == null) {
-                    fileChooser = new DCFileChooser();
-                } else {
-                    fileChooser = new DCFileChooser(_directory);
-                }
-
-                WidgetUtils.centerOnScreen(fileChooser);
-
-                for (FileFilter filter : _choosableFileFilters) {
-                    fileChooser.addChoosableFileFilter(filter);
-                }
-
-                fileChooser.setFileSelectionMode(_fileSelectionMode);
-
-                if (_selectedFileFilter != null) {
-                    if (!_choosableFileFilters.contains(_selectedFileFilter)) {
-                        _choosableFileFilters.add(_selectedFileFilter);
-                    }
-                    fileChooser.setFileFilter(_selectedFileFilter);
-                }
-
-                int result;
-                if (fileOpenDialog) {
-                    result = fileChooser.showOpenDialog(FilenameTextField.this);
-                } else {
-                    result = fileChooser.showSaveDialog(FilenameTextField.this);
-                }
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File file = fileChooser.getSelectedFile();
-
-                    boolean accepted = true;
-                    if (fileOpenDialog) {
-                        accepted = file.exists();
-                    }
-
-                    if (accepted) {
-                        setFile(file);
-                        if (file.isDirectory()) {
-                            _directory = file;
-                        } else {
-                            _directory = file.getParentFile();
-                        }
-                        notifySelectionListeners(file);
-                    }
-                }
+        _browseButton.addActionListener(e -> {
+            final DCFileChooser fileChooser;
+            if (_directory == null) {
+                fileChooser = new DCFileChooser();
+            } else {
+                fileChooser = new DCFileChooser(_directory);
             }
 
+            WidgetUtils.centerOnScreen(fileChooser);
+
+            for (final FileFilter filter : _choosableFileFilters) {
+                fileChooser.addChoosableFileFilter(filter);
+            }
+
+            fileChooser.setFileSelectionMode(_fileSelectionMode);
+
+            if (_selectedFileFilter != null) {
+                if (!_choosableFileFilters.contains(_selectedFileFilter)) {
+                    _choosableFileFilters.add(_selectedFileFilter);
+                }
+                fileChooser.setFileFilter(_selectedFileFilter);
+            }
+
+            final int result;
+            if (fileOpenDialog) {
+                result = fileChooser.showOpenDialog(FilenameTextField.this);
+            } else {
+                result = fileChooser.showSaveDialog(FilenameTextField.this);
+            }
+            if (result == JFileChooser.APPROVE_OPTION) {
+                final File file = fileChooser.getSelectedFile();
+
+                boolean accepted = true;
+                if (fileOpenDialog) {
+                    accepted = file.exists();
+                }
+
+                if (accepted) {
+                    setFile(file);
+                    if (file.isDirectory()) {
+                        _directory = file;
+                    } else {
+                        _directory = file.getParentFile();
+                    }
+                    notifySelectionListeners(file);
+                }
+            }
         });
     }
 
-    public void addFileSelectionListener(FileSelectionListener listener) {
+    public void addFileSelectionListener(final FileSelectionListener listener) {
         _fileSelectionListeners.add(listener);
     }
 
-    public void removeSelectionListener(FileSelectionListener listener) {
+    public void removeSelectionListener(final FileSelectionListener listener) {
         _fileSelectionListeners.remove(listener);
     }
 
@@ -131,7 +124,7 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
     }
 
     private void notifySelectionListeners(final File file) {
-        for (FileSelectionListener listener : _fileSelectionListeners) {
+        for (final FileSelectionListener listener : _fileSelectionListeners) {
             listener.onSelected(this, file);
         }
     }
@@ -146,7 +139,7 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
     }
 
     @Override
-    public void setResource(FileResource resource) {
+    public void setResource(final FileResource resource) {
         setFile(resource.getFile());
     }
 
@@ -155,17 +148,17 @@ public final class FilenameTextField extends AbstractResourceTextField<FileResou
     }
 
     public File getFile() {
-        String filename = getFilename();
+        final String filename = getFilename();
         if (StringUtils.isNullOrEmpty(filename)) {
             return null;
         }
         return new File(filename);
     }
 
-    public void setFile(File file) {
+    public void setFile(final File file) {
         try {
             setFilename(file.getCanonicalPath());
-        } catch (IOException e1) {
+        } catch (final IOException e) {
             // ignore
             setFilename(file.getAbsolutePath());
         }

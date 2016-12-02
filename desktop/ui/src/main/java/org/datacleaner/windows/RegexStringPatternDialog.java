@@ -21,8 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -38,14 +36,14 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.datacleaner.reference.RegexStringPattern;
-import org.datacleaner.reference.StringPattern;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.RegexStringPattern;
+import org.datacleaner.reference.StringPattern;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -60,13 +58,12 @@ public final class RegexStringPatternDialog extends AbstractDialog {
     private static final int NUM_TEST_FIELDS = 6;
     private static final ImageManager imageManager = ImageManager.get();
     private static final Icon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL);
-    private static final Icon ICON_SUCCESS = imageManager.getImageIcon(IconUtils.STATUS_VALID,
-            IconUtils.ICON_SIZE_SMALL);
-
+    private static final Icon ICON_SUCCESS =
+            imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
+    final JButton _saveButton;
     private final MutableReferenceDataCatalog _catalog;
     private final JXTextField _expressionField;
     private final JXTextField _expressionNameField;
-
     private List<JTextField> _inputFields;
     private String _expressionString;
     private String _expressionNameString;
@@ -74,10 +71,9 @@ public final class RegexStringPatternDialog extends AbstractDialog {
     private JLabel _errorLabel;
     private Pattern _pattern;
     private JButton _resetButton;
-    final JButton _saveButton;
     private StringPattern _regexStringPattern;
 
-    public RegexStringPatternDialog(MutableReferenceDataCatalog catalog, WindowContext windowContext) {
+    public RegexStringPatternDialog(final MutableReferenceDataCatalog catalog, final WindowContext windowContext) {
         super(windowContext, ImageManager.get().getImage(IconUtils.STRING_PATTERN_REGEX_IMAGEPATH));
         _catalog = catalog;
         _expressionNameField = WidgetFactory.createTextField("String pattern name");
@@ -86,13 +82,13 @@ public final class RegexStringPatternDialog extends AbstractDialog {
         _saveButton = WidgetFactory.createPrimaryButton("Save Expression", IconUtils.ACTION_SAVE_BRIGHT);
     }
 
-    public RegexStringPatternDialog(RegexStringPattern stringPattern, MutableReferenceDataCatalog catalog,
-            WindowContext windowContext) {
+    public RegexStringPatternDialog(final RegexStringPattern stringPattern, final MutableReferenceDataCatalog catalog,
+            final WindowContext windowContext) {
         this(stringPattern.getName(), stringPattern.getExpression(), catalog, windowContext);
     }
 
-    public RegexStringPatternDialog(String expressionName, String expression, MutableReferenceDataCatalog catalog,
-            WindowContext windowContext) {
+    public RegexStringPatternDialog(final String expressionName, final String expression,
+            final MutableReferenceDataCatalog catalog, final WindowContext windowContext) {
         this(catalog, windowContext);
         _expressionString = expression;
         _expressionNameString = expressionName;
@@ -124,53 +120,46 @@ public final class RegexStringPatternDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("Expression:"), formPanel, 0, row);
 
         _expressionField.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
+            public void changedUpdate(final DocumentEvent e) {
                 checkInputFields();
             }
 
-            public void insertUpdate(DocumentEvent e) {
+            public void insertUpdate(final DocumentEvent e) {
                 checkInputFields();
             }
 
-            public void removeUpdate(DocumentEvent e) {
+            public void removeUpdate(final DocumentEvent e) {
                 checkInputFields();
             }
         });
         WidgetUtils.addToGridBag(_expressionField, formPanel, 1, row, 1.0, 0.0);
 
-        _resetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                _expressionField.setText(_expressionString);
-            }
-        });
+        _resetButton.addActionListener(event -> _expressionField.setText(_expressionString));
         WidgetUtils.addToGridBag(_resetButton, formPanel, 2, row);
 
         row++;
 
-        _saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String expressionName = _expressionNameField.getText();
-                if (StringUtils.isNullOrEmpty(expressionName)) {
-                    JOptionPane.showMessageDialog(RegexStringPatternDialog.this,
-                            "Please fill out the name of the regular expression");
-                    return;
-                }
-
-                String expression = _expressionField.getText();
-                if (StringUtils.isNullOrEmpty(expression)) {
-                    JOptionPane.showMessageDialog(RegexStringPatternDialog.this,
-                            "Please fill out the regular expression");
-                    return;
-                }
-                if (_regexStringPattern != null && _catalog.containsStringPattern(_regexStringPattern.getName())) {
-                    _catalog.removeStringPattern(_catalog.getStringPattern(_regexStringPattern.getName()));
-                }
-                RegexStringPattern regexStringPattern = new RegexStringPattern(expressionName, expression, true);
-                _regexStringPattern = regexStringPattern;
-                _catalog.addStringPattern(regexStringPattern);
-                RegexStringPatternDialog.this.dispose();
+        _saveButton.addActionListener(e -> {
+            final String expressionName = _expressionNameField.getText();
+            if (StringUtils.isNullOrEmpty(expressionName)) {
+                JOptionPane.showMessageDialog(RegexStringPatternDialog.this,
+                        "Please fill out the name of the regular expression");
+                return;
             }
+
+            final String expression = _expressionField.getText();
+            if (StringUtils.isNullOrEmpty(expression)) {
+                JOptionPane.showMessageDialog(RegexStringPatternDialog.this, "Please fill out the regular expression");
+                return;
+            }
+            final RegexStringPattern regexStringPattern = new RegexStringPattern(expressionName, expression, true);
+            if (_regexStringPattern != null && _catalog.containsStringPattern(_regexStringPattern.getName())) {
+                _catalog.changeStringPattern(_regexStringPattern, regexStringPattern);
+            } else {
+                _catalog.addStringPattern(regexStringPattern);
+            }
+            _regexStringPattern = regexStringPattern;
+            RegexStringPatternDialog.this.dispose();
         });
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, _saveButton);
@@ -183,41 +172,43 @@ public final class RegexStringPatternDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(_errorLabel, testitPanel, 0, row);
 
         row++;
-        JLabel testInputLabel = DCLabel.bright("You can test your expression here");
+        final JLabel testInputLabel = DCLabel.bright("You can test your expression here");
         testInputLabel.setIcon(imageManager.getImageIcon("images/actions/test-pattern.png"));
         testInputLabel.setFont(WidgetUtils.FONT_HEADER2);
         WidgetUtils.addToGridBag(testInputLabel, testitPanel, 0, row);
 
-        _inputFields = new ArrayList<JTextField>(NUM_TEST_FIELDS);
-        _statusLabels = new ArrayList<JLabel>(NUM_TEST_FIELDS);
+        _inputFields = new ArrayList<>(NUM_TEST_FIELDS);
+        _statusLabels = new ArrayList<>(NUM_TEST_FIELDS);
         for (int i = 0; i < NUM_TEST_FIELDS; i++) {
             final int index = i;
-            JTextField inputField = WidgetFactory.createTextField("Test Input");
+            final JTextField inputField = WidgetFactory.createTextField("Test Input");
             inputField.getDocument().addDocumentListener(new DocumentListener() {
-                public void changedUpdate(DocumentEvent e) {
+                public void changedUpdate(final DocumentEvent e) {
                     checkInputField(index);
                 }
 
-                public void insertUpdate(DocumentEvent e) {
+                public void insertUpdate(final DocumentEvent e) {
                     checkInputField(index);
                 }
 
-                public void removeUpdate(DocumentEvent e) {
+                public void removeUpdate(final DocumentEvent e) {
                     checkInputField(index);
                 }
             });
             // inputField.setPreferredSize(d);
             WidgetUtils.addToGridBag(inputField, testitPanel, 0, 4 + i);
 
-            JLabel statusLabel = new JLabel();
+            final JLabel statusLabel = new JLabel();
             WidgetUtils.addToGridBag(statusLabel, testitPanel, 1, 4 + i);
 
             _inputFields.add(inputField);
             _statusLabels.add(statusLabel);
         }
 
-        final DescriptionLabel descriptionLabel = new DescriptionLabel(
-                "A regex (regular expression) is a concise and flexible means for identifying strings of text of interest, such as particular characters, words, or patterns of characters. The registered regexes can be used to identify certain types of strings and validate their pattern-correctness.");
+        final DescriptionLabel descriptionLabel = new DescriptionLabel("A regex (regular expression) is a concise "
+                + "and flexible means for identifying strings of text of interest, such as particular characters, "
+                + "words, or patterns of characters. The registered regexes can be used to identify certain "
+                + "types of strings and validate their pattern-correctness.");
 
         final DCPanel mainPanel = new DCPanel();
         mainPanel.setLayout(new BorderLayout());
@@ -246,27 +237,27 @@ public final class RegexStringPatternDialog extends AbstractDialog {
             for (int i = 0; i < NUM_TEST_FIELDS; i++) {
                 checkInputField(i);
             }
-        } catch (PatternSyntaxException e) {
+        } catch (final PatternSyntaxException e) {
             _errorLabel.setText(e.getMessage());
             _saveButton.setEnabled(false);
         }
     }
 
     private Pattern getPattern() {
-        String text = _expressionField.getText();
+        final String text = _expressionField.getText();
         if (_pattern == null || !text.equals(_pattern.pattern())) {
             _pattern = Pattern.compile(text);
         }
         return _pattern;
     }
 
-    private void checkInputField(int index) {
-        String text = _inputFields.get(index).getText();
-        JLabel label = _statusLabels.get(index);
+    private void checkInputField(final int index) {
+        final String text = _inputFields.get(index).getText();
+        final JLabel label = _statusLabels.get(index);
         if ("".equals(text)) {
             label.setIcon(null);
         } else {
-            Matcher matcher = getPattern().matcher(text);
+            final Matcher matcher = getPattern().matcher(text);
             if (matcher.matches()) {
                 label.setIcon(ICON_SUCCESS);
             } else {

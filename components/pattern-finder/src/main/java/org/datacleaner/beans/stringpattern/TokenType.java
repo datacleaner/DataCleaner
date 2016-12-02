@@ -21,5 +21,5 @@ package org.datacleaner.beans.stringpattern;
 
 public enum TokenType {
 
-	PREDEFINED, TEXT, NUMBER, DELIM, WHITESPACE, MIXED, UNDEFINED
+    PREDEFINED, TEXT, NUMBER, DELIM, WHITESPACE, MIXED, UNDEFINED
 }

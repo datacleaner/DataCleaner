@@ -26,16 +26,16 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.vfs2.FileObject;
-import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.SimpleAnalysisResult;
+import org.apache.metamodel.util.Ref;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.SimpleAnalysisResult;
 import org.datacleaner.user.MonitorConnection;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.windows.ResultWindow;
-import org.apache.metamodel.util.Ref;
 
 import com.google.common.base.Strings;
 
@@ -51,8 +51,9 @@ public class PublishResultToMonitorActionListener extends PublishFileToMonitorAc
     private byte[] _bytes;
     private String _resultFilename;
 
-    public PublishResultToMonitorActionListener(WindowContext windowContext, UserPreferences userPreferences,
-            Ref<AnalysisResult> resultRef, @Nullable @JobFile FileObject jobFilename) {
+    public PublishResultToMonitorActionListener(final WindowContext windowContext,
+            final UserPreferences userPreferences, final Ref<AnalysisResult> resultRef,
+            @Nullable @JobFile final FileObject jobFilename) {
         super(windowContext, userPreferences);
         _resultRef = resultRef;
         _jobFilename = jobFilename;
@@ -98,7 +99,7 @@ public class PublishResultToMonitorActionListener extends PublishFileToMonitorAc
     }
 
     @Override
-    protected String getUploadUrl(MonitorConnection monitorConnection) {
+    protected String getUploadUrl(final MonitorConnection monitorConnection) {
         final String transferredFilename = getTransferredFilename();
         final String encodedFilename = encodeSpaces(transferredFilename);
         return monitorConnection.getBaseUrl() + "/repository/" + monitorConnection.getTenantId() + "/results/"

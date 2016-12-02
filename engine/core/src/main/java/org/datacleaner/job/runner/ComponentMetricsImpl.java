@@ -23,22 +23,22 @@ import org.datacleaner.job.ComponentJob;
 
 final class ComponentMetricsImpl implements ComponentMetrics {
 
-	private final RowProcessingMetrics _rowProcessingMetrics;
-	private final ComponentJob _componentJob;
+    private final RowProcessingMetrics _rowProcessingMetrics;
+    private final ComponentJob _componentJob;
 
-	public ComponentMetricsImpl(RowProcessingMetrics rowProcessingMetrics, ComponentJob componentJob) {
-		_rowProcessingMetrics = rowProcessingMetrics;
-		_componentJob = componentJob;
-	}
+    public ComponentMetricsImpl(final RowProcessingMetrics rowProcessingMetrics, final ComponentJob componentJob) {
+        _rowProcessingMetrics = rowProcessingMetrics;
+        _componentJob = componentJob;
+    }
 
-	@Override
-	public ComponentJob getComponentJob() {
-		return _componentJob;
-	}
+    @Override
+    public ComponentJob getComponentJob() {
+        return _componentJob;
+    }
 
-	@Override
-	public RowProcessingMetrics getRowProcessingMetrics() {
-		return _rowProcessingMetrics;
-	}
+    @Override
+    public RowProcessingMetrics getRowProcessingMetrics() {
+        return _rowProcessingMetrics;
+    }
 
 }

@@ -23,11 +23,11 @@ package org.datacleaner.api;
  * An exception that {@link Component}s can throw when certain functionality is
  * restricted - typically because it's a paid for function or because an
  * approval process is pending or so.
- * 
+ *
  * Typically the user interface will have special handling available for this
  * exception type to guide him in the direction of unlocking the restricted
  * functionality.
- * 
+ *
  * This class and {@link RestrictedFunctionalityMessage} are two ways to
  * archieve something quite similar. The main difference is that a
  * {@link RestrictedFunctionalityMessage} can be used in scenarios where a job
@@ -44,21 +44,22 @@ public class RestrictedFunctionalityException extends RuntimeException {
 
     /**
      * Constructs a {@link RestrictedFunctionalityException}
-     * 
+     *
      * @param message
      *            a message to the user about what and why he is being
      *            restricted in functionality.
      * @param callToActions
      *            an array of call to actions for the user to pick from.
      */
-    public RestrictedFunctionalityException(String message, RestrictedFunctionalityCallToAction... callToActions) {
+    public RestrictedFunctionalityException(final String message,
+            final RestrictedFunctionalityCallToAction... callToActions) {
         super(message, null, true, false);
         _callToActions = callToActions;
     }
 
     /**
      * Constructs a {@link RestrictedFunctionalityException}
-     * 
+     *
      * @param message
      *            a message to the user about what and why he is being
      *            restricted in functionality.
@@ -67,8 +68,8 @@ public class RestrictedFunctionalityException extends RuntimeException {
      * @param callToActions
      *            an array of call to actions for the user to pick from.
      */
-    public RestrictedFunctionalityException(String message, Throwable cause,
-            RestrictedFunctionalityCallToAction... callToActions) {
+    public RestrictedFunctionalityException(final String message, final Throwable cause,
+            final RestrictedFunctionalityCallToAction... callToActions) {
         super(message, cause, true, false);
         _callToActions = callToActions;
     }

@@ -34,17 +34,17 @@ public class GuiceInjectionManagerFactory implements InjectionManagerFactory {
     private final InjectorBuilder _injectorBuilder;
 
     @Inject
-    protected GuiceInjectionManagerFactory(InjectorBuilder injectorBuilder) {
+    protected GuiceInjectionManagerFactory(final InjectorBuilder injectorBuilder) {
         _injectorBuilder = injectorBuilder;
     }
 
     @Override
-    public InjectionManager getInjectionManager(DataCleanerConfiguration conf, AnalysisJob job) {
+    public InjectionManager getInjectionManager(final DataCleanerConfiguration conf, final AnalysisJob job) {
         return new GuiceInjectionManager(conf, job, _injectorBuilder);
     }
 
     @Override
-    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
+    public InjectionManager getInjectionManager(final DataCleanerConfiguration configuration) {
         return getInjectionManager(configuration, null);
     }
 }

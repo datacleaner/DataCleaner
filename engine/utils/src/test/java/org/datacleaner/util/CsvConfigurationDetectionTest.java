@@ -20,6 +20,8 @@
 package org.datacleaner.util;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.metamodel.csv.CsvConfiguration;
 
@@ -28,17 +30,29 @@ import junit.framework.TestCase;
 public class CsvConfigurationDetectionTest extends TestCase {
 
     public void testDetectMultiLine() throws Exception {
-        CsvConfigurationDetection detection = new CsvConfigurationDetection(new File(
-                "src/test/resources/csv-detect/csv_multi_line.csv"));
-        CsvConfiguration configuration = detection.suggestCsvConfiguration();
+        final CsvConfigurationDetection detection =
+                new CsvConfigurationDetection(new File("src/test/resources/csv-detect/csv_multi_line.csv"));
+        final CsvConfiguration configuration = detection.suggestCsvConfiguration();
         assertTrue(configuration.isMultilineValues());
     }
 
     public void testDetectSingleLine() throws Exception {
-        CsvConfigurationDetection detection = new CsvConfigurationDetection(new File(
-                "src/test/resources/csv-detect/csv_single_line.csv"));
-        CsvConfiguration configuration = detection.suggestCsvConfiguration();
+        final CsvConfigurationDetection detection =
+                new CsvConfigurationDetection(new File("src/test/resources/csv-detect/csv_single_line.csv"));
+        final CsvConfiguration configuration = detection.suggestCsvConfiguration();
         assertFalse(configuration.isMultilineValues());
+    }
+
+    public void testColumnNames() throws Exception {
+        final CsvConfigurationDetection detection =
+                new CsvConfigurationDetection(new File("src/test/resources/csv-detect/csv_single_line.csv"));
+        final List<String> list = new ArrayList<>();
+        list.add("myId");
+        list.add("MyName");
+
+        final CsvConfiguration configuration = detection.suggestCsvConfiguration(list);
+        assertFalse(configuration.isMultilineValues());
+        assertNotNull(configuration.getColumnNamingStrategy());
     }
 
 }

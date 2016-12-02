@@ -41,12 +41,12 @@ public class ExcelDatastoreWizard implements DatastoreWizard {
     }
 
     @Override
-    public DatastoreWizardSession start(DatastoreWizardContext context) {
+    public DatastoreWizardSession start(final DatastoreWizardContext context) {
         return new ExcelDatastoreWizardSession(context);
     }
 
     @Override
-    public boolean isApplicableTo(DatastoreWizardContext context) {
+    public boolean isApplicableTo(final DatastoreWizardContext context) {
         return true;
     }
 }

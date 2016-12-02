@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.filter;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -53,7 +53,8 @@ import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.util.ReflectionUtils;
 
 @Named("Compare")
-@Description("Compare two values using an operator of your choice. The options available in this filter resemble those of a SQL WHERE clause - you can specify columns, fixed values and use operators including the LIKE operator.")
+@Description("Compare two values using an operator of your choice. The options available in this filter resemble those "
+        + "of a SQL WHERE clause - you can specify columns, fixed values and use operators including the LIKE operator.")
 @Categorized(FilterCategory.class)
 @Distributed(true)
 public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Category>, HasLabelAdvice {
@@ -70,7 +71,7 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         EQUALS_TO("Equal", OperatorType.EQUALS_TO),
 
         LIKE("Like", OperatorType.LIKE),
-        
+
         IN("In", OperatorType.IN),
 
         DIFFERENT_FROM("Not equal", OperatorType.DIFFERENT_FROM),
@@ -82,7 +83,7 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         private final OperatorType _operatorType;
         private final String _name;
 
-        Operator(String name, OperatorType operatorType) {
+        Operator(final String name, final OperatorType operatorType) {
             _name = name;
             _operatorType = operatorType;
         }
@@ -122,7 +123,7 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
     public CompareFilter() {
     }
 
-    public CompareFilter(InputColumn<?> column, Operator operator, String compareValue) {
+    public CompareFilter(final InputColumn<?> column, final Operator operator, final String compareValue) {
         this();
         this.inputColumn = column;
         this.operator = operator;
@@ -130,7 +131,8 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         init();
     }
 
-    public CompareFilter(InputColumn<?> inputColumn, Operator operator, InputColumn<?> compareColumn) {
+    public CompareFilter(final InputColumn<?> inputColumn, final Operator operator,
+            final InputColumn<?> compareColumn) {
         this();
         this.inputColumn = inputColumn;
         this.operator = operator;
@@ -138,11 +140,11 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         init();
     }
 
-    public void setCompareColumn(InputColumn<?> compareColumn) {
+    public void setCompareColumn(final InputColumn<?> compareColumn) {
         this.compareColumn = compareColumn;
     }
 
-    public void setCompareValue(String compareValue) {
+    public void setCompareValue(final String compareValue) {
         this.compareValue = compareValue;
     }
 
@@ -184,17 +186,17 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
 
         return sb.toString();
     }
-    
-    private void injectCompareValueLabel(StringBuilder labelPart) {
+
+    private void injectCompareValueLabel(final StringBuilder labelPart) {
         if (compareValue == null) {
             return;
         }
-        
+
         final Object operand = toOperand(compareValue);
 
         if (operand instanceof String[] && operator == Operator.IN) {
             labelPart.append("('");
-            labelPart.append(StringUtils.join((String[])operand, "','"));
+            labelPart.append(StringUtils.join((String[]) operand, "','"));
             labelPart.append("')");
         } else if (operand instanceof String) {
             labelPart.append('\'');
@@ -205,7 +207,7 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         }
     }
 
-    private Object toOperand(Object value) {
+    private Object toOperand(final Object value) {
         if (value == null) {
             return null;
         }
@@ -227,13 +229,13 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
             return value;
         }
     }
-    
-    private String[] csvStringToArray(String csvString) {
+
+    private String[] csvStringToArray(final String csvString) {
         return csvString.trim().replaceAll(" *, *", ",").split(",");
     }
 
     @Override
-    public CompareFilter.Category categorize(InputRow inputRow) {
+    public CompareFilter.Category categorize(final InputRow inputRow) {
         final Object inputValue = inputRow.getValue(inputColumn);
 
         final Object operand;
@@ -247,13 +249,14 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
         return filter(inputValue, operator, operand);
     }
 
-    public CompareFilter.Category filter(final Object v, final Operator operator, final Object operand) {
+    public CompareFilter.Category filter(final Object value, final Operator operator, final Object operand) {
         // use MetaModel FilterItem to do the evaluation - it's a bit of a
         // detour, but there's a ton of operator/operand combinations to take
         // care of which is already done there.
         final FilterItem item = new FilterItem(compareSelectItem, operator.getOperatorType(), operand);
         final boolean evaluation = item.evaluate(
-                new DefaultRow(new SimpleDataSetHeader(Arrays.asList(compareSelectItem)), new Object[] { v }));
+                new DefaultRow(new SimpleDataSetHeader(Collections.singletonList(compareSelectItem)),
+                        new Object[] { value }));
 
         if (evaluation) {
             return Category.TRUE;
@@ -263,12 +266,12 @@ public class CompareFilter implements QueryOptimizedFilter<CompareFilter.Categor
     }
 
     @Override
-    public boolean isOptimizable(Category category) {
+    public boolean isOptimizable(final Category category) {
         return category == Category.TRUE;
     }
 
     @Override
-    public Query optimizeQuery(Query q, Category category) {
+    public Query optimizeQuery(final Query q, final Category category) {
         if (category == Category.TRUE) {
             final Column inputPhysicalColumn = inputColumn.getPhysicalColumn();
 

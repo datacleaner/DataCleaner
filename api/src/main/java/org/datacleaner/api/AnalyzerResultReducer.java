@@ -23,5 +23,5 @@ import java.util.Collection;
 
 public interface AnalyzerResultReducer<R extends AnalyzerResult> {
 
-    public R reduce(Collection<? extends R> results);
+    R reduce(Collection<? extends R> results);
 }

@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * Popup style panel used by wizards. It creates a popup panel on which elements
  * can be added and controlled through wizard framework
- * 
+ *
  */
 public class PopupWizardPanel extends DCPopupPanel implements WizardPanel {
 
@@ -53,7 +53,7 @@ public class PopupWizardPanel extends DCPopupPanel implements WizardPanel {
     }
 
     private FlowPanel getWizardFlowPanel() {
-        FlowPanel wizardFlowPanel = new FlowPanel();
+        final FlowPanel wizardFlowPanel = new FlowPanel();
         wizardFlowPanel.add(_progressBar);
         wizardFlowPanel.add(_contentPanel);
         wizardFlowPanel.add(_buttonPanel);
@@ -61,10 +61,10 @@ public class PopupWizardPanel extends DCPopupPanel implements WizardPanel {
     }
 
     private SimplePanel getContentPanel() {
-        int clientHeight = Window.getClientHeight();
-        int heightMargin = 100;
-        int maxHeight = (int) ((clientHeight - heightMargin) * 0.90);
-        SimplePanel contentPanel = new ScrollPanel();
+        final int clientHeight = Window.getClientHeight();
+        final int heightMargin = 100;
+        final int maxHeight = (int) ((clientHeight - heightMargin) * 0.90);
+        final SimplePanel contentPanel = new ScrollPanel();
         contentPanel.getElement().getStyle().setProperty("maxHeight", maxHeight + "px");
         contentPanel.setStyleName("PopupWizardPanelContent");
         return contentPanel;
@@ -79,7 +79,7 @@ public class PopupWizardPanel extends DCPopupPanel implements WizardPanel {
     }
 
     @Override
-    public void setHeader(String header) {
+    public void setHeader(final String header) {
         super.setHeader(header);
     }
 
@@ -89,7 +89,7 @@ public class PopupWizardPanel extends DCPopupPanel implements WizardPanel {
     }
 
     @Override
-    public void setContent(IsWidget w) {
+    public void setContent(final IsWidget w) {
         _contentPanel.setWidget(w);
         center();
     }
@@ -121,7 +121,7 @@ public class PopupWizardPanel extends DCPopupPanel implements WizardPanel {
     }
 
     @Override
-    public void addStyleClass(String styleClass) {
+    public void addStyleClass(final String styleClass) {
         super.addStyleName(styleClass);
     }
 

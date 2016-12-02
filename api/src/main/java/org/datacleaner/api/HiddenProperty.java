@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
 /**
  * Additional annotation that can be put on a {@link Configured} property to
  * hide it from the Desktop UI of DataCleaner.
- * 
+ *
  * Hidden properties will still be configurable through XML files or
  * programmatic instrumentation.
  */

@@ -31,13 +31,13 @@ import org.datacleaner.components.convert.ConvertToNumberTransformer;
  *
  */
 class TypeConverter {
-    
-    static Object convertType(final Object value, Column targetColumn) throws IllegalArgumentException {
+
+    static Object convertType(final Object value, final Column targetColumn) throws IllegalArgumentException {
         if (value == null) {
             return null;
         }
         Object result = value;
-        ColumnType type = targetColumn.getType();
+        final ColumnType type = targetColumn.getType();
         if (type.isLiteral()) {
             // for strings, only convert some simple cases, since JDBC drivers
             // typically also do a decent job here (with eg. Clob types, char[]
@@ -46,13 +46,13 @@ class TypeConverter {
                 result = value.toString();
             }
         } else if (type.isNumber()) {
-            Number numberValue = ConvertToNumberTransformer.transformValue(value);
+            final Number numberValue = ConvertToNumberTransformer.transformValue(value);
             if (numberValue == null && !"".equals(value)) {
                 throw new IllegalArgumentException("Could not convert " + value + " to number");
             }
             result = numberValue;
         } else if (type == ColumnType.BOOLEAN) {
-            Boolean booleanValue = ConvertToBooleanTransformer.transformValue(value);
+            final Boolean booleanValue = ConvertToBooleanTransformer.transformValue(value);
             if (booleanValue == null && !"".equals(value)) {
                 throw new IllegalArgumentException("Could not convert " + value + " to boolean");
             }

@@ -57,14 +57,16 @@ public class MonitorConnection implements Serializable {
 
     private transient boolean _acceptUnverifiedSslPeers = false;
 
-    public MonitorConnection(UserPreferences userPreferences, String hostname, int port, String contextPath,
-            boolean isHttps, String tenantId, String username, char[] password) {
-        this(userPreferences, hostname, port, contextPath, isHttps, tenantId, username, SecurityUtils
-                .encodePassword(password));
+    public MonitorConnection(final UserPreferences userPreferences, final String hostname, final int port,
+            final String contextPath, final boolean isHttps, final String tenantId, final String username,
+            final char[] password) {
+        this(userPreferences, hostname, port, contextPath, isHttps, tenantId, username,
+                SecurityUtils.encodePassword(password));
     }
 
-    public MonitorConnection(UserPreferences userPreferences, String hostname, int port, String contextPath,
-            boolean isHttps, String tenantId, String username, String encodedPassword) {
+    public MonitorConnection(final UserPreferences userPreferences, final String hostname, final int port,
+            final String contextPath, final boolean isHttps, final String tenantId, final String username,
+            final String encodedPassword) {
         _userPreferences = userPreferences;
         _hostname = hostname;
         _port = port;
@@ -132,7 +134,7 @@ public class MonitorConnection implements Serializable {
     }
 
     public String getBaseUrl() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         if (_https) {
             sb.append("https://");
         } else {
@@ -162,14 +164,16 @@ public class MonitorConnection implements Serializable {
         return !StringUtils.isNullOrEmpty(_username);
     }
 
-    public boolean matchesURI(String uriString) {
+
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    public boolean matchesURI(final String uriString) {
         if (uriString == null) {
             return false;
         }
         try {
-            URI uri = new URI(uriString);
+            final URI uri = new URI(uriString);
             return matchesURI(uri);
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             logger.debug("Failed to create URI of string: " + uriString, e);
             return false;
         }
@@ -177,11 +181,12 @@ public class MonitorConnection implements Serializable {
 
     /**
      * Determines if a {@link URI} matches the configured DC Monitor settings.
-     * 
+     *
      * @param uri
      * @return
      */
-    public boolean matchesURI(URI uri) {
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+    public boolean matchesURI(final URI uri) {
         if (uri == null) {
             return false;
         }
@@ -222,7 +227,7 @@ public class MonitorConnection implements Serializable {
         return _acceptUnverifiedSslPeers;
     }
 
-    public void setAcceptUnverifiedSslPeers(boolean acceptUnverifiedSslPeers) {
+    public void setAcceptUnverifiedSslPeers(final boolean acceptUnverifiedSslPeers) {
         _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
     }
 }

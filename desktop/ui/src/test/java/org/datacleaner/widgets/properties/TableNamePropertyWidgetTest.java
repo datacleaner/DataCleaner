@@ -22,8 +22,6 @@ package org.datacleaner.widgets.properties;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
@@ -44,11 +42,13 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 
+import junit.framework.TestCase;
+
 public class TableNamePropertyWidgetTest extends TestCase {
 
     public void testTwoWidgetsForSameProperty() throws Exception {
-        final TransformerDescriptor<TableLookupTransformer> descriptor = Descriptors
-                .ofTransformer(TableLookupTransformer.class);
+        final TransformerDescriptor<TableLookupTransformer> descriptor =
+                Descriptors.ofTransformer(TableLookupTransformer.class);
 
         final ConfiguredPropertyDescriptor datastoreProperty = descriptor.getConfiguredProperty("Datastore");
         final ConfiguredPropertyDescriptor tableProperty = descriptor.getConfiguredProperty("Table name");
@@ -57,14 +57,14 @@ public class TableNamePropertyWidgetTest extends TestCase {
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
         final AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(configuration);
 
-        final TransformerComponentBuilder<TableLookupTransformer> tjb = analysisJobBuilder
-                .addTransformer(TableLookupTransformer.class);
+        final TransformerComponentBuilder<TableLookupTransformer> tjb =
+                analysisJobBuilder.addTransformer(TableLookupTransformer.class);
 
         final List<TableDataProvider<?>> tables = new ArrayList<>();
         tables.add(new ArrayTableDataProvider(new SimpleTableDef("foo", new String[] { "col1", "col2" }),
-                new ArrayList<Object[]>()));
+                new ArrayList<>()));
         tables.add(new ArrayTableDataProvider(new SimpleTableDef("bar", new String[] { "col3", "col4" }),
-                new ArrayList<Object[]>()));
+                new ArrayList<>()));
 
         final PojoDatastore ds = new PojoDatastore("myds", tables);
 
@@ -74,20 +74,20 @@ public class TableNamePropertyWidgetTest extends TestCase {
         final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(ds);
         final WindowContext windowContext = new SimpleWindowContext();
 
-        final SingleDatastorePropertyWidget datastoreWidget1 = new SingleDatastorePropertyWidget(tjb,
-                datastoreProperty, datastoreCatalog, new DCModuleImpl());
+        final SingleDatastorePropertyWidget datastoreWidget1 =
+                new SingleDatastorePropertyWidget(tjb, datastoreProperty, datastoreCatalog, new DCModuleImpl());
         final SchemaNamePropertyWidget schemaWidget1 = new SchemaNamePropertyWidget(tjb, schemaProperty);
-        final SingleTableNamePropertyWidget tableWidget1 = new SingleTableNamePropertyWidget(tjb, tableProperty,
-                windowContext);
+        final SingleTableNamePropertyWidget tableWidget1 =
+                new SingleTableNamePropertyWidget(tjb, tableProperty, windowContext);
         datastoreWidget1.connectToSchemaNamePropertyWidget(schemaWidget1);
         schemaWidget1.connectToTableNamePropertyWidget(tableWidget1);
         collection1.registerWidget(tableProperty, tableWidget1);
 
-        final SingleDatastorePropertyWidget datastoreWidget2 = new SingleDatastorePropertyWidget(tjb,
-                datastoreProperty, datastoreCatalog, new DCModuleImpl());
+        final SingleDatastorePropertyWidget datastoreWidget2 =
+                new SingleDatastorePropertyWidget(tjb, datastoreProperty, datastoreCatalog, new DCModuleImpl());
         final SchemaNamePropertyWidget schemaWidget2 = new SchemaNamePropertyWidget(tjb, schemaProperty);
-        final SingleTableNamePropertyWidget tableWidget2 = new SingleTableNamePropertyWidget(tjb, tableProperty,
-                windowContext);
+        final SingleTableNamePropertyWidget tableWidget2 =
+                new SingleTableNamePropertyWidget(tjb, tableProperty, windowContext);
         datastoreWidget2.connectToSchemaNamePropertyWidget(schemaWidget2);
         schemaWidget2.connectToTableNamePropertyWidget(tableWidget2);
         collection2.registerWidget(tableProperty, tableWidget2);
@@ -116,29 +116,29 @@ public class TableNamePropertyWidgetTest extends TestCase {
     }
 
     private PropertyWidgetCollection createPropertyWidgetCollection(
-            TransformerComponentBuilder<TableLookupTransformer> tjb) {
+            final TransformerComponentBuilder<TableLookupTransformer> tjb) {
         final PropertyWidgetCollection collection = new PropertyWidgetCollection(tjb);
         tjb.addChangeListener(new TransformerChangeListener() {
             @Override
-            public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
+            public void onRequirementChanged(final TransformerComponentBuilder<?> transformerJobBuilder) {
             }
 
             @Override
-            public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
+            public void onRemove(final TransformerComponentBuilder<?> transformerJobBuilder) {
             }
 
             @Override
-            public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
-                    List<MutableInputColumn<?>> outputColumns) {
+            public void onOutputChanged(final TransformerComponentBuilder<?> transformerJobBuilder,
+                    final List<MutableInputColumn<?>> outputColumns) {
             }
 
             @Override
-            public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
+            public void onConfigurationChanged(final TransformerComponentBuilder<?> transformerJobBuilder) {
                 collection.onConfigurationChanged();
             }
 
             @Override
-            public void onAdd(TransformerComponentBuilder<?> transformerJobBuilder) {
+            public void onAdd(final TransformerComponentBuilder<?> transformerJobBuilder) {
             }
         });
         return collection;

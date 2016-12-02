@@ -45,10 +45,10 @@ public class JobGraphActions {
     private final Map<Table, SourceTableConfigurationDialog> _tableConfigurationDialogs;
     private final RendererFactory _presenterRendererFactory;
 
-    public JobGraphActions(JobGraphContext graphContext, WindowContext windowContext,
-            RendererFactory presenterRendererFactory,
-            Map<ComponentBuilder, ComponentConfigurationDialog> componentConfigurationDialogs,
-            Map<Table, SourceTableConfigurationDialog> tableConfigurationDialogs) {
+    public JobGraphActions(final JobGraphContext graphContext, final WindowContext windowContext,
+            final RendererFactory presenterRendererFactory,
+            final Map<ComponentBuilder, ComponentConfigurationDialog> componentConfigurationDialogs,
+            final Map<Table, SourceTableConfigurationDialog> tableConfigurationDialogs) {
         _graphContext = graphContext;
         _windowContext = windowContext;
         _presenterRendererFactory = presenterRendererFactory;
@@ -63,16 +63,16 @@ public class JobGraphActions {
             return;
         }
 
-        @SuppressWarnings("unchecked")
-        final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer = (Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
-                .getRenderer(componentBuilder, ComponentBuilderPresenterRenderingFormat.class);
+        @SuppressWarnings("unchecked") final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer =
+                (Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
+                        .getRenderer(componentBuilder, ComponentBuilderPresenterRenderingFormat.class);
 
         if (renderer != null) {
-            final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(_windowContext,
-                    componentBuilder, renderer);
+            final ComponentConfigurationDialog dialog =
+                    new ComponentConfigurationDialog(_windowContext, componentBuilder, renderer);
             dialog.addWindowListener(new WindowAdapter() {
                 @Override
-                public void windowClosed(WindowEvent e) {
+                public void windowClosed(final WindowEvent e) {
                     _componentConfigurationDialogs.remove(componentBuilder);
                     _graphContext.getJobGraph().refresh();
                 }
@@ -90,12 +90,12 @@ public class JobGraphActions {
         }
 
         final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder(table);
-        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
-                analysisJobBuilder, table);
+        final SourceTableConfigurationDialog dialog =
+                new SourceTableConfigurationDialog(_windowContext, analysisJobBuilder, table);
 
         dialog.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosed(WindowEvent e) {
+            public void windowClosed(final WindowEvent e) {
                 _tableConfigurationDialogs.remove(table);
             }
         });

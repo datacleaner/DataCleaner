@@ -37,22 +37,22 @@ public class WriteDataResultHtmlRenderer implements Renderer<WriteDataResult, Ht
     DataCleanerConfiguration _configuration;
 
     @Override
-    public RendererPrecedence getPrecedence(WriteDataResult renderable) {
+    public RendererPrecedence getPrecedence(final WriteDataResult renderable) {
         return RendererPrecedence.MEDIUM;
     }
 
-    public void setConfiguration(DataCleanerConfiguration configuration) {
+    public void setConfiguration(final DataCleanerConfiguration configuration) {
         _configuration = configuration;
     }
 
     @Override
-    public HtmlFragment render(WriteDataResult r) {
+    public HtmlFragment render(final WriteDataResult r) {
         final int inserts = r.getWrittenRowCount();
         final int updates = r.getUpdatesCount();
         final int errors = r.getErrorRowCount();
         final int total = inserts + updates + errors;
-        final Datastore datastore = (_configuration == null ? null : r.getDatastore(_configuration
-                .getDatastoreCatalog()));
+        final Datastore datastore =
+                (_configuration == null ? null : r.getDatastore(_configuration.getDatastoreCatalog()));
 
         final StringBuilder sb = new StringBuilder("<div>");
         if (datastore != null) {

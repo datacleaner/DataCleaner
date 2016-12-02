@@ -19,11 +19,11 @@
  */
 package org.datacleaner.job.runner;
 
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.AnalysisResult;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Table;
 
 /**
  * Provides useful metrics about a row processing flow and it's execution.
@@ -32,56 +32,56 @@ public interface RowProcessingMetrics {
 
     /**
      * Gets the metrics for the complete analysis job.
-     * 
+     *
      * @return the metrics for the complete analysis job.
      */
-    public AnalysisJobMetrics getAnalysisJobMetrics();
+    AnalysisJobMetrics getAnalysisJobMetrics();
 
     /**
      * Gets references to the {@link AnalyzerJob}s that are a part of this row
      * processing flow.
-     * 
+     *
      * @return an array of {@link AnalyzerJob}s.
      */
-    public AnalyzerJob[] getAnalyzerJobs();
+    AnalyzerJob[] getAnalyzerJobs();
 
     /**
      * Gets references to the {@link ComponentJob}s that are expected to produce
      * an {@link AnalysisResult}
-     * 
+     *
      * @return
      */
-    public ComponentJob[] getResultProducers();
+    ComponentJob[] getResultProducers();
 
     /**
      * Gets the query that will be executed to retrieve the table records.
-     * 
+     *
      * @return the query that will be executed to retrieve the table records.
      */
-    public Query getQuery();
+    Query getQuery();
 
     /**
      * Gets the table that is being processed (eg. acts as a source table) in
      * this row processing flow.
-     * 
+     *
      * @return the Table that acts as a source to the row processor.
      */
-    public Table getTable();
+    Table getTable();
 
     /**
      * Gets the {@link RowProcessingStream} that is being processed
-     * 
+     *
      * @return
      */
-    public RowProcessingStream getStream();
+    RowProcessingStream getStream();
 
     /**
      * Gets the expected amount of rows to process. Use this method only if
-     * nescesary, since it may query the database to find the record count.
-     * 
+     * necessary, since it may query the database to find the record count.
+     *
      * @return an expected count of records to process, or -1 if the expected
      *         count could not be determined.
      */
-    public int getExpectedRows();
+    int getExpectedRows();
 
 }

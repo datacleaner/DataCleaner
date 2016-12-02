@@ -38,23 +38,23 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
  * not intercept or perform any special treatment when invoked.
  */
 public class DefaultConfigurationReaderInterceptor implements ConfigurationReaderInterceptor {
-private final Map<String, String> _propertyOverrides;
+    private final Map<String, String> _propertyOverrides;
     private final DataCleanerEnvironment _baseEnvironment;
 
     public DefaultConfigurationReaderInterceptor() {
         this((Resource) null);
     }
 
-    public DefaultConfigurationReaderInterceptor(DataCleanerEnvironment baseEnvironment) {
+    public DefaultConfigurationReaderInterceptor(final DataCleanerEnvironment baseEnvironment) {
         this((Resource) null, baseEnvironment);
     }
 
-    public DefaultConfigurationReaderInterceptor(Map<String, String> propertyOverrides) {
+    public DefaultConfigurationReaderInterceptor(final Map<String, String> propertyOverrides) {
         this(propertyOverrides, new DataCleanerEnvironmentImpl());
     }
 
-    public DefaultConfigurationReaderInterceptor(Map<String, String> propertyOverrides,
-            DataCleanerEnvironment baseEnvironment) {
+    public DefaultConfigurationReaderInterceptor(final Map<String, String> propertyOverrides,
+            final DataCleanerEnvironment baseEnvironment) {
         if (propertyOverrides == null) {
             _propertyOverrides = Collections.emptyMap();
         } else {
@@ -63,11 +63,12 @@ private final Map<String, String> _propertyOverrides;
         _baseEnvironment = baseEnvironment;
     }
 
-    public DefaultConfigurationReaderInterceptor(Resource propertiesResource) {
+    public DefaultConfigurationReaderInterceptor(final Resource propertiesResource) {
         this(propertiesResource, new DataCleanerEnvironmentImpl());
     }
 
-    public DefaultConfigurationReaderInterceptor(Resource propertiesResource, DataCleanerEnvironment baseEnvironment) {
+    public DefaultConfigurationReaderInterceptor(final Resource propertiesResource,
+            final DataCleanerEnvironment baseEnvironment) {
         if (propertiesResource == null || !propertiesResource.isExists()) {
             _propertyOverrides = Collections.emptyMap();
         } else {
@@ -77,7 +78,7 @@ private final Map<String, String> _propertyOverrides;
     }
 
     @Override
-    public final String createFilename(String filename) {
+    public final String createFilename(final String filename) {
         if (filename == null) {
             return null;
         }
@@ -94,18 +95,18 @@ private final Map<String, String> _propertyOverrides;
     }
 
     @Override
-    public Resource createResource(String resourceUrl, DataCleanerConfiguration temporaryConfiguration) {
-        final ResourceConverter converter = new ResourceConverter(temporaryConfiguration,
-                ResourceConverter.getConfiguredDefaultScheme()).withExtraHandlers(getExtraResourceTypeHandlers());
+    public Resource createResource(final String resourceUrl, final DataCleanerConfiguration temporaryConfiguration) {
+        final ResourceConverter converter =
+                new ResourceConverter(temporaryConfiguration, ResourceConverter.getConfiguredDefaultScheme())
+                        .withExtraHandlers(getExtraResourceTypeHandlers());
 
-        final Resource resource = converter.fromString(Resource.class, resourceUrl);
-        return resource;
+        return converter.fromString(Resource.class, resourceUrl);
     }
 
     /**
      * Creates a list of {@link ResourceTypeHandler}s. Subclasses can optionally
      * override this method and add more handlers to the list.
-     * 
+     *
      * @return
      */
     protected List<ResourceTypeHandler<?>> getExtraResourceTypeHandlers() {
@@ -115,7 +116,7 @@ private final Map<String, String> _propertyOverrides;
     /**
      * Returns the parent directory of relative files. Can be overridden by
      * subclasses to specify a "root" of the relative files loaded.
-     * 
+     *
      * @return
      */
     protected File getRelativeParentDirectory() {
@@ -128,12 +129,12 @@ private final Map<String, String> _propertyOverrides;
     }
 
     @Override
-    public Class<?> loadClass(String className) throws ClassNotFoundException {
+    public Class<?> loadClass(final String className) throws ClassNotFoundException {
         return Class.forName(className);
     }
 
     @Override
-    public String getPropertyOverride(String variablePath) {
+    public String getPropertyOverride(final String variablePath) {
         String result = _propertyOverrides.get(variablePath);
         if (result == null) {
             result = System.getProperty(variablePath);

@@ -1,12 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Analysis result</title>  <script type="text/javascript" src="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result.js"></script>
-<link rel="shortcut icon" href="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result-icon.png" />
+  <title>Analysis result</title>  <link rel="shortcut icon" href="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result-icon.png" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/themes/base/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result.css?load=script" />
 <script type="text/javascript">//<![CDATA[
-  var analysisResult = {};
+var analysisResult = {};
+requirejs = {
+    baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/',
+    shim: {
+        'jquery-ui': {
+            deps: ['jquery']
+        },
+        'jquery.flot': {
+            deps: ['jquery'],
+            exports: '$.plot'
+        },
+        'jquery.flot.selection': {
+            deps: ['jquery.flot']
+        }
+    },
+    paths: {
+        'jquery': 'jquery/2.2.4/jquery.min',
+        'jquery-ui': 'jqueryui/1.12.0/jquery-ui.min',
+        'excanvas': 'flot/0.8.3/excanvas.min',
+        'jquery.colorhelpers': 'flot/0.8.3/jquery.colorhelpers.min',
+        'jquery.flot.canvas': 'flot/0.8.3/jquery.flot.canvas.min',
+        'jquery.flot.categories': 'flot/0.8.3/jquery.flot.categories.min',
+        'jquery.flot.crosshair': 'flot/0.8.3/jquery.flot.crosshair.min',
+        'jquery.flot.errorbars': 'flot/0.8.3/jquery.flot.errorbars.min',
+        'jquery.flot.fillbetween': 'flot/0.8.3/jquery.flot.fillbetween.min',
+        'jquery.flot.image': 'flot/0.8.3/jquery.flot.image.min',
+        'jquery.flot': 'flot/0.8.3/jquery.flot.min',
+        'jquery.flot.navigate': 'flot/0.8.3/jquery.flot.navigate.min',
+        'jquery.flot.pie': 'flot/0.8.3/jquery.flot.pie.min',
+        'jquery.flot.resize': 'flot/0.8.3/jquery.flot.resize.min',
+        'jquery.flot.selection': 'flot/0.8.3/jquery.flot.selection.min',
+        'jquery.flot.stack': 'flot/0.8.3/jquery.flot.stack.min',
+        'jquery.flot.symbol': 'flot/0.8.3/jquery.flot.symbol.min',
+        'jquery.flot.threshold': 'flot/0.8.3/jquery.flot.threshold.min',
+        'jquery.flot.time': 'flot/0.8.3/jquery.flot.time.min'
+    }
+};
 //]]>
-</script>
+</script><script type="text/javascript"     src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.js"></script><script type="text/javascript"     src="http://eobjects.org/resources/datacleaner-html-rendering/analysis-result-v2.js"></script>
 </head><body>
 <div class="analysisResultContainer">
 <div class="analysisResultHeader"><ul class="analysisResultToc"></ul></div></div>

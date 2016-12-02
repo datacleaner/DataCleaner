@@ -34,7 +34,7 @@ public class DatastoreIdentifier implements Serializable, Comparable<JobIdentifi
         this(null);
     }
 
-    public DatastoreIdentifier(String name) {
+    public DatastoreIdentifier(final String name) {
         _name = name;
     }
 
@@ -43,7 +43,7 @@ public class DatastoreIdentifier implements Serializable, Comparable<JobIdentifi
         return _name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         _name = name;
     }
 
@@ -61,28 +61,33 @@ public class DatastoreIdentifier implements Serializable, Comparable<JobIdentifi
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        DatastoreIdentifier other = (DatastoreIdentifier) obj;
+        }
+        final DatastoreIdentifier other = (DatastoreIdentifier) obj;
         if (_name == null) {
-            if (other._name != null)
+            if (other._name != null) {
                 return false;
-        } else if (!_name.equals(other._name))
+            }
+        } else if (!_name.equals(other._name)) {
             return false;
+        }
         return true;
     }
 
     @Override
-    public int compareTo(JobIdentifier o) {
+    public int compareTo(final JobIdentifier o) {
         if (o == null) {
             return 1;
         }
-        String name = getName();
+        final String name = getName();
         if (name == null) {
             return -1;
         }

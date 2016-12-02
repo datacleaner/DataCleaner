@@ -23,5 +23,5 @@ import org.datacleaner.connection.Datastore;
 
 public interface DatastoreSelectedListener {
 
-    public void datastoreSelected(Datastore datastore);
+    void datastoreSelected(Datastore datastore);
 }

@@ -25,13 +25,13 @@ final class BatchEntryBatchSink<O> implements BatchSink<O> {
 
     private final List<BatchEntry<?, O>> _entries;
 
-    public BatchEntryBatchSink(List<BatchEntry<?, O>> entries) {
+    public BatchEntryBatchSink(final List<BatchEntry<?, O>> entries) {
         _entries = entries;
     }
 
     @Override
-    public void setOutput(int index, O output) {
-        _entries.get(index).setOutput(output);        
+    public void setOutput(final int index, final O output) {
+        _entries.get(index).setOutput(output);
     }
 
 }

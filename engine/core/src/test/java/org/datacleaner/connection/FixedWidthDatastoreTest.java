@@ -23,15 +23,16 @@ import java.util.Arrays;
 
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileResource;
 
 import junit.framework.TestCase;
 
 public class FixedWidthDatastoreTest extends TestCase {
 
     public void testSimpleGetters() throws Exception {
-        FixedWidthDatastore ds = new FixedWidthDatastore("name", "filename", "encoding", 5);
+        final FixedWidthDatastore ds = new FixedWidthDatastore("name", "filename", "encoding", 5);
         assertEquals("name", ds.getName());
-        assertEquals("filename", ds.getFilename());
+        assertEquals("filename", ds.getResource().getName());
         assertEquals("encoding", ds.getEncoding());
         assertEquals(5, ds.getFixedValueWidth());
 
@@ -39,24 +40,31 @@ public class FixedWidthDatastoreTest extends TestCase {
     }
 
     public void testToString() throws Exception {
-        FixedWidthDatastore ds = new FixedWidthDatastore("name", "filename", "encoding", 5);
-        assertEquals(
-                "FixedWidthDatastore[name=name, filename=filename, encoding=encoding, headerLineNumber=1, valueWidths=[], fixedValueWidth=5]",
-                ds.toString());
+        final FixedWidthDatastore ds = new FixedWidthDatastore("name", "filename", "encoding", 5);
+        assertEquals( "FixedWidthDatastore[name=name, filename=filename, encoding=encoding, headerLineNumber=1, "
+                + "valueWidths=[], fixedValueWidth=5]", ds.toString());
     }
 
     public void testGetDatastoreConnection() throws Exception {
-        FixedWidthDatastore ds = new FixedWidthDatastore("example datastore",
-                "src/test/resources/employees-fixed-width.txt", "UTF-8", 19, false, false, true);
+        final FixedWidthDatastore ds = new FixedWidthDatastore("example datastore",
+                "src/test/resources/employees-fixed-width.txt", "UTF-8", 19, false, false, false);
 
         try (DatastoreConnection con = ds.openConnection()) {
-            Schema schema = con.getDataContext().getDefaultSchema();
+            final Schema schema = con.getDataContext().getDefaultSchema();
             assertEquals("resources", schema.getName());
 
-            Table table = schema.getTables()[0];
+            final Table table = schema.getTables()[0];
             assertEquals("employees-fixed-width.txt", table.getName());
 
             assertEquals("[name, email]", Arrays.toString(table.getColumnNames()));
         }
+    }
+
+    public void testResource() throws Exception {
+        final FileResource resource = new FileResource("mytest.txt");
+        final FixedWidthDatastore fixedWidthDatastore =
+                new FixedWidthDatastore("name", resource, resource.getName(), "UTF-8", 20, false, false, false, 0);
+        assertEquals( "FixedWidthDatastore[name=name, filename=mytest.txt, encoding=UTF-8, headerLineNumber=0, "
+                + "valueWidths=[], fixedValueWidth=20]", fixedWidthDatastore.toString());
     }
 }

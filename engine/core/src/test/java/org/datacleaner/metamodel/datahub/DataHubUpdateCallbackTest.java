@@ -19,9 +19,7 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,19 +36,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class DataHubUpdateCallbackTest {
 
+    private static final int MAX_BATCH_SIZE = DataHubUpdateCallback.INSERT_BATCH_SIZE;
     @Mock
     private DataHubDataContext dataContext;
-
     @InjectMocks
     private DataHubUpdateCallback callback;
-
     private UpdateData updateData;
-
-    private static final int MAX_BATCH_SIZE = DataHubUpdateCallback.INSERT_BATCH_SIZE;
 
     @Before
     public void init() {
-        Map<String, Object> fields = new HashMap<String, Object>();
+        final Map<String, Object> fields = new HashMap<>();
         fields.put("field1", "value1");
         fields.put("field2", "value2");
         updateData = new UpdateData("20", fields);
@@ -84,6 +79,6 @@ public class DataHubUpdateCallbackTest {
             verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class));
         }
         // Tests if it was called a second time
-        verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class)); 
+        verify(dataContext, times(1)).executeUpdates(Matchers.anyListOf(UpdateData.class));
     }
 }

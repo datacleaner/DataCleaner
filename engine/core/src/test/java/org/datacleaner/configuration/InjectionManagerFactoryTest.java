@@ -25,8 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.Configured;
@@ -40,6 +38,8 @@ import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.NumberResult;
 import org.datacleaner.test.TestHelper;
 import org.junit.Ignore;
+
+import junit.framework.TestCase;
 
 public class InjectionManagerFactoryTest extends TestCase {
 
@@ -55,7 +55,7 @@ public class InjectionManagerFactoryTest extends TestCase {
         InputColumn<Object> col;
 
         @Override
-        public void run(InputRow row, int distinctCount) {
+        public void run(final InputRow row, final int distinctCount) {
         }
 
         @Override
@@ -70,7 +70,7 @@ public class InjectionManagerFactoryTest extends TestCase {
         final InjectionManager injectionManager = new InjectionManager() {
             @SuppressWarnings("unchecked")
             @Override
-            public <E> E getInstance(InjectionPoint<E> injectionPoint) {
+            public <E> E getInstance(final InjectionPoint<E> injectionPoint) {
                 touched.set(true);
                 assertEquals(AtomicInteger.class, injectionPoint.getBaseType());
                 return (E) new AtomicInteger(42);
@@ -79,21 +79,22 @@ public class InjectionManagerFactoryTest extends TestCase {
 
         final InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactory() {
             @Override
-            public InjectionManager getInjectionManager(DataCleanerConfiguration conf, AnalysisJob job) {
+            public InjectionManager getInjectionManager(final DataCleanerConfiguration conf, final AnalysisJob job) {
                 return injectionManager;
             }
 
             @Override
-            public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
+            public InjectionManager getInjectionManager(final DataCleanerConfiguration configuration) {
                 return injectionManager;
             }
         };
 
-        final DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl().withDatastores(
-                TestHelper.createSampleDatabaseDatastore("orderdb")).withEnvironment(
-                new DataCleanerEnvironmentImpl().withInjectionManagerFactory(injectionManagerFactory));
+        final DataCleanerConfigurationImpl conf =
+                new DataCleanerConfigurationImpl().withDatastores(TestHelper.createSampleDatabaseDatastore("orderdb"))
+                        .withEnvironment(
+                                new DataCleanerEnvironmentImpl().withInjectionManagerFactory(injectionManagerFactory));
 
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
 
             ajb.setDatastore("orderdb");
             ajb.addSourceColumns("PUBLIC.EMPLOYEES.EMPLOYEENUMBER");

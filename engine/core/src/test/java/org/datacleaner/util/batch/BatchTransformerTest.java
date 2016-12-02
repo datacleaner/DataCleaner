@@ -21,8 +21,6 @@ package org.datacleaner.util.batch;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -41,6 +39,8 @@ import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestEnvironment;
 
+import junit.framework.TestCase;
+
 public class BatchTransformerTest extends TestCase {
 
     private AnalysisJob job;
@@ -51,8 +51,8 @@ public class BatchTransformerTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(new CsvDatastore("foo",
-                "src/test/resources/employees.csv"));
+        final DatastoreCatalog datastoreCatalog =
+                new DatastoreCatalogImpl(new CsvDatastore("foo", "src/test/resources/employees.csv"));
         configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog)
                 .withEnvironment(TestEnvironment.getEnvironment());
 
@@ -60,12 +60,12 @@ public class BatchTransformerTest extends TestCase {
             jobBuilder.setDatastore("foo");
             jobBuilder.addSourceColumns("name");
 
-            TransformerComponentBuilder<MockBatchTransformer> transformerBuilder = jobBuilder
-                    .addTransformer(MockBatchTransformer.class);
+            final TransformerComponentBuilder<MockBatchTransformer> transformerBuilder =
+                    jobBuilder.addTransformer(MockBatchTransformer.class);
             sourceColumn = jobBuilder.getSourceColumns().get(0);
             transformerBuilder.addInputColumns(sourceColumn);
 
-            AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer.addInputColumns(sourceColumn);
             sortedColumn = transformerBuilder.getOutputColumns().get(0);
             analyzer.addInputColumns(sortedColumn);
@@ -75,18 +75,18 @@ public class BatchTransformerTest extends TestCase {
     }
 
     public void testScenario() throws Exception {
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
 
-        @SuppressWarnings("unchecked")
-        ListResult<InputRow> result = (ListResult<InputRow>) resultFuture.getResults().get(0);
+        @SuppressWarnings("unchecked") final ListResult<InputRow> result =
+                (ListResult<InputRow>) resultFuture.getResults().get(0);
 
-        List<InputRow> values = result.getValues();
+        final List<InputRow> values = result.getValues();
         assertEquals(7, values.size());
 
         boolean foundRemixedFields = false;
-        for (InputRow inputRow : values) {
-            Object sourceValue = inputRow.getValue(sourceColumn);
-            Object sortedValue = inputRow.getValue(sortedColumn);
+        for (final InputRow inputRow : values) {
+            final Object sourceValue = inputRow.getValue(sourceColumn);
+            final Object sortedValue = inputRow.getValue(sortedColumn);
             if (!sourceValue.equals(sortedValue)) {
                 foundRemixedFields = true;
                 break;

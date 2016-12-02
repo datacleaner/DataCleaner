@@ -53,8 +53,8 @@ public class Neo4jDatastoreDialog extends AbstractDatastoreDialog<Neo4jDatastore
     private final JPasswordField _passwordTextField;
 
     @Inject
-    public Neo4jDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
-            @Nullable Neo4jDatastore originalDatastore, UserPreferences userPreferences) {
+    public Neo4jDatastoreDialog(final WindowContext windowContext, final MutableDatastoreCatalog catalog,
+            @Nullable final Neo4jDatastore originalDatastore, final UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
         setSaveButtonEnabled(false);
@@ -67,25 +67,25 @@ public class Neo4jDatastoreDialog extends AbstractDatastoreDialog<Neo4jDatastore
 
         _hostnameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
         _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
         _usernameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
         _passwordTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
@@ -124,12 +124,12 @@ public class Neo4jDatastoreDialog extends AbstractDatastoreDialog<Neo4jDatastore
             return false;
         } else {
             try {
-                int portInt = Integer.parseInt(port);
+                final int portInt = Integer.parseInt(port);
                 if (portInt <= 0) {
                     setStatusError("Please enter a valid (positive port number)");
                     return false;
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 setStatusError("Please enter a valid port number");
                 return false;
             }
@@ -177,9 +177,8 @@ public class Neo4jDatastoreDialog extends AbstractDatastoreDialog<Neo4jDatastore
     @Override
     public Schema createSchema() {
         final Neo4jDatastore datastore = createDatastore();
-        try (final DatastoreConnection connection = datastore.openConnection()) {
-            final Schema defaultSchema = connection.getDataContext().getDefaultSchema();
-            return defaultSchema;
+        try (DatastoreConnection connection = datastore.openConnection()) {
+            return connection.getDataContext().getDefaultSchema();
         }
     }
 
@@ -190,11 +189,11 @@ public class Neo4jDatastoreDialog extends AbstractDatastoreDialog<Neo4jDatastore
 
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
-        List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Password", _passwordTextField));
+        final List<Entry<String, JComponent>> result = super.getFormElements();
+        result.add(new ImmutableEntry<>("Hostname", _hostnameTextField));
+        result.add(new ImmutableEntry<>("Port", _portTextField));
+        result.add(new ImmutableEntry<>("Username", _usernameTextField));
+        result.add(new ImmutableEntry<>("Password", _passwordTextField));
         return result;
     }
 

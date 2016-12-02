@@ -32,14 +32,13 @@ public abstract class BatchTransformer implements Transformer, BatchTransformati
     private final BatchTransformationBuffer<InputRow, Object[]> _batchTransformationBuffer;
 
     public BatchTransformer() {
-        _batchTransformationBuffer = new BatchTransformationBuffer<InputRow, Object[]>(this, getMaxBatchSize(),
-                getFlushIntervalMillis());
+        _batchTransformationBuffer = new BatchTransformationBuffer<>(this, getMaxBatchSize(), getFlushIntervalMillis());
     }
 
     /**
      * Overrideable method to define the number of milliseconds between flushes
      * of the batch buffer.
-     * 
+     *
      * @return
      */
     protected int getFlushIntervalMillis() {
@@ -48,7 +47,7 @@ public abstract class BatchTransformer implements Transformer, BatchTransformati
 
     /**
      * Overrideable method to define the maximum batch size of the batch buffer.
-     * 
+     *
      * @return
      */
     protected int getMaxBatchSize() {
@@ -66,7 +65,7 @@ public abstract class BatchTransformer implements Transformer, BatchTransformati
     }
 
     @Override
-    public final Object[] transform(InputRow inputRow) {
+    public final Object[] transform(final InputRow inputRow) {
         return _batchTransformationBuffer.transform(inputRow);
     }
 

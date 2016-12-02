@@ -36,7 +36,7 @@ final class TemporaryMutableDataCleanerEnvironment implements DataCleanerEnviron
     private TaskRunner _taskRunner;
     private RemoteServerConfiguration _remoteServerConfiguration;
 
-    public TemporaryMutableDataCleanerEnvironment(DataCleanerEnvironment baseEnvironment) {
+    public TemporaryMutableDataCleanerEnvironment(final DataCleanerEnvironment baseEnvironment) {
         _injectionManagerFactory = baseEnvironment.getInjectionManagerFactory();
         _storageProvider = baseEnvironment.getStorageProvider();
         _descriptorProvider = baseEnvironment.getDescriptorProvider();
@@ -49,7 +49,7 @@ final class TemporaryMutableDataCleanerEnvironment implements DataCleanerEnviron
         return _remoteServerConfiguration;
     }
 
-    public void setRemoteServerConfiguration(RemoteServerConfiguration remoteServerConfiguration) {
+    public void setRemoteServerConfiguration(final RemoteServerConfiguration remoteServerConfiguration) {
         this._remoteServerConfiguration = remoteServerConfiguration;
     }
 
@@ -58,9 +58,17 @@ final class TemporaryMutableDataCleanerEnvironment implements DataCleanerEnviron
         return _taskRunner;
     }
 
+    public void setTaskRunner(final TaskRunner taskRunner) {
+        _taskRunner = taskRunner;
+    }
+
     @Override
     public DescriptorProvider getDescriptorProvider() {
         return _descriptorProvider;
+    }
+
+    public void setDescriptorProvider(final DescriptorProvider descriptorProvider) {
+        _descriptorProvider = descriptorProvider;
     }
 
     @Override
@@ -68,24 +76,16 @@ final class TemporaryMutableDataCleanerEnvironment implements DataCleanerEnviron
         return _storageProvider;
     }
 
+    public void setStorageProvider(final StorageProvider storageProvider) {
+        _storageProvider = storageProvider;
+    }
+
     @Override
     public InjectionManagerFactory getInjectionManagerFactory() {
         return _injectionManagerFactory;
     }
 
-    public void setDescriptorProvider(DescriptorProvider descriptorProvider) {
-        _descriptorProvider = descriptorProvider;
-    }
-
-    public void setInjectionManagerFactory(InjectionManagerFactory injectionManagerFactory) {
+    public void setInjectionManagerFactory(final InjectionManagerFactory injectionManagerFactory) {
         _injectionManagerFactory = injectionManagerFactory;
-    }
-
-    public void setStorageProvider(StorageProvider storageProvider) {
-        _storageProvider = storageProvider;
-    }
-
-    public void setTaskRunner(TaskRunner taskRunner) {
-        _taskRunner = taskRunner;
     }
 }

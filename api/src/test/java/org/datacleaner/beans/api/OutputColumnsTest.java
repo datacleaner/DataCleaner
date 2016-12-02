@@ -30,13 +30,13 @@ public class OutputColumnsTest extends TestCase {
         try {
             new OutputColumns(0);
             fail("Exception expected");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals("columns must be 1 or higher", e.getMessage());
         }
     }
 
     public void testSingleOutputColumn() throws Exception {
-        OutputColumns oc = new OutputColumns(1);
+        final OutputColumns oc = new OutputColumns(1);
         assertEquals(1, oc.getColumnCount());
         assertNull(oc.getColumnName(0));
         assertEquals(Object.class, oc.getColumnType(0));
@@ -47,7 +47,7 @@ public class OutputColumnsTest extends TestCase {
         try {
             new OutputColumns(null);
             fail("Exception expected");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals("Arguments cannot be null", e.getMessage());
         }
     }
@@ -56,13 +56,14 @@ public class OutputColumnsTest extends TestCase {
         try {
             new OutputColumns(new String[0]);
             fail("Exception expected");
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals("Column names length must be 1 or greater", e.getMessage());
         }
     }
 
     public void testConstructWithTypes() throws Exception {
-        OutputColumns oc = new OutputColumns(new String[] { "foo", "bar" }, new Class[] { String.class, Number.class });
+        final OutputColumns oc =
+                new OutputColumns(new String[] { "foo", "bar" }, new Class[] { String.class, Number.class });
         assertEquals(2, oc.getColumnCount());
         assertEquals("foo", oc.getColumnName(0));
         assertEquals("bar", oc.getColumnName(1));
@@ -73,7 +74,7 @@ public class OutputColumnsTest extends TestCase {
     }
 
     public void testConstructVarArgNames() throws Exception {
-        OutputColumns oc = new OutputColumns("first", "second", "third");
+        final OutputColumns oc = new OutputColumns("first", "second", "third");
         assertEquals(3, oc.getColumnCount());
         assertEquals("first", oc.getColumnName(0));
         assertEquals("second", oc.getColumnName(1));
@@ -84,7 +85,7 @@ public class OutputColumnsTest extends TestCase {
     }
 
     public void testConstructNullTypes() throws Exception {
-        OutputColumns oc = new OutputColumns(new String[] { "foo", "bar" }, null);
+        final OutputColumns oc = new OutputColumns(new String[] { "foo", "bar" }, null);
         assertEquals(2, oc.getColumnCount());
         assertEquals("foo", oc.getColumnName(0));
         assertEquals("bar", oc.getColumnName(1));
@@ -96,13 +97,13 @@ public class OutputColumnsTest extends TestCase {
         try {
             new OutputColumns(new String[] { "foo", "bar" }, new Class[] { String.class });
             fail("Exception expected");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             assertEquals("Column names and column types must have equal length", e.getMessage());
         }
     }
 
     public void testSetColumnType() throws Exception {
-        OutputColumns oc = new OutputColumns("first", "second", "third");
+        final OutputColumns oc = new OutputColumns("first", "second", "third");
         oc.setColumnType(1, String.class);
         assertEquals(Object.class, oc.getColumnType(0));
         assertEquals(String.class, oc.getColumnType(1));
@@ -110,7 +111,7 @@ public class OutputColumnsTest extends TestCase {
     }
 
     public void testSetColumnName() throws Exception {
-        OutputColumns oc = new OutputColumns(1, String.class);
+        final OutputColumns oc = new OutputColumns(1, String.class);
         oc.setColumnName(0, "foo");
         assertEquals("foo", oc.getColumnName(0));
         assertEquals(String.class, oc.getColumnType(0));

@@ -37,7 +37,7 @@ import org.apache.commons.vfs2.FileType;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.VersionComparator;
-import org.datacleaner.user.DemoConfiguration;
+import org.datacleaner.user.DataCleanerHome;
 import org.datacleaner.util.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,104 +52,24 @@ public final class DataCleanerHomeUpgrader {
 
     private static final List<String> candidateBlacklist = Arrays.asList("log", Version.UNKNOWN_VERSION);
 
-    /**
-     * Finds a folder to upgrade from based on the "newFolder" parameter -
-     * upgrades are performed only within the same major version.
-     * 
-     * @param newFolder
-     *            The folder we want to upgrade to (the new version)
-     * @return true if upgrade was successful, false otherwise
-     */
-    public boolean upgrade(FileObject newFolder) {
-        try {
-            if (newFolder.getChildren().length != 0) {
-                // if the folder is not new then we don't want to touch it
-                return false;
-            }
-            
-            final FileObject upgradeFromFolderCandidate = findUpgradeCandidate(newFolder);
-
-            if (upgradeFromFolderCandidate == null) {
-                logger.info("Did not find a suitable upgrade candidate");
-                return false;
-            }
-
-            logger.info("Upgrading DATACLEANER_HOME from : {}", upgradeFromFolderCandidate);
-            newFolder.copyFrom(upgradeFromFolderCandidate, new AllFileSelector());
-
-            // special handling of userpreferences.dat - we only want to keep
-            // the good parts ;-)
-            final UserPreferencesUpgrader userPreferencesUpgrader = new UserPreferencesUpgrader(newFolder);
-            userPreferencesUpgrader.upgrade();
-
-            // Overwrite example jobs
-            final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
-            for (String filePath : allFilePaths) {
-                overwriteFileWithDefaults(newFolder, filePath);
-            }
-            return true;
-        } catch (FileSystemException e) {
-            logger.warn("Exception occured during upgrading: {}", e);
-            return false;
-        }
-    }
-
-    private FileObject findUpgradeCandidate(FileObject target) throws FileSystemException {
-        FileObject parentFolder = target.getParent();
-
-        List<FileObject> versionFolders = new ArrayList<>();
-        FileObject[] allFoldersInParent = parentFolder.findFiles(new FileDepthSelector(1, 1));
-        for (FileObject folderInParent : allFoldersInParent) {
-            final String folderInParentName = folderInParent.getName().getBaseName();
-            if (folderInParent.getType().equals(FileType.FOLDER)
-                    && (!folderInParentName.equals(target.getName().getBaseName()))
-                    && (!candidateBlacklist.contains(folderInParentName))) {
-                versionFolders.add(folderInParent);
-            }
-        }
-
-        List<FileObject> validatedVersionFolders = validateVersionFolders(versionFolders);
-
-        if (!validatedVersionFolders.isEmpty()) {
-
-            List<String> versions = new ArrayList<>();
-            for (FileObject validatedVersionFolder : validatedVersionFolders) {
-                String baseName = validatedVersionFolder.getName().getBaseName();
-                versions.add(baseName);
-            }
-
-            final Comparator<String> comp = new VersionComparator();
-            String latestVersion = Collections.max(versions, comp);
-            FileObject latestVersionFolder = null;
-            for (FileObject validatedVersionFolder : validatedVersionFolders) {
-                if (validatedVersionFolder.getName().getBaseName().equals(latestVersion)) {
-                    latestVersionFolder = validatedVersionFolder;
-                }
-            }
-            return latestVersionFolder;
-        } else {
-            return null;
-        }
-    }
-
-    private static List<FileObject> validateVersionFolders(List<FileObject> versionFolders) {
-        List<FileObject> validatedVersionFolders = new ArrayList<>();
-        Integer currentMajorVersion = Version.getMajorVersion();
+    private static List<FileObject> validateVersionFolders(final List<FileObject> versionFolders) {
+        final List<FileObject> validatedVersionFolders = new ArrayList<>();
+        final Integer currentMajorVersion = Version.getMajorVersion();
         if (currentMajorVersion == null) {
             return validatedVersionFolders;
         }
 
-        for (FileObject versionFolder : versionFolders) {
-            String baseName = versionFolder.getName().getBaseName();
+        for (final FileObject versionFolder : versionFolders) {
+            final String baseName = versionFolder.getName().getBaseName();
 
-            String[] versionParts = baseName.split("\\.");
+            final String[] versionParts = baseName.split("\\.");
 
             try {
-                int majorVersion = Integer.parseInt(versionParts[0]);
+                final int majorVersion = Integer.parseInt(versionParts[0]);
                 if (majorVersion != currentMajorVersion) {
                     continue;
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 continue;
             }
 
@@ -160,10 +80,10 @@ public final class DataCleanerHomeUpgrader {
                 }
                 try {
                     Integer.parseInt(versionPart);
-                } catch (NumberFormatException e) {
-                    logger.warn(
-                            "Found a version folder in home directory ({}) with a part that could not be parsed to an integer: {} Removing this folder from potential upgrade candidates.",
-                            baseName, versionPart);
+                } catch (final NumberFormatException e) {
+                    logger.warn("Found a version folder in home directory ({}) with a part that could not be parsed "
+                                    + "to an integer: {} Removing this folder from potential upgrade candidates.", baseName,
+                            versionPart);
                     validated = false;
                 }
             }
@@ -174,10 +94,10 @@ public final class DataCleanerHomeUpgrader {
         return validatedVersionFolders;
     }
 
-    private static FileObject overwriteFileWithDefaults(FileObject targetDirectory, String targetFilename)
+    private static FileObject overwriteFileWithDefaults(final FileObject targetDirectory, final String targetFilename)
             throws FileSystemException {
-        FileObject file = targetDirectory.resolveFile(targetFilename);
-        FileObject parentFile = file.getParent();
+        final FileObject file = targetDirectory.resolveFile(targetFilename);
+        final FileObject parentFile = file.getParent();
         if (!parentFile.exists()) {
             parentFile.createFolder();
         }
@@ -195,13 +115,92 @@ public final class DataCleanerHomeUpgrader {
             out = file.getContent().getOutputStream();
 
             FileHelper.copy(in, out);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalArgumentException(e);
         } finally {
             FileHelper.safeClose(in, out);
         }
 
         return file;
+    }
+
+    /**
+     * Finds a folder to upgrade from based on the "newFolder" parameter -
+     * upgrades are performed only within the same major version.
+     *
+     * @param newFolder
+     *            The folder we want to upgrade to (the new version)
+     * @return true if upgrade was successful, false otherwise
+     */
+    public boolean upgrade(final FileObject newFolder) {
+        try {
+            if (newFolder.getChildren().length != 0) {
+                // if the folder is not new then we don't want to touch it
+                return false;
+            }
+
+            final FileObject upgradeFromFolderCandidate = findUpgradeCandidate(newFolder);
+
+            if (upgradeFromFolderCandidate == null) {
+                logger.info("Did not find a suitable upgrade candidate");
+                return false;
+            }
+
+            logger.info("Upgrading DATACLEANER_HOME from : {}", upgradeFromFolderCandidate);
+            newFolder.copyFrom(upgradeFromFolderCandidate, new AllFileSelector());
+
+            // special handling of userpreferences.dat - we only want to keep
+            // the good parts ;-)
+            final UserPreferencesUpgrader userPreferencesUpgrader = new UserPreferencesUpgrader(newFolder);
+            userPreferencesUpgrader.upgrade();
+
+            // Overwrite example jobs
+            final List<String> allFilePaths = DataCleanerHome.getAllInitialFiles();
+            for (final String filePath : allFilePaths) {
+                overwriteFileWithDefaults(newFolder, filePath);
+            }
+            return true;
+        } catch (final FileSystemException e) {
+            logger.warn("Exception occured during upgrading: {}", e);
+            return false;
+        }
+    }
+
+    private FileObject findUpgradeCandidate(final FileObject target) throws FileSystemException {
+        final FileObject parentFolder = target.getParent();
+
+        final List<FileObject> versionFolders = new ArrayList<>();
+        final FileObject[] allFoldersInParent = parentFolder.findFiles(new FileDepthSelector(1, 1));
+        for (final FileObject folderInParent : allFoldersInParent) {
+            final String folderInParentName = folderInParent.getName().getBaseName();
+            if (folderInParent.getType().equals(FileType.FOLDER) && (!folderInParentName
+                    .equals(target.getName().getBaseName())) && (!candidateBlacklist.contains(folderInParentName))) {
+                versionFolders.add(folderInParent);
+            }
+        }
+
+        final List<FileObject> validatedVersionFolders = validateVersionFolders(versionFolders);
+
+        if (!validatedVersionFolders.isEmpty()) {
+
+            final List<String> versions = new ArrayList<>();
+            for (final FileObject validatedVersionFolder : validatedVersionFolders) {
+                final String baseName = validatedVersionFolder.getName().getBaseName();
+                versions.add(baseName);
+            }
+
+            final Comparator<String> comp = new VersionComparator();
+            final String latestVersion = Collections.max(versions, comp);
+            FileObject latestVersionFolder = null;
+            for (final FileObject validatedVersionFolder : validatedVersionFolders) {
+                if (validatedVersionFolder.getName().getBaseName().equals(latestVersion)) {
+                    latestVersionFolder = validatedVersionFolder;
+                }
+            }
+            return latestVersionFolder;
+        } else {
+            return null;
+        }
     }
 
 }

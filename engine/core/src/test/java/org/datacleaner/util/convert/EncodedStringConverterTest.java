@@ -23,21 +23,21 @@ import junit.framework.TestCase;
 
 public class EncodedStringConverterTest extends TestCase {
 
-     public void testFromAndToString() throws Exception {
-        EncodedStringConverter converter = new EncodedStringConverter();
-        String encoded = converter.toString("My secret 1234");
+    public void testFromAndToString() throws Exception {
+        final EncodedStringConverter converter = new EncodedStringConverter();
+        final String encoded = converter.toString("My secret 1234");
         assertEquals("xWP8CYUpivVDX6l31xBvdg==", encoded);
-        
-        String result = converter.fromString(String.class, encoded);
+
+        final String result = converter.fromString(String.class, encoded);
         assertEquals("My secret 1234", result);
     }
-     
-     public void testFromAndToNull() throws Exception {
-         EncodedStringConverter converter = new EncodedStringConverter();
-         String encoded = converter.toString(null);
-         assertEquals(null, encoded);
-         
-         String result = converter.fromString(String.class, null);
-         assertEquals(null, result);
+
+    public void testFromAndToNull() throws Exception {
+        final EncodedStringConverter converter = new EncodedStringConverter();
+        final String encoded = converter.toString(null);
+        assertEquals(null, encoded);
+
+        final String result = converter.fromString(String.class, null);
+        assertEquals(null, result);
     }
 }

@@ -23,12 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.datacleaner.monitor.wizard.job.JobWizardContext;
+import org.datacleaner.util.StringUtils;
 
 /**
  * Page for entering a name for a job.
@@ -39,13 +39,13 @@ public abstract class JobNameWizardPage extends AbstractFreemarkerWizardPage {
     private final int _pageIndex;
     private final String _suggestedName;
 
-    public JobNameWizardPage(JobWizardContext context, int pageIndex, String suggestedName) {
+    public JobNameWizardPage(final JobWizardContext context, final int pageIndex, final String suggestedName) {
         _context = context;
         _pageIndex = pageIndex;
         _suggestedName = (suggestedName == null ? "" : suggestedName);
     }
 
-    public JobNameWizardPage(JobWizardContext context, int pageIndex) {
+    public JobNameWizardPage(final JobWizardContext context, final int pageIndex) {
         this(context, pageIndex, null);
     }
 
@@ -53,14 +53,14 @@ public abstract class JobNameWizardPage extends AbstractFreemarkerWizardPage {
     public Integer getPageIndex() {
         return _pageIndex;
     }
-    
+
     @Override
     protected Class<?> getTemplateFriendlyClass() {
         return JobNameWizardPage.class;
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final String name = formParameters.get("name").get(0);
 
@@ -70,7 +70,7 @@ public abstract class JobNameWizardPage extends AbstractFreemarkerWizardPage {
 
         final TenantContext tenantContext = _context.getTenantContext();
 
-        boolean exists = tenantContext.containsJob(name);
+        final boolean exists = tenantContext.containsJob(name);
         if (exists) {
             throw new DCUserInputException("A job with the name '" + name + "' already exist.");
         }
@@ -87,7 +87,7 @@ public abstract class JobNameWizardPage extends AbstractFreemarkerWizardPage {
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("name", _suggestedName);
         return map;
     }

@@ -31,7 +31,7 @@ public class ErrorUtils {
     /**
      * Unwraps an exception for presentation to the user. This method will
      * remove unnecesary/irrelevant wrapping exceptions if possible.
-     * 
+     *
      * @param throwable
      * @return
      */

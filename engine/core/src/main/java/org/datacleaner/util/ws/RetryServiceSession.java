@@ -43,17 +43,17 @@ public class RetryServiceSession<R> extends SimpleServiceSession<R> implements S
 
     /**
      * Constructs a {@link RetryServiceSession}.
-     * 
+     *
      * @param maxRetries
      *            maximum number of retries
      */
-    public RetryServiceSession(int maxRetries) {
+    public RetryServiceSession(final int maxRetries) {
         this(maxRetries, null);
     }
 
     /**
      * Constructs a {@link RetryServiceSession}.
-     * 
+     *
      * @param maxRetries
      *            maximum number of retries
      * @param sleepTimeBetweenRetries
@@ -61,7 +61,7 @@ public class RetryServiceSession<R> extends SimpleServiceSession<R> implements S
      *            is null, empty or not of appropriate size, a sleep time of
      *            {@link #DEFAULT_RETRY_SLEEP_TIME} will be used.
      */
-    public RetryServiceSession(int maxRetries, int[] sleepTimeBetweenRetries) {
+    public RetryServiceSession(final int maxRetries, final int[] sleepTimeBetweenRetries) {
         if (maxRetries < 0) {
             throw new IllegalArgumentException("Max retries cannot be a negative number");
         }
@@ -74,7 +74,7 @@ public class RetryServiceSession<R> extends SimpleServiceSession<R> implements S
     }
 
     @Override
-    public ServiceResult<R> invokeService(Callable<R> callable) {
+    public ServiceResult<R> invokeService(final Callable<R> callable) {
         // note attemptNo is 1-based
         int attemptNo = 1;
         while (true) {
@@ -93,7 +93,7 @@ public class RetryServiceSession<R> extends SimpleServiceSession<R> implements S
                 return result;
             }
 
-            long sleepTime = getSleepTime(attemptNo);
+            final long sleepTime = getSleepTime(attemptNo);
 
             attemptNo++;
             _retryCount.incrementAndGet();
@@ -101,15 +101,15 @@ public class RetryServiceSession<R> extends SimpleServiceSession<R> implements S
             if (sleepTime > 0) {
                 try {
                     Thread.sleep(sleepTime);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     // do nothing
                 }
             }
         }
     }
 
-    private long getSleepTime(int attemptNo) {
-        int index = attemptNo - 1;
+    private long getSleepTime(final int attemptNo) {
+        final int index = attemptNo - 1;
         if (_sleepTimeBetweenRetries != null && _sleepTimeBetweenRetries.length > index) {
             return _sleepTimeBetweenRetries[index];
         }
@@ -119,7 +119,7 @@ public class RetryServiceSession<R> extends SimpleServiceSession<R> implements S
     /**
      * Gets the maximum number of retries tolerated before the service
      * invocation is considered a failure.
-     * 
+     *
      * @return
      */
     public int getMaxRetries() {
@@ -128,7 +128,7 @@ public class RetryServiceSession<R> extends SimpleServiceSession<R> implements S
 
     /**
      * Gets the actual number of service invocation retries performed
-     * 
+     *
      * @return
      */
     public int getRetryCount() {
@@ -138,7 +138,7 @@ public class RetryServiceSession<R> extends SimpleServiceSession<R> implements S
     /**
      * Gets the number of failed service invocations. A failure in this sense
      * mean that all retries failed.
-     * 
+     *
      * @return
      */
     public int getFailureCount() {
@@ -147,7 +147,7 @@ public class RetryServiceSession<R> extends SimpleServiceSession<R> implements S
 
     /**
      * Gets the number of successful service invocations.
-     * 
+     *
      * @return
      */
     public int getSuccessCount() {

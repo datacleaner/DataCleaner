@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Enum that contains all ISO code countries.
- * 
+ *
  * The enum values where generated based on this list:
- * 
+ *
  * <ul>
  * <li><a href="http://www.iso.org/iso/english_country_names_and_code_elements">
  * English country names and code elements</a></li>
@@ -93,7 +93,8 @@ public enum Country implements HasName, HasAliases {
 
     BOLIVIA("BO", "BOL", "Bolivia", "Plurinational State of Bolivia", "Bolivia (Plurinational State of)"),
 
-    BONAIRE_SAINT_EUSTATIUS_AND_SABA("BQ", "BES", "Bonaire, Saint Eustatius and Saba", "Bonaire", "Saba", "Sint Eustatius"),
+    BONAIRE_SAINT_EUSTATIUS_AND_SABA("BQ", "BES", "Bonaire, Saint Eustatius and Saba", "Bonaire", "Saba",
+            "Sint Eustatius"),
 
     BOSNIA_AND_HERZEGOVINA("BA", "BIH", "Bosnia and Herzegovina"),
 
@@ -141,8 +142,9 @@ public enum Country implements HasName, HasAliases {
 
     CONGO_BRAZZAVILLE("CG", "COG", "Congo (Brazzaville)", "Congo", "Congo (the)", "the Republic of the Congo"),
 
-    CONGO_KINSHASA("CD", "COD", "Congo (Kinshasa)", "Congo, Democratic republic of the", "the Democratic Republic of the Congo", "Congo (the Democratic Republic of the)", "Zaire"), /* Former country name 'Zaire' */
-    
+    CONGO_KINSHASA("CD", "COD", "Congo (Kinshasa)", "Congo, Democratic republic of the",
+            "the Democratic Republic of the Congo", "Congo (the Democratic Republic of the)", /* former name */"Zaire"),
+
     COOK_ISLANDS("CK", "COK", "Cook Islands"),
 
     COSTA_RICA("CR", "CRI", "Costa Rica"),
@@ -190,7 +192,8 @@ public enum Country implements HasName, HasAliases {
 
     FINLAND("FI", "FIN", "Finland"),
 
-    FRANCE("FR", "FRA", "France", "French Republic", "République Française", "Republique Francaise", "Frankrijk", "Corsica"),
+    FRANCE("FR", "FRA", "France", "French Republic", "République Française", "Republique Francaise", "Frankrijk",
+            "Corsica"),
 
     FRENCH_GUIANA("GF", "GUF", "French Guiana"),
 
@@ -326,7 +329,8 @@ public enum Country implements HasName, HasAliases {
 
     MEXICO("MX", "MEX", "Mexico", "México", "United Mexican States"),
 
-    MICRONESIA("FM", "FSM", "Micronesia", "Micronesia (Federated States of)", "Federated States of Micronesia", "Micronesia, Federated States of"),
+    MICRONESIA("FM", "FSM", "Micronesia", "Micronesia (Federated States of)", "Federated States of Micronesia",
+            "Micronesia, Federated States of"),
 
     MOLDOVA("MD", "MDA", "Moldova"),
 
@@ -457,7 +461,7 @@ public enum Country implements HasName, HasAliases {
     SRI_LANKA("LK", "LKA", "Sri Lanka"),
 
     SUDAN("SD", "SDN", "Sudan"),
-    
+
     SOUTH_SUDAN("SS", "SSD", "South Sudan"),
 
     SURINAME("SR", "SUR", "Suriname"),
@@ -508,12 +512,12 @@ public enum Country implements HasName, HasAliases {
 
     UNITED_KINGDOM("GB", "GBR", "United Kingdom", "Great Britain", "United Kingdom of Great Britain",
             "United Kingdom of Great Britain and Northern Ireland", "England", "Scotland", "Wales", "Northern Ireland",
-            "Engeland", "Groot Britannie", "Groot Britannië", "Verenigd Koninkrijk", "VK",
-            "UK"),
+            "Engeland", "Groot Britannie", "Groot Britannië", "Verenigd Koninkrijk", "VK", "UK"),
 
     UNITED_STATES_MINOR_OUTLYING_ISLANDS("UM", "UMI", "United States Minor Outlying Islands"),
 
-    UNITED_STATES_OF_AMERICA("US", "USA", "United States of America", "United States", "Verenigde Staten", "Verenigde Staten", "VS"),
+    UNITED_STATES_OF_AMERICA("US", "USA", "United States of America", "United States", "Verenigde Staten",
+            "Verenigde Staten", "VS"),
 
     URUGUAY("UY", "URY", "Uruguay"),
 
@@ -546,7 +550,7 @@ public enum Country implements HasName, HasAliases {
 
     // build reusable matching map for find(...) method
     static {
-        matchingMap = new HashMap<String, Country>();
+        matchingMap = new HashMap<>();
         final Country[] values = values();
 
         // first add aliases (separately, they take second priority)
@@ -574,46 +578,29 @@ public enum Country implements HasName, HasAliases {
 
     /**
      * Constructor for country enum
-     * 
+     *
      * @param isoCode2
      * @param isoCode3
      * @param name
      * @param aliases
      */
-    private Country(String isoCode2, String isoCode3, String name, String... aliases) {
+    Country(final String isoCode2, final String isoCode3, final String name, final String... aliases) {
         _twoLetterIsoCode = isoCode2;
         _threeLetterIsoCode = isoCode3;
         _name = name;
         _aliases = aliases;
     }
 
-    public String getTwoLetterISOCode() {
-        return _twoLetterIsoCode;
-    }
-
-    public String getThreeLetterISOCode() {
-        return _threeLetterIsoCode;
-    }
-
-    public String getCountryName() {
-        return _name;
-    }
-
-    @Override
-    public String[] getAliases() {
-        return _aliases;
-    }
-
     /**
      * Finds a particular country based on a countrycode. The search will look
      * first for country codes but in case no matches are found, then country
      * name search is also applied.
-     * 
+     *
      * @param country
      *            the country code or name to search for
      * @return
      */
-    public static Country find(String country) {
+    public static Country find(final String country) {
         return find(country, null);
     }
 
@@ -621,7 +608,7 @@ public enum Country implements HasName, HasAliases {
      * Finds a particular country based on a countrycode. The search will look
      * first for country codes but in case no matches are found, then country
      * name search is also applied.
-     * 
+     *
      * @param countryInput
      *            the country code or name to search for
      * @param defaultCountry
@@ -642,7 +629,7 @@ public enum Country implements HasName, HasAliases {
             return defaultCountry;
         }
 
-        Country country = matchingMap.get(countryCompare);
+        final Country country = matchingMap.get(countryCompare);
         if (country != null) {
             LOGGER.debug("Found matching country (by compare value '{}'): {}", countryCompare, country);
             return country;
@@ -679,7 +666,7 @@ public enum Country implements HasName, HasAliases {
         country = replaceAll(country, "STATES ", " ");
         country = replaceAll(country, "STATE ", " ");
         country = replaceAll(country, "OF ", " ");
-        country = country.replaceFirst("THE", " "); 
+        country = country.replaceFirst("THE", " ");
 
         // remove spaces
         country = replaceAll(country, " ", "");
@@ -689,17 +676,34 @@ public enum Country implements HasName, HasAliases {
 
     /**
      * Non-regex based replace-all method
-     * 
+     *
      * @param str
      * @param searchFor
      * @param replaceWith
      * @return
      */
-    private static String replaceAll(String str, String searchFor, String replaceWith) {
+    private static String replaceAll(String str, final String searchFor, final String replaceWith) {
         while (str.indexOf(searchFor) != -1) {
             str = str.replace(searchFor, replaceWith);
         }
         return str;
+    }
+
+    public String getTwoLetterISOCode() {
+        return _twoLetterIsoCode;
+    }
+
+    public String getThreeLetterISOCode() {
+        return _threeLetterIsoCode;
+    }
+
+    public String getCountryName() {
+        return _name;
+    }
+
+    @Override
+    public String[] getAliases() {
+        return _aliases;
     }
 
     @Override

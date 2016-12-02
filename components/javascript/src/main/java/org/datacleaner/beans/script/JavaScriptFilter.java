@@ -35,25 +35,24 @@ import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Named("JavaScript filter")
-@Description("Supply your own piece of JavaScript that evaluates whether rows should be included or excluded from processing.")
+@Description(
+        "Supply your own piece of JavaScript that evaluates whether rows should be included or excluded from processing.")
 @Categorized(ScriptingCategory.class)
 public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
 
-    public static enum Category {
-        VALID, INVALID;
+    public enum Category {
+        VALID, INVALID
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(JavaScriptFilter.class);
 
     @Configured
     InputColumn<?>[] columns;
 
     @Configured
-    @Description("Available variables:\nvalues[0..]: Array of values\nvalues[\"my_col\"]: Map of values\nmy_col: Each column value has it's own variable\nout: Print to console using out.println('hello')\nlogger: Print to log using log.info(...), log.warn(...), log.error(...)")
+    @Description("Available variables:\nvalues[0..]: Array of values\nvalues[\"my_col\"]: Map of values\nmy_col: "
+            + "Each column value has it's own variable\nout: Print to console using out.println('hello')\n"
+            + "logger: Print to log using log.info(...), log.warn(...), log.error(...)")
     @StringProperty(multiline = true, mimeType = { "text/javascript", "application/x-javascript" })
     String sourceCode = "function eval() {\n  return values[0] != null;\n}\n\neval();";
 
@@ -66,13 +65,13 @@ public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
     @Initialize
     public void init() {
         _contextFactory = new ContextFactory();
-        Context context = _contextFactory.enterContext();
+        final Context context = _contextFactory.enterContext();
 
         try {
             _script = context.compileString(sourceCode, this.getClass().getSimpleName(), 1, null);
             _sharedScope = context.initStandardObjects();
 
-            JavaScriptUtils.addToScope(_sharedScope, logger, "logger", "log");
+            JavaScriptUtils.addToScope(_sharedScope, new JavaScriptLogger(), "logger", "log");
             JavaScriptUtils.addToScope(_sharedScope, System.out, "out");
         } finally {
             Context.exit();
@@ -80,20 +79,20 @@ public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
     }
 
     @Override
-    public Category categorize(InputRow inputRow) {
-        Context context = _contextFactory.enterContext();
+    public Category categorize(final InputRow inputRow) {
+        final Context context = _contextFactory.enterContext();
 
         try {
 
             // this scope is local to the execution of a single row
-            Scriptable scope = context.newObject(_sharedScope);
+            final Scriptable scope = context.newObject(_sharedScope);
             scope.setPrototype(_sharedScope);
             scope.setParentScope(null);
 
             JavaScriptUtils.addToScope(scope, inputRow, columns, "values");
 
-            Object result = _script.exec(context, scope);
-            boolean booleanResult = Context.toBoolean(result);
+            final Object result = _script.exec(context, scope);
+            final boolean booleanResult = Context.toBoolean(result);
 
             if (booleanResult) {
                 return JavaScriptFilter.Category.VALID;
@@ -104,11 +103,11 @@ public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
         }
     }
 
-    public void setSourceCode(String sourceCode) {
+    public void setSourceCode(final String sourceCode) {
         this.sourceCode = sourceCode;
     }
 
-    public void setColumns(InputColumn<?>[] columns) {
+    public void setColumns(final InputColumn<?>[] columns) {
         this.columns = columns;
     }
 }

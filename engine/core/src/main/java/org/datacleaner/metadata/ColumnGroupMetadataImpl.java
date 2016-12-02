@@ -34,8 +34,9 @@ public final class ColumnGroupMetadataImpl extends AbstractHasMetadataAnnotation
     private final String _columnGroupName;
     private final ImmutableList<ColumnMetadata> _columnMetadata;
 
-    public ColumnGroupMetadataImpl(String columnGroupName, Collection<? extends ColumnMetadata> columnMetadata,
-            Collection<? extends MetadataAnnotation> annotations) {
+    public ColumnGroupMetadataImpl(final String columnGroupName,
+            final Collection<? extends ColumnMetadata> columnMetadata,
+            final Collection<? extends MetadataAnnotation> annotations) {
         super(annotations);
         _columnGroupName = columnGroupName;
         _columnMetadata = ImmutableList.copyOf(columnMetadata);
@@ -47,12 +48,12 @@ public final class ColumnGroupMetadataImpl extends AbstractHasMetadataAnnotation
     }
 
     @Override
-    public ColumnMetadata getColumnMetadataByName(String columnName) {
+    public ColumnMetadata getColumnMetadataByName(final String columnName) {
         return getByName(columnName, _columnMetadata);
     }
 
     @Override
-    public ColumnMetadata getColumnMetadata(Column column) {
+    public ColumnMetadata getColumnMetadata(final Column column) {
         if (column == null) {
             return null;
         }

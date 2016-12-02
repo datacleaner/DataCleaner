@@ -24,11 +24,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import org.datacleaner.util.ReadObjectBuilder;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.xml.XmlSaxDataContext;
 import org.apache.metamodel.xml.XmlSaxTableDef;
+import org.datacleaner.util.ReadObjectBuilder;
 
 /**
  * Datastore implementation for XML files.
@@ -40,17 +40,17 @@ public class XmlDatastore extends UsageAwareDatastore<DataContext> implements Fi
     private final String _filename;
     private final XmlSaxTableDef[] _tableDefs;
 
-    public XmlDatastore(String name, String filename) {
+    public XmlDatastore(final String name, final String filename) {
         this(name, filename, null);
     }
 
-    public XmlDatastore(String name, String filename, XmlSaxTableDef[] tableDefs) {
+    public XmlDatastore(final String name, final String filename, final XmlSaxTableDef[] tableDefs) {
         super(name);
         _filename = filename;
         _tableDefs = tableDefs;
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, XmlDatastore.class).readObject(stream);
     }
 
@@ -72,7 +72,7 @@ public class XmlDatastore extends UsageAwareDatastore<DataContext> implements Fi
         } else {
             dataContext = new XmlSaxDataContext(file, _tableDefs);
         }
-        return new DatastoreConnectionImpl<DataContext>(dataContext, this);
+        return new DatastoreConnectionImpl<>(dataContext, this);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class XmlDatastore extends UsageAwareDatastore<DataContext> implements Fi
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         super.decorateIdentity(identifiers);
         identifiers.add(_filename);
         identifiers.add(_tableDefs);

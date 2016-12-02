@@ -26,6 +26,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.panels.MetadataPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetUtils;
 
 /**
  * A dialog containing metadata about a job and it's data source
@@ -33,10 +34,10 @@ import org.datacleaner.util.ImageManager;
 public class MetadataDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
-    
+    private static final int MAX_HEIGHT = 800;
     private final AnalysisJobBuilder _jobBuilder;
 
-    public MetadataDialog(WindowContext windowContext, AnalysisJobBuilder jobBuilder) {
+    public MetadataDialog(final WindowContext windowContext, final AnalysisJobBuilder jobBuilder) {
         super(windowContext, ImageManager.get().getImage(IconUtils.MODEL_METADATA));
         _jobBuilder = jobBuilder;
     }
@@ -58,7 +59,6 @@ public class MetadataDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        return new MetadataPanel(_jobBuilder);
+        return WidgetUtils.scrollable(new MetadataPanel(_jobBuilder), MAX_HEIGHT);
     }
-
 }

@@ -24,13 +24,13 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
 import org.datacleaner.api.AnalyzerResultFuture.Listener;
+
+import junit.framework.TestCase;
 
 public class AnalyzerResultFutureTest extends TestCase {
 
@@ -39,7 +39,7 @@ public class AnalyzerResultFutureTest extends TestCase {
         private static final long serialVersionUID = 1L;
         private final Number _number;
 
-        public NumberResult(int number) {
+        public NumberResult(final int number) {
             _number = number;
         }
 
@@ -55,8 +55,8 @@ public class AnalyzerResultFutureTest extends TestCase {
     public void testAddListenerWhenResultIsReady() throws Exception {
         final NumberResult result1 = new NumberResult(42);
 
-        final AnalyzerResultFuture<NumberResult> future = new AnalyzerResultFutureImpl<>("foo",
-                new ImmutableRef<NumberResult>(result1));
+        final AnalyzerResultFuture<NumberResult> future =
+                new AnalyzerResultFutureImpl<>("foo", new ImmutableRef<>(result1));
 
         final NumberResult result2 = future.get();
 
@@ -66,13 +66,13 @@ public class AnalyzerResultFutureTest extends TestCase {
 
         future.addListener(new Listener<NumberResult>() {
             @Override
-            public void onSuccess(NumberResult result) {
+            public void onSuccess(final NumberResult result) {
                 assertEquals(result1, result);
                 b.set(true);
             }
 
             @Override
-            public void onError(RuntimeException error) {
+            public void onError(final RuntimeException error) {
                 fail("This should never happen");
             }
         });
@@ -86,19 +86,18 @@ public class AnalyzerResultFutureTest extends TestCase {
         final int threadCount = 10;
 
         final Thread[] threads = new Thread[threadCount];
-        @SuppressWarnings({ "unchecked" })
-        final Listener<NumberResult>[] listeners = new Listener[threadCount];
+        @SuppressWarnings({ "unchecked" }) final Listener<NumberResult>[] listeners = new Listener[threadCount];
         final ArrayBlockingQueue<Object> resultQueue = new ArrayBlockingQueue<>(threadCount);
 
         for (int i = 0; i < listeners.length; i++) {
             listeners[i] = new Listener<NumberResult>() {
                 @Override
-                public void onSuccess(NumberResult result) {
+                public void onSuccess(final NumberResult result) {
                     resultQueue.add(result);
                 }
 
                 @Override
-                public void onError(RuntimeException error) {
+                public void onError(final RuntimeException error) {
                     resultQueue.add(error);
                 }
             };
@@ -159,17 +158,17 @@ public class AnalyzerResultFutureTest extends TestCase {
     public void testSerializationAndDeserialization() throws Exception {
         final NumberResult result1 = new NumberResult(42);
 
-        final AnalyzerResultFuture<NumberResult> future = new AnalyzerResultFutureImpl<>("foo",
-                new ImmutableRef<NumberResult>(result1));
+        final AnalyzerResultFuture<NumberResult> future =
+                new AnalyzerResultFutureImpl<>("foo", new ImmutableRef<>(result1));
 
         future.addListener(new Listener<NumberResult>() {
             @Override
-            public void onSuccess(NumberResult result) {
+            public void onSuccess(final NumberResult result) {
                 // do nothing - this is just a non-serializable listener
             }
 
             @Override
-            public void onError(RuntimeException error) {
+            public void onError(final RuntimeException error) {
                 // do nothing - this is just a non-serializable listener
             }
         });

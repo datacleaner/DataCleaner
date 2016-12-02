@@ -37,17 +37,17 @@ public class MockMetricDescriptor extends AbstractMetricDescriptor implements Me
     private final Number _value;
     private String _name;
 
-    public MockMetricDescriptor(Number value) {
+    public MockMetricDescriptor(final Number value) {
         _value = value;
     }
 
     @Override
-    public Number getValue(AnalyzerResult result, MetricParameters metricParameters) {
+    public Number getValue(final AnalyzerResult result, final MetricParameters metricParameters) {
         return _value;
     }
 
     @Override
-    public Collection<String> getMetricParameterSuggestions(AnalyzerResult result) {
+    public Collection<String> getMetricParameterSuggestions(final AnalyzerResult result) {
         return Collections.emptyList();
     }
 
@@ -57,7 +57,7 @@ public class MockMetricDescriptor extends AbstractMetricDescriptor implements Me
     }
 
     @Override
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+    public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
         return null;
     }
 
@@ -76,7 +76,7 @@ public class MockMetricDescriptor extends AbstractMetricDescriptor implements Me
         return _name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         _name = name;
     }
 

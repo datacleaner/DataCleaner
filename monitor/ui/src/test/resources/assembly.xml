@@ -1,0 +1,9 @@
+<assembly>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<files>
+		<file>
+			<source>${project.build.directory}/${project.build.finalName}.war</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
+	</files>
+</assembly>

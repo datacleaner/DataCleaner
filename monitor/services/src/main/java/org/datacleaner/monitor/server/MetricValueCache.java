@@ -19,6 +19,6 @@
  */
 package org.datacleaner.monitor.server;
 
-public interface MetricValueCache extends MetricValueProducer{
+public interface MetricValueCache extends MetricValueProducer {
 
 }

@@ -62,8 +62,9 @@ public class JobTriggeringController {
     @ResponseBody
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Map<String, String> invokeJob(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName, @RequestParam(value = "block", required = false) Boolean block,
-            @RequestParam(value = "timeoutMillis", required = false) Integer timeoutMillis) throws Throwable {
+            @PathVariable("job") final String jobName,
+            @RequestParam(value = "block", required = false) final Boolean block,
+            @RequestParam(value = "timeoutMillis", required = false) final Integer timeoutMillis) throws Throwable {
         return handleJob(tenant, jobName, block, timeoutMillis, null);
     }
 
@@ -72,56 +73,59 @@ public class JobTriggeringController {
     @ResponseBody
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Map<String, String> handlePlainText(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName, @RequestParam(value = "block", required = false) Boolean block,
-            @RequestParam(value = "timeoutMillis", required = false) Integer timeoutMillis,
+            @PathVariable("job") final String jobName,
+            @RequestParam(value = "block", required = false) final Boolean block,
+            @RequestParam(value = "timeoutMillis", required = false) final Integer timeoutMillis,
             @RequestBody final String overrideProperties) throws Throwable {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         if (overrideProperties != null && !overrideProperties.isEmpty()) {
             properties.load(new StringReader(overrideProperties));
         }
-        
+
         return handleJob(tenant, jobName, block, timeoutMillis, properties);
     }
-    
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, 
+
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Map<String, String> handleMultipartFormData(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName, @RequestParam(value = "block", required = false) Boolean block,
-            @RequestParam(value = "timeoutMillis", required = false) Integer timeoutMillis,
+            @PathVariable("job") final String jobName,
+            @RequestParam(value = "block", required = false) final Boolean block,
+            @RequestParam(value = "timeoutMillis", required = false) final Integer timeoutMillis,
             @RequestParam(value = "overrideProperties") final MultipartFile overrideProperties) throws Throwable {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         if (overrideProperties != null && !overrideProperties.isEmpty()) {
             properties.load(overrideProperties.getInputStream());
         }
-        
+
         return handleJob(tenant, jobName, block, timeoutMillis, properties);
     }
-    
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, 
+
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Map<String, String> handleJob(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName, @RequestParam(value = "block", required = false) Boolean block,
-            @RequestParam(value = "timeoutMillis", required = false) Integer timeoutMillis,
+            @PathVariable("job") String jobName, @RequestParam(value = "block", required = false) final Boolean block,
+            @RequestParam(value = "timeoutMillis", required = false) final Integer timeoutMillis,
             @RequestBody final Properties overrideProperties) throws Throwable {
         final boolean blocking = block != null && block;
 
         jobName = jobName.replaceAll("\\+", " ");
 
-        TenantIdentifier tenantIdentifier = new TenantIdentifier(tenant);
+        final TenantIdentifier tenantIdentifier = new TenantIdentifier(tenant);
 
-        ExecutionLog executionLog = _schedulingService.triggerExecution(tenantIdentifier, new JobIdentifier(jobName),
-                mapProperties(overrideProperties));
+        ExecutionLog executionLog = _schedulingService
+                .triggerExecution(tenantIdentifier, new JobIdentifier(jobName), mapProperties(overrideProperties));
 
         if (blocking) {
             int millisWaited = 0;
             while (!executionLog.isFinished() && !isTimedOut(millisWaited, timeoutMillis)) {
                 Thread.sleep(POLL_INCREMENT_MILLIS);
                 millisWaited += POLL_INCREMENT_MILLIS;
-                ExecutionLog updatedExecutionLog = _schedulingService.getExecution(tenantIdentifier, executionLog);
+                final ExecutionLog updatedExecutionLog =
+                        _schedulingService.getExecution(tenantIdentifier, executionLog);
                 if (updatedExecutionLog != null) {
                     executionLog = updatedExecutionLog;
                 }
@@ -145,14 +149,14 @@ public class JobTriggeringController {
         return Maps.fromProperties(properties);
     }
 
-    private boolean isTimedOut(int millisWaited, Integer timeoutMillis) {
+    private boolean isTimedOut(final int millisWaited, final Integer timeoutMillis) {
         if (timeoutMillis == null) {
             return false;
         }
         return millisWaited > timeoutMillis;
     }
 
-    private String toString(Object obj) {
+    private String toString(final Object obj) {
         if (obj == null) {
             return null;
         }

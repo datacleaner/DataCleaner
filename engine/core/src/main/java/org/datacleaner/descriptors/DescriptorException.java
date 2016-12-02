@@ -25,21 +25,21 @@ package org.datacleaner.descriptors;
  */
 public class DescriptorException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public DescriptorException() {
-		super();
-	}
+    public DescriptorException() {
+        super();
+    }
 
-	public DescriptorException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public DescriptorException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 
-	public DescriptorException(String message) {
-		super(message);
-	}
+    public DescriptorException(final String message) {
+        super(message);
+    }
 
-	public DescriptorException(Throwable cause) {
-		super(cause);
-	}
+    public DescriptorException(final Throwable cause) {
+        super(cause);
+    }
 }

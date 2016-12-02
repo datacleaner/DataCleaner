@@ -37,7 +37,7 @@ public class ResultFilePathUtils {
      * the properties file and the system is configured to save the results, the
      * default path will be saved to
      * '/datacleaner/results/[jobname]-[timestamp].analysis.result.dat
-     * 
+     *
      * @return a Resource to use
      */
     public static Resource getResultResource(final JavaSparkContext sparkContext,
@@ -62,7 +62,7 @@ public class ResultFilePathUtils {
         return hdfsHelper.getResourceToUse(resultPath);
     }
 
-    private static String generateResultFilename(SparkJobContext sparkJobContext) {
+    private static String generateResultFilename(final SparkJobContext sparkJobContext) {
         return sparkJobContext.getJobName() + "-" + System.currentTimeMillis() + SparkRunner.RESULT_FILE_EXTENSION;
     }
 

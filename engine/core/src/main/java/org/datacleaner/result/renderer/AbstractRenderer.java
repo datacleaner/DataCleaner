@@ -26,15 +26,16 @@ import org.datacleaner.api.RendererPrecedence;
 /**
  * Abstract implementation of the {@link Renderable} interface. Only implements
  * the {@link #getPrecedence(Renderable)} method (returns MEDIUM precedence).
- * 
- * 
- * 
+ *
+ *
+ *
  * @param <I>
  * @param <O>
  */
 public abstract class AbstractRenderer<I extends Renderable, O> implements Renderer<I, O> {
 
-	public RendererPrecedence getPrecedence(I renderable) {
-		return RendererPrecedence.MEDIUM;
-	};
+    public RendererPrecedence getPrecedence(final I renderable) {
+        return RendererPrecedence.MEDIUM;
+    }
+
 }

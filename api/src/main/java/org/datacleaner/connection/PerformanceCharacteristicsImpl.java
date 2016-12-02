@@ -25,23 +25,24 @@ package org.datacleaner.connection;
 public final class PerformanceCharacteristicsImpl implements PerformanceCharacteristics {
 
     private static final long serialVersionUID = 1L;
-    
+
     private final boolean _queryOptimizationPreferred;
     private final boolean _naturalRecordOrderConsistent;
 
     /**
-     * 
+     *
      * @param queryOptimizationPreferred
-     * 
+     *
      * @deprecated use {@link #PerformanceCharacteristicsImpl(boolean, boolean)}
      *             instead.
      */
     @Deprecated
-    public PerformanceCharacteristicsImpl(boolean queryOptimizationPreferred) {
+    public PerformanceCharacteristicsImpl(final boolean queryOptimizationPreferred) {
         this(queryOptimizationPreferred, true);
     }
 
-    public PerformanceCharacteristicsImpl(boolean queryOptimizationPreferred, boolean naturalRecordOrderConsistent) {
+    public PerformanceCharacteristicsImpl(final boolean queryOptimizationPreferred,
+            final boolean naturalRecordOrderConsistent) {
         _queryOptimizationPreferred = queryOptimizationPreferred;
         _naturalRecordOrderConsistent = naturalRecordOrderConsistent;
     }

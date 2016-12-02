@@ -27,9 +27,9 @@ import org.datacleaner.monitor.configuration.TenantContext;
  */
 public interface CustomJobCallback {
 
-    public TenantContext getTenantContext();
+    TenantContext getTenantContext();
 
-    public void log(String message);
+    void log(String message);
 
-    public void log(String message, Throwable throwable);
+    void log(String message, Throwable throwable);
 }

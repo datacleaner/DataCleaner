@@ -22,8 +22,8 @@ package org.datacleaner.windows;
 import javax.inject.Inject;
 import javax.swing.filechooser.FileFilter;
 
-import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
@@ -33,46 +33,47 @@ import org.datacleaner.widgets.AbstractResourceTextField;
 
 /**
  * Datastore configuration dialog for MS Access datastores.
- * 
+ *
  * @author Kasper Sørensen
  */
 public final class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialog<AccessDatastore> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	protected AccessDatastoreDialog(@Nullable AccessDatastore originalDatastore,
-			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext, UserPreferences userPreferences) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
-	}
+    @Inject
+    protected AccessDatastoreDialog(@Nullable final AccessDatastore originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
+        super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
+    }
 
-	@Override
-	protected String getBannerTitle() {
-		return "MS Access database";
-	}
+    @Override
+    protected String getBannerTitle() {
+        return "MS Access database";
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return "MS Access database | Datastore";
-	}
+    @Override
+    public String getWindowTitle() {
+        return "MS Access database | Datastore";
+    }
 
-	@Override
-	protected AccessDatastore createDatastore(String name, String filename) {
-		return new AccessDatastore(name, filename);
-	}
+    @Override
+    protected AccessDatastore createDatastore(final String name, final String filename) {
+        return new AccessDatastore(name, filename);
+    }
 
-	@Override
-	protected String getDatastoreIconPath() {
-		return IconUtils.ACCESS_IMAGEPATH;
-	}
+    @Override
+    protected String getDatastoreIconPath() {
+        return IconUtils.ACCESS_IMAGEPATH;
+    }
 
-	@Override
-	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
-		FileFilter combinedFilter = FileFilters.combined("Any Access database (.mdb, .accdb)", FileFilters.MDB,
-				FileFilters.ACCDB);
-		filenameField.addChoosableFileFilter(FileFilters.MDB);
-		filenameField.addChoosableFileFilter(FileFilters.ACCDB);
-		filenameField.addChoosableFileFilter(FileFilters.ALL);
-		filenameField.setSelectedFileFilter(combinedFilter);
-	}
+    @Override
+    protected void setFileFilters(final AbstractResourceTextField<?> filenameField) {
+        final FileFilter combinedFilter =
+                FileFilters.combined("Any Access database (.mdb, .accdb)", FileFilters.MDB, FileFilters.ACCDB);
+        filenameField.addChoosableFileFilter(FileFilters.MDB);
+        filenameField.addChoosableFileFilter(FileFilters.ACCDB);
+        filenameField.addChoosableFileFilter(FileFilters.ALL);
+        filenameField.setSelectedFileFilter(combinedFilter);
+    }
 }

@@ -42,13 +42,6 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class StringParameterizedMetricPresenter implements MetricPresenter {
 
-    private final MetricIdentifier _metricIdentifier;
-    private final List<MetricIdentifier> _activeMetrics;
-    private final FlowPanel _panel;
-    private final List<MetricPanel> _metricPanels;
-    private final TenantIdentifier _tenantIdentifier;
-    private final JobIdentifier _jobIdentifier;
-
     public final class MetricPanel extends FlowPanel {
 
         private final MetricIdentifier _metricToReturn;
@@ -85,13 +78,21 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
         }
     }
 
-    public StringParameterizedMetricPresenter(TenantIdentifier tenantIdentifier, JobIdentifier jobIdentifier,
-            MetricIdentifier metricIdentifier, List<MetricIdentifier> activeMetrics, DashboardServiceAsync service) {
+    private final MetricIdentifier _metricIdentifier;
+    private final List<MetricIdentifier> _activeMetrics;
+    private final FlowPanel _panel;
+    private final List<MetricPanel> _metricPanels;
+    private final TenantIdentifier _tenantIdentifier;
+    private final JobIdentifier _jobIdentifier;
+
+    public StringParameterizedMetricPresenter(final TenantIdentifier tenantIdentifier,
+            final JobIdentifier jobIdentifier, final MetricIdentifier metricIdentifier,
+            final List<MetricIdentifier> activeMetrics, final DashboardServiceAsync service) {
         _tenantIdentifier = tenantIdentifier;
         _jobIdentifier = jobIdentifier;
         _metricIdentifier = metricIdentifier;
         _activeMetrics = activeMetrics;
-        _metricPanels = new ArrayList<MetricPanel>();
+        _metricPanels = new ArrayList<>();
         _panel = new FlowPanel();
         _panel.addStyleName("StringParameterizedMetricsPresenter");
 
@@ -99,7 +100,7 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
         addButton.addStyleName("StringParameterizedMetricPresenterAddButton");
         addButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 addMetricPanel(_metricIdentifier);
             }
         });
@@ -107,7 +108,7 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
         _panel.add(new Label(_metricIdentifier.getMetricDescriptorName() + ":"));
         _panel.add(addButton);
 
-        for (MetricIdentifier activeMetric : activeMetrics) {
+        for (final MetricIdentifier activeMetric : activeMetrics) {
             if (activeMetric.equalsIgnoreParameterValues(_metricIdentifier)) {
                 addMetricPanel(activeMetric);
             }
@@ -118,14 +119,14 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
         }
     }
 
-    private void addMetricPanel(MetricIdentifier metric) {
-        MetricPanel widget = new MetricPanel(metric);
+    private void addMetricPanel(final MetricIdentifier metric) {
+        final MetricPanel widget = new MetricPanel(metric);
         _panel.add(widget);
         _metricPanels.add(widget);
     }
 
-    private MetricIdentifier isActiveMetric(MetricIdentifier metric) {
-        for (MetricIdentifier activeMetric : _activeMetrics) {
+    private MetricIdentifier isActiveMetric(final MetricIdentifier metric) {
+        for (final MetricIdentifier activeMetric : _activeMetrics) {
             if (activeMetric.equalsIgnoreCustomizedDetails(metric)) {
                 return activeMetric;
             }
@@ -140,10 +141,10 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
 
     @Override
     public List<MetricIdentifier> getSelectedMetrics() {
-        List<MetricIdentifier> result = new ArrayList<MetricIdentifier>();
-        for (MetricPanel panel : _metricPanels) {
+        final List<MetricIdentifier> result = new ArrayList<>();
+        for (final MetricPanel panel : _metricPanels) {
             if (panel.isSelected()) {
-                MetricIdentifier metricIdentifier = panel.createMetricIdentifier();
+                final MetricIdentifier metricIdentifier = panel.createMetricIdentifier();
                 result.add(metricIdentifier);
             }
         }

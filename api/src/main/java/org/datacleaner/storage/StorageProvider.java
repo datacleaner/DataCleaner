@@ -30,11 +30,11 @@ import java.util.Set;
  */
 public interface StorageProvider {
 
-    public <E> List<E> createList(Class<E> valueType) throws IllegalStateException;
+    <E> List<E> createList(Class<E> valueType) throws IllegalStateException;
 
-    public <E> Set<E> createSet(Class<E> valueType) throws IllegalStateException;
+    <E> Set<E> createSet(Class<E> valueType) throws IllegalStateException;
 
-    public <K, V> Map<K, V> createMap(Class<K> keyType, Class<V> valueType) throws IllegalStateException;
+    <K, V> Map<K, V> createMap(Class<K> keyType, Class<V> valueType) throws IllegalStateException;
 
-    public RowAnnotationFactory createRowAnnotationFactory();
+    RowAnnotationFactory createRowAnnotationFactory();
 }

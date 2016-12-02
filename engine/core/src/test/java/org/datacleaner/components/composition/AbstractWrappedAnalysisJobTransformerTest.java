@@ -27,8 +27,6 @@ import java.util.Map;
 
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
@@ -52,77 +50,9 @@ import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
 
+import junit.framework.TestCase;
+
 public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
-
-    private DataCleanerConfiguration _configuration;
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        // define the datastore that the wrapped job will refer to
-        TableDataProvider<?> origTableDataProvider = new ArrayTableDataProvider(new SimpleTableDef("table",
-                new String[] { "foo", "bar", "baz" }), new ArrayList<Object[]>(0));
-        Datastore origInput = new PojoDatastore("orig_input", origTableDataProvider);
-
-        // define the datastore that our actual job refers to
-        ArrayList<Object[]> rows = new ArrayList<Object[]>();
-        TableDataProvider<?> actualTableDataProvider = new ArrayTableDataProvider(new SimpleTableDef("table",
-                new String[] { "name" }), rows);
-        rows.add(new Object[] { "Tomasz" });
-        rows.add(new Object[] { "Kasper" });
-        rows.add(new Object[] { "Claudia" });
-        rows.add(new Object[] { "Anders" });
-        Datastore actualInput = new PojoDatastore("actual_input", actualTableDataProvider);
-
-        DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(origInput, actualInput);
-        _configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog);
-    }
-
-    public void testGetOutputColumns() throws Exception {
-        MockWrappedAnalysisJobTransformer transformer = new MockWrappedAnalysisJobTransformer();
-        transformer._configuration = _configuration;
-        transformer.input = new InputColumn[] { new MockInputColumn<String>("foo"), new MockInputColumn<String>("bar"),
-                new MockInputColumn<String>("baz") };
-        OutputColumns outputColumns = transformer.getOutputColumns();
-        assertEquals("OutputColumns[mock output]", outputColumns.toString());
-    }
-
-    public void testWrappedExecution() throws Throwable {
-        final AnalysisJob job;
-        try (AnalysisJobBuilder builder = new AnalysisJobBuilder(_configuration)) {
-            builder.setDatastore("actual_input");
-            builder.addSourceColumns("table.name");
-            builder.addTransformer(MockWrappedAnalysisJobTransformer.class).addInputColumn(
-                    builder.getSourceColumnByName("name"));
-            builder.addAnalyzer(MockAnalyzer.class).addInputColumns(builder.getAvailableInputColumns(Object.class));
-
-            job = builder.toAnalysisJob();
-        }
-
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(_configuration).run(job);
-        resultFuture.await();
-
-        if (resultFuture.isErrornous()) {
-            throw resultFuture.getErrors().get(0);
-        }
-
-        List<AnalyzerResult> results = resultFuture.getResults();
-        assertEquals(1, results.size());
-
-        @SuppressWarnings("unchecked")
-        ListResult<InputRow> analyzerResult = (ListResult<InputRow>) results.get(0);
-
-        List<InputRow> values = analyzerResult.getValues();
-        assertEquals(4, values.size());
-
-        assertEquals("TransformedInputRow[values={"
-                + "TransformedInputColumn[id=trans-0001-0002,name=mock output]=mocked: Tomasz},"
-                + "delegate=MetaModelInputRow[Row[values=[Tomasz]]]]", values.get(0).toString());
-        assertEquals("TransformedInputRow[values={"
-                + "TransformedInputColumn[id=trans-0001-0002,name=mock output]=mocked: Kasper},"
-                + "delegate=MetaModelInputRow[Row[values=[Kasper]]]]", values.get(1).toString());
-    }
 
     @Named("MockWrappedAnalysisJobTransformer")
     public static class MockWrappedAnalysisJobTransformer extends AbstractWrappedAnalysisJobTransformer {
@@ -137,23 +67,93 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
                 builder.addSourceColumns("table.foo");
                 builder.addTransformer(MockTransformer.class).addInputColumns(builder.getSourceColumns());
                 builder.addAnalyzer(MockAnalyzer.class).addInputColumns(builder.getAvailableInputColumns(Object.class));
-                AnalysisJob job = builder.toAnalysisJob();
-                return job;
+                return builder.toAnalysisJob();
             }
         }
 
         @Override
-        protected Map<InputColumn<?>, InputColumn<?>> getInputColumnConversion(AnalysisJob wrappedAnalysisJob) {
-            final Map<InputColumn<?>, InputColumn<?>> map = new HashMap<InputColumn<?>, InputColumn<?>>();
+        protected Map<InputColumn<?>, InputColumn<?>> getInputColumnConversion(final AnalysisJob wrappedAnalysisJob) {
+            final Map<InputColumn<?>, InputColumn<?>> map = new HashMap<>();
             final Iterator<InputColumn<?>> sourceColumns = wrappedAnalysisJob.getSourceColumns().iterator();
             int i = 0;
             while (i < input.length && sourceColumns.hasNext()) {
-                InputColumn<?> next = sourceColumns.next();
+                final InputColumn<?> next = sourceColumns.next();
                 map.put(input[i], next);
                 i++;
             }
             return map;
         }
 
+    }
+
+    private DataCleanerConfiguration _configuration;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        // define the datastore that the wrapped job will refer to
+        final TableDataProvider<?> origTableDataProvider =
+                new ArrayTableDataProvider(new SimpleTableDef("table", new String[] { "foo", "bar", "baz" }),
+                        new ArrayList<>(0));
+        final Datastore origInput = new PojoDatastore("orig_input", origTableDataProvider);
+
+        // define the datastore that our actual job refers to
+        final ArrayList<Object[]> rows = new ArrayList<>();
+        final TableDataProvider<?> actualTableDataProvider =
+                new ArrayTableDataProvider(new SimpleTableDef("table", new String[] { "name" }), rows);
+        rows.add(new Object[] { "Tomasz" });
+        rows.add(new Object[] { "Kasper" });
+        rows.add(new Object[] { "Claudia" });
+        rows.add(new Object[] { "Anders" });
+        final Datastore actualInput = new PojoDatastore("actual_input", actualTableDataProvider);
+
+        final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(origInput, actualInput);
+        _configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog);
+    }
+
+    public void testGetOutputColumns() throws Exception {
+        final MockWrappedAnalysisJobTransformer transformer = new MockWrappedAnalysisJobTransformer();
+        transformer._configuration = _configuration;
+        transformer.input = new InputColumn[] { new MockInputColumn<String>("foo"), new MockInputColumn<String>("bar"),
+                new MockInputColumn<String>("baz") };
+        final OutputColumns outputColumns = transformer.getOutputColumns();
+        assertEquals("OutputColumns[mock output]", outputColumns.toString());
+    }
+
+    public void testWrappedExecution() throws Throwable {
+        final AnalysisJob job;
+        try (AnalysisJobBuilder builder = new AnalysisJobBuilder(_configuration)) {
+            builder.setDatastore("actual_input");
+            builder.addSourceColumns("table.name");
+            builder.addTransformer(MockWrappedAnalysisJobTransformer.class)
+                    .addInputColumn(builder.getSourceColumnByName("name"));
+            builder.addAnalyzer(MockAnalyzer.class).addInputColumns(builder.getAvailableInputColumns(Object.class));
+
+            job = builder.toAnalysisJob();
+        }
+
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(_configuration).run(job);
+        resultFuture.await();
+
+        if (resultFuture.isErrornous()) {
+            throw resultFuture.getErrors().get(0);
+        }
+
+        final List<AnalyzerResult> results = resultFuture.getResults();
+        assertEquals(1, results.size());
+
+        @SuppressWarnings("unchecked") final ListResult<InputRow> analyzerResult =
+                (ListResult<InputRow>) results.get(0);
+
+        final List<InputRow> values = analyzerResult.getValues();
+        assertEquals(4, values.size());
+
+        assertEquals("TransformedInputRow[values={"
+                + "TransformedInputColumn[id=trans-0001-0002,name=mock output]=mocked: Tomasz},"
+                + "delegate=MetaModelInputRow[Row[values=[Tomasz]]]]", values.get(0).toString());
+        assertEquals("TransformedInputRow[values={"
+                + "TransformedInputColumn[id=trans-0001-0002,name=mock output]=mocked: Kasper},"
+                + "delegate=MetaModelInputRow[Row[values=[Kasper]]]]", values.get(1).toString());
     }
 }

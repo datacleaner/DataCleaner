@@ -35,7 +35,7 @@ public class LazyOutputDataStreamJob implements OutputDataStreamJob {
     private final OutputDataStream _outputDataStream;
     private final transient AnalysisJobBuilder _jobBuilder;
 
-    public LazyOutputDataStreamJob(OutputDataStream outputDataStream, AnalysisJobBuilder jobBuilder) {
+    public LazyOutputDataStreamJob(final OutputDataStream outputDataStream, final AnalysisJobBuilder jobBuilder) {
         _outputDataStream = outputDataStream;
         _jobBuilder = jobBuilder;
     }
@@ -50,7 +50,7 @@ public class LazyOutputDataStreamJob implements OutputDataStreamJob {
         return getJob(false, new AnalysisJobImmutabilizer());
     }
 
-    public AnalysisJob getJob(boolean validate, AnalysisJobImmutabilizer immutabilizer) {
+    public AnalysisJob getJob(final boolean validate, final AnalysisJobImmutabilizer immutabilizer) {
         return _jobBuilder.toAnalysisJob(validate, immutabilizer);
     }
 

@@ -25,8 +25,6 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.ImmutableRef;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Renderer;
@@ -43,38 +41,40 @@ import org.datacleaner.util.ChangeAwareObjectInputStream;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import junit.framework.TestCase;
+
 public class RenderAnalysisResultAsHtmlTest extends TestCase {
 
     /**
      * A very broad integration test which opens an analysis result with (more
      * or less) all built-in analyzer results and verifies that there is a
      * renderer for each of them
-     * 
+     *
      * @throws Exception
      */
     public void testOpenJobWithAllAnalyzers() throws Exception {
-        DCModule module = new DCModuleImpl();
-        Injector injector = Guice.createInjector(module);
-        DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
+        final DCModule module = new DCModuleImpl();
+        final Injector injector = Guice.createInjector(module);
+        final DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
 
-        File file = new File("src/test/resources/all_analyzers.analysis.result.dat");
-        AnalysisResult analysisResult;
+        final File file = new File("src/test/resources/all_analyzers.analysis.result.dat");
+        final AnalysisResult analysisResult;
         try (ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(new FileInputStream(file))) {
             analysisResult = (AnalysisResult) is.readObject();
         }
 
-        RendererFactory rendererFactory = new RendererFactory(configuration);
+        final RendererFactory rendererFactory = new RendererFactory(configuration);
 
-        List<AnalyzerResult> results = analysisResult.getResults();
-        for (AnalyzerResult analyzerResult : results) {
-            Renderer<? super AnalyzerResult, ? extends HtmlFragment> renderer = rendererFactory.getRenderer(
-                    analyzerResult, HtmlRenderingFormat.class);
+        final List<AnalyzerResult> results = analysisResult.getResults();
+        for (final AnalyzerResult analyzerResult : results) {
+            final Renderer<? super AnalyzerResult, ? extends HtmlFragment> renderer =
+                    rendererFactory.getRenderer(analyzerResult, HtmlRenderingFormat.class);
 
             assertNotNull("Did not find a renderer for: " + analyzerResult, renderer);
         }
 
         try (Writer fileWriter = new FileWriter("target/testOpenJobWithAllAnalyzers.out.html")) {
-            HtmlAnalysisResultWriter writer = new HtmlAnalysisResultWriter();
+            final HtmlAnalysisResultWriter writer = new HtmlAnalysisResultWriter();
             writer.write(analysisResult, configuration, ImmutableRef.of(fileWriter), null);
         }
     }

@@ -39,7 +39,7 @@ public class SingleInputColumnTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow inputRow) {
+    public String[] transform(final InputRow inputRow) {
         return new String[2];
     }
 

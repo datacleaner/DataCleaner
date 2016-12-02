@@ -32,12 +32,12 @@ public class WizardIdentifier implements Serializable {
     private int _expectedPageCount;
     private boolean _datastoreConsumer;
 
-    public WizardIdentifier(String displayName) {
+    public WizardIdentifier(final String displayName) {
         this();
         _displayName = displayName;
         _datastoreConsumer = true;
     }
-    
+
     public WizardIdentifier() {
     }
 
@@ -45,7 +45,7 @@ public class WizardIdentifier implements Serializable {
         return _displayName;
     }
 
-    public void setDisplayName(String displayName) {
+    public void setDisplayName(final String displayName) {
         this._displayName = displayName;
     }
 
@@ -53,15 +53,15 @@ public class WizardIdentifier implements Serializable {
         return _expectedPageCount;
     }
 
-    public void setExpectedPageCount(int expectedPageCount) {
+    public void setExpectedPageCount(final int expectedPageCount) {
         _expectedPageCount = expectedPageCount;
     }
-    
+
     public boolean isDatastoreConsumer() {
         return _datastoreConsumer;
     }
-    
-    public void setDatastoreConsumer(boolean datastoreConsumer) {
+
+    public void setDatastoreConsumer(final boolean datastoreConsumer) {
         _datastoreConsumer = datastoreConsumer;
     }
 

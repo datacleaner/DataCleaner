@@ -24,18 +24,18 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.easymock.EasyMock;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.datacleaner.monitor.server.job.DataCleanerJobContext;
-import org.apache.metamodel.util.FileHelper;
+import org.easymock.EasyMock;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+
+import junit.framework.TestCase;
 
 public class LaunchDataCleanerControllerTest extends TestCase {
 
@@ -51,11 +51,11 @@ public class LaunchDataCleanerControllerTest extends TestCase {
 
         EasyMock.replay(contextFactoryMock, contextMock, jobMock);
 
-        LaunchDataCleanerController controller = new LaunchDataCleanerController();
+        final LaunchDataCleanerController controller = new LaunchDataCleanerController();
         controller._contextFactory = contextFactoryMock;
         controller._launchArtifactProvider = new LaunchArtifactProvider() {
             @Override
-            public InputStream readJarFile(String filename) {
+            public InputStream readJarFile(final String filename) {
                 throw new UnsupportedOperationException();
             }
 
@@ -70,13 +70,13 @@ public class LaunchDataCleanerControllerTest extends TestCase {
             }
         };
 
-        FileSystemResourceLoader resourceLoader = new FileSystemResourceLoader();
-        MockServletContext servletContext = new MockServletContext(resourceLoader);
-        MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        final FileSystemResourceLoader resourceLoader = new FileSystemResourceLoader();
+        final MockServletContext servletContext = new MockServletContext(resourceLoader);
+        final MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
         request.setContextPath("DataCleaner-monitor");
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        String tenant = "DC";
-        String jobName = "my job";
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final String tenant = "DC";
+        final String jobName = "my job";
 
         controller.launchDataCleanerForJob(request, response, tenant, jobName);
 

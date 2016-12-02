@@ -26,7 +26,7 @@ import org.apache.spark.launcher.SparkLauncher;
 
 /**
  * Prerequisites:
- * 
+ *
  * <ul>
  * <li>Make sure to set SPARK_HOME as either an environment variable or system
  * property.</li>
@@ -42,12 +42,12 @@ import org.apache.spark.launcher.SparkLauncher;
  * <li>DataCleaner-env-spark-[version]-jar-with-dependencies.jar</li>
  * </ul>
  * this can be done with a command a la:
- * 
+ *
  * <pre>
  * hadoop fs -mkdir /datacleaner/lib
  * hadoop fs -put /path/to/DataCleaner-env-spark-4.5.1-SNAPSHOT-jar-with-dependencies.jar /datacleaner/lib
  * </pre>
- * 
+ *
  * </li>
  * </ul>
  */
@@ -60,11 +60,11 @@ public class ExampleLaunch {
     private static final String JOB_LOCATION = "/datacleaner/test/vanilla-job.analysis.xml";
     private static final String DATA_LOCATION = "/datacleaner/test/person_names.txt";
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         if (System.getenv("SPARK_HOME") == null) {
             System.setProperty("SPARK_HOME", SPARK_HOME);
         }
-        
+
         final ApplicationDriver launcher = new ApplicationDriver(HDFS_NAMENODE, HDFS_JAR_LOCATION);
 
         // copy test files to the desired location
@@ -73,8 +73,8 @@ public class ExampleLaunch {
         launcher.copyFileToHdfs(new File("src/test/resources/vanilla-job.analysis.xml"), JOB_LOCATION, false);
 
         final File hadoopConfDir = launcher.createTemporaryHadoopConfDir();
-        final SparkLauncher sparkLauncher = launcher.createSparkLauncher(hadoopConfDir, CONFIGURATION_LOCATION,
-                JOB_LOCATION, null);
+        final SparkLauncher sparkLauncher =
+                launcher.createSparkLauncher(hadoopConfDir, CONFIGURATION_LOCATION, JOB_LOCATION, null);
         final int exitCode = launcher.launch(sparkLauncher);
 
         System.out.println("Exit code: " + exitCode);

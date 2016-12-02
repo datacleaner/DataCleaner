@@ -21,16 +21,15 @@ package org.datacleaner.monitor.dashboard.model;
 
 public class DefaultVAxisOption implements ChartOptions.VerticalAxisOption {
 
-    private static final long serialVersionUID = 1L;
-
     public static final int DEFAULT_HEIGHT = 350;
-
+    private static final long serialVersionUID = 1L;
     private Integer _height;
     private Integer _minimumValue;
     private Integer _maximumValue;
     private boolean _logarithmicScale;
 
-    public DefaultVAxisOption(Integer height, Integer minimumValue, Integer maximumValue, boolean logarithmicScale) {
+    public DefaultVAxisOption(final Integer height, final Integer minimumValue, final Integer maximumValue,
+            final boolean logarithmicScale) {
         _height = height;
         _minimumValue = minimumValue;
         _maximumValue = maximumValue;
@@ -63,7 +62,7 @@ public class DefaultVAxisOption implements ChartOptions.VerticalAxisOption {
     public boolean isLogarithmicScale() {
         return _logarithmicScale;
     }
-    
+
     public boolean isHeightSet() {
         return _height != null;
     }

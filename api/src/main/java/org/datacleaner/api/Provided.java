@@ -30,11 +30,11 @@ import java.lang.annotation.Target;
  * Methods and fields with the @Provided annotation are used to let component
  * retrieve service-objects such as persistent collections, the current
  * SchemaNavigator or DataContext.
- * 
+ *
  * This features ensures separation of concerns: The framework will make sure
  * that persistence is handled and the bean-developer will not have to worry
  * about memory problems related to his/her collection(s).
- * 
+ *
  * Additionally Analyzerbeans can use the @Provided annotation to inject a
  * SchemaNavigator in order to perform metadata-based analysis. A DataContext
  * can also be injected, but this is generally discouraged for normal use-cases
@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
  * is an ExploringAnalyzer or be out of scope if the AnalyzerBean is a
  * RowProcessingAnalyzer. For some use-cases it is helpful though, for example
  * initialization that requires some simple querying.
- * 
+ *
  * Valid types for @Provided annotated fields and method arguments are:
  * <ul>
  * <li>List</li>

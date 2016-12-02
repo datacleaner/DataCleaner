@@ -27,5 +27,5 @@ public interface HasIcon {
      * Returns binary data of an image (icon).
      * @return
      */
-    public byte[] getIconData();
+    byte[] getIconData();
 }

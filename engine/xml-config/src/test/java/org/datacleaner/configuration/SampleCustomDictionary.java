@@ -58,12 +58,12 @@ public class SampleCustomDictionary implements Dictionary {
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
     @Override
-    public DictionaryConnection openConnection(DataCleanerConfiguration arg0) {
+    public DictionaryConnection openConnection(final DataCleanerConfiguration arg0) {
         final List<String> valueList = new ArrayList<>();
         for (int i = 0; i < SampleCustomDictionary.this.values; i++) {
             valueList.add("value" + i);
@@ -81,7 +81,7 @@ public class SampleCustomDictionary implements Dictionary {
             }
 
             @Override
-            public boolean containsValue(String str) {
+            public boolean containsValue(final String str) {
                 return valueList.contains(str);
             }
 

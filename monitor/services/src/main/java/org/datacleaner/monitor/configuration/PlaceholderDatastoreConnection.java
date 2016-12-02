@@ -19,10 +19,10 @@
  */
 package org.datacleaner.monitor.configuration;
 
+import org.apache.metamodel.DataContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
-import org.apache.metamodel.DataContext;
 
 /**
  * {@link DatastoreConnection} placeholder for lightweight reading of analysis
@@ -32,7 +32,7 @@ final class PlaceholderDatastoreConnection implements DatastoreConnection {
 
     private final PlaceholderDatastore _datastore;
 
-    public PlaceholderDatastoreConnection(PlaceholderDatastore datastore) {
+    public PlaceholderDatastoreConnection(final PlaceholderDatastore datastore) {
         _datastore = datastore;
     }
 

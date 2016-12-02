@@ -29,9 +29,9 @@ public interface InjectionManager {
     /**
      * Gets the value/object/instance to be injected at a particular injection
      * point.
-     * 
+     *
      * @param injectionPoint
      * @return
      */
-    public <E> E getInstance(InjectionPoint<E> injectionPoint);
+    <E> E getInstance(InjectionPoint<E> injectionPoint);
 }

@@ -19,100 +19,71 @@
  */
 package org.datacleaner.beans.standardize;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.inject.Named;
 
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
-import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.TextCategory;
-import org.datacleaner.util.HasGroupLiteral;
-import org.datacleaner.util.NamedPattern;
-import org.datacleaner.util.NamedPatternMatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 @Named("URL parser")
 @Description("Retrieve the individual parts of an URL, including protocol, domain, port, path and querystring.")
 @Categorized({ TextCategory.class })
 public class UrlStandardizerTransformer implements Transformer {
+    private static final Logger logger = LoggerFactory.getLogger(UrlStandardizerTransformer.class);
+    @Configured
+    InputColumn<String> inputColumn;
 
-	public static final String[] PATTERNS = { "PROTOCOL://DOMAIN:PORTPATH\\?QUERYSTRING",
-			"PROTOCOL://DOMAINPATH\\?QUERYSTRING", "PROTOCOL://DOMAIN:PORTPATH", "PROTOCOL://DOMAIN:PORT\\?QUERYSTRING",
-			"PROTOCOL://DOMAIN\\?QUERYSTRING", "PROTOCOL://DOMAINPATH", "PROTOCOL://DOMAIN:PORT", "PROTOCOL://DOMAIN" };
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(String.class, new String[] { "Protocol", "Domain", "Port", "Path", "Querystring" });
+    }
 
-	public static enum UrlPart implements HasGroupLiteral {
-		PROTOCOL, DOMAIN, PORT, PATH, QUERYSTRING;
+    @Override
+    public String[] transform(final InputRow inputRow) {
+        final String value = inputRow.getValue(inputColumn);
+        return transform(value);
+    }
 
-		@Override
-		public String getGroupLiteral() {
-			if (this == DOMAIN) {
-				return "([a-zA-Z0-9\\._\\-@]+)";
-			}
-			if (this == PORT) {
-				return "([0-9]+)";
-			}
-			if (this == PATH) {
-				return "(/[a-zA-Z0-9\\._\\-/#:%]+)";
-			}
-			if (this == QUERYSTRING) {
-				return "([a-zA-Z0-9\\.=\\?_\\-/%]+)";
-			}
-			return null;
-		}
-	}
+    public String[] transform(final String value) {
+        String protocol = null;
+        String host = null;
+        String port = null;
+        String path = null;
+        String queryString = null;
 
-	@Configured
-	InputColumn<String> inputColumn;
+        if (value != null) {
+            try {
+                final URI url = new URI(value);
 
-	private List<NamedPattern<UrlPart>> namedPatterns;
+                protocol = url.getScheme();
+                host = url.getHost();
 
-	@Initialize
-	public void init() {
-		namedPatterns = new ArrayList<NamedPattern<UrlPart>>(PATTERNS.length);
-		for (String pattern : PATTERNS) {
-			namedPatterns.add(new NamedPattern<UrlPart>(pattern, UrlPart.class));
-		}
-	}
+                if (url.getPort() != -1) {
+                    port = Integer.toString(url.getPort());
+                }
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(String.class, "Protocol", "Domain", "Port", "Path", "Querystring");
-	}
+                if (!Strings.isNullOrEmpty(url.getPath())) {
+                    path = url.getPath();
+                }
+                queryString = url.getRawQuery();
 
-	@Override
-	public String[] transform(InputRow inputRow) {
-		String value = inputRow.getValue(inputColumn);
-		return transform(value);
-	}
+            } catch (final URISyntaxException e) {
+                logger.info("Throwing away illegal URL \"{}\"", value);
+            }
+        }
 
-	public String[] transform(String value) {
-		String protocol = null;
-		String domain = null;
-		String port = null;
-		String path = null;
-		String queryString = null;
-
-		if (value != null) {
-			for (NamedPattern<UrlPart> namedPattern : namedPatterns) {
-				NamedPatternMatch<UrlPart> match = namedPattern.match(value);
-				if (match != null) {
-					protocol = match.get(UrlPart.PROTOCOL);
-					domain = match.get(UrlPart.DOMAIN);
-					port = match.get(UrlPart.PORT);
-					path = match.get(UrlPart.PATH);
-					queryString = match.get(UrlPart.QUERYSTRING);
-					break;
-				}
-			}
-		}
-
-		return new String[] { protocol, domain, port, path, queryString };
-	}
-
+        return new String[] { protocol, host, port, path, queryString };
+    }
 }

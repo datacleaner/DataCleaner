@@ -30,32 +30,32 @@ public final class ImmutableAnalyzerJob extends ImmutableComponentJob implements
 
     private static final long serialVersionUID = 1L;
 
-    public ImmutableAnalyzerJob(String name, AnalyzerDescriptor<?> descriptor,
-            ComponentConfiguration componentConfiguration, ComponentRequirement componentRequirement,
-            Map<String, String> metadataProperties, OutputDataStreamJob[] outputDataStreamJobs) {
+    public ImmutableAnalyzerJob(final String name, final AnalyzerDescriptor<?> descriptor,
+            final ComponentConfiguration componentConfiguration, final ComponentRequirement componentRequirement,
+            final Map<String, String> metadataProperties, final OutputDataStreamJob[] outputDataStreamJobs) {
         super(name, descriptor, componentConfiguration, componentRequirement, metadataProperties, outputDataStreamJobs);
     }
 
     /**
-     * 
+     *
      * @param name
      * @param descriptor
      * @param componentConfiguration
      * @param requirement
      * @param metadataProperties
-     * 
+     *
      * @deprecated use
-     *             {@link #ImmutableAnalyzerJob(String, AnalyzerDescriptor, ComponentConfiguration, ComponentRequirement, Map, OutputDataStreamJob[])}
-     *             instead
+     *             {@link #ImmutableAnalyzerJob(String, AnalyzerDescriptor, ComponentConfiguration,
+     *             ComponentRequirement, Map, OutputDataStreamJob[])} instead
      */
     @Deprecated
-    public ImmutableAnalyzerJob(String name, AnalyzerDescriptor<?> descriptor,
-            ComponentConfiguration componentConfiguration, ComponentRequirement requirement,
-            Map<String, String> metadataProperties) {
+    public ImmutableAnalyzerJob(final String name, final AnalyzerDescriptor<?> descriptor,
+            final ComponentConfiguration componentConfiguration, final ComponentRequirement requirement,
+            final Map<String, String> metadataProperties) {
         super(name, descriptor, componentConfiguration, requirement, metadataProperties);
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, ImmutableAnalyzerJob.class).readObject(stream);
     }
 

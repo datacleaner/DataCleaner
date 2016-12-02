@@ -32,13 +32,13 @@ public class SingleCharacterDocument extends PlainDocument {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+    public void insertString(final int offs, final String str, final AttributeSet a) throws BadLocationException {
         if (str == null) {
             return;
         }
 
-        String newText = getText(0, getLength()) + str;
-        int length = newText.length();
+        final String newText = getText(0, getLength()) + str;
+        final int length = newText.length();
 
         if (length == 1) {
             super.insertString(offs, str, a);

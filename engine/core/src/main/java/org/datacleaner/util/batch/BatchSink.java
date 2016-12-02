@@ -22,10 +22,10 @@ package org.datacleaner.util.batch;
 /**
  * Defines a sink for a batch transformation. A sink accepts processed elements
  * in a one-to-one relationship with the source elements.
- * 
+ *
  * @param <E>
  *            the output element type
  */
 public interface BatchSink<E> {
-    public void setOutput(int index, E output);
+    void setOutput(int index, E output);
 }

@@ -25,6 +25,6 @@ package org.datacleaner.connection;
  */
 public interface UpdateableDatastore extends Datastore {
 
-	@Override
-	public UpdateableDatastoreConnection openConnection();
+    @Override
+    UpdateableDatastoreConnection openConnection();
 }

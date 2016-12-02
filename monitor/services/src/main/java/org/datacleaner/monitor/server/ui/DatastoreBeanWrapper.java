@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper for datastore to facilitate property retrieval in ui
- * 
+ *
  * @author anand
  */
 public class DatastoreBeanWrapper {
@@ -49,7 +49,7 @@ public class DatastoreBeanWrapper {
 
     private final Datastore _datastore;
 
-    public DatastoreBeanWrapper(Datastore datastore) {
+    public DatastoreBeanWrapper(final Datastore datastore) {
         _datastore = datastore;
     }
 
@@ -101,8 +101,7 @@ public class DatastoreBeanWrapper {
                     return resource.getQualifiedPath();
                 }
             }
-            final String filename = ((FileDatastore) _datastore).getFilename();
-            return filename;
+            return ((FileDatastore) _datastore).getFilename();
         } else {
             return null;
         }
@@ -110,7 +109,7 @@ public class DatastoreBeanWrapper {
 
     public String getJdbcUrl() {
         if (_datastore instanceof JdbcDatastore) {
-            JdbcDatastore jdbcDatastore = (JdbcDatastore) _datastore;
+            final JdbcDatastore jdbcDatastore = (JdbcDatastore) _datastore;
             String url = jdbcDatastore.getJdbcUrl();
             if (url == null) {
                 url = jdbcDatastore.getDatasourceJndiUrl();
@@ -123,16 +122,16 @@ public class DatastoreBeanWrapper {
 
     public String getHostname() {
         try {
-            Method hostnameMethod = _datastore.getClass().getDeclaredMethod("getHostname");
+            final Method hostnameMethod = _datastore.getClass().getDeclaredMethod("getHostname");
             if (hostnameMethod != null) {
                 hostnameMethod.setAccessible(true);
-                Object result = hostnameMethod.invoke(_datastore);
+                final Object result = hostnameMethod.invoke(_datastore);
                 if (result != null && result instanceof String) {
                     return (String) result;
                 }
             }
             return null;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.debug("Failed to invoke method 'getHostname'", e);
             return null;
         }
@@ -140,17 +139,17 @@ public class DatastoreBeanWrapper {
 
     public boolean isFileFound() {
         if (_datastore instanceof ResourceDatastore) {
-            Resource resource = ((ResourceDatastore) _datastore).getResource();
+            final Resource resource = ((ResourceDatastore) _datastore).getResource();
             if (resource != null) {
                 return resource.isExists();
             }
         }
 
-        String filename = getFilename();
+        final String filename = getFilename();
         if (filename == null) {
             return false;
         }
-        File file = new File(filename);
+        final File file = new File(filename);
         return file.exists();
     }
 
@@ -161,7 +160,7 @@ public class DatastoreBeanWrapper {
     public boolean isHostnameBasedDatastore() {
         try {
             return _datastore.getClass().getDeclaredMethod("getHostname") != null;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.debug("Failed to get method 'getHostname'", e);
             return false;
         }
@@ -175,9 +174,9 @@ public class DatastoreBeanWrapper {
         if (!isCompositeDatastore()) {
             return null;
         }
-        CompositeDatastore compositeDatastore = (CompositeDatastore) _datastore;
-        List<? extends Datastore> childDatastores = compositeDatastore.getDatastores();
-        List<String> names = CollectionUtils.map(childDatastores, new HasNameMapper());
+        final CompositeDatastore compositeDatastore = (CompositeDatastore) _datastore;
+        final List<? extends Datastore> childDatastores = compositeDatastore.getDatastores();
+        final List<String> names = CollectionUtils.map(childDatastores, new HasNameMapper());
         return names.toString();
     }
 }

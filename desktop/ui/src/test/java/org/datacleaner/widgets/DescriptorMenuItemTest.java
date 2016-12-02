@@ -21,18 +21,18 @@ package org.datacleaner.widgets;
 
 import javax.swing.JComponent;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.beans.transform.TokenizerTransformer;
 import org.datacleaner.descriptors.Descriptors;
+
+import junit.framework.TestCase;
 
 public class DescriptorMenuItemTest extends TestCase {
 
     public void testToolTipSize() throws Exception {
-        DescriptorMenuItem menuItem = new DescriptorMenuItem(null, null,
-                Descriptors.ofTransformer(TokenizerTransformer.class));
+        final DescriptorMenuItem menuItem =
+                new DescriptorMenuItem(null, null, Descriptors.ofTransformer(TokenizerTransformer.class));
 
-        JComponent toolTipPanel = menuItem.createToolTipPanel();
+        final JComponent toolTipPanel = menuItem.createToolTipPanel();
         assertTrue(1000 > toolTipPanel.getPreferredSize().width);
         assertTrue(1000 > toolTipPanel.getPreferredSize().height);
     }

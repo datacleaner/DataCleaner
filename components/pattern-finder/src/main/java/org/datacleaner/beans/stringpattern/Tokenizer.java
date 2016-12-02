@@ -23,5 +23,5 @@ import java.util.List;
 
 public interface Tokenizer {
 
-	public List<Token> tokenize(String s);
+    List<Token> tokenize(String pattern);
 }

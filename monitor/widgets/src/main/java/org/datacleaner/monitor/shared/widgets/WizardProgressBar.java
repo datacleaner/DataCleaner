@@ -35,7 +35,7 @@ public class WizardProgressBar extends FlowPanel {
         this(0);
     }
 
-    public WizardProgressBar(int steps) {
+    public WizardProgressBar(final int steps) {
         super();
         setStyleName("WizardProgressBar");
         setSteps(steps);
@@ -49,7 +49,7 @@ public class WizardProgressBar extends FlowPanel {
         setSteps(steps, false);
     }
 
-    public void setSteps(final Integer steps, boolean indicateMore) {
+    public void setSteps(final Integer steps, final boolean indicateMore) {
         if (steps == null) {
             return;
         }
@@ -59,13 +59,13 @@ public class WizardProgressBar extends FlowPanel {
 
         clear();
 
-        Widget metaBefore = new Label();
+        final Widget metaBefore = new Label();
         metaBefore.setStyleName("MetaItem");
         metaBefore.addStyleName("before");
         add(metaBefore);
 
         for (int i = 0; i < steps; i++) {
-            Widget child = new Label("" + (i + 1));
+            final Widget child = new Label("" + (i + 1));
             child.setStyleName("WizardProgressItem");
             if (i == 0) {
                 child.addStyleName("first");
@@ -74,16 +74,16 @@ public class WizardProgressBar extends FlowPanel {
             }
             add(child);
         }
-        
+
         _indicatingMore = indicateMore;
         if (indicateMore) {
-            Widget metaAfter = new Label("...");
+            final Widget metaAfter = new Label("...");
             metaAfter.setStyleName("MetaItem");
             metaAfter.addStyleName("more");
             add(metaAfter);
         }
 
-        Widget metaAfter = new Label();
+        final Widget metaAfter = new Label();
         metaAfter.setStyleName("MetaItem");
         metaAfter.addStyleName("after");
         add(metaAfter);
@@ -91,12 +91,12 @@ public class WizardProgressBar extends FlowPanel {
 
     /**
      * Sets the current progress index (0-based)
-     * 
+     *
      * @param stepIndex
      */
     public void setProgress(final Integer stepIndex) {
-        WidgetCollection children = getChildren();
-        for (Widget child : children) {
+        final WidgetCollection children = getChildren();
+        for (final Widget child : children) {
             child.removeStyleName("current");
         }
         if (stepIndex != null) {

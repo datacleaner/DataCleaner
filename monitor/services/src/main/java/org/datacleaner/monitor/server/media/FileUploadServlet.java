@@ -64,78 +64,7 @@ public class FileUploadServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUploadServlet.class);
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        clearSession(req);
-
-        File tempFolder = FileHelper.getTempDir();
-        try {
-            File subDirectory = new File(tempFolder, ".datacleaner_upload");
-            if (subDirectory.mkdirs()) {
-                tempFolder = subDirectory;
-            }
-        } catch (Exception e) {
-            logger.warn("Could not create subdirectory in temp folder", e);
-        }
-
-        final FileItemFactory fileItemFactory = new DiskFileItemFactory(0, tempFolder);
-        final ServletFileUpload servletFileUpload = new ServletFileUpload(fileItemFactory);
-        servletFileUpload.setFileSizeMax(FILE_SIZE_MAX);
-        servletFileUpload.setSizeMax(REQUEST_SIZE_MAX);
-
-        final List<Object> resultFileElements = new ArrayList<Object>();
-        final HttpSession session = req.getSession();
-
-        try {
-            int index = 0;
-            @SuppressWarnings("unchecked")
-            final List<DiskFileItem> items = servletFileUpload.parseRequest(req);
-            for (DiskFileItem item : items) {
-                if (item.isFormField()) {
-                    logger.warn("Ignoring form field in request: {}", item);
-                } else {
-                    final String sessionKey = "file_upload_" + index;
-                    final File file = item.getStoreLocation();
-
-                    String filename = toFilename(item.getName());
-                    logger.info("File '{}' uploaded to temporary location: {}", filename, file);
-
-                    session.setAttribute(sessionKey, file);
-
-                    final Map<String, String> resultItem = new LinkedHashMap<String, String>();
-                    resultItem.put("field_name", item.getFieldName());
-                    resultItem.put("file_name", filename);
-                    resultItem.put("content_type", item.getContentType());
-                    resultItem.put("size", Long.toString(item.getSize()));
-                    resultItem.put("session_key", sessionKey);
-
-                    resultFileElements.add(resultItem);
-
-                    index++;
-                }
-            }
-        } catch (FileUploadException e) {
-            logger.error("Unexpected file upload exception: " + e.getMessage(), e);
-            throw new IOException(e);
-        }
-
-        final String contentType = req.getParameter("contentType");
-        if (contentType == null) {
-            resp.setContentType("application/json");
-        } else {
-            resp.setContentType(contentType);
-        }
-
-        final Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
-        resultMap.put("status", "success");
-        resultMap.put("files", resultFileElements);
-
-        // write result as JSON
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValue(resp.getOutputStream(), resultMap);
-    }
-
-    protected static String toFilename(String name) {
+    protected static String toFilename(final String name) {
         if (name == null) {
             return null;
         }
@@ -143,9 +72,9 @@ public class FileUploadServlet extends HttpServlet {
             final String substr = name.substring(0, name.length() - 1);
             return toFilename(substr);
         }
-        int index1 = name.lastIndexOf('\\');
-        int index2 = name.lastIndexOf('/');
-        int index = Math.max(index1, index2);
+        final int index1 = name.lastIndexOf('\\');
+        final int index2 = name.lastIndexOf('/');
+        final int index = Math.max(index1, index2);
         if (index != -1) {
             return name.substring(index + 1);
         }
@@ -155,20 +84,20 @@ public class FileUploadServlet extends HttpServlet {
     /**
      * Clears the HTTP session of the request from any file-upload related
      * state.
-     * 
+     *
      * @param req
      */
-    public static final void clearSession(HttpServletRequest req) {
+    public static final void clearSession(final HttpServletRequest req) {
         final HttpSession session = req.getSession();
         clearSession(session);
     }
 
     /**
      * Clears the HTTP session from any file-upload related state.
-     * 
+     *
      * @param session
      */
-    public static final void clearSession(HttpSession session) {
+    public static final void clearSession(final HttpSession session) {
         int index = 0;
         while (true) {
             final String sessionKey = "file_upload_" + index;
@@ -180,5 +109,76 @@ public class FileUploadServlet extends HttpServlet {
             }
             index++;
         }
+    }
+
+    @Override
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
+            throws ServletException, IOException {
+        clearSession(req);
+
+        File tempFolder = FileHelper.getTempDir();
+        try {
+            final File subDirectory = new File(tempFolder, ".datacleaner_upload");
+            if (subDirectory.mkdirs()) {
+                tempFolder = subDirectory;
+            }
+        } catch (final Exception e) {
+            logger.warn("Could not create subdirectory in temp folder", e);
+        }
+
+        final FileItemFactory fileItemFactory = new DiskFileItemFactory(0, tempFolder);
+        final ServletFileUpload servletFileUpload = new ServletFileUpload(fileItemFactory);
+        servletFileUpload.setFileSizeMax(FILE_SIZE_MAX);
+        servletFileUpload.setSizeMax(REQUEST_SIZE_MAX);
+
+        final List<Object> resultFileElements = new ArrayList<>();
+        final HttpSession session = req.getSession();
+
+        try {
+            int index = 0;
+            @SuppressWarnings("unchecked") final List<DiskFileItem> items = servletFileUpload.parseRequest(req);
+            for (final DiskFileItem item : items) {
+                if (item.isFormField()) {
+                    logger.warn("Ignoring form field in request: {}", item);
+                } else {
+                    final String sessionKey = "file_upload_" + index;
+                    final File file = item.getStoreLocation();
+
+                    final String filename = toFilename(item.getName());
+                    logger.info("File '{}' uploaded to temporary location: {}", filename, file);
+
+                    session.setAttribute(sessionKey, file);
+
+                    final Map<String, String> resultItem = new LinkedHashMap<>();
+                    resultItem.put("field_name", item.getFieldName());
+                    resultItem.put("file_name", filename);
+                    resultItem.put("content_type", item.getContentType());
+                    resultItem.put("size", Long.toString(item.getSize()));
+                    resultItem.put("session_key", sessionKey);
+
+                    resultFileElements.add(resultItem);
+
+                    index++;
+                }
+            }
+        } catch (final FileUploadException e) {
+            logger.error("Unexpected file upload exception: " + e.getMessage(), e);
+            throw new IOException(e);
+        }
+
+        final String contentType = req.getParameter("contentType");
+        if (contentType == null) {
+            resp.setContentType("application/json");
+        } else {
+            resp.setContentType(contentType);
+        }
+
+        final Map<String, Object> resultMap = new LinkedHashMap<>();
+        resultMap.put("status", "success");
+        resultMap.put("files", resultFileElements);
+
+        // write result as JSON
+        final ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(resp.getOutputStream(), resultMap);
     }
 }

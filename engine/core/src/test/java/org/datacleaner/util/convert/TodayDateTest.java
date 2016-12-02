@@ -33,7 +33,7 @@ public class TodayDateTest extends TestCase {
         assertEquals(format(now), format(today));
     }
 
-    private String format(Date d) {
-        return new SimpleDateFormat("yyyy-MM-dd").format(d);
+    private String format(final Date date) {
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
     }
 }

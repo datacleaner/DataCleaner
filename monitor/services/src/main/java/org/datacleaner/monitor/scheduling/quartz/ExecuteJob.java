@@ -54,7 +54,7 @@ import org.springframework.context.ApplicationEventPublisher;
 /**
  * Quartz job which encapsulates the process of executing a DataCleaner job and
  * writes the result to the repository.
- * 
+ *
  * The {@link ExecuteJob} class is annotated with
  * {@link DisallowConcurrentExecution}. This ensures that Quartz will not run a
  * job instance concurrently. For more details, please check out the section
@@ -69,11 +69,12 @@ public class ExecuteJob extends AbstractQuartzJob {
     public static final String DETAIL_EXECUTION_LOG = "DataCleaner.schedule.execution.log";
 
     @Override
-    protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    protected void executeInternal(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
         if (logger.isInfoEnabled()) {
-            logger.info("Executing quartz job with key: {} - {}", jobExecutionContext.getJobDetail().getKey(), jobExecutionContext.getJobInstance());
+            logger.info("Executing quartz job with key: {} - {}", jobExecutionContext.getJobDetail().getKey(),
+                    jobExecutionContext.getJobInstance());
         }
-        
+
         final ApplicationContext applicationContext;
         final ExecutionLog execution;
         final ScheduleDefinition schedule;
@@ -106,21 +107,22 @@ public class ExecuteJob extends AbstractQuartzJob {
             logger.info("Tenant {} executing job {}", tenant.getId(), schedule.getJob());
 
             context = contextFactory.getContext(tenant);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             logger.error("Unexpected error occurred in executeInternal!", e);
             throw e;
         }
 
         executeJob(context, execution, applicationContext, jobEngineManager);
-        
+
         if (logger.isInfoEnabled()) {
-            logger.info("Finished quartz job with key: {} - {}", jobExecutionContext.getJobDetail().getKey(), jobExecutionContext.getJobInstance());
+            logger.info("Finished quartz job with key: {} - {}", jobExecutionContext.getJobDetail().getKey(),
+                    jobExecutionContext.getJobInstance());
         }
     }
 
     /**
      * Executes a DataCleaner job in the repository and stores the result.
-     * 
+     *
      * @param context
      *            the tenant's {@link TenantContext}
      * @param execution
@@ -132,7 +134,7 @@ public class ExecuteJob extends AbstractQuartzJob {
      * @param jobEngineManager
      *            A {@link JobEngineManager} for determining the job engine to
      *            use
-     * 
+     *
      * @return The expected result name, which can be used to get updates about
      *         execution status etc. at a later state.
      */
@@ -160,15 +162,15 @@ public class ExecuteJob extends AbstractQuartzJob {
                 throw new UnsupportedOperationException("No Job engine available for job: " + job);
             }
 
-            final DataCleanerConfiguration configuration = context.getConfiguration(execution.getSchedule()
-                    .getOverrideProperties());           
+            final DataCleanerConfiguration configuration =
+                    context.getConfiguration(execution.getSchedule().getOverrideProperties());
 
             final VariableProviderDefinition variableProviderDef = execution.getSchedule().getVariableProvider();
             final Map<String, String> variables = overrideVariables(variableProviderDef, job, execution, configuration);
 
             jobEngine.executeJob(context, execution, executionLogger, variables);
 
-        } catch (Throwable error) {
+        } catch (final Throwable error) {
             // only initialization issues are catched here, eg. failing to load
             // job or configuration. Other issues will be reported to the
             // listener by the runner.
@@ -177,8 +179,9 @@ public class ExecuteJob extends AbstractQuartzJob {
         return execution.getResultId();
     }
 
-    private Map<String, String> overrideVariables(VariableProviderDefinition variableProviderDef, JobContext job,
-            ExecutionLog execution, DataCleanerConfiguration configuration) throws ClassNotFoundException {
+    private Map<String, String> overrideVariables(final VariableProviderDefinition variableProviderDef,
+            final JobContext job, final ExecutionLog execution, final DataCleanerConfiguration configuration)
+            throws ClassNotFoundException {
         if (variableProviderDef == null) {
             return null;
         }
@@ -190,8 +193,8 @@ public class ExecuteJob extends AbstractQuartzJob {
 
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration, null, true);
 
-        @SuppressWarnings("unchecked")
-        final Class<? extends VariableProvider> cls = (Class<? extends VariableProvider>) Class.forName(className);
+        @SuppressWarnings("unchecked") final Class<? extends VariableProvider> cls =
+                (Class<? extends VariableProvider>) Class.forName(className);
         final ComponentDescriptor<? extends VariableProvider> descriptor = Descriptors.ofComponent(cls);
         final VariableProvider variableProvider = ReflectionUtils.newInstance(cls);
         lifeCycleHelper.assignProvidedProperties(descriptor, variableProvider);
@@ -200,7 +203,7 @@ public class ExecuteJob extends AbstractQuartzJob {
             final Map<String, String> variableOverrides = variableProvider.provideValues(job, execution);
             lifeCycleHelper.close(descriptor, variableProvider, true);
             return variableOverrides;
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             lifeCycleHelper.close(descriptor, variableProvider, false);
             throw e;
         }

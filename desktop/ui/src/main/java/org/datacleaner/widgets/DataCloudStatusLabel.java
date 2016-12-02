@@ -43,19 +43,30 @@ import org.datacleaner.windows.AbstractWindow;
  * Status Label for DataCloud
  */
 public class DataCloudStatusLabel extends JLabel {
-    public static final String PANEL_NAME = "DataCloud";
+    private class RemoteServerStateListenerImpl implements RemoteServerStateListener {
 
+        @Override
+        public void onRemoteServerStateChange(final String remoteServerName, final RemoteServerState state) {
+            if (RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(remoteServerName)) {
+                setIcon(state.getActualState());
+                _dataCloudInformationPanel.setInformationStatus(state);
+            }
+        }
+    }
+
+    public static final String PANEL_NAME = "DataCloud";
+    private final RightInformationPanel _rightPanel;
     private RemoteServerConfiguration _remoteServerConfiguration;
     private DataCloudInformationPanel _dataCloudInformationPanel;
-    private final RightInformationPanel _rightPanel;
 
-    public DataCloudStatusLabel(RightInformationPanel rightPanel, final DataCleanerConfiguration configuration,
-                                final UserPreferences userPreferences, WindowContext windowContext, AbstractWindow owner) {
+    public DataCloudStatusLabel(final RightInformationPanel rightPanel, final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences, final WindowContext windowContext, final AbstractWindow owner) {
         super(PANEL_NAME);
         _rightPanel = rightPanel;
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _remoteServerConfiguration = configuration.getEnvironment().getRemoteServerConfiguration();
-        _dataCloudInformationPanel = new DataCloudInformationPanel(rightPanel, configuration, userPreferences, windowContext, owner);
+        _dataCloudInformationPanel =
+                new DataCloudInformationPanel(rightPanel, configuration, userPreferences, windowContext, owner);
         _rightPanel.addTabToPane(PANEL_NAME, _dataCloudInformationPanel);
 
         _remoteServerConfiguration.addListener(new RemoteServerStateListenerImpl());
@@ -68,20 +79,19 @@ public class DataCloudStatusLabel extends JLabel {
                     .setInformationStatus(new RemoteServerState(RemoteServerState.State.NOT_CONNECTED, null, null));
         } else {
             setIcon(actualServerStateOfDataCloud.getActualState());
-            _dataCloudInformationPanel
-                    .setInformationStatus(actualServerStateOfDataCloud);
+            _dataCloudInformationPanel.setInformationStatus(actualServerStateOfDataCloud);
         }
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(final MouseEvent e) {
                 onMouseClick();
             }
         });
     }
 
-    private void setIcon(RemoteServerState.State state) {
+    private void setIcon(final RemoteServerState.State state) {
         switch (state) {
         case NOT_CONNECTED:
             setIcon(ImageManager.get().getImageIcon(IconUtils.CLOUD_GREY, IconUtils.ICON_SIZE_SMALL));
@@ -95,21 +105,12 @@ public class DataCloudStatusLabel extends JLabel {
         case ERROR:
             setIcon(ImageManager.get().getImageIcon(IconUtils.CLOUD_RED, IconUtils.ICON_SIZE_SMALL));
             break;
+        default:
+            throw new IllegalArgumentException();
         }
     }
 
-    private void onMouseClick(){
+    private void onMouseClick() {
         _rightPanel.toggleWindow(PANEL_NAME);
-    }
-
-    private class RemoteServerStateListenerImpl implements RemoteServerStateListener{
-
-        @Override
-        public void onRemoteServerStateChange(final String remoteServerName, final RemoteServerState state) {
-            if(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(remoteServerName)){
-                setIcon(state.getActualState());
-                _dataCloudInformationPanel.setInformationStatus(state);
-            }
-        }
     }
 }

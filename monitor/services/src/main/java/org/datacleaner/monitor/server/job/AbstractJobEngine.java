@@ -22,7 +22,6 @@ package org.datacleaner.monitor.server.job;
 import java.util.List;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HasNameMapper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.job.JobContext;
@@ -38,13 +37,13 @@ public abstract class AbstractJobEngine<T extends JobContext> implements JobEngi
 
     private final String _fileExtension;
 
-    public AbstractJobEngine(String fileExtension) {
+    public AbstractJobEngine(final String fileExtension) {
         _fileExtension = fileExtension;
     }
 
     /**
      * Utility method to get the filename of a job.
-     * 
+     *
      * @param jobName
      * @return
      */
@@ -56,7 +55,7 @@ public abstract class AbstractJobEngine<T extends JobContext> implements JobEngi
     }
 
     @Override
-    public T getJobContext(TenantContext tenantContext, JobIdentifier job) {
+    public T getJobContext(final TenantContext tenantContext, final JobIdentifier job) {
         final String jobName = job.getName();
         final String jobFilename = getJobFilename(jobName);
         final RepositoryFile file = tenantContext.getJobFolder().getFile(jobFilename);
@@ -69,22 +68,18 @@ public abstract class AbstractJobEngine<T extends JobContext> implements JobEngi
     protected abstract T getJobContext(TenantContext tenantContext, RepositoryFile file);
 
     @Override
-    public final List<JobIdentifier> getJobs(TenantContext tenantContext) {
+    public final List<JobIdentifier> getJobs(final TenantContext tenantContext) {
         final RepositoryFolder jobsFolder = tenantContext.getJobFolder();
         final List<RepositoryFile> files = jobsFolder.getFiles(null, _fileExtension);
         final List<String> filenames = CollectionUtils.map(files, new HasNameMapper());
-        final List<JobIdentifier> jobs = CollectionUtils.map(filenames, new Func<String, JobIdentifier>() {
-            @Override
-            public JobIdentifier eval(String filename) {
-                String jobName = filename.substring(0, filename.length() - _fileExtension.length());
-                return new JobIdentifier(jobName, getJobType());
-            }
+        return CollectionUtils.map(filenames, filename -> {
+            final String jobName = filename.substring(0, filename.length() - _fileExtension.length());
+            return new JobIdentifier(jobName, getJobType());
         });
-        return jobs;
     }
 
     @Override
-    public final boolean containsJob(TenantContext tenantContext, String jobName) {
+    public final boolean containsJob(final TenantContext tenantContext, String jobName) {
         if (!jobName.endsWith(_fileExtension)) {
             jobName = jobName + _fileExtension;
         }

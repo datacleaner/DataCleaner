@@ -27,47 +27,47 @@ import org.apache.metamodel.util.Resource;
 /**
  * Interface for widgets that present a {@link Resource} to the user and
  * possibly allows him to edit it
- * 
+ *
  * @param <R>
  *            the type of resource
  */
 public interface ResourceTypePresenter<R extends Resource> {
 
-    public static interface Listener {
+    interface Listener {
 
         /**
          * Obverser method called when a {@link Resource} is selected or a path
          * that was entered has been parsed and recognized.
-         * 
+         *
          * @param presenter
          * @param resource
          */
-        public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource);
+        void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource);
 
         /**
          * Obverser method called whenever the user enters a path which isn't
          * recognized as a ready-to-use {@link Resource}. Listeners may choose
          * to act on this path in order to process the path anyway.
-         * 
+         *
          * @param presenter
          * @param path
          */
-        public void onPathEntered(ResourceTypePresenter<?> presenter, String path);
+        void onPathEntered(ResourceTypePresenter<?> presenter, String path);
     }
 
-    public JComponent getWidget();
+    JComponent getWidget();
 
-    public R getResource();
+    R getResource();
 
-    public void setResource(R resource);
+    void setResource(R resource);
 
-    public void addListener(Listener listener);
+    void addListener(Listener listener);
 
-    public void removeListener(Listener listener);
+    void removeListener(Listener listener);
 
-    public void addChoosableFileFilter(FileFilter fileFilter);
+    void addChoosableFileFilter(FileFilter fileFilter);
 
-    public void removeChoosableFileFilter(FileFilter fileFilter);
+    void removeChoosableFileFilter(FileFilter fileFilter);
 
-    public void setSelectedFileFilter(FileFilter fileFilter);
+    void setSelectedFileFilter(FileFilter fileFilter);
 }

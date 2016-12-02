@@ -26,5 +26,5 @@ import org.apache.metamodel.schema.Schema;
  */
 public interface SchemaFactory {
 
-	public Schema createSchema();
+    Schema createSchema();
 }

@@ -21,7 +21,8 @@
 
 -->
 <module rename-to='scheduling'>
-
+	<inherits name="com.google.gwt.logging.Logging"/>
+	
 	<inherits name="org.datacleaner.monitor.Widgets"/>
 
 	<entry-point class='org.datacleaner.monitor.scheduling.SchedulingEntryPoint' />

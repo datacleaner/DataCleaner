@@ -28,30 +28,27 @@ import org.apache.metamodel.util.FileHelper;
  */
 public final class Main {
 
-	/**
-	 * Main method of the Command-line interface (CLI)
-	 * 
-	 * @param args
-	 *            command-line arguments
-	 * @throws Throwable
-	 */
-	public static void main(String[] args) throws Throwable {
-		CliArguments arguments = CliArguments.parse(args);
-		if (arguments.isSet() && !arguments.isUsageMode()) {
-			CliRunner runner = new CliRunner(arguments);
-			try {
-				runner.run();
-			} finally {
-				runner.close();
-			}
-		} else {
-			PrintWriter out = new PrintWriter(System.out);
-			printUsage(out);
-			FileHelper.safeClose(out);
-		}
-	}
+    private static void printUsage(final PrintWriter out) {
+        CliArguments.printUsage(out);
+    }
 
-	private static void printUsage(PrintWriter out) {
-		CliArguments.printUsage(out);
-	}
+    /**
+     * Main method of the Command-line interface (CLI)
+     *
+     * @param args
+     *            command-line arguments
+     * @throws Throwable
+     */
+    public static void main(final String[] args) throws Throwable {
+        final CliArguments arguments = CliArguments.parse(args);
+        if (arguments.isSet() && !arguments.isUsageMode()) {
+            try (CliRunner runner = new CliRunner(arguments)) {
+                runner.run();
+            }
+        } else {
+            final PrintWriter out = new PrintWriter(System.out);
+            printUsage(out);
+            FileHelper.safeClose(out);
+        }
+    }
 }

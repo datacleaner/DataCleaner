@@ -21,26 +21,27 @@ package org.datacleaner.widgets.result;
 
 import java.util.Arrays;
 
-import org.datacleaner.result.ResultProducer;
-import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.result.ResultProducer;
+import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.windows.DetailsResultWindow;
 
 public class DrillToDetailsCallbackImpl implements DrillToDetailsCallback {
 
-	private final WindowContext _windowContext;
-	private final RendererFactory _rendererFactory;
+    private final WindowContext _windowContext;
+    private final RendererFactory _rendererFactory;
 
-	public DrillToDetailsCallbackImpl(WindowContext windowContext, RendererFactory rendererFactory) {
-		_windowContext = windowContext;
-		_rendererFactory = rendererFactory;
-	}
+    public DrillToDetailsCallbackImpl(final WindowContext windowContext, final RendererFactory rendererFactory) {
+        _windowContext = windowContext;
+        _rendererFactory = rendererFactory;
+    }
 
-	@Override
-	public void drillToDetails(String title, ResultProducer resultProducer) {
-		final AnalyzerResult result = resultProducer.getResult();
-		final DetailsResultWindow window = new DetailsResultWindow(title, Arrays.asList(result), _windowContext, _rendererFactory);
-		window.open();
-	}
+    @Override
+    public void drillToDetails(final String title, final ResultProducer resultProducer) {
+        final AnalyzerResult result = resultProducer.getResult();
+        final DetailsResultWindow window =
+                new DetailsResultWindow(title, Arrays.asList(result), _windowContext, _rendererFactory);
+        window.open();
+    }
 }

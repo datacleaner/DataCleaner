@@ -22,12 +22,12 @@ package org.datacleaner.configuration;
 /**
  * An object that is capable of reading an {@link DataCleanerConfiguration} from
  * a source.
- * 
+ *
  * @param <E>
  *            The source type, typically an InputStream, but could be another
  *            type of source as well.
  */
 public interface ConfigurationReader<T> {
 
-    public DataCleanerConfiguration read(T input);
+    DataCleanerConfiguration read(T input);
 }

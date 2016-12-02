@@ -60,7 +60,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Bean factory for {@link org.datacleaner.configuration.DataCleanerConfiguration} elements in the DC
  * monitor application, like the {@link TaskRunner} and
  * {@link DescriptorProvider}.
- * 
+ *
  * Since the scannedPackages property (and to some extent also the numThreads
  * property) is meant to be externalized, this class is NOT annotated with
  * {@link Component}. Add it in the spring beans xml file.
@@ -78,7 +78,7 @@ public class ConfigurationFactory {
         return scanWebInfFolder;
     }
 
-    public void setScanWebInfFolder(boolean scanWebInfFolder) {
+    public void setScanWebInfFolder(final boolean scanWebInfFolder) {
         this.scanWebInfFolder = scanWebInfFolder;
     }
 
@@ -86,7 +86,7 @@ public class ConfigurationFactory {
         return _scannedPackages;
     }
 
-    public void setScannedPackages(List<String> scannedPackages) {
+    public void setScannedPackages(final List<String> scannedPackages) {
         _scannedPackages = scannedPackages;
     }
 
@@ -94,7 +94,7 @@ public class ConfigurationFactory {
         return _numThreads;
     }
 
-    public void setNumThreads(Integer numThreads) {
+    public void setNumThreads(final Integer numThreads) {
         _numThreads = numThreads;
     }
 
@@ -102,7 +102,7 @@ public class ConfigurationFactory {
      * Adds additional remote server. For remote components it is possible to use
      * the {@link RemoteServerDataFactory} factory.
      */
-    public void setRemoteServer(RemoteServerData remoteServer) {
+    public void setRemoteServer(final RemoteServerData remoteServer) {
         this._remoteServerData = remoteServer;
     }
 
@@ -121,8 +121,8 @@ public class ConfigurationFactory {
     }
 
     @Bean(name = "descriptorProvider")
-    public DescriptorProvider createDescriptorProvider(TaskRunner taskRunner, ServletContext servletContext,
-            RemoteServerConfiguration remoteServerConfiguration) {
+    public DescriptorProvider createDescriptorProvider(final TaskRunner taskRunner, final ServletContext servletContext,
+            final RemoteServerConfiguration remoteServerConfiguration) {
         final File[] files = getJarFilesForDescriptorProvider(servletContext);
 
         if (logger.isDebugEnabled()) {
@@ -131,22 +131,22 @@ public class ConfigurationFactory {
 
         logger.info("Creating shared descriptor provider with packages: {}", _scannedPackages);
 
-        final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<Class<? extends RenderingFormat<?>>>();
+        final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<>();
         excludedRenderingFormats.add(SwingRenderingFormat.class);
         excludedRenderingFormats.add(TextRenderingFormat.class);
         excludedRenderingFormats.add(ComponentBuilderPresenterRenderingFormat.class);
 
-        final ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner,
-                excludedRenderingFormats, true);
+        final ClasspathScanDescriptorProvider descriptorProvider =
+                new ClasspathScanDescriptorProvider(taskRunner, excludedRenderingFormats, true);
         final ClassLoader classLoader = getClass().getClassLoader();
         logger.info("Using classloader: {}", classLoader);
 
-        for (String packageName : _scannedPackages) {
+        for (final String packageName : _scannedPackages) {
             descriptorProvider.scanPackage(packageName, true, classLoader, false, files);
         }
 
         if (_remoteServerData != null) {
-            CompositeDescriptorProvider compositeDescriptorProvider = new CompositeDescriptorProvider();
+            final CompositeDescriptorProvider compositeDescriptorProvider = new CompositeDescriptorProvider();
             compositeDescriptorProvider.addDelegates(Arrays.asList(descriptorProvider,
                     new RemoteDescriptorProviderImpl(_remoteServerData, remoteServerConfiguration)));
             return compositeDescriptorProvider;
@@ -155,9 +155,9 @@ public class ConfigurationFactory {
     }
 
     @Bean(name = "remoteServerConfiguration")
-    public RemoteServerConfiguration createRemoteServerConfiguration(TaskRunner taskRunner){
-        List<RemoteServerData> remoteServerDataList = new ArrayList<>();
-        if(_remoteServerData != null){
+    public RemoteServerConfiguration createRemoteServerConfiguration(final TaskRunner taskRunner) {
+        final List<RemoteServerData> remoteServerDataList = new ArrayList<>();
+        if (_remoteServerData != null) {
             remoteServerDataList.add(_remoteServerData);
         }
         return new RemoteServerConfigurationImpl(remoteServerDataList, taskRunner);
@@ -169,9 +169,10 @@ public class ConfigurationFactory {
     }
 
     @Bean(name = "dataCleanerEnvironment")
-    public DataCleanerEnvironment createDataCleanerEnvironment(TaskRunner taskRunner,
-            DescriptorProvider descriptorProvider, StorageProvider storageProvider,
-            InjectionManagerFactory injectionManagerFactory, RemoteServerConfiguration remoteServerConfiguration) {
+    public DataCleanerEnvironment createDataCleanerEnvironment(final TaskRunner taskRunner,
+            final DescriptorProvider descriptorProvider, final StorageProvider storageProvider,
+            final InjectionManagerFactory injectionManagerFactory,
+            final RemoteServerConfiguration remoteServerConfiguration) {
         return new DataCleanerEnvironmentImpl(taskRunner, descriptorProvider, storageProvider, injectionManagerFactory,
                 remoteServerConfiguration);
     }
@@ -199,7 +200,8 @@ public class ConfigurationFactory {
         logger.debug("Path of 'lib': {}", libPath);
 
         if (classesPath == null && libPath == null) {
-            logger.info("ServletContext.getRealPath(...) returned null, will not attempt loading JAR files from WEB-INF");
+            logger.info(
+                    "ServletContext.getRealPath(...) returned null, will not attempt loading JAR files from WEB-INF");
             return null;
         }
 

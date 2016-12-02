@@ -28,77 +28,77 @@ import org.apache.metamodel.util.HasName;
 /**
  * Super-interface for descriptor objects that describe metadata about
  * properties, typically configurable by the user or the framework.
- * 
+ *
  * A property exist within a component, which are described by the
  * {@link ComponentDescriptor} interface.
- * 
- * 
+ *
+ *
  */
 public interface PropertyDescriptor extends Comparable<PropertyDescriptor>, Serializable, HasName {
 
-	/**
-	 * Gets the name of the property
-	 * 
-	 * @return a string representation, the name, of the property
-	 */
-	@Override
-	public String getName();
+    /**
+     * Gets the name of the property
+     *
+     * @return a string representation, the name, of the property
+     */
+    @Override
+    String getName();
 
-	/**
-	 * Sets the value of the property on a component instance.
-	 * 
-	 * @param component
-	 *            the component instance
-	 * @param value
-	 *            the new value of the property
-	 * @throws IllegalArgumentException
-	 *             if the component is invalid or the value has a wrong type
-	 */
-	public void setValue(Object component, Object value) throws IllegalArgumentException;
+    /**
+     * Sets the value of the property on a component instance.
+     *
+     * @param component
+     *            the component instance
+     * @param value
+     *            the new value of the property
+     * @throws IllegalArgumentException
+     *             if the component is invalid or the value has a wrong type
+     */
+    void setValue(Object component, Object value) throws IllegalArgumentException;
 
-	/**
-	 * Gets the current value of this property on a component.
-	 * 
-	 * @param component
-	 *            the component to get the value from
-	 * @return the current value of this property
-	 * @throws IllegalArgumentException
-	 *             if the component is invalid.
-	 */
-	public Object getValue(Object component) throws IllegalArgumentException;
+    /**
+     * Gets the current value of this property on a component.
+     *
+     * @param component
+     *            the component to get the value from
+     * @return the current value of this property
+     * @throws IllegalArgumentException
+     *             if the component is invalid.
+     */
+    Object getValue(Object component) throws IllegalArgumentException;
 
-	public Set<Annotation> getAnnotations();
+    Set<Annotation> getAnnotations();
 
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass);
+    <A extends Annotation> A getAnnotation(Class<A> annotationClass);
 
-	/**
-	 * Gets the property type, as specified by the field representing the
-	 * property
-	 * 
-	 * @return
-	 */
-	public Class<?> getType();
+    /**
+     * Gets the property type, as specified by the field representing the
+     * property
+     *
+     * @return
+     */
+    Class<?> getType();
 
-	/**
-	 * @return whether or not the type of the property type is an array
-	 */
-	public boolean isArray();
+    /**
+     * @return whether or not the type of the property type is an array
+     */
+    boolean isArray();
 
-	/**
-	 * @return the type of the property or the component type of the array, if
-	 *         the property type is an array
-	 */
-	public Class<?> getBaseType();
+    /**
+     * @return the type of the property or the component type of the array, if
+     *         the property type is an array
+     */
+    Class<?> getBaseType();
 
-	/**
-	 * Gets the descriptor of the component that has this property.
-	 * 
-	 * @return a descriptor object of the owning component.
-	 */
-	public ComponentDescriptor<?> getComponentDescriptor();
+    /**
+     * Gets the descriptor of the component that has this property.
+     *
+     * @return a descriptor object of the owning component.
+     */
+    ComponentDescriptor<?> getComponentDescriptor();
 
-	public int getTypeArgumentCount();
+    int getTypeArgumentCount();
 
-	public Class<?> getTypeArgument(int i) throws IndexOutOfBoundsException;
+    Class<?> getTypeArgument(int index) throws IndexOutOfBoundsException;
 
 }

@@ -40,7 +40,8 @@ public abstract class ExcelDatastoreLocationWizardPage extends AbstractFreemarke
     private final String _filename;
     private final boolean _newFile;
 
-    public ExcelDatastoreLocationWizardPage(WizardContext wizardContext, String filename, boolean newFile) {
+    public ExcelDatastoreLocationWizardPage(final WizardContext wizardContext, final String filename,
+            final boolean newFile) {
         _wizardContext = wizardContext;
         _filename = filename;
         _newFile = newFile;
@@ -60,7 +61,7 @@ public abstract class ExcelDatastoreLocationWizardPage extends AbstractFreemarke
     protected Map<String, Object> getFormModel() {
         final String absolutePrefix = File.listRoots()[0].getAbsolutePath() + "data" + File.separatorChar;
 
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("filename", _filename);
         map.put("absolutePrefix", absolutePrefix);
 
@@ -78,7 +79,7 @@ public abstract class ExcelDatastoreLocationWizardPage extends AbstractFreemarke
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final List<String> locations = formParameters.get("location");
         if (locations == null || locations.isEmpty()) {
@@ -111,7 +112,7 @@ public abstract class ExcelDatastoreLocationWizardPage extends AbstractFreemarke
     /**
      * Invoked when the user has selected a file location on the server of the
      * Excel spreadsheet.
-     * 
+     *
      * @param filepath
      * @param file
      * @return

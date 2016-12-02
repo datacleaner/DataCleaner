@@ -36,10 +36,10 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.Version;
-import org.datacleaner.util.SystemProperties;
 import org.apache.metamodel.util.SharedExecutorService;
+import org.datacleaner.Version;
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.util.SystemProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,63 +49,6 @@ import com.google.common.base.Strings;
  * Class that handles remote logging of usage data
  */
 public final class UsageLogger {
-
-    private static long sessionId = -1;
-
-    // Special username used for anonymous entries. This is the only
-    // non-existing username that is allowed on server side.
-    private static final String NOT_LOGGED_IN_USERNAME = "[not-logged-in]";
-
-    private static final Logger logger = LoggerFactory.getLogger(UsageLogger.class);
-
-    private final Charset charset = Charset.forName("UTF-8");
-    private final UserPreferences _userPreferences;
-    private final ExecutorService _executorService;
-
-    private final String _javaVersion;
-    private final String _osName;
-    private final String _osArch;
-    private final String _country;
-    private final String _language;
-    private final String _javaVendor;
-
-    @Inject
-    protected UsageLogger(UserPreferences userPreferences) {
-        _userPreferences = userPreferences;
-        _executorService = SharedExecutorService.get();
-
-        _javaVendor = System.getProperty("java.vendor");
-        _javaVersion = System.getProperty("java.version");
-        _osName = System.getProperty("os.name");
-        _osArch = System.getProperty("os.arch");
-
-        final Locale defaultLocale = Locale.getDefault();
-        _country = defaultLocale.getCountry();
-        _language = defaultLocale.getLanguage();
-
-        logger.debug(
-                "Determined installation details as:\nJava version: {}\nJava vendor: {}\nOS name: {}\nOS arch: {}\nUser country: {}\nUser language: {}",
-                _javaVersion, _javaVendor, _osName, _osArch, _country, _language);
-    }
-
-    public void logApplicationStartup() {
-        final String embeddedClient = System.getProperty(SystemProperties.EMBED_CLIENT);
-        log("Startup", embeddedClient);
-    }
-
-    public void logApplicationShutdown() {
-        final String embeddedClient = System.getProperty(SystemProperties.EMBED_CLIENT);
-        log("Shutdown", embeddedClient);
-
-        // order the executor service to shut down.
-        _executorService.shutdown();
-    }
-
-    private void log(final String action, final String detail) {
-        logger.debug("Logging action='{}', detail='{}'", action, detail);
-        final Runnable runnable = new UsageLoggerRunnable(action, detail);
-        _executorService.submit(runnable);
-    }
 
     /**
      * Runnable implementation that does the actual remote notification. This is
@@ -124,11 +67,11 @@ public final class UsageLogger {
         @Override
         public void run() {
             try {
-                Map<String, String> additionalProperties = _userPreferences.getAdditionalProperties();
-                long deploymentId = getDeploymentId(additionalProperties);
-                long sessionId = getSessionId();
+                final Map<String, String> additionalProperties = _userPreferences.getAdditionalProperties();
+                final long deploymentId = getDeploymentId(additionalProperties);
+                final long sessionId = getSessionId();
 
-                final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                final List<NameValuePair> nameValuePairs = new ArrayList<>();
                 final HttpPost req = new HttpPost("https://datacleaner.org/ws/user_action");
                 nameValuePairs.add(new BasicNameValuePair("username", NOT_LOGGED_IN_USERNAME));
                 nameValuePairs.add(new BasicNameValuePair("deployment", "" + deploymentId));
@@ -162,36 +105,90 @@ public final class UsageLogger {
                 } else {
                     logger.debug("Usage logger response unsuccessful: {}", responseText);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Could not dispatch usage log for action: {} ({})", _action, e.getMessage());
                 logger.debug("Error occurred while dispatching usage log", e);
             }
         }
     }
 
-    public void logComponentUsage(ComponentDescriptor<?> descriptor) {
+    // Special username used for anonymous entries. This is the only
+    // non-existing username that is allowed on server side.
+    private static final String NOT_LOGGED_IN_USERNAME = "[not-logged-in]";
+
+    private static final Logger logger = LoggerFactory.getLogger(UsageLogger.class);
+    private static long sessionId = -1;
+    private final Charset charset = Charset.forName("UTF-8");
+    private final UserPreferences _userPreferences;
+    private final ExecutorService _executorService;
+    private final String _javaVersion;
+    private final String _osName;
+    private final String _osArch;
+    private final String _country;
+    private final String _language;
+    private final String _javaVendor;
+
+    @Inject
+    protected UsageLogger(final UserPreferences userPreferences) {
+        _userPreferences = userPreferences;
+        _executorService = SharedExecutorService.get();
+
+        _javaVendor = System.getProperty("java.vendor");
+        _javaVersion = System.getProperty("java.version");
+        _osName = System.getProperty("os.name");
+        _osArch = System.getProperty("os.arch");
+
+        final Locale defaultLocale = Locale.getDefault();
+        _country = defaultLocale.getCountry();
+        _language = defaultLocale.getLanguage();
+
+        logger.debug("Determined installation details as:\nJava version: {}\nJava vendor: {}\nOS name: {}\n"
+                        + "OS arch: {}\nUser country: {}\nUser language: {}", _javaVersion, _javaVendor, _osName, _osArch,
+                _country, _language);
+    }
+
+    public void logApplicationStartup() {
+        final String embeddedClient = System.getProperty(SystemProperties.EMBED_CLIENT);
+        log("Startup", embeddedClient);
+    }
+
+    public void logApplicationShutdown() {
+        final String embeddedClient = System.getProperty(SystemProperties.EMBED_CLIENT);
+        log("Shutdown", embeddedClient);
+
+        // order the executor service to shut down.
+        _executorService.shutdown();
+    }
+
+    private void log(final String action, final String detail) {
+        logger.debug("Logging action='{}', detail='{}'", action, detail);
+        final Runnable runnable = new UsageLoggerRunnable(action, detail);
+        _executorService.submit(runnable);
+    }
+
+    public void logComponentUsage(final ComponentDescriptor<?> descriptor) {
         log("Add component", descriptor.getDisplayName());
     }
 
     private long getSessionId() {
         if (sessionId == -1) {
-            RandomData rd = new RandomDataImpl();
+            final RandomData rd = new RandomDataImpl();
             sessionId = rd.nextLong(1, Long.MAX_VALUE);
         }
         return sessionId;
     }
 
-    private long getDeploymentId(Map<String, String> additionalProperties) {
+    private long getDeploymentId(final Map<String, String> additionalProperties) {
         String deploymentId = additionalProperties.get("datacleaner.usage.deployment_id");
         if (Strings.isNullOrEmpty(deploymentId)) {
-            RandomData rd = new RandomDataImpl();
+            final RandomData rd = new RandomDataImpl();
             deploymentId = "" + rd.nextLong(1, Long.MAX_VALUE);
             additionalProperties.put("datacleaner.usage.deployment_id", deploymentId);
         }
         try {
             return Long.parseLong(deploymentId);
-        } catch (NumberFormatException e) {
-            return -1l;
+        } catch (final NumberFormatException e) {
+            return -1L;
         }
     }
 }

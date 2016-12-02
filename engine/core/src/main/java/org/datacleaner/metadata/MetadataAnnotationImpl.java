@@ -32,7 +32,7 @@ public final class MetadataAnnotationImpl implements MetadataAnnotation, Seriali
     private final String _name;
     private final Map<String, String> _parameters;
 
-    public MetadataAnnotationImpl(String name, Map<String, String> parameters) {
+    public MetadataAnnotationImpl(final String name, final Map<String, String> parameters) {
         _name = name;
         _parameters = parameters;
     }

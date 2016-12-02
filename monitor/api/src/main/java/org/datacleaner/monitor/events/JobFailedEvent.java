@@ -39,7 +39,7 @@ public class JobFailedEvent extends ApplicationEvent {
 
     /**
      * Constructs a new {@link JobFailedEvent}.
-     * 
+     *
      * @param source
      * @param executionLog
      *            the execution log of the triggered job
@@ -52,7 +52,8 @@ public class JobFailedEvent extends ApplicationEvent {
      *            the exception thrown that made the job fail, if available, or
      *            null.
      */
-    public JobFailedEvent(Object source, ExecutionLog executionLog, Object component, Object data, Throwable throwable) {
+    public JobFailedEvent(final Object source, final ExecutionLog executionLog, final Object component,
+            final Object data, final Throwable throwable) {
         super(source);
         _executionLog = executionLog;
         _component = component;
@@ -62,7 +63,7 @@ public class JobFailedEvent extends ApplicationEvent {
 
     /**
      * Gets the execution log of the triggered job
-     * 
+     *
      * @return the execution log of the triggered job
      */
     public ExecutionLog getExecutionLog() {
@@ -79,7 +80,7 @@ public class JobFailedEvent extends ApplicationEvent {
 
     /**
      * Gets the component that made job fail, if available, or else null.
-     * 
+     *
      * @return the component that made job fail, if available, or else null.
      */
     public Object getComponent() {
@@ -95,7 +96,7 @@ public class JobFailedEvent extends ApplicationEvent {
 
     /**
      * Gets the data/record that made the job fail, if available, or else null.
-     * 
+     *
      * @return the data/record that made the job fail, if available, or else
      *         null.
      */
@@ -105,7 +106,7 @@ public class JobFailedEvent extends ApplicationEvent {
 
     /**
      * Gets the exception thrown that made the job fail, if available, or null.
-     * 
+     *
      * @return the exception thrown that made the job fail, if available, or
      *         null.
      */

@@ -31,7 +31,7 @@ public class UpdateData {
     private final String grId;
     private final Map<String, Object> fields;
 
-    public UpdateData(String grId, Map<String, Object> fields) {
+    public UpdateData(final String grId, final Map<String, Object> fields) {
         this.grId = grId;
         this.fields = fields;
     }

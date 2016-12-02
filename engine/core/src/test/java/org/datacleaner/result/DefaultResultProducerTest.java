@@ -25,9 +25,9 @@ import junit.framework.TestCase;
 
 public class DefaultResultProducerTest extends TestCase {
 
-	public void testConstructAndGet() throws Exception {
-	    AnalyzerResult result = new NumberResult(42);
-        DefaultResultProducer producer = new DefaultResultProducer(result);
+    public void testConstructAndGet() throws Exception {
+        final AnalyzerResult result = new NumberResult(42);
+        final DefaultResultProducer producer = new DefaultResultProducer(result);
         assertSame(result, producer.getResult());
     }
 }

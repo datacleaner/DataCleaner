@@ -27,11 +27,11 @@ import org.apache.hadoop.conf.Configuration;
 /**
  * Environment based configuration
  */
-public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHadoopClusterInformation implements
-        HadoopClusterInformation {
-    private static final long serialVersionUID = 1L;
+public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHadoopClusterInformation
+        implements HadoopClusterInformation {
     public static final String YARN_CONF_DIR = "YARN_CONF_DIR";
     public static final String HADOOP_CONF_DIR = "HADOOP_CONF_DIR";
+    private static final long serialVersionUID = 1L;
     private static final String[] CONFIGURATION_VARIABLES = { HADOOP_CONF_DIR, YARN_CONF_DIR };
 
     public EnvironmentBasedHadoopClusterInformation(final String name, final String description) {
@@ -41,7 +41,7 @@ public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHado
     /**
      * Determines if the configuration directories specified by YARN_CONF_DIR
      * and/or HADOOP_CONF_DIR are set or not.
-     * 
+     *
      * @return
      */
     public static boolean isConfigurationDirectoriesSpecified() {
@@ -52,7 +52,7 @@ public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHado
         final List<String> configDirectories = new ArrayList<>();
 
         // first read system properties
-        for (String configVariable : CONFIGURATION_VARIABLES) {
+        for (final String configVariable : CONFIGURATION_VARIABLES) {
             final String propertyValues = System.getProperty(configVariable);
             if (propertyValues != null) {
                 configDirectories.add(propertyValues);
@@ -62,7 +62,7 @@ public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHado
         // if no system properties defined, then check environment variables
         // (don't mix the two)
         if (configDirectories.isEmpty()) {
-            for (String configVariable : CONFIGURATION_VARIABLES) {
+            for (final String configVariable : CONFIGURATION_VARIABLES) {
                 final String environmentValue = System.getenv(configVariable);
                 if (environmentValue != null) {
                     configDirectories.add(environmentValue);
@@ -77,7 +77,7 @@ public class EnvironmentBasedHadoopClusterInformation extends DirectoryBasedHado
     public Configuration getConfiguration() {
         try {
             return super.getConfiguration();
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             if (getDirectories().length == 0) {
                 throw new IllegalStateException(
                         "None of the standard Hadoop environment variables (HADOOP_CONF_DIR, YARN_CONF_DIR) has been set.",

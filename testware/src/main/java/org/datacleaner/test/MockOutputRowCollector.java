@@ -30,12 +30,12 @@ public class MockOutputRowCollector implements OutputRowCollector {
     private final List<Object[]> output = new ArrayList<>();
 
     @Override
-    public void putValues(Object... values) {
+    public void putValues(final Object... values) {
         output.add(values);
     }
 
     @Override
-    public void putRow(Row row) {
+    public void putRow(final Row row) {
         output.add(row.getValues());
     }
 

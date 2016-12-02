@@ -40,9 +40,9 @@ public final class JsonDatastoreDialog extends AbstractResourceBasedDatastoreDia
     private static final long serialVersionUID = 1L;
 
     @Inject
-    protected JsonDatastoreDialog(@Nullable JsonDatastore originalDatastore,
-            MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
-            DataCleanerConfiguration configuration, UserPreferences userPreferences) {
+    protected JsonDatastoreDialog(@Nullable final JsonDatastore originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, configuration, userPreferences);
     }
 
@@ -62,12 +62,12 @@ public final class JsonDatastoreDialog extends AbstractResourceBasedDatastoreDia
     }
 
     @Override
-    protected JsonDatastore createDatastore(String name, Resource resource) {
+    protected JsonDatastore createDatastore(final String name, final Resource resource) {
         return new JsonDatastore(name, resource);
     }
 
     @Override
-    protected void initializeFileFilters(ResourceSelector resourceSelector) {
+    protected void initializeFileFilters(final ResourceSelector resourceSelector) {
         resourceSelector.addChoosableFileFilter(FileFilters.JSON);
         resourceSelector.addChoosableFileFilter(FileFilters.ALL);
         resourceSelector.setSelectedFileFilter(FileFilters.JSON);

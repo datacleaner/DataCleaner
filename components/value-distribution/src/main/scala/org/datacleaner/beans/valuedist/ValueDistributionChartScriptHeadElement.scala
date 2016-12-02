@@ -1,22 +1,18 @@
 package org.datacleaner.beans.valuedist
-import scala.collection.JavaConversions.collectionAsScalaIterable
-import org.datacleaner.result.html.HeadElement
-import org.datacleaner.result.html.HtmlRenderingContext
-import org.datacleaner.result.ValueCountingAnalyzerResult
+import org.datacleaner.result.html.{HeadElement, HtmlRenderingContext}
+import org.datacleaner.result.{ValueCountingAnalyzerResult, ValueFrequency}
 import org.datacleaner.util.LabelUtils
-import org.datacleaner.result.SingleValueFrequency
-import org.datacleaner.result.ValueFrequency
-import java.util.Collections
 
 class ValueDistributionChartScriptHeadElement(result: ValueCountingAnalyzerResult, valueCounts: Iterable[ValueFrequency], chartElementId: String) extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {
     // will be used to plot the y-axis value. Descending/negative because we want them to go from top to bottom.
     var negativeIndex = 0;
+    val dataId = "data" + chartElementId;
 
     return """<script type="text/javascript">
     //<![CDATA[
-    var data = [
+    var """ + dataId + """ = [
         """ +
       valueCounts.map(vc => {
         val color = getColor(vc);
@@ -27,9 +23,9 @@ class ValueDistributionChartScriptHeadElement(result: ValueCountingAnalyzerResul
           "}" + "";
       }).mkString(",") + """
     ];
-    wait_for_script_load('jQuery', function() {
-      $(function(){
-        draw_value_distribution_bar('""" + chartElementId + """', data, 2);
+    require(['jquery'], function ($) {
+      $(function() {
+        draw_value_distribution_bar('""" + chartElementId + """', """ + dataId + """, 2);
       });
     });
     //]]>

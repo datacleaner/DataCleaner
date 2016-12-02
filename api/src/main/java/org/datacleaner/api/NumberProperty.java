@@ -40,16 +40,16 @@ public @interface NumberProperty {
     /**
      * @return true if this number may be a negative number.
      */
-    public boolean positive() default true;
+    boolean positive() default true;
 
     /**
      * @return true if this number may be a positive number.
      */
-    public boolean negative() default true;
+    boolean negative() default true;
 
     /**
      * @return true if this number may be zero.
      */
-    public boolean zero() default true;
+    boolean zero() default true;
 
 }

@@ -21,12 +21,9 @@ package org.datacleaner.cluster;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Schema;
@@ -80,25 +77,22 @@ public class ClusterTestHelper {
     /**
      * Creates a {@link DataCleanerConfiguration} object (based on a few
      * parameters), typically to use in test methods of this class.
-     * 
+     *
      * @param testName
      * @param multiThreaded
      * @return
      */
-    public static DataCleanerConfiguration createConfiguration(String testName, boolean multiThreaded) {
-        final JdbcDatastore csvDatastore = new JdbcDatastore("csv", "jdbc:h2:mem:" + testName, "org.h2.Driver", "SA",
-                "", true);
+    public static DataCleanerConfiguration createConfiguration(final String testName, final boolean multiThreaded) {
+        final JdbcDatastore csvDatastore =
+                new JdbcDatastore("csv", "jdbc:h2:mem:" + testName, "org.h2.Driver", "SA", "", true);
         final UpdateableDatastoreConnection con = csvDatastore.openConnection();
-        con.getUpdateableDataContext().executeUpdate(new UpdateScript() {
-            @Override
-            public void run(UpdateCallback callback) {
-                Schema schema = callback.getDataContext().getDefaultSchema();
-                if (schema.getTableByName("testtable") != null) {
-                    return;
-                }
-                callback.createTable(schema, "testtable").withColumn("id").ofType(ColumnType.INTEGER)
-                        .withColumn("name").ofType(ColumnType.VARCHAR).execute();
+        con.getUpdateableDataContext().executeUpdate(callback -> {
+            final Schema schema = callback.getDataContext().getDefaultSchema();
+            if (schema.getTableByName("testtable") != null) {
+                return;
             }
+            callback.createTable(schema, "testtable").withColumn("id").ofType(ColumnType.INTEGER).withColumn("name")
+                    .ofType(ColumnType.VARCHAR).execute();
         });
         con.close();
 
@@ -120,35 +114,33 @@ public class ClusterTestHelper {
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(ValueMatchAnalyzer.class));
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(MockAnalyzerWithBadReducer.class));
 
-        final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner)
-                .withDescriptorProvider(descriptorProvider);
-        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(
-                datastoreCatalog).withEnvironment(environment);
+        final DataCleanerEnvironment environment =
+                new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner).withDescriptorProvider(descriptorProvider);
 
-        return configuration;
+        return new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog).withEnvironment(environment);
     }
 
     /**
      * Runs a job that verifies that errors (caused by the
      * {@link MockTransformerThatWillFail} dummy component) are picked up
      * correctly from the slave nodes.
-     * 
+     *
      * @param configuration
-     * @param virtualClusterManager
+     * @param clusterManager
      * @return the list of errors returned, to perform further assertions
      */
-    public static List<Throwable> runErrorHandlingJob(DataCleanerConfiguration configuration,
-            ClusterManager clusterManager) {
+    public static List<Throwable> runErrorHandlingJob(final DataCleanerConfiguration configuration,
+            final ClusterManager clusterManager) {
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
         jobBuilder.setDatastore("orderdb");
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER");
 
-        final TransformerComponentBuilder<MockTransformerThatWillFail> transformer = jobBuilder
-                .addTransformer(MockTransformerThatWillFail.class);
+        final TransformerComponentBuilder<MockTransformerThatWillFail> transformer =
+                jobBuilder.addTransformer(MockTransformerThatWillFail.class);
         transformer.addInputColumns(jobBuilder.getSourceColumns());
 
-        final AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer = jobBuilder
-                .addAnalyzer(CompletenessAnalyzer.class);
+        final AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer =
+                jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
         analyzer.addInputColumns(transformer.getOutputColumns());
         analyzer.setConfiguredProperty("Conditions",
                 new CompletenessAnalyzer.Condition[] { CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL });
@@ -186,8 +178,8 @@ public class ClusterTestHelper {
         return errors;
     }
 
-    public static void runBasicAnalyzersJob(DataCleanerConfiguration configuration, ClusterManager clusterManager)
-            throws Throwable {
+    public static void runBasicAnalyzersJob(final DataCleanerConfiguration configuration,
+            final ClusterManager clusterManager) throws Throwable {
         // build a job that concats names and inserts the concatenated names
         // into a file
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
@@ -208,13 +200,13 @@ public class ClusterTestHelper {
         final AnalysisResultFuture resultFuture = runner.run(job);
         jobBuilder.close();
 
-        Assert.assertTrue(resultFuture.getStatus() == JobStatus.NOT_FINISHED
-                || resultFuture.getStatus() == JobStatus.SUCCESSFUL);
+        Assert.assertTrue(
+                resultFuture.getStatus() == JobStatus.NOT_FINISHED || resultFuture.getStatus() == JobStatus.SUCCESSFUL);
 
         resultFuture.await();
 
         if (resultFuture.isErrornous()) {
-            List<Throwable> errors = resultFuture.getErrors();
+            final List<Throwable> errors = resultFuture.getErrors();
             throw errors.get(0);
         }
 
@@ -224,7 +216,7 @@ public class ClusterTestHelper {
 
         Assert.assertEquals(2, results.size());
 
-        for (AnalyzerResult analyzerResult : results) {
+        for (final AnalyzerResult analyzerResult : results) {
             Assert.assertNotNull(analyzerResult);
             if (analyzerResult instanceof StringAnalyzerResult) {
                 final StringAnalyzerResult stringAnalyzerResult = (StringAnalyzerResult) analyzerResult;
@@ -265,29 +257,31 @@ public class ClusterTestHelper {
         }
     }
 
-    public static void runCompletenessAndValueMatcherAnalyzerJob(DataCleanerConfiguration configuration,
-            ClusterManager clusterManager) throws Throwable {
+    public static void runCompletenessAndValueMatcherAnalyzerJob(final DataCleanerConfiguration configuration,
+            final ClusterManager clusterManager) throws Throwable {
         // build a job that concats names and inserts the concatenated names
         // into a file
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
         jobBuilder.setDatastore("orderdb");
-        jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER", "CUSTOMERS.CONTACTFIRSTNAME",
-                "CUSTOMERS.CONTACTLASTNAME", "CUSTOMERS.COUNTRY", "CUSTOMERS.ADDRESSLINE2");
+        jobBuilder
+                .addSourceColumns("CUSTOMERS.CUSTOMERNUMBER", "CUSTOMERS.CONTACTFIRSTNAME", "CUSTOMERS.CONTACTLASTNAME",
+                        "CUSTOMERS.COUNTRY", "CUSTOMERS.ADDRESSLINE2");
 
-        List<MetaModelInputColumn> cols = jobBuilder.getSourceColumns();
-        AnalyzerComponentBuilder<CompletenessAnalyzer> completeness = jobBuilder
-                .addAnalyzer(CompletenessAnalyzer.class);
+        final List<MetaModelInputColumn> cols = jobBuilder.getSourceColumns();
+        final AnalyzerComponentBuilder<CompletenessAnalyzer> completeness =
+                jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
         completeness.addInputColumns(cols);
-        Condition[] conditions = new CompletenessAnalyzer.Condition[cols.size()];
+        final Condition[] conditions = new CompletenessAnalyzer.Condition[cols.size()];
         for (int i = 0; i < conditions.length; i++) {
             conditions[i] = Condition.NOT_BLANK_OR_NULL;
         }
         completeness.setConfiguredProperty("Conditions", conditions);
 
-        AnalyzerComponentBuilder<ValueMatchAnalyzer> valueMatch = jobBuilder.addAnalyzer(ValueMatchAnalyzer.class);
+        final AnalyzerComponentBuilder<ValueMatchAnalyzer> valueMatch =
+                jobBuilder.addAnalyzer(ValueMatchAnalyzer.class);
         valueMatch.addInputColumn(jobBuilder.getSourceColumnByName("COUNTRY"));
-        valueMatch.setConfiguredProperty("Expected values", new String[] { "United States", "USA", "Denmark",
-                "Danmark", "Netherlands" });
+        valueMatch.setConfiguredProperty("Expected values",
+                new String[] { "United States", "USA", "Denmark", "Danmark", "Netherlands" });
 
         final AnalysisJob job = jobBuilder.toAnalysisJob();
 
@@ -301,7 +295,7 @@ public class ClusterTestHelper {
             resultFuture.await();
 
             if (resultFuture.isErrornous()) {
-                List<Throwable> errors = resultFuture.getErrors();
+                final List<Throwable> errors = resultFuture.getErrors();
                 throw errors.get(0);
             }
         }
@@ -311,23 +305,24 @@ public class ClusterTestHelper {
         final List<AnalyzerResult> results = resultFuture.getResults();
         Assert.assertEquals(2, results.size());
 
-        for (AnalyzerResult analyzerResult : results) {
+        for (final AnalyzerResult analyzerResult : results) {
             Assert.assertNotNull(analyzerResult);
             if (analyzerResult instanceof CompletenessAnalyzerResult) {
                 // Check completeness analyzer result
 
-                CompletenessAnalyzerResult completenessAnalyzerResult = (CompletenessAnalyzerResult) analyzerResult;
+                final CompletenessAnalyzerResult completenessAnalyzerResult =
+                        (CompletenessAnalyzerResult) analyzerResult;
 
                 Assert.assertEquals(193, completenessAnalyzerResult.getInvalidRowCount());
 
-                List<InputRow> rows = completenessAnalyzerResult.getSampleRows();
+                final List<InputRow> rows = completenessAnalyzerResult.getSampleRows();
                 Assert.assertNotNull(rows);
 
                 Assert.assertTrue("No annotated rows available in CompletenessAnalyzer's result", rows.size() > 0);
 
             } else if (analyzerResult instanceof ValueMatchAnalyzerResult) {
 
-                ValueMatchAnalyzerResult valueMatchAnalyzerResult = (ValueMatchAnalyzerResult) analyzerResult;
+                final ValueMatchAnalyzerResult valueMatchAnalyzerResult = (ValueMatchAnalyzerResult) analyzerResult;
                 Assert.assertEquals(10, valueMatchAnalyzerResult.getNullCount());
 
                 Assert.assertEquals(150, valueMatchAnalyzerResult.getUnexpectedValueCount().intValue());
@@ -338,24 +333,21 @@ public class ClusterTestHelper {
                 Assert.assertEquals(8, valueMatchAnalyzerResult.getCount("Denmark").intValue());
                 rows = new ArrayList<>(valueMatchAnalyzerResult.getAnnotatedRowsForValue("Denmark").getSampleRows());
                 Assert.assertEquals(8, rows.size());
-                
-                Collections.sort(rows, new Comparator<InputRow>() {
-                    @Override
-                    public int compare(InputRow o1, InputRow o2) {
-                        return (int) (o1.getId() - o2.getId());
-                    }
-                });
-                
-                Assert.assertEquals("MetaModelInputRow[Row[values=[145, Jytte, Petersen, Denmark, null]]]", rows.get(0).toString());
-                Assert.assertEquals("MetaModelInputRow[Row[values=[287, Jytte, Pedersen, Denmark, 1734 Kbh]]]", rows.get(2).toString());
+
+                Collections.sort(rows, (o1, o2) -> (int) (o1.getId() - o2.getId()));
+
+                Assert.assertEquals("MetaModelInputRow[Row[values=[145, Jytte, Petersen, Denmark, null]]]",
+                        rows.get(0).toString());
+                Assert.assertEquals("MetaModelInputRow[Row[values=[287, Jytte, Pedersen, Denmark, 1734 Kbh]]]",
+                        rows.get(2).toString());
             } else {
                 Assert.fail("Unexpected analyzer result found: " + analyzerResult);
             }
         }
     }
 
-    public static void runExistingMaxRowsJob(DataCleanerConfiguration configuration, ClusterManager clusterManager)
-            throws Throwable {
+    public static void runExistingMaxRowsJob(final DataCleanerConfiguration configuration,
+            final ClusterManager clusterManager) throws Throwable {
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
         jobBuilder.setDatastore("orderdb");
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER", "CUSTOMERS.CONTACTFIRSTNAME",
@@ -382,7 +374,7 @@ public class ClusterTestHelper {
         try {
             runner.run(job);
             Assert.fail("Exception expected");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             Assert.assertEquals("Job is not distributable!", e.getMessage());
         }
     }
@@ -392,13 +384,13 @@ public class ClusterTestHelper {
      * execute in all contexts. The job does one transformation (concatenates
      * two fields) and inserts this field, together with a source field, into
      * another table.
-     * 
+     *
      * @param configuration
      * @param clusterManager
      * @throws Throwable
      */
-    public static void runConcatAndInsertJob(DataCleanerConfiguration configuration, ClusterManager clusterManager)
-            throws Throwable {
+    public static void runConcatAndInsertJob(final DataCleanerConfiguration configuration,
+            final ClusterManager clusterManager) throws Throwable {
         // build a job that concats names and inserts the concatenated names
         // into a file
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
@@ -407,8 +399,8 @@ public class ClusterTestHelper {
                 "CUSTOMERS.CONTACTLASTNAME");
 
         // concatenate firstname + lastname
-        final TransformerComponentBuilder<ConcatenatorTransformer> concatenator = jobBuilder
-                .addTransformer(ConcatenatorTransformer.class);
+        final TransformerComponentBuilder<ConcatenatorTransformer> concatenator =
+                jobBuilder.addTransformer(ConcatenatorTransformer.class);
         concatenator.addInputColumn(jobBuilder.getSourceColumnByName("CONTACTFIRSTNAME"));
         concatenator.addInputColumn(jobBuilder.getSourceColumnByName("CONTACTLASTNAME"));
         concatenator.setConfiguredProperty("Separator", " ");
@@ -424,8 +416,8 @@ public class ClusterTestHelper {
             final String schemaName = schema.getName();
             final String tableName = schema.getTable(0).getName();
 
-            final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = jobBuilder
-                    .addAnalyzer(InsertIntoTableAnalyzer.class);
+            final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert =
+                    jobBuilder.addAnalyzer(InsertIntoTableAnalyzer.class);
             insert.setConfiguredProperty("Datastore", csvDatastore);
             insert.addInputColumn(jobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));
             insert.addInputColumn(concatenator.getOutputColumns().get(0));
@@ -445,7 +437,7 @@ public class ClusterTestHelper {
                 resultFuture.await();
 
                 if (resultFuture.isErrornous()) {
-                    List<Throwable> errors = resultFuture.getErrors();
+                    final List<Throwable> errors = resultFuture.getErrors();
                     throw errors.get(0);
                 }
             }
@@ -454,15 +446,11 @@ public class ClusterTestHelper {
 
             // check that the file created has the same amount of records as the
             // CUSTOMER table of orderdb.
-            DataSet ds1 = dbCon.getDataContext().query().from("CUSTOMERS").selectCount().execute();
-            DataSet ds2 = csvCon.getDataContext().query().from(tableName).selectCount().execute();
-            try {
+            try (DataSet ds1 = dbCon.getDataContext().query().from("CUSTOMERS").selectCount().execute();
+                 DataSet ds2 = csvCon.getDataContext().query().from(tableName).selectCount().execute()) {
                 Assert.assertTrue(ds1.next());
                 Assert.assertTrue(ds2.next());
                 Assert.assertEquals(ds1.getRow().toString(), ds2.getRow().toString());
-            } finally {
-                ds1.close();
-                ds2.close();
             }
 
             // await multiple times to ensure that second time isn't distorting
@@ -483,11 +471,10 @@ public class ClusterTestHelper {
         }
     }
 
-    public static void runNoExpectedRecordsJob(DataCleanerConfiguration configuration) throws Throwable {
+    public static void runNoExpectedRecordsJob(final DataCleanerConfiguration configuration) throws Throwable {
         final AnalysisJob job;
         {
-            final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
-            try {
+            try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
                 // build a job that concats names and inserts the concatenated
                 // names
                 // into a file
@@ -495,24 +482,22 @@ public class ClusterTestHelper {
                 jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER", "CUSTOMERS.CONTACTFIRSTNAME",
                         "CUSTOMERS.CONTACTLASTNAME");
 
-                final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> equalsFilter = jobBuilder
-                        .addFilter(EqualsFilter.class);
+                final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> equalsFilter =
+                        jobBuilder.addFilter(EqualsFilter.class);
                 equalsFilter.addInputColumn(jobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));
                 equalsFilter.getComponentInstance().setValues(new String[] { "-1000000" });
 
-                final AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzer = jobBuilder
-                        .addAnalyzer(StringAnalyzer.class);
+                final AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzer =
+                        jobBuilder.addAnalyzer(StringAnalyzer.class);
                 stringAnalyzer.addInputColumns(jobBuilder.getAvailableInputColumns(String.class));
                 stringAnalyzer.setRequirement(equalsFilter, EqualsFilter.Category.EQUALS);
 
                 job = jobBuilder.toAnalysisJob();
-            } finally {
-                jobBuilder.close();
             }
         }
 
-        final DistributedAnalysisRunner analysisRunner = new DistributedAnalysisRunner(configuration,
-                new ClusterManager() {
+        final DistributedAnalysisRunner analysisRunner =
+                new DistributedAnalysisRunner(configuration, new ClusterManager() {
                     @Override
                     public JobDivisionManager getJobDivisionManager() {
                         throw new IllegalStateException(
@@ -520,7 +505,7 @@ public class ClusterTestHelper {
                     }
 
                     @Override
-                    public AnalysisResultFuture dispatchJob(AnalysisJob job, DistributedJobContext context)
+                    public AnalysisResultFuture dispatchJob(final AnalysisJob job, final DistributedJobContext context)
                             throws Exception {
                         throw new IllegalStateException(
                                 "Since this job should yield 0 expected records, this method should not be invoked");
@@ -540,8 +525,8 @@ public class ClusterTestHelper {
         Assert.assertTrue(analyzerResult instanceof StringAnalyzerResult);
     }
 
-    public static void runCancelJobJob(DataCleanerConfiguration configuration, ClusterManager clusterManager)
-            throws Throwable {
+    public static void runCancelJobJob(final DataCleanerConfiguration configuration,
+            final ClusterManager clusterManager) throws Throwable {
         // build a job that concats names and inserts the concatenated names
         // into a file
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
@@ -550,8 +535,8 @@ public class ClusterTestHelper {
                 "CUSTOMERS.CONTACTLASTNAME");
 
         // concatenate firstname + lastname
-        final TransformerComponentBuilder<ConcatenatorTransformer> concatenator = jobBuilder
-                .addTransformer(ConcatenatorTransformer.class);
+        final TransformerComponentBuilder<ConcatenatorTransformer> concatenator =
+                jobBuilder.addTransformer(ConcatenatorTransformer.class);
         concatenator.addInputColumn(jobBuilder.getSourceColumnByName("CONTACTFIRSTNAME"));
         concatenator.addInputColumn(jobBuilder.getSourceColumnByName("CONTACTLASTNAME"));
         concatenator.setConfiguredProperty("Separator", " ");
@@ -567,8 +552,8 @@ public class ClusterTestHelper {
             final String schemaName = schema.getName();
             final String tableName = schema.getTable(0).getName();
 
-            final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = jobBuilder
-                    .addAnalyzer(InsertIntoTableAnalyzer.class);
+            final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert =
+                    jobBuilder.addAnalyzer(InsertIntoTableAnalyzer.class);
             insert.setConfiguredProperty("Datastore", csvDatastore);
             insert.addInputColumn(jobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));
             insert.addInputColumn(concatenator.getOutputColumns().get(0));

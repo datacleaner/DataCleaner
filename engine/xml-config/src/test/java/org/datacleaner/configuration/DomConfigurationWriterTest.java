@@ -19,6 +19,8 @@
  */
 package org.datacleaner.configuration;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
@@ -35,6 +37,7 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
@@ -62,19 +65,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import static org.junit.Assert.*;
-
 public class DomConfigurationWriterTest {
 
+    private static final String PASSWORD_ENCODED = "enc:00em6E9KEO9FG42CH0yrVQ==";
     @Rule
     public TemporaryFolder _temporaryFolder = new TemporaryFolder();
-
-    private DomConfigurationWriter configurationWriter;
-
-    private static final String PASSWORD_ENCODED = "enc:00em6E9KEO9FG42CH0yrVQ==";
-
     @Rule
     public TestName testName = new TestName();
+    private DomConfigurationWriter configurationWriter;
 
     @Before
     public void setUp() throws Exception {
@@ -83,12 +81,12 @@ public class DomConfigurationWriterTest {
 
     @Test
     public void testExternalizeCsvDatastore() throws Exception {
-        CsvDatastore ds = new CsvDatastore("foo", "foo.txt");
+        final CsvDatastore ds = new CsvDatastore("foo", "foo.txt");
         ds.setDescription("bar");
 
-        Element elem = configurationWriter.toElement(ds, "baz.txt");
+        final Element elem = configurationWriter.toElement(ds, "baz.txt");
 
-        String str = transform(elem);
+        final String str = transform(elem);
 
         assertEquals("<csv-datastore description=\"bar\" name=\"foo\">\n" + "  <filename>baz.txt</filename>\n"
                 + "  <quote-char>\"</quote-char>\n" + "  <separator-char>,</separator-char>\n"
@@ -100,12 +98,12 @@ public class DomConfigurationWriterTest {
 
     @Test
     public void testExternalizeExcelDatastore() throws Exception {
-        ExcelDatastore ds = new ExcelDatastore("foo", new FileResource("foo.txt"), "foo.txt");
+        final ExcelDatastore ds = new ExcelDatastore("foo", new FileResource("foo.txt"), "foo.txt");
         ds.setDescription("bar");
 
-        Element elem = configurationWriter.toElement(ds, "baz.txt");
+        final Element elem = configurationWriter.toElement(ds, "baz.txt");
 
-        String str = transform(elem);
+        final String str = transform(elem);
 
         assertEquals(
                 "<excel-datastore description=\"bar\" name=\"foo\">\n  <filename>baz.txt</filename>\n</excel-datastore>\n",
@@ -121,7 +119,7 @@ public class DomConfigurationWriterTest {
         try {
             configurationWriter.externalize(unsupportedDatastore);
             fail("Exception expected");
-        } catch (UnsupportedOperationException e) {
+        } catch (final UnsupportedOperationException e) {
             assertEquals("Unsupported resource type: ClasspathResource[foo.txt]", e.getMessage());
         }
 
@@ -151,8 +149,9 @@ public class DomConfigurationWriterTest {
                 + "  <driver>foo.bar.Baz</driver>\n" + "  <multiple-connections>true</multiple-connections>\n"
                 + "</jdbc-datastore>\n", str1);
 
-        final JdbcDatastore datastore2 = new JdbcDatastore("foo ds 2", "JNDI_URL", new TableType[] { TableType.VIEW,
-                TableType.ALIAS }, "mycatalog");
+        final JdbcDatastore datastore2 =
+                new JdbcDatastore("foo ds 2", "JNDI_URL", new TableType[] { TableType.VIEW, TableType.ALIAS },
+                        "mycatalog");
         assertTrue(configurationWriter.isExternalizable(datastore2));
         final String str2 = transform(configurationWriter.externalize(datastore2));
         assertEquals("<jdbc-datastore name=\"foo ds 2\">\n" + "  <datasource-jndi-url>JNDI_URL</datasource-jndi-url>\n"
@@ -175,10 +174,10 @@ public class DomConfigurationWriterTest {
 
     @Test
     public void testExternalizeJdbcDatastoreWithPassword() throws Exception {
-        Datastore ds1 = new JdbcDatastore("name", "jdbcUrl", "driverClass", "username", "password", true,
+        final Datastore ds1 = new JdbcDatastore("name", "jdbcUrl", "driverClass", "username", "password", true,
                 new TableType[] { TableType.ALIAS }, "catalogName");
 
-        Element externalized = configurationWriter.externalize(ds1);
+        final Element externalized = configurationWriter.externalize(ds1);
         assertEquals("<jdbc-datastore name=\"name\">\n" + "  <url>jdbcUrl</url>\n" + "  <driver>driverClass</driver>\n"
                 + "  <username>username</username>\n" + "  <password>" + PASSWORD_ENCODED + "</password>\n"
                 + "  <multiple-connections>true</multiple-connections>\n" + "  <table-types>\n"
@@ -188,9 +187,9 @@ public class DomConfigurationWriterTest {
 
     @Test
     public void testExternalizeMongoDbDatastoreWithPassword() throws Exception {
-        Datastore ds1 = new MongoDbDatastore("name", "hostname", 1234, "database", "user", "password");
+        final Datastore ds1 = new MongoDbDatastore("name", "hostname", 1234, "database", "user", "password");
 
-        Element externalized = configurationWriter.externalize(ds1);
+        final Element externalized = configurationWriter.externalize(ds1);
         assertEquals("<mongodb-datastore name=\"name\">\n" + "  <hostname>hostname</hostname>\n  <port>1234</port>\n"
                 + "  <database-name>database</database-name>\n" + "  <username>user</username>\n" + "  <password>"
                 + PASSWORD_ENCODED + "</password>\n</mongodb-datastore>\n", transform(externalized));
@@ -198,57 +197,59 @@ public class DomConfigurationWriterTest {
 
     @Test
     public void testExternalizeCouchDbDatastoreWithPassword() throws Exception {
-        Datastore ds1 = new CouchDbDatastore("name", "hostname", 1234, "user", "password", true, null);
+        final Datastore ds1 = new CouchDbDatastore("name", "hostname", 1234, "user", "password", true, null);
 
-        Element externalized = configurationWriter.externalize(ds1);
-        assertEquals("<couchdb-datastore name=\"name\">\n" + "  <hostname>hostname</hostname>\n"
-                + "  <port>1234</port>\n" + "  <username>user</username>\n" + "  <password>" + PASSWORD_ENCODED
-                + "</password>\n" + "  <ssl>true</ssl>\n" + "</couchdb-datastore>\n", transform(externalized));
+        final Element externalized = configurationWriter.externalize(ds1);
+        assertEquals(
+                "<couchdb-datastore name=\"name\">\n" + "  <hostname>hostname</hostname>\n" + "  <port>1234</port>\n"
+                        + "  <username>user</username>\n" + "  <password>" + PASSWORD_ENCODED + "</password>\n"
+                        + "  <ssl>true</ssl>\n" + "</couchdb-datastore>\n", transform(externalized));
     }
 
     @Test
     public void testExternalizeSalesforceDatastoreWithPassword() throws Exception {
-        Datastore ds1 = new SalesforceDatastore("name", "username", "password", "securityToken");
+        final Datastore ds1 = new SalesforceDatastore("name", "username", "password", "securityToken");
 
-        Element externalized = configurationWriter.externalize(ds1);
+        final Element externalized = configurationWriter.externalize(ds1);
         assertEquals("<salesforce-datastore name=\"name\">\n" + "  <username>username</username>\n" + "  <password>"
-                + PASSWORD_ENCODED + "</password>\n"
-                + "  <security-token>securityToken</security-token>\n</salesforce-datastore>\n", transform(
-                        externalized));
+                        + PASSWORD_ENCODED + "</password>\n"
+                        + "  <security-token>securityToken</security-token>\n</salesforce-datastore>\n",
+                transform(externalized));
     }
 
     @Test
     public void testExternalizeDataHubDatastoreWithPassword() throws Exception {
-        Datastore datastore = new DataHubDatastore("name", "hostname", 1234, "user", "password", false, false,
+        final Datastore datastore = new DataHubDatastore("name", "hostname", 1234, "user", "password", false, false,
                 DataHubSecurityMode.DEFAULT);
 
-        Element externalized = configurationWriter.externalize(datastore);
-        StringBuilder expectedConfiguration = new StringBuilder();
-        expectedConfiguration//
-                .append("<datahub-datastore name=\"name\">\n")//
-                .append("  <host>hostname</host>\n")//
-                .append("  <port>1234</port>\n")//
-                .append("  <username>user</username>\n")//
-                .append("  <password>" + PASSWORD_ENCODED + "</password>\n")//
-                .append("  <https>false</https>\n")//
-                .append("  <acceptunverifiedsslpeers>false</acceptunverifiedsslpeers>\n")//
-                .append("  <datahubsecuritymode>DEFAULT</datahubsecuritymode>\n")//
-                .append("</datahub-datastore>\n");//
+        final Element externalized = configurationWriter.externalize(datastore);
+        final StringBuilder expectedConfiguration = new StringBuilder();
 
+        // @formatter:off
+        expectedConfiguration
+                .append("<datahub-datastore name=\"name\">\n")
+                .append("  <host>hostname</host>\n")
+                .append("  <port>1234</port>\n")
+                .append("  <username>user</username>\n")
+                .append("  <password>" + PASSWORD_ENCODED + "</password>\n")
+                .append("  <https>false</https>\n")
+                .append("  <acceptunverifiedsslpeers>false</acceptunverifiedsslpeers>\n")
+                .append("  <datahubsecuritymode>DEFAULT</datahubsecuritymode>\n")
+                .append("</datahub-datastore>\n");
+        // @formatter:on
         assertEquals(expectedConfiguration.toString(), transform(externalized));
     }
-    
+
     @Test
     public void testExternalizeJsonDatastore() throws Exception {
-        final JsonDatastore jsonDatastore = new JsonDatastore("my Json", new FileResource("c:/test/json.json")); 
+        final JsonDatastore jsonDatastore = new JsonDatastore("my Json", new FileResource("c:/test/json.json"));
         jsonDatastore.setDescription("My Json datastore");
         final Element elem = configurationWriter.toElement(jsonDatastore, "json.json");
 
         final String str = transform(elem);
-        assertEquals("<json-datastore description=\"My Json datastore\" name=\"my Json\">\n" + 
-                "  <filename>json.json</filename>\n" + 
-                "</json-datastore>\n", str); 
-        
+        assertEquals("<json-datastore description=\"My Json datastore\" name=\"my Json\">\n"
+                + "  <filename>json.json</filename>\n" + "</json-datastore>\n", str);
+
     }
 
     @Test
@@ -262,23 +263,23 @@ public class DomConfigurationWriterTest {
         FileHelper.writeStringAsFile(file, str);
 
         final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
-        assertEquals("[ds dict, simple dict, textfile dict]", Arrays.toString(configuration.getReferenceDataCatalog()
-                .getDictionaryNames()));
+        assertEquals("[ds dict, simple dict, textfile dict]",
+                Arrays.toString(configuration.getReferenceDataCatalog().getDictionaryNames()));
 
-        final SimpleDictionary simpleDictionary = (SimpleDictionary) configuration.getReferenceDataCatalog()
-                .getDictionary("simple dict");
+        final SimpleDictionary simpleDictionary =
+                (SimpleDictionary) configuration.getReferenceDataCatalog().getDictionary("simple dict");
         assertEquals(false, simpleDictionary.isCaseSensitive());
-        assertEquals("[bar, baz, foo]", simpleDictionary.getValueSet().stream().sorted().collect(Collectors.toList())
-                .toString());
+        assertEquals("[bar, baz, foo]",
+                simpleDictionary.getValueSet().stream().sorted().collect(Collectors.toList()).toString());
 
-        final TextFileDictionary textFileDictionary = (TextFileDictionary) configuration.getReferenceDataCatalog()
-                .getDictionary("textfile dict");
+        final TextFileDictionary textFileDictionary =
+                (TextFileDictionary) configuration.getReferenceDataCatalog().getDictionary("textfile dict");
         assertEquals(false, textFileDictionary.isCaseSensitive());
         assertEquals("UTF8", textFileDictionary.getEncoding());
         assertTrue(textFileDictionary.getFilename().endsWith("bar.txt"));
 
-        final DatastoreDictionary datastoreDictionary = (DatastoreDictionary) configuration.getReferenceDataCatalog()
-                .getDictionary("ds dict");
+        final DatastoreDictionary datastoreDictionary =
+                (DatastoreDictionary) configuration.getReferenceDataCatalog().getDictionary("ds dict");
         assertEquals(false, datastoreDictionary.isLoadIntoMemory());
         assertEquals("orderdb", datastoreDictionary.getDatastoreName());
         assertEquals("products.productname", datastoreDictionary.getQualifiedColumnName());
@@ -295,21 +296,21 @@ public class DomConfigurationWriterTest {
         FileHelper.writeStringAsFile(file, str);
 
         final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
-        assertEquals("[ds sc, textfile sc]", Arrays.toString(configuration.getReferenceDataCatalog()
-                .getSynonymCatalogNames()));
+        assertEquals("[ds sc, textfile sc]",
+                Arrays.toString(configuration.getReferenceDataCatalog().getSynonymCatalogNames()));
 
-        final TextFileSynonymCatalog textFileSynonymCatalog = (TextFileSynonymCatalog) configuration
-                .getReferenceDataCatalog().getSynonymCatalog("textfile sc");
+        final TextFileSynonymCatalog textFileSynonymCatalog =
+                (TextFileSynonymCatalog) configuration.getReferenceDataCatalog().getSynonymCatalog("textfile sc");
         assertEquals("UTF8", textFileSynonymCatalog.getEncoding());
         assertTrue(textFileSynonymCatalog.getFilename().endsWith("bar.txt"));
 
-        final DatastoreSynonymCatalog datastoreSynonymCatalog = (DatastoreSynonymCatalog) configuration
-                .getReferenceDataCatalog().getSynonymCatalog("ds sc");
+        final DatastoreSynonymCatalog datastoreSynonymCatalog =
+                (DatastoreSynonymCatalog) configuration.getReferenceDataCatalog().getSynonymCatalog("ds sc");
         assertEquals(false, datastoreSynonymCatalog.isLoadIntoMemory());
         assertEquals("orderdb", datastoreSynonymCatalog.getDatastoreName());
         assertEquals("products.productname", datastoreSynonymCatalog.getMasterTermColumnPath());
-        assertEquals("[products.productline, product.producttype]", Arrays.toString(datastoreSynonymCatalog
-                .getSynonymColumnPaths()));
+        assertEquals("[products.productline, product.producttype]",
+                Arrays.toString(datastoreSynonymCatalog.getSynonymColumnPaths()));
     }
 
     @Test
@@ -319,8 +320,8 @@ public class DomConfigurationWriterTest {
         configurationWriter.externalize(
                 new DirectoryBasedHadoopClusterInformation("directory", "Directory-based cluster", "C:\\Users\\Test",
                         "file:///C:/Users/Test2"));
-        configurationWriter
-                .externalize(new DirectConnectionHadoopClusterInformation("namenode", "Namenode-based cluster",
+        configurationWriter.externalize(
+                new DirectConnectionHadoopClusterInformation("namenode", "Namenode-based cluster",
                         URI.create("hdfs://localhost:8020/")));
 
         final String str = transform(configurationWriter.getDocument());
@@ -332,23 +333,23 @@ public class DomConfigurationWriterTest {
         FileHelper.writeStringAsFile(file, str);
 
         final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
-        ServerInformationCatalog serverInformationCatalog = configuration.getServerInformationCatalog();
+        final ServerInformationCatalog serverInformationCatalog = configuration.getServerInformationCatalog();
         assertEquals("[directory, environment, namenode, org.datacleaner.hadoop.environment]",
                 Arrays.toString(serverInformationCatalog.getServerNames()));
 
         assertNotNull(serverInformationCatalog.getServer("environment"));
 
-        DirectoryBasedHadoopClusterInformation directoryBasedHadoopClusterInformation =
+        final DirectoryBasedHadoopClusterInformation directoryBasedHadoopClusterInformation =
                 (DirectoryBasedHadoopClusterInformation) serverInformationCatalog.getServer("directory");
         assertArrayEquals(new String[] { "C:\\Users\\Test", "file:///C:/Users/Test2" },
                 directoryBasedHadoopClusterInformation.getDirectories());
 
-        DirectConnectionHadoopClusterInformation directConnectionHadoopClusterInformation =
+        final DirectConnectionHadoopClusterInformation directConnectionHadoopClusterInformation =
                 (DirectConnectionHadoopClusterInformation) serverInformationCatalog.getServer("namenode");
         assertEquals(URI.create("hdfs://localhost:8020/"), directConnectionHadoopClusterInformation.getNameNodeUri());
-        
+
         configurationWriter.removeHadoopClusterServerInformation("namenode");
-        
+
         final String str2 = transform(configurationWriter.getDocument());
         assertFalse(str2, str2.contains("namenode"));
     }
@@ -360,18 +361,22 @@ public class DomConfigurationWriterTest {
         helper.generateCoreFile();
         // Prepare "environment"
         try {
-            System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR, helper.getConfFolder().getAbsolutePath());
+            System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR,
+                    helper.getConfFolder().getAbsolutePath());
 
-            final HadoopResource hadoopResource = new HadoopResource(URI.create("example-dates.csv"), new Configuration(),
-                    HadoopResource.DEFAULT_CLUSTERREFERENCE);
+            final HadoopResource hadoopResource =
+                    new HadoopResource(URI.create("example-dates.csv"), new Configuration(),
+                            HadoopResource.DEFAULT_CLUSTERREFERENCE);
             configurationWriter.externalize(new CsvDatastore("csvDatastore", hadoopResource));
             final String str = transform(configurationWriter.getDocument());
-            final File file = new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
+            final File file =
+                    new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
             FileHelper.writeStringAsFile(file, str);
 
             final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
 
-            final CsvDatastore csvDatastore = (CsvDatastore) configuration.getDatastoreCatalog().getDatastore("csvDatastore");
+            final CsvDatastore csvDatastore =
+                    (CsvDatastore) configuration.getDatastoreCatalog().getDatastore("csvDatastore");
             final HadoopResource resource = (HadoopResource) csvDatastore.getResource();
             assertNotNull(resource);
             assertEquals("example-dates.csv", resource.getFilepath());
@@ -391,20 +396,56 @@ public class DomConfigurationWriterTest {
         FileHelper.writeStringAsFile(file, str);
 
         final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
-        assertEquals("[regex pattern, simple sp]", Arrays.toString(configuration.getReferenceDataCatalog()
-                .getStringPatternNames()));
+        assertEquals("[regex pattern, simple sp]",
+                Arrays.toString(configuration.getReferenceDataCatalog().getStringPatternNames()));
 
-        final SimpleStringPattern simpleStringPattern = (SimpleStringPattern) configuration.getReferenceDataCatalog()
-                .getStringPattern("simple sp");
+        final SimpleStringPattern simpleStringPattern =
+                (SimpleStringPattern) configuration.getReferenceDataCatalog().getStringPattern("simple sp");
         assertEquals("aaaa@aaaa.aaa", simpleStringPattern.getExpression());
 
-        final RegexStringPattern regexStringPattern = (RegexStringPattern) configuration.getReferenceDataCatalog()
-                .getStringPattern("regex pattern");
+        final RegexStringPattern regexStringPattern =
+                (RegexStringPattern) configuration.getReferenceDataCatalog().getStringPattern("regex pattern");
         assertEquals(".*", regexStringPattern.getExpression());
         assertEquals(false, regexStringPattern.isMatchEntireString());
     }
 
-    private String transform(Node elem) throws Exception {
+    @Test
+    public void testWriteAndReadFixedWidthDatastore() throws Exception {
+        final FileResource fileResource = new FileResource("test.csv");
+        final FixedWidthDatastore fixedWidthDatastore =
+                new FixedWidthDatastore("my fixed width ds", fileResource, fileResource.getName(), "UTF-8", 20, false,
+                        true, true, 1);
+        fixedWidthDatastore.setDescription("bar");
+
+        final Element externalized = configurationWriter.externalize(fixedWidthDatastore);
+        final String str = transform(externalized);
+        assertEquals("<fixed-width-datastore description=\"bar\" name=\"my fixed width ds\">\n"
+                + "  <filename>test.csv</filename>\n" + "  <encoding>UTF-8</encoding>\n" + "  <width-specification>\n"
+                + "    <fixed-value-width>20</fixed-value-width>\n" + "  </width-specification>\n"
+                + "  <header-line-number>1</header-line-number>\n"
+                + "  <fail-on-inconsistencies>false</fail-on-inconsistencies>\n"
+                + "  <skip-ebcdic-header>true</skip-ebcdic-header>\n" + "  <eol-present>true</eol-present>\n"
+                + "</fixed-width-datastore>\n", str);
+
+
+        final FixedWidthDatastore fixedWidthDatastore2 =
+                new FixedWidthDatastore("my fixed width ds 2", fileResource, fileResource.getName(), "UTF-8",
+                        new int[] { 19, 22 }, false, false, true, 1, null);
+        fixedWidthDatastore2.setDescription("bar");
+
+        final Element externalized2 = configurationWriter.externalize(fixedWidthDatastore2);
+        final String str2 = transform(externalized2);
+        assertEquals("<fixed-width-datastore description=\"bar\" name=\"my fixed width ds 2\">\n"
+                + "  <filename>test.csv</filename>\n" + "  <encoding>UTF-8</encoding>\n" + "  <width-specification>\n"
+                + "    <value-width>19</value-width>\n" + "    <value-width>22</value-width>\n"
+                + "  </width-specification>\n" + "  <header-line-number>1</header-line-number>\n"
+                + "  <fail-on-inconsistencies>false</fail-on-inconsistencies>\n"
+                + "  <skip-ebcdic-header>false</skip-ebcdic-header>\n" + "  <eol-present>true</eol-present>\n"
+                + "</fixed-width-datastore>\n", str2);
+
+    }
+
+    private String transform(final Node elem) throws Exception {
         return XmlUtils.writeDocumentToString(elem, false).replace("\r", "");
     }
 }

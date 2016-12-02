@@ -34,35 +34,33 @@ import org.datacleaner.api.Transformer;
 @Description("Converts a number representation of an IPv4 address to it's regular string representation.")
 public class NumberToIpConverter implements Transformer {
 
-	@Configured("IP number column")
-	InputColumn<Number> ipColumn;
+    @Configured("IP number column")
+    InputColumn<Number> ipColumn;
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(String.class, ipColumn.getName() + " (IP as number)");
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(String.class, ipColumn.getName() + " (IP as number)");
+    }
 
-	@Override
-	public String[] transform(InputRow inputRow) {
-		final String[] result = new String[1];
-		final Number number = inputRow.getValue(ipColumn);
-		
-		result[0] = transform(number);
+    @Override
+    public String[] transform(final InputRow inputRow) {
+        final String[] result = new String[1];
+        final Number number = inputRow.getValue(ipColumn);
 
-		return result;
-	}
+        result[0] = transform(number);
 
-	public String transform(Number number) {
-		if (number == null) {
-			return null;
-		}
-		long l = number.longValue();
-		if (l > 0) {
-			final String str = ((l >> 24) & 0xFF) + "." + ((l >> 16) & 0xFF)
-					+ "." + ((l >> 8) & 0xFF) + "." + (l & 0xFF);
+        return result;
+    }
 
-			return str;
-		}
-		return null;
-	}
+    public String transform(final Number number) {
+        if (number == null) {
+            return null;
+        }
+        final long l = number.longValue();
+        if (l > 0) {
+
+            return ((l >> 24) & 0xFF) + "." + ((l >> 16) & 0xFF) + "." + ((l >> 8) & 0xFF) + "." + (l & 0xFF);
+        }
+        return null;
+    }
 }

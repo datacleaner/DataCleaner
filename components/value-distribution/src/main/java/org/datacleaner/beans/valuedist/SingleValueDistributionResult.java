@@ -25,22 +25,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.metamodel.util.Ref;
+import org.apache.metamodel.util.SerializableRef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CompositeValueFrequency;
 import org.datacleaner.result.SingleValueFrequency;
-import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.result.ValueCountList;
 import org.datacleaner.result.ValueCountListImpl;
+import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.NullTolerableComparator;
-import org.apache.metamodel.util.Ref;
-import org.apache.metamodel.util.SerializableRef;
 
-public class SingleValueDistributionResult extends ValueDistributionAnalyzerResult implements
-        Comparable<SingleValueDistributionResult> {
+public class SingleValueDistributionResult extends ValueDistributionAnalyzerResult
+        implements Comparable<SingleValueDistributionResult> {
 
     private static final long serialVersionUID = 1L;
 
@@ -57,10 +57,11 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
     private final int _distinctCount;
     private final Ref<RowAnnotationFactory> _annotationFactoryRef;
 
-    public SingleValueDistributionResult(String groupName, ValueCountList topValues, ValueCountList bottomValues,
-            Collection<String> uniqueValues, int uniqueValueCount, int distinctCount, int totalCount,
-            Map<String, RowAnnotation> annotations, RowAnnotation nullValueAnnotation,
-            RowAnnotationFactory annotationFactory, InputColumn<?>[] highlightedColumns) {
+    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues,
+            final ValueCountList bottomValues, final Collection<String> uniqueValues, final int uniqueValueCount,
+            final int distinctCount, final int totalCount, final Map<String, RowAnnotation> annotations,
+            final RowAnnotation nullValueAnnotation, final RowAnnotationFactory annotationFactory,
+            final InputColumn<?>[] highlightedColumns) {
         _groupName = groupName;
         _topValues = topValues;
         _bottomValues = bottomValues;
@@ -70,37 +71,37 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
         _distinctCount = distinctCount;
         _nullValueAnnotation = nullValueAnnotation;
         _annotations = annotations;
-        _annotationFactoryRef = new SerializableRef<RowAnnotationFactory>(annotationFactory);
+        _annotationFactoryRef = new SerializableRef<>(annotationFactory);
         _highlightedColumns = highlightedColumns;
         _nullCount = 0;
     }
 
-    public SingleValueDistributionResult(String groupName, ValueCountList topValues, int uniqueValueCount,
-            int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
-            RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
-            InputColumn<?>[] highlightedColumns) {
+    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues,
+            final int uniqueValueCount, final int distinctCount, final int totalCount,
+            final Map<String, RowAnnotation> annotations, final RowAnnotation nullValueAnnotation,
+            final RowAnnotationFactory annotationFactory, final InputColumn<?>[] highlightedColumns) {
         this(groupName, topValues, null, null, uniqueValueCount, distinctCount, totalCount, annotations,
                 nullValueAnnotation, annotationFactory, highlightedColumns);
     }
 
-    public SingleValueDistributionResult(String groupName, ValueCountList topValues, Collection<String> uniqueValues,
-            int uniqueValueCount, int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
-            RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
-            InputColumn<?>[] highlightedColumns) {
+    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues,
+            final Collection<String> uniqueValues, final int uniqueValueCount, final int distinctCount,
+            final int totalCount, final Map<String, RowAnnotation> annotations, final RowAnnotation nullValueAnnotation,
+            final RowAnnotationFactory annotationFactory, final InputColumn<?>[] highlightedColumns) {
         this(groupName, topValues, null, uniqueValues, uniqueValueCount, distinctCount, totalCount, annotations,
                 nullValueAnnotation, annotationFactory, highlightedColumns);
     }
 
-    public SingleValueDistributionResult(String groupName, ValueCountList topValues, ValueCountList bottomValues,
-            int uniqueValueCount, int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
-            RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
-            InputColumn<?>[] highlightedColumns) {
+    public SingleValueDistributionResult(final String groupName, final ValueCountList topValues,
+            final ValueCountList bottomValues, final int uniqueValueCount, final int distinctCount,
+            final int totalCount, final Map<String, RowAnnotation> annotations, final RowAnnotation nullValueAnnotation,
+            final RowAnnotationFactory annotationFactory, final InputColumn<?>[] highlightedColumns) {
         this(groupName, topValues, bottomValues, null, uniqueValueCount, distinctCount, totalCount, annotations,
                 nullValueAnnotation, annotationFactory, highlightedColumns);
     }
 
     @Override
-    public boolean hasAnnotatedRows(String value) {
+    public boolean hasAnnotatedRows(final String value) {
         if (_annotations == null) {
             return false;
         }
@@ -125,7 +126,7 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
     }
 
     @Override
-    public AnnotatedRowsResult getAnnotatedRowsForValue(String value) {
+    public AnnotatedRowsResult getAnnotatedRowsForValue(final String value) {
         if (_annotations == null) {
             return null;
         }
@@ -220,8 +221,8 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
         }
 
         if (_topValues != null) {
-            List<ValueFrequency> valueCounts = _topValues.getValueCounts();
-            for (ValueFrequency valueCount : valueCounts) {
+            final List<ValueFrequency> valueCounts = _topValues.getValueCounts();
+            for (final ValueFrequency valueCount : valueCounts) {
                 if (value.equals(valueCount.getValue())) {
                     return valueCount.getCount();
                 }
@@ -229,8 +230,8 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
         }
 
         if (_bottomValues != null) {
-            List<ValueFrequency> valueCounts = _bottomValues.getValueCounts();
-            for (ValueFrequency valueCount : valueCounts) {
+            final List<ValueFrequency> valueCounts = _bottomValues.getValueCounts();
+            for (final ValueFrequency valueCount : valueCounts) {
                 if (value.equals(valueCount.getValue())) {
                     return valueCount.getCount();
                 }
@@ -265,7 +266,7 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
 
     @Override
     public Collection<ValueFrequency> getValueCounts() {
-        Collection<ValueFrequency> result = new TreeSet<ValueFrequency>();
+        final Collection<ValueFrequency> result = new TreeSet<>();
         if (_topValues != null) {
             result.addAll(_topValues.getValueCounts());
         }
@@ -291,7 +292,7 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
     }
 
     @Override
-    public int compareTo(SingleValueDistributionResult o) {
+    public int compareTo(final SingleValueDistributionResult o) {
         return NullTolerableComparator.get(String.class).compare(getName(), o.getName());
     }
 

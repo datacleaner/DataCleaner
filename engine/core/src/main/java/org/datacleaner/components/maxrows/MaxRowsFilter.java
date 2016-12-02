@@ -44,38 +44,33 @@ import org.datacleaner.components.categories.FilterCategory;
 @Distributed(false)
 public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Category>, HasLabelAdvice {
 
-    public static final String PROPERTY_APPLY_ORDERING = "Apply ordering";
-
-    public static enum Category {
+    public enum Category {
         VALID, INVALID
     }
 
+    public static final String PROPERTY_APPLY_ORDERING = "Apply ordering";
+    private final AtomicInteger counter = new AtomicInteger();
     @Configured
     @NumberProperty(negative = false, zero = false)
     @Description("The maximum number of rows to process.")
     int maxRows = 1000;
-
     @Configured
     @NumberProperty(negative = false, zero = false)
     @Description("The first row (aka 'offset') to process.")
     int firstRow = 1;
-
     // this property is hidden because normally it is driven by the selection of
     // "orderColumn" below
     @Configured(value = PROPERTY_APPLY_ORDERING, order = 1000, required = false)
     @HiddenProperty
     boolean applyOrdering = true;
-
     @Configured(order = 1001, required = false)
     @Description("Optional column to use for specifying dataset ordering. Use if consistent pagination is needed.")
     InputColumn<?> orderColumn;
 
-    private final AtomicInteger counter = new AtomicInteger();
-
     public MaxRowsFilter() {
     }
 
-    public MaxRowsFilter(int firstRow, int maxRows) {
+    public MaxRowsFilter(final int firstRow, final int maxRows) {
         this();
         this.firstRow = firstRow;
         this.maxRows = maxRows;
@@ -86,19 +81,19 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
         return "Max " + getMaxRows() + " rows";
     }
 
-    public void setMaxRows(int maxRows) {
-        this.maxRows = maxRows;
-    }
-
     public int getMaxRows() {
         return maxRows;
+    }
+
+    public void setMaxRows(final int maxRows) {
+        this.maxRows = maxRows;
     }
 
     public int getFirstRow() {
         return firstRow;
     }
 
-    public void setFirstRow(int firstRow) {
+    public void setFirstRow(final int firstRow) {
         this.firstRow = firstRow;
     }
 
@@ -106,16 +101,16 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
         return orderColumn;
     }
 
-    public void setOrderColumn(InputColumn<?> orderColumn) {
+    public void setOrderColumn(final InputColumn<?> orderColumn) {
         this.orderColumn = orderColumn;
     }
-    
-    public void setApplyOrdering(boolean applyOrdering) {
-        this.applyOrdering = applyOrdering;
-    }
-    
+
     public boolean isApplyOrdering() {
         return applyOrdering;
+    }
+
+    public void setApplyOrdering(final boolean applyOrdering) {
+        this.applyOrdering = applyOrdering;
     }
 
     @Validate
@@ -129,8 +124,8 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
     }
 
     @Override
-    public Category categorize(InputRow inputRow) {
-        int count = counter.incrementAndGet();
+    public Category categorize(final InputRow inputRow) {
+        final int count = counter.incrementAndGet();
         if (count < firstRow || count >= maxRows + firstRow) {
             return Category.INVALID;
         }
@@ -138,13 +133,13 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
     }
 
     @Override
-    public boolean isOptimizable(Category category) {
+    public boolean isOptimizable(final Category category) {
         // can only optimize the valid records
         return category == Category.VALID;
     }
 
     @Override
-    public Query optimizeQuery(Query q, Category category) {
+    public Query optimizeQuery(final Query q, final Category category) {
         if (category == Category.VALID) {
             final Integer previousMaxRows = q.getMaxRows();
             final Integer previousFirstRow = q.getFirstRow();
@@ -164,8 +159,8 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
                 int newMaxRows = Math.min(previousMaxRows.intValue(), maxRows);
                 if (previousFirstRow != null) {
                     final Integer newFirstRow = q.getFirstRow();
-                    final int maxWindowSizeFrombefore = previousFirstRow.intValue() + previousMaxRows.intValue()
-                            - newFirstRow;
+                    final int maxWindowSizeFrombefore =
+                            previousFirstRow.intValue() + previousMaxRows.intValue() - newFirstRow;
                     newMaxRows = Math.min(newMaxRows, maxWindowSizeFrombefore);
                 }
 

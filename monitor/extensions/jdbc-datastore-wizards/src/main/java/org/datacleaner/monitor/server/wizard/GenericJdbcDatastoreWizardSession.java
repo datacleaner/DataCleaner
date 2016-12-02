@@ -26,10 +26,10 @@ import org.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
 /**
  * Wizard session for generic JDBC connections
  */
-public class GenericJdbcDatastoreWizardSession extends AbstractJdbcDatastoreWizardSession implements
-        DatastoreWizardSession {
+public class GenericJdbcDatastoreWizardSession extends AbstractJdbcDatastoreWizardSession
+        implements DatastoreWizardSession {
 
-    public GenericJdbcDatastoreWizardSession(DatastoreWizardContext context) {
+    public GenericJdbcDatastoreWizardSession(final DatastoreWizardContext context) {
         super(context);
     }
 

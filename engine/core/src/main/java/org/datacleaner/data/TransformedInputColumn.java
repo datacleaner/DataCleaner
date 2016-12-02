@@ -24,16 +24,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
+import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.IdGenerator;
 import org.datacleaner.util.InputColumnComparator;
-import org.apache.metamodel.schema.Column;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents an InputColumn that is a result of a transformer.
- * 
+ *
  * @param <E>
  */
 public class TransformedInputColumn<E> implements MutableInputColumn<E>, Serializable, Comparable<InputColumn<E>> {
@@ -49,18 +49,18 @@ public class TransformedInputColumn<E> implements MutableInputColumn<E>, Seriali
     private String _initialName;
     private boolean _hidden;
 
-    public TransformedInputColumn(String name, IdGenerator idGenerator) {
+    public TransformedInputColumn(final String name, final IdGenerator idGenerator) {
         this(name, idGenerator.nextId());
     }
 
-    public TransformedInputColumn(String name, String id) {
+    public TransformedInputColumn(final String name, final String id) {
         if (name == null) {
             throw new IllegalArgumentException("Name cannot be null");
         }
         _name = name;
         _initialName = name;
         _id = id;
-        _listeners = new HashSet<Listener>();
+        _listeners = new HashSet<>();
         _hidden = false;
     }
 
@@ -70,16 +70,7 @@ public class TransformedInputColumn<E> implements MutableInputColumn<E>, Seriali
     }
 
     @Override
-    public String getInitialName() {
-        return _initialName;
-    }
-
-    public void setInitialName(String initialName) {
-        _initialName = initialName;
-    }
-
-    @Override
-    public void setName(String name) {
+    public void setName(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("Name cannot be null");
         }
@@ -88,9 +79,18 @@ public class TransformedInputColumn<E> implements MutableInputColumn<E>, Seriali
         }
         final String oldName = _name;
         _name = name;
-        for (Listener listener : getListeners()) {
+        for (final Listener listener : getListeners()) {
             listener.onNameChanged(this, oldName, name);
         }
+    }
+
+    @Override
+    public String getInitialName() {
+        return _initialName;
+    }
+
+    public void setInitialName(final String initialName) {
+        _initialName = initialName;
     }
 
     public Collection<Listener> getListeners() {
@@ -103,10 +103,6 @@ public class TransformedInputColumn<E> implements MutableInputColumn<E>, Seriali
     @Override
     public String getId() {
         return _id;
-    }
-
-    public void setDataType(Class<?> dataType) {
-        _dataType = dataType;
     }
 
     @Override
@@ -135,13 +131,17 @@ public class TransformedInputColumn<E> implements MutableInputColumn<E>, Seriali
         return (Class<? extends E>) _dataType;
     }
 
+    public void setDataType(final Class<?> dataType) {
+        _dataType = dataType;
+    }
+
     @Override
     public int hashCode() {
         return _id.hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         // transformed input columns should always rely on identity equality -
         // other transformed columns with the same name, id etc. are NOT
         // necessarily equal (may come from another job, or even a copy of the
@@ -150,7 +150,7 @@ public class TransformedInputColumn<E> implements MutableInputColumn<E>, Seriali
     }
 
     @Override
-    public int compareTo(InputColumn<E> o) {
+    public int compareTo(final InputColumn<E> o) {
         return InputColumnComparator.compareInputColumns(this, o);
     }
 
@@ -160,20 +160,20 @@ public class TransformedInputColumn<E> implements MutableInputColumn<E>, Seriali
     }
 
     @Override
-    public void setHidden(boolean hidden) {
+    public void setHidden(final boolean hidden) {
         _hidden = hidden;
-        for (Listener listener : getListeners()) {
+        for (final Listener listener : getListeners()) {
             listener.onVisibilityChanged(this, hidden);
         }
     }
 
     @Override
-    public boolean addListener(Listener listener) {
+    public boolean addListener(final Listener listener) {
         if (_listeners == null) {
             logger.warn("Attempted to add listener onto TransformedInputColumn with null List of listeners");
             return false;
         }
-        boolean added = _listeners.add(listener);
+        final boolean added = _listeners.add(listener);
         if (logger.isDebugEnabled()) {
             logger.debug("[{}].addListener({}): {}", getName(), listener, added);
         }
@@ -181,12 +181,12 @@ public class TransformedInputColumn<E> implements MutableInputColumn<E>, Seriali
     }
 
     @Override
-    public boolean removeListener(Listener listener) {
+    public boolean removeListener(final Listener listener) {
         if (_listeners == null) {
             logger.warn("Attempted to remove listener onto TransformedInputColumn with null List of listeners");
             return false;
         }
-        boolean removed = _listeners.remove(listener);
+        final boolean removed = _listeners.remove(listener);
         if (logger.isDebugEnabled()) {
             logger.debug("[{}].removeListener({}): {}", getName(), listener, removed);
             logger.debug("[{}].listeners.size: {}", getName(), _listeners.size());

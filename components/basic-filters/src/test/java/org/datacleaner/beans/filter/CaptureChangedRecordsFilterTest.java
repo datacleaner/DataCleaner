@@ -20,27 +20,25 @@
 package org.datacleaner.beans.filter;
 
 import java.io.File;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.InMemoryResource;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 
+import junit.framework.TestCase;
+
 public class CaptureChangedRecordsFilterTest extends TestCase {
 
     public void testInitializeAndClose() throws Exception {
-        File file = new File("target/test_capture_changed_records_filter.properties");
+        final File file = new File("target/test_capture_changed_records_filter.properties");
         file.delete();
 
-        MockInputColumn<Object> column = new MockInputColumn<Object>("Foo LastModified");
+        final MockInputColumn<Object> column = new MockInputColumn<>("Foo LastModified");
 
         CaptureChangedRecordsFilter filter = new CaptureChangedRecordsFilter();
 
@@ -105,7 +103,7 @@ public class CaptureChangedRecordsFilterTest extends TestCase {
         filter.initialize();
         assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "2013-06-08")));
 
-        Date newBenchmarkDate = ConvertToDateTransformer.getInternalInstance().transformValue("2013-06-08");
+        final Date newBenchmarkDate = ConvertToDateTransformer.getInternalInstance().transformValue("2013-06-08");
         filter.close();
 
         lines = FileHelper.readFileAsString(file).split("\n");
@@ -118,10 +116,10 @@ public class CaptureChangedRecordsFilterTest extends TestCase {
     }
 
     public void testFilterOnNumber() throws Exception {
-        File file = new File("target/test_capture_changed_records_filter.properties");
+        final File file = new File("target/test_capture_changed_records_filter.properties");
         file.delete();
 
-        MockInputColumn<Object> column = new MockInputColumn<Object>("Foo LastId");
+        final MockInputColumn<Object> column = new MockInputColumn<>("Foo LastId");
 
         CaptureChangedRecordsFilter filter = new CaptureChangedRecordsFilter();
 
@@ -190,15 +188,15 @@ public class CaptureChangedRecordsFilterTest extends TestCase {
     }
 
     public void testFilterOnTimestampsWithNanos() throws Exception {
-        final Timestamp ts1 = new Timestamp(ConvertToDateTransformer.getInternalInstance().transformValue("2013-01-03")
-                .getTime());
+        final Timestamp ts1 =
+                new Timestamp(ConvertToDateTransformer.getInternalInstance().transformValue("2013-01-03").getTime());
         ts1.setNanos(1234);
 
-        final Timestamp ts2 = new Timestamp(ConvertToDateTransformer.getInternalInstance().transformValue("2013-01-03")
-                .getTime());
+        final Timestamp ts2 =
+                new Timestamp(ConvertToDateTransformer.getInternalInstance().transformValue("2013-01-03").getTime());
         ts2.setNanos(999999999);
 
-        final MockInputColumn<Object> column = new MockInputColumn<Object>("Foo LastId", Timestamp.class);
+        final MockInputColumn<Object> column = new MockInputColumn<>("Foo LastId", Timestamp.class);
 
         final CaptureChangedRecordsFilter filter = new CaptureChangedRecordsFilter();
         final InMemoryResource resource = new InMemoryResource("foo.txt");
@@ -211,11 +209,8 @@ public class CaptureChangedRecordsFilterTest extends TestCase {
 
         filter.close();
 
-        String str = resource.read(new Func<InputStream, String>() {
-            @Override
-            public String eval(InputStream in) {
-                return FileHelper.readInputStreamAsString(in, "UTF8");
-            }
+        final String str = resource.read(in -> {
+            return FileHelper.readInputStreamAsString(in, "UTF8");
         });
         assertEquals("my_timestamp.GreatestLastModifiedValue=" + ts1.getTime() + ".000001234",
                 str.split("\n")[1].trim());

@@ -27,5 +27,5 @@ import org.datacleaner.monitor.wizard.WizardSession;
 public interface DatastoreWizardSession extends WizardSession {
 
     @Override
-    public DatastoreWizardContext getWizardContext();
+    DatastoreWizardContext getWizardContext();
 }

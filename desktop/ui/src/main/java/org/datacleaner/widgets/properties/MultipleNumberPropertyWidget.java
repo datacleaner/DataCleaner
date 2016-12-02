@@ -30,8 +30,8 @@ import org.datacleaner.job.builder.ComponentBuilder;
 public class MultipleNumberPropertyWidget extends AbstractMultipleNumberPropertyWidget<Number[]> {
 
     @Inject
-    public MultipleNumberPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    public MultipleNumberPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
     }
 }

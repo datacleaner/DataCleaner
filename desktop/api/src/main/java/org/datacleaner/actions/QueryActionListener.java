@@ -39,12 +39,14 @@ public class QueryActionListener implements ActionListener {
     private final Table _table;
     private final WindowContext _windowContext;
     private final Collection<? extends HasName> _columns;
-    
-    public QueryActionListener(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, Table table) {
+
+    public QueryActionListener(final WindowContext windowContext, final AnalysisJobBuilder analysisJobBuilder,
+            final Table table) {
         this(windowContext, analysisJobBuilder, table, null);
     }
 
-    public QueryActionListener(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, Table table, Collection<? extends HasName> columns) {
+    public QueryActionListener(final WindowContext windowContext, final AnalysisJobBuilder analysisJobBuilder,
+            final Table table, final Collection<? extends HasName> columns) {
         _windowContext = windowContext;
         _analysisJobBuilder = analysisJobBuilder;
         _table = table;
@@ -52,15 +54,15 @@ public class QueryActionListener implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         final Datastore datastore = _analysisJobBuilder.getDatastore();
-        
+
         final StringBuilder initialQuery = new StringBuilder("SELECT ");
         if (_columns == null || _columns.isEmpty()) {
             initialQuery.append("*");
         } else {
             boolean first = true;
-            for (HasName column : _columns) {
+            for (final HasName column : _columns) {
                 if (!first) {
                     initialQuery.append(", ");
                 }
@@ -69,14 +71,14 @@ public class QueryActionListener implements ActionListener {
                 first = false;
             }
         }
-        
+
         String fromClause = _table.getQualifiedLabel();
         if (fromClause.contains(" ")) {
             fromClause = _table.getName();
         }
-        
+
         initialQuery.append("\nFROM " + fromClause + " a");
-        
+
         final QueryWindow window = new QueryWindow(_windowContext, datastore, initialQuery.toString());
         window.open();
     }

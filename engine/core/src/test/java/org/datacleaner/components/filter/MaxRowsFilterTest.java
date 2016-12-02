@@ -19,14 +19,14 @@
  */
 package org.datacleaner.components.filter;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.query.Query;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.FilterDescriptor;
+
+import junit.framework.TestCase;
 
 public class MaxRowsFilterTest extends TestCase {
 

@@ -33,10 +33,10 @@ import scala.Tuple2;
 /**
  * Mapper function that changes takes Object arrays representing physical
  * records into the format of an {@link InputRow}.
- * 
+ *
  * Currently this is implemented very strictly by just investigating the column
  * indices of the job's source columns.
- * 
+ *
  * It is assumed that the job is based on a single source {@link Table}.
  */
 public class ValuesToInputRowFunction implements Function<Tuple2<Object[], Long>, InputRow> {
@@ -45,18 +45,18 @@ public class ValuesToInputRowFunction implements Function<Tuple2<Object[], Long>
 
     private final SparkJobContext _sparkJobContext;
 
-    public ValuesToInputRowFunction(SparkJobContext sparkJobContext) {
+    public ValuesToInputRowFunction(final SparkJobContext sparkJobContext) {
         _sparkJobContext = sparkJobContext;
     }
 
     @Override
-    public InputRow call(Tuple2<Object[], Long> tuple) throws Exception {
+    public InputRow call(final Tuple2<Object[], Long> tuple) throws Exception {
         final Object[] values = tuple._1;
         final Long rowNumber = tuple._2;
-        
+
         final MockInputRow inputRow = new MockInputRow(rowNumber.intValue());
         final List<InputColumn<?>> sourceColumns = _sparkJobContext.getAnalysisJob().getSourceColumns();
-        for (InputColumn<?> sourceColumn : sourceColumns) {
+        for (final InputColumn<?> sourceColumn : sourceColumns) {
             assert sourceColumn.isPhysicalColumn();
             final int columnIndex = sourceColumn.getPhysicalColumn().getColumnNumber();
             final Object value = values[columnIndex];

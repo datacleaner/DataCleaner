@@ -29,5 +29,5 @@ public interface DatastoreWizardContext extends WizardContext {
     /**
      * Gets the wizard that is currently initiated
      */
-    public DatastoreWizard getDatastoreWizard();
+    DatastoreWizard getDatastoreWizard();
 }

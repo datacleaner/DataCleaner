@@ -31,7 +31,7 @@ public class MetricDocumentationWrapper {
 
     private final MetricDescriptor _metric;
 
-    public MetricDocumentationWrapper(MetricDescriptor metric) {
+    public MetricDocumentationWrapper(final MetricDescriptor metric) {
         _metric = metric;
     }
 

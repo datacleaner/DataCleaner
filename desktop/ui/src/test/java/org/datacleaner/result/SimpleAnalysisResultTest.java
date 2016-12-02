@@ -23,11 +23,11 @@ import java.io.FileInputStream;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
+
+import junit.framework.TestCase;
 
 public class SimpleAnalysisResultTest extends TestCase {
 
@@ -36,36 +36,36 @@ public class SimpleAnalysisResultTest extends TestCase {
      * times. The test asserts that the job definition saved in one of the
      * result files can be used to retrieve information from the other analysis
      * results as well.
-     * 
+     *
      * @throws Exception
      */
     public void testDeserializeAndCompare() throws Exception {
-        AnalysisResult[] analysisResults = new AnalysisResult[4];
+        final AnalysisResult[] analysisResults = new AnalysisResult[4];
 
         for (int i = 0; i < analysisResults.length; i++) {
-            String filename = "src/test/resources/resultfiles/out" + (i + 1) + ".analysis.result.dat";
-            
+            final String filename = "src/test/resources/resultfiles/out" + (i + 1) + ".analysis.result.dat";
+
             try {
-                ChangeAwareObjectInputStream in = new ChangeAwareObjectInputStream(new FileInputStream(filename));
+                final ChangeAwareObjectInputStream in = new ChangeAwareObjectInputStream(new FileInputStream(filename));
                 analysisResults[i] = (AnalysisResult) in.readObject();
                 in.close();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Failed to deserialize file: " + filename, e);
             }
-            
+
             assertNotNull(analysisResults[i]);
             assertTrue(analysisResults[i] instanceof SimpleAnalysisResult);
-            
+
         }
 
-        Map<ComponentJob, AnalyzerResult> resultMap = analysisResults[0].getResultMap();
-        Set<ComponentJob> componentJobs = resultMap.keySet();
+        final Map<ComponentJob, AnalyzerResult> resultMap = analysisResults[0].getResultMap();
+        final Set<ComponentJob> componentJobs = resultMap.keySet();
         assertEquals(8, componentJobs.size());
 
         for (int i = 0; i < analysisResults.length; i++) {
-            AnalysisResult analysisResult = analysisResults[i];
-            for (ComponentJob componentJob : componentJobs) {
-                AnalyzerResult analyzerResult = analysisResult.getResult(componentJob);
+            final AnalysisResult analysisResult = analysisResults[i];
+            for (final ComponentJob componentJob : componentJobs) {
+                final AnalyzerResult analyzerResult = analysisResult.getResult(componentJob);
                 assertNotNull(analyzerResult);
             }
         }

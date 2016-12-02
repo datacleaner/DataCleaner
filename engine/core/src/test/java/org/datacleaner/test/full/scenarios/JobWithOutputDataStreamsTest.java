@@ -19,11 +19,7 @@
  */
 package org.datacleaner.test.full.scenarios;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -59,21 +55,21 @@ public class JobWithOutputDataStreamsTest {
 
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
     private DataCleanerEnvironment environment = TestEnvironment.getEnvironment();
-    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
-            .withEnvironment(environment);
-    
-    @Test(timeout=30*1000)
+    private final DataCleanerConfiguration configuration =
+            new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(environment);
+
+    @Test(timeout = 30 * 1000)
     public void testSimpleBuildAndExecuteScenario() throws Throwable {
         final AnalysisJob job;
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore(datastore);
 
             ajb.addSourceColumns("customers.contactfirstname");
             ajb.addSourceColumns("customers.contactlastname");
             ajb.addSourceColumns("customers.city");
 
-            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = ajb
-                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 =
+                    ajb.addAnalyzer(MockOutputDataStreamAnalyzer.class);
 
             // analyzer is still unconfigured
             assertEquals(0, analyzer1.getOutputDataStreams().size());
@@ -107,8 +103,8 @@ public class JobWithOutputDataStreamsTest {
             // the output stream
             assertFalse(analyzer1.isOutputDataStreamConsumed(dataStream));
 
-            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 = outputDataStreamJobBuilder
-                    .addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 =
+                    outputDataStreamJobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer2.addInputColumns(outputDataStreamColumns);
             analyzer2.setName("analyzer2");
             assertTrue(analyzer2.isConfigured());
@@ -150,7 +146,8 @@ public class JobWithOutputDataStreamsTest {
 
         final byte[] serialized = SerializationUtils.serialize(new SimpleAnalysisResult(resultFuture.getResultMap()));
 
-        final SimpleAnalysisResult deSerializedResult = (SimpleAnalysisResult) SerializationUtils.deserialize(serialized);
+        final SimpleAnalysisResult deSerializedResult =
+                (SimpleAnalysisResult) SerializationUtils.deserialize(serialized);
 
         // the first result should be trivial - it was also there before issue
         // #224

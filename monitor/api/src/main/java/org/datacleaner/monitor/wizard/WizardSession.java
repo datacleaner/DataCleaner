@@ -26,34 +26,34 @@ public interface WizardSession {
 
     /**
      * Gets the first page of the wizard
-     * 
+     *
      * @param params
      * @return
      */
-    public WizardPageController firstPageController();
+    WizardPageController firstPageController();
 
     /**
      * Gets the context of the wizard.s
-     * 
+     *
      * @return
      */
-    public WizardContext getWizardContext();
+    WizardContext getWizardContext();
 
     /**
      * Gets the expected amount of pages in this wizard.
-     * 
+     *
      * @return the count of pages, or null if not known.
      */
-    public Integer getPageCount();
+    Integer getPageCount();
 
     /**
      * Method invoked by the wizard framework when the wizard has finished.
      * Wizard implementations should use this method to persist the work created
      * by the user.
-     * 
+     *
      * @return the name of the resulting job/datastore (or whatever other entity
      *         was built using the wizard), or null if no applicable name can be
      *         applied.
      */
-    public String finished();
+    String finished();
 }

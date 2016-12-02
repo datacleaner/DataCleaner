@@ -39,11 +39,11 @@ public abstract class AbstractAnalysisResult implements AnalysisResult {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <R extends AnalyzerResult> List<? extends R> getResults(Class<R> resultClass) {
-        final List<R> list = new ArrayList<R>();
+    public <R extends AnalyzerResult> List<? extends R> getResults(final Class<R> resultClass) {
+        final List<R> list = new ArrayList<>();
 
         final List<AnalyzerResult> results = getResults();
-        for (AnalyzerResult analyzerResult : results) {
+        for (final AnalyzerResult analyzerResult : results) {
             if (ReflectionUtils.is(analyzerResult.getClass(), resultClass)) {
                 list.add((R) analyzerResult);
             }
@@ -52,14 +52,14 @@ public abstract class AbstractAnalysisResult implements AnalysisResult {
     }
 
     @Override
-    public AnalyzerResult getResult(ComponentJob queryComponentJob) {
+    public AnalyzerResult getResult(final ComponentJob queryComponentJob) {
         final Map<ComponentJob, AnalyzerResult> resultMap = getResultMap();
         AnalyzerResult analyzerResult = resultMap.get(queryComponentJob);
         if (analyzerResult == null && queryComponentJob instanceof AnalyzerJob) {
             final AnalyzerJob queryAnalyzerJob = (AnalyzerJob) queryComponentJob;
             final Collection<AnalyzerJob> analyzerJobs = new ArrayList<>();
             final Set<Entry<ComponentJob, AnalyzerResult>> entries = resultMap.entrySet();
-            for (Entry<ComponentJob, AnalyzerResult> entry : entries) {
+            for (final Entry<ComponentJob, AnalyzerResult> entry : entries) {
                 final ComponentJob componentJob = entry.getKey();
                 if (componentJob instanceof AnalyzerJob) {
                     analyzerJobs.add((AnalyzerJob) componentJob);
@@ -68,7 +68,7 @@ public abstract class AbstractAnalysisResult implements AnalysisResult {
             final AnalyzerJobHelper helper = new AnalyzerJobHelper(analyzerJobs);
             final AnalyzerJob analyzerJob = helper.getAnalyzerJob(queryAnalyzerJob);
             if (analyzerJob != null && analyzerJob != queryComponentJob) {
-                analyzerResult= resultMap.get(analyzerJob);
+                analyzerResult = resultMap.get(analyzerJob);
             }
         }
         return analyzerResult;

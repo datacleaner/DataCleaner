@@ -59,35 +59,12 @@ public class ConvertToBooleanTransformer implements Transformer {
     @Description("Text tokens that will translate to 'false'")
     String[] _falseTokens = DEFAULT_FALSE_TOKENS;
 
-    public ConvertToBooleanTransformer(InputColumn<?>[] input) {
+    public ConvertToBooleanTransformer(final InputColumn<?>[] input) {
         this.input = input;
     }
 
     public ConvertToBooleanTransformer() {
         this(null);
-    }
-
-    @Override
-    public OutputColumns getOutputColumns() {
-        String[] names = new String[input.length];
-        for (int i = 0; i < names.length; i++) {
-            names[i] = input[i].getName() + " (as boolean)";
-        }
-        return new OutputColumns(Boolean.class, names);
-    }
-
-    @Override
-    public Object[] transform(InputRow inputRow) {
-        Boolean[] result = new Boolean[input.length];
-        for (int i = 0; i < input.length; i++) {
-            Object value = inputRow.getValue(input[i]);
-            Boolean b = transformValue(value, _trueTokens, _falseTokens);
-            if (b == null) {
-                b = nullReplacement;
-            }
-            result[i] = b;
-        }
-        return result;
     }
 
     public static Boolean transformValue(final Object value) {
@@ -101,14 +78,14 @@ public class ConvertToBooleanTransformer implements Transformer {
                 String stringValue = (String) value;
                 stringValue = stringValue.trim();
 
-                for (String token : trueTokens) {
+                for (final String token : trueTokens) {
                     if (token.equalsIgnoreCase(stringValue)) {
                         b = true;
                         break;
                     }
                 }
                 if (b == null) {
-                    for (String token : falseTokens) {
+                    for (final String token : falseTokens) {
                         if (token.equalsIgnoreCase(stringValue)) {
                             b = false;
                             break;
@@ -116,7 +93,7 @@ public class ConvertToBooleanTransformer implements Transformer {
                     }
                 }
             } else if (value instanceof Number) {
-                Number numberValue = (Number) value;
+                final Number numberValue = (Number) value;
                 if (numberValue.intValue() == 1) {
                     b = true;
                 } else if (numberValue.intValue() == 0) {
@@ -129,36 +106,59 @@ public class ConvertToBooleanTransformer implements Transformer {
         return b;
     }
 
-    public void setFalseTokens(String[] falseTokens) {
-        _falseTokens = falseTokens;
+    @Override
+    public OutputColumns getOutputColumns() {
+        final String[] names = new String[input.length];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = input[i].getName() + " (as boolean)";
+        }
+        return new OutputColumns(Boolean.class, names);
+    }
+
+    @Override
+    public Object[] transform(final InputRow inputRow) {
+        final Boolean[] result = new Boolean[input.length];
+        for (int i = 0; i < input.length; i++) {
+            final Object value = inputRow.getValue(input[i]);
+            Boolean b = transformValue(value, _trueTokens, _falseTokens);
+            if (b == null) {
+                b = nullReplacement;
+            }
+            result[i] = b;
+        }
+        return result;
     }
 
     public String[] getFalseTokens() {
         return _falseTokens;
     }
 
-    public void setInput(InputColumn<?>... input) {
-        this.input = input;
+    public void setFalseTokens(final String[] falseTokens) {
+        _falseTokens = falseTokens;
     }
 
     public InputColumn<?>[] getInput() {
         return input;
     }
 
-    public void setNullReplacement(Boolean nullReplacement) {
-        this.nullReplacement = nullReplacement;
+    public void setInput(final InputColumn<?>... input) {
+        this.input = input;
     }
 
     public Boolean getNullReplacement() {
         return nullReplacement;
     }
 
-    public void setTrueTokens(String[] trueTokens) {
-        _trueTokens = trueTokens;
+    public void setNullReplacement(final Boolean nullReplacement) {
+        this.nullReplacement = nullReplacement;
     }
 
     public String[] getTrueTokens() {
         return _trueTokens;
+    }
+
+    public void setTrueTokens(final String[] trueTokens) {
+        _trueTokens = trueTokens;
     }
 
 }

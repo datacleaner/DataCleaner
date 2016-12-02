@@ -31,7 +31,7 @@ public class SchemaIdentifier implements Serializable, HasName {
     private String _name;
     private DatastoreIdentifier _datastore;
 
-    public SchemaIdentifier(DatastoreIdentifier datastore, String name) {
+    public SchemaIdentifier(final DatastoreIdentifier datastore, final String name) {
         _name = name;
         _datastore = datastore;
     }
@@ -44,7 +44,7 @@ public class SchemaIdentifier implements Serializable, HasName {
         return _datastore;
     }
 
-    public void setDatastore(DatastoreIdentifier datastore) {
+    public void setDatastore(final DatastoreIdentifier datastore) {
         _datastore = datastore;
     }
 
@@ -53,7 +53,7 @@ public class SchemaIdentifier implements Serializable, HasName {
         return _name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         _name = name;
     }
 }

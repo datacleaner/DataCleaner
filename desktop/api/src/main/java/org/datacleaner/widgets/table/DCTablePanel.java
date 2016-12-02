@@ -36,65 +36,65 @@ import org.datacleaner.util.WidgetUtils;
  */
 public final class DCTablePanel extends DCPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final JScrollPane _scrollPane;
-	private final DCTable _table;
+    private final JScrollPane _scrollPane;
+    private final DCTable _table;
 
-	public DCTablePanel(DCTable table, boolean scrolleable) {
-		_table = table;
-		setLayout(new BorderLayout());
-		final JTableHeader tableHeader = table.getTableHeader();
+    public DCTablePanel(final DCTable table, final boolean scrolleable) {
+        _table = table;
+        setLayout(new BorderLayout());
+        final JTableHeader tableHeader = table.getTableHeader();
         add(tableHeader, BorderLayout.NORTH);
 
         tableHeader.setBorder(WidgetUtils.BORDER_TABLE_PANEL);
         table.setBorder(WidgetUtils.BORDER_TABLE_PANEL);
-		
-		if (scrolleable) {
-		    _scrollPane = WidgetUtils.scrolleable(table);
-		    add(_scrollPane, BorderLayout.CENTER);
-		} else {
-		    _scrollPane = null;
-		    add(table, BorderLayout.CENTER);
-		}
-		
-	}
 
-	@Override
-	public void setPreferredSize(Dimension preferredSize) {
-		throw new UnsupportedOperationException();
-	}
+        if (scrolleable) {
+            _scrollPane = WidgetUtils.scrolleable(table);
+            add(_scrollPane, BorderLayout.CENTER);
+        } else {
+            _scrollPane = null;
+            add(table, BorderLayout.CENTER);
+        }
 
-	@Override
-	public Dimension getPreferredSize() {
-	    if (_scrollPane == null) {
-	        return super.getPreferredSize();
-	    }
-		Dimension tableSize = _table.getPreferredSize();
-		Dimension headerSize = _table.getTableHeader().getPreferredSize();
+    }
 
-		Dimension d = new Dimension();
-		d.width = Math.max(tableSize.width, headerSize.width);
-		d.height = headerSize.height + (_table.getRowHeight() * _table.getRowCount());
+    @Override
+    public Dimension getPreferredSize() {
+        if (_scrollPane == null) {
+            return super.getPreferredSize();
+        }
+        final Dimension tableSize = _table.getPreferredSize();
+        final Dimension headerSize = _table.getTableHeader().getPreferredSize();
 
-		Insets insets = getInsets();
-		d.height = d.height + insets.top + insets.bottom;
+        final Dimension d = new Dimension();
+        d.width = Math.max(tableSize.width, headerSize.width);
+        d.height = headerSize.height + (_table.getRowHeight() * _table.getRowCount());
 
-		JScrollBar scrollBar = _scrollPane.getHorizontalScrollBar();
-		int scrollbarHeight = scrollBar.getHeight();
-		
-		d.height = d.height + scrollbarHeight;
+        final Insets insets = getInsets();
+        d.height = d.height + insets.top + insets.bottom;
 
-		return d;
-	}
+        final JScrollBar scrollBar = _scrollPane.getHorizontalScrollBar();
+        final int scrollbarHeight = scrollBar.getHeight();
 
-	@Override
-	public void setVisible(boolean visible) {
-		_table.setVisible(visible);
-	}
+        d.height = d.height + scrollbarHeight;
 
-	@Override
-	public boolean isVisible() {
-		return _table.isVisible();
-	}
+        return d;
+    }
+
+    @Override
+    public void setPreferredSize(final Dimension preferredSize) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isVisible() {
+        return _table.isVisible();
+    }
+
+    @Override
+    public void setVisible(final boolean visible) {
+        _table.setVisible(visible);
+    }
 }

@@ -45,7 +45,7 @@ public abstract class SelectJobPanel extends FlowPanel {
     private final LoadingIndicator _loadingIndicator;
     private final ListBox _listBox;
 
-    public SelectJobPanel(DashboardServiceAsync service, TenantIdentifier tenant) {
+    public SelectJobPanel(final DashboardServiceAsync service, final TenantIdentifier tenant) {
         _service = service;
         _tenant = tenant;
         _loadingIndicator = new LoadingIndicator();
@@ -59,18 +59,18 @@ public abstract class SelectJobPanel extends FlowPanel {
 
         _service.getJobs(_tenant, new DCAsyncCallback<List<JobIdentifier>>() {
             @Override
-            public void onSuccess(List<JobIdentifier> result) {
+            public void onSuccess(final List<JobIdentifier> result) {
                 setAvailableJobs(result);
             }
         });
     }
 
-    public void setAvailableJobs(List<JobIdentifier> availableJobs) {
+    public void setAvailableJobs(final List<JobIdentifier> availableJobs) {
         remove(_loadingIndicator);
 
         _listBox.clear();
 
-        for (JobIdentifier job : availableJobs) {
+        for (final JobIdentifier job : availableJobs) {
             _listBox.addItem(job.getName(), job.getName());
         }
 
@@ -81,7 +81,7 @@ public abstract class SelectJobPanel extends FlowPanel {
         final Button button = DCButtons.primaryButton(null, "Select job");
         button.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(final ClickEvent event) {
                 final int index = _listBox.getSelectedIndex();
                 final String name = _listBox.getItemText(index);
                 final JobIdentifier job = new JobIdentifier(name);

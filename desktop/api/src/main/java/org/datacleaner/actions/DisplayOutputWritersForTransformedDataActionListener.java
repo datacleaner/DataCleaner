@@ -40,36 +40,37 @@ import org.datacleaner.lifecycle.LifeCycleHelper;
 /**
  * Action that displays output writers for a transformer's data.
  */
-public class DisplayOutputWritersForTransformedDataActionListener extends DisplayOutputWritersAction implements
-        ActionListener {
+public class DisplayOutputWritersForTransformedDataActionListener extends DisplayOutputWritersAction
+        implements ActionListener {
 
     private final TransformerComponentBuilder<?> _transformerJobBuilder;
 
-    public DisplayOutputWritersForTransformedDataActionListener(TransformerComponentBuilder<?> transformerJobBuilder) {
+    public DisplayOutputWritersForTransformedDataActionListener(
+            final TransformerComponentBuilder<?> transformerJobBuilder) {
         super(transformerJobBuilder.getAnalysisJobBuilder());
         _transformerJobBuilder = transformerJobBuilder;
     }
 
     @Override
-    protected void configure(AnalysisJobBuilder analysisJobBuilder, ComponentBuilder componentBuilder) {
-        Component component = componentBuilder.getComponentInstance();
+    protected void configure(final AnalysisJobBuilder analysisJobBuilder, final ComponentBuilder componentBuilder) {
+        final Component component = componentBuilder.getComponentInstance();
         if (component instanceof PrecedingComponentConsumer) {
             final LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration(), null, true);
             helper.assignProvidedProperties(componentBuilder.getDescriptor(), component);
-            ((PrecedingComponentConsumer) component).configureForTransformedData(analysisJobBuilder,
-                    _transformerJobBuilder.getDescriptor());
+            ((PrecedingComponentConsumer) component)
+                    .configureForTransformedData(analysisJobBuilder, _transformerJobBuilder.getDescriptor());
         }
 
-        final Set<ConfiguredPropertyDescriptor> inputProperties = componentBuilder.getDescriptor()
-                .getConfiguredPropertiesForInput(false);
+        final Set<ConfiguredPropertyDescriptor> inputProperties =
+                componentBuilder.getDescriptor().getConfiguredPropertiesForInput(false);
         if (!inputProperties.isEmpty()) {
             final ConfiguredPropertyDescriptor property = inputProperties.iterator().next();
 
-            final List<InputColumn<?>> inputColumnsToAdd = new ArrayList<InputColumn<?>>();
+            final List<InputColumn<?>> inputColumnsToAdd = new ArrayList<>();
             inputColumnsToAdd.addAll(_transformerJobBuilder.getInputColumns());
             final List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
-            for(MutableInputColumn<?> outputColumn: outputColumns){
-                if (!outputColumn.isHidden()){
+            for (final MutableInputColumn<?> outputColumn : outputColumns) {
+                if (!outputColumn.isHidden()) {
                     inputColumnsToAdd.add(outputColumn);
                 }
             }
@@ -78,8 +79,8 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Displa
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        JComponent component = (JComponent) e.getSource();
+    public void actionPerformed(final ActionEvent e) {
+        final JComponent component = (JComponent) e.getSource();
         showPopup(component);
     }
 

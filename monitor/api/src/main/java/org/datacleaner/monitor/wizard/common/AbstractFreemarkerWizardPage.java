@@ -41,16 +41,20 @@ public abstract class AbstractFreemarkerWizardPage extends AbstractWizardPage im
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractFreemarkerWizardPage.class);
 
+    protected final Configuration _templateConfiguration;
+
+    public AbstractFreemarkerWizardPage() {
+        final Version freeMarkerVersion = Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
+        _templateConfiguration = new Configuration(freeMarkerVersion);
+        _templateConfiguration.setObjectWrapper(new DefaultObjectWrapper(freeMarkerVersion));
+    }
+
     @Override
     public final String getFormInnerHtml() {
-        final Version freeMarkerVersion = Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
-        final Configuration configuration = new Configuration(freeMarkerVersion);
-        configuration.setObjectWrapper(new DefaultObjectWrapper(freeMarkerVersion));
-
         // load templates from the package of the (concrete) class.
         final Class<?> templateFriendlyClass = getTemplateFriendlyClass();
         final TemplateLoader templateLoader = new ClassTemplateLoader(templateFriendlyClass, "");
-        configuration.setTemplateLoader(templateLoader);
+        _templateConfiguration.setTemplateLoader(templateLoader);
 
         final Map<String, Object> formModel = getFormModel();
         final String templateFilename = getTemplateFilename();
@@ -59,14 +63,14 @@ public abstract class AbstractFreemarkerWizardPage extends AbstractWizardPage im
 
         final StringWriter out = new StringWriter();
         try {
-            final Template template = configuration.getTemplate(templateFilename);
+            final Template template = _templateConfiguration.getTemplate(templateFilename);
             template.process(formModel, out);
             out.flush();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            
+
             throw new IllegalStateException("Could not render freemarker template: " + templateFilename, e);
         }
 

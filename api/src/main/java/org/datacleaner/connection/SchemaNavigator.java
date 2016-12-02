@@ -36,7 +36,7 @@ public final class SchemaNavigator {
 
     private final DataContext dataContext;
 
-    public SchemaNavigator(DataContext dataContext) {
+    public SchemaNavigator(final DataContext dataContext) {
         this.dataContext = dataContext;
     }
 
@@ -44,7 +44,7 @@ public final class SchemaNavigator {
         dataContext.refreshSchemas();
     }
 
-    public Schema convertToSchema(String schemaName) {
+    public Schema convertToSchema(final String schemaName) {
         return dataContext.getSchemaByName(schemaName);
     }
 
@@ -56,11 +56,11 @@ public final class SchemaNavigator {
         return dataContext.getDefaultSchema();
     }
 
-    public Schema getSchemaByName(String name) {
+    public Schema getSchemaByName(final String name) {
         return dataContext.getSchemaByName(name);
     }
 
-    public Table convertToTable(String schemaName, String tableName) {
+    public Table convertToTable(final String schemaName, final String tableName) {
         final Schema schema;
         if (schemaName == null) {
             schema = getDefaultSchema();
@@ -69,8 +69,9 @@ public final class SchemaNavigator {
         }
 
         if (schema == null) {
-            throw new IllegalArgumentException("Schema " + schemaName + " not found. Available schema names are: "
-                    + Arrays.toString(dataContext.getSchemaNames()));
+            throw new IllegalArgumentException(
+                    "Schema " + schemaName + " not found. Available schema names are: " + Arrays
+                            .toString(dataContext.getSchemaNames()));
         }
 
         final Table table;
@@ -79,22 +80,22 @@ public final class SchemaNavigator {
                 table = schema.getTables()[0];
             } else {
                 throw new IllegalArgumentException(
-                        "No table name specified, and multiple options exist. Available table names are: "
-                                + Arrays.toString(schema.getTableNames()));
+                        "No table name specified, and multiple options exist. Available table names are: " + Arrays
+                                .toString(schema.getTableNames()));
             }
         } else {
             table = schema.getTableByName(tableName);
         }
 
         if (table == null) {
-            throw new IllegalArgumentException("Table not found. Available table names are: "
-                    + Arrays.toString(schema.getTableNames()));
+            throw new IllegalArgumentException(
+                    "Table not found. Available table names are: " + Arrays.toString(schema.getTableNames()));
         }
 
         return table;
     }
 
-    public Column[] convertToColumns(String schemaName, String tableName, String[] columnNames) {
+    public Column[] convertToColumns(final String schemaName, final String tableName, final String[] columnNames) {
         if (columnNames == null) {
             return null;
         }
@@ -113,35 +114,35 @@ public final class SchemaNavigator {
         return columns;
     }
 
-    public Schema[] convertToSchemas(String[] schemaNames) {
-        Schema[] result = new Schema[schemaNames.length];
+    public Schema[] convertToSchemas(final String[] schemaNames) {
+        final Schema[] result = new Schema[schemaNames.length];
         for (int i = 0; i < result.length; i++) {
             result[i] = convertToSchema(schemaNames[i]);
         }
         return result;
     }
 
-    public Table[] convertToTables(String[] tableNames) {
-        Table[] result = new Table[tableNames.length];
+    public Table[] convertToTables(final String[] tableNames) {
+        final Table[] result = new Table[tableNames.length];
         for (int i = 0; i < result.length; i++) {
             result[i] = convertToTable(tableNames[i]);
         }
         return result;
     }
 
-    public Table convertToTable(String tableName) {
+    public Table convertToTable(final String tableName) {
         return dataContext.getTableByQualifiedLabel(tableName);
     }
 
-    public Column[] convertToColumns(String[] columnNames) {
-        Column[] result = new Column[columnNames.length];
+    public Column[] convertToColumns(final String[] columnNames) {
+        final Column[] result = new Column[columnNames.length];
         for (int i = 0; i < result.length; i++) {
             result[i] = convertToColumn(columnNames[i]);
         }
         return result;
     }
 
-    public Column convertToColumn(String columnName) {
+    public Column convertToColumn(final String columnName) {
         return dataContext.getColumnByQualifiedLabel(columnName);
     }
 }

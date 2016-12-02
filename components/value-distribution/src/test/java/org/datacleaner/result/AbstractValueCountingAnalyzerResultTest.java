@@ -31,7 +31,7 @@ public class AbstractValueCountingAnalyzerResultTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        list = new ArrayList<ValueFrequency>();
+        list = new ArrayList<>();
         list.add(new SingleValueFrequency("foo", 10));
         list.add(new SingleValueFrequency("bar", 10));
         list.add(new SingleValueFrequency("baz", 10));
@@ -42,21 +42,22 @@ public class AbstractValueCountingAnalyzerResultTest extends TestCase {
     }
 
     public void testGetReducedValueFrequenciesVanilla() throws Exception {
-        AbstractValueCountingAnalyzerResult analyzerResult = new MockValueCountingAnalyzerResult(list);
+        final AbstractValueCountingAnalyzerResult analyzerResult = new MockValueCountingAnalyzerResult(list);
 
-        Collection<ValueFrequency> reduced = analyzerResult.getReducedValueFrequencies(10);
+        final Collection<ValueFrequency> reduced = analyzerResult.getReducedValueFrequencies(10);
         assertEquals(list.size(), reduced.size());
-        assertEquals("[[hey->40], [yo->40], [bah->30], [buh->20], [bar->10], [baz->10], [foo->10]]", reduced.toString());
+        assertEquals("[[hey->40], [yo->40], [bah->30], [buh->20], [bar->10], [baz->10], [foo->10]]",
+                reduced.toString());
     }
 
     public void testGetReducedValueFrequenciesExpandUniques() throws Exception {
-        Collection<String> values = Arrays.asList("this is a long test split into many individual word tokens"
-                .split(" "));
+        final Collection<String> values =
+                Arrays.asList("this is a long test split into many individual word tokens".split(" "));
         list.add(new CompositeValueFrequency("<uniques>", values, 1));
 
-        AbstractValueCountingAnalyzerResult analyzerResult = new MockValueCountingAnalyzerResult(list);
+        final AbstractValueCountingAnalyzerResult analyzerResult = new MockValueCountingAnalyzerResult(list);
 
-        Collection<ValueFrequency> reduced = analyzerResult.getReducedValueFrequencies(40);
+        final Collection<ValueFrequency> reduced = analyzerResult.getReducedValueFrequencies(40);
         assertEquals("[[hey->40], [yo->40], [bah->30], [buh->20], [bar->10], [baz->10], [foo->10], "
                 + "[a->1], [individual->1], [into->1], [is->1], [long->1], [many->1], [split->1], "
                 + "[test->1], [this->1], [tokens->1], [word->1]]", reduced.toString());

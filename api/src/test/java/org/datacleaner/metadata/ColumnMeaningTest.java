@@ -32,10 +32,10 @@ public class ColumnMeaningTest {
         assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, ColumnMeaning.find("Givenname"));
         assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, ColumnMeaning.find("First name"));
         assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, ColumnMeaning.find("   FIRST_NAME \t"));
-        
+
         assertEquals(ColumnMeaning.EMAIL_ADDRESS, ColumnMeaning.find("Email"));
         assertEquals(ColumnMeaning.EMAIL_ADDRESS, ColumnMeaning.find("e-mail"));
-        
+
         assertEquals(ColumnMeaning.PHONE_PHONENUMBER, ColumnMeaning.find("phone no."));
         assertEquals(ColumnMeaning.PHONE_PHONENUMBER, ColumnMeaning.find("phone number"));
     }

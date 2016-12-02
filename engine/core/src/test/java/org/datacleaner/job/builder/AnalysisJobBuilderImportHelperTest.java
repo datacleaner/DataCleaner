@@ -21,8 +21,6 @@ package org.datacleaner.job.builder;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -33,36 +31,37 @@ import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
 import org.datacleaner.test.TestHelper;
 
+import junit.framework.TestCase;
+
 public class AnalysisJobBuilderImportHelperTest extends TestCase {
 
     public void testImportTransformersWithBackwardsChaining() throws Exception {
         // build a job with a renamed transformer output column
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        final DataCleanerConfiguration conf = new DataCleanerConfigurationImpl()
-                .withDatastores(datastore);
+        final DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(datastore);
 
         final AnalysisJob originalJob;
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(conf)) {
             jobBuilder.setDatastore(datastore);
             jobBuilder.addSourceColumns("EMPLOYEES.FIRSTNAME");
 
-            TransformerComponentBuilder<MockTransformer> transformer1 = jobBuilder
-                    .addTransformer(MockTransformer.class);
+            final TransformerComponentBuilder<MockTransformer> transformer1 =
+                    jobBuilder.addTransformer(MockTransformer.class);
             {
                 transformer1.addInputColumn(jobBuilder.getSourceColumnByName("FIRSTNAME"));
-                List<MutableInputColumn<?>> columns = transformer1.getOutputColumns();
+                final List<MutableInputColumn<?>> columns = transformer1.getOutputColumns();
                 assertEquals("[TransformedInputColumn[id=trans-0001-0002,name=mock output]]", columns.toString());
-                MutableInputColumn<?> renamedColumn = columns.get(0);
+                final MutableInputColumn<?> renamedColumn = columns.get(0);
                 renamedColumn.setName("foo");
             }
 
-            TransformerComponentBuilder<MockTransformer> transformer2 = jobBuilder
-                    .addTransformer(MockTransformer.class);
+            final TransformerComponentBuilder<MockTransformer> transformer2 =
+                    jobBuilder.addTransformer(MockTransformer.class);
             {
                 transformer2.addInputColumn(jobBuilder.getSourceColumnByName("FIRSTNAME"));
-                List<MutableInputColumn<?>> columns = transformer2.getOutputColumns();
+                final List<MutableInputColumn<?>> columns = transformer2.getOutputColumns();
                 assertEquals("[TransformedInputColumn[id=trans-0003-0004,name=mock output]]", columns.toString());
-                MutableInputColumn<?> renamedColumn = columns.get(0);
+                final MutableInputColumn<?> renamedColumn = columns.get(0);
                 renamedColumn.setName("bar");
             }
 
@@ -77,17 +76,17 @@ public class AnalysisJobBuilderImportHelperTest extends TestCase {
 
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(conf, originalJob)) {
 
-            AnalyzerComponentBuilder<?> analyzer = jobBuilder.getAnalyzerComponentBuilders().get(0);
+            final AnalyzerComponentBuilder<?> analyzer = jobBuilder.getAnalyzerComponentBuilders().get(0);
             assertEquals("foo", analyzer.getInputColumns().get(0).getName());
 
-            List<TransformerComponentBuilder<?>> transformers = jobBuilder.getTransformerComponentBuilders();
+            final List<TransformerComponentBuilder<?>> transformers = jobBuilder.getTransformerComponentBuilders();
             assertEquals(2, transformers.size());
 
-            TransformerComponentBuilder<?> transformer1 = transformers.get(0);
+            final TransformerComponentBuilder<?> transformer1 = transformers.get(0);
             assertEquals("foo", transformer1.getOutputColumns().get(0).getName());
             assertEquals("bar", transformer1.getInputColumns().get(0).getName());
 
-            TransformerComponentBuilder<?> transformer2 = transformers.get(1);
+            final TransformerComponentBuilder<?> transformer2 = transformers.get(1);
             assertEquals("bar", transformer2.getOutputColumns().get(0).getName());
             assertEquals("FIRSTNAME", transformer2.getInputColumns().get(0).getName());
 
@@ -103,20 +102,21 @@ public class AnalysisJobBuilderImportHelperTest extends TestCase {
 
     public void testImportTransformerAndAnalyzer() throws Exception {
         // build a job with a renamed transformer output column
-        Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(datastore);
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+        final DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(datastore);
 
         final AnalysisJob originalJob;
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(conf)) {
             jobBuilder.setDatastore(datastore);
             jobBuilder.addSourceColumns("EMPLOYEES.FIRSTNAME");
 
-            TransformerComponentBuilder<MockTransformer> transformer = jobBuilder.addTransformer(MockTransformer.class);
+            final TransformerComponentBuilder<MockTransformer> transformer =
+                    jobBuilder.addTransformer(MockTransformer.class);
             transformer.addInputColumn(jobBuilder.getSourceColumnByName("FIRSTNAME"));
-            List<MutableInputColumn<?>> columns = transformer.getOutputColumns();
+            final List<MutableInputColumn<?>> columns = transformer.getOutputColumns();
             assertEquals("[TransformedInputColumn[id=trans-0001-0002,name=mock output]]", columns.toString());
 
-            MutableInputColumn<?> renamedColumn = columns.get(0);
+            final MutableInputColumn<?> renamedColumn = columns.get(0);
             renamedColumn.setName("foobar");
 
             jobBuilder.addAnalyzer(MockAnalyzer.class).addInputColumn(renamedColumn);
@@ -125,10 +125,10 @@ public class AnalysisJobBuilderImportHelperTest extends TestCase {
         }
 
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(conf, originalJob)) {
-            List<TransformerComponentBuilder<?>> transformers = jobBuilder.getTransformerComponentBuilders();
+            final List<TransformerComponentBuilder<?>> transformers = jobBuilder.getTransformerComponentBuilders();
             assertEquals(1, transformers.size());
 
-            List<MutableInputColumn<?>> outputColumns = transformers.get(0).getOutputColumns();
+            final List<MutableInputColumn<?>> outputColumns = transformers.get(0).getOutputColumns();
             assertEquals("foobar", outputColumns.get(0).getName());
         }
     }

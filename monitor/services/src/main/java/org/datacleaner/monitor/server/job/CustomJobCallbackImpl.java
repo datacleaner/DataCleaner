@@ -30,24 +30,24 @@ final class CustomJobCallbackImpl implements CustomJobCallback {
     private final ExecutionLogger _executionLogger;
     private final TenantContext _tenantContext;
 
-    public CustomJobCallbackImpl(TenantContext tenantContext, ExecutionLogger executionLogger) {
+    public CustomJobCallbackImpl(final TenantContext tenantContext, final ExecutionLogger executionLogger) {
         _tenantContext = tenantContext;
         _executionLogger = executionLogger;
     }
-    
+
     @Override
     public TenantContext getTenantContext() {
         return _tenantContext;
     }
 
     @Override
-    public void log(String message) {
+    public void log(final String message) {
         _executionLogger.log(message);
         _executionLogger.flushLog();
     }
 
     @Override
-    public void log(String message, Throwable throwable) {
+    public void log(final String message, final Throwable throwable) {
         _executionLogger.log(message, throwable);
         _executionLogger.flushLog();
     }

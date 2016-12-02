@@ -19,7 +19,7 @@
  */
 package org.datacleaner.api;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -31,9 +31,9 @@ public class RestrictedFunctionalityExceptionTest {
     @Test
     public void testNoStackTrace() throws Exception {
         final RestrictedFunctionalityException ex = new RestrictedFunctionalityException("foo bar");
-        
+
         assertEquals(0, ex.getStackTrace().length);
-        
+
         final StringWriter out = new StringWriter();
         ex.printStackTrace(new PrintWriter(out));
 

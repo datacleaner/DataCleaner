@@ -22,8 +22,6 @@ package org.datacleaner.test.full.scenarios;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.api.InputColumn;
@@ -49,6 +47,8 @@ import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
 import org.datacleaner.test.mock.EvenOddFilter;
 
+import junit.framework.TestCase;
+
 public class FilterRequirementMergingTest extends TestCase {
 
     private DataCleanerConfiguration configuration;
@@ -58,8 +58,8 @@ public class FilterRequirementMergingTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        SimpleTableDef tableDef = new SimpleTableDef("table", new String[] { "col1" });
-        List<Object[]> rowData = new ArrayList<Object[]>();
+        final SimpleTableDef tableDef = new SimpleTableDef("table", new String[] { "col1" });
+        final List<Object[]> rowData = new ArrayList<>();
         rowData.add(new Object[] { "foo" });
         rowData.add(new Object[] { "bar" });
         rowData.add(new Object[] { "baz" });
@@ -67,7 +67,7 @@ public class FilterRequirementMergingTest extends TestCase {
         rowData.add(new Object[] { "world" });
         datastore = new PojoDatastore("ds", "sch", new ArrayTableDataProvider(tableDef, rowData));
 
-        DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
+        final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
         configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog);
 
         jobBuilder = new AnalysisJobBuilder(configuration);
@@ -87,32 +87,32 @@ public class FilterRequirementMergingTest extends TestCase {
      */
     public void testMergeFilterRequirementsWhenAnalyzerConsumesInputColumnsWithMultipleRequirements() throws Throwable {
         jobBuilder.addSourceColumns("col1");
-        InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder
-                .addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
+        final InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
+        final FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter =
+                jobBuilder.addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
 
-        FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
-        FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
+        final FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
+        final FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
 
-        TransformerComponentBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
-                .addInputColumn(sourceColumn);
+        final TransformerComponentBuilder<MockTransformer> transformer1 =
+                jobBuilder.addTransformer(MockTransformer.class).addInputColumn(sourceColumn);
         transformer1.setRequirement(req1);
-        MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
+        final MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
         outputColumn1.setName("outputColumn1");
 
-        TransformerComponentBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
-                .addInputColumn(sourceColumn);
+        final TransformerComponentBuilder<MockTransformer> transformer2 =
+                jobBuilder.addTransformer(MockTransformer.class).addInputColumn(sourceColumn);
         transformer2.setRequirement(req2);
-        MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
+        final MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
         outputColumn2.setName("outputColumn2");
 
-        AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
         // add outputcolumn 1+2 - they have opposite requirements
         analyzer.addInputColumns(sourceColumn, outputColumn1, outputColumn2);
 
-        AnalysisJob job = jobBuilder.toAnalysisJob();
+        final AnalysisJob job = jobBuilder.toAnalysisJob();
 
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
 
         resultFuture.await();
 
@@ -120,22 +120,22 @@ public class FilterRequirementMergingTest extends TestCase {
             throw resultFuture.getErrors().get(0);
         }
 
-        @SuppressWarnings("unchecked")
-        ListResult<InputRow> listResult = (ListResult<InputRow>) resultFuture.getResults().get(0);
-        List<InputRow> list = listResult.getValues();
+        @SuppressWarnings("unchecked") final ListResult<InputRow> listResult =
+                (ListResult<InputRow>) resultFuture.getResults().get(0);
+        final List<InputRow> list = listResult.getValues();
 
         assertFalse("List is empty - this indicates that no records passed through the 'multiple requirements' rule",
                 list.isEmpty());
-        assertEquals("[foo, null, mocked: foo]", list.get(0).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[bar, mocked: bar, null]", list.get(1).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[baz, null, mocked: baz]", list.get(2).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[hello, mocked: hello, null]", list.get(3).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[world, null, mocked: world]", list.get(4).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
+        assertEquals("[foo, null, mocked: foo]",
+                list.get(0).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[bar, mocked: bar, null]",
+                list.get(1).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[baz, null, mocked: baz]",
+                list.get(2).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[hello, mocked: hello, null]",
+                list.get(3).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[world, null, mocked: world]",
+                list.get(4).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
         assertEquals(5, list.size());
     }
 
@@ -146,33 +146,33 @@ public class FilterRequirementMergingTest extends TestCase {
      */
     public void testDontMergeFilterRequirementWhenAnalyzerConsumesInputColumnsWithSingleRequirement() throws Throwable {
         jobBuilder.addSourceColumns("col1");
-        InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder
-                .addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
+        final InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
+        final FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter =
+                jobBuilder.addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
 
-        FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
-        FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
+        final FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
+        final FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
 
-        TransformerComponentBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
-                .addInputColumn(sourceColumn);
+        final TransformerComponentBuilder<MockTransformer> transformer1 =
+                jobBuilder.addTransformer(MockTransformer.class).addInputColumn(sourceColumn);
         transformer1.setRequirement(req1);
-        MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
+        final MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
         outputColumn1.setName("outputColumn1");
 
-        TransformerComponentBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
-                .addInputColumn(sourceColumn);
+        final TransformerComponentBuilder<MockTransformer> transformer2 =
+                jobBuilder.addTransformer(MockTransformer.class).addInputColumn(sourceColumn);
         transformer2.setRequirement(req2);
-        MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
+        final MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
         outputColumn2.setName("outputColumn2");
 
-        AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
 
         // add only outputcolumn 1 - it has a single requirement
         analyzer.addInputColumns(sourceColumn, outputColumn1);
 
-        AnalysisJob job = jobBuilder.toAnalysisJob();
+        final AnalysisJob job = jobBuilder.toAnalysisJob();
 
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
 
         resultFuture.await();
 
@@ -180,16 +180,16 @@ public class FilterRequirementMergingTest extends TestCase {
             throw resultFuture.getErrors().get(0);
         }
 
-        @SuppressWarnings("unchecked")
-        ListResult<InputRow> listResult = (ListResult<InputRow>) resultFuture.getResults().get(0);
-        List<InputRow> list = listResult.getValues();
+        @SuppressWarnings("unchecked") final ListResult<InputRow> listResult =
+                (ListResult<InputRow>) resultFuture.getResults().get(0);
+        final List<InputRow> list = listResult.getValues();
 
         assertFalse("List is empty - this indicates that no records passed through the 'single requirements' rule",
                 list.isEmpty());
-        assertEquals("[bar, mocked: bar, null]", list.get(0).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[hello, mocked: hello, null]", list.get(1).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
+        assertEquals("[bar, mocked: bar, null]",
+                list.get(0).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[hello, mocked: hello, null]",
+                list.get(1).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
         assertEquals(2, list.size());
     }
 
@@ -199,34 +199,34 @@ public class FilterRequirementMergingTest extends TestCase {
      */
     public void testConsumeRecordsWhenAnyOutcomeRequirementIsSet() throws Throwable {
         jobBuilder.addSourceColumns("col1");
-        InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder
-                .addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
+        final InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
+        final FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter =
+                jobBuilder.addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
 
-        FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
-        FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
+        final FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
+        final FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
 
-        TransformerComponentBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
-                .addInputColumn(sourceColumn);
+        final TransformerComponentBuilder<MockTransformer> transformer1 =
+                jobBuilder.addTransformer(MockTransformer.class).addInputColumn(sourceColumn);
         transformer1.setRequirement(req1);
-        MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
+        final MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
         outputColumn1.setName("outputColumn1");
 
-        TransformerComponentBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
-                .addInputColumn(sourceColumn);
+        final TransformerComponentBuilder<MockTransformer> transformer2 =
+                jobBuilder.addTransformer(MockTransformer.class).addInputColumn(sourceColumn);
         transformer2.setRequirement(req2);
-        MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
+        final MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
         outputColumn2.setName("outputColumn2");
 
-        AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
 
         // add only outputcolumn 1 - it has a single requirement
         analyzer.addInputColumns(sourceColumn, outputColumn1);
         analyzer.setComponentRequirement(AnyComponentRequirement.get());
 
-        AnalysisJob job = jobBuilder.toAnalysisJob();
+        final AnalysisJob job = jobBuilder.toAnalysisJob();
 
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
 
         resultFuture.await();
 
@@ -234,23 +234,23 @@ public class FilterRequirementMergingTest extends TestCase {
             throw resultFuture.getErrors().get(0);
         }
 
-        @SuppressWarnings("unchecked")
-        ListResult<InputRow> listResult = (ListResult<InputRow>) resultFuture.getResults().get(0);
-        List<InputRow> list = listResult.getValues();
+        @SuppressWarnings("unchecked") final ListResult<InputRow> listResult =
+                (ListResult<InputRow>) resultFuture.getResults().get(0);
+        final List<InputRow> list = listResult.getValues();
 
         assertFalse("List is empty - this indicates that no records passed through the 'any requirements' rule",
                 list.isEmpty());
 
-        assertEquals("[foo, null, mocked: foo]", list.get(0).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[bar, mocked: bar, null]", list.get(1).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[baz, null, mocked: baz]", list.get(2).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[hello, mocked: hello, null]", list.get(3).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[world, null, mocked: world]", list.get(4).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
+        assertEquals("[foo, null, mocked: foo]",
+                list.get(0).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[bar, mocked: bar, null]",
+                list.get(1).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[baz, null, mocked: baz]",
+                list.get(2).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[hello, mocked: hello, null]",
+                list.get(3).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[world, null, mocked: world]",
+                list.get(4).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
 
         assertEquals(5, list.size());
     }
@@ -261,34 +261,34 @@ public class FilterRequirementMergingTest extends TestCase {
      */
     public void testConsumeRecordsWhenCompoundOutcomeRequirementIsSet() throws Throwable {
         jobBuilder.addSourceColumns("col1");
-        InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder
-                .addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
+        final InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
+        final FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter =
+                jobBuilder.addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
 
-        FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
-        FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
+        final FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
+        final FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
 
-        TransformerComponentBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
-                .addInputColumn(sourceColumn);
+        final TransformerComponentBuilder<MockTransformer> transformer1 =
+                jobBuilder.addTransformer(MockTransformer.class).addInputColumn(sourceColumn);
         transformer1.setRequirement(req1);
-        MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
+        final MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
         outputColumn1.setName("outputColumn1");
 
-        TransformerComponentBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
-                .addInputColumn(sourceColumn);
+        final TransformerComponentBuilder<MockTransformer> transformer2 =
+                jobBuilder.addTransformer(MockTransformer.class).addInputColumn(sourceColumn);
         transformer2.setRequirement(req2);
-        MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
+        final MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
         outputColumn2.setName("outputColumn2");
 
-        AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
 
         // add only outputcolumn 1 - it has a single requirement
         analyzer.addInputColumns(sourceColumn, outputColumn1);
         analyzer.setComponentRequirement(new CompoundComponentRequirement(req1, req2));
 
-        AnalysisJob job = jobBuilder.toAnalysisJob();
+        final AnalysisJob job = jobBuilder.toAnalysisJob();
 
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
 
         resultFuture.await();
 
@@ -296,23 +296,23 @@ public class FilterRequirementMergingTest extends TestCase {
             throw resultFuture.getErrors().get(0);
         }
 
-        @SuppressWarnings("unchecked")
-        ListResult<InputRow> listResult = (ListResult<InputRow>) resultFuture.getResults().get(0);
-        List<InputRow> list = listResult.getValues();
+        @SuppressWarnings("unchecked") final ListResult<InputRow> listResult =
+                (ListResult<InputRow>) resultFuture.getResults().get(0);
+        final List<InputRow> list = listResult.getValues();
 
         assertFalse("List is empty - this indicates that no records passed through the 'any requirements' rule",
                 list.isEmpty());
 
-        assertEquals("[foo, null, mocked: foo]", list.get(0).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[bar, mocked: bar, null]", list.get(1).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[baz, null, mocked: baz]", list.get(2).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[hello, mocked: hello, null]", list.get(3).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
-        assertEquals("[world, null, mocked: world]", list.get(4).getValues(sourceColumn, outputColumn1, outputColumn2)
-                .toString());
+        assertEquals("[foo, null, mocked: foo]",
+                list.get(0).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[bar, mocked: bar, null]",
+                list.get(1).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[baz, null, mocked: baz]",
+                list.get(2).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[hello, mocked: hello, null]",
+                list.get(3).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
+        assertEquals("[world, null, mocked: world]",
+                list.get(4).getValues(sourceColumn, outputColumn1, outputColumn2).toString());
 
         assertEquals(5, list.size());
     }

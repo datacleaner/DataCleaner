@@ -34,7 +34,7 @@ public class JobGraphMetadata {
     public static final String METADATA_PROPERTY_COORDINATES_X = "CoordinatesX";
     public static final String METADATA_PROPERTY_COORDINATES_Y = "CoordinatesY";
 
-    public static Point getPointForTable(AnalysisJobBuilder analysisJobBuilder, Table table) {
+    public static Point getPointForTable(final AnalysisJobBuilder analysisJobBuilder, final Table table) {
         final String postFix = getTablePostFix(table);
 
         final Map<String, String> metadataProperties = analysisJobBuilder.getMetadataProperties();
@@ -48,7 +48,8 @@ public class JobGraphMetadata {
         return null;
     }
 
-    public static void setPointForTable(AnalysisJobBuilder analysisJobBuilder, Table table, Number x, Number y) {
+    public static void setPointForTable(final AnalysisJobBuilder analysisJobBuilder, final Table table, final Number x,
+            final Number y) {
         final String postFix = getTablePostFix(table);
 
         final Map<String, String> metadataProperties = analysisJobBuilder.getMetadataProperties();
@@ -56,7 +57,7 @@ public class JobGraphMetadata {
         metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y + postFix, "" + y.intValue());
     }
 
-    private static String getTablePostFix(Table table) {
+    private static String getTablePostFix(final Table table) {
         final String postFix;
         final Schema schema = table.getSchema();
         if (schema == null) {
@@ -67,19 +68,19 @@ public class JobGraphMetadata {
         return postFix;
     }
 
-    public static Map<String, String> createMetadataProperties(int x, int y) {
+    public static Map<String, String> createMetadataProperties(final int x, final int y) {
         final Map<String, String> metadataProperties = new HashMap<>();
         metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x);
         metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y);
         return metadataProperties;
     }
 
-    public static Map<String, String> createMetadataProperties(Point2D p) {
-        if (p == null) {
+    public static Map<String, String> createMetadataProperties(final Point2D point2D) {
+        if (point2D == null) {
             return null;
         }
-        final int x = (int) p.getX();
-        final int y = (int) p.getY();
+        final int x = (int) point2D.getX();
+        final int y = (int) point2D.getY();
         return createMetadataProperties(x, y);
     }
 }

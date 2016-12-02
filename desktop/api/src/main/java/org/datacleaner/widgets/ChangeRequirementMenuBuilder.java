@@ -19,8 +19,6 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,21 +50,19 @@ import org.slf4j.LoggerFactory;
  */
 public class ChangeRequirementMenuBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(ChangeRequirementMenuBuilder.class);
-
     public static final String NO_REQUIREMENT_TEXT = "(No requirement)";
     public static final String ANY_REQUIREMENT_TEXT = "All records";
-
+    private static final Logger logger = LoggerFactory.getLogger(ChangeRequirementMenuBuilder.class);
     private static final ImageManager imageManager = ImageManager.get();
 
-    private static final Icon selectedRequirementIcon = imageManager.getImageIcon(IconUtils.STATUS_VALID,
-            IconUtils.ICON_SIZE_SMALL);
-    private static final Icon unconfiguredFilterIcon = imageManager.getImageIcon(IconUtils.STATUS_WARNING,
-            IconUtils.ICON_SIZE_SMALL);
+    private static final Icon selectedRequirementIcon =
+            imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
+    private static final Icon unconfiguredFilterIcon =
+            imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL);
 
     private final ComponentBuilder _componentBuilder;
 
-    public ChangeRequirementMenuBuilder(ComponentBuilder componentBuilder) {
+    public ChangeRequirementMenuBuilder(final ComponentBuilder componentBuilder) {
         _componentBuilder = componentBuilder;
     }
 
@@ -74,31 +70,26 @@ public class ChangeRequirementMenuBuilder {
         final ComponentRequirement currentComponentRequirement = _componentBuilder.getComponentRequirement();
         logger.info("Current requirement: {}", currentComponentRequirement);
 
-        final Collection<FilterOutcome> currentFilterOutcomes = currentComponentRequirement == null ? Collections
-                .<FilterOutcome> emptyList() : currentComponentRequirement.getProcessingDependencies();
+        final Collection<FilterOutcome> currentFilterOutcomes = currentComponentRequirement == null
+                ? Collections.emptyList()
+                : currentComponentRequirement.getProcessingDependencies();
 
         final List<JMenuItem> popup = new ArrayList<>();
         final JMenuItem noFilterMenuItem = new JMenuItem(NO_REQUIREMENT_TEXT);
-        noFilterMenuItem
-                .setToolTipText("Do not apply any specific requirements on this component, except for those that are transitively inherited by the configuration.");
-        noFilterMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _componentBuilder.setComponentRequirement(null);
-                onRequirementChanged();
-            }
+        noFilterMenuItem.setToolTipText("Do not apply any specific requirements on this component, "
+                + "except for those that are transitively inherited by the configuration.");
+        noFilterMenuItem.addActionListener(e -> {
+            _componentBuilder.setComponentRequirement(null);
+            onRequirementChanged();
         });
         popup.add(noFilterMenuItem);
 
         final JMenuItem anyFilterMenuItem = new JMenuItem(ANY_REQUIREMENT_TEXT);
-        anyFilterMenuItem
-                .setToolTipText("Explicitly accept all records into this component, regardless of any other transitive requirements.");
-        anyFilterMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _componentBuilder.setComponentRequirement(AnyComponentRequirement.get());
-                onRequirementChanged();
-            }
+        anyFilterMenuItem.setToolTipText("Explicitly accept all records into this component, "
+                + "regardless of any other transitive requirements.");
+        anyFilterMenuItem.addActionListener(e -> {
+            _componentBuilder.setComponentRequirement(AnyComponentRequirement.get());
+            onRequirementChanged();
         });
         if (AnyComponentRequirement.get().equals(_componentBuilder.getComponentRequirement())) {
             anyFilterMenuItem.setIcon(selectedRequirementIcon);
@@ -132,20 +123,17 @@ public class ChangeRequirementMenuBuilder {
                             filterMenuItem.setIcon(selectedRequirementIcon);
                             categoryMenuItem.setIcon(selectedRequirementIcon);
                         }
-                    } catch (Exception ex) {
+                    } catch (final Exception ex) {
                         logger.info("Filterjob matching threw exception, probably because of incomplete configuration",
                                 ex);
                     }
 
-                    categoryMenuItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            final Enum<?> outcome = fjb.getDescriptor().getOutcomeCategoryByName(category);
-                            final FilterOutcome filterOutcome = fjb.getFilterOutcome(outcome);
-                            final ComponentRequirement newRequirement = new SimpleComponentRequirement(filterOutcome);
-                            _componentBuilder.setComponentRequirement(newRequirement);
-                            onRequirementChanged();
-                        }
+                    categoryMenuItem.addActionListener(e -> {
+                        final Enum<?> outcome = fjb.getDescriptor().getOutcomeCategoryByName(category);
+                        final FilterOutcome filterOutcome = fjb.getFilterOutcome(outcome);
+                        final ComponentRequirement newRequirement = new SimpleComponentRequirement(filterOutcome);
+                        _componentBuilder.setComponentRequirement(newRequirement);
+                        onRequirementChanged();
                     });
 
                     filterMenuItem.add(categoryMenuItem);
@@ -161,8 +149,7 @@ public class ChangeRequirementMenuBuilder {
     private List<FilterComponentBuilder<?, ?>> getFilterJobBuilders() {
         final List<FilterComponentBuilder<?, ?>> fjbs;
         if (_componentBuilder instanceof FilterComponentBuilder<?, ?>) {
-            fjbs = new LinkedList<FilterComponentBuilder<?, ?>>(_componentBuilder.getAnalysisJobBuilder()
-                    .getFilterComponentBuilders());
+            fjbs = new LinkedList<>(_componentBuilder.getAnalysisJobBuilder().getFilterComponentBuilders());
             fjbs.remove(_componentBuilder);
         } else {
             fjbs = _componentBuilder.getAnalysisJobBuilder().getFilterComponentBuilders();
@@ -170,9 +157,10 @@ public class ChangeRequirementMenuBuilder {
         return fjbs;
     }
 
-    private boolean validateRequirementSource(FilterComponentBuilder<?, ?> fjb) {
+    private boolean validateRequirementSource(final FilterComponentBuilder<?, ?> fjb) {
         if (_componentBuilder instanceof AbstractComponentBuilder) {
-            AbstractComponentBuilder<?, ?, ?> abstractBeanWithInputColumnsBuilder = (AbstractComponentBuilder<?, ?, ?>) _componentBuilder;
+            final AbstractComponentBuilder<?, ?, ?> abstractBeanWithInputColumnsBuilder =
+                    (AbstractComponentBuilder<?, ?, ?>) _componentBuilder;
             return abstractBeanWithInputColumnsBuilder.validateRequirementSource(fjb);
         }
         return true;

@@ -28,11 +28,11 @@ public class JaxbException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public JaxbException(String message, JAXBException cause) {
+    public JaxbException(final String message, final JAXBException cause) {
         super(message, cause);
     }
 
-    public JaxbException(JAXBException cause) {
+    public JaxbException(final JAXBException cause) {
         super(cause);
     }
 }

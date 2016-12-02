@@ -57,29 +57,6 @@ public class ConvertToStringTransformer implements Transformer {
     @Configured(required = false)
     String nullReplacement;
 
-    @Override
-    public OutputColumns getOutputColumns() {
-        String[] names = new String[input.length];
-        for (int i = 0; i < names.length; i++) {
-            names[i] = input[i].getName() + " (as string)";
-        }
-        return new OutputColumns(String.class, names);
-    }
-
-    @Override
-    public String[] transform(InputRow inputRow) {
-        String[] result = new String[input.length];
-        for (int i = 0; i < input.length; i++) {
-            Object value = inputRow.getValue(input[i]);
-            String stringValue = transformValue(value);
-            if (stringValue == null) {
-                stringValue = nullReplacement;
-            }
-            result[i] = stringValue;
-        }
-        return result;
-    }
-
     public static String transformValue(Object value) {
         if (value == null) {
             return null;
@@ -89,11 +66,11 @@ public class ConvertToStringTransformer implements Transformer {
         }
         final String stringValue;
         if (value instanceof Reader) {
-            char[] buffer = new char[1024];
+            final char[] buffer = new char[1024];
 
-            Reader reader = (Reader) value;
+            final Reader reader = (Reader) value;
 
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             try {
                 for (int read = reader.read(buffer); read != -1; read = reader.read(buffer)) {
                     char[] charsToWrite = buffer;
@@ -102,7 +79,7 @@ public class ConvertToStringTransformer implements Transformer {
                     }
                     sb.append(charsToWrite);
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new IllegalStateException(e);
             } finally {
                 FileHelper.safeClose(reader);
@@ -110,9 +87,9 @@ public class ConvertToStringTransformer implements Transformer {
             stringValue = sb.toString();
         } else if (value instanceof Clob) {
             try {
-                Clob clob = (Clob) value;
+                final Clob clob = (Clob) value;
                 stringValue = clob.getSubString(1, (int) clob.length());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Failed to read CLOB value", e);
             }
         } else {
@@ -121,11 +98,34 @@ public class ConvertToStringTransformer implements Transformer {
         return stringValue;
     }
 
-    public void setInput(InputColumn<?>[] input) {
+    @Override
+    public OutputColumns getOutputColumns() {
+        final String[] names = new String[input.length];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = input[i].getName() + " (as string)";
+        }
+        return new OutputColumns(String.class, names);
+    }
+
+    @Override
+    public String[] transform(final InputRow inputRow) {
+        final String[] result = new String[input.length];
+        for (int i = 0; i < input.length; i++) {
+            final Object value = inputRow.getValue(input[i]);
+            String stringValue = transformValue(value);
+            if (stringValue == null) {
+                stringValue = nullReplacement;
+            }
+            result[i] = stringValue;
+        }
+        return result;
+    }
+
+    public void setInput(final InputColumn<?>[] input) {
         this.input = input;
     }
 
-    public void setNullReplacement(String nullReplacement) {
+    public void setNullReplacement(final String nullReplacement) {
         this.nullReplacement = nullReplacement;
     }
 }

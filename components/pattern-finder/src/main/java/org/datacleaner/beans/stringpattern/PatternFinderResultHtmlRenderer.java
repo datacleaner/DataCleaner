@@ -39,12 +39,12 @@ public class PatternFinderResultHtmlRenderer extends AbstractRenderer<PatternFin
         this(null);
     }
 
-    public PatternFinderResultHtmlRenderer(RendererFactory rendererFactory) {
+    public PatternFinderResultHtmlRenderer(final RendererFactory rendererFactory) {
         this.rendererFactory = rendererFactory;
     }
 
     @Override
-    public HtmlFragment render(PatternFinderResult result) {
+    public HtmlFragment render(final PatternFinderResult result) {
         return new PatternFinderHtmlFragment(result, rendererFactory);
     }
 }

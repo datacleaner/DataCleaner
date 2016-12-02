@@ -26,40 +26,43 @@ import junit.framework.TestCase;
 
 public class TransliterateTransformerTest extends TestCase {
 
-    private TransliterateTransformer t;
+    private TransliterateTransformer _transformer;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        t = new TransliterateTransformer();
-        t.column = new MockInputColumn<String>("foo", String.class);
+        _transformer = new TransliterateTransformer();
+        _transformer.column = new MockInputColumn<>("foo", String.class);
     }
 
     public void testGetOutputColumns() throws Exception {
-        assertEquals("OutputColumns[foo (transliterated)]", t.getOutputColumns().toString());
+        assertEquals("OutputColumns[foo (transliterated)]", _transformer.getOutputColumns().toString());
     }
 
     public void testTransliterateToAscii() throws Exception {
-        assertEquals("DataCleaner", t.transform(new MockInputRow().put(t.column, "DataCleaner"))[0]);
-        assertEquals("DataClaenor", t.transform(new MockInputRow().put(t.column, "DåtåClænør"))[0]);
-        assertEquals("Dannyecistogo", t.transform(new MockInputRow().put(t.column, "Данныечистого"))[0]);
-        assertEquals("shu ju qing jie", t.transform(new MockInputRow().put(t.column, "數據清潔"))[0]);
-        assertEquals("byanat alanzf", t.transform(new MockInputRow().put(t.column, "بيانات الأنظف"))[0]);
-        assertEquals("du lieu sach hon", t.transform(new MockInputRow().put(t.column, "dữ liệu sạch hơn"))[0]);
+        assertEquals("DataCleaner", _transformer.transform(new MockInputRow().put(_transformer.column, "DataCleaner"))[0]);
+        assertEquals("DataClaenor", _transformer.transform(new MockInputRow().put(_transformer.column, "DåtåClænør"))[0]);
+        assertEquals("Dannyecistogo", _transformer.transform(new MockInputRow().put(_transformer.column, "Данныечистого"))[0]);
+        assertEquals("shu ju qing jie", _transformer.transform(new MockInputRow().put(_transformer.column, "數據清潔"))[0]);
+        assertEquals("byanat alanzf", _transformer.transform(new MockInputRow().put(_transformer.column, "بيانات الأنظف"))[0]);
+        assertEquals("du lieu sach hon", _transformer
+                .transform(new MockInputRow().put(_transformer.column, "dữ liệu sạch hơn"))[0]);
     }
 
     public void testTransliterateToLatin() throws Exception {
-        t.latinToAscii = false;
-        assertEquals("DataCleaner", t.transform(new MockInputRow().put(t.column, "DataCleaner"))[0]);
-        assertEquals("DåtåClænør", t.transform(new MockInputRow().put(t.column, "DåtåClænør"))[0]);
-        assertEquals("Dannyečistogo", t.transform(new MockInputRow().put(t.column, "Данныечистого"))[0]);
-        assertEquals("shù jù qīng jié", t.transform(new MockInputRow().put(t.column, "數據清潔"))[0]);
-        assertEquals("byạnạt ạlạ̉nẓf", t.transform(new MockInputRow().put(t.column, "بيانات الأنظف"))[0]);
-        assertEquals("dữ liệu sạch hơn", t.transform(new MockInputRow().put(t.column, "dữ liệu sạch hơn"))[0]);
+        _transformer.latinToAscii = false;
+        assertEquals("DataCleaner", _transformer.transform(new MockInputRow().put(_transformer.column, "DataCleaner"))[0]);
+        assertEquals("DåtåClænør", _transformer.transform(new MockInputRow().put(_transformer.column, "DåtåClænør"))[0]);
+        assertEquals("Dannyečistogo", _transformer.transform(new MockInputRow().put(_transformer.column, "Данныечистого"))[0]);
+        assertEquals("shù jù qīng jié", _transformer.transform(new MockInputRow().put(_transformer.column, "數據清潔"))[0]);
+        assertEquals("byạnạt ạlạ̉nẓf", _transformer
+                .transform(new MockInputRow().put(_transformer.column, "بيانات الأنظف"))[0]);
+        assertEquals("dữ liệu sạch hơn", _transformer
+                .transform(new MockInputRow().put(_transformer.column, "dữ liệu sạch hơn"))[0]);
     }
 
     public void testNull() throws Exception {
-        assertEquals(null, t.transform(new MockInputRow().put(t.column, null))[0]);
-        assertEquals("", t.transform(new MockInputRow().put(t.column, ""))[0]);
+        assertEquals(null, _transformer.transform(new MockInputRow().put(_transformer.column, null))[0]);
+        assertEquals("", _transformer.transform(new MockInputRow().put(_transformer.column, ""))[0]);
     }
 }

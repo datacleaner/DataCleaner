@@ -24,18 +24,18 @@ import java.util.List;
 
 import org.apache.metamodel.util.AggregateBuilder;
 
-final class CreateListAggregateBuilder extends AbstractRowNumberAwareAggregateBuilder<List<?>> implements
-        AggregateBuilder<List<?>> {
+final class CreateListAggregateBuilder extends AbstractRowNumberAwareAggregateBuilder<List<?>>
+        implements AggregateBuilder<List<?>> {
 
     private final List<Object> _result;
 
-    public CreateListAggregateBuilder(SortationType sortationType, boolean skipNulls) {
+    public CreateListAggregateBuilder(final SortationType sortationType, final boolean skipNulls) {
         super(sortationType, skipNulls);
         _result = new ArrayList<>();
     }
 
     @Override
-    protected void addSorted(Object o) {
+    protected void addSorted(final Object o) {
         _result.add(o);
     }
 

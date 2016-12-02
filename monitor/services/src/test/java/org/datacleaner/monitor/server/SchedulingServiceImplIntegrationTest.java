@@ -25,9 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.apache.commons.io.FileUtils;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
@@ -37,7 +34,6 @@ import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.datacleaner.monitor.server.job.DefaultJobEngineManager;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
 import org.quartz.CronTrigger;
 import org.quartz.Scheduler;
@@ -45,6 +41,8 @@ import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import junit.framework.TestCase;
 
 /**
  * Slightly heavier tests than those in {@link SchedulingServiceImplTest}. To
@@ -61,14 +59,10 @@ public class SchedulingServiceImplIntegrationTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         if (service == null) {
-            final File targetDir = new File("target/example_repo");
-            FileUtils.deleteDirectory(targetDir);
-            FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
+            final ApplicationContext applicationContext =
+                    new ClassPathXmlApplicationContext("context/application-context.xml");
 
-            final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                    "context/application-context.xml");
-
-            final Repository repository = new FileRepository(targetDir);
+            final FileRepository repository = applicationContext.getBean(FileRepository.class);
             tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
                     new DefaultJobEngineManager(applicationContext));
 
@@ -77,7 +71,7 @@ public class SchedulingServiceImplIntegrationTest extends TestCase {
 
             service.initialize();
 
-            resultDirectory = new File(targetDir, "tenant1/results");
+            resultDirectory = new File(repository.getFile(), "tenant1/results");
         }
     }
 
@@ -95,7 +89,7 @@ public class SchedulingServiceImplIntegrationTest extends TestCase {
             assertNotNull(execution.getJob());
         }
 
-        boolean result = service.cancelExecution(tenant, execution);
+        final boolean result = service.cancelExecution(tenant, execution);
         if (!result) {
             final String logOutput = execution.getLogOutput();
             System.err.println(logOutput);
@@ -110,16 +104,11 @@ public class SchedulingServiceImplIntegrationTest extends TestCase {
     }
 
     public void testActiveQuartzTriggersInScenario() throws Exception {
-        Scheduler scheduler = service.getScheduler();
+        final Scheduler scheduler = service.getScheduler();
 
         assertTrue(scheduler.isStarted());
 
-        final FilenameFilter filenameFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.startsWith("random_number");
-            }
-        };
+        final FilenameFilter filenameFilter = (dir, name) -> name.startsWith("random_number");
 
         try {
             final List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
@@ -137,29 +126,29 @@ public class SchedulingServiceImplIntegrationTest extends TestCase {
             assertEquals("[tenant1, tenant2]", jobGroupNames.toString());
             assertEquals("[tenant1.random_number_generation]",
                     scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith("tenant1")).toString());
-            assertEquals("[tenant2.another_random_job]", scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith("tenant2"))
-                    .toString());
+            assertEquals("[tenant2.another_random_job]",
+                    scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith("tenant2")).toString());
 
             final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
-            final List<ScheduleDefinition> schedules = service.getSchedules(tenant);
+            final List<ScheduleDefinition> schedules = service.getSchedules(tenant, true);
 
             // sort to make it deterministic
             Collections.sort(schedules);
 
             assertEquals(9, schedules.size());
             assertEquals(null, schedules.get(1).getCronExpression());
-            ScheduleDefinition randomNumberGenerationSchedule = schedules.get(7);
+            final ScheduleDefinition randomNumberGenerationSchedule = schedules.get(7);
             assertEquals("@hourly", randomNumberGenerationSchedule.getCronExpression());
 
-            final CronTrigger trigger = (CronTrigger) scheduler.getTrigger(new TriggerKey("random_number_generation",
-                    "tenant1"));
+            final CronTrigger trigger =
+                    (CronTrigger) scheduler.getTrigger(new TriggerKey("random_number_generation", "tenant1"));
             assertEquals("0 0 * * * ?", trigger.getCronExpression());
 
             File[] files = resultDirectory.listFiles(filenameFilter);
             assertEquals("Unexpected files in " + resultDirectory + ": " + Arrays.toString(files), 0, files.length);
 
-            ExecutionLog execution = service.triggerExecution(tenant, randomNumberGenerationSchedule.getJob());
+            final ExecutionLog execution = service.triggerExecution(tenant, randomNumberGenerationSchedule.getJob());
 
             assertEquals(ExecutionStatus.PENDING, execution.getExecutionStatus());
             assertNull(execution.getJobEndDate());
@@ -189,7 +178,7 @@ public class SchedulingServiceImplIntegrationTest extends TestCase {
         } finally {
             scheduler.shutdown();
 
-            File[] files = resultDirectory.listFiles(filenameFilter);
+            final File[] files = resultDirectory.listFiles(filenameFilter);
             for (int i = 0; i < files.length; i++) {
                 files[i].delete();
             }

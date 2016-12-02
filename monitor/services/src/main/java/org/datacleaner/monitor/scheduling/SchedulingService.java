@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.scheduling;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -42,55 +43,56 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface SchedulingService extends RemoteService {
 
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
-    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant) throws DCSecurityException;
+    List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, boolean loadProperties) throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition)
+    ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition)
             throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public void removeSchedule(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
+    void removeSchedule(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
+    ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
-            Map<String, String> overrideProperties) throws DCSecurityException;
-
-    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public boolean cancelExecution(TenantIdentifier tenant, ExecutionLog execution) throws DCSecurityException;
-
-    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
-    public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
-
-    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
-    public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier)
+    ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job, Map<String, String> overrideProperties)
             throws DCSecurityException;
-    
+
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public String getServerDate();
+    boolean cancelExecution(TenantIdentifier tenant, ExecutionLog execution) throws DCSecurityException;
+
+    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
+    ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
+
+    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
+    ScheduleDefinition getSchedule(TenantIdentifier tenant, JobIdentifier jobIdentifier) throws DCSecurityException;
+
+    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
+    String getServerDate();
+
     /**
      * Gets the full details about an {@link ExecutionIdentifier}.
-     * 
+     *
      * @param tenant
      * @param executionLog
      * @return
      * @throws DCSecurityException
      */
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
-    public ExecutionLog getExecution(TenantIdentifier tenant, ExecutionIdentifier executionIdentifier)
+    ExecutionLog getExecution(TenantIdentifier tenant, ExecutionIdentifier executionIdentifier)
             throws DCSecurityException;
 
     /**
      * Gets all executions of a particular job.
+     * @throws FileNotFoundException
      */
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
-    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job)
-            throws DCSecurityException;
+    List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job)
+            throws DCSecurityException, IllegalStateException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)
+    List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)
             throws DCSecurityException;
-	
+
 }

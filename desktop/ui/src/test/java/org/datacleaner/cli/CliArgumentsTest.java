@@ -26,14 +26,14 @@ import junit.framework.TestCase;
 public class CliArgumentsTest extends TestCase {
 
     public void testSlashUsage() throws Exception {
-        CliArguments args = CliArguments.parse("/?".split(" "));
+        final CliArguments args = CliArguments.parse("/?".split(" "));
         assertTrue(args.isUsageMode());
         assertFalse(args.isVersionMode());
         assertTrue(args.isSet());
     }
 
     public void testVersionMode() throws Exception {
-        CliArguments args = CliArguments.parse("--version".split(" "));
+        final CliArguments args = CliArguments.parse("--version".split(" "));
         assertFalse(args.isUsageMode());
         assertTrue(args.isVersionMode());
         assertTrue(args.isSet());
@@ -65,9 +65,8 @@ public class CliArgumentsTest extends TestCase {
     }
 
     public void testVariableOverrides() throws Exception {
-        CliArguments args;
+        final CliArguments args;
         args = CliArguments.parse("-job myjob.xml -conf conf.xml -var foo=bar -v bar=c:\\foo\bar\baz.csv".split(" "));
-        assertEquals("{bar=c:\\foo\bar\baz.csv, foo=bar}",
-                new TreeMap<String, String>(args.getVariableOverrides()).toString());
+        assertEquals("{bar=c:\\foo\bar\baz.csv, foo=bar}", new TreeMap<>(args.getVariableOverrides()).toString());
     }
 }

@@ -26,7 +26,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 
 /**
  * Defines a HTTP client for DataCleaner monitor connectivity.
- * 
+ *
  * A monitor http client is STATEFUL and must be closed after usage. This is
  * because some implementations will contain security tokens etc. which is
  * reused accross requests.
@@ -34,8 +34,8 @@ import org.apache.http.client.methods.HttpUriRequest;
 public interface MonitorHttpClient extends WebServiceHttpClient, Closeable {
 
     @Override
-    public HttpResponse execute(HttpUriRequest request) throws Exception;
+    HttpResponse execute(HttpUriRequest request) throws Exception;
 
     @Override
-    public void close();
+    void close();
 }

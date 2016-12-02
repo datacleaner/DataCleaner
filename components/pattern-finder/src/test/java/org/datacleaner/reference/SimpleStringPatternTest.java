@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 public class SimpleStringPatternTest extends TestCase {
 
     public void testMatches() throws Exception {
-        SimpleStringPattern ssp = new SimpleStringPattern("email", "aaaa@aaaa.aa");
+        final SimpleStringPattern ssp = new SimpleStringPattern("email", "aaaa@aaaa.aa");
 
         assertTrue(ssp.matches("kasper@eobjects.dk"));
         assertTrue(ssp.matches("kasper@eobjects.org"));
@@ -36,26 +36,26 @@ public class SimpleStringPatternTest extends TestCase {
     }
 
     public void testNullPattern() throws Exception {
-        SimpleStringPattern ssp = new SimpleStringPattern("email", "<null>");
+        final SimpleStringPattern ssp = new SimpleStringPattern("email", "<null>");
 
         assertFalse(ssp.matches("foobar"));
         assertTrue(ssp.matches(null));
         assertFalse(ssp.matches("<null>"));
         assertFalse(ssp.matches("<blank>"));
-        
+
         assertFalse(ssp.matches(""));
         assertFalse(ssp.matches(" "));
     }
-    
+
 
     public void testBlankPattern() throws Exception {
-        SimpleStringPattern ssp = new SimpleStringPattern("email", "<blank>");
+        final SimpleStringPattern ssp = new SimpleStringPattern("email", "<blank>");
 
         assertFalse(ssp.matches("foobar"));
         assertFalse(ssp.matches(null));
         assertFalse(ssp.matches("<null>"));
         assertFalse(ssp.matches("<blank>"));
-        
+
         assertTrue(ssp.matches(""));
         assertFalse(ssp.matches(" "));
     }

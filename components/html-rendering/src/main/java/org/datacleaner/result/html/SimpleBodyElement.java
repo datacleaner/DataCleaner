@@ -23,12 +23,12 @@ public class SimpleBodyElement implements BodyElement {
 
     private final String _html;
 
-    public SimpleBodyElement(String html) {
+    public SimpleBodyElement(final String html) {
         _html = html;
     }
 
     @Override
-    public String toHtml(HtmlRenderingContext renderingContext) {
+    public String toHtml(final HtmlRenderingContext renderingContext) {
         return _html;
     }
 

@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.writers.InsertIntoTableAnalyzer;
 import org.datacleaner.bootstrap.WindowContext;
@@ -40,7 +39,6 @@ import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
 import org.datacleaner.panels.ConfiguredPropertyTaskPane;
 import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.properties.MultipleMappedColumnsPropertyWidget;
 import org.datacleaner.widgets.properties.MultipleMappedPrefixedColumnsPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
@@ -69,12 +67,13 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
     private final ConfiguredPropertyDescriptor _additionalErrorLogValuesProperty;
     private final ConfiguredPropertyDescriptor _bufferSizeProperty;
     private final ConfiguredPropertyDescriptor _truncateTableProperty;
-    
-    public InsertIntoTableJobBuilderPresenter(AnalyzerComponentBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration, DCModule dcModule) {
+
+    public InsertIntoTableJobBuilderPresenter(
+            final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration, final DCModule dcModule) {
         super(analyzerJobBuilder, propertyWidgetFactory);
-        _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
+        _overriddenPropertyWidgets = new HashMap<>();
 
         final AnalyzerDescriptor<InsertIntoTableAnalyzer> descriptor = analyzerJobBuilder.getDescriptor();
         assert descriptor.getComponentClass() == InsertIntoTableAnalyzer.class;
@@ -93,45 +92,42 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
         // the Datastore property
         assert _datastoreProperty != null;
         assert _datastoreProperty.getType() == Datastore.class;
-        final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(
-                analyzerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog(), dcModule);
+        final SingleDatastorePropertyWidget datastorePropertyWidget =
+                new SingleDatastorePropertyWidget(analyzerJobBuilder, _datastoreProperty,
+                        configuration.getDatastoreCatalog(), dcModule);
         datastorePropertyWidget.setOnlyUpdatableDatastores(true);
         _overriddenPropertyWidgets.put(_datastoreProperty, datastorePropertyWidget);
 
         // The schema name (String) property
-        final SchemaNamePropertyWidget schemaNamePropertyWidget = new SchemaNamePropertyWidget(analyzerJobBuilder,
-                _schemaNameProperty);
+        final SchemaNamePropertyWidget schemaNamePropertyWidget =
+                new SchemaNamePropertyWidget(analyzerJobBuilder, _schemaNameProperty);
         _overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
 
         // The table name (String) property
-        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(
-                analyzerJobBuilder, _tableNameProperty, windowContext);
+        final SingleTableNamePropertyWidget tableNamePropertyWidget =
+                new SingleTableNamePropertyWidget(analyzerJobBuilder, _tableNameProperty, windowContext);
         _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
         // the InputColumn<?>[] property
         assert _inputColumnsProperty != null;
         assert _inputColumnsProperty.getType() == InputColumn[].class;
-        final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedPrefixedColumnsPropertyWidget(
-                analyzerJobBuilder, _inputColumnsProperty, _columnNamesProperty, " → ");
+        final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget =
+                new MultipleMappedPrefixedColumnsPropertyWidget(analyzerJobBuilder, _inputColumnsProperty,
+                        _columnNamesProperty, " → ");
         _overriddenPropertyWidgets.put(_inputColumnsProperty, inputColumnsPropertyWidget);
 
         // the String[] property
         assert _columnNamesProperty != null;
         assert _columnNamesProperty.getType() == String[].class;
-        _overriddenPropertyWidgets.put(_columnNamesProperty,
-                inputColumnsPropertyWidget.getMappedColumnNamesPropertyWidget());
+        _overriddenPropertyWidgets
+                .put(_columnNamesProperty, inputColumnsPropertyWidget.getMappedColumnNamesPropertyWidget());
 
         // chain combo boxes
         datastorePropertyWidget.connectToSchemaNamePropertyWidget(schemaNamePropertyWidget);
         schemaNamePropertyWidget.connectToTableNamePropertyWidget(tableNamePropertyWidget);
 
-        tableNamePropertyWidget.addComboListener(new Listener<Table>() {
-            @Override
-            public void onItemSelected(Table item) {
-                // update the column combo boxes when the table is selected
-                inputColumnsPropertyWidget.setTable(item);
-            }
-        });
+        // update the column combo boxes when the table is selected
+        tableNamePropertyWidget.addComboListener(inputColumnsPropertyWidget::setTable);
 
         // initialize
         schemaNamePropertyWidget.setDatastore(datastorePropertyWidget.getValue());
@@ -141,23 +137,25 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
     @Override
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-        final ConfiguredPropertyTaskPane taskPane = new ConfiguredPropertyTaskPane("Insert mapping",
-                "images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
-                        _inputColumnsProperty, _truncateTableProperty, _bufferSizeProperty));
+        final ConfiguredPropertyTaskPane taskPane =
+                new ConfiguredPropertyTaskPane("Insert mapping", "images/model/column.png",
+                        Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
+                                _inputColumnsProperty, _truncateTableProperty, _bufferSizeProperty));
 
-        final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling",
-                IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,
-                        _additionalErrorLogValuesProperty), false);
+        final ConfiguredPropertyTaskPane errorHandlingPane =
+                new ConfiguredPropertyTaskPane("Error handling", IconUtils.STATUS_WARNING,
+                        Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,
+                                _additionalErrorLogValuesProperty), false);
 
-        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
+        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<>();
         propertyTaskPanes.add(taskPane);
         propertyTaskPanes.add(errorHandlingPane);
         return propertyTaskPanes;
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
             return _overriddenPropertyWidgets.get(propertyDescriptor);
         }

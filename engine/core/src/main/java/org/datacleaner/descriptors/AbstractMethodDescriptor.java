@@ -39,15 +39,15 @@ class AbstractMethodDescriptor extends BaseObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private transient final Method _method;
+    private final transient Method _method;
     private final ComponentDescriptor<?> _componentDescriptor;
     private final String _name;
 
-    public AbstractMethodDescriptor(Method method, ComponentDescriptor<?> componentDescriptor) {
+    AbstractMethodDescriptor(final Method method, final ComponentDescriptor<?> componentDescriptor) {
         if (method.getReturnType() != void.class) {
             throw new DescriptorException("Method can only be void");
         }
-        Class<?>[] parameterTypes = method.getParameterTypes();
+        final Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length > 0) {
             throw new DescriptorException("Method cannot have parameters");
         }
@@ -57,7 +57,7 @@ class AbstractMethodDescriptor extends BaseObject implements Serializable {
         _name = method.getName();
         _componentDescriptor = componentDescriptor;
     }
-    
+
     public ComponentDescriptor<?> getComponentDescriptor() {
         return _componentDescriptor;
     }
@@ -74,14 +74,14 @@ class AbstractMethodDescriptor extends BaseObject implements Serializable {
         return getClass().getSimpleName() + "[method=" + _name + "]";
     }
 
-    protected final void invoke(Object component) throws RuntimeException, IllegalStateException {
+    protected final void invoke(final Object component) throws RuntimeException, IllegalStateException {
         try {
             _method.invoke(component);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             throw e;
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             throw convertThrownException(component, e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -89,7 +89,7 @@ class AbstractMethodDescriptor extends BaseObject implements Serializable {
         }
     }
 
-    protected RuntimeException convertThrownException(Object component, InvocationTargetException e) {
+    protected RuntimeException convertThrownException(final Object component, final InvocationTargetException e) {
         final Throwable targetException = e.getTargetException();
         if (targetException instanceof RuntimeException) {
             throw (RuntimeException) targetException;
@@ -98,16 +98,16 @@ class AbstractMethodDescriptor extends BaseObject implements Serializable {
     }
 
     public final Set<Annotation> getAnnotations() {
-        Annotation[] annotations = getMethod().getAnnotations();
-        return new HashSet<Annotation>(Arrays.asList(annotations));
+        final Annotation[] annotations = getMethod().getAnnotations();
+        return new HashSet<>(Arrays.asList(annotations));
     }
 
-    public final <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+    public final <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
         return ReflectionUtils.getAnnotation(getMethod(), annotationClass);
     }
 
     @Override
-    protected void decorateIdentity(List<Object> list) {
+    protected void decorateIdentity(final List<Object> list) {
         list.add(getMethod());
     }
 }

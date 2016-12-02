@@ -27,17 +27,17 @@ import org.slf4j.LoggerFactory;
 
 public final class JaxbValidationEventHandler implements ValidationEventHandler {
 
-	private static final Logger logger = LoggerFactory.getLogger(JaxbValidationEventHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(JaxbValidationEventHandler.class);
 
-	@Override
-	public boolean handleEvent(ValidationEvent event) {
-		int severity = event.getSeverity();
-		if (severity == ValidationEvent.WARNING) {
-			logger.warn("encountered JAXB parsing warning: " + event.getMessage());
-			return true;
-		}
+    @Override
+    public boolean handleEvent(final ValidationEvent event) {
+        final int severity = event.getSeverity();
+        if (severity == ValidationEvent.WARNING) {
+            logger.warn("encountered JAXB parsing warning: " + event.getMessage());
+            return true;
+        }
 
-		logger.warn("encountered JAXB parsing error: " + event.getMessage());
-		return false;
-	}
+        logger.warn("encountered JAXB parsing error: " + event.getMessage());
+        return false;
+    }
 }

@@ -35,5 +35,5 @@ public interface MetricPresenter extends IsWidget {
      * Gets the selected metrics of this presenter.
      * @return
      */
-    public List<MetricIdentifier> getSelectedMetrics();
+    List<MetricIdentifier> getSelectedMetrics();
 }

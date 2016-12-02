@@ -44,7 +44,8 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
     private final AnalysisJob _job;
     private final ResultWindow _resultWindow;
 
-    public AnalysisRunnerSwingWorker(DataCleanerConfiguration configuration, AnalysisJob job, ResultWindow resultWindow) {
+    public AnalysisRunnerSwingWorker(final DataCleanerConfiguration configuration, final AnalysisJob job,
+            final ResultWindow resultWindow) {
         final AnalysisListener analysisListener = resultWindow.createAnalysisListener();
         _analysisRunner = new AnalysisRunnerImpl(configuration, analysisListener);
         _job = job;
@@ -63,7 +64,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
     }
 
     public void cancelIfRunning() {
-        javax.swing.SwingWorker.StateValue state = getState();
+        final javax.swing.SwingWorker.StateValue state = getState();
         switch (state) {
         case STARTED:
         case DONE:
@@ -72,12 +73,15 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
                 if (!resultFuture.isDone()) {
                     resultFuture.cancel();
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Failed to cancel job", e);
             }
             break;
         case PENDING:
             logger.info("SwingWorker hasn't started yet - cancelIfRunning() invocation disregarded");
+            break;
+        default:
+            throw new IllegalArgumentException();
         }
     }
 }

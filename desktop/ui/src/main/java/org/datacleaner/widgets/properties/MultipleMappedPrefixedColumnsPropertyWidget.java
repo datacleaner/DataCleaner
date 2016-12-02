@@ -39,16 +39,16 @@ public class MultipleMappedPrefixedColumnsPropertyWidget extends MultipleMappedC
 
     private final String _prefix;
 
-    public MultipleMappedPrefixedColumnsPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedColumnsProperty,
-            String prefix) {
+    public MultipleMappedPrefixedColumnsPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor inputColumnsProperty,
+            final ConfiguredPropertyDescriptor mappedColumnsProperty, final String prefix) {
         super(componentBuilder, inputColumnsProperty, mappedColumnsProperty);
         _prefix = prefix;
     }
 
     @Override
-    protected JComponent decorateSourceColumnComboBox(InputColumn<?> inputColumn,
-            SourceColumnComboBox sourceColumnComboBox) {
+    protected JComponent decorateSourceColumnComboBox(final InputColumn<?> inputColumn,
+            final SourceColumnComboBox sourceColumnComboBox) {
         final DCLabel label = DCLabel.dark(_prefix);
         label.setFont(WidgetUtils.FONT_MONOSPACE);
 

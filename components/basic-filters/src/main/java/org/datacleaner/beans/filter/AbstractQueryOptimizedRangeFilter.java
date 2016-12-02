@@ -38,8 +38,8 @@ import org.datacleaner.api.Validate;
  * which demarcate valid value bounds.
  */
 @Distributed(true)
-abstract class AbstractQueryOptimizedRangeFilter<E> implements QueryOptimizedFilter<RangeFilterCategory>,
-        Comparator<E>, HasLabelAdvice {
+abstract class AbstractQueryOptimizedRangeFilter<E>
+        implements QueryOptimizedFilter<RangeFilterCategory>, Comparator<E>, HasLabelAdvice {
 
     @Validate
     public void validate() {
@@ -55,12 +55,12 @@ abstract class AbstractQueryOptimizedRangeFilter<E> implements QueryOptimizedFil
     public abstract E getLowestValue();
 
     @Override
-    public RangeFilterCategory categorize(InputRow inputRow) {
-        E value = inputRow.getValue(getColumn());
+    public RangeFilterCategory categorize(final InputRow inputRow) {
+        final E value = inputRow.getValue(getColumn());
         return categorize(value);
     }
 
-    protected RangeFilterCategory categorize(E value) {
+    protected RangeFilterCategory categorize(final E value) {
         if (value == null) {
             return RangeFilterCategory.LOWER;
         }
@@ -75,7 +75,7 @@ abstract class AbstractQueryOptimizedRangeFilter<E> implements QueryOptimizedFil
     }
 
     @Override
-    public boolean isOptimizable(RangeFilterCategory category) {
+    public boolean isOptimizable(final RangeFilterCategory category) {
         return true;
     }
 
@@ -94,47 +94,59 @@ abstract class AbstractQueryOptimizedRangeFilter<E> implements QueryOptimizedFil
     }
 
     @Override
-    public Query optimizeQuery(Query q, RangeFilterCategory category) {
+    public Query optimizeQuery(final Query q, final RangeFilterCategory category) {
         final Column col = getColumn().getPhysicalColumn();
         final SelectItem selectItem = new SelectItem(col);
         switch (category) {
         case LOWER:
-            // special case, null is also considered "lower"
-            final FilterItem isNullFilter = new FilterItem(selectItem, OperatorType.EQUALS_TO, null);
-            final FilterItem isLowerThanFilter = new FilterItem(selectItem, OperatorType.LESS_THAN, getLowestValue());
-            q.where(new FilterItem(isNullFilter, isLowerThanFilter));
-            return q;
+            return lowerQuery(q, selectItem);
         case HIGHER:
-            q.where(selectItem, OperatorType.GREATER_THAN, getHighestValue());
-            return q;
+            return higherQuery(q, selectItem);
         case VALID:
-            final E lowestValue = getLowestValue();
-            final E highestValue = getHighestValue();
-            if (compare(lowestValue, highestValue) == 0) {
-                // special case where highest and lowest value are equal
-                q.where(col, OperatorType.EQUALS_TO, lowestValue);
-                return q;
-            }
-
-            final FilterItem orFilter1;
-            {
-                final FilterItem f1 = new FilterItem(selectItem, OperatorType.GREATER_THAN, lowestValue);
-                final FilterItem f2 = new FilterItem(selectItem, OperatorType.EQUALS_TO, lowestValue);
-                orFilter1 = new FilterItem(f1, f2);
-            }
-
-            final FilterItem orFilter2;
-            {
-                final FilterItem f3 = new FilterItem(selectItem, OperatorType.LESS_THAN, highestValue);
-                final FilterItem f4 = new FilterItem(selectItem, OperatorType.EQUALS_TO, highestValue);
-                orFilter2 = new FilterItem(f3, f4);
-            }
-
-            q.where(orFilter1);
-            q.where(orFilter2);
-            return q;
+            return validQuery(q, col, selectItem);
         default:
             throw new UnsupportedOperationException();
         }
+    }
+
+    private Query validQuery(final Query query, final Column col, final SelectItem selectItem) {
+        final E lowestValue = getLowestValue();
+        final E highestValue = getHighestValue();
+        if (compare(lowestValue, highestValue) == 0) {
+            // special case where highest and lowest value are equal
+            query.where(col, OperatorType.EQUALS_TO, lowestValue);
+            return query;
+        }
+
+        final FilterItem orFilter1;
+        {
+            final FilterItem f1 = new FilterItem(selectItem, OperatorType.GREATER_THAN, lowestValue);
+            final FilterItem f2 = new FilterItem(selectItem, OperatorType.EQUALS_TO, lowestValue);
+            orFilter1 = new FilterItem(f1, f2);
+        }
+
+        final FilterItem orFilter2;
+        {
+            final FilterItem f3 = new FilterItem(selectItem, OperatorType.LESS_THAN, highestValue);
+            final FilterItem f4 = new FilterItem(selectItem, OperatorType.EQUALS_TO, highestValue);
+            orFilter2 = new FilterItem(f3, f4);
+        }
+
+        query.where(orFilter1);
+        query.where(orFilter2);
+        return query;
+    }
+
+    private Query higherQuery(final Query query, final SelectItem selectItem) {
+        query.where(selectItem, OperatorType.GREATER_THAN, getHighestValue());
+        return query;
+    }
+
+    private Query lowerQuery(final Query query, final SelectItem selectItem) {
+        // special case, null is also considered "lower"
+        final FilterItem isNullFilter = new FilterItem(selectItem, OperatorType.EQUALS_TO, null);
+        final FilterItem isLowerThanFilter = new FilterItem(selectItem, OperatorType.LESS_THAN, getLowestValue());
+        query.where(new FilterItem(isNullFilter, isLowerThanFilter));
+        return query;
     }
 }

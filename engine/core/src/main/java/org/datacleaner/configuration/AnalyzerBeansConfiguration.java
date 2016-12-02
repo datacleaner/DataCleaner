@@ -30,7 +30,7 @@ import org.datacleaner.storage.StorageProvider;
  * Represents the configuration of the application. The configuration can
  * provide all the needed providers and catalogs used by DataCleaner to
  * configure and execute jobs.
- * 
+ *
  * @deprecated use {@link DataCleanerConfiguration} and/or
  *             {@link DataCleanerEnvironment} instead.
  */
@@ -42,39 +42,39 @@ public interface AnalyzerBeansConfiguration extends DataCleanerConfiguration, Da
      * @return the datastore catalog defined in this configuration
      */
     @Override
-    public DatastoreCatalog getDatastoreCatalog();
+    DatastoreCatalog getDatastoreCatalog();
 
     /**
      * @see ReferenceDataCatalog
      * @return the reference data catalog defined in this configuration
      */
     @Override
-    public ReferenceDataCatalog getReferenceDataCatalog();
+    ReferenceDataCatalog getReferenceDataCatalog();
 
     /**
      * @see DescriptorProvider
      * @return the descriptor provider defined in this configuration
      */
     @Override
-    public DescriptorProvider getDescriptorProvider();
+    DescriptorProvider getDescriptorProvider();
 
     /**
      * @see StorageProvider
      * @return the storage provider defined in this configuration
      */
     @Override
-    public StorageProvider getStorageProvider();
+    StorageProvider getStorageProvider();
 
     /**
      * @see InjectionManager
      * @return an injection manager for the job
      */
-    public InjectionManager getInjectionManager(AnalysisJob job);
+    InjectionManager getInjectionManager(AnalysisJob job);
 
     /**
      * @see TaskRunner
      * @return the task runner defined in this configuration
      */
     @Override
-    public TaskRunner getTaskRunner();
+    TaskRunner getTaskRunner();
 }

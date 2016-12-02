@@ -39,58 +39,54 @@ import de.odysseus.el.util.SimpleContext;
  * InputColumn that evaluates an EL expression in order to return a computed
  * value. This can be used as a lightweight alternative to eg. JavaScript
  * transformation.
- * 
- * 
+ *
+ *
  */
 public class ELInputColumn extends AbstractExpressionBasedInputColumn<String> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(ELInputColumn.class);
+    private static final Logger logger = LoggerFactory.getLogger(ELInputColumn.class);
 
-	private final ExpressionFactory _factory;
-	private final String _expression;
+    private final ExpressionFactory _factory;
+    private final String _expression;
 
-	public ELInputColumn(String expression) {
-		_expression = expression;
-		_factory = new ExpressionFactoryImpl();
-	}
+    public ELInputColumn(final String expression) {
+        _expression = expression;
+        _factory = new ExpressionFactoryImpl();
+    }
 
-	@Override
-	public String evaluate(InputRow row) {
-		SimpleContext context = new SimpleContext();
-		List<InputColumn<?>> inputColumns = row.getInputColumns();
-		for (InputColumn<?> inputColumn : inputColumns) {
-			if (!(inputColumn instanceof ExpressionBasedInputColumn)) {
-				Object value = row.getValue(inputColumn);
-				Class<?> javaType = inputColumn.getDataType();
-				ValueExpression valueExpression = _factory
-						.createValueExpression(value, javaType);
-				String variableName = inputColumn.getName();
-				variableName = StringUtils
-						.replaceWhitespaces(variableName, "_");
-				context.setVariable(variableName, valueExpression);
-			}
-		}
+    @Override
+    public String evaluate(final InputRow row) {
+        final SimpleContext context = new SimpleContext();
+        final List<InputColumn<?>> inputColumns = row.getInputColumns();
+        for (final InputColumn<?> inputColumn : inputColumns) {
+            if (!(inputColumn instanceof ExpressionBasedInputColumn)) {
+                final Object value = row.getValue(inputColumn);
+                final Class<?> javaType = inputColumn.getDataType();
+                final ValueExpression valueExpression = _factory.createValueExpression(value, javaType);
+                String variableName = inputColumn.getName();
+                variableName = StringUtils.replaceWhitespaces(variableName, "_");
+                context.setVariable(variableName, valueExpression);
+            }
+        }
 
-		try {
-			ValueExpression valueExpression = _factory.createValueExpression(
-					context, _expression, String.class);
-			return (String) valueExpression.getValue(context);
-		} catch (ELException e) {
-			logger.error("Could not evaluate EL expression", e);
-			return null;
-		}
-	}
+        try {
+            final ValueExpression valueExpression = _factory.createValueExpression(context, _expression, String.class);
+            return (String) valueExpression.getValue(context);
+        } catch (final ELException e) {
+            logger.error("Could not evaluate EL expression", e);
+            return null;
+        }
+    }
 
-	@Override
-	public String getExpression() {
-		return _expression;
-	}
+    @Override
+    public String getExpression() {
+        return _expression;
+    }
 
-	@Override
-	public Class<? extends String> getDataType() {
-		return String.class;
-	}
+    @Override
+    public Class<? extends String> getDataType() {
+        return String.class;
+    }
 }

@@ -24,96 +24,86 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.monitor.wizard.WizardPageController;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
+import org.datacleaner.monitor.wizard.WizardPageController;
 
 /**
  * A simple {@link WizardPageController} that asks the user to select the
  * {@link Column}s of interest.
  */
-public abstract class SelectColumnsWizardPage extends
-		AbstractFreemarkerWizardPage {
+public abstract class SelectColumnsWizardPage extends AbstractFreemarkerWizardPage {
 
-	private final Integer _pageIndex;
-	private final Map<String, Column> _availableColumns;
+    private final Integer _pageIndex;
+    private final Map<String, Column> _availableColumns;
 
-	public SelectColumnsWizardPage(Integer pageIndex, Table table) {
-		this(pageIndex, table.getColumns());
-	}
+    public SelectColumnsWizardPage(final Integer pageIndex, final Table table) {
+        this(pageIndex, table.getColumns());
+    }
 
-	public SelectColumnsWizardPage(Integer pageIndex, Column[] availableColumns) {
-		_pageIndex = pageIndex;
-		_availableColumns = new LinkedHashMap<String, Column>();
-		for (Column column : availableColumns) {
-			_availableColumns.put(column.getName(), column);
-		}
-	}
+    public SelectColumnsWizardPage(final Integer pageIndex, final Column[] availableColumns) {
+        _pageIndex = pageIndex;
+        _availableColumns = new LinkedHashMap<>();
+        for (final Column column : availableColumns) {
+            _availableColumns.put(column.getName(), column);
+        }
+    }
 
-	@Override
-	protected Class<?> getTemplateFriendlyClass() {
-		return SelectColumnsWizardPage.class;
-	}
+    @Override
+    protected Class<?> getTemplateFriendlyClass() {
+        return SelectColumnsWizardPage.class;
+    }
 
-	/**
-	 * Gets the "header" part of the page, shown before the table of column
-	 * selections. Typically this part will contain instructions to the user as
-	 * to which columns to select
-	 * 
-	 * @return
-	 */
-	protected String getHeaderHtml() {
-		return "<p>Please select the source columns of the job:</p>";
-	}
+    /**
+     * Gets the "header" part of the page, shown before the table of column
+     * selections. Typically this part will contain instructions to the user as
+     * to which columns to select
+     *
+     * @return
+     */
+    protected String getHeaderHtml() {
+        return "<p>Please select the source columns of the job:</p>";
+    }
 
-	/**
-	 * Gets a "footer" part of the page, shown after the table of column
-	 * selections.
-	 * 
-	 * @return
-	 */
-	protected String getFooterHtml() {
-		return "";
-	}
+    /**
+     * Gets a "footer" part of the page, shown after the table of column
+     * selections.
+     *
+     * @return
+     */
+    protected String getFooterHtml() {
+        return "";
+    }
 
-	@Override
-	protected String getTemplateFilename() {
-		return "SelectColumnsWizardPage.html";
-	}
+    @Override
+    protected String getTemplateFilename() {
+        return "SelectColumnsWizardPage.html";
+    }
 
-	@Override
-	public Integer getPageIndex() {
-		return _pageIndex;
-	}
+    @Override
+    public Integer getPageIndex() {
+        return _pageIndex;
+    }
 
-	@Override
-	protected Map<String, Object> getFormModel() {
-		final Map<String, Object> map = new HashMap<String, Object>();
-		map.put("headerHtml", getHeaderHtml());
-		map.put("columns", _availableColumns.values());
-		map.put("footerHtml", getFooterHtml());
-		return map;
-	}
+    @Override
+    protected Map<String, Object> getFormModel() {
+        final Map<String, Object> map = new HashMap<>();
+        map.put("headerHtml", getHeaderHtml());
+        map.put("columns", _availableColumns.values());
+        map.put("footerHtml", getFooterHtml());
+        return map;
+    }
 
-	@Override
-	public WizardPageController nextPageController(
-			Map<String, List<String>> formParameters) {
-		final List<String> columnNames = formParameters.get("columns");
+    @Override
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters) {
+        final List<String> columnNames = formParameters.get("columns");
 
-		final List<Column> selectedColumns = CollectionUtils.map(columnNames,
-				new Func<String, Column>() {
-					@Override
-					public Column eval(String columnName) {
-						return _availableColumns.get(columnName);
-					}
-				});
+        final List<Column> selectedColumns = CollectionUtils.map(columnNames, _availableColumns::get);
 
-		return nextPageController(selectedColumns);
-	}
+        return nextPageController(selectedColumns);
+    }
 
-	protected abstract WizardPageController nextPageController(
-			List<Column> selectedColumns);
+    protected abstract WizardPageController nextPageController(List<Column> selectedColumns);
 
 }

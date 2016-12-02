@@ -28,7 +28,7 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 
 /**
  * {@link ResourceTypeHandler} for {@link RepositoryFileResource}s.
- * 
+ *
  * Unlike most other {@link ResourceTypeHandler}s, this one is contextual, since
  * it needs a reference to the repository of the system and it is also specific
  * to a single tenant to ensure isolation between loaded repository content.
@@ -38,23 +38,23 @@ public class RepositoryFileResourceTypeHandler implements ResourceTypeHandler<Re
     private final Repository _repository;
     private final RepositoryFolder _homeFolder;
 
-    public RepositoryFileResourceTypeHandler(Repository repository, RepositoryFolder homeFolder) {
+    public RepositoryFileResourceTypeHandler(final Repository repository, final RepositoryFolder homeFolder) {
         _repository = repository;
         _homeFolder = homeFolder;
     }
 
-    public RepositoryFileResourceTypeHandler(Repository repository, String tenantId) {
+    public RepositoryFileResourceTypeHandler(final Repository repository, final String tenantId) {
         _repository = repository;
         _homeFolder = repository.getFolder(tenantId);
     }
 
     @Override
-    public boolean isParserFor(Class<? extends Resource> cls) {
+    public boolean isParserFor(final Class<? extends Resource> cls) {
         return ReflectionUtils.is(cls, RepositoryFileResource.class);
     }
 
     @Override
-    public String createPath(Resource resource) {
+    public String createPath(final Resource resource) {
         final RepositoryFileResource repositoryFileResource = (RepositoryFileResource) resource;
         final String qualifiedPath = repositoryFileResource.getQualifiedPath();
         final String prefix = getHomeFolderPrefix();
@@ -64,9 +64,7 @@ public class RepositoryFileResourceTypeHandler implements ResourceTypeHandler<Re
                             + "'. Got: " + qualifiedPath);
         }
 
-        final String relativePath = qualifiedPath.substring(prefix.length());
-
-        return relativePath;
+        return qualifiedPath.substring(prefix.length());
     }
 
     private String getHomeFolderPrefix() {
@@ -83,7 +81,7 @@ public class RepositoryFileResourceTypeHandler implements ResourceTypeHandler<Re
     }
 
     @Override
-    public RepositoryFileResource parsePath(String path) {
+    public RepositoryFileResource parsePath(final String path) {
         final String qualifiedPath = getHomeFolderPrefix() + path;
         return new RepositoryFileResource(_repository, qualifiedPath);
     }

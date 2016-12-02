@@ -19,6 +19,6 @@
  */
 package org.datacleaner.storage;
 
-public abstract class AbstractRowAnnotationSampler  implements RowAnnotationFactory {
+public abstract class AbstractRowAnnotationSampler implements RowAnnotationFactory {
 
 }

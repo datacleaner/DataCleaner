@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
+import org.datacleaner.util.StringUtils;
 
 /**
  * Wizard page for entering the base url of a SugarCRM system
@@ -41,7 +41,8 @@ public abstract class SugarCrmBaseUrlWizardPage extends AbstractFreemarkerWizard
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters) throws DCUserInputException {
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
+            throws DCUserInputException {
         _baseUrl = getString(formParameters, "baseUrl");
         if (StringUtils.isNullOrEmpty(_baseUrl)) {
             throw new DCUserInputException("Please provide a valid base URL.");
@@ -51,7 +52,7 @@ public abstract class SugarCrmBaseUrlWizardPage extends AbstractFreemarkerWizard
 
     /**
      * Invoked when a base URL has been entered and 'next' is clicked.
-     * 
+     *
      * @param baseUrl
      * @return
      */
@@ -64,7 +65,7 @@ public abstract class SugarCrmBaseUrlWizardPage extends AbstractFreemarkerWizard
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("baseUrl", _baseUrl);
         return map;
     }

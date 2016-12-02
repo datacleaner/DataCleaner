@@ -36,16 +36,16 @@ public class MockHadoopConfigHelper {
 
     private final String path = resourcesFolder.toURI().toString();
 
-    public MockHadoopConfigHelper(TemporaryFolder temporaryFolder) throws IOException {
-         confFolder = temporaryFolder.newFolder();
+    public MockHadoopConfigHelper(final TemporaryFolder temporaryFolder) throws IOException {
+        confFolder = temporaryFolder.newFolder();
     }
 
     public void generateCoreFile() throws IOException {
         final File coreSiteFile = new File(confFolder, "conf-site.xml");
 
-        try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("core-site-template.xml")) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("core-site-template.xml")) {
             final BufferedReader reader = FileHelper.getBufferedReader(inputStream, FileHelper.UTF_8_ENCODING);
-            try (final Writer writer = FileHelper.getWriter(coreSiteFile)) {
+            try (Writer writer = FileHelper.getWriter(coreSiteFile)) {
                 String line = reader.readLine();
                 while (line != null) {
                     line = line.replace("${PATH}", path);
@@ -64,7 +64,6 @@ public class MockHadoopConfigHelper {
     public String getPath() {
         return path;
     }
-
 
 
 }

@@ -29,7 +29,7 @@ import org.datacleaner.api.Initialize;
 /**
  * Interface for jobs that can be run and scheduled in DataCleaner using the
  * {@link CustomJobEngine}.
- * 
+ *
  * Instances of this interface can have {@link Inject}ed fields, declare
  * {@link Configured} properties and {@link Initialize} methods etc., just like
  * any other AnalyzerBeans component.
@@ -39,12 +39,12 @@ public interface CustomJob {
     /**
      * Called by the {@link CustomJobEngine} when the user or schedule triggers
      * job execution.
-     * 
+     *
      * @param callback
      *            a callback for the job to be able to report it's progress and
      *            get contextual information.
      * @return
      * @throws Exception
      */
-    public Serializable execute(CustomJobCallback callback) throws Exception;
+    Serializable execute(CustomJobCallback callback) throws Exception;
 }

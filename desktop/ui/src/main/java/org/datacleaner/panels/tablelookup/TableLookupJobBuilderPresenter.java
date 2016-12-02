@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
@@ -40,7 +39,6 @@ import org.datacleaner.panels.ConfiguredPropertyTaskPane;
 import org.datacleaner.panels.TransformerComponentBuilderPanel;
 import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.properties.MultipleMappedColumnsPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
@@ -51,7 +49,7 @@ import org.datacleaner.widgets.properties.SingleTableNamePropertyWidget;
 /**
  * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link TableLookupTransformer}.
- * 
+ *
  * @author Kasper Sørensen
  */
 class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
@@ -69,11 +67,12 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
     private final ConfiguredPropertyDescriptor _cacheLookupsProperty;
     private final ConfiguredPropertyDescriptor _joinSemanticProperty;
 
-    public TableLookupJobBuilderPresenter(TransformerComponentBuilder<TableLookupTransformer> transformerJobBuilder,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration, DCModule dcModule) {
+    public TableLookupJobBuilderPresenter(
+            final TransformerComponentBuilder<TableLookupTransformer> transformerJobBuilder,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration, final DCModule dcModule) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
-        _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
+        _overriddenPropertyWidgets = new HashMap<>();
 
         final TransformerDescriptor<?> descriptor = transformerJobBuilder.getDescriptor();
         assert descriptor.getComponentClass() == TableLookupTransformer.class;
@@ -90,49 +89,48 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
         // the Datastore property
         assert _datastoreProperty != null;
         assert _datastoreProperty.getType() == Datastore.class;
-        final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(
-                transformerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog(), dcModule);
+        final SingleDatastorePropertyWidget datastorePropertyWidget =
+                new SingleDatastorePropertyWidget(transformerJobBuilder, _datastoreProperty,
+                        configuration.getDatastoreCatalog(), dcModule);
         _overriddenPropertyWidgets.put(_datastoreProperty, datastorePropertyWidget);
 
         // The schema name (String) property
-        final SchemaNamePropertyWidget schemaNamePropertyWidget = new SchemaNamePropertyWidget(transformerJobBuilder,
-                _schemaNameProperty);
+        final SchemaNamePropertyWidget schemaNamePropertyWidget =
+                new SchemaNamePropertyWidget(transformerJobBuilder, _schemaNameProperty);
         _overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
 
         // The table name (String) property
-        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(
-                transformerJobBuilder, _tableNameProperty, windowContext);
+        final SingleTableNamePropertyWidget tableNamePropertyWidget =
+                new SingleTableNamePropertyWidget(transformerJobBuilder, _tableNameProperty, windowContext);
         _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
         // the output columns (String[]) property
-        final TableLookupOutputColumnsPropertyWidget outputColumnsPropertyWidget = new TableLookupOutputColumnsPropertyWidget(
-                transformerJobBuilder, _outputColumnsProperty);
+        final TableLookupOutputColumnsPropertyWidget outputColumnsPropertyWidget =
+                new TableLookupOutputColumnsPropertyWidget(transformerJobBuilder, _outputColumnsProperty);
         _overriddenPropertyWidgets.put(_outputColumnsProperty, outputColumnsPropertyWidget);
 
         // the InputColumn<?>[] property
         assert _inputColumnArrayProperty != null;
         assert _inputColumnArrayProperty.getType() == InputColumn[].class;
-        final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedColumnsPropertyWidget(
-                transformerJobBuilder, _inputColumnArrayProperty, _columnNameArrayProperty);
+        final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget =
+                new MultipleMappedColumnsPropertyWidget(transformerJobBuilder, _inputColumnArrayProperty,
+                        _columnNameArrayProperty);
         _overriddenPropertyWidgets.put(_inputColumnArrayProperty, inputColumnsPropertyWidget);
 
         // the String[] property
         assert _columnNameArrayProperty != null;
         assert _columnNameArrayProperty.getType() == String[].class;
-        _overriddenPropertyWidgets.put(_columnNameArrayProperty,
-                inputColumnsPropertyWidget.getMappedColumnNamesPropertyWidget());
+        _overriddenPropertyWidgets
+                .put(_columnNameArrayProperty, inputColumnsPropertyWidget.getMappedColumnNamesPropertyWidget());
 
         // chain combo boxes
         datastorePropertyWidget.connectToSchemaNamePropertyWidget(schemaNamePropertyWidget);
         schemaNamePropertyWidget.connectToTableNamePropertyWidget(tableNamePropertyWidget);
 
-        tableNamePropertyWidget.addComboListener(new Listener<Table>() {
-            @Override
-            public void onItemSelected(Table item) {
-                // update the column combo boxes when the table is selected
-                inputColumnsPropertyWidget.setTable(item);
-                outputColumnsPropertyWidget.setTable(item);
-            }
+        tableNamePropertyWidget.addComboListener(item -> {
+            // update the column combo boxes when the table is selected
+            inputColumnsPropertyWidget.setTable(item);
+            outputColumnsPropertyWidget.setTable(item);
         });
 
         // initialize
@@ -144,14 +142,15 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
     @Override
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
+        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<>();
 
-        final ConfiguredPropertyTaskPane inputMappingTaskPane = new ConfiguredPropertyTaskPane("Input mapping",
-                "images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
-                        _inputColumnArrayProperty, _columnNameArrayProperty));
-        final ConfiguredPropertyTaskPane outputMappingTaskPane = new ConfiguredPropertyTaskPane("Output mapping",
-                IconUtils.MENU_OPTIONS, Arrays.asList(_outputColumnsProperty, _joinSemanticProperty,
-                        _cacheLookupsProperty));
+        final ConfiguredPropertyTaskPane inputMappingTaskPane =
+                new ConfiguredPropertyTaskPane("Input mapping", "images/model/column.png",
+                        Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
+                                _inputColumnArrayProperty, _columnNameArrayProperty));
+        final ConfiguredPropertyTaskPane outputMappingTaskPane =
+                new ConfiguredPropertyTaskPane("Output mapping", IconUtils.MENU_OPTIONS,
+                        Arrays.asList(_outputColumnsProperty, _joinSemanticProperty, _cacheLookupsProperty));
         propertyTaskPanes.add(inputMappingTaskPane);
         propertyTaskPanes.add(outputMappingTaskPane);
 
@@ -159,8 +158,8 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
             return _overriddenPropertyWidgets.get(propertyDescriptor);
         }

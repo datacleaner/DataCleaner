@@ -1,8 +1,6 @@
 package org.datacleaner.monitor.jobwizard.movedata
-import org.datacleaner.connection.UpdateableDatastore
-import org.datacleaner.connection.Datastore
-import org.datacleaner.connection.UpdateableDatastoreConnection
 import org.apache.metamodel.UpdateableDataContext
+import org.datacleaner.connection.{Datastore, UpdateableDatastore, UpdateableDatastoreConnection}
 
 /**
  * An implementation of the UpdateableDatastore interface.

@@ -19,22 +19,24 @@
  */
 package org.datacleaner.job;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
+import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
-import org.apache.metamodel.schema.Column;
 
 /**
  * Defines a job to be executed by DataCleaner.
- * 
+ *
  * A {@link AnalysisJob} contains a set of components.
- * 
+ *
  * A {@link AnalysisJob} references a source {@link Datastore} and some
  * {@link Column}s (represented via {@link InputColumn}s) of this datastore.
- * 
+ *
  * Building jobs is usually done using the <b>AnalysisJobBuilder</b> class.
- * 
+ *
  * Executing jobs is usually done using the <b>AnalysisRunner</b> interface.
  */
 public interface AnalysisJob {
@@ -42,44 +44,63 @@ public interface AnalysisJob {
     /**
      * Gets the {@link AnalysisJobMetadata} which add additional descriptions
      * and properties of the job.
-     * 
+     *
      * @return
      */
-    public AnalysisJobMetadata getMetadata();
+    AnalysisJobMetadata getMetadata();
 
     /**
      * Gets the {@link Datastore} that this job uses as it's source.
-     * 
+     *
      * @return
      */
-    public Datastore getDatastore();
+    Datastore getDatastore();
 
     /**
      * Gets the source columns of the {@link Datastore} (see
      * {@link #getDatastore()}) referenced by this job.
-     * 
+     *
      * @return
      */
-    public List<InputColumn<?>> getSourceColumns();
+    List<InputColumn<?>> getSourceColumns();
 
     /**
      * Gets all {@link TransformerJob}s contained in this job.
-     * 
+     *
      * @return
      */
-    public List<TransformerJob> getTransformerJobs();
+    List<TransformerJob> getTransformerJobs();
 
     /**
      * Gets all {@link FilterJob}s contained in this job.
-     * 
+     *
      * @return
      */
-    public List<FilterJob> getFilterJobs();
+    List<FilterJob> getFilterJobs();
 
     /**
      * Gets all {@link AnalyzerJob}s contained in this job.
-     * 
+     *
      * @return
      */
-    public List<AnalyzerJob> getAnalyzerJobs();
+    List<AnalyzerJob> getAnalyzerJobs();
+
+    /**
+     * Get all {@link ComponentJob}s contained in this job.
+     *
+     * @return
+     */
+    default List<ComponentJob> getComponentJobs() {
+        final ArrayList<ComponentJob> componentJobs = new ArrayList<>();
+        componentJobs.addAll(getTransformerJobs());
+        componentJobs.addAll(getAnalyzerJobs());
+        componentJobs.addAll(getFilterJobs());
+        return componentJobs;
+    }
+
+    default Stream<AnalysisJob> flattened() {
+        return Stream.concat(Stream.of(this), getComponentJobs().stream().flatMap(
+                componentJob -> Stream.of(componentJob.getOutputDataStreamJobs()).map(OutputDataStreamJob::getJob))
+                .flatMap(AnalysisJob::flattened));
+    }
 }

@@ -50,8 +50,8 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
         super.init();
 
         if (_delegate == null) {
-            WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            SchedulingService delegate = applicationContext.getBean(SchedulingService.class);
+            final WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final SchedulingService delegate = applicationContext.getBean(SchedulingService.class);
             if (delegate == null) {
                 throw new ServletException("No delegate found in application context!");
             }
@@ -63,71 +63,74 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
         return _delegate;
     }
 
-    public void setDelegate(SchedulingService delegate) {
+    public void setDelegate(final SchedulingService delegate) {
         _delegate = delegate;
     }
 
     @Override
-    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant) {
-        return _delegate.getSchedules(tenant);
+    public List<ScheduleDefinition> getSchedules(final TenantIdentifier tenant, final boolean loadProperties) {
+        return _delegate.getSchedules(tenant, loadProperties);
     }
 
     @Override
-    public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition) {
+    public ScheduleDefinition updateSchedule(final TenantIdentifier tenant,
+            final ScheduleDefinition scheduleDefinition) {
         return _delegate.updateSchedule(tenant, scheduleDefinition);
     }
 
     @Override
-    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
+    public List<ExecutionIdentifier> getAllExecutions(final TenantIdentifier tenant, final JobIdentifier job)
+            throws DCSecurityException, IllegalStateException {
         return _delegate.getAllExecutions(tenant, job);
     }
 
     @Override
-    public ExecutionLog getExecution(TenantIdentifier tenant, ExecutionIdentifier executionIdentifier)
+    public ExecutionLog getExecution(final TenantIdentifier tenant, final ExecutionIdentifier executionIdentifier)
             throws DCSecurityException {
         return _delegate.getExecution(tenant, executionIdentifier);
     }
 
     @Override
-    public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) {
+    public ExecutionLog getLatestExecution(final TenantIdentifier tenant, final JobIdentifier job) {
         return _delegate.getLatestExecution(tenant, job);
     }
 
     @Override
-    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
+    public ExecutionLog triggerExecution(final TenantIdentifier tenant, final JobIdentifier job) {
         return _delegate.triggerExecution(tenant, job);
     }
 
     @Override
-    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job,
-            Map<String, String> overrideProperties) {
+    public ExecutionLog triggerExecution(final TenantIdentifier tenant, final JobIdentifier job,
+            final Map<String, String> overrideProperties) {
         return _delegate.triggerExecution(tenant, job, overrideProperties);
     }
 
     @Override
-    public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)
-            throws DCSecurityException {
+    public List<JobIdentifier> getDependentJobCandidates(final TenantIdentifier tenant,
+            final ScheduleDefinition schedule) throws DCSecurityException {
         return _delegate.getDependentJobCandidates(tenant, schedule);
     }
 
     @Override
-    public void removeSchedule(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException {
+    public void removeSchedule(final TenantIdentifier tenant, final JobIdentifier job) throws DCSecurityException {
         _delegate.removeSchedule(tenant, job);
     }
 
     @Override
-    public boolean cancelExecution(TenantIdentifier tenant, ExecutionLog executionLog) throws DCSecurityException {
+    public boolean cancelExecution(final TenantIdentifier tenant, final ExecutionLog executionLog)
+            throws DCSecurityException {
         return _delegate.cancelExecution(tenant, executionLog);
     }
-    
+
     @Override
-    public ScheduleDefinition getSchedule(TenantIdentifier tenant, JobIdentifier jobIdentifier)
+    public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier)
             throws DCSecurityException {
         return _delegate.getSchedule(tenant, jobIdentifier);
     }
 
-	@Override
-	public String getServerDate() {
-		return _delegate.getServerDate();
-	}
+    @Override
+    public String getServerDate() {
+        return _delegate.getServerDate();
+    }
 }

@@ -20,8 +20,6 @@
 package org.datacleaner.widgets;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -35,62 +33,59 @@ import org.jdesktop.swingx.VerticalLayout;
 
 /**
  * Panel that contains a schema tree and allows for a "hide/show" mechanism
- * 
+ *
  * @author Kasper Sørensen
  */
 public class CollapsibleTreePanel extends DCPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.get();
+    private static final ImageManager imageManager = ImageManager.get();
 
-	private final JXCollapsiblePane _collapsibleTreePane;
-	private final JButton _toggleTreeViewButton;
+    private final JXCollapsiblePane _collapsibleTreePane;
+    private final JButton _toggleTreeViewButton;
 
-	public CollapsibleTreePanel(JComponent treeComponent) {
-		_collapsibleTreePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
-		_collapsibleTreePane.getContentPane().setBackground(WidgetUtils.BG_COLOR_DARK);
-		_collapsibleTreePane.add(treeComponent);
-		_collapsibleTreePane.setAnimated(false);
+    public CollapsibleTreePanel(final JComponent treeComponent) {
+        _collapsibleTreePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
+        _collapsibleTreePane.getContentPane().setBackground(WidgetUtils.BG_COLOR_DARK);
+        _collapsibleTreePane.add(treeComponent);
+        _collapsibleTreePane.setAnimated(false);
 
-		_toggleTreeViewButton = new JButton(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
-		_toggleTreeViewButton.setBorder(null);
-		_toggleTreeViewButton.setOpaque(false);
-		_toggleTreeViewButton.setContentAreaFilled(false);
-		_toggleTreeViewButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				boolean collapsed = _collapsibleTreePane.isCollapsed();
-				if (collapsed) {
-					_toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
-					_toggleTreeViewButton.setBorder(null);
-				} else {
-					_toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-expand.png"));
-					_toggleTreeViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
-				}
-				_collapsibleTreePane.setCollapsed(!collapsed);
-			}
-		});
+        _toggleTreeViewButton = new JButton(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
+        _toggleTreeViewButton.setBorder(null);
+        _toggleTreeViewButton.setOpaque(false);
+        _toggleTreeViewButton.setContentAreaFilled(false);
+        _toggleTreeViewButton.addActionListener(e -> {
+            final boolean collapsed = _collapsibleTreePane.isCollapsed();
+            if (collapsed) {
+                _toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
+                _toggleTreeViewButton.setBorder(null);
+            } else {
+                _toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-expand.png"));
+                _toggleTreeViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
+            }
+            _collapsibleTreePane.setCollapsed(!collapsed);
+        });
 
-		final DCPanel collapseButtonPanel = new DCPanel();
-		collapseButtonPanel.setOpaque(true);
-		collapseButtonPanel.setBackground(WidgetUtils.BG_COLOR_DARK);
-		collapseButtonPanel.setLayout(new VerticalLayout(4));
-		collapseButtonPanel.setBorder(null);
-		collapseButtonPanel.add(_toggleTreeViewButton);
+        final DCPanel collapseButtonPanel = new DCPanel();
+        collapseButtonPanel.setOpaque(true);
+        collapseButtonPanel.setBackground(WidgetUtils.BG_COLOR_DARK);
+        collapseButtonPanel.setLayout(new VerticalLayout(4));
+        collapseButtonPanel.setBorder(null);
+        collapseButtonPanel.add(_toggleTreeViewButton);
 
-		setLayout(new BorderLayout());
-		add(_collapsibleTreePane, BorderLayout.CENTER);
-		add(collapseButtonPanel, BorderLayout.EAST);
-	}
+        setLayout(new BorderLayout());
+        add(_collapsibleTreePane, BorderLayout.CENTER);
+        add(collapseButtonPanel, BorderLayout.EAST);
+    }
 
-	public void setCollapsed(boolean collapsed) {
-		if (collapsed != _collapsibleTreePane.isCollapsed()) {
-			_toggleTreeViewButton.doClick();
-		}
-	}
+    public boolean isCollapsed() {
+        return _collapsibleTreePane.isCollapsed();
+    }
 
-	public boolean isCollapsed() {
-		return _collapsibleTreePane.isCollapsed();
-	}
+    public void setCollapsed(final boolean collapsed) {
+        if (collapsed != _collapsibleTreePane.isCollapsed()) {
+            _toggleTreeViewButton.doClick();
+        }
+    }
 }

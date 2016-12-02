@@ -41,14 +41,15 @@ public class GrouperTransformerTest {
         final GrouperTransformer grouper = new GrouperTransformer();
         grouper.groupKey = groupKey;
         grouper.aggregatedValues = new InputColumn[] { value1, value2 };
-        grouper.aggregationTypes = new GrouperTransformer.AggregationType[] {
-                GrouperTransformer.AggregationType.CONCAT_VALUES, GrouperTransformer.AggregationType.CONCAT_VALUES };
+        grouper.aggregationTypes =
+                new GrouperTransformer.AggregationType[] { GrouperTransformer.AggregationType.CONCAT_VALUES,
+                        GrouperTransformer.AggregationType.CONCAT_VALUES };
         grouper.valueSortation = SortationType.RECORD_ORDER;
         grouper.concatenationSeparator = ";";
 
         grouper.init();
 
-        MockOutputRowCollector collector = new MockOutputRowCollector();
+        final MockOutputRowCollector collector = new MockOutputRowCollector();
         grouper.initializeOutputDataStream(null, null, collector);
 
         grouper.transform(new MockInputRow(3).put(groupKey, "A").put(value1, "hi").put(value2, "C"));
@@ -59,7 +60,7 @@ public class GrouperTransformerTest {
 
         grouper.close();
 
-        List<Object[]> output = collector.getOutput();
+        final List<Object[]> output = collector.getOutput();
         assertEquals(2, output.size());
         assertEquals("[A, 4, hello;world;hi;there, A;B;C;D]", Arrays.toString(output.get(0)));
         assertEquals("[B, 1, hola, E]", Arrays.toString(output.get(1)));
@@ -70,14 +71,15 @@ public class GrouperTransformerTest {
         final GrouperTransformer grouper = new GrouperTransformer();
         grouper.groupKey = groupKey;
         grouper.aggregatedValues = new InputColumn[] { value1, value2 };
-        grouper.aggregationTypes = new GrouperTransformer.AggregationType[] {
-                GrouperTransformer.AggregationType.CONCAT_VALUES, GrouperTransformer.AggregationType.CONCAT_VALUES };
+        grouper.aggregationTypes =
+                new GrouperTransformer.AggregationType[] { GrouperTransformer.AggregationType.CONCAT_VALUES,
+                        GrouperTransformer.AggregationType.CONCAT_VALUES };
         grouper.valueSortation = SortationType.NATURAL_SORT_ASC;
         grouper.concatenationSeparator = ";";
 
         grouper.init();
 
-        MockOutputRowCollector collector = new MockOutputRowCollector();
+        final MockOutputRowCollector collector = new MockOutputRowCollector();
         grouper.initializeOutputDataStream(null, null, collector);
 
         grouper.transform(new MockInputRow(3).put(groupKey, "A").put(value1, "hi").put(value2, "C"));
@@ -88,7 +90,7 @@ public class GrouperTransformerTest {
 
         grouper.close();
 
-        List<Object[]> output = collector.getOutput();
+        final List<Object[]> output = collector.getOutput();
         assertEquals(2, output.size());
         assertEquals("[A, 4, hello;hi;there;world, A;B;C;D]", Arrays.toString(output.get(0)));
         assertEquals("[B, 1, hola, E]", Arrays.toString(output.get(1)));
@@ -99,14 +101,15 @@ public class GrouperTransformerTest {
         final GrouperTransformer grouper = new GrouperTransformer();
         grouper.groupKey = groupKey;
         grouper.aggregatedValues = new InputColumn[] { value1, value2 };
-        grouper.aggregationTypes = new GrouperTransformer.AggregationType[] {
-                GrouperTransformer.AggregationType.CONCAT_VALUES, GrouperTransformer.AggregationType.CONCAT_VALUES };
+        grouper.aggregationTypes =
+                new GrouperTransformer.AggregationType[] { GrouperTransformer.AggregationType.CONCAT_VALUES,
+                        GrouperTransformer.AggregationType.CONCAT_VALUES };
         grouper.valueSortation = SortationType.NATURAL_SORT_DESC;
         grouper.concatenationSeparator = ";";
 
         grouper.init();
 
-        MockOutputRowCollector collector = new MockOutputRowCollector();
+        final MockOutputRowCollector collector = new MockOutputRowCollector();
         grouper.initializeOutputDataStream(null, null, collector);
 
         grouper.transform(new MockInputRow(3).put(groupKey, "A").put(value1, "hi").put(value2, "C"));
@@ -117,7 +120,7 @@ public class GrouperTransformerTest {
 
         grouper.close();
 
-        List<Object[]> output = collector.getOutput();
+        final List<Object[]> output = collector.getOutput();
         assertEquals(2, output.size());
         assertEquals("[A, 4, world;there;hi;hello, D;C;B;A]", Arrays.toString(output.get(0)));
         assertEquals("[B, 1, hola, E]", Arrays.toString(output.get(1)));

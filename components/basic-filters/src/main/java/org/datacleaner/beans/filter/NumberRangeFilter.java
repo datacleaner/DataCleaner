@@ -41,7 +41,7 @@ public class NumberRangeFilter extends AbstractQueryOptimizedRangeFilter<Number>
     @Configured(order = 2)
     Double highestValue;
 
-    public NumberRangeFilter(double lowestValue, double highestValue) {
+    public NumberRangeFilter(final double lowestValue, final double highestValue) {
         this.lowestValue = lowestValue;
         this.highestValue = highestValue;
     }
@@ -66,8 +66,8 @@ public class NumberRangeFilter extends AbstractQueryOptimizedRangeFilter<Number>
     }
 
     @Override
-    public int compare(Number o1, Number o2) {
-        double diff = o1.doubleValue() - o2.doubleValue();
+    public int compare(final Number o1, final Number o2) {
+        final double diff = o1.doubleValue() - o2.doubleValue();
         if (diff == 0) {
             return 0;
         } else if (diff > 0) {

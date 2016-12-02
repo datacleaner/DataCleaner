@@ -30,47 +30,47 @@ import org.datacleaner.job.FilterOutcome;
 /**
  * Optimizer that will apply possible optimizations coming from
  * {@link QueryOptimizedFilter} instances in the job.
- * 
- * 
+ *
+ *
  */
 public interface RowProcessingQueryOptimizer {
 
     /**
      * Gets the optimized query.
-     * 
+     *
      * @return
      */
-    public Query getOptimizedQuery();
+    Query getOptimizedQuery();
 
     /**
      * Gets the optimized list of {@link RowProcessingConsumer}. This list will
      * consist of the original consumers, except the eliminated ones (see
      * {@link #getEliminatedConsumers()}).
-     * 
+     *
      * @return
      */
-    public List<RowProcessingConsumer> getOptimizedConsumers();
+    List<RowProcessingConsumer> getOptimizedConsumers();
 
     /**
      * Gets the {@link RowProcessingConsumer}s that where eliminated while
      * optimizing the query.
-     * 
+     *
      * @return
      */
-    public Set<? extends RowProcessingConsumer> getEliminatedConsumers();
+    Set<? extends RowProcessingConsumer> getEliminatedConsumers();
 
     /**
      * Gets the {@link FilterOutcome}s that has been optimized by the query.
-     * 
+     *
      * @return
      */
-    public Collection<? extends FilterOutcome> getOptimizedAvailableOutcomes();
+    Collection<? extends FilterOutcome> getOptimizedAvailableOutcomes();
 
     /**
      * Determines if the query has been optimized or not.
-     * 
+     *
      * @return
      */
-    public boolean isOptimizable();
+    boolean isOptimizable();
 
 }

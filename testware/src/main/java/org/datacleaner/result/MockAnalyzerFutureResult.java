@@ -30,7 +30,7 @@ public class MockAnalyzerFutureResult implements AnalyzerResult {
     public String getMockMessage() {
         return "MockAnalyzerResult available";
     }
-    
+
     @Override
     public String toString() {
         return getMockMessage();

@@ -20,8 +20,8 @@
 package org.datacleaner.monitor.dashboard.widgets;
 
 import org.datacleaner.monitor.dashboard.DashboardServiceAsync;
-import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.datacleaner.monitor.dashboard.model.DashboardGroup;
+import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.util.DCAsyncCallback;
@@ -40,14 +40,15 @@ public class SaveTimelineClickHandler implements ClickHandler {
     private final TenantIdentifier _tenantIdentifier;
     private final TimelinePanel _timelinePanel;
 
-    public SaveTimelineClickHandler(DashboardServiceAsync service, TenantIdentifier tenantIdentifier, TimelinePanel timelinePanel) {
+    public SaveTimelineClickHandler(final DashboardServiceAsync service, final TenantIdentifier tenantIdentifier,
+            final TimelinePanel timelinePanel) {
         _service = service;
         _tenantIdentifier = tenantIdentifier;
         _timelinePanel = timelinePanel;
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(final ClickEvent event) {
         final boolean create;
         TimelineIdentifier timelineIdentifier = _timelinePanel.getTimelineIdentifier();
         if (timelineIdentifier == null) {
@@ -63,15 +64,15 @@ public class SaveTimelineClickHandler implements ClickHandler {
         } else {
             create = false;
         }
-        TimelineDefinition timelineDefinition = _timelinePanel.getTimelineDefinition();
+        final TimelineDefinition timelineDefinition = _timelinePanel.getTimelineDefinition();
 
         _timelinePanel.setTimelineDefinitionUnchanged();
-        
+
         if (create) {
             _service.createTimelineDefinition(_tenantIdentifier, timelineIdentifier, timelineDefinition,
                     new DCAsyncCallback<TimelineIdentifier>() {
                         @Override
-                        public void onSuccess(TimelineIdentifier result) {
+                        public void onSuccess(final TimelineIdentifier result) {
                             _timelinePanel.setTimelineIdentifier(result);
                             Window.alert("Saved timeline '" + result.getName() + "'");
                         }
@@ -80,7 +81,7 @@ public class SaveTimelineClickHandler implements ClickHandler {
             _service.updateTimelineDefinition(_tenantIdentifier, timelineIdentifier, timelineDefinition,
                     new DCAsyncCallback<TimelineIdentifier>() {
                         @Override
-                        public void onSuccess(TimelineIdentifier result) {
+                        public void onSuccess(final TimelineIdentifier result) {
                             Window.alert("Saved timeline '" + result.getName() + "'");
                         }
                     });

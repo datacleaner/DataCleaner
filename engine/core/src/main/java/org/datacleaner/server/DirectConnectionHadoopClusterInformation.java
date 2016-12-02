@@ -33,7 +33,8 @@ public class DirectConnectionHadoopClusterInformation extends EnvironmentBasedHa
     private static final long serialVersionUID = 1L;
     private final URI _nameNodeUri;
 
-    public DirectConnectionHadoopClusterInformation(final String name, final String description, final URI nameNodeUri) {
+    public DirectConnectionHadoopClusterInformation(final String name, final String description,
+            final URI nameNodeUri) {
         super(name, description);
 
         _nameNodeUri = nameNodeUri;
@@ -42,7 +43,7 @@ public class DirectConnectionHadoopClusterInformation extends EnvironmentBasedHa
     @Override
     public Configuration getConfiguration() {
         final Configuration configuration;
-        if(SystemProperties.getBoolean(HdfsResource.SYSTEM_PROPERTY_HADOOP_CONF_DIR_ENABLED, false)){
+        if (SystemProperties.getBoolean(HdfsResource.SYSTEM_PROPERTY_HADOOP_CONF_DIR_ENABLED, false)) {
             configuration = super.getConfiguration();
         } else {
             configuration = new Configuration();

@@ -36,9 +36,9 @@ public class MathFormulaTransformerTest extends TestCase {
     @Override
     @SuppressWarnings("unchecked")
     protected void setUp() throws Exception {
-        foo = new MockInputColumn<Number>("foo");
-        bar = new MockInputColumn<Number>("BAR");
-        baz = new MockInputColumn<Number>("baz");
+        foo = new MockInputColumn<>("foo");
+        bar = new MockInputColumn<>("BAR");
+        baz = new MockInputColumn<>("baz");
 
         trans = new MathFormulaTransformer();
         trans._input = new InputColumn[] { foo, bar, baz };
@@ -86,8 +86,8 @@ public class MathFormulaTransformerTest extends TestCase {
         assertFormulaResult(null, 0, 0, 0);
     }
 
-    private void assertFormulaResult(Number result, Integer fo, Integer br, Integer bz) {
-        Number[] arr = trans.transform(new MockInputRow().put(foo, fo).put(bar, br).put(baz, bz));
+    private void assertFormulaResult(final Number result, final Integer fo, final Integer br, final Integer bz) {
+        final Number[] arr = trans.transform(new MockInputRow().put(foo, fo).put(bar, br).put(baz, bz));
         assertNotNull(arr);
         assertEquals(1, arr.length);
         if (result == null) {
@@ -96,8 +96,8 @@ public class MathFormulaTransformerTest extends TestCase {
             if (arr[0] == null) {
                 fail("Expected " + result + " but got null!");
             }
-            double d1 = result.doubleValue();
-            double d2 = arr[0].doubleValue();
+            final double d1 = result.doubleValue();
+            final double d2 = arr[0].doubleValue();
             assertEquals(d1, d2);
         }
     }

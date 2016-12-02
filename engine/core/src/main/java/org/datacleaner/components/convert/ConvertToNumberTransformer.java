@@ -73,54 +73,17 @@ public class ConvertToNumberTransformer implements Transformer {
     public ConvertToNumberTransformer() {
     }
 
-    public ConvertToNumberTransformer(char decimalSeparator, char thousandSeparator, char minusSign) {
+    public ConvertToNumberTransformer(final char decimalSeparator, final char thousandSeparator, final char minusSign) {
         this();
         this.decimalSeparator = decimalSeparator;
         this.thousandSeparator = thousandSeparator;
         this.minusSign = minusSign;
     }
 
-    public DecimalFormat getDecimalFormat() {
-        DecimalFormat format = new DecimalFormat();
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setDecimalSeparator(decimalSeparator);
-        symbols.setGroupingSeparator(thousandSeparator);
-        symbols.setMinusSign(minusSign);
-        format.setDecimalFormatSymbols(symbols);
-        return format;
-    }
-
-    @Override
-    public OutputColumns getOutputColumns() {
-        String[] names = new String[input.length];
-        for (int i = 0; i < names.length; i++) {
-            names[i] = input[i].getName() + " (as number)";
-        }
-        return new OutputColumns(Number.class, names);
-    }
-
-    @Override
-    public Number[] transform(InputRow inputRow) {
-        Number[] result = new Number[input.length];
-        for (int i = 0; i < input.length; i++) {
-            Object value = inputRow.getValue(input[i]);
-            Number n = transform(value);
-            if (n == null) {
-                n = nullReplacement;
-            }
-            result[i] = n;
-        }
-        return result;
-    }
-
-    protected Number transform(Object value) {
-        return transformValue(value, getDecimalFormat());
-    }
-
-    public static Number transformValue(Object value) {
+    public static Number transformValue(final Object value) {
         // use java's normal decimal symbols
-        DecimalFormat format = new DecimalFormat();
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        final DecimalFormat format = new DecimalFormat();
+        final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
         symbols.setGroupingSeparator(',');
         symbols.setMinusSign('-');
@@ -128,7 +91,7 @@ public class ConvertToNumberTransformer implements Transformer {
         return transformValue(value, format);
     }
 
-    public static Number transformValue(Object value, DecimalFormat decimalFormat) {
+    public static Number transformValue(final Object value, final DecimalFormat decimalFormat) {
         Number n = null;
         if (value != null) {
             if (value instanceof Number) {
@@ -140,10 +103,10 @@ public class ConvertToNumberTransformer implements Transformer {
                     n = 0;
                 }
             } else if (value instanceof Date) {
-                Date d = (Date) value;
+                final Date d = (Date) value;
                 n = d.getTime();
             } else if (value instanceof Character) {
-                Character c = (Character) value;
+                final Character c = (Character) value;
                 if (!Character.isDigit(c)) {
                     // return the integer value of the character
                     n = (int) c;
@@ -162,7 +125,7 @@ public class ConvertToNumberTransformer implements Transformer {
                     } else {
                         n = decimalFormat.parse(stringValue);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.info("Error occured parsing string as number: {}", stringValue);
                 }
             }
@@ -170,23 +133,60 @@ public class ConvertToNumberTransformer implements Transformer {
         return n;
     }
 
-    public void setInput(InputColumn<?>... input) {
+    public DecimalFormat getDecimalFormat() {
+        final DecimalFormat format = new DecimalFormat();
+        final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setDecimalSeparator(decimalSeparator);
+        symbols.setGroupingSeparator(thousandSeparator);
+        symbols.setMinusSign(minusSign);
+        format.setDecimalFormatSymbols(symbols);
+        return format;
+    }
+
+    @Override
+    public OutputColumns getOutputColumns() {
+        final String[] names = new String[input.length];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = input[i].getName() + " (as number)";
+        }
+        return new OutputColumns(Number.class, names);
+    }
+
+    @Override
+    public Number[] transform(final InputRow inputRow) {
+        final Number[] result = new Number[input.length];
+        for (int i = 0; i < input.length; i++) {
+            final Object value = inputRow.getValue(input[i]);
+            Number n = transform(value);
+            if (n == null) {
+                n = nullReplacement;
+            }
+            result[i] = n;
+        }
+        return result;
+    }
+
+    protected Number transform(final Object value) {
+        return transformValue(value, getDecimalFormat());
+    }
+
+    public void setInput(final InputColumn<?>... input) {
         this.input = input;
     }
 
-    public void setNullReplacement(Number nullReplacement) {
+    public void setNullReplacement(final Number nullReplacement) {
         this.nullReplacement = nullReplacement;
     }
 
-    public void setDecimalSeparator(char decimalSeparator) {
+    public void setDecimalSeparator(final char decimalSeparator) {
         this.decimalSeparator = decimalSeparator;
     }
 
-    public void setMinusSign(char minusSign) {
+    public void setMinusSign(final char minusSign) {
         this.minusSign = minusSign;
     }
 
-    public void setThousandSeparator(char thousandSeparator) {
+    public void setThousandSeparator(final char thousandSeparator) {
         this.thousandSeparator = thousandSeparator;
     }
 }

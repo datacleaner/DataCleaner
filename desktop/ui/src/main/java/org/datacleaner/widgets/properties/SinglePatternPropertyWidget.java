@@ -35,7 +35,7 @@ import org.jdesktop.swingx.JXTextField;
 
 /**
  * Property widget for regular expression Pattern properties.
- * 
+ *
  * @author Stefan Janssen
  */
 public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern> implements DocumentListener {
@@ -44,15 +44,15 @@ public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern>
     private final PatternProperty patternPropertyAnnotation;
 
     @Inject
-    public SinglePatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder) {
+    public SinglePatternPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
 
         patternPropertyAnnotation = propertyDescriptor.getAnnotation(PatternProperty.class);
 
         _textField = WidgetFactory.createTextField(propertyDescriptor.getName());
         _textField.getDocument().addDocumentListener(this);
-        Pattern currentValue = getCurrentValue();
+        final Pattern currentValue = getCurrentValue();
         setValue(currentValue);
         updateColor();
         add(_textField);
@@ -64,7 +64,7 @@ public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern>
             return false;
         }
 
-        return ((patternPropertyAnnotation != null && patternPropertyAnnotation.emptyString()) 
+        return ((patternPropertyAnnotation != null && patternPropertyAnnotation.emptyString())
                 || _textField.getText().length() > 0) && isValidPattern();
     }
 
@@ -72,15 +72,25 @@ public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern>
     public Pattern getValue() {
         try {
             return Pattern.compile(_textField.getText());
-        } catch (PatternSyntaxException e) {
+        } catch (final PatternSyntaxException e) {
             return null;
+        }
+    }
+
+    @Override
+    protected void setValue(final Pattern value) {
+        if (value != null) {
+            final String pattern = value.pattern();
+            if (!pattern.equals(_textField.getText())) {
+                _textField.setText(pattern);
+            }
         }
     }
 
     public boolean isValidPattern() {
         try {
             Pattern.compile(_textField.getText());
-        } catch (PatternSyntaxException e) {
+        } catch (final PatternSyntaxException e) {
             return false;
         }
         return true;
@@ -98,27 +108,17 @@ public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern>
     }
 
     @Override
-    public void changedUpdate(DocumentEvent e) {
+    public void changedUpdate(final DocumentEvent e) {
         updateColor();
     }
 
     @Override
-    public void insertUpdate(DocumentEvent e) {
+    public void insertUpdate(final DocumentEvent e) {
         updateColor();
     }
 
     @Override
-    public void removeUpdate(DocumentEvent e) {
+    public void removeUpdate(final DocumentEvent e) {
         updateColor();
-    }
-
-    @Override
-    protected void setValue(Pattern value) {
-        if (value != null) {
-            String pattern = value.pattern();
-            if (!pattern.equals(_textField.getText())) {
-                _textField.setText(pattern);
-            }
-        }
     }
 }

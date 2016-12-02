@@ -35,6 +35,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -55,14 +56,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DataHubDataContext extends AbstractDataContext implements UpdateableDataContext {
 
-    private static final String JSON_CONTENT_TYPE = ContentType.APPLICATION_JSON.getMimeType();
+    private static class UserInfo {
+        @SuppressWarnings("unused")
+        public String username;
+        public String tenant;
+    }
 
+    private static final String JSON_CONTENT_TYPE = ContentType.APPLICATION_JSON.getMimeType();
+    private final String _tenantName;
     private DataHubRepoConnection _repoConnection;
     private DataHubUpdateConnection _updateConnection;
     private Map<String, DataHubSchema> _schemas;
-    private final String _tenantName;
 
-    public DataHubDataContext(DataHubConnection connection) {
+    public DataHubDataContext(final DataHubConnection connection) {
         _repoConnection = new DataHubRepoConnection(connection);
         _updateConnection = new DataHubUpdateConnection(connection);
         _tenantName = retrieveTenantName();
@@ -70,7 +76,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     }
 
     private Map<String, DataHubSchema> getDatahubSchemas() {
-        Map<String, DataHubSchema> schemas = new HashMap<String, DataHubSchema>();
+        final Map<String, DataHubSchema> schemas = new HashMap<>();
         for (final String datastoreName : getDataStoreNames()) {
             final String uri = _repoConnection.getSchemaUrl(_tenantName, datastoreName);
             final HttpGet request = new HttpGet(uri);
@@ -81,7 +87,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
                 final DataHubSchema schema = parser.parseJsonSchema(entity.getContent());
                 schema.setDatastoreName(datastoreName);
                 schemas.put(schema.getName(), schema);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException(e);
             }
         }
@@ -89,10 +95,10 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     }
 
     @Override
-    public void executeUpdate(UpdateScript script) {
-        try (final DataHubUpdateCallback callback = new DataHubUpdateCallback(this)) {
+    public void executeUpdate(final UpdateScript script) {
+        try (DataHubUpdateCallback callback = new DataHubUpdateCallback(this)) {
             script.run(callback);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             throw e;
         }
     }
@@ -103,14 +109,14 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     }
 
     private List<String> getDataStoreNames() {
-        String uri = _repoConnection.getDatastoreUrl(_tenantName);
-        HttpGet request = new HttpGet(uri);
-        HttpResponse response = executeRequest(request, _repoConnection.getHttpClient());
-        HttpEntity entity = response.getEntity();
-        JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
+        final String uri = _repoConnection.getDatastoreUrl(_tenantName);
+        final HttpGet request = new HttpGet(uri);
+        final HttpResponse response = executeRequest(request, _repoConnection.getHttpClient());
+        final HttpEntity entity = response.getEntity();
+        final JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
         try {
             return parser.parseDataStoreArray(entity.getContent());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
@@ -119,12 +125,12 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         return getDefaultSchema();
     }
 
-    private HttpResponse executeRequest(HttpUriRequest request, MonitorHttpClient httpClient) {
+    private HttpResponse executeRequest(final HttpUriRequest request, final MonitorHttpClient httpClient) {
 
-        HttpResponse response;
+        final HttpResponse response;
         try {
             response = httpClient.execute(request);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
 
@@ -144,64 +150,56 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     }
 
     @Override
-    protected Schema getSchemaByNameInternal(String name) {
+    protected Schema getSchemaByNameInternal(final String name) {
         return _schemas.get(name);
     }
 
-    public void executeUpdates(List<UpdateData> pendingUpdates) {
-        String uri = _updateConnection.getUpdateUrl(_tenantName);
-        final HttpPost request = new HttpPost(uri);
+    public void executeUpdates(final List<UpdateData> pendingUpdates) {
+        final String uri = _updateConnection.getGoldenRecordBatchUrl();
+        final HttpPut request = new HttpPut(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        request.setEntity(new StringEntity(JsonUpdateDataBuilder.<List<UpdateData>> buildJsonArray(pendingUpdates),
-                ContentType.APPLICATION_JSON));
+        request.setEntity(
+                new StringEntity(JsonUpdateDataBuilder.buildJsonArray(pendingUpdates), ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
 
     /**
      * Invokes DataHub REST service to delete a batch of golden records.
-     * 
+     *
      * @param pendingGoldenRecordDeletes
      *            The golden records to delete.
      */
-    public void executeGoldenRecordDelete(List<String> pendingGoldenRecordDeletes) {
-        final String uri = _updateConnection.getDeleteGoldenRecordUrl();
+    public void executeGoldenRecordDelete(final List<String> pendingGoldenRecordDeletes) {
+        final String uri = _updateConnection.getGoldenRecordBatchUrl();
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        request.setEntity(
-                new StringEntity(JsonUpdateDataBuilder.<List<String>> buildJsonArray(pendingGoldenRecordDeletes),
-                        ContentType.APPLICATION_JSON));
+        request.setEntity(new StringEntity(JsonUpdateDataBuilder.buildJsonArray(pendingGoldenRecordDeletes),
+                ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
     }
 
     /**
      * Invokes DataHub REST service to delete a batch of source records.
-     * 
+     *
      * @param pendingSourceDeletes
      *            The batch of sources to delete.
      */
-    public void executeSourceDelete(List<SourceRecordIdentifier> pendingSourceDeletes) {
-        final String uri = _updateConnection.getDeleteSourceRecordUrl();
+    public void executeSourceDelete(final List<SourceRecordIdentifier> pendingSourceDeletes) {
+        final String uri = _updateConnection.getSourceRecordBatchUrl();
         final HttpPost request = new HttpPost(uri);
         request.addHeader(CONTENT_TYPE, JSON_CONTENT_TYPE);
         request.addHeader(ACCEPT, JSON_CONTENT_TYPE);
-        request.setEntity(new StringEntity(
-                JsonUpdateDataBuilder.<List<SourceRecordIdentifier>> buildJsonArray(pendingSourceDeletes),
+        request.setEntity(new StringEntity(JsonUpdateDataBuilder.buildJsonArray(pendingSourceDeletes),
                 ContentType.APPLICATION_JSON));
         executeRequest(request, _updateConnection.getHttpClient());
-    }
-    
-    private static class UserInfo {
-        @SuppressWarnings("unused")
-        public String username;
-        public String tenant;
     }
 
     private String retrieveTenantName() {
         final String getUserInfoUrl = _repoConnection.getUserInfoUrl();
         final HttpGet request = new HttpGet(getUserInfoUrl);
-        try (final MonitorHttpClient monitorHttpClient = _repoConnection.getHttpClient()) {
+        try (MonitorHttpClient monitorHttpClient = _repoConnection.getHttpClient()) {
             final HttpResponse response = monitorHttpClient.execute(request);
 
             final StatusLine statusLine = response.getStatusLine();
@@ -220,7 +218,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
                 final String reasonPhrase = statusLine.getReasonPhrase();
                 throw new RuntimeException("Failed to retrieve the tenant name: " + reasonPhrase);
             }
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             if (exception instanceof RuntimeException) {
                 throw (RuntimeException) exception;
             }

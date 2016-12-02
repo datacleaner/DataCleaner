@@ -35,7 +35,8 @@ public class JobModificationEvent extends ApplicationEvent {
     private final String _newJobName;
     private final String _oldJobName;
 
-    public JobModificationEvent(Object source, String tenant, String oldJobName, String newJobName) {
+    public JobModificationEvent(final Object source, final String tenant, final String oldJobName,
+            final String newJobName) {
         super(source);
         _tenant = tenant;
         _oldJobName = oldJobName;

@@ -39,8 +39,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * {@link InsertIntoTableAnalyzer}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class InsertIntoTableJobBuilderPresenterRenderer implements
-        Renderer<AnalyzerComponentBuilder<InsertIntoTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
+public class InsertIntoTableJobBuilderPresenterRenderer
+        implements Renderer<AnalyzerComponentBuilder<InsertIntoTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -52,7 +52,7 @@ public class InsertIntoTableJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<InsertIntoTableAnalyzer> ajb) {
+    public RendererPrecedence getPrecedence(final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> ajb) {
         if (ajb.getDescriptor().getComponentClass() == InsertIntoTableAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -60,11 +60,12 @@ public class InsertIntoTableJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<InsertIntoTableAnalyzer> ajb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
-                PropertyWidgetFactory.class);
+    public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> ajb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
 
-        return new InsertIntoTableJobBuilderPresenter(ajb, windowContext, propertyWidgetFactory, configuration, dcModule);
+        return new InsertIntoTableJobBuilderPresenter(ajb, windowContext, propertyWidgetFactory, configuration,
+                dcModule);
     }
 
 }

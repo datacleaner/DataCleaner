@@ -32,7 +32,7 @@ public class DefaultHAxisOption implements ChartOptions.HorizontalAxisOption {
         this(null, null);
     }
 
-    public DefaultHAxisOption(Date beginDate, Date endDate) {
+    public DefaultHAxisOption(final Date beginDate, final Date endDate) {
         _beginDate = beginDate;
         _endDate = endDate;
     }

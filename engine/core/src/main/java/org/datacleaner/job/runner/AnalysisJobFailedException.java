@@ -33,7 +33,7 @@ public class AnalysisJobFailedException extends RuntimeException {
 
     private final List<Throwable> _errors;
 
-    public AnalysisJobFailedException(List<Throwable> errors) {
+    public AnalysisJobFailedException(final List<Throwable> errors) {
         if (errors == null) {
             _errors = Collections.emptyList();
         } else {
@@ -49,7 +49,7 @@ public class AnalysisJobFailedException extends RuntimeException {
 
         final StringBuilder sb = new StringBuilder();
 
-        for (Throwable throwable : _errors) {
+        for (final Throwable throwable : _errors) {
             if (sb.length() == 0) {
                 sb.append("The analysis ended with " + _errors.size() + " errors: [");
             } else {
@@ -69,7 +69,7 @@ public class AnalysisJobFailedException extends RuntimeException {
 
     /**
      * Gets all the errors that this exception encapsulates.
-     * 
+     *
      * @return
      */
     public List<Throwable> getErrors() {

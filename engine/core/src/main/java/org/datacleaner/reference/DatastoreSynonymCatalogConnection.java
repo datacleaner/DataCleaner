@@ -32,8 +32,8 @@ final class DatastoreSynonymCatalogConnection implements SynonymCatalogConnectio
     private final DatastoreConnection _datastoreConnection;
     private final DatastoreSynonymCatalog _synonymCatalog;
 
-    public DatastoreSynonymCatalogConnection(DatastoreSynonymCatalog synonymCatalog,
-            DatastoreConnection datastoreConnection) {
+    public DatastoreSynonymCatalogConnection(final DatastoreSynonymCatalog synonymCatalog,
+            final DatastoreConnection datastoreConnection) {
         _synonymCatalog = synonymCatalog;
         _datastoreConnection = datastoreConnection;
     }
@@ -45,14 +45,15 @@ final class DatastoreSynonymCatalogConnection implements SynonymCatalogConnectio
     }
 
     @Override
-    public String getMasterTerm(String term) {
+    public String getMasterTerm(final String term) {
         final DataContext dataContext = _datastoreConnection.getDataContext();
 
         final Column masterTermColumn = _synonymCatalog.getMasterTermColumn(_datastoreConnection);
         final Column[] columns = _synonymCatalog.getSynonymColumns(_datastoreConnection);
 
-        SatisfiedWhereBuilder<?> queryBuilder = dataContext.query().from(masterTermColumn.getTable())
-                .select(masterTermColumn).where(columns[0]).eq(term);
+        SatisfiedWhereBuilder<?> queryBuilder =
+                dataContext.query().from(masterTermColumn.getTable()).select(masterTermColumn).where(columns[0])
+                        .eq(term);
         for (int i = 1; i < columns.length; i++) {
             final Column column = columns[i];
             queryBuilder = queryBuilder.or(column).eq(term);

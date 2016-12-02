@@ -38,20 +38,21 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
     private final JTextField _textField;
 
     @Inject
-    public SingleNumberPropertyWidget(ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+    public SingleNumberPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
         _textField = new JTextField(5);
 
         _textField.setDocument(new NumberDocument(isDecimalAllowed(), isNegativeAllowed()));
         _primitive = propertyDescriptor.getType().isPrimitive();
-        Number currentValue = getCurrentValue();
+        final Number currentValue = getCurrentValue();
         if (currentValue != null) {
             _textField.setText(currentValue.toString());
         }
         _textField.getDocument().addDocumentListener(new DCDocumentListener() {
 
             @Override
-            protected void onChange(DocumentEvent e) {
+            protected void onChange(final DocumentEvent e) {
                 fireValueChanged();
             }
         });
@@ -59,7 +60,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
     }
 
     private boolean isNegativeAllowed() {
-        NumberProperty numberProperty = getPropertyDescriptor().getAnnotation(NumberProperty.class);
+        final NumberProperty numberProperty = getPropertyDescriptor().getAnnotation(NumberProperty.class);
         if (numberProperty != null) {
             return numberProperty.negative();
         }
@@ -67,7 +68,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
     }
 
     private boolean isDecimalAllowed() {
-        Class<?> type = getPropertyDescriptor().getBaseType();
+        final Class<?> type = getPropertyDescriptor().getBaseType();
         if (ReflectionUtils.isByte(type) || ReflectionUtils.isShort(type) || ReflectionUtils.isInteger(type)
                 || ReflectionUtils.isLong(type)) {
             return false;
@@ -90,7 +91,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
                 return null;
             }
         }
-        Class<?> type = getPropertyDescriptor().getType();
+        final Class<?> type = getPropertyDescriptor().getType();
         if (ReflectionUtils.isInteger(type)) {
             return Integer.parseInt(text);
         }
@@ -120,7 +121,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
     }
 
     @Override
-    protected void setValue(Number value) {
+    protected void setValue(final Number value) {
         if (value == null) {
             _textField.setText("");
             return;
@@ -128,7 +129,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
         _textField.setText(value.toString());
     }
 
-    public void setEnabled(boolean b) {
+    public void setEnabled(final boolean b) {
         _textField.setEnabled(b);
     }
 }

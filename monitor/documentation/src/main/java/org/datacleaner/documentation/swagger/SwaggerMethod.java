@@ -32,16 +32,16 @@ public class SwaggerMethod {
     private String summary = "";
     private String description = "";
     private String operationId = "";
-    private String[] consumes = new String[] { };
-    private String[] produces = new String[] { };
-    private SwaggerParameter[] parameters = new SwaggerParameter[] { };
+    private String[] consumes = new String[] {};
+    private String[] produces = new String[] {};
+    private SwaggerParameter[] parameters = new SwaggerParameter[] {};
     private Map<String, SwaggerResponse> responses = new HashMap<>();
 
     public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(final List<String> tags) {
         this.tags = tags;
     }
 
@@ -49,7 +49,7 @@ public class SwaggerMethod {
         return summary;
     }
 
-    public void setSummary(String summary) {
+    public void setSummary(final String summary) {
         this.summary = summary;
     }
 
@@ -57,7 +57,7 @@ public class SwaggerMethod {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -65,7 +65,7 @@ public class SwaggerMethod {
         return operationId;
     }
 
-    public void setOperationId(String operationId) {
+    public void setOperationId(final String operationId) {
         this.operationId = operationId;
     }
 
@@ -73,7 +73,7 @@ public class SwaggerMethod {
         return consumes;
     }
 
-    public void setConsumes(String[] consumes) {
+    public void setConsumes(final String[] consumes) {
         this.consumes = consumes;
     }
 
@@ -81,7 +81,7 @@ public class SwaggerMethod {
         return produces;
     }
 
-    public void setProduces(String[] produces) {
+    public void setProduces(final String[] produces) {
         this.produces = produces;
     }
 
@@ -89,7 +89,7 @@ public class SwaggerMethod {
         return parameters;
     }
 
-    public void setParameters(SwaggerParameter[] parameters) {
+    public void setParameters(final SwaggerParameter[] parameters) {
         this.parameters = parameters;
     }
 
@@ -97,7 +97,7 @@ public class SwaggerMethod {
         return responses;
     }
 
-    public void setResponses(Map<String, SwaggerResponse> responses) {
+    public void setResponses(final Map<String, SwaggerResponse> responses) {
         this.responses = responses;
     }
 }

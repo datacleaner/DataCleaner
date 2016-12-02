@@ -45,15 +45,15 @@ public class TuplesToTuplesFunction<K, V> implements PairFlatMapFunction<Iterato
         logger.info("call(Iterator) invoked");
         return new Iterable<Tuple2<K, V>>() {
 
-            private int i = 0;
+            private int index = 0;
 
             @Override
             public Iterator<Tuple2<K, V>> iterator() {
-                i++;
-                if (i == 1) {
+                index++;
+                if (index == 1) {
                     logger.debug("Returning iterator for the first time");
                 } else {
-                    logger.warn("Returning iterator more than once! - {}", i);
+                    logger.warn("Returning iterator more than once! - {}", index);
                 }
                 return iterator;
             }

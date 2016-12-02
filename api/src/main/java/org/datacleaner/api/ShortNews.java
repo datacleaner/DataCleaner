@@ -23,26 +23,8 @@ import java.util.Date;
 import java.util.List;
 
 public class ShortNews implements java.io.Serializable {
-
-    List<Item> newsItems;
-
-    public ShortNews() {
-    }
-
-    public ShortNews(List<Item> newsItems) {
-        this.newsItems = newsItems;
-    }
-
-    public List<Item> getNewsItems() {
-        return newsItems;
-    }
-
-    public void setNewsItems(List<Item> newsItems) {
-        this.newsItems = newsItems;
-    }
-
     public static class Item implements java.io.Serializable {
-
+        private static final long serialVersionUID = 1L;
         private String name;
         private String title;
         private Date dateCreated;
@@ -55,40 +37,44 @@ public class ShortNews implements java.io.Serializable {
             return name;
         }
 
+        private void setName(final String name) {
+            this.name = name;
+        }
+
         public String getTitle() {
             return title;
+        }
+
+        private void setTitle(final String title) {
+            this.title = title;
         }
 
         public Date getDateCreated() {
             return dateCreated;
         }
 
+        private void setDateCreated(final Date dateCreated) {
+            this.dateCreated = dateCreated;
+        }
+
         public String getMessage() {
             return message;
         }
 
-        private void setName(String name) {
-            this.name = name;
-        }
-
-        private void setTitle(String title) {
-            this.title = title;
-        }
-
-        private void setDateCreated(Date dateCreated) {
-            this.dateCreated = dateCreated;
-        }
-
-        private void setMessage(String message) {
+        private void setMessage(final String message) {
             this.message = message;
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
-            Item item = (Item) o;
+            final Item item = (Item) o;
 
             return name.equals(item.name);
 
@@ -98,5 +84,23 @@ public class ShortNews implements java.io.Serializable {
         public int hashCode() {
             return name.hashCode();
         }
+    }
+
+    private static final long serialVersionUID = 1L;
+    private List<Item> newsItems;
+
+    public ShortNews() {
+    }
+
+    public ShortNews(final List<Item> newsItems) {
+        this.newsItems = newsItems;
+    }
+
+    public List<Item> getNewsItems() {
+        return newsItems;
+    }
+
+    public void setNewsItems(final List<Item> newsItems) {
+        this.newsItems = newsItems;
     }
 }

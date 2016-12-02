@@ -20,12 +20,13 @@
 package org.datacleaner.windows;
 
 import java.awt.Image;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.List;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -39,6 +40,7 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.CsvConfigurationDetection;
@@ -47,13 +49,13 @@ import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
-import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.HeaderLineComboBox;
 import org.datacleaner.widgets.ResourceSelector;
 import org.datacleaner.widgets.ResourceTypePresenter;
+import org.jdesktop.swingx.HorizontalLayout;
 
 /**
  * Dialog for setting up CSV datastores.
@@ -81,16 +83,18 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     private final CharSetEncodingComboBox _encodingComboBox;
     private final JCheckBox _failOnInconsistenciesCheckBox;
     private final JCheckBox _multilineValuesCheckBox;
+    private final JButton _addColumnNamesButton;
+    private List<String> _columnNames;
 
     private volatile boolean showPreview = true;
 
     @Inject
-    public CsvDatastoreDialog(@Nullable CsvDatastore originalDatastore,
-            MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
-            DataCleanerConfiguration configuration, UserPreferences userPreferences) {
+    public CsvDatastoreDialog(@Nullable final CsvDatastore originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, configuration, userPreferences);
-        _separatorCharField = new JComboBox<>(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
-                SEPARATOR_PIPE });
+        _separatorCharField =
+                new JComboBox<>(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON, SEPARATOR_PIPE });
         _separatorCharField.setEditable(true);
 
         _quoteCharField = new JComboBox<>(new String[] { QUOTE_NONE, QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
@@ -107,17 +111,19 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
         _failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent column count", true);
         _failOnInconsistenciesCheckBox.setOpaque(false);
         _failOnInconsistenciesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _failOnInconsistenciesCheckBox
-                .setToolTipText("Check this checkbox to fail fast in case of inconsistent record lengths found in the CSV file. If not checked, missing fields will be represented by <null> values.");
+        _failOnInconsistenciesCheckBox.setToolTipText("Check this checkbox to fail fast in case of inconsistent record "
+                + "lengths found in the CSV file. If not checked, missing fields will be represented by <null> values.");
 
         _multilineValuesCheckBox = new JCheckBox("Enable multi-line values?", false);
         _multilineValuesCheckBox.setOpaque(false);
         _multilineValuesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _multilineValuesCheckBox
-                .setToolTipText("Check this checkbox if you want to allow CSV values to span multiple lines. Since this is rare, and comes at a performance penalty, we recommend turning multi-line values off.");
+        _multilineValuesCheckBox.setToolTipText(
+                "Check this checkbox if you want to allow CSV values to span multiple lines. Since this is rare, and "
+                        + "comes at a performance penalty, we recommend turning multi-line values off.");
 
         setSaveButtonEnabled(false);
         showPreview = true;
+        _addColumnNamesButton = WidgetFactory.createDefaultButton("Change", IconUtils.ACTION_RENAME);
 
         if (originalDatastore != null) {
             _failOnInconsistenciesCheckBox.setSelected(originalDatastore.isFailOnInconsistencies());
@@ -126,7 +132,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
             _headerLineComboBox.setSelectedItem(originalDatastore.getHeaderLineNumber());
 
-            Character separatorChar = originalDatastore.getSeparatorChar();
+            final Character separatorChar = originalDatastore.getSeparatorChar();
             String separator = null;
             if (separatorChar != null) {
                 if (separatorChar == ',') {
@@ -143,7 +149,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             }
             _separatorCharField.setSelectedItem(separator);
 
-            Character quoteChar = originalDatastore.getQuoteChar();
+            final Character quoteChar = originalDatastore.getQuoteChar();
             final String quote;
             if (quoteChar == null) {
                 quote = QUOTE_NONE;
@@ -160,7 +166,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             }
             _quoteCharField.setSelectedItem(quote);
 
-            Character escapeChar = originalDatastore.getEscapeChar();
+            final Character escapeChar = originalDatastore.getEscapeChar();
             final String escape;
             if (escapeChar == null) {
                 escape = ESCAPE_NONE;
@@ -176,39 +182,67 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             _escapeCharField.setSelectedItem(escape);
 
             onSettingsUpdated(false, false, getResource());
+            _columnNames = originalDatastore.getCustomColumnNames();
+            _addColumnNamesButton.setEnabled(true);
+        } else {
+            _columnNames = null;
+            _addColumnNamesButton.setEnabled(false);
         }
 
         // add listeners
-        _separatorCharField.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                onSettingsUpdated(false, false, getResource());
-            }
+        _separatorCharField.addItemListener(e -> onSettingsUpdated(false, false, getResource()));
+        _quoteCharField.addItemListener(e -> onSettingsUpdated(false, false, getResource()));
+        _escapeCharField.addItemListener(e -> onSettingsUpdated(false, false, getResource()));
+        _encodingComboBox.addListener(item -> onSettingsUpdated(true, false, getResource()));
+        _headerLineComboBox.addListener(item -> onSettingsUpdated(false, false, getResource()));
+
+        final DCPanel addColumnNamesPanel = new DCPanel();
+        addColumnNamesPanel.setLayout(new HorizontalLayout());
+        _addColumnNamesButton.addActionListener(arg0 -> {
+            final ColumnNamesSetterDialog columnNamesChooserDialog =
+                    new ColumnNamesSetterDialog(windowContext, _columnNames);
+            columnNamesChooserDialog.setVisible(true);
+            columnNamesChooserDialog.addWindowListener(new WindowListener() {
+                @Override
+                public void windowClosed(final WindowEvent e) {
+                    _columnNames = columnNamesChooserDialog.getColumnNames();
+                    onSettingsUpdated(false, false, getResource());
+                    columnNamesChooserDialog.dispose();
+
+                }
+
+                @Override
+                public void windowActivated(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowClosing(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeactivated(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeiconified(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowIconified(final WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowOpened(final WindowEvent e) {
+
+                }
+            });
         });
-        _quoteCharField.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                onSettingsUpdated(false, false, getResource());
-            }
-        });
-        _escapeCharField.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                onSettingsUpdated(false, false, getResource());
-            }
-        });
-        _encodingComboBox.addListener(new Listener<String>() {
-            @Override
-            public void onItemSelected(String item) {
-                onSettingsUpdated(true, false, getResource());
-            }
-        });
-        _headerLineComboBox.addListener(new DCComboBox.Listener<Integer>() {
-            @Override
-            public void onItemSelected(Integer item) {
-                onSettingsUpdated(false, false, getResource());
-            }
-        });
+        addColumnNamesPanel.add(_addColumnNamesButton, 0);
     }
 
     @Override
@@ -217,11 +251,13 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     }
 
     @Override
-    protected void onSelected(Resource resource) {
+    protected void onSelected(final Resource resource) {
+        _columnNames = null;
         onSettingsUpdated(true, true, resource);
     }
 
-    private void onSettingsUpdated(final boolean autoDetectSeparatorAndQuote, final boolean autoDetectEncoding, final Resource resource) {
+    private void onSettingsUpdated(final boolean autoDetectSeparatorAndQuote, final boolean autoDetectEncoding,
+            final Resource resource) {
         if (!validateForm()) {
             return;
         }
@@ -238,15 +274,16 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
                 try {
                     if (autoDetectEncoding) {
-                        configuration = detection.suggestCsvConfiguration();
+                        configuration = detection.suggestCsvConfiguration(_columnNames);
                     } else {
                         final String charSet = _encodingComboBox.getSelectedItem();
-                        configuration = detection.suggestCsvConfiguration(charSet);
+                        configuration = detection.suggestCsvConfiguration(charSet, _columnNames);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.debug("Failed to auto detect CSV configuration", e);
                     throw e;
                 }
+                _columnNames = detection.getColumnNames();
                 return configuration;
             }
 
@@ -255,7 +292,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
                 final CsvConfiguration configuration;
                 try {
                     configuration = get();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     final Throwable error = ErrorUtils.unwrapForPresentation(e);
                     setStatusError(error.getMessage());
                     showPreview = false;
@@ -294,7 +331,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
                     }
 
                     // set the escape char
-                    char escapeChar = configuration.getEscapeChar();
+                    final char escapeChar = configuration.getEscapeChar();
                     if (escapeChar == '\\') {
                         _escapeCharField.setSelectedItem(ESCAPE_BACKSLASH);
                     }
@@ -308,7 +345,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
     @Override
     protected boolean validateForm() {
-        Object selectedEncoding = _encodingComboBox.getSelectedItem();
+        final Object selectedEncoding = _encodingComboBox.getSelectedItem();
         if (selectedEncoding == null || selectedEncoding.toString().length() == 0) {
             setStatusError("Please select a character encoding!");
             return false;
@@ -328,21 +365,23 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
-        List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Character encoding", _encodingComboBox));
-        result.add(new ImmutableEntry<String, JComponent>("Separator", _separatorCharField));
-        result.add(new ImmutableEntry<String, JComponent>("Quote char", _quoteCharField));
-        result.add(new ImmutableEntry<String, JComponent>("Escape char", _escapeCharField));
-        result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
-        result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
-        result.add(new ImmutableEntry<String, JComponent>("", _multilineValuesCheckBox));
+        final List<Entry<String, JComponent>> result = super.getFormElements();
+        result.add(new ImmutableEntry<>("Character encoding", _encodingComboBox));
+        result.add(new ImmutableEntry<>("Separator", _separatorCharField));
+        result.add(new ImmutableEntry<>("Quote char", _quoteCharField));
+        result.add(new ImmutableEntry<>("Escape char", _escapeCharField));
+        result.add(new ImmutableEntry<>("Header line", _headerLineComboBox));
+        result.add(new ImmutableEntry<>("", _failOnInconsistenciesCheckBox));
+        result.add(new ImmutableEntry<>("", _multilineValuesCheckBox));
+        //TODO: Uncomment the line about columns names panel after the release of metamodel 4.5.5
+        //result.add(new ImmutableEntry<>("Column Names", _addColumnNamesPanel));
         return result;
     }
 
     public int getHeaderLine() {
-        Number headerLineComboValue = _headerLineComboBox.getSelectedItem();
+        final Number headerLineComboValue = _headerLineComboBox.getSelectedItem();
         if (headerLineComboValue != null) {
-            int intComboValue = headerLineComboValue.intValue();
+            final int intComboValue = headerLineComboValue.intValue();
             if (intComboValue < 0) {
                 return CsvConfiguration.NO_COLUMN_NAME_LINE;
             } else {
@@ -363,7 +402,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     }
 
     public Character getSeparatorChar() {
-        Object separatorItem = _separatorCharField.getSelectedItem();
+        final Object separatorItem = _separatorCharField.getSelectedItem();
         if (SEPARATOR_COMMA.equals(separatorItem)) {
             return ',';
         } else if (SEPARATOR_SEMICOLON.equals(separatorItem)) {
@@ -378,7 +417,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     }
 
     public Character getQuoteChar() {
-        Object quoteItem = _quoteCharField.getSelectedItem();
+        final Object quoteItem = _quoteCharField.getSelectedItem();
         if (QUOTE_NONE.equals(quoteItem)) {
             return CsvDatastore.NOT_A_CHAR;
         } else if (QUOTE_DOUBLE_QUOTE.equals(quoteItem)) {
@@ -391,7 +430,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     }
 
     public Character getEscapeChar() {
-        Object escapeItem = _escapeCharField.getSelectedItem();
+        final Object escapeItem = _escapeCharField.getSelectedItem();
         if (ESCAPE_NONE.equals(escapeItem)) {
             return CsvDatastore.NOT_A_CHAR;
         } else if (ESCAPE_BACKSLASH.equals(escapeItem)) {
@@ -412,19 +451,21 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     }
 
     @Override
-    protected CsvDatastore getPreviewDatastore(Resource resource) {
+    protected CsvDatastore getPreviewDatastore(final Resource resource) {
         return createDatastore("Preview", resource, false);
     }
 
     @Override
-    protected CsvDatastore createDatastore(String name, Resource resource) {
-        boolean failOnInconsistentRecords = _failOnInconsistenciesCheckBox.isSelected();
+    protected CsvDatastore createDatastore(final String name, final Resource resource) {
+        final boolean failOnInconsistentRecords = _failOnInconsistenciesCheckBox.isSelected();
         return createDatastore(name, resource, failOnInconsistentRecords);
     }
 
-    private CsvDatastore createDatastore(String name, Resource resource, boolean failOnInconsistentRecords) {
+    private CsvDatastore createDatastore(final String name, final Resource resource,
+            final boolean failOnInconsistentRecords) {
         return new CsvDatastore(name, resource, resource.getQualifiedPath(), getQuoteChar(), getSeparatorChar(),
-                getEscapeChar(), getEncoding(), failOnInconsistentRecords, isMultilineValues(), getHeaderLine());
+                getEscapeChar(), getEncoding(), failOnInconsistentRecords, isMultilineValues(), getHeaderLine(),
+                _columnNames);
     }
 
     public boolean isMultilineValues() {
@@ -437,9 +478,10 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     }
 
     @Override
-    protected void initializeFileFilters(ResourceSelector resourceSelector) {
-        final FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)",
-                FileFilters.CSV, FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
+    protected void initializeFileFilters(final ResourceSelector resourceSelector) {
+        final FileFilter combinedFilter = FileFilters
+                .combined("Any raw data file (.csv, .tsv, .dat, .txt)", FileFilters.CSV, FileFilters.TSV,
+                        FileFilters.DAT, FileFilters.TXT);
         resourceSelector.addChoosableFileFilter(combinedFilter);
         resourceSelector.addChoosableFileFilter(FileFilters.CSV);
         resourceSelector.addChoosableFileFilter(FileFilters.TSV);
@@ -450,16 +492,20 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
         resourceSelector.addListener(new ResourceTypePresenter.Listener() {
             @Override
-            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
+            public void onResourceSelected(final ResourceTypePresenter<?> presenter, final Resource resource) {
                 if (FileFilters.TSV.accept(resource)) {
                     _separatorCharField.setSelectedItem(SEPARATOR_TAB);
                 }
 
+                _columnNames = null;
                 onSettingsUpdated(true, true, resource);
+                _addColumnNamesButton.setEnabled(true);
             }
 
             @Override
-            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+            public void onPathEntered(final ResourceTypePresenter<?> presenter, final String path) {
+                _addColumnNamesButton.setEnabled(true);
+                _columnNames = null;
             }
         });
     }

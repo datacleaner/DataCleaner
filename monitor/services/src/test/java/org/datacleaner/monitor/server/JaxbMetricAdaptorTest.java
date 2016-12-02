@@ -25,8 +25,6 @@ import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.datacleaner.monitor.jaxb.MetricType;
 import org.datacleaner.monitor.jaxb.MetricsType;
@@ -35,27 +33,31 @@ import org.datacleaner.monitor.server.jaxb.JaxbTimelineReader;
 import org.datacleaner.monitor.server.jaxb.JaxbTimelineWriter;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 
+import junit.framework.TestCase;
+
 public class JaxbMetricAdaptorTest extends TestCase {
 
-    private final MetricIdentifier metric1 = new MetricIdentifier("Null strings", "String analyzer", null,
-            "My strings", "Null count", null, "My strings", false, true);
-    private final MetricIdentifier metric2 = new MetricIdentifier(null, "Number analyzer", null, "My numbers",
-            "Null count", null, "My numbers", false, true);
+    private final MetricIdentifier metric1 =
+            new MetricIdentifier("Null strings", "String analyzer", null, "My strings", "Null count", null,
+                    "My strings", false, true);
+    private final MetricIdentifier metric2 =
+            new MetricIdentifier(null, "Number analyzer", null, "My numbers", "Null count", null, "My numbers", false,
+                    true);
 
     public void testSerializeSingleMetric() throws Exception {
         TimelineDefinition timelineDefinition = new TimelineDefinition();
         timelineDefinition.setMetrics(Arrays.asList(metric1));
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         new JaxbTimelineWriter().write(timelineDefinition, out);
 
-        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
         timelineDefinition = new JaxbTimelineReader().read(in);
 
         assertEquals(1, timelineDefinition.getMetrics().size());
-        MetricIdentifier metric = timelineDefinition.getMetrics().get(0);
+        final MetricIdentifier metric = timelineDefinition.getMetrics().get(0);
 
         assertFalse(metric.isFormulaBased());
         assertEquals(
@@ -66,31 +68,31 @@ public class JaxbMetricAdaptorTest extends TestCase {
     }
 
     public void testSerializeFormulaMetric() throws Exception {
-        final MetricIdentifier formulaMetricIdentifier = new MetricIdentifier("My formula metric",
-                "Null strings / Null count", Arrays.asList(metric1, metric2));
+        final MetricIdentifier formulaMetricIdentifier =
+                new MetricIdentifier("My formula metric", "Null strings / Null count", Arrays.asList(metric1, metric2));
 
         TimelineDefinition timelineDefinition = new TimelineDefinition();
         timelineDefinition.setMetrics(Arrays.asList(formulaMetricIdentifier));
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         new JaxbTimelineWriter().write(timelineDefinition, out);
 
-        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
         timelineDefinition = new JaxbTimelineReader().read(in);
 
         assertEquals(1, timelineDefinition.getMetrics().size());
-        MetricIdentifier metric = timelineDefinition.getMetrics().get(0);
+        final MetricIdentifier metric = timelineDefinition.getMetrics().get(0);
 
         assertTrue(metric.isFormulaBased());
         assertEquals("MetricIdentifier[formula=Null strings / Null count]", metric.toString());
 
-        List<MetricIdentifier> children = metric.getChildren();
+        final List<MetricIdentifier> children = metric.getChildren();
         assertEquals(2, children.size());
 
-        MetricIdentifier child1 = children.get(0);
-        MetricIdentifier child2 = children.get(1);
+        final MetricIdentifier child1 = children.get(0);
+        final MetricIdentifier child2 = children.get(1);
 
         assertEquals(
                 "MetricIdentifier[analyzerInputName=My strings,metricDescriptorName=Null count,paramColumnName=My strings]",
@@ -102,21 +104,21 @@ public class JaxbMetricAdaptorTest extends TestCase {
         assertEquals(metric1, child1);
         assertEquals(metric2, child2);
     }
-    
+
     public void testReadMetricsList() throws Exception {
-        JaxbMetricAdaptor adaptor = new JaxbMetricAdaptor();
-        MetricsType metrics;
+        final JaxbMetricAdaptor adaptor = new JaxbMetricAdaptor();
+        final MetricsType metrics;
         try (FileInputStream in = new FileInputStream("src/test/resources/jaxb_metrics.xml")) {
             metrics = adaptor.read(in);
         }
-        
-        List<MetricType> metricList = metrics.getMetric();
+
+        final List<MetricType> metricList = metrics.getMetric();
         assertEquals(3, metricList.size());
-        
-        MetricType metricType = metricList.get(0);
+
+        final MetricType metricType = metricList.get(0);
         assertEquals("Record count", metricType.getMetricDisplayName());
-        
-        MetricIdentifier metric = adaptor.deserialize(metricType);
+
+        final MetricIdentifier metric = adaptor.deserialize(metricType);
         assertEquals("MetricIdentifier[analyzerInputName=null,metricDescriptorName=Row count]", metric.toString());
     }
 }

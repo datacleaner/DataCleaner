@@ -34,7 +34,7 @@ public final class NowDate extends Date implements ExpressionDate {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj instanceof NowDate) {
             return true;
         }

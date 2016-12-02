@@ -34,25 +34,25 @@ abstract class AbstractHasMetadataAnnotations implements HasMetadataAnnotations 
 
     private final ImmutableList<MetadataAnnotation> _annotations;
 
-    public AbstractHasMetadataAnnotations(Collection<? extends MetadataAnnotation> annotations) {
+    public AbstractHasMetadataAnnotations(final Collection<? extends MetadataAnnotation> annotations) {
         _annotations = ImmutableList.copyOf(annotations);
     }
 
     @Override
-    public MetadataAnnotation getAnnotation(String annotationName) {
+    public MetadataAnnotation getAnnotation(final String annotationName) {
         if (Strings.isNullOrEmpty(annotationName)) {
             return null;
         }
 
         // first check: exact match
-        for (MetadataAnnotation annotation : _annotations) {
+        for (final MetadataAnnotation annotation : _annotations) {
             if (annotationName.equals(annotation.getName())) {
                 return annotation;
             }
         }
 
         // second check: case insensitive match
-        for (MetadataAnnotation annotation : _annotations) {
+        for (final MetadataAnnotation annotation : _annotations) {
             if (annotationName.equalsIgnoreCase(annotation.getName())) {
                 return annotation;
             }
@@ -62,7 +62,7 @@ abstract class AbstractHasMetadataAnnotations implements HasMetadataAnnotations 
     }
 
     @Override
-    public <M> M getAdaptedAnnotation(MetadataAnnotationAdaptor<M> annotationAdaptor) {
+    public <M> M getAdaptedAnnotation(final MetadataAnnotationAdaptor<M> annotationAdaptor) {
         if (annotationAdaptor == null) {
             return null;
         }
@@ -73,8 +73,7 @@ abstract class AbstractHasMetadataAnnotations implements HasMetadataAnnotations 
             return null;
         }
 
-        final M result = annotationAdaptor.convertFromAnnotation(annotation);
-        return result;
+        return annotationAdaptor.convertFromAnnotation(annotation);
     }
 
     @Override
@@ -88,14 +87,14 @@ abstract class AbstractHasMetadataAnnotations implements HasMetadataAnnotations 
         }
 
         // exact match
-        for (H hasName : hasNames) {
+        for (final H hasName : hasNames) {
             if (name.equals(hasName.getName())) {
                 return hasName;
             }
         }
 
         // case insensitive match
-        for (H hasName : hasNames) {
+        for (final H hasName : hasNames) {
             if (name.equalsIgnoreCase(hasName.getName())) {
                 return hasName;
             }

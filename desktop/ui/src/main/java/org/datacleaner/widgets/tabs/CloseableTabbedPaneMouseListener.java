@@ -29,146 +29,147 @@ import java.awt.event.MouseMotionListener;
 
 class CloseableTabbedPaneMouseListener extends MouseAdapter implements MouseMotionListener {
 
-	private final CloseableTabbedPaneUI _tabbedPaneUI;
-	private final CloseableTabbedPane _pane;
-	private volatile int _closedIndex = -1;
+    private final CloseableTabbedPaneUI _tabbedPaneUI;
+    private final CloseableTabbedPane _pane;
+    private volatile int _closedIndex = -1;
 
-	/**
-	 * @param closeableTabbedPaneUI
-	 */
-	public CloseableTabbedPaneMouseListener(CloseableTabbedPaneUI closeableTabbedPaneUI, CloseableTabbedPane pane) {
-		_tabbedPaneUI = closeableTabbedPaneUI;
-		_pane = pane;
-	}
+    /**
+     * @param closeableTabbedPaneUI
+     */
+    public CloseableTabbedPaneMouseListener(final CloseableTabbedPaneUI closeableTabbedPaneUI,
+            final CloseableTabbedPane pane) {
+        _tabbedPaneUI = closeableTabbedPaneUI;
+        _pane = pane;
+    }
 
-	public int getClosedIndex() {
-		return _closedIndex;
-	}
+    public int getClosedIndex() {
+        return _closedIndex;
+    }
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		_closedIndex = -1;
-		_pane.repaint();
-	}
+    @Override
+    public void mouseReleased(final MouseEvent e) {
+        _closedIndex = -1;
+        _pane.repaint();
+    }
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		final int button = e.getButton();
-		if (button == MouseEvent.NOBUTTON) {
-			return;
-		}
+    @Override
+    public void mouseClicked(final MouseEvent e) {
+        final int button = e.getButton();
+        if (button == MouseEvent.NOBUTTON) {
+            return;
+        }
 
-		if (!_pane.isEnabled()) {
-			return;
-		}
+        if (!_pane.isEnabled()) {
+            return;
+        }
 
-		int clickedTabIndex = _tabbedPaneUI.tabForCoordinate(_pane, e.getX(), e.getY());
+        final int clickedTabIndex = _tabbedPaneUI.tabForCoordinate(_pane, e.getX(), e.getY());
 
-		if (clickedTabIndex == -1) {
-			return;
-		}
+        if (clickedTabIndex == -1) {
+            return;
+        }
 
-		// regular left click
-		if (button == MouseEvent.BUTTON1) {
-			// only allow closing windows on the same run (row of tabs) as the
-			// selected tab
-			int selectedIndex = _pane.getSelectedIndex();
+        // regular left click
+        if (button == MouseEvent.BUTTON1) {
+            // only allow closing windows on the same run (row of tabs) as the
+            // selected tab
+            final int selectedIndex = _pane.getSelectedIndex();
 
-			// check for double clicks
-			if (e.getClickCount() > 1) {
-				ActionListener doubleClickActionListener = _pane.getDoubleClickActionListener(selectedIndex);
-				if (doubleClickActionListener != null) {
-					doubleClickActionListener.actionPerformed(new ActionEvent(e, clickedTabIndex, "double-click"));
-					return;
-				}
-			}
+            // check for double clicks
+            if (e.getClickCount() > 1) {
+                final ActionListener doubleClickActionListener = _pane.getDoubleClickActionListener(selectedIndex);
+                if (doubleClickActionListener != null) {
+                    doubleClickActionListener.actionPerformed(new ActionEvent(e, clickedTabIndex, "double-click"));
+                    return;
+                }
+            }
 
-			int runIndexOfSelectedTab = _tabbedPaneUI.getRunForTab(_pane.getTabCount(), selectedIndex);
-			int runIndexOfClickedTab = _tabbedPaneUI.getRunForTab(_pane.getTabCount(), clickedTabIndex);
-			if (runIndexOfClickedTab != runIndexOfSelectedTab) {
-				return;
-			}
+            final int runIndexOfSelectedTab = _tabbedPaneUI.getRunForTab(_pane.getTabCount(), selectedIndex);
+            final int runIndexOfClickedTab = _tabbedPaneUI.getRunForTab(_pane.getTabCount(), clickedTabIndex);
+            if (runIndexOfClickedTab != runIndexOfSelectedTab) {
+                return;
+            }
 
-			if (_pane.getUnclosables().contains(clickedTabIndex)) {
-				return;
-			}
-			if (_pane.getSeparators().contains(clickedTabIndex)) {
-				return;
-			}
+            if (_pane.getUnclosables().contains(clickedTabIndex)) {
+                return;
+            }
+            if (_pane.getSeparators().contains(clickedTabIndex)) {
+                return;
+            }
 
-			Rectangle r = _tabbedPaneUI.closeRectFor(clickedTabIndex);
-			// Check for mouse being in close box
-			if (r.contains(new Point(e.getX(), e.getY()))) {
-				// Send tab closed message
-				_pane.closeTab(clickedTabIndex);
-			}
-		}
+            final Rectangle r = _tabbedPaneUI.closeRectFor(clickedTabIndex);
+            // Check for mouse being in close box
+            if (r.contains(new Point(e.getX(), e.getY()))) {
+                // Send tab closed message
+                _pane.closeTab(clickedTabIndex);
+            }
+        }
 
-		// right click
-		if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-			ActionListener actionListener = _pane.getRightClickActionListener(clickedTabIndex);
-			if (actionListener != null) {
-				actionListener.actionPerformed(new ActionEvent(e, clickedTabIndex, "right-click"));
-			}
-		}
-	}
+        // right click
+        if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+            final ActionListener actionListener = _pane.getRightClickActionListener(clickedTabIndex);
+            if (actionListener != null) {
+                actionListener.actionPerformed(new ActionEvent(e, clickedTabIndex, "right-click"));
+            }
+        }
+    }
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (!_pane.isEnabled()) {
-			return;
-		}
-		if (e.getButton() != 1) {
-			return;
-		}
-		int tabIndex = _tabbedPaneUI.tabForCoordinate(_pane, e.getX(), e.getY());
+    @Override
+    public void mousePressed(final MouseEvent e) {
+        if (!_pane.isEnabled()) {
+            return;
+        }
+        if (e.getButton() != 1) {
+            return;
+        }
+        final int tabIndex = _tabbedPaneUI.tabForCoordinate(_pane, e.getX(), e.getY());
 
-		if (tabIndex == -1) {
-			return;
-		}
-		if (_pane.getUnclosables().contains(tabIndex)) {
-			return;
-		}
-		if (_pane.getSeparators().contains(tabIndex)) {
-			return;
-		}
+        if (tabIndex == -1) {
+            return;
+        }
+        if (_pane.getUnclosables().contains(tabIndex)) {
+            return;
+        }
+        if (_pane.getSeparators().contains(tabIndex)) {
+            return;
+        }
 
-		Rectangle r = _tabbedPaneUI.closeRectFor(tabIndex);
-		if (r.contains(new Point(e.getX(), e.getY()))) {
-			_closedIndex = tabIndex;
-		} else {
-			_closedIndex = -1;
-		}
-		_pane.repaint();
-	}
+        final Rectangle r = _tabbedPaneUI.closeRectFor(tabIndex);
+        if (r.contains(new Point(e.getX(), e.getY()))) {
+            _closedIndex = tabIndex;
+        } else {
+            _closedIndex = -1;
+        }
+        _pane.repaint();
+    }
 
-	public void mouseDragged(MouseEvent e) {
-		mouseMoved(e);
-		mousePressed(e);
-	}
+    public void mouseDragged(final MouseEvent e) {
+        mouseMoved(e);
+        mousePressed(e);
+    }
 
-	public void mouseMoved(MouseEvent e) {
-		if (_pane == null || !_pane.isEnabled()) {
-			return;
-		}
-		int tabIndex = _tabbedPaneUI.tabForCoordinate(_pane, e.getX(), e.getY());
-		if (tabIndex == -1) {
-			return;
-		}
-		if (_pane.getUnclosables().contains(tabIndex)) {
-			return;
-		}
-		if (_pane.getSeparators().contains(tabIndex)) {
-			return;
-		}
+    public void mouseMoved(final MouseEvent e) {
+        if (_pane == null || !_pane.isEnabled()) {
+            return;
+        }
+        final int tabIndex = _tabbedPaneUI.tabForCoordinate(_pane, e.getX(), e.getY());
+        if (tabIndex == -1) {
+            return;
+        }
+        if (_pane.getUnclosables().contains(tabIndex)) {
+            return;
+        }
+        if (_pane.getSeparators().contains(tabIndex)) {
+            return;
+        }
 
-		Rectangle r = _tabbedPaneUI.closeRectFor(tabIndex);
-		if (r.contains(new Point(e.getX(), e.getY()))) {
-			_closedIndex = tabIndex;
-		} else {
-			_closedIndex = -1;
-		}
+        final Rectangle r = _tabbedPaneUI.closeRectFor(tabIndex);
+        if (r.contains(new Point(e.getX(), e.getY()))) {
+            _closedIndex = tabIndex;
+        } else {
+            _closedIndex = -1;
+        }
 
-		_pane.repaint();
-	}
+        _pane.repaint();
+    }
 }

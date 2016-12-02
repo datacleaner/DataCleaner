@@ -26,82 +26,83 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.swing.JComponent;
 
-import org.datacleaner.connection.SasDatastore;
-import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.DCLabel;
 import org.eobjects.metamodel.sas.SasFilenameFilter;
 
 public final class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<SasDatastore> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final DCLabel _tableCountLabel;
+    private final DCLabel _tableCountLabel;
 
-	@Inject
-	protected SasDatastoreDialog(@Nullable SasDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowContext windowContext, UserPreferences userPreferences) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
-		_tableCountLabel = DCLabel.bright("Please choose the directory to infer the tables");
+    @Inject
+    protected SasDatastoreDialog(@Nullable final SasDatastore originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
+        super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
+        _tableCountLabel = DCLabel.bright("Please choose the directory to infer the tables");
 
-		if (originalDatastore != null) {
-			onFileSelected(new File(originalDatastore.getFilename()));
-		}
-	}
+        if (originalDatastore != null) {
+            onFileSelected(new File(originalDatastore.getFilename()));
+        }
+    }
 
-	@Override
-	protected void onFileSelected(File file) {
-		if (file.exists() && file.isDirectory()) {
-			String[] files = file.list(new SasFilenameFilter());
-			_tableCountLabel.setText("Directory contains " + files.length + " SAS table(s).");
-			if (files.length == 0) {
-				setStatusWarning("No SAS tables in directory");
-			} else {
-				setStatusValid();
-			}
-		} else {
-			setStatusWarning("Please select a valid directory");
-		}
-	}
+    @Override
+    protected void onFileSelected(final File file) {
+        if (file.exists() && file.isDirectory()) {
+            final String[] files = file.list(new SasFilenameFilter());
+            _tableCountLabel.setText("Directory contains " + files.length + " SAS table(s).");
+            if (files.length == 0) {
+                setStatusWarning("No SAS tables in directory");
+            } else {
+                setStatusValid();
+            }
+        } else {
+            setStatusWarning("Please select a valid directory");
+        }
+    }
 
-	@Override
-	protected List<Entry<String, JComponent>> getFormElements() {
-		List<Entry<String, JComponent>> result = super.getFormElements();
-		result.add(new ImmutableEntry<String, JComponent>("Tables", _tableCountLabel));
-		return result;
-	}
+    @Override
+    protected List<Entry<String, JComponent>> getFormElements() {
+        final List<Entry<String, JComponent>> result = super.getFormElements();
+        result.add(new ImmutableEntry<>("Tables", _tableCountLabel));
+        return result;
+    }
 
-	@Override
-	protected String getBannerTitle() {
-		return "SAS library";
-	}
+    @Override
+    protected String getBannerTitle() {
+        return "SAS library";
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return "SAS library | Datastore";
-	}
+    @Override
+    public String getWindowTitle() {
+        return "SAS library | Datastore";
+    }
 
-	@Override
-	protected SasDatastore createDatastore(String name, String filename) {
-		return new SasDatastore(name, new File(filename));
-	}
+    @Override
+    protected SasDatastore createDatastore(final String name, final String filename) {
+        return new SasDatastore(name, new File(filename));
+    }
 
-	@Override
-	protected String getDatastoreIconPath() {
-		return IconUtils.SAS_IMAGEPATH;
-	}
+    @Override
+    protected String getDatastoreIconPath() {
+        return IconUtils.SAS_IMAGEPATH;
+    }
 
-	@Override
-	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
-	}
+    @Override
+    protected void setFileFilters(final AbstractResourceTextField<?> filenameField) {
+    }
 
-	@Override
-	protected boolean isDirectoryBased() {
-		return true;
-	}
+    @Override
+    protected boolean isDirectoryBased() {
+        return true;
+    }
 }

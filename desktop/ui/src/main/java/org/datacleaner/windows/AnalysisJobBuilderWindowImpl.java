@@ -22,6 +22,7 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -90,8 +92,13 @@ import org.datacleaner.panels.RightInformationPanel;
 import org.datacleaner.panels.SchemaTreePanel;
 import org.datacleaner.panels.SelectDatastoreContainerPanel;
 import org.datacleaner.panels.WelcomePanel;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.MutableReferenceDataCatalog;
+import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -102,11 +109,13 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.widgets.CollapsibleTreePanel;
+import org.datacleaner.widgets.CommunityEditionStatusLabel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.DataCloudStatusLabel;
 import org.datacleaner.widgets.ExecuteButtonBuilder;
-import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
+import org.datacleaner.widgets.InformationPanelDescriptor;
+import org.datacleaner.widgets.InformationPanelLabel;
 import org.datacleaner.widgets.NewsChannelStatusLabel;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.visualization.JobGraph;
@@ -121,9 +130,8 @@ import org.slf4j.LoggerFactory;
  * {@link AnalysisJobBuilder} class.
  */
 @Singleton
-public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements
-        AnalysisJobBuilderWindow,
-        WindowListener {
+public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
+        implements AnalysisJobBuilderWindow, WindowListener {
 
     private class WindowAnalysisJobChangeListener implements AnalysisJobChangeListener {
         @Override
@@ -136,7 +144,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
             // We'll need to listen to already added output data stream job
             // builders
-            for (AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()) {
+            for (final AnalysisJobBuilder analysisJobBuilder : builder.getConsumedOutputDataStreamsJobBuilders()) {
                 onActivation(analysisJobBuilder);
             }
         }
@@ -192,7 +200,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         @Override
         public void onOutputChanged(final TransformerComponentBuilder<?> transformerJobBuilder,
-                List<MutableInputColumn<?>> outputColumns) {
+                final List<MutableInputColumn<?>> outputColumns) {
             _graph.refresh();
         }
 
@@ -288,6 +296,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final FilterChangeListener _filterChangeListener = new WindowFilterChangeListener();
     private final SourceColumnChangeListener _sourceColumnChangeListener = new WindowSourceColumnChangeListener();
     private final AnalysisJobChangeListener _analysisJobChangeListener = new WindowAnalysisJobChangeListener();
+    private final ReferenceDataAnalysisJobWindowImplListeners _referenceDataAnalysisJobWindowListeners;
+    private ReferenceDataChangeListener<StringPattern> _stringPatternChangeListener;
+    private ReferenceDataChangeListener<Dictionary> _dictionaryChangeListener;
+    private ReferenceDataChangeListener<SynonymCatalog> _synonymCatalogListener;
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -295,18 +307,22 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private JComponent _windowContent;
     private WindowSizePreferences _windowSizePreference;
     private AnalysisWindowPanelType _currentPanelType;
+    private MutableReferenceDataCatalog _mutableReferenceCatalog;
 
     @Inject
-    protected AnalysisJobBuilderWindowImpl(DataCleanerConfiguration configuration, WindowContext windowContext,
-            SchemaTreePanel schemaTreePanel, AnalysisJobBuilder analysisJobBuilder, DCModule dcModule,
-            UserPreferences userPreferences, @Nullable @JobFile FileObject jobFilename,
-            Provider<NewAnalysisJobActionListener> newAnalysisJobActionListenerProvider,
-            Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
-            Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
-            Provider<ReferenceDataDialog> referenceDataDialogProvider, UsageLogger usageLogger,
-            Provider<OptionsDialog> optionsDialogProvider,
-            Provider<MonitorConnectionDialog> monitorConnectionDialogProvider,
-            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog) {
+    protected AnalysisJobBuilderWindowImpl(final DataCleanerConfiguration configuration,
+            final WindowContext windowContext, final SchemaTreePanel schemaTreePanel,
+            final AnalysisJobBuilder analysisJobBuilder, final DCModule dcModule, final UserPreferences userPreferences,
+            @Nullable @JobFile final FileObject jobFilename,
+            final Provider<NewAnalysisJobActionListener> newAnalysisJobActionListenerProvider,
+            final Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
+            final Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
+            final Provider<ReferenceDataDialog> referenceDataDialogProvider, final UsageLogger usageLogger,
+            final Provider<OptionsDialog> optionsDialogProvider,
+            final Provider<MonitorConnectionDialog> monitorConnectionDialogProvider,
+            final OpenAnalysisJobActionListener openAnalysisJobActionListener,
+            final DatabaseDriverCatalog databaseDriverCatalog,
+            final MutableReferenceDataCatalog mutableReferenceCatalog) {
         super(windowContext);
         _jobFilename = jobFilename;
         _configuration = configuration;
@@ -318,8 +334,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _monitorConnectionDialogProvider = monitorConnectionDialogProvider;
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
-        _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass(), DEFAULT_WINDOW_WIDTH,
-                DEFAULT_WINDOW_HEIGHT);
+        _mutableReferenceCatalog = mutableReferenceCatalog;
+        _windowSizePreference =
+                new WindowSizePreferences(_userPreferences, getClass(), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+
+        setMinimumSize(new Dimension(900, 550));
 
         if (analysisJobBuilder == null) {
             _analysisJobBuilder = new AnalysisJobBuilder(_configuration);
@@ -341,17 +360,27 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 usageLogger);
 
         _analysisJobChangeListener.onActivation(_analysisJobBuilder);
+        //Add listeners for ReferenceData classes 
+        _referenceDataAnalysisJobWindowListeners = new ReferenceDataAnalysisJobWindowImplListeners(_analysisJobBuilder);
+        _stringPatternChangeListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeStringPatternListener();
+        _dictionaryChangeListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeDictionaryListener();
+        _synonymCatalogListener = _referenceDataAnalysisJobWindowListeners.new WindowChangeSynonymCatalogListener();
+        _mutableReferenceCatalog.addStringPatternListener(_stringPatternChangeListener);
+        _mutableReferenceCatalog.addDictionaryListener(_dictionaryChangeListener);
+        _mutableReferenceCatalog.addSynonymCatalogListener(_synonymCatalogListener);
 
         _saveButton = WidgetFactory.createToolbarButton("Save", IconUtils.ACTION_SAVE_BRIGHT);
         _saveAsButton = WidgetFactory.createToolbarButton("Save As...", IconUtils.ACTION_SAVE_BRIGHT);
 
-        _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(),
-                _dcModule);
+        _welcomePanel =
+                new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(), _dcModule);
 
-        _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
-                _optionsDialogProvider, _dcModule, databaseDriverCatalog, _userPreferences);
+        _datastoreManagementPanel =
+                new DatastoreManagementPanel(_configuration, this, _glassPane, _optionsDialogProvider, _dcModule,
+                        databaseDriverCatalog, _userPreferences);
         _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog,
-                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), configuration.getServerInformationCatalog(), _userPreferences, windowContext);
+                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(),
+                configuration.getServerInformationCatalog(), _userPreferences, windowContext);
         _contentContainerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _contentContainerPanel.setLayout(new CardLayout());
         _contentContainerPanel.add(_welcomePanel, AnalysisWindowPanelType.WELCOME.getName());
@@ -365,15 +394,16 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
+
     }
 
     @Override
     public void open() {
         super.open();
     }
-    
+
     @Override
-    public void changePanel(AnalysisWindowPanelType panel) {
+    public void changePanel(final AnalysisWindowPanelType panel) {
         if (_datastore == null) {
             _currentPanelType = panel;
             _schemaTreePanel.onPanelHiding();
@@ -392,7 +422,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     /**
      * Gets whether or not the datastore has been set in this window (ie. if the
      * tree is showing a datastore).
-     * 
+     *
      * @return true if a datastore is set.
      */
     @Override
@@ -402,7 +432,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     /**
      * Initializes the window to use a particular datastore in the schema tree.
-     * 
+     *
      * @param datastore
      */
     @Override
@@ -412,13 +442,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     /**
      * Initializes the window to use a particular datastore in the schema tree.
-     * 
+     *
      * @param datastore
      * @param expandTree
      *            true if the datastore tree should be initially expanded.
      */
     @Override
-    public void setDatastore(final Datastore datastore, boolean expandTree) {
+    public void setDatastore(final Datastore datastore, final boolean expandTree) {
         final DatastoreConnection con;
         if (datastore == null) {
             con = null;
@@ -446,7 +476,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _graph.refresh();
     }
 
-    private void setSchemaTree(final Datastore datastore, boolean expandTree, final DatastoreConnection con) {
+    private void setSchemaTree(final Datastore datastore, final boolean expandTree, final DatastoreConnection con) {
         if (con != null) {
             final Schema defaultSchema = con.getSchemaNavigator().getDefaultSchema();
             final int datastoreSize = defaultSchema.getTables().length;
@@ -469,7 +499,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
     }
 
-    private void updateLeftPanelVisibility(boolean show) {
+    private void updateLeftPanelVisibility(final boolean show) {
         if (show) {
             _leftPanel.setVisible(true);
             if (_leftPanel.isCollapsed()) {
@@ -512,18 +542,19 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                     setStatusLabelText("Job is not correctly configured");
                     setStatusLabelWarning();
                 }
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 executeable = false;
                 logger.debug("Job not correctly configured", ex);
                 final String errorMessage;
                 if (ex instanceof UnconfiguredConfiguredPropertyException) {
-                    final UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException = (UnconfiguredConfiguredPropertyException) ex;
-                    final ConfiguredPropertyDescriptor configuredProperty = unconfiguredConfiguredPropertyException
-                            .getConfiguredProperty();
-                    final ComponentBuilder componentBuilder = unconfiguredConfiguredPropertyException
-                            .getComponentBuilder();
-                    errorMessage = "Property '" + configuredProperty.getName() + "' in " + LabelUtils.getLabel(
-                            componentBuilder) + " is not set!";
+                    final UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException =
+                            (UnconfiguredConfiguredPropertyException) ex;
+                    final ConfiguredPropertyDescriptor configuredProperty =
+                            unconfiguredConfiguredPropertyException.getConfiguredProperty();
+                    final ComponentBuilder componentBuilder =
+                            unconfiguredConfiguredPropertyException.getComponentBuilder();
+                    errorMessage = "Property '" + configuredProperty.getName() + "' in " + LabelUtils
+                            .getLabel(componentBuilder) + " is not set!";
                 } else if (ex instanceof ComponentValidationException) {
                     final ComponentValidationException componentValidationException = (ComponentValidationException) ex;
                     errorMessage = componentValidationException.getComponentDescriptor().getDisplayName()
@@ -565,7 +596,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     @Override
-    public void setStatusLabelText(String statusLabelText) {
+    public void setStatusLabelText(final String statusLabelText) {
         _statusLabel.setText(statusLabelText);
     }
 
@@ -595,15 +626,17 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             if (isJobUnsaved(getJobFile(), _analysisJobBuilder) && (_saveButton.isEnabled())) {
 
                 final Object[] buttons = { "Save changes", "Discard changes", "Cancel" };
-                final int unsavedChangesChoice = JOptionPane.showOptionDialog(this,
-                        "The job has unsaved changes. What would you like to do?", "Unsaved changes detected",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[1]);
+                final int unsavedChangesChoice = JOptionPane
+                        .showOptionDialog(this, "The job has unsaved changes. What would you like to do?",
+                                "Unsaved changes detected", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                                null, buttons, buttons[1]);
 
                 if (unsavedChangesChoice == 0) { // save changes
                     _saveButton.doClick();
                     final ActionListener[] actionListeners = _saveButton.getActionListeners();
-                    if (actionListeners[0] instanceof SaveAnalysisJobActionListener){
-                        final SaveAnalysisJobActionListener saveAnalysisJobActionListener = (SaveAnalysisJobActionListener) actionListeners[0];
+                    if (actionListeners[0] instanceof SaveAnalysisJobActionListener) {
+                        final SaveAnalysisJobActionListener saveAnalysisJobActionListener =
+                                (SaveAnalysisJobActionListener) actionListeners[0];
                         if (!saveAnalysisJobActionListener.isSaved()) {
                             return false;
                         }
@@ -628,10 +661,16 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (_datastoreConnection != null) {
             _datastoreConnection.close();
         }
+
+        //Remove the reference data listener
+        _mutableReferenceCatalog.removeStringPatternListener(_stringPatternChangeListener);
+        _mutableReferenceCatalog.removeDictionaryListener(_dictionaryChangeListener);
+        _mutableReferenceCatalog.removeSynonymCatalogListener(_synonymCatalogListener);
+
         getContentPane().removeAll();
     }
 
-    private boolean isJobUnsaved(FileObject lastSavedJobFile, AnalysisJobBuilder analysisJobBuilder) {
+    private boolean isJobUnsaved(final FileObject lastSavedJobFile, final AnalysisJobBuilder analysisJobBuilder) {
         if (lastSavedJobFile == null) {
             return analysisJobBuilder.getComponentCount() != 0;
         }
@@ -639,31 +678,31 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             if (!lastSavedJobFile.exists()) {
                 return true;
             }
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             logger.warn("Error while determining if the job file already exists", e);
         }
 
-        InputStream lastSavedOutputStream = null;
+        final InputStream lastSavedOutputStream = null;
         ByteArrayOutputStream currentOutputStream = null;
         try {
-            File jobFile = new File(getJobFile().getURL().getFile());
+            final File jobFile = new File(getJobFile().getURL().getFile());
             if (jobFile.length() == 0) {
                 return true;
             }
 
-            String lastSavedJob = FileHelper.readFileAsString(jobFile);
-            String lastSavedJobNoMetadata = lastSavedJob.replaceAll("\n", "").replaceAll(
-                    "<job-metadata>.*</job-metadata>", "");
+            final String lastSavedJob = FileHelper.readFileAsString(jobFile);
+            final String lastSavedJobNoMetadata =
+                    lastSavedJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
 
-            JaxbJobWriter writer = new JaxbJobWriter(_configuration);
+            final JaxbJobWriter writer = new JaxbJobWriter(_configuration);
             currentOutputStream = new ByteArrayOutputStream();
             writer.write(_analysisJobBuilder.toAnalysisJob(false), currentOutputStream);
-            String currentJob = new String(currentOutputStream.toByteArray());
-            String currentJobNoMetadata = currentJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>",
-                    "");
+            final String currentJob = new String(currentOutputStream.toByteArray());
+            final String currentJobNoMetadata =
+                    currentJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
 
             return !currentJobNoMetadata.equals(lastSavedJobNoMetadata);
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new IllegalStateException(e);
         } finally {
             FileHelper.safeClose(currentOutputStream);
@@ -677,14 +716,14 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     @Override
-    public void setJobFile(FileObject jobFile) {
-        _jobFilename = jobFile;
-        updateWindowTitle();
+    public FileObject getJobFile() {
+        return _jobFilename;
     }
 
     @Override
-    public FileObject getJobFile() {
-        return _jobFilename;
+    public void setJobFile(final FileObject jobFile) {
+        _jobFilename = jobFile;
+        updateWindowTitle();
     }
 
     @Override
@@ -697,7 +736,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
 
         if (_datastore != null) {
-            String datastoreName = _datastore.getName();
+            final String datastoreName = _datastore.getName();
             if (!StringUtils.isNullOrEmpty(datastoreName)) {
                 title = datastoreName + " | " + title;
             }
@@ -731,8 +770,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             setDatastore(_datastore);
         }
 
-        final SaveAnalysisJobActionListener saveAnalysisJobActionListener = _saveAnalysisJobActionListenerProvider
-                .get();
+        final SaveAnalysisJobActionListener saveAnalysisJobActionListener =
+                _saveAnalysisJobActionListenerProvider.get();
         _saveButton.addActionListener(saveAnalysisJobActionListener);
         _saveAsButton.addActionListener(saveAnalysisJobActionListener);
         _saveAsButton.setActionCommand(SaveAnalysisJobActionListener.ACTION_COMMAND_SAVE_AS);
@@ -763,19 +802,33 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _executeButton.addComponentsToToolbar(toolBar);
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
-        RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);
+        final RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);
 
         final DataCloudStatusLabel dataCloudStatusLabel =
-                new DataCloudStatusLabel(rightInformationPanel, _configuration, _userPreferences, getWindowContext(), this);
+                new DataCloudStatusLabel(rightInformationPanel, _configuration, _userPreferences, getWindowContext(),
+                        this);
         statusBar.add(dataCloudStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
 
-        final NewsChannelStatusLabel newChannelStatusLabel = new NewsChannelStatusLabel(rightInformationPanel, _userPreferences);
+        final NewsChannelStatusLabel newChannelStatusLabel =
+                new NewsChannelStatusLabel(rightInformationPanel, _userPreferences);
         statusBar.add(newChannelStatusLabel);
         statusBar.add(Box.createHorizontalStrut(20));
 
-        final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(rightInformationPanel);
-        statusBar.add(statusLabel);
+        if (Version.isCommunityEdition()) {
+            final CommunityEditionStatusLabel statusLabel = new CommunityEditionStatusLabel(rightInformationPanel);
+            statusBar.add(statusLabel);
+            statusBar.add(Box.createHorizontalStrut(20));
+        } else {
+            final ServiceLoader<InformationPanelDescriptor> panelsLoaders =
+                    ServiceLoader.load(InformationPanelDescriptor.class);
+            for (final InformationPanelDescriptor panel : panelsLoaders) {
+                final InformationPanelLabel plugableRightPanelLabel =
+                        new InformationPanelLabel(rightInformationPanel, panel);
+                statusBar.add(plugableRightPanelLabel);
+                statusBar.add(Box.createHorizontalStrut(20));
+            }
+        }
 
         final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK);
         toolBarPanel.setLayout(new BorderLayout());
@@ -806,40 +859,40 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             optionsDialog.getTabbedPane().setSelectedIndex(0);
             optionsDialog.open();
         });
-        
-        final JMenuItem monitorMenuItem = WidgetFactory.createMenuItem("DataCleaner monitor",
-                IconUtils.MENU_DQ_MONITOR);
+
+        final JMenuItem monitorMenuItem =
+                WidgetFactory.createMenuItem("DataCleaner monitor", IconUtils.MENU_DQ_MONITOR);
         monitorMenuItem.addActionListener(e -> {
-            MonitorConnectionDialog dialog = _monitorConnectionDialogProvider.get();
+            final MonitorConnectionDialog dialog = _monitorConnectionDialogProvider.get();
             dialog.open();
         });
 
-        final JMenuItem dictionariesMenuItem = WidgetFactory.createMenuItem("Dictionaries",
-                IconUtils.DICTIONARY_IMAGEPATH);
+        final JMenuItem dictionariesMenuItem =
+                WidgetFactory.createMenuItem("Dictionaries", IconUtils.DICTIONARY_IMAGEPATH);
         dictionariesMenuItem.addActionListener(e -> {
-            ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
+            final ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
             referenceDataDialog.selectDictionariesTab();
             referenceDataDialog.open();
         });
 
-        final JMenuItem synonymCatalogsMenuItem = WidgetFactory.createMenuItem("Synonyms",
-                IconUtils.SYNONYM_CATALOG_IMAGEPATH);
+        final JMenuItem synonymCatalogsMenuItem =
+                WidgetFactory.createMenuItem("Synonyms", IconUtils.SYNONYM_CATALOG_IMAGEPATH);
         synonymCatalogsMenuItem.addActionListener(e -> {
-            ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
+            final ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
             referenceDataDialog.selectSynonymsTab();
             referenceDataDialog.open();
         });
 
-        final JMenuItem stringPatternsMenuItem = WidgetFactory.createMenuItem("String patterns",
-                IconUtils.STRING_PATTERN_IMAGEPATH);
+        final JMenuItem stringPatternsMenuItem =
+                WidgetFactory.createMenuItem("String patterns", IconUtils.STRING_PATTERN_IMAGEPATH);
         stringPatternsMenuItem.addActionListener(e -> {
-            ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
+            final ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
             referenceDataDialog.selectStringPatternsTab();
             referenceDataDialog.open();
         });
 
-        final PopupButton popupButton = new PopupButton("More", imageManager.getImageIcon(
-                IconUtils.ACTION_SCROLLDOWN_BRIGHT));
+        final PopupButton popupButton =
+                new PopupButton("More", imageManager.getImageIcon(IconUtils.ACTION_SCROLLDOWN_BRIGHT));
         applyMenuPopupButttonStyling(popupButton);
 
         final JMenu windowsMenuItem = WidgetFactory.createMenu("Windows", 'w');
@@ -858,8 +911,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 } else {
                     titleText = title;
                 }
-                final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
-                        IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
+                final ImageIcon icon = new ImageIcon(windowIcon
+                        .getScaledInstance(IconUtils.ICON_SIZE_SMALL, IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
                 final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(titleText, icon);
                 switchToWindowItem.addActionListener(e1 -> window.toFront());
                 windowsMenuItem.add(switchToWindowItem);
@@ -867,10 +920,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
             windowsMenuItem.add(new JSeparator());
 
-            JMenuItem closeAllWindowsItem = WidgetFactory.createMenuItem("Close all dialogs", (ImageIcon) null);
+            final JMenuItem closeAllWindowsItem = WidgetFactory.createMenuItem("Close all dialogs", (ImageIcon) null);
             closeAllWindowsItem.addActionListener(e1 -> {
-                List<DCWindow> windows1 = new ArrayList<>(getWindowContext().getWindows());
-                for (DCWindow window : windows1) {
+                final List<DCWindow> windows1 = new ArrayList<>(getWindowContext().getWindows());
+                for (final DCWindow window : windows1) {
                     if (window instanceof AbstractDialog) {
                         window.close();
                     }
@@ -892,7 +945,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return popupButton;
     }
 
-    private void applyMenuPopupButttonStyling(PopupButton popupButton) {
+    private void applyMenuPopupButttonStyling(final PopupButton popupButton) {
         popupButton.setBorder(new EmptyBorder(10, 4, 10, 4));
         popupButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         popupButton.setFocusPainted(false);
@@ -908,24 +961,24 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     private void onSourceColumnsChanged() {
-        boolean everythingEnabled = !_analysisJobBuilder.getSourceColumns().isEmpty();
+        final boolean everythingEnabled = !_analysisJobBuilder.getSourceColumns().isEmpty() && _datastore != null;
 
         _saveButton.setEnabled(everythingEnabled);
         _saveAsButton.setEnabled(everythingEnabled);
 
-        for (PopupButton superCategoryButton : _superCategoryButtons) {
+        for (final PopupButton superCategoryButton : _superCategoryButtons) {
             superCategoryButton.setEnabled(everythingEnabled);
         }
     }
 
     @Override
-    public void setDatastoreSelectionEnabled(boolean datastoreSelectionEnabled) {
-        _datastoreSelectionEnabled = datastoreSelectionEnabled;
+    public boolean isDatastoreSelectionEnabled() {
+        return _datastoreSelectionEnabled;
     }
 
     @Override
-    public boolean isDatastoreSelectionEnabled() {
-        return _datastoreSelectionEnabled;
+    public void setDatastoreSelectionEnabled(final boolean datastoreSelectionEnabled) {
+        _datastoreSelectionEnabled = datastoreSelectionEnabled;
     }
 
     @Override
@@ -938,7 +991,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return _analysisJobBuilder;
     }
 
-    public void windowClosed(WindowEvent e) {
+    public void windowClosed(final WindowEvent e) {
         if (this.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
             _windowSizePreference.setUserPreferredSize(null, true);
         } else {

@@ -84,17 +84,17 @@ public class JaxbPojoDatastoreAdaptor {
         _converter = StringConverter.simpleInstance();
     }
 
-    public JaxbPojoDatastoreAdaptor(DataCleanerConfiguration configuration) {
+    public JaxbPojoDatastoreAdaptor(final DataCleanerConfiguration configuration) {
         _converter = new StringConverter(configuration);
     }
 
-    public PojoDatastore read(PojoDatastoreType pojoDatastore) {
+    public PojoDatastore read(final PojoDatastoreType pojoDatastore) {
         final String name = pojoDatastore.getName();
         final String schemaName = (pojoDatastore.getSchemaName() == null ? name : pojoDatastore.getSchemaName());
 
-        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<TableDataProvider<?>>();
+        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<>();
         final List<PojoTableType> tables = pojoDatastore.getTable();
-        for (PojoTableType table : tables) {
+        for (final PojoTableType table : tables) {
             final String tableName = table.getName();
 
             final List<Columns.Column> columns = table.getColumns().getColumn();
@@ -110,16 +110,17 @@ public class JaxbPojoDatastoreAdaptor {
 
             final SimpleTableDef tableDef = new SimpleTableDef(tableName, columnNames, columnTypes);
 
-            final Collection<Object[]> arrays = new ArrayList<Object[]>();
+            final Collection<Object[]> arrays = new ArrayList<>();
             final Rows rowsType = table.getRows();
             if (rowsType != null) {
                 final List<Rows.Row> rows = rowsType.getRow();
-                for (Rows.Row row : rows) {
+                for (final Rows.Row row : rows) {
                     final List<Object> values = row.getV();
                     if (values.size() != columnCount) {
-                        throw new IllegalStateException("Row value count is not equal to column count in datastore '"
-                                + name + "'. Expected " + columnCount + " values, found " + values.size() + " (table "
-                                + tableName + ", row no. " + arrays.size() + ")");
+                        throw new IllegalStateException(
+                                "Row value count is not equal to column count in datastore '" + name + "'. Expected "
+                                        + columnCount + " values, found " + values.size() + " (table " + tableName
+                                        + ", row no. " + arrays.size() + ")");
                     }
                     final Object[] array = new Object[columnCount];
                     for (int i = 0; i < array.length; i++) {
@@ -138,11 +139,10 @@ public class JaxbPojoDatastoreAdaptor {
             tableDataProviders.add(tableDataProvider);
         }
 
-        final PojoDatastore ds = new PojoDatastore(name, schemaName, tableDataProviders);
-        return ds;
+        return new PojoDatastore(name, schemaName, tableDataProviders);
     }
 
-    private Object deserializeValue(final Object value, Class<?> expectedClass) {
+    private Object deserializeValue(final Object value, final Class<?> expectedClass) {
         if (value == null) {
             return null;
         }
@@ -161,7 +161,7 @@ public class JaxbPojoDatastoreAdaptor {
         }
 
         if (value instanceof String) {
-            String str = (String) value;
+            final String str = (String) value;
             return _converter.deserialize(str, expectedClass);
         } else {
             throw new UnsupportedOperationException("Unknown value type: " + value);
@@ -169,7 +169,7 @@ public class JaxbPojoDatastoreAdaptor {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T getNodeValue(Node node, Class<T> expectedClass) {
+    private <T> T getNodeValue(final Node node, Class<T> expectedClass) {
         if (node.getNodeType() == Node.TEXT_NODE) {
             final String str = node.getNodeValue();
             if (expectedClass == null) {
@@ -199,7 +199,8 @@ public class JaxbPojoDatastoreAdaptor {
                 final Map<String, Object> map = getNodeMap(childNodes);
                 return (T) map;
             } else {
-                throw new UnsupportedOperationException("Unexpected child nodes. First child: " + printNode(firstChild));
+                throw new UnsupportedOperationException(
+                        "Unexpected child nodes. First child: " + printNode(firstChild));
             }
         } else if (ReflectionUtils.is(expectedClass, List.class)) {
             final List<Object> list = getNodeList(childNodes);
@@ -216,17 +217,16 @@ public class JaxbPojoDatastoreAdaptor {
         throw new UnsupportedOperationException("Not a value (v) node type: " + printNode(node));
     }
 
-    private Class<?> determineExpectedClass(Node node, Class<?> fallbackType) {
-        NamedNodeMap attributes = node.getAttributes();
+    private Class<?> determineExpectedClass(final Node node, final Class<?> fallbackType) {
+        final NamedNodeMap attributes = node.getAttributes();
         if (attributes != null) {
             final Node attribute = attributes.getNamedItem("class");
             if (attribute != null) {
                 final String className = attribute.getTextContent();
                 if (!StringUtils.isNullOrEmpty(className)) {
                     try {
-                        final Class<?> cls = Class.forName(className);
-                        return cls;
-                    } catch (ClassNotFoundException e) {
+                        return Class.forName(className);
+                    } catch (final ClassNotFoundException e) {
                         logger.error("Could not load class: " + className + ". Falling back to String type.", e);
                     }
                 }
@@ -236,37 +236,39 @@ public class JaxbPojoDatastoreAdaptor {
         return fallbackType;
     }
 
-    private List<Object> getNodeList(List<Node> childNodes) {
-        final List<Object> list = new ArrayList<Object>();
-        for (Node childNode : childNodes) {
-            Object value = getNodeValue(childNode, null);
+    private List<Object> getNodeList(final List<Node> childNodes) {
+        final List<Object> list = new ArrayList<>();
+        for (final Node childNode : childNodes) {
+            final Object value = getNodeValue(childNode, null);
             list.add(value);
         }
         return list;
     }
 
-    private List<Node> getChildNodes(Node node) {
-        final List<Node> list = new ArrayList<Node>();
+    private List<Node> getChildNodes(final Node node) {
+        final List<Node> list = new ArrayList<>();
         final NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             final Node child = childNodes.item(i);
             switch (child.getNodeType()) {
             case Node.ELEMENT_NODE:
                 list.add(child);
+                // fallthru
             case Node.TEXT_NODE:
-                String text = child.getNodeValue();
+                final String text = child.getNodeValue();
                 if (!StringUtils.isNullOrEmpty(text)) {
                     list.add(child);
                 }
+                break;
             default: // ignore
             }
         }
         return list;
     }
 
-    private Map<String, Object> getNodeMap(List<Node> entryNodes) {
-        final Map<String, Object> map = new LinkedHashMap<String, Object>();
-        for (Node entryNode : entryNodes) {
+    private Map<String, Object> getNodeMap(final List<Node> entryNodes) {
+        final Map<String, Object> map = new LinkedHashMap<>();
+        for (final Node entryNode : entryNodes) {
             final String entryNodeName = entryNode.getNodeName();
             if (!"e".equals(entryNodeName)) {
                 throw new UnsupportedOperationException(
@@ -280,7 +282,7 @@ public class JaxbPojoDatastoreAdaptor {
 
             assert keyOrValueNodes.size() == 2;
 
-            for (Node keyOrValueNode : keyOrValueNodes) {
+            for (final Node keyOrValueNode : keyOrValueNodes) {
                 final String keyOrValueNodeName = keyOrValueNode.getNodeName();
                 if ("k".equals(keyOrValueNodeName)) {
                     key = getNodeValue(keyOrValueNode, String.class);
@@ -298,14 +300,16 @@ public class JaxbPojoDatastoreAdaptor {
         return map;
     }
 
-    private String printNode(Node node) {
+    private String printNode(final Node node) {
         return XmlUtils.writeDocumentToString(node, false);
     }
 
-    private org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row createPojoRow(Row row, Document document) {
-        final org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row rowType = new org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row();
+    private org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row createPojoRow(final Row row,
+            final Document document) {
+        final org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row rowType =
+                new org.datacleaner.configuration.jaxb.PojoTableType.Rows.Row();
         final Object[] values = row.getValues();
-        for (Object value : values) {
+        for (final Object value : values) {
             final Element elem = document.createElement("v");
             createPojoValue(value, elem, document, false);
             rowType.getV().add(elem);
@@ -313,14 +317,15 @@ public class JaxbPojoDatastoreAdaptor {
         return rowType;
     }
 
-    private void createPojoValue(Object value, Element elem, Document document, boolean explicitType) {
+    private void createPojoValue(Object value, final Element elem, final Document document,
+            final boolean explicitType) {
         if (value == null) {
             // return an empty element
             return;
         }
 
         if (value.getClass().isArray()) {
-            Class<?> componentType = value.getClass().getComponentType();
+            final Class<?> componentType = value.getClass().getComponentType();
             if (componentType.isPrimitive() || componentType == String.class) {
                 // leave the array to be serialized using the string converter -
                 // it
@@ -331,8 +336,8 @@ public class JaxbPojoDatastoreAdaptor {
         }
 
         if (value instanceof List) {
-            List<?> list = (List<?>) value;
-            for (Object item : list) {
+            final List<?> list = (List<?>) value;
+            for (final Object item : list) {
                 final Element itemElement = document.createElement("i");
                 createPojoValue(item, itemElement, document, true);
                 elem.appendChild(itemElement);
@@ -341,8 +346,8 @@ public class JaxbPojoDatastoreAdaptor {
         }
 
         if (value instanceof Map) {
-            Map<?, ?> map = (Map<?, ?>) value;
-            for (Entry<?, ?> entry : map.entrySet()) {
+            final Map<?, ?> map = (Map<?, ?>) value;
+            for (final Entry<?, ?> entry : map.entrySet()) {
                 final Element keyElement = document.createElement("k");
                 createPojoValue(entry.getKey(), keyElement, document, true);
 
@@ -364,15 +369,16 @@ public class JaxbPojoDatastoreAdaptor {
             if (explicitType) {
                 elem.setAttribute("class", value.getClass().getName());
             }
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             logger.warn("Failed to serialize value: " + value + ". Returning null.", e);
         }
         return;
     }
 
-    private org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column createPojoColumn(String name,
-            ColumnType type) {
-        org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column columnType = new org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column();
+    private org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column createPojoColumn(final String name,
+            final ColumnType type) {
+        final org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column columnType =
+                new org.datacleaner.configuration.jaxb.PojoTableType.Columns.Column();
         columnType.setName(name);
         columnType.setType(type.toString());
         return columnType;
@@ -385,7 +391,7 @@ public class JaxbPojoDatastoreAdaptor {
 
         // read columns
         final Columns columnsType = new Columns();
-        for (Column column : usedColumns) {
+        for (final Column column : usedColumns) {
             columnsType.getColumn().add(createPojoColumn(column.getName(), column.getType()));
         }
         tableType.setColumns(columnsType);
@@ -397,7 +403,7 @@ public class JaxbPojoDatastoreAdaptor {
 
             final Document document = XmlUtils.createDocument();
             final Rows rowsType = new Rows();
-            try (final DataSet ds = dataContext.executeQuery(q)) {
+            try (DataSet ds = dataContext.executeQuery(q)) {
                 while (ds.next()) {
                     final Row row = ds.getRow();
                     rowsType.getRow().add(createPojoRow(row, document));
@@ -422,7 +428,7 @@ public class JaxbPojoDatastoreAdaptor {
 
     /**
      * Creates a serialized POJO copy of a datastore.
-     * 
+     *
      * @param datastore
      *            the datastore to copy
      * @param columns
@@ -441,7 +447,7 @@ public class JaxbPojoDatastoreAdaptor {
         datastoreType.setName(datastore.getName());
         datastoreType.setDescription(datastore.getDescription());
 
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final DataContext dataContext = con.getDataContext();
 
             final Schema schema;

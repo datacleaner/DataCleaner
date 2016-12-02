@@ -24,8 +24,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
@@ -69,11 +67,12 @@ import edu.uci.ics.jung.visualization.VisualizationServer;
  */
 public class JobGraphLinkPainter {
     public static class VertexContext {
-        final private Object _vertex;
-        final private OutputDataStream _outputDataStream;
-        final private AnalysisJobBuilder _analysisJobBuilder;
+        private final Object _vertex;
+        private final OutputDataStream _outputDataStream;
+        private final AnalysisJobBuilder _analysisJobBuilder;
 
-        public VertexContext(Object vertex, AnalysisJobBuilder analysisJobBuilder, OutputDataStream outputDataStream) {
+        public VertexContext(final Object vertex, final AnalysisJobBuilder analysisJobBuilder,
+                final OutputDataStream outputDataStream) {
             _vertex = vertex;
             _outputDataStream = outputDataStream;
             _analysisJobBuilder = analysisJobBuilder;
@@ -92,19 +91,55 @@ public class JobGraphLinkPainter {
         }
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainter.class);
+    /**
+     * Used for the edge creation visual effect during mouse drag
+     */
+    class EdgePaintable implements VisualizationServer.Paintable {
 
+        public void paint(final Graphics graphics) {
+            if (_edgeShape != null) {
+                final Color oldColor = graphics.getColor();
+                graphics.setColor(Color.black);
+                ((Graphics2D) graphics).draw(_edgeShape);
+                graphics.setColor(oldColor);
+            }
+        }
+
+        public boolean useTransform() {
+            return false;
+        }
+    }
+
+    /**
+     * Used for the directed edge creation visual effect during mouse drag
+     */
+    class ArrowPaintable implements VisualizationServer.Paintable {
+
+        public void paint(final Graphics graphics) {
+            if (_arrowShape != null) {
+                final Color oldColor = graphics.getColor();
+                graphics.setColor(Color.black);
+                ((Graphics2D) graphics).fill(_arrowShape);
+                graphics.setColor(oldColor);
+            }
+        }
+
+        public boolean useTransform() {
+            return false;
+        }
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainter.class);
     private final JobGraphContext _graphContext;
     private final JobGraphActions _actions;
     private final VisualizationServer.Paintable _edgePaintable;
     private final VisualizationServer.Paintable _arrowPaintable;
-
     private Shape _edgeShape;
     private Shape _arrowShape;
     private VertexContext _startVertex;
     private Point2D _startPoint;
 
-    public JobGraphLinkPainter(JobGraphContext graphContext, JobGraphActions actions) {
+    public JobGraphLinkPainter(final JobGraphContext graphContext, final JobGraphActions actions) {
         _graphContext = graphContext;
         _actions = actions;
         _edgePaintable = new EdgePaintable();
@@ -116,14 +151,14 @@ public class JobGraphLinkPainter {
      *
      * @param startVertex
      */
-    public void startLink(VertexContext startVertex) {
+    public void startLink(final VertexContext startVertex) {
         if (startVertex == null) {
             return;
         }
 
         final AbstractLayout<Object, JobGraphLink> graphLayout = _graphContext.getGraphLayout();
-        int x = (int) graphLayout.getX(startVertex.getVertex());
-        int y = (int) graphLayout.getY(startVertex.getVertex());
+        final int x = (int) graphLayout.getX(startVertex.getVertex());
+        final int y = (int) graphLayout.getY(startVertex.getVertex());
 
         logger.debug("startLink({})", startVertex);
 
@@ -136,7 +171,7 @@ public class JobGraphLinkPainter {
         _graphContext.getVisualizationViewer().addPostRenderPaintable(_arrowPaintable);
     }
 
-    public boolean endLink(MouseEvent me) {
+    public boolean endLink(final MouseEvent me) {
         if (_startVertex != null) {
             final Object vertex = _graphContext.getVertex(me);
             return endLink(vertex, me);
@@ -150,7 +185,7 @@ public class JobGraphLinkPainter {
      *
      * @return true if a link drawing was ended or false if it wasn't started
      */
-    public boolean endLink(Object endVertex, MouseEvent mouseEvent) {
+    public boolean endLink(final Object endVertex, final MouseEvent mouseEvent) {
         logger.debug("endLink({})", endVertex);
         boolean result = false;
         if (_startVertex != null && endVertex != null) {
@@ -181,13 +216,13 @@ public class JobGraphLinkPainter {
         stopDrawing();
     }
 
-    public void moveCursor(MouseEvent me) {
+    public void moveCursor(final MouseEvent me) {
         if (_startVertex != null) {
             moveCursor(me.getPoint());
         }
     }
 
-    public void moveCursor(Point2D currentPoint) {
+    public void moveCursor(final Point2D currentPoint) {
         if (_startVertex != null) {
             logger.debug("moveCursor({})", currentPoint);
             transformEdgeShape(_startPoint, currentPoint);
@@ -215,7 +250,7 @@ public class JobGraphLinkPainter {
             InputColumn<?>[] outputColumns;
             try {
                 outputColumns = ((InputColumnSourceJob) fromVertex.getVertex()).getOutput();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 outputColumns = new InputColumn[0];
             }
             sourceColumns = getVisibleOutputColumns(outputColumns);
@@ -248,17 +283,17 @@ public class JobGraphLinkPainter {
 
                 try {
 
-                    final ConfiguredPropertyDescriptor inputProperty = componentBuilder
-                            .getDefaultConfiguredPropertyForInput();
+                    final ConfiguredPropertyDescriptor inputProperty =
+                            componentBuilder.getDefaultConfiguredPropertyForInput();
 
                     final ColumnProperty columnProperty = inputProperty.getAnnotation(ColumnProperty.class);
                     if (inputProperty.isArray() || (columnProperty != null && columnProperty
                             .escalateToMultipleJobs())) {
-                        componentBuilder.addInputColumns(getRelevantSourceColumns(sourceColumns, inputProperty),
-                                inputProperty);
+                        componentBuilder
+                                .addInputColumns(getRelevantSourceColumns(sourceColumns, inputProperty), inputProperty);
                     } else {
-                        final InputColumn<?> firstRelevantSourceColumn = getFirstRelevantSourceColumn(sourceColumns,
-                                inputProperty);
+                        final InputColumn<?> firstRelevantSourceColumn =
+                                getFirstRelevantSourceColumn(sourceColumns, inputProperty);
                         if (firstRelevantSourceColumn != null) {
                             componentBuilder.setConfiguredProperty(inputProperty, firstRelevantSourceColumn);
                         }
@@ -268,22 +303,19 @@ public class JobGraphLinkPainter {
                     // returning true to indicate a change
                     logger.debug("createLink(...) returning true - input column(s) added");
                     return true;
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // nothing to do
                     logger.info("Failed to add input columns ({}) to {}", sourceColumns.size(), componentBuilder, e);
                 }
             } else if (filterOutcomes != null && !filterOutcomes.isEmpty()) {
                 final JPopupMenu popup = new JPopupMenu();
                 for (final FilterOutcome filterOutcome : filterOutcomes) {
-                    final JMenuItem menuItem = WidgetFactory.createMenuItem(filterOutcome.getSimpleName(),
-                            IconUtils.FILTER_OUTCOME_PATH);
-                    menuItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (scopeUpdatePermitted(sourceAnalysisJobBuilder, componentBuilder)) {
-                                sourceAnalysisJobBuilder.moveComponent(componentBuilder);
-                                addOrSetFilterOutcomeAsRequirement(componentBuilder, filterOutcome);
-                            }
+                    final JMenuItem menuItem =
+                            WidgetFactory.createMenuItem(filterOutcome.getSimpleName(), IconUtils.FILTER_OUTCOME_PATH);
+                    menuItem.addActionListener(e -> {
+                        if (scopeUpdatePermitted(sourceAnalysisJobBuilder, componentBuilder)) {
+                            sourceAnalysisJobBuilder.moveComponent(componentBuilder);
+                            addOrSetFilterOutcomeAsRequirement(componentBuilder, filterOutcome);
                         }
                     });
                     popup.add(menuItem);
@@ -329,7 +361,8 @@ public class JobGraphLinkPainter {
         return true;
     }
 
-    protected void addOrSetFilterOutcomeAsRequirement(ComponentBuilder componentBuilder, FilterOutcome filterOutcome) {
+    protected void addOrSetFilterOutcomeAsRequirement(final ComponentBuilder componentBuilder,
+            final FilterOutcome filterOutcome) {
         final ComponentRequirement existingRequirement = componentBuilder.getComponentRequirement();
         if (existingRequirement == null) {
             // set a new requirement
@@ -338,8 +371,8 @@ public class JobGraphLinkPainter {
             return;
         }
 
-        final ComponentRequirement defaultRequirement = componentBuilder.getAnalysisJobBuilder()
-                .getDefaultRequirement();
+        final ComponentRequirement defaultRequirement =
+                componentBuilder.getAnalysisJobBuilder().getDefaultRequirement();
         if (existingRequirement.equals(defaultRequirement)) {
             // override the default requirement
             final ComponentRequirement requirement = new SimpleComponentRequirement(filterOutcome);
@@ -348,17 +381,17 @@ public class JobGraphLinkPainter {
         }
 
         // add outcome to a compound requirement
-        final CompoundComponentRequirement requirement = new CompoundComponentRequirement(existingRequirement,
-                filterOutcome);
+        final CompoundComponentRequirement requirement =
+                new CompoundComponentRequirement(existingRequirement, filterOutcome);
         componentBuilder.setComponentRequirement(requirement);
     }
 
-    private InputColumn<?> getFirstRelevantSourceColumn(List<? extends InputColumn<?>> sourceColumns,
-            ConfiguredPropertyDescriptor inputProperty) {
+    private InputColumn<?> getFirstRelevantSourceColumn(final List<? extends InputColumn<?>> sourceColumns,
+            final ConfiguredPropertyDescriptor inputProperty) {
         assert inputProperty.isInputColumn();
 
         final Class<?> expectedDataType = inputProperty.getTypeArgument(0);
-        for (InputColumn<?> inputColumn : sourceColumns) {
+        for (final InputColumn<?> inputColumn : sourceColumns) {
             final Class<?> actualDataType = inputColumn.getDataType();
             if (ReflectionUtils.is(actualDataType, expectedDataType, false)) {
                 return inputColumn;
@@ -368,13 +401,13 @@ public class JobGraphLinkPainter {
         return null;
     }
 
-    private Collection<? extends InputColumn<?>> getRelevantSourceColumns(List<? extends InputColumn<?>> sourceColumns,
-            ConfiguredPropertyDescriptor inputProperty) {
+    private Collection<? extends InputColumn<?>> getRelevantSourceColumns(
+            final List<? extends InputColumn<?>> sourceColumns, final ConfiguredPropertyDescriptor inputProperty) {
         assert inputProperty.isInputColumn();
 
         final List<InputColumn<?>> result = new ArrayList<>();
         final Class<?> expectedDataType = inputProperty.getTypeArgument(0);
-        for (InputColumn<?> inputColumn : sourceColumns) {
+        for (final InputColumn<?> inputColumn : sourceColumns) {
             final Class<?> actualDataType = inputColumn.getDataType();
             if (ReflectionUtils.is(actualDataType, expectedDataType, false)) {
                 result.add(inputColumn);
@@ -384,75 +417,37 @@ public class JobGraphLinkPainter {
         return result;
     }
 
-    private List<InputColumn<?>> getVisibleOutputColumns(InputColumn<?>[] outputColumns) {
-        List<InputColumn<?>> visibleColumns = new ArrayList<>();
+    private List<InputColumn<?>> getVisibleOutputColumns(final InputColumn<?>[] outputColumns) {
+        final List<InputColumn<?>> visibleColumns = new ArrayList<>();
         for (int i = 0; i < outputColumns.length; i++) {
             if (outputColumns[i] instanceof MutableInputColumn) {
-                MutableInputColumn<?> mutableOutputColum = (MutableInputColumn<?>) outputColumns[i];
+                final MutableInputColumn<?> mutableOutputColum = (MutableInputColumn<?>) outputColumns[i];
                 if (!mutableOutputColum.isHidden()) {
                     visibleColumns.add(mutableOutputColum);
                 }
-            }else{
+            } else {
                 visibleColumns.add(outputColumns[i]);
             }
         }
         return visibleColumns;
     }
 
-    private void transformEdgeShape(Point2D down, Point2D out) {
+    private void transformEdgeShape(final Point2D down, final Point2D out) {
         _edgeShape = new Line2D.Float(down, out);
     }
 
-    private void transformArrowShape(Point2D down, Point2D out) {
-        float x1 = (float) down.getX();
-        float y1 = (float) down.getY();
-        float x2 = (float) out.getX();
-        float y2 = (float) out.getY();
+    private void transformArrowShape(final Point2D down, final Point2D out) {
+        final float x1 = (float) down.getX();
+        final float y1 = (float) down.getY();
+        final float x2 = (float) out.getX();
+        final float y2 = (float) out.getY();
 
-        AffineTransform xform = AffineTransform.getTranslateInstance(x2, y2);
+        final AffineTransform xform = AffineTransform.getTranslateInstance(x2, y2);
 
-        float dx = x2 - x1;
-        float dy = y2 - y1;
-        float thetaRadians = (float) Math.atan2(dy, dx);
+        final float dx = x2 - x1;
+        final float dy = y2 - y1;
+        final float thetaRadians = (float) Math.atan2(dy, dx);
         xform.rotate(thetaRadians);
         _arrowShape = xform.createTransformedShape(GraphUtils.ARROW_SHAPE);
-    }
-
-    /**
-     * Used for the edge creation visual effect during mouse drag
-     */
-    class EdgePaintable implements VisualizationServer.Paintable {
-
-        public void paint(Graphics g) {
-            if (_edgeShape != null) {
-                Color oldColor = g.getColor();
-                g.setColor(Color.black);
-                ((Graphics2D) g).draw(_edgeShape);
-                g.setColor(oldColor);
-            }
-        }
-
-        public boolean useTransform() {
-            return false;
-        }
-    }
-
-    /**
-     * Used for the directed edge creation visual effect during mouse drag
-     */
-    class ArrowPaintable implements VisualizationServer.Paintable {
-
-        public void paint(Graphics g) {
-            if (_arrowShape != null) {
-                Color oldColor = g.getColor();
-                g.setColor(Color.black);
-                ((Graphics2D) g).fill(_arrowShape);
-                g.setColor(oldColor);
-            }
-        }
-
-        public boolean useTransform() {
-            return false;
-        }
     }
 }

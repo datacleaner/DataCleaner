@@ -26,19 +26,19 @@ import org.apache.metamodel.neo4j.Neo4jDataContext;
  */
 public class Neo4jDatastore extends UsageAwareDatastore<Neo4jDataContext> {
 
-    private static final long serialVersionUID = 1L;
     public static final int DEFAULT_PORT = 7474;
-
+    private static final long serialVersionUID = 1L;
     private final String _hostname;
     private final int _port;
     private final String _username;
     private final String _password;
 
-    public Neo4jDatastore(String name, String hostname, String username, String password) {
+    public Neo4jDatastore(final String name, final String hostname, final String username, final String password) {
         this(name, hostname, DEFAULT_PORT, username, password);
     }
 
-    public Neo4jDatastore(String name, String hostname, int port, String username, String password) {
+    public Neo4jDatastore(final String name, final String hostname, final int port, final String username,
+            final String password) {
         super(name);
         _hostname = hostname;
         _port = port;
@@ -55,7 +55,7 @@ public class Neo4jDatastore extends UsageAwareDatastore<Neo4jDataContext> {
     protected UsageAwareDatastoreConnection<Neo4jDataContext> createDatastoreConnection() {
         if (_hostname != null & _username != null & _password != null) {
             final Neo4jDataContext dataContext = new Neo4jDataContext(_hostname, _port, _username, _password);
-            return new DatastoreConnectionImpl<Neo4jDataContext>(dataContext, this);
+            return new DatastoreConnectionImpl<>(dataContext, this);
         }
         return null;
     }

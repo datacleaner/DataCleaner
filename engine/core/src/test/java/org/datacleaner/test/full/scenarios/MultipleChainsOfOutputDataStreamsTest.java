@@ -21,8 +21,6 @@ package org.datacleaner.test.full.scenarios;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
@@ -37,36 +35,38 @@ import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.TestEnvironment;
 import org.datacleaner.test.TestHelper;
 
+import junit.framework.TestCase;
+
 public class MultipleChainsOfOutputDataStreamsTest extends TestCase {
 
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
     private DataCleanerEnvironment environment = TestEnvironment.getEnvironment();
-    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
-            .withEnvironment(environment);
+    private final DataCleanerConfiguration configuration =
+            new DataCleanerConfigurationImpl().withDatastores(datastore).withEnvironment(environment);
 
     public void testSimpleBuildAndExecuteScenario() throws Throwable {
         final AnalysisJob job;
-        try (final AnalysisJobBuilder ajb1 = new AnalysisJobBuilder(configuration)) {
+        try (AnalysisJobBuilder ajb1 = new AnalysisJobBuilder(configuration)) {
             ajb1.setDatastore(datastore);
 
             ajb1.addSourceColumns("customers.city");
 
-            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = ajb1
-                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 =
+                    ajb1.addAnalyzer(MockOutputDataStreamAnalyzer.class);
             analyzer1.addInputColumn(ajb1.getSourceColumns().get(0));
             analyzer1.setConfiguredProperty(MockOutputDataStreamAnalyzer.PROPERTY_IDENTIFIER, "analyzer1");
 
-            final AnalysisJobBuilder ajb2 = analyzer1.getOutputDataStreamJobBuilder(analyzer1.getOutputDataStreams()
-                    .get(0));
-            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer2 = ajb2
-                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            final AnalysisJobBuilder ajb2 =
+                    analyzer1.getOutputDataStreamJobBuilder(analyzer1.getOutputDataStreams().get(0));
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer2 =
+                    ajb2.addAnalyzer(MockOutputDataStreamAnalyzer.class);
             analyzer2.addInputColumn(ajb2.getSourceColumns().get(0));
             analyzer2.setConfiguredProperty(MockOutputDataStreamAnalyzer.PROPERTY_IDENTIFIER, "analyzer2");
 
-            final AnalysisJobBuilder ajb3 = analyzer2.getOutputDataStreamJobBuilder(analyzer2.getOutputDataStreams()
-                    .get(0));
-            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer3 = ajb3
-                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            final AnalysisJobBuilder ajb3 =
+                    analyzer2.getOutputDataStreamJobBuilder(analyzer2.getOutputDataStreams().get(0));
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer3 =
+                    ajb3.addAnalyzer(MockOutputDataStreamAnalyzer.class);
             analyzer3.addInputColumn(ajb3.getSourceColumns().get(0));
             analyzer3.setConfiguredProperty(MockOutputDataStreamAnalyzer.PROPERTY_IDENTIFIER, "analyzer3");
 
@@ -84,8 +84,8 @@ public class MultipleChainsOfOutputDataStreamsTest extends TestCase {
 
         assertEquals(3, resultFuture.getResults().size());
 
-        @SuppressWarnings("unchecked")
-        final List<ListResult<?>> results = (List<ListResult<?>>) resultFuture.getResults(ListResult.class);
+        @SuppressWarnings("unchecked") final List<ListResult<?>> results =
+                (List<ListResult<?>>) resultFuture.getResults(ListResult.class);
 
         // for every result we expect a drop-off of 1/3 values
         assertEquals(71, results.get(0).getValues().size());

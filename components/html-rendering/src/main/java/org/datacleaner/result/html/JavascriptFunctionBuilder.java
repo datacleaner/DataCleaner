@@ -29,13 +29,13 @@ public class JavascriptFunctionBuilder {
     private final String _functionName;
     private final StringBuilder _functionBody;
 
-    public JavascriptFunctionBuilder(String functionName) {
+    public JavascriptFunctionBuilder(final String functionName) {
         _functionName = functionName;
         _functionBody = new StringBuilder();
     }
 
     public String toHeadElementHtml() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("<script type=\"text/javascript\">//<![CDATA[\n");
         if (_functionName.indexOf('.') == -1) {
             sb.append("function ");
@@ -55,7 +55,7 @@ public class JavascriptFunctionBuilder {
         return _functionBody;
     }
 
-    public void append(String code) {
+    public void append(final String code) {
         _functionBody.append(code);
     }
 

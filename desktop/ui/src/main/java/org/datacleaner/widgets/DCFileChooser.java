@@ -23,22 +23,24 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.io.File;
 
 import javax.swing.Icon;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.LookAndFeelManager;
+import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
 
 /**
  * An extension of the normal JFileChooser, applying various minor tweaks to the
  * presentation of files etc.
- * 
+ *
  * @author Kasper Sørensen
  */
 public class DCFileChooser extends JFileChooser {
@@ -51,25 +53,25 @@ public class DCFileChooser extends JFileChooser {
     public DCFileChooser() {
         this((File) null);
     }
-    
-    public DCFileChooser(File dir) {
+
+    public DCFileChooser(final File dir) {
         super(dir);
         setPreferredSize(new Dimension(600, 550));
         setFilePaneBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
         setAcceptAllFileFilterUsed(false);
     }
 
-    public void setFilePaneBackground(Color bg) {
+    public void setFilePaneBackground(final Color bg) {
         setFilePaneBackground(this, bg);
     }
 
-    private void setFilePaneBackground(Container container, Color bg) {
-        Component[] children = container.getComponents();
-        for (Component component : children) {
+    private void setFilePaneBackground(final Container container, final Color bg) {
+        final Component[] children = container.getComponents();
+        for (final Component component : children) {
             if (component instanceof JScrollPane) {
                 // the "file pane" (the component containing the list of files)
                 // is placed inside a JScrollPane
-                JScrollPane scroll = (JScrollPane) component;
+                final JScrollPane scroll = (JScrollPane) component;
                 setContainerBackground(scroll.getComponent(0), bg);
             } else if (component instanceof Container) {
                 setFilePaneBackground((Container) component, bg);
@@ -77,13 +79,13 @@ public class DCFileChooser extends JFileChooser {
         }
     }
 
-    private void setContainerBackground(Component component, Color bg) {
+    private void setContainerBackground(final Component component, final Color bg) {
         if (component instanceof Container) {
-            Container c = (Container) component;
+            final Container c = (Container) component;
             // drill further down the tree
-            Component child = c.getComponent(0);
+            final Component child = c.getComponent(0);
             if (child instanceof Container) {
-                Container childContainer = (Container) child;
+                final Container childContainer = (Container) child;
                 if (childContainer.getComponentCount() == 1) {
                     setContainerBackground(childContainer, bg);
                 }
@@ -92,27 +94,28 @@ public class DCFileChooser extends JFileChooser {
         component.setBackground(bg);
     }
 
+    @Override
+    protected JDialog createDialog(final Component parent) throws HeadlessException {
+        final JDialog dialog = super.createDialog(parent);
+        dialog.setMinimumSize(new Dimension(400, 400));
+        return dialog;
+    }
+
     public FileObject getSelectedFileObject() {
-        File selectedFile = getSelectedFile();
+        final File selectedFile = getSelectedFile();
         if (selectedFile == null) {
             return null;
         }
         try {
             return VFSUtils.getFileSystemManager().toFileObject(selectedFile);
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public Icon getIcon(File f) {
+    public Icon getIcon(final File f) {
         return getFileIconFactory().getIcon(f);
-    }
-
-    public static void main(String[] args) {
-        LookAndFeelManager.get().init();
-        DCFileChooser fc = new DCFileChooser();
-        fc.showOpenDialog(null);
     }
 
     public FileIconFactory getFileIconFactory() {
@@ -120,5 +123,11 @@ public class DCFileChooser extends JFileChooser {
             return _defaultFileIconFactory;
         }
         return _fileIconFactory;
+    }
+
+    public static void main(final String[] args) {
+        LookAndFeelManager.get().init();
+        final DCFileChooser fc = new DCFileChooser();
+        fc.showOpenDialog(null);
     }
 }

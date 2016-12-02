@@ -23,12 +23,12 @@ import java.io.Closeable;
 import java.util.Iterator;
 
 public interface DictionaryConnection extends Closeable {
-    public boolean containsValue(String value);
+    boolean containsValue(String value);
 
-    public Iterator<String> getLengthSortedValues();
+    Iterator<String> getLengthSortedValues();
 
-    public Iterator<String> getAllValues();
+    Iterator<String> getAllValues();
 
     @Override
-    public void close();
+    void close();
 }

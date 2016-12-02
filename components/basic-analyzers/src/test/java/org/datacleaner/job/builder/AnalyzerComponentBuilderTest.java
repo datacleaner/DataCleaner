@@ -19,8 +19,6 @@
  */
 package org.datacleaner.job.builder;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
@@ -30,6 +28,8 @@ import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.AnalyzerJob;
+
+import junit.framework.TestCase;
 
 public class AnalyzerComponentBuilderTest extends TestCase {
 
@@ -42,17 +42,16 @@ public class AnalyzerComponentBuilderTest extends TestCase {
     }
 
     public void testNoOriginatingTableBecauseOfMockColumns() throws Exception {
-        AnalyzerComponentBuilder<StringAnalyzer> jobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
-        jobBuilder.addInputColumn(new MockInputColumn<String>("foo", String.class));
-        jobBuilder.addInputColumn(new MockInputColumn<String>("bar", String.class));
+        final AnalyzerComponentBuilder<StringAnalyzer> jobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+        jobBuilder.addInputColumn(new MockInputColumn<>("foo", String.class));
+        jobBuilder.addInputColumn(new MockInputColumn<>("bar", String.class));
 
         try {
             jobBuilder.toAnalyzerJob();
             fail("Exception expected");
-        } catch (IllegalStateException e) {
-            assertEquals(
-                    "Could not determine source for analyzer 'AnalyzerComponentBuilder[analyzer=String analyzer,inputColumns=[MockInputColumn[name=foo], MockInputColumn[name=bar]]]'",
-                    e.getMessage());
+        } catch (final IllegalStateException e) {
+            assertEquals("Could not determine source for analyzer 'AnalyzerComponentBuilder[analyzer=String analyzer,"
+                    + "inputColumns=[MockInputColumn[name=foo], MockInputColumn[name=bar]]]'", e.getMessage());
         }
     }
 
@@ -60,20 +59,20 @@ public class AnalyzerComponentBuilderTest extends TestCase {
         final AnalyzerComponentBuilder<StringAnalyzer> jobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
 
         final Table table1 = new MutableTable("table1");
-        jobBuilder.addInputColumn(new MetaModelInputColumn(
-                new MutableColumn("foo", ColumnType.VARCHAR, table1, 0, true)));
-        jobBuilder.addInputColumn(new MetaModelInputColumn(
-                new MutableColumn("bar", ColumnType.VARCHAR, table1, 1, true)));
+        jobBuilder.addInputColumn(
+                new MetaModelInputColumn(new MutableColumn("foo", ColumnType.VARCHAR, table1, 0, true)));
+        jobBuilder.addInputColumn(
+                new MetaModelInputColumn(new MutableColumn("bar", ColumnType.VARCHAR, table1, 1, true)));
 
         final Table table2 = new MutableTable("table2");
-        jobBuilder.addInputColumn(new MetaModelInputColumn(new MutableColumn("w00p", ColumnType.VARCHAR, table2, 0,
-                true)));
-        jobBuilder.addInputColumn(new MetaModelInputColumn(new MutableColumn("weee", ColumnType.VARCHAR, table2, 1,
-                true)));
-        jobBuilder.addInputColumn(new MetaModelInputColumn(new MutableColumn("wohoo", ColumnType.VARCHAR, table2, 2,
-                true)));
+        jobBuilder.addInputColumn(
+                new MetaModelInputColumn(new MutableColumn("w00p", ColumnType.VARCHAR, table2, 0, true)));
+        jobBuilder.addInputColumn(
+                new MetaModelInputColumn(new MutableColumn("weee", ColumnType.VARCHAR, table2, 1, true)));
+        jobBuilder.addInputColumn(
+                new MetaModelInputColumn(new MutableColumn("wohoo", ColumnType.VARCHAR, table2, 2, true)));
 
-        AnalyzerJob[] analyzerJobs = jobBuilder.toAnalyzerJobs();
+        final AnalyzerJob[] analyzerJobs = jobBuilder.toAnalyzerJobs();
         assertEquals(2, analyzerJobs.length);
 
         assertEquals(2, analyzerJobs[0].getInput().length);

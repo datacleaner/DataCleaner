@@ -55,9 +55,10 @@ import com.google.common.base.Joiner;
 @Named("Synonym lookup")
 @Alias("Synonym replacement")
 @Description("Replaces strings with their synonyms")
-@ExternalDocumentation({
-        @DocumentationLink(title = "Segmenting customers on messy data", url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0"),
-        @DocumentationLink(title = "Understanding and using Synonyms", url = "https://www.youtube.com/watch?v=_YiPaA8bFt4", type = DocumentationType.VIDEO, version = "2.0") })
+@ExternalDocumentation({ @DocumentationLink(title = "Segmenting customers on messy data",
+        url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0"),
+        @DocumentationLink(title = "Understanding and using Synonyms",
+                url = "https://www.youtube.com/watch?v=_YiPaA8bFt4", type = DocumentationType.VIDEO, version = "2.0") })
 @Categorized(superCategory = ImproveSuperCategory.class, value = ReferenceDataCategory.class)
 public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     public enum ReplacedSynonymsType implements HasName {
@@ -65,7 +66,7 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
 
         private final String _name;
 
-        ReplacedSynonymsType(String name) {
+        ReplacedSynonymsType(final String name) {
             _name = name;
         }
 
@@ -82,12 +83,14 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     SynonymCatalog synonymCatalog;
 
     @Configured
-    @Description("Retain original value when no synonyms are found. If turned off, <null> will be returned when no synonyms are found.")
+    @Description("Retain original value when no synonyms are found. If turned off, "
+            + "<null> will be returned when no synonyms are found.")
     boolean retainOriginalValue = true;
 
     @Configured
     @Alias("Look up every token")
-    @Description("Replace synonyms that occur as a substring within the complete text? If turned off, only synonyms that match the complete text value will be replaced.")
+    @Description("Replace synonyms that occur as a substring within the complete text? If turned off, "
+            + "only synonyms that match the complete text value will be replaced.")
     boolean replaceInlinedSynonyms = true;
 
     @Inject
@@ -104,8 +107,8 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     public SynonymLookupTransformer() {
     }
 
-    public SynonymLookupTransformer(InputColumn<String> column, SynonymCatalog synonymCatalog,
-            boolean retainOriginalValue, DataCleanerConfiguration configuration) {
+    public SynonymLookupTransformer(final InputColumn<String> column, final SynonymCatalog synonymCatalog,
+            final boolean retainOriginalValue, final DataCleanerConfiguration configuration) {
         this();
         this.column = column;
         this.synonymCatalog = synonymCatalog;
@@ -122,8 +125,9 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
             columnTypes = new Class[] { String.class, List.class, List.class };
         }
 
-        return new OutputColumns(new String[] { column.getName() + " (synonyms replaced)", column.getName()
-                + " (synonyms found)", column.getName() + " (master terms found)" }, columnTypes);
+        return new OutputColumns(
+                new String[] { column.getName() + " (synonyms replaced)", column.getName() + " (synonyms found)",
+                        column.getName() + " (master terms found)" }, columnTypes);
     }
 
     @Override
@@ -148,7 +152,7 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     }
 
     @Override
-    public Object[] transform(InputRow inputRow) {
+    public Object[] transform(final InputRow inputRow) {
         final String originalValue = inputRow.getValue(column);
 
         if (originalValue == null) {
@@ -156,14 +160,14 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
         }
 
         if (replaceInlinedSynonyms) {
-            final SynonymCatalogConnection.Replacement replacement = synonymCatalogConnection.replaceInline(
-                    originalValue);
+            final SynonymCatalogConnection.Replacement replacement =
+                    synonymCatalogConnection.replaceInline(originalValue);
             if (replacedSynonymsType == ReplacedSynonymsType.STRING) {
                 return new Object[] { replacement.getReplacedString(), Joiner.on(' ').join(replacement.getSynonyms()),
                         Joiner.on(' ').join(replacement.getMasterTerms()) };
             } else {
-                return new Object[] { replacement.getReplacedString(), replacement.getSynonyms(), replacement
-                        .getMasterTerms() };
+                return new Object[] { replacement.getReplacedString(), replacement.getSynonyms(),
+                        replacement.getMasterTerms() };
             }
         } else {
             final String masterTerm = synonymCatalogConnection.getMasterTerm(originalValue);

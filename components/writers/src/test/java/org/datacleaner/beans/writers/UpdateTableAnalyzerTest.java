@@ -21,9 +21,13 @@ package org.datacleaner.beans.writers;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
-import org.easymock.EasyMock;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.UpdateableDataContext;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.CsvDatastore;
@@ -31,15 +35,9 @@ import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileHelper;
+import org.easymock.EasyMock;
+
+import junit.framework.TestCase;
 
 public class UpdateTableAnalyzerTest extends TestCase {
 
@@ -54,19 +52,16 @@ public class UpdateTableAnalyzerTest extends TestCase {
             final UpdateableDatastoreConnection con = jdbcDatastore.openConnection();
             final UpdateableDataContext dc = con.getUpdateableDataContext();
             if (dc.getDefaultSchema().getTableByName("test_table") == null) {
-                dc.executeUpdate(new UpdateScript() {
-                    @Override
-                    public void run(UpdateCallback cb) {
-                        Table table = cb.createTable(dc.getDefaultSchema(), "test_table").withColumn("foo")
-                                .ofType(ColumnType.VARCHAR).withColumn("bar").ofType(ColumnType.INTEGER)
-                                .withColumn("baz").ofType(ColumnType.VARCHAR).execute();
+                dc.executeUpdate(cb -> {
+                    final Table table = cb.createTable(dc.getDefaultSchema(), "test_table").withColumn("foo")
+                            .ofType(ColumnType.VARCHAR).withColumn("bar").ofType(ColumnType.INTEGER).withColumn("baz")
+                            .ofType(ColumnType.VARCHAR).execute();
 
-                        cb.insertInto(table).value("foo", "a").value("bar", 1).value("baz", "lorem").execute();
-                        cb.insertInto(table).value("foo", "b").value("bar", 2).value("baz", "ipsum").execute();
-                        cb.insertInto(table).value("foo", "c").value("bar", 3).value("baz", "dolor").execute();
-                        cb.insertInto(table).value("foo", "d").value("bar", 4).value("baz", "sit").execute();
-                        cb.insertInto(table).value("foo", "e").value("bar", 5).value("baz", "amet").execute();
-                    }
+                    cb.insertInto(table).value("foo", "a").value("bar", 1).value("baz", "lorem").execute();
+                    cb.insertInto(table).value("foo", "b").value("bar", 2).value("baz", "ipsum").execute();
+                    cb.insertInto(table).value("foo", "c").value("bar", 3).value("baz", "dolor").execute();
+                    cb.insertInto(table).value("foo", "d").value("bar", 4).value("baz", "sit").execute();
+                    cb.insertInto(table).value("foo", "e").value("bar", 5).value("baz", "amet").execute();
                 });
             }
             con.close();
@@ -81,23 +76,23 @@ public class UpdateTableAnalyzerTest extends TestCase {
         updateTableAnalyzer.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         updateTableAnalyzer.errorLogFile = new File("src/test/resources/invalid-error-handling-file.csv");
 
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
+        final InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        final InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
 
         updateTableAnalyzer.values = new InputColumn[] { col1, col2 };
 
         try {
             updateTableAnalyzer.init();
             fail("Exception expected");
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             assertEquals("Error log file does not have required column header: foo", e.getMessage());
         }
     }
 
     public void testVanillaScenario() throws Exception {
-        InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
-        InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
-        InputColumn<Object> col3 = new MockInputColumn<Object>("in3", Object.class);
+        final InputColumn<Object> col1 = new MockInputColumn<>("in1", Object.class);
+        final InputColumn<Object> col2 = new MockInputColumn<>("in2", Object.class);
+        final InputColumn<Object> col3 = new MockInputColumn<>("in3", Object.class);
 
         final UpdateTableAnalyzer updateTableAnalyzer = new UpdateTableAnalyzer();
         updateTableAnalyzer.datastore = jdbcDatastore;
@@ -111,15 +106,15 @@ public class UpdateTableAnalyzerTest extends TestCase {
         updateTableAnalyzer.init();
         updateTableAnalyzer.run(new MockInputRow().put(col1, "aaa").put(col2, 1).put(col3, "hello"), 1);
         updateTableAnalyzer.run(new MockInputRow().put(col1, "bbb").put(col2, 2).put(col3, "world"), 1);
-        WriteDataResult result = updateTableAnalyzer.getResult();
+        final WriteDataResult result = updateTableAnalyzer.getResult();
 
         assertEquals(0, result.getErrorRowCount());
         assertEquals(0, result.getWrittenRowCount());
         assertEquals(2, result.getUpdatesCount());
 
-        UpdateableDatastoreConnection con = jdbcDatastore.openConnection();
-        DataContext dc = con.getDataContext();
-        DataSet ds = dc.query().from("test_table").select("foo", "bar", "baz").orderBy("bar").execute();
+        final UpdateableDatastoreConnection con = jdbcDatastore.openConnection();
+        final DataContext dc = con.getDataContext();
+        final DataSet ds = dc.query().from("test_table").select("foo", "bar", "baz").orderBy("bar").execute();
         assertTrue(ds.next());
         assertEquals("Row[values=[aaa, 1, hello]]", ds.getRow().toString());
         assertTrue(ds.next());
@@ -153,8 +148,8 @@ public class UpdateTableAnalyzerTest extends TestCase {
         updateTableAnalyzer.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         updateTableAnalyzer._componentContext = EasyMock.createMock(ComponentContext.class);
 
-        InputColumn<Object> inputId = new MockInputColumn<Object>("id", Object.class);
-        InputColumn<Object> inputNewName = new MockInputColumn<Object>("new_name", Object.class);
+        final InputColumn<Object> inputId = new MockInputColumn<>("id", Object.class);
+        final InputColumn<Object> inputNewName = new MockInputColumn<>("new_name", Object.class);
         updateTableAnalyzer.values = new InputColumn[] { inputNewName };
         updateTableAnalyzer.conditionValues = new InputColumn[] { inputId };
 
@@ -165,12 +160,12 @@ public class UpdateTableAnalyzerTest extends TestCase {
         updateTableAnalyzer.run(new MockInputRow().put(inputId, "2").put(inputNewName, "bar"), 1);
         updateTableAnalyzer.run(new MockInputRow().put(inputId, 3).put(inputNewName, "baz"), 1);
 
-        WriteDataResult result = updateTableAnalyzer.getResult();
+        final WriteDataResult result = updateTableAnalyzer.getResult();
         assertEquals(0, result.getErrorRowCount());
         assertEquals(0, result.getWrittenRowCount());
         assertEquals(3, result.getUpdatesCount());
 
-        DataSet dataSet = dataContext.query().from(table).select("id", "name").execute();
+        final DataSet dataSet = dataContext.query().from(table).select("id", "name").execute();
         assertTrue(dataSet.next());
         assertEquals("Row[values=[4, hans]]", dataSet.getRow().toString());
         assertTrue(dataSet.next());

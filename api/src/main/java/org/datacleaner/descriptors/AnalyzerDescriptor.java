@@ -23,10 +23,10 @@ import org.datacleaner.api.Analyzer;
 
 /**
  * {@link ComponentDescriptor} interface for {@link Analyzer}s.
- * 
+ *
  * @param <B> the type of {@link Analyzer}
  */
-public interface AnalyzerDescriptor<B extends Analyzer<?>> extends HasAnalyzerResultComponentDescriptor<B>,
-        ComponentDescriptor<B> {
+public interface AnalyzerDescriptor<B extends Analyzer<?>>
+        extends HasAnalyzerResultComponentDescriptor<B>, ComponentDescriptor<B> {
 
 }

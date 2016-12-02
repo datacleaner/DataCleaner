@@ -24,15 +24,15 @@ import org.datacleaner.job.AnalysisJob;
 /**
  * Component responsible for determining how many divisions/chunks to build from
  * a single master job. Each division will be represented by a slave job.
- * 
+ *
  * Too many divisions will cause too much distribution, i.e. units of work being
  * too small and time is wasted in distribution instead of execution.
- * 
+ *
  * Too few divisions will cause potential bottleneck situations because the
  * slowest execution nodes will be determining the total job execution time.
  */
 public interface JobDivisionManager {
 
-    public int calculateDivisionCount(AnalysisJob masterJob, int expectedRows);
+    int calculateDivisionCount(AnalysisJob masterJob, int expectedRows);
 
 }

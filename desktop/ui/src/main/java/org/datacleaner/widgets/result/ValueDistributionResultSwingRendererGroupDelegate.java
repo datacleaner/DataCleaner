@@ -22,7 +22,6 @@ package org.datacleaner.widgets.result;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,8 +72,8 @@ import org.slf4j.LoggerFactory;
  */
 final class ValueDistributionResultSwingRendererGroupDelegate {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(ValueDistributionResultSwingRendererGroupDelegate.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(ValueDistributionResultSwingRendererGroupDelegate.class);
 
     private static final Color[] SLICE_COLORS = DCDrawingSupplier.DEFAULT_FILL_COLORS;
     private static final int DEFAULT_PREFERRED_SLICES = 32;
@@ -94,22 +93,22 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
     /**
      * Default constructor
      */
-    public ValueDistributionResultSwingRendererGroupDelegate(String groupOrColumnName, RendererFactory rendererFactory,
-            WindowContext windowContext) {
+    public ValueDistributionResultSwingRendererGroupDelegate(final String groupOrColumnName,
+            final RendererFactory rendererFactory, final WindowContext windowContext) {
         this(groupOrColumnName, DEFAULT_PREFERRED_SLICES, rendererFactory, windowContext);
     }
 
     /**
      * Alternative constructor (primarily used for testing) with customizable
      * slice count
-     * 
+     *
      * @param groupOrColumnName
      * @param preferredSlices
      * @param rendererFactory
      * @param windowContext
      */
-    public ValueDistributionResultSwingRendererGroupDelegate(String groupOrColumnName, int preferredSlices,
-            RendererFactory rendererFactory, WindowContext windowContext) {
+    public ValueDistributionResultSwingRendererGroupDelegate(final String groupOrColumnName, final int preferredSlices,
+            final RendererFactory rendererFactory, final WindowContext windowContext) {
         _groupOrColumnName = groupOrColumnName;
         _preferredSlices = preferredSlices;
         _rendererFactory = rendererFactory;
@@ -119,7 +118,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         _table.setRowHeight(22);
 
         // create a map of predefined color mappings
-        _valueColorMap = new HashMap<String, Color>();
+        _valueColorMap = new HashMap<>();
         _valueColorMap.put(LabelUtils.BLANK_LABEL.toUpperCase(), WidgetUtils.BG_COLOR_BRIGHTEST);
         _valueColorMap.put(LabelUtils.UNIQUE_LABEL.toUpperCase(), WidgetUtils.BG_COLOR_BRIGHT);
         _valueColorMap.put(LabelUtils.NULL_LABEL.toUpperCase(), WidgetUtils.BG_COLOR_DARKEST);
@@ -140,7 +139,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         _valueCounts = result.getReducedValueFrequencies(_preferredSlices);
         _valueCounts = moveUniqueToEnd(_valueCounts);
 
-        for (ValueFrequency valueCount : _valueCounts) {
+        for (final ValueFrequency valueCount : _valueCounts) {
             setDataSetValue(valueCount.getName(), valueCount.getCount());
         }
 
@@ -150,12 +149,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         drillToOverview(result);
 
         _backButton.setMargin(new Insets(0, 0, 0, 0));
-        _backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                drillToOverview(result);
-            }
-        });
+        _backButton.addActionListener(e -> drillToOverview(result));
 
         _rightPanel.setLayout(new VerticalLayout());
         _rightPanel.add(_backButton);
@@ -181,11 +175,11 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 
     /**
      * Creates a chart panel, or null if chart display is not applicable.
-     * 
+     *
      * @param result
      * @return
      */
-    private ChartPanel createChartPanel(ValueCountingAnalyzerResult result) {
+    private ChartPanel createChartPanel(final ValueCountingAnalyzerResult result) {
         if (_valueCounts.size() > ChartUtils.CATEGORY_COUNT_DISPLAY_THRESHOLD) {
             logger.info("Display threshold of {} in chart surpassed (got {}). Skipping chart.",
                     ChartUtils.CATEGORY_COUNT_DISPLAY_THRESHOLD, _valueCounts.size());
@@ -198,10 +192,10 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 
         // chart for display of the dataset
         final String title = "Value distribution of " + _groupOrColumnName;
-        final JFreeChart chart = ChartFactory.createBarChart(title, "Value", "Count", _dataset,
-                PlotOrientation.HORIZONTAL, true, true, false);
+        final JFreeChart chart = ChartFactory
+                .createBarChart(title, "Value", "Count", _dataset, PlotOrientation.HORIZONTAL, true, true, false);
 
-        List<Title> titles = new ArrayList<Title>();
+        final List<Title> titles = new ArrayList<>();
         titles.add(new ShortTextTitle("Total count: " + totalCount));
         if (distinctCount != null) {
             titles.add(new ShortTextTitle("Distinct count: " + distinctCount));
@@ -234,7 +228,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
                     }
 
                     Color colorCandidate = SLICE_COLORS[colorIndex];
-                    int darkAmount = i / SLICE_COLORS.length;
+                    final int darkAmount = i / SLICE_COLORS.length;
                     for (int j = 0; j < darkAmount; j++) {
                         colorCandidate = WidgetUtils.slightlyDarker(colorCandidate);
                     }
@@ -253,10 +247,10 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         return ChartUtils.createPanel(chart, false);
     }
 
-    private Collection<ValueFrequency> moveUniqueToEnd(Collection<ValueFrequency> valueCounts) {
+    private Collection<ValueFrequency> moveUniqueToEnd(final Collection<ValueFrequency> valueCounts) {
 
         ValueFrequency uniqueValueFrequency = null;
-        for (ValueFrequency valueFrequency : valueCounts) {
+        for (final ValueFrequency valueFrequency : valueCounts) {
             if ("<unique>".equals(valueFrequency.getName())) {
                 uniqueValueFrequency = valueFrequency;
                 break;
@@ -278,8 +272,8 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
     }
 
     private void drillToOverview(final ValueCountingAnalyzerResult result) {
-        final TableModel model = new DefaultTableModel(new String[] { "Value", LabelUtils.COUNT_LABEL },
-                _valueCounts.size());
+        final TableModel model =
+                new DefaultTableModel(new String[] { "Value", LabelUtils.COUNT_LABEL }, _valueCounts.size());
 
         int i = 0;
         for (final ValueFrequency valueFreq : _valueCounts) {
@@ -288,17 +282,12 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
             model.setValueAt(key, i, 0);
 
             if (valueFreq.isComposite() && valueFreq.getChildren() != null && !valueFreq.getChildren().isEmpty()) {
-                DCPanel panel = new DCPanel();
+                final DCPanel panel = new DCPanel();
                 panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-                JLabel label = new JLabel(count + "");
-                JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_DRILL_TO_DETAIL);
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        drillToGroup(result, valueFreq, true);
-                    }
-                });
+                final JLabel label = new JLabel(count + "");
+                final JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_DRILL_TO_DETAIL);
+                button.addActionListener(e -> drillToGroup(result, valueFreq, true));
 
                 panel.add(label);
                 panel.add(Box.createHorizontalStrut(4));
@@ -315,22 +304,20 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         _rightPanel.updateUI();
     }
 
-    protected void setDataSetValue(String label, Integer value) {
+    protected void setDataSetValue(final String label, final Integer value) {
         _dataset.setValue(value, label, "");
     }
 
-    protected int getDataSetValue(int i) {
-        Number value = _dataset.getValue(i, 0);
-        return value.intValue();
+    protected int getDataSetValue(final int index) {
+        return _dataset.getValue(index, 0).intValue();
     }
 
-    public int getDataSetValue(String label) {
-        Number value = _dataset.getValue(label, "");
-        return value.intValue();
+    public int getDataSetValue(final String label) {
+        return _dataset.getValue(label, "").intValue();
     }
 
-    protected String getDataSetKey(int i) {
-        Comparable<?> key = _dataset.getRowKey(i);
+    protected String getDataSetKey(final int index) {
+        final Comparable<?> key = _dataset.getRowKey(index);
         assert key instanceof String;
         return key.toString();
     }
@@ -339,7 +326,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         return _dataset.getRowCount();
     }
 
-    private void setCountValue(final ValueCountingAnalyzerResult result, final TableModel model, int i,
+    private void setCountValue(final ValueCountingAnalyzerResult result, final TableModel model, final int index,
             final ValueFrequency vc) {
         final String value = vc.getName();
         final int count = vc.getCount();
@@ -362,46 +349,45 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         }
 
         if (hasAnnotation) {
-            ActionListener action = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent action) {
-                    String title = "Detailed results for [" + value + "]";
-                    List<AnalyzerResult> results = new ArrayList<AnalyzerResult>();
-                    final AnnotatedRowsResult annotatedRows;
-                    if (isNullValue) {
-                        annotatedRows = result.getAnnotatedRowsForNull();
-                    } else if (isUnexpectedValues) {
-                        annotatedRows = result.getAnnotatedRowsForUnexpectedValues();
-                    } else if (isBlank) {
-                        annotatedRows = result.getAnnotatedRowsForValue("");
-                    } else {
-                        annotatedRows = result.getAnnotatedRowsForValue(value);
-                    }
-                    results.add(annotatedRows);
-                    DetailsResultWindow window = new DetailsResultWindow(title, results, _windowContext,
-                            _rendererFactory);
-                    window.setVisible(true);
+            final ActionListener action = action1 -> {
+                final String title = "Detailed results for [" + value + "]";
+                final List<AnalyzerResult> results = new ArrayList<>();
+                final AnnotatedRowsResult annotatedRows;
+                if (isNullValue) {
+                    annotatedRows = result.getAnnotatedRowsForNull();
+                } else if (isUnexpectedValues) {
+                    annotatedRows = result.getAnnotatedRowsForUnexpectedValues();
+                } else if (isBlank) {
+                    annotatedRows = result.getAnnotatedRowsForValue("");
+                } else {
+                    annotatedRows = result.getAnnotatedRowsForValue(value);
                 }
+                results.add(annotatedRows);
+                final DetailsResultWindow window =
+                        new DetailsResultWindow(title, results, _windowContext, _rendererFactory);
+                window.setVisible(true);
             };
 
-            DCPanel panel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(count, Alignment.LEFT,
-                    action, IconUtils.ACTION_DRILL_TO_DETAIL);
+            final DCPanel panel = AbstractCrosstabResultSwingRenderer
+                    .createActionableValuePanel(count, Alignment.LEFT, action, IconUtils.ACTION_DRILL_TO_DETAIL);
 
-            model.setValueAt(panel, i, 1);
+            model.setValueAt(panel, index, 1);
         } else {
-            model.setValueAt(count, i, 1);
+            model.setValueAt(count, index, 1);
         }
     }
 
-    private void drillToGroup(ValueCountingAnalyzerResult result, ValueFrequency valueFrequency, boolean showBackButton) {
+    private void drillToGroup(final ValueCountingAnalyzerResult result, final ValueFrequency valueFrequency,
+            final boolean showBackButton) {
         final List<ValueFrequency> children = valueFrequency.getChildren();
-        final TableModel model = new DefaultTableModel(new String[] { valueFrequency.getName() + " value",
-                LabelUtils.COUNT_LABEL }, children.size());
+        final TableModel model =
+                new DefaultTableModel(new String[] { valueFrequency.getName() + " value", LabelUtils.COUNT_LABEL },
+                        children.size());
 
         final Iterator<ValueFrequency> valueCounts = children.iterator();
         int i = 0;
         while (valueCounts.hasNext()) {
-            ValueFrequency vc = valueCounts.next();
+            final ValueFrequency vc = valueCounts.next();
             model.setValueAt(LabelUtils.getLabel(vc.getValue()), i, 0);
             setCountValue(result, model, i, vc);
             i++;

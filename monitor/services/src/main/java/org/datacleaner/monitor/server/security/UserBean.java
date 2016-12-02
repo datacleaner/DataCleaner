@@ -47,19 +47,19 @@ public class UserBean implements User, Serializable {
     private final Set<String> _roles;
     private String _username;
     private String _tenant;
-    
+
     /**
-     * 
+     *
      * @param tenantResolver
      * @deprecated use {@link #UserBean()} instead
      */
     @Deprecated
-    public UserBean(TenantResolver tenantResolver) {
+    public UserBean(final TenantResolver tenantResolver) {
         this();
     }
 
     public UserBean() {
-        _roles = new HashSet<String>();
+        _roles = new HashSet<>();
     }
 
     public void updateUser() {
@@ -92,7 +92,7 @@ public class UserBean implements User, Serializable {
             }
 
             final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            for (GrantedAuthority authority : authorities) {
+            for (final GrantedAuthority authority : authorities) {
                 _roles.add(authority.getAuthority());
             }
         }
@@ -107,7 +107,7 @@ public class UserBean implements User, Serializable {
     }
 
     @Override
-    public boolean hasRole(String role) {
+    public boolean hasRole(final String role) {
         if (_roles.isEmpty()) {
             updateUser();
         }
@@ -116,8 +116,8 @@ public class UserBean implements User, Serializable {
             return true;
         }
 
-        if (SecurityRoles.VIEWER.equals(role) || SecurityRoles.SCHEDULE_EDITOR.equals(role)
-                || SecurityRoles.JOB_EDITOR.equals(role)) {
+        if (SecurityRoles.VIEWER.equals(role) || SecurityRoles.SCHEDULE_EDITOR.equals(role) || SecurityRoles.JOB_EDITOR
+                .equals(role)) {
             if (_roles.contains(SecurityRoles.ENGINEER)) {
                 // ENGINEER is a super-role of SCHEDULE_EDITOR and JOB_EDITOR
                 return true;
@@ -139,14 +139,14 @@ public class UserBean implements User, Serializable {
         if (_roles.isEmpty()) {
             updateUser();
         }
-        return new ArrayList<String>(_roles);
+        return new ArrayList<>(_roles);
     }
 
     @Override
     public boolean isLoggedIn() {
         return isAuthenticated();
     }
-    
+
     @Override
     public boolean isAuthenticated() {
         return getUsername() != null;

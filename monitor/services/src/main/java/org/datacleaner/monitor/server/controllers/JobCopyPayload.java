@@ -30,12 +30,12 @@ public class JobCopyPayload implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String _name;
-    
+
     public String getName() {
         return _name;
     }
-    
-    public void setName(String name) {
+
+    public void setName(final String name) {
         _name = name;
     }
 

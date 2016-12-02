@@ -29,11 +29,11 @@ import org.datacleaner.api.AnalyzerResultReducer;
 public class WriteDataResultReducer implements AnalyzerResultReducer<WriteDataResult> {
 
     @Override
-    public WriteDataResult reduce(Collection<? extends WriteDataResult> results) {
+    public WriteDataResult reduce(final Collection<? extends WriteDataResult> results) {
         int writes = 0;
         int updates = 0;
         int errors = 0;
-        for (WriteDataResult result : results) {
+        for (final WriteDataResult result : results) {
             writes += result.getWrittenRowCount();
             updates += result.getUpdatesCount();
             errors += result.getErrorRowCount();

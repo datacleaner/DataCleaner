@@ -34,13 +34,13 @@ public interface MetadataAnnotation extends HasName {
      * Gets the name of the annotation.
      */
     @Override
-    public String getName();
+    String getName();
 
     /**
      * Gets any parameters set on the annotation. Parameters may be used to
      * specify further details and behaviour for the annotations.
-     * 
+     *
      * @return
      */
-    public Map<String, String> getParameters();
+    Map<String, String> getParameters();
 }

@@ -28,14 +28,14 @@ public interface MetricJobContext extends JobContext {
 
     /**
      * Gets the metrics exposed by the job.
-     * 
+     *
      * @return
      */
-    public JobMetrics getJobMetrics();
+    JobMetrics getJobMetrics();
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MetricJobEngine<? extends MetricJobContext> getJobEngine();
+    MetricJobEngine<? extends MetricJobContext> getJobEngine();
 }

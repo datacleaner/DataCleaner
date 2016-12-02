@@ -19,7 +19,10 @@
  */
 package org.datacleaner.configuration;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -36,6 +39,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
@@ -50,6 +54,9 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
+import org.datacleaner.reference.regexswap.Category;
+import org.datacleaner.reference.regexswap.Regex;
+import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
@@ -66,14 +73,12 @@ import org.w3c.dom.NodeList;
 
 import com.google.common.base.Strings;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 /**
  * Utility class for writing configuration elements to the XML format of
  * conf.xml.
- * 
+ *
  * Generally speaking, XML elements created by this class, and placed in a the
- * <datastore-catalog> and <reference-data-catalog> elements of conf.xml, will
+ * &lt;datastore-catalog&gt; and &lt;reference-data-catalog&gt; elements of conf.xml, will
  * be readable by {@link JaxbConfigurationReader}.
  */
 public class DomConfigurationWriter {
@@ -84,12 +89,12 @@ public class DomConfigurationWriter {
         _document = XmlUtils.createDocument();
     }
 
-    public DomConfigurationWriter(Resource resource) {
+    public DomConfigurationWriter(final Resource resource) {
         _document = resource.read(XmlUtils::parseDocument);
 
     }
 
-    public DomConfigurationWriter(Document document) {
+    public DomConfigurationWriter(final Document document) {
         _document = document;
     }
 
@@ -100,7 +105,7 @@ public class DomConfigurationWriter {
      * @return
      */
     public boolean isExternalizable(final ServerInformation serverInformation) {
-        if(serverInformation == null) {
+        if (serverInformation == null) {
             return false;
         }
 
@@ -171,24 +176,27 @@ public class DomConfigurationWriter {
         if (datastore instanceof DataHubDatastore) {
             return true;
         }
-        
-        if (datastore instanceof JsonDatastore){
-            return true; 
+
+        if (datastore instanceof JsonDatastore) {
+            return true;
+        }
+        if (datastore instanceof FixedWidthDatastore) {
+            return true;
         }
 
         return false;
     }
 
-    public boolean isExternalizable(Dictionary dict) {
+    public boolean isExternalizable(final Dictionary dict) {
         return dict instanceof SimpleDictionary || dict instanceof TextFileDictionary
                 || dict instanceof DatastoreDictionary;
     }
 
-    public boolean isExternalizable(SynonymCatalog sc) {
+    public boolean isExternalizable(final SynonymCatalog sc) {
         return sc instanceof TextFileSynonymCatalog || sc instanceof DatastoreSynonymCatalog;
     }
 
-    public boolean isExternalizable(StringPattern sp) {
+    public boolean isExternalizable(final StringPattern sp) {
         return sp instanceof SimpleStringPattern || sp instanceof RegexStringPattern;
     }
 
@@ -201,15 +209,15 @@ public class DomConfigurationWriter {
      */
     public boolean removeHadoopClusterServerInformation(final String serverName) {
         final Element serverInformationCatalogElement = getServerInformationCatalogElement();
-        final Element hadoopClustersElement = getOrCreateChildElementByTagName(serverInformationCatalogElement,
-                "hadoop-clusters");
+        final Element hadoopClustersElement =
+                getOrCreateChildElementByTagName(serverInformationCatalogElement, "hadoop-clusters");
         return removeChildElementByNameAttribute(serverName, hadoopClustersElement);
     }
 
     /**
      * Removes a datastore by its name, if it exists and is recognizeable by the
      * externalizer.
-     * 
+     *
      * @param datastoreName
      * @return true if a datastore element was removed from the XML document.
      */
@@ -221,7 +229,7 @@ public class DomConfigurationWriter {
     /**
      * Removes a dictionary by its name, if it exists and is recognizable by the
      * externalizer.
-     * 
+     *
      * @param dictionaryName
      * @return true if dictionary element was removed from the XML document
      */
@@ -233,7 +241,7 @@ public class DomConfigurationWriter {
     /**
      * Removes a synonym catalog by its name, if it exists and is recognizable
      * by the externalizer.
-     * 
+     *
      * @param synonymCatalogName
      * @return true if dictionary element was removed from the XML document
      */
@@ -245,7 +253,7 @@ public class DomConfigurationWriter {
     /**
      * Removes a string pattern by its name, if it exists and is recognizable by
      * the externalizer.
-     * 
+     *
      * @param stringPatternName
      * @return true if string pattern element was removed from the XML document
      */
@@ -262,7 +270,7 @@ public class DomConfigurationWriter {
             if (node instanceof Element) {
                 final Element element = (Element) node;
                 final Attr[] attributes = XmlDomDataContext.getAttributes(element);
-                for (Attr attr : attributes) {
+                for (final Attr attr : attributes) {
                     if ("name".equals(attr.getName())) {
                         final String value = attr.getValue();
                         if (dictionaryName.equals(value)) {
@@ -281,7 +289,7 @@ public class DomConfigurationWriter {
         return false;
     }
 
-    public Element externalize(ServerInformation serverInformation) throws UnsupportedOperationException {
+    public Element externalize(final ServerInformation serverInformation) throws UnsupportedOperationException {
         if (serverInformation == null) {
             throw new IllegalArgumentException("ServerInformation cannot be null");
         }
@@ -309,7 +317,7 @@ public class DomConfigurationWriter {
      * @return
      * @throws UnsupportedOperationException
      */
-    public Element externalize(Datastore datastore) throws UnsupportedOperationException {
+    public Element externalize(final Datastore datastore) throws UnsupportedOperationException {
         if (datastore == null) {
             throw new IllegalArgumentException("Datastore cannot be null");
         }
@@ -340,6 +348,10 @@ public class DomConfigurationWriter {
             final Resource resource = ((JsonDatastore) datastore).getResource();
             final String filename = toFilename(resource);
             elem = toElement((JsonDatastore) datastore, filename);
+        } else if (datastore instanceof FixedWidthDatastore) {
+            final Resource resource = ((FixedWidthDatastore) datastore).getResource();
+            final String filename = toFilename(resource);
+            elem = toElement((FixedWidthDatastore) datastore, filename);
         } else {
             throw new UnsupportedOperationException("Non-supported datastore: " + datastore);
         }
@@ -352,7 +364,7 @@ public class DomConfigurationWriter {
         return elem;
     }
 
-    public Element externalize(Dictionary dictionary) throws UnsupportedOperationException {
+    public Element externalize(final Dictionary dictionary) throws UnsupportedOperationException {
         if (dictionary == null) {
             throw new IllegalArgumentException("Dictionary cannot be null");
         }
@@ -377,7 +389,7 @@ public class DomConfigurationWriter {
         return elem;
     }
 
-    public Element externalize(SynonymCatalog sc) throws UnsupportedOperationException {
+    public Element externalize(final SynonymCatalog sc) throws UnsupportedOperationException {
         if (sc == null) {
             throw new IllegalArgumentException("SynonymCatalog cannot be null");
         }
@@ -400,7 +412,7 @@ public class DomConfigurationWriter {
         return elem;
     }
 
-    public Element externalize(StringPattern sp) throws UnsupportedOperationException {
+    public Element externalize(final StringPattern sp) throws UnsupportedOperationException {
         if (sp == null) {
             throw new IllegalArgumentException("StringPattern cannot be null");
         }
@@ -411,6 +423,8 @@ public class DomConfigurationWriter {
             elem = toElement((SimpleStringPattern) sp);
         } else if (sp instanceof RegexStringPattern) {
             elem = toElement((RegexStringPattern) sp);
+        } else if (sp instanceof RegexSwapStringPattern) {
+            elem = toElement((RegexSwapStringPattern) sp);
         } else {
             throw new UnsupportedOperationException("Non-supported string pattern: " + sp);
         }
@@ -423,7 +437,7 @@ public class DomConfigurationWriter {
         return elem;
     }
 
-    private Element toElement(RegexStringPattern sp) {
+    private Element toElement(final RegexStringPattern sp) {
         final Element elem = getDocument().createElement("regex-pattern");
         elem.setAttribute("name", sp.getName());
         if (!Strings.isNullOrEmpty(sp.getDescription())) {
@@ -436,7 +450,39 @@ public class DomConfigurationWriter {
         return elem;
     }
 
-    private Element toElement(SimpleStringPattern sp) {
+    private Element toElement(final RegexSwapStringPattern regexSwapStringPattern) {
+        final Element patternElement = getDocument().createElement("regex-swap-pattern");
+        final Regex regex = regexSwapStringPattern.getRegex();
+        patternElement.setAttribute("name", regex.getName());
+        patternElement.setAttribute("description", regex.getDescription());
+        appendElement(patternElement, "expression", regex.getExpression());
+        appendElement(patternElement, "author", regex.getAuthor());
+        appendElement(patternElement, "detailsUrl", regex.getDetailsUrl());
+        appendElement(patternElement, "negativeVotes", regex.getNegativeVotes());
+        appendElement(patternElement, "positiveVotes", regex.getPositiveVotes());
+        appendElement(patternElement, "timestamp", regex.getTimestamp());
+        appendElement(patternElement, "categories", getCSVCategoryList(regex.getCategories()));
+
+        return patternElement;
+    }
+
+    private String getCSVCategoryList(final List<Category> categories) {
+        if (categories == null || categories.size() <= 0) {
+            return "";
+        }
+
+        final StringBuilder builder = new StringBuilder();
+
+        for (final Category category : categories) {
+            builder.append(category.getName()).append(",");
+        }
+
+        final String csvList = builder.toString();
+
+        return csvList.substring(0, csvList.length() - 1); // remove last comma 
+    }
+
+    private Element toElement(final SimpleStringPattern sp) {
         final Element elem = getDocument().createElement("simple-pattern");
         elem.setAttribute("name", sp.getName());
         if (!Strings.isNullOrEmpty(sp.getDescription())) {
@@ -448,7 +494,7 @@ public class DomConfigurationWriter {
         return elem;
     }
 
-    private Element toElement(DatastoreSynonymCatalog sc) {
+    private Element toElement(final DatastoreSynonymCatalog sc) {
         final Element elem = getDocument().createElement("datastore-synonym-catalog");
         elem.setAttribute("name", sc.getName());
         if (!Strings.isNullOrEmpty(sc.getDescription())) {
@@ -459,7 +505,7 @@ public class DomConfigurationWriter {
         appendElement(elem, "master-term-column-path", sc.getMasterTermColumnPath());
 
         final String[] synonymColumnPaths = sc.getSynonymColumnPaths();
-        for (String path : synonymColumnPaths) {
+        for (final String path : synonymColumnPaths) {
             appendElement(elem, "synonym-column-path", path);
         }
 
@@ -468,7 +514,7 @@ public class DomConfigurationWriter {
         return elem;
     }
 
-    private Element toElement(TextFileSynonymCatalog sc) {
+    private Element toElement(final TextFileSynonymCatalog sc) {
         final Element elem = getDocument().createElement("text-file-synonym-catalog");
         elem.setAttribute("name", sc.getName());
         if (!Strings.isNullOrEmpty(sc.getDescription())) {
@@ -482,7 +528,7 @@ public class DomConfigurationWriter {
         return elem;
     }
 
-    private Element toElement(SimpleDictionary dictionary) {
+    private Element toElement(final SimpleDictionary dictionary) {
         final Element elem = getDocument().createElement("value-list-dictionary");
         elem.setAttribute("name", dictionary.getName());
         if (!Strings.isNullOrEmpty(dictionary.getDescription())) {
@@ -490,7 +536,7 @@ public class DomConfigurationWriter {
         }
 
         final Set<String> values = dictionary.getValueSet();
-        for (String value : values) {
+        for (final String value : values) {
             appendElement(elem, "value", value);
         }
 
@@ -499,7 +545,7 @@ public class DomConfigurationWriter {
         return elem;
     }
 
-    private Element toElement(TextFileDictionary dictionary) {
+    private Element toElement(final TextFileDictionary dictionary) {
         final Element elem = getDocument().createElement("text-file-dictionary");
         elem.setAttribute("name", dictionary.getName());
         if (!Strings.isNullOrEmpty(dictionary.getDescription())) {
@@ -513,7 +559,7 @@ public class DomConfigurationWriter {
         return elem;
     }
 
-    private Element toElement(DatastoreDictionary dictionary) {
+    private Element toElement(final DatastoreDictionary dictionary) {
         final Element elem = getDocument().createElement("datastore-dictionary");
         elem.setAttribute("name", dictionary.getName());
         if (!Strings.isNullOrEmpty(dictionary.getDescription())) {
@@ -529,16 +575,16 @@ public class DomConfigurationWriter {
 
     /**
      * Overrideable method, invoked whenever the document has changed
-     * 
+     *
      * @param document
      */
-    protected void onDocumentChanged(Document document) {
+    protected void onDocumentChanged(final Document document) {
     }
 
     /**
      * Creates a filename string to externalize, based on a given
      * {@link Resource}.
-     * 
+     *
      * @param resource
      * @return
      * @throws UnsupportedOperationException
@@ -547,7 +593,7 @@ public class DomConfigurationWriter {
         if (resource instanceof FileResource) {
             return ((FileResource) resource).getFile().getPath();
         }
-        if(resource instanceof HadoopResource) {
+        if (resource instanceof HadoopResource) {
             return ((HadoopResource) resource).getTemplatedPath();
         }
         if (resource instanceof HdfsResource) {
@@ -559,18 +605,18 @@ public class DomConfigurationWriter {
 
     /**
      * Externalizes a {@link JdbcDatastore} to a XML element.
-     * 
+     *
      * @param datastore
      * @return
      */
-    public Element toElement(JdbcDatastore datastore) {
+    public Element toElement(final JdbcDatastore datastore) {
         final Element ds = getDocument().createElement("jdbc-datastore");
         ds.setAttribute("name", datastore.getName());
         if (!Strings.isNullOrEmpty(datastore.getDescription())) {
             ds.setAttribute("description", datastore.getDescription());
         }
 
-        String jndiUrl = datastore.getDatasourceJndiUrl();
+        final String jndiUrl = datastore.getDatasourceJndiUrl();
         if (Strings.isNullOrEmpty(jndiUrl)) {
             appendElement(ds, "url", datastore.getJdbcUrl());
             appendElement(ds, "driver", datastore.getDriverClass());
@@ -599,7 +645,7 @@ public class DomConfigurationWriter {
         return ds;
     }
 
-    private String encodePassword(String password) {
+    private String encodePassword(final String password) {
         if (password == null) {
             return null;
         }
@@ -607,7 +653,7 @@ public class DomConfigurationWriter {
         return SecurityUtils.encodePasswordWithPrefix(password);
     }
 
-    private String encodePassword(char[] password) {
+    private String encodePassword(final char[] password) {
         return encodePassword(new String(password));
     }
 
@@ -617,7 +663,7 @@ public class DomConfigurationWriter {
      * @param hadoopClusterInformation the hadoopClusterInformation to externalize
      * @return a XML element representing the datastore.
      */
-    public Element toElement(HadoopClusterInformation hadoopClusterInformation) {
+    public Element toElement(final HadoopClusterInformation hadoopClusterInformation) {
         final Element hadoopClusterElement = getDocument().createElement("hadoop-cluster");
 
         hadoopClusterElement.setAttribute("name", hadoopClusterInformation.getName());
@@ -634,11 +680,11 @@ public class DomConfigurationWriter {
         } else if (hadoopClusterInformation instanceof EnvironmentBasedHadoopClusterInformation) {
             appendElement(hadoopClusterElement, "environment-configured", "");
         } else if (hadoopClusterInformation instanceof DirectoryBasedHadoopClusterInformation) {
-            DirectoryBasedHadoopClusterInformation directoryBasedHadoopClusterInformation =
+            final DirectoryBasedHadoopClusterInformation directoryBasedHadoopClusterInformation =
                     (DirectoryBasedHadoopClusterInformation) hadoopClusterInformation;
-            Element directoriesElement = getDocument().createElement("directories");
+            final Element directoriesElement = getDocument().createElement("directories");
             hadoopClusterElement.appendChild(directoriesElement);
-            for (String directory : directoryBasedHadoopClusterInformation.getDirectories()) {
+            for (final String directory : directoryBasedHadoopClusterInformation.getDirectories()) {
                 appendElement(directoriesElement, "directory", directory);
             }
         } else {
@@ -650,11 +696,11 @@ public class DomConfigurationWriter {
 
     /**
      * Externalizes a {@link ElasticSearchDatastore} to a XML element
-     * 
+     *
      * @param datastore
      * @return
      */
-    public Element toElement(ElasticSearchDatastore datastore) {
+    public Element toElement(final ElasticSearchDatastore datastore) {
         final Element ds = getDocument().createElement("elasticsearch-datastore");
         ds.setAttribute("name", datastore.getName());
         if (!Strings.isNullOrEmpty(datastore.getDescription())) {
@@ -680,11 +726,11 @@ public class DomConfigurationWriter {
 
     /**
      * Externalizes a {@link MongoDbDatastore} to a XML element
-     * 
+     *
      * @param datastore
      * @return
      */
-    public Element toElement(MongoDbDatastore datastore) {
+    public Element toElement(final MongoDbDatastore datastore) {
         final Element ds = getDocument().createElement("mongodb-datastore");
         ds.setAttribute("name", datastore.getName());
         if (!Strings.isNullOrEmpty(datastore.getDescription())) {
@@ -702,11 +748,11 @@ public class DomConfigurationWriter {
 
     /**
      * Externalizes a {@link CouchDbDatastore} to a XML element
-     * 
+     *
      * @param datastore
      * @return
      */
-    public Element toElement(CouchDbDatastore datastore) {
+    public Element toElement(final CouchDbDatastore datastore) {
         final Element ds = getDocument().createElement("couchdb-datastore");
         ds.setAttribute("name", datastore.getName());
         if (!Strings.isNullOrEmpty(datastore.getDescription())) {
@@ -722,13 +768,43 @@ public class DomConfigurationWriter {
         return ds;
     }
 
+
+    public Element toElement(final FixedWidthDatastore datastore, final String filename) {
+        final Element ds = getDocument().createElement("fixed-width-datastore");
+        ds.setAttribute("name", datastore.getName());
+        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
+            ds.setAttribute("description", datastore.getDescription());
+        }
+        appendElement(ds, "filename", filename);
+        appendElement(ds, "encoding", datastore.getEncoding());
+
+        final Element widthElement = getDocument().createElement("width-specification");
+        final int fixedValueWidth = datastore.getFixedValueWidth();
+        if (fixedValueWidth > -1) {
+            final String valueOf = String.valueOf(fixedValueWidth);
+            appendElement(widthElement, "fixed-value-width", valueOf);
+        } else {
+            final int[] valueWidths = datastore.getValueWidths();
+            for (int i = 0; i < valueWidths.length; i++) {
+                appendElement(widthElement, "value-width", String.valueOf(valueWidths[i]));
+            }
+        }
+        ds.appendChild(widthElement);
+        appendElement(ds, "header-line-number", datastore.getHeaderLineNumber());
+        appendElement(ds, "fail-on-inconsistencies", String.valueOf(datastore.isFailOnInconsistencies()));
+        appendElement(ds, "skip-ebcdic-header", String.valueOf(datastore.isSkipEbcdicHeader()));
+        appendElement(ds, "eol-present", String.valueOf(datastore.isEolPresent()));
+
+        return ds;
+    }
+
     /**
      * Externalizes a {@link CouchDbDatastore} to an XML element
-     * 
+     *
      * @param datastore
      * @return
      */
-    public Element toElement(SalesforceDatastore datastore) {
+    public Element toElement(final SalesforceDatastore datastore) {
         final Element ds = getDocument().createElement("salesforce-datastore");
         ds.setAttribute("name", datastore.getName());
         if (!Strings.isNullOrEmpty(datastore.getDescription())) {
@@ -749,11 +825,11 @@ public class DomConfigurationWriter {
 
     /**
      * Externalizes a {@link DataHubDatastore} to an XML element
-     * 
+     *
      * @param datastore
      * @return
      */
-    private Element toElement(DataHubDatastore datastore) {
+    private Element toElement(final DataHubDatastore datastore) {
         final Element ds = getDocument().createElement("datahub-datastore");
         ds.setAttribute("name", datastore.getName());
         if (!isNullOrEmpty(datastore.getDescription())) {
@@ -773,7 +849,7 @@ public class DomConfigurationWriter {
 
     /**
      * Externalizes a {@link ExcelDatastore} to a XML element.
-     * 
+     *
      * @param datastore
      * @param filename
      *            the filename/path to use in the XML element. Since the
@@ -782,7 +858,7 @@ public class DomConfigurationWriter {
      *            property of the datastore is provided separately.
      * @return
      */
-    public Element toElement(ExcelDatastore datastore, String filename) {
+    public Element toElement(final ExcelDatastore datastore, final String filename) {
         final Element ds = getDocument().createElement("excel-datastore");
 
         ds.setAttribute("name", datastore.getName());
@@ -792,12 +868,20 @@ public class DomConfigurationWriter {
 
         appendElement(ds, "filename", filename);
 
+        if (datastore.getCustomColumnNames() != null && datastore.getCustomColumnNames().size() > 0) {
+            final Element customColumnNamesElement = getDocument().createElement("custom-column-names");
+            ds.appendChild(customColumnNamesElement);
+
+            datastore.getCustomColumnNames()
+                    .forEach(columnName -> appendElement(customColumnNamesElement, "column-name", columnName));
+        }
+
         return ds;
     }
 
     /**
      * Externalizes a {@link CsvDatastore} to a XML element.
-     * 
+     *
      * @param datastore
      *            the datastore to externalize
      * @param filename
@@ -807,7 +891,7 @@ public class DomConfigurationWriter {
      *            property of the datastore is provided separately.
      * @return a XML element representing the datastore.
      */
-    public Element toElement(CsvDatastore datastore, String filename) {
+    public Element toElement(final CsvDatastore datastore, final String filename) {
         final Element datastoreElement = getDocument().createElement("csv-datastore");
         datastoreElement.setAttribute("name", datastore.getName());
 
@@ -825,29 +909,38 @@ public class DomConfigurationWriter {
         appendElement(datastoreElement, "multiline-values", datastore.isMultilineValues());
         appendElement(datastoreElement, "header-line-number", datastore.getHeaderLineNumber());
 
+        if (datastore.getCustomColumnNames() != null && datastore.getCustomColumnNames().size() > 0) {
+            final Element customColumnNamesElement = getDocument().createElement("custom-column-names");
+            datastoreElement.appendChild(customColumnNamesElement);
+
+            datastore.getCustomColumnNames()
+                    .forEach(columnName -> appendElement(customColumnNamesElement, "column-name", columnName));
+        }
+
         return datastoreElement;
     }
+
     /**
      * Extrnalizes a Json datastore
      * @param datastore
      * @param filename
      * @return
      */
-    public Element toElement(JsonDatastore datastore, String filename){
-        final Element datastoreElement = getDocument().createElement("json-datastore"); 
+    public Element toElement(final JsonDatastore datastore, final String filename) {
+        final Element datastoreElement = getDocument().createElement("json-datastore");
         datastoreElement.setAttribute("name", datastore.getName());
         final String description = datastore.getDescription();
         if (!Strings.isNullOrEmpty(description)) {
             datastoreElement.setAttribute("description", description);
         }
         appendElement(datastoreElement, "filename", filename);
-        
-        return datastoreElement; 
+
+        return datastoreElement;
     }
 
     /**
      * Gets the XML document that has been built.
-     * 
+     *
      * @return
      */
     public final Document getDocument() {
@@ -856,14 +949,14 @@ public class DomConfigurationWriter {
 
     /**
      * Gets the XML element that represents the {@link DatastoreCatalog}.
-     * 
+     *
      * @return
      */
     public Element getDatastoreCatalogElement() {
         final Element configurationFileDocumentElement = getDocumentElement();
 
-        final Element datastoreCatalogElement = getOrCreateChildElementByTagName(configurationFileDocumentElement,
-                "datastore-catalog");
+        final Element datastoreCatalogElement =
+                getOrCreateChildElementByTagName(configurationFileDocumentElement, "datastore-catalog");
         if (datastoreCatalogElement == null) {
             throw new IllegalStateException("Could not find <datastore-catalog> element in configuration file");
         }
@@ -890,14 +983,14 @@ public class DomConfigurationWriter {
 
     /**
      * Gets the XML element that represents the dictionaries
-     * 
+     *
      * @return
      */
     public Element getDictionariesElement() {
         final Element referenceDataCatalogElement = getReferenceDataCatalogElement();
 
-        final Element dictionariesElement = getOrCreateChildElementByTagName(referenceDataCatalogElement,
-                "dictionaries");
+        final Element dictionariesElement =
+                getOrCreateChildElementByTagName(referenceDataCatalogElement, "dictionaries");
         if (dictionariesElement == null) {
             throw new IllegalStateException("Could not find <dictionaries> element in configuration file");
         }
@@ -906,14 +999,14 @@ public class DomConfigurationWriter {
 
     /**
      * Gets the XML element that represents the synonym catalogs
-     * 
+     *
      * @return
      */
     public Element getSynonymCatalogsElement() {
         final Element referenceDataCatalogElement = getReferenceDataCatalogElement();
 
-        final Element synonymCatalogsElement = getOrCreateChildElementByTagName(referenceDataCatalogElement,
-                "synonym-catalogs");
+        final Element synonymCatalogsElement =
+                getOrCreateChildElementByTagName(referenceDataCatalogElement, "synonym-catalogs");
         if (synonymCatalogsElement == null) {
             throw new IllegalStateException("Could not find <synonym-catalogs> element in configuration file");
         }
@@ -922,14 +1015,14 @@ public class DomConfigurationWriter {
 
     /**
      * Gets the XML element that represents the string patterns
-     * 
+     *
      * @return
      */
     public Element getStringPatternsElement() {
         final Element referenceDataCatalogElement = getReferenceDataCatalogElement();
 
-        final Element stringPatternsElement = getOrCreateChildElementByTagName(referenceDataCatalogElement,
-                "string-patterns");
+        final Element stringPatternsElement =
+                getOrCreateChildElementByTagName(referenceDataCatalogElement, "string-patterns");
         if (stringPatternsElement == null) {
             throw new IllegalStateException("Could not find <string-patterns> element in configuration file");
         }
@@ -939,8 +1032,8 @@ public class DomConfigurationWriter {
     private Element getReferenceDataCatalogElement() {
         final Element configurationFileDocumentElement = getDocumentElement();
 
-        final Element referenceDataCatalogElement = getOrCreateChildElementByTagName(configurationFileDocumentElement,
-                "reference-data-catalog");
+        final Element referenceDataCatalogElement =
+                getOrCreateChildElementByTagName(configurationFileDocumentElement, "reference-data-catalog");
         if (referenceDataCatalogElement == null) {
             throw new IllegalStateException("Could not find <reference-data-catalog> element in configuration file");
         }
@@ -958,7 +1051,7 @@ public class DomConfigurationWriter {
         return documentElement;
     }
 
-    private Element getOrCreateChildElementByTagName(Element element, String tagName) {
+    private Element getOrCreateChildElementByTagName(final Element element, final String tagName) {
         Element elem = getChildElementByTagName(element, tagName);
         if (elem == null) {
             elem = getDocument().createElement(tagName);
@@ -967,7 +1060,7 @@ public class DomConfigurationWriter {
         return elem;
     }
 
-    private Element getChildElementByTagName(Element element, String tagName) {
+    private Element getChildElementByTagName(final Element element, final String tagName) {
         final NodeList nodeList = element.getElementsByTagName(tagName);
         if (nodeList == null) {
             return null;
@@ -982,7 +1075,7 @@ public class DomConfigurationWriter {
         return null;
     }
 
-    private void appendElement(Element parent, String elementName, Object value) {
+    private void appendElement(final Element parent, final String elementName, Object value) {
         if (value == null) {
             return;
         }
@@ -1012,20 +1105,21 @@ public class DomConfigurationWriter {
     }
 
 
-    public void addRemoteServer(String serverName, String url, String username, String password){
-        Element descriptorProviderElement =
+    public void addRemoteServer(final String serverName, final String url, final String username,
+            final String password) {
+        final Element descriptorProviderElement =
                 getOrCreateChildElementByTagName(getDocumentElement(), "descriptor-providers");
-        Element remoteComponentsElement =
+        final Element remoteComponentsElement =
                 getOrCreateChildElementByTagName(descriptorProviderElement, "remote-components");
 
-        Element serverElement = getDocument().createElement("server");
+        final Element serverElement = getDocument().createElement("server");
         remoteComponentsElement.appendChild(serverElement);
 
-        if(!StringUtils.isNullOrEmpty(serverName)){
+        if (!StringUtils.isNullOrEmpty(serverName)) {
             appendElement(serverElement, "name", serverName);
         }
 
-        if(!StringUtils.isNullOrEmpty(url)){
+        if (!StringUtils.isNullOrEmpty(url)) {
             appendElement(serverElement, "url", url);
         }
         appendElement(serverElement, "username", username);
@@ -1033,17 +1127,17 @@ public class DomConfigurationWriter {
         onDocumentChanged(getDocument());
     }
 
-    public void updateRemoteServerCredentials(String serverName, String username, String password) {
-        Element remoteComponents = getChildElementByTagName(getDocumentElement(), "remote-components");
-        NodeList servers = remoteComponents.getElementsByTagName("server");
+    public void updateRemoteServerCredentials(final String serverName, final String username, final String password) {
+        final Element remoteComponents = getChildElementByTagName(getDocumentElement(), "remote-components");
+        final NodeList servers = remoteComponents.getElementsByTagName("server");
         for (int i = 0; i < servers.getLength(); i++) {
-            if(servers.item(i) instanceof Element){
-                Element server = (Element) servers.item(i);
-                Element name = getChildElementByTagName(server, "name");
-                if(name!= null && serverName.equals(name.getTextContent())){
-                    Element usernameElemet = getOrCreateChildElementByTagName(server, "username");
+            if (servers.item(i) instanceof Element) {
+                final Element server = (Element) servers.item(i);
+                final Element name = getChildElementByTagName(server, "name");
+                if (name != null && serverName.equals(name.getTextContent())) {
+                    final Element usernameElemet = getOrCreateChildElementByTagName(server, "username");
                     usernameElemet.setTextContent(username);
-                    Element passwordElement = getOrCreateChildElementByTagName(server, "password");
+                    final Element passwordElement = getOrCreateChildElementByTagName(server, "password");
                     passwordElement.setTextContent(SecurityUtils.encodePasswordWithPrefix(password));
                     break;
                 }

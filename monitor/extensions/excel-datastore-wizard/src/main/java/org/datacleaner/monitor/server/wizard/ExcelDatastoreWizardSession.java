@@ -23,14 +23,14 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
 import org.datacleaner.configuration.DatastoreXmlExternalizer;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.datastore.AbstractDatastoreWizardSession;
 import org.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
 import org.w3c.dom.Element;
 
 public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession {
@@ -39,7 +39,7 @@ public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession 
     private String _name;
     private String _description;
 
-    public ExcelDatastoreWizardSession(DatastoreWizardContext context) {
+    public ExcelDatastoreWizardSession(final DatastoreWizardContext context) {
         super(context);
     }
 
@@ -51,7 +51,7 @@ public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession 
                 return new ExcelDatastoreLocationWizardPage(getWizardContext(), filename, true) {
 
                     @Override
-                    protected WizardPageController nextPageController(String filepath, File file) {
+                    protected WizardPageController nextPageController(final String filepath, final File file) {
                         final File directory = file.getParentFile();
                         if (!directory.exists() && !directory.mkdirs()) {
                             throw new DCUserInputException("Could not create directory for file:\n" + filepath);
@@ -73,14 +73,14 @@ public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession 
                 return new ExcelDatastoreLocationWizardPage(getWizardContext(), "my_spreadsheet.xlsx", false) {
 
                     @Override
-                    protected WizardPageController nextPageController(String filepath, File file) {
+                    protected WizardPageController nextPageController(final String filepath, final File file) {
                         if (!filepath.toLowerCase().endsWith(".xls")) {
                             if (!filepath.toLowerCase().endsWith(".xlsx")) {
                                 // only .csv and .tsv files are allowed to be
                                 // referenced on the server, for security
                                 // reasons.
-                                throw new DCUserInputException(
-                                        "For security reasons, only existing .xls and .xlsx files can be referenced on the server");
+                                throw new DCUserInputException("For security reasons, only existing .xls and .xlsx "
+                                        + "files can be referenced on the server");
                             }
                         }
 
@@ -96,10 +96,10 @@ public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession 
         };
     }
 
-    private WizardPageController createNameAndDescriptionWizardPage(String name) {
+    private WizardPageController createNameAndDescriptionWizardPage(final String name) {
         return new DatastoreNameAndDescriptionWizardPage(getWizardContext(), 2, name) {
             @Override
-            protected WizardPageController nextPageController(String name, String description) {
+            protected WizardPageController nextPageController(final String name, final String description) {
                 _name = name;
                 _description = description;
                 return null;
@@ -113,15 +113,14 @@ public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession 
     }
 
     @Override
-    public Element createDatastoreElement(DocumentBuilder documentBuilder) {
+    public Element createDatastoreElement(final DocumentBuilder documentBuilder) {
         final DatastoreXmlExternalizer externalizer = new DatastoreXmlExternalizer();
 
         final File file = new File(_filepath);
         final ExcelDatastore datastore = new ExcelDatastore(_name, new FileResource(file), _filepath);
         datastore.setDescription(_description);
 
-        final Element ds = externalizer.toElement(datastore, _filepath);
-        return ds;
+        return externalizer.toElement(datastore, _filepath);
     }
 
 }

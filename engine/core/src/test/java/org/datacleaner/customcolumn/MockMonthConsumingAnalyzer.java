@@ -33,18 +33,18 @@ import org.datacleaner.result.ListResult;
 @Named("Mock Month Consuming analyzer")
 public class MockMonthConsumingAnalyzer implements Analyzer<ListResult<InputRow>> {
 
-	@Configured
-	InputColumn<Month> cols;
+    @Configured
+    InputColumn<Month> cols;
 
-	private List<InputRow> rows = new ArrayList<InputRow>();
+    private List<InputRow> rows = new ArrayList<>();
 
-	@Override
-	public void run(InputRow row, int distinctCount) {
-		rows.add(row);
-	}
+    @Override
+    public void run(final InputRow row, final int distinctCount) {
+        rows.add(row);
+    }
 
-	@Override
-	public ListResult<InputRow> getResult() {
-		return new ListResult<InputRow>(rows);
-	}
+    @Override
+    public ListResult<InputRow> getResult() {
+        return new ListResult<>(rows);
+    }
 }

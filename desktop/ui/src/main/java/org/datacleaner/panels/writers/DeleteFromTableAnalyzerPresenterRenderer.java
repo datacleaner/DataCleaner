@@ -38,8 +38,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * {@link DeleteFromTableAnalyzer}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class DeleteFromTableAnalyzerPresenterRenderer implements
-        Renderer<AnalyzerComponentBuilder<DeleteFromTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
+public class DeleteFromTableAnalyzerPresenterRenderer
+        implements Renderer<AnalyzerComponentBuilder<DeleteFromTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -51,7 +51,7 @@ public class DeleteFromTableAnalyzerPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<DeleteFromTableAnalyzer> ajb) {
+    public RendererPrecedence getPrecedence(final AnalyzerComponentBuilder<DeleteFromTableAnalyzer> ajb) {
         if (ajb.getDescriptor().getComponentClass() == DeleteFromTableAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -59,9 +59,9 @@ public class DeleteFromTableAnalyzerPresenterRenderer implements
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<DeleteFromTableAnalyzer> ajb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
-                PropertyWidgetFactory.class);
+    public AnalyzerComponentBuilderPresenter render(final AnalyzerComponentBuilder<DeleteFromTableAnalyzer> ajb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
 
         return new DeleteFromTableAnalyzerPresenter(ajb, windowContext, propertyWidgetFactory, configuration, dcModule);
     }

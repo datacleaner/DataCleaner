@@ -30,23 +30,23 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.panels.DCPanel;
-import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.NumberDocument;
-import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.widgets.table.DCTable;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.DataSetTableModel;
 import org.apache.metamodel.query.Query;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.NumberDocument;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.table.DCTable;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.jdesktop.swingx.JXTextField;
@@ -70,7 +70,7 @@ public class QueryWindow extends AbstractWindow {
     private final DCTable _table;
     private final JXTextField _limitTextField;
 
-    public QueryWindow(WindowContext windowContext, Datastore datastore, String query) {
+    public QueryWindow(final WindowContext windowContext, final Datastore datastore, final String query) {
         super(windowContext);
         _datastore = datastore;
         _queryTextArea = new RSyntaxTextArea(5, 17);
@@ -85,23 +85,23 @@ public class QueryWindow extends AbstractWindow {
         _queryButton = WidgetFactory.createPrimaryButton("Execute query", IconUtils.MODEL_QUERY);
         _queryButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
+            public void actionPerformed(final ActionEvent event) {
                 final String queryString = _queryTextArea.getText();
                 logger.debug("Query being parsed: {}", queryString);
 
-                try (final DatastoreConnection con = _datastore.openConnection()) {
+                try (DatastoreConnection con = _datastore.openConnection()) {
                     final DataContext dataContext = con.getDataContext();
                     final Query q = dataContext.parseQuery(queryString);
                     logger.info("Parsed query: {}", q);
                     final String limitString = _limitTextField.getText();
                     if (!StringUtils.isNullOrEmpty(limitString)) {
-                        int limit = Integer.parseInt(limitString);
+                        final int limit = Integer.parseInt(limitString);
                         q.setMaxRows(limit);
                     }
                     final DataSet dataSet = dataContext.executeQuery(q);
                     _centerPanel.setVisible(true);
                     _table.setModel(new DataSetTableModel(dataSet));
-                } catch (MetaModelException e) {
+                } catch (final MetaModelException e) {
                     WidgetUtils.showErrorMessage("Failed to execute query", e.getMessage(), e);
                 }
             }
@@ -135,7 +135,7 @@ public class QueryWindow extends AbstractWindow {
     public Image getWindowIcon() {
         return ImageManager.get().getImage("images/model/query.png");
     }
-    
+
     @Override
     protected boolean isWindowResizable() {
         return true;
@@ -148,7 +148,7 @@ public class QueryWindow extends AbstractWindow {
 
     @Override
     protected JComponent getWindowContent() {
-        DCPanel outerPanel = new DCPanel();
+        final DCPanel outerPanel = new DCPanel();
         outerPanel.setLayout(new BorderLayout());
 
         outerPanel.add(_upperPanel, BorderLayout.NORTH);

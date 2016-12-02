@@ -34,7 +34,8 @@ public class ComponentStoreHolderTest {
 
     @Test
     public void testConstructor() {
-        ComponentStoreHolder storeHolder = new ComponentStoreHolder(timeout, createInput, instanceId, componentName);
+        final ComponentStoreHolder storeHolder =
+                new ComponentStoreHolder(timeout, createInput, instanceId, componentName);
         assertEquals(timeout, storeHolder.getTimeout());
         assertEquals(createInput, storeHolder.getCreateInput());
         assertEquals(instanceId, storeHolder.getInstanceId());

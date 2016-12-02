@@ -24,16 +24,16 @@ import javax.swing.JToolTip;
 
 public class DCToolTip extends JToolTip {
 
-	private static final long serialVersionUID = 1L;
-	private final JComponent _tooltipComponent;
+    private static final long serialVersionUID = 1L;
+    private final JComponent _tooltipComponent;
 
-	public DCToolTip(JComponent owner, JComponent tooltipComponent) {
-		super();
-		_tooltipComponent = tooltipComponent;
-		setComponent(owner);
-	}
+    public DCToolTip(final JComponent owner, final JComponent tooltipComponent) {
+        super();
+        _tooltipComponent = tooltipComponent;
+        setComponent(owner);
+    }
 
-	public JComponent getTooltipComponent() {
-		return _tooltipComponent;
-	}
+    public JComponent getTooltipComponent() {
+        return _tooltipComponent;
+    }
 }

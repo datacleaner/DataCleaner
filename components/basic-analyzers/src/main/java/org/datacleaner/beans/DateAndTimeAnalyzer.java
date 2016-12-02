@@ -48,7 +48,8 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 @Named("Date/time analyzer")
-@Description("Records a variety of interesting measures for date or time based data. Which are the highest/lowest values? How is the year distribution of dates? Are there null values?")
+@Description("Records a variety of interesting measures for date or time based data. Which are the highest/lowest "
+        + "values? How is the year distribution of dates? Are there null values?")
 @Concurrent(true)
 @Categorized(DateAndTimeCategory.class)
 public class DateAndTimeAnalyzer implements Analyzer<DateAndTimeAnalyzerResult> {
@@ -68,43 +69,40 @@ public class DateAndTimeAnalyzer implements Analyzer<DateAndTimeAnalyzerResult> 
     public static final String MEASURE_PERCENTILE75 = "75th percentile";
     public static final String MEASURE_KURTOSIS = "Kurtosis";
     public static final String MEASURE_SKEWNESS = "Skewness";
-
-    private Map<InputColumn<Date>, DateAndTimeAnalyzerColumnDelegate> _delegates = new HashMap<InputColumn<Date>, DateAndTimeAnalyzerColumnDelegate>();
-
     @Inject
     @Configured(order = 1)
     InputColumn<Date>[] _columns;
-
     @Inject
     @Configured(order = 10)
-    @Description("Gather so-called descriptive statistics, including median, skewness, kurtosis and percentiles, which have a larger memory-footprint.")
+    @Description("Gather so-called descriptive statistics, including median, skewness, kurtosis and percentiles, "
+            + "which have a larger memory-footprint.")
     boolean descriptiveStatistics = false;
-
     @Inject
     @Provided
     RowAnnotationFactory _annotationFactory;
+    private Map<InputColumn<Date>, DateAndTimeAnalyzerColumnDelegate> _delegates = new HashMap<>();
 
     @Initialize
     public void init() {
-        for (InputColumn<Date> col : _columns) {
-            final DateAndTimeAnalyzerColumnDelegate delegate = new DateAndTimeAnalyzerColumnDelegate(
-                    descriptiveStatistics, _annotationFactory);
+        for (final InputColumn<Date> col : _columns) {
+            final DateAndTimeAnalyzerColumnDelegate delegate =
+                    new DateAndTimeAnalyzerColumnDelegate(descriptiveStatistics, _annotationFactory);
             _delegates.put(col, delegate);
         }
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
-        for (InputColumn<Date> col : _columns) {
-            Date value = row.getValue(col);
-            DateAndTimeAnalyzerColumnDelegate delegate = _delegates.get(col);
+    public void run(final InputRow row, final int distinctCount) {
+        for (final InputColumn<Date> col : _columns) {
+            final Date value = row.getValue(col);
+            final DateAndTimeAnalyzerColumnDelegate delegate = _delegates.get(col);
             delegate.run(value, row, distinctCount);
         }
     }
 
     @Override
     public DateAndTimeAnalyzerResult getResult() {
-        CrosstabDimension measureDimension = new CrosstabDimension(DIMENSION_MEASURE);
+        final CrosstabDimension measureDimension = new CrosstabDimension(DIMENSION_MEASURE);
         measureDimension.addCategory(MEASURE_ROW_COUNT);
         measureDimension.addCategory(MEASURE_NULL_COUNT);
         measureDimension.addCategory(MEASURE_HIGHEST_DATE);
@@ -121,15 +119,14 @@ public class DateAndTimeAnalyzer implements Analyzer<DateAndTimeAnalyzerResult> 
             measureDimension.addCategory(MEASURE_KURTOSIS);
         }
 
-        CrosstabDimension columnDimension = new CrosstabDimension(DIMENSION_COLUMN);
-        for (InputColumn<Date> column : _columns) {
+        final CrosstabDimension columnDimension = new CrosstabDimension(DIMENSION_COLUMN);
+        for (final InputColumn<Date> column : _columns) {
             columnDimension.addCategory(column.getName());
         }
 
-        final Crosstab<Serializable> crosstab = new Crosstab<Serializable>(Serializable.class, columnDimension,
-                measureDimension);
+        final Crosstab<Serializable> crosstab = new Crosstab<>(Serializable.class, columnDimension, measureDimension);
         final CrosstabNavigator<Serializable> nav = crosstab.navigate();
-        for (InputColumn<Date> column : _columns) {
+        for (final InputColumn<Date> column : _columns) {
             final DateAndTimeAnalyzerColumnDelegate delegate = _delegates.get(column);
 
             nav.where(columnDimension, column.getName());
@@ -139,7 +136,8 @@ public class DateAndTimeAnalyzer implements Analyzer<DateAndTimeAnalyzerResult> 
             final int numNull = delegate.getNumNull();
             nav.where(measureDimension, MEASURE_NULL_COUNT).put(numNull);
             if (numNull > 0) {
-                nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(delegate.getNullAnnotation(), _annotationFactory, column));
+                nav.attach(AnnotatedRowsResult
+                        .createIfSampleRowsAvailable(delegate.getNullAnnotation(), _annotationFactory, column));
             }
 
             final LocalDate maxDate = delegate.getMaxDate();
@@ -194,13 +192,13 @@ public class DateAndTimeAnalyzer implements Analyzer<DateAndTimeAnalyzerResult> 
         return new DateAndTimeAnalyzerResult(crosstab);
     }
 
-    private String toString(Object obj) {
+    private String toString(final Object obj) {
         if (obj == null) {
             return null;
         }
         if (obj instanceof Date) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            return format.format((Date)obj);
+            final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            return format.format((Date) obj);
         }
         return obj.toString();
     }

@@ -33,8 +33,8 @@ final class AnalyzerConsumer extends AbstractRowProcessingConsumer implements Ro
     private final InputColumn<?>[] _inputColumns;
     private final boolean _concurrent;
 
-    public AnalyzerConsumer(Analyzer<?> analyzer, AnalyzerJob analyzerJob, InputColumn<?>[] inputColumns,
-            RowProcessingPublisher publisher) {
+    public AnalyzerConsumer(final Analyzer<?> analyzer, final AnalyzerJob analyzerJob,
+            final InputColumn<?>[] inputColumns, final RowProcessingPublisher publisher) {
         super(publisher, analyzerJob, analyzerJob);
         _analyzer = analyzer;
         _analyzerJob = analyzerJob;
@@ -43,7 +43,7 @@ final class AnalyzerConsumer extends AbstractRowProcessingConsumer implements Ro
     }
 
     private boolean determineConcurrent() {
-        Concurrent concurrent = _analyzerJob.getDescriptor().getAnnotation(Concurrent.class);
+        final Concurrent concurrent = _analyzerJob.getDescriptor().getAnnotation(Concurrent.class);
         if (concurrent == null) {
             // analyzers are by default not concurrent
             return false;
@@ -67,7 +67,8 @@ final class AnalyzerConsumer extends AbstractRowProcessingConsumer implements Ro
     }
 
     @Override
-    public void consumeInternal(InputRow row, int distinctCount, FilterOutcomes outcomes, RowProcessingChain chain) {
+    public void consumeInternal(final InputRow row, final int distinctCount, final FilterOutcomes outcomes,
+            final RowProcessingChain chain) {
         _analyzer.run(row, distinctCount);
         chain.processNext(row, distinctCount, outcomes);
     }

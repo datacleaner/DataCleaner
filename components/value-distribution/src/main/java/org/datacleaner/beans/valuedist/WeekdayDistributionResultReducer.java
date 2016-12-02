@@ -35,6 +35,6 @@ public class WeekdayDistributionResultReducer extends DatePartDistributionResult
     @Override
     protected Set<String> createMeasureDimensionCategorySet() {
         // retain the order of the measures (weekday names)
-        return new LinkedHashSet<String>();
+        return new LinkedHashSet<>();
     }
 }

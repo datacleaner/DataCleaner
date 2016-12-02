@@ -37,8 +37,8 @@ import com.google.common.cache.CacheBuilder;
 /**
  * Additional (to {@link CollectionUtils} utility methods for common collection
  * or array operations.
- * 
- * 
+ *
+ *
  */
 public final class CollectionUtils2 {
 
@@ -50,7 +50,7 @@ public final class CollectionUtils2 {
      * Refines a list of candidate objects based on a inclusion predicate. If no
      * candidates are found, the original list will be retained in the result.
      * Therefore the result will always have 1 or more elements in it.
-     * 
+     *
      * @param candidates
      * @param predicate
      * @return
@@ -59,7 +59,7 @@ public final class CollectionUtils2 {
         if (candidates.size() == 1) {
             return candidates;
         }
-        List<E> newCandidates = CollectionUtils.filter(candidates, predicate);
+        final List<E> newCandidates = CollectionUtils.filter(candidates, predicate);
         if (newCandidates.isEmpty()) {
             return candidates;
         }
@@ -67,9 +67,9 @@ public final class CollectionUtils2 {
     }
 
     @SuppressWarnings("unchecked")
-    public static <E> List<E> filterOnClass(Collection<?> superTypeList, Class<E> subType) {
-        final List<E> result = new ArrayList<E>();
-        for (Object object : superTypeList) {
+    public static <E> List<E> filterOnClass(final Collection<?> superTypeList, final Class<E> subType) {
+        final List<E> result = new ArrayList<>();
+        for (final Object object : superTypeList) {
             if (object != null) {
                 if (ReflectionUtils.is(object.getClass(), subType)) {
                     result.add((E) object);
@@ -80,13 +80,13 @@ public final class CollectionUtils2 {
     }
 
     @SuppressWarnings("unchecked")
-    public static <E> E[] array(Class<E> elementClass, Object existingArray, E... elements) {
+    public static <E> E[] array(final Class<E> elementClass, final Object existingArray, final E... elements) {
         if (existingArray == null) {
             return elements;
         }
-        E[] result;
+        final E[] result;
         if (existingArray.getClass().isArray()) {
-            int length = Array.getLength(existingArray);
+            final int length = Array.getLength(existingArray);
             result = (E[]) Array.newInstance(elementClass, length + elements.length);
             System.arraycopy(existingArray, 0, result, 0, length);
             System.arraycopy(elements, 0, result, length, elements.length);
@@ -100,58 +100,57 @@ public final class CollectionUtils2 {
     }
 
     @SuppressWarnings("unchecked")
-    public static <E> E[] arrayOf(Class<E> elementClass, Object arrayOrElement) {
+    public static <E> E[] arrayOf(final Class<E> elementClass, final Object arrayOrElement) {
         if (arrayOrElement == null) {
             return null;
         }
         if (arrayOrElement.getClass().isArray()) {
             return (E[]) arrayOrElement;
         }
-        Object result = Array.newInstance(elementClass, 1);
+        final Object result = Array.newInstance(elementClass, 1);
         Array.set(result, 0, arrayOrElement);
         return (E[]) result;
     }
 
-    public static <E> List<E> sorted(Collection<E> col, Comparator<? super E> comparator) {
+    public static <E> List<E> sorted(final Collection<E> col, final Comparator<? super E> comparator) {
         final List<E> list = new ArrayList<>(col);
         Collections.sort(list, comparator);
         return list;
     }
 
-    public static <E extends Comparable<? super E>> List<E> sorted(Collection<E> col) {
+    public static <E extends Comparable<? super E>> List<E> sorted(final Collection<E> col) {
         final List<E> list = new ArrayList<>(col);
         Collections.sort(list);
         return list;
     }
 
     /**
-     * 
+     *
      * @return
-     * 
+     *
      * @deprecated use Google Guava's {@link CacheBuilder},
      *             {@link #createCache(int, long)} or something similar if
      *             needed.
      */
     @Deprecated
     public static <K, V> ConcurrentMap<K, V> createCacheMap() {
-        Cache<K, V> cache = CacheBuilder.newBuilder().maximumSize(10000).build();
+        final Cache<K, V> cache = CacheBuilder.newBuilder().maximumSize(10000).build();
         return cache.asMap();
     }
 
     /**
      * Creates a typical Google Guava cache
-     * 
+     *
      * @param maximumSize
      * @param expiryDurationSeconds
      * @return
      */
-    public static <K, V> Cache<K, V> createCache(int maximumSize, long expiryDurationSeconds) {
-        Cache<K, V> cache = CacheBuilder.newBuilder().maximumSize(maximumSize)
+    public static <K, V> Cache<K, V> createCache(final int maximumSize, final long expiryDurationSeconds) {
+        return CacheBuilder.newBuilder().maximumSize(maximumSize)
                 .expireAfterAccess(expiryDurationSeconds, TimeUnit.SECONDS).build();
-        return cache;
     }
 
-    public static Object toArray(List<?> list, Class<?> componentType) {
+    public static Object toArray(final List<?> list, final Class<?> componentType) {
         final int size = list.size();
         final Object result = Array.newInstance(componentType, size);
         if (!componentType.isPrimitive()) {

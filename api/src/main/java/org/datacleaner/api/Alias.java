@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation used to specify optional alias(es) for a component, a
  * {@link Configured} property or a {@link Metric} method.
- * 
+ *
  * Aliases can be used as a way of providing backwards compatibility to
  * components or properties that are renamed (by specifying the old name as an
  * alias).
@@ -40,7 +40,7 @@ public @interface Alias {
 
     /**
      * Defines the alias(es) of the component or configured property.
-     * 
+     *
      * @return the aliases of the component or configuration property
      */
     String[] value();

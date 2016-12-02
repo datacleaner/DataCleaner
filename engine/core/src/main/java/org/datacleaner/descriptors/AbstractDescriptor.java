@@ -29,70 +29,70 @@ import org.datacleaner.util.ReflectionUtils;
 /**
  * Abstract descriptor implementation which contains only the bare bones of a
  * class field- and method-inspecting descriptor.
- * 
- * 
- * 
+ *
+ *
+ *
  * @param <B>
  */
 public abstract class AbstractDescriptor<B> implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final Class<B> _componentClass;
+    private final Class<B> _componentClass;
 
-	public AbstractDescriptor(Class<B> componentClass) {
-		if (componentClass == null) {
-			throw new IllegalArgumentException("Component class cannot be null");
-		}
-		if (componentClass.isInterface() || Modifier.isAbstract(componentClass.getModifiers())) {
-			throw new DescriptorException("Component (" + componentClass + ") is not a non-abstract class");
-		}
+    public AbstractDescriptor(final Class<B> componentClass) {
+        if (componentClass == null) {
+            throw new IllegalArgumentException("Component class cannot be null");
+        }
+        if (componentClass.isInterface() || Modifier.isAbstract(componentClass.getModifiers())) {
+            throw new DescriptorException("Component (" + componentClass + ") is not a non-abstract class");
+        }
 
-		_componentClass = componentClass;
-	}
+        _componentClass = componentClass;
+    }
 
-	protected void visitClass() {
-		Field[] fields = ReflectionUtils.getAllFields(_componentClass);
-		for (Field field : fields) {
-			visitField(field);
-		}
+    protected void visitClass() {
+        final Field[] fields = ReflectionUtils.getAllFields(_componentClass);
+        for (final Field field : fields) {
+            visitField(field);
+        }
 
-		Method[] methods = ReflectionUtils.getMethods(_componentClass);
-		for (Method method : methods) {
-			visitMethod(method);
-		}
-	}
+        final Method[] methods = ReflectionUtils.getMethods(_componentClass);
+        for (final Method method : methods) {
+            visitMethod(method);
+        }
+    }
 
-	protected abstract void visitField(Field field);
+    protected abstract void visitField(Field field);
 
-	protected abstract void visitMethod(Method method);
+    protected abstract void visitMethod(Method method);
 
-	public Class<B> getComponentClass() {
-		return _componentClass;
-	}
+    public Class<B> getComponentClass() {
+        return _componentClass;
+    }
 
-	@Override
-	public int hashCode() {
-		return _componentClass.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return _componentClass.hashCode();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (obj.getClass() == this.getClass()) {
-			AbstractDescriptor<?> that = (AbstractDescriptor<?>) obj;
-			return this._componentClass == that._componentClass;
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() == this.getClass()) {
+            final AbstractDescriptor<?> that = (AbstractDescriptor<?>) obj;
+            return this._componentClass == that._componentClass;
+        }
+        return false;
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + "[" + _componentClass.getName() + "]";
-	}
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[" + _componentClass.getName() + "]";
+    }
 }

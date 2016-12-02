@@ -25,9 +25,9 @@ import org.apache.http.HttpResponse;
 
 public class DataHubConnectionHelper {
 
-    public static void validateReponseStatusCode(HttpResponse response) {
-        
-        int statusCode = response.getStatusLine().getStatusCode();
+    public static void validateReponseStatusCode(final HttpResponse response) {
+
+        final int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == 403) {
             throw new AccessControlException("You are not authorized to access the service");
         }

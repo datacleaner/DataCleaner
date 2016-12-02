@@ -22,8 +22,8 @@ package org.datacleaner.job.runner;
 import org.datacleaner.job.ComponentJob;
 
 public interface ComponentMetrics {
-	
-	public ComponentJob getComponentJob();
 
-	public RowProcessingMetrics getRowProcessingMetrics();
+    ComponentJob getComponentJob();
+
+    RowProcessingMetrics getRowProcessingMetrics();
 }

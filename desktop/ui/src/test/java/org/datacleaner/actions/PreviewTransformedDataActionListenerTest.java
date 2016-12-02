@@ -19,6 +19,10 @@
  */
 package org.datacleaner.actions;
 
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -70,18 +74,13 @@ import org.junit.rules.TestName;
 
 import com.google.common.base.Joiner;
 
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-
 @SuppressWarnings("deprecation")
 public class PreviewTransformedDataActionListenerTest {
 
-    private TransformerComponentBuilder<EmailStandardizerTransformer> emailTransformerBuilder;
-    private AnalysisJobBuilder analysisJobBuilder;
-
     @Rule
     public TestName testName = new TestName();
+    private TransformerComponentBuilder<EmailStandardizerTransformer> emailTransformerBuilder;
+    private AnalysisJobBuilder analysisJobBuilder;
 
     @Before
     public void setUp() throws Exception {
@@ -99,10 +98,9 @@ public class PreviewTransformedDataActionListenerTest {
         descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(EqualsFilter.class));
 
 
-
-        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(
-                datastoreCatalog).withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(
-                        descriptorProvider));
+        final DataCleanerConfiguration configuration =
+                new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog)
+                        .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
         analysisJobBuilder = new AnalysisJobBuilder(configuration);
         analysisJobBuilder.setDatastore("orderdb");
@@ -111,26 +109,26 @@ public class PreviewTransformedDataActionListenerTest {
         emailTransformerBuilder = analysisJobBuilder.addTransformer(EmailStandardizerTransformer.class);
         emailTransformerBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("EMAIL"));
     }
-    
+
     @Test
     public void testPreviewTransformationAfterQueryOptimizedFilteredTransformation() throws Exception {
         analysisJobBuilder.addSourceColumns("employees.lastname");
 
         // add a "lastname=Patterson" filter on the email transformer - only 3
         // records will pass through that filter
-        final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> filter = analysisJobBuilder.addFilter(
-                EqualsFilter.class);
+        final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> filter =
+                analysisJobBuilder.addFilter(EqualsFilter.class);
         filter.getComponentInstance().setValues(new String[] { "Patterson" });
         filter.addInputColumn(analysisJobBuilder.getSourceColumnByName("lastname"));
         emailTransformerBuilder.setRequirement(filter, EqualsFilter.Category.EQUALS);
 
         // add a transformer that consumes the email output
-        final TransformerComponentBuilder<ConcatenatorTransformer> concatenator = analysisJobBuilder.addTransformer(
-                ConcatenatorTransformer.class);
+        final TransformerComponentBuilder<ConcatenatorTransformer> concatenator =
+                analysisJobBuilder.addTransformer(ConcatenatorTransformer.class);
         concatenator.addInputColumns(emailTransformerBuilder.getOutputColumns());
 
-        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null,
-                concatenator);
+        final PreviewTransformedDataActionListener action =
+                new PreviewTransformedDataActionListener(null, concatenator);
         final TableModel tableModel = action.call();
 
         assertEquals(3, tableModel.getRowCount());
@@ -139,14 +137,14 @@ public class PreviewTransformedDataActionListenerTest {
 
     @Test
     public void testPreviewTransformationInOutputDataStream() throws Exception {
-        final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> streamProducer = analysisJobBuilder.addAnalyzer(
-                MockOutputDataStreamAnalyzer.class);
+        final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> streamProducer =
+                analysisJobBuilder.addAnalyzer(MockOutputDataStreamAnalyzer.class);
         streamProducer.addInputColumn(emailTransformerBuilder.getOutputColumns().get(0));
 
-        final AnalysisJobBuilder streamJobBuilder = streamProducer.getOutputDataStreamJobBuilder(
-                MockOutputDataStreamAnalyzer.STREAM_NAME1);
-        final TransformerComponentBuilder<MockTransformer> transformer = streamJobBuilder.addTransformer(
-                MockTransformer.class);
+        final AnalysisJobBuilder streamJobBuilder =
+                streamProducer.getOutputDataStreamJobBuilder(MockOutputDataStreamAnalyzer.STREAM_NAME1);
+        final TransformerComponentBuilder<MockTransformer> transformer =
+                streamJobBuilder.addTransformer(MockTransformer.class);
         transformer.addInputColumn(streamJobBuilder.getSourceColumns().get(0));
 
         final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, transformer);
@@ -161,24 +159,24 @@ public class PreviewTransformedDataActionListenerTest {
     public void testPreviewTransformationInMultiStreamGeneratedOutputDataStream() throws Exception {
         analysisJobBuilder.addSourceColumns("PUBLIC.CUSTOMERS.PHONE");
 
-        final TransformerComponentBuilder<FuseStreamsComponent> union = analysisJobBuilder.addTransformer(
-                FuseStreamsComponent.class);
+        final TransformerComponentBuilder<FuseStreamsComponent> union =
+                analysisJobBuilder.addTransformer(FuseStreamsComponent.class);
         union.addInputColumns(analysisJobBuilder.getSourceColumns());
-        union.setConfiguredProperty("Units", new CoalesceUnit[] { new CoalesceUnit(analysisJobBuilder
-                .getSourceColumns()) });
+        union.setConfiguredProperty("Units",
+                new CoalesceUnit[] { new CoalesceUnit(analysisJobBuilder.getSourceColumns()) });
 
-        final AnalysisJobBuilder streamJobBuilder = union.getOutputDataStreamJobBuilder(
-                FuseStreamsComponent.OUTPUT_DATA_STREAM_NAME);
+        final AnalysisJobBuilder streamJobBuilder =
+                union.getOutputDataStreamJobBuilder(FuseStreamsComponent.OUTPUT_DATA_STREAM_NAME);
 
-        final TransformerComponentBuilder<MockTransformer> transformer = streamJobBuilder.addTransformer(
-                MockTransformer.class);
+        final TransformerComponentBuilder<MockTransformer> transformer =
+                streamJobBuilder.addTransformer(MockTransformer.class);
         transformer.addInputColumn(streamJobBuilder.getSourceColumns().get(0));
 
-        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-                transformer, 10);
-        
+        final PreviewTransformedDataActionListener action =
+                new PreviewTransformedDataActionListener(null, null, transformer, 10);
+
         compareWithBenchmark(action);
-        
+
         final TableModel tableModel = action.call();
         assertEquals(10, tableModel.getRowCount());
 
@@ -192,24 +190,24 @@ public class PreviewTransformedDataActionListenerTest {
 
     @Test
     public void testJobWithMaxRowsFilter() throws Exception {
-        final FilterComponentBuilder<MaxRowsFilter, Category> filter = analysisJobBuilder.addFilter(
-                MaxRowsFilter.class);
+        final FilterComponentBuilder<MaxRowsFilter, Category> filter =
+                analysisJobBuilder.addFilter(MaxRowsFilter.class);
         filter.addInputColumn(analysisJobBuilder.getSourceColumnByName("email"));
         filter.getComponentInstance().setMaxRows(5);
 
         emailTransformerBuilder.setRequirement(filter, Category.VALID);
 
-        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-                emailTransformerBuilder, 10);
-        
+        final PreviewTransformedDataActionListener action =
+                new PreviewTransformedDataActionListener(null, null, emailTransformerBuilder, 10);
+
         final TableModel tableModel = action.call();
         assertEquals(5, tableModel.getRowCount());
     }
 
     @Test
     public void testSingleTransformer() throws Exception {
-        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-                emailTransformerBuilder);
+        final PreviewTransformedDataActionListener action =
+                new PreviewTransformedDataActionListener(null, null, emailTransformerBuilder);
         final TableModel tableModel = action.call();
 
         assertEquals(3, tableModel.getColumnCount());
@@ -236,16 +234,16 @@ public class PreviewTransformedDataActionListenerTest {
 
     @Test
     public void testChainedTransformers() throws Exception {
-        final TransformerComponentBuilder<ConcatenatorTransformer> lengthTransformerBuilder = analysisJobBuilder
-                .addTransformer(ConcatenatorTransformer.class);
+        final TransformerComponentBuilder<ConcatenatorTransformer> lengthTransformerBuilder =
+                analysisJobBuilder.addTransformer(ConcatenatorTransformer.class);
         lengthTransformerBuilder.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
         lengthTransformerBuilder.addInputColumn(new ConstantInputColumn("foo"));
 
         // first simple run
         {
-            PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-                    lengthTransformerBuilder);
-            TableModel tableModel = action.call();
+            final PreviewTransformedDataActionListener action =
+                    new PreviewTransformedDataActionListener(null, null, lengthTransformerBuilder);
+            final TableModel tableModel = action.call();
 
             assertEquals(3, tableModel.getColumnCount());
             assertEquals("Username", tableModel.getColumnName(0));
@@ -256,7 +254,7 @@ public class PreviewTransformedDataActionListenerTest {
 
             for (int i = 0; i < tableModel.getRowCount(); i++) {
                 assertTrue(tableModel.getValueAt(i, 0).toString().indexOf('@') == -1);
-                Object concatValue = tableModel.getValueAt(i, 1);
+                final Object concatValue = tableModel.getValueAt(i, 1);
                 assertNotNull(concatValue);
                 assertTrue(concatValue instanceof String);
             }
@@ -269,15 +267,15 @@ public class PreviewTransformedDataActionListenerTest {
         }
 
         // add a filter
-        final FilterComponentBuilder<StringLengthRangeFilter, RangeFilterCategory> rangeFilter = analysisJobBuilder
-                .addFilter(StringLengthRangeFilter.class);
+        final FilterComponentBuilder<StringLengthRangeFilter, RangeFilterCategory> rangeFilter =
+                analysisJobBuilder.addFilter(StringLengthRangeFilter.class);
         rangeFilter.addInputColumn(lengthTransformerBuilder.getOutputColumnByName("Concat of Username,\"foo\""));
         rangeFilter.setConfiguredProperty("Minimum length", 5);
         rangeFilter.setConfiguredProperty("Maximum length", 20);
 
         // add a multi-row transformer
-        final TransformerComponentBuilder<TokenizerTransformer> tokenizer = analysisJobBuilder.addTransformer(
-                TokenizerTransformer.class);
+        final TransformerComponentBuilder<TokenizerTransformer> tokenizer =
+                analysisJobBuilder.addTransformer(TokenizerTransformer.class);
         tokenizer.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
         tokenizer.setRequirement(rangeFilter.getFilterOutcome(RangeFilterCategory.VALID));
         tokenizer.setConfiguredProperty("Token target", TokenizerTransformer.TokenTarget.ROWS);
@@ -287,8 +285,8 @@ public class PreviewTransformedDataActionListenerTest {
 
         // run advanced
         {
-            final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-                    tokenizer);
+            final PreviewTransformedDataActionListener action =
+                    new PreviewTransformedDataActionListener(null, null, tokenizer);
             final TableModel tableModel = action.call();
 
             assertEquals(29, tableModel.getRowCount());
@@ -313,23 +311,22 @@ public class PreviewTransformedDataActionListenerTest {
         analysisJobBuilder.addSourceColumns("CUSTOMERS.SALESREPEMPLOYEENUMBER");
 
         final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> countryEqualsFilter =
-                analysisJobBuilder.addFilter(
-                        EqualsFilter.class);
+                analysisJobBuilder.addFilter(EqualsFilter.class);
         countryEqualsFilter.getComponentInstance().setValues(new String[] { "France" });
         countryEqualsFilter.addInputColumn(analysisJobBuilder.getSourceColumnByName("COUNTRY"));
         assertTrue(countryEqualsFilter.isConfigured());
 
         final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> salesEmployeeNumberEqualsFilter =
-                analysisJobBuilder.addFilter(
-                        EqualsFilter.class);
+                analysisJobBuilder.addFilter(EqualsFilter.class);
         salesEmployeeNumberEqualsFilter.getComponentInstance().setValues(new String[] { "1370" });
-        salesEmployeeNumberEqualsFilter.addInputColumn(analysisJobBuilder.getSourceColumnByName("SALESREPEMPLOYEENUMBER"));
+        salesEmployeeNumberEqualsFilter
+                .addInputColumn(analysisJobBuilder.getSourceColumnByName("SALESREPEMPLOYEENUMBER"));
         salesEmployeeNumberEqualsFilter
                 .setRequirement(countryEqualsFilter.getFilterOutcome(EqualsFilter.Category.EQUALS));
         assertTrue(salesEmployeeNumberEqualsFilter.isConfigured());
 
-        final TransformerComponentBuilder<ConvertToStringTransformer> convertToStringBuilder = analysisJobBuilder
-                .addTransformer(ConvertToStringTransformer.class);
+        final TransformerComponentBuilder<ConvertToStringTransformer> convertToStringBuilder =
+                analysisJobBuilder.addTransformer(ConvertToStringTransformer.class);
         convertToStringBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));
         convertToStringBuilder.getComponentInstance().setNullReplacement("<null>");
         convertToStringBuilder
@@ -337,8 +334,8 @@ public class PreviewTransformedDataActionListenerTest {
         convertToStringBuilder.getOutputColumns().get(0).setName("CUSTOMERNUMBER (English)");
         assertTrue(convertToStringBuilder.isConfigured());
 
-        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-                convertToStringBuilder);
+        final PreviewTransformedDataActionListener action =
+                new PreviewTransformedDataActionListener(null, null, convertToStringBuilder);
 
         final TableModel tableModel = action.call();
         assertEquals(6, tableModel.getRowCount());
@@ -350,14 +347,14 @@ public class PreviewTransformedDataActionListenerTest {
         analysisJobBuilder.removeAllSourceColumns();
         analysisJobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER");
         analysisJobBuilder.addSourceColumns("CUSTOMERS.COUNTRY");
-        final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> equalsFilter = analysisJobBuilder.addFilter(
-                EqualsFilter.class);
+        final FilterComponentBuilder<EqualsFilter, EqualsFilter.Category> equalsFilter =
+                analysisJobBuilder.addFilter(EqualsFilter.class);
         equalsFilter.getComponentInstance().setValues(new String[] { "US", "UK", "GB", "USA" });
         equalsFilter.addInputColumn(analysisJobBuilder.getSourceColumnByName("COUNTRY"));
         assertTrue(equalsFilter.isConfigured());
 
-        final TransformerComponentBuilder<ConvertToStringTransformer> englishConvertToStringBuilder = analysisJobBuilder
-                .addTransformer(ConvertToStringTransformer.class);
+        final TransformerComponentBuilder<ConvertToStringTransformer> englishConvertToStringBuilder =
+                analysisJobBuilder.addTransformer(ConvertToStringTransformer.class);
         englishConvertToStringBuilder.setName("English customers");
         englishConvertToStringBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));
         englishConvertToStringBuilder.addInputColumn(new ConstantInputColumn("foo"));
@@ -366,28 +363,32 @@ public class PreviewTransformedDataActionListenerTest {
         englishConvertToStringBuilder.getOutputColumns().get(0).setName("CUSTOMERNUMBER (English)");
         assertTrue(englishConvertToStringBuilder.isConfigured());
 
-        final TransformerComponentBuilder<ConvertToStringTransformer> nonEnglishConvertToStringBuilder = analysisJobBuilder
-                .addTransformer(ConvertToStringTransformer.class);
+        final TransformerComponentBuilder<ConvertToStringTransformer> nonEnglishConvertToStringBuilder =
+                analysisJobBuilder.addTransformer(ConvertToStringTransformer.class);
         nonEnglishConvertToStringBuilder.setName("Non-English customers");
         nonEnglishConvertToStringBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));
         nonEnglishConvertToStringBuilder.addInputColumn(new ConstantInputColumn("foo"));
         nonEnglishConvertToStringBuilder.getComponentInstance().setNullReplacement("<null>");
-        nonEnglishConvertToStringBuilder.setRequirement(equalsFilter.getFilterOutcome(EqualsFilter.Category.NOT_EQUALS));
+        nonEnglishConvertToStringBuilder
+                .setRequirement(equalsFilter.getFilterOutcome(EqualsFilter.Category.NOT_EQUALS));
         nonEnglishConvertToStringBuilder.getOutputColumns().get(0).setName("CUSTOMERNUMBER (Non-English)");
         assertTrue(nonEnglishConvertToStringBuilder.isConfigured());
 
-        final TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> coalesceMultipleFieldsTransformerComponentBuilder = analysisJobBuilder
-                .addTransformer(CoalesceMultipleFieldsTransformer.class);
+        final TransformerComponentBuilder<CoalesceMultipleFieldsTransformer>
+                coalesceMultipleFieldsTransformerComponentBuilder =
+                analysisJobBuilder.addTransformer(CoalesceMultipleFieldsTransformer.class);
 
-        coalesceMultipleFieldsTransformerComponentBuilder.addInputColumns(englishConvertToStringBuilder
-                .getOutputColumns().get(0), nonEnglishConvertToStringBuilder.getOutputColumns().get(0));
+        coalesceMultipleFieldsTransformerComponentBuilder
+                .addInputColumns(englishConvertToStringBuilder.getOutputColumns().get(0),
+                        nonEnglishConvertToStringBuilder.getOutputColumns().get(0));
         coalesceMultipleFieldsTransformerComponentBuilder.setConfiguredProperty("Units", new CoalesceUnit[] {
                 new CoalesceUnit(englishConvertToStringBuilder.getOutputColumns().get(0),
                         nonEnglishConvertToStringBuilder.getOutputColumns().get(0)) });
         assertTrue(coalesceMultipleFieldsTransformerComponentBuilder.isConfigured());
 
-        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-                coalesceMultipleFieldsTransformerComponentBuilder, 500);
+        final PreviewTransformedDataActionListener action =
+                new PreviewTransformedDataActionListener(null, null, coalesceMultipleFieldsTransformerComponentBuilder,
+                        500);
 
         compareWithBenchmark(action);
 
@@ -396,15 +397,15 @@ public class PreviewTransformedDataActionListenerTest {
         assertEquals(214, tableModel.getRowCount());
 
         for (int i = 0; i < tableModel.getRowCount(); i++) {
-            assertTrue(printRow(tableModel, i), tableModel.getValueAt(i, 0) == null || tableModel.getValueAt(i,
-                    1) == null);
+            assertTrue(printRow(tableModel, i),
+                    tableModel.getValueAt(i, 0) == null || tableModel.getValueAt(i, 1) == null);
         }
     }
 
-    private String printRow(TableModel tableModel, int row) {
-        List<String> values = new ArrayList<>(tableModel.getColumnCount());
+    private String printRow(final TableModel tableModel, final int row) {
+        final List<String> values = new ArrayList<>(tableModel.getColumnCount());
         for (int i = 0; i < tableModel.getColumnCount(); i++) {
-            Object value = tableModel.getValueAt(row, i);
+            final Object value = tableModel.getValueAt(row, i);
             values.add(value == null ? "<null>" : value.toString());
         }
         return Joiner.on(',').join(values);
@@ -413,12 +414,11 @@ public class PreviewTransformedDataActionListenerTest {
     @Test()
     public void testUnchainedTransformers() throws Exception {
 
-        @SuppressWarnings("unused")
-        final TransformerComponentBuilder<ConcatenatorTransformer> lengthTransformerBuilder = analysisJobBuilder
-                .addTransformer(ConcatenatorTransformer.class);
+        @SuppressWarnings("unused") final TransformerComponentBuilder<ConcatenatorTransformer>
+                lengthTransformerBuilder = analysisJobBuilder.addTransformer(ConcatenatorTransformer.class);
 
-        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-                emailTransformerBuilder);
+        final PreviewTransformedDataActionListener action =
+                new PreviewTransformedDataActionListener(null, null, emailTransformerBuilder);
 
         final TableModel tableModel = action.call();
 
@@ -447,8 +447,7 @@ public class PreviewTransformedDataActionListenerTest {
 
     @Test
     public void testPreviewTransformationAfterNonOptimizedFilteredTransformation() throws Exception {
-        final String baseFilename = getClass().getSimpleName() + "-" + testName
-                .getMethodName() + ".analysis.xml";
+        final String baseFilename = getClass().getSimpleName() + "-" + testName.getMethodName() + ".analysis.xml";
         final File analysisFile = new File("src/test/resources/previewfiles/" + baseFilename);
 
         final JaxbJobReader reader = new JaxbJobReader(analysisJobBuilder.getConfiguration());
@@ -458,23 +457,22 @@ public class PreviewTransformedDataActionListenerTest {
                 readAnalysisJobBuilder.getTransformerComponentBuilders();
 
         final TransformerComponentBuilder<?> whitespaceTrimmer = transformerComponentBuilders.get(2);
-        
+
         // verify that we got the right transformer - the trimmer
         assertEquals("Whitespace trimmer", whitespaceTrimmer.getDescriptor().getDisplayName());
 
-        final PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-                whitespaceTrimmer, 500);
-        
+        final PreviewTransformedDataActionListener action =
+                new PreviewTransformedDataActionListener(null, null, whitespaceTrimmer, 500);
+
         final TableModel tableModel = action.call();
 
         assertEquals(1, tableModel.getRowCount());
-        
+
         assertTrue(tableModel.getValueAt(0, 1).toString().contains("5307.98"));
     }
 
-    private void compareWithBenchmark(PreviewTransformedDataActionListener action) throws IOException {
-        final String baseFilename = getClass().getSimpleName() + "-" + testName
-                        .getMethodName() + ".analysis.xml";
+    private void compareWithBenchmark(final PreviewTransformedDataActionListener action) throws IOException {
+        final String baseFilename = getClass().getSimpleName() + "-" + testName.getMethodName() + ".analysis.xml";
         final File benchmarkFile = new File("src/test/resources/benchmark/" + baseFilename);
         final File outputFile = new File("target/" + baseFilename);
 
@@ -482,13 +480,13 @@ public class PreviewTransformedDataActionListenerTest {
         assertNotNull(previewJob);
         final AnalysisJobBuilder ajb = previewJob.analysisJobBuilder;
         ajb.getAnalysisJobMetadata().getProperties().put(PreviewUtils.METADATA_PROPERTY_MARKER, "test");
-        
+
         final JaxbJobWriter writer = new JaxbJobWriter(ajb.getConfiguration(), new EmptyJaxbJobMetadataFactory());
-        
+
         try (FileOutputStream out = new FileOutputStream(outputFile)) {
             writer.write(ajb.toAnalysisJob(), out);
         }
-        
+
         TestHelper.assertXmlFilesEquals(benchmarkFile, outputFile);
     }
 }

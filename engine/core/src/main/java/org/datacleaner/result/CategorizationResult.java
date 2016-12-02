@@ -45,17 +45,18 @@ public class CategorizationResult implements AnalyzerResult {
     private final Ref<RowAnnotationFactory> _annotationFactoryRef;
     private final Map<String, RowAnnotation> _categories;
 
-    public CategorizationResult(RowAnnotationFactory annotationFactory,
-            Collection<Entry<String, RowAnnotation>> categories) {
-        _annotationFactoryRef = new SerializableRef<RowAnnotationFactory>(annotationFactory);
+    public CategorizationResult(final RowAnnotationFactory annotationFactory,
+            final Collection<Entry<String, RowAnnotation>> categories) {
+        _annotationFactoryRef = new SerializableRef<>(annotationFactory);
         _categories = new LinkedHashMap<>();
-        for (Entry<String, RowAnnotation> entry : categories) {
+        for (final Entry<String, RowAnnotation> entry : categories) {
             _categories.put(entry.getKey(), entry.getValue());
         }
     }
 
-    public CategorizationResult(RowAnnotationFactory annotationFactory, Map<String, RowAnnotation> categories) {
-        _annotationFactoryRef = new SerializableRef<RowAnnotationFactory>(annotationFactory);
+    public CategorizationResult(final RowAnnotationFactory annotationFactory,
+            final Map<String, RowAnnotation> categories) {
+        _annotationFactoryRef = new SerializableRef<>(annotationFactory);
         _categories = categories;
     }
 
@@ -64,7 +65,7 @@ public class CategorizationResult implements AnalyzerResult {
         return new ParameterizableMetric() {
 
             @Override
-            public Number getValue(String parameter) {
+            public Number getValue(final String parameter) {
                 return getCategoryCount(parameter);
             }
 
@@ -79,12 +80,12 @@ public class CategorizationResult implements AnalyzerResult {
         return _categories.keySet();
     }
 
-    public int getCategoryCount(String category) {
+    public int getCategoryCount(final String category) {
         final RowAnnotation annotation = getCategoryRowAnnotation(category);
         return annotation.getRowCount();
     }
 
-    public AnnotatedRowsResult getCategoryRowSample(String category) {
+    public AnnotatedRowsResult getCategoryRowSample(final String category) {
         final RowAnnotationFactory rowAnnotationFactory = _annotationFactoryRef.get();
         if (rowAnnotationFactory == null) {
             return null;
@@ -93,10 +94,15 @@ public class CategorizationResult implements AnalyzerResult {
         if (annotation == null) {
             return null;
         }
+
+        if (!rowAnnotationFactory.hasSampleRows(annotation)) {
+            return null;
+        }
+
         return new AnnotatedRowsResult(annotation, rowAnnotationFactory);
     }
 
-    public RowAnnotation getCategoryRowAnnotation(String category) {
+    public RowAnnotation getCategoryRowAnnotation(final String category) {
         final RowAnnotation annotation = _categories.get(category);
         if (annotation == null) {
             // return an empty annotation

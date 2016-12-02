@@ -38,30 +38,30 @@ public class ServerInformationCatalogImpl implements ServerInformationCatalog {
 
     private final Collection<ServerInformation> _servers;
 
-    public ServerInformationCatalogImpl(Collection<ServerInformation> servers) {
+    public ServerInformationCatalogImpl(final Collection<ServerInformation> servers) {
         if (servers == null) {
             throw new IllegalArgumentException("servers cannot be null");
         }
         _servers = servers;
     }
 
-    public ServerInformationCatalogImpl(ServerInformation... servers) {
+    public ServerInformationCatalogImpl(final ServerInformation... servers) {
         final List<ServerInformation> serversList = new ArrayList<>();
         Collections.addAll(serversList, servers);
         _servers = serversList;
 
         try {
             if (!containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
-                final EnvironmentBasedHadoopClusterInformation environmentBasedHadoopClusterInformation = new EnvironmentBasedHadoopClusterInformation(
-                        HadoopResource.DEFAULT_CLUSTERREFERENCE, null);
+                final EnvironmentBasedHadoopClusterInformation environmentBasedHadoopClusterInformation =
+                        new EnvironmentBasedHadoopClusterInformation(HadoopResource.DEFAULT_CLUSTERREFERENCE, null);
                 if (environmentBasedHadoopClusterInformation.getDirectories().length > 0) {
                     serversList.add(0, environmentBasedHadoopClusterInformation);
                 }
             }
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             logger.info("No Hadoop environment variables, skipping default server");
         }
-        
+
     }
 
     @Override
@@ -72,9 +72,9 @@ public class ServerInformationCatalogImpl implements ServerInformationCatalog {
     }
 
     @Override
-    public ServerInformation getServer(String name) {
+    public ServerInformation getServer(final String name) {
         if (name != null) {
-            for (ServerInformation ds : _servers) {
+            for (final ServerInformation ds : _servers) {
                 if (name.equals(ds.getName())) {
                     return ds;
                 }

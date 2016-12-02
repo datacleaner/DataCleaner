@@ -39,12 +39,12 @@ public class MockJobEscalatingAnalyzer implements Analyzer<ListResult<Integer>> 
     InputColumn<?> column;
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
     }
 
     @Override
     public ListResult<Integer> getResult() {
-        List<Integer> list = new ArrayList<>();
+        final List<Integer> list = new ArrayList<>();
         list.add(42);
         return new ListResult<>(list);
     }

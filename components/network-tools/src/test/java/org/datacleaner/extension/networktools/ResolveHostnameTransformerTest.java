@@ -30,37 +30,37 @@ import org.junit.Test;
 
 public class ResolveHostnameTransformerTest {
 
-    private final ResolveHostnameTransformer t = new ResolveHostnameTransformer();
-    private final MockInputColumn<String> col = new MockInputColumn<String>("host", String.class);
+    private final ResolveHostnameTransformer _transformer = new ResolveHostnameTransformer();
+    private final MockInputColumn<String> _col = new MockInputColumn<>("host", String.class);
 
     @Before
     public void setUp() {
-        t.hostnameColumn = col;
+        _transformer.hostnameColumn = _col;
     }
 
     @Test
     public void testTransformLocal() throws Exception {
-        assertEquals("127.0.0.1", t.transform(new MockInputRow().put(col, "localhost"))[0]);
+        assertEquals("127.0.0.1", _transformer.transform(new MockInputRow().put(_col, "localhost"))[0]);
 
-        assertEquals("127.0.0.1", t.transform(new MockInputRow().put(col, "127.0.0.1"))[0]);
-        
-        assertEquals(null, t.transform(new MockInputRow().put(col, ""))[0]);
-        
-        assertEquals(null, t.transform(new MockInputRow().put(col, null))[0]);
-        
-        assertEquals(null, t.transform(new MockInputRow().put(col,
+        assertEquals("127.0.0.1", _transformer.transform(new MockInputRow().put(_col, "127.0.0.1"))[0]);
+
+        assertEquals(null, _transformer.transform(new MockInputRow().put(_col, ""))[0]);
+
+        assertEquals(null, _transformer.transform(new MockInputRow().put(_col, null))[0]);
+
+        assertEquals(null, _transformer.transform(new MockInputRow().put(_col,
                 "lmdslfsm flskmf lskmfls kmslf kdmlfsk mflsk fmsl kfdmsl"))[0]);
     }
-    
+
     @Test
     public void testTransformInternet() throws Exception {
         Assume.assumeTrue(TestHelper.isInternetConnected());
-        
-        assertEquals("94.142.215.39", t.transform(new MockInputRow().put(col, "eobjects.org"))[0]);
+
+        assertEquals("94.142.215.39", _transformer.transform(new MockInputRow().put(_col, "eobjects.org"))[0]);
     }
 
     @Test
     public void testGetOutputColumns() throws Exception {
-        assertEquals("OutputColumns[host (ip address)]", t.getOutputColumns().toString());
+        assertEquals("OutputColumns[host (ip address)]", _transformer.getOutputColumns().toString());
     }
 }

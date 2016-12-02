@@ -1,0 +1,42 @@
+<ui:composition template="template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:define name="head">
+		<script type="text/javascript" src="referencedata/referencedata.nocache.js"></script>
+		<link rel="stylesheet" type="text/css" href="#{request.contextPath}/stylesheets/referencedata.css" />
+		<c:if test="#{user.scheduleEditor}">
+			<script type="text/javascript">
+				//<![CDATA[
+				function showUploadJobForm(button) {
+					$(button).replaceWith($("#UploadFileTemplateDiv"));
+				}
+				//]]>
+			</script>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="content">
+		<div id="ReferenceDataPage" class="container">
+			<c:if test="#{user.configurationEditor}">
+				<button class="btn btn-primary" onclick="datacleaner.startReferenceDataWizard('dictionary');">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"/> <span>New dictionary</span>
+				</button>
+				<button class="btn btn-primary" onclick="datacleaner.startReferenceDataWizard('synonym-catalog');">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"/> <span>New synonym catalog</span>
+				</button>
+				<button class="btn btn-primary" onclick="datacleaner.startReferenceDataWizard('string-pattern');">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"/> <span>New string pattern</span>
+				</button>
+				<div class="spacer"></div>
+			</c:if>
+
+			<div id="RootPanelTarget">
+				<div id="Dictionaries"></div>
+				<div id="Synonyms"></div>
+				<div id="Patterns"></div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

@@ -26,49 +26,49 @@ import javax.inject.Inject;
 /**
  * Defines an injection point in a component. An injection point is typically
  * derived from the {@link Inject} annotation
- * 
+ *
  * @param <E>
  */
 public interface InjectionPoint<E> {
 
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass);
+    <A extends Annotation> A getAnnotation(Class<A> annotationClass);
 
     /**
      * Gets the instance that requests the injection
-     * 
+     *
      * @return
      */
-    public Object getInstance();
+    Object getInstance();
 
     /**
      * Gets the base type to inject. This will be the class of the injected
      * variable, eg. String, InputColumn, Number etc.
-     * 
+     *
      * @return
      */
-    public Class<E> getBaseType();
+    Class<E> getBaseType();
 
     /**
      * Gets whether the injected type has generic arguments in addition to the
      * base type
-     * 
+     *
      * @return
      */
-    public boolean isGenericType();
+    boolean isGenericType();
 
     /**
      * Gets the amount of generic arguments in the injected type
-     * 
+     *
      * @return
      */
-    public int getGenericTypeArgumentCount();
+    int getGenericTypeArgumentCount();
 
     /**
      * Gets a generic argument by index
-     * 
-     * @param i
+     *
+     * @param index
      * @return
      * @throws IndexOutOfBoundsException
      */
-    public Class<?> getGenericTypeArgument(int i) throws IndexOutOfBoundsException;
+    Class<?> getGenericTypeArgument(int index) throws IndexOutOfBoundsException;
 }

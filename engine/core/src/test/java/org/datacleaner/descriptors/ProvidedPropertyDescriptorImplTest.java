@@ -26,9 +26,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.Provided;
+
+import junit.framework.TestCase;
 
 public class ProvidedPropertyDescriptorImplTest extends TestCase {
 
@@ -43,20 +43,20 @@ public class ProvidedPropertyDescriptorImplTest extends TestCase {
     Map<String, Date> dateMap;
 
     public void testDiscovery() throws Exception {
-        SimpleComponentDescriptor<ProvidedPropertyDescriptorImplTest> desc = new SimpleComponentDescriptor<ProvidedPropertyDescriptorImplTest>(
-                ProvidedPropertyDescriptorImplTest.class, true);
+        final SimpleComponentDescriptor<ProvidedPropertyDescriptorImplTest> desc =
+                new SimpleComponentDescriptor<>(ProvidedPropertyDescriptorImplTest.class, true);
 
-        Set<ProvidedPropertyDescriptor> properties = desc.getProvidedProperties();
+        final Set<ProvidedPropertyDescriptor> properties = desc.getProvidedProperties();
         assertEquals(3, properties.size());
 
         assertEquals("[ProvidedPropertyDescriptorImpl[field=dateMap,baseType=interface java.util.Map], "
-                + "ProvidedPropertyDescriptorImpl[field=intMap,baseType=interface java.util.Map], "
-                + "ProvidedPropertyDescriptorImpl[field=stringMap,baseType=interface java.util.Map]]",
+                        + "ProvidedPropertyDescriptorImpl[field=intMap,baseType=interface java.util.Map], "
+                        + "ProvidedPropertyDescriptorImpl[field=stringMap,baseType=interface java.util.Map]]",
                 properties.toString());
     }
 
     public void testGenericTypes() throws Exception {
-        Field stringMapField = getClass().getDeclaredField("stringMap");
+        final Field stringMapField = getClass().getDeclaredField("stringMap");
         ProvidedPropertyDescriptorImpl descriptor = new ProvidedPropertyDescriptorImpl(stringMapField, null);
 
         assertEquals("ProvidedPropertyDescriptorImpl[field=stringMap,baseType=interface java.util.Map]",
@@ -66,7 +66,7 @@ public class ProvidedPropertyDescriptorImplTest extends TestCase {
         assertEquals(String.class, descriptor.getTypeArgument(0));
         assertEquals(Boolean.class, descriptor.getTypeArgument(1));
 
-        Field intMapField = getClass().getDeclaredField("intMap");
+        final Field intMapField = getClass().getDeclaredField("intMap");
         descriptor = new ProvidedPropertyDescriptorImpl(intMapField, null);
         assertEquals("ProvidedPropertyDescriptorImpl[field=intMap,baseType=interface java.util.Map]",
                 descriptor.toString());
@@ -75,7 +75,7 @@ public class ProvidedPropertyDescriptorImplTest extends TestCase {
         assertEquals(String.class, descriptor.getTypeArgument(0));
         assertEquals(Integer.class, descriptor.getTypeArgument(1));
 
-        Field dateMapField = getClass().getDeclaredField("dateMap");
+        final Field dateMapField = getClass().getDeclaredField("dateMap");
         descriptor = new ProvidedPropertyDescriptorImpl(dateMapField, null);
         assertEquals("ProvidedPropertyDescriptorImpl[field=dateMap,baseType=interface java.util.Map]",
                 descriptor.toString());

@@ -38,20 +38,20 @@ public class ExecutionIdentifier implements Serializable, Comparable<ExecutionId
     public ExecutionIdentifier() {
         this(null, null);
     }
-    
-    public ExecutionIdentifier(String resultId) {
+
+    public ExecutionIdentifier(final String resultId) {
         this(resultId, null);
         _executionStatus = ExecutionStatus.UNKNOWN;
     }
 
-    protected ExecutionIdentifier(String resultId, TriggerType triggerType) {
+    protected ExecutionIdentifier(final String resultId, final TriggerType triggerType) {
         _resultId = resultId;
         _triggerType = triggerType;
         _executionStatus = ExecutionStatus.PENDING;
     }
 
     public boolean isFinished() {
-        boolean runningOrUnkown = _executionStatus == null || _executionStatus == ExecutionStatus.RUNNING
+        final boolean runningOrUnkown = _executionStatus == null || _executionStatus == ExecutionStatus.RUNNING
                 || _executionStatus == ExecutionStatus.PENDING || _executionStatus == ExecutionStatus.UNKNOWN;
         return !runningOrUnkown;
     }
@@ -60,7 +60,7 @@ public class ExecutionIdentifier implements Serializable, Comparable<ExecutionId
         return _resultId;
     }
 
-    public void setResultId(String resultId) {
+    public void setResultId(final String resultId) {
         _resultId = resultId;
     }
 
@@ -69,14 +69,14 @@ public class ExecutionIdentifier implements Serializable, Comparable<ExecutionId
      * MIGHT NOT be the same as the TriggerType in the Schedule of the job (
      * {@link ExecutionLog#getSchedule()}), since the execution might be
      * manually triggered while also having a defined schedule.
-     * 
+     *
      * @return
      */
     public TriggerType getTriggerType() {
         return _triggerType;
     }
 
-    public void setTriggerType(TriggerType triggerType) {
+    public void setTriggerType(final TriggerType triggerType) {
         _triggerType = triggerType;
     }
 
@@ -84,7 +84,7 @@ public class ExecutionIdentifier implements Serializable, Comparable<ExecutionId
         return _jobBeginDate;
     }
 
-    public void setJobBeginDate(Date jobBeginDate) {
+    public void setJobBeginDate(final Date jobBeginDate) {
         _jobBeginDate = jobBeginDate;
     }
 
@@ -92,7 +92,7 @@ public class ExecutionIdentifier implements Serializable, Comparable<ExecutionId
         return _executionStatus;
     }
 
-    public void setExecutionStatus(ExecutionStatus executionStatus) {
+    public void setExecutionStatus(final ExecutionStatus executionStatus) {
         _executionStatus = executionStatus;
     }
 
@@ -102,7 +102,7 @@ public class ExecutionIdentifier implements Serializable, Comparable<ExecutionId
     }
 
     @Override
-    public int compareTo(ExecutionIdentifier o) {
+    public int compareTo(final ExecutionIdentifier o) {
         if (o == null) {
             return 1;
         }

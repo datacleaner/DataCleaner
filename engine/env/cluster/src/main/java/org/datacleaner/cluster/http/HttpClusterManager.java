@@ -37,7 +37,6 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.cluster.ClusterManager;
@@ -59,33 +58,30 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpClusterManager implements ClusterManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpClusterManager.class);
-
     public static final String HTTP_PARAM_SLAVE_JOB_ID = "slave-job-id";
     public static final String HTTP_PARAM_ACTION = "action";
     public static final String HTTP_PARAM_JOB_DEF = "job-def";
-
     public static final String ACTION_RUN = "run";
     public static final String ACTION_CANCEL = "cancel";
-
+    private static final Logger logger = LoggerFactory.getLogger(HttpClusterManager.class);
     private final HttpClient _httpClient;
     private final List<String> _slaveEndpoints;
     private final HttpClientContext _httpClientContext;
 
     /**
      * Creates a new HTTP cluster manager
-     * 
+     *
      * @param slaveEndpoints
      *            the endpoint URLs of the slaves
      */
-    public HttpClusterManager(List<String> slaveEndpoints) {
+    public HttpClusterManager(final List<String> slaveEndpoints) {
         this(HttpClients.custom().useSystemProperties().setConnectionManager(new PoolingHttpClientConnectionManager())
                 .build(), HttpClientContext.create(), slaveEndpoints);
     }
 
     /**
      * Create a new HTTP cluster manager
-     * 
+     *
      * @param httpClient
      *            http client to use for invoking slave endpoints. Must be
      *            capable of executing multiple requests at the same time (see
@@ -94,7 +90,8 @@ public class HttpClusterManager implements ClusterManager {
      * @param slaveEndpoints
      *            the endpoint URLs of the slaves
      */
-    public HttpClusterManager(HttpClient httpClient, HttpClientContext context, List<String> slaveEndpoints) {
+    public HttpClusterManager(final HttpClient httpClient, final HttpClientContext context,
+            final List<String> slaveEndpoints) {
         _httpClient = httpClient;
         _httpClientContext = context;
         _slaveEndpoints = slaveEndpoints;
@@ -106,7 +103,8 @@ public class HttpClusterManager implements ClusterManager {
     }
 
     @Override
-    public AnalysisResultFuture dispatchJob(AnalysisJob job, DistributedJobContext context) throws Exception {
+    public AnalysisResultFuture dispatchJob(final AnalysisJob job, final DistributedJobContext context)
+            throws Exception {
         // determine endpoint url
         final int index = context.getJobDivisionIndex();
         final String slaveEndpoint = _slaveEndpoints.get(index);
@@ -118,17 +116,12 @@ public class HttpClusterManager implements ClusterManager {
         final byte[] bytes = baos.toByteArray();
 
         // send the request in another thread
-        final List<Throwable> errors = new LinkedList<Throwable>();
+        final List<Throwable> errors = new LinkedList<>();
 
         final String slaveJobUuid = UUID.randomUUID().toString();
 
         final LazyRef<AnalysisResult> resultRef = sendExecuteRequest(slaveEndpoint, bytes, errors, slaveJobUuid);
-        resultRef.requestLoad(new Action<Throwable>() {
-            @Override
-            public void run(Throwable error) throws Exception {
-                errors.add(error);
-            }
-        });
+        resultRef.requestLoad(errors::add);
 
         return new LazyRefAnalysisResultFuture(resultRef, errors) {
             @Override
@@ -146,7 +139,7 @@ public class HttpClusterManager implements ClusterManager {
                 // send the HTTP request
                 final HttpPost request = new HttpPost(slaveEndpoint);
 
-                final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+                final List<NameValuePair> parameters = new ArrayList<>();
                 parameters.add(new BasicNameValuePair(HTTP_PARAM_SLAVE_JOB_ID, slaveJobId));
                 parameters.add(new BasicNameValuePair(HTTP_PARAM_ACTION, ACTION_RUN));
                 parameters.add(new BasicNameValuePair(HTTP_PARAM_JOB_DEF, new String(bytes)));
@@ -161,15 +154,14 @@ public class HttpClusterManager implements ClusterManager {
                 // handle the response
                 final StatusLine statusLine = response.getStatusLine();
                 if (statusLine.getStatusCode() != 200) {
-                    throw new IllegalStateException("Slave server '" + slaveEndpoint
-                            + "' responded with an error to 'run' request: " + statusLine.getReasonPhrase() + " ("
-                            + statusLine.getStatusCode() + ")");
+                    throw new IllegalStateException(
+                            "Slave server '" + slaveEndpoint + "' responded with an error to 'run' request: "
+                                    + statusLine.getReasonPhrase() + " (" + statusLine.getStatusCode() + ")");
                 }
 
                 final InputStream inputStream = response.getEntity().getContent();
                 try {
-                    AnalysisResult result = readResult(inputStream, errors);
-                    return result;
+                    return readResult(inputStream, errors);
                 } finally {
                     FileHelper.safeClose(inputStream);
                 }
@@ -177,8 +169,8 @@ public class HttpClusterManager implements ClusterManager {
         };
     }
 
-    private void sendCancelRequest(String slaveEndpoint, String slaveJobId) {
-        RequestBuilder rb = RequestBuilder.post(slaveEndpoint);
+    private void sendCancelRequest(final String slaveEndpoint, final String slaveJobId) {
+        final RequestBuilder rb = RequestBuilder.post(slaveEndpoint);
         rb.addParameter(HTTP_PARAM_SLAVE_JOB_ID, slaveJobId);
         rb.addParameter(HTTP_PARAM_ACTION, ACTION_CANCEL);
 
@@ -188,21 +180,22 @@ public class HttpClusterManager implements ClusterManager {
             // handle the response
             final StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode() != 200) {
-                throw new IllegalStateException("Slave server '" + slaveEndpoint
-                        + "' responded with an error to 'cancel' request: " + statusLine.getReasonPhrase() + " ("
-                        + statusLine.getStatusCode() + ")");
+                throw new IllegalStateException(
+                        "Slave server '" + slaveEndpoint + "' responded with an error to 'cancel' request: "
+                                + statusLine.getReasonPhrase() + " (" + statusLine.getStatusCode() + ")");
             }
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new IllegalStateException("Failed to fire cancel request to slave server '" + slaveEndpoint
-                    + "' for job id '" + slaveJobId + "'", e);
+            throw new IllegalStateException(
+                    "Failed to fire cancel request to slave server '" + slaveEndpoint + "' for job id '" + slaveJobId
+                            + "'", e);
         }
     }
 
-    protected AnalysisResult readResult(InputStream inputStream, List<Throwable> errors) throws Exception {
+    protected AnalysisResult readResult(final InputStream inputStream, final List<Throwable> errors) throws Exception {
         final ChangeAwareObjectInputStream changeAwareObjectInputStream = new ChangeAwareObjectInputStream(inputStream);
         final Object object = changeAwareObjectInputStream.readObject();
         changeAwareObjectInputStream.close();
@@ -211,8 +204,7 @@ public class HttpClusterManager implements ClusterManager {
             return (AnalysisResult) object;
         } else if (object instanceof List) {
             // response carries a list of errors
-            @SuppressWarnings("unchecked")
-            List<Throwable> slaveErrors = (List<Throwable>) object;
+            @SuppressWarnings("unchecked") final List<Throwable> slaveErrors = (List<Throwable>) object;
             errors.addAll(slaveErrors);
             return null;
         } else {

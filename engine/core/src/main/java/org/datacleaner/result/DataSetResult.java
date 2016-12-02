@@ -38,12 +38,12 @@ public class DataSetResult implements TableModelResult, AnalyzerResult {
     // DataSet is not serializable)
     private final List<Row> _rows;
 
-    public DataSetResult(List<Row> rows) {
+    public DataSetResult(final List<Row> rows) {
         _rows = rows;
     }
 
-    public DataSetResult(DataSet ds) {
-        _rows = new ArrayList<Row>();
+    public DataSetResult(final DataSet ds) {
+        _rows = new ArrayList<>();
         while (ds.next()) {
             _rows.add(ds.getRow());
         }

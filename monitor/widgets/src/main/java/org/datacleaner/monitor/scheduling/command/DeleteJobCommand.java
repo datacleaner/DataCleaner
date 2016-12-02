@@ -33,32 +33,33 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 
 public class DeleteJobCommand implements Command {
- 
-	private TenantIdentifier _tenant;
-	private JobIdentifier _job ; 
-	private DCPopupPanel _morePopup;
-	
-	public DeleteJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier, DCPopupPanel morePopup) {
-		_tenant = tenant;
-		_job = jobIdentifier; 
-		_morePopup = morePopup;
-	}
-	
-	@Override
-	public void execute() {
-		 _morePopup.hide();
-		 boolean delete = Window.confirm("Are you sure you want to delete the job '" + _job.getName()
-                 + "' and related schedule, results and timelines.");
-         if (delete) {
-             final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + _job.getName() + ".delete");
-             final DCRequestBuilder requestBuilder = new DCRequestBuilder(RequestBuilder.POST, url);
-             requestBuilder.setHeader("Content-Type", "application/json");
-             requestBuilder.send("", new DCRequestCallback() {
-                 @Override
-                 protected void onSuccess(Request request, Response response) {
-                     Window.Location.reload();
-                 }
-             });
-         }
-     }
+
+    private TenantIdentifier _tenant;
+    private JobIdentifier _job;
+    private DCPopupPanel _morePopup;
+
+    public DeleteJobCommand(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
+            final DCPopupPanel morePopup) {
+        _tenant = tenant;
+        _job = jobIdentifier;
+        _morePopup = morePopup;
+    }
+
+    @Override
+    public void execute() {
+        _morePopup.hide();
+        final boolean delete = Window.confirm("Are you sure you want to delete the job '" + _job.getName()
+                + "' and related schedule, results and timelines.");
+        if (delete) {
+            final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + _job.getName() + ".delete");
+            final DCRequestBuilder requestBuilder = new DCRequestBuilder(RequestBuilder.POST, url);
+            requestBuilder.setHeader("Content-Type", "application/json");
+            requestBuilder.send("", new DCRequestCallback() {
+                @Override
+                protected void onSuccess(final Request request, final Response response) {
+                    Window.Location.reload();
+                }
+            });
+        }
+    }
 }

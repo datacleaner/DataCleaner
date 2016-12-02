@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
@@ -51,7 +50,8 @@ public abstract class CsvDatastoreLocationWizardPage extends AbstractFreemarkerW
     private final String _filename;
     private final boolean _newFile;
 
-    public CsvDatastoreLocationWizardPage(WizardContext wizardContext, String filename, boolean newFile) {
+    public CsvDatastoreLocationWizardPage(final WizardContext wizardContext, final String filename,
+            final boolean newFile) {
         _wizardContext = wizardContext;
         _filename = filename;
         _newFile = newFile;
@@ -71,7 +71,7 @@ public abstract class CsvDatastoreLocationWizardPage extends AbstractFreemarkerW
     protected Map<String, Object> getFormModel() {
         final String absolutePrefix = File.listRoots()[0].getAbsolutePath() + "data" + File.separatorChar;
 
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("filename", _filename);
         map.put("absolutePrefix", absolutePrefix);
 
@@ -91,7 +91,7 @@ public abstract class CsvDatastoreLocationWizardPage extends AbstractFreemarkerW
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final List<String> locations = formParameters.get("location");
         if (locations == null || locations.isEmpty()) {
@@ -117,14 +117,14 @@ public abstract class CsvDatastoreLocationWizardPage extends AbstractFreemarkerW
             resource = new FileResource(file);
         } else if ("relativeHadoop".equals(location)) {
             final String path = formParameters.get("filepath_relative_hadoop").get(0);
-            String uri;
+            final String uri;
             try {
                 uri = HadoopUtils.getFileSystem().getUri().resolve(path).toString();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new DCUserInputException("The Hadoop path does not exist");
             }
-            final EnvironmentBasedHadoopClusterInformation environmentBasedHadoopClusterInformation = new EnvironmentBasedHadoopClusterInformation(
-                    "default", HadoopResource.DEFAULT_CLUSTERREFERENCE);
+            final EnvironmentBasedHadoopClusterInformation environmentBasedHadoopClusterInformation =
+                    new EnvironmentBasedHadoopClusterInformation("default", HadoopResource.DEFAULT_CLUSTERREFERENCE);
             if (!EnvironmentBasedHadoopClusterInformation.isConfigurationDirectoriesSpecified()) {
                 throw new DCUserInputException("HADOOP_CONF_DIR or/and SPARK_CONF_DIR are not defined");
             }
@@ -143,7 +143,7 @@ public abstract class CsvDatastoreLocationWizardPage extends AbstractFreemarkerW
     /**
      * Invoked when the user has selected a file location on the server of the
      * CSV file.
-     * 
+     *
      * @param filepath
      * @param resource
      * @return

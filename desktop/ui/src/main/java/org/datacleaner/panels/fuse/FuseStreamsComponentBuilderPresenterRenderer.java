@@ -39,8 +39,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * {@link CoalesceMultipleFieldsTransformer}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class FuseStreamsComponentBuilderPresenterRenderer implements
-        Renderer<TransformerComponentBuilder<FuseStreamsComponent>, TransformerComponentBuilderPresenter> {
+public class FuseStreamsComponentBuilderPresenterRenderer
+        implements Renderer<TransformerComponentBuilder<FuseStreamsComponent>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -52,7 +52,7 @@ public class FuseStreamsComponentBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerComponentBuilder<FuseStreamsComponent> tjb) {
+    public RendererPrecedence getPrecedence(final TransformerComponentBuilder<FuseStreamsComponent> tjb) {
         if (tjb.getDescriptor().getComponentClass() == FuseStreamsComponent.class) {
             return RendererPrecedence.HIGH;
         }
@@ -60,9 +60,9 @@ public class FuseStreamsComponentBuilderPresenterRenderer implements
     }
 
     @Override
-    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<FuseStreamsComponent> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
-                PropertyWidgetFactory.class);
+    public TransformerComponentBuilderPresenter render(final TransformerComponentBuilder<FuseStreamsComponent> tjb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(tjb).getInstance(PropertyWidgetFactory.class);
 
         return new FuseStreamsComponentBuilderPresenter(tjb, propertyWidgetFactory, windowContext, configuration);
     }

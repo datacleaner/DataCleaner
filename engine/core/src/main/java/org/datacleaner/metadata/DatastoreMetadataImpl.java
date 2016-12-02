@@ -33,19 +33,19 @@ public final class DatastoreMetadataImpl extends AbstractHasMetadataAnnotations 
 
     private final ImmutableList<SchemaMetadata> _schemaMetadata;
 
-    public DatastoreMetadataImpl(Collection<? extends SchemaMetadata> schemaMetadata,
-            Collection<? extends MetadataAnnotation> annotations) {
+    public DatastoreMetadataImpl(final Collection<? extends SchemaMetadata> schemaMetadata,
+            final Collection<? extends MetadataAnnotation> annotations) {
         super(annotations);
         _schemaMetadata = ImmutableList.copyOf(schemaMetadata);
     }
 
     @Override
-    public SchemaMetadata getSchemaMetadataByName(String schemaName) {
+    public SchemaMetadata getSchemaMetadataByName(final String schemaName) {
         return getByName(schemaName, _schemaMetadata);
     }
 
     @Override
-    public SchemaMetadata getSchemaMetadata(Schema schema) {
+    public SchemaMetadata getSchemaMetadata(final Schema schema) {
         if (schema == null) {
             return null;
         }

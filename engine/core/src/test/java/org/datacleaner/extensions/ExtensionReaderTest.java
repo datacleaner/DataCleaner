@@ -30,27 +30,28 @@ public class ExtensionReaderTest extends TestCase {
     public void testGetInternalExtensions() throws Exception {
         final List<ExtensionPackage> extensions = new ExtensionReader().getInternalExtensions();
         assertTrue(extensions.size() >= 1);
-        
-        boolean foundTestExtension= false;
-        for (ExtensionPackage extensionPackage : extensions) {
+
+        boolean foundTestExtension = false;
+        for (final ExtensionPackage extensionPackage : extensions) {
             if ("Test extension".equals(extensionPackage.getName())) {
-                
+
                 foundTestExtension = true;
-                
+
                 assertEquals("org.eobjects.foobar", extensionPackage.getScanPackage());
                 assertEquals(false, extensionPackage.isExternal());
                 assertEquals(false, extensionPackage.isLoaded());
-                
+
                 final Map<String, String> additionalProperties = extensionPackage.getAdditionalProperties();
-                assertEquals("{description=This is just a dummy test file for unittesting the extension file reader.}", additionalProperties.toString());
+                assertEquals("{description=This is just a dummy test file for unittesting the extension file reader.}",
+                        additionalProperties.toString());
             }
         }
         assertTrue(foundTestExtension);
-        
+
     }
 
     public void testAutoDetectPackageName() throws Exception {
-        File file = new File("src/test/resources/FooBarPlugin.jar");
+        final File file = new File("src/test/resources/FooBarPlugin.jar");
         assertTrue("example plugin jar does not exist", file.exists());
 
         assertEquals("foo.bar", new ExtensionReader().autoDetectPackageName(file));

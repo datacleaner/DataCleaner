@@ -31,9 +31,9 @@ import com.google.gwt.user.client.ui.IsWidget;
  */
 public interface WizardClientController extends IsWidget {
 
-    public WizardSessionIdentifier getSessionIdentifier();
+    WizardSessionIdentifier getSessionIdentifier();
 
-    public void requestNextPage(AsyncCallback<WizardPage> callback) throws DCUserInputException;
+    void requestNextPage(AsyncCallback<WizardPage> callback) throws DCUserInputException;
 
-    public void requestPreviousPage(AsyncCallback<WizardPage> createNextPageCallback);
+    void requestPreviousPage(AsyncCallback<WizardPage> createNextPageCallback);
 }

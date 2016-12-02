@@ -19,19 +19,19 @@
  */
 package org.datacleaner.beans.transform;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 
+import junit.framework.TestCase;
+
 public class ConcatenatorTransformerTest extends TestCase {
 
     public void testConcat() throws Exception {
-        InputColumn<String> col1 = new MockInputColumn<String>("str", String.class);
-        InputColumn<Boolean> col2 = new MockInputColumn<Boolean>("bool", Boolean.class);
+        final InputColumn<String> col1 = new MockInputColumn<>("str", String.class);
+        final InputColumn<Boolean> col2 = new MockInputColumn<>("bool", Boolean.class);
 
-        ConcatenatorTransformer t = new ConcatenatorTransformer(" + ", new InputColumn[] { col1, col2 });
+        final ConcatenatorTransformer t = new ConcatenatorTransformer(" + ", new InputColumn[] { col1, col2 });
 
         assertEquals(1, t.getOutputColumns().getColumnCount());
         assertEquals("Concat of str,bool", t.getOutputColumns().getColumnName(0));

@@ -35,17 +35,17 @@ import com.google.inject.Injector;
 @Singleton
 public final class NewAnalysisJobActionListener implements ActionListener {
 
-	private final DCModule _parentModule;
+    private final DCModule _parentModule;
 
-	@Inject
-	protected NewAnalysisJobActionListener(DCModule parentModule) {
-		_parentModule = parentModule;
-	}
+    @Inject
+    protected NewAnalysisJobActionListener(final DCModule parentModule) {
+        _parentModule = parentModule;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, null));
-		injector.getInstance(AnalysisJobBuilderWindow.class).open();
-	}
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        final Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, null));
+        injector.getInstance(AnalysisJobBuilderWindow.class).open();
+    }
 
 }

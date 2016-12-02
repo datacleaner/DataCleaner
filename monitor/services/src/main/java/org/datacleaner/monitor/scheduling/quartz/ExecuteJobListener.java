@@ -40,7 +40,7 @@ public class ExecuteJobListener extends JobListenerSupport {
     private final String _name;
     private final ScheduleDefinition _schedule;
 
-    public ExecuteJobListener(String name, ScheduleDefinition schedule) {
+    public ExecuteJobListener(final String name, final ScheduleDefinition schedule) {
         _name = name;
         _schedule = schedule;
     }
@@ -51,7 +51,7 @@ public class ExecuteJobListener extends JobListenerSupport {
     }
 
     @Override
-    public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
+    public void jobWasExecuted(final JobExecutionContext context, final JobExecutionException jobException) {
         final JobKey jobKey = context.getJobDetail().getKey();
         final String jobName = jobKey.getName();
         final String expectedJobName = _schedule.getDependentJob().getName();
@@ -61,7 +61,7 @@ public class ExecuteJobListener extends JobListenerSupport {
             final String expectedTenantId = _schedule.getTenant().getId();
             if (tenantId.equals(expectedTenantId)) {
                 logger.debug("Looked for tenant '{}', found it!", expectedTenantId);
-                Scheduler scheduler = context.getScheduler();
+                final Scheduler scheduler = context.getScheduler();
                 scheduleExecution(scheduler);
             } else {
                 logger.debug("Looked for tenant '{}', found tenant '{}'", expectedTenantId, tenantId);
@@ -71,12 +71,12 @@ public class ExecuteJobListener extends JobListenerSupport {
         }
     }
 
-    private void scheduleExecution(Scheduler scheduler) {
+    private void scheduleExecution(final Scheduler scheduler) {
         final String jobName = _schedule.getJob().getName();
         final String tenantId = _schedule.getTenant().getId();
         try {
             scheduler.triggerJob(new JobKey(jobName, tenantId));
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             logger.error("Failed to trigger job " + jobName + " for tenant " + tenantId, e);
         }
     }

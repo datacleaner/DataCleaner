@@ -24,8 +24,8 @@ import org.datacleaner.result.html.HtmlFragment;
 
 public class HtmlRenderingFormat implements RenderingFormat<HtmlFragment> {
 
-	@Override
-	public Class<HtmlFragment> getOutputClass() {
-		return HtmlFragment.class;
-	}
+    @Override
+    public Class<HtmlFragment> getOutputClass() {
+        return HtmlFragment.class;
+    }
 }

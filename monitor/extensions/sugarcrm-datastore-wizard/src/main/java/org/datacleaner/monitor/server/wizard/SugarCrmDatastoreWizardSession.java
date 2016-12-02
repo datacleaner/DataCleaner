@@ -38,7 +38,7 @@ final class SugarCrmDatastoreWizardSession extends AbstractDatastoreWizardSessio
     private String _name;
     private String _description;
 
-    public SugarCrmDatastoreWizardSession(DatastoreWizardContext context) {
+    public SugarCrmDatastoreWizardSession(final DatastoreWizardContext context) {
         super(context);
     }
 
@@ -46,7 +46,7 @@ final class SugarCrmDatastoreWizardSession extends AbstractDatastoreWizardSessio
     public WizardPageController firstPageController() {
         return new SugarCrmBaseUrlWizardPage() {
             @Override
-            protected WizardPageController nextPageController(String baseUrl) {
+            protected WizardPageController nextPageController(final String baseUrl) {
                 _baseUrl = baseUrl;
                 return new SugarCrmDatastoreCredentialsPage(SugarCrmDatastoreWizardSession.this);
             }
@@ -58,21 +58,21 @@ final class SugarCrmDatastoreWizardSession extends AbstractDatastoreWizardSessio
         return 3;
     }
 
-    protected void setCredentials(String username, String password) {
+    protected void setCredentials(final String username, final String password) {
         _username = username;
         _password = password;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         _name = name;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         _description = description;
     }
 
     @Override
-    public Element createDatastoreElement(DocumentBuilder documentBuilder) {
+    public Element createDatastoreElement(final DocumentBuilder documentBuilder) {
         final Document doc = documentBuilder.newDocument();
         final Element username = doc.createElement("username");
         final Element password = doc.createElement("password");

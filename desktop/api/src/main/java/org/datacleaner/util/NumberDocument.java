@@ -25,8 +25,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
-import org.datacleaner.util.CharIterator;
-
 /**
  * A {@link Document}, typically used for {@link JTextField}s, which specifies
  * that only numbers may be entered.
@@ -42,19 +40,19 @@ public class NumberDocument extends PlainDocument {
         this(true);
     }
 
-    public NumberDocument(boolean allowDecimal) {
+    public NumberDocument(final boolean allowDecimal) {
         this(allowDecimal, true);
     }
 
-    public NumberDocument(boolean allowDecimal, boolean allowNegative) {
+    public NumberDocument(final boolean allowDecimal, final boolean allowNegative) {
         _allowDecimal = allowDecimal;
         _allowNegative = allowNegative;
     }
-    
+
     @Override
-    public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+    public void insertString(final int offs, final String str, final AttributeSet a) throws BadLocationException {
         boolean valid = true;
-        CharIterator it = new CharIterator(str);
+        final CharIterator it = new CharIterator(str);
         while (it.hasNext() && valid) {
             it.next();
 

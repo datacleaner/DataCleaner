@@ -31,25 +31,26 @@ public class MutableRemoteServerConfigurationImpl extends RemoteServerConfigurat
 
     private DomConfigurationWriter configWriter;
 
-    public MutableRemoteServerConfigurationImpl(RemoteServerConfiguration remoteServerConfiguration, TaskRunner taskRunner, DomConfigurationWriter configurationWriter) {
+    public MutableRemoteServerConfigurationImpl(final RemoteServerConfiguration remoteServerConfiguration,
+            final TaskRunner taskRunner, final DomConfigurationWriter configurationWriter) {
         super(remoteServerConfiguration, taskRunner);
         configWriter = configurationWriter;
     }
 
-    public void addServer(String serverName, String url, String username, String password) {
+    public void addServer(final String serverName, final String url, final String username, final String password) {
         final RemoteServerData serverData = new RemoteServerDataImpl(url, serverName, username, password);
         addRemoteData(serverData);
-        if(RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName)){
+        if (RemoteDescriptorProvider.DATACLOUD_SERVER_NAME.equals(serverName)) {
             configWriter.addRemoteServer(serverName, null, username, password);
-        }else{
+        } else {
             configWriter.addRemoteServer(serverName, url, username, password);
         }
     }
 
-    public void updateServerCredentials(String serverName, String userName, String password) {
-        RemoteServerData serverConfig = getServerConfig(serverName);
+    public void updateServerCredentials(final String serverName, final String userName, final String password) {
+        final RemoteServerData serverConfig = getServerConfig(serverName);
         if (serverConfig instanceof RemoteServerDataImpl) {
-            RemoteServerDataImpl remoteServerDataImpl = (RemoteServerDataImpl) serverConfig;
+            final RemoteServerDataImpl remoteServerDataImpl = (RemoteServerDataImpl) serverConfig;
             remoteServerDataImpl.setUsername(userName);
             remoteServerDataImpl.setPassword(password);
         } else {

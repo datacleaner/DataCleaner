@@ -21,9 +21,15 @@ package org.datacleaner.user;
 
 import org.datacleaner.reference.SynonymCatalog;
 
+/**
+ *  Use {@link org.datacleaner.user.ReferenceDataChangeListener} instead
+ */
+@Deprecated
 public interface SynonymCatalogChangeListener {
 
-	public void onAdd(SynonymCatalog synonymCatalog);
-	
-	public void onRemove(SynonymCatalog synonymCatalog);
+    @Deprecated
+    void onAdd(SynonymCatalog synonymCatalog);
+
+    @Deprecated
+    void onRemove(SynonymCatalog synonymCatalog);
 }

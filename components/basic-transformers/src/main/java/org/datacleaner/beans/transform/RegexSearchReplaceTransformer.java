@@ -28,19 +28,20 @@ import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.ExternalDocumentation;
+import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
+import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.PatternProperty;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
-import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.components.categories.TextCategory;
 
 @Named("Regex search/replace")
 @Description("Search and replace text in String values using regular expressions.")
-@ExternalDocumentation({
-        @DocumentationLink(title = "Java Tutorials: Regular Expressions Lesson", url = "https://docs.oracle.com/javase/tutorial/essential/regex/", type = DocumentationType.TECH, version = "3.0") })
+@ExternalDocumentation({ @DocumentationLink(title = "Java Tutorials: Regular Expressions Lesson",
+        url = "https://docs.oracle.com/javase/tutorial/essential/regex/", type = DocumentationType.TECH,
+        version = "3.0") })
 @Categorized(TextCategory.class)
 public class RegexSearchReplaceTransformer implements Transformer {
 
@@ -62,7 +63,7 @@ public class RegexSearchReplaceTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow row) {
+    public String[] transform(final InputRow row) {
         final String[] result = new String[1];
         final String value = row.getValue(valueColumn);
         if (value == null) {

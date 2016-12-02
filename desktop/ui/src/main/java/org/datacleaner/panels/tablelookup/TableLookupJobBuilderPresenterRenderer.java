@@ -38,8 +38,8 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * {@link TableLookupTransformer}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class TableLookupJobBuilderPresenterRenderer implements
-        Renderer<TransformerComponentBuilder<TableLookupTransformer>, TransformerComponentBuilderPresenter> {
+public class TableLookupJobBuilderPresenterRenderer
+        implements Renderer<TransformerComponentBuilder<TableLookupTransformer>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -51,7 +51,7 @@ public class TableLookupJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerComponentBuilder<TableLookupTransformer> tjb) {
+    public RendererPrecedence getPrecedence(final TransformerComponentBuilder<TableLookupTransformer> tjb) {
         if (tjb.getDescriptor().getComponentClass() == TableLookupTransformer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -59,9 +59,9 @@ public class TableLookupJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<TableLookupTransformer> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
-                PropertyWidgetFactory.class);
+    public TransformerComponentBuilderPresenter render(final TransformerComponentBuilder<TableLookupTransformer> tjb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(tjb).getInstance(PropertyWidgetFactory.class);
 
         return new TableLookupJobBuilderPresenter(tjb, windowContext, propertyWidgetFactory, configuration, dcModule);
     }

@@ -34,11 +34,11 @@ import javax.inject.Qualifier;
  * configure a {@link Component} before execution. Typically, the
  * {@link Configured} annotated fields will be used to prompt the user for
  * configuration in the UI or job definition that is instructing the framework
- * 
+ *
  * In principle any field type can be annotated with {@link Configured}. For
  * serialization and deserialization purposes it may be needed with a
  * {@link Convertable} annotation as well.
- * 
+ *
  * In the list of classes below there's a reference of the types that do not
  * need any {@link Convertable} annotation. Furthermore arrays of all these
  * types are supported:
@@ -63,15 +63,15 @@ import javax.inject.Qualifier;
  * <li>org.apache.metamodel.schema.Table</li>
  * <li>org.apache.metamodel.schema.Schema</li>
  * </ul>
- * 
+ *
  * In addition to the name of the {@link Configured} property (provided via
  * {@link #value()}) a number of aliases can be provided via the {@link Alias}
  * annotation. This is particularly useful when renaming properties - adding an
  * alias with the old names will help retain backwards compatibility.
- * 
+ *
  * Details of the property can be provided to the end user via the
  * {@link Description} annotation.
- * 
+ *
  * Fields may also be annotated with {@link StringProperty},
  * {@link NumberProperty}, {@link ColumnProperty}, {@link TableProperty},
  * {@link SchemaProperty} or {@link FileProperty}. These annotations provide
@@ -90,14 +90,14 @@ public @interface Configured {
 
     /**
      * Defines the name of the required configuration property.
-     * 
+     *
      * @return the name of the configuration property
      */
     String value() default "";
 
     /**
      * Defines whether or not this configured property is required
-     * 
+     *
      * @return true if the configured property is required
      */
     boolean required() default true;
@@ -105,7 +105,7 @@ public @interface Configured {
     /**
      * Defines the display order of this configured property, relative to other
      * properties.
-     * 
+     *
      * @return the order (if any) of this configured property when sorting
      *         properties of a component. A low order will place the property
      *         before higher order properties.

@@ -46,7 +46,7 @@ public class JnlpUrlLaunchArtifactProvider implements LaunchArtifactProvider {
         this("https://datacleaner.org/resources/webstart/datacleaner.jnlp");
     }
 
-    public JnlpUrlLaunchArtifactProvider(String url) {
+    public JnlpUrlLaunchArtifactProvider(final String url) {
         _url = url;
     }
 
@@ -60,7 +60,7 @@ public class JnlpUrlLaunchArtifactProvider implements LaunchArtifactProvider {
         final int length = jarElements.getLength();
         assert length > 0;
 
-        final List<String> result = new ArrayList<String>(length);
+        final List<String> result = new ArrayList<>(length);
 
         for (int i = 0; i < length; i++) {
             final Element jarElement = (Element) jarElements.item(i);
@@ -86,7 +86,7 @@ public class JnlpUrlLaunchArtifactProvider implements LaunchArtifactProvider {
     public List<String> getJarFilenames() {
         try {
             return readFromUrl();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Failed to retrieve and parse JNLP file from url: " + _url, e);
             // return empty list to indicate an issue.
             return Collections.emptyList();
@@ -94,7 +94,7 @@ public class JnlpUrlLaunchArtifactProvider implements LaunchArtifactProvider {
     }
 
     @Override
-    public InputStream readJarFile(String filename) throws IllegalArgumentException, IllegalStateException {
+    public InputStream readJarFile(final String filename) throws IllegalArgumentException, IllegalStateException {
         throw new IllegalArgumentException(
                 "This provider does not provide JAR files themselves. Expecting to not be invoked!");
     }

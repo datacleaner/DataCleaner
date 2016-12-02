@@ -40,12 +40,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class TypeBasedConfiguredPropertyDescriptorImpl extends RemoteConfiguredPropertyDescriptor {
 
     private static final long serialVersionUID = 1L;
-    
+
     private final Class<?> type;
 
-    public TypeBasedConfiguredPropertyDescriptorImpl(String name, String description, Class<?> type, boolean required,
-            ComponentDescriptor<?> component, Map<Class<? extends Annotation>, Annotation> annotations,
-            JsonNode defaultValue) {
+    public TypeBasedConfiguredPropertyDescriptorImpl(final String name, final String description, final Class<?> type,
+            final boolean required, final ComponentDescriptor<?> component,
+            final Map<Class<? extends Annotation>, Annotation> annotations, final JsonNode defaultValue) {
         super(name, description, required, component, annotations, defaultValue);
         this.type = type;
     }

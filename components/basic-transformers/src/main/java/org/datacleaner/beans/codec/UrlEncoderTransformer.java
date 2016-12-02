@@ -40,12 +40,12 @@ import com.google.common.net.UrlEscapers;
 @Categorized(EncodingCategory.class)
 public class UrlEncoderTransformer implements Transformer {
 
-    public static enum TargetFormat implements HasName {
+    public enum TargetFormat implements HasName {
         FORM_PARAMETER("Form parameter"), FRAGMENT("URL fragment"), PATH_SEGMENT("Path segment");
 
         private final String _name;
 
-        private TargetFormat(String name) {
+        TargetFormat(final String name) {
             _name = name;
         }
 
@@ -64,7 +64,7 @@ public class UrlEncoderTransformer implements Transformer {
     public UrlEncoderTransformer() {
     }
 
-    public UrlEncoderTransformer(MockInputColumn<String> column) {
+    public UrlEncoderTransformer(final MockInputColumn<String> column) {
         this();
         this.column = column;
     }

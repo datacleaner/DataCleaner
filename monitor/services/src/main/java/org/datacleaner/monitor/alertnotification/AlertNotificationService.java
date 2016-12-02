@@ -27,6 +27,6 @@ import org.datacleaner.monitor.scheduling.model.ExecutionLog;
  */
 public interface AlertNotificationService {
 
-    public void notifySubscribers(ExecutionLog execution);
+    void notifySubscribers(ExecutionLog execution);
 
 }

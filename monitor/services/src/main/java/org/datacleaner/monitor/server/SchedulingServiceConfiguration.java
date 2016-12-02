@@ -41,7 +41,7 @@ public class SchedulingServiceConfiguration {
         return _tenantInitialization;
     }
 
-    public void setTenantInitialization(boolean tenantInitialization) {
+    public void setTenantInitialization(final boolean tenantInitialization) {
         _tenantInitialization = tenantInitialization;
     }
 }

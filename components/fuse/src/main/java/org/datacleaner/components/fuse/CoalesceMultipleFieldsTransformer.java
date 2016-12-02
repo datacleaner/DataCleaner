@@ -43,13 +43,14 @@ import org.slf4j.LoggerFactory;
 @Named("Fuse / Coalesce fields")
 @Alias("Coalesce multiple fields")
 @Description("Lets you combine multiple fields into one, selecting the first value that is non-null.\n\n"
-        + "Use it to fuse data streams coming from different filter requirements. You can define new fields whose values represent whatever is available from one of the input streams.\n\n"
-        + "Or use it to identify the most accurate or most recent observation, if multiple entries have been recorded in separate columns.")
+        + "Use it to fuse data streams coming from different filter requirements. You can define new fields whose "
+        + "values represent whatever is available from one of the input streams.\n\n"
+        + "Or use it to identify the most accurate or most recent observation, "
+        + "if multiple entries have been recorded in separate columns.")
 @Categorized(CompositionCategory.class)
 public class CoalesceMultipleFieldsTransformer implements Transformer {
-    private static final Logger logger = LoggerFactory.getLogger(CoalesceMultipleFieldsTransformer.class);
     public static final String PROPERTY_UNITS = "Units";
-    
+    private static final Logger logger = LoggerFactory.getLogger(CoalesceMultipleFieldsTransformer.class);
     @Configured
     InputColumn<?>[] _input;
 
@@ -67,7 +68,7 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
     public CoalesceMultipleFieldsTransformer() {
     }
 
-    public CoalesceMultipleFieldsTransformer(CoalesceUnit... units) {
+    public CoalesceMultipleFieldsTransformer(final CoalesceUnit... units) {
         this();
         this._units = units;
     }
@@ -83,20 +84,20 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
 
     @Validate
     public void validate() {
-        for (final CoalesceUnit _unit : _units) {
+        for (final CoalesceUnit unit : _units) {
             // Ensure that initialization is actually possible.
-            _unit.updateInputColumns(_input);
+            unit.updateInputColumns(_input);
         }
     }
 
     /**
      * Configures the transformer using the coalesce units provided
-     * 
+     *
      * @param units
      */
-    public void configureUsingCoalesceUnits(CoalesceUnit... units) {
+    public void configureUsingCoalesceUnits(final CoalesceUnit... units) {
         final List<InputColumn<?>> input = new ArrayList<>();
-        for (CoalesceUnit coalesceUnit : units) {
+        for (final CoalesceUnit coalesceUnit : units) {
             final InputColumn<?>[] inputColumns = coalesceUnit.getInputColumns();
             Collections.addAll(input, inputColumns);
         }
@@ -118,7 +119,7 @@ public class CoalesceMultipleFieldsTransformer implements Transformer {
     }
 
     @Override
-    public Object[] transform(InputRow inputRow) {
+    public Object[] transform(final InputRow inputRow) {
         final Object[] result = new Object[_initializedUnits.length];
         for (int i = 0; i < _initializedUnits.length; i++) {
             final CoalesceUnit unit = _initializedUnits[i];

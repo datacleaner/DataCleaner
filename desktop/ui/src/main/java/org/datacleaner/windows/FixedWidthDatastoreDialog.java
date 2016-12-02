@@ -21,26 +21,32 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.io.File;
-import java.io.FileInputStream;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
-import org.datacleaner.connection.FixedWidthDatastore;
-import org.datacleaner.util.ImmutableEntry;
-import org.datacleaner.util.StringUtils;
+import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
@@ -48,318 +54,331 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.NumberDocument;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
+import org.datacleaner.widgets.CustomColumnNamesWidget;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.HeaderLineComboBox;
-import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.datacleaner.widgets.ResourceSelector;
+import org.datacleaner.widgets.ResourceTypePresenter;
 import org.jdesktop.swingx.JXTextField;
 
-public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<FixedWidthDatastore> {
+public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatastoreDialog<FixedWidthDatastore> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final CharSetEncodingComboBox _encodingComboBox;
-	private final JCheckBox _failOnInconsistenciesCheckBox;
-	private final JCheckBox _skipEbcdicHeaderCheckBox;
-	private final JCheckBox _eolPresentCheckBox;
-	private final List<JXTextField> _valueWidthTextFields;
-	private final DCPanel _valueWidthsPanel;
-	private final DCLabel _lineWidthLabel;
-	private final HeaderLineComboBox _headerLineComboBox;
-	private final JButton _addValueWidthButton;
-	private final JButton _removeValueWidthButton;
-	private final DocumentListener _updatePreviewTableDocumentListener;
+    private final CharSetEncodingComboBox _encodingComboBox;
+    private final JCheckBox _failOnInconsistenciesCheckBox;
+    private final JCheckBox _skipEbcdicHeaderCheckBox;
+    private final JCheckBox _eolPresentCheckBox;
+    private final List<JXTextField> _valueWidthTextFields;
+    private final DCPanel _valueWidthsPanel;
+    private final DCLabel _lineWidthLabel;
+    private final HeaderLineComboBox _headerLineComboBox;
+    private final JButton _addValueWidthButton;
+    private final JButton _removeValueWidthButton;
+    private final DocumentListener _updatePreviewTableDocumentListener;
+    private final CustomColumnNamesWidget _columnNamesWidget;
 
-	private volatile boolean showPreview = true;
+    private volatile boolean showPreview = true;
 
-	@Inject
-	protected FixedWidthDatastoreDialog(@Nullable FixedWidthDatastore originalDatastore,
-			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext, UserPreferences userPreferences) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
-		_updatePreviewTableDocumentListener = new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent event) {
-				onSettingsUpdated(false);
-			}
-		};
-		_lineWidthLabel = DCLabel.bright("");
-		_valueWidthsPanel = new DCPanel();
-		_valueWidthsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
-		_valueWidthTextFields = new ArrayList<>();
-		_encodingComboBox = new CharSetEncodingComboBox();
-		_addValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-		_removeValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
+    private Set<JTextField> _columnNameFields = new HashSet<>();
 
-		_headerLineComboBox = new HeaderLineComboBox();
+    @Inject
+    protected FixedWidthDatastoreDialog(@Nullable final FixedWidthDatastore originalDatastore,
+            final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
+            final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
+        super(originalDatastore, mutableDatastoreCatalog, windowContext, configuration, userPreferences);
+        _updatePreviewTableDocumentListener = new DCDocumentListener() {
+            @Override
+            protected void onChange(final DocumentEvent event) {
+                onSettingsUpdated(false);
+            }
+        };
+        _lineWidthLabel = DCLabel.bright("");
+        _valueWidthsPanel = new DCPanel();
+        _valueWidthsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
+        _valueWidthTextFields = new ArrayList<>();
+        _encodingComboBox = new CharSetEncodingComboBox();
+        _addValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
+        _removeValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
 
-		_failOnInconsistenciesCheckBox = createCheckBox("Fail on inconsistent line length", true);
-		_skipEbcdicHeaderCheckBox = createCheckBox("Input file contains a header that should be skipped", false);
-		_eolPresentCheckBox = createCheckBox("Input file contains new line characters", true);
+        _headerLineComboBox = new HeaderLineComboBox();
 
-		if (originalDatastore != null) {
-			_encodingComboBox.setSelectedItem(originalDatastore.getEncoding());
-			_failOnInconsistenciesCheckBox.setSelected(originalDatastore.isFailOnInconsistencies());
-			_skipEbcdicHeaderCheckBox.setSelected(originalDatastore.isSkipEbcdicHeader());
-			_eolPresentCheckBox.setSelected(originalDatastore.isEolPresent());
+        _failOnInconsistenciesCheckBox = createCheckBox("Fail on inconsistent line length", true);
+        _skipEbcdicHeaderCheckBox = createCheckBox("Input file contains a header that should be skipped", false);
+        _eolPresentCheckBox = createCheckBox("Input file contains new line characters", true);
 
-			int[] valueWidths = originalDatastore.getValueWidths();
-			for (int valueWidth : valueWidths) {
-				addValueWidthTextField(valueWidth);
-			}
+        if (originalDatastore != null) {
+            _columnNamesWidget = new CustomColumnNamesWidget(originalDatastore.getCustomColumnNames());
 
-			_headerLineComboBox.setSelectedIndex(originalDatastore.getHeaderLineNumber());
+            _encodingComboBox.setSelectedItem(originalDatastore.getEncoding());
+            _failOnInconsistenciesCheckBox.setSelected(originalDatastore.isFailOnInconsistencies());
+            _skipEbcdicHeaderCheckBox.setSelected(originalDatastore.isSkipEbcdicHeader());
+            _eolPresentCheckBox.setSelected(originalDatastore.isEolPresent());
 
-			onSettingsUpdated(false);
-		} else {
-			addValueWidthTextField();
-			addValueWidthTextField();
-			addValueWidthTextField();
-		}
+            final int[] valueWidths = originalDatastore.getValueWidths();
+            for (final int valueWidth : valueWidths) {
+                addValueWidthTextField(valueWidth);
+            }
 
-		_addValueWidthButton.addActionListener(e -> addValueWidthTextField());
-		_removeValueWidthButton.addActionListener(e -> removeValueWidthTextField());
-		_encodingComboBox.addListener(item -> onSettingsUpdated(false));
-		_headerLineComboBox.addListener(item -> onSettingsUpdated(false));
-	}
+            _headerLineComboBox.setSelectedIndex(originalDatastore.getHeaderLineNumber());
 
-	private JCheckBox createCheckBox(String label, boolean selected) {
-		final JCheckBox checkBox = new JCheckBox(label, selected);
-		checkBox.setOpaque(false);
-		checkBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		checkBox.addItemListener(item -> onSettingsUpdated(false));
+            onSettingsUpdated(false);
+        } else {
+            _columnNamesWidget = new CustomColumnNamesWidget(null);
 
-		return checkBox;
-	}
+            addValueWidthTextField();
+            addValueWidthTextField();
+            addValueWidthTextField();
+        }
 
-	@Override
-	protected boolean validateForm() {
-		Object selectedEncoding = _encodingComboBox.getSelectedItem();
-		if (selectedEncoding == null || selectedEncoding.toString().length() == 0) {
-			setStatusError("Please select a character encoding!");
-			return false;
-		}
-		return super.validateForm();
-	}
+        _addValueWidthButton.addActionListener(e -> addValueWidthTextField());
+        _removeValueWidthButton.addActionListener(e -> removeValueWidthTextField());
+        _encodingComboBox.addListener(item -> onSettingsUpdated(false));
+        _headerLineComboBox.addListener(item -> onSettingsUpdated(false));
 
-	@Override
-	protected void onFileSelected(File file) {
-		onSettingsUpdated(true);
-	}
+        _columnNamesWidget.getButtons().forEach(button -> button.addActionListener(action -> {
+            onSettingsUpdated(false);
+            SwingUtilities.invokeLater(this::registerColumnNameFields);
+        }));
 
-	private void onSettingsUpdated(boolean autoDetectEncoding) {
-		if (!validateForm()) {
-			return;
-		}
+        registerColumnNameFields();
 
-		byte[] sampleBuffer = getSampleBuffer();
-		if (sampleBuffer == null || sampleBuffer.length == 0) {
-			logger.debug("No bytes read to autodetect settings");
-			return;
-		}
+    }
 
-		final String charSet;
-		if (autoDetectEncoding) {
-			charSet = _encodingComboBox.autoDetectEncoding(sampleBuffer);
-		} else {
-			charSet = _encodingComboBox.getSelectedItem();
-		}
+    private JCheckBox createCheckBox(final String label, final boolean selected) {
+        final JCheckBox checkBox = new JCheckBox(label, selected);
+        checkBox.setOpaque(false);
+        checkBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        checkBox.addItemListener(item -> onSettingsUpdated(false));
 
-		char[] sampleChars = readSampleBuffer(sampleBuffer, charSet);
+        return checkBox;
+    }
 
-		int lineLength = StringUtils.indexOf('\n', sampleChars);
-		if (_eolPresentCheckBox.isSelected() && lineLength == -1) {
-			setStatusWarning("No newline in first " + sampleChars.length + " chars");
-			// don't show the preview if no newlines where found (it may try to treat the whole file as a single row)
-			showPreview = false;
-		} else {
-			int[] valueWidths = getValueWidths(false);
-			int totalMappedWidth = 0;
-			for (int valueWidth : valueWidths) {
-				totalMappedWidth += valueWidth;
-			}
-			_lineWidthLabel.setText(lineLength + " chars in first line. " + totalMappedWidth + " mapped.");
-			_lineWidthLabel.updateUI();
-			showPreview = true;
-			validateAndUpdate();
-		}
-	}
+    @Override
+    protected boolean validateForm() {
+        final Object selectedEncoding = _encodingComboBox.getSelectedItem();
+        if (selectedEncoding == null || selectedEncoding.toString().length() == 0) {
+            setStatusError("Please select a character encoding!");
+            return false;
+        }
+        return super.validateForm();
+    }
 
-	@Override
-	protected byte[] getSampleBuffer() {
-		final File file = new File(getFilename());
-		final int bufferSize = getBufferSize();
-		byte[] bytes = new byte[bufferSize];
+    @Override
+    protected void onSelected(final Resource resource) {
+        onSettingsUpdated(true);
+    }
 
-		try (final FileInputStream fileInputStream = new FileInputStream(file)) {
-			int startPosition = getStartPosition();
-			fileInputStream.skip(startPosition);
-			int bytesRead = fileInputStream.read(bytes, 0, bufferSize);
+    private void onSettingsUpdated(final boolean autoDetectEncoding) {
+        if (!validateForm()) {
+            return;
+        }
 
-			if (bytesRead != -1 && bytesRead <= bufferSize) {
-				bytes = Arrays.copyOf(bytes, bytesRead);
-			}
+        final byte[] sampleBuffer = getSampleBuffer();
+        if (sampleBuffer == null || sampleBuffer.length == 0) {
+            logger.debug("No bytes read to autodetect settings");
+            return;
+        }
 
-			return bytes;
-		} catch (IOException e) {
-			logger.error("IOException occurred while reading sample buffer", e);
-			return new byte[0];
-		}
-	}
+        final String charSet;
+        if (autoDetectEncoding) {
+            charSet = _encodingComboBox.autoDetectEncoding(sampleBuffer);
+        } else {
+            charSet = _encodingComboBox.getSelectedItem();
+        }
 
-	private int getStartPosition() {
-		return _skipEbcdicHeaderCheckBox.isSelected() ? getRecordDataLength() : 0;
-	}
+        final char[] sampleChars = readSampleBuffer(sampleBuffer, charSet);
 
-	private int getBufferSize() {
-		return _eolPresentCheckBox.isSelected() ? SAMPLE_BUFFER_SIZE : getRecordDataLength();
-	}
+        final int lineLength = StringUtils.indexOf('\n', sampleChars);
+        if (_eolPresentCheckBox.isSelected() && lineLength == -1) {
+            setStatusWarning("No newline in first " + sampleChars.length + " chars");
+            // don't show the preview if no newlines were found (it may try to treat the whole file as a single row)
+            showPreview = false;
+        } else {
+            final int[] valueWidths = getValueWidths(false);
+            int totalMappedWidth = 0;
+            for (final int valueWidth : valueWidths) {
+                totalMappedWidth += valueWidth;
+            }
+            _lineWidthLabel.setText(lineLength + " chars in first line. " + totalMappedWidth + " mapped.");
+            _lineWidthLabel.updateUI();
+            showPreview = true;
+            validateAndUpdate();
+        }
+    }
 
-	private int getRecordDataLength() {
-		int length = 0;
+    @Override
+    protected byte[] getSampleBuffer() {
+        final Resource resource = getResource();
+        final int bufferSize = getBufferSize();
+        byte[] bytes = new byte[bufferSize];
 
-		if (_valueWidthTextFields != null && _valueWidthTextFields.size() > 0) {
-			for (JXTextField textField : _valueWidthTextFields) {
-				try {
-					final int columnWidth = Integer.parseInt(textField.getText());
-					length += columnWidth;
-				} catch (NumberFormatException e) {
-					throw new IllegalStateException("Value width must be a valid number.");
-				}
-			}
-		}
+        try (InputStream fileInputStream = resource.read()) {
+            final int startPosition = getStartPosition();
+            fileInputStream.skip(startPosition);
+            final int bytesRead = fileInputStream.read(bytes, 0, bufferSize);
 
-		return length;
-	}
+            if (bytesRead != -1 && bytesRead <= bufferSize) {
+                bytes = Arrays.copyOf(bytes, bytesRead);
+            }
 
-	@Override
-	protected FixedWidthDatastore getPreviewDatastore(String filename) {
-		return createDatastore("Preview", filename, false, _skipEbcdicHeaderCheckBox.isSelected(),
-				_eolPresentCheckBox.isSelected());
-	}
+            return bytes;
+        } catch (final IOException e) {
+            logger.error("IOException occurred while reading sample buffer", e);
+            return new byte[0];
+        }
+    }
 
-	@Override
-	protected boolean isPreviewDataAvailable() {
-		return showPreview;
-	}
+    private int getStartPosition() {
+        return _skipEbcdicHeaderCheckBox.isSelected() ? getRecordDataLength() : 0;
+    }
 
-	@Override
-	protected boolean isPreviewTableEnabled() {
-		return true;
-	}
+    private int getBufferSize() {
+        return _eolPresentCheckBox.isSelected() ? SAMPLE_BUFFER_SIZE : getRecordDataLength();
+    }
 
-	private JXTextField addValueWidthTextField() {
-		return addValueWidthTextField(8);
-	}
+    private int getRecordDataLength() {
+        int length = 0;
 
-	private JXTextField addValueWidthTextField(int valueWidth) {
-		JXTextField textField = WidgetFactory.createTextField();
-		textField.setColumns(2);
-		NumberDocument document = new NumberDocument();
-		document.addDocumentListener(_updatePreviewTableDocumentListener);
-		textField.setDocument(document);
-		textField.setText(valueWidth + "");
-		_valueWidthTextFields.add(textField);
-		_valueWidthsPanel.add(textField);
-		if (_valueWidthTextFields.size() > 1) {
-			_removeValueWidthButton.setEnabled(true);
-		}
-		_valueWidthsPanel.updateUI();
-		onSettingsUpdated(false);
-		return textField;
-	}
+        if (_valueWidthTextFields != null && _valueWidthTextFields.size() > 0) {
+            for (final JXTextField textField : _valueWidthTextFields) {
+                try {
+                    final int columnWidth = Integer.parseInt(textField.getText());
+                    length += columnWidth;
+                } catch (final NumberFormatException e) {
+                    throw new IllegalStateException("Value width must be a valid number.");
+                }
+            }
+        }
 
-	private JXTextField removeValueWidthTextField() {
-		if (_valueWidthTextFields.isEmpty()) {
-			return null;
-		}
-		JXTextField textField = _valueWidthTextFields.get(_valueWidthTextFields.size() - 1);
-		_valueWidthTextFields.remove(textField);
-		_valueWidthsPanel.remove(textField);
+        return length;
+    }
 
-		if (_valueWidthTextFields.size() == 1) {
-			_removeValueWidthButton.setEnabled(false);
-		} else {
-			_removeValueWidthButton.setEnabled(true);
-		}
-		_valueWidthsPanel.updateUI();
-		onSettingsUpdated(false);
-		return textField;
-	}
+    @Override
+    protected FixedWidthDatastore getPreviewDatastore(final Resource resource) {
+        return createDatastore("Preview", resource, false, _skipEbcdicHeaderCheckBox.isSelected(),
+                _eolPresentCheckBox.isSelected());
+    }
 
-	@Override
-	protected boolean isWindowResizable() {
-		return true;
-	}
+    @Override
+    protected boolean isPreviewDataAvailable() {
+        return showPreview;
+    }
 
-	@Override
-	protected List<Entry<String, JComponent>> getFormElements() {
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
-		buttonPanel.add(_addValueWidthButton);
-		buttonPanel.add(_removeValueWidthButton);
+    @Override
+    protected boolean isPreviewTableEnabled() {
+        return true;
+    }
 
-		final DCPanel valueWidthConfigurationPanel = new DCPanel();
-		valueWidthConfigurationPanel.setLayout(new BorderLayout());
-		valueWidthConfigurationPanel.add(_valueWidthsPanel, BorderLayout.CENTER);
-		valueWidthConfigurationPanel.add(buttonPanel, BorderLayout.EAST);
-		valueWidthConfigurationPanel.add(_lineWidthLabel, BorderLayout.SOUTH);
+    private JXTextField addValueWidthTextField() {
+        return addValueWidthTextField(8);
+    }
 
-		final List<Entry<String, JComponent>> result = super.getFormElements();
-		result.add(new ImmutableEntry<>("Character encoding", _encodingComboBox));
-		result.add(new ImmutableEntry<>("Column widths", valueWidthConfigurationPanel));
-		result.add(new ImmutableEntry<>("Header line", _headerLineComboBox));
-		result.add(new ImmutableEntry<>("", _failOnInconsistenciesCheckBox));
-		result.add(new ImmutableEntry<>("", _skipEbcdicHeaderCheckBox));
-		result.add(new ImmutableEntry<>("", _eolPresentCheckBox));
-		return result;
-	}
+    private JXTextField addValueWidthTextField(final int valueWidth) {
+        final JXTextField textField = WidgetFactory.createTextField();
+        textField.setColumns(2);
+        final NumberDocument document = new NumberDocument();
+        document.addDocumentListener(_updatePreviewTableDocumentListener);
+        textField.setDocument(document);
+        textField.setText(valueWidth + "");
+        _valueWidthTextFields.add(textField);
+        _valueWidthsPanel.add(textField);
+        if (_valueWidthTextFields.size() > 1) {
+            _removeValueWidthButton.setEnabled(true);
+        }
+        _valueWidthsPanel.updateUI();
+        onSettingsUpdated(false);
+        return textField;
+    }
 
-	@Override
-	protected void setFileFilters(AbstractResourceTextField<?> filenameField) {
-		FileFilter combinedFilter = FileFilters.combined("Any text, data or EBCDIC files (.txt, .dat, .ebc)",
-				FileFilters.TXT, FileFilters.DAT, FileFilters.EBC);
-		filenameField.addChoosableFileFilter(combinedFilter);
-		filenameField.addChoosableFileFilter(FileFilters.TXT);
-		filenameField.addChoosableFileFilter(FileFilters.DAT);
-		filenameField.addChoosableFileFilter(FileFilters.EBC);
-		filenameField.setSelectedFileFilter(combinedFilter);
-	}
+    private JXTextField removeValueWidthTextField() {
+        if (_valueWidthTextFields.isEmpty()) {
+            return null;
+        }
+        final JXTextField textField = _valueWidthTextFields.get(_valueWidthTextFields.size() - 1);
+        _valueWidthTextFields.remove(textField);
+        _valueWidthsPanel.remove(textField);
 
-	@Override
-	protected String getBannerTitle() {
-		return "Fixed width file";
-	}
+        if (_valueWidthTextFields.size() == 1) {
+            _removeValueWidthButton.setEnabled(false);
+        } else {
+            _removeValueWidthButton.setEnabled(true);
+        }
+        _valueWidthsPanel.updateUI();
+        onSettingsUpdated(false);
+        return textField;
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return "Fixed width file | Datastore";
-	}
+    @Override
+    protected boolean isWindowResizable() {
+        return true;
+    }
 
-	@Override
-	protected FixedWidthDatastore createDatastore(String name, String filename) {
-		boolean failOnInconsistencies = _failOnInconsistenciesCheckBox.isSelected();
-		boolean skipEbcdicHeader = _skipEbcdicHeaderCheckBox.isSelected();
-		boolean eolPresent = _eolPresentCheckBox.isSelected();
-		return createDatastore(name, filename, failOnInconsistencies, skipEbcdicHeader, eolPresent);
-	}
+    @Override
+    protected List<Entry<String, JComponent>> getFormElements() {
+        final DCPanel buttonPanel = new DCPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
+        buttonPanel.add(_addValueWidthButton);
+        buttonPanel.add(_removeValueWidthButton);
 
-	private FixedWidthDatastore createDatastore(String name, String filename, boolean failOnInconsistencies,
-			boolean skipEbcdicHeader, boolean eolPresent) {
-		int[] valueWidths = getValueWidths(true);
-		try {
-			return new FixedWidthDatastore(name, filename, _encodingComboBox.getSelectedItem(), valueWidths,
-					failOnInconsistencies, skipEbcdicHeader, eolPresent, getHeaderLine());
-		} catch (NumberFormatException e) {
-			throw new IllegalStateException("Value width must be a valid number.");
-		}
-	}
+        final DCPanel valueWidthConfigurationPanel = new DCPanel();
+        valueWidthConfigurationPanel.setLayout(new BorderLayout());
+        valueWidthConfigurationPanel.add(_valueWidthsPanel, BorderLayout.CENTER);
+        valueWidthConfigurationPanel.add(buttonPanel, BorderLayout.EAST);
+        valueWidthConfigurationPanel.add(_lineWidthLabel, BorderLayout.SOUTH);
 
-	private int[] getValueWidths(boolean failOnMissingValue) {
-        int[] valueWidths = new int[_valueWidthTextFields.size()];
+        final List<Entry<String, JComponent>> result = super.getFormElements();
+        result.add(new ImmutableEntry<>("Character encoding", _encodingComboBox));
+        result.add(new ImmutableEntry<>("Column widths", valueWidthConfigurationPanel));
+        result.add(new ImmutableEntry<>("Header line", _headerLineComboBox));
+        result.add(new ImmutableEntry<>("", _failOnInconsistenciesCheckBox));
+        result.add(new ImmutableEntry<>("", _skipEbcdicHeaderCheckBox));
+        result.add(new ImmutableEntry<>("", _eolPresentCheckBox));
+        // TODO: Uncomment the line about columns names panel after the release of metamodel 4.5.5
+        //result.add(new ImmutableEntry<>("Column Names", _columnNamesWidget.getPanel()));
+        return result;
+    }
+
+    @Override
+    protected String getBannerTitle() {
+        return "Fixed width file";
+    }
+
+    @Override
+    public String getWindowTitle() {
+        return "Fixed width file | Datastore";
+    }
+
+    @Override
+    protected FixedWidthDatastore createDatastore(final String name, final Resource resource) {
+        final boolean failOnInconsistencies = _failOnInconsistenciesCheckBox.isSelected();
+        final boolean skipEbcdicHeader = _skipEbcdicHeaderCheckBox.isSelected();
+        final boolean eolPresent = _eolPresentCheckBox.isSelected();
+
+        return createDatastore(name, resource, failOnInconsistencies, skipEbcdicHeader, eolPresent);
+
+    }
+
+    private FixedWidthDatastore createDatastore(final String name, final Resource resource,
+            final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent) {
+        final int[] valueWidths = getValueWidths(true);
+        try {
+            return new FixedWidthDatastore(name, resource, resource.getQualifiedPath(),
+                    _encodingComboBox.getSelectedItem(), valueWidths, failOnInconsistencies, skipEbcdicHeader,
+                    eolPresent, getHeaderLine(), _columnNamesWidget.getColumnNames());
+        } catch (final NumberFormatException e) {
+            throw new IllegalStateException("Value width must be a valid number.");
+        }
+    }
+
+    private int[] getValueWidths(final boolean failOnMissingValue) {
+        final int[] valueWidths = new int[_valueWidthTextFields.size()];
 
         try {
             for (int i = 0; i < valueWidths.length; i++) {
@@ -375,30 +394,66 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 
                 valueWidths[i] = Integer.parseInt(text);
             }
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new IllegalStateException("Please specify all column widths as numbers. ");
         }
 
         return valueWidths;
     }
 
-	@Override
-	protected String getDatastoreIconPath() {
-		return IconUtils.FIXEDWIDTH_IMAGEPATH;
-	}
+    @Override
+    protected String getDatastoreIconPath() {
+        return IconUtils.FIXEDWIDTH_IMAGEPATH;
+    }
 
-	public int getHeaderLine() {
-		Number headerLineComboValue = _headerLineComboBox.getSelectedItem();
-		if (headerLineComboValue != null) {
-			int intComboValue = headerLineComboValue.intValue();
-			if (intComboValue < 0) {
-				return FixedWidthConfiguration.NO_COLUMN_NAME_LINE;
-			} else {
-				// MetaModel's headerline number is 0-based
-				return intComboValue;
-			}
-		} else {
-			return FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE;
-		}
-	}
+    public int getHeaderLine() {
+        final Number headerLineComboValue = _headerLineComboBox.getSelectedItem();
+        if (headerLineComboValue != null) {
+            final int intComboValue = headerLineComboValue.intValue();
+            if (intComboValue < 0) {
+                return FixedWidthConfiguration.NO_COLUMN_NAME_LINE;
+            } else {
+                // MetaModel's headerline number is 0-based
+                return intComboValue;
+            }
+        } else {
+            return FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE;
+        }
+    }
+
+    private void registerColumnNameFields() {
+        _columnNamesWidget.getColumnNameFields().stream().filter(field -> !_columnNameFields.contains(field))
+                .forEach(field -> {
+                    field.addKeyListener(new KeyAdapter() {
+                        @Override
+                        public void keyTyped(final KeyEvent e) {
+                            onSettingsUpdated(false);
+                        }
+                    });
+
+                    _columnNameFields.add(field);
+                });
+    }
+
+    @Override
+    protected void initializeFileFilters(final ResourceSelector resourceSelector) {
+        final FileFilter combinedFilter = FileFilters
+                .combined("Any text, data or EBCDIC files (.txt, .dat, .ebc)", FileFilters.TXT, FileFilters.DAT,
+                        FileFilters.EBC);
+        resourceSelector.addChoosableFileFilter(combinedFilter);
+        resourceSelector.addChoosableFileFilter(FileFilters.TXT);
+        resourceSelector.addChoosableFileFilter(FileFilters.DAT);
+        resourceSelector.addChoosableFileFilter(FileFilters.EBC);
+        resourceSelector.setSelectedFileFilter(combinedFilter);
+        resourceSelector.addListener(new ResourceTypePresenter.Listener() {
+            @Override
+            public void onResourceSelected(final ResourceTypePresenter<?> presenter, final Resource resource) {
+                onSettingsUpdated(true);
+            }
+
+            @Override
+            public void onPathEntered(final ResourceTypePresenter<?> presenter, final String path) {
+            }
+        });
+    }
 }

@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -48,12 +46,13 @@ import org.datacleaner.widgets.Alignment;
 public class SourceTableConfigurationDialog extends AbstractDialog implements SourceColumnChangeListener {
 
     private static final long serialVersionUID = 1L;
+    private static final int MAX_HEIGHT = 800;
     private final Table _table;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final ColumnListTable _columnListTable;
 
-    public SourceTableConfigurationDialog(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder,
-            Table table) {
+    public SourceTableConfigurationDialog(final WindowContext windowContext,
+            final AnalysisJobBuilder analysisJobBuilder, final Table table) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
 
         _table = table;
@@ -92,28 +91,23 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
     @Override
     protected JComponent getDialogContent() {
         final List<MetaModelInputColumn> columns = _analysisJobBuilder.getSourceColumnsOfTable(_table);
-        for (MetaModelInputColumn metaModelInputColumn : columns) {
+        for (final MetaModelInputColumn metaModelInputColumn : columns) {
             _columnListTable.addColumn(metaModelInputColumn);
         }
 
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SourceTableConfigurationDialog.this.dispose();
-            }
-        });
+        closeButton.addActionListener(e -> SourceTableConfigurationDialog.this.dispose());
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(_columnListTable, BorderLayout.CENTER);
         panel.add(DCPanel.flow(Alignment.CENTER, closeButton), BorderLayout.SOUTH);
-        return panel;
+        return WidgetUtils.scrollable(panel, MAX_HEIGHT);
     }
 
     @Override
-    public void onAdd(InputColumn<?> column) {
-        Column physicalColumn = column.getPhysicalColumn();
+    public void onAdd(final InputColumn<?> column) {
+        final Column physicalColumn = column.getPhysicalColumn();
         if (physicalColumn != null) {
             if (physicalColumn.getTable() == _table) {
                 _columnListTable.addColumn(column);
@@ -122,7 +116,7 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
     }
 
     @Override
-    public void onRemove(InputColumn<?> column) {
+    public void onRemove(final InputColumn<?> column) {
         _columnListTable.removeColumn(column);
         final boolean empty = _analysisJobBuilder.getSourceColumnsOfTable(_table).isEmpty();
         if (empty) {

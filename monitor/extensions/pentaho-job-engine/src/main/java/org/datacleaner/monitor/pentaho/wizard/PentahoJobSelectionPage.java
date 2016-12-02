@@ -36,7 +36,7 @@ abstract class PentahoJobSelectionPage extends AbstractFreemarkerWizardPage {
     private final int _pageIndex;
     private final List<PentahoTransformation> _availableTransformations;
 
-    public PentahoJobSelectionPage(int pageIndex, List<PentahoTransformation> availableTransformations) {
+    public PentahoJobSelectionPage(final int pageIndex, final List<PentahoTransformation> availableTransformations) {
         _pageIndex = pageIndex;
         _availableTransformations = availableTransformations;
     }
@@ -47,11 +47,11 @@ abstract class PentahoJobSelectionPage extends AbstractFreemarkerWizardPage {
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final String groupName = formParameters.get("groupName").get(0);
         final String transformationId = formParameters.get("transformation").get(0);
-        for (PentahoTransformation candidate : _availableTransformations) {
+        for (final PentahoTransformation candidate : _availableTransformations) {
             if (candidate.matches(transformationId, null)) {
                 return nextPageController(candidate, groupName);
             }
@@ -68,7 +68,7 @@ abstract class PentahoJobSelectionPage extends AbstractFreemarkerWizardPage {
 
     @Override
     protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("transformations", _availableTransformations);
         map.put("groupName", "Pentaho jobs");
         return map;

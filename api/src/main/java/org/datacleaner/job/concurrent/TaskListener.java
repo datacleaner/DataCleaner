@@ -23,9 +23,9 @@ import org.datacleaner.job.tasks.Task;
 
 public interface TaskListener {
 
-	public void onBegin(Task task);
+    void onBegin(Task task);
 
-	public void onComplete(Task task);
+    void onComplete(Task task);
 
-	public void onError(Task task, Throwable throwable);
+    void onError(Task task, Throwable throwable);
 }

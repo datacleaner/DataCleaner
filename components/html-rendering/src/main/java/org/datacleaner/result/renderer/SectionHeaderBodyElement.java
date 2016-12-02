@@ -30,12 +30,12 @@ public class SectionHeaderBodyElement implements BodyElement {
 
     private final String _header;
 
-    public SectionHeaderBodyElement(String header) {
+    public SectionHeaderBodyElement(final String header) {
         _header = header;
     }
 
     @Override
-    public String toHtml(HtmlRenderingContext context) {
+    public String toHtml(final HtmlRenderingContext context) {
         return "<h3>" + context.escapeHtml(_header) + "</h3>";
     }
 

@@ -27,7 +27,7 @@ public class MockTransformerMessage implements ComponentMessage {
     private final String _message;
     private final InputColumn<?> _column;
 
-    public MockTransformerMessage(String message, InputColumn<?> column) {
+    public MockTransformerMessage(final String message, final InputColumn<?> column) {
         _message = message;
         _column = column;
     }
@@ -39,7 +39,7 @@ public class MockTransformerMessage implements ComponentMessage {
     public String getMessage() {
         return _message;
     }
-    
+
     @Override
     public String toString() {
         return "MockTransformerMessage[" + _message + "]";

@@ -33,20 +33,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/_user")
 public class TenantInfoController {
 
-    @ResponseBody
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserInfo getUserInfo() {
-        UserInfo userInfo = new UserInfo();
-        final UserBean user = new UserBean();
-        user.updateUser();
-        userInfo.tenant = user.getTenant();
-        userInfo.username= user.getUsername();
-        return userInfo;
-    }
-
     public static class UserInfo {
         public String username;
         public String tenant;
+    }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserInfo getUserInfo() {
+        final UserInfo userInfo = new UserInfo();
+        final UserBean user = new UserBean();
+        user.updateUser();
+        userInfo.tenant = user.getTenant();
+        userInfo.username = user.getUsername();
+        return userInfo;
     }
 
 }

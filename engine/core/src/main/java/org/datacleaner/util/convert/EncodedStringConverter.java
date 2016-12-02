@@ -33,7 +33,7 @@ import org.datacleaner.api.Converter;
 /**
  * A custom {@link Converter} for encrypting sensitive strings, such as
  * passwords.
- * 
+ *
  * Apply it to your sensitive {@link Configured} properties using the
  * {@link Convertable} annotation.
  */
@@ -41,8 +41,8 @@ public class EncodedStringConverter implements Converter<String> {
 
     private static final String ALGORHITM = "PBEWithMD5AndDES";
 
-    private static final byte[] DEFAULT_SALT = { (byte) 0xde, (byte) 0x33, (byte) 0x12, (byte) 0x10, (byte) 0x33,
-            (byte) 0x10, (byte) 0x12, (byte) 0xde };
+    private static final byte[] DEFAULT_SALT =
+            { (byte) 0xde, (byte) 0x33, (byte) 0x12, (byte) 0x10, (byte) 0x33, (byte) 0x10, (byte) 0x12, (byte) 0xde };
     private static final char[] DEFAULT_SECRET = "cafelattebabemlobhat".toCharArray();
 
     private final byte[] _salt;
@@ -52,53 +52,53 @@ public class EncodedStringConverter implements Converter<String> {
         this(DEFAULT_SALT, DEFAULT_SECRET);
     }
 
-    public EncodedStringConverter(byte[] salt, char[] secret) {
+    public EncodedStringConverter(final byte[] salt, final char[] secret) {
         _salt = salt;
         _secret = secret;
     }
 
     @Override
-    public String fromString(Class<?> type, String encodedPassword) {
+    public String fromString(final Class<?> type, final String encodedPassword) {
         if (encodedPassword == null) {
             return null;
         }
         try {
-            SecretKeyFactory instance = SecretKeyFactory.getInstance(ALGORHITM);
-            SecretKey key = instance.generateSecret(new PBEKeySpec(_secret));
-            Cipher cipher = Cipher.getInstance(ALGORHITM);
+            final SecretKeyFactory instance = SecretKeyFactory.getInstance(ALGORHITM);
+            final SecretKey key = instance.generateSecret(new PBEKeySpec(_secret));
+            final Cipher cipher = Cipher.getInstance(ALGORHITM);
             cipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(_salt, 20));
 
             byte[] bytes = encodedPassword.getBytes("UTF-8");
 
             bytes = cipher.doFinal(Base64.decodeBase64(bytes));
             return new String(bytes);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Unable to decode password", e);
         }
     }
 
     @Override
-    public String toString(String password) {
+    public String toString(final String password) {
         if (password == null) {
             return null;
         }
         try {
-            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(ALGORHITM);
-            SecretKey key = keyFactory.generateSecret(new PBEKeySpec(_secret));
-            Cipher pbeCipher = Cipher.getInstance(ALGORHITM);
+            final SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(ALGORHITM);
+            final SecretKey key = keyFactory.generateSecret(new PBEKeySpec(_secret));
+            final Cipher pbeCipher = Cipher.getInstance(ALGORHITM);
             pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(_salt, 20));
 
             byte[] bytes = pbeCipher.doFinal(password.getBytes());
 
             bytes = Base64.encodeBase64(bytes, false);
             return new String(bytes, "UTF-8");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Unable to encode password", e);
         }
     }
 
     @Override
-    public boolean isConvertable(Class<?> type) {
+    public boolean isConvertable(final Class<?> type) {
         return String.class.equals(type);
     }
 

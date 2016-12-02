@@ -32,14 +32,14 @@ public class ChangeRequirementMenu extends JMenu {
 
     private static final long serialVersionUID = 1L;
 
-    public ChangeRequirementMenu(ComponentBuilder componentBuilder) {
+    public ChangeRequirementMenu(final ComponentBuilder componentBuilder) {
         super("Set requirement");
         setIcon(ImageManager.get().getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_SMALL));
 
         final ChangeRequirementMenuBuilder menuBuilder = new ChangeRequirementMenuBuilder(componentBuilder);
         if (menuBuilder.isFilterRequirementsAvailable()) {
             final List<JMenuItem> menuItems = menuBuilder.createMenuItems();
-            for (JMenuItem menuItem : menuItems) {
+            for (final JMenuItem menuItem : menuItems) {
                 add(menuItem);
             }
         } else {
@@ -52,11 +52,11 @@ public class ChangeRequirementMenu extends JMenu {
      * Determines if changing requirements for a particular
      * {@link ComponentBuilder} is relevant or not. If no filters exist, it is
      * not relevant to even show the ability to set requirements.
-     * 
+     *
      * @param componentBuilder
      * @return
      */
-    public static boolean isRelevant(ComponentBuilder componentBuilder) {
+    public static boolean isRelevant(final ComponentBuilder componentBuilder) {
         return !componentBuilder.getAnalysisJobBuilder().getFilterComponentBuilders().isEmpty();
     }
 }

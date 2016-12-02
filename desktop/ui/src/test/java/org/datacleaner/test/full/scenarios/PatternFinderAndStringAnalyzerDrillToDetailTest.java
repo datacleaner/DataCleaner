@@ -22,8 +22,6 @@ package org.datacleaner.test.full.scenarios;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
@@ -55,6 +53,8 @@ import org.datacleaner.result.ResultProducer;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.test.TestHelper;
 
+import junit.framework.TestCase;
+
 @SuppressWarnings("deprecation")
 public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
 
@@ -64,39 +64,38 @@ public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
 
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(environment);
 
-        Datastore datastore = TestHelper.createSampleDatabaseDatastore("ds");
-        DatastoreConnection con = datastore.openConnection();
-        DataContext dc = con.getDataContext();
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("ds");
+        final DatastoreConnection con = datastore.openConnection();
+        final DataContext dc = con.getDataContext();
 
-        AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
-        try {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastoreConnection(con);
 
-            Table table = dc.getDefaultSchema().getTableByName("EMPLOYEES");
+            final Table table = dc.getDefaultSchema().getTableByName("EMPLOYEES");
             assertNotNull(table);
 
-            Column jobTitleColumn = table.getColumnByName("JOBTITLE");
+            final Column jobTitleColumn = table.getColumnByName("JOBTITLE");
             assertNotNull(jobTitleColumn);
 
-            Column emailColumn = table.getColumnByName("EMAIL");
+            final Column emailColumn = table.getColumnByName("EMAIL");
             assertNotNull(emailColumn);
 
             ajb.addSourceColumns(jobTitleColumn, emailColumn);
 
-            InputColumn<?> emailInputColumn = ajb.getSourceColumnByName("EMAIL");
-            TransformerComponentBuilder<EmailStandardizerTransformer> emailStd1 = ajb.addTransformer(
-                    EmailStandardizerTransformer.class).addInputColumn(emailInputColumn);
+            final InputColumn<?> emailInputColumn = ajb.getSourceColumnByName("EMAIL");
+            final TransformerComponentBuilder<EmailStandardizerTransformer> emailStd1 =
+                    ajb.addTransformer(EmailStandardizerTransformer.class).addInputColumn(emailInputColumn);
 
-            AnalyzerComponentBuilder<PatternFinderAnalyzer> pf = ajb.addAnalyzer(PatternFinderAnalyzer.class);
-            InputColumn<?> jobtitleInputColumn = ajb.getSourceColumnByName("JOBTITLE");
+            final AnalyzerComponentBuilder<PatternFinderAnalyzer> pf = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+            final InputColumn<?> jobtitleInputColumn = ajb.getSourceColumnByName("JOBTITLE");
             pf.addInputColumn(jobtitleInputColumn);
             pf.getComponentInstance().setDiscriminateTextCase(false);
 
-            AnalyzerComponentBuilder<StringAnalyzer> sa = ajb.addAnalyzer(StringAnalyzer.class);
+            final AnalyzerComponentBuilder<StringAnalyzer> sa = ajb.addAnalyzer(StringAnalyzer.class);
             sa.addInputColumns(emailInputColumn, emailStd1.getOutputColumnByName("Username"),
                     emailStd1.getOutputColumnByName("Domain"));
 
-            AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(ajb.toAnalysisJob());
+            final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(ajb.toAnalysisJob());
             if (!resultFuture.isSuccessful()) {
                 throw resultFuture.getErrors().iterator().next();
             }
@@ -112,33 +111,34 @@ public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
                 assertEquals(resultString, "                            Match count Sample      ", resultLines[0]);
                 assertTrue(resultString, resultLines[1].startsWith("aaaaa aaaaaaaaa                      19"));
 
-                ResultProducer resultProducer = result.getSingleCrosstab().where("Pattern", "aaaaa aaaaaaaaa")
-                        .where("Measures", "Match count").explore();
+                final ResultProducer resultProducer =
+                        result.getSingleCrosstab().where("Pattern", "aaaaa aaaaaaaaa").where("Measures", "Match count")
+                                .explore();
                 assertEquals(DefaultResultProducer.class, resultProducer.getClass());
-                AnalyzerResult result2 = resultProducer.getResult();
+                final AnalyzerResult result2 = resultProducer.getResult();
                 assertEquals(AnnotatedRowsResult.class, result2.getClass());
 
-                AnnotatedRowsResult annotatedRowsResult = (AnnotatedRowsResult) result2;
+                final AnnotatedRowsResult annotatedRowsResult = (AnnotatedRowsResult) result2;
                 assertEquals(19, annotatedRowsResult.getAnnotatedRowCount());
-                List<InputRow> rows = annotatedRowsResult.getSampleRows();
+                final List<InputRow> rows = annotatedRowsResult.getSampleRows();
                 assertEquals(19, rows.size());
 
-                String[] values = new String[19];
+                final String[] values = new String[19];
                 for (int i = 0; i < values.length; i++) {
                     values[i] = (String) rows.get(i).getValue(jobtitleInputColumn);
                 }
 
                 Arrays.sort(values);
 
-                assertEquals(
-                        "[Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, VP Marketing, VP Sales]",
-                        Arrays.toString(values));
+                assertEquals( "[Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, "
+                                + "Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, Sales Rep, "
+                                + "Sales Rep, Sales Rep, Sales Rep, VP Marketing, VP Sales]", Arrays.toString(values));
             }
 
             // string analyzer tests
             {
-                CrosstabResult result = (CrosstabResult) resultFuture.getResult(sa.toAnalyzerJob());
-                String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
+                final CrosstabResult result = (CrosstabResult) resultFuture.getResult(sa.toAnalyzerJob());
+                final String[] resultLines = new CrosstabTextRenderer().render(result).split("\n");
 
                 assertEquals("                                         EMAIL Username   Domain ", resultLines[0]);
                 assertEquals("Total char count                           655      172      460 ", resultLines[6]);
@@ -148,8 +148,8 @@ public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
                 // username is a virtual columns, but because of the
                 // row-annotation
                 // system it is still possible to drill to detail on it.
-                ResultProducer resultProducer = result.getCrosstab().where("Column", "Username")
-                        .where("Measures", "Max chars").explore();
+                ResultProducer resultProducer =
+                        result.getCrosstab().where("Column", "Username").where("Measures", "Max chars").explore();
                 assertNotNull(resultProducer);
                 assertEquals(AnnotatedRowsResult.class, resultProducer.getResult().getClass());
 
@@ -157,17 +157,15 @@ public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
                 resultProducer = result.getCrosstab().where("Column", "EMAIL").where("Measures", "Max chars").explore();
                 assertNotNull(resultProducer);
 
-                AnalyzerResult result2 = resultProducer.getResult();
+                final AnalyzerResult result2 = resultProducer.getResult();
                 assertEquals(AnnotatedRowsResult.class, result2.getClass());
 
-                AnnotatedRowsResult arr = (AnnotatedRowsResult) result2;
-                List<InputRow> rows = arr.getSampleRows();
+                final AnnotatedRowsResult arr = (AnnotatedRowsResult) result2;
+                final List<InputRow> rows = arr.getSampleRows();
                 assertEquals(1, rows.size());
                 assertEquals("wpatterson@classicmodelcars.com", rows.get(0).getValue(emailInputColumn).toString());
             }
 
-        } finally {
-            ajb.close();
         }
 
         con.close();

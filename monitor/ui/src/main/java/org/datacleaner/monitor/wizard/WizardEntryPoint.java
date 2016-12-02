@@ -26,7 +26,7 @@ import com.google.gwt.core.client.GWT;
 
 /**
  * The EntryPoint containing a method to launch a Job Wizard
- * 
+ *
  */
 
 public class WizardEntryPoint implements com.google.gwt.core.client.EntryPoint {

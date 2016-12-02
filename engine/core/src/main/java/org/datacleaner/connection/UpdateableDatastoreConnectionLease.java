@@ -24,23 +24,24 @@ import org.apache.metamodel.UpdateableDataContext;
 /**
  * Subclass of {@link DatastoreConnectionLease} for {@link UpdateableDatastore}
  * implementations.
- * 
+ *
  * @see DatastoreConnectionLease
  */
-public class UpdateableDatastoreConnectionLease extends DatastoreConnectionLease implements UpdateableDatastoreConnection {
+public class UpdateableDatastoreConnectionLease extends DatastoreConnectionLease
+        implements UpdateableDatastoreConnection {
 
-	public UpdateableDatastoreConnectionLease(UpdateableDatastoreConnection delegate) {
-		super(delegate);
-	}
+    public UpdateableDatastoreConnectionLease(final UpdateableDatastoreConnection delegate) {
+        super(delegate);
+    }
 
-	@Override
-	public UpdateableDatastoreConnection getDelegate() {
-		return (UpdateableDatastoreConnection) super.getDelegate();
-	}
+    @Override
+    public UpdateableDatastoreConnection getDelegate() {
+        return (UpdateableDatastoreConnection) super.getDelegate();
+    }
 
-	@Override
-	public UpdateableDataContext getUpdateableDataContext() {
-		return (UpdateableDataContext) getDataContext();
-	}
+    @Override
+    public UpdateableDataContext getUpdateableDataContext() {
+        return (UpdateableDataContext) getDataContext();
+    }
 
 }

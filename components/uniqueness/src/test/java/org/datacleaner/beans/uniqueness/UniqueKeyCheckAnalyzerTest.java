@@ -22,8 +22,6 @@ package org.datacleaner.beans.uniqueness;
 import java.io.File;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
@@ -31,13 +29,15 @@ import org.junit.Test;
 
 import com.google.common.base.Splitter;
 
+import junit.framework.TestCase;
+
 public class UniqueKeyCheckAnalyzerTest extends TestCase {
 
     @Test
     public void testSimpleScenario() throws Exception {
         final int bufferSizeInTest = 20;
 
-        final MockInputColumn<String> col = new MockInputColumn<String>("foo");
+        final MockInputColumn<String> col = new MockInputColumn<>("foo");
         final UniqueKeyCheckAnalyzer analyzer = new UniqueKeyCheckAnalyzer(bufferSizeInTest);
         analyzer.column = col;
 
@@ -46,26 +46,27 @@ public class UniqueKeyCheckAnalyzerTest extends TestCase {
         analyzer.run(new MockInputRow().put(col, "foo"), 1);
         analyzer.run(new MockInputRow().put(col, "bar"), 1);
 
-        Splitter splitter = Splitter.on(' ').omitEmptyStrings();
-        Iterable<String> it = splitter
-                .split(FileHelper.readFileAsString(new File("src/test/resources/loremipsum.txt")));
-        for (String str : it) {
+        final Splitter splitter = Splitter.on(' ').omitEmptyStrings();
+        final Iterable<String> it =
+                splitter.split(FileHelper.readFileAsString(new File("src/test/resources/loremipsum.txt")));
+        for (final String str : it) {
             analyzer.run(new MockInputRow().put(col, str), 1);
         }
 
         analyzer.run(new MockInputRow().put(col, "foo"), 1);
         analyzer.run(new MockInputRow().put(col, "bar"), 1);
 
-        UniqueKeyCheckAnalyzerResult result = analyzer.getResult();
+        final UniqueKeyCheckAnalyzerResult result = analyzer.getResult();
         assertEquals(73, result.getRowCount());
         assertEquals(60, result.getUniqueCount());
         assertEquals(0, result.getNullCount());
         assertEquals(13, result.getNonUniqueCount());
 
-        Map<String, Integer> samples = result.getNonUniqueSamples();
+        final Map<String, Integer> samples = result.getNonUniqueSamples();
         assertEquals("{bar=2, dolor=2, dolore=2, foo=2, in=3, ut=2}", samples.toString());
 
-        assertEquals("Unique key check result:\n" + " - Row count: 73\n" + " - Null count: 0\n"
-                + " - Unique count: 60\n" + " - Non-unique count: 13", result.toString());
+        assertEquals(
+                "Unique key check result:\n" + " - Row count: 73\n" + " - Null count: 0\n" + " - Unique count: 60\n"
+                        + " - Non-unique count: 13", result.toString());
     }
 }

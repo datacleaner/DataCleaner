@@ -22,32 +22,32 @@ package org.datacleaner.spring;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
-import org.easymock.EasyMock;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.easymock.EasyMock;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
+
+import junit.framework.TestCase;
 
 public class SpringVariableProviderTest extends TestCase {
 
     public void testProvideVariables() throws Exception {
         System.setProperty("DataCleaner.foo", "bar");
 
-        SpringVariableProvider provider = new SpringVariableProvider();
-        StandardEnvironment standardEnvironment = new StandardEnvironment();
-        Map<String, Object> map = new HashMap<String, Object>();
+        final SpringVariableProvider provider = new SpringVariableProvider();
+        final StandardEnvironment standardEnvironment = new StandardEnvironment();
+        final Map<String, Object> map = new HashMap<>();
         map.put("foo", "fooooo");
         map.put("bar", "baaaar");
-        PropertySource<?> propertySource = new MapPropertySource("foo", map);
+        final PropertySource<?> propertySource = new MapPropertySource("foo", map);
         standardEnvironment.getPropertySources().addFirst(propertySource);
         provider.environment = standardEnvironment;
 
-        JobContext job = EasyMock.createMock(JobContext.class);
+        final JobContext job = EasyMock.createMock(JobContext.class);
 
-        Map<String, String> inputVariables = new HashMap<String, String>();
+        final Map<String, String> inputVariables = new HashMap<>();
         inputVariables.put("foobar", "1");
         inputVariables.put("${foo}", "hello");
         inputVariables.put("#{DataCleaner.foo}", "hello");
@@ -58,7 +58,7 @@ public class SpringVariableProviderTest extends TestCase {
 
         EasyMock.replay(job);
 
-        Map<String, String> result = provider.provideValues(job, new ExecutionLog());
+        final Map<String, String> result = provider.provideValues(job, new ExecutionLog());
 
         EasyMock.verify(job);
 

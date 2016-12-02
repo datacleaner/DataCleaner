@@ -32,8 +32,8 @@ import com.google.gwt.user.client.ui.Button;
  */
 public class DefineMetricPopup extends DCPopupPanel {
 
-    public static interface Handler {
-        public void onMetricDefined(MetricIdentifier metric);
+    public interface Handler {
+        void onMetricDefined(MetricIdentifier metric);
     }
 
     public DefineMetricPopup(final TenantIdentifier tenant, final JobMetrics jobMetrics, final boolean formulaOnly,
@@ -50,8 +50,8 @@ public class DefineMetricPopup extends DCPopupPanel {
         final Button saveButton = DCButtons.primaryButton("glyphicon-save", "Save");
         saveButton.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
-                MetricIdentifier metric = panel.getMetric();
+            public void onClick(final ClickEvent event) {
+                final MetricIdentifier metric = panel.getMetric();
                 handler.onMetricDefined(metric);
                 hide();
             }

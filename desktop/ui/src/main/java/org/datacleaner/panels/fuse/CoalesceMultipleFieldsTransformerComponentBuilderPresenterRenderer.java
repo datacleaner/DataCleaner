@@ -51,7 +51,7 @@ public class CoalesceMultipleFieldsTransformerComponentBuilderPresenterRenderer 
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> tjb) {
+    public RendererPrecedence getPrecedence(final TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> tjb) {
         if (tjb.getDescriptor().getComponentClass() == CoalesceMultipleFieldsTransformer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -60,12 +60,12 @@ public class CoalesceMultipleFieldsTransformerComponentBuilderPresenterRenderer 
 
     @Override
     public TransformerComponentBuilderPresenter render(
-            TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
-                PropertyWidgetFactory.class);
+            final TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> tjb) {
+        final PropertyWidgetFactory propertyWidgetFactory =
+                dcModule.createChildInjectorForComponent(tjb).getInstance(PropertyWidgetFactory.class);
 
-        return new CoalesceMultipleFieldsTransformerComponentBuilderPresenter(tjb, propertyWidgetFactory,
-                windowContext, configuration);
+        return new CoalesceMultipleFieldsTransformerComponentBuilderPresenter(tjb, propertyWidgetFactory, windowContext,
+                configuration);
     }
 
 }

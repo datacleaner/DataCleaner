@@ -21,36 +21,34 @@ package org.datacleaner.beans.filter;
 
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.ValidateMethodDescriptor;
 
+import junit.framework.TestCase;
+
 public class NumberRangeFilterTest extends TestCase {
 
     public void testDescriptorInheritance() throws Exception {
-        FilterDescriptor<NumberRangeFilter, RangeFilterCategory> filter = Descriptors
-                .ofFilter(NumberRangeFilter.class);
-        
+        final FilterDescriptor<NumberRangeFilter, RangeFilterCategory> filter =
+                Descriptors.ofFilter(NumberRangeFilter.class);
+
         assertTrue(filter.isDistributable());
 
-        Set<ConfiguredPropertyDescriptor> inputs = filter.getConfiguredPropertiesForInput();
+        final Set<ConfiguredPropertyDescriptor> inputs = filter.getConfiguredPropertiesForInput();
         assertEquals(1, inputs.size());
-        ConfiguredPropertyDescriptor input = inputs.iterator().next();
-        assertEquals(
-                "ConfiguredPropertyDescriptorImpl[name=Column]",
-                input.toString());
+        final ConfiguredPropertyDescriptor input = inputs.iterator().next();
+        assertEquals("ConfiguredPropertyDescriptorImpl[name=Column]", input.toString());
 
         assertEquals("java.lang.Number", input.getTypeArgument(0).getName());
 
-        Set<ValidateMethodDescriptor> validateMethods = filter.getValidateMethods();
+        final Set<ValidateMethodDescriptor> validateMethods = filter.getValidateMethods();
         assertEquals(1, validateMethods.size());
     }
 
     public void testFilter() throws Exception {
-        NumberRangeFilter filter = new NumberRangeFilter(5d, 10d);
+        final NumberRangeFilter filter = new NumberRangeFilter(5d, 10d);
         filter.validate();
         assertEquals(RangeFilterCategory.LOWER, filter.categorize((Number) null));
         assertEquals(RangeFilterCategory.LOWER, filter.categorize(0));
@@ -65,7 +63,7 @@ public class NumberRangeFilterTest extends TestCase {
     }
 
     public void testSameMaxAndMin() throws Exception {
-        NumberRangeFilter filter = new NumberRangeFilter(18d, 18d);
+        final NumberRangeFilter filter = new NumberRangeFilter(18d, 18d);
         filter.validate();
         assertEquals(RangeFilterCategory.VALID, filter.categorize(18));
         assertEquals(RangeFilterCategory.VALID, filter.categorize(18.0));

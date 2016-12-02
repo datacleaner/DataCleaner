@@ -26,5 +26,5 @@ import org.apache.commons.vfs2.FileObject;
  */
 public interface FileDownloadListener {
 
-    public void onFilesDownloaded(FileObject[] files);
+    void onFilesDownloaded(FileObject[] files);
 }

@@ -32,13 +32,14 @@ final class DistributedJobContextImpl implements DistributedJobContext {
     private final int _chunkIndex;
     private final int _chunkCount;
 
-    public DistributedJobContextImpl(DataCleanerConfiguration masterConfiguration, AnalysisJob masterJob, int chunkIndex, int chunkCount) {
+    public DistributedJobContextImpl(final DataCleanerConfiguration masterConfiguration, final AnalysisJob masterJob,
+            final int chunkIndex, final int chunkCount) {
         _masterConfiguration = masterConfiguration;
         _masterJob = masterJob;
         _chunkIndex = chunkIndex;
         _chunkCount = chunkCount;
     }
-    
+
     @Override
     public DataCleanerConfiguration getMasterConfiguration() {
         return _masterConfiguration;

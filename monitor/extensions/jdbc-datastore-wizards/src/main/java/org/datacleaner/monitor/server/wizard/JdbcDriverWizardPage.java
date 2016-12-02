@@ -36,7 +36,7 @@ final class JdbcDriverWizardPage extends AbstractFreemarkerWizardPage {
 
     private final GenericJdbcDatastoreWizardSession _session;
 
-    public JdbcDriverWizardPage(GenericJdbcDatastoreWizardSession session) {
+    public JdbcDriverWizardPage(final GenericJdbcDatastoreWizardSession session) {
         _session = session;
     }
 
@@ -46,19 +46,19 @@ final class JdbcDriverWizardPage extends AbstractFreemarkerWizardPage {
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+    public WizardPageController nextPageController(final Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        String driverClassName = formParameters.get("driverClassName").get(0);
+        final String driverClassName = formParameters.get("driverClassName").get(0);
 
         _session.setDriverClassName(driverClassName);
 
-        final DatabaseDriverDescriptor driver = DatabaseDriverCatalog
-                .getDatabaseDriverByDriverClassName(driverClassName);
+        final DatabaseDriverDescriptor driver =
+                DatabaseDriverCatalog.getDatabaseDriverByDriverClassName(driverClassName);
         final String templateUrl;
         if (driver == null) {
             templateUrl = "jdbc:<vendor>://<hostname>/<database>";
         } else {
-            String[] connectionUrlTemplates = driver.getConnectionUrlTemplates();
+            final String[] connectionUrlTemplates = driver.getConnectionUrlTemplates();
             if (connectionUrlTemplates == null || connectionUrlTemplates.length == 0) {
                 templateUrl = "jdbc:<vendor>://<hostname>/<database>";
             } else {
@@ -81,7 +81,7 @@ final class JdbcDriverWizardPage extends AbstractFreemarkerWizardPage {
 
     @Override
     protected Map<String, Object> getFormModel() {
-        return new HashMap<String, Object>();
+        return new HashMap<>();
     }
 
 }

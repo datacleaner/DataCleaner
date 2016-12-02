@@ -22,8 +22,6 @@ package org.datacleaner.job.runner;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
@@ -41,6 +39,8 @@ import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
 import org.datacleaner.test.MockTransformerMessage;
 
+import junit.framework.TestCase;
+
 public class ComponentContextImplTest extends TestCase {
 
     public void testPublishMessage() throws Throwable {
@@ -48,54 +48,56 @@ public class ComponentContextImplTest extends TestCase {
         final List<Object[]> rows = new ArrayList<>();
         rows.add(new Object[] { "1", "Kasper" });
         rows.add(new Object[] { "2", "Claudia" });
-        final TableDataProvider<?> tableDataProvider = new ArrayTableDataProvider(new SimpleTableDef("table",
-                new String[] { "id", "name" }), rows);
+        final TableDataProvider<?> tableDataProvider =
+                new ArrayTableDataProvider(new SimpleTableDef("table", new String[] { "id", "name" }), rows);
         final PojoDatastore datastore = new PojoDatastore("foo", tableDataProvider);
 
-        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
-                .withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
+        final DataCleanerConfiguration configuration =
+                new DataCleanerConfigurationImpl().withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
 
         // build a job with the MockTransformer (publishes MockTransformerMessages)
         final AnalysisJob job;
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
             jobBuilder.setDatastore(datastore);
-            jobBuilder.addSourceColumns("id","name");
-            
-            TransformerComponentBuilder<MockTransformer> mockTransformer = jobBuilder.addTransformer(MockTransformer.class);
+            jobBuilder.addSourceColumns("id", "name");
+
+            final TransformerComponentBuilder<MockTransformer> mockTransformer =
+                    jobBuilder.addTransformer(MockTransformer.class);
             mockTransformer.addInputColumn(jobBuilder.getSourceColumnByName("name"));
             mockTransformer.setName("FOO");
-            
-            AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer.addInputColumns(mockTransformer.getOutputColumns());
-            
+
             job = jobBuilder.toAnalysisJob();
         }
-        
+
         final List<ComponentMessage> messages = new ArrayList<>();
-        AnalysisListener listener = new AnalysisListenerAdaptor() {
+        final AnalysisListener listener = new AnalysisListenerAdaptor() {
             @Override
-            public void onComponentMessage(AnalysisJob jobParameter, ComponentJob componentJob, ComponentMessage message) {
+            public void onComponentMessage(final AnalysisJob jobParameter, final ComponentJob componentJob,
+                    final ComponentMessage message) {
                 assertSame(job, jobParameter);
                 assertEquals("ImmutableTransformerJob[name=FOO,transformer=Mock transformer]", componentJob.toString());
                 messages.add(message);
             }
         };
-        
-        AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration, listener);
-        AnalysisResultFuture resultFuture = runner.run(job);
-        
+
+        final AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration, listener);
+        final AnalysisResultFuture resultFuture = runner.run(job);
+
         resultFuture.await();
-        
+
         if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
-        
+
         assertEquals(2, messages.size());
-        
-        MockTransformerMessage message = (MockTransformerMessage) messages.get(0);
+
+        final MockTransformerMessage message = (MockTransformerMessage) messages.get(0);
         assertEquals("MockTransformerMessage[Mocking: Kasper]", message.toString());
         assertEquals("MockTransformerMessage[Mocking: Claudia]", messages.get(1).toString());
-        
+
         assertEquals("MetaModelInputColumn[foo.table.name]", message.getColumn().toString());
     }
 }

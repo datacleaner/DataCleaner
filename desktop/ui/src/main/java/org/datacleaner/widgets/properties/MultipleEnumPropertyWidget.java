@@ -21,37 +21,37 @@ package org.datacleaner.widgets.properties;
 
 import javax.inject.Inject;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.apache.metamodel.util.HasName;
 
 public class MultipleEnumPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<Enum<?>> {
 
-	@Inject
-	@SuppressWarnings("unchecked")
-	public MultipleEnumPropertyWidget(ComponentBuilder componentBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor) {
-		super(componentBuilder, propertyDescriptor, (Class<Enum<?>>) propertyDescriptor.getBaseType());
-	}
+    @Inject
+    @SuppressWarnings("unchecked")
+    public MultipleEnumPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
+        super(componentBuilder, propertyDescriptor, (Class<Enum<?>>) propertyDescriptor.getBaseType());
+    }
 
-	@Override
-	protected Enum<?>[] getAvailableValues() {
-		@SuppressWarnings("unchecked")
-		Class<? extends Enum<?>> baseType = (Class<? extends Enum<?>>) getPropertyDescriptor().getBaseType();
-		return baseType.getEnumConstants();
-	}
+    @Override
+    protected Enum<?>[] getAvailableValues() {
+        @SuppressWarnings("unchecked") final Class<? extends Enum<?>> baseType =
+                (Class<? extends Enum<?>>) getPropertyDescriptor().getBaseType();
+        return baseType.getEnumConstants();
+    }
 
-	@Override
-	protected String getName(Enum<?> item) {
-	    if (item instanceof HasName) {
-	        return ((HasName)item).getName();
-	    }
-		return item.toString();
-	}
+    @Override
+    protected String getName(final Enum<?> item) {
+        if (item instanceof HasName) {
+            return ((HasName) item).getName();
+        }
+        return item.toString();
+    }
 
-	@Override
-	protected String getNotAvailableText() {
-		return "not available";
-	}
+    @Override
+    protected String getNotAvailableText() {
+        return "not available";
+    }
 
 }

@@ -25,7 +25,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -52,13 +51,10 @@ import org.datacleaner.windows.AnalysisJobBuilderWindow.AnalysisWindowPanelType;
  */
 public class DCSplashPanel extends DCPanel {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final Image BACKGROUND_IMAGE = getBackgroundImage();
-
     public static final int WIDTH_CONTENT = 800;
     public static final int MARGIN_LEFT = 20;
-
+    private static final long serialVersionUID = 1L;
+    private static final Image BACKGROUND_IMAGE = getBackgroundImage();
     private final AnalysisJobBuilderWindow _window;
 
     public DCSplashPanel(final AnalysisJobBuilderWindow window) {
@@ -66,32 +62,9 @@ public class DCSplashPanel extends DCPanel {
         _window = window;
     }
 
-    public AnalysisJobBuilderWindow getWindow() {
-        return _window;
-    }
-
     /**
      * Creates a label for the title of the screen
-     * 
-     * @param string
-     * @return
-     */
-    public JComponent createTitleLabel(String text, boolean includeBackButton) {
-        if (includeBackButton) {
-            ActionListener actionListener = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    _window.changePanel(AnalysisWindowPanelType.WELCOME);
-                }
-            };
-            return createTitleLabel(text, actionListener);
-        }
-        return createTitleLabel(text, null);
-    }
-
-    /**
-     * Creates a label for the title of the screen
-     * 
+     *
      * @param text
      * @param includeBackButton
      * @param window
@@ -106,12 +79,12 @@ public class DCSplashPanel extends DCPanel {
         if (backButtonActionListener != null) {
             titleLabel.addMouseListener(new MouseAdapter() {
                 @Override
-                public void mouseClicked(MouseEvent e) {
+                public void mouseClicked(final MouseEvent e) {
                     backButtonActionListener.actionPerformed(null);
                 }
             });
             titleLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            
+
             final DCPanel panel = DCPanel.flow(Alignment.LEFT, MARGIN_LEFT, 0,
                     createBackToWelcomeScreenButton(backButtonActionListener), titleLabel);
             panel.setBorder(border);
@@ -121,8 +94,8 @@ public class DCSplashPanel extends DCPanel {
             return titleLabel;
         }
     }
-    
-    public static JComponent createSubtitleLabel(String text) {
+
+    public static JComponent createSubtitleLabel(final String text) {
         final DCLabel label = DCLabel.dark(text);
         label.setFont(WidgetUtils.FONT_HEADER2);
         return label;
@@ -139,14 +112,36 @@ public class DCSplashPanel extends DCPanel {
         return backButton;
     }
 
+    private static Image getBackgroundImage() {
+        return ImageManager.get().getImage("images/window/welcome-panel-background.jpg");
+    }
+
+    public AnalysisJobBuilderWindow getWindow() {
+        return _window;
+    }
+
+    /**
+     * Creates a label for the title of the screen
+     *
+     * @param string
+     * @return
+     */
+    public JComponent createTitleLabel(final String text, final boolean includeBackButton) {
+        if (includeBackButton) {
+            final ActionListener actionListener = e -> _window.changePanel(AnalysisWindowPanelType.WELCOME);
+            return createTitleLabel(text, actionListener);
+        }
+        return createTitleLabel(text, null);
+    }
+
     /**
      * Wraps a content panel in a scroll pane and applies a maximum width to the
      * content to keep it nicely in place on the screen.
-     * 
+     *
      * @param panel
      * @return
      */
-    protected JScrollPane wrapContent(JComponent panel) {
+    protected JScrollPane wrapContent(final JComponent panel) {
         panel.setMaximumSize(new Dimension(WIDTH_CONTENT, Integer.MAX_VALUE));
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -156,43 +151,37 @@ public class DCSplashPanel extends DCPanel {
         wrappingPanel.add(panel);
         wrappingPanel.setBorder(new EmptyBorder(0, MARGIN_LEFT, 0, 0));
 
-        final JScrollPane scroll = WidgetUtils.scrolleable(wrappingPanel);
-        return scroll;
+        return WidgetUtils.scrolleable(wrappingPanel);
     }
 
     @Override
-    protected void paintPanelBackgroundImage(Graphics g, Image watermark, int imageWidth, int imageHeight,
-            float horizontalAlignment, float verticalAlignment) {
+    protected void paintPanelBackgroundImage(final Graphics graphics, final Image watermark, final int imageWidth,
+            final int imageHeight, final float horizontalAlignment, final float verticalAlignment) {
 
         final int minimumImageWidth = 1150;
         final int panelWidth = getWidth();
 
         if (panelWidth >= imageWidth) {
             // there's plenty of room
-            super.paintPanelBackgroundImage(g, watermark, imageWidth, imageHeight, horizontalAlignment,
+            super.paintPanelBackgroundImage(graphics, watermark, imageWidth, imageHeight, horizontalAlignment,
                     verticalAlignment);
             return;
         }
 
         if (panelWidth < minimumImageWidth) {
             // paint it left-aligned
-            final int paintedWidth = minimumImageWidth;
-            final double factor = 1.0 * paintedWidth / imageWidth;
+            final double factor = 1.0 * minimumImageWidth / imageWidth;
             final int paintedHeight = (int) (factor * imageHeight);
 
-            super.paintPanelBackgroundImage(g, watermark, paintedWidth, paintedHeight, 0, verticalAlignment);
+            super.paintPanelBackgroundImage(graphics, watermark, minimumImageWidth, paintedHeight, 0,
+                    verticalAlignment);
             return;
         }
 
         // scale the watermark but keep right-alignment
-        final int paintedWidth = panelWidth;
-        final double factor = 1.0 * paintedWidth / imageWidth;
+        final double factor = 1.0 * panelWidth / imageWidth;
         final int paintedHeight = (int) (factor * imageHeight);
-        super.paintPanelBackgroundImage(g, watermark, paintedWidth, paintedHeight, horizontalAlignment,
+        super.paintPanelBackgroundImage(graphics, watermark, panelWidth, paintedHeight, horizontalAlignment,
                 verticalAlignment);
-    }
-
-    private static Image getBackgroundImage() {
-        return ImageManager.get().getImage("images/window/welcome-panel-background.jpg");
     }
 }

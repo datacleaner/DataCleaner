@@ -34,8 +34,8 @@ public class NoopRowProcessingQueryOptimizer implements RowProcessingQueryOptimi
 
     private final Query _query;
     private List<RowProcessingConsumer> _consumers;
-    
-    public NoopRowProcessingQueryOptimizer(Query query, List<RowProcessingConsumer> consumers) {
+
+    public NoopRowProcessingQueryOptimizer(final Query query, final List<RowProcessingConsumer> consumers) {
         _query = query;
         _consumers = consumers;
     }

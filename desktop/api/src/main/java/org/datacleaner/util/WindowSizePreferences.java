@@ -30,9 +30,9 @@ public class WindowSizePreferences {
     private final String _identifier;
     private final int _defaultWidth;
     private final int _defaultHeight;
-    
+
     /**
-     * 
+     *
      * @param userPreferences
      *            represents the settings provided by the user at runtime @{link
      *            UserPreferences}
@@ -44,7 +44,7 @@ public class WindowSizePreferences {
      *            represents the default height
      */
     public WindowSizePreferences(final UserPreferences userPreferences, final Class<?> windowClass,
-            final int defaultWidth, int defaultHeight) {
+            final int defaultWidth, final int defaultHeight) {
         _identifier = windowClass.getName();
         _defaultWidth = defaultWidth;
         _defaultHeight = defaultHeight;
@@ -56,7 +56,7 @@ public class WindowSizePreferences {
     }
 
     public boolean isWindowMaximized() {
-        Map<String, String> properties = _userPreferences.getAdditionalProperties();
+        final Map<String, String> properties = _userPreferences.getAdditionalProperties();
         final String isMaximized = properties.get(getIsMaximizedWindowPropertyKey());
         if (isMaximized == null) {
             return true;
@@ -65,7 +65,7 @@ public class WindowSizePreferences {
     }
 
     public Dimension getUserPreferredSize() {
-        Map<String, String> properties = _userPreferences.getAdditionalProperties();
+        final Map<String, String> properties = _userPreferences.getAdditionalProperties();
         String widthStr = properties.get(getWidthPropertyKey());
         if (widthStr == null) {
             widthStr = "" + _defaultWidth;
@@ -77,13 +77,13 @@ public class WindowSizePreferences {
         return new Dimension(Integer.parseInt(widthStr), Integer.parseInt(heightStr));
     }
 
-    public void setUserPreferredSize(Dimension size, boolean isMaximized) {
-        Map<String, String> properties = _userPreferences.getAdditionalProperties();
+    public void setUserPreferredSize(final Dimension size, final boolean isMaximized) {
+        final Map<String, String> properties = _userPreferences.getAdditionalProperties();
         if (size != null) {
             properties.put(getWidthPropertyKey(), "" + size.width);
             properties.put(getHeightPropertyKey(), "" + size.height);
-        } 
-        
+        }
+
         properties.put(getIsMaximizedWindowPropertyKey(), "" + isMaximized);
         _userPreferences.save();
     }

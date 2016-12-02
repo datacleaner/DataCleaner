@@ -31,29 +31,29 @@ public interface RowAnnotationHandler {
     /**
      * Annotates/labels a row with an annotation. The row will be sampled and
      * usually retrievable using the getRows(...) method later in the process.
-     * 
+     *
      * @param row
      * @param annotation
      */
-    public void annotate(InputRow row, RowAnnotation annotation);
+    void annotate(InputRow row, RowAnnotation annotation);
 
-    public void annotate(InputRow row, int distinctCount, RowAnnotation annotation);
+    void annotate(InputRow row, int distinctCount, RowAnnotation annotation);
 
     /**
      * Transfers registered annotated rows from one annotation to the other.
-     * 
+     *
      * @param from
      * @param to
      */
-    public void transferAnnotations(RowAnnotation from, RowAnnotation to);
+    void transferAnnotations(RowAnnotation from, RowAnnotation to);
 
     /**
      * Removes/resets all annotations of a specific kind. This method can be
      * used for situations where eg. an analyzer is annotating extreme values
      * (highest/lowest values etc.) and the threshold is changing, cancelling
      * all previous annotations.
-     * 
+     *
      * @param annotation
      */
-    public void resetAnnotation(RowAnnotation annotation);
+    void resetAnnotation(RowAnnotation annotation);
 }

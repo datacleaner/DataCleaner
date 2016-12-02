@@ -38,30 +38,30 @@ import org.datacleaner.data.ELInputColumn;
 @Categorized({ ScriptingCategory.class })
 public class ELTransformer implements Transformer {
 
-	@Configured
-	String _expression;
+    @Configured
+    String _expression;
 
-	private ExpressionBasedInputColumn<String> _column;
+    private ExpressionBasedInputColumn<String> _column;
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(1, String.class);
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(1, String.class);
+    }
 
-	@Initialize
-	public void init() {
-		// we simply reuse the functionality available in the ELInputColumn
-		if (_expression.indexOf("#{") == -1) {
-			_column = new ConstantInputColumn(_expression);
-		} else {
-			_column = new ELInputColumn(_expression);
-		}
-	}
+    @Initialize
+    public void init() {
+        // we simply reuse the functionality available in the ELInputColumn
+        if (_expression.indexOf("#{") == -1) {
+            _column = new ConstantInputColumn(_expression);
+        } else {
+            _column = new ELInputColumn(_expression);
+        }
+    }
 
-	@Override
-	public String[] transform(InputRow inputRow) {
-		String result = _column.evaluate(inputRow);
-		return new String[] { result };
-	}
+    @Override
+    public String[] transform(final InputRow inputRow) {
+        final String result = _column.evaluate(inputRow);
+        return new String[] { result };
+    }
 
 }

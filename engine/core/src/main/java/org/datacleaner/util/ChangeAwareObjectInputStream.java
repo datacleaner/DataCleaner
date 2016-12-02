@@ -62,13 +62,13 @@ import org.slf4j.LoggerFactory;
  * {@link ObjectInputStream} implementation that is aware of changes such as
  * class or package renaming. This can be used to deserialize classes with
  * historic/legacy class names.
- * 
+ *
  * Furthermore the deserialization mechanism is aware of multiple
  * {@link ClassLoader}s. This means that if the object being deserialized
  * pertains to a different {@link ClassLoader}, then this classloader can be
  * added using the {@link #addClassLoader(ClassLoader)} method.
- * 
- * 
+ *
+ *
  */
 public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInputStream {
 
@@ -78,14 +78,26 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
      * Table mapping primitive type names to corresponding class objects. As
      * defined in {@link ObjectInputStream}.
      */
-    private static final Map<String, Class<?>> PRIMITIVE_CLASSES = new HashMap<String, Class<?>>(8, 1.0F);
+    private static final Map<String, Class<?>> PRIMITIVE_CLASSES = new HashMap<>(8, 1.0F);
 
     /**
      * Since the change from eobjects.org MetaModel to Apache MetaModel, a lot
      * of interfaces (especially those that extend {@link HasName}) have
      * transparently changed their serialization IDs.
      */
-    private static final Set<String> INTERFACES_WITH_SERIAL_ID_CHANGES = new HashSet<String>();
+    private static final Set<String> INTERFACES_WITH_SERIAL_ID_CHANGES = new HashSet<>();
+    private static final Comparator<String> packageNameComparator = (o1, o2) -> {
+        if (EqualsBuilder.equals(o1, o2)) {
+            return 0;
+        }
+        // use length as the primary differentiator, to make sure long
+        // packages are placed before short ones.
+        int diff = o1.length() - o2.length();
+        if (diff == 0) {
+            diff = o1.compareTo(o2);
+        }
+        return diff;
+    };
 
     static {
         PRIMITIVE_CLASSES.put("boolean", boolean.class);
@@ -107,31 +119,15 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         INTERFACES_WITH_SERIAL_ID_CHANGES.add("org.datacleaner.beans.writers.WriteDataResult");
     }
 
-    private static final Comparator<String> packageNameComparator = new Comparator<String>() {
-        @Override
-        public int compare(String o1, String o2) {
-            if (EqualsBuilder.equals(o1, o2)) {
-                return 0;
-            }
-            // use length as the primary differentiator, to make sure long
-            // packages are placed before short ones.
-            int diff = o1.length() - o2.length();
-            if (diff == 0) {
-                diff = o1.compareTo(o2);
-            }
-            return diff;
-        }
-    };
-
     private final List<ClassLoader> additionalClassLoaders;
     private final Map<String, String> renamedPackages;
     private final Map<String, String> renamedClasses;
 
-    public ChangeAwareObjectInputStream(InputStream in) throws IOException {
+    public ChangeAwareObjectInputStream(final InputStream in) throws IOException {
         super(in);
-        renamedPackages = new TreeMap<String, String>(packageNameComparator);
-        renamedClasses = new HashMap<String, String>();
-        additionalClassLoaders = new ArrayList<ClassLoader>();
+        renamedPackages = new TreeMap<>(packageNameComparator);
+        renamedClasses = new HashMap<>();
+        additionalClassLoaders = new ArrayList<>();
 
         // add analyzerbeans' own renamed classes
         addRenamedClass("org.datacleaner.reference.TextBasedDictionary", TextFileDictionary.class);
@@ -173,7 +169,8 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
                 "org.datacleaner.result.ValueCountListImpl");
 
         // duplicate detection analyzer changed
-        final String duplicateDetectionClassName = "com.hi.hiqmr.packaging.datacleaner.deduplication.DuplicateDetectionAnalyzer";
+        final String duplicateDetectionClassName =
+                "com.hi.hiqmr.packaging.datacleaner.deduplication.DuplicateDetectionAnalyzer";
         addRenamedClass("com.hi.contacts.datacleaner.DuplicateDetectionAnalyzer", duplicateDetectionClassName);
         addRenamedClass("com.hi.hiqmr.datacleaner.deduplication.Identify7DeduplicationAnalyzer",
                 duplicateDetectionClassName);
@@ -220,19 +217,19 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         addRenamedPackage("org.datacleaner.output.beans", "org.datacleaner.extension.output");
     }
 
-    public void addClassLoader(ClassLoader classLoader) {
+    public void addClassLoader(final ClassLoader classLoader) {
         additionalClassLoaders.add(classLoader);
     }
 
-    public void addRenamedPackage(String originalPackageName, String newPackageName) {
+    public void addRenamedPackage(final String originalPackageName, final String newPackageName) {
         renamedPackages.put(originalPackageName, newPackageName);
     }
 
-    public void addRenamedClass(String originalClassName, Class<?> newClass) {
+    public void addRenamedClass(final String originalClassName, final Class<?> newClass) {
         addRenamedClass(originalClassName, newClass.getName());
     }
 
-    public void addRenamedClass(String originalClassName, String newClassName) {
+    public void addRenamedClass(final String originalClassName, final String newClassName) {
         renamedClasses.put(originalClassName, newClassName);
     }
 
@@ -248,9 +245,7 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         }
 
         if (INTERFACES_WITH_SERIAL_ID_CHANGES.contains(originalClassName)) {
-            final ObjectStreamClass newClassDescriptor = ObjectStreamClass
-                    .lookup(resolveClass(originalClassName, false));
-            return newClassDescriptor;
+            return ObjectStreamClass.lookup(resolveClass(originalClassName, false));
         }
 
         return resultClassDescriptor;
@@ -277,13 +272,13 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
             // try to hack our way out of it by changing the value of the "name"
             // field in the ORIGINAL descriptor
             try {
-                Field field = ObjectStreamClass.class.getDeclaredField("name");
+                final Field field = ObjectStreamClass.class.getDeclaredField("name");
                 assert field != null;
                 assert field.getType() == String.class;
                 field.setAccessible(true);
                 field.set(originalClassDescriptor, className);
                 return originalClassDescriptor;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Unsuccesful attempt at changing the name of the original class descriptor");
                 if (e instanceof RuntimeException) {
                     throw (RuntimeException) e;
@@ -295,7 +290,7 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
     }
 
     @Override
-    protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+    protected Class<?> resolveClass(final ObjectStreamClass desc) throws IOException, ClassNotFoundException {
         final String className = desc.getName();
         if (className.startsWith("org.eobjects.metamodel") || className.startsWith("[Lorg.eobjects.metamodel")) {
             return super.resolveClass(desc);
@@ -303,7 +298,8 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         return resolveClass(className, true);
     }
 
-    private Class<?> resolveClass(final String classNameParameter, boolean checkRenames) throws ClassNotFoundException {
+    private Class<?> resolveClass(final String classNameParameter, final boolean checkRenames)
+            throws ClassNotFoundException {
         logger.debug("Resolving class '{}'", classNameParameter);
 
         final String className;
@@ -315,18 +311,18 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
 
         try {
             return Class.forName(className);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             final Class<?> primitiveClass = PRIMITIVE_CLASSES.get(className);
             if (primitiveClass != null) {
                 return primitiveClass;
             }
 
             logger.info("Class '{}' was not resolved in main class loader.", className);
-            final List<Exception> exceptions = new ArrayList<Exception>(additionalClassLoaders.size());
-            for (ClassLoader classLoader : additionalClassLoaders) {
+            final List<Exception> exceptions = new ArrayList<>(additionalClassLoaders.size());
+            for (final ClassLoader classLoader : additionalClassLoaders) {
                 try {
                     return Class.forName(className, true, classLoader);
-                } catch (ClassNotFoundException minorException) {
+                } catch (final ClassNotFoundException minorException) {
                     logger.info("Class '{}' was not resolved in additional class loader '{}'", className, classLoader);
                     exceptions.add(minorException);
                 }
@@ -338,7 +334,7 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
             // issues
             int i = 1;
             for (final Exception exception : exceptions) {
-                int numExceptions = exceptions.size();
+                final int numExceptions = exceptions.size();
                 logger.error("Exception " + i + " of " + numExceptions, exception);
                 i++;
             }
@@ -347,11 +343,11 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         }
     }
 
-    private String getClassNameRenamed(String className) {
+    private String getClassNameRenamed(final String className) {
         return getClassNameRenamed(className, true);
     }
 
-    private String getClassNameRenamed(String className, boolean includeRenamedPackages) {
+    private String getClassNameRenamed(final String className, final boolean includeRenamedPackages) {
         // handle array definitions
         if (className.startsWith("[L")) {
             final String classNameWithoutArrayDef = className.substring(2, className.length() - 1);
@@ -369,7 +365,7 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         if (includeRenamedPackages) {
             // handle renamed packages
             final Set<Entry<String, String>> entrySet = renamedPackages.entrySet();
-            for (Entry<String, String> entry : entrySet) {
+            for (final Entry<String, String> entry : entrySet) {
                 final String legacyPackage = entry.getKey();
                 if (className.startsWith(legacyPackage)) {
                     final String renamedClassName = className.replaceFirst(legacyPackage, entry.getValue());
@@ -384,7 +380,7 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         return className;
     }
 
-    private String[] getFieldNames(ObjectStreamClass classDescriptor) {
+    private String[] getFieldNames(final ObjectStreamClass classDescriptor) {
         if (classDescriptor == null) {
             return new String[0];
         }

@@ -29,7 +29,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 public class NoopSlaveJobInterceptor implements SlaveJobInterceptor {
 
     @Override
-    public void intercept(AnalysisJobBuilder jobBuilder, DataCleanerConfiguration configuration) {
+    public void intercept(final AnalysisJobBuilder jobBuilder, final DataCleanerConfiguration configuration) {
     }
 
 }

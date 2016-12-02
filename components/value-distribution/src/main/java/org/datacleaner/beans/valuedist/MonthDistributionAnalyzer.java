@@ -50,7 +50,7 @@ import org.datacleaner.result.CrosstabResult;
 @Description("Finds the distribution of months from Date values.")
 @Concurrent(true)
 @Categorized(DateAndTimeCategory.class)
-@Distributed(reducer=MonthDistributionResultReducer.class)
+@Distributed(reducer = MonthDistributionResultReducer.class)
 public class MonthDistributionAnalyzer implements Analyzer<CrosstabResult> {
 
     private final Map<InputColumn<Date>, ConcurrentMap<Integer, AtomicInteger>> distributionMap;
@@ -59,28 +59,28 @@ public class MonthDistributionAnalyzer implements Analyzer<CrosstabResult> {
     InputColumn<Date>[] dateColumns;
 
     public MonthDistributionAnalyzer() {
-        distributionMap = new HashMap<InputColumn<Date>, ConcurrentMap<Integer, AtomicInteger>>();
+        distributionMap = new HashMap<>();
     }
 
     @Initialize
     public void init() {
-        for (InputColumn<Date> col : dateColumns) {
-            final ConcurrentMap<Integer, AtomicInteger> countMap = new ConcurrentHashMap<Integer, AtomicInteger>();
+        for (final InputColumn<Date> col : dateColumns) {
+            final ConcurrentMap<Integer, AtomicInteger> countMap = new ConcurrentHashMap<>();
             distributionMap.put(col, countMap);
         }
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
-        for (InputColumn<Date> col : dateColumns) {
+    public void run(final InputRow row, final int distinctCount) {
+        for (final InputColumn<Date> col : dateColumns) {
             final Date value = row.getValue(col);
             if (value != null) {
                 final Calendar c = Calendar.getInstance();
                 c.setTime(value);
                 final int monthConstant = c.get(Calendar.MONTH);
                 final ConcurrentMap<Integer, AtomicInteger> countMap = distributionMap.get(col);
-                final AtomicInteger previousCount = countMap.putIfAbsent(monthConstant,
-                        new AtomicInteger(distinctCount));
+                final AtomicInteger previousCount =
+                        countMap.putIfAbsent(monthConstant, new AtomicInteger(distinctCount));
                 if (previousCount != null) {
                     previousCount.addAndGet(distinctCount);
                 }
@@ -93,19 +93,19 @@ public class MonthDistributionAnalyzer implements Analyzer<CrosstabResult> {
         final CrosstabDimension columnDimension = new CrosstabDimension("Column");
         final CrosstabDimension monthDimension = new CrosstabDimension("Month");
 
-        for (Month month : Month.values()) {
+        for (final Month month : Month.values()) {
             final String monthName = toMonthName(month);
             monthDimension.addCategory(monthName);
         }
 
-        final Crosstab<Integer> crosstab = new Crosstab<Integer>(Integer.class, columnDimension, monthDimension);
-        for (InputColumn<Date> col : dateColumns) {
+        final Crosstab<Integer> crosstab = new Crosstab<>(Integer.class, columnDimension, monthDimension);
+        for (final InputColumn<Date> col : dateColumns) {
             columnDimension.addCategory(col.getName());
             final CrosstabNavigator<Integer> nav = crosstab.where(columnDimension, col.getName());
 
             final Map<Integer, AtomicInteger> countMap = distributionMap.get(col);
 
-            for (Entry<Integer, AtomicInteger> entry : countMap.entrySet()) {
+            for (final Entry<Integer, AtomicInteger> entry : countMap.entrySet()) {
                 final Integer monthConstant = entry.getKey();
                 final Month month = Month.getByCalendarConstant(monthConstant);
                 final AtomicInteger count = entry.getValue();
@@ -117,14 +117,13 @@ public class MonthDistributionAnalyzer implements Analyzer<CrosstabResult> {
         return new CrosstabResult(crosstab);
     }
 
-    private String toMonthName(Month month) {
+    private String toMonthName(final Month month) {
         final String upperCaseMonthName = month.toString();
-        final String monthName = upperCaseMonthName.charAt(0) + upperCaseMonthName.substring(1).toLowerCase();
-        return monthName;
+        return upperCaseMonthName.charAt(0) + upperCaseMonthName.substring(1).toLowerCase();
     }
 
     // used only for unittesting
-    public void setDateColumns(InputColumn<Date>[] dateColumns) {
+    public void setDateColumns(final InputColumn<Date>[] dateColumns) {
         this.dateColumns = dateColumns;
     }
 }

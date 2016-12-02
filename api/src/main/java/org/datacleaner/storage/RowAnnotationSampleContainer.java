@@ -32,17 +32,17 @@ public interface RowAnnotationSampleContainer {
     /**
      * Determines if there are sample rows available for a specific
      * {@link RowAnnotation}.
-     * 
+     *
      * @param annotation
      * @return
      */
-    public boolean hasSampleRows(RowAnnotation annotation);
+    boolean hasSampleRows(RowAnnotation annotation);
 
     /**
      * Gets all the available sample rows with a given annotation.
-     * 
+     *
      * @param annotation
      * @return
      */
-    public List<InputRow> getSampleRows(RowAnnotation annotation);
+    List<InputRow> getSampleRows(RowAnnotation annotation);
 }

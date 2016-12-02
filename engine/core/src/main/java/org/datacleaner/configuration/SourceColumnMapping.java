@@ -26,11 +26,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.datacleaner.connection.DatastoreConnection;
+import org.apache.metamodel.schema.Column;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.job.AnalysisJobMetadata;
-import org.apache.metamodel.schema.Column;
 
 /**
  * A class that represents a mapping between column paths as defined in a
@@ -43,37 +43,37 @@ public final class SourceColumnMapping {
     private final Map<String, Column> _map;
     private Datastore _datastore;
 
-    public SourceColumnMapping(AnalysisJobMetadata metadata) {
+    public SourceColumnMapping(final AnalysisJobMetadata metadata) {
         this(metadata.getSourceColumnPaths());
     }
 
-    public SourceColumnMapping(String... originalColumnPaths) {
-        _map = new TreeMap<String, Column>();
-        for (String path : originalColumnPaths) {
+    public SourceColumnMapping(final String... originalColumnPaths) {
+        _map = new TreeMap<>();
+        for (final String path : originalColumnPaths) {
             _map.put(path, null);
         }
     }
 
-    public SourceColumnMapping(List<String> sourceColumnPaths) {
+    public SourceColumnMapping(final List<String> sourceColumnPaths) {
         this(sourceColumnPaths.toArray(new String[sourceColumnPaths.size()]));
-    }
-
-    public void setDatastore(Datastore datastore) {
-        _datastore = datastore;
     }
 
     public Datastore getDatastore() {
         return _datastore;
     }
 
+    public void setDatastore(final Datastore datastore) {
+        _datastore = datastore;
+    }
+
     /**
      * Automatically maps all unmapped paths by looking them up in a datastore.
-     * 
+     *
      * @param schemaNavigator
      */
-    public void autoMap(Datastore datastore) {
+    public void autoMap(final Datastore datastore) {
         setDatastore(datastore);
-        try (final DatastoreConnection con = datastore.openConnection()) {
+        try (DatastoreConnection con = datastore.openConnection()) {
             final SchemaNavigator schemaNavigator = con.getSchemaNavigator();
             for (final Entry<String, Column> entry : _map.entrySet()) {
                 if (entry.getValue() == null) {
@@ -89,7 +89,7 @@ public final class SourceColumnMapping {
         if (_datastore == null) {
             return false;
         }
-        for (Entry<String, Column> entry : _map.entrySet()) {
+        for (final Entry<String, Column> entry : _map.entrySet()) {
             if (entry.getValue() == null) {
                 return false;
             }
@@ -97,11 +97,11 @@ public final class SourceColumnMapping {
         return true;
     }
 
-    public Column getColumn(String path) {
+    public Column getColumn(final String path) {
         return _map.get(path);
     }
 
-    public void setColumn(String path, Column column) {
+    public void setColumn(final String path, final Column column) {
         _map.put(path, column);
     }
 
@@ -110,8 +110,8 @@ public final class SourceColumnMapping {
     }
 
     public Set<String> getUnmappedPaths() {
-        Set<String> result = new TreeSet<String>();
-        for (Entry<String, Column> entry : _map.entrySet()) {
+        final Set<String> result = new TreeSet<>();
+        for (final Entry<String, Column> entry : _map.entrySet()) {
             if (entry.getValue() == null) {
                 result.add(entry.getKey());
             }

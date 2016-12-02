@@ -29,13 +29,13 @@ import junit.framework.TestCase;
 public class WriteDefaultTenantConfigurationActionTest extends TestCase {
 
     public void testWrite() throws Exception {
-        WriteDefaultTenantConfigurationAction action = new WriteDefaultTenantConfigurationAction();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final WriteDefaultTenantConfigurationAction action = new WriteDefaultTenantConfigurationAction();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         action.run(out);
 
-        String result = FileHelper.readInputStreamAsString(new ByteArrayInputStream(out.toByteArray()), "UTF8");
+        final String result = FileHelper.readInputStreamAsString(new ByteArrayInputStream(out.toByteArray()), "UTF8");
         assertNotNull(result);
-        assertTrue(result, result.replaceAll("\r\n", "\n").startsWith(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<configuration"));
+        assertTrue(result, result.replaceAll("\r\n", "\n")
+                .startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<configuration"));
     }
 }

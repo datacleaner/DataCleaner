@@ -26,13 +26,13 @@ import com.google.gwt.http.client.Response;
 /**
  * Convenient abstract implementation of the {@link RequestCallback} which
  * handles error situations.
- * 
+ *
  * @see RequestCallback
  */
 public abstract class DCRequestCallback implements RequestCallback {
 
     @Override
-    public void onResponseReceived(Request request, Response response) {
+    public void onResponseReceived(final Request request, final Response response) {
         final int statusCode = response.getStatusCode();
         if (statusCode == 200) {
             onSuccess(request, response);
@@ -45,11 +45,12 @@ public abstract class DCRequestCallback implements RequestCallback {
     protected abstract void onSuccess(Request request, Response response);
 
     @Override
-    public void onError(Request request, Throwable exception) {
+    public void onError(final Request request, final Throwable exception) {
         ErrorHandler.showErrorDialog("", null, exception);
     }
 
-    public void onNonSuccesfullStatusCode(Request request, Response response, int statusCode, String statusText) {
+    public void onNonSuccesfullStatusCode(final Request request, final Response response, final int statusCode,
+            final String statusText) {
         ErrorHandler.showErrorDialog("Server reported error (HTTP " + statusCode + ")", statusText, response.getText());
     }
 

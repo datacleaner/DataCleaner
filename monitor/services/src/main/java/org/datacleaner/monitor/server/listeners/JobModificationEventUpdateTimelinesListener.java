@@ -41,25 +41,25 @@ public class JobModificationEventUpdateTimelinesListener implements ApplicationL
     private final TimelineDao _timelineDao;
 
     @Autowired
-    public JobModificationEventUpdateTimelinesListener(TimelineDao timelineDao) {
+    public JobModificationEventUpdateTimelinesListener(final TimelineDao timelineDao) {
         _timelineDao = timelineDao;
     }
 
     @Override
-    public void onApplicationEvent(JobModificationEvent event) {
+    public void onApplicationEvent(final JobModificationEvent event) {
         final String oldJobName = event.getOldJobName();
         final String newJobName = event.getNewJobName();
         if (oldJobName.equals(newJobName)) {
             return;
         }
 
-        JobIdentifier oldJobIdentifier = new JobIdentifier(oldJobName);
-        JobIdentifier newJobIdentifier = new JobIdentifier(newJobName);
+        final JobIdentifier oldJobIdentifier = new JobIdentifier(oldJobName);
+        final JobIdentifier newJobIdentifier = new JobIdentifier(newJobName);
 
-        final Map<TimelineIdentifier, TimelineDefinition> timelines = _timelineDao.getTimelinesForJob(
-                new TenantIdentifier(event.getTenant()), oldJobIdentifier);
+        final Map<TimelineIdentifier, TimelineDefinition> timelines =
+                _timelineDao.getTimelinesForJob(new TenantIdentifier(event.getTenant()), oldJobIdentifier);
 
-        for (Map.Entry<TimelineIdentifier, TimelineDefinition> entry : timelines.entrySet()) {
+        for (final Map.Entry<TimelineIdentifier, TimelineDefinition> entry : timelines.entrySet()) {
             final TimelineIdentifier identifier = entry.getKey();
             final TimelineDefinition definition = entry.getValue();
             definition.setJobIdentifier(newJobIdentifier);

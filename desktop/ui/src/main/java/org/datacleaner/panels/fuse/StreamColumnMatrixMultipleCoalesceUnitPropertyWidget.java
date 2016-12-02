@@ -22,7 +22,9 @@ package org.datacleaner.panels.fuse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -53,7 +55,7 @@ import com.google.common.collect.Multimap;
  * A {@link PropertyWidget} for representing both a property with an array of
  * {@link CoalesceUnit}s and another property with an array of
  * {@link InputColumn}s.
- * 
+ *
  * This widget presents the incoming streams as columns and available
  * {@link InputColumn}s from each stream as rows in a matrix where the user gets
  * the design a new {@link OutputDataStream}.
@@ -61,16 +63,16 @@ import com.google.common.collect.Multimap;
 public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]>
         implements TransformerChangeListener, MutableInputColumn.Listener {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(StreamColumnMatrixMultipleCoalesceUnitPropertyWidget.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(StreamColumnMatrixMultipleCoalesceUnitPropertyWidget.class);
 
     private final ConfiguredPropertyDescriptor _unitProperty;
     private final MinimalPropertyWidget<CoalesceUnit[]> _unitPropertyWidget;
     private final DCPanel _containerPanel;
     private final List<StreamColumnListPanel> _tablePanels;
 
-    public StreamColumnMatrixMultipleCoalesceUnitPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor inputProperty, ConfiguredPropertyDescriptor unitProperty) {
+    public StreamColumnMatrixMultipleCoalesceUnitPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor inputProperty, final ConfiguredPropertyDescriptor unitProperty) {
         super(componentBuilder, inputProperty);
         _unitProperty = unitProperty;
         _tablePanels = new ArrayList<>();
@@ -88,8 +90,8 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
 
         add(scroll);
 
-        final CoalesceUnit[] coalesceUnits = (CoalesceUnit[]) getComponentBuilder()
-                .getConfiguredProperty(_unitProperty);
+        final CoalesceUnit[] coalesceUnits =
+                (CoalesceUnit[]) getComponentBuilder().getConfiguredProperty(_unitProperty);
 
         refresh(coalesceUnits);
 
@@ -108,10 +110,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
 
         final AnalysisJobBuilder ajb = getAnalysisJobBuilder();
 
-        InputColumn<?>[] inputColumns = getCurrentValue();
-        if (inputColumns == null) {
-            inputColumns = ajb.getSourceColumns().toArray(new InputColumn[0]);
-        }
+        final InputColumn<?>[] inputColumns = ajb.getSourceColumns().toArray(new InputColumn[0]);
 
         // TODO: We need a SourceColumnFinder that is aware of also nested jobs
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
@@ -120,40 +119,52 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
         // build registries of available columns and coalesced columns
         final Multimap<Table, InputColumn<?>> allTablesAndColumns = ArrayListMultimap.create();
         final Multimap<Table, InputColumn<?>> coalescedTablesAndColumns = ArrayListMultimap.create();
-        {
-            if (units != null) {
-                for (CoalesceUnit unit : units) {
-                    final InputColumn<?>[] coalescedInputColumns = unit.updateInputColumns(inputColumns).getInputColumns();
-                    for (InputColumn<?> inputColumn : coalescedInputColumns) {
-                        final Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
-                        coalescedTablesAndColumns.put(table, inputColumn);
+
+        for (final InputColumn<?> inputColumn : inputColumns) {
+            final Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
+            allTablesAndColumns.put(table, inputColumn);
+        }
+
+        if (units != null) {
+            final List<CoalesceUnit> survivingCoalesceUnits = new ArrayList<>(units.length);
+            for (CoalesceUnit unit : units) {
+                // Not necessarily initialized yet, so no _initializedUnits available
+                final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(inputColumns, false);
+
+                if (updatedInputColumns.length > 0) {
+                    unit = unit.getUpdatedCoalesceUnit(updatedInputColumns);
+                    survivingCoalesceUnits.add(unit);
+                    for (final InputColumn<?> inputColumn : updatedInputColumns) {
+                        final Table originatingTable = sourceColumnFinder.findOriginatingTable(inputColumn);
+                        coalescedTablesAndColumns.put(originatingTable, inputColumn);
                     }
                 }
             }
-            for (InputColumn<?> inputColumn : inputColumns) {
-                Table table = sourceColumnFinder.findOriginatingTable(inputColumn);
-                allTablesAndColumns.put(table, inputColumn);
+            if (!Arrays
+                    .equals(units, survivingCoalesceUnits.toArray(new CoalesceUnit[survivingCoalesceUnits.size()]))) {
+                final Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<>();
+                properties.put(getPropertyDescriptor(), getValue());
+                properties.put(_unitProperty,
+                        survivingCoalesceUnits.toArray(new CoalesceUnit[survivingCoalesceUnits.size()]));
+                fireValuesChanged(properties);
             }
         }
 
         for (final Table table : allTablesAndColumns.keySet()) {
-            final StreamColumnListPanel tablePanel = new StreamColumnListPanel(ajb, table,
-                    new StreamColumnListPanel.Listener() {
-                        @Override
-                        public void onValueChanged(StreamColumnListPanel panel) {
-                            fireValueChanged();
-                            _unitPropertyWidget.fireValueChanged();
-                        }
-                    });
+            final StreamColumnListPanel tablePanel = new StreamColumnListPanel(ajb, table, panel -> {
+                fireValueChanged();
+                _unitPropertyWidget.fireValueChanged();
+            });
 
             final Collection<InputColumn<?>> selectedColumns = coalescedTablesAndColumns.get(table);
-            for (InputColumn<?> inputColumn : selectedColumns) {
+
+            for (final InputColumn<?> inputColumn : selectedColumns) {
                 tablePanel.addInputColumn(inputColumn, true);
             }
 
             final Collection<InputColumn<?>> columns = new ArrayList<>(allTablesAndColumns.get(table));
             columns.removeAll(selectedColumns);
-            for (InputColumn<?> inputColumn : columns) {
+            for (final InputColumn<?> inputColumn : columns) {
                 tablePanel.addInputColumn(inputColumn, false);
             }
 
@@ -197,12 +208,12 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
             }
 
             @Override
-            public boolean isSet() {
-                return StreamColumnMatrixMultipleCoalesceUnitPropertyWidget.this.isSet();
+            protected void setValue(final CoalesceUnit[] value) {
             }
 
             @Override
-            protected void setValue(CoalesceUnit[] value) {
+            public boolean isSet() {
+                return StreamColumnMatrixMultipleCoalesceUnitPropertyWidget.this.isSet();
             }
         };
     }
@@ -211,7 +222,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
         int max = 0;
 
         final List<List<InputColumn<?>>> allCoalescedInputColumns = new ArrayList<>();
-        for (StreamColumnListPanel tablePanel : _tablePanels) {
+        for (final StreamColumnListPanel tablePanel : _tablePanels) {
             final List<InputColumn<?>> coalescedInputColumns = tablePanel.getCoalescedInputColumns();
             allCoalescedInputColumns.add(coalescedInputColumns);
             max = Math.max(max, coalescedInputColumns.size());
@@ -220,7 +231,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
         final CoalesceUnit[] result = new CoalesceUnit[max];
         for (int i = 0; i < result.length; i++) {
             final List<InputColumn<?>> coalesceUnitInputColumns = new ArrayList<>();
-            for (List<InputColumn<?>> coalescedInputColumnsForTable : allCoalescedInputColumns) {
+            for (final List<InputColumn<?>> coalescedInputColumnsForTable : allCoalescedInputColumns) {
                 if (coalescedInputColumnsForTable.size() - 1 >= i) {
                     coalesceUnitInputColumns.add(coalescedInputColumnsForTable.get(i));
                 }
@@ -234,7 +245,7 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
     @Override
     public InputColumn<?>[] getValue() {
         final List<InputColumn<?>> result = new ArrayList<>();
-        for (StreamColumnListPanel tablePanel : _tablePanels) {
+        for (final StreamColumnListPanel tablePanel : _tablePanels) {
             if (tablePanel.hasSelectedInputColumns()) {
                 result.addAll(tablePanel.getAllInputColumns());
             }
@@ -243,38 +254,38 @@ public class StreamColumnMatrixMultipleCoalesceUnitPropertyWidget extends Abstra
     }
 
     @Override
-    public void onNameChanged(MutableInputColumn<?> inputColumn, String oldName, String newName) {
+    protected void setValue(final InputColumn<?>[] value) {
     }
 
     @Override
-    public void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden) {
+    public void onNameChanged(final MutableInputColumn<?> inputColumn, final String oldName, final String newName) {
     }
 
     @Override
-    public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
-            List<MutableInputColumn<?>> outputColumns) {
+    public void onVisibilityChanged(final MutableInputColumn<?> inputColumn, final boolean hidden) {
+    }
+
+    @Override
+    public void onOutputChanged(final TransformerComponentBuilder<?> transformerJobBuilder,
+            final List<MutableInputColumn<?>> outputColumns) {
         if (transformerJobBuilder != getComponentBuilder()) {
             refresh(getCoalesceUnits());
         }
     }
 
     @Override
-    protected void setValue(InputColumn<?>[] value) {
+    public void onAdd(final TransformerComponentBuilder<?> builder) {
     }
 
     @Override
-    public void onAdd(TransformerComponentBuilder<?> builder) {
+    public void onConfigurationChanged(final TransformerComponentBuilder<?> builder) {
     }
 
     @Override
-    public void onConfigurationChanged(TransformerComponentBuilder<?> builder) {
+    public void onRequirementChanged(final TransformerComponentBuilder<?> builder) {
     }
 
     @Override
-    public void onRequirementChanged(TransformerComponentBuilder<?> builder) {
-    }
-
-    @Override
-    public void onRemove(TransformerComponentBuilder<?> componentBuilder) {
+    public void onRemove(final TransformerComponentBuilder<?> componentBuilder) {
     }
 }

@@ -34,38 +34,39 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
 
     private final DataHubUpdateCallback _callback;
 
-    public DataHubUpdateBuilder(DataHubUpdateCallback dataHubUpdateCallback, Table table) {
+    public DataHubUpdateBuilder(final DataHubUpdateCallback dataHubUpdateCallback, final Table table) {
         super(table);
         _callback = dataHubUpdateCallback;
     }
 
     @Override
     public void execute() throws MetaModelException {
-        UpdateData updateData = createUpdateData();
+        final UpdateData updateData = createUpdateData();
         _callback.executeUpdate(updateData);
     }
 
     private UpdateData createUpdateData() {
         final Object[] values = getValues();
-        Column[] columns = getColumns();
-        boolean[] explicitNulls = getExplicitNulls();
-        Map<String, Object> fields = new HashMap<String, Object>();
+        final Column[] columns = getColumns();
+        final boolean[] explicitNulls = getExplicitNulls();
+        final Map<String, Object> fields = new HashMap<>();
         for (int i = 0; i < columns.length; i++) {
             final Object value = values[i];
             if (value != null || explicitNulls[i]) {
-                String columnName = columns[i].getName();
+                final String columnName = columns[i].getName();
                 if (columnName.startsWith("_")) {
-                    throw new IllegalArgumentException("Updates are not allowed on fields containing meta data, identified by the prefix \" _\".");
+                    throw new IllegalArgumentException(
+                            "Updates are not allowed on fields containing meta data, identified by the prefix \" _\".");
                 }
                 fields.put(columnName, value);
             }
         }
 
-        List<FilterItem> whereItems = getWhereItems();
+        final List<FilterItem> whereItems = getWhereItems();
         if (whereItems.size() != 1 || !"gr_id".equals(whereItems.get(0).getSelectItem().getColumn().getName())) {
             throw new IllegalArgumentException("Updates should have the gr_id as the sole condition value.");
         }
-        String grId = (String) whereItems.get(0).getOperand();
+        final String grId = (String) whereItems.get(0).getOperand();
         return new UpdateData(grId, fields);
     }
 }

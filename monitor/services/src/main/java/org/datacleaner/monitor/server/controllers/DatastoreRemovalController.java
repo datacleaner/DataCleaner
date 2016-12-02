@@ -59,7 +59,7 @@ public class DatastoreRemovalController {
 
         datastoreName = datastoreName.replaceAll("\\+", " ");
 
-        final Map<String, String> response = new TreeMap<String, String>();
+        final Map<String, String> response = new TreeMap<>();
         response.put("datastore", datastoreName);
         response.put("action", "remove");
 
@@ -72,9 +72,9 @@ public class DatastoreRemovalController {
 
         try {
             datastoreDao.removeDatastore(tenantContext, datastoreName);
-        } catch (Exception e) {
-            logger.error("Removing datastore '" + datastoreName + "' from tenant '" + tenant
-                    + "'s configuration failed", e);
+        } catch (final Exception e) {
+            logger.error(
+                    "Removing datastore '" + datastoreName + "' from tenant '" + tenant + "'s configuration failed", e);
             response.put("status", "FAILURE");
             response.put("message", e.getMessage());
             return response;

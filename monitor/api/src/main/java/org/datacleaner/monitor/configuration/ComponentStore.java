@@ -28,11 +28,11 @@ import java.util.List;
  */
 public interface ComponentStore {
 
-    public ComponentStoreHolder get(String instanceId);
+    ComponentStoreHolder get(String instanceId);
 
-    public void store(final ComponentStoreHolder configuration);
+    void store(ComponentStoreHolder configuration);
 
-    public boolean remove(String instanceId);
+    boolean remove(String instanceId);
 
-    public List<ComponentStoreHolder> getList();
+    List<ComponentStoreHolder> getList();
 }

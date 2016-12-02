@@ -36,27 +36,16 @@ import org.apache.metamodel.schema.Table;
 
 public class DragDropUtils {
 
-    public static final DataFlavor MODEL_DATA_FLAVOR;
-
-    static {
-        try {
-            MODEL_DATA_FLAVOR = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=\""
-                    + Object.class.getName() + "\"");
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     private static class ModelDataTransferable implements Transferable {
 
         private final Object _modelObject;
 
-        public ModelDataTransferable(Object modelObject) {
+        public ModelDataTransferable(final Object modelObject) {
             _modelObject = modelObject;
         }
 
         @Override
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
+        public boolean isDataFlavorSupported(final DataFlavor flavor) {
             return flavor == MODEL_DATA_FLAVOR;
         }
 
@@ -66,13 +55,24 @@ public class DragDropUtils {
         }
 
         @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException, IOException {
             if (flavor != MODEL_DATA_FLAVOR) {
                 return null;
             }
             return _modelObject;
         }
-    };
+    }
+
+    public static final DataFlavor MODEL_DATA_FLAVOR;
+
+    static {
+        try {
+            MODEL_DATA_FLAVOR =
+                    new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=\"" + Object.class.getName() + "\"");
+        } catch (final ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     public static TransferHandler createSourceTransferHandler() {
         return new TransferHandler() {
@@ -80,12 +80,12 @@ public class DragDropUtils {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public int getSourceActions(JComponent c) {
+            public int getSourceActions(final JComponent c) {
                 return COPY;
             }
 
             @Override
-            protected Transferable createTransferable(JComponent c) {
+            protected Transferable createTransferable(final JComponent c) {
                 final Object modelObject = getModelObject(c);
                 if (modelObject == null) {
                     return null;
@@ -106,15 +106,14 @@ public class DragDropUtils {
         };
     }
 
-    protected static Object getModelObject(JComponent c) {
+    protected static Object getModelObject(final JComponent c) {
         if (c instanceof JTree) {
             final TreePath path = ((JTree) c).getSelectionPath();
             if (path != null) {
                 final Object pathComponent = path.getLastPathComponent();
                 if (pathComponent instanceof DefaultMutableTreeNode) {
                     final DefaultMutableTreeNode node = (DefaultMutableTreeNode) pathComponent;
-                    final Object userObject = node.getUserObject();
-                    return userObject;
+                    return node.getUserObject();
                 }
             }
         }

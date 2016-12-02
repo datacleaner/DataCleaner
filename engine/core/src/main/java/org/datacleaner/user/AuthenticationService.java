@@ -24,5 +24,5 @@ package org.datacleaner.user;
  */
 public interface AuthenticationService {
 
-	public boolean auth(String username, char[] password);
+    boolean auth(String username, char[] password);
 }

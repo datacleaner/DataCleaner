@@ -24,31 +24,39 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import org.datacleaner.util.ReadObjectBuilder;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.excel.ExcelConfiguration;
 import org.apache.metamodel.excel.ExcelDataContext;
+import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SerializableRef;
+import org.datacleaner.util.ReadObjectBuilder;
 
 /**
  * Datastore implementation for Excel spreadsheets.
  */
-public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataContext> implements FileDatastore,
-        ResourceDatastore, UpdateableDatastore {
+public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataContext>
+        implements FileDatastore, ResourceDatastore, UpdateableDatastore {
 
     private static final long serialVersionUID = 1L;
 
     private final String _filename;
     private final SerializableRef<Resource> _resourceRef;
+    private List<String> _customColumnNames;
 
-    public ExcelDatastore(String name, Resource resource, String filename) {
-        super(name);
-        _resourceRef = new SerializableRef<Resource>(resource);
-        _filename = filename;
+    public ExcelDatastore(final String name, final Resource resource, final String filename) {
+        this(name, resource, filename, null);
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    public ExcelDatastore(final String name, final Resource resource, final String filename,
+            final List<String> customColumnNames) {
+        super(name);
+        _resourceRef = new SerializableRef<>(resource);
+        _filename = filename;
+        _customColumnNames = customColumnNames;
+    }
+
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         ReadObjectBuilder.create(this, ExcelDatastore.class).readObject(stream);
     }
 
@@ -65,16 +73,33 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
         return _filename;
     }
 
+    public List<String> getCustomColumnNames() {
+        return _customColumnNames;
+    }
+
     @Override
     protected UsageAwareDatastoreConnection<UpdateableDataContext> createDatastoreConnection() {
         final UpdateableDataContext dc;
         final Resource resource = getResource();
+        final ExcelConfiguration excelConfiguration = getExcelConfiguration();
+
         if (resource == null) {
-            dc = new ExcelDataContext(new File(_filename));
+            dc = new ExcelDataContext(new File(_filename), excelConfiguration);
         } else {
-            dc = new ExcelDataContext(resource, new ExcelConfiguration());
+            dc = new ExcelDataContext(resource, excelConfiguration);
         }
-        return new UpdateableDatastoreConnectionImpl<UpdateableDataContext>(dc, this);
+
+        return new UpdateableDatastoreConnectionImpl<>(dc, this);
+    }
+
+    private ExcelConfiguration getExcelConfiguration() {
+        if (_customColumnNames != null && _customColumnNames.size() > 0) {
+            return new ExcelConfiguration(ExcelConfiguration.DEFAULT_COLUMN_NAME_LINE,
+                    new CustomColumnNamingStrategy(_customColumnNames), true, false);
+        } else {
+            return new ExcelConfiguration();
+        }
+
     }
 
     @Override
@@ -89,7 +114,7 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         super.decorateIdentity(identifiers);
         identifiers.add(_filename);
     }

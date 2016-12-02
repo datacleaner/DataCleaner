@@ -22,10 +22,7 @@ package org.datacleaner.widgets.result;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -98,7 +95,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
     private static final int GROUPS_VISIBLE = 8;
 
     @Override
-    public JComponent render(DateGapAnalyzerResult result) {
+    public JComponent render(final DateGapAnalyzerResult result) {
 
         final TaskSeriesCollection dataset = new TaskSeriesCollection();
         final Set<String> groupNames = result.getGroupNames();
@@ -119,8 +116,8 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
             }
 
             final TimeInterval completeDuration = result.getCompleteDuration(groupName);
-            final Task completeDurationTask = new Task(groupDisplayName, createTimePeriod(completeDuration.getFrom(),
-                    completeDuration.getTo()));
+            final Task completeDurationTask =
+                    new Task(groupDisplayName, createTimePeriod(completeDuration.getFrom(), completeDuration.getTo()));
             completeDurationTaskSeries.add(completeDurationTask);
 
             // plot gaps
@@ -129,14 +126,14 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 
                 int i = 1;
                 Task rootTask = null;
-                for (TimeInterval interval : gaps) {
+                for (final TimeInterval interval : gaps) {
                     final TimePeriod timePeriod = createTimePeriod(interval.getFrom(), interval.getTo());
 
                     if (rootTask == null) {
                         rootTask = new Task(groupDisplayName, timePeriod);
                         gapsTaskSeries.add(rootTask);
                     } else {
-                        Task task = new Task(groupDisplayName + " gap" + i, timePeriod);
+                        final Task task = new Task(groupDisplayName + " gap" + i, timePeriod);
                         rootTask.addSubtask(task);
                     }
 
@@ -150,14 +147,14 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 
                 int i = 1;
                 Task rootTask = null;
-                for (TimeInterval interval : overlaps) {
+                for (final TimeInterval interval : overlaps) {
                     final TimePeriod timePeriod = createTimePeriod(interval.getFrom(), interval.getTo());
 
                     if (rootTask == null) {
                         rootTask = new Task(groupDisplayName, timePeriod);
                         overlapsTaskSeries.add(rootTask);
                     } else {
-                        Task task = new Task(groupDisplayName + " overlap" + i, timePeriod);
+                        final Task task = new Task(groupDisplayName + " overlap" + i, timePeriod);
                         rootTask.addSubtask(task);
                     }
 
@@ -180,8 +177,9 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
         {
             final CategoryPlot plot = (CategoryPlot) chart.getPlot();
 
-            plot.setDrawingSupplier(new DCDrawingSupplier(WidgetUtils.BG_COLOR_GREEN_BRIGHT,
-                    WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_BLUE_BRIGHT));
+            plot.setDrawingSupplier(
+                    new DCDrawingSupplier(WidgetUtils.BG_COLOR_GREEN_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT,
+                            WidgetUtils.BG_COLOR_BLUE_BRIGHT));
         }
 
         final int visibleLines = Math.min(GROUPS_VISIBLE, groupNames.size());
@@ -189,9 +187,9 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 
         chartPanel.addChartMouseListener(new ChartMouseListener() {
             @Override
-            public void chartMouseMoved(ChartMouseEvent event) {
+            public void chartMouseMoved(final ChartMouseEvent event) {
                 Cursor cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-                ChartEntity entity = event.getEntity();
+                final ChartEntity entity = event.getEntity();
                 if (entity instanceof PlotEntity) {
                     cursor = Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
                 }
@@ -199,7 +197,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
             }
 
             @Override
-            public void chartMouseClicked(ChartMouseEvent event) {
+            public void chartMouseClicked(final ChartMouseEvent event) {
                 // do nothing
             }
         });
@@ -207,35 +205,26 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
         final JComponent decoratedChartPanel;
 
         final StringBuilder chartDescription = new StringBuilder("<html>");
-        chartDescription
-                .append("<p>The chart displays the recorded timeline based on FROM and TO dates.</p>");
-        chartDescription
-                .append("<p>The <b>red items</b> represent gaps in the timeline and the <b>green items</b> represent points in the timeline where more than one record show activity.</p>");
-        chartDescription
-                .append("<p>You can <b>zoom in</b> by clicking and dragging the area that you want to examine in further detail.</p>");
+        chartDescription.append("<p>The chart displays the recorded timeline based on FROM and TO dates.</p>");
+        chartDescription.append("<p>The <b>red items</b> represent gaps in the timeline and the <b>green items</b> "
+                + "represent points in the timeline where more than one record show activity.</p>");
+        chartDescription.append("<p>You can <b>zoom in</b> by clicking and dragging the area that you want to "
+                + "examine in further detail.</p>");
 
         if (groupNames.size() > GROUPS_VISIBLE) {
             final JScrollBar scroll = new JScrollBar(JScrollBar.VERTICAL);
             scroll.setMinimum(0);
             scroll.setMaximum(groupNames.size());
-            scroll.addAdjustmentListener(new AdjustmentListener() {
-
-                @Override
-                public void adjustmentValueChanged(AdjustmentEvent e) {
-                    int value = e.getAdjustable().getValue();
-                    slidingDataset.setFirstCategoryIndex(value);
-                }
+            scroll.addAdjustmentListener(e -> {
+                final int value = e.getAdjustable().getValue();
+                slidingDataset.setFirstCategoryIndex(value);
             });
 
-            chartPanel.addMouseWheelListener(new MouseWheelListener() {
-
-                @Override
-                public void mouseWheelMoved(MouseWheelEvent e) {
-                    int scrollType = e.getScrollType();
-                    if (scrollType == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-                        int wheelRotation = e.getWheelRotation();
-                        scroll.setValue(scroll.getValue() + wheelRotation);
-                    }
+            chartPanel.addMouseWheelListener(e -> {
+                final int scrollType = e.getScrollType();
+                if (scrollType == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+                    final int wheelRotation = e.getWheelRotation();
+                    scroll.setValue(scroll.getValue() + wheelRotation);
                 }
             });
 
@@ -261,7 +250,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
         return panel;
     }
 
-    private TimePeriod createTimePeriod(long from, long to) {
+    private TimePeriod createTimePeriod(final long from, final long to) {
         if (from > to) {
             logger.warn("An illegal from/to combination occurred: {}, {}", from, to);
         }
@@ -271,15 +260,15 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
     /**
      * A main method that will display the results of a few example value
      * distributions. Useful for tweaking the charts and UI.
-     * 
+     *
      * @param args
      * @throws Throwable
      */
-    public static void main(String[] args) throws Throwable {
+    public static void main(final String[] args) throws Throwable {
         LookAndFeelManager.get().init();
 
-        Injector injector = Guice.createInjector(new DCModuleImpl(VFSUtils.getFileSystemManager().resolveFile("."),
-                null));
+        final Injector injector =
+                Guice.createInjector(new DCModuleImpl(VFSUtils.getFileSystemManager().resolveFile("."), null));
 
         // run a small job
         final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
@@ -289,45 +278,44 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
         final DataCleanerConfiguration conf = injector.getInstance(DataCleanerConfiguration.class);
         final AnalysisRunner runner = new AnalysisRunnerImpl(conf);
 
-        DatastoreConnection con = ds.openConnection();
-        Table table = con.getSchemaNavigator().convertToTable("PUBLIC.ORDERS");
+        final DatastoreConnection con = ds.openConnection();
+        final Table table = con.getSchemaNavigator().convertToTable("PUBLIC.ORDERS");
 
         ajb.addSourceColumn(table.getColumnByName("ORDERDATE"));
         ajb.addSourceColumn(table.getColumnByName("SHIPPEDDATE"));
         ajb.addSourceColumn(table.getColumnByName("CUSTOMERNUMBER"));
 
-        @SuppressWarnings("unchecked")
-        InputColumn<Date> orderDateColumn = (InputColumn<Date>) ajb.getSourceColumnByName("ORDERDATE");
-        @SuppressWarnings("unchecked")
-        InputColumn<Date> shippedDateColumn = (InputColumn<Date>) ajb.getSourceColumnByName("SHIPPEDDATE");
-        @SuppressWarnings("unchecked")
-        InputColumn<Integer> customerNumberColumn = (InputColumn<Integer>) ajb.getSourceColumnByName("CUSTOMERNUMBER");
-        @SuppressWarnings("unchecked")
-        MutableInputColumn<String> customerNumberAsStringColumn = (MutableInputColumn<String>) ajb
-                .addTransformer(ConvertToStringTransformer.class).addInputColumn(customerNumberColumn)
-                .getOutputColumns().get(0);
+        @SuppressWarnings("unchecked") final InputColumn<Date> orderDateColumn =
+                (InputColumn<Date>) ajb.getSourceColumnByName("ORDERDATE");
+        @SuppressWarnings("unchecked") final InputColumn<Date> shippedDateColumn =
+                (InputColumn<Date>) ajb.getSourceColumnByName("SHIPPEDDATE");
+        @SuppressWarnings("unchecked") final InputColumn<Integer> customerNumberColumn =
+                (InputColumn<Integer>) ajb.getSourceColumnByName("CUSTOMERNUMBER");
+        @SuppressWarnings("unchecked") final MutableInputColumn<String> customerNumberAsStringColumn =
+                (MutableInputColumn<String>) ajb.addTransformer(ConvertToStringTransformer.class)
+                        .addInputColumn(customerNumberColumn).getOutputColumns().get(0);
 
-        DateGapAnalyzer dga = ajb.addAnalyzer(DateGapAnalyzer.class).getComponentInstance();
+        final DateGapAnalyzer dga = ajb.addAnalyzer(DateGapAnalyzer.class).getComponentInstance();
         dga.setFromColumn(orderDateColumn);
         dga.setToColumn(shippedDateColumn);
         dga.setGroupColumn(customerNumberAsStringColumn);
 
-        AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
+        final AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
 
         if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 
-        List<AnalyzerResult> list = Collections.emptyList();
-        RendererFactory rendererFactory = new RendererFactory(conf);
-        DetailsResultWindow window = new DetailsResultWindow("Example", list,
-                injector.getInstance(WindowContext.class), rendererFactory);
+        final List<AnalyzerResult> list = Collections.emptyList();
+        final RendererFactory rendererFactory = new RendererFactory(conf);
+        final DetailsResultWindow window =
+                new DetailsResultWindow("Example", list, injector.getInstance(WindowContext.class), rendererFactory);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        List<AnalyzerResult> results = resultFuture.getResults();
-        for (AnalyzerResult analyzerResult : results) {
-            JComponent renderedResult = new DateGapAnalyzerResultSwingRenderer()
-                    .render((DateGapAnalyzerResult) analyzerResult);
+        final List<AnalyzerResult> results = resultFuture.getResults();
+        for (final AnalyzerResult analyzerResult : results) {
+            final JComponent renderedResult =
+                    new DateGapAnalyzerResultSwingRenderer().render((DateGapAnalyzerResult) analyzerResult);
             window.addRenderedResult(renderedResult);
         }
         window.repaint();

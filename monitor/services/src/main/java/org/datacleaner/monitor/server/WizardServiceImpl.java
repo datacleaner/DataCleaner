@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.LocaleUtils;
+import org.apache.metamodel.util.Func;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -43,7 +44,11 @@ import org.datacleaner.monitor.wizard.datastore.DatastoreWizard;
 import org.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.datacleaner.monitor.wizard.job.JobWizard;
 import org.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.apache.metamodel.util.Func;
+import org.datacleaner.monitor.wizard.referencedata.DictionaryWizard;
+import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizard;
+import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
+import org.datacleaner.monitor.wizard.referencedata.StringPatternWizard;
+import org.datacleaner.monitor.wizard.referencedata.SynonymCatalogWizard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -63,10 +68,11 @@ public class WizardServiceImpl implements WizardService {
     WizardDao _wizardDao;
 
     @Override
-    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant, String locale) {
-        final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
+    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(final TenantIdentifier tenant,
+            final String locale) {
+        final List<WizardIdentifier> result = new ArrayList<>();
         final Collection<JobWizard> jobWizards = _wizardDao.getWizardsOfType(JobWizard.class);
-        for (JobWizard jobWizard : jobWizards) {
+        for (final JobWizard jobWizard : jobWizards) {
             if (!jobWizard.isDatastoreConsumer()) {
                 final WizardIdentifier jobWizardIdentifier = createJobWizardIdentifier(jobWizard);
                 result.add(jobWizardIdentifier);
@@ -76,7 +82,8 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
-    public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant, String localeString) {
+    public List<WizardIdentifier> getDatastoreWizardIdentifiers(final TenantIdentifier tenant,
+            final String localeString) {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
 
@@ -84,10 +91,10 @@ public class WizardServiceImpl implements WizardService {
         final Locale locale = getLocale(localeString);
         final DatastoreWizardContext context = new DatastoreWizardContextImpl(null, tenantContext, sessionFunc, locale);
 
-        final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
-        for (DatastoreWizard datastoreWizard : _wizardDao.getWizardsOfType(DatastoreWizard.class)) {
+        final List<WizardIdentifier> result = new ArrayList<>();
+        for (final DatastoreWizard datastoreWizard : _wizardDao.getWizardsOfType(DatastoreWizard.class)) {
             if (datastoreWizard.isApplicableTo(context)) {
-                WizardIdentifier wizardIdentifier = createDatastoreWizardIdentifier(datastoreWizard);
+                final WizardIdentifier wizardIdentifier = createDatastoreWizardIdentifier(datastoreWizard);
                 result.add(wizardIdentifier);
             }
         }
@@ -95,28 +102,28 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
-    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant,
-            DatastoreIdentifier datastoreIdentifier, String localeString) {
+    public List<WizardIdentifier> getJobWizardIdentifiers(final TenantIdentifier tenant,
+            final DatastoreIdentifier datastoreIdentifier, final String localeString) {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        final Datastore datastore = tenantContext.getConfiguration().getDatastoreCatalog()
-                .getDatastore(datastoreIdentifier.getName());
+        final Datastore datastore =
+                tenantContext.getConfiguration().getDatastoreCatalog().getDatastore(datastoreIdentifier.getName());
 
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
         final Locale locale = getLocale(localeString);
         final JobWizardContext context = new JobWizardContextImpl(null, tenantContext, datastore, sessionFunc, locale);
 
-        final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
-        for (JobWizard jobWizard : _wizardDao.getWizardsOfType(JobWizard.class)) {
+        final List<WizardIdentifier> result = new ArrayList<>();
+        for (final JobWizard jobWizard : _wizardDao.getWizardsOfType(JobWizard.class)) {
             if (jobWizard.isDatastoreConsumer() && jobWizard.isApplicableTo(context)) {
-                WizardIdentifier wizardIdentifier = createJobWizardIdentifier(jobWizard);
+                final WizardIdentifier wizardIdentifier = createJobWizardIdentifier(jobWizard);
                 result.add(wizardIdentifier);
             }
         }
         return result;
     }
 
-    private WizardIdentifier createDatastoreWizardIdentifier(DatastoreWizard datastoreWizard) {
+    private WizardIdentifier createDatastoreWizardIdentifier(final DatastoreWizard datastoreWizard) {
         final String displayName = datastoreWizard.getDisplayName();
         final WizardIdentifier jobWizardIdentifier = new WizardIdentifier();
         jobWizardIdentifier.setDisplayName(displayName);
@@ -124,7 +131,7 @@ public class WizardServiceImpl implements WizardService {
         return jobWizardIdentifier;
     }
 
-    private WizardIdentifier createJobWizardIdentifier(JobWizard jobWizard) {
+    private WizardIdentifier createJobWizardIdentifier(final JobWizard jobWizard) {
         final String displayName = jobWizard.getDisplayName();
         final WizardIdentifier jobWizardIdentifier = new WizardIdentifier();
         jobWizardIdentifier.setDisplayName(displayName);
@@ -134,24 +141,20 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
-    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
-            String localeString) throws IllegalArgumentException {
+    public WizardPage startDatastoreWizard(final TenantIdentifier tenant, final WizardIdentifier wizardIdentifier,
+            final String localeString) throws IllegalArgumentException {
         final DatastoreWizard wizard = instantiateDatastoreWizard(wizardIdentifier);
-
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
         final Locale locale = getLocale(localeString);
-
-        final DatastoreWizardContext context = new DatastoreWizardContextImpl(wizard, tenantContext, sessionFunc,
-                locale);
-
+        final DatastoreWizardContext context =
+                new DatastoreWizardContextImpl(wizard, tenantContext, sessionFunc, locale);
         final WizardSession session = wizard.start(context);
 
         return startSession(session, wizardIdentifier);
     }
 
-    private Locale getLocale(String localeString) {
+    private Locale getLocale(final String localeString) {
         if (localeString == null) {
             return Locale.ENGLISH;
         }
@@ -162,58 +165,55 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
-    public WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
-            DatastoreIdentifier selectedDatastore, String localeString) throws IllegalArgumentException {
+    public WizardPage startJobWizard(final TenantIdentifier tenant, final WizardIdentifier wizardIdentifier,
+            final DatastoreIdentifier selectedDatastore, final String localeString) throws IllegalArgumentException {
         final JobWizard wizard = instantiateJobWizard(wizardIdentifier);
-
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-
         final Datastore datastore;
+
         if (selectedDatastore == null) {
             datastore = null;
         } else {
-            datastore = tenantContext.getConfiguration().getDatastoreCatalog()
-                    .getDatastore(selectedDatastore.getName());
+            datastore =
+                    tenantContext.getConfiguration().getDatastoreCatalog().getDatastore(selectedDatastore.getName());
         }
 
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
         final Locale locale = getLocale(localeString);
-
-        final JobWizardContext context = new JobWizardContextImpl(wizard, tenantContext, datastore, sessionFunc, locale);
-
+        final JobWizardContext context =
+                new JobWizardContextImpl(wizard, tenantContext, datastore, sessionFunc, locale);
         final WizardSession session = wizard.start(context);
 
         return startSession(session, wizardIdentifier);
     }
 
-    private WizardPage startSession(WizardSession session, WizardIdentifier wizardIdentifier) {
-        final WizardPage page = _wizardDao.startSession(wizardIdentifier, session);
-        return page;
+    private WizardPage startSession(final WizardSession session, final WizardIdentifier wizardIdentifier) {
+        return _wizardDao.startSession(wizardIdentifier, session);
     }
 
     @Override
-    public WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
-            Map<String, List<String>> formParameters) throws DCUserInputException {
+    public WizardPage nextPage(final TenantIdentifier tenant, final WizardSessionIdentifier sessionIdentifier,
+            final Map<String, List<String>> formParameters) throws DCUserInputException {
         return _wizardDao.nextPage(tenant, sessionIdentifier, formParameters);
     }
-    
+
     @Override
-    public WizardPage previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier) {
+    public WizardPage previousPage(final TenantIdentifier tenant, final WizardSessionIdentifier sessionIdentifier) {
         return _wizardDao.previousPage(tenant, sessionIdentifier);
     }
 
     @Override
-    public Boolean cancelWizard(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier) {
+    public Boolean cancelWizard(final TenantIdentifier tenant, final WizardSessionIdentifier sessionIdentifier) {
         if (sessionIdentifier == null) {
             return true;
         }
-        String sessionId = sessionIdentifier.getSessionId();
+        final String sessionId = sessionIdentifier.getSessionId();
         _wizardDao.closeSession(sessionId);
         return true;
     }
 
-    private JobWizard instantiateJobWizard(WizardIdentifier wizardIdentifier) {
-        for (JobWizard jobWizard : _wizardDao.getWizardsOfType(JobWizard.class)) {
+    private JobWizard instantiateJobWizard(final WizardIdentifier wizardIdentifier) {
+        for (final JobWizard jobWizard : _wizardDao.getWizardsOfType(JobWizard.class)) {
             final String displayName = jobWizard.getDisplayName();
             if (displayName.equals(wizardIdentifier.getDisplayName())) {
                 return jobWizard;
@@ -222,13 +222,79 @@ public class WizardServiceImpl implements WizardService {
         return null;
     }
 
-    private DatastoreWizard instantiateDatastoreWizard(WizardIdentifier wizardIdentifier) {
-        for (DatastoreWizard jobWizard : _wizardDao.getWizardsOfType(DatastoreWizard.class)) {
-            final String displayName = jobWizard.getDisplayName();
+    private DatastoreWizard instantiateDatastoreWizard(final WizardIdentifier wizardIdentifier) {
+        for (final DatastoreWizard datastoreWizard : _wizardDao.getWizardsOfType(DatastoreWizard.class)) {
+            final String displayName = datastoreWizard.getDisplayName();
             if (displayName.equals(wizardIdentifier.getDisplayName())) {
-                return jobWizard;
+                return datastoreWizard;
             }
         }
+        return null;
+    }
+
+    @Override
+    public List<WizardIdentifier> getReferenceDataWizardIdentifiers(final String referenceDataType,
+            final TenantIdentifier tenant, final String localeString) {
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
+        final Locale locale = getLocale(localeString);
+        final ReferenceDataWizardContext context =
+                new ReferenceDataWizardContextImpl(null, tenantContext, sessionFunc, locale);
+        final List<WizardIdentifier> result = new ArrayList<>();
+        final Collection wizards;
+
+        if (referenceDataType.equals("dictionary")) {
+            wizards = _wizardDao.getWizardsOfType(DictionaryWizard.class);
+        } else if (referenceDataType.equals("synonym-catalog")) {
+            wizards = _wizardDao.getWizardsOfType(SynonymCatalogWizard.class);
+        } else if (referenceDataType.equals("string-pattern")) {
+            wizards = _wizardDao.getWizardsOfType(StringPatternWizard.class);
+        } else {
+            wizards = _wizardDao.getWizardsOfType(ReferenceDataWizard.class);
+        }
+
+        for (final ReferenceDataWizard datastoreWizard : ((Collection<ReferenceDataWizard>) wizards)) {
+            if (datastoreWizard.isApplicableTo(context)) {
+                final WizardIdentifier wizardIdentifier = createReferenceDataWizardIdentifier(datastoreWizard);
+                result.add(wizardIdentifier);
+            }
+        }
+
+        return result;
+    }
+
+    private WizardIdentifier createReferenceDataWizardIdentifier(final ReferenceDataWizard referenceDataWizard) {
+        final String displayName = referenceDataWizard.getDisplayName();
+        final WizardIdentifier referenceDataWizardIdentifier = new WizardIdentifier();
+        referenceDataWizardIdentifier.setDisplayName(displayName);
+        referenceDataWizardIdentifier.setExpectedPageCount(referenceDataWizard.getExpectedPageCount());
+
+        return referenceDataWizardIdentifier;
+    }
+
+    @Override
+    public WizardPage startReferenceDataWizard(final TenantIdentifier tenant, final WizardIdentifier wizardIdentifier,
+            final String localeString) throws IllegalArgumentException {
+        final ReferenceDataWizard wizard = instantiateReferenceDataWizard(wizardIdentifier);
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
+        final Locale locale = getLocale(localeString);
+        final ReferenceDataWizardContext context =
+                new ReferenceDataWizardContextImpl(wizard, tenantContext, sessionFunc, locale);
+        final WizardSession session = wizard.start(context);
+
+        return startSession(session, wizardIdentifier);
+    }
+
+    private ReferenceDataWizard instantiateReferenceDataWizard(final WizardIdentifier wizardIdentifier) {
+        for (final ReferenceDataWizard referenceDataWizard : _wizardDao.getWizardsOfType(ReferenceDataWizard.class)) {
+            final String displayName = referenceDataWizard.getDisplayName();
+
+            if (displayName.equals(wizardIdentifier.getDisplayName())) {
+                return referenceDataWizard;
+            }
+        }
+
         return null;
     }
 }

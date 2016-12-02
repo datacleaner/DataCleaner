@@ -27,12 +27,12 @@ import org.datacleaner.api.NoAnalyzerResultReducer;
 import org.datacleaner.components.categories.AnalyzeSuperCategory;
 import org.datacleaner.util.ReflectionUtils;
 
-final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> extends
-        AbstractHasAnalyzerResultComponentDescriptor<A> implements AnalyzerDescriptor<A> {
+final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>>
+        extends AbstractHasAnalyzerResultComponentDescriptor<A> implements AnalyzerDescriptor<A> {
 
     private static final long serialVersionUID = 1L;
 
-    protected AnnotationBasedAnalyzerComponentDescriptor(Class<A> analyzerClass) throws DescriptorException {
+    protected AnnotationBasedAnalyzerComponentDescriptor(final Class<A> analyzerClass) throws DescriptorException {
         super(analyzerClass, true);
 
         if (!ReflectionUtils.is(analyzerClass, Analyzer.class)) {
@@ -44,9 +44,9 @@ final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> ex
 
     @Override
     @SuppressWarnings("deprecation")
-    protected String getDisplayNameIfNotNamed(Class<?> cls) {
-        org.eobjects.analyzer.beans.api.AnalyzerBean annotation = ReflectionUtils.getAnnotation(cls,
-                org.eobjects.analyzer.beans.api.AnalyzerBean.class);
+    protected String getDisplayNameIfNotNamed(final Class<?> cls) {
+        final org.eobjects.analyzer.beans.api.AnalyzerBean annotation =
+                ReflectionUtils.getAnnotation(cls, org.eobjects.analyzer.beans.api.AnalyzerBean.class);
         if (annotation == null) {
             return null;
         }
@@ -75,7 +75,7 @@ final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> ex
 
         return super.getResultReducerClass();
     }
-    
+
     @Override
     protected boolean isDistributableByDefault() {
         return getResultReducerClass() != null;

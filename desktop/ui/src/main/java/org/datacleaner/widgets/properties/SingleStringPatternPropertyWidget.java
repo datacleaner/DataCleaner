@@ -19,114 +19,114 @@
  */
 package org.datacleaner.widgets.properties;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.swing.JButton;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.reference.StringPattern;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.StringPattern;
 import org.datacleaner.user.MutableReferenceDataCatalog;
-import org.datacleaner.user.StringPatternChangeListener;
+import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.ReferenceDataComboBoxListRenderer;
 import org.datacleaner.windows.ReferenceDataDialog;
 import org.jdesktop.swingx.HorizontalLayout;
 
-public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<StringPattern> implements
-		StringPatternChangeListener {
+public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<StringPattern>
+        implements ReferenceDataChangeListener<StringPattern> {
 
-	private final DCComboBox<StringPattern> _comboBox;
-	private final MutableReferenceDataCatalog _referenceDataCatalog;
-	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
+    private final DCComboBox<StringPattern> _comboBox;
+    private final MutableReferenceDataCatalog _referenceDataCatalog;
+    private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
-	@Inject
-	public SingleStringPatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			ComponentBuilder componentBuilder, MutableReferenceDataCatalog referenceDataCatalog,
-			Provider<ReferenceDataDialog> referenceDataDialogProvider) {
-		super(componentBuilder, propertyDescriptor);
-		_referenceDataCatalog = referenceDataCatalog;
-		_referenceDataDialogProvider = referenceDataDialogProvider;
+    @Inject
+    public SingleStringPatternPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder, final MutableReferenceDataCatalog referenceDataCatalog,
+            final Provider<ReferenceDataDialog> referenceDataDialogProvider) {
+        super(componentBuilder, propertyDescriptor);
+        _referenceDataCatalog = referenceDataCatalog;
+        _referenceDataDialogProvider = referenceDataDialogProvider;
 
-		_comboBox = new DCComboBox<StringPattern>();
-		_comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
-		_comboBox.setEditable(false);
+        _comboBox = new DCComboBox<>();
+        _comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
+        _comboBox.setEditable(false);
 
-		if (!propertyDescriptor.isRequired()) {
-			_comboBox.addItem(null);
-		}
-		final String[] stringPatternNames = referenceDataCatalog.getStringPatternNames();
-		for (String name : stringPatternNames) {
-			_comboBox.addItem(referenceDataCatalog.getStringPattern(name));
-		}
+        if (!propertyDescriptor.isRequired()) {
+            _comboBox.addItem(null);
+        }
+        final String[] stringPatternNames = referenceDataCatalog.getStringPatternNames();
+        for (final String name : stringPatternNames) {
+            _comboBox.addItem(referenceDataCatalog.getStringPattern(name));
+        }
 
-		StringPattern currentValue = getCurrentValue();
-		_comboBox.setSelectedItem(currentValue);
+        final StringPattern currentValue = getCurrentValue();
+        _comboBox.setSelectedItem(currentValue);
 
-		_comboBox.addListener(new Listener<StringPattern>() {
-			@Override
-			public void onItemSelected(StringPattern item) {
-				fireValueChanged();
-			}
-		});
+        _comboBox.addListener(item -> fireValueChanged());
 
-		final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
-		dialogButton.setToolTipText("Configure synonym catalogs");
-		dialogButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
-				dialog.selectStringPatternsTab();
-				dialog.setVisible(true);
-			}
-		});
+        final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
+        dialogButton.setToolTipText("Configure synonym catalogs");
+        dialogButton.addActionListener(e -> {
+            final ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+            dialog.selectStringPatternsTab();
+            dialog.setVisible(true);
+        });
 
-		final DCPanel outerPanel = new DCPanel();
-		outerPanel.setLayout(new HorizontalLayout(2));
-		outerPanel.add(_comboBox);
-		outerPanel.add(dialogButton);
+        final DCPanel outerPanel = new DCPanel();
+        outerPanel.setLayout(new HorizontalLayout(2));
+        outerPanel.add(_comboBox);
+        outerPanel.add(dialogButton);
 
-		add(outerPanel);
-	}
+        add(outerPanel);
+    }
 
-	@Override
-	public void onPanelAdd() {
-		super.onPanelAdd();
-		_referenceDataCatalog.addStringPatternListener(this);
-	}
+    @Override
+    public void onPanelAdd() {
+        super.onPanelAdd();
+        _referenceDataCatalog.addStringPatternListener(this);
+    }
 
-	@Override
-	public void onPanelRemove() {
-		super.onPanelRemove();
-		_referenceDataCatalog.removeStringPatternListener(this);
-	}
+    @Override
+    public void onPanelRemove() {
+        super.onPanelRemove();
+        _referenceDataCatalog.removeStringPatternListener(this);
+    }
 
-	@Override
-	public StringPattern getValue() {
-		return (StringPattern) _comboBox.getSelectedItem();
-	}
+    @Override
+    public StringPattern getValue() {
+        return (StringPattern) _comboBox.getSelectedItem();
+    }
 
-	@Override
-	protected void setValue(StringPattern value) {
-		_comboBox.setEditable(true);
-		_comboBox.setSelectedItem(value);
-		_comboBox.setEditable(false);
-	}
+    @Override
+    protected void setValue(final StringPattern value) {
+        _comboBox.setEditable(true);
+        _comboBox.setSelectedItem(value);
+        _comboBox.setEditable(false);
+    }
 
-	@Override
-	public void onAdd(StringPattern stringPattern) {
-		_comboBox.addItem(stringPattern);
-	}
+    @Override
+    public void onAdd(final StringPattern stringPattern) {
+        _comboBox.addItem(stringPattern);
+    }
 
-	@Override
-	public void onRemove(StringPattern stringPattern) {
-		_comboBox.removeItem(stringPattern);
-	}
+    @Override
+    public void onRemove(final StringPattern stringPattern) {
+        _comboBox.removeItem(stringPattern);
+    }
+
+    @Override
+    public void onChange(final StringPattern oldStringPattern, final StringPattern newStringPattern) {
+        final StringPattern selectedItem = _comboBox.getSelectedItem();
+        _comboBox.removeItem(oldStringPattern);
+        _comboBox.addItem(newStringPattern);
+
+        if (selectedItem.equals(oldStringPattern)) {
+            _comboBox.setSelectedItem(newStringPattern);
+        }
+        fireValueChanged();
+    }
 }

@@ -23,6 +23,7 @@ import java.util.Date;
 
 import javax.inject.Named;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
@@ -32,58 +33,57 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.DateAndTimeCategory;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
-import org.apache.metamodel.util.HasName;
 
 @Named("Timestamp converter")
 @Description("Convert a timestamp (string or number) to a date field. Epoch is assumed to be 1970-01-01.")
 @Categorized(DateAndTimeCategory.class)
 public class TimestampConverter implements Transformer {
 
-	public static enum Unit implements HasName {
-		DAYS("Days", 24 * 60 * 60 * 1000), HOURS("Hours", 60 * 60 * 1000), MINUTES("Minutes", 60 * 1000), SECONDS("Seconds",
-				1000), MILLIS("Milliseconds", 1);
+    public enum Unit implements HasName {
+        DAYS("Days", 24 * 60 * 60 * 1000), HOURS("Hours", 60 * 60 * 1000), MINUTES("Minutes", 60 * 1000),
+        SECONDS("Seconds", 1000), MILLIS("Milliseconds", 1);
 
-		private final String _name;
-		private final int _millisPerUnit;
+        private final String _name;
+        private final int _millisPerUnit;
 
-		private Unit(String name, int millisPerUnit) {
-			_name = name;
-			_millisPerUnit = millisPerUnit;
-		}
+        Unit(final String name, final int millisPerUnit) {
+            _name = name;
+            _millisPerUnit = millisPerUnit;
+        }
 
-		@Override
-		public String getName() {
-			return _name;
-		}
+        @Override
+        public String getName() {
+            return _name;
+        }
 
-		public int getMillisPerUnit() {
-			return _millisPerUnit;
-		}
-	}
+        public int getMillisPerUnit() {
+            return _millisPerUnit;
+        }
+    }
 
-	@Configured
-	InputColumn<?> timestampColumn;
+    @Configured
+    InputColumn<?> timestampColumn;
 
-	@Configured
-	@Description("The unit of measure for comparing the timestamp to the epoch")
-	Unit unit = Unit.SECONDS;
+    @Configured
+    @Description("The unit of measure for comparing the timestamp to the epoch")
+    Unit unit = Unit.SECONDS;
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(Date.class, timestampColumn.getName() + " (as date)");
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(Date.class, timestampColumn.getName() + " (as date)");
+    }
 
-	@Override
-	public Date[] transform(InputRow inputRow) {
-		final Date[] result = new Date[1];
-		final Object value = inputRow.getValue(timestampColumn);
-		final Number number = ConvertToNumberTransformer.transformValue(value);
+    @Override
+    public Date[] transform(final InputRow inputRow) {
+        final Date[] result = new Date[1];
+        final Object value = inputRow.getValue(timestampColumn);
+        final Number number = ConvertToNumberTransformer.transformValue(value);
 
-		if (number != null) {
-			Date timestampedDate = new Date(number.longValue() * unit.getMillisPerUnit());
-			result[0] = timestampedDate;
-		}
+        if (number != null) {
+            final Date timestampedDate = new Date(number.longValue() * unit.getMillisPerUnit());
+            result[0] = timestampedDate;
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

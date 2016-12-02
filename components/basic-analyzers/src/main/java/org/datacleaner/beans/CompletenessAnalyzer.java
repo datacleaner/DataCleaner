@@ -52,16 +52,8 @@ import com.google.common.base.Strings;
 @Named("Completeness analyzer")
 @Description("Asserts the completeness of your data by ensuring that all required fields are filled.")
 public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult>, HasOutputDataStreams {
-    public static final String OUTPUT_STREAM_COMPLETE = "Complete rows";
-    public static final String OUTPUT_STREAM_INCOMPLETE = "Incomplete rows";
+    public enum Condition implements HasName {
 
-    public static final String PROPERTY_VALUES = "Values";
-    public static final String PROPERTY_CONDITIONS = "Conditions";
-    public static final String PROPERTY_EVALUATION_MODE = "Evaluation mode";
-    public static final String PROPERTY_ADDITIONAL_OUTPUT_VALUES = "Additional output values";
-
-    public static enum Condition implements HasName {
-        
         NOT_BLANK_OR_NULL("Not <blank> or <null>", Condition::isNotNullOrEmpty),
 
         NOT_NULL("Not <null>", e -> (e != null)),
@@ -73,39 +65,39 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
         private final String _name;
         private final Predicate<Object> _predicate;
 
-        private Condition(String name, Predicate<Object> predicate) {
+        Condition(final String name, final Predicate<Object> predicate) {
             _name = name;
             _predicate = predicate;
         }
 
-        @Override
-        public String getName() {
-            return _name;
-        }
-
-        public boolean isValid(Object argument) {
-            return _predicate.test(argument);
-        }
-        
-        private static final boolean isNotNullOrEmpty(Object value) {
+        private static boolean isNotNullOrEmpty(final Object value) {
             return !isNullOrEmpty(value);
         }
 
-        private static final boolean isNullOrEmpty(Object value) {
+        private static boolean isNullOrEmpty(final Object value) {
             if (value instanceof String) {
                 return Strings.isNullOrEmpty((String) value);
             }
             return value == null;
         }
+
+        @Override
+        public String getName() {
+            return _name;
+        }
+
+        public boolean isValid(final Object argument) {
+            return _predicate.test(argument);
+        }
     }
 
-    public static enum EvaluationMode implements HasName {
-        ALL_FIELDS("When all fields are incomplete, the record is incomplete"), ANY_FIELD(
-                "When any field is incomplete, the record is incomplete");
+    public enum EvaluationMode implements HasName {
+        ALL_FIELDS("When all fields are incomplete, the record is incomplete"),
+        ANY_FIELD("When any field is incomplete, the record is incomplete");
 
         private final String _name;
 
-        private EvaluationMode(String name) {
+        EvaluationMode(final String name) {
             _name = name;
         }
 
@@ -115,32 +107,33 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
         }
     }
 
-    @Inject
-    @Configured(order = 1, value = PROPERTY_VALUES)
-    @Description("Values to check for completeness")
-    InputColumn<?>[] _valueColumns;
-
-    @Inject
-    @Configured(order = 2, value = PROPERTY_CONDITIONS)
-    @Description("The conditions of which a value is determined to be filled or not")
-    @MappedProperty(PROPERTY_VALUES)
-    Condition[] _conditions;
-
-    @Inject
-    @Configured(order = 3, value = PROPERTY_EVALUATION_MODE)
-    EvaluationMode _evaluationMode = EvaluationMode.ANY_FIELD;
-
-    @Inject
-    @Configured(order = 100, value = PROPERTY_ADDITIONAL_OUTPUT_VALUES, required = false)
-    @Description("Optional additional values to add to output data streams")
-    InputColumn<?>[] _additionalOutputValueColumns;
-
+    public static final String OUTPUT_STREAM_COMPLETE = "Complete rows";
+    public static final String OUTPUT_STREAM_INCOMPLETE = "Incomplete rows";
+    public static final String PROPERTY_VALUES = "Values";
+    public static final String PROPERTY_CONDITIONS = "Conditions";
+    public static final String PROPERTY_EVALUATION_MODE = "Evaluation mode";
+    public static final String PROPERTY_ADDITIONAL_OUTPUT_VALUES = "Additional output values";
     // Do not inject the shared RowAnnotations, available rows are always
     // needed.
     private final RowAnnotationFactory _annotationFactory = new InMemoryRowAnnotationFactory2();
     private final RowAnnotation _invalidRecords = _annotationFactory.createAnnotation();
     private final AtomicInteger _rowCount = new AtomicInteger();
-
+    @Inject
+    @Configured(order = 1, value = PROPERTY_VALUES)
+    @Description("Values to check for completeness")
+    InputColumn<?>[] _valueColumns;
+    @Inject
+    @Configured(order = 2, value = PROPERTY_CONDITIONS)
+    @Description("The conditions of which a value is determined to be filled or not")
+    @MappedProperty(PROPERTY_VALUES)
+    Condition[] _conditions;
+    @Inject
+    @Configured(order = 3, value = PROPERTY_EVALUATION_MODE)
+    EvaluationMode _evaluationMode = EvaluationMode.ANY_FIELD;
+    @Inject
+    @Configured(order = 100, value = PROPERTY_ADDITIONAL_OUTPUT_VALUES, required = false)
+    @Description("Optional additional values to add to output data streams")
+    InputColumn<?>[] _additionalOutputValueColumns;
     private OutputRowCollector _completeRowCollector;
     private OutputRowCollector _incompleteRowCollector;
     private List<InputColumn<?>> _outputDataStreamColumns;
@@ -155,7 +148,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
         final List<InputColumn<?>> outputDataStreamColumns = new ArrayList<>();
         Collections.addAll(outputDataStreamColumns, _valueColumns);
         if (_additionalOutputValueColumns != null) {
-            for (InputColumn<?> inputColumn : _additionalOutputValueColumns) {
+            for (final InputColumn<?> inputColumn : _additionalOutputValueColumns) {
                 if (!outputDataStreamColumns.contains(inputColumn)) {
                     outputDataStreamColumns.add(inputColumn);
                 }
@@ -165,7 +158,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     }
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         _rowCount.addAndGet(distinctCount);
         boolean allInvalid = true;
         for (int i = 0; i < _valueColumns.length; i++) {
@@ -201,11 +194,11 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
         return new CompletenessAnalyzerResult(_rowCount.get(), _invalidRecords, _annotationFactory, _valueColumns);
     }
 
-    public void setConditions(Condition[] conditions) {
+    public void setConditions(final Condition[] conditions) {
         _conditions = conditions;
     }
 
-    public void setValueColumns(InputColumn<?>[] valueColumns) {
+    public void setValueColumns(final InputColumn<?>[] valueColumns) {
         _valueColumns = valueColumns;
     }
 
@@ -215,7 +208,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
      *
      * @param condition
      */
-    public void fillAllConditions(Condition condition) {
+    public void fillAllConditions(final Condition condition) {
         if (_valueColumns != null) {
             final Condition[] conditions = new Condition[_valueColumns.length];
             Arrays.fill(conditions, condition);
@@ -226,16 +219,16 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     @Override
     public OutputDataStream[] getOutputDataStreams() {
         final OutputDataStreamBuilder completeStreamBuilder = OutputDataStreams.pushDataStream(OUTPUT_STREAM_COMPLETE);
-        final OutputDataStreamBuilder incompleteStreamBuilder = OutputDataStreams.pushDataStream(
-                OUTPUT_STREAM_INCOMPLETE);
+        final OutputDataStreamBuilder incompleteStreamBuilder =
+                OutputDataStreams.pushDataStream(OUTPUT_STREAM_INCOMPLETE);
 
-        for (InputColumn<?> column : createOutputDataStreamColumns()) {
+        for (final InputColumn<?> column : createOutputDataStreamColumns()) {
             completeStreamBuilder.withColumnLike(column);
             incompleteStreamBuilder.withColumnLike(column);
         }
 
-        return new OutputDataStream[] { completeStreamBuilder.toOutputDataStream(), incompleteStreamBuilder
-                .toOutputDataStream() };
+        return new OutputDataStream[] { completeStreamBuilder.toOutputDataStream(),
+                incompleteStreamBuilder.toOutputDataStream() };
     }
 
     @Override

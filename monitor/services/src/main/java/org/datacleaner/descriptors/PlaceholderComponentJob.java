@@ -44,8 +44,8 @@ import org.datacleaner.util.StringUtils;
  * "unidentified" result objects, ie. result objects that are serialized outside
  * of a {@link AnalysisResult}
  */
-public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements ComponentJob, ComponentDescriptor<C>,
-        HasAnalyzerResultComponentDescriptor<C> {
+public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>>
+        implements ComponentJob, ComponentDescriptor<C>, HasAnalyzerResultComponentDescriptor<C> {
 
     private static final long serialVersionUID = 1L;
 
@@ -53,7 +53,8 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     private final Class<C> _componentClass;
     private final ResultDescriptor _resultDescriptor;
 
-    public PlaceholderComponentJob(String name, Class<C> componentClass, Class<? extends AnalyzerResult> resultClass) {
+    public PlaceholderComponentJob(final String name, final Class<C> componentClass,
+            final Class<? extends AnalyzerResult> resultClass) {
         _name = name;
         _componentClass = componentClass;
         _resultDescriptor = new ResultDescriptorImpl(resultClass);
@@ -70,7 +71,7 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     }
 
     @Override
-    public int compareTo(ComponentDescriptor<?> o) {
+    public int compareTo(final ComponentDescriptor<?> o) {
         return -1;
     }
 
@@ -100,17 +101,19 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     }
 
     @Override
-    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByAnnotation(Class<? extends Annotation> annotation) {
+    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByAnnotation(
+            final Class<? extends Annotation> annotation) {
         return Collections.emptySet();
     }
 
     @Override
-    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByType(Class<?> type, boolean includeArrays) {
+    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByType(final Class<?> type,
+            final boolean includeArrays) {
         return Collections.emptySet();
     }
 
     @Override
-    public ConfiguredPropertyDescriptor getConfiguredProperty(String name) {
+    public ConfiguredPropertyDescriptor getConfiguredProperty(final String name) {
         return null;
     }
 
@@ -135,7 +138,7 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     }
 
     @Override
-    public Set<ProvidedPropertyDescriptor> getProvidedPropertiesByType(Class<?> cls) {
+    public Set<ProvidedPropertyDescriptor> getProvidedPropertiesByType(final Class<?> cls) {
         return Collections.emptySet();
     }
 
@@ -145,7 +148,7 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     }
 
     @Override
-    public MetricDescriptor getResultMetric(String name) {
+    public MetricDescriptor getResultMetric(final String name) {
         return _resultDescriptor.getResultMetric(name);
     }
 
@@ -180,7 +183,7 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     }
 
     @Override
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+    public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
         return null;
     }
 
@@ -190,7 +193,7 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     }
 
     @Override
-    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput(boolean includeOptional) {
+    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput(final boolean includeOptional) {
         return Collections.emptySet();
     }
 

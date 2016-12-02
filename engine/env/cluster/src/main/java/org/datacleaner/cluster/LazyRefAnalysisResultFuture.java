@@ -25,13 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.runner.AnalysisJobFailedException;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.JobStatus;
 import org.datacleaner.result.AnalysisResult;
-import org.apache.metamodel.util.LazyRef;
 
 /**
  * An {@link AnalysisResultFuture} implementation which uses a {@link LazyRef}
@@ -42,7 +42,7 @@ public class LazyRefAnalysisResultFuture implements AnalysisResultFuture {
     private final LazyRef<AnalysisResult> _resultRef;
     private final List<Throwable> _errors;
 
-    public LazyRefAnalysisResultFuture(LazyRef<AnalysisResult> resultRef, List<Throwable> errors) {
+    public LazyRefAnalysisResultFuture(final LazyRef<AnalysisResult> resultRef, final List<Throwable> errors) {
         _resultRef = resultRef;
         _errors = errors;
     }
@@ -59,7 +59,7 @@ public class LazyRefAnalysisResultFuture implements AnalysisResultFuture {
 
     @Override
     public Date getCreationDate() {
-        AnalysisResult analysisResult = _resultRef.get();
+        final AnalysisResult analysisResult = _resultRef.get();
         if (analysisResult == null) {
             return null;
         }
@@ -82,7 +82,7 @@ public class LazyRefAnalysisResultFuture implements AnalysisResultFuture {
     }
 
     @Override
-    public void await(long timeout, TimeUnit timeUnit) {
+    public void await(final long timeout, final TimeUnit timeUnit) {
         final long offsetMillis = System.currentTimeMillis();
 
         final long millisToWait = timeUnit.convert(timeout, TimeUnit.MILLISECONDS);
@@ -92,7 +92,7 @@ public class LazyRefAnalysisResultFuture implements AnalysisResultFuture {
         while (!isDone()) {
             try {
                 Thread.sleep(sleepInterval);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 // do nothing
             }
 
@@ -124,7 +124,7 @@ public class LazyRefAnalysisResultFuture implements AnalysisResultFuture {
 
     @Override
     public List<AnalyzerResult> getResults() throws AnalysisJobFailedException {
-        AnalysisResult analysisResult = _resultRef.get();
+        final AnalysisResult analysisResult = _resultRef.get();
         if (analysisResult == null) {
             return null;
         }
@@ -132,8 +132,8 @@ public class LazyRefAnalysisResultFuture implements AnalysisResultFuture {
     }
 
     @Override
-    public AnalyzerResult getResult(ComponentJob componentJob) throws AnalysisJobFailedException {
-        AnalysisResult analysisResult = _resultRef.get();
+    public AnalyzerResult getResult(final ComponentJob componentJob) throws AnalysisJobFailedException {
+        final AnalysisResult analysisResult = _resultRef.get();
         if (analysisResult == null) {
             return null;
         }
@@ -142,7 +142,7 @@ public class LazyRefAnalysisResultFuture implements AnalysisResultFuture {
 
     @Override
     public Map<ComponentJob, AnalyzerResult> getResultMap() throws AnalysisJobFailedException {
-        AnalysisResult analysisResult = _resultRef.get();
+        final AnalysisResult analysisResult = _resultRef.get();
         if (analysisResult == null) {
             return null;
         }
@@ -155,7 +155,7 @@ public class LazyRefAnalysisResultFuture implements AnalysisResultFuture {
     }
 
     @Override
-    public <R extends AnalyzerResult> List<? extends R> getResults(Class<R> resultClass) {
+    public <R extends AnalyzerResult> List<? extends R> getResults(final Class<R> resultClass) {
         return _resultRef.get().getResults(resultClass);
     }
 

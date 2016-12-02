@@ -26,12 +26,12 @@ package org.datacleaner.job;
 public class ComponentConfigurationException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
-    
-    public ComponentConfigurationException(String message) {
+
+    public ComponentConfigurationException(final String message) {
         super(message);
     }
-    
-    public ComponentConfigurationException(String message, Throwable cause) {
+
+    public ComponentConfigurationException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

@@ -20,7 +20,6 @@
 package org.datacleaner.spark.utils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.hadoop.conf.Configuration;
@@ -28,7 +27,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -49,13 +47,26 @@ public class HdfsHelper {
     private static Configuration _lastKnownConfiguration;
     private final Configuration _hadoopConfiguration;
 
+    public HdfsHelper(final JavaSparkContext sparkContext) {
+        this(getHadoopConfigurationIfYarnMode(sparkContext));
+    }
+
+    public HdfsHelper(final Configuration configuration) {
+        if (configuration == null) {
+            logger.warn("Hadoop Configuration is null!", new Throwable());
+        } else {
+            _lastKnownConfiguration = configuration;
+        }
+        _hadoopConfiguration = configuration;
+    }
+
     /**
      * Creates a {@link HdfsHelper} without any configuration or context
      * available. This is normally not the recommended way to obtain a
      * {@link HdfsHelper} but may be necessary in executor functions where the
      * {@link JavaSparkContext} is not in scope and not made available by Spark
      * (at least spark's end-user API).
-     * 
+     *
      * @return
      */
     public static HdfsHelper createHelper() {
@@ -66,7 +77,7 @@ public class HdfsHelper {
                 if (sparkHadoopUtil.isYarnMode()) {
                     configuration = sparkHadoopUtil.conf();
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // the above is developer API so we don't consider it very
                 // stable.
             }
@@ -74,11 +85,7 @@ public class HdfsHelper {
         return new HdfsHelper(configuration);
     }
 
-    public HdfsHelper(JavaSparkContext sparkContext) {
-        this(getHadoopConfigurationIfYarnMode(sparkContext));
-    }
-
-    private static Configuration getHadoopConfigurationIfYarnMode(JavaSparkContext sparkContext) {
+    private static Configuration getHadoopConfigurationIfYarnMode(final JavaSparkContext sparkContext) {
         final String sparkMaster = sparkContext.getConf().get("spark.master");
         if (Strings.isNullOrEmpty(sparkMaster) || "local".equals(sparkMaster)) {
             return null;
@@ -86,20 +93,21 @@ public class HdfsHelper {
         return sparkContext.hadoopConfiguration();
     }
 
-    public HdfsHelper(Configuration configuration) {
-        if (configuration == null) {
-            logger.warn("Hadoop Configuration is null!", new Throwable());
-        } else {
-            _lastKnownConfiguration = configuration;
-        }
-        _hadoopConfiguration = configuration;
+    /**
+     * Clears up the statically cached reference to a {@link Configuration} object, which is used an
+     * HdfsHelper is instantiated without an explicit {@link Configuration} object.
+     *
+     * Note: Only use if you want to start fresh and make sure no lingering objects are used.
+     */
+    public static void clear() {
+        _lastKnownConfiguration = null;
     }
 
-    public String readFile(URI filepath) {
+    public String readFile(final URI filepath) {
         return readFile(filepath, false);
     }
 
-    public String readFile(URI filepath, boolean failOnNoData) {
+    public String readFile(final URI filepath, final boolean failOnNoData) {
         final Resource resourceInUse = getResourceToUse(filepath);
         if (failOnNoData && resourceInUse == null) {
             throw new IllegalArgumentException("Could not resolve resource: " + filepath);
@@ -107,20 +115,17 @@ public class HdfsHelper {
         return readResource(resourceInUse);
     }
 
-    public String readResource(Resource resource) {
+    public String readResource(final Resource resource) {
         final Resource resourceInUse = getResourceToUse(resource);
         if (resourceInUse == null) {
             return null;
         }
-        return resourceInUse.read(new Func<InputStream, String>() {
-            @Override
-            public String eval(InputStream in) {
-                return FileHelper.readInputStreamAsString(in, FileHelper.DEFAULT_ENCODING);
-            }
+        return resourceInUse.read(in -> {
+            return FileHelper.readInputStreamAsString(in, FileHelper.DEFAULT_ENCODING);
         });
     }
 
-    public Resource getResourceToUse(Resource resource) {
+    public Resource getResourceToUse(final Resource resource) {
         if (resource == null) {
             return null;
         }
@@ -142,7 +147,7 @@ public class HdfsHelper {
         return resource;
     }
 
-    public Resource getResourceToUse(URI path) {
+    public Resource getResourceToUse(final URI path) {
         if (path == null) {
             return null;
         }
@@ -155,7 +160,7 @@ public class HdfsHelper {
         return new HadoopResource(path, _hadoopConfiguration, HadoopResource.DEFAULT_CLUSTERREFERENCE);
     }
 
-    public boolean isDirectory(URI path) {
+    public boolean isDirectory(final URI path) {
         final Resource resource = getResourceToUse(path);
         if (!resource.isExists()) {
             return false;
@@ -168,7 +173,7 @@ public class HdfsHelper {
             final Path hadoopPath = ((HdfsResource) resource).getHadoopPath();
             try {
                 return fileSystem.isDirectory(hadoopPath);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new IllegalStateException(e);
             }
         }

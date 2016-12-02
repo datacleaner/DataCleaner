@@ -20,7 +20,6 @@
 package org.datacleaner.widgets.result;
 
 import java.awt.BasicStroke;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import org.apache.metamodel.schema.Table;
@@ -63,12 +62,13 @@ import com.google.inject.Injector;
 public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwingRenderer<NumberAnalyzerResult> {
 
     @Override
-    protected void decorate(NumberAnalyzerResult result, DCTable table, final DisplayChartCallback displayChartCallback) {
+    protected void decorate(final NumberAnalyzerResult result, final DCTable table,
+            final DisplayChartCallback displayChartCallback) {
         // find the std. deviation row number.
         int rowNumber = -1;
         {
             for (int i = 0; i < table.getRowCount(); i++) {
-                Object value = table.getValueAt(i, 0);
+                final Object value = table.getValueAt(i, 0);
                 if (NumberAnalyzer.MEASURE_STANDARD_DEVIATION.equals(value)) {
                     rowNumber = i;
                     break;
@@ -79,53 +79,53 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
             }
         }
 
-        Crosstab<?> crosstab = result.getCrosstab();
+        final Crosstab<?> crosstab = result.getCrosstab();
 
         final InputColumn<? extends Number>[] columns = result.getColumns();
         int columnNumber = 1;
         for (final InputColumn<? extends Number> column : columns) {
             final CrosstabNavigator<?> nav = crosstab.where(NumberAnalyzer.DIMENSION_COLUMN, column.getName());
 
-            final Number numRows = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
-                    NumberAnalyzer.MEASURE_ROW_COUNT).get();
+            final Number numRows =
+                    (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_ROW_COUNT).get();
             if (numRows.intValue() > 0) {
-                final Number standardDeviation = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
-                        NumberAnalyzer.MEASURE_STANDARD_DEVIATION).get();
+                final Number standardDeviation =
+                        (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_STANDARD_DEVIATION)
+                                .get();
                 if (standardDeviation != null) {
 
-                    ActionListener action = new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            final Number mean = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
-                                    NumberAnalyzer.MEASURE_MEAN).get();
-                            final Number min = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
-                                    NumberAnalyzer.MEASURE_LOWEST_VALUE).get();
-                            final Number max = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
-                                    NumberAnalyzer.MEASURE_HIGHEST_VALUE).get();
+                    final ActionListener action = e -> {
+                        final Number mean =
+                                (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_MEAN).get();
+                        final Number min = (Number) nav
+                                .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_LOWEST_VALUE).get();
+                        final Number max = (Number) nav
+                                .where(NumberAnalyzer.DIMENSION_MEASURE, NumberAnalyzer.MEASURE_HIGHEST_VALUE).get();
 
-                            final NormalDistributionFunction2D normalDistributionFunction = new NormalDistributionFunction2D(
-                                    mean.doubleValue(), standardDeviation.doubleValue());
-                            final XYDataset dataset = DatasetUtilities.sampleFunction2D(normalDistributionFunction,
-                                    min.doubleValue(), max.doubleValue(), 100, "Normal");
+                        final NormalDistributionFunction2D normalDistributionFunction =
+                                new NormalDistributionFunction2D(mean.doubleValue(), standardDeviation.doubleValue());
+                        final XYDataset dataset = DatasetUtilities
+                                .sampleFunction2D(normalDistributionFunction, min.doubleValue(), max.doubleValue(), 100,
+                                        "Normal");
 
-                            final JFreeChart chart = ChartFactory.createXYLineChart(
-                                    "Normal distribution of " + column.getName(), column.getName(), "", dataset,
-                                    PlotOrientation.VERTICAL, false, true, false);
-                            ChartUtils.applyStyles(chart);
-                            Marker meanMarker = new ValueMarker(mean.doubleValue(), WidgetUtils.BG_COLOR_BLUE_DARK,
-                                    new BasicStroke(2f));
-                            meanMarker.setLabel("Mean");
-                            meanMarker.setLabelOffset(new RectangleInsets(70d, 25d, 0d, 0d));
-                            meanMarker.setLabelFont(WidgetUtils.FONT_SMALL);
-                            chart.getXYPlot().addDomainMarker(meanMarker);
+                        final JFreeChart chart = ChartFactory
+                                .createXYLineChart("Normal distribution of " + column.getName(), column.getName(), "",
+                                        dataset, PlotOrientation.VERTICAL, false, true, false);
+                        ChartUtils.applyStyles(chart);
+                        final Marker meanMarker = new ValueMarker(mean.doubleValue(), WidgetUtils.BG_COLOR_BLUE_DARK,
+                                new BasicStroke(2f));
+                        meanMarker.setLabel("Mean");
+                        meanMarker.setLabelOffset(new RectangleInsets(70d, 25d, 0d, 0d));
+                        meanMarker.setLabelFont(WidgetUtils.FONT_SMALL);
+                        chart.getXYPlot().addDomainMarker(meanMarker);
 
-                            final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
-                            displayChartCallback.displayChart(chartPanel);
-                        }
+                        final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
+                        displayChartCallback.displayChart(chartPanel);
                     };
 
-                    DCPanel panel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(standardDeviation,
-                            Alignment.RIGHT, action, IconUtils.CHART_LINE);
+                    final DCPanel panel = AbstractCrosstabResultSwingRenderer
+                            .createActionableValuePanel(standardDeviation, Alignment.RIGHT, action,
+                                    IconUtils.CHART_LINE);
                     table.setValueAt(panel, rowNumber, columnNumber);
                 }
             }
@@ -139,24 +139,25 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
     /**
      * A main method that will display the results of a few example number
      * analyzers. Useful for tweaking the charts and UI.
-     * 
+     *
      * @param args
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         LookAndFeelManager.get().init();
 
-        Injector injector = Guice.createInjector(new DCModuleImpl(VFSUtils.getFileSystemManager().resolveFile("."), null));
+        final Injector injector =
+                Guice.createInjector(new DCModuleImpl(VFSUtils.getFileSystemManager().resolveFile("."), null));
 
         // run a small job
         final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
-        Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
-        DatastoreConnection con = ds.openConnection();
-        Table table = con.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
+        final Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
+        final DatastoreConnection con = ds.openConnection();
+        final Table table = con.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
         ajb.setDatastore(ds);
         ajb.addSourceColumns(table.getNumberColumns());
         ajb.addAnalyzer(NumberAnalyzer.class).addInputColumns(ajb.getSourceColumns());
 
-        ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
+        final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
         resultWindow.setVisible(true);
         resultWindow.startAnalysis();
     }

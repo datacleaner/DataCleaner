@@ -38,20 +38,20 @@ final class GuiceInjectionManager extends InjectionManagerImpl {
 
     private final InjectorBuilder _injectorBuilder;
 
-    public GuiceInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job,
-            InjectorBuilder injectorBuilder) {
+    public GuiceInjectionManager(final DataCleanerConfiguration configuration, final AnalysisJob job,
+            final InjectorBuilder injectorBuilder) {
         super(configuration, job);
         _injectorBuilder = injectorBuilder;
     }
 
     @Override
-    protected Object getInstanceInternal(InjectionPoint<?> injectionPoint) {
+    protected Object getInstanceInternal(final InjectionPoint<?> injectionPoint) {
         Object instance = super.getInstanceInternal(injectionPoint);
         if (instance == null) {
-            Class<?> baseType = injectionPoint.getBaseType();
+            final Class<?> baseType = injectionPoint.getBaseType();
             try {
                 instance = _injectorBuilder.getInstance(baseType);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Error occurred while getting guice instance for injection point: " + injectionPoint, e);
             }
         }

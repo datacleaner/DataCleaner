@@ -32,24 +32,24 @@ import junit.framework.TestCase;
 
 public class SasDatastoreTest extends TestCase {
 
-    // This is an integration test. it is pretty nescesary since release cycles
+    // This is an integration test. it is pretty necessary since release cycles
     // of MetaModel and SassyReader are not synced.
     public void testConnectAndExplore() throws Exception {
         final SasDatastore ds = new SasDatastore("my sas ds", new File("src/test/resources/sas"));
-        try (final DatastoreConnection con = ds.openConnection()) {
-            Schema schema = con.getSchemaNavigator().getDefaultSchema();
+        try (DatastoreConnection con = ds.openConnection()) {
+            final Schema schema = con.getSchemaNavigator().getDefaultSchema();
             assertEquals("[dummy1, dummy2, pizza]", Arrays.toString(schema.getTableNames()));
 
-            Table table = schema.getTableByName("pizza");
+            final Table table = schema.getTableByName("pizza");
             assertEquals("[id, mois, prot, fat, ash, sodium, carb, cal, brand]",
                     Arrays.toString(table.getColumnNames()));
 
-            Column col = table.getColumnByName("brand");
+            final Column col = table.getColumnByName("brand");
 
-            Query q = con.getDataContext().query().from(table).select(col).orderBy(col).toQuery();
+            final Query q = con.getDataContext().query().from(table).select(col).orderBy(col).toQuery();
             q.getSelectClause().setDistinct(true);
 
-            List<Object[]> objectArrays = con.getDataContext().executeQuery(q).toObjectArrays();
+            final List<Object[]> objectArrays = con.getDataContext().executeQuery(q).toObjectArrays();
             assertEquals(10, objectArrays.size());
             assertEquals("a", objectArrays.get(0)[0]);
             assertEquals("b", objectArrays.get(1)[0]);

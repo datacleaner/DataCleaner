@@ -37,15 +37,15 @@ public class DefaultToggleButtonUI extends MetalToggleButtonUI {
 
     private static final DefaultToggleButtonUI INSTANCE = new DefaultToggleButtonUI();
 
+    private DefaultToggleButtonUI() {
+    }
+
     public static DefaultToggleButtonUI get() {
         return INSTANCE;
     }
 
-    private DefaultToggleButtonUI() {
-    }
-
     @Override
-    public void installDefaults(AbstractButton b) {
+    public void installDefaults(final AbstractButton b) {
         super.installDefaults(b);
         b.setFocusPainted(false);
         b.setFont(WidgetUtils.FONT_BUTTON);

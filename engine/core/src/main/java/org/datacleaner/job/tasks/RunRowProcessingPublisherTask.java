@@ -26,21 +26,21 @@ import org.slf4j.LoggerFactory;
 
 public final class RunRowProcessingPublisherTask implements Task {
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private final RowProcessingPublisher _publisher;
-	private final RowProcessingMetrics _metrics;
+    private final RowProcessingPublisher _publisher;
+    private final RowProcessingMetrics _metrics;
 
-	public RunRowProcessingPublisherTask(RowProcessingPublisher publisher, RowProcessingMetrics metrics) {
-		_publisher = publisher;
-		_metrics = metrics;
-	}
+    public RunRowProcessingPublisherTask(final RowProcessingPublisher publisher, final RowProcessingMetrics metrics) {
+        _publisher = publisher;
+        _metrics = metrics;
+    }
 
-	@Override
-	public void execute() throws Exception {
-		logger.debug("execute()");
+    @Override
+    public void execute() throws Exception {
+        logger.debug("execute()");
 
-		_publisher.processRows(_metrics);
-	}
+        _publisher.processRows(_metrics);
+    }
 
 }

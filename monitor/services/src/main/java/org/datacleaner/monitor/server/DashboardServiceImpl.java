@@ -20,13 +20,13 @@
 package org.datacleaner.monitor.server;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.dashboard.DashboardService;
@@ -48,9 +48,6 @@ import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFile.Type;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,103 +68,27 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Autowired
     public DashboardServiceImpl(final TenantContextFactory tenantContextFactory,
-            final MetricValueProducer metricValueProducer, ResultDao resultDao, TimelineDao timelineDao) {
+            final MetricValueProducer metricValueProducer, final ResultDao resultDao, final TimelineDao timelineDao) {
         _tenantContextFactory = tenantContextFactory;
         _metricValueProducer = metricValueProducer;
         _resultDao = resultDao;
         _timelineDao = timelineDao;
     }
 
-    @Override
-    public List<DashboardGroup> getDashboardGroups(final TenantIdentifier tenant) {
-        final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
-        final List<RepositoryFolder> folders = timelinesFolder.getFolders();
-        final List<DashboardGroup> groups = new ArrayList<DashboardGroup>();
-        for (RepositoryFolder folder : folders) {
-            final DashboardGroup group = new DashboardGroup(folder.getName());
-
-            final RepositoryFile descriptionFile = folder.getFile("description.txt");
-            if (descriptionFile == null) {
-                logger.debug("No description file for timeline group: {}", group);
-            } else {
-                descriptionFile.readFile(new Action<InputStream>() {
-                    @Override
-                    public void run(InputStream in) throws Exception {
-                        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                            final StringBuilder sb = new StringBuilder();
-                            boolean first = false;
-                            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    sb.append('\n');
-                                }
-                                sb.append(line);
-                            }
-                            group.setDescription(sb.toString());
-                        } catch (Exception e) {
-                            logger.error("Error while reading timeline group description file: " + descriptionFile, e);
-                        }
-                    }
-                });
-            }
-
-            groups.add(group);
-        }
-        return groups;
-    }
-
-    @Override
-    public List<TimelineIdentifier> getTimelines(final TenantIdentifier tenant, final DashboardGroup group) {
-        final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
-        final List<RepositoryFile> files;
-        final String groupName = (group == null ? null : group.getName());
-        if (group == null || groupName == null || "".equals(groupName)) {
-            files = timelinesFolder.getFiles();
-        } else {
-            RepositoryFolder groupFolder = timelinesFolder.getFolder(groupName);
-            files = groupFolder.getFiles();
-        }
-
-        final List<TimelineIdentifier> result = new ArrayList<TimelineIdentifier>();
-        for (RepositoryFile file : files) {
-            if (file.getType() == Type.TIMELINE_SPEC) {
-                String timelineName = file.getName().substring(0,
-                        file.getName().length() - FileFilters.ANALYSIS_TIMELINE_XML.getExtension().length());
-                TimelineIdentifier timeline = new TimelineIdentifier(timelineName, file.getQualifiedPath(), group);
-                result.add(timeline);
-            }
-        }
-
-        return result;
-    }
-
-    @Override
-    public TimelineData getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline) {
-        final JobIdentifier jobIdentifier = timeline.getJobIdentifier();
-        final List<RepositoryFile> resultFiles = _resultDao.getResultsForJob(tenant, jobIdentifier);
-
-        final List<TimelineDataRow> rows = getTimelineData(tenant, timeline, resultFiles, _metricValueProducer);
-
-        final TimelineData timelineData = new TimelineData();
-        timelineData.setRows(rows);
-
-        return timelineData;
-    }
-
-    protected static List<TimelineDataRow> getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline,
-            Iterable<RepositoryFile> resultFiles, MetricValueProducer metricValueProducer) {
+    protected static List<TimelineDataRow> getTimelineData(final TenantIdentifier tenant,
+            final TimelineDefinition timeline, final Iterable<RepositoryFile> resultFiles,
+            final MetricValueProducer metricValueProducer) {
         final List<MetricIdentifier> metricIdentifiers = timeline.getMetrics();
         final JobIdentifier jobIdentifier = timeline.getJobIdentifier();
         final HorizontalAxisOption horizontalAxisOption = timeline.getChartOptions().getHorizontalAxisOption();
 
-        final List<TimelineDataRow> rows = new ArrayList<TimelineDataRow>();
-        for (RepositoryFile resultFile : resultFiles) {
+        final List<TimelineDataRow> rows = new ArrayList<>();
+        for (final RepositoryFile resultFile : resultFiles) {
             final MetricValues metricValues;
             try {
-                metricValues = metricValueProducer
-                        .getMetricValues(metricIdentifiers, resultFile, tenant, jobIdentifier);
-            } catch (Exception e) {
+                metricValues =
+                        metricValueProducer.getMetricValues(metricIdentifiers, resultFile, tenant, jobIdentifier);
+            } catch (final Exception e) {
                 logger.warn("Failed to read result metrics of file: {}", resultFile, e);
                 continue;
             }
@@ -186,7 +107,7 @@ public class DashboardServiceImpl implements DashboardService {
         return rows;
     }
 
-    private static boolean isInRange(Date date, HorizontalAxisOption horizontalAxisOption) {
+    private static boolean isInRange(final Date date, final HorizontalAxisOption horizontalAxisOption) {
         final Date beginDate = horizontalAxisOption.getBeginDate();
         final Date endDate = horizontalAxisOption.getEndDate();
 
@@ -201,6 +122,81 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
+    public List<DashboardGroup> getDashboardGroups(final TenantIdentifier tenant) {
+        final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
+        final List<RepositoryFolder> folders = timelinesFolder.getFolders();
+        final List<DashboardGroup> groups = new ArrayList<>();
+        for (final RepositoryFolder folder : folders) {
+            final DashboardGroup group = new DashboardGroup(folder.getName());
+
+            final RepositoryFile descriptionFile = folder.getFile("description.txt");
+            if (descriptionFile == null) {
+                logger.debug("No description file for timeline group: {}", group);
+            } else {
+                descriptionFile.readFile(in -> {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+                        final StringBuilder sb = new StringBuilder();
+                        boolean first = false;
+                        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                sb.append('\n');
+                            }
+                            sb.append(line);
+                        }
+                        group.setDescription(sb.toString());
+                    } catch (final Exception e) {
+                        logger.error("Error while reading timeline group description file: " + descriptionFile, e);
+                    }
+                });
+            }
+
+            groups.add(group);
+        }
+        return groups;
+    }
+
+    @Override
+    public List<TimelineIdentifier> getTimelines(final TenantIdentifier tenant, final DashboardGroup group) {
+        final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
+        final List<RepositoryFile> files;
+        final String groupName = (group == null ? null : group.getName());
+        if (group == null || groupName == null || "".equals(groupName)) {
+            files = timelinesFolder.getFiles();
+        } else {
+            final RepositoryFolder groupFolder = timelinesFolder.getFolder(groupName);
+            files = groupFolder.getFiles();
+        }
+
+        final List<TimelineIdentifier> result = new ArrayList<>();
+        for (final RepositoryFile file : files) {
+            if (file.getType() == Type.TIMELINE_SPEC) {
+                final String timelineName = file.getName().substring(0,
+                        file.getName().length() - FileFilters.ANALYSIS_TIMELINE_XML.getExtension().length());
+                final TimelineIdentifier timeline =
+                        new TimelineIdentifier(timelineName, file.getQualifiedPath(), group);
+                result.add(timeline);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public TimelineData getTimelineData(final TenantIdentifier tenant, final TimelineDefinition timeline) {
+        final JobIdentifier jobIdentifier = timeline.getJobIdentifier();
+        final List<RepositoryFile> resultFiles = _resultDao.getResultsForJob(tenant, jobIdentifier);
+
+        final List<TimelineDataRow> rows = getTimelineData(tenant, timeline, resultFiles, _metricValueProducer);
+
+        final TimelineData timelineData = new TimelineData();
+        timelineData.setRows(rows);
+
+        return timelineData;
+    }
+
+    @Override
     public TimelineDefinition getTimelineDefinition(final TenantIdentifier tenant, final TimelineIdentifier timeline) {
         return _timelineDao.getTimelineDefinition(timeline);
     }
@@ -209,21 +205,18 @@ public class DashboardServiceImpl implements DashboardService {
     public List<JobIdentifier> getJobs(final TenantIdentifier tenant) {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         List<JobIdentifier> jobs = tenantContext.getJobs();
-        jobs = CollectionUtils.filter(jobs, new Predicate<JobIdentifier>() {
-            @Override
-            public Boolean eval(JobIdentifier job) {
-                final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job.getType());
-                if (analysisJob) {
-                    // in most cases we have DC jobs, and this evaluation is
-                    // faster
-                    return true;
-                }
-                final JobContext jobContext = tenantContext.getJob(job);
-                if (jobContext instanceof MetricJobContext) {
-                    return true;
-                }
-                return false;
+        jobs = CollectionUtils.filter(jobs, job -> {
+            final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job.getType());
+            if (analysisJob) {
+                // in most cases we have DC jobs, and this evaluation is
+                // faster
+                return true;
             }
+            final JobContext jobContext = tenantContext.getJob(job);
+            if (jobContext instanceof MetricJobContext) {
+                return true;
+            }
+            return false;
         });
         Collections.sort(jobs);
         return jobs;
@@ -258,12 +251,12 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public Boolean removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline) {
+    public Boolean removeTimeline(final TenantIdentifier tenant, final TimelineIdentifier timeline) {
         return _timelineDao.removeTimeline(timeline);
     }
 
     @Override
-    public DashboardGroup addDashboardGroup(TenantIdentifier tenant, String name) {
+    public DashboardGroup addDashboardGroup(final TenantIdentifier tenant, final String name) {
         final DashboardGroup group = new DashboardGroup(name);
 
         final RepositoryFolder timelineFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
@@ -275,7 +268,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public Boolean removeDashboardGroup(TenantIdentifier tenant, DashboardGroup timelineGroup) {
+    public Boolean removeDashboardGroup(final TenantIdentifier tenant, final DashboardGroup timelineGroup) {
         final RepositoryFolder timelineFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
         final RepositoryFolder groupFolder = timelineFolder.getFolder(timelineGroup.getName());
 
@@ -286,7 +279,7 @@ public class DashboardServiceImpl implements DashboardService {
         try {
             groupFolder.delete();
             return true;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Failed to delete timeline group folder: " + timelineGroup.getName(), e);
             return false;
         }

@@ -39,9 +39,33 @@ import org.slf4j.LoggerFactory;
  */
 public final class MultiThreadedTaskRunner implements ScheduledTaskRunner {
 
+    /**
+     * We keep this class as private because it shouldn't be used anywhere else,
+     * it is a hack. It actually breaks a blocking queue contract. The reason
+     * for it is that Java ThreadPoolExecutor does not support blocking
+     * behaviour for the caller. So we override the non-blocking method of the
+     * queue to behave as a blocking one.
+     */
+    class AlwaysBlockingQueue<T> extends ArrayBlockingQueue<T> {
+
+        private static final long serialVersionUID = 1L;
+
+        AlwaysBlockingQueue(final int size) {
+            super(size);
+        }
+
+        public boolean offer(final T task) {
+            try {
+                this.put(task);
+            } catch (final InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(MultiThreadedTaskRunner.class);
     private final ThreadFactory _threadFactory;
-
     private final ExecutorService _executorService;
     private final ScheduledThreadPoolExecutor _executorScheduledService;
     private final int _numThreads;
@@ -51,7 +75,7 @@ public final class MultiThreadedTaskRunner implements ScheduledTaskRunner {
         this(30);
     }
 
-    public MultiThreadedTaskRunner(int numThreads) {
+    public MultiThreadedTaskRunner(final int numThreads) {
         _numThreads = numThreads;
 
         // if all threads are busy, newly submitted tasks will be run by caller
@@ -77,8 +101,9 @@ public final class MultiThreadedTaskRunner implements ScheduledTaskRunner {
         // place in it.
         _workQueue = new AlwaysBlockingQueue<>(taskCapacity);
 
-        _executorService = new ThreadPoolExecutor(numThreads, numThreads, 60, TimeUnit.SECONDS, _workQueue,
-                _threadFactory, rejectionHandler);
+        _executorService =
+                new ThreadPoolExecutor(numThreads, numThreads, 60, TimeUnit.SECONDS, _workQueue, _threadFactory,
+                        rejectionHandler);
 
         _executorScheduledService = new ScheduledThreadPoolExecutor(1);
         _executorScheduledService.setMaximumPoolSize(50);
@@ -99,27 +124,29 @@ public final class MultiThreadedTaskRunner implements ScheduledTaskRunner {
     }
 
     @Override
-    public void run(TaskRunnable taskRunnable) {
+    public void run(final TaskRunnable taskRunnable) {
         logger.debug("run({})", taskRunnable);
         executeInternal(taskRunnable);
     }
 
-    private void executeInternal(TaskRunnable taskRunnable) {
+    private void executeInternal(final TaskRunnable taskRunnable) {
         try {
             _executorService.execute(taskRunnable);
-        } catch (RejectedExecutionException e) {
+        } catch (final RejectedExecutionException e) {
             logger.error("Unexpected rejected execution!", e);
         }
     }
 
     @Override
-    public void runScheduled(final Task task, final TaskListener listener, long initialDelay, long delay, TimeUnit unit) {
+    public void runScheduled(final Task task, final TaskListener listener, final long initialDelay, final long delay,
+            final TimeUnit unit) {
         logger.debug("Schedule task ({},{}), delay {} {}", task, listener, delay, unit);
         _executorScheduledService.scheduleWithFixedDelay(new TaskRunnable(task, listener), initialDelay, delay, unit);
     }
 
     @Override
-    public void runScheduled(TaskRunnable taskRunnable, long initialDelay, long delay, TimeUnit unit) {
+    public void runScheduled(final TaskRunnable taskRunnable, final long initialDelay, final long delay,
+            final TimeUnit unit) {
         logger.debug("Schedule task ({}), delay {} {}", taskRunnable, delay, unit);
         _executorScheduledService.scheduleWithFixedDelay(taskRunnable, initialDelay, delay, unit);
     }
@@ -142,34 +169,9 @@ public final class MultiThreadedTaskRunner implements ScheduledTaskRunner {
 
     @Override
     public void assistExecution() {
-        Runnable task = _workQueue.poll();
+        final Runnable task = _workQueue.poll();
         if (task != null) {
             task.run();
-        }
-    }
-
-    /**
-     * We keep this class as private because it shouldn't be used anywhere else,
-     * it is a hack. It actually breaks a blocking queue contract. The reason
-     * for it is that Java ThreadPoolExecutor does not support blocking
-     * behaviour for the caller. So we override the non-blocking method of the
-     * queue to behave as a blocking one.
-     */
-    class AlwaysBlockingQueue<T> extends ArrayBlockingQueue<T> {
-
-        private static final long serialVersionUID = 1L;
-
-        AlwaysBlockingQueue(int size) {
-            super(size);
-        }
-
-        public boolean offer(T task) {
-            try {
-                this.put(task);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            return true;
         }
     }
 

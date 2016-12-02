@@ -32,51 +32,51 @@ import org.slf4j.LoggerFactory;
  */
 public class DatastoreConnectionLease implements DatastoreConnection {
 
-	private static final Logger logger = LoggerFactory.getLogger(DatastoreConnectionLease.class);
+    private static final Logger logger = LoggerFactory.getLogger(DatastoreConnectionLease.class);
 
-	private final DatastoreConnection _delegate;
-	private final AtomicBoolean _closed;
+    private final DatastoreConnection _delegate;
+    private final AtomicBoolean _closed;
 
-	public DatastoreConnectionLease(DatastoreConnection delegate) {
-		_delegate = delegate;
-		_closed = new AtomicBoolean(false);
-	}
+    public DatastoreConnectionLease(final DatastoreConnection delegate) {
+        _delegate = delegate;
+        _closed = new AtomicBoolean(false);
+    }
 
-	public DatastoreConnection getDelegate() {
-		return _delegate;
-	}
+    public DatastoreConnection getDelegate() {
+        return _delegate;
+    }
 
-	public boolean isClosed() {
-		return _closed.get();
-	}
+    public boolean isClosed() {
+        return _closed.get();
+    }
 
-	@Override
-	public DataContext getDataContext() {
-		return _delegate.getDataContext();
-	}
+    @Override
+    public DataContext getDataContext() {
+        return _delegate.getDataContext();
+    }
 
-	@Override
-	public SchemaNavigator getSchemaNavigator() {
-		return _delegate.getSchemaNavigator();
-	}
+    @Override
+    public SchemaNavigator getSchemaNavigator() {
+        return _delegate.getSchemaNavigator();
+    }
 
-	@Override
-	public Datastore getDatastore() {
-		return _delegate.getDatastore();
-	}
+    @Override
+    public Datastore getDatastore() {
+        return _delegate.getDatastore();
+    }
 
-	@Override
-	public void close() {
-		boolean changed = _closed.compareAndSet(false, true);
-		if (changed) {
-			_delegate.close();
-		} else {
-			logger.warn("Connection is already closed, but close() was invoked!", new Throwable());
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return "DatastoreConnectionLease[" + _delegate + "]";
-	}
+    @Override
+    public void close() {
+        final boolean changed = _closed.compareAndSet(false, true);
+        if (changed) {
+            _delegate.close();
+        } else {
+            logger.warn("Connection is already closed, but close() was invoked!", new Throwable());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "DatastoreConnectionLease[" + _delegate + "]";
+    }
 }

@@ -21,17 +21,17 @@ package org.datacleaner.beans.filter;
 
 /**
  * A simple category for filters that categorize rows as either valid or invalid
- * 
- * 
+ *
+ *
  */
 public enum ValidationCategory {
 
-	VALID, INVALID;
-	
-	public static ValidationCategory valueOf(boolean b) {
-		if (b) {
-			return VALID;
-		}
-		return INVALID;
-	}
+    VALID, INVALID;
+
+    public static ValidationCategory valueOf(final boolean b) {
+        if (b) {
+            return VALID;
+        }
+        return INVALID;
+    }
 }

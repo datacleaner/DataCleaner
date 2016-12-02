@@ -26,8 +26,8 @@ import junit.framework.TestCase;
 
 public class TestwareTest extends TestCase {
 
-	public void testLoggingLevel() throws Exception {
-		Logger logger = LoggerFactory.getLogger(getClass());
-		assertTrue("debug level logging is disabled", logger.isDebugEnabled());
-	}
+    public void testLoggingLevel() throws Exception {
+        final Logger logger = LoggerFactory.getLogger(getClass());
+        assertTrue("debug level logging is disabled", logger.isDebugEnabled());
+    }
 }

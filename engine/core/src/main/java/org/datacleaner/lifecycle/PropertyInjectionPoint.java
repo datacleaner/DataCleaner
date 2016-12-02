@@ -26,52 +26,52 @@ import org.datacleaner.descriptors.PropertyDescriptor;
 
 /**
  * {@link InjectionPoint} implementation for {@link PropertyDescriptor}s
- * 
- * 
+ *
+ *
  */
 public final class PropertyInjectionPoint implements InjectionPoint<Object> {
 
-	private final PropertyDescriptor _descriptor;
-	private final Object _instance;
+    private final PropertyDescriptor _descriptor;
+    private final Object _instance;
 
-	public PropertyInjectionPoint(PropertyDescriptor descriptor, Object instance) {
-		_descriptor = descriptor;
-		_instance = instance;
-	}
+    public PropertyInjectionPoint(final PropertyDescriptor descriptor, final Object instance) {
+        _descriptor = descriptor;
+        _instance = instance;
+    }
 
-	@Override
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		return _descriptor.getAnnotation(annotationClass);
-	}
+    @Override
+    public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
+        return _descriptor.getAnnotation(annotationClass);
+    }
 
-	@Override
-	public Object getInstance() {
-		return _instance;
-	}
+    @Override
+    public Object getInstance() {
+        return _instance;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Class<Object> getBaseType() {
-		return (Class<Object>) _descriptor.getType();
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Class<Object> getBaseType() {
+        return (Class<Object>) _descriptor.getType();
+    }
 
-	@Override
-	public boolean isGenericType() {
-		return _descriptor.getTypeArgumentCount() > 0;
-	}
+    @Override
+    public boolean isGenericType() {
+        return _descriptor.getTypeArgumentCount() > 0;
+    }
 
-	@Override
-	public int getGenericTypeArgumentCount() {
-		return _descriptor.getTypeArgumentCount();
-	}
+    @Override
+    public int getGenericTypeArgumentCount() {
+        return _descriptor.getTypeArgumentCount();
+    }
 
-	@Override
-	public Class<?> getGenericTypeArgument(int i) throws IndexOutOfBoundsException {
-		return _descriptor.getTypeArgument(i);
-	}
+    @Override
+    public Class<?> getGenericTypeArgument(final int i) throws IndexOutOfBoundsException {
+        return _descriptor.getTypeArgument(i);
+    }
 
-	@Override
-	public String toString() {
-	    return "PropertyInjectionPoint[" + _descriptor + "]";
-	}
+    @Override
+    public String toString() {
+        return "PropertyInjectionPoint[" + _descriptor + "]";
+    }
 }

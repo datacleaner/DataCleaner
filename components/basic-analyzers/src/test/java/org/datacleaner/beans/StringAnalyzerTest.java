@@ -21,8 +21,6 @@ package org.datacleaner.beans;
 
 import javax.swing.table.TableModel;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
@@ -32,6 +30,8 @@ import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
+
+import junit.framework.TestCase;
 
 public class StringAnalyzerTest extends TestCase {
 
@@ -43,8 +43,8 @@ public class StringAnalyzerTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        c1 = new MockInputColumn<String>("greetings", String.class);
-        c2 = new MockInputColumn<String>("greeters", String.class);
+        c1 = new MockInputColumn<>("greetings", String.class);
+        c2 = new MockInputColumn<>("greeters", String.class);
         stringAnalyzer = new StringAnalyzer(c1, c2);
     }
 
@@ -54,15 +54,15 @@ public class StringAnalyzerTest extends TestCase {
         stringAnalyzer.run(new MockInputRow().put(c1, "Hey").put(c2, "country"), 1);
         stringAnalyzer.run(new MockInputRow().put(c1, "hi").put(c2, "stranger"), 1);
 
-        CrosstabResult result = stringAnalyzer.getResult();
+        final CrosstabResult result = stringAnalyzer.getResult();
 
         assertEquals(Number.class, result.getCrosstab().getValueClass());
 
-        String renderedResult = new CrosstabTextRenderer().render(result);
-        String[] resultLines = renderedResult.split("\n");
+        final String renderedResult = new CrosstabTextRenderer().render(result);
+        final String[] resultLines = renderedResult.split("\n");
         assertEquals(22, resultLines.length);
 
-        int i=0;
+        int i = 0;
         assertEquals("                                      greetings  greeters ", resultLines[i++]);
         assertEquals("Row count                                     4         4 ", resultLines[i++]);
         assertEquals("Null count                                    0         0 ", resultLines[i++]);
@@ -94,15 +94,15 @@ public class StringAnalyzerTest extends TestCase {
         stringAnalyzer.run(new MockInputRow().put(c1, " HËJSÄN").put(c2, "eobjects.org"), 1);
         stringAnalyzer.run(new MockInputRow().put(c1, "SØREN SEN").put(c2, "- hi"), 4);
 
-        StringAnalyzerResult result = stringAnalyzer.getResult();
+        final StringAnalyzerResult result = stringAnalyzer.getResult();
 
         assertEquals(Number.class, result.getCrosstab().getValueClass());
 
-        String renderedResult = new CrosstabTextRenderer().render(result);
-        String[] resultLines = renderedResult.split("\n");
+        final String renderedResult = new CrosstabTextRenderer().render(result);
+        final String[] resultLines = renderedResult.split("\n");
         assertEquals(22, resultLines.length);
 
-        int i=0;
+        int i = 0;
         assertEquals("                                      greetings  greeters ", resultLines[i++]);
         assertEquals("Row count                                     9         9 ", resultLines[i++]);
         assertEquals("Null count                                    0         3 ", resultLines[i++]);
@@ -126,8 +126,9 @@ public class StringAnalyzerTest extends TestCase {
         assertEquals("Max words                                     2         2 ", resultLines[i++]);
         assertEquals("Min words                                     1         0 ", resultLines[i++]);
 
-        AnnotatedRowsResult drillResult = (AnnotatedRowsResult) result.getCrosstab()
-                .where("Measures", "Max white spaces").where("Column", "greetings").explore().getResult();
+        final AnnotatedRowsResult drillResult =
+                (AnnotatedRowsResult) result.getCrosstab().where("Measures", "Max white spaces")
+                        .where("Column", "greetings").explore().getResult();
         assertEquals(5, drillResult.getAnnotation().getRowCount());
 
         TableModel tableModel = drillResult.toTableModel();
@@ -137,7 +138,7 @@ public class StringAnalyzerTest extends TestCase {
         assertEquals(5, tableModel.getRowCount());
         assertEquals("greetings", tableModel.getColumnName(0));
         assertEquals("greeters", tableModel.getColumnName(1));
-        
+
         assertEquals(" HËJSÄN", tableModel.getValueAt(0, 0).toString());
         assertEquals("eobjects.org", tableModel.getValueAt(0, 1).toString());
         for (int j = 1; j < 4; j++) {
@@ -159,17 +160,17 @@ public class StringAnalyzerTest extends TestCase {
     }
 
     public void testNoRows() throws Exception {
-        StringAnalyzer stringAnalyzer = new StringAnalyzer(c1, c2);
+        final StringAnalyzer stringAnalyzer = new StringAnalyzer(c1, c2);
 
-        CrosstabResult result = stringAnalyzer.getResult();
+        final CrosstabResult result = stringAnalyzer.getResult();
 
         assertEquals(Number.class, result.getCrosstab().getValueClass());
 
-        String renderedResult = new CrosstabTextRenderer().render(result);
-        String[] resultLines = renderedResult.split("\n");
+        final String renderedResult = new CrosstabTextRenderer().render(result);
+        final String[] resultLines = renderedResult.split("\n");
         assertEquals(22, resultLines.length);
 
-        int i=0;
+        int i = 0;
         assertEquals("                                      greetings  greeters ", resultLines[i++]);
         assertEquals("Row count                                     0         0 ", resultLines[i++]);
         assertEquals("Null count                                    0         0 ", resultLines[i++]);
@@ -195,9 +196,9 @@ public class StringAnalyzerTest extends TestCase {
     }
 
     public void testMetricDescriptor() throws Exception {
-        AnalyzerDescriptor<org.datacleaner.beans.StringAnalyzer> descriptor = Descriptors
-                .ofAnalyzer(StringAnalyzer.class);
-        MetricDescriptor metric = descriptor.getResultMetric(StringAnalyzer.MEASURE_ENTIRELY_LOWERCASE_COUNT);
+        final AnalyzerDescriptor<org.datacleaner.beans.StringAnalyzer> descriptor =
+                Descriptors.ofAnalyzer(StringAnalyzer.class);
+        final MetricDescriptor metric = descriptor.getResultMetric(StringAnalyzer.MEASURE_ENTIRELY_LOWERCASE_COUNT);
         assertEquals("MetricDescriptorImpl[name=Entirely lowercase count]", metric.toString());
         assertTrue(metric.isParameterizedByInputColumn());
         assertFalse(metric.isParameterizedByString());

@@ -34,7 +34,7 @@ public class TenantIdentifier implements Serializable {
         this(null);
     }
 
-    public TenantIdentifier(String id) {
+    public TenantIdentifier(final String id) {
         _id = id;
     }
 
@@ -42,7 +42,7 @@ public class TenantIdentifier implements Serializable {
         return _id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         _id = id;
     }
 
@@ -55,19 +55,24 @@ public class TenantIdentifier implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        TenantIdentifier other = (TenantIdentifier) obj;
+        }
+        final TenantIdentifier other = (TenantIdentifier) obj;
         if (_id == null) {
-            if (other._id != null)
+            if (other._id != null) {
                 return false;
-        } else if (!_id.equals(other._id))
+            }
+        } else if (!_id.equals(other._id)) {
             return false;
+        }
         return true;
     }
 

@@ -66,9 +66,34 @@ public class PlainSearchReplaceTransformer implements Transformer {
     @Description("Replace the entire string when the search string is found.")
     boolean replaceEntireString = false;
 
+    public static void processRemovedProperties(final ComponentBuilder builder, final StringConverter stringConverter,
+            final ComponentDescriptor<?> descriptor, final Map<String, String> removedProperties) {
+        if (removedProperties.containsKey(SEARCH_STRING_PROPERTY_NAME) && removedProperties
+                .containsKey(REPLACEMENT_STRING_PROPERTY_NAME)) {
+            final ConfiguredPropertyDescriptor configuredProperty =
+                    descriptor.getConfiguredProperty(REPLACEMENTS_PROPERTY_NAME);
+
+            final Converter<?> customConverter = configuredProperty.createCustomConverter();
+
+            final Map<String, String> replacements = new HashMap<>();
+            replacements.put(SerializationStringEscaper.unescape(removedProperties.get(SEARCH_STRING_PROPERTY_NAME)),
+                    SerializationStringEscaper.unescape(removedProperties.get(REPLACEMENT_STRING_PROPERTY_NAME)));
+
+            final Object value = stringConverter
+                    .deserialize(new MapStringToStringConverter().toString(replacements), configuredProperty.getType(),
+                            customConverter);
+
+            builder.setConfiguredProperty(configuredProperty, value);
+        }
+    }
+
+    public static boolean isRemovedProperty(final ComponentDescriptor<?> descriptor, final String name) {
+        return (SEARCH_STRING_PROPERTY_NAME.equals(name) || REPLACEMENT_STRING_PROPERTY_NAME.equals(name));
+    }
+
     @Validate
     public void validate() {
-        for (Entry<String, String> entry : replacements.entrySet()) {
+        for (final Entry<String, String> entry : replacements.entrySet()) {
             final String searchString = entry.getKey();
             if (Strings.isNullOrEmpty(searchString)) {
                 throw new IllegalArgumentException("Search string cannot be empty");
@@ -87,7 +112,7 @@ public class PlainSearchReplaceTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow row) {
+    public String[] transform(final InputRow row) {
         final String[] result = new String[1];
         String value = row.getValue(valueColumn);
         if (value == null) {
@@ -95,7 +120,7 @@ public class PlainSearchReplaceTransformer implements Transformer {
         }
 
         if (replaceEntireString) {
-            for (Entry<String, String> entry : replacements.entrySet()) {
+            for (final Entry<String, String> entry : replacements.entrySet()) {
                 final String replacementString = entry.getValue();
                 final String searchString = entry.getKey();
                 if (value.indexOf(searchString) != -1) {
@@ -104,7 +129,7 @@ public class PlainSearchReplaceTransformer implements Transformer {
                 }
             }
         } else {
-            for (Entry<String, String> entry : replacements.entrySet()) {
+            for (final Entry<String, String> entry : replacements.entrySet()) {
                 final String replacementString = entry.getValue();
                 final String searchString = entry.getKey();
                 value = value.replace(searchString, replacementString);
@@ -114,37 +139,13 @@ public class PlainSearchReplaceTransformer implements Transformer {
 
         return result;
     }
-    
-    public void setReplacements(Map<String, String> replacements) {
+
+    public void setReplacements(final Map<String, String> replacements) {
         this.replacements = replacements;
     }
-    
-    public void setReplaceEntireString(boolean replaceEntireString) {
+
+    public void setReplaceEntireString(final boolean replaceEntireString) {
         this.replaceEntireString = replaceEntireString;
-    }
-
-    public static void processRemovedProperties(final ComponentBuilder builder, final StringConverter stringConverter,
-            final ComponentDescriptor<?> descriptor, Map<String, String> removedProperties) {
-        if (removedProperties.containsKey(SEARCH_STRING_PROPERTY_NAME) && removedProperties.containsKey(
-                REPLACEMENT_STRING_PROPERTY_NAME)) {
-            final ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty(
-                    REPLACEMENTS_PROPERTY_NAME);
-
-            final Converter<?> customConverter = configuredProperty.createCustomConverter();
-
-            Map<String, String> replacements = new HashMap<>();
-            replacements.put(SerializationStringEscaper.unescape(removedProperties.get(SEARCH_STRING_PROPERTY_NAME)),
-                    SerializationStringEscaper.unescape(removedProperties.get(REPLACEMENT_STRING_PROPERTY_NAME)));
-
-            final Object value = stringConverter.deserialize(new MapStringToStringConverter().toString(replacements),
-                    configuredProperty.getType(), customConverter);
-
-            builder.setConfiguredProperty(configuredProperty, value);
-        }
-    }
-
-    public static boolean isRemovedProperty(final ComponentDescriptor<?> descriptor, final String name) {
-        return (SEARCH_STRING_PROPERTY_NAME.equals(name) || REPLACEMENT_STRING_PROPERTY_NAME.equals(name));
     }
 
 }

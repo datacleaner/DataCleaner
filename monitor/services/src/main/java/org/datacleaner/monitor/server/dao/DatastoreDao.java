@@ -32,41 +32,41 @@ public interface DatastoreDao {
 
     /**
      * Reads/parses a datastore XML element
-     * 
+     *
      * @param reader
      * @return
      */
-    public Element parseDatastoreElement(Reader reader);
+    Element parseDatastoreElement(Reader reader);
 
     /**
      * Adds a datastore to a tenant's configuration
-     * 
+     *
      * @param tenantContext
      * @param datastoreElement
      * @return the name of the datastore that was added
      */
-    public String addDatastore(TenantContext tenantContext, Element datastoreElement);
+    String addDatastore(TenantContext tenantContext, Element datastoreElement);
 
     /**
      * Adds a datastore to a tenant's configuration, if possible using standard
      * XML serialization mechanims.
-     * 
+     *
      * Beware that not all datastore types are supported to be saved using this
      * method. Refer to {@link #addDatastore(TenantContext, Element)} to be
      * completely safe.
-     * 
+     *
      * @param tenantContext
      * @param datastore
      * @return
      * @throws UnsupportedOperationException
      */
-    public String addDatastore(TenantContext tenantContext, Datastore datastore) throws UnsupportedOperationException;
+    String addDatastore(TenantContext tenantContext, Datastore datastore) throws UnsupportedOperationException;
 
     /**
      * Removes a datastore from a tenant's configuration
-     * 
+     *
      * @param tenantContext
      * @param datastoreName
      */
-    public void removeDatastore(TenantContext tenantContext, String datastoreName) throws IllegalArgumentException;
+    void removeDatastore(TenantContext tenantContext, String datastoreName) throws IllegalArgumentException;
 }

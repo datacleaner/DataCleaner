@@ -39,7 +39,7 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
 
     private final DataHubUpdateCallback _callback;
 
-    public DataHubDeleteBuilder(DataHubUpdateCallback callback, Table table) {
+    public DataHubDeleteBuilder(final DataHubUpdateCallback callback, final Table table) {
         super(table);
         _callback = callback;
     }
@@ -60,19 +60,19 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
         }
     }
 
-    private void deleteSourceRecord(List<FilterItem> whereItems) {
+    private void deleteSourceRecord(final List<FilterItem> whereItems) {
         if (whereItems.size() != 2) {
             throw new IllegalArgumentException(
                     "Delete must be executed on a SourceRecordsGoldenRecordFormat table using " + SOURCE_ID_COLUMN_NAME
-                    + " and " + SOURCE_NAME_COLUMN_NAME + " as condition values.");
-       }
+                            + " and " + SOURCE_NAME_COLUMN_NAME + " as condition values.");
+        }
         final FilterItem firstWhereItem = whereItems.get(0);
         final FilterItem secondWhereItem = whereItems.get(1);
 
         final String secondColumnName = getConditionColumnName(secondWhereItem);
         if (SOURCE_NAME_COLUMN_NAME.equals(secondColumnName)) {
-            String id = getConditionColumnValue(firstWhereItem);
-            String sourceName = getConditionColumnValue(secondWhereItem);
+            final String id = getConditionColumnValue(firstWhereItem);
+            final String sourceName = getConditionColumnValue(secondWhereItem);
             _callback.executeDeleteSourceRecord(sourceName, id, getRecordType());
         } else {
             throw new IllegalArgumentException(
@@ -81,21 +81,21 @@ public class DataHubDeleteBuilder extends AbstractRowDeletionBuilder {
         }
     }
 
-    private void deleteGoldenRecord(List<FilterItem> whereItems) {
+    private void deleteGoldenRecord(final List<FilterItem> whereItems) {
         if (whereItems.size() != 1) {
-            throw new IllegalArgumentException("Delete requires the " + GR_ID_COLUMN_NAME
-                    + " as the sole condition value.");
+            throw new IllegalArgumentException(
+                    "Delete requires the " + GR_ID_COLUMN_NAME + " as the sole condition value.");
         }
         final FilterItem whereItem = whereItems.get(0);
         final String grId = getConditionColumnValue(whereItem);
         _callback.executeDeleteGoldenRecord(grId);
     }
 
-    private String getConditionColumnValue(FilterItem filterItem) {
+    private String getConditionColumnValue(final FilterItem filterItem) {
         return (String) filterItem.getOperand();
     }
 
-    private String getConditionColumnName(FilterItem filterItem) {
+    private String getConditionColumnName(final FilterItem filterItem) {
         return filterItem.getSelectItem().getColumn().getName();
     }
 

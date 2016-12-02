@@ -35,15 +35,15 @@ import org.datacleaner.result.QueryParameterizableMetric;
 
 /**
  * Represents the result of the {@link PatternFinderAnalyzer}.
- * 
+ *
  * A pattern finder result has two basic forms: Grouped or ungrouped. To find
  * out which type a particular instance has, use the
  * {@link #isGroupingEnabled()} method.
- * 
+ *
  * Ungrouped results only contain a single/global crosstab. A grouped result
  * contain multiple crosstabs, based on groups.
- * 
- * 
+ *
+ *
  */
 @Distributed(reducer = PatternFinderResultReducer.class)
 public class PatternFinderResult implements AnalyzerResult {
@@ -55,23 +55,23 @@ public class PatternFinderResult implements AnalyzerResult {
     private final Map<String, Crosstab<?>> _crosstabs;
     private final TokenizerConfiguration _tokenizerConfiguration;
 
-    public PatternFinderResult(InputColumn<String> column, Crosstab<?> crosstab,
-            TokenizerConfiguration tokenizerConfiguration) {
+    public PatternFinderResult(final InputColumn<String> column, final Crosstab<?> crosstab,
+            final TokenizerConfiguration tokenizerConfiguration) {
         _column = column;
         _groupColumn = null;
-        _crosstabs = new HashMap<String, Crosstab<?>>();
+        _crosstabs = new HashMap<>();
         _crosstabs.put(null, crosstab);
         _tokenizerConfiguration = tokenizerConfiguration;
     }
 
-    public PatternFinderResult(InputColumn<String> column, InputColumn<String> groupColumn,
-            Map<String, Crosstab<?>> crosstabs, TokenizerConfiguration tokenizerConfiguration) {
+    public PatternFinderResult(final InputColumn<String> column, final InputColumn<String> groupColumn,
+            final Map<String, Crosstab<?>> crosstabs, final TokenizerConfiguration tokenizerConfiguration) {
         _column = column;
         _groupColumn = groupColumn;
         _crosstabs = crosstabs;
         _tokenizerConfiguration = tokenizerConfiguration;
     }
-    
+
     public TokenizerConfiguration getTokenizerConfiguration() {
         return _tokenizerConfiguration;
     }
@@ -107,7 +107,7 @@ public class PatternFinderResult implements AnalyzerResult {
         return new QueryParameterizableMetric() {
 
             @Override
-            protected int getInstanceCount(String instance) {
+            protected int getInstanceCount(final String instance) {
                 return getMatchCount(instance);
             }
 
@@ -118,11 +118,10 @@ public class PatternFinderResult implements AnalyzerResult {
 
             @Override
             public Collection<String> getParameterSuggestions() {
-                Crosstab<?> crosstab = getSingleCrosstab();
-                CrosstabDimension patternDimension = crosstab
-                        .getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
-                List<String> categories = patternDimension.getCategories();
-                return categories;
+                final Crosstab<?> crosstab = getSingleCrosstab();
+                final CrosstabDimension patternDimension =
+                        crosstab.getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
+                return patternDimension.getCategories();
             }
         };
     }
@@ -130,11 +129,11 @@ public class PatternFinderResult implements AnalyzerResult {
     private int getTotalCount() {
         int sum = 0;
 
-        Crosstab<?> crosstab = getSingleCrosstab();
-        CrosstabDimension patternDimension = crosstab.getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
-        List<String> categories = patternDimension.getCategories();
-        for (String category : categories) {
-            Object value = crosstab.where(patternDimension, category)
+        final Crosstab<?> crosstab = getSingleCrosstab();
+        final CrosstabDimension patternDimension = crosstab.getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
+        final List<String> categories = patternDimension.getCategories();
+        for (final String category : categories) {
+            final Object value = crosstab.where(patternDimension, category)
                     .where(PatternFinderAnalyzer.DIMENSION_NAME_MEASURES, PatternFinderAnalyzer.MEASURE_MATCH_COUNT)
                     .get();
             if (value instanceof Number) {
@@ -144,15 +143,15 @@ public class PatternFinderResult implements AnalyzerResult {
         return sum;
     }
 
-    public int getMatchCount(String pattern) {
-        Crosstab<?> crosstab = getSingleCrosstab();
-        CrosstabDimension patternDimension = crosstab.getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
-        List<String> categories = patternDimension.getCategories();
-        for (String category : categories) {
-            SimpleStringPattern stringPattern = new SimpleStringPattern(category, category, _tokenizerConfiguration);
+    public int getMatchCount(final String pattern) {
+        final Crosstab<?> crosstab = getSingleCrosstab();
+        final CrosstabDimension patternDimension = crosstab.getDimension(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN);
+        final List<String> categories = patternDimension.getCategories();
+        for (final String category : categories) {
+            final SimpleStringPattern stringPattern =
+                    new SimpleStringPattern(category, category, _tokenizerConfiguration);
             if (stringPattern.matches(pattern)) {
-                Object value = crosstab
-                        .where(patternDimension, category)
+                final Object value = crosstab.where(patternDimension, category)
                         .where(PatternFinderAnalyzer.DIMENSION_NAME_MEASURES, PatternFinderAnalyzer.MEASURE_MATCH_COUNT)
                         .get();
                 if (value instanceof Number) {

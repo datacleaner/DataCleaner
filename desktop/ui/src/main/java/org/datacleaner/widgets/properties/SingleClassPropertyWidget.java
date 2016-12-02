@@ -32,74 +32,68 @@ import javax.swing.JList;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCListCellRenderer;
 
 public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> {
 
-	private final DCComboBox<Class<?>> _comboBox;
+    private final DCComboBox<Class<?>> _comboBox;
 
-	@Inject
-	public SingleClassPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			ComponentBuilder componentBuilder) {
-		super(componentBuilder, propertyDescriptor);
+    @Inject
+    public SingleClassPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder) {
+        super(componentBuilder, propertyDescriptor);
 
-		_comboBox = createClassComboBox(propertyDescriptor.isRequired());
-		Class<?> currentValue = getCurrentValue();
-		if (currentValue != null) {
-			_comboBox.setSelectedItem(currentValue);
-		}
+        _comboBox = createClassComboBox(propertyDescriptor.isRequired());
+        final Class<?> currentValue = getCurrentValue();
+        if (currentValue != null) {
+            _comboBox.setSelectedItem(currentValue);
+        }
 
-		_comboBox.addListener(new Listener<Class<?>>() {
-			@Override
-			public void onItemSelected(Class<?> item) {
-				fireValueChanged(item);
-			}
-		});
+        _comboBox.addListener(this::fireValueChanged);
 
-		add(_comboBox);
-	}
+        add(_comboBox);
+    }
 
-	public static DCComboBox<Class<?>> createClassComboBox(boolean required) {
-		Collection<Class<?>> items = new ArrayList<Class<?>>();
+    public static DCComboBox<Class<?>> createClassComboBox(final boolean required) {
+        final Collection<Class<?>> items = new ArrayList<>();
 
-		if (!required) {
-			items.add(null);
-		}
-		items.add(String.class);
-		items.add(Number.class);
-		items.add(Date.class);
-		items.add(Boolean.class);
-		items.add(List.class);
-		items.add(Map.class);
-		items.add(Object.class);
+        if (!required) {
+            items.add(null);
+        }
+        items.add(String.class);
+        items.add(Number.class);
+        items.add(Date.class);
+        items.add(Boolean.class);
+        items.add(List.class);
+        items.add(Map.class);
+        items.add(Object.class);
 
-		DCComboBox<Class<?>> comboBox = new DCComboBox<Class<?>>(items);
-		comboBox.setRenderer(new DCListCellRenderer() {
+        final DCComboBox<Class<?>> comboBox = new DCComboBox<>(items);
+        comboBox.setRenderer(new DCListCellRenderer() {
 
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				if (value instanceof Class) {
-					// render eg. java.lang.String as just "String"
-					value = ((Class<?>) value).getSimpleName();
-				}
-				return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			}
-		});
-		return comboBox;
-	}
+            @Override
+            public Component getListCellRendererComponent(final JList<?> list, Object value, final int index,
+                    final boolean isSelected, final boolean cellHasFocus) {
+                if (value instanceof Class) {
+                    // render eg. java.lang.String as just "String"
+                    value = ((Class<?>) value).getSimpleName();
+                }
+                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            }
+        });
+        return comboBox;
+    }
 
-	@Override
-	public Class<?> getValue() {
-		return _comboBox.getSelectedItem();
-	}
+    @Override
+    public Class<?> getValue() {
+        return _comboBox.getSelectedItem();
+    }
 
-	@Override
-	protected void setValue(Class<?> value) {
-		_comboBox.setSelectedItem(value);
-	}
+    @Override
+    protected void setValue(final Class<?> value) {
+        _comboBox.setSelectedItem(value);
+    }
 
 }

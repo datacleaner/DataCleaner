@@ -22,6 +22,7 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -44,24 +45,22 @@ import org.datacleaner.util.WidgetUtils;
 public abstract class AbstractDialog extends JDialog implements DCWindow, WindowListener {
 
     private static final long serialVersionUID = 1L;
-
-    private volatile boolean initialized = false;
     private final WindowContext _windowContext;
-
+    private volatile boolean initialized = false;
     private Image _bannerImage;
 
     private volatile Color _backgroundColor = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
     private DCBannerPanel _banner;
 
-    public AbstractDialog(WindowContext windowContext) {
+    public AbstractDialog(final WindowContext windowContext) {
         this(windowContext, null);
     }
 
-    public AbstractDialog(WindowContext windowContext, Image bannerImage) {
+    public AbstractDialog(final WindowContext windowContext, final Image bannerImage) {
         this(windowContext, bannerImage, null);
     }
 
-    public AbstractDialog(WindowContext windowContext, Image bannerImage, AbstractWindow owner) {
+    public AbstractDialog(final WindowContext windowContext, final Image bannerImage, final AbstractWindow owner) {
         super(owner);
         // modal dialogs are turned off because they prevent use of default
         // uncaught exception handlers(!)
@@ -77,7 +76,8 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         // ESC is typed.
         setFocusable(true);
 
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "EscapeAction");
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "EscapeAction");
         getRootPane().getActionMap().put("EscapeAction", createEscapeAction());
     }
 
@@ -86,19 +86,19 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 close();
             }
         };
     }
 
-    public void setBannerImage(Image bannerImage) {
-        _bannerImage = bannerImage;
-        _banner = null;
-    }
-
     public Image getBannerImage() {
         return _bannerImage;
+    }
+
+    public void setBannerImage(final Image bannerImage) {
+        _bannerImage = bannerImage;
+        _banner = null;
     }
 
     protected DCBannerPanel getBanner() {
@@ -108,7 +108,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         return _banner;
     }
 
-    protected void setBackgroundColor(Color backgroundColor) {
+    protected void setBackgroundColor(final Color backgroundColor) {
         _backgroundColor = backgroundColor;
     }
 
@@ -141,7 +141,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         setIconImage(getWindowIcon());
         setResizable(isWindowResizable());
 
-        JComponent content = getWindowContent();
+        final JComponent content = getWindowContent();
         getContentPane().removeAll();
         getContentPane().add(content);
 
@@ -159,7 +159,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
     }
 
     @Override
-    public final void setVisible(boolean b) {
+    public final void setVisible(final boolean b) {
         if (!b) {
             throw new UnsupportedOperationException("Window does not support hiding, consider using dispose()");
         }
@@ -197,6 +197,8 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         panel.setPreferredSize(getDialogWidth(),
                 bannerHeight + dialogContent.getPreferredSize().height + getDialogHeightBuffer());
 
+        setMinimumSize(new Dimension(getDialogWidth(), 300));
+
         return panel;
     }
 
@@ -204,14 +206,14 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
      * Method that can be overridden by subclasses to add "buffer space" to the
      * height of the dialog. This is usually used if the contents of the dialog
      * is expected to grow as the user uses it.
-     * 
+     *
      * @return
      */
     protected int getDialogHeightBuffer() {
         return 0;
     }
 
-    protected DCBannerPanel createBanner(Image bannerImage) {
+    protected DCBannerPanel createBanner(final Image bannerImage) {
         if (bannerImage == null) {
             return null;
         } else {
@@ -223,6 +225,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
             return bannerPanel;
         }
     }
+
     protected abstract String getBannerTitle();
 
     protected abstract int getDialogWidth();
@@ -230,12 +233,12 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
     protected abstract JComponent getDialogContent();
 
     @Override
-    public void windowOpened(WindowEvent e) {
+    public void windowOpened(final WindowEvent e) {
     }
 
     @Override
-    public final void windowClosing(WindowEvent e) {
-        boolean dispose = onWindowClosing();
+    public final void windowClosing(final WindowEvent e) {
+        final boolean dispose = onWindowClosing();
         if (dispose) {
             dispose();
         }
@@ -259,23 +262,23 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
     }
 
     @Override
-    public void windowClosed(WindowEvent e) {
+    public void windowClosed(final WindowEvent e) {
     }
 
     @Override
-    public void windowIconified(WindowEvent e) {
+    public void windowIconified(final WindowEvent e) {
     }
 
     @Override
-    public void windowDeiconified(WindowEvent e) {
+    public void windowDeiconified(final WindowEvent e) {
     }
 
     @Override
-    public void windowActivated(WindowEvent e) {
+    public void windowActivated(final WindowEvent e) {
     }
 
     @Override
-    public void windowDeactivated(WindowEvent e) {
+    public void windowDeactivated(final WindowEvent e) {
     }
 
     @Override

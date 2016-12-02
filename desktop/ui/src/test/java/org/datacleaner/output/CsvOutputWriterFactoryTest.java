@@ -21,32 +21,31 @@ package org.datacleaner.output;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
-import org.datacleaner.output.csv.CsvOutputWriterFactory;
-
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.output.csv.CsvOutputWriterFactory;
+
+import junit.framework.TestCase;
 
 public class CsvOutputWriterFactoryTest extends TestCase {
 
-	public void testFullScenario() throws Exception {
-		OutputWriterScenarioHelper scenarioHelper = new OutputWriterScenarioHelper();
+    public void testFullScenario() throws Exception {
+        final OutputWriterScenarioHelper scenarioHelper = new OutputWriterScenarioHelper();
 
-		final String filename = "target/test-output/csv-file1.txt";
-		OutputWriter writer = CsvOutputWriterFactory.getWriter(filename, scenarioHelper.getColumns());
+        final String filename = "target/test-output/csv-file1.txt";
+        final OutputWriter writer = CsvOutputWriterFactory.getWriter(filename, scenarioHelper.getColumns());
 
-		scenarioHelper.writeExampleData(writer);
-		writer.close();
-		
-		DataContext dc = DataContextFactory.createCsvDataContext(new File(filename));
-		Table table = dc.getDefaultSchema().getTables()[0];
-		Query q = dc.query().from(table).select(table.getColumns()).toQuery();
-		DataSet dataSet = dc.executeQuery(q);
-		
-		scenarioHelper.performAssertions(dataSet, false);
-	}
+        scenarioHelper.writeExampleData(writer);
+        writer.close();
+
+        final DataContext dc = DataContextFactory.createCsvDataContext(new File(filename));
+        final Table table = dc.getDefaultSchema().getTables()[0];
+        final Query q = dc.query().from(table).select(table.getColumns()).toQuery();
+        final DataSet dataSet = dc.executeQuery(q);
+
+        scenarioHelper.performAssertions(dataSet, false);
+    }
 }

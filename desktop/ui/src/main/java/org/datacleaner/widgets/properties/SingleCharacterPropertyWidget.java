@@ -29,50 +29,50 @@ import org.datacleaner.widgets.CharTextField;
 
 public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Character> {
 
-	private final CharTextField _textField;
-	private final DCDocumentListener _listener = new DCDocumentListener() {
-		@Override
-		protected void onChange(DocumentEvent e) {
-			fireValueChanged();
-		}
-	};
-	
-	@Inject
-	public SingleCharacterPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			ComponentBuilder componentBuilder) {
-		super(componentBuilder, propertyDescriptor);
-		_textField = new CharTextField();
-		Character currentValue = getCurrentValue();
-		setValue(currentValue);
+    private final CharTextField _textField;
+    private final DCDocumentListener _listener = new DCDocumentListener() {
+        @Override
+        protected void onChange(final DocumentEvent e) {
+            fireValueChanged();
+        }
+    };
 
-		_textField.addDocumentListener(_listener);
+    @Inject
+    public SingleCharacterPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder) {
+        super(componentBuilder, propertyDescriptor);
+        _textField = new CharTextField();
+        final Character currentValue = getCurrentValue();
+        setValue(currentValue);
 
-		add(_textField);
-	}
+        _textField.addDocumentListener(_listener);
 
-	public boolean isSet() {
-		Character value = _textField.getValue();
-		return value != null;
-	};
+        add(_textField);
+    }
 
-	@Override
-	public Character getValue() {
-		Character value = _textField.getValue();
-		if (value == null) {
-			if (getPropertyDescriptor().getBaseType().isPrimitive()) {
-				// cannot return null if it's a primitive char.
-				return (char) 0;
-			} else {
-				return null;
-			}
-		}
-		return value;
-	}
+    public boolean isSet() {
+        final Character value = _textField.getValue();
+        return value != null;
+    }
 
-	@Override
-	protected void setValue(Character value) {
-		_textField.removeDocumentListener(_listener);
-		_textField.setValue(value);
-		_textField.addDocumentListener(_listener);
-	}
+    @Override
+    public Character getValue() {
+        final Character value = _textField.getValue();
+        if (value == null) {
+            if (getPropertyDescriptor().getBaseType().isPrimitive()) {
+                // cannot return null if it's a primitive char.
+                return (char) 0;
+            } else {
+                return null;
+            }
+        }
+        return value;
+    }
+
+    @Override
+    protected void setValue(final Character value) {
+        _textField.removeDocumentListener(_listener);
+        _textField.setValue(value);
+        _textField.addDocumentListener(_listener);
+    }
 }

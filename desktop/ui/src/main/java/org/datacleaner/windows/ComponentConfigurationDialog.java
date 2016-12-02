@@ -21,8 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -60,12 +58,12 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
     private final ComponentBuilder _componentBuilder;
     private final ComponentScopeButton _componentScopeButton;
+    private final ChangeRequirementButton _changeRequirementButton;
+    private final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> _renderer;
     private boolean _changingScope;
 
-    private final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> _renderer;
-
-    public ComponentConfigurationDialog(WindowContext windowContext, ComponentBuilder componentBuilder,
-            Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer) {
+    public ComponentConfigurationDialog(final WindowContext windowContext, final ComponentBuilder componentBuilder,
+            final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer) {
         super(windowContext, getBannerImage(componentBuilder));
 
         _componentBuilder = componentBuilder;
@@ -82,16 +80,20 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
                     final ComponentBuilder osComponentBuilder) {
                 _changingScope = false;
                 _componentScopeButton.updateText(osJobBuilder, osComponentBuilder);
+
+                _changeRequirementButton.updateText();
+                _changeRequirementButton.setVisible(ChangeRequirementMenu.isRelevant(_componentBuilder));
                 initialize();
             }
         };
 
         _componentScopeButton = new ComponentScopeButton(_componentBuilder, menuBuilder);
+        _changeRequirementButton = new ChangeRequirementButton(_componentBuilder);
     }
 
-    private static Image getBannerImage(ComponentBuilder componentBuilder) {
-        final ImageIcon descriptorIcon = IconUtils.getDescriptorIcon(componentBuilder.getDescriptor(),
-                IconUtils.ICON_SIZE_LARGE);
+    private static Image getBannerImage(final ComponentBuilder componentBuilder) {
+        final ImageIcon descriptorIcon =
+                IconUtils.getDescriptorIcon(componentBuilder.getDescriptor(), IconUtils.ICON_SIZE_LARGE);
         return descriptorIcon.getImage();
     }
 
@@ -110,7 +112,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         return _componentBuilder.getDescriptor().getDisplayName();
     }
 
-    private String getBannerTitle2(boolean onlyIfDifferentThanTitle1) {
+    private String getBannerTitle2(final boolean onlyIfDifferentThanTitle1) {
         final String title2 = LabelUtils.getLabel(_componentBuilder);
         if (onlyIfDifferentThanTitle1 && getBannerTitle().equals(title2)) {
             return null;
@@ -119,14 +121,15 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     }
 
     @Override
-    protected DCBannerPanel createBanner(Image bannerImage) {
+    protected DCBannerPanel createBanner(final Image bannerImage) {
         final String remoteServerName;
 
         if (_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
-            final RemoteTransformerDescriptor<?> remoteTransformerDescriptor = (RemoteTransformerDescriptor<?>) (_componentBuilder
-                    .getDescriptor());
-            remoteServerName = " ("
-                    + remoteTransformerDescriptor.getRemoteDescriptorProvider().getServerData().getServerName() + ")";
+            final RemoteTransformerDescriptor<?> remoteTransformerDescriptor =
+                    (RemoteTransformerDescriptor<?>) (_componentBuilder.getDescriptor());
+            remoteServerName =
+                    " (" + remoteTransformerDescriptor.getRemoteDescriptorProvider().getServerData().getServerName()
+                            + ")";
         } else {
             remoteServerName = "";
         }
@@ -143,8 +146,8 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
             }
         });
 
-        final JButton documentationButton = WidgetFactory.createDefaultButton("Documentation",
-                IconUtils.MENU_DOCUMENTATION);
+        final JButton documentationButton =
+                WidgetFactory.createDefaultButton("Documentation", IconUtils.MENU_DOCUMENTATION);
         documentationButton.addActionListener(new ComponentReferenceDocumentationActionListener(
                 _componentBuilder.getAnalysisJobBuilder().getConfiguration(), _componentBuilder.getDescriptor()));
 
@@ -153,9 +156,11 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         }
 
         banner.add(documentationButton);
-        if (ChangeRequirementMenu.isRelevant(_componentBuilder)) {
-            banner.add(new ChangeRequirementButton(_componentBuilder));
-        }
+
+        _changeRequirementButton.setVisible(ChangeRequirementMenu.isRelevant(_componentBuilder));
+        banner.add(_changeRequirementButton);
+
+
         banner.add(renameButton);
 
         return banner;
@@ -176,12 +181,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         final JComponent configurationComponent = _renderer.render(_componentBuilder).createJComponent();
 
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ComponentConfigurationDialog.this.dispose();
-            }
-        });
+        closeButton.addActionListener(e -> ComponentConfigurationDialog.this.dispose());
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_WELL_BACKGROUND);
         panel.setLayout(new BorderLayout());
@@ -192,7 +192,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     }
 
     @Override
-    public void onRemove(ComponentBuilder componentBuilder) {
+    public void onRemove(final ComponentBuilder componentBuilder) {
         if (!_changingScope) {
             close();
         }

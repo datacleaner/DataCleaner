@@ -23,8 +23,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;
@@ -45,55 +43,57 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.test.TestHelper;
 
+import junit.framework.TestCase;
+
 public class LoadCoalesceMultipleFieldsJobTest extends TestCase {
 
     public void testScenario() throws Throwable {
-        Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
-        SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+        final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
+        final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(CompletenessAnalyzer.class));
-        descriptorProvider.addTransformerBeanDescriptor(Descriptors
-                .ofTransformer(CoalesceMultipleFieldsTransformer.class));
-        DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl()
-                .withDescriptorProvider(descriptorProvider);
+        descriptorProvider
+                .addTransformerBeanDescriptor(Descriptors.ofTransformer(CoalesceMultipleFieldsTransformer.class));
+        final DataCleanerEnvironment environment =
+                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider);
 
-        DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(
-                datastoreCatalog).withEnvironment(environment);
+        final DataCleanerConfigurationImpl configuration =
+                new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog).withEnvironment(environment);
 
-        JaxbJobReader reader = new JaxbJobReader(configuration);
-        AnalysisJobBuilder analysisJobBuilder = reader.create(new File(
-                "src/test/resources/example-job-coalesce-completeness.analysis.xml"));
+        final JaxbJobReader reader = new JaxbJobReader(configuration);
+        final AnalysisJobBuilder analysisJobBuilder =
+                reader.create(new File("src/test/resources/example-job-coalesce-completeness.analysis.xml"));
 
-        AnalysisJob job = analysisJobBuilder.toAnalysisJob(true);
+        final AnalysisJob job = analysisJobBuilder.toAnalysisJob(true);
         assertNotNull(job);
 
-        Collection<TransformerJob> transformerJobs = job.getTransformerJobs();
+        final Collection<TransformerJob> transformerJobs = job.getTransformerJobs();
         assertEquals(1, transformerJobs.size());
 
-        Collection<AnalyzerJob> analyzerJobs = job.getAnalyzerJobs();
+        final Collection<AnalyzerJob> analyzerJobs = job.getAnalyzerJobs();
         assertEquals(1, analyzerJobs.size());
 
-        TransformerJob transformerJob = transformerJobs.iterator().next();
-        assertEquals(
-                "[MetaModelInputColumn[PUBLIC.CUSTOMERS.STATE], MetaModelInputColumn[PUBLIC.CUSTOMERS.COUNTRY], "
-                        + "MetaModelInputColumn[PUBLIC.CUSTOMERS.SALESREPEMPLOYEENUMBER], MetaModelInputColumn[PUBLIC.CUSTOMERS.PHONE]]",
+        final TransformerJob transformerJob = transformerJobs.iterator().next();
+        assertEquals("[MetaModelInputColumn[PUBLIC.CUSTOMERS.STATE], MetaModelInputColumn[PUBLIC.CUSTOMERS.COUNTRY], "
+                        + "MetaModelInputColumn[PUBLIC.CUSTOMERS.SALESREPEMPLOYEENUMBER], "
+                        + "MetaModelInputColumn[PUBLIC.CUSTOMERS.PHONE]]",
                 Arrays.toString(transformerJob.getInput()));
         assertEquals("[TransformedInputColumn[id=trans-0001-0002,name=__state_or_country], "
-                + "TransformedInputColumn[id=trans-0001-0003,name=__salesrep_or_phone]]",
+                        + "TransformedInputColumn[id=trans-0001-0003,name=__salesrep_or_phone]]",
                 Arrays.toString(transformerJob.getOutput()));
 
-        AnalyzerJob analyzerJob = analyzerJobs.iterator().next();
+        final AnalyzerJob analyzerJob = analyzerJobs.iterator().next();
         assertEquals("[TransformedInputColumn[id=trans-0001-0002,name=__state_or_country], "
-                + "TransformedInputColumn[id=trans-0001-0003,name=__salesrep_or_phone]]",
+                        + "TransformedInputColumn[id=trans-0001-0003,name=__salesrep_or_phone]]",
                 Arrays.toString(analyzerJob.getInput()));
 
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
+        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
         resultFuture.await();
         if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
 
-        CompletenessAnalyzerResult result = (CompletenessAnalyzerResult) resultFuture.getResult(analyzerJob);
+        final CompletenessAnalyzerResult result = (CompletenessAnalyzerResult) resultFuture.getResult(analyzerJob);
         assertEquals(214, result.getTotalRowCount());
         assertEquals(73, result.getInvalidRowCount());
         assertEquals(214 - 73, result.getValidRowCount());

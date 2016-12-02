@@ -39,7 +39,7 @@ public final class ImmutableAnalysisJob extends BaseObject implements AnalysisJo
 
     /**
      * Creates an AnalysisJob
-     * 
+     *
      * @param datastore
      * @param sourceColumns
      * @param filterJobs
@@ -50,15 +50,15 @@ public final class ImmutableAnalysisJob extends BaseObject implements AnalysisJo
      *             instead
      */
     @Deprecated
-    public ImmutableAnalysisJob(Datastore datastore, Collection<? extends InputColumn<?>> sourceColumns,
-            Collection<FilterJob> filterJobs, Collection<TransformerJob> transformerJobs,
-            Collection<AnalyzerJob> analyzerJobs) {
+    public ImmutableAnalysisJob(final Datastore datastore, final Collection<? extends InputColumn<?>> sourceColumns,
+            final Collection<FilterJob> filterJobs, final Collection<TransformerJob> transformerJobs,
+            final Collection<AnalyzerJob> analyzerJobs) {
         this(AnalysisJobMetadata.EMPTY_METADATA, datastore, sourceColumns, filterJobs, transformerJobs, analyzerJobs);
     }
 
     /**
      * Creates an AnalysisJob
-     * 
+     *
      * @param metadata
      * @param datastore
      * @param sourceColumns
@@ -66,9 +66,9 @@ public final class ImmutableAnalysisJob extends BaseObject implements AnalysisJo
      * @param transformerJobs
      * @param analyzerJobs
      */
-    public ImmutableAnalysisJob(AnalysisJobMetadata metadata, Datastore datastore,
-            Collection<? extends InputColumn<?>> sourceColumns, Collection<FilterJob> filterJobs,
-            Collection<TransformerJob> transformerJobs, Collection<AnalyzerJob> analyzerJobs) {
+    public ImmutableAnalysisJob(final AnalysisJobMetadata metadata, final Datastore datastore,
+            final Collection<? extends InputColumn<?>> sourceColumns, final Collection<FilterJob> filterJobs,
+            final Collection<TransformerJob> transformerJobs, final Collection<AnalyzerJob> analyzerJobs) {
         _metadata = metadata;
         _datastore = datastore;
         _sourceColumns = ImmutableList.copyOf(sourceColumns);
@@ -78,7 +78,7 @@ public final class ImmutableAnalysisJob extends BaseObject implements AnalysisJo
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         identifiers.add(_datastore);
         identifiers.add(_sourceColumns);
         identifiers.add(_transformerJobs);

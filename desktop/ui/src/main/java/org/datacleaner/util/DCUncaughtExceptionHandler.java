@@ -31,7 +31,7 @@ public final class DCUncaughtExceptionHandler implements UncaughtExceptionHandle
     private static final Logger logger = LoggerFactory.getLogger(DCUncaughtExceptionHandler.class);
 
     @Override
-    public void uncaughtException(Thread t, final Throwable e) {
+    public void uncaughtException(final Thread t, final Throwable e) {
         if (isIgnoreIssue(e)) {
             logger.debug("Ignoring uncaught exception", e);
             return;
@@ -41,42 +41,33 @@ public final class DCUncaughtExceptionHandler implements UncaughtExceptionHandle
             logger.debug("Handling restricted functionality exception", e);
 
             final StringBuilder sb = new StringBuilder(e.getMessage());
-            final RestrictedFunctionalityCallToAction[] callToActions = ((RestrictedFunctionalityException) e)
-                    .getCallToActions();
-            for (RestrictedFunctionalityCallToAction callToAction : callToActions) {
+            final RestrictedFunctionalityCallToAction[] callToActions =
+                    ((RestrictedFunctionalityException) e).getCallToActions();
+            for (final RestrictedFunctionalityCallToAction callToAction : callToActions) {
                 sb.append('\n');
                 sb.append(" - " + callToAction.getName() + " - " + callToAction.getHref());
             }
 
             final String detailedMessage = sb.toString();
 
-            WidgetUtils.invokeSwingAction(new Runnable() {
-                @Override
-                public void run() {
-                    WidgetUtils.showErrorMessage("Restricted functionality", detailedMessage);
-                }
-            });
+            WidgetUtils
+                    .invokeSwingAction(() -> WidgetUtils.showErrorMessage("Restricted functionality", detailedMessage));
             return;
         }
 
         logger.error("Thread " + t.getName() + " threw uncaught exception", e);
 
-        WidgetUtils.invokeSwingAction(new Runnable() {
-            @Override
-            public void run() {
-                WidgetUtils.showErrorMessage("Unexpected error!", e);
-            }
-        });
+        WidgetUtils.invokeSwingAction(() -> WidgetUtils.showErrorMessage("Unexpected error!", e));
     }
 
     /**
      * Intentionally dirty (because it's hard to make this sorta stuff pretty)
      * method used to identify known issues that we cannot do anything about
-     * 
+     *
      * @param e
      * @return
      */
-    private boolean isIgnoreIssue(Throwable e) {
+    private boolean isIgnoreIssue(final Throwable e) {
         final StackTraceElement[] stackTrace = e.getStackTrace();
         /**
          * <pre>
@@ -87,8 +78,8 @@ public final class DCUncaughtExceptionHandler implements UncaughtExceptionHandle
          */
         if (e instanceof NullPointerException && stackTrace != null && stackTrace.length > 1) {
             final StackTraceElement stack1 = stackTrace[0];
-            if ("java.awt.geom.RectangularShape".equals(stack1.getClassName())
-                    && "setFrameFromDiagonal".equals(stack1.getMethodName())) {
+            if ("java.awt.geom.RectangularShape".equals(stack1.getClassName()) && "setFrameFromDiagonal"
+                    .equals(stack1.getMethodName())) {
                 final StackTraceElement stack2 = stackTrace[1];
                 if ("edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin".equals(stack2.getClassName())
                         && "mouseDragged".equals(stack2.getMethodName())) {

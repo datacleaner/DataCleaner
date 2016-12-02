@@ -51,12 +51,10 @@ import org.slf4j.LoggerFactory;
 @Categorized(CompositionCategory.class)
 public class FuseStreamsComponent extends MultiStreamComponent {
 
-    private static final Logger logger = LoggerFactory.getLogger(FuseStreamsComponent.class);
-
     public static final String OUTPUT_DATA_STREAM_NAME = "output";
     public static final String PROPERTY_INPUTS = "Inputs";
     public static final String PROPERTY_UNITS = "Units";
-
+    private static final Logger logger = LoggerFactory.getLogger(FuseStreamsComponent.class);
     @Configured(PROPERTY_INPUTS)
     InputColumn<?>[] _inputs;
 
@@ -70,7 +68,7 @@ public class FuseStreamsComponent extends MultiStreamComponent {
     public FuseStreamsComponent() {
     }
 
-    public FuseStreamsComponent(CoalesceUnit... units) {
+    public FuseStreamsComponent(final CoalesceUnit... units) {
         this();
         this._units = units;
     }
@@ -86,12 +84,12 @@ public class FuseStreamsComponent extends MultiStreamComponent {
 
     /**
      * Configures the transformer using the coalesce units provided
-     * 
+     *
      * @param units
      */
-    public void configureUsingCoalesceUnits(CoalesceUnit... units) {
+    public void configureUsingCoalesceUnits(final CoalesceUnit... units) {
         final List<InputColumn<?>> input = new ArrayList<>();
-        for (CoalesceUnit coalesceUnit : units) {
+        for (final CoalesceUnit coalesceUnit : units) {
             final InputColumn<?>[] inputColumns = coalesceUnit.getInputColumns();
             Collections.addAll(input, inputColumns);
         }
@@ -102,7 +100,7 @@ public class FuseStreamsComponent extends MultiStreamComponent {
     }
 
     @Override
-    public void run(InputRow inputRow) {
+    public void run(final InputRow inputRow) {
         final Object[] output = new Object[_initializedUnits.length];
         for (int i = 0; i < _initializedUnits.length; i++) {
             final CoalesceUnit unit = _initializedUnits[i];
@@ -122,20 +120,31 @@ public class FuseStreamsComponent extends MultiStreamComponent {
     @Override
     public OutputDataStream[] getOutputDataStreams() {
         final OutputDataStreamBuilder builder = OutputDataStreams.pushDataStream(OUTPUT_DATA_STREAM_NAME);
-        for (int i = 0; i < _units.length; i++) {
+        boolean foundOutputDataStream = false;
+        for (final CoalesceUnit unit : _units) {
             // Not necessarily initialized yet, so no _initializedUnits available
-            final CoalesceUnit unit = _units[i].updateInputColumns(_inputs);
-            final Class<?> dataType = unit.getOutputDataType();
-            final String columnName = unit.getSuggestedOutputColumnName();
-            final ColumnType columnType = ColumnTypeImpl.convertColumnType(dataType);
-            builder.withColumn(columnName, columnType);
+            final InputColumn<?>[] updatedInputColumns = unit.getUpdatedInputColumns(_inputs, false);
+            if (unit.getInputColumnNames().length == updatedInputColumns.length) {
+                // Valid Unit
+                foundOutputDataStream = true;
+                final CoalesceUnit updatedCoalesceUnit = unit.getUpdatedCoalesceUnit(updatedInputColumns);
+                final Class<?> dataType = updatedCoalesceUnit.getOutputDataType();
+                final String columnName = updatedCoalesceUnit.getSuggestedOutputColumnName();
+                final ColumnType columnType = ColumnTypeImpl.convertColumnType(dataType);
+                builder.withColumn(columnName, columnType);
+            } else {
+                logger.info("Missing columns detected, skipping coalesce unit");
+            }
+        }
+        if (!foundOutputDataStream) {
+            return new OutputDataStream[0];
         }
         return new OutputDataStream[] { builder.toOutputDataStream() };
     }
 
     @Override
-    public void initializeOutputDataStream(OutputDataStream outputDataStream, Query query,
-            OutputRowCollector outputRowCollector) {
+    public void initializeOutputDataStream(final OutputDataStream outputDataStream, final Query query,
+            final OutputRowCollector outputRowCollector) {
         _outputRowCollector = outputRowCollector;
     }
 

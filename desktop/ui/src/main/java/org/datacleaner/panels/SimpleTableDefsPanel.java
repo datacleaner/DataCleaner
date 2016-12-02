@@ -22,8 +22,6 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -43,8 +41,6 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.datacleaner.widgets.tabs.TabCloseEvent;
-import org.datacleaner.widgets.tabs.TabCloseListener;
 
 /**
  * A panel for letting the user build multiple {@link SimpleTableDef}s
@@ -53,8 +49,8 @@ public class SimpleTableDefsPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Icon TABLE_ICON = ImageManager.get().getImageIcon(IconUtils.MODEL_TABLE,
-            IconUtils.ICON_SIZE_TAB);
+    private static final Icon TABLE_ICON =
+            ImageManager.get().getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_TAB);
 
     private final CloseableTabbedPane _tabbedPane;
     private final SchemaFactory _schemaFactory;
@@ -66,11 +62,11 @@ public class SimpleTableDefsPanel extends DCPanel {
         this(null);
     }
 
-    public SimpleTableDefsPanel(SchemaFactory schemaFactory) {
+    public SimpleTableDefsPanel(final SchemaFactory schemaFactory) {
         this(schemaFactory, null);
     }
 
-    public SimpleTableDefsPanel(SchemaFactory schemaFactory, SimpleTableDef[] tableDefs) {
+    public SimpleTableDefsPanel(final SchemaFactory schemaFactory, final SimpleTableDef[] tableDefs) {
         super();
         _schemaFactory = schemaFactory;
         _tabbedPane = new CloseableTabbedPane();
@@ -87,7 +83,7 @@ public class SimpleTableDefsPanel extends DCPanel {
         if (tableDefs == null || tableDefs.length == 0) {
             setTabbedPaneVisible(false);
         } else {
-            for (SimpleTableDef tableDef : tableDefs) {
+            for (final SimpleTableDef tableDef : tableDefs) {
                 addTableDef(tableDef);
             }
         }
@@ -96,17 +92,14 @@ public class SimpleTableDefsPanel extends DCPanel {
         add(createButtonPanel(), BorderLayout.NORTH);
         setMinimumSize(new Dimension(400, 300));
 
-        _tabbedPane.addTabCloseListener(new TabCloseListener() {
-            @Override
-            public void tabClosed(TabCloseEvent ev) {
-                if (_tabbedPane.getTabCount() == 0) {
-                    setTabbedPaneVisible(false);
-                }
+        _tabbedPane.addTabCloseListener(ev -> {
+            if (_tabbedPane.getTabCount() == 0) {
+                setTabbedPaneVisible(false);
             }
         });
     }
 
-    private void setTabbedPaneVisible(boolean showTabbedPane) {
+    private void setTabbedPaneVisible(final boolean showTabbedPane) {
         _tabbedPaneContainer.removeAll();
         if (showTabbedPane) {
             _tabbedPaneContainer.add(_tabbedPane, BorderLayout.CENTER);
@@ -119,15 +112,13 @@ public class SimpleTableDefsPanel extends DCPanel {
     private DCPanel createButtonPanel() {
         final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
         addButton.setText("Add table");
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final String tableName = JOptionPane.showInputDialog(SimpleTableDefsPanel.this,
-                        "What is the name of the table", "Add table", JOptionPane.QUESTION_MESSAGE);
-                if (!StringUtils.isNullOrEmpty(tableName)) {
-                    SimpleTableDef tableDef = new SimpleTableDef(tableName, new String[0]);
-                    addTableDef(tableDef);
-                }
+        addButton.addActionListener(e -> {
+            final String tableName = JOptionPane
+                    .showInputDialog(SimpleTableDefsPanel.this, "What is the name of the table", "Add table",
+                            JOptionPane.QUESTION_MESSAGE);
+            if (!StringUtils.isNullOrEmpty(tableName)) {
+                final SimpleTableDef tableDef = new SimpleTableDef(tableName, new String[0]);
+                addTableDef(tableDef);
             }
         });
 
@@ -136,16 +127,13 @@ public class SimpleTableDefsPanel extends DCPanel {
         if (_schemaFactory != null) {
             final JButton autoDetectButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REFRESH);
             autoDetectButton.setText("Auto-detect tables");
-            autoDetectButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    removeAllTableDefs();
+            autoDetectButton.addActionListener(e -> {
+                removeAllTableDefs();
 
-                    Schema schema = _schemaFactory.createSchema();
-                    Table[] tables = schema.getTables();
-                    for (Table table : tables) {
-                        addTableDef(createTableDef(table));
-                    }
+                final Schema schema = _schemaFactory.createSchema();
+                final Table[] tables = schema.getTables();
+                for (final Table table : tables) {
+                    addTableDef(createTableDef(table));
                 }
             });
             buttonPanel = DCPanel.flow(Alignment.RIGHT, 10, 10, addButton, autoDetectButton);
@@ -156,10 +144,10 @@ public class SimpleTableDefsPanel extends DCPanel {
         return buttonPanel;
     }
 
-    private SimpleTableDef createTableDef(Table table) {
-        int columnCount = table.getColumnCount();
-        String[] names = new String[columnCount];
-        ColumnType[] types = new ColumnType[columnCount];
+    private SimpleTableDef createTableDef(final Table table) {
+        final int columnCount = table.getColumnCount();
+        final String[] names = new String[columnCount];
+        final ColumnType[] types = new ColumnType[columnCount];
         for (int i = 0; i < columnCount; i++) {
             names[i] = table.getColumn(i).getName();
             types[i] = table.getColumn(i).getType();
@@ -173,7 +161,7 @@ public class SimpleTableDefsPanel extends DCPanel {
         }
     }
 
-    public void addTableDef(SimpleTableDef tableDef) {
+    public void addTableDef(final SimpleTableDef tableDef) {
         _tabbedPane.addTab(tableDef.getName(), TABLE_ICON, new SimpleTableDefPanel(tableDef));
         setTabbedPaneVisible(true);
     }
@@ -187,7 +175,7 @@ public class SimpleTableDefsPanel extends DCPanel {
         return result;
     }
 
-    private SimpleTableDef getTableDef(int index) {
+    private SimpleTableDef getTableDef(final int index) {
         final Component component = _tabbedPane.getComponentAt(index);
         final SimpleTableDefPanel panel = (SimpleTableDefPanel) component;
         return panel.getTableDef();

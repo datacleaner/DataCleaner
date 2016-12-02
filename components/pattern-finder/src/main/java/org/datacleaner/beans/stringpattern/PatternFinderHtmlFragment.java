@@ -21,8 +21,8 @@ package org.datacleaner.beans.stringpattern;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.html.BodyElement;
@@ -43,27 +43,27 @@ class PatternFinderHtmlFragment implements HtmlFragment {
     private final RendererFactory _rendererFactory;
     private final SimpleHtmlFragment _htmlFragment;
 
-    public PatternFinderHtmlFragment(PatternFinderResult result, RendererFactory rendererFactory) {
+    public PatternFinderHtmlFragment(final PatternFinderResult result, final RendererFactory rendererFactory) {
         _result = result;
         _rendererFactory = rendererFactory;
         _htmlFragment = new SimpleHtmlFragment();
     }
 
     @Override
-    public void initialize(HtmlRenderingContext context) {
-        StringBuilder sb = new StringBuilder();
+    public void initialize(final HtmlRenderingContext context) {
+        final StringBuilder sb = new StringBuilder();
         sb.append("<div class=\"patternFinderResultContainer\">");
 
         if (_result.isGroupingEnabled()) {
-            Map<String, Crosstab<?>> crosstabs = _result.getGroupedCrosstabs();
+            final Map<String, Crosstab<?>> crosstabs = _result.getGroupedCrosstabs();
             if (crosstabs.isEmpty()) {
                 _htmlFragment.addBodyElement("<p>No patterns found</p>");
                 return;
             }
-            Set<Entry<String, Crosstab<?>>> crosstabEntries = crosstabs.entrySet();
-            for (Entry<String, Crosstab<?>> entry : crosstabEntries) {
-                String group = entry.getKey();
-                Crosstab<?> crosstab = entry.getValue();
+            final Set<Entry<String, Crosstab<?>>> crosstabEntries = crosstabs.entrySet();
+            for (final Entry<String, Crosstab<?>> entry : crosstabEntries) {
+                final String group = entry.getKey();
+                final Crosstab<?> crosstab = entry.getValue();
                 if (sb.length() != 0) {
                     sb.append("\n");
                 }
@@ -76,7 +76,7 @@ class PatternFinderHtmlFragment implements HtmlFragment {
                 sb.append("</div>");
             }
         } else {
-            Crosstab<?> crosstab = _result.getSingleCrosstab();
+            final Crosstab<?> crosstab = _result.getSingleCrosstab();
             sb.append("<div class=\"patternFinderResultPanel\">");
             append(sb, crosstab, context);
             sb.append("</div>");
@@ -85,19 +85,19 @@ class PatternFinderHtmlFragment implements HtmlFragment {
         _htmlFragment.addBodyElement(sb.toString());
     }
 
-    private void append(StringBuilder sb, Crosstab<?> crosstab, HtmlRenderingContext context) {
+    private void append(final StringBuilder sb, final Crosstab<?> crosstab, final HtmlRenderingContext context) {
         final CrosstabHtmlRenderer crosstabHtmlRenderer = new CrosstabHtmlRenderer(_rendererFactory);
 
         final HtmlFragment renderedResult = crosstabHtmlRenderer.render(crosstab);
         renderedResult.initialize(context);
 
         final List<BodyElement> bodyElements = renderedResult.getBodyElements();
-        for (BodyElement bodyElement : bodyElements) {
+        for (final BodyElement bodyElement : bodyElements) {
             sb.append(bodyElement.toHtml(context));
         }
 
         final List<HeadElement> headElements = renderedResult.getHeadElements();
-        for (HeadElement headElement : headElements) {
+        for (final HeadElement headElement : headElements) {
             _htmlFragment.addHeadElement(headElement);
         }
     }

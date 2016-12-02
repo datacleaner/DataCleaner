@@ -36,7 +36,7 @@ final class ComponentBuilderModule extends AbstractModule {
 
     private final ComponentBuilder _componentBuilder;
 
-    public ComponentBuilderModule(ComponentBuilder componentBuilder) {
+    public ComponentBuilderModule(final ComponentBuilder componentBuilder) {
         _componentBuilder = componentBuilder;
     }
 

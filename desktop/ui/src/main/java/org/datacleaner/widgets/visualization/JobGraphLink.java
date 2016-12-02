@@ -38,8 +38,8 @@ final class JobGraphLink {
     private final FilterOutcome _filterOutcome;
     private final OutputDataStream _outputDataStream;
 
-    public JobGraphLink(Object from, Object to, ComponentRequirement requirement, FilterOutcome filterOutcome,
-            OutputDataStream outputDataStream) {
+    public JobGraphLink(final Object from, final Object to, final ComponentRequirement requirement,
+            final FilterOutcome filterOutcome, final OutputDataStream outputDataStream) {
         _from = from;
         _to = to;
         _requirement = requirement;
@@ -62,7 +62,7 @@ final class JobGraphLink {
     public Object getTo() {
         return _to;
     }
-    
+
     public OutputDataStream getOutputDataStream() {
         return _outputDataStream;
     }
@@ -78,7 +78,7 @@ final class JobGraphLink {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (!(obj instanceof JobGraphLink)) {
             return false;
         }
@@ -95,11 +95,11 @@ final class JobGraphLink {
 
     /**
      * Gets the label (if any) to show towards the user in the {@link JobGraph}.
-     * 
+     *
      * @return
      */
     public String getLinkLabel() {
-        FilterOutcome filterOutcome = getFilterOutcome();
+        final FilterOutcome filterOutcome = getFilterOutcome();
         if (filterOutcome != null) {
             return filterOutcome.getCategory() + "";
         }

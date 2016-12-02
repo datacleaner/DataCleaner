@@ -38,6 +38,43 @@ import java.util.Map;
  */
 public class AnnotationProxy {
 
+    private static class InvHandler implements InvocationHandler {
+        Map<String, Object> properties;
+        Class<?> annotationClass;
+
+        public InvHandler(final Class<?> anClass, final Map<String, Object> properties) {
+            this.properties = properties;
+            this.annotationClass = anClass;
+        }
+
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+
+            if ("hashCode".equals(method.getName())) {
+                return annotationClass.hashCode();
+            }
+            if ("toString".equals(method.getName())) {
+                return annotationClass.getName() + ": " + properties.toString();
+            }
+            if ("annotationType".equals(method.getName())) {
+                return annotationClass;
+            }
+
+            final Object result = properties.get(method.getName());
+            if (result != null) {
+                final Class<?> retType = method.getReturnType();
+                if (retType.isArray()) {
+                    if (List.class.isAssignableFrom(result.getClass())) {
+                        return ((List<?>) result).toArray(
+                                (Object[]) Array.newInstance(retType.getComponentType(), ((List<?>) result).size()));
+                    }
+                    return result;
+                }
+            }
+            return result;
+        }
+    }
+
     /**
      * Factory method for annotations which is able to create an instance of any
      * annotation class.
@@ -53,48 +90,11 @@ public class AnnotationProxy {
      * @return An annotation instance providing given values by its interface
      *         methods.
      */
-    public static <A extends Annotation> A newAnnotation(Class<A> anClass, Map<String, Object> properties) {
+    public static <A extends Annotation> A newAnnotation(final Class<A> anClass, final Map<String, Object> properties) {
         final InvHandler handler = new InvHandler(anClass, properties);
-        ClassLoader classLoader = AnnotationProxy.class.getClassLoader();
-        @SuppressWarnings("unchecked")
-        final A proxy = (A) Proxy.newProxyInstance(classLoader, new Class[] { anClass }, handler);
+        final ClassLoader classLoader = AnnotationProxy.class.getClassLoader();
+        @SuppressWarnings("unchecked") final A proxy =
+                (A) Proxy.newProxyInstance(classLoader, new Class[] { anClass }, handler);
         return proxy;
-    }
-
-    private static class InvHandler implements InvocationHandler {
-        Map<String, Object> properties;
-        Class<?> annotationClass;
-
-        public InvHandler(Class<?> anClass, Map<String, Object> properties) {
-            this.properties = properties;
-            this.annotationClass = anClass;
-        }
-
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-
-            if("hashCode".equals(method.getName())) {
-                return annotationClass.hashCode();
-            }
-            if("toString".equals(method.getName())) {
-                return annotationClass.getName() + ": " + properties.toString();
-            }
-            if("annotationType".equals(method.getName())) {
-                return annotationClass;
-            }
-
-            Object result = properties.get(method.getName());
-            if (result != null) {
-                Class<?> retType = method.getReturnType();
-                if (retType.isArray()) {
-                    if (List.class.isAssignableFrom(result.getClass())) {
-                        return ((List<?>) result).toArray(
-                                (Object[]) Array.newInstance(retType.getComponentType(), ((List<?>) result).size()));
-                    }
-                    return result;
-                }
-            }
-            return result;
-        }
     }
 }

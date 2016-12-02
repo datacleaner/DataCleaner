@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Default/simple/base implementation of {@link ServiceSession}.
- * 
+ *
  * @param <R>
  */
 public class SimpleServiceSession<R> implements ServiceSession<R> {
@@ -38,20 +38,20 @@ public class SimpleServiceSession<R> implements ServiceSession<R> {
 
     private final AtomicInteger _requestCount = new AtomicInteger();
     private final AtomicInteger _activeRequestsCount = new AtomicInteger();
-    
+
     @Override
-    public ServiceResult<R> invokeService(Callable<R> callable) {
+    public ServiceResult<R> invokeService(final Callable<R> callable) {
         _requestCount.incrementAndGet();
         _activeRequestsCount.incrementAndGet();
         try {
             final R result = callable.call();
-            return new ServiceResult<R>(result);
+            return new ServiceResult<>(result);
         } catch (Throwable e) {
             if (e instanceof WebServiceException && e.getCause() != null) {
                 logger.info("Exception thrown was a WebServiceException. Handling cause exception instead.", e);
                 e = e.getCause();
             }
-            return new ServiceResult<R>(e);
+            return new ServiceResult<>(e);
         } finally {
             _activeRequestsCount.decrementAndGet();
         }
@@ -60,7 +60,7 @@ public class SimpleServiceSession<R> implements ServiceSession<R> {
     /**
      * Gets the number of service invocations / requests attempted through
      * {@link #invokeService(Callable)}.
-     * 
+     *
      * @return
      */
     public int getRequestCount() {
@@ -69,7 +69,7 @@ public class SimpleServiceSession<R> implements ServiceSession<R> {
 
     /**
      * Gets the number of active requests currently being processed.
-     * 
+     *
      * @return
      */
     public int getActiveRequestsCount() {
@@ -77,10 +77,9 @@ public class SimpleServiceSession<R> implements ServiceSession<R> {
     }
 
     @Override
-    public <E> E invokeAdhocService(Callable<E> callable) throws RuntimeException, IllegalStateException {
+    public <E> E invokeAdhocService(final Callable<E> callable) throws RuntimeException, IllegalStateException {
         try {
-            final E result = callable.call();
-            return result;
+            return callable.call();
         } catch (Throwable e) {
             if (e instanceof WebServiceException && e.getCause() != null) {
                 logger.info("Exception thrown was a WebServiceException. Throwing cause exception instead.", e);

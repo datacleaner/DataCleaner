@@ -28,34 +28,34 @@ import org.datacleaner.api.Validate;
 /**
  * Descriptor for a validation method. The most common way of registering a
  * validateion method is using the @Validate annotation.
- * 
+ *
  * @see Validate
  */
 public interface ValidateMethodDescriptor extends Serializable {
 
     /**
      * Invokes the validate method
-     * 
+     *
      * @param component
      *            the component to validate
      */
-    public void validate(Object component);
+    void validate(Object component);
 
     /**
      * Gets the annotations of the method
-     * 
+     *
      * @return the annotations of the method
      */
-    public Set<Annotation> getAnnotations();
+    Set<Annotation> getAnnotations();
 
     /**
      * Gets a particular annotation of the method
-     * 
+     *
      * @param <A>
      *            the annotation type
      * @param annotationClass
      *            the annotation class to look for
      * @return a matching annotation or null, if none is present
      */
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass);
+    <A extends Annotation> A getAnnotation(Class<A> annotationClass);
 }

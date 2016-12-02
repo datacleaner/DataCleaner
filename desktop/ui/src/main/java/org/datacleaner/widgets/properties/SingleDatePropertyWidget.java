@@ -20,92 +20,82 @@
 package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Date;
 
 import javax.inject.Inject;
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButton;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.util.convert.NowDate;
-import org.datacleaner.util.convert.TodayDate;
-import org.datacleaner.util.convert.YesterdayDate;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.widgets.Alignment;
-import org.jdesktop.swingx.JXDatePicker;
+import org.datacleaner.util.convert.TodayDate;
 
 public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
-
-    private final JXDatePicker _datePicker;
-    private final JRadioButton _dateCustomRadio;
-    private final JRadioButton _dateNowRadio;
-    private final JRadioButton _dateTodayRadio;
-    private final JRadioButton _dateYesterdayRadio;
+    private final SingleDatePropertySettingDialog _settingDialog;
+    private final JLabel _valueLabel;
+    private final JButton _changeButton;
 
     @Inject
-    public SingleDatePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder) {
+    public SingleDatePropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder, final WindowContext windowContext) {
         super(componentBuilder, propertyDescriptor);
 
-        _datePicker = new JXDatePicker();
-        _datePicker.setFormats("yyyy-MM-dd");
+        _settingDialog = new SingleDatePropertySettingDialog(windowContext, this);
+        _changeButton = createChangeButton();
+        _valueLabel = createValueLabel();
+        createContent();
+    }
 
-        _dateCustomRadio = new JRadioButton("Select: ");
-        _dateNowRadio = new JRadioButton("Now");
-        _dateTodayRadio = new JRadioButton("Today");
-        _dateYesterdayRadio = new JRadioButton("Yesterday");
+    @Override
+    protected void onPanelRemove() {
+        super.onPanelRemove();
+        _settingDialog.dispose();
+    }
 
-        _datePicker.addActionListener(fireValueChangedActionListener());
-        _dateCustomRadio.addActionListener(fireValueChangedActionListener());
-        _dateNowRadio.addActionListener(fireValueChangedActionListener());
-        _dateTodayRadio.addActionListener(fireValueChangedActionListener());
-        _dateYesterdayRadio.addActionListener(fireValueChangedActionListener());
+    private JLabel createValueLabel() {
+        final JLabel valueLabel = new JLabel();
+        final Date currentValue = getCurrentValue() == null ? new TodayDate() : getCurrentValue();
+        setValue(currentValue);
+        fireValueChanged();
+        valueLabel.setText(_settingDialog.getFormattedString());
 
-        final ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(_dateCustomRadio);
-        buttonGroup.add(_dateNowRadio);
-        buttonGroup.add(_dateTodayRadio);
-        buttonGroup.add(_dateYesterdayRadio);
+        return valueLabel;
+    }
 
+    private JButton createChangeButton() {
+        final JButton changeButton = new JButton("Select");
+        changeButton.addActionListener(e -> _settingDialog.setVisible(true));
+        final Dimension buttonSize = new Dimension(100, 25);
+        changeButton.setMinimumSize(buttonSize);
+        changeButton.setPreferredSize(buttonSize);
+        changeButton.setMaximumSize(buttonSize);
+
+        return changeButton;
+    }
+
+    private void createContent() {
         final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(DCPanel.flow(Alignment.LEFT, 4, 0, _dateCustomRadio, _datePicker), BorderLayout.CENTER);
-        panel.add(DCPanel.flow(Alignment.LEFT, 4, 0, _dateNowRadio, _dateTodayRadio, _dateYesterdayRadio),
-                BorderLayout.SOUTH);
-
+        panel.add(_valueLabel, BorderLayout.WEST);
+        panel.add(_changeButton, BorderLayout.EAST);
         add(panel);
+    }
 
-        Date currentValue = getCurrentValue();
-        setValue(currentValue);
+    public void updateValue(final String newValue) {
+        _valueLabel.setText(newValue);
+        fireValueChanged();
     }
 
     @Override
     public Date getValue() {
-        if (_dateNowRadio.isSelected()) {
-            return new NowDate();
-        } else if (_dateTodayRadio.isSelected()) {
-            return new TodayDate();
-        } else if (_dateYesterdayRadio.isSelected()) {
-            return new YesterdayDate();
-        } else {
-            return _datePicker.getDate();
-        }
+        return _settingDialog.getValue();
     }
 
     @Override
-    protected void setValue(Date value) {
-        if (value instanceof NowDate) {
-            _dateNowRadio.setSelected(true);
-        } else if (value instanceof TodayDate) {
-            _dateTodayRadio.setSelected(true);
-        } else if (value instanceof YesterdayDate) {
-            _dateYesterdayRadio.setSelected(true);
-        } else {
-            _dateCustomRadio.setSelected(true);
-            if (value != null) {
-                _datePicker.setDate(value);
-            }
-        }
+    protected void setValue(final Date value) {
+        _settingDialog.setValue(value);
     }
 }

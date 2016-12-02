@@ -19,9 +19,8 @@
  */
 package org.datacleaner.test.mock;
 
-import org.easymock.IArgumentMatcher;
-
 import org.apache.metamodel.query.Query;
+import org.easymock.IArgumentMatcher;
 import org.junit.Assert;
 
 /**
@@ -29,25 +28,25 @@ import org.junit.Assert;
  */
 public class QueryMatcher implements IArgumentMatcher {
 
-	private String queryToString;
+    private String queryToString;
 
-	public QueryMatcher(String queryToString) {
-		if (queryToString == null) {
-			throw new NullPointerException();
-		}
-		this.queryToString = queryToString;
-	}
+    public QueryMatcher(final String queryToString) {
+        if (queryToString == null) {
+            throw new NullPointerException();
+        }
+        this.queryToString = queryToString;
+    }
 
-	@Override
-	public boolean matches(Object argument) {
-		Query q = (Query) argument;
-		String sql = q.toString();
-		Assert.assertEquals(queryToString, sql);
-		return true;
-	}
+    @Override
+    public boolean matches(final Object argument) {
+        final Query q = (Query) argument;
+        final String sql = q.toString();
+        Assert.assertEquals(queryToString, sql);
+        return true;
+    }
 
-	@Override
-	public void appendTo(StringBuffer buffer) {
-		buffer.append("QueryMatcher(" + queryToString + ")");
-	}
+    @Override
+    public void appendTo(final StringBuffer buffer) {
+        buffer.append("QueryMatcher(" + queryToString + ")");
+    }
 }

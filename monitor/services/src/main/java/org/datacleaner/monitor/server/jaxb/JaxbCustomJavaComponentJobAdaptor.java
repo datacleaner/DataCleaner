@@ -34,12 +34,12 @@ public class JaxbCustomJavaComponentJobAdaptor extends AbstractJaxbAdaptor<Custo
     }
 
     @Override
-    public CustomJavaComponentJob unmarshal(InputStream in) {
+    public CustomJavaComponentJob unmarshal(final InputStream in) {
         return super.unmarshal(in);
     }
 
     @Override
-    public void marshal(CustomJavaComponentJob obj, OutputStream outputStream) {
+    public void marshal(final CustomJavaComponentJob obj, final OutputStream outputStream) {
         super.marshal(obj, outputStream);
     }
 }

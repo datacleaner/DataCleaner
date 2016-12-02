@@ -57,7 +57,7 @@ public class DatastoreDownloadController {
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.download", method = RequestMethod.GET)
-    protected void downloadFileRepo(HttpServletRequest request, HttpServletResponse response,
+    protected void downloadFileRepo(final HttpServletRequest request, final HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("datastore") String datastoreName)
             throws IOException {
         datastoreName = datastoreName.replaceAll("\\+", " ");
@@ -69,12 +69,12 @@ public class DatastoreDownloadController {
             return;
         }
 
-        InputStream is = getInputStream(ds, response);
+        final InputStream is = getInputStream(ds, response);
         if (is == null) {
             return;
         }
 
-        String filename = getFilename(ds);
+        final String filename = getFilename(ds);
 
         try {
             response.setHeader("Content-Disposition", "attachment; filename=" + filename);
@@ -86,7 +86,7 @@ public class DatastoreDownloadController {
         }
     }
 
-    private String getFilename(Datastore ds) {
+    private String getFilename(final Datastore ds) {
         if (ds instanceof ResourceDatastore) {
             final Resource resource = ((ResourceDatastore) ds).getResource();
             return resource.getName();
@@ -97,7 +97,7 @@ public class DatastoreDownloadController {
         return ds.getName();
     }
 
-    private InputStream getInputStream(Datastore ds, HttpServletResponse response) throws IOException {
+    private InputStream getInputStream(final Datastore ds, final HttpServletResponse response) throws IOException {
         if (ds instanceof ResourceDatastore) {
             final Resource resource = ((ResourceDatastore) ds).getResource();
 
@@ -106,7 +106,7 @@ public class DatastoreDownloadController {
                 return null;
             }
 
-            String username = getUsername();
+            final String username = getUsername();
             logger.info("Serving datastore resource {} to user: {}", resource, username);
 
             return resource.read();
@@ -120,7 +120,7 @@ public class DatastoreDownloadController {
                 return null;
             }
 
-            String username = getUsername();
+            final String username = getUsername();
 
             logger.info("Serving datastore file {} to user: {}", filename, username);
 
@@ -135,7 +135,7 @@ public class DatastoreDownloadController {
         try {
             final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             return authentication.getName();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.warn("Error occurred retreiving username", e);
             return null;
         }

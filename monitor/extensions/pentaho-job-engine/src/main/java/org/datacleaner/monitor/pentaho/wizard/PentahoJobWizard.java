@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 public class PentahoJobWizard implements JobWizard {
 
     @Override
-    public boolean isApplicableTo(JobWizardContext context) {
+    public boolean isApplicableTo(final JobWizardContext context) {
         return true;
     }
 
@@ -46,7 +46,7 @@ public class PentahoJobWizard implements JobWizard {
     }
 
     @Override
-    public JobWizardSession start(JobWizardContext context) {
+    public JobWizardSession start(final JobWizardContext context) {
         return new PentahoJobWizardSession(context);
     }
 

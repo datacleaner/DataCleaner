@@ -21,7 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 
@@ -46,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * Window showing a progress indicator for a file transfer (typically over the
  * network). The window is updated externally, by the code that does the actual
  * download and file handling.
- * 
+ *
  * @see DownloadFilesActionListener
  * @see PublishResultToMonitorActionListener
  */
@@ -63,7 +62,8 @@ public class FileTransferProgressWindow extends AbstractDialog {
     private final JLabel[] _infoLabels;
     private final String[] _filenames;
 
-    public FileTransferProgressWindow(WindowContext windowContext, Action<Void> cancelCallback, String[] filenames) {
+    public FileTransferProgressWindow(final WindowContext windowContext, final Action<Void> cancelCallback,
+            final String[] filenames) {
         super(windowContext);
         setBackgroundColor(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
 
@@ -99,7 +99,7 @@ public class FileTransferProgressWindow extends AbstractDialog {
             if (_cancelCallback != null) {
                 try {
                     _cancelCallback.run(null);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     logger.error("Cancelling file transfer threw exception", e);
                 }
             }
@@ -117,11 +117,11 @@ public class FileTransferProgressWindow extends AbstractDialog {
         return 460;
     }
 
-    private int getIndex(String filename) {
+    private int getIndex(final String filename) {
         return ArrayUtils.indexOf(_filenames, filename);
     }
 
-    public void setProgress(String filename, Long bytes) {
+    public void setProgress(final String filename, final Long bytes) {
         final int index = getIndex(filename);
 
         final DecimalFormat formatter = new DecimalFormat("###,###");
@@ -130,7 +130,7 @@ public class FileTransferProgressWindow extends AbstractDialog {
         progressBar.setValueIfGreater((int) (bytes / 100));
     }
 
-    public void setExpectedSize(String filename, Long bytes) {
+    public void setExpectedSize(final String filename, final Long bytes) {
         final int index = getIndex(filename);
 
         final DecimalFormat formatter = new DecimalFormat("###,###");
@@ -172,7 +172,7 @@ public class FileTransferProgressWindow extends AbstractDialog {
         return "Transfering...";
     }
 
-    public void setFinished(String filename) {
+    public void setFinished(final String filename) {
         final int index = getIndex(filename);
 
         final String doneText = "Done!";
@@ -187,12 +187,9 @@ public class FileTransferProgressWindow extends AbstractDialog {
         }
 
         final Timer timer = new Timer(1500, null);
-        final ActionListener listener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FileTransferProgressWindow.this.dispose();
-                timer.stop();
-            }
+        final ActionListener listener = e -> {
+            FileTransferProgressWindow.this.dispose();
+            timer.stop();
         };
         timer.addActionListener(listener);
         timer.start();

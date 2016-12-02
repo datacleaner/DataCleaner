@@ -1,13 +1,10 @@
 package org.datacleaner.beans.valuedist
-import org.datacleaner.api.Provided
-import org.datacleaner.api.RendererBean
-import org.datacleaner.api.Renderer
-import org.datacleaner.api.RendererPrecedence
-import org.datacleaner.result.html.HtmlFragment
-import org.datacleaner.result.renderer.HtmlRenderingFormat
-import org.datacleaner.result.renderer.RendererFactory
 import javax.inject.Inject
+
+import org.datacleaner.api.{Provided, Renderer, RendererBean, RendererPrecedence}
 import org.datacleaner.result.ValueCountingAnalyzerResult
+import org.datacleaner.result.html.HtmlFragment
+import org.datacleaner.result.renderer.{HtmlRenderingFormat, RendererFactory}
 
 @RendererBean(classOf[HtmlRenderingFormat])
 class ValueDistributionResultHtmlRenderer(rf: RendererFactory) extends Renderer[ValueCountingAnalyzerResult, HtmlFragment] {

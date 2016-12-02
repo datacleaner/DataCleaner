@@ -53,10 +53,10 @@ public class MockMultiRowTransformer implements Transformer {
     }
 
     @Override
-    public Number[] transform(InputRow inputRow) {
-        Number countTo = inputRow.getValue(countToColumn);
+    public Number[] transform(final InputRow inputRow) {
+        final Number countTo = inputRow.getValue(countToColumn);
         if (countTo != null) {
-            int max = Math.abs(countTo.intValue());
+            final int max = Math.abs(countTo.intValue());
             for (int i = 0; i < max; i++) {
                 outputRowCollector.putValues(i + 1, 42);
             }

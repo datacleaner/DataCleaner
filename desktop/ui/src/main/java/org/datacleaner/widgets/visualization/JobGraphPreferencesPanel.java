@@ -20,8 +20,6 @@
 package org.datacleaner.widgets.visualization;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -52,7 +50,7 @@ public class JobGraphPreferencesPanel extends DCPanel {
     private final UserPreferences _userPreferences;
     private final JobGraph _jobGraph;
 
-    public JobGraphPreferencesPanel(UserPreferences userPreferences, JobGraph jobGraph) {
+    public JobGraphPreferencesPanel(final UserPreferences userPreferences, final JobGraph jobGraph) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         setBorder(null);
         setLayout(new HorizontalLayout(4));
@@ -87,31 +85,28 @@ public class JobGraphPreferencesPanel extends DCPanel {
         final JToggleButton toggle = new JToggleButton("Show hints", icon, true);
         WidgetUtils.setDefaultButtonStyle(toggle);
         toggle.setMargin(WidgetUtils.INSETS_EMPTY);
-        
-        toggle.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final String existingValue = _userPreferences.getAdditionalProperties().get(
-                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
-                final String newValue;
-                if (existingValue == null || "true".equals(existingValue)) {
-                    newValue = "false";
-                } else {
-                    newValue = "true";
-                }
-                _userPreferences.getAdditionalProperties().put(
-                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS, newValue);
-                updateToggleText(toggle);
-                _jobGraph.refresh();
+
+        toggle.addActionListener(e -> {
+            final String existingValue = _userPreferences.getAdditionalProperties()
+                    .get(JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
+            final String newValue;
+            if (existingValue == null || "true".equals(existingValue)) {
+                newValue = "false";
+            } else {
+                newValue = "true";
             }
+            _userPreferences.getAdditionalProperties()
+                    .put(JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS, newValue);
+            updateToggleText(toggle);
+            _jobGraph.refresh();
         });
         updateToggleText(toggle);
         return toggle;
     }
 
-    protected void updateToggleText(JToggleButton toggle) {
-        final String showHints = _userPreferences.getAdditionalProperties().get(
-                JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
+    protected void updateToggleText(final JToggleButton toggle) {
+        final String showHints = _userPreferences.getAdditionalProperties()
+                .get(JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
         if (showHints == null || "true".equals(showHints)) {
             toggle.setSelected(true);
         } else {
@@ -121,42 +116,36 @@ public class JobGraphPreferencesPanel extends DCPanel {
 
     private Component createFontFactorButton(final String imagePath, final float increment) {
         final JButton button = WidgetFactory.createSmallButton(imagePath);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final String factorString = _userPreferences.getAdditionalProperties().get(
-                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_FONT_SIZE_FACTOR);
-                final float existingFactor;
-                if (Strings.isNullOrEmpty(factorString)) {
-                    existingFactor = 1.0f;
-                } else {
-                    existingFactor = Float.parseFloat(factorString);
-                }
-
-                final float newFactor = existingFactor + increment;
-                _userPreferences.getAdditionalProperties().put(
-                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_FONT_SIZE_FACTOR, newFactor + "");
-                _jobGraph.refresh();
+        button.addActionListener(e -> {
+            final String factorString = _userPreferences.getAdditionalProperties()
+                    .get(JobGraphTransformers.USER_PREFERENCES_PROPERTY_FONT_SIZE_FACTOR);
+            final float existingFactor;
+            if (Strings.isNullOrEmpty(factorString)) {
+                existingFactor = 1.0f;
+            } else {
+                existingFactor = Float.parseFloat(factorString);
             }
+
+            final float newFactor = existingFactor + increment;
+            _userPreferences.getAdditionalProperties()
+                    .put(JobGraphTransformers.USER_PREFERENCES_PROPERTY_FONT_SIZE_FACTOR, newFactor + "");
+            _jobGraph.refresh();
         });
         return button;
     }
 
     private JButton createLineStyleButton(final String imagePath, final String typeName) {
         final JButton button = WidgetFactory.createSmallButton(imagePath);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _userPreferences.getAdditionalProperties().put(
-                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_EDGE_STYLE, typeName);
-                _jobGraph.refresh();
-            }
+        button.addActionListener(e -> {
+            _userPreferences.getAdditionalProperties()
+                    .put(JobGraphTransformers.USER_PREFERENCES_PROPERTY_EDGE_STYLE, typeName);
+            _jobGraph.refresh();
         });
         return button;
     }
 
-    private void addLabel(String text) {
-        DCLabel label = DCLabel.dark(text);
+    private void addLabel(final String text) {
+        final DCLabel label = DCLabel.dark(text);
         label.setVerticalAlignment(SwingConstants.BOTTOM);
         add(label);
     }

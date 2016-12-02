@@ -30,20 +30,20 @@ import org.datacleaner.api.Transformer;
 @Named("mock multi mapped columns")
 public class MockMultipleMappedColumnsTransformer implements Transformer {
 
-	@Configured
-	InputColumn<String>[] inputColumns;
+    @Configured
+    InputColumn<String>[] inputColumns;
 
-	@Configured
-	String[] columnNames;
+    @Configured
+    String[] columnNames;
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(2, String.class);
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(2, String.class);
+    }
 
-	@Override
-	public String[] transform(InputRow inputRow) {
-		return new String[2];
-	}
+    @Override
+    public String[] transform(final InputRow inputRow) {
+        return new String[2];
+    }
 
 }

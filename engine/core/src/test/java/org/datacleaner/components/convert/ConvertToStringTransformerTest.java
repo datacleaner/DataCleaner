@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 
@@ -33,11 +32,11 @@ import junit.framework.TestCase;
 public class ConvertToStringTransformerTest extends TestCase {
 
     public void testBasicScenario() throws Exception {
-        ConvertToStringTransformer t = new ConvertToStringTransformer();
-        InputColumn<Object> col = new MockInputColumn<Object>("foo");
+        final ConvertToStringTransformer t = new ConvertToStringTransformer();
+        final InputColumn<Object> col = new MockInputColumn<>("foo");
         t.setInput(new InputColumn[] { col });
         t.setNullReplacement("!null!");
-        
+
         assertEquals("OutputColumns[foo (as string)]", t.getOutputColumns().toString());
 
         assertEquals("!null!", t.transform(new MockInputRow().put(col, null))[0]);
@@ -62,7 +61,7 @@ public class ConvertToStringTransformerTest extends TestCase {
 
         // make a string that will not fit into the buffer being used in the
         // converter
-        StringBuilder longString = new StringBuilder("hello");
+        final StringBuilder longString = new StringBuilder("hello");
         for (int i = 0; i < 1024; i++) {
             longString.append(" hello");
         }

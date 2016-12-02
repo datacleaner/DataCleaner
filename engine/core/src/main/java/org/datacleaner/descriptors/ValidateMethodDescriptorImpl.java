@@ -28,17 +28,17 @@ final class ValidateMethodDescriptorImpl extends AbstractMethodDescriptor implem
 
     private static final long serialVersionUID = 1L;
 
-    public ValidateMethodDescriptorImpl(Method method, ComponentDescriptor<?> componentDescriptor) {
+    public ValidateMethodDescriptorImpl(final Method method, final ComponentDescriptor<?> componentDescriptor) {
         super(method, componentDescriptor);
     }
 
     @Override
-    public void validate(Object component) throws ComponentValidationException {
+    public void validate(final Object component) throws ComponentValidationException {
         invoke(component);
     }
 
     @Override
-    protected RuntimeException convertThrownException(Object component, InvocationTargetException e) {
+    protected RuntimeException convertThrownException(final Object component, final InvocationTargetException e) {
         return new ComponentValidationException(getComponentDescriptor(), component, e.getCause());
     }
 }

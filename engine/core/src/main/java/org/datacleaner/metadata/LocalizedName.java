@@ -29,23 +29,23 @@ public final class LocalizedName {
 
     private final Map<String, String> _map;
 
-    public LocalizedName(Map<String, String> parameters) {
+    public LocalizedName(final Map<String, String> parameters) {
         _map = parameters;
     }
 
-    public String getDisplayName(String locale) {
+    public String getDisplayName(final String locale) {
         if (locale == null) {
             return null;
         }
         return _map.get(locale);
     }
 
-    public String getDisplayName(String... locales) {
+    public String getDisplayName(final String... locales) {
         if (locales == null) {
             return null;
         }
-        for (String locale : locales) {
-            String result = getDisplayName(locale);
+        for (final String locale : locales) {
+            final String result = getDisplayName(locale);
             if (result != null) {
                 return result;
             }
@@ -53,7 +53,7 @@ public final class LocalizedName {
         return null;
     }
 
-    public String getDisplayName(Locale locale) {
+    public String getDisplayName(final Locale locale) {
         if (locale == null) {
             return null;
         }

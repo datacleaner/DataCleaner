@@ -39,7 +39,7 @@ public class DictionaryClientConfig implements ClientConfig {
 
     @Override
     public TenantIdentifier getTenant() {
-        String tenantId = getString("tenant_id");
+        final String tenantId = getString("tenant_id");
         if (tenantId == null) {
             return null;
         }
@@ -70,26 +70,26 @@ public class DictionaryClientConfig implements ClientConfig {
     public boolean isConfigurationEditor() {
         return getBoolean("role_configuration_editor", false);
     }
-    
+
     @Override
     public boolean isDashboardEditor() {
         return getBoolean("role_dashboard_editor", false);
     }
-    
+
     @Override
     public boolean isWebstartAvailable() {
         return getBoolean("webstart_available", false);
     }
 
-    private String getString(String key) {
+    private String getString(final String key) {
         try {
             return _dictionary.get(key);
-        } catch (MissingResourceException e) {
+        } catch (final MissingResourceException e) {
             return null;
         }
     }
 
-    private boolean getBoolean(String key, boolean defaultValue) {
+    private boolean getBoolean(final String key, final boolean defaultValue) {
         final String str = getString(key);
         if (str == null) {
             // default is true

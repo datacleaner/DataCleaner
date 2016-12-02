@@ -52,8 +52,8 @@ public class SelectDatastorePanel extends DCPanel {
             add(newDatastoreLabel);
         }
 
-        add(new AddDatastorePanel(datastoreCatalog, serverInformationCatalog, databaseDriverCatalog, dcModule, datastoreSelectListener, userPreferences,
-                !showExistingDatastoresAsLongList));
+        add(new AddDatastorePanel(datastoreCatalog, serverInformationCatalog, databaseDriverCatalog, dcModule,
+                datastoreSelectListener, userPreferences, !showExistingDatastoresAsLongList));
 
         if (showExistingDatastoresAsLongList) {
             final JComponent existingDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use existing datastore");

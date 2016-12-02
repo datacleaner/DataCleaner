@@ -30,36 +30,36 @@ import org.slf4j.LoggerFactory;
  */
 public class CloseResourcesTaskListener implements TaskListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(CloseResourcesTaskListener.class);
-	
-	private final Closeable[] _closeables;
+    private static final Logger logger = LoggerFactory.getLogger(CloseResourcesTaskListener.class);
 
-	public CloseResourcesTaskListener(Closeable... closeables) {
-		_closeables = closeables;
-	}
+    private final Closeable[] _closeables;
 
-	@Override
-	public void onBegin(Task task) {
-	}
+    public CloseResourcesTaskListener(final Closeable... closeables) {
+        _closeables = closeables;
+    }
 
-	private void cleanup() {
-		for (int i = 0; i < _closeables.length; i++) {
-			try {
-				_closeables[i].close();
-			} catch (Exception e) {
-				logger.error("Could not close resource: " + _closeables[i], e);
-			}
-		}
-	}
+    @Override
+    public void onBegin(final Task task) {
+    }
 
-	@Override
-	public void onComplete(Task task) {
-		cleanup();
-	}
+    private void cleanup() {
+        for (int i = 0; i < _closeables.length; i++) {
+            try {
+                _closeables[i].close();
+            } catch (final Exception e) {
+                logger.error("Could not close resource: " + _closeables[i], e);
+            }
+        }
+    }
 
-	@Override
-	public void onError(Task task, Throwable throwable) {
-		cleanup();
-	}
+    @Override
+    public void onComplete(final Task task) {
+        cleanup();
+    }
+
+    @Override
+    public void onError(final Task task, final Throwable throwable) {
+        cleanup();
+    }
 
 }

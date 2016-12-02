@@ -40,9 +40,9 @@ import org.jdesktop.swingx.JXTextField;
 
 public abstract class AbstractResourceTextField<R extends Resource> extends DCPanel
         implements ResourceTypePresenter<R> {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     protected final JXTextField _textField = WidgetFactory.createTextField("Filename");
     protected final JButton _browseButton = WidgetFactory.createDefaultButton("Browse", IconUtils.ACTION_BROWSE);
     protected final List<Listener> _resourceListeners = new ArrayList<>();
@@ -59,7 +59,7 @@ public abstract class AbstractResourceTextField<R extends Resource> extends DCPa
 
         _textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
-            protected void onChange(DocumentEvent event) {
+            protected void onChange(final DocumentEvent event) {
                 _textFieldUpdating = true;
                 _textField.setToolTipText(_textField.getText().isEmpty() ? "Filename" : _textField.getText());
                 try {
@@ -73,11 +73,11 @@ public abstract class AbstractResourceTextField<R extends Resource> extends DCPa
 
     }
 
-    protected void notifyListeners(String text) {
+    protected void notifyListeners(final String text) {
         final Resource resource = getResource();
-        for (Listener listener : _resourceListeners) {
+        for (final Listener listener : _resourceListeners) {
             listener.onPathEntered(this, text);
-            if(resource != null) {
+            if (resource != null) {
                 listener.onResourceSelected(this, resource);
             }
         }
@@ -95,7 +95,7 @@ public abstract class AbstractResourceTextField<R extends Resource> extends DCPa
         return _textField.getText();
     }
 
-    public void setFilename(String filename) {
+    public void setFilename(final String filename) {
         if (_textFieldUpdating) {
             // ignore this event - it's a call back from listeners that reacted
             // to a text field change.
@@ -105,7 +105,7 @@ public abstract class AbstractResourceTextField<R extends Resource> extends DCPa
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         super.setEnabled(enabled);
 
         _browseButton.setEnabled(enabled);
@@ -113,17 +113,17 @@ public abstract class AbstractResourceTextField<R extends Resource> extends DCPa
     }
 
     @Override
-    public void addChoosableFileFilter(FileFilter filter) {
+    public void addChoosableFileFilter(final FileFilter filter) {
         _choosableFileFilters.add(filter);
     }
 
     @Override
-    public void setSelectedFileFilter(FileFilter filter) {
+    public void setSelectedFileFilter(final FileFilter filter) {
         _selectedFileFilter = filter;
     }
 
     @Override
-    public void removeChoosableFileFilter(FileFilter filter) {
+    public void removeChoosableFileFilter(final FileFilter filter) {
         _choosableFileFilters.remove(filter);
     }
 
@@ -131,7 +131,7 @@ public abstract class AbstractResourceTextField<R extends Resource> extends DCPa
         return _fileSelectionMode;
     }
 
-    public void setFileSelectionMode(int fileSelectionMode) {
+    public void setFileSelectionMode(final int fileSelectionMode) {
         _fileSelectionMode = fileSelectionMode;
     }
 
@@ -141,12 +141,12 @@ public abstract class AbstractResourceTextField<R extends Resource> extends DCPa
     }
 
     @Override
-    public void addListener(Listener listener) {
+    public void addListener(final Listener listener) {
         _resourceListeners.add(listener);
     }
 
     @Override
-    public void removeListener(Listener listener) {
+    public void removeListener(final Listener listener) {
         _resourceListeners.remove(listener);
     }
 

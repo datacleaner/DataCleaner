@@ -40,25 +40,25 @@ public class MockAnalyzer implements Analyzer<ListResult<InputRow>> {
     @Configured
     InputColumn<?>[] cols;
 
-    private BlockingQueue<InputRow> rows = new LinkedBlockingQueue<InputRow>();
+    private BlockingQueue<InputRow> rows = new LinkedBlockingQueue<>();
 
     @Override
-    public void run(InputRow row, int distinctCount) {
+    public void run(final InputRow row, final int distinctCount) {
         rows.add(row);
     }
 
     @Override
     public ListResult<InputRow> getResult() {
-        List<InputRow> rowsList = new ArrayList<InputRow>(rows.size());
+        final List<InputRow> rowsList = new ArrayList<>(rows.size());
         rows.drainTo(rowsList);
-        return new ListResult<InputRow>(rowsList);
-    }
-
-    public void setCols(InputColumn<?>[] cols) {
-        this.cols = cols;
+        return new ListResult<>(rowsList);
     }
 
     public InputColumn<?>[] getCols() {
         return cols;
+    }
+
+    public void setCols(final InputColumn<?>[] cols) {
+        this.cols = cols;
     }
 }

@@ -34,22 +34,23 @@ import org.datacleaner.configuration.RemoteServerData;
  * DataCleaner Monitor server. This descriptor is created by
  * {@link RemoteDescriptorProvider} when it downloads a transformers list from
  * the server.
- * 
+ *
  * @Since 9/1/15
  */
 public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<RemoteTransformer>
         implements RemoteTransformerDescriptor<RemoteTransformer>, HasIcon, Allowable {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private final String remoteDisplayName;
     private final Map<Class<? extends Annotation>, Annotation> annotations;
     private final byte[] iconData;
     private final Boolean isEnabled;
     private final RemoteDescriptorProvider remoteDescriptorProvider;
 
-    public RemoteTransformerDescriptorImpl(RemoteDescriptorProvider remoteDescriptorProvider, String displayName,
-            Map<Class<? extends Annotation>, Annotation> annotations, byte[] iconData, Boolean isEnabled) {
+    public RemoteTransformerDescriptorImpl(final RemoteDescriptorProvider remoteDescriptorProvider,
+            final String displayName, final Map<Class<? extends Annotation>, Annotation> annotations,
+            final byte[] iconData, final Boolean isEnabled) {
         super(RemoteTransformer.class, true);
         this.remoteDescriptorProvider = remoteDescriptorProvider;
         this.remoteDisplayName = displayName;
@@ -62,7 +63,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
         return remoteDescriptorProvider;
     }
 
-    public void addPropertyDescriptor(ConfiguredPropertyDescriptor propertyDescriptor) {
+    public void addPropertyDescriptor(final ConfiguredPropertyDescriptor propertyDescriptor) {
         this._configuredProperties.add(propertyDescriptor);
     }
 
@@ -73,13 +74,13 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
 
     @SuppressWarnings("unchecked")
     @Override
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+    public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
         return (A) annotations.get(annotationClass);
     }
 
     @Override
     public final Set<Annotation> getAnnotations() {
-        return new HashSet<Annotation>(annotations.values());
+        return new HashSet<>(annotations.values());
     }
 
 
@@ -88,7 +89,7 @@ public class RemoteTransformerDescriptorImpl extends SimpleComponentDescriptor<R
         final RemoteServerData serverData = getRemoteDescriptorProvider().getServerData();
         final RemoteTransformer remoteTransformer = new RemoteTransformer(serverData, remoteDisplayName);
 
-        for (ConfiguredPropertyDescriptor propertyDescriptor : _configuredProperties) {
+        for (final ConfiguredPropertyDescriptor propertyDescriptor : _configuredProperties) {
             if (propertyDescriptor instanceof RemoteConfiguredPropertyDescriptor) {
                 ((RemoteConfiguredPropertyDescriptor) propertyDescriptor).setDefaultValue(remoteTransformer);
             }

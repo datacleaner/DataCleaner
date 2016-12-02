@@ -21,11 +21,11 @@ package org.datacleaner.monitor.configuration;
 
 import java.util.List;
 
+import org.apache.metamodel.schema.ColumnType;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.PerformanceCharacteristics;
 import org.datacleaner.connection.PerformanceCharacteristicsImpl;
-import org.apache.metamodel.schema.ColumnType;
 
 /**
  * {@link Datastore} placeholder for lightweight reading of analysis jobs
@@ -40,7 +40,8 @@ public class PlaceholderDatastore implements Datastore {
     private final List<ColumnType> _sourceColumnTypes;
     private String _description;
 
-    public PlaceholderDatastore(String datastoreName, List<String> sourceColumnPaths, List<ColumnType> sourceColumnTypes) {
+    public PlaceholderDatastore(final String datastoreName, final List<String> sourceColumnPaths,
+            final List<ColumnType> sourceColumnTypes) {
         _datastoreName = datastoreName;
         _sourceColumnPaths = sourceColumnPaths;
         _sourceColumnTypes = sourceColumnTypes;
@@ -49,7 +50,7 @@ public class PlaceholderDatastore implements Datastore {
     public List<String> getSourceColumnPaths() {
         return _sourceColumnPaths;
     }
-    
+
     public List<ColumnType> getSourceColumnTypes() {
         return _sourceColumnTypes;
     }
@@ -57,6 +58,11 @@ public class PlaceholderDatastore implements Datastore {
     @Override
     public String getDescription() {
         return _description;
+    }
+
+    @Override
+    public void setDescription(final String description) {
+        _description = description;
     }
 
     @Override
@@ -72,11 +78,6 @@ public class PlaceholderDatastore implements Datastore {
     @Override
     public DatastoreConnection openConnection() {
         return new PlaceholderDatastoreConnection(this);
-    }
-
-    @Override
-    public void setDescription(String description) {
-        _description = description;
     }
 
 }

@@ -82,8 +82,8 @@ public class SparkJobContext implements Serializable {
 
         _configurationXml = hdfsHelper.readFile(dataCleanerConfigurationPath, true);
         if (Strings.isNullOrEmpty(_configurationXml)) {
-            throw new IllegalArgumentException("Failed to read content from configuration file: "
-                    + dataCleanerConfigurationPath);
+            throw new IllegalArgumentException(
+                    "Failed to read content from configuration file: " + dataCleanerConfigurationPath);
         }
 
         _analysisJobXml = hdfsHelper.readFile(analysisJobXmlPath, true);
@@ -97,8 +97,8 @@ public class SparkJobContext implements Serializable {
         } else {
             // this is a pretty ugly way to go back to the bytes to read the
             // properties - but works and is quick
-            _customProperties = new InputStreamToPropertiesMapFunc().eval(new ByteArrayInputStream(propertiesString
-                    .getBytes()));
+            _customProperties =
+                    new InputStreamToPropertiesMapFunc().eval(new ByteArrayInputStream(propertiesString.getBytes()));
         }
         validateCustomProperties();
     }
@@ -112,6 +112,18 @@ public class SparkJobContext implements Serializable {
         validateCustomProperties();
     }
 
+    /**
+     * Gets the job name (removing the extension '.analysis.xml')
+     *
+     * @return
+     */
+    private static String getAnalysisJobName(final URI uri) {
+        final String filename = uri.getPath();
+        final int lastIndexOfSlash = filename.lastIndexOf("/");
+        final int lastIndexOfFileExtension = filename.lastIndexOf(".analysis.xml");
+        return filename.substring(lastIndexOfSlash + 1, lastIndexOfFileExtension);
+    }
+
     private void validateCustomProperties() {
         if (isResultEnabled()) {
             // ensure parsability of result path
@@ -121,8 +133,8 @@ public class SparkJobContext implements Serializable {
 
     public DataCleanerConfiguration getConfiguration() {
         if (_dataCleanerConfiguration == null) {
-            final JaxbConfigurationReader confReader = new JaxbConfigurationReader(
-                    new SparkConfigurationReaderInterceptor(_customProperties));
+            final JaxbConfigurationReader confReader =
+                    new JaxbConfigurationReader(new SparkConfigurationReaderInterceptor(_customProperties));
             _dataCleanerConfiguration = confReader.read(createInputStream(_configurationXml));
         }
         return _dataCleanerConfiguration;
@@ -132,11 +144,11 @@ public class SparkJobContext implements Serializable {
         return _jobName;
     }
 
-    private InputStream createInputStream(String fileContents) {
+    private InputStream createInputStream(final String fileContents) {
         try {
             final byte[] bytes = fileContents.getBytes("UTF-8");
             return new ByteArrayInputStream(bytes);
-        } catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -166,26 +178,28 @@ public class SparkJobContext implements Serializable {
      * @param analysisJobBuilder
      * @param currentComponentIndex
      */
-    private void applyComponentIndexForKeyLookups(AnalysisJobBuilder analysisJobBuilder,
-            AtomicInteger currentComponentIndex) {
+    private void applyComponentIndexForKeyLookups(final AnalysisJobBuilder analysisJobBuilder,
+            final AtomicInteger currentComponentIndex) {
         final Collection<ComponentBuilder> componentBuilders = analysisJobBuilder.getComponentBuilders();
-        for (ComponentBuilder componentBuilder : componentBuilders) {
-            componentBuilder.setMetadataProperty(METADATA_PROPERTY_COMPONENT_INDEX, Integer.toString(
-                    currentComponentIndex.getAndIncrement()));
+        for (final ComponentBuilder componentBuilder : componentBuilders) {
+            componentBuilder.setMetadataProperty(METADATA_PROPERTY_COMPONENT_INDEX,
+                    Integer.toString(currentComponentIndex.getAndIncrement()));
         }
 
         final List<AnalysisJobBuilder> childJobBuilders = analysisJobBuilder.getConsumedOutputDataStreamsJobBuilders();
-        for (AnalysisJobBuilder childJobBuilder : childJobBuilders) {
+        for (final AnalysisJobBuilder childJobBuilder : childJobBuilders) {
             applyComponentIndexForKeyLookups(childJobBuilder, currentComponentIndex);
         }
     }
 
-    public String getComponentKey(ComponentJob componentJob) {
+    public String getComponentKey(final ComponentJob componentJob) {
         final String key = componentJob.getMetadataProperties().get(METADATA_PROPERTY_COMPONENT_INDEX);
         if (key == null) {
-            throw new IllegalStateException("No key registered for component: " + componentJob);        }
+            throw new IllegalStateException("No key registered for component: " + componentJob);
+        }
 
-        final String partitionKey = componentJob.getMetadataProperties().get(AnalyzerComponentBuilder.METADATA_PROPERTY_BUILDER_PARTITION_INDEX);
+        final String partitionKey = componentJob.getMetadataProperties()
+                .get(AnalyzerComponentBuilder.METADATA_PROPERTY_BUILDER_PARTITION_INDEX);
         if (partitionKey != null) {
             return key + "." + partitionKey;
         } else {
@@ -203,16 +217,16 @@ public class SparkJobContext implements Serializable {
     }
 
     private ComponentJob getComponentByKey(final AnalysisJob job, final String queriedKey) {
-        final List<ComponentJob> componentJobs = CollectionUtils.<ComponentJob> concat(false, job.getTransformerJobs(),
-                job.getTransformerJobs(), job.getAnalyzerJobs());
-        for (ComponentJob componentJob : componentJobs) {
+        final List<ComponentJob> componentJobs = CollectionUtils
+                .concat(false, job.getTransformerJobs(), job.getTransformerJobs(), job.getAnalyzerJobs());
+        for (final ComponentJob componentJob : componentJobs) {
             final String componentKey = getComponentKey(componentJob);
             if (queriedKey.equals(componentKey)) {
                 return componentJob;
             }
 
             final OutputDataStreamJob[] outputDataStreamJobs = componentJob.getOutputDataStreamJobs();
-            for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
+            for (final OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
                 final AnalysisJob childJob = outputDataStreamJob.getJob();
                 if (childJob != null) {
                     final ComponentJob result = getComponentByKey(childJob, queriedKey);
@@ -245,25 +259,12 @@ public class SparkJobContext implements Serializable {
     }
 
     /**
-     * Gets the job name (removing the extension '.analysis.xml')
-     *
-     * @return
-     */
-    private static String getAnalysisJobName(URI uri) {
-        final String filename = uri.getPath();
-        final int lastIndexOfSlash = filename.lastIndexOf("/");
-        final int lastIndexOfFileExtension = filename.lastIndexOf(".analysis.xml");
-        final String jobName = filename.substring(lastIndexOfSlash + 1, lastIndexOfFileExtension);
-        return jobName;
-    }
-
-    /**
      * Adds a listener for the job life cycle.
-     * 
+     *
      * @param sparkJobLifeCycleListener
      *            The listener to add. Must be serializable.
      */
-    public void addSparkJobLifeCycleListener(SparkJobLifeCycleListener sparkJobLifeCycleListener) {
+    public void addSparkJobLifeCycleListener(final SparkJobLifeCycleListener sparkJobLifeCycleListener) {
         _sparkJobLifeCycleListeners.add(sparkJobLifeCycleListener);
     }
 
@@ -272,45 +273,45 @@ public class SparkJobContext implements Serializable {
      * globally after job start. If you remove it on a node, it will only be
      * removed on that node.
      */
-    public void removeSparkJobLifeCycleListener(SparkJobLifeCycleListener sparkJobLifeCycleListener) {
+    public void removeSparkJobLifeCycleListener(final SparkJobLifeCycleListener sparkJobLifeCycleListener) {
         _sparkJobLifeCycleListeners.remove(sparkJobLifeCycleListener);
     }
 
     public void triggerOnPartitionProcessingEnd() {
-        for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
+        for (final SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
             try {
                 listener.onPartitionProcessingEnd(this);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 logger.warn("onPartitionProcessingEnd: Listener {} threw exception", listener, e);
             }
         }
     }
 
     public void triggerOnPartitionProcessingStart() {
-        for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
+        for (final SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
             try {
                 listener.onPartitionProcessingStart(this);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 logger.warn("onPartitionProcessingStart: Listener {} threw exception", listener, e);
             }
         }
     }
 
     public void triggerOnJobStart() {
-        for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
+        for (final SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
             try {
                 listener.onJobStart(this);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 logger.warn("onJobStart: Listener {} threw exception", listener, e);
             }
         }
     }
 
     public void triggerOnJobEnd() {
-        for (SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
+        for (final SparkJobLifeCycleListener listener : _sparkJobLifeCycleListeners) {
             try {
                 listener.onJobEnd(this);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 logger.warn("onJobEnd: Listener {} threw exception", listener, e);
             }
         }

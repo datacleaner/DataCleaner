@@ -34,13 +34,13 @@ public abstract class PropertyWidgetPanel extends FormPanel {
 
     private static final long serialVersionUID = 1L;
 
-    public void addProperties(Collection<ConfiguredPropertyDescriptor> properties) {
-        for (ConfiguredPropertyDescriptor propertyDescriptor : properties) {
+    public void addProperties(final Collection<ConfiguredPropertyDescriptor> properties) {
+        for (final ConfiguredPropertyDescriptor propertyDescriptor : properties) {
             final PropertyWidget<?> propertyWidget = getPropertyWidget(propertyDescriptor);
 
             // some properties may not have a PropertyWidget
             if (propertyWidget != null) {
-                JComponent component = propertyWidget.getWidget();
+                final JComponent component = propertyWidget.getWidget();
 
                 // some properties may have a PropertyWidget implementation that
                 // is "invisible", ie. the JComponent is not returned

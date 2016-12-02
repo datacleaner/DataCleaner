@@ -29,17 +29,15 @@ import org.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption
  */
 public class LatestNumberOfDaysHAxisOption implements HorizontalAxisOption {
 
-    private static final long serialVersionUID = 1L;
-
     public static final int DEFAULT_NUMBER_OF_DAYS = 30;
-    
+    private static final long serialVersionUID = 1L;
     private int _latestNumberOfDays;
-    
+
     public LatestNumberOfDaysHAxisOption() {
         this(DEFAULT_NUMBER_OF_DAYS);
     }
 
-    public LatestNumberOfDaysHAxisOption(int latestNumberOfDays) {
+    public LatestNumberOfDaysHAxisOption(final int latestNumberOfDays) {
         _latestNumberOfDays = latestNumberOfDays;
     }
 
@@ -49,7 +47,7 @@ public class LatestNumberOfDaysHAxisOption implements HorizontalAxisOption {
 
     @Override
     public Date getBeginDate() {
-        final long latestNumberOfMillis = _latestNumberOfDays * 1000l * 60 * 60 * 24;
+        final long latestNumberOfMillis = _latestNumberOfDays * 1000L * 60 * 60 * 24;
 
         final Date now = new Date();
         final long time = now.getTime() - latestNumberOfMillis;

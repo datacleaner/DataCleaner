@@ -41,8 +41,8 @@ import org.datacleaner.windows.AnalysisJobBuilderWindow;
  * The usual container panel of {@link SelectDatastorePanel} when selecting to
  * build job from scratch.
  */
-public class SelectDatastoreContainerPanel extends DCSplashPanel implements DatastoreSelectedListener,
-        DatastoreChangeListener {
+public class SelectDatastoreContainerPanel extends DCSplashPanel
+        implements DatastoreSelectedListener, DatastoreChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -55,8 +55,9 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
             final WindowContext windowContext) {
         super(window);
         _datastoreCatalog = datastoreCatalog;
-        _selectDatastorePanel = new SelectDatastorePanel(dcModule, datastoreCatalog, serverInformationCatalog,
-                databaseDriverCatalog, userPreferences, this, true);
+        _selectDatastorePanel =
+                new SelectDatastorePanel(dcModule, datastoreCatalog, serverInformationCatalog, databaseDriverCatalog,
+                        userPreferences, this, true);
 
         setLayout(new BorderLayout());
         final JScrollPane scroll = wrapContent(_selectDatastorePanel);
@@ -65,7 +66,7 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
 
         addComponentListener(new ComponentAdapter() {
             @Override
-            public void componentHidden(ComponentEvent e) {
+            public void componentHidden(final ComponentEvent e) {
                 scroll.getVerticalScrollBar().setValue(0);
             }
         });
@@ -84,27 +85,17 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
     }
 
     @Override
-    public void onAdd(Datastore datastore) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                _selectDatastorePanel.updateDatastores();
-            }
-        });
+    public void onAdd(final Datastore datastore) {
+        SwingUtilities.invokeLater(_selectDatastorePanel::updateDatastores);
     }
 
     @Override
-    public void onRemove(Datastore datastore) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                _selectDatastorePanel.updateDatastores();
-            }
-        });
+    public void onRemove(final Datastore datastore) {
+        SwingUtilities.invokeLater(_selectDatastorePanel::updateDatastores);
     }
 
     @Override
-    public void datastoreSelected(Datastore datastore) {
+    public void datastoreSelected(final Datastore datastore) {
         getWindow().setDatastore(datastore);
     }
 }

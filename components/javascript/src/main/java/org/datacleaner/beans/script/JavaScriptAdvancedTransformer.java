@@ -42,8 +42,6 @@ import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptableObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A transformer that uses userwritten JavaScript to generate a transformer
@@ -54,8 +52,6 @@ import org.slf4j.LoggerFactory;
 @Categorized(ScriptingCategory.class)
 @Concurrent(false)
 public class JavaScriptAdvancedTransformer implements Transformer {
-
-    private static final Logger logger = LoggerFactory.getLogger(JavaScriptAdvancedTransformer.class);
 
     @Inject
     @Configured
@@ -68,10 +64,27 @@ public class JavaScriptAdvancedTransformer implements Transformer {
     @Inject
     @Configured
     @StringProperty(multiline = true, mimeType = { "text/javascript", "application/x-javascript" })
-    String sourceCode = "var transformerObj = {\n"
-            + "\tinitialize: function() {\n\t\tlogger.info('Initializing advanced JavaScript transformer...');\n\t},\n\n"
-            + "\ttransform: function(columns,values,outputCollector) {\n\t\tlogger.debug('transform({},{},{}) invoked', columns, values, outputCollector);\n\t\tfor (var i=0;i<columns.length;i++) {\n\t\t\toutputCollector.putValues(columns[i],values[i])\n\t\t}\n\t},\n\n"
-            + "\tclose: function() {\n\t\tlogger.info('Closing advanced JavaScript transformer...');\n\t}\n}";
+    // @formatter:off
+    // @checkstyle:off
+    String sourceCode =
+              "var transformerObj = {\n"
+            + "    initialize: function () {\n"
+            + "        logger.info('Initializing advanced JavaScript transformer...');\n"
+            + "    },\n"
+            + "\n"
+            + "    transform: function (columns, values, outputCollector) {\n"
+            + "        logger.debug('transform({},{},{}) invoked', columns, values, outputCollector);\n"
+            + "        for (var i = 0; i < columns.length; i++) {\n"
+            + "            outputCollector.putValues(columns[i], values[i])\n"
+            + "        }\n"
+            + "    },\n"
+            + "\n"
+            + "    close: function () {\n"
+            + "        logger.info('Closing advanced JavaScript transformer...');\n"
+            + "    }\n"
+            + "}";
+    // @formatter:on
+    // @checkstyle:on
 
     @Inject
     @Provided
@@ -88,26 +101,25 @@ public class JavaScriptAdvancedTransformer implements Transformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        String[] names = new String[returnTypes.length];
-        Class<?>[] types = new Class[returnTypes.length];
+        final String[] names = new String[returnTypes.length];
+        final Class<?>[] types = new Class[returnTypes.length];
         for (int i = 0; i < returnTypes.length; i++) {
             names[i] = "JavaScript output " + (i + 1);
             types[i] = returnTypes[i];
         }
-        OutputColumns outputColumns = new OutputColumns(names, types);
-        return outputColumns;
+        return new OutputColumns(names, types);
     }
 
     @Initialize
     public void init() {
         _contextFactory = new ContextFactory();
 
-        Context context = _contextFactory.enterContext();
+        final Context context = _contextFactory.enterContext();
         try {
             _script = context.compileString(sourceCode, this.getClass().getSimpleName(), 1, null);
             _sharedScope = context.initStandardObjects();
 
-            JavaScriptUtils.addToScope(_sharedScope, logger, "logger", "log");
+            JavaScriptUtils.addToScope(_sharedScope, new JavaScriptLogger(), "logger", "log");
             JavaScriptUtils.addToScope(_sharedScope, System.out, "out");
 
             _script.exec(context, _sharedScope);
@@ -128,7 +140,7 @@ public class JavaScriptAdvancedTransformer implements Transformer {
 
     @Close
     public void close() {
-        Context context = _contextFactory.enterContext();
+        final Context context = _contextFactory.enterContext();
         try {
             _closeFunction.call(context, _sharedScope, _sharedScope, new Object[0]);
         } finally {
@@ -137,16 +149,16 @@ public class JavaScriptAdvancedTransformer implements Transformer {
     }
 
     @Override
-    public Object[] transform(InputRow inputRow) {
-        Context context = _contextFactory.enterContext();
+    public Object[] transform(final InputRow inputRow) {
+        final Context context = _contextFactory.enterContext();
         try {
-            String[] columnNames = new String[columns.length];
-            Object[] values = new Object[columns.length];
+            final String[] columnNames = new String[columns.length];
+            final Object[] values = new Object[columns.length];
             for (int i = 0; i < columns.length; i++) {
                 columnNames[i] = columns[i].getName();
                 values[i] = inputRow.getValue(columns[i]);
             }
-            Object[] args = { columnNames, values, rowCollector };
+            final Object[] args = { columnNames, values, rowCollector };
             _transformFunction.call(context, _sharedScope, _sharedScope, args);
             return null;
         } finally {

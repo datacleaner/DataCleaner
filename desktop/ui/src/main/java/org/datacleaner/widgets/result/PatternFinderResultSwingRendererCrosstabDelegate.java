@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -60,8 +58,8 @@ import org.slf4j.LoggerFactory;
  */
 class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabResultSwingRenderer<CrosstabResult> {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(PatternFinderResultSwingRendererCrosstabDelegate.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(PatternFinderResultSwingRendererCrosstabDelegate.class);
 
     // don't show the pattern decoration buttons if there's a way too high
     // amount of patterns.
@@ -69,20 +67,20 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
     private final MutableReferenceDataCatalog _catalog;
 
-    public PatternFinderResultSwingRendererCrosstabDelegate(WindowContext windowContext,
-            RendererFactory rendererFactory, MutableReferenceDataCatalog referenceDataCatalog) {
+    public PatternFinderResultSwingRendererCrosstabDelegate(final WindowContext windowContext,
+            final RendererFactory rendererFactory, final MutableReferenceDataCatalog referenceDataCatalog) {
         super(windowContext, rendererFactory);
         _catalog = referenceDataCatalog;
     }
 
     @Override
-    public RendererPrecedence getPrecedence(CrosstabResult renderable) {
+    public RendererPrecedence getPrecedence(final CrosstabResult renderable) {
         throw new UnsupportedOperationException(
                 "This renderer is programmatically invoked, don't register it in the descriptor catalog.");
     }
 
     @Override
-    public JComponent render(CrosstabResult result) {
+    public JComponent render(final CrosstabResult result) {
         final CrosstabPanel crosstabPanel = super.renderInternal(result);
         final DCTable table = crosstabPanel.getTable();
         if (isInitiallyCharted(table) || isTooLimitedToChart(table) || isTooBigToChart(table)) {
@@ -94,12 +92,9 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
         final JButton chartButton = WidgetFactory.createDefaultButton("Show distribution chart", IconUtils.CHART_BAR);
         chartButton.setMargin(new Insets(1, 1, 1, 1));
-        chartButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                headerPanel.setVisible(false);
-                displayChart(table, crosstabPanel.getDisplayChartCallback());
-            }
+        chartButton.addActionListener(e -> {
+            headerPanel.setVisible(false);
+            displayChart(table, crosstabPanel.getDisplayChartCallback());
         });
 
         headerPanel.add(chartButton);
@@ -112,7 +107,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
         return panel;
     }
 
-    protected void displayChart(DCTable table, DisplayChartCallback displayChartCallback) {
+    protected void displayChart(final DCTable table, final DisplayChartCallback displayChartCallback) {
         final int rowCount = table.getRowCount();
 
         logger.info("Rendering chart with {} patterns", rowCount);
@@ -131,8 +126,8 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
         // only show legend if there are not too many patterns
         final boolean showLegend = dataset.getRowCount() < 25;
 
-        final JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL,
-                showLegend, true, false);
+        final JFreeChart chart = ChartFactory
+                .createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL, showLegend, true, false);
         ChartUtils.applyStyles(chart);
 
         final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
@@ -141,7 +136,8 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
     }
 
     @Override
-    protected void decorate(CrosstabResult result, DCTable table, DisplayChartCallback displayChartCallback) {
+    protected void decorate(final CrosstabResult result, final DCTable table,
+            final DisplayChartCallback displayChartCallback) {
         super.decorate(result, table, displayChartCallback);
 
         table.setAlignment(1, Alignment.RIGHT);
@@ -156,7 +152,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
                 final String stringPatternName = "PF: " + label;
 
                 if (_catalog.containsStringPattern(stringPatternName)) {
-                    DCPanel panel = new DCPanel();
+                    final DCPanel panel = new DCPanel();
                     panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
                     panel.add(Box.createHorizontalStrut(4));
@@ -164,12 +160,9 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
                     final JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_SAVE_DARK);
                     button.setToolTipText("Save as string pattern");
-                    button.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            _catalog.addStringPattern(new SimpleStringPattern(stringPatternName, expression));
-                            button.setEnabled(false);
-                        }
+                    button.addActionListener(e -> {
+                        _catalog.addStringPattern(new SimpleStringPattern(stringPatternName, expression));
+                        button.setEnabled(false);
                     });
                     panel.add(Box.createHorizontalStrut(4));
                     panel.add(button);
@@ -184,22 +177,22 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
         }
     }
 
-    private String extractExpression(String string) {
+    private String extractExpression(final String string) {
         if (LabelUtils.BLANK_LABEL.equals(string)) {
             return "";
         }
         return string;
     }
 
-    private boolean isInitiallyCharted(DCTable table) {
+    private boolean isInitiallyCharted(final DCTable table) {
         return table.getRowCount() >= 8;
     }
 
-    private boolean isTooLimitedToChart(DCTable table) {
+    private boolean isTooLimitedToChart(final DCTable table) {
         return table.getRowCount() <= 1;
     }
 
-    private boolean isTooBigToChart(DCTable table) {
+    private boolean isTooBigToChart(final DCTable table) {
         final int rowCount = table.getRowCount();
         if (rowCount > ChartUtils.CATEGORY_COUNT_DISPLAY_THRESHOLD) {
             logger.info("Display threshold of {} in chart surpassed (got {}). Skipping chart.",
@@ -209,14 +202,14 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
         return false;
     }
 
-    private String extractString(Object obj) {
+    private String extractString(final Object obj) {
         if (obj == null) {
             return null;
         } else if (obj instanceof String) {
             return (String) obj;
         } else if (obj instanceof JPanel) {
-            Component[] components = ((JPanel) obj).getComponents();
-            for (Component component : components) {
+            final Component[] components = ((JPanel) obj).getComponents();
+            for (final Component component : components) {
                 if (component instanceof JLabel) {
                     return extractString(component);
                 }

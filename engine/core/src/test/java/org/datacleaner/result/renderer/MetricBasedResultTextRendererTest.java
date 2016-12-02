@@ -27,13 +27,12 @@ import junit.framework.TestCase;
 public class MetricBasedResultTextRendererTest extends TestCase {
 
     public void testRenderNumberResult() throws Exception {
-        NumberResult result = new NumberResult(1234);
+        final NumberResult result = new NumberResult(1234);
 
-        MetricBasedResultTextRenderer renderer = new MetricBasedResultTextRenderer();
+        final MetricBasedResultTextRenderer renderer = new MetricBasedResultTextRenderer();
         assertEquals(RendererPrecedence.LOWEST, renderer.getPrecedence(result));
-        
-        String str = renderer.render(result);
-        assertEquals("NumberResult:\n" + 
-                " - Number: 1234", str);
+
+        final String str = renderer.render(result);
+        assertEquals("NumberResult:\n" + " - Number: 1234", str);
     }
 }

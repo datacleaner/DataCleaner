@@ -37,8 +37,6 @@ import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A transformer that uses userwritten JavaScript to generate a value
@@ -49,97 +47,95 @@ import org.slf4j.LoggerFactory;
 @Categorized(ScriptingCategory.class)
 public class JavaScriptTransformer implements Transformer {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(JavaScriptTransformer.class);
+    public enum ReturnType {
+        STRING, NUMBER, BOOLEAN
+    }
 
-	public static enum ReturnType {
-		STRING, NUMBER, BOOLEAN;
-	}
+    @Configured
+    InputColumn<?>[] columns;
 
-	@Configured
-	InputColumn<?>[] columns;
+    @Configured
+    ReturnType returnType = ReturnType.STRING;
 
-	@Configured
-	ReturnType returnType = ReturnType.STRING;
+    @Configured
+    @Description(
+            "Available variables:\nvalues[0..]: Array of values\nvalues[\"my_col\"]: Map of values\nmy_col: "
+                    + "Each column value has it's own variable\nout: Print to console using out.println('hello')\n"
+                    + "log: Print to log using log.info(...), log.warn(...), log.error(...)")
+    @StringProperty(multiline = true, mimeType = { "text/javascript", "application/x-javascript" })
+    String sourceCode = "function eval() {\n\treturn \"hello \" + values[0];\n}\n\neval();";
 
-	@Configured
-	@Description("Available variables:\nvalues[0..]: Array of values\nvalues[\"my_col\"]: Map of values\nmy_col: Each column value has it's own variable\nout: Print to console using out.println('hello')\nlog: Print to log using log.info(...), log.warn(...), log.error(...)")
-	@StringProperty(multiline = true, mimeType = { "text/javascript",
-			"application/x-javascript" })
-	String sourceCode = "function eval() {\n\treturn \"hello \" + values[0];\n}\n\neval();";
+    private ContextFactory _contextFactory;
+    private Script _script;
 
-	private ContextFactory _contextFactory;
-	private Script _script;
+    // this scope is shared between all threads
+    private ScriptableObject _sharedScope;
 
-	// this scope is shared between all threads
-	private ScriptableObject _sharedScope;
+    @Override
+    public OutputColumns getOutputColumns() {
+        final OutputColumns outputColumns = new OutputColumns(Object.class, "JavaScript output");
+        if (returnType == ReturnType.NUMBER) {
+            outputColumns.setColumnType(0, Number.class);
+        } else if (returnType == ReturnType.BOOLEAN) {
+            outputColumns.setColumnType(0, Boolean.class);
+        } else {
+            outputColumns.setColumnType(0, String.class);
+        }
+        return outputColumns;
+    }
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		OutputColumns outputColumns = new OutputColumns(Object.class, "JavaScript output");
-		if (returnType == ReturnType.NUMBER) {
-			outputColumns.setColumnType(0, Number.class);
-		} else if (returnType == ReturnType.BOOLEAN) {
-			outputColumns.setColumnType(0, Boolean.class);
-		} else {
-			outputColumns.setColumnType(0, String.class);
-		}
-		return outputColumns;
-	}
+    @Initialize
+    public void init() {
+        _contextFactory = new ContextFactory();
+        final Context context = _contextFactory.enterContext();
 
-	@Initialize
-	public void init() {
-		_contextFactory = new ContextFactory();
-		Context context = _contextFactory.enterContext();
+        try {
+            _script = context.compileString(sourceCode, this.getClass().getSimpleName(), 1, null);
+            _sharedScope = context.initStandardObjects();
 
-		try {
-			_script = context.compileString(sourceCode, this.getClass()
-					.getSimpleName(), 1, null);
-			_sharedScope = context.initStandardObjects();
+            JavaScriptUtils.addToScope(_sharedScope, new JavaScriptLogger(), "logger", "log");
+            JavaScriptUtils.addToScope(_sharedScope, System.out, "out");
+        } finally {
+            Context.exit();
+        }
+    }
 
-			JavaScriptUtils.addToScope(_sharedScope, logger, "logger", "log");
-			JavaScriptUtils.addToScope(_sharedScope, System.out, "out");
-		} finally {
-			Context.exit();
-		}
-	}
+    @Override
+    public Object[] transform(final InputRow inputRow) {
+        final Context context = _contextFactory.enterContext();
 
-	@Override
-	public Object[] transform(InputRow inputRow) {
-		Context context = _contextFactory.enterContext();
+        try {
 
-		try {
+            // this scope is local to the execution of a single row
+            final Scriptable scope = context.newObject(_sharedScope);
+            scope.setPrototype(_sharedScope);
+            scope.setParentScope(null);
 
-			// this scope is local to the execution of a single row
-			Scriptable scope = context.newObject(_sharedScope);
-			scope.setPrototype(_sharedScope);
-			scope.setParentScope(null);
+            JavaScriptUtils.addToScope(scope, inputRow, columns, "values");
 
-			JavaScriptUtils.addToScope(scope, inputRow, columns, "values");
+            Object result = _script.exec(context, scope);
+            // String stringResult = Context.toString(result);
 
-			Object result = _script.exec(context, scope);
-			// String stringResult = Context.toString(result);
+            if (result == null) {
+                result = null;
+            } else if (returnType == ReturnType.NUMBER) {
+                result = Context.toNumber(result);
+            } else if (returnType == ReturnType.BOOLEAN) {
+                result = Context.toBoolean(result);
+            } else {
+                result = Context.toString(result);
+            }
+            return new Object[] { result };
+        } finally {
+            Context.exit();
+        }
+    }
 
-			if (result == null) {
-				result = null;
-			} else if (returnType == ReturnType.NUMBER) {
-				result = Context.toNumber(result);
-			} else if (returnType == ReturnType.BOOLEAN) {
-				result = Context.toBoolean(result);
-			} else {
-				result = Context.toString(result);
-			}
-			return new Object[] { result };
-		} finally {
-			Context.exit();
-		}
-	}
+    public void setSourceCode(final String sourceCode) {
+        this.sourceCode = sourceCode;
+    }
 
-	public void setSourceCode(String sourceCode) {
-		this.sourceCode = sourceCode;
-	}
-
-	public void setColumns(InputColumn<?>[] columns) {
-		this.columns = columns;
-	}
+    public void setColumns(final InputColumn<?>[] columns) {
+        this.columns = columns;
+    }
 }

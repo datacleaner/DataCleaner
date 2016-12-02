@@ -1,9 +1,9 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.util.WidgetUtils
 import java.awt.Color
-import org.jfree.chart.renderer.LookupPaintScale
-import org.jfree.chart.renderer.PaintScale
+
+import org.datacleaner.util.WidgetUtils
+import org.jfree.chart.renderer.{LookupPaintScale, PaintScale}
 
 object DensityAnalyzerColors {
   

@@ -26,7 +26,7 @@ public class DatastoreConnectionException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public DatastoreConnectionException(String message) {
+    public DatastoreConnectionException(final String message) {
         super(message);
     }
 

@@ -22,18 +22,18 @@ package org.datacleaner.beans.writers;
 import org.apache.metamodel.util.HasName;
 
 public enum ErrorHandlingOption implements HasName {
-	
-	STOP_JOB("Stop the job"), SAVE_TO_FILE("Save errornuos records to file");
-	
-	private final String _name;
 
-	private ErrorHandlingOption(String name) {
-		_name = name;
-	}
+    STOP_JOB("Stop the job"), SAVE_TO_FILE("Save errornuos records to file");
 
-	@Override
-	public String getName() {
-		return _name;
-	}
+    private final String _name;
+
+    ErrorHandlingOption(final String name) {
+        _name = name;
+    }
+
+    @Override
+    public String getName() {
+        return _name;
+    }
 
 }

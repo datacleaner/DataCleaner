@@ -39,16 +39,17 @@ public class SlaveAnalysisRunner extends AnalysisRunnerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(SlaveAnalysisRunner.class);
 
-    public SlaveAnalysisRunner(DataCleanerConfiguration configuration) {
+    public SlaveAnalysisRunner(final DataCleanerConfiguration configuration) {
         super(configuration);
     }
 
-    public SlaveAnalysisRunner(DataCleanerConfiguration configuration, AnalysisListener... sharedAnalysisListeners) {
+    public SlaveAnalysisRunner(final DataCleanerConfiguration configuration,
+            final AnalysisListener... sharedAnalysisListeners) {
         super(configuration, sharedAnalysisListeners);
     }
 
     @Override
-    public AnalysisResultFuture run(AnalysisJob job) {
+    public AnalysisResultFuture run(final AnalysisJob job) {
         logger.info("Running slave job: {}", job);
         return super.run(job);
     }

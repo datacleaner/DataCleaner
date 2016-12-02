@@ -46,17 +46,16 @@ public class SecurityUtils {
     /**
      * Creates a {@link SSLConnectionSocketFactory} which is careless about SSL
      * certificate checks. Use with caution!
-     * 
+     *
      * @return
      */
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public static SSLConnectionSocketFactory createUnsafeSSLConnectionSocketFactory() {
         try {
-            SSLContextBuilder builder = new SSLContextBuilder();
+            final SSLContextBuilder builder = new SSLContextBuilder();
             builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build(),
-                    new NaiveHostnameVerifier());
-            return sslsf;
-        } catch (Exception e) {
+            return new SSLConnectionSocketFactory(builder.build(), new NaiveHostnameVerifier());
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
@@ -64,31 +63,31 @@ public class SecurityUtils {
     /**
      * Removes the certificate checks of HTTPS traffic on a HTTP client. Use
      * with caution!
-     * 
+     *
      * @param httpClient
      * @throws IllegalStateException
-     * 
+     *
      * @{@link Deprecated} use {@link #createUnsafeSSLConnectionSocketFactory()}
      *         in conjunction with {@link HttpClients#custom()} instead.
      */
     @Deprecated
-    public static void removeSshCertificateChecks(HttpClient httpClient) throws IllegalStateException {
+    public static void removeSshCertificateChecks(final HttpClient httpClient) throws IllegalStateException {
         try {
             // prepare a SSL context which doesn't validate certificates
             final SSLContext sslContext = SSLContext.getInstance("SSL");
             final TrustManager trustManager = new NaiveTrustManager();
             sslContext.init(null, new TrustManager[] { trustManager }, new SecureRandom());
 
-            final org.apache.http.conn.ssl.SSLSocketFactory schemeSocketFactory = new org.apache.http.conn.ssl.SSLSocketFactory(
-                    sslContext);
-            final org.apache.http.conn.scheme.Scheme sslScheme = new org.apache.http.conn.scheme.Scheme("https", 443,
-                    schemeSocketFactory);
+            final org.apache.http.conn.ssl.SSLSocketFactory schemeSocketFactory =
+                    new org.apache.http.conn.ssl.SSLSocketFactory(sslContext);
+            final org.apache.http.conn.scheme.Scheme sslScheme =
+                    new org.apache.http.conn.scheme.Scheme("https", 443, schemeSocketFactory);
 
             // try again with a new registry
-            final org.apache.http.conn.scheme.SchemeRegistry registry = httpClient.getConnectionManager()
-                    .getSchemeRegistry();
+            final org.apache.http.conn.scheme.SchemeRegistry registry =
+                    httpClient.getConnectionManager().getSchemeRegistry();
             registry.register(sslScheme);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
     }
@@ -97,28 +96,27 @@ public class SecurityUtils {
      * Encodes/obfuscates a password. Although this does not prevent actual
      * hacking of password, it does remove the obvious threats of having
      * passwords stored as clear text.
-     * 
+     *
      * @param password
      * @return a String containing the encoded password
      */
-    public static String encodePassword(char[] password) {
+    public static String encodePassword(final char[] password) {
         if (password == null) {
             return null;
         }
         final EncodedStringConverter converter = new EncodedStringConverter();
-        final String encodedPassword = converter.toString(new String(password));
-        return encodedPassword;
+        return converter.toString(new String(password));
     }
 
     /**
      * Encodes/obfuscates a password. Although this does not prevent actual
      * hacking of password, it does remove the obvious threats of having
      * passwords stored as clear text.
-     * 
+     *
      * @param password
      * @return a String containing the encoded password
      */
-    public static String encodePassword(String password) {
+    public static String encodePassword(final String password) {
         if (password == null) {
             return null;
         }
@@ -129,19 +127,18 @@ public class SecurityUtils {
      * Decodes/deobfuscates an encoded password. Although this does not prevent
      * actual hacking of password, it does remove the obvious threats of having
      * passwords stored as clear text.
-     * 
+     *
      * @param encodedPassword
      * @return a char array containing the password. Do not use this as a
      *         long-lived object. If the password needs to be held in memory for
      *         longer periods, the encoded version is recommended.
      */
-    public static String decodePassword(String encodedPassword) {
+    public static String decodePassword(final String encodedPassword) {
         if (encodedPassword == null) {
             return null;
         }
         final EncodedStringConverter converter = new EncodedStringConverter();
-        final String password = converter.fromString(String.class, encodedPassword);
-        return password;
+        return converter.fromString(String.class, encodedPassword);
     }
 
     /**
@@ -150,7 +147,7 @@ public class SecurityUtils {
      * @param passwordInPlainText
      * @return a String containing the encoded password
      */
-    public static String encodePasswordWithPrefix(String passwordInPlainText) {
+    public static String encodePasswordWithPrefix(final String passwordInPlainText) {
         if (hasPrefix(passwordInPlainText)) {
             return passwordInPlainText;
         }
@@ -164,7 +161,7 @@ public class SecurityUtils {
      * @param encodedPasswordWithPrefix
      * @return a String containing the decoded password
      */
-    public static String decodePasswordWithPrefix(String encodedPasswordWithPrefix) {
+    public static String decodePasswordWithPrefix(final String encodedPasswordWithPrefix) {
         if (encodedPasswordWithPrefix == null) {
             return null;
         }
@@ -175,7 +172,7 @@ public class SecurityUtils {
         }
     }
 
-    public static boolean hasPrefix(String password) {
+    public static boolean hasPrefix(final String password) {
         if (password == null) {
             return false;
         }

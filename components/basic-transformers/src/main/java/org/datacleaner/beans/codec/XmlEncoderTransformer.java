@@ -39,7 +39,7 @@ import com.google.common.xml.XmlEscapers;
 @Categorized(EncodingCategory.class)
 public class XmlEncoderTransformer implements Transformer {
 
-    public static enum TargetFormat {
+    public enum TargetFormat {
         Content, Attribute
     }
 
@@ -52,7 +52,7 @@ public class XmlEncoderTransformer implements Transformer {
     public XmlEncoderTransformer() {
     }
 
-    public XmlEncoderTransformer(MockInputColumn<String> column) {
+    public XmlEncoderTransformer(final MockInputColumn<String> column) {
         this();
         this.column = column;
     }

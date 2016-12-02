@@ -32,21 +32,21 @@ public interface LaunchArtifactProvider {
      * Determines if launching artifacts are available. This to allow an
      * implementing class to signal that the artifacts cannot be resolved, and
      * thus disable launching in the user interface etc.
-     * 
+     *
      * @return
      */
-    public boolean isAvailable();
+    boolean isAvailable();
 
     /**
      * Gets a list of artifact filenames
-     * 
+     *
      * @return
      */
-    public List<String> getJarFilenames();
+    List<String> getJarFilenames();
 
     /**
      * Reads the content of a single jar file
-     * 
+     *
      * @param filename
      * @return
      * @throws IllegalArgumentException
@@ -54,5 +54,5 @@ public interface LaunchArtifactProvider {
      * @throws IllegalStateException
      *             in case an error occurred while reading from the file
      */
-    public InputStream readJarFile(String filename) throws IllegalArgumentException, IllegalStateException;
+    InputStream readJarFile(String filename) throws IllegalArgumentException, IllegalStateException;
 }

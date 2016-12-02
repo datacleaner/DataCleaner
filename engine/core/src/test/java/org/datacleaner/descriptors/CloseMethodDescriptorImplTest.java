@@ -25,20 +25,20 @@ import junit.framework.TestCase;
 
 public class CloseMethodDescriptorImplTest extends TestCase {
 
-	private boolean executed;
+    private boolean executed;
 
-	public void testClose() throws Exception {
-		executed = false;
-		Method m = getClass().getDeclaredMethod("doClose");
-		CloseMethodDescriptorImpl closeMethodDescriptorImpl = new CloseMethodDescriptorImpl(m, null);
-		closeMethodDescriptorImpl.close(this);
+    public void testClose() throws Exception {
+        executed = false;
+        final Method m = getClass().getDeclaredMethod("doClose");
+        final CloseMethodDescriptorImpl closeMethodDescriptorImpl = new CloseMethodDescriptorImpl(m, null);
+        closeMethodDescriptorImpl.close(this);
 
-		assertTrue(executed);
+        assertTrue(executed);
 
-		assertEquals("CloseMethodDescriptorImpl[method=doClose]", closeMethodDescriptorImpl.toString());
-	}
+        assertEquals("CloseMethodDescriptorImpl[method=doClose]", closeMethodDescriptorImpl.toString());
+    }
 
-	public void doClose() {
-		executed = true;
-	}
+    public void doClose() {
+        executed = true;
+    }
 }

@@ -44,26 +44,26 @@ public class JobModificationEventUpdateSchedulesListener implements ApplicationL
     private final SchedulingService _schedulingService;
 
     @Autowired
-    public JobModificationEventUpdateSchedulesListener(SchedulingService schedulingService) {
+    public JobModificationEventUpdateSchedulesListener(final SchedulingService schedulingService) {
         _schedulingService = schedulingService;
     }
 
     @Override
-    public void onApplicationEvent(JobModificationEvent event) {
+    public void onApplicationEvent(final JobModificationEvent event) {
         final String oldJobName = event.getOldJobName();
         final String newJobName = event.getNewJobName();
         if (oldJobName.equals(newJobName)) {
             return;
         }
-        
+
         final TenantIdentifier tenant = new TenantIdentifier(event.getTenant());
         _schedulingService.removeSchedule(tenant, new JobIdentifier(oldJobName));
-        
-        final List<ScheduleDefinition> schedules = _schedulingService.getSchedules(tenant);
-        for (ScheduleDefinition schedule : schedules) {
+
+        final List<ScheduleDefinition> schedules = _schedulingService.getSchedules(tenant, false);
+        for (final ScheduleDefinition schedule : schedules) {
             boolean update = false;
             if (schedule.getDependentJob() != null) {
-                String dependentJob = schedule.getDependentJob().getName();
+                final String dependentJob = schedule.getDependentJob().getName();
                 if (oldJobName.equals(dependentJob)) {
                     logger.info("Updating dependent job schedule: {}", schedule);
                     schedule.setDependentJob(new JobIdentifier(newJobName));

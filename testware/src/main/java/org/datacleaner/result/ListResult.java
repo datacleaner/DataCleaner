@@ -22,37 +22,43 @@ package org.datacleaner.result;
 import java.util.List;
 
 import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Metric;
 
 /**
  * A very simple AnalyzerResult that simply holds a list of values
- * 
- * 
- * 
+ *
+ *
+ *
  * @param <E>
  */
 public class ListResult<E> implements AnalyzerResult {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final List<E> _values;
+    private final List<E> _values;
 
-	public ListResult(List<E> values) {
-		_values = values;
-	}
+    public ListResult(final List<E> values) {
+        _values = values;
+    }
 
-	public List<E> getValues() {
-		return _values;
-	}
+    public List<E> getValues() {
+        return _values;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		for (E value : _values) {
-			if (sb.length() > 0) {
-				sb.append('\n');
-			}
-			sb.append(value);
-		}
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        for (final E value : _values) {
+            if (sb.length() > 0) {
+                sb.append('\n');
+            }
+            sb.append(value);
+        }
+        return sb.toString();
+    }
+
+    @Metric(order = 1, value = "Row count")
+    public int getTotalRowCount() {
+        return _values.size();
+    }
 }

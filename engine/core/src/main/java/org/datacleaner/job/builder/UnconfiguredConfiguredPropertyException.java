@@ -34,8 +34,8 @@ public class UnconfiguredConfiguredPropertyException extends ComponentConfigurat
     private final ComponentBuilder _componentBuilder;
     private final ConfiguredPropertyDescriptor _configuredProperty;
 
-    public UnconfiguredConfiguredPropertyException(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor configuredProperty) {
+    public UnconfiguredConfiguredPropertyException(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor configuredProperty) {
         super("Property '" + configuredProperty.getName() + "' is not properly configured (" + componentBuilder + ")");
         _componentBuilder = componentBuilder;
         _configuredProperty = configuredProperty;

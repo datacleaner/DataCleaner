@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.datacleaner.job.NoSuchComponentException;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.configuration.ResultContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.JobContext;
@@ -38,6 +37,7 @@ import org.datacleaner.monitor.shared.model.JobMetrics;
 import org.datacleaner.monitor.shared.model.MetricGroup;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class DescriptorServiceImpl implements DescriptorService {
     private final ResultDao _resultDao;
 
     @Autowired
-    public DescriptorServiceImpl(TenantContextFactory tenantContextFactory, ResultDao resultDao) {
+    public DescriptorServiceImpl(final TenantContextFactory tenantContextFactory, final ResultDao resultDao) {
         _tenantContextFactory = tenantContextFactory;
         _resultDao = resultDao;
     }
@@ -69,30 +69,30 @@ public class DescriptorServiceImpl implements DescriptorService {
                 return ((MetricJobContext) jobContext).getJobMetrics();
             }
 
-            final List<MetricGroup> list = new ArrayList<MetricGroup>(0);
+            final List<MetricGroup> list = new ArrayList<>(0);
             return new JobMetrics(jobIdentifier, list);
-        } catch (NoSuchComponentException e) {
+        } catch (final NoSuchComponentException e) {
             logger.warn("Encountered exception while get Job metrics", e);
             throw new DescriptorNotFoundException(e.getMessage());
         }
     }
 
     @Override
-    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier,
-            MetricIdentifier metric) {
+    public Collection<String> getMetricParameterSuggestions(final TenantIdentifier tenant,
+            final JobIdentifier jobIdentifier, final MetricIdentifier metric) {
         if (metric == null || metric.isFormulaBased()) {
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
 
         final String analyzerDescriptorName = metric.getAnalyzerDescriptorName();
         final String metricDescriptorName = metric.getMetricDescriptorName();
         if (StringUtils.isNullOrEmpty(analyzerDescriptorName) || StringUtils.isNullOrEmpty(metricDescriptorName)) {
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
-        
+
         final ResultContext result = _resultDao.getLatestResult(tenant, jobIdentifier);
         if (result == null) {
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
         final MetricJobContext job = (MetricJobContext) result.getJob();
         final MetricJobEngine<?> jobEngine = job.getJobEngine();

@@ -22,21 +22,21 @@ package org.datacleaner.extensions;
 import java.io.File;
 
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
-import org.datacleaner.extensions.ExtensionPackage;
 
 import junit.framework.TestCase;
 
 public class ExtensionPackageTest extends TestCase {
 
     public void testLoadExtension() throws Exception {
-        File file = new File("src/test/resources/extensions/DataCleaner-basic-transformers.jar");
+        final File file = new File("src/test/resources/extensions/DataCleaner-basic-transformers.jar");
         assertTrue("example plugin jar does not exist", file.exists());
 
-        ExtensionPackage extensionPackage = new ExtensionPackage("foobar plugin", "org.datacleaner", true, new File[] { file });
+        final ExtensionPackage extensionPackage =
+                new ExtensionPackage("foobar plugin", "org.datacleaner", true, new File[] { file });
 
         assertFalse(extensionPackage.isLoaded());
 
-        ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider();
+        final ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider();
         extensionPackage.loadDescriptors(descriptorProvider);
 
         assertTrue(extensionPackage.isLoaded());

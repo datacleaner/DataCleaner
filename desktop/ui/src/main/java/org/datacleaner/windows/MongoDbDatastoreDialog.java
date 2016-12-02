@@ -55,8 +55,8 @@ public class MongoDbDatastoreDialog extends AbstractDatastoreDialog<MongoDbDatas
     private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
     @Inject
-    public MongoDbDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
-            @Nullable MongoDbDatastore originalDatastore, UserPreferences userPreferences) {
+    public MongoDbDatastoreDialog(final WindowContext windowContext, final MutableDatastoreCatalog catalog,
+            @Nullable final MongoDbDatastore originalDatastore, final UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
         _datastoreNameTextField = WidgetFactory.createTextField();
@@ -163,9 +163,8 @@ public class MongoDbDatastoreDialog extends AbstractDatastoreDialog<MongoDbDatas
     @Override
     public Schema createSchema() {
         final MongoDbDatastore datastore = createDatastore();
-        try (final UpdateableDatastoreConnection con = datastore.openConnection()) {
-            final Schema schema = con.getDataContext().getDefaultSchema();
-            return schema;
+        try (UpdateableDatastoreConnection con = datastore.openConnection()) {
+            return con.getDataContext().getDefaultSchema();
         }
     }
 

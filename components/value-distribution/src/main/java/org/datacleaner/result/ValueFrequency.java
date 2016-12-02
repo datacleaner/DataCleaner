@@ -26,51 +26,51 @@ import org.apache.metamodel.util.HasName;
 
 /**
  * Represents a frequency of values. Value frequencies can either represent a single
- * value or a composite list of other values (for instance - "<unique>" is
+ * value or a composite list of other values (for instance - "&lt;unique&gt;" is
  * a typical composite group of values - all with a frequency of 1).
  */
 public interface ValueFrequency extends HasName, Serializable, Comparable<ValueFrequency> {
 
     /**
      * Gets the name of this value count
-     * 
+     *
      * @return a name to display for this value count. Never null.
      */
-    public String getName();
+    String getName();
 
     /**
      * Gets the frequency/count of this value or group of values.
-     * 
+     *
      * @return
      */
-    public int getCount();
+    int getCount();
 
     /**
      * Determines if this {@link ValueFrequency} is a composite or not. If true,
      * {@link #getChildren()} will potentially hold child values. If false,
      * {@link #getValue()} will always hold a value.
-     * 
+     *
      * @return
      */
-    public boolean isComposite();
+    boolean isComposite();
 
     /**
      * Gets the value that this {@link ValueFrequency} represents. If this is a
      * composite value count, this method will return null.
-     * 
+     *
      * @see #isComposite()
-     * 
+     *
      * @return the value that this {@link ValueFrequency} represents
      */
-    public String getValue();
+    String getValue();
 
     /**
      * Gets the children of this {@link ValueFrequency}, if it is a composite value
      * count. May return null.
-     * 
+     *
      * @see #isComposite()
-     * 
+     *
      * @return the children of this {@link ValueFrequency}, if there are any
      */
-    public List<ValueFrequency> getChildren();
+    List<ValueFrequency> getChildren();
 }

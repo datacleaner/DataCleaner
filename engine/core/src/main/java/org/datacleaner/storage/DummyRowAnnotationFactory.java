@@ -32,7 +32,7 @@ import org.datacleaner.api.InputRow;
 public class DummyRowAnnotationFactory extends AbstractRowAnnotationFactory2 {
 
     @Override
-    public List<InputRow> getSampleRows(RowAnnotation annotation) {
+    public List<InputRow> getSampleRows(final RowAnnotation annotation) {
         return Collections.emptyList();
     }
 }

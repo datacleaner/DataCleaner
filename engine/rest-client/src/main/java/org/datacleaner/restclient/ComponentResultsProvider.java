@@ -26,6 +26,7 @@ import java.io.Serializable;
  * @since 14. 07. 2015
  */
 public interface ComponentResultsProvider {
-    public Serializable getComponentResults();
-    public boolean exists(String name);
+    Serializable getComponentResults();
+
+    boolean exists(String name);
 }

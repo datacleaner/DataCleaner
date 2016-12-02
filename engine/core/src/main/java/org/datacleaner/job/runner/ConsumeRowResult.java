@@ -32,7 +32,7 @@ public class ConsumeRowResult {
     private final List<InputRow> _rows;
     private final List<FilterOutcomes> _outcomeSinks;
 
-    public ConsumeRowResult(List<InputRow> rows, List<FilterOutcomes> outcomeSinks) {
+    public ConsumeRowResult(final List<InputRow> rows, final List<FilterOutcomes> outcomeSinks) {
         _rows = rows;
         _outcomeSinks = outcomeSinks;
     }

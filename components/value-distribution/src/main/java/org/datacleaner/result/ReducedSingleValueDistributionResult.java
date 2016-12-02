@@ -42,7 +42,8 @@ public class ReducedSingleValueDistributionResult extends ValueDistributionAnaly
     private final Map<String, Integer> _valueCountsMap;
     private final int _nullCount;
 
-    public ReducedSingleValueDistributionResult(final String name, Map<String, Integer> valueCountsMap, int nullCount) {
+    public ReducedSingleValueDistributionResult(final String name, final Map<String, Integer> valueCountsMap,
+            final int nullCount) {
         _name = name;
         _valueCountsMap = valueCountsMap;
         _nullCount = nullCount;
@@ -55,17 +56,17 @@ public class ReducedSingleValueDistributionResult extends ValueDistributionAnaly
 
     @Override
     public Collection<ValueFrequency> getValueCounts() {
-        List<ValueFrequency> valueCounts = new ArrayList<>(); 
-        for (Map.Entry<String, Integer> valueCount : _valueCountsMap.entrySet()) {
-            ValueFrequency valueFrequency = new SingleValueFrequency(valueCount.getKey(), valueCount.getValue());
+        final List<ValueFrequency> valueCounts = new ArrayList<>();
+        for (final Map.Entry<String, Integer> valueCount : _valueCountsMap.entrySet()) {
+            final ValueFrequency valueFrequency = new SingleValueFrequency(valueCount.getKey(), valueCount.getValue());
             valueCounts.add(valueFrequency);
         }
         return valueCounts;
     }
 
     @Override
-    public Integer getCount(String value) {
-        Integer result = _valueCountsMap.get(value);
+    public Integer getCount(final String value) {
+        final Integer result = _valueCountsMap.get(value);
         if (result == null) {
             return 0;
         }
@@ -78,12 +79,12 @@ public class ReducedSingleValueDistributionResult extends ValueDistributionAnaly
     }
 
     @Override
-    public boolean hasAnnotatedRows(String value) {
+    public boolean hasAnnotatedRows(final String value) {
         return false;
     }
 
     @Override
-    public AnnotatedRowsResult getAnnotatedRowsForValue(String value) {
+    public AnnotatedRowsResult getAnnotatedRowsForValue(final String value) {
         return null;
     }
 
@@ -101,7 +102,7 @@ public class ReducedSingleValueDistributionResult extends ValueDistributionAnaly
     public Collection<String> getUniqueValues() {
         final Collection<String> result = new ArrayList<>();
         final Set<Entry<String, Integer>> entries = _valueCountsMap.entrySet();
-        for (Entry<String, Integer> entry : entries) {
+        for (final Entry<String, Integer> entry : entries) {
             if (entry.getValue().intValue() == 1) {
                 result.add(entry.getKey());
             }
@@ -113,7 +114,7 @@ public class ReducedSingleValueDistributionResult extends ValueDistributionAnaly
     public int getTotalCount() {
         int sum = 0;
         final Set<Entry<String, Integer>> entries = _valueCountsMap.entrySet();
-        for (Entry<String, Integer> entry : entries) {
+        for (final Entry<String, Integer> entry : entries) {
             sum = sum + entry.getValue().intValue();
         }
         return sum + _nullCount;
@@ -128,7 +129,7 @@ public class ReducedSingleValueDistributionResult extends ValueDistributionAnaly
     public Integer getUniqueCount() {
         int sum = 0;
         final Set<Entry<String, Integer>> entries = _valueCountsMap.entrySet();
-        for (Entry<String, Integer> entry : entries) {
+        for (final Entry<String, Integer> entry : entries) {
             if (entry.getValue().intValue() == 1) {
                 sum++;
             }
@@ -145,8 +146,8 @@ public class ReducedSingleValueDistributionResult extends ValueDistributionAnaly
     }
 
     public ValueCountList getTopValues() {
-        ValueCountListImpl valueCountList = ValueCountListImpl.createTopList(2);
-        for (ValueFrequency valueFrequency : getValueCounts()) {
+        final ValueCountListImpl valueCountList = ValueCountListImpl.createTopList(2);
+        for (final ValueFrequency valueFrequency : getValueCounts()) {
             valueCountList.register(valueFrequency);
         }
         return valueCountList;

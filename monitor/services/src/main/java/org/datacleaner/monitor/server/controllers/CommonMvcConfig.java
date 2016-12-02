@@ -29,7 +29,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class CommonMvcConfig extends WebMvcConfigurerAdapter {
 
     @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+    public void configureContentNegotiation(final ContentNegotiationConfigurer configurer) {
         // Ensures that Spring MVC does proper controller resolution based on
         // the URL. We used to have issues with the URLs for updating conf.xml
         // and job xml files because of the xml extension. See

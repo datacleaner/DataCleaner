@@ -39,17 +39,17 @@ public final class CompositeAnalysisListener implements AnalysisListener {
 
     private final List<AnalysisListener> _delegates;
 
-    public CompositeAnalysisListener(AnalysisListener[] delegates) {
+    public CompositeAnalysisListener(final AnalysisListener[] delegates) {
         _delegates = new ArrayList<>(delegates.length);
-        for (AnalysisListener analysisListener : delegates) {
+        for (final AnalysisListener analysisListener : delegates) {
             addDelegate(analysisListener);
         }
     }
 
-    public CompositeAnalysisListener(AnalysisListener firstDelegate, AnalysisListener... delegates) {
+    public CompositeAnalysisListener(final AnalysisListener firstDelegate, final AnalysisListener... delegates) {
         _delegates = new ArrayList<>(1 + delegates.length);
         addDelegate(firstDelegate);
-        for (AnalysisListener analysisListener : delegates) {
+        for (final AnalysisListener analysisListener : delegates) {
             addDelegate(analysisListener);
         }
     }
@@ -59,7 +59,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
      *
      * @param analysisListener
      */
-    public void addDelegate(AnalysisListener analysisListener) {
+    public void addDelegate(final AnalysisListener analysisListener) {
         if (analysisListener == null) {
             return;
         }
@@ -86,110 +86,113 @@ public final class CompositeAnalysisListener implements AnalysisListener {
     }
 
     @Override
-    public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
-        for (AnalysisListener delegate : _delegates) {
+    public void jobBegin(final AnalysisJob job, final AnalysisJobMetrics metrics) {
+        for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.jobBegin(job, metrics);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
 
     @Override
-    public void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message) {
-        for (AnalysisListener delegate : _delegates) {
+    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob,
+            final ComponentMessage message) {
+        for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.onComponentMessage(job, componentJob, message);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
 
     @Override
-    public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
-        for (AnalysisListener delegate : _delegates) {
+    public void jobSuccess(final AnalysisJob job, final AnalysisJobMetrics metrics) {
+        for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.jobSuccess(job, metrics);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
 
     @Override
-    public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
-        for (AnalysisListener delegate : _delegates) {
+    public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
+        for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.rowProcessingBegin(job, metrics);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
 
     @Override
-    public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, InputRow row, int currentRow) {
-        for (AnalysisListener delegate : _delegates) {
+    public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
+            final int currentRow) {
+        for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.rowProcessingProgress(job, metrics, row, currentRow);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
 
     @Override
-    public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
-        for (AnalysisListener delegate : _delegates) {
+    public void rowProcessingSuccess(final AnalysisJob job, final RowProcessingMetrics metrics) {
+        for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.rowProcessingSuccess(job, metrics);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
 
     @Override
-    public void componentBegin(AnalysisJob job, ComponentJob componentJob, ComponentMetrics metrics) {
-        for (AnalysisListener delegate : _delegates) {
+    public void componentBegin(final AnalysisJob job, final ComponentJob componentJob, final ComponentMetrics metrics) {
+        for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.componentBegin(job, componentJob, metrics);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
 
     @Override
-    public void componentSuccess(AnalysisJob job, ComponentJob componentJob, AnalyzerResult result) {
-        for (AnalysisListener delegate : _delegates) {
+    public void componentSuccess(final AnalysisJob job, final ComponentJob componentJob, final AnalyzerResult result) {
+        for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.componentSuccess(job, componentJob, result);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
 
     @Override
-    public void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row, Throwable throwable) {
-        for (AnalysisListener delegate : _delegates) {
+    public void errorInComponent(final AnalysisJob job, final ComponentJob componentJob, final InputRow row,
+            final Throwable throwable) {
+        for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.errorInComponent(job, componentJob, row, throwable);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }
     }
 
     @Override
-    public void errorUnknown(AnalysisJob job, Throwable throwable) {
-        for (AnalysisListener delegate : _delegates) {
+    public void errorUnknown(final AnalysisJob job, final Throwable throwable) {
+        for (final AnalysisListener delegate : _delegates) {
             try {
                 delegate.errorUnknown(job, throwable);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.warn("Listener {} failed", delegate.getClass().getName(), e);
             }
         }

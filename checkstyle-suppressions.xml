@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+		"-//Puppy Crawl//DTD Suppressions 1.0//EN"
+		"http://www.puppycrawl.com/dtds/suppressions_1_0.dtd">
+
+<suppressions>
+	<!--
+		If you need to write new suppressions, handy examples are here:
+		http://checkstyle.sourceforge.net/config_filters.html
+	-->
+	<suppress files="[/\\]target[/\\]" checks=".*"/>
+	<suppress files=".*xml$" checks="FileTabCharacter" />
+	<suppress files=".*xml$" checks="FileTabCharacter" />
+</suppressions>
+

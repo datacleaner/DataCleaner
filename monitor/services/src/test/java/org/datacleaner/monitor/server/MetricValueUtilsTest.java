@@ -21,7 +21,10 @@ package org.datacleaner.monitor.server;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.metamodel.util.ImmutableRef;
@@ -29,6 +32,11 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.AnalyzerResultFuture;
 import org.datacleaner.api.AnalyzerResultFutureImpl;
 import org.datacleaner.api.Metric;
+import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.descriptors.MetricParameters;
@@ -36,11 +44,17 @@ import org.datacleaner.descriptors.ResultDescriptor;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.monitor.job.MetricJobContext;
 import org.datacleaner.monitor.server.job.DataCleanerJobEngine;
+import org.datacleaner.monitor.shared.model.MetricGroup;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.SimpleAnalysisResult;
+import org.datacleaner.test.MockAnalyzer;
+import org.datacleaner.test.MockOutputDataStreamAnalyzer;
+import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
 import org.easymock.EasyMockRunner;
 import org.easymock.EasyMockSupport;
@@ -50,15 +64,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(EasyMockRunner.class)
 public class MetricValueUtilsTest extends EasyMockSupport {
-
-    @Mock
-    MetricJobContext jobContext;
-
-    @Mock
-    MetricIdentifier metricIdentifier;
-
-    @Mock
-    ComponentJob componentJob;
 
     private static class MyResultClass implements AnalyzerResult {
 
@@ -70,25 +75,31 @@ public class MetricValueUtilsTest extends EasyMockSupport {
         }
 
         @Metric("My parameterized metric")
-        public int getMyMetric(String param) {
+        public int getMyMetric(final String param) {
             return param.length();
         }
     }
 
     private final MyResultClass analyzerResult = new MyResultClass();
-    private final DataCleanerJobEngine jobEngine = new DataCleanerJobEngine(null, new SimpleDescriptorProvider(true),
-            null);
+    private final DataCleanerJobEngine jobEngine =
+            new DataCleanerJobEngine(null, new SimpleDescriptorProvider(true), null);
     private final AnalysisJob analysisJob = null;
     private final MetricValueUtils utils = new MetricValueUtils();
     private final ResultDescriptor resultDescriptor = Descriptors.ofResult(MyResultClass.class);
+    @Mock
+    MetricJobContext jobContext;
+    @Mock
+    MetricIdentifier metricIdentifier;
+    @Mock
+    ComponentJob componentJob;
 
     @Test
     public void testGetResultFromAnalyzerResultFuture() throws Exception {
         final MetricDescriptor metricDescriptor = resultDescriptor.getResultMetric("My metric");
         final MetricParameters parameters = new MetricParameters();
 
-        final AnalyzerResultFuture<MyResultClass> analyzerResultFuture = new AnalyzerResultFutureImpl<>("my result",
-                new ImmutableRef<MyResultClass>(analyzerResult));
+        final AnalyzerResultFuture<MyResultClass> analyzerResultFuture =
+                new AnalyzerResultFutureImpl<>("my result", new ImmutableRef<>(analyzerResult));
 
         EasyMock.expect(metricIdentifier.isFormulaBased()).andReturn(false).atLeastOnce();
 
@@ -98,8 +109,9 @@ public class MetricValueUtilsTest extends EasyMockSupport {
 
         replayAll();
 
-        final Number value = utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor,
-                analysisJob, componentJob, analysisResult, parameters);
+        final Number value =
+                utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor, analysisJob,
+                        componentJob, analysisResult, parameters);
         assertEquals(42, value);
 
         verifyAll();
@@ -117,14 +129,51 @@ public class MetricValueUtilsTest extends EasyMockSupport {
 
         replayAll();
 
-        final Number value1 = utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor,
-                analysisJob, componentJob, analysisResult, new MetricParameters("foo"));
+        final Number value1 =
+                utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor, analysisJob,
+                        componentJob, analysisResult, new MetricParameters("foo"));
         assertEquals(3, value1);
 
-        final Number value2 = utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor,
-                analysisJob, componentJob, analysisResult, new MetricParameters("foo bar"));
+        final Number value2 =
+                utils.getMetricValue(jobEngine, jobContext, metricIdentifier, metricDescriptor, analysisJob,
+                        componentJob, analysisResult, new MetricParameters("foo bar"));
         assertEquals(7, value2);
 
         verifyAll();
+    }
+
+    @Test
+    public void testGetMetricGroupsFromAnalysisJob() throws URISyntaxException, FileNotFoundException {
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
+
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+            ajb.setDatastore(datastore);
+
+            ajb.addSourceColumns("customers.contactfirstname");
+            ajb.addSourceColumns("customers.contactlastname");
+            ajb.addSourceColumns("customers.city");
+
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 =
+                    ajb.addAnalyzer(MockOutputDataStreamAnalyzer.class);
+
+            final List<MetaModelInputColumn> sourceColumns = ajb.getSourceColumns();
+            analyzer1.setName("analyzer1");
+            analyzer1.addInputColumn(sourceColumns.get(0));
+            final OutputDataStream outputDataStream = analyzer1.getOutputDataStreams().get(0);
+            final AnalysisJobBuilder outputDataStreamJobBuilder =
+                    analyzer1.getOutputDataStreamJobBuilder(outputDataStream);
+            final List<MetaModelInputColumn> outputDataStreamColumns = outputDataStreamJobBuilder.getSourceColumns();
+
+
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 =
+                    outputDataStreamJobBuilder.addAnalyzer(MockAnalyzer.class);
+            analyzer2.addInputColumns(outputDataStreamColumns);
+            analyzer2.setName("analyzer2");
+
+            final MetricValueUtils metricValueUtils = new MetricValueUtils();
+            final List<MetricGroup> metricGroups = metricValueUtils.getMetricGroups(jobContext, ajb.toAnalysisJob());
+            assertEquals(2, metricGroups.size()); // One from each analyzer
+        }
     }
 }

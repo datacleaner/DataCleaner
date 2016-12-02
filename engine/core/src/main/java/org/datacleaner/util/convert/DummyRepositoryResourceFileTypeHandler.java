@@ -19,10 +19,10 @@
  */
 package org.datacleaner.util.convert;
 
-import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.apache.metamodel.util.InMemoryResource;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 
 /**
  * A {@link ResourceTypeHandler} that handles resource with the "repo" scheme,
@@ -35,8 +35,8 @@ import org.apache.metamodel.util.Resource;
 public class DummyRepositoryResourceFileTypeHandler implements ResourceTypeHandler<InMemoryResource> {
 
     @Override
-    public String createPath(Resource res) {
-        InMemoryResource resource = (InMemoryResource) res;
+    public String createPath(final Resource res) {
+        final InMemoryResource resource = (InMemoryResource) res;
         return resource.getPath();
     }
 
@@ -46,12 +46,12 @@ public class DummyRepositoryResourceFileTypeHandler implements ResourceTypeHandl
     }
 
     @Override
-    public boolean isParserFor(Class<? extends Resource> resourceClass) {
+    public boolean isParserFor(final Class<? extends Resource> resourceClass) {
         return ReflectionUtils.is(resourceClass, InMemoryResource.class);
     }
 
     @Override
-    public InMemoryResource parsePath(String path) {
+    public InMemoryResource parsePath(final String path) {
         return new InMemoryResource(path);
     }
 

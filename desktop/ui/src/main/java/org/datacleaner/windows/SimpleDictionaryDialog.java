@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -57,8 +55,8 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
     private final DCCheckBox<Boolean> _caseSensitiveCheckBox;
 
     @Inject
-    protected SimpleDictionaryDialog(@Nullable SimpleDictionary dictionary, MutableReferenceDataCatalog catalog,
-            WindowContext windowContext) {
+    protected SimpleDictionaryDialog(@Nullable final SimpleDictionary dictionary,
+            final MutableReferenceDataCatalog catalog, final WindowContext windowContext) {
         super(windowContext, ImageManager.get().getImage(IconUtils.DICTIONARY_SIMPLE_IMAGEPATH));
         _originalDictionary = dictionary;
         _catalog = catalog;
@@ -77,7 +75,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
             final Collection<String> values = dictionary.getValueSet();
             final StringBuilder sb = new StringBuilder();
             boolean first = true;
-            for (String value : values) {
+            for (final String value : values) {
                 if (first) {
                     first = false;
                 } else {
@@ -115,40 +113,39 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
         row++;
         WidgetUtils.addToGridBag(_caseSensitiveCheckBox, formPanel, 1, row);
 
-        final JButton createDictionaryButton = WidgetFactory.createPrimaryButton("Save dictionary",
-                IconUtils.ACTION_SAVE_BRIGHT);
-        createDictionaryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final String name = _nameTextField.getText();
-                if (StringUtils.isNullOrEmpty(name)) {
-                    JOptionPane.showMessageDialog(SimpleDictionaryDialog.this,
-                            "Please fill out the name of the dictionary");
-                    return;
-                }
-
-                final String values = _valuesTextArea.getText();
-                if (StringUtils.isNullOrEmpty(values)) {
-                    JOptionPane.showMessageDialog(SimpleDictionaryDialog.this, "Please fill out the values");
-                    return;
-                }
-
-                final boolean caseSensitive = _caseSensitiveCheckBox.isSelected();
-
-                final SimpleDictionary dict = new SimpleDictionary(name, caseSensitive, values.split("\n"));
-
-                if (_originalDictionary != null) {
-                    _catalog.removeDictionary(_originalDictionary);
-                }
-                _catalog.addDictionary(dict);
-                SimpleDictionaryDialog.this.dispose();
+        final JButton createDictionaryButton =
+                WidgetFactory.createPrimaryButton("Save dictionary", IconUtils.ACTION_SAVE_BRIGHT);
+        createDictionaryButton.addActionListener(e -> {
+            final String name1 = _nameTextField.getText();
+            if (StringUtils.isNullOrEmpty(name1)) {
+                JOptionPane
+                        .showMessageDialog(SimpleDictionaryDialog.this, "Please fill out the name of the dictionary");
+                return;
             }
+
+            final String values = _valuesTextArea.getText();
+            if (StringUtils.isNullOrEmpty(values)) {
+                JOptionPane.showMessageDialog(SimpleDictionaryDialog.this, "Please fill out the values");
+                return;
+            }
+
+            final boolean caseSensitive = _caseSensitiveCheckBox.isSelected();
+
+            final SimpleDictionary dict = new SimpleDictionary(name1, caseSensitive, values.split("\n"));
+
+            if (_originalDictionary != null) {
+                _catalog.changeDictionary(_originalDictionary, dict);
+            } else {
+                _catalog.addDictionary(dict);
+            }
+            SimpleDictionaryDialog.this.dispose();
         });
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, createDictionaryButton);
 
-        final DescriptionLabel descriptionLabel = new DescriptionLabel(
-                "A simple dictionary is a dictionary that you enter directly in DataCleaner. In the 'Values' field you can enter each value of the dictionary on a separate line.");
+        final DescriptionLabel descriptionLabel = new DescriptionLabel("A simple dictionary is a dictionary "
+                + "that you enter directly in DataCleaner. In the 'Values' field you can enter each value of "
+                + "the dictionary on a separate line.");
 
         final DCPanel mainPanel = new DCPanel();
         mainPanel.setLayout(new BorderLayout());

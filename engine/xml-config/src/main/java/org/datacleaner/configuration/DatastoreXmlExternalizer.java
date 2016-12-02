@@ -23,7 +23,7 @@ import org.apache.metamodel.util.Resource;
 import org.w3c.dom.Document;
 
 /**
- * 
+ *
  * @deprecated use {@link DomConfigurationWriter} instead.
  */
 @Deprecated
@@ -33,11 +33,11 @@ public class DatastoreXmlExternalizer extends DomConfigurationWriter {
         super();
     }
 
-    public DatastoreXmlExternalizer(Document document) {
+    public DatastoreXmlExternalizer(final Document document) {
         super(document);
     }
 
-    public DatastoreXmlExternalizer(Resource resource) {
+    public DatastoreXmlExternalizer(final Resource resource) {
         super(resource);
     }
 }

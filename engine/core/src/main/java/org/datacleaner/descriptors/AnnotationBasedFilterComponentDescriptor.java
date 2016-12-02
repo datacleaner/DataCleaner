@@ -30,12 +30,12 @@ import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.util.ReflectionUtils;
 
-final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C extends Enum<C>> extends
-        AbstractComponentDescriptor<F> implements FilterDescriptor<F, C> {
+final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C extends Enum<C>>
+        extends AbstractComponentDescriptor<F> implements FilterDescriptor<F, C> {
 
     private static final long serialVersionUID = 1L;
 
-    protected AnnotationBasedFilterComponentDescriptor(Class<F> filterClass) throws DescriptorException {
+    protected AnnotationBasedFilterComponentDescriptor(final Class<F> filterClass) throws DescriptorException {
         super(filterClass, false);
 
         if (!ReflectionUtils.is(filterClass, Filter.class)) {
@@ -47,9 +47,9 @@ final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C exte
 
     @Override
     @SuppressWarnings("deprecation")
-    protected String getDisplayNameIfNotNamed(Class<?> cls) {
-        org.eobjects.analyzer.beans.api.FilterBean annotation = ReflectionUtils.getAnnotation(cls,
-                org.eobjects.analyzer.beans.api.FilterBean.class);
+    protected String getDisplayNameIfNotNamed(final Class<?> cls) {
+        final org.eobjects.analyzer.beans.api.FilterBean annotation =
+                ReflectionUtils.getAnnotation(cls, org.eobjects.analyzer.beans.api.FilterBean.class);
         if (annotation == null) {
             return null;
         }
@@ -64,7 +64,7 @@ final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C exte
     @SuppressWarnings("unchecked")
     @Override
     public Class<C> getOutcomeCategoryEnum() {
-        Class<?> typeParameter = ReflectionUtils.getTypeParameter(getComponentClass(), Filter.class, 0);
+        final Class<?> typeParameter = ReflectionUtils.getTypeParameter(getComponentClass(), Filter.class, 0);
         if (typeParameter == null) {
             throw new IllegalStateException("Could not determine Filter's category enum type");
         }
@@ -73,38 +73,38 @@ final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C exte
 
     @Override
     public EnumSet<C> getOutcomeCategories() {
-        Class<C> categoryEnum = getOutcomeCategoryEnum();
+        final Class<C> categoryEnum = getOutcomeCategoryEnum();
         return EnumSet.allOf(categoryEnum);
     }
 
     @Override
     public Set<String> getOutcomeCategoryNames() {
-        EnumSet<C> enumSet = getOutcomeCategories();
-        Set<String> result = new HashSet<String>();
-        for (Enum<C> category : enumSet) {
+        final EnumSet<C> enumSet = getOutcomeCategories();
+        final Set<String> result = new HashSet<>();
+        for (final Enum<C> category : enumSet) {
             result.add(category.name());
         }
         return result;
     }
 
     @Override
-    public Enum<C> getOutcomeCategoryByName(String categoryName) {
+    public Enum<C> getOutcomeCategoryByName(final String categoryName) {
         if (categoryName == null) {
             return null;
         }
-        EnumSet<C> categories = getOutcomeCategories();
-        for (Enum<C> c : categories) {
+        final EnumSet<C> categories = getOutcomeCategories();
+        for (final Enum<C> c : categories) {
             if (c.name().equals(categoryName)) {
                 return c;
             }
         }
 
-        for (Enum<C> c : categories) {
+        for (final Enum<C> c : categories) {
             // check aliases
-            Alias aliasAnnotation = ReflectionUtils.getAnnotation(c, Alias.class);
+            final Alias aliasAnnotation = ReflectionUtils.getAnnotation(c, Alias.class);
             if (aliasAnnotation != null) {
-                String[] aliases = aliasAnnotation.value();
-                for (String alias : aliases) {
+                final String[] aliases = aliasAnnotation.value();
+                for (final String alias : aliases) {
                     if (categoryName.equals(alias)) {
                         return c;
                     }

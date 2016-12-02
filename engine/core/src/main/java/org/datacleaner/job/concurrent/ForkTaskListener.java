@@ -28,61 +28,62 @@ import org.slf4j.LoggerFactory;
 /**
  * Task listener that will fork into a new set of tasks, once it's predecessors
  * have ben completed.
- * 
- * 
+ *
+ *
  */
 public final class ForkTaskListener implements TaskListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(ForkTaskListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(ForkTaskListener.class);
 
-	private final TaskRunner _taskRunner;
-	private final Collection<TaskRunnable> _tasks;
-	private final String _whatAreYouWaitingFor;
+    private final TaskRunner _taskRunner;
+    private final Collection<TaskRunnable> _tasks;
+    private final String _whatAreYouWaitingFor;
 
-	/**
-	 * Creates a new {@link ForkTaskListener}.
-	 * 
-	 * @param whatAreYouWaitingFor
-	 *            a description of what the task is waiting for (used for
-	 *            debugging and messaging)
-	 * @param taskRunner
-	 * @param tasksToSchedule
-	 * @param executeOnErrors
-	 *            defines whether the tasks should be executed/forked even if
-	 *            previous errors have been encountered. Default value should be
-	 *            false, but in some cases (like tasks that clean up resources)
-	 *            this can be set to true.
-	 */
-	public ForkTaskListener(String whatAreYouWaitingFor, TaskRunner taskRunner, Collection<TaskRunnable> tasksToSchedule) {
-		_whatAreYouWaitingFor = whatAreYouWaitingFor;
-		_taskRunner = taskRunner;
-		_tasks = tasksToSchedule;
-	}
+    /**
+     * Creates a new {@link ForkTaskListener}.
+     *
+     * @param whatAreYouWaitingFor
+     *            a description of what the task is waiting for (used for
+     *            debugging and messaging)
+     * @param taskRunner
+     * @param tasksToSchedule
+     * @param executeOnErrors
+     *            defines whether the tasks should be executed/forked even if
+     *            previous errors have been encountered. Default value should be
+     *            false, but in some cases (like tasks that clean up resources)
+     *            this can be set to true.
+     */
+    public ForkTaskListener(final String whatAreYouWaitingFor, final TaskRunner taskRunner,
+            final Collection<TaskRunnable> tasksToSchedule) {
+        _whatAreYouWaitingFor = whatAreYouWaitingFor;
+        _taskRunner = taskRunner;
+        _tasks = tasksToSchedule;
+    }
 
-	@Override
-	public void onComplete(Task task) {
-		logger.info("onComplete({})", _whatAreYouWaitingFor);
-		int index = 1;
-		for (TaskRunnable tr : _tasks) {
-			logger.debug("Scheduling task {} out of {}: {}", new Object[] { index, _tasks.size(), tr });
-			_taskRunner.run(tr);
-			index++;
-		}
-	}
+    @Override
+    public void onComplete(final Task task) {
+        logger.info("onComplete({})", _whatAreYouWaitingFor);
+        int index = 1;
+        for (final TaskRunnable tr : _tasks) {
+            logger.debug("Scheduling task {} out of {}: {}", new Object[] { index, _tasks.size(), tr });
+            _taskRunner.run(tr);
+            index++;
+        }
+    }
 
-	public void onBegin(Task task) {
-		// do nothing
-	};
+    public void onBegin(final Task task) {
+        // do nothing
+    }
 
-	@Override
-	public void onError(Task task, Throwable throwable) {
-		for (TaskRunnable tr : _tasks) {
-			TaskListener listener = tr.getListener();
-			if (listener == null) {
-				logger.warn("TaskListener for {} was null", tr);
-			} else {
-				listener.onError(task, throwable);
-			}
-		}
-	}
+    @Override
+    public void onError(final Task task, final Throwable throwable) {
+        for (final TaskRunnable tr : _tasks) {
+            final TaskListener listener = tr.getListener();
+            if (listener == null) {
+                logger.warn("TaskListener for {} was null", tr);
+            } else {
+                listener.onError(task, throwable);
+            }
+        }
+    }
 }

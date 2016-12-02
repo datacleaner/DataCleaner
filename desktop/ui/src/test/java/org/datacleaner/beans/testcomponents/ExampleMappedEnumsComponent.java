@@ -31,25 +31,25 @@ import org.datacleaner.api.Transformer;
 @Named("Example mapped enums transformer")
 public class ExampleMappedEnumsComponent implements Transformer {
 
-    public static enum SomeEnum {
+    public enum SomeEnum {
         ONE, TWO, THREE, FOUR, FIVE, SIX
     }
-    
+
     @Configured
     InputColumn<?>[] columns;
-    
+
     @Configured
     @MappedProperty("Columns")
     SomeEnum[] enums;
-    
+
     @Override
     public OutputColumns getOutputColumns() {
         return new OutputColumns(columns.length, String.class);
     }
 
     @Override
-    public String[] transform(InputRow arg0) {
-        String[] strings = new String[enums.length];
+    public String[] transform(final InputRow arg0) {
+        final String[] strings = new String[enums.length];
         for (int i = 0; i < strings.length; i++) {
             strings[i] = enums[i].name();
         }

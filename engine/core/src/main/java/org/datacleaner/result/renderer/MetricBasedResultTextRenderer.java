@@ -39,12 +39,12 @@ import org.datacleaner.util.LabelUtils;
 public class MetricBasedResultTextRenderer implements Renderer<AnalyzerResult, String> {
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerResult renderable) {
+    public RendererPrecedence getPrecedence(final AnalyzerResult renderable) {
         return RendererPrecedence.LOWEST;
     }
 
     @Override
-    public String render(AnalyzerResult result) {
+    public String render(final AnalyzerResult result) {
         final ResultDescriptor resultDescriptor = Descriptors.ofResult(result);
         final Set<MetricDescriptor> resultMetrics = resultDescriptor.getResultMetrics();
 
@@ -70,9 +70,9 @@ public class MetricBasedResultTextRenderer implements Renderer<AnalyzerResult, S
         for (final MetricDescriptor metricDescriptor : resultMetrics) {
             if (metricDescriptor.isParameterizedByString() && !metricDescriptor.isParameterizedByInputColumn()) {
                 try {
-                    Collection<String> suggestions = metricDescriptor.getMetricParameterSuggestions(result);
+                    final Collection<String> suggestions = metricDescriptor.getMetricParameterSuggestions(result);
                     if (suggestions != null && !suggestions.isEmpty()) {
-                        for (String suggestion : suggestions) {
+                        for (final String suggestion : suggestions) {
                             final Number value = metricDescriptor.getValue(result, new MetricParameters(suggestion));
 
                             sb.append("\n - ");
@@ -84,7 +84,7 @@ public class MetricBasedResultTextRenderer implements Renderer<AnalyzerResult, S
                         }
                         count++;
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // ignore that metric
                 }
             }

@@ -28,14 +28,12 @@ import java.util.Arrays;
  */
 public class OutputColumns implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * Constant {@link OutputColumns} values for components with no/zero output
      * columns.
      */
     public static final OutputColumns NO_OUTPUT_COLUMNS = new OutputColumns();
-
+    private static final long serialVersionUID = 1L;
     private final String[] columnNames;
     private final Class<?>[] columnTypes;
 
@@ -50,27 +48,27 @@ public class OutputColumns implements Serializable {
     /**
      * Constructs an OutputColumns object with a variable amount of anonymous
      * columns.
-     * 
+     *
      * @param columns
      *            the amount of columns.
-     * 
+     *
      * @deprecated use {@link #OutputColumns(int, Class)} instead.
      */
     @Deprecated
-    public OutputColumns(int columns) {
+    public OutputColumns(final int columns) {
         this(columns, Object.class);
     }
 
     /**
      * Constructs an OutputColumns object with a variable amount of anonymous
      * columns of the same type.
-     * 
+     *
      * @param columns
      *            the amount of columns.
      * @param columnType
      *            the data type of the columns.
      */
-    public OutputColumns(int columns, Class<?> columnType) {
+    public OutputColumns(final int columns, final Class<?> columnType) {
         if (columns < 1) {
             throw new IllegalArgumentException("columns must be 1 or higher");
         }
@@ -83,32 +81,33 @@ public class OutputColumns implements Serializable {
 
     /**
      * Constructs an OutputColumns object with named columns.
-     * 
+     *
      * @param columnNames
      *            the names of the output columns.
      * @deprecated use {@link #OutputColumns(String[], Class[])} instead.
      */
     @Deprecated
-    public OutputColumns(String[] columnNames) {
+    public OutputColumns(final String[] columnNames) {
         this(columnNames, null);
     }
 
     /**
      * Constructs an OutputColumns object with named columns.
-     * 
+     *
      * @param firstColumnName
      *            the first column name
      * @param additionalColumnNames
      *            the additional column names (varargs)
-     * 
+     *
      * @deprecated use {@link #OutputColumns(String[], Class[])} instead
      */
-    public OutputColumns(String firstColumnName, String... additionalColumnNames) {
+    public OutputColumns(final String firstColumnName, final String... additionalColumnNames) {
         this(Object.class, firstColumnName, additionalColumnNames);
     }
 
-    public OutputColumns(Class<?> columnType, String firstColumnName, String... additionalColumnNames) {
-        int length = additionalColumnNames.length + 1;
+    public OutputColumns(final Class<?> columnType, final String firstColumnName,
+            final String... additionalColumnNames) {
+        final int length = additionalColumnNames.length + 1;
         columnNames = new String[length];
         columnTypes = new Class[length];
 
@@ -122,13 +121,13 @@ public class OutputColumns implements Serializable {
 
     /**
      * Constructs an OutputColumns object with named columns.
-     * 
+     *
      * @param columnNames
      *            the names of the output columns.
      * @param columnTypes
      *            the types of the output columns.
      */
-    public OutputColumns(String[] columnNames, Class<?>[] columnTypes) {
+    public OutputColumns(final String[] columnNames, Class<?>[] columnTypes) {
         if (columnNames == null) {
             throw new IllegalArgumentException("Arguments cannot be null");
         }
@@ -147,13 +146,13 @@ public class OutputColumns implements Serializable {
 
     /**
      * Constructs an OutputColumns object with named columns.
-     * 
+     *
      * @param columnType
      *            the column type of all columns
      * @param columnNames
      *            the names of the columns
      */
-    public OutputColumns(Class<?> columnType, String[] columnNames) {
+    public OutputColumns(final Class<?> columnType, final String[] columnNames) {
         if (columnNames == null || columnType == null) {
             throw new IllegalArgumentException("Arguments cannot be null");
         }
@@ -169,13 +168,13 @@ public class OutputColumns implements Serializable {
 
     /**
      * Gets the column type (if specified) by index
-     * 
+     *
      * @param index
      *            the index of the column
      * @return the type (if specified) of the column
      */
-    public Class<?> getColumnType(int index) {
-        Class<?> cls = columnTypes[index];
+    public Class<?> getColumnType(final int index) {
+        final Class<?> cls = columnTypes[index];
         if (cls == null) {
             return Object.class;
         }
@@ -184,42 +183,42 @@ public class OutputColumns implements Serializable {
 
     /**
      * Sets the type of a column.
-     * 
+     *
      * @param index
      *            the index of a column
      * @param type
      *            the column type
      */
-    public void setColumnType(int index, Class<?> type) {
+    public void setColumnType(final int index, final Class<?> type) {
         columnTypes[index] = type;
     }
 
     /**
      * Gets the column name of a column by index
-     * 
+     *
      * @param index
      *            the index of the column
      * @return the name of the column
      */
-    public String getColumnName(int index) {
+    public String getColumnName(final int index) {
         return columnNames[index];
     }
 
     /**
      * Sets the name of a column.
-     * 
+     *
      * @param index
      *            the index of a column
      * @param name
      *            the column name
      */
-    public void setColumnName(int index, String name) {
+    public void setColumnName(final int index, final String name) {
         columnNames[index] = name;
     }
 
     /**
      * Gets the amount of columns in this OutputColumns object
-     * 
+     *
      * @return an integer representing the amount of columns available
      */
     public int getColumnCount() {

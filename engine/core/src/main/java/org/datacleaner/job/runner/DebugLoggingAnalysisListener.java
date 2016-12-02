@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 /**
  * AnalysisListener used for DEBUG level logging. This listener is obviously
  * very verbose.
- * 
- * 
+ *
+ *
  */
 public class DebugLoggingAnalysisListener extends AnalysisListenerAdaptor {
 
@@ -45,47 +45,50 @@ public class DebugLoggingAnalysisListener extends AnalysisListenerAdaptor {
     }
 
     @Override
-    public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
+    public void jobBegin(final AnalysisJob job, final AnalysisJobMetrics metrics) {
         logger.debug("jobBegin({})", job);
     }
 
     @Override
-    public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
+    public void jobSuccess(final AnalysisJob job, final AnalysisJobMetrics metrics) {
         logger.debug("jobSuccess({})", job);
     }
 
     @Override
-    public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
+    public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
         logger.debug("rowProcessingBegin({}, {})", new Object[] { job, metrics.getTable() });
     }
 
     @Override
-    public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, InputRow row, int currentRow) {
-        logger.debug("rowProcessingProgress({}, {}, {}, {})", new Object[] { job, metrics.getTable(), row, currentRow });
+    public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
+            final int currentRow) {
+        logger.debug("rowProcessingProgress({}, {}, {}, {})",
+                new Object[] { job, metrics.getTable(), row, currentRow });
     }
 
     @Override
-    public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
+    public void rowProcessingSuccess(final AnalysisJob job, final RowProcessingMetrics metrics) {
         logger.debug("rowProcessingSuccess({}, {})", new Object[] { job, metrics.getTable() });
     }
 
     @Override
-    public void componentBegin(AnalysisJob job, ComponentJob componentJob, ComponentMetrics metrics) {
+    public void componentBegin(final AnalysisJob job, final ComponentJob componentJob, final ComponentMetrics metrics) {
         logger.debug("componentBegin({}, {})", new Object[] { job, componentJob });
     }
 
     @Override
-    public void componentSuccess(AnalysisJob job, ComponentJob componentJob, AnalyzerResult result) {
+    public void componentSuccess(final AnalysisJob job, final ComponentJob componentJob, final AnalyzerResult result) {
         logger.debug("componentSuccess({}, {})", new Object[] { job, componentJob, result });
     }
 
     @Override
-    public void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row, Throwable throwable) {
+    public void errorInComponent(final AnalysisJob job, final ComponentJob componentJob, final InputRow row,
+            final Throwable throwable) {
         logger.debug("errorInComponent(" + job + "," + componentJob + "," + row + ")", throwable);
     }
 
     @Override
-    public void errorUknown(AnalysisJob job, Throwable throwable) {
+    public void errorUknown(final AnalysisJob job, final Throwable throwable) {
         logger.debug("errorUknown(" + job + ")", throwable);
     }
 }

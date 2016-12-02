@@ -28,12 +28,12 @@ public class TokenPatternImplTest extends TestCase {
     private TokenizerConfiguration configuration = new TokenizerConfiguration(true, '.', ',', '-');
 
     public void testSimpleMatching() throws Exception {
-        DefaultTokenizer tokenizer = new DefaultTokenizer(configuration);
+        final DefaultTokenizer tokenizer = new DefaultTokenizer(configuration);
         List<Token> tokens;
 
         tokens = tokenizer.tokenize("hello world");
 
-        TokenPatternImpl tp1 = new TokenPatternImpl("hello world", tokens, configuration);
+        final TokenPatternImpl tp1 = new TokenPatternImpl("hello world", tokens, configuration);
         assertEquals("aaaaa aaaaa", tp1.toSymbolicString());
 
         tokens = tokenizer.tokenize("hello pinnochio");
@@ -50,31 +50,31 @@ public class TokenPatternImplTest extends TestCase {
 
         configuration.setDiscriminateTextCase(true);
         tokens = tokenizer.tokenize("hello Mr. FanDango");
-        TokenPatternImpl tp2 = new TokenPatternImpl("hello Mr. FanDango", tokens, configuration);
+        final TokenPatternImpl tp2 = new TokenPatternImpl("hello Mr. FanDango", tokens, configuration);
         assertEquals("aaaaa Aa. AaaAaaaa", tp2.toSymbolicString());
     }
 
     public void testBlankPattern() throws Exception {
-        DefaultTokenizer tokenizer = new DefaultTokenizer(configuration);
-        List<Token> tokens;
+        final DefaultTokenizer tokenizer = new DefaultTokenizer(configuration);
+        final List<Token> tokens;
 
         tokens = tokenizer.tokenize("");
-        TokenPatternImpl tp1 = new TokenPatternImpl("", tokens, configuration);
+        final TokenPatternImpl tp1 = new TokenPatternImpl("", tokens, configuration);
         assertEquals("<blank>", tp1.toSymbolicString());
     }
 
     public void testNullPattern() throws Exception {
-        DefaultTokenizer tokenizer = new DefaultTokenizer(configuration);
-        List<Token> tokens;
+        final DefaultTokenizer tokenizer = new DefaultTokenizer(configuration);
+        final List<Token> tokens;
 
         tokens = tokenizer.tokenize(null);
-        TokenPatternImpl tp1 = new TokenPatternImpl(null, tokens, configuration);
+        final TokenPatternImpl tp1 = new TokenPatternImpl(null, tokens, configuration);
         assertEquals("<null>", tp1.toSymbolicString());
     }
 
     public void testNoneExpandableMatching() throws Exception {
 
-        DefaultTokenizer tokenizer = new DefaultTokenizer(configuration);
+        final DefaultTokenizer tokenizer = new DefaultTokenizer(configuration);
         TokenPatternImpl tp;
 
         // both cases non-expandable

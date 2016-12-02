@@ -40,12 +40,12 @@ public class SimpleWebServiceHttpClient implements WebServiceHttpClient, Monitor
         this(HttpClients.createSystem());
     }
 
-    public SimpleWebServiceHttpClient(CloseableHttpClient httpClient) {
+    public SimpleWebServiceHttpClient(final CloseableHttpClient httpClient) {
         _httpClient = httpClient;
     }
 
     @Override
-    public HttpResponse execute(HttpUriRequest request) throws Exception {
+    public HttpResponse execute(final HttpUriRequest request) throws Exception {
         return _httpClient.execute(request);
     }
 

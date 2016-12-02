@@ -27,9 +27,9 @@ public interface TenantResolver {
 
     /**
      * Gets the Tenant ID of a particular user.
-     * 
+     *
      * @param username
      * @return
      */
-    public String getTenantId(String username);
+    String getTenantId(String username);
 }

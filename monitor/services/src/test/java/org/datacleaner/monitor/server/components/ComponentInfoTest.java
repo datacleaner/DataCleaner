@@ -19,14 +19,14 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertTrue;
+
 import org.datacleaner.restclient.ComponentConfiguration;
 import org.datacleaner.restclient.ComponentList.ComponentInfo;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertTrue;
 
 public class ComponentInfoTest {
     private ComponentInfo componentInfo = new ComponentInfo();

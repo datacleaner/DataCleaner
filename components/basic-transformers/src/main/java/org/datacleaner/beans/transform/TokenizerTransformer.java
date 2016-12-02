@@ -49,7 +49,7 @@ import org.datacleaner.components.categories.TextCategory;
 @Categorized(TextCategory.class)
 public class TokenizerTransformer implements Transformer {
 
-    public static enum TokenTarget implements HasName {
+    public enum TokenTarget implements HasName {
         COLUMNS, ROWS;
 
         @Override
@@ -89,7 +89,7 @@ public class TokenizerTransformer implements Transformer {
     public TokenizerTransformer() {
     }
 
-    public TokenizerTransformer(InputColumn<String> column, Integer numTokens) {
+    public TokenizerTransformer(final InputColumn<String> column, final Integer numTokens) {
         this.column = column;
         this.numTokens = numTokens;
     }
@@ -97,7 +97,7 @@ public class TokenizerTransformer implements Transformer {
     @Override
     public OutputColumns getOutputColumns() {
         if (tokenTarget == TokenTarget.COLUMNS) {
-            String[] names = new String[numTokens];
+            final String[] names = new String[numTokens];
             for (int i = 0; i < names.length; i++) {
                 names[i] = column.getName() + " (token " + (i + 1) + ")";
             }
@@ -108,30 +108,30 @@ public class TokenizerTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow inputRow) {
-        List<String> allTokens = getTokens(inputRow);
+    public String[] transform(final InputRow inputRow) {
+        final List<String> allTokens = getTokens(inputRow);
 
         if (tokenTarget == TokenTarget.COLUMNS) {
             return allTokens.toArray(new String[numTokens]);
         } else {
-            for (String token : allTokens) {
+            for (final String token : allTokens) {
                 outputRowCollector.putValues(token);
             }
-            
+
             return null;
         }
     }
-    
-    private List<String> getTokens(InputRow inputRow) {
+
+    private List<String> getTokens(final InputRow inputRow) {
         final String value = inputRow.getValue(column);
         final List<String> tokens = new ArrayList<>();
-        
+
         if (value == null) {
             return tokens;
         }
-        
-        StringTokenizer tokenizer = new StringTokenizer(value, new String(delimiters));
-        
+
+        final StringTokenizer tokenizer = new StringTokenizer(value, new String(delimiters));
+
         while (tokenizer.hasMoreTokens()) {
             final String nextToken = tokenizer.nextToken();
             tokens.add(nextToken);

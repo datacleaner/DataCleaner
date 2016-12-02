@@ -47,19 +47,18 @@ import com.google.common.base.Strings;
  */
 public final class LabelUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(LabelUtils.class);
-
     public static final String NULL_LABEL = "<null>";
     public static final String UNIQUE_LABEL = "<unique>";
     public static final String BLANK_LABEL = "<blank>";
     public static final String UNEXPECTED_LABEL = "<unexpected>";
     public static final String COUNT_LABEL = "COUNT(*)";
+    private static final Logger logger = LoggerFactory.getLogger(LabelUtils.class);
 
     private LabelUtils() {
         // prevent instantiation
     }
 
-    public static String getLabel(ComponentBuilder builder) {
+    public static String getLabel(final ComponentBuilder builder) {
         final String name = builder.getName();
         if (!Strings.isNullOrEmpty(name)) {
             return name;
@@ -75,49 +74,47 @@ public final class LabelUtils {
             }
         }
 
-        final String descriptorDisplayName = builder.getDescriptor().getDisplayName();
-
-        return descriptorDisplayName;
+        return builder.getDescriptor().getDisplayName();
     }
 
     /**
      * Gets the label of a component job
-     * 
+     *
      * @param job
      * @return
      */
-    public static String getLabel(ComponentJob job) {
+    public static String getLabel(final ComponentJob job) {
         return getLabel(job, false, true, true);
     }
 
     /**
      * Gets the label of a components job
-     * 
+     *
      * @param job
      * @param includeDescriptorName
      * @param includeInputColumnNames
      * @param includeRequirements
-     * 
+     *
      * @return
      */
-    public static String getLabel(ComponentJob job, boolean includeDescriptorName, boolean includeInputColumnNames,
-            boolean includeRequirements) {
+    public static String getLabel(final ComponentJob job, final boolean includeDescriptorName,
+            boolean includeInputColumnNames, final boolean includeRequirements) {
         final String jobName = job.getName();
         final StringBuilder label = new StringBuilder();
         if (Strings.isNullOrEmpty(jobName)) {
-            ComponentDescriptor<?> descriptor = job.getDescriptor();
+            final ComponentDescriptor<?> descriptor = job.getDescriptor();
             String baseName = descriptor.getDisplayName();
             if (ReflectionUtils.is(descriptor.getComponentClass(), HasLabelAdvice.class)) {
                 try {
-                    HasLabelAdvice c = (HasLabelAdvice) descriptor.newInstance();
-                    LifeCycleHelper lch = new LifeCycleHelper((DataCleanerConfiguration) null, (AnalysisJob) null,
-                            false);
+                    final HasLabelAdvice c = (HasLabelAdvice) descriptor.newInstance();
+                    final LifeCycleHelper lch =
+                            new LifeCycleHelper((DataCleanerConfiguration) null, (AnalysisJob) null, false);
                     lch.assignConfiguredProperties(descriptor, c, job.getConfiguration());
-                    String suggestedLabel = c.getSuggestedLabel();
-                    if(!StringUtils.isNullOrEmpty(suggestedLabel)) {
+                    final String suggestedLabel = c.getSuggestedLabel();
+                    if (!StringUtils.isNullOrEmpty(suggestedLabel)) {
                         baseName = suggestedLabel;
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // Ignore.
                 }
             }
@@ -127,7 +124,7 @@ public final class LabelUtils {
         }
 
         if (job instanceof AnalyzerJob) {
-            AnalyzerJob analyzerJob = (AnalyzerJob) job;
+            final AnalyzerJob analyzerJob = (AnalyzerJob) job;
             if (includeDescriptorName && !Strings.isNullOrEmpty(jobName)) {
                 label.append(" (");
                 label.append(analyzerJob.getDescriptor().getDisplayName());
@@ -172,7 +169,7 @@ public final class LabelUtils {
         return label.toString();
     }
 
-    public static String getLabel(String text) {
+    public static String getLabel(final String text) {
         if (text == null) {
             return NULL_LABEL;
         }
@@ -182,7 +179,7 @@ public final class LabelUtils {
         return text;
     }
 
-    public static String getDataTypeLabel(Class<?> dataType) {
+    public static String getDataTypeLabel(final Class<?> dataType) {
         if (dataType == null) {
             return "<undefined>";
         } else {
@@ -192,11 +189,11 @@ public final class LabelUtils {
 
     /**
      * Gets the label of a value, eg. a value in a crosstab.
-     * 
+     *
      * @param value
      * @return
      */
-    public static String getValueLabel(Object value) {
+    public static String getValueLabel(final Object value) {
         if (value == null) {
             return NULL_LABEL;
         }
@@ -229,7 +226,7 @@ public final class LabelUtils {
 
     public static String getScopeLabel(final AnalysisJobBuilder sourceAnalysisJobBuilder) {
         final String scopeText;
-        if(sourceAnalysisJobBuilder.isRootJobBuilder()){
+        if (sourceAnalysisJobBuilder.isRootJobBuilder()) {
             scopeText = "default scope";
         } else {
             scopeText = "scope " + sourceAnalysisJobBuilder.getDatastore().getName();

@@ -30,85 +30,85 @@ public interface User {
      * @deprecated use {@link #isAuthenticated()} instead.
      */
     @Deprecated
-    public boolean isLoggedIn();
-    
-    public boolean isAuthenticated();
+    boolean isLoggedIn();
 
-    public String getUsername();
+    boolean isAuthenticated();
 
-    public String getTenant();
+    String getUsername();
 
-    public boolean hasRole(String role);
+    String getTenant();
+
+    boolean hasRole(String role);
 
     /**
      * Determines whether the user has the {@link SecurityRoles#VIEWER} role.
-     * 
+     *
      * @return whether the user has the {@link SecurityRoles#VIEWER} role.
      */
-    public boolean isViewer();
+    boolean isViewer();
 
     /**
      * Determines whether the user has the {@link SecurityRoles#GOD} super role.
-     * 
+     *
      * @return whether the user has the {@link SecurityRoles#GOD} super role.
      */
-    public boolean isGod();
+    boolean isGod();
 
     /**
      * Determines whether the user has the {@link SecurityRoles#ADMIN} super
      * role.
-     * 
+     *
      * @return whether the user has the {@link SecurityRoles#ADMIN} super role.
      */
-    public boolean isAdmin();
+    boolean isAdmin();
 
     /**
      * Determines whether the user has the {@link SecurityRoles#TASK_QUERY} role
-     * 
+     *
      * @return
      */
-    public boolean isQueryAllowed();
+    boolean isQueryAllowed();
 
     /**
      * Determines whether the user has the {@link SecurityRoles#JOB_EDITOR}
      * role.
-     * 
+     *
      * @return whether the user has the {@link SecurityRoles#JOB_EDITOR} role.
      */
-    public boolean isJobEditor();
+    boolean isJobEditor();
 
     /**
      * Determines whether the user has the
      * {@link SecurityRoles#CONFIGURATION_EDITOR} role.
-     * 
+     *
      * @return
      */
-    public boolean isConfigurationEditor();
+    boolean isConfigurationEditor();
 
     /**
      * Determines whether the user has the
      * {@link SecurityRoles#DASHBOARD_EDITOR} role.
-     * 
+     *
      * @return whether the user has the {@link SecurityRoles#DASHBOARD_EDITOR}
      *         role.
      */
-    public boolean isDashboardEditor();
+    boolean isDashboardEditor();
 
     /**
      * Determines whether the user has the {@link SecurityRoles#SCHEDULE_EDITOR}
      * role.
-     * 
+     *
      * @return whether the user has the {@link SecurityRoles#SCHEDULE_EDITOR}
      *         role.
      */
-    public boolean isScheduleEditor();
+    boolean isScheduleEditor();
 
     /**
      * Determines whether the user has the {@link SecurityRoles#ENGINEER} super
      * role.
-     * 
+     *
      * @return whether the user has the {@link SecurityRoles#ENGINEER} super
      *         role.
      */
-    public boolean isEngineer();
+    boolean isEngineer();
 }

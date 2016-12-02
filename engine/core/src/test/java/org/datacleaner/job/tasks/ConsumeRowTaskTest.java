@@ -23,14 +23,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
@@ -43,11 +41,13 @@ import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 
+import junit.framework.TestCase;
+
 public class ConsumeRowTaskTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testMultiRowTransformer() throws Throwable {
-        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
         final InputColumn<?> countingColumn;
         final AnalysisJob job;
@@ -63,14 +63,15 @@ public class ConsumeRowTaskTest extends TestCase {
             builder.setDatastore(new CsvDatastore("foo", "src/test/resources/multi_row_transformer_test.csv"));
             builder.addSourceColumns("number_col");
 
-            TransformerComponentBuilder<ConvertToNumberTransformer> convertTransformer = builder.addTransformer(
-                    ConvertToNumberTransformer.class).addInputColumn(builder.getSourceColumnByName("number_col"));
-            MutableInputColumn<?> numberColumn = convertTransformer.getOutputColumns().get(0);
+            final TransformerComponentBuilder<ConvertToNumberTransformer> convertTransformer =
+                    builder.addTransformer(ConvertToNumberTransformer.class)
+                            .addInputColumn(builder.getSourceColumnByName("number_col"));
+            final MutableInputColumn<?> numberColumn = convertTransformer.getOutputColumns().get(0);
 
-            TransformerComponentBuilder<MockMultiRowTransformer> multiRowTransformer = builder.addTransformer(
-                    MockMultiRowTransformer.class).addInputColumn(numberColumn);
+            final TransformerComponentBuilder<MockMultiRowTransformer> multiRowTransformer =
+                    builder.addTransformer(MockMultiRowTransformer.class).addInputColumn(numberColumn);
 
-            List<MutableInputColumn<?>> mockTransformerColumns = multiRowTransformer.getOutputColumns();
+            final List<MutableInputColumn<?>> mockTransformerColumns = multiRowTransformer.getOutputColumns();
             countingColumn = mockTransformerColumns.get(0);
             assertEquals("Mock multi row transformer (1)", countingColumn.getName());
             builder.addAnalyzer(MockAnalyzer.class).addInputColumns(mockTransformerColumns);
@@ -78,19 +79,19 @@ public class ConsumeRowTaskTest extends TestCase {
             job = builder.toAnalysisJob();
         }
 
-        ListResult<InputRow> result;
+        final ListResult<InputRow> result;
 
         // run job
         {
-            AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
-            AnalysisResultFuture resultFuture = runner.run(job);
+            final AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
+            final AnalysisResultFuture resultFuture = runner.run(job);
             if (resultFuture.isErrornous()) {
                 throw resultFuture.getErrors().get(0);
             }
             result = (ListResult<InputRow>) resultFuture.getResults().get(0);
         }
 
-        List<InputRow> list = result.getValues();
+        final List<InputRow> list = result.getValues();
 
         // we expect 13 rows (3 + 10 + 0)
         assertEquals(13, list.size());
@@ -111,7 +112,7 @@ public class ConsumeRowTaskTest extends TestCase {
 
         // assert that all generated rows have unique ids
         final Set<Long> ids = new HashSet<>();
-        for (InputRow row : list) {
+        for (final InputRow row : list) {
             final long id = row.getId();
             if (ids.contains(id)) {
                 fail("Multiple rows with id " + id);
@@ -122,42 +123,41 @@ public class ConsumeRowTaskTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testConsumeRowTaskForComplexJob() throws Throwable {
-        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
         final AnalysisJob job;
         // build example job
         try (AnalysisJobBuilder builder = new AnalysisJobBuilder(configuration)) {
             builder.setDatastore(new CsvDatastore("Names", "src/test/resources/example-name-lengths.csv"));
             builder.addSourceColumns("name");
-            FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filterJobBuilder = builder
-                    .addFilter(MaxRowsFilter.class);
+            final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filterJobBuilder =
+                    builder.addFilter(MaxRowsFilter.class);
             filterJobBuilder.setConfiguredProperty("Max rows", 10);
 
-            TransformerComponentBuilder<ConvertToNumberTransformer> convertTransformer = builder.addTransformer(
-                    ConvertToNumberTransformer.class).addInputColumn(builder.getSourceColumnByName("name"));
-            MutableInputColumn<?> numberColumn = convertTransformer.getOutputColumns().get(0);
+            final TransformerComponentBuilder<ConvertToNumberTransformer> convertTransformer =
+                    builder.addTransformer(ConvertToNumberTransformer.class)
+                            .addInputColumn(builder.getSourceColumnByName("name"));
+            final MutableInputColumn<?> numberColumn = convertTransformer.getOutputColumns().get(0);
 
             convertTransformer.setRequirement(filterJobBuilder, MaxRowsFilter.Category.VALID);
             builder.addAnalyzer(MockAnalyzer.class).addInputColumns(numberColumn);
             job = builder.toAnalysisJob();
         }
 
-        ListResult<InputRow> result;
+        final ListResult<InputRow> result;
 
         // run job
         {
-            AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
-            AnalysisResultFuture resultFuture = runner.run(job);
+            final AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
+            final AnalysisResultFuture resultFuture = runner.run(job);
             if (resultFuture.isErrornous()) {
                 throw resultFuture.getErrors().get(0);
             }
             result = (ListResult<InputRow>) resultFuture.getResults().get(0);
         }
 
-        List<InputRow> list = result.getValues();
+        final List<InputRow> list = result.getValues();
 
         assertEquals(10, list.size());
-
-        // assertEquals(1, list.get(0).getValue(countingColumn));
     }
 
 }

@@ -30,30 +30,32 @@ public class ReversePatternFinder extends PatternFinder<String> {
     private final HashMap<TokenPattern, AtomicInteger> _patternCounts;
     private final HashMap<TokenPattern, String> _patternSamples;
 
-    public ReversePatternFinder(TokenizerConfiguration configuration) {
+    public ReversePatternFinder(final TokenizerConfiguration configuration) {
         super(new ReverseTokenizer(configuration), configuration);
-        _patternCounts = new HashMap<TokenPattern, AtomicInteger>();
-        _patternSamples = new HashMap<TokenPattern, String>();
+        _patternCounts = new HashMap<>();
+        _patternSamples = new HashMap<>();
     }
 
     @Override
-    protected void storeNewPattern(TokenPattern pattern, String sample, String originalPattern, int distinctCount) {
+    protected void storeNewPattern(final TokenPattern pattern, final String sample, final String originalPattern,
+            final int distinctCount) {
         final AtomicInteger counter = new AtomicInteger(distinctCount);
         _patternCounts.put(pattern, counter);
         _patternSamples.put(pattern, sample);
     }
 
     @Override
-    protected void storeMatch(TokenPattern pattern, String sample, String originalPattern, int distinctCount) {
+    protected void storeMatch(final TokenPattern pattern, final String sample, final String originalPattern,
+            final int distinctCount) {
         final AtomicInteger counter = _patternCounts.get(pattern);
         counter.addAndGet(distinctCount);
     }
-    
+
     public HashMap<TokenPattern, AtomicInteger> getPatternCounts() {
         return _patternCounts;
     }
-    
-    public String getSample(TokenPattern pattern) {
+
+    public String getSample(final TokenPattern pattern) {
         return _patternSamples.get(pattern);
     }
 }

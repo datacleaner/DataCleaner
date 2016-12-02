@@ -30,16 +30,16 @@ public class WizardPanelFactory {
 
     /**
      * Creates a {@link WizardPanel}.
-     * 
+     *
      * @param htmlDivId
      *            the ID of a HTML DIV element in which the wizard should run.
      *            If null or empty, the wizard will be displayed in a popup.
      * @return
      */
-    public static WizardPanel createWizardPanel(String htmlDivId) {
+    public static WizardPanel createWizardPanel(final String htmlDivId) {
         if (htmlDivId != null && !"".equals(htmlDivId)) {
-            SimpleWizardPanel wizardPanel = new SimpleWizardPanel(htmlDivId);
-            RootWizardPanelWrapper wrapper = new RootWizardPanelWrapper(wizardPanel, htmlDivId);
+            final SimpleWizardPanel wizardPanel = new SimpleWizardPanel(htmlDivId);
+            final RootWizardPanelWrapper wrapper = new RootWizardPanelWrapper(wizardPanel, htmlDivId);
             return wrapper;
         }
         return new PopupWizardPanel();

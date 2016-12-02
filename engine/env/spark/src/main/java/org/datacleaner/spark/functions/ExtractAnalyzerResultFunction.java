@@ -23,12 +23,11 @@ import org.apache.spark.api.java.function.Function;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.spark.NamedAnalyzerResult;
 
-public final class ExtractAnalyzerResultFunction implements
-        Function<NamedAnalyzerResult, AnalyzerResult> {
+public final class ExtractAnalyzerResultFunction implements Function<NamedAnalyzerResult, AnalyzerResult> {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public AnalyzerResult call(NamedAnalyzerResult namedAnalyzerResult) throws Exception {
+    public AnalyzerResult call(final NamedAnalyzerResult namedAnalyzerResult) throws Exception {
         return namedAnalyzerResult.getAnalyzerResult();
     }
 }

@@ -62,8 +62,9 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
     private final UserPreferences _userPreferences;
 
     @Inject
-    protected SaveTableAsExcelSpreadsheetActionListener(Datastore datastore, Table table, WindowContext windowContext,
-            DataCleanerConfiguration configuration, UserPreferences userPreferences, DCModule parentModule) {
+    protected SaveTableAsExcelSpreadsheetActionListener(final Datastore datastore, final Table table,
+            final WindowContext windowContext, final DataCleanerConfiguration configuration,
+            final UserPreferences userPreferences, final DCModule parentModule) {
         _datastore = datastore;
         _table = table;
         _windowContext = windowContext;
@@ -73,23 +74,24 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         final AnalysisJobBuilder ajb = new AnalysisJobBuilder(_configuration);
         ajb.setDatastore(_datastore);
         ajb.addSourceColumns(_table.getColumns());
 
-        final AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> excelOutputAnalyzerBuilder = ajb
-                .addAnalyzer(CreateExcelSpreadsheetAnalyzer.class);
+        final AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> excelOutputAnalyzerBuilder =
+                ajb.addAnalyzer(CreateExcelSpreadsheetAnalyzer.class);
         excelOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
-        File directory = _userPreferences.getConfiguredFileDirectory();
+        final File directory = _userPreferences.getConfiguredFileDirectory();
         excelOutputAnalyzerBuilder.getComponentInstance().setFile(new File(directory, _datastore.getName() + ".xlsx"));
         excelOutputAnalyzerBuilder.getComponentInstance().setSheetName(_table.getName());
 
-        final PropertyWidgetFactory propertyWidgetFactory = _parentModule.createChildInjectorForComponent(
-                excelOutputAnalyzerBuilder).getInstance(PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory =
+                _parentModule.createChildInjectorForComponent(excelOutputAnalyzerBuilder)
+                        .getInstance(PropertyWidgetFactory.class);
 
-        final AnalyzerComponentBuilderPanel presenter = new AnalyzerComponentBuilderPanel(excelOutputAnalyzerBuilder,
-                propertyWidgetFactory);
+        final AnalyzerComponentBuilderPanel presenter =
+                new AnalyzerComponentBuilderPanel(excelOutputAnalyzerBuilder, propertyWidgetFactory);
 
         final AbstractDialog dialog = new AbstractDialog(_windowContext) {
             private static final long serialVersionUID = 1L;
@@ -103,7 +105,7 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
             protected int getDialogWidth() {
                 return 600;
             }
-            
+
             @Override
             protected boolean isWindowResizable() {
                 return true;
@@ -111,12 +113,11 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 
             @Override
             protected JComponent getDialogContent() {
-                final AnalyzerDescriptor<CreateExcelSpreadsheetAnalyzer> descriptor = excelOutputAnalyzerBuilder
-                        .getDescriptor();
+                final AnalyzerDescriptor<CreateExcelSpreadsheetAnalyzer> descriptor =
+                        excelOutputAnalyzerBuilder.getDescriptor();
                 final CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
                 tabbedPane.addTab(descriptor.getDisplayName(),
-                        IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TAB),
-                        presenter.createJComponent());
+                        IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TAB), presenter.createJComponent());
                 tabbedPane.setUnclosableTab(0);
                 return tabbedPane;
             }
@@ -128,25 +129,17 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
         };
 
         final JButton runButton = WidgetFactory.createPrimaryButton("Run", IconUtils.ACTION_EXECUTE);
-        runButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, ajb));
+        runButton.addActionListener(e12 -> {
+            final Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, ajb));
 
-                ResultWindow window = injector.getInstance(ResultWindow.class);
-                window.open();
-                dialog.close();
-                window.startAnalysis();
-            }
+            final ResultWindow window = injector.getInstance(ResultWindow.class);
+            window.open();
+            dialog.close();
+            window.startAnalysis();
         });
 
         final JButton closeButton = WidgetFactory.createDefaultButton("Close", IconUtils.ACTION_CLOSE_DARK);
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.close();
-            }
-        });
+        closeButton.addActionListener(e1 -> dialog.close());
 
         presenter.addToButtonPanel(runButton);
         presenter.addToButtonPanel(closeButton);

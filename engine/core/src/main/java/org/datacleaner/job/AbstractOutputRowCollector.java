@@ -29,7 +29,7 @@ import org.datacleaner.api.OutputRowCollector;
 public abstract class AbstractOutputRowCollector implements OutputRowCollector {
 
     @Override
-    public void putRow(Row row) {
+    public void putRow(final Row row) {
         putValues(row.getValues());
     }
 

@@ -21,11 +21,11 @@ package org.datacleaner.beans.stringpattern;
 
 public interface Token {
 
-	public TokenType getType();
+    TokenType getType();
 
-	public String getString();
+    String getString();
 
-	public char charAt(int index);
+    char charAt(int index);
 
-	public int length();
+    int length();
 }

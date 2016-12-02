@@ -31,7 +31,7 @@ import org.datacleaner.api.Analyzer;
 
 /**
  * Legacy {@link AnalyzerBean} annotation.
- * 
+ *
  * @deprecated use {@link Named} instead. See {@link Analyzer} for general instructions on building an analyzer.
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -43,7 +43,7 @@ public @interface AnalyzerBean {
     /**
      * The display name of the AnalyzerBean. The display name should be humanly
      * readable and is presented to the user in User Interfaces.
-     * 
+     *
      * @return the name of the AnalyzerBean
      */
     String value();

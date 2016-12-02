@@ -461,6 +461,13 @@
 							</documentation>
 						</annotation>
 					</element>
+					<element name="custom-column-names" minOccurs="0" maxOccurs="1">
+						<complexType>
+							<sequence>
+								<element name="column-name" minOccurs="0" maxOccurs="unbounded" type="string" />
+							</sequence>
+						</complexType>
+					</element>
 				</all>
 			</extension>
 		</complexContent>
@@ -791,6 +798,13 @@
 					<element name="fail-on-inconsistencies" type="boolean" minOccurs="0" />
 					<element name="skip-ebcdic-header" type="boolean" minOccurs="0" />
 					<element name="eol-present" type="boolean" minOccurs="0" />
+					<element name="custom-column-names" minOccurs="0" maxOccurs="1">
+						<complexType>
+							<sequence>
+								<element name="column-name" minOccurs="0" maxOccurs="unbounded" type="string" />
+							</sequence>
+						</complexType>
+					</element>
 				</all>
 			</extension>
 		</complexContent>
@@ -811,6 +825,13 @@
 			<extension base="ab:abstractDatastoreType">
 				<sequence>
 					<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
+					<element name="custom-column-names" minOccurs="0" maxOccurs="1">
+						<complexType>
+							<sequence>
+								<element name="column-name" minOccurs="0" maxOccurs="unbounded" type="string" />
+							</sequence>
+						</complexType>
+					</element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -922,12 +943,28 @@
 					<choice minOccurs="0" maxOccurs="unbounded">
 						<element name="regex-pattern" minOccurs="0" maxOccurs="unbounded"
 							type="ab:regexPatternType" />
+						<element name="regex-swap-pattern" minOccurs="0" maxOccurs="unbounded"
+							type="ab:regexSwapPatternType" />
 						<element name="simple-pattern" minOccurs="0" maxOccurs="unbounded"
 							type="ab:simplePatternType" />
 					</choice>
 				</complexType>
 			</element>
 		</sequence>
+	</complexType>
+	
+	<complexType name="regexSwapPatternType">
+		<sequence>
+			<element name="expression" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="author" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="detailsUrl" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="negativeVotes" minOccurs="0" maxOccurs="1" type="int" />
+			<element name="positiveVotes" minOccurs="0" maxOccurs="1" type="int" />
+			<element name="timestamp" minOccurs="0" maxOccurs="1" type="long" />
+			<element name="categories" minOccurs="1" maxOccurs="1" type="string" />
+		</sequence>
+		<attribute name="name" type="string" use="required" />
+		<attribute name="description" type="string" use="optional" />
 	</complexType>
 
 	<complexType name="regexPatternType">

@@ -37,13 +37,13 @@ import org.datacleaner.util.ReflectionUtils;
 public class ListResultHtmlRenderer implements Renderer<ListResult<?>, HtmlFragment> {
 
     @Override
-    public RendererPrecedence getPrecedence(ListResult<?> renderable) {
+    public RendererPrecedence getPrecedence(final ListResult<?> renderable) {
         return RendererPrecedence.LOW;
     }
 
     @Override
     public HtmlFragment render(final ListResult<?> result) {
-        SimpleHtmlFragment htmlFragment = new SimpleHtmlFragment();
+        final SimpleHtmlFragment htmlFragment = new SimpleHtmlFragment();
 
         final List<?> values = result.getValues();
 

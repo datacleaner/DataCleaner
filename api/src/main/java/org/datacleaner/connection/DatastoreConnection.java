@@ -25,36 +25,36 @@ import org.apache.metamodel.DataContext;
 
 /**
  * Represents an open connection to a {@link Datastore}.
- * 
+ *
  * Connections are often pooled/shared and in those cases, the connection
  * represents a single client of the pool.
- * 
+ *
  * {@link DatastoreConnection}s should be closed using the {@link #close()}
  * method.
  */
 public interface DatastoreConnection extends Closeable {
 
-	/**
-	 * Gets a {@link DataContext} object which provides access to both exploring
-	 * schema structure and querying data.
-	 */
-	public DataContext getDataContext();
+    /**
+     * Gets a {@link DataContext} object which provides access to both exploring
+     * schema structure and querying data.
+     */
+    DataContext getDataContext();
 
-	/**
-	 * Gets a {@link SchemaNavigator} which provides access to schema
-	 * exploration. Note that the schema navigator is preferred over
-	 * {@link #getDataContext()} if only schema data is needed.
-	 */
-	public SchemaNavigator getSchemaNavigator();
+    /**
+     * Gets a {@link SchemaNavigator} which provides access to schema
+     * exploration. Note that the schema navigator is preferred over
+     * {@link #getDataContext()} if only schema data is needed.
+     */
+    SchemaNavigator getSchemaNavigator();
 
-	/**
-	 * Gets the {@link Datastore} that this is a connection to.
-	 */
-	public Datastore getDatastore();
+    /**
+     * Gets the {@link Datastore} that this is a connection to.
+     */
+    Datastore getDatastore();
 
-	/**
-	 * Closes the connection to the datastore.
-	 */
-	@Override
-	public void close();
+    /**
+     * Closes the connection to the datastore.
+     */
+    @Override
+    void close();
 }

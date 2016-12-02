@@ -36,7 +36,7 @@ import org.datacleaner.api.InputRow;
  * A dummy analyzer used by the Preview Data button (
  * {@link PreviewTransformedDataActionListener}) to collect values from the
  * previewed records.
- * 
+ *
  * Note that this analyzer is not annotated with {@link Named} - this enables it
  * to not be discovered and exposed to the users, but still to be used programmatically.
  */
@@ -47,16 +47,16 @@ public class PreviewTransformedDataAnalyzer implements Analyzer<PreviewTransform
     @Configured
     InputColumn<?>[] columns;
 
-    private BlockingQueue<Object[]> rows = new LinkedBlockingQueue<Object[]>();
+    private BlockingQueue<Object[]> rows = new LinkedBlockingQueue<>();
 
     @Override
-    public void run(InputRow row, int distinctCount) {
-        List<Object> result = row.getValues(columns);
+    public void run(final InputRow row, final int distinctCount) {
+        final List<Object> result = row.getValues(columns);
         rows.add(result.toArray(new Object[result.size()]));
     }
 
     public List<Object[]> getList() {
-        return new ArrayList<Object[]>(rows);
+        return new ArrayList<>(rows);
     }
 
     public InputColumn<?>[] getColumns() {

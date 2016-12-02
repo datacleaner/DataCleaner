@@ -73,15 +73,17 @@ public class ResultMetricsController {
     MetricValueProducer _metricValueProducer;
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics.xml", method = RequestMethod.POST, produces = "application/xml", consumes = "application/xml")
-    public void getMetricsXml(@PathVariable("tenant") final String tenant, @PathVariable("result") String resultName,
-            final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics.xml", method = RequestMethod.POST,
+            produces = "application/xml", consumes = "application/xml")
+    public void getMetricsXml(@PathVariable("tenant") final String tenant,
+            @PathVariable("result") final String resultName, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
 
         final JaxbMetricAdaptor adaptor = new JaxbMetricAdaptor();
 
         final MetricsType metricsType = adaptor.read(request.getInputStream());
-        final List<MetricIdentifier> metricList = new ArrayList<MetricIdentifier>();
-        for (MetricType metricType : metricsType.getMetric()) {
+        final List<MetricIdentifier> metricList = new ArrayList<>();
+        for (final MetricType metricType : metricsType.getMetric()) {
             final MetricIdentifier metric = adaptor.deserialize(metricType);
             metricList.add(metric);
         }
@@ -93,7 +95,7 @@ public class ResultMetricsController {
 
         response.setContentType("application/xml");
 
-        try (final PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             out.write("<result>");
 
             out.write("\n  <metric-date>");
@@ -121,7 +123,8 @@ public class ResultMetricsController {
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.GET,
+            produces = "application/json")
     @ResponseBody
     public List<MetricIdentifier> getMetricsJson(@PathVariable("tenant") final String tenant,
             @PathVariable("result") String resultName) throws IOException {
@@ -130,7 +133,7 @@ public class ResultMetricsController {
 
         final TenantContext context = _contextFactory.getContext(tenant);
 
-        final List<MetricIdentifier> result = new ArrayList<MetricIdentifier>();
+        final List<MetricIdentifier> result = new ArrayList<>();
 
         final ResultContext resultContext = context.getResult(resultName);
         final JobContext job = resultContext.getJob();
@@ -143,7 +146,7 @@ public class ResultMetricsController {
         final List<MetricGroup> metricGroups = jobMetrics.getMetricGroups();
         for (final MetricGroup metricGroup : metricGroups) {
             final List<MetricIdentifier> metrics = metricGroup.getMetrics();
-            for (MetricIdentifier metricIdentifier : metrics) {
+            for (final MetricIdentifier metricIdentifier : metrics) {
                 result.add(metricIdentifier);
             }
         }
@@ -152,10 +155,11 @@ public class ResultMetricsController {
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.POST,
+            produces = "application/json", consumes = "application/json")
     @ResponseBody
     public Map<String, ?> postMetricsJson(@PathVariable("tenant") final String tenant,
-            @PathVariable("result") String resultName, @RequestBody MetricIdentifier[] metricIdentifiers)
+            @PathVariable("result") final String resultName, @RequestBody final MetricIdentifier[] metricIdentifiers)
             throws IOException {
 
         final List<MetricIdentifier> metricList = Arrays.asList(metricIdentifiers);
@@ -164,14 +168,14 @@ public class ResultMetricsController {
 
         final MetricValues metricValues = getMetricValues(resultName, tenant, metricList);
 
-        final Map<String, Object> result = new HashMap<String, Object>();
+        final Map<String, Object> result = new HashMap<>();
         result.put("metricDate", metricValues.getMetricDate());
 
-        final List<Map<String, Object>> metricValuesMaps = new ArrayList<Map<String, Object>>();
+        final List<Map<String, Object>> metricValuesMaps = new ArrayList<>();
         for (int i = 0; i < metricList.size(); i++) {
             final String displayName = metricList.get(i).getDisplayName();
             final Number value = metricValues.getValues().get(i);
-            final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            final LinkedHashMap<String, Object> map = new LinkedHashMap<>();
             map.put("displayName", displayName);
             map.put("value", value);
             metricValuesMaps.add(map);
@@ -180,7 +184,8 @@ public class ResultMetricsController {
         return result;
     }
 
-    public MetricValues getMetricValues(String resultName, String tenant, List<MetricIdentifier> metricList) {
+    public MetricValues getMetricValues(String resultName, final String tenant,
+            final List<MetricIdentifier> metricList) {
         resultName = resultName.replaceAll("\\+", " ");
 
         final TenantContext context = _contextFactory.getContext(tenant);
@@ -191,9 +196,8 @@ public class ResultMetricsController {
         final JobIdentifier jobIdentifier = new JobIdentifier(job.getName());
         final RepositoryFile resultFile = resultContext.getResultFile();
 
-        final MetricValues metricValues = _metricValueProducer.getMetricValues(metricList, resultFile,
-                new TenantIdentifier(tenant), jobIdentifier);
-        return metricValues;
+        return _metricValueProducer
+                .getMetricValues(metricList, resultFile, new TenantIdentifier(tenant), jobIdentifier);
     }
 
 }

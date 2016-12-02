@@ -27,19 +27,19 @@ import org.datacleaner.monitor.shared.model.TenantIdentifier;
  */
 public interface ClientConfig {
 
-    public TenantIdentifier getTenant();
-    
-    public boolean isJobEditor();
-    
-    public boolean isScheduleEditor();
-    
-    public boolean isConfigurationEditor();
-    
-    public boolean isDefaultDashboardGroupDisplayed();
-    
-    public boolean isInformercialDisplayed();
-    
-    public boolean isDashboardEditor();
-    
-    public boolean isWebstartAvailable();
+    TenantIdentifier getTenant();
+
+    boolean isJobEditor();
+
+    boolean isScheduleEditor();
+
+    boolean isConfigurationEditor();
+
+    boolean isDefaultDashboardGroupDisplayed();
+
+    boolean isInformercialDisplayed();
+
+    boolean isDashboardEditor();
+
+    boolean isWebstartAvailable();
 }

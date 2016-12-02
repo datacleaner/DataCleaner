@@ -31,13 +31,13 @@ public class SimpleComponentRequirement implements ComponentRequirement {
 
     private final FilterOutcome _outcome;
 
-    public SimpleComponentRequirement(FilterOutcome outcome) {
+    public SimpleComponentRequirement(final FilterOutcome outcome) {
         if (outcome == null) {
             throw new IllegalArgumentException("FilterOutcome cannot be null");
         }
         _outcome = outcome;
     }
-    
+
     /**
      * Gets the outcome that this {@link ComponentRequirement} represents
      * @return
@@ -45,14 +45,14 @@ public class SimpleComponentRequirement implements ComponentRequirement {
     public FilterOutcome getOutcome() {
         return _outcome;
     }
-    
+
     @Override
     public Collection<FilterOutcome> getProcessingDependencies() {
         return Arrays.asList(_outcome);
     }
 
     @Override
-    public boolean isSatisfied(InputRow row, FilterOutcomes outcomes) {
+    public boolean isSatisfied(final InputRow row, final FilterOutcomes outcomes) {
         return outcomes.contains(_outcome);
     }
 
@@ -61,7 +61,7 @@ public class SimpleComponentRequirement implements ComponentRequirement {
         final String filterLabel = LabelUtils.getLabel(_outcome.getFilterJob());
         return filterLabel + "=" + _outcome.getCategory();
     }
-    
+
     @Override
     public String getSimpleName() {
         return _outcome.getCategory() + "";
@@ -76,19 +76,24 @@ public class SimpleComponentRequirement implements ComponentRequirement {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final SimpleComponentRequirement other = (SimpleComponentRequirement) obj;
         if (_outcome == null) {
-            if (other._outcome != null)
+            if (other._outcome != null) {
                 return false;
-        } else if (!_outcome.equals(other._outcome))
+            }
+        } else if (!_outcome.equals(other._outcome)) {
             return false;
+        }
         return true;
     }
 }

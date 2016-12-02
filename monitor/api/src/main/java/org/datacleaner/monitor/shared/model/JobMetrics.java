@@ -32,12 +32,12 @@ public class JobMetrics implements Serializable {
 
     private JobIdentifier _job;
     private List<MetricGroup> _metricGroups;
-    
-    public JobMetrics(JobIdentifier job, List<MetricGroup> metricGroups) {
+
+    public JobMetrics(final JobIdentifier job, final List<MetricGroup> metricGroups) {
         _job = job;
         _metricGroups = metricGroups;
     }
-    
+
     public JobMetrics() {
     }
 
@@ -45,7 +45,7 @@ public class JobMetrics implements Serializable {
         return _job;
     }
 
-    public void setJob(JobIdentifier job) {
+    public void setJob(final JobIdentifier job) {
         _job = job;
     }
 
@@ -53,7 +53,7 @@ public class JobMetrics implements Serializable {
         return _metricGroups;
     }
 
-    public void setMetricGroups(List<MetricGroup> metricGroups) {
+    public void setMetricGroups(final List<MetricGroup> metricGroups) {
         _metricGroups = metricGroups;
     }
 
@@ -66,8 +66,8 @@ public class JobMetrics implements Serializable {
         return "JobMetrics[" + getName() + "]";
     }
 
-    public MetricGroup getMetricGroup(String groupName) {
-        for (MetricGroup group : _metricGroups) {
+    public MetricGroup getMetricGroup(final String groupName) {
+        for (final MetricGroup group : _metricGroups) {
             if (groupName.equals(group.getName())) {
                 return group;
             }
@@ -75,8 +75,8 @@ public class JobMetrics implements Serializable {
         return null;
     }
 
-    public MetricGroup getMetricGroup(MetricIdentifier metric) {
-        for (MetricGroup group : _metricGroups) {
+    public MetricGroup getMetricGroup(final MetricIdentifier metric) {
+        for (final MetricGroup group : _metricGroups) {
             if (group.containsMetric(metric)) {
                 return group;
             }

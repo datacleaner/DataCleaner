@@ -42,7 +42,7 @@ import com.google.gwt.user.client.ui.RootPanel;
  */
 public class FileUploadFunctionHandler {
 
-    public static void uploadFile(String fileUploadElementId) {
+    public static void uploadFile(final String fileUploadElementId) {
         final Element element = Document.get().getElementById(fileUploadElementId);
 
         final InputElement inputElement = getFileInput(element);
@@ -72,7 +72,7 @@ public class FileUploadFunctionHandler {
         form.addSubmitCompleteHandler(new SubmitCompleteHandler() {
 
             @Override
-            public void onSubmitComplete(SubmitCompleteEvent event) {
+            public void onSubmitComplete(final SubmitCompleteEvent event) {
 
                 final String stringResponse = event.getResults();
 
@@ -83,11 +83,13 @@ public class FileUploadFunctionHandler {
                     final JSONArray jsonFiles = jsonResponse.isObject().get("files").isArray();
                     final JSONValue jsonFile = jsonFiles.get(0);
                     final String jsonFileStr = jsonFile.toString();
-                    parent.setInnerHTML("<p>File uploaded!</p><input type='hidden' name='" + inputName + "' value='"
-                            + jsonFileStr + "' />");
+                    parent.setInnerHTML(
+                            "<p>File uploaded!</p><input type='hidden' name='" + inputName + "' value='" + jsonFileStr
+                                    + "' />");
                     rootPanel.remove(form);
-                } catch (Exception e) {
-                    ErrorHandler.showErrorDialog("Unexpected error occurred", "An error occurred when uploading the file to the server.", stringResponse);
+                } catch (final Exception e) {
+                    ErrorHandler.showErrorDialog("Unexpected error occurred",
+                            "An error occurred when uploading the file to the server.", stringResponse);
                 }
             }
         });
@@ -99,7 +101,7 @@ public class FileUploadFunctionHandler {
         form.submit();
     }
 
-    private static InputElement getFileInput(Element element) {
+    private static InputElement getFileInput(final Element element) {
         if (element == null) {
             return null;
         }
@@ -115,7 +117,7 @@ public class FileUploadFunctionHandler {
         for (int i = 0; i < nodes.getLength(); i++) {
             final Node node = nodes.getItem(i);
             if (Element.is(node)) {
-                InputElement input = getFileInput(Element.as(node));
+                final InputElement input = getFileInput(Element.as(node));
                 if (input != null) {
                     return input;
                 }
@@ -128,7 +130,8 @@ public class FileUploadFunctionHandler {
      * Exports the "uploadFile(elementId)" method as a function in the native
      * javascript scope.
      */
+    @SuppressWarnings("checkstyle:LineLength")
     public static native void exportFileUploadFunction() /*-{
-                                                         $wnd.uploadFile = $entry(@org.datacleaner.monitor.shared.widgets.FileUploadFunctionHandler::uploadFile(Ljava/lang/String;));
-                                                         }-*/;
+        $wnd.uploadFile = $entry(@org.datacleaner.monitor.shared.widgets.FileUploadFunctionHandler::uploadFile(Ljava/lang/String;));
+    }-*/;
 }

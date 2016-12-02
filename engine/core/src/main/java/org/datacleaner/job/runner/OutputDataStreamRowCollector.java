@@ -25,8 +25,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.metamodel.data.CachingDataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.Row;
+import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
 import org.datacleaner.api.HasOutputDataStreams;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.job.OutputDataStreamJob;
@@ -35,8 +37,7 @@ import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 /**
  * The type of {@link OutputRowCollector} used for {@link OutputDataStreamJob}
  * execution. This instance will eventually be passed into the
- * {@link HasOutputDataStreams#initializeOutputDataStream(org.datacleaner.api.OutputDataStream, org.apache.metamodel.query.Query, OutputRowCollector)}
- * method.
+ * {@link HasOutputDataStreams#initializeOutputDataStream(OutputDataStream, Query, OutputRowCollector)}
  */
 public class OutputDataStreamRowCollector implements OutputRowCollector {
 
@@ -45,8 +46,8 @@ public class OutputDataStreamRowCollector implements OutputRowCollector {
     private final ConsumeRowHandler _consumeRowHandler;
     private final RowProcessingPublisher _publisher;
 
-    public OutputDataStreamRowCollector(final RowProcessingPublisher publisher, List<SelectItem> selectItems,
-            ConsumeRowHandler consumeRowHandler) {
+    public OutputDataStreamRowCollector(final RowProcessingPublisher publisher, final List<SelectItem> selectItems,
+            final ConsumeRowHandler consumeRowHandler) {
         _publisher = publisher;
         _dataSetHeader = new CachingDataSetHeader(selectItems);
         _consumeRowHandler = consumeRowHandler;
@@ -54,13 +55,13 @@ public class OutputDataStreamRowCollector implements OutputRowCollector {
     }
 
     @Override
-    public void putValues(Object... values) {
+    public void putValues(final Object... values) {
         final DefaultRow row = new DefaultRow(_dataSetHeader, values);
         putRow(row);
     }
 
     @Override
-    public void putRow(Row row) {
+    public void putRow(final Row row) {
         final ErrorAware errorAware = _publisher.getErrorAware();
         if (errorAware.isCancelled() || errorAware.isErrornous()) {
             throw new PreviousErrorsExistException();
@@ -68,7 +69,8 @@ public class OutputDataStreamRowCollector implements OutputRowCollector {
         final int rowNumber = _rowCounter.incrementAndGet();
         final MetaModelInputRow inputRow = new MetaModelInputRow(rowNumber, row);
         _consumeRowHandler.consumeRow(inputRow);
-        _publisher.getAnalysisListener().rowProcessingProgress(_publisher.getAnalysisJob(),
-                _publisher.getRowProcessingMetrics(), inputRow, rowNumber);
+        _publisher.getAnalysisListener()
+                .rowProcessingProgress(_publisher.getAnalysisJob(), _publisher.getRowProcessingMetrics(), inputRow,
+                        rowNumber);
     }
 }

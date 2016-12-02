@@ -28,34 +28,38 @@ import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
 import org.datacleaner.widgets.properties.MultipleMappedStringsPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CustomHeaderColumnNamesAnalyzerJobPanel extends AnalyzerComponentBuilderPanel {
 
     private static final long serialVersionUID = 1L;
-    
+    private static final Logger logger = LoggerFactory.getLogger(CustomHeaderColumnNamesAnalyzerJobPanel.class);
+
     private final MultipleMappedStringsPropertyWidget _mappedWidget;
     private final ConfiguredPropertyDescriptor _inputColumnsProperty;
     private final ConfiguredPropertyDescriptor _mappedStringsProperty;
 
-    public CustomHeaderColumnNamesAnalyzerJobPanel(AnalyzerComponentBuilder<?> analyzerJobBuilder,
-            PropertyWidgetFactory propertyWidgetFactory) {
+    public CustomHeaderColumnNamesAnalyzerJobPanel(final AnalyzerComponentBuilder<?> analyzerJobBuilder,
+            final PropertyWidgetFactory propertyWidgetFactory) {
         super(analyzerJobBuilder, propertyWidgetFactory);
-
-        _inputColumnsProperty = analyzerJobBuilder.getDescriptor().getConfiguredProperty(CreateCsvFileAnalyzer.PROPERTY_COLUMNS);
-        _mappedStringsProperty = analyzerJobBuilder.getDescriptor().getConfiguredProperty(CreateCsvFileAnalyzer.PROPERTY_FIELD_NAMES);
-
+        
+        _inputColumnsProperty = analyzerJobBuilder.getDescriptor()
+                .getConfiguredProperty(CreateCsvFileAnalyzer.PROPERTY_COLUMNS);
+        _mappedStringsProperty = analyzerJobBuilder.getDescriptor()
+                .getConfiguredProperty(CreateCsvFileAnalyzer.PROPERTY_FIELD_NAMES);
         _mappedWidget = new MultipleMappedStringsPropertyWidget(analyzerJobBuilder, _inputColumnsProperty,
                 _mappedStringsProperty) {
             @Override
-            protected String getDefaultMappedString(InputColumn<?> inputColumn) {
+            protected String getDefaultMappedString(final InputColumn<?> inputColumn) {
                 return inputColumn.getName();
             }
         };
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (propertyDescriptor == _inputColumnsProperty) {
             return _mappedWidget;
         } else if (propertyDescriptor == _mappedStringsProperty) {
@@ -63,5 +67,5 @@ public class CustomHeaderColumnNamesAnalyzerJobPanel extends AnalyzerComponentBu
         }
         return super.createPropertyWidget(componentBuilder, propertyDescriptor);
     }
-    
+
 }

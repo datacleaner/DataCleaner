@@ -21,16 +21,15 @@ package org.datacleaner;
 
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.h2.util.StringUtils;
+
+import junit.framework.TestCase;
 
 public class MainTest extends TestCase {
 
     public void testInitializeSystemProperties() throws Exception {
-        Map<String, String> properties = Main
-                .initializeSystemProperties("-job hey.xml -Dfoo=bar -Dfoo=bar -DdatastoreCatalog.orderdb.url=foobar -hello world"
-                        .split(" "));
+        final Map<String, String> properties = Main.initializeSystemProperties(
+                "-job hey.xml -Dfoo=bar -Dfoo=bar -DdatastoreCatalog.orderdb.url=foobar -hello world".split(" "));
         assertEquals(2, properties.size());
         assertEquals("foobar", properties.get("datastoreCatalog.orderdb.url"));
         assertEquals("bar", properties.get("foo"));
@@ -43,7 +42,7 @@ public class MainTest extends TestCase {
     // A simple main method "integration test" which assumes that the
     // JettyRunner of the DC monitor is running. This will emulate how the JNLP
     // client of DC monitor starts up.
-    public static void main(String[] foo) {
+    public static void main(final String[] foo) {
         final String hostname = "localhost";
 
         final boolean https = true;
@@ -53,7 +52,6 @@ public class MainTest extends TestCase {
         final String username = "admin";
         final String datastore = "orderdb";
         final String jobName = "Customer completeness";
-//        final String jobName = "";
 
         final String securityMode = "CAS";
         final String casServerUrl = "https://localhost:8443/cas";
@@ -67,17 +65,18 @@ public class MainTest extends TestCase {
         } else {
             confLocation = "https://" + hostname + ":" + port + context + "/repository/" + tenant
                     + "/launch-resources/conf.xml?job=" + jobName.replaceAll(" ", "\\+");
-            jobLocation = "https://" + hostname + ":" + port + context + "/repository/" + tenant + "/jobs/"
-                    + jobName.replaceAll(" ", "\\+") + ".analysis.xml";
+            jobLocation = "https://" + hostname + ":" + port + context + "/repository/" + tenant + "/jobs/" + jobName
+                    .replaceAll(" ", "\\+") + ".analysis.xml";
         }
-        String fullArguments = "-conf " + confLocation + (jobLocation != null ? " -job " + jobLocation : "")
-                + (StringUtils.isNullOrEmpty(datastore) ? "" : " -ds " + datastore)
-                + " -Ddatacleaner.ui.visible=true -Ddatacleaner.embed.client=dq-monitor -Ddatacleaner.sandbox=true"
-                + " -Ddatacleaner.monitor.hostname=" + hostname + " -Ddatacleaner.monitor.port=" + port
-                + " -Ddatacleaner.monitor.context=" + context + "/ -Ddatacleaner.monitor.https=" + https
-                + " -Ddatacleaner.monitor.tenant=" + tenant + " -Ddatacleaner.monitor.username=" + username
-                + " -Ddatacleaner.monitor.security.mode=" + securityMode
-                + " -Ddatacleaner.monitor.security.casserverurl=" + casServerUrl;
+        final String fullArguments =
+                "-conf " + confLocation + (jobLocation != null ? " -job " + jobLocation : "") + (StringUtils
+                        .isNullOrEmpty(datastore) ? "" : " -ds " + datastore)
+                        + " -Ddatacleaner.ui.visible=true -Ddatacleaner.embed.client=dq-monitor -Ddatacleaner.sandbox=true"
+                        + " -Ddatacleaner.monitor.hostname=" + hostname + " -Ddatacleaner.monitor.port=" + port
+                        + " -Ddatacleaner.monitor.context=" + context + "/ -Ddatacleaner.monitor.https=" + https
+                        + " -Ddatacleaner.monitor.tenant=" + tenant + " -Ddatacleaner.monitor.username=" + username
+                        + " -Ddatacleaner.monitor.security.mode=" + securityMode
+                        + " -Ddatacleaner.monitor.security.casserverurl=" + casServerUrl;
         final String[] args = fullArguments.split(" ");
         Main.main(args);
     }

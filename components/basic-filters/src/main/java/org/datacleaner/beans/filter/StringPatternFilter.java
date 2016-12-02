@@ -57,8 +57,8 @@ public class StringPatternFilter implements Filter<ValidationCategory> {
 
     private StringPatternConnection[] stringPatternConnections;
 
-    public StringPatternFilter(InputColumn<String> column, StringPattern[] stringPatterns,
-            MatchFilterCriteria matchCriteria, DataCleanerConfiguration configuration) {
+    public StringPatternFilter(final InputColumn<String> column, final StringPattern[] stringPatterns,
+            final MatchFilterCriteria matchCriteria, final DataCleanerConfiguration configuration) {
         this();
         this.column = column;
         this.stringPatterns = stringPatterns;
@@ -80,7 +80,7 @@ public class StringPatternFilter implements Filter<ValidationCategory> {
     @Close
     public void close() {
         if (stringPatternConnections != null) {
-            for (StringPatternConnection connection : stringPatternConnections) {
+            for (final StringPatternConnection connection : stringPatternConnections) {
                 connection.close();
             }
             stringPatternConnections = null;
@@ -88,11 +88,11 @@ public class StringPatternFilter implements Filter<ValidationCategory> {
     }
 
     @Override
-    public ValidationCategory categorize(InputRow inputRow) {
-        String value = inputRow.getValue(column);
+    public ValidationCategory categorize(final InputRow inputRow) {
+        final String value = inputRow.getValue(column);
         if (value != null) {
             int matches = 0;
-            for (StringPatternConnection connection : stringPatternConnections) {
+            for (final StringPatternConnection connection : stringPatternConnections) {
                 if (connection.matches(value)) {
                     matches++;
                     if (matchCriteria == MatchFilterCriteria.ANY) {

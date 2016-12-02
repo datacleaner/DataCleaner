@@ -31,7 +31,7 @@ public final class JobAndResult {
     private final ComponentJob _job;
     private final AnalyzerResult _result;
 
-    public JobAndResult(ComponentJob job, AnalyzerResult result) {
+    public JobAndResult(final ComponentJob job, final AnalyzerResult result) {
         _job = job;
         _result = result;
     }

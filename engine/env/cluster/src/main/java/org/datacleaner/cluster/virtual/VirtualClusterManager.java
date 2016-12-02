@@ -38,14 +38,14 @@ public class VirtualClusterManager implements ClusterManager {
     private final DataCleanerConfiguration _configuration;
     private final int _nodeCount;
 
-    public VirtualClusterManager(DataCleanerConfiguration configuration, int nodeCount) {
+    public VirtualClusterManager(final DataCleanerConfiguration configuration, final int nodeCount) {
         _configuration = configuration;
         _nodeCount = nodeCount;
     }
 
     @Override
-    public AnalysisResultFuture dispatchJob(AnalysisJob job, DistributedJobContext context) {
-        AnalysisRunner runner = new SlaveAnalysisRunner(_configuration);
+    public AnalysisResultFuture dispatchJob(final AnalysisJob job, final DistributedJobContext context) {
+        final AnalysisRunner runner = new SlaveAnalysisRunner(_configuration);
         return runner.run(job);
     }
 

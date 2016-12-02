@@ -1,10 +1,6 @@
 package org.datacleaner.result.html
 
-import org.datacleaner.api.Renderer
-import org.datacleaner.api.RendererPrecedence
-import org.datacleaner.api.Renderable
-import scala.xml.Node
-import scala.xml.Elem
+import org.datacleaner.api.{Renderable, Renderer, RendererPrecedence}
 
 /**
  * An extension of the renderer interface, useful for most simple HTML renderers.

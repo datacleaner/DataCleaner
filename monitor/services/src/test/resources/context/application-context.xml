@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean name="injectionManagerFactory" class="org.datacleaner.configuration.InjectionManagerFactoryImpl">
 	</bean>
@@ -33,10 +31,7 @@
 	
 	<bean class="org.datacleaner.descriptors.SimpleDescriptorProvider" />
 
-	<bean id="repository" class="org.datacleaner.repository.file.FileRepository">
-		<constructor-arg type="java.io.File"
-			value="target/example_repo" />
-	</bean>
+	<bean id="repository" class="org.datacleaner.monitor.server.ExampleFileRepository" />
 
 	<bean id="alertNotificationService" name="alertNotificationService"
 		class="org.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl"

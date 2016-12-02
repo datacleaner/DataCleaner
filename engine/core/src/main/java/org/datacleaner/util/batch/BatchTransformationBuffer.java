@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * A batch transformation buffer utility for archieving minor batch operations
  * while preserving the one-by-one transformation interface of
  * {@link Transformer}.
- * 
+ *
  * @param <I>
  *            the input type
  * @param <O>
@@ -45,14 +45,11 @@ import org.slf4j.LoggerFactory;
  */
 public class BatchTransformationBuffer<I, O> {
 
-    private static final Logger logger = LoggerFactory.getLogger(BatchTransformationBuffer.class);
-
     // default 1 second interval of flushing
     public static final int DEFAULT_FLUSH_INTERVAL = 1000;
-
     // default max 20 items in buffer
     public static final int DEFAULT_MAX_BATCH_SIZE = 20;
-
+    private static final Logger logger = LoggerFactory.getLogger(BatchTransformationBuffer.class);
     private static final long[] AWAIT_TIMES = { 20, 50, 100, 100, 200 };
 
     private final BatchTransformation<I, O> _transformation;
@@ -64,15 +61,16 @@ public class BatchTransformationBuffer<I, O> {
 
     private Throwable exception;
 
-    public BatchTransformationBuffer(BatchTransformation<I, O> transformation) {
+    public BatchTransformationBuffer(final BatchTransformation<I, O> transformation) {
         this(transformation, DEFAULT_MAX_BATCH_SIZE, DEFAULT_FLUSH_INTERVAL);
     }
 
-    public BatchTransformationBuffer(BatchTransformation<I, O> transformation, int maxBatchSize, int flushIntervalMillis) {
+    public BatchTransformationBuffer(final BatchTransformation<I, O> transformation, final int maxBatchSize,
+            final int flushIntervalMillis) {
         _transformation = transformation;
         _flushInterval = flushIntervalMillis;
         _maxBatchSize = maxBatchSize;
-        _queue = new ArrayBlockingQueue<BatchEntry<I, O>>(maxBatchSize);
+        _queue = new ArrayBlockingQueue<>(maxBatchSize);
         _batchNo = new AtomicInteger();
         _threadPool = Executors.newScheduledThreadPool(1);
     }
@@ -83,18 +81,15 @@ public class BatchTransformationBuffer<I, O> {
     }
 
     private Runnable createFlushCommand() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    do {
-                        flushBuffer(true);
-                    } while(!_queue.isEmpty());
-                } catch(Throwable t) {
-                    logger.warn("Cannot flush buffer", t);
-                    exception = t;
-                    shutdown();
-                }
+        return () -> {
+            try {
+                do {
+                    flushBuffer(true);
+                } while (!_queue.isEmpty());
+            } catch (final Throwable t) {
+                logger.warn("Cannot flush buffer", t);
+                exception = t;
+                shutdown();
             }
         };
     }
@@ -107,7 +102,7 @@ public class BatchTransformationBuffer<I, O> {
         flushBuffer(false);
     }
 
-    private void flushBuffer(boolean scheduled) {
+    private void flushBuffer(final boolean scheduled) {
         if (_queue.isEmpty()) {
             // do nothing when queue is empty
             return;
@@ -119,7 +114,7 @@ public class BatchTransformationBuffer<I, O> {
             }
         }
 
-        final List<BatchEntry<?, O>> entries = new ArrayList<BatchEntry<?, O>>(_maxBatchSize);
+        final List<BatchEntry<?, O>> entries = new ArrayList<>(_maxBatchSize);
 
         final int batchSize = _queue.drainTo(entries);
 
@@ -139,8 +134,8 @@ public class BatchTransformationBuffer<I, O> {
             input[i] = entries.get(i).getInput();
         }
 
-        final BatchSource<I> source = new ArrayBatchSource<I>(input);
-        final BatchEntryBatchSink<O> sink = new BatchEntryBatchSink<O>(entries);
+        final BatchSource<I> source = new ArrayBatchSource<>(input);
+        final BatchEntryBatchSink<O> sink = new BatchEntryBatchSink<>(entries);
 
         _transformation.map(source, sink);
 
@@ -152,8 +147,8 @@ public class BatchTransformationBuffer<I, O> {
         _threadPool.shutdown();
     }
 
-    public O transform(I input) {
-        final BatchEntry<I, O> entry = new BatchEntry<I, O>(input);
+    public O transform(final I input) {
+        final BatchEntry<I, O> entry = new BatchEntry<>(input);
 
         while (!_queue.offer(entry)) {
             flushBuffer();
@@ -162,12 +157,13 @@ public class BatchTransformationBuffer<I, O> {
         int attemptIndex = 0;
         while (true) {
             rethrowException();
-            if(_threadPool.isShutdown()) {
+            if (_threadPool.isShutdown()) {
                 // Re-check the exception from background thread - it is preferred
                 rethrowException();
                 throw new PreviousErrorsExistException("Transformer closed");
             }
-            final long waitTime = (attemptIndex < AWAIT_TIMES.length ? AWAIT_TIMES[attemptIndex]
+            final long waitTime = (attemptIndex < AWAIT_TIMES.length
+                    ? AWAIT_TIMES[attemptIndex]
                     : AWAIT_TIMES[AWAIT_TIMES.length - 1]);
 
             try {
@@ -178,8 +174,8 @@ public class BatchTransformationBuffer<I, O> {
 
                 flushBuffer();
                 attemptIndex++;
-            } catch (Exception e) {
-                if(exception == null) {
+            } catch (final Exception e) {
+                if (exception == null) {
                     exception = e;
                 }
                 if (e instanceof RuntimeException) {
@@ -192,8 +188,10 @@ public class BatchTransformationBuffer<I, O> {
 
     /** Re-throws the exception from background thread */
     private void rethrowException() {
-        if(exception != null) {
-            if(exception instanceof RuntimeException) { throw (RuntimeException) exception; }
+        if (exception != null) {
+            if (exception instanceof RuntimeException) {
+                throw (RuntimeException) exception;
+            }
             throw new RuntimeException(exception);
         }
     }

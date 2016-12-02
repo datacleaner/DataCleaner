@@ -35,7 +35,8 @@ public class ScheduleGroupPanel extends FlowPanel {
     private final SchedulingServiceAsync _service;
     private final ClientConfig _clientConfig;
 
-    public ScheduleGroupPanel(String name, ClientConfig clientConfig, SchedulingServiceAsync service) {
+    public ScheduleGroupPanel(final String name, final ClientConfig clientConfig,
+            final SchedulingServiceAsync service) {
         _clientConfig = clientConfig;
         _service = service;
 
@@ -46,13 +47,13 @@ public class ScheduleGroupPanel extends FlowPanel {
         }
     }
 
-    private Widget createHeader(String name) {
+    private Widget createHeader(final String name) {
         final HeadingLabel label = new HeadingLabel(name);
         label.addStyleName("col-xs-12");
         return label;
     }
 
-    public void addSchedule(ScheduleDefinition schedule) {
+    public void addSchedule(final ScheduleDefinition schedule) {
         final SchedulePanel panel = new SchedulePanel(_clientConfig, schedule, _service);
         add(panel);
     }

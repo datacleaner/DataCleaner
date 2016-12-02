@@ -36,7 +36,7 @@ public final class SingleValueFrequency extends AbstractValueFrequency implement
     private final String _value;
     private final int _count;
 
-    public SingleValueFrequency(String value, int count) {
+    public SingleValueFrequency(final String value, final int count) {
         _value = value;
         _count = count;
     }

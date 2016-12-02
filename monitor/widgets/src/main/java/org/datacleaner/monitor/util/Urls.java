@@ -32,7 +32,7 @@ public final class Urls {
     public static final String CONTEXT_PATH;
 
     static {
-        String host = Window.Location.getHost();
+        final String host = Window.Location.getHost();
         String baseUrl = GWT.getHostPageBaseURL();
         if (baseUrl.endsWith("/")) {
             baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
@@ -52,13 +52,13 @@ public final class Urls {
 
     /**
      * Creates a URL relative to the webapp context root.
-     * 
+     *
      * @param relativePath
      * @return
      */
     public static String createRelativeUrl(String relativePath) {
         if (!GWT.isProdMode()) {
-            String gwtCodeServer = Window.Location.getParameter("gwt.codesvr");
+            final String gwtCodeServer = Window.Location.getParameter("gwt.codesvr");
             if (gwtCodeServer != null) {
                 // build a proper URL with the 'gwt.codesvr' parameter in it.
                 final int historyTokenIndex = relativePath.indexOf("#");
@@ -83,22 +83,22 @@ public final class Urls {
 
     /**
      * Creates a URL relative to the tenant's repository folder URL.
-     * 
+     *
      * @param tenant
      * @param relativePath
      * @return
      */
-    public static String createRepositoryUrl(TenantIdentifier tenant, String relativePath) {
+    public static String createRepositoryUrl(final TenantIdentifier tenant, final String relativePath) {
         return createRelativeUrl("repository/" + tenant.getId() + "/" + relativePath);
     }
 
     /**
      * Utility function to ensure that a URL is properly assigned to the window
      * location, and the location is reloaded no matter what.
-     * 
+     *
      * @param url
      */
-    public static void assign(String url) {
+    public static void assign(final String url) {
         Window.Location.assign(url);
         Window.Location.reload();
     }

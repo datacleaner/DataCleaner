@@ -27,7 +27,7 @@ import org.datacleaner.util.WindowSizePreferences;
 
 /**
  * A panel that stores it's preferred size in the user preferences.
- * 
+ *
  */
 public class DCPersistentSizedPanel extends DCPanel {
 

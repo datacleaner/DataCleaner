@@ -19,6 +19,8 @@
  */
 package org.datacleaner.connection;
 
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+
 import java.util.List;
 
 import org.apache.metamodel.DataContext;
@@ -41,8 +43,6 @@ import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.HttpClientConfig;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
-
 /**
  * Datastore providing access to an ElasticSearch index.
  */
@@ -53,7 +53,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
 
         private String _humanReadableName;
 
-        ClientType(String humanReadableName) {
+        ClientType(final String humanReadableName) {
             _humanReadableName = humanReadableName;
         }
 
@@ -63,11 +63,9 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
         }
     }
 
-    private static final long serialVersionUID = 1L;
-
     public static final int DEFAULT_PORT = 9200;
     public static final int TRANSPORT_PORT = 9300;
-
+    private static final long serialVersionUID = 1L;
     private final SimpleTableDef[] _tableDefs;
     private final ClientType _clientType;
     private final String _indexName;
@@ -80,21 +78,22 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
     private final String _keystorePath;
     private final String _keystorePassword;
 
-    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName,
-            String indexName) {
+    public ElasticSearchDatastore(final String name, final ClientType clientType, final String hostname,
+            final Integer port, final String clusterName, final String indexName) {
         this(name, clientType, hostname, port, clusterName, indexName, null, null, null, false, null, null);
     }
 
-    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName,
-            String indexName, String username, String password, boolean ssl, String keystorePath,
-            String keystorePassword) {
+    public ElasticSearchDatastore(final String name, final ClientType clientType, final String hostname,
+            final Integer port, final String clusterName, final String indexName, final String username,
+            final String password, final boolean ssl, final String keystorePath, final String keystorePassword) {
         this(name, clientType, hostname, port, clusterName, indexName, null, username, password, ssl, keystorePath,
                 keystorePassword);
     }
 
-    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName,
-            String indexName, SimpleTableDef[] tableDefs, String username, String password, boolean ssl,
-            String keystorePath, String keystorePassword) {
+    public ElasticSearchDatastore(final String name, final ClientType clientType, final String hostname,
+            final Integer port, final String clusterName, final String indexName, final SimpleTableDef[] tableDefs,
+            final String username, final String password, final boolean ssl, final String keystorePath,
+            final String keystorePassword) {
         super(name);
         _hostname = hostname;
         _port = port;
@@ -139,16 +138,14 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
 
     }
 
-    private UsageAwareDatastoreConnection<UpdateableDataContext> createConnection(DataContext dataContext,
-            Client simpleclient) {
+    private UsageAwareDatastoreConnection<UpdateableDataContext> createConnection(final DataContext dataContext,
+            final Client simpleclient) {
         switch (_clientType) {
         case NODE:
         case TRANSPORT:
-            return new UpdateableDatastoreConnectionImpl<>((ElasticSearchDataContext) dataContext,
-                    this, simpleclient);
+            return new UpdateableDatastoreConnectionImpl<>((ElasticSearchDataContext) dataContext, this, simpleclient);
         case REST:
-            return new UpdateableDatastoreConnectionImpl<>(
-                    (ElasticSearchRestDataContext) dataContext, this);
+            return new UpdateableDatastoreConnectionImpl<>((ElasticSearchRestDataContext) dataContext, this);
         default:
             //do nothing
         }
@@ -170,8 +167,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
     private JestClient getClientForRestProtocol() {
         final JestClientFactory factory = new JestClientFactory();
         HttpClientConfig.Builder builder =
-                new HttpClientConfig.Builder("http://" + _hostname + ":" + _port).multiThreaded(
-                        true);
+                new HttpClientConfig.Builder("http://" + _hostname + ":" + _port).multiThreaded(true);
         if (!Strings.isNullOrEmpty(_username)) {
             builder = builder.defaultCredentials(_username, _password);
         }
@@ -271,7 +267,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
+    protected void decorateIdentity(final List<Object> identifiers) {
         super.decorateIdentity(identifiers);
         identifiers.add(_clusterName);
         identifiers.add(_hostname);

@@ -34,13 +34,14 @@ public class HadoopResource extends HdfsResource {
     private final transient Configuration _configuration;
     private final String _clusterReferenceName;
 
-    public HadoopResource(URI uri, Configuration configuration, String clusterReferenceName) {
+    public HadoopResource(final URI uri, final Configuration configuration, final String clusterReferenceName) {
         super(uri.toString());
         _configuration = configuration;
         _clusterReferenceName = clusterReferenceName;
     }
 
-    public HadoopResource(Resource resource, Configuration configuration, String clusterReferenceName) {
+    public HadoopResource(final Resource resource, final Configuration configuration,
+            final String clusterReferenceName) {
         super(resource.getQualifiedPath());
         _configuration = configuration;
         _clusterReferenceName = clusterReferenceName;
@@ -50,7 +51,7 @@ public class HadoopResource extends HdfsResource {
         this(uri, defaultCluster.getConfiguration(), defaultCluster.getName());
     }
 
-    public HadoopResource(String uri, Configuration configuration, String clusterReferenceName) {
+    public HadoopResource(final String uri, final Configuration configuration, final String clusterReferenceName) {
         super(uri);
         _configuration = configuration;
         _clusterReferenceName = clusterReferenceName;
@@ -72,7 +73,7 @@ public class HadoopResource extends HdfsResource {
 
     public String getTemplatedPath() {
         // Legacy support.
-        if(_clusterReferenceName == null){
+        if (_clusterReferenceName == null) {
             return getQualifiedPath();
         }
         return "hdfs://{" + _clusterReferenceName + "}" + getFilepath();

@@ -55,17 +55,17 @@ public class DatastoresFolderController {
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<Map<String, String>> datastoresFolderJson(@PathVariable("tenant") String tenant) {
+    public List<Map<String, String>> datastoresFolderJson(@PathVariable("tenant") final String tenant) {
         final TenantContext context = _contextFactory.getContext(tenant);
 
         final DatastoreCatalog datastoreCatalog = context.getConfiguration().getDatastoreCatalog();
         final String[] names = datastoreCatalog.getDatastoreNames();
 
-        final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        final List<Map<String, String>> result = new ArrayList<>();
 
-        for (String name : names) {
+        for (final String name : names) {
             final Datastore datastore = datastoreCatalog.getDatastore(name);
-            final Map<String, String> map = new LinkedHashMap<String, String>();
+            final Map<String, String> map = new LinkedHashMap<>();
             map.put("name", name);
             map.put("description", datastore.getDescription());
             map.put("type", datastore.getClass().getSimpleName());
@@ -77,8 +77,8 @@ public class DatastoresFolderController {
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(method = RequestMethod.POST)
-    protected void registerDatastore(@PathVariable("tenant") String tenant, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected void registerDatastore(@PathVariable("tenant") final String tenant, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
 
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
 

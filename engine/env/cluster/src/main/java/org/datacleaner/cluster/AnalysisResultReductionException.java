@@ -33,18 +33,17 @@ import org.datacleaner.job.AnalyzerJob;
  */
 public class AnalysisResultReductionException extends IllegalStateException {
 
+    private static final long serialVersionUID = 1L;
     private final AnalyzerJob _analyzerJob;
     private final Collection<AnalyzerResult> _slaveResults;
 
-    private static final long serialVersionUID = 1L;
-
-    public AnalysisResultReductionException(AnalyzerJob analyzerJob, Collection<AnalyzerResult> slaveResults,
-            Exception cause) {
+    public AnalysisResultReductionException(final AnalyzerJob analyzerJob,
+            final Collection<AnalyzerResult> slaveResults, final Exception cause) {
         super(cause);
         _analyzerJob = analyzerJob;
         _slaveResults = slaveResults;
     }
-    
+
     @Override
     public String getMessage() {
         return "Failed to reduce results for " + _analyzerJob + ": " + getCause().getMessage();
@@ -52,7 +51,7 @@ public class AnalysisResultReductionException extends IllegalStateException {
 
     /**
      * Gets the {@link AnalyzerJob} for which the results pertained to.
-     * 
+     *
      * @return
      */
     public AnalyzerJob getAnalyzerJob() {
@@ -61,7 +60,7 @@ public class AnalysisResultReductionException extends IllegalStateException {
 
     /**
      * Gets the individual results from the slaves in the cluster
-     * 
+     *
      * @return
      */
     public Collection<AnalyzerResult> getSlaveResults() {

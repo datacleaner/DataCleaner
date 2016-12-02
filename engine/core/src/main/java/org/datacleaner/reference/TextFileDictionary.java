@@ -21,17 +21,13 @@ package org.datacleaner.reference;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectInputStream.GetField;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ReadObjectBuilder;
@@ -55,65 +51,60 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
     private final String _encoding;
     private final boolean _caseSensitive;
 
-    public TextFileDictionary(String name, String filename, String encoding) {
+    public TextFileDictionary(final String name, final String filename, final String encoding) {
         this(name, filename, encoding, true);
     }
 
-    public TextFileDictionary(String name, String filename, String encoding, boolean caseSensitive) {
+    public TextFileDictionary(final String name, final String filename, final String encoding,
+            final boolean caseSensitive) {
         super(name);
         _filename = filename;
         _encoding = encoding;
         _caseSensitive = caseSensitive;
     }
-    
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        Adaptor adaptor = new Adaptor() {
-            @Override
-            public void deserialize(GetField getField, Serializable serializable) throws Exception {
-                final boolean caseSensitive = getField.get("_caseSensitive", true);
-                Field field = TextFileDictionary.class.getDeclaredField("_caseSensitive");
-                field.setAccessible(true);
-                field.set(serializable, caseSensitive);
-            }
+
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        final Adaptor adaptor = (getField, serializable) -> {
+            final boolean caseSensitive = getField.get("_caseSensitive", true);
+            final Field field = TextFileDictionary.class.getDeclaredField("_caseSensitive");
+            field.setAccessible(true);
+            field.set(serializable, caseSensitive);
         };
         ReadObjectBuilder.create(this, TextFileDictionary.class).readObject(stream, adaptor);
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (super.equals(obj)) {
             final TextFileDictionary other = (TextFileDictionary) obj;
-            return Objects.equals(_filename, other._filename) && Objects.equals(_encoding, other._encoding)
-                    && Objects.equals(_caseSensitive, other._caseSensitive);
+            return Objects.equals(_filename, other._filename) && Objects.equals(_encoding, other._encoding) && Objects
+                    .equals(_caseSensitive, other._caseSensitive);
         }
         return false;
     }
 
     @Override
-    public DictionaryConnection openConnection(DataCleanerConfiguration configuration) {
+    public DictionaryConnection openConnection(final DataCleanerConfiguration configuration) {
         final ResourceConverter rc = new ResourceConverter(configuration);
         final Resource resource = rc.fromString(Resource.class, _filename);
-        final Set<String> values = resource.read(new Func<InputStream, Set<String>>() {
-            @Override
-            public Set<String> eval(InputStream in) {
-                final Set<String> values = new HashSet<>();
-                final BufferedReader reader = FileHelper.getBufferedReader(in, getEncoding());
-                try {
-                    String line = reader.readLine();
-                    while (line != null) {
-                        if (!_caseSensitive) {
-                            line = line.toLowerCase();
-                        }
-                        values.add(line);
-                        line = reader.readLine();
+        final Set<String> values = resource.read(in -> {
+            final Set<String> values1 = new HashSet<>();
+            final BufferedReader reader = FileHelper.getBufferedReader(in, getEncoding());
+            try {
+                String line = reader.readLine();
+                while (line != null) {
+                    if (!_caseSensitive) {
+                        line = line.toLowerCase();
                     }
-                } catch (IOException e) {
-                    logger.error("Failed to read line from resource: {}", resource, e);
-                } finally {
-                    FileHelper.safeClose(reader);
+                    values1.add(line);
+                    line = reader.readLine();
                 }
-                return values;
+            } catch (final IOException e) {
+                logger.error("Failed to read line from resource: {}", resource, e);
+            } finally {
+                FileHelper.safeClose(reader);
             }
+            return values1;
         });
 
         final SimpleDictionary simpleDictionary = new SimpleDictionary(getName(), values, _caseSensitive);

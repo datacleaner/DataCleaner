@@ -20,9 +20,6 @@
 package org.datacleaner.regexswap;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -35,9 +32,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
-import javax.swing.JTree;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -48,6 +42,10 @@ import javax.swing.tree.TreePath;
 import org.apache.metamodel.util.SharedExecutorService;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.regexswap.Category;
+import org.datacleaner.reference.regexswap.Regex;
+import org.datacleaner.reference.regexswap.RegexSwapClient;
+import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -59,7 +57,6 @@ import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.table.DCTable;
 import org.datacleaner.windows.AbstractDialog;
 import org.jdesktop.swingx.JXTree;
-import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 import org.jdesktop.swingx.renderer.WrappingIconPanel;
 import org.joda.time.DateTime;
@@ -78,29 +75,26 @@ public class RegexSwapDialog extends AbstractDialog {
     private final DCTable _regexSelectionTable;
     private final DCLabel _regexDescriptionLabel;
     private final JButton _importRegexButton;
-    private final JButton _viewOnlineButton;
     private final TreeCellRenderer _treeRendererDelegate;
     private final MutableReferenceDataCatalog _referenceDataCatalog;
     private Regex _selectedRegex;
 
-    public RegexSwapDialog(MutableReferenceDataCatalog referenceDataCatalog, WindowContext windowContext,
-            UserPreferences userPreferences) {
+    public RegexSwapDialog(final MutableReferenceDataCatalog referenceDataCatalog, final WindowContext windowContext,
+            final UserPreferences userPreferences) {
         super(windowContext, imageManager.getImage(IconUtils.STRING_PATTERN_REGEXSWAP_IMAGEPATH));
         _referenceDataCatalog = referenceDataCatalog;
         _client = new RegexSwapClient(userPreferences.createHttpClient());
         _regexDescriptionLabel = DCLabel.brightMultiLine("No regex selected");
 
         _importRegexButton = new JButton("Import regex", imageManager.getImageIcon(IconUtils.ACTION_SAVE_DARK));
-        _importRegexButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                RegexSwapStringPattern stringPattern = new RegexSwapStringPattern(_selectedRegex);
-                if (_referenceDataCatalog.containsStringPattern(stringPattern.getName())) {
-                    JOptionPane.showMessageDialog(RegexSwapDialog.this,
-                            "You already have a string pattern with the name '" + stringPattern.getName() + "'.");
-                } else {
-                    _referenceDataCatalog.addStringPattern(stringPattern);
-                    RegexSwapDialog.this.dispose();
-                }
+        _importRegexButton.addActionListener(e -> {
+            final RegexSwapStringPattern stringPattern = new RegexSwapStringPattern(_selectedRegex);
+            if (_referenceDataCatalog.containsStringPattern(stringPattern.getName())) {
+                JOptionPane.showMessageDialog(RegexSwapDialog.this,
+                        "You already have a string pattern with the name '" + stringPattern.getName() + "'.");
+            } else {
+                _referenceDataCatalog.addStringPattern(stringPattern);
+                RegexSwapDialog.this.dispose();
             }
         });
         _importRegexButton.setEnabled(false);
@@ -108,31 +102,15 @@ public class RegexSwapDialog extends AbstractDialog {
         _importRegexButton.setFocusPainted(false);
         _importRegexButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-        _viewOnlineButton = new JButton("View online", imageManager.getImageIcon(IconUtils.WEBSITE));
-        _viewOnlineButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent event) {
-                OpenBrowserAction actionListener = new OpenBrowserAction(_selectedRegex.createWebsiteUrl());
-                actionListener.actionPerformed(event);
-            }
-
-        });
-        _viewOnlineButton.setEnabled(false);
-        _viewOnlineButton.setOpaque(false);
-        _viewOnlineButton.setFocusPainted(false);
-        _viewOnlineButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-
         _regexSelectionTable = new DCTable();
-        _regexSelectionTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                int selectedRow = _regexSelectionTable.getSelectedRow();
-                if (selectedRow >= 0) {
-                    String regexName = (String) _regexSelectionTable.getValueAt(selectedRow, 0);
-                    Regex regex = _client.getRegexByName(regexName);
-                    onRegexSelected(regex);
-                } else {
-                    onRegexSelected(null);
-                }
+        _regexSelectionTable.getSelectionModel().addListSelectionListener(e -> {
+            final int selectedRow = _regexSelectionTable.getSelectedRow();
+            if (selectedRow >= 0) {
+                final String regexName = (String) _regexSelectionTable.getValueAt(selectedRow, 0);
+                final Regex regex = _client.getRegexByName(regexName);
+                onRegexSelected(regex);
+            } else {
+                onRegexSelected(null);
             }
         });
 
@@ -145,64 +123,60 @@ public class RegexSwapDialog extends AbstractDialog {
 
         _categoryTree = new JXTree(rootNode);
         _categoryTree.setOpaque(false);
-        _categoryTree.setCellRenderer(new TreeCellRenderer() {
+        _categoryTree.setCellRenderer((tree, value, selected, expanded, leaf, row, hasFocus) -> {
+            Icon icon = null;
 
-            @Override
-            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
-                    boolean leaf, int row, boolean hasFocus) {
-                Icon icon = null;
+            final JComponent result;
+            final Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
+            if (userObject instanceof Category) {
+                // Used to render categories
+                final Category category = (Category) userObject;
+                result = (JComponent) _treeRendererDelegate
+                        .getTreeCellRendererComponent(tree, category.getName(), selected, expanded, leaf, row,
+                                hasFocus);
+                result.setToolTipText(category.getDescription());
+                icon = imageManager.getImageIcon(IconUtils.FILE_SEARCH, IconUtils.ICON_SIZE_SMALL);
+            } else if (userObject instanceof JLabel) {
+                result = (JLabel) userObject;
+            } else {
+                // Default renderer
+                result = (JComponent) _treeRendererDelegate
+                        .getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
-                JComponent result;
-                Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
-                if (userObject instanceof Category) {
-                    // Used to render categories
-                    Category category = (Category) userObject;
-                    result = (JComponent) _treeRendererDelegate.getTreeCellRendererComponent(tree, category.getName(),
-                            selected, expanded, leaf, row, hasFocus);
-                    result.setToolTipText(category.getDescription());
-                    icon = imageManager.getImageIcon(IconUtils.FILE_SEARCH, IconUtils.ICON_SIZE_SMALL);
-                } else if (userObject instanceof JLabel) {
-                    result = (JLabel) userObject;
-                } else {
-                    // Default renderer
-                    result = (JComponent) _treeRendererDelegate.getTreeCellRendererComponent(tree, value, selected,
-                            expanded, leaf, row, hasFocus);
-
-                    if ("Categories".equals(userObject)) {
-                        icon = imageManager.getImageIcon(IconUtils.FILE_FOLDER, IconUtils.ICON_SIZE_SMALL);
-                    }
+                if ("Categories".equals(userObject)) {
+                    icon = imageManager.getImageIcon(IconUtils.FILE_FOLDER, IconUtils.ICON_SIZE_SMALL);
                 }
-
-                final boolean opaque = hasFocus || selected;
-
-                result.setOpaque(opaque);
-                if (result instanceof WrappingIconPanel) {
-                    WrappingIconPanel wip = (WrappingIconPanel) result;
-                    wip.getComponent().setOpaque(opaque);
-
-                    if (icon != null) {
-                        wip.setIcon(icon);
-                    }
-                }
-                return result;
             }
+
+            final boolean opaque = hasFocus || selected;
+
+            result.setOpaque(opaque);
+            if (result instanceof WrappingIconPanel) {
+                final WrappingIconPanel wip = (WrappingIconPanel) result;
+                wip.getComponent().setOpaque(opaque);
+
+                if (icon != null) {
+                    wip.setIcon(icon);
+                }
+            }
+            return result;
         });
 
         _categoryTree.addMouseListener(new MouseAdapter() {
 
             @Override
-            public void mousePressed(MouseEvent e) {
-                int selRow = _categoryTree.getRowForLocation(e.getX(), e.getY());
+            public void mousePressed(final MouseEvent e) {
+                final int selRow = _categoryTree.getRowForLocation(e.getX(), e.getY());
                 if (selRow != -1) {
-                    TreePath path = _categoryTree.getPathForLocation(e.getX(), e.getY());
+                    final TreePath path = _categoryTree.getPathForLocation(e.getX(), e.getY());
                     _categoryTree.setSelectionPath(path);
                     _categoryTree.updateUI();
                     if (path.getPathCount() == 2) {
                         // A category is selected
-                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getPathComponent(1);
-                        Object userObject = node.getUserObject();
+                        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getPathComponent(1);
+                        final Object userObject = node.getUserObject();
                         if (userObject instanceof Category) {
-                            Category category = (Category) userObject;
+                            final Category category = (Category) userObject;
                             fireCategorySelected(category);
                         }
                     }
@@ -234,7 +208,6 @@ public class RegexSwapDialog extends AbstractDialog {
         final JToolBar toolBar = WidgetFactory.createToolBar();
         toolBar.add(Box.createHorizontalGlue());
         toolBar.add(_importRegexButton);
-        toolBar.add(_viewOnlineButton);
 
         final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         toolBarPanel.setLayout(new BorderLayout());
@@ -249,30 +222,27 @@ public class RegexSwapDialog extends AbstractDialog {
     }
 
     private void updateCategories() {
-        SharedExecutorService.get().submit(new Runnable() {
-            @Override
-            public void run() {
-                DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Categories");
-                _client.refreshCategories();
-                Collection<Category> categories = _client.getCategories();
-                for (Category category : categories) {
-                    DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(category);
-                    rootNode.add(categoryNode);
-                }
-
-                TreeModel treeModel = new DefaultTreeModel(rootNode);
-                _categoryTree.setModel(treeModel);
+        SharedExecutorService.get().submit((Runnable) () -> {
+            final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Categories");
+            _client.refreshCategories();
+            final Collection<Category> categories = _client.getCategories();
+            for (final Category category : categories) {
+                final DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(category);
+                rootNode.add(categoryNode);
             }
+
+            final TreeModel treeModel = new DefaultTreeModel(rootNode);
+            _categoryTree.setModel(treeModel);
         });
     }
 
     private void fireCategorySelected(final Category category) {
-        List<Regex> regexes = _client.getRegexes(category);
+        final List<Regex> regexes = _client.getRegexes(category);
 
-        DefaultTableModel tableModel = new DefaultTableModel(TABLE_HEADERS, regexes.size());
+        final DefaultTableModel tableModel = new DefaultTableModel(TABLE_HEADERS, regexes.size());
         if (!regexes.isEmpty()) {
             for (int i = 0; i < regexes.size(); i++) {
-                Regex regex = regexes.get(i);
+                final Regex regex = regexes.get(i);
                 tableModel.setValueAt(regex.getName(), i, 0);
                 tableModel.setValueAt(regex.getPositiveVotes() + "/" + regex.getNegativeVotes(), i, 1);
                 tableModel.setValueAt(regex.getAuthor(), i, 2);
@@ -288,10 +258,9 @@ public class RegexSwapDialog extends AbstractDialog {
         _selectedRegex = regex;
         if (regex == null) {
             _importRegexButton.setEnabled(false);
-            _viewOnlineButton.setEnabled(false);
             _regexDescriptionLabel.setText("No regex selected");
         } else {
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             sb.append("<b>Expression</b>:\n");
             sb.append(regex.getExpression());
             sb.append("\n\n<b>Description</b>:\n");
@@ -301,7 +270,6 @@ public class RegexSwapDialog extends AbstractDialog {
 
             _regexDescriptionLabel.setText(sb.toString());
             _importRegexButton.setEnabled(true);
-            _viewOnlineButton.setEnabled(true);
         }
     }
 

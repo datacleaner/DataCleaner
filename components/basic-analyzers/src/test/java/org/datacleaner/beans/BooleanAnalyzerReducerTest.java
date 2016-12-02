@@ -63,10 +63,10 @@ public class BooleanAnalyzerReducerTest {
         final BooleanAnalyzerResult partialResult3 = getPartialResult(jobBuilder3, 11, 5);
 
         { // assert partial result1
-            final Crosstab<Number> partialResult1columnStatisticsCrosstab = partialResult1
-                    .getColumnStatisticsCrosstab();
-            final String[] resultLines = new CrosstabTextRenderer().render(partialResult1columnStatisticsCrosstab)
-                    .split("\n");
+            final Crosstab<Number> partialResult1columnStatisticsCrosstab =
+                    partialResult1.getColumnStatisticsCrosstab();
+            final String[] resultLines =
+                    new CrosstabTextRenderer().render(partialResult1columnStatisticsCrosstab).split("\n");
             assertEquals(5, resultLines.length);
             assertEquals("            b1 (as boolean) b2 (as boolean) ", resultLines[0]);
             assertEquals("Row count                 5               5 ", resultLines[1]);
@@ -74,8 +74,8 @@ public class BooleanAnalyzerReducerTest {
             assertEquals("True count                3               2 ", resultLines[3]);
             assertEquals("False count               2               3 ", resultLines[4]);
 
-            final String[] resultLines1 = new CrosstabTextRenderer().render(
-                    partialResult1.getValueCombinationCrosstab()).split("\n");
+            final String[] resultLines1 =
+                    new CrosstabTextRenderer().render(partialResult1.getValueCombinationCrosstab()).split("\n");
             assertEquals(3, resultLines1.length);
             assertEquals("               b1 (as boolean) b2 (as boolean)       Frequency ", resultLines1[0]);
             assertEquals("Most frequent                1               0               3 ", resultLines1[1]);
@@ -84,10 +84,10 @@ public class BooleanAnalyzerReducerTest {
         }
 
         { // assert partial result2
-            final Crosstab<Number> partialResult2columnStatisticsCrosstab = partialResult2
-                    .getColumnStatisticsCrosstab();
-            final String[] resultLines = new CrosstabTextRenderer().render(partialResult2columnStatisticsCrosstab)
-                    .split("\n");
+            final Crosstab<Number> partialResult2columnStatisticsCrosstab =
+                    partialResult2.getColumnStatisticsCrosstab();
+            final String[] resultLines =
+                    new CrosstabTextRenderer().render(partialResult2columnStatisticsCrosstab).split("\n");
             assertEquals(5, resultLines.length);
             assertEquals("            b1 (as boolean) b2 (as boolean) ", resultLines[0]);
             assertEquals("Row count                 5               5 ", resultLines[1]);
@@ -95,8 +95,8 @@ public class BooleanAnalyzerReducerTest {
             assertEquals("True count                2               3 ", resultLines[3]);
             assertEquals("False count               2               2 ", resultLines[4]);
 
-            final String[] resultLines1 = new CrosstabTextRenderer().render(
-                    partialResult2.getValueCombinationCrosstab()).split("\n");
+            final String[] resultLines1 =
+                    new CrosstabTextRenderer().render(partialResult2.getValueCombinationCrosstab()).split("\n");
             assertEquals(5, resultLines1.length);
             assertEquals("               b1 (as boolean) b2 (as boolean)       Frequency ", resultLines1[0]);
             assertEquals("Most frequent                1               1               2 ", resultLines1[1]);
@@ -107,10 +107,10 @@ public class BooleanAnalyzerReducerTest {
         }
 
         { // assert partial result3
-            final Crosstab<Number> partialResult3columnStatisticsCrosstab = partialResult3
-                    .getColumnStatisticsCrosstab();
-            final String[] resultLines = new CrosstabTextRenderer().render(partialResult3columnStatisticsCrosstab)
-                    .split("\n");
+            final Crosstab<Number> partialResult3columnStatisticsCrosstab =
+                    partialResult3.getColumnStatisticsCrosstab();
+            final String[] resultLines =
+                    new CrosstabTextRenderer().render(partialResult3columnStatisticsCrosstab).split("\n");
             assertEquals(5, resultLines.length);
             assertEquals("            b1 (as boolean) b2 (as boolean) ", resultLines[0]);
             assertEquals("Row count                 5               5 ", resultLines[1]);
@@ -118,8 +118,8 @@ public class BooleanAnalyzerReducerTest {
             assertEquals("True count                2               1 ", resultLines[3]);
             assertEquals("False count               3               2 ", resultLines[4]);
 
-            final String[] resultLines1 = new CrosstabTextRenderer().render(
-                    partialResult3.getValueCombinationCrosstab()).split("\n");
+            final String[] resultLines1 =
+                    new CrosstabTextRenderer().render(partialResult3.getValueCombinationCrosstab()).split("\n");
             assertEquals(6, resultLines1.length);
             assertEquals("               b1 (as boolean) b2 (as boolean)       Frequency ", resultLines1[0]);
             assertEquals("Most frequent                1          <null>               1 ", resultLines1[1]);
@@ -130,7 +130,7 @@ public class BooleanAnalyzerReducerTest {
 
         }
 
-        final List<BooleanAnalyzerResult> partialResults = new ArrayList<BooleanAnalyzerResult>();
+        final List<BooleanAnalyzerResult> partialResults = new ArrayList<>();
         partialResults.add(partialResult1);
         partialResults.add(partialResult2);
         partialResults.add(partialResult3);
@@ -140,8 +140,8 @@ public class BooleanAnalyzerReducerTest {
 
         { // assert reduced results
             final Crosstab<Number> reducedResultcolumnStatisticsCrosstab = reducedResults.getColumnStatisticsCrosstab();
-            final String[] resultLinesReduced = new CrosstabTextRenderer()
-                    .render(reducedResultcolumnStatisticsCrosstab).split("\n");
+            final String[] resultLinesReduced =
+                    new CrosstabTextRenderer().render(reducedResultcolumnStatisticsCrosstab).split("\n");
             assertEquals(5, resultLinesReduced.length);
             assertEquals("            b1 (as boolean) b2 (as boolean) ", resultLinesReduced[0]);
             assertEquals("Row count                15              15 ", resultLinesReduced[1]);
@@ -149,8 +149,8 @@ public class BooleanAnalyzerReducerTest {
             assertEquals("True count                7               6 ", resultLinesReduced[3]);
             assertEquals("False count               7               7 ", resultLinesReduced[4]);
 
-            final String[] resultLinesReduced1 = new CrosstabTextRenderer().render(
-                    reducedResults.getValueCombinationCrosstab()).split("\n");
+            final String[] resultLinesReduced1 =
+                    new CrosstabTextRenderer().render(reducedResults.getValueCombinationCrosstab()).split("\n");
             assertEquals(8, resultLinesReduced1.length);
             assertEquals("               b1 (as boolean) b2 (as boolean)       Frequency ", resultLinesReduced1[0]);
             assertEquals("Most frequent                1               0               4 ", resultLinesReduced1[1]);
@@ -165,8 +165,8 @@ public class BooleanAnalyzerReducerTest {
 
         { // assert full result
             final Crosstab<Number> fullResultcolumnStatisticsCrosstab = fullResult.getColumnStatisticsCrosstab();
-            final String[] resultLinesFull = new CrosstabTextRenderer().render(fullResultcolumnStatisticsCrosstab)
-                    .split("\n");
+            final String[] resultLinesFull =
+                    new CrosstabTextRenderer().render(fullResultcolumnStatisticsCrosstab).split("\n");
             assertEquals(5, resultLinesFull.length);
             assertEquals("            b1 (as boolean) b2 (as boolean) ", resultLinesFull[0]);
             assertEquals("Row count                15              15 ", resultLinesFull[1]);
@@ -174,8 +174,8 @@ public class BooleanAnalyzerReducerTest {
             assertEquals("True count                7               6 ", resultLinesFull[3]);
             assertEquals("False count               7               7 ", resultLinesFull[4]);
 
-            final String[] resultLines = new CrosstabTextRenderer().render(fullResult.getValueCombinationCrosstab())
-                    .split("\n");
+            final String[] resultLines =
+                    new CrosstabTextRenderer().render(fullResult.getValueCombinationCrosstab()).split("\n");
             assertEquals(8, resultLines.length);
             assertEquals("               b1 (as boolean) b2 (as boolean)       Frequency ", resultLines[0]);
             assertEquals("Most frequent                1               0               4 ", resultLines[1]);
@@ -190,8 +190,8 @@ public class BooleanAnalyzerReducerTest {
     }
 
     @SuppressWarnings("unchecked")
-    private BooleanAnalyzerResult getPartialResult(AnalysisJobBuilder jobBuilder, Integer firstRow, Integer maxRows)
-            throws Throwable {
+    private BooleanAnalyzerResult getPartialResult(final AnalysisJobBuilder jobBuilder, final Integer firstRow,
+            final Integer maxRows) throws Throwable {
 
         final InputColumn<?>[] inputColumns = jobBuilder.getSourceColumns().toArray(new InputColumn[2]);
         final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilder.addFilter(MaxRowsFilter.class);
@@ -203,34 +203,33 @@ public class BooleanAnalyzerReducerTest {
             maxRowsFilter.setConfiguredProperty("Max rows", maxRows);
         }
         maxRowsFilter.setConfiguredProperty("Order column", null);
-        final TransformerComponentBuilder<ConvertToBooleanTransformer> convertToBoolean = jobBuilder
-                .addTransformer(ConvertToBooleanTransformer.class);
+        final TransformerComponentBuilder<ConvertToBooleanTransformer> convertToBoolean =
+                jobBuilder.addTransformer(ConvertToBooleanTransformer.class);
         convertToBoolean.addInputColumns(inputColumns);
         final FilterOutcome filterOutcome = maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID);
         convertToBoolean.setRequirement(filterOutcome);
-        final AnalyzerComponentBuilder<BooleanAnalyzer> booleanAnalyzerBuilder = jobBuilder
-                .addAnalyzer(BooleanAnalyzer.class);
+        final AnalyzerComponentBuilder<BooleanAnalyzer> booleanAnalyzerBuilder =
+                jobBuilder.addAnalyzer(BooleanAnalyzer.class);
         final BooleanAnalyzer booleanAnalyzer = booleanAnalyzerBuilder.getComponentInstance();
         booleanAnalyzer._columns = convertToBoolean.getOutputColumns().toArray(new MutableInputColumn[2]);
         final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
         jobBuilder.close();
-        final AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(jobBuilder.getConfiguration())
-                .run(analysisJob);
+        final AnalysisResultFuture resultFuture =
+                new AnalysisRunnerImpl(jobBuilder.getConfiguration()).run(analysisJob);
         resultFuture.await();
         if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
-        final BooleanAnalyzerResult result = resultFuture.getResults(BooleanAnalyzerResult.class).get(0);
 
-        return result;
+        return resultFuture.getResults(BooleanAnalyzerResult.class).get(0);
     }
 
     private AnalysisJobBuilder getAnalysisJobBuilder() {
         final File file = new File("src/test/resources/testBooleanAnalyzer.txt");
         assertTrue(file.exists());
         final Datastore datastore = new CsvDatastore("test", new FileResource(file));
-        final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl()
-                .withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
+        final DataCleanerConfigurationImpl configuration =
+                new DataCleanerConfigurationImpl().withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
         jobBuilder.setDatastore(datastore);
         jobBuilder.addSourceColumns("b1");

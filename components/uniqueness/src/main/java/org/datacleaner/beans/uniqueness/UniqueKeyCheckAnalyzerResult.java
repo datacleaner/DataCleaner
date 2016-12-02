@@ -37,8 +37,8 @@ public class UniqueKeyCheckAnalyzerResult implements AnalyzerResult {
     private final int _nullCount;
     private final Map<String, Integer> _nonUniqueSamples;
 
-    public UniqueKeyCheckAnalyzerResult(int rowCount, int uniqueCount, int nonUniqueCount, int nullCount,
-            Map<String, Integer> samples) {
+    public UniqueKeyCheckAnalyzerResult(final int rowCount, final int uniqueCount, final int nonUniqueCount,
+            final int nullCount, final Map<String, Integer> samples) {
         _rowCount = rowCount;
         _uniqueCount = uniqueCount;
         _nonUniqueCount = nonUniqueCount;
@@ -68,7 +68,7 @@ public class UniqueKeyCheckAnalyzerResult implements AnalyzerResult {
 
     /**
      * Gets samples of the non-unique values
-     * 
+     *
      * @return
      */
     public Map<String, Integer> getNonUniqueSamples() {

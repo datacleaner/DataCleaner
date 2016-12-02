@@ -29,7 +29,7 @@ import org.datacleaner.monitor.shared.model.JobIdentifier;
 /**
  * A component responsible for discovery and execution of jobs of a particular
  * type.
- * 
+ *
  * @param <T>
  *            the type of Jobs (JobContexts) that are produced by this engine.
  */
@@ -39,47 +39,47 @@ public interface JobEngine<T extends JobContext> {
      * Gets the type string, such as 'DataCleanerAnalysisJob', 'CustomJob' or
      * other names of the job type. These string should not contain white space
      * or special signs.
-     * 
+     *
      * @return
      */
-    public String getJobType();
+    String getJobType();
 
     /**
      * Gets all jobs of a particular tenant.
-     * 
+     *
      * @param tenantContext
      * @return
      */
-    public List<JobIdentifier> getJobs(TenantContext tenantContext);
+    List<JobIdentifier> getJobs(TenantContext tenantContext);
 
     /**
      * Gets/produces a job context for a specific job.
-     * 
+     *
      * @param job
      * @return
      */
-    public T getJobContext(TenantContext tenantContext, JobIdentifier job);
+    T getJobContext(TenantContext tenantContext, JobIdentifier job);
 
     /**
      * Executes a job
-     * 
+     *
      * @param tenantContext
      * @param execution
      * @param executionLogger
      * @param variables
      *            special variables/parameters/properties for this job execution
-     * 
+     *
      * @throws Exception
      *             if something goes wrong while executing the job, in which
      *             case the job status will be set to FAILURE and the exception
      *             logged.
      */
-    public void executeJob(TenantContext tenantContext, ExecutionLog execution, ExecutionLogger executionLogger,
+    void executeJob(TenantContext tenantContext, ExecutionLog execution, ExecutionLogger executionLogger,
             Map<String, String> variables) throws Exception;
 
     /**
      * Requests a cancellation of a running job.
-     * 
+     *
      * @param tenantContext
      * @param executionLog
      *            the executionlog of a job that is assumed to be running and
@@ -88,14 +88,14 @@ public interface JobEngine<T extends JobContext> {
      *         state of the job is unknown, or if the {@link JobEngine} is not
      *         capable of cancelling the job.
      */
-    public boolean cancelJob(TenantContext tenantContext, ExecutionLog executionLog);
+    boolean cancelJob(TenantContext tenantContext, ExecutionLog executionLog);
 
     /**
      * Determines if a particular job is available within this job engine's jobs
-     * 
+     *
      * @param tenantContext
      * @param jobName
      * @return
      */
-    public boolean containsJob(TenantContext tenantContext, String jobName);
+    boolean containsJob(TenantContext tenantContext, String jobName);
 }

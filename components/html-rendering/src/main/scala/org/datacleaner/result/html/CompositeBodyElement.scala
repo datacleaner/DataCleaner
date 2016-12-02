@@ -1,5 +1,4 @@
 package org.datacleaner.result.html
-import scala.xml.XML
 
 /**
  * A body element which wraps several other body elements in a div

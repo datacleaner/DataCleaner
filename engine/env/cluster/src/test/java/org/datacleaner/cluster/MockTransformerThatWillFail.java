@@ -42,7 +42,7 @@ public class MockTransformerThatWillFail implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow inputRow) {
+    public String[] transform(final InputRow inputRow) {
         throw new UnsupportedOperationException("I am just a dummy transformer!");
     }
 

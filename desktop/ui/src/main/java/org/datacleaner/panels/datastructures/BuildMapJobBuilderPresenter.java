@@ -46,31 +46,31 @@ final class BuildMapJobBuilderPresenter extends TransformerComponentBuilderPanel
 
     private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _overriddenPropertyWidgets;
 
-    public BuildMapJobBuilderPresenter(TransformerComponentBuilder<BuildMapTransformer> tjb,
-            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration) {
+    public BuildMapJobBuilderPresenter(final TransformerComponentBuilder<BuildMapTransformer> tjb,
+            final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
+            final DataCleanerConfiguration configuration) {
         super(tjb, windowContext, propertyWidgetFactory, configuration);
 
-        _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
+        _overriddenPropertyWidgets = new HashMap<>();
 
         final TransformerDescriptor<BuildMapTransformer> descriptor = tjb.getDescriptor();
         final ConfiguredPropertyDescriptor valuesProperty = descriptor.getConfiguredProperty("Values");
         final ConfiguredPropertyDescriptor keysProperty = descriptor.getConfiguredProperty("Keys");
 
-        final MultipleMappedStringsPropertyWidget propertyWidget = new MultipleMappedStringsPropertyWidget(tjb,
-                valuesProperty, keysProperty) {
-            @Override
-            protected String getDefaultMappedString(InputColumn<?> inputColumn) {
-                return inputColumn.getName();
-            }
-        };
+        final MultipleMappedStringsPropertyWidget propertyWidget =
+                new MultipleMappedStringsPropertyWidget(tjb, valuesProperty, keysProperty) {
+                    @Override
+                    protected String getDefaultMappedString(final InputColumn<?> inputColumn) {
+                        return inputColumn.getName();
+                    }
+                };
         _overriddenPropertyWidgets.put(valuesProperty, propertyWidget);
         _overriddenPropertyWidgets.put(keysProperty, propertyWidget.getMappedStringsPropertyWidget());
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected PropertyWidget<?> createPropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
             return _overriddenPropertyWidgets.get(propertyDescriptor);
         }

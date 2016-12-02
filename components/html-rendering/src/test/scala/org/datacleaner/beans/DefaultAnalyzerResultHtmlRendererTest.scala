@@ -1,21 +1,13 @@
 package org.datacleaner.beans
 
 import javax.inject.Named
-import org.datacleaner.api.Analyzer
-import org.datacleaner.api.Configured
-import org.datacleaner.api.RendererBean
-import org.datacleaner.api.InputColumn
-import org.datacleaner.api.InputRow
+
+import org.datacleaner.api._
 import org.datacleaner.descriptors.Descriptors
-import org.datacleaner.job.ImmutableAnalyzerJob
-import org.datacleaner.job.ImmutableComponentConfiguration
-import org.datacleaner.result.html.DefaultHtmlRenderingContext
-import org.datacleaner.api.Metric
-import org.datacleaner.api.AnalyzerResult
-import org.junit.Test
-import org.junit.Assert
+import org.datacleaner.job.{ImmutableAnalyzerJob, ImmutableComponentConfiguration}
+import org.datacleaner.result.html.{ComponentHtmlRenderingContext, DefaultHtmlRenderingContext}
+import org.junit.{Assert, Test}
 import org.scalatest.junit.AssertionsForJUnit
-import org.datacleaner.result.html.ComponentHtmlRenderingContext
 
 class DefaultAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
 

@@ -19,26 +19,26 @@
  */
 package org.datacleaner.data;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.data.DataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.SimpleDataSetHeader;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.MutableColumn;
 
+import junit.framework.TestCase;
+
 public class MetaModelInputRowTest extends TestCase {
 
-	public void testContainsInputColumn() throws Exception {
-		SelectItem[] items = new SelectItem[] { new SelectItem(new MutableColumn("foo")),
-				new SelectItem(new MutableColumn("bar")) };
-		Object[] values = new Object[] { "baz", null };
+    public void testContainsInputColumn() throws Exception {
+        final SelectItem[] items =
+                new SelectItem[] { new SelectItem(new MutableColumn("foo")), new SelectItem(new MutableColumn("bar")) };
+        final Object[] values = new Object[] { "baz", null };
 
-		DataSetHeader header = new SimpleDataSetHeader(items);
-        MetaModelInputRow row = new MetaModelInputRow(1, new DefaultRow(header, values));
+        final DataSetHeader header = new SimpleDataSetHeader(items);
+        final MetaModelInputRow row = new MetaModelInputRow(1, new DefaultRow(header, values));
 
-		assertTrue(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("foo"))));
-		assertTrue(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("bar"))));
-		assertFalse(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("baz"))));
-	}
+        assertTrue(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("foo"))));
+        assertTrue(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("bar"))));
+        assertFalse(row.containsInputColumn(new MetaModelInputColumn(new MutableColumn("baz"))));
+    }
 }

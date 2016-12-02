@@ -50,13 +50,13 @@ public class FormatDateTransformer implements Transformer {
     }
 
     @Override
-    public String[] transform(InputRow inputRow) {
-        Date date = inputRow.getValue(dateColumn);
+    public String[] transform(final InputRow inputRow) {
+        final Date date = inputRow.getValue(dateColumn);
         if (date == null) {
             return new String[] { null };
         }
 
-        SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+        final SimpleDateFormat format = new SimpleDateFormat(dateFormat);
         return new String[] { format.format(date) };
     }
 

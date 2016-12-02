@@ -33,7 +33,7 @@ public class SimpleMetricValues implements MetricValues {
     private final Date _date;
     private final List<Number> _values;
 
-    public SimpleMetricValues(Date date, List<Number> values) {
+    public SimpleMetricValues(final Date date, final List<Number> values) {
         _date = date;
         _values = values;
     }

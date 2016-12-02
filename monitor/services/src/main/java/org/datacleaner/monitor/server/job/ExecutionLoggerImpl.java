@@ -19,7 +19,6 @@
  */
 package org.datacleaner.monitor.server.job;
 
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -29,8 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.SerializationUtils;
-import org.datacleaner.util.NoopAction;
-import org.datacleaner.util.StringUtils;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.concurrent.PreviousErrorsExistException;
@@ -46,8 +44,8 @@ import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.save.AnalysisResultSaveHandler;
 import org.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.util.NoopAction;
+import org.datacleaner.util.StringUtils;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -74,8 +72,8 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
     private final RepositoryFolder _resultFolder;
     private final AtomicBoolean _erronuous;
 
-    public ExecutionLoggerImpl(ExecutionLog execution, RepositoryFolder resultFolder,
-            ApplicationEventPublisher eventPublisher) {
+    public ExecutionLoggerImpl(final ExecutionLog execution, final RepositoryFolder resultFolder,
+            final ApplicationEventPublisher eventPublisher) {
         _execution = execution;
         _resultFolder = resultFolder;
         _eventPublisher = eventPublisher;
@@ -89,12 +87,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
 
         final RepositoryFile existingLogFile = resultFolder.getFile(logFilename);
         if (existingLogFile == null) {
-            _logFile = resultFolder.createFile(logFilename, new Action<OutputStream>() {
-                @Override
-                public void run(OutputStream out) throws Exception {
-                    _executionLogWriter.write(_execution, out);
-                }
-            });
+            _logFile = resultFolder.createFile(logFilename, out -> _executionLogWriter.write(_execution, out));
         } else {
             _logFile = existingLogFile;
         }
@@ -111,14 +104,13 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
     }
 
     @Override
-    public void setStatusFailed(Object component, Object data, Throwable throwable) {
+    public void setStatusFailed(final Object component, final Object data, final Throwable throwable) {
         final boolean erronuousBefore = _erronuous.getAndSet(true);
         if (erronuousBefore) {
             if (throwable instanceof PreviousErrorsExistException) {
                 // don't report PreviousErrorsExistExceptions
-                logger.error(
-                        "More than one error was reported, but only the first will be put into the user-log. This error was also reported: "
-                                + throwable.getMessage(), throwable);
+                logger.error("More than one error was reported, but only the first will be put into the user-log. "
+                        + "This error was also reported: " + throwable.getMessage(), throwable);
             } else {
                 log("\n - Additional exception stacktrace:", throwable);
                 flushLog();
@@ -169,7 +161,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
     }
 
     @Override
-    public void setStatusSuccess(Object result) {
+    public void setStatusSuccess(final Object result) {
         if (result == null) {
             _execution.setResultPersisted(false);
         } else if (result instanceof Serializable) {
@@ -177,7 +169,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
                 log("Saving job result.");
                 serializeResult((Serializable) result);
                 _execution.setResultPersisted(true);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 log("Failed to save job result! Execution of the job was succesfull, but the result was not persisted.");
                 _execution.setResultPersisted(false);
                 setStatusFailed(null, result, e);
@@ -203,39 +195,37 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
         final String resultFilename = _execution.getResultId() + FileFilters.ANALYSIS_RESULT_SER.getExtension();
 
         if (result instanceof AnalysisResult) {
-            final RepositoryFile file = _resultFolder.createFile(resultFilename, new NoopAction<OutputStream>());
+            final RepositoryFile file = _resultFolder.createFile(resultFilename, new NoopAction<>());
             final Resource resource = new RepositoryFileResource(file);
-            final AnalysisResultSaveHandler analysisResultSaveHandler = new AnalysisResultSaveHandler((AnalysisResult) result, resource);
+            final AnalysisResultSaveHandler analysisResultSaveHandler =
+                    new AnalysisResultSaveHandler((AnalysisResult) result, resource);
             try {
                 analysisResultSaveHandler.saveOrThrow();
-            } catch (SerializationException e) {
+            } catch (final SerializationException e) {
                 // attempt to save what we can - and then rethrow
                 final AnalysisResult safeAnalysisResult = analysisResultSaveHandler.createSafeAnalysisResult();
                 if (safeAnalysisResult == null) {
                     logger.error("Serialization of result failed without any safe result elements to persist");
                 } else {
-                    final Map<ComponentJob, AnalyzerResult> unsafeResultElements = analysisResultSaveHandler.getUnsafeResultElements();
-                    logger.error("Serialization of result failed with the following unsafe elements: {}", unsafeResultElements);
+                    final Map<ComponentJob, AnalyzerResult> unsafeResultElements =
+                            analysisResultSaveHandler.getUnsafeResultElements();
+                    logger.error("Serialization of result failed with the following unsafe elements: {}",
+                            unsafeResultElements);
                     logger.warn("Partial AnalysisResult will be persisted to filename '{}'", resultFilename);
-                    
+
                     analysisResultSaveHandler.saveWithoutUnsafeResultElements();
                 }
-                
+
                 // rethrow the exception regardless
                 throw e;
             }
         } else {
-            _resultFolder.createFile(resultFilename, new Action<OutputStream>() {
-                @Override
-                public void run(OutputStream out) throws Exception {
-                    SerializationUtils.serialize(result, out);
-                }
-            });
+            _resultFolder.createFile(resultFilename, out -> SerializationUtils.serialize(result, out));
         }
     }
 
     @Override
-    public void log(String message) {
+    public void log(final String message) {
         final String dateString = new LocalTime().toString(DATE_TIME_FORMAT);
 
         synchronized (_log) {
@@ -249,7 +239,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
     }
 
     @Override
-    public void log(String message, Throwable throwable) {
+    public void log(final String message, final Throwable throwable) {
         final StringWriter stringWriter = new StringWriter();
         if (message != null) {
             stringWriter.write(message);
@@ -267,13 +257,10 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
     public void flushLog() {
         _execution.setLogOutput(_log.toString());
 
-        _logFile.writeFile(new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                // synchronize while writing
-                synchronized (_log) {
-                    _executionLogWriter.write(_execution, out);
-                }
+        _logFile.writeFile(out -> {
+            // synchronize while writing
+            synchronized (_log) {
+                _executionLogWriter.write(_execution, out);
             }
         });
     }

@@ -29,7 +29,7 @@ public class NamedAnalyzerResult implements Serializable {
 
     private final String _name;
     private final AnalyzerResult _analyzerResult;
-    
+
     public NamedAnalyzerResult(final String name, final AnalyzerResult analyzerResult) {
         if (name == null) {
             throw new IllegalArgumentException("NamedAnalyzerResult name cannot be null");
@@ -40,13 +40,13 @@ public class NamedAnalyzerResult implements Serializable {
         _name = name;
         _analyzerResult = analyzerResult;
     }
-    
+
     public String getName() {
         return _name;
     }
-    
+
     public AnalyzerResult getAnalyzerResult() {
         return _analyzerResult;
     }
-    
+
 }

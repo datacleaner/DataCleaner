@@ -34,12 +34,13 @@ import org.junit.Test;
 public class CompositeDescriptorProviderTest {
 
     CompositeDescriptorProvider dp;
-    AnalyzerDescriptor<?> ad1, ad2;
+    AnalyzerDescriptor<?> ad1;
+    AnalyzerDescriptor<?> ad2;
 
     @Before
     public void init() {
-        SimpleDescriptorProvider p1 = new SimpleDescriptorProvider(false);
-        SimpleDescriptorProvider p2 = new SimpleDescriptorProvider(false);
+        final SimpleDescriptorProvider p1 = new SimpleDescriptorProvider(false);
+        final SimpleDescriptorProvider p2 = new SimpleDescriptorProvider(false);
         ad1 = Descriptors.ofAnalyzer(AnalyzerMock.class);
         ad2 = Descriptors.ofAnalyzer(AnnotationBasedAnalyzerComponentDescriptorTest.OneMoreMockAnalyzer.class);
         p1.addAnalyzerBeanDescriptor(ad1);
@@ -50,13 +51,14 @@ public class CompositeDescriptorProviderTest {
 
     @Test
     public void testGetComponentDescritptors() {
-        Collection<? extends ComponentDescriptor<?>> descritptors = dp.getComponentDescriptors();
+        final Collection<? extends ComponentDescriptor<?>> descritptors = dp.getComponentDescriptors();
         CollectionUtils.isEqualCollection(Arrays.asList(ad1, ad2), descritptors);
     }
 
     @Test
     public void testGetAnalyzerDescriptorByClass() {
         Assert.assertEquals(ad1, dp.getAnalyzerDescriptorForClass(AnalyzerMock.class));
-        Assert.assertEquals(ad2, dp.getAnalyzerDescriptorForClass(AnnotationBasedAnalyzerComponentDescriptorTest.OneMoreMockAnalyzer.class));
+        Assert.assertEquals(ad2, dp.getAnalyzerDescriptorForClass(
+                AnnotationBasedAnalyzerComponentDescriptorTest.OneMoreMockAnalyzer.class));
     }
 }

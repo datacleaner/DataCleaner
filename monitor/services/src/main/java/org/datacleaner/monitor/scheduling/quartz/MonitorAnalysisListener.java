@@ -56,19 +56,19 @@ public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements 
     private final Map<Table, ProgressCounter> _progressCounters;
     private final ExecutionLogger _executionLogger;
 
-    public MonitorAnalysisListener(ExecutionLog execution, ExecutionLogger executionLogger) {
+    public MonitorAnalysisListener(final ExecutionLog execution, final ExecutionLogger executionLogger) {
         _executionLogger = executionLogger;
-        _results = new ConcurrentHashMap<ComponentJob, AnalyzerResult>();
-        _progressCounters = new ConcurrentHashMap<Table, ProgressCounter>();
+        _results = new ConcurrentHashMap<>();
+        _progressCounters = new ConcurrentHashMap<>();
     }
 
     @Override
-    public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
+    public void jobBegin(final AnalysisJob job, final AnalysisJobMetrics metrics) {
         _executionLogger.setStatusRunning();
     }
 
     @Override
-    public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
+    public void jobSuccess(final AnalysisJob job, final AnalysisJobMetrics metrics) {
 
         final AnalysisResult result = new SimpleAnalysisResult(_results);
 
@@ -78,17 +78,17 @@ public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements 
     /**
      * Dispatch method for all failure conditions. All parameters are optional,
      * because their availability depend on the failure condition.
-     * 
+     *
      * @param componentJob
      * @param row
      * @param throwable
      */
-    private void jobFailed(ComponentJob componentJob, InputRow row, Throwable throwable) {
+    private void jobFailed(final ComponentJob componentJob, final InputRow row, final Throwable throwable) {
         _executionLogger.setStatusFailed(componentJob, row, throwable);
     }
 
     @Override
-    public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
+    public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
         final Table table = metrics.getTable();
 
         _progressCounters.put(table, new ProgressCounter());
@@ -118,7 +118,7 @@ public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements 
     }
 
     @Override
-    public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, int currentRow) {
+    public void rowProcessingProgress(final AnalysisJob job, final RowProcessingMetrics metrics, final int currentRow) {
         if (currentRow <= 0) {
             return;
         }
@@ -136,7 +136,8 @@ public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements 
     }
 
     @Override
-    public void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message) {
+    public void onComponentMessage(final AnalysisJob job, final ComponentJob componentJob,
+            final ComponentMessage message) {
         if (message instanceof ExecutionLogMessage) {
             final String messageString = ((ExecutionLogMessage) message).getMessage();
             final String componentLabel = LabelUtils.getLabel(componentJob);
@@ -146,17 +147,17 @@ public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements 
     }
 
     @Override
-    public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
+    public void rowProcessingSuccess(final AnalysisJob job, final RowProcessingMetrics metrics) {
         final Table table = metrics.getTable();
         _executionLogger.log("Processing of " + table.getName() + " finished. Generating results ...");
     }
 
     @Override
-    public void componentBegin(AnalysisJob job, ComponentJob componentJob, ComponentMetrics metrics) {
+    public void componentBegin(final AnalysisJob job, final ComponentJob componentJob, final ComponentMetrics metrics) {
     }
 
     @Override
-    public void componentSuccess(AnalysisJob job, ComponentJob componentJob, AnalyzerResult result) {
+    public void componentSuccess(final AnalysisJob job, final ComponentJob componentJob, final AnalyzerResult result) {
         if (result != null) {
             _results.put(componentJob, result);
             _executionLogger.log("Result gathered from analyzer: " + componentJob);
@@ -165,22 +166,25 @@ public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements 
     }
 
     @Override
-    public void errorInFilter(AnalysisJob job, FilterJob filterJob, InputRow row, Throwable throwable) {
+    public void errorInFilter(final AnalysisJob job, final FilterJob filterJob, final InputRow row,
+            final Throwable throwable) {
         jobFailed(filterJob, row, throwable);
     }
 
     @Override
-    public void errorInTransformer(AnalysisJob job, TransformerJob transformerJob, InputRow row, Throwable throwable) {
+    public void errorInTransformer(final AnalysisJob job, final TransformerJob transformerJob, final InputRow row,
+            final Throwable throwable) {
         jobFailed(transformerJob, row, throwable);
     }
 
     @Override
-    public void errorInAnalyzer(AnalysisJob job, AnalyzerJob analyzerJob, InputRow row, Throwable throwable) {
+    public void errorInAnalyzer(final AnalysisJob job, final AnalyzerJob analyzerJob, final InputRow row,
+            final Throwable throwable) {
         jobFailed(analyzerJob, row, throwable);
     }
 
     @Override
-    public void errorUknown(AnalysisJob job, Throwable throwable) {
+    public void errorUknown(final AnalysisJob job, final Throwable throwable) {
         jobFailed(null, null, throwable);
     }
 }

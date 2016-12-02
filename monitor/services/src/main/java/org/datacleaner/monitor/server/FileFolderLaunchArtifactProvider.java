@@ -43,13 +43,13 @@ public class FileFolderLaunchArtifactProvider implements LaunchArtifactProvider 
 
     private final File _libFolder;
 
-    public FileFolderLaunchArtifactProvider(File libFolder) {
+    public FileFolderLaunchArtifactProvider(final File libFolder) {
         _libFolder = libFolder;
     }
 
     @Override
     public List<String> getJarFilenames() {
-        String[] list = _libFolder.list(FileFilters.JAR);
+        final String[] list = _libFolder.list(FileFilters.JAR);
         if (list == null || list.length == 0) {
             logger.error("No JAR files found in launch artifact folder: {}", _libFolder);
             return Collections.emptyList();
@@ -62,9 +62,9 @@ public class FileFolderLaunchArtifactProvider implements LaunchArtifactProvider 
         final File file = new File(_libFolder, filename);
         if (file.exists()) {
             try {
-                FileInputStream in = new FileInputStream(file);
+                final FileInputStream in = new FileInputStream(file);
                 return new BufferedInputStream(in);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new IllegalStateException("Could not read from file: " + file, e);
             }
         }

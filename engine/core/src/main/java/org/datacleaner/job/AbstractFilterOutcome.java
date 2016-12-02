@@ -21,37 +21,37 @@ package org.datacleaner.job;
 
 import java.util.List;
 
-import org.datacleaner.job.builder.LazyFilterOutcome;
 import org.apache.metamodel.util.BaseObject;
+import org.datacleaner.job.builder.LazyFilterOutcome;
 
 /**
  * Provides hashCode, equals and toString implementations for FilterOutcome,
  * making them comparable across different implementations.
- * 
+ *
  * Specifically this has been designed to make it possible to use the
  * equals(...) method with both ImmutableFilterOutcome and LazyFilterOutcome
  * instances.
- * 
+ *
  * @see ImmutableFilterOutcome
  * @see LazyFilterOutcome
  */
 public abstract class AbstractFilterOutcome extends BaseObject implements FilterOutcome {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Override
-    public boolean isEquals(FilterOutcome filterOutcome) {
+    public boolean isEquals(final FilterOutcome filterOutcome) {
         return equals(filterOutcome);
     }
 
     @Override
-    protected final void decorateIdentity(List<Object> identifiers) {
+    protected final void decorateIdentity(final List<Object> identifiers) {
         identifiers.add(getCategory());
         identifiers.add(getSource());
     }
 
     @Override
-    protected final boolean classEquals(BaseObject obj) {
+    protected final boolean classEquals(final BaseObject obj) {
         // works with all subtypes
         return obj instanceof FilterOutcome;
     }
@@ -60,7 +60,7 @@ public abstract class AbstractFilterOutcome extends BaseObject implements Filter
     public String toString() {
         return "FilterOutcome[category=" + getCategory() + "]";
     }
-    
+
     @Override
     public final String getSimpleName() {
         return getCategory().toString();

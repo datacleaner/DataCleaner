@@ -133,13 +133,13 @@ public class SystemProperties {
     /**
      * Gets a system property string, or a replacement value if the property is
      * null or blank.
-     * 
+     *
      * @param key
      * @param valueIfNull
      * @return
      */
-    public static String getString(String key, String valueIfNull) {
-        String value = System.getProperty(key);
+    public static String getString(final String key, final String valueIfNull) {
+        final String value = System.getProperty(key);
         if (Strings.isNullOrEmpty(value)) {
             return valueIfNull;
         }
@@ -149,19 +149,19 @@ public class SystemProperties {
     /**
      * Gets a system property long, or a replacement value if the property is
      * null or blank or not parseable
-     * 
+     *
      * @param key
      * @param valueIfNullOrNotParseable
      * @return
      */
-    public static long getLong(String key, long valueIfNullOrNotParseable) {
-        String value = System.getProperty(key);
+    public static long getLong(final String key, final long valueIfNullOrNotParseable) {
+        final String value = System.getProperty(key);
         if (Strings.isNullOrEmpty(value)) {
             return valueIfNullOrNotParseable;
         }
         try {
             return Long.parseLong(value);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             return valueIfNullOrNotParseable;
         }
     }
@@ -169,19 +169,19 @@ public class SystemProperties {
     /**
      * Gets a system property int, or a replacement value if the property is
      * null or blank or not parseable
-     * 
+     *
      * @param key
      * @param valueIfNullOrNotParseable
      * @return
      */
-    public static int getInt(String key, int valueIfNullOrNotParseable) {
-        String value = System.getProperty(key);
+    public static int getInt(final String key, final int valueIfNullOrNotParseable) {
+        final String value = System.getProperty(key);
         if (Strings.isNullOrEmpty(value)) {
             return valueIfNullOrNotParseable;
         }
         try {
             return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             return valueIfNullOrNotParseable;
         }
     }
@@ -189,12 +189,12 @@ public class SystemProperties {
     /**
      * Gets a system property boolean, or a replacement value if the property is
      * null or blank or not parseable as a boolean.
-     * 
+     *
      * @param key
      * @param valueIfNull
      * @return
      */
-    public static boolean getBoolean(String key, boolean valueIfNull) {
+    public static boolean getBoolean(final String key, final boolean valueIfNull) {
         String value = System.getProperty(key);
         if (Strings.isNullOrEmpty(value)) {
             return valueIfNull;
@@ -211,7 +211,7 @@ public class SystemProperties {
         return valueIfNull;
     }
 
-    public static void setIfNotSpecified(String property, String value) {
+    public static void setIfNotSpecified(final String property, final String value) {
         final String existingValue = System.getProperty(property);
         if (Strings.isNullOrEmpty(existingValue)) {
             System.setProperty(property, value);

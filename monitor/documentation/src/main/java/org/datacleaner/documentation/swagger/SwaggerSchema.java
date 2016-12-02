@@ -27,7 +27,7 @@ import java.util.HashMap;
 public class SwaggerSchema extends HashMap<String, Object> {
     public static final long serialVersionUID = 1;
 
-    public SwaggerSchema(String type) {
+    public SwaggerSchema(final String type) {
         this.put("type", type);
     }
 }

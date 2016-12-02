@@ -33,11 +33,12 @@ import org.apache.commons.vfs2.provider.local.LocalFile;
 /**
  * Convenience methods for commons VFS.
  */
+@SuppressWarnings("checkstyle:AbbreviationAsWordInName")
 public class VFSUtils {
 
     /**
      * Gets the file system manager to use in typical scenarios.
-     * 
+     *
      * @return
      */
     public static FileSystemManager getFileSystemManager() {
@@ -49,7 +50,7 @@ public class VFSUtils {
                 ((DefaultFileSystemManager) manager).setBaseFile(new File("."));
             }
             return manager;
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -57,24 +58,24 @@ public class VFSUtils {
     public static FileSystem getBaseFileSystem() {
         try {
             return getFileSystemManager().getBaseFile().getFileSystem();
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new IllegalStateException(e);
         }
     }
 
     /**
      * Converts a {@link File} to a FileObject.
-     * 
+     *
      * @param file
      * @return
      */
-    public static FileObject toFileObject(File file) {
+    public static FileObject toFileObject(final File file) {
         if (file == null) {
             return null;
         }
         try {
             return getFileSystemManager().toFileObject(file);
-        } catch (FileSystemException e) {
+        } catch (final FileSystemException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -82,18 +83,18 @@ public class VFSUtils {
     /**
      * Converts (if possible) a {@link FileObject} to a {@link File}. Use with
      * caution since {@link FileObject} is generally preferred.
-     * 
+     *
      * @param fileObject
      * @return
      */
-    public static File toFile(FileObject fileObject) {
+    public static File toFile(final FileObject fileObject) {
         if (fileObject instanceof LocalFile) {
-            Method method = ReflectionUtils.getMethod(LocalFile.class, "getLocalFile");
+            final Method method = ReflectionUtils.getMethod(LocalFile.class, "getLocalFile");
             try {
                 method.setAccessible(true);
-                Object result = method.invoke(fileObject);
+                final Object result = method.invoke(fileObject);
                 return (File) result;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException(e);
             }
         }

@@ -39,20 +39,18 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link DatabaseConnectionPresenter} for database connections based on URL
  * templates.
- * 
+ *
  * The template should have the format of a JDBC URL where HOSTNAME,PORT and
  * DATABASE tokens are inlined. For example:
  * "jdbc:mysql://HOSTNAME:PORT/DATABASE".
- * 
+ *
  * In addition to there's four optional tokens which can be used: PARAM1,
  * PARAM2, PARAM3, PARAM4. Make sure to use corresponding getLabelFor... methods
  * to provide user names.
  */
 public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDatabaseConnectionPresenter {
 
-    private static final Logger logger = LoggerFactory.getLogger(UrlTemplateDatabaseConnectionPresenter.class);
-
-    public static enum UrlPart implements HasGroupLiteral {
+    public enum UrlPart implements HasGroupLiteral {
         HOSTNAME, PORT, DATABASE, PARAM1, PARAM2, PARAM3, PARAM4;
 
         @Override
@@ -65,6 +63,7 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
         }
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(UrlTemplateDatabaseConnectionPresenter.class);
     private final JXTextField _hostnameTextField;
     private final JXTextField _portTextField;
     private final JXTextField _databaseTextField;
@@ -76,17 +75,17 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
 
     /**
      * Constructs a {@link DatabaseConnectionPresenter} based on URL templates.
-     * 
+     *
      * @param urlTemplates
      */
-    public UrlTemplateDatabaseConnectionPresenter(String... urlTemplates) {
+    public UrlTemplateDatabaseConnectionPresenter(final String... urlTemplates) {
         super();
         if (urlTemplates == null || urlTemplates.length == 0) {
             throw new IllegalArgumentException("URL templates cannot be null or empty");
         }
-        _urlTemplates = new ArrayList<NamedPattern<UrlPart>>(urlTemplates.length);
-        for (String urlTemplate : urlTemplates) {
-            NamedPattern<UrlPart> template = new NamedPattern<UrlPart>(urlTemplate, UrlPart.class);
+        _urlTemplates = new ArrayList<>(urlTemplates.length);
+        for (final String urlTemplate : urlTemplates) {
+            final NamedPattern<UrlPart> template = new NamedPattern<>(urlTemplate, UrlPart.class);
             _urlTemplates.add(template);
         }
         _hostnameTextField = createTextField("Hostname");
@@ -100,7 +99,7 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
         _param3TextField = createTextField(getLabelForParam3());
         _param4TextField = createTextField(getLabelForParam4());
     }
-    
+
     protected JXTextField getDatabaseTextField() {
         return _databaseTextField;
     }
@@ -160,14 +159,14 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
             String param3, String param4);
 
     @Override
-    public boolean initialize(JdbcDatastore datastore) {
+    public boolean initialize(final JdbcDatastore datastore) {
         super.initialize(datastore);
 
         final String url = datastore.getJdbcUrl();
 
         NamedPatternMatch<UrlPart> match = null;
         NamedPattern<UrlPart> matchingUrlTemplate = null;
-        for (NamedPattern<UrlPart> urlTemplate : _urlTemplates) {
+        for (final NamedPattern<UrlPart> urlTemplate : _urlTemplates) {
             matchingUrlTemplate = urlTemplate;
             match = urlTemplate.match(url);
             if (match != null) {
@@ -184,8 +183,8 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
         return initializeFromMatch(datastore, matchingUrlTemplate, match);
     }
 
-    protected boolean initializeFromMatch(JdbcDatastore datastore, NamedPattern<UrlPart> matchingUrlTemplate,
-            NamedPatternMatch<UrlPart> match) {
+    protected boolean initializeFromMatch(final JdbcDatastore datastore,
+            final NamedPattern<UrlPart> matchingUrlTemplate, final NamedPatternMatch<UrlPart> match) {
         _hostnameTextField.setText(match.get(UrlPart.HOSTNAME));
         _portTextField.setText(match.get(UrlPart.PORT));
         _databaseTextField.setText(match.get(UrlPart.DATABASE));
@@ -199,8 +198,8 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
 
     private EnumSet<UrlPart> getUrlParts() {
         // build a set of all URL parts in all templates.
-        EnumSet<UrlPart> urlParts = EnumSet.noneOf(UrlPart.class);
-        for (NamedPattern<UrlPart> urlTemplate : _urlTemplates) {
+        final EnumSet<UrlPart> urlParts = EnumSet.noneOf(UrlPart.class);
+        for (final NamedPattern<UrlPart> urlTemplate : _urlTemplates) {
             urlParts.addAll(urlTemplate.getUsedGroups());
         }
         return urlParts;
@@ -211,7 +210,7 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
     }
 
     @Override
-    protected int layoutGridBagAboveCredentials(DCPanel panel) {
+    protected int layoutGridBagAboveCredentials(final DCPanel panel) {
         final EnumSet<UrlPart> urlParts = getUrlParts();
 
         int row = -1;
@@ -225,14 +224,14 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
         return row;
     }
 
-    protected int layoutGridBagDatabase(DCPanel panel, int row) {
+    protected int layoutGridBagDatabase(final DCPanel panel, int row) {
         row++;
         WidgetUtils.addToGridBag(DCLabel.dark(getLabelForDatabase() + ":"), panel, 0, row);
         WidgetUtils.addToGridBag(_databaseTextField, panel, 1, row);
         return row;
     }
 
-    protected int layoutGridBagHostnameAndPort(DCPanel panel, int row) {
+    protected int layoutGridBagHostnameAndPort(final DCPanel panel, int row) {
         final EnumSet<UrlPart> urlParts = getUrlParts();
         if (urlParts.contains(UrlPart.HOSTNAME)) {
             row++;
@@ -249,7 +248,7 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
     }
 
     @Override
-    protected void layoutGridBagBelowCredentials(DCPanel panel, int row) {
+    protected void layoutGridBagBelowCredentials(final DCPanel panel, int row) {
         final EnumSet<UrlPart> urlParts = getUrlParts();
 
         if (!showDatabaseAboveCredentials() && urlParts.contains(UrlPart.DATABASE)) {
@@ -259,7 +258,7 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
         layoutGridBagParams(panel, row);
     }
 
-    protected int layoutGridBagParams(DCPanel panel, int row) {
+    protected int layoutGridBagParams(final DCPanel panel, int row) {
         final EnumSet<UrlPart> urlParts = getUrlParts();
 
         if (urlParts.contains(UrlPart.PARAM1)) {
@@ -290,7 +289,7 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
     }
 
     @Override
-    public void setSelectedDatabaseDriver(DatabaseDriverDescriptor driver) {
+    public void setSelectedDatabaseDriver(final DatabaseDriverDescriptor driver) {
         // do nothing
     }
 }

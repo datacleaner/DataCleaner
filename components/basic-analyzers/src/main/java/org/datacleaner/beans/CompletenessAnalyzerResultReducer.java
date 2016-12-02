@@ -41,20 +41,20 @@ public class CompletenessAnalyzerResultReducer implements AnalyzerResultReducer<
     RowAnnotationFactory _rowAnnotationFactory;
 
     @Override
-    public CompletenessAnalyzerResult reduce(Collection<? extends CompletenessAnalyzerResult> results) {
+    public CompletenessAnalyzerResult reduce(final Collection<? extends CompletenessAnalyzerResult> results) {
         final CompletenessAnalyzerResult firstResult = results.iterator().next();
 
         final RowAnnotation annotation = _rowAnnotationFactory.createAnnotation();
         final InputColumn<?>[] highlightedColumns = firstResult.getHighlightedColumns();
 
         int totalRowCount = 0;
-        for (CompletenessAnalyzerResult result : results) {
+        for (final CompletenessAnalyzerResult result : results) {
             final List<InputRow> sampleRows = result.getSampleRows();
             final int invalidRowCount = result.getInvalidRowCount();
             if (invalidRowCount == sampleRows.size()) {
                 // if the rows are included for preview/sampling - then
                 // re-annotate them in the master result
-                for (InputRow sampleRow : sampleRows) {
+                for (final InputRow sampleRow : sampleRows) {
                     _rowAnnotationFactory.annotate(sampleRow, annotation);
                 }
             } else {

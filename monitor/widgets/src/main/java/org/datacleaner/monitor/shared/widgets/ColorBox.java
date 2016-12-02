@@ -63,19 +63,17 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
         ImageResource hueSaturation();
     }
 
-    private static final Images IMAGES = GWT.create(Images.class);
-
     private class ColorPopup extends PopupPanel {
 
+        float hue = 200;
+        float saturation = 2 / 3f;
+        float luminance = 1 / 3f;
         private FlowPanel panel;
         private Image hueSaturation;
         private Image lightness;
         private Label preview;
         private boolean down = false;
         private boolean clicked = false;
-        float h = 200;
-        float s = 2 / 3f;
-        float l = 1 / 3f;
 
         ColorPopup() {
             super(true);
@@ -105,7 +103,7 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
             hueSaturation.addMouseDownHandler(new MouseDownHandler() {
 
                 @Override
-                public void onMouseDown(MouseDownEvent event) {
+                public void onMouseDown(final MouseDownEvent event) {
                     event.preventDefault();
                     setHueSaturation(event.getNativeEvent());
                     down = true;
@@ -115,7 +113,7 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
             hueSaturation.addMouseUpHandler(new MouseUpHandler() {
 
                 @Override
-                public void onMouseUp(MouseUpEvent event) {
+                public void onMouseUp(final MouseUpEvent event) {
                     setHueSaturation(event.getNativeEvent());
                     down = false;
                 }
@@ -124,16 +122,17 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
             hueSaturation.addMouseMoveHandler(new MouseMoveHandler() {
 
                 @Override
-                public void onMouseMove(MouseMoveEvent event) {
-                    if (down)
+                public void onMouseMove(final MouseMoveEvent event) {
+                    if (down) {
                         setHueSaturation(event.getNativeEvent());
+                    }
                 }
             });
 
             hueSaturation.addMouseOutHandler(new MouseOutHandler() {
 
                 @Override
-                public void onMouseOut(MouseOutEvent event) {
+                public void onMouseOut(final MouseOutEvent event) {
                     down = false;
                 }
             });
@@ -143,7 +142,7 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
             lightness.addMouseDownHandler(new MouseDownHandler() {
 
                 @Override
-                public void onMouseDown(MouseDownEvent event) {
+                public void onMouseDown(final MouseDownEvent event) {
                     event.preventDefault();
                     setLightness(event.getNativeEvent());
                     down = true;
@@ -153,7 +152,7 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
             lightness.addMouseUpHandler(new MouseUpHandler() {
 
                 @Override
-                public void onMouseUp(MouseUpEvent event) {
+                public void onMouseUp(final MouseUpEvent event) {
                     setLightness(event.getNativeEvent());
                     down = false;
                 }
@@ -162,16 +161,17 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
             lightness.addMouseMoveHandler(new MouseMoveHandler() {
 
                 @Override
-                public void onMouseMove(MouseMoveEvent event) {
-                    if (down)
+                public void onMouseMove(final MouseMoveEvent event) {
+                    if (down) {
                         setLightness(event.getNativeEvent());
+                    }
                 }
             });
 
             lightness.addMouseOutHandler(new MouseOutHandler() {
 
                 @Override
-                public void onMouseOut(MouseOutEvent event) {
+                public void onMouseOut(final MouseOutEvent event) {
                     down = false;
                 }
             });
@@ -181,7 +181,7 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
             preview.addMouseDownHandler(new MouseDownHandler() {
 
                 @Override
-                public void onMouseDown(MouseDownEvent event) {
+                public void onMouseDown(final MouseDownEvent event) {
                     clicked = false;
                     hide();
                 }
@@ -189,36 +189,36 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
         }
 
         public String getHex() {
-            return new Color(h, s, l).toString();
+            return new Color(hue, saturation, luminance).toString();
         }
 
-        public void setHex(String colorString) {
+        public void setHex(final String colorString) {
             if (colorString.startsWith("#") && colorString.length() == 7 && clicked) {
-                Color rgb = new Color(colorString);
-                h = rgb.getHue();
-                s = rgb.getSaturation();
-                l = rgb.getLightness();
+                final Color rgb = new Color(colorString);
+                hue = rgb.getHue();
+                saturation = rgb.getSaturation();
+                luminance = rgb.getLightness();
                 setColor();
             }
         }
 
         private void setColor() {
-            Color p = new Color(h, s, l);
+            final Color p = new Color(hue, saturation, luminance);
             setStyleAttribute(preview.getElement(), "backgroundColor", p.toString());
-            Color l = new Color(h, s, 0.5f);
+            final Color l = new Color(hue, saturation, 0.5f);
             setStyleAttribute(lightness.getElement(), "backgroundColor", l.toString());
 
             setStyleAttribute(blotch.getElement(), "backgroundColor", getHex());
         }
 
-        private void setHueSaturation(NativeEvent event) {
+        private void setHueSaturation(final NativeEvent event) {
             clicked = true;
-            int x = event.getClientX() - hueSaturation.getAbsoluteLeft();
-            int y = event.getClientY() - hueSaturation.getAbsoluteTop();
+            final int x = event.getClientX() - hueSaturation.getAbsoluteLeft();
+            final int y = event.getClientY() - hueSaturation.getAbsoluteTop();
 
             if (x > -1 && x < 181 && y > -1 && y < 101) {
-                h = x * 2;
-                s = (float) (100 - y) / 100f;
+                hue = x * 2;
+                saturation = (float) (100 - y) / 100f;
 
                 setColor();
             } else {
@@ -226,12 +226,12 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
             }
         }
 
-        private void setLightness(NativeEvent event) {
+        private void setLightness(final NativeEvent event) {
             clicked = true;
-            int y = event.getClientY() - lightness.getAbsoluteTop();
+            final int y = event.getClientY() - lightness.getAbsoluteTop();
 
             if (y > -1 && y < 101) {
-                l = (float) (100 - y) / 100f;
+                luminance = (float) (100 - y) / 100f;
                 setColor();
             } else {
                 down = false;
@@ -239,14 +239,16 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
         }
     }
 
+    private static final Images IMAGES = GWT.create(Images.class);
     private ColorPopup popup;
     private TextBox textbox;
     private Anchor blotch;
     private FlowPanel panel;
     private boolean keyPressed = false;
-    private int rx = 10, ry = 20;
+    private int rx = 10;
+    private int ry = 20;
 
-    public ColorBox(String colorString) {
+    public ColorBox(final String colorString) {
         this.panel = new FlowPanel();
         this.textbox = new TextBox();
         this.blotch = new Anchor();
@@ -257,7 +259,7 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
         textbox.addFocusHandler(new FocusHandler() {
 
             @Override
-            public void onFocus(FocusEvent event) {
+            public void onFocus(final FocusEvent event) {
                 enterEditMode();
             }
         });
@@ -265,7 +267,7 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
         textbox.addKeyPressHandler(new KeyPressHandler() {
 
             @Override
-            public void onKeyPress(KeyPressEvent event) {
+            public void onKeyPress(final KeyPressEvent event) {
                 keyPressed = true;
                 popup.setHex(getValue());
                 setStyleAttribute(blotch.getElement(), "backgroundColor", getValue());
@@ -275,7 +277,7 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
         blotch.addMouseDownHandler(new MouseDownHandler() {
 
             @Override
-            public void onMouseDown(MouseDownEvent event) {
+            public void onMouseDown(final MouseDownEvent event) {
                 if (!popup.isShowing()) {
                     enterEditMode();
                 } else {
@@ -288,7 +290,7 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
         popup.addCloseHandler(new CloseHandler<PopupPanel>() {
 
             @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
+            public void onClose(final CloseEvent<PopupPanel> event) {
                 if (!keyPressed) {
                     setValue(popup.getHex());
                     setStyleAttribute(blotch.getElement(), "backgroundColor", popup.getHex());
@@ -310,13 +312,19 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
         addStyleName("gwt-ColorBox");
     }
 
+    private static void setStyleAttribute(
+            @SuppressWarnings("deprecation") final com.google.gwt.user.client.Element element,
+            final String key, final String value) {
+        element.getStyle().setProperty(key, value);
+    }
+
     @Override
     public String getName() {
         return textbox.getName();
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(final String name) {
         textbox.setName(name);
     }
 
@@ -330,28 +338,30 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
     }
 
     @Override
-    public void setValue(String value) {
+    public void setValue(final String value) {
         textbox.setValue(value);
         setStyleAttribute(blotch.getElement(), "backgroundColor", value);
     }
 
     @Override
-    public void setValue(String value, boolean fireEvents) {
+    public void setValue(final String value, final boolean fireEvents) {
         textbox.setValue(value, fireEvents);
         setStyleAttribute(blotch.getElement(), "backgroundColor", value);
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> handler) {
 
         return textbox.addValueChangeHandler(handler);
     }
 
-    public void setRelativeX(int x) {
+    @SuppressWarnings("checkstyle:ParameterName")
+    public void setRelativeX(final int x) {
         this.rx = x;
     }
 
-    public void setRelativeY(int y) {
+    @SuppressWarnings("checkstyle:ParameterName")
+    public void setRelativeY(final int y) {
         this.ry = y;
     }
 
@@ -362,12 +372,7 @@ public class ColorBox extends Composite implements HasValue<String>, HasName, Ha
     }
 
     @Override
-    public HandlerRegistration addClickHandler(ClickHandler handler) {
+    public HandlerRegistration addClickHandler(final ClickHandler handler) {
         return addHandler(handler, ClickEvent.getType());
-    }
-
-    private static void setStyleAttribute(@SuppressWarnings("deprecation") com.google.gwt.user.client.Element element,
-            String key, String value) {
-        element.getStyle().setProperty(key, value);
     }
 }

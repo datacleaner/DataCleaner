@@ -66,16 +66,16 @@ public final class JobCompletionTaskListener implements StatusAwareTaskListener 
     }
 
     @Override
-    public void await(long timeout, TimeUnit timeUnit) throws InterruptedException {
+    public void await(final long timeout, final TimeUnit timeUnit) throws InterruptedException {
         _countDownLatch.await(timeout, timeUnit);
     }
 
     @Override
-    public void onBegin(Task task) {
+    public void onBegin(final Task task) {
     }
 
     @Override
-    public void onComplete(Task task) {
+    public void onComplete(final Task task) {
         try {
             logger.debug("onComplete(...)");
 
@@ -94,7 +94,7 @@ public final class JobCompletionTaskListener implements StatusAwareTaskListener 
     }
 
     @Override
-    public void onError(Task task, Throwable throwable) {
+    public void onError(final Task task, final Throwable throwable) {
         try {
             logger.debug("onError(...)");
             _analysisListener.errorUnknown(_analysisJobMetrics.getAnalysisJob(), throwable);

@@ -49,8 +49,8 @@ public class DashboardServiceServlet extends SecureGwtServlet implements Dashboa
         super.init();
 
         if (_delegate == null) {
-            WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            DashboardService delegate = applicationContext.getBean(DashboardService.class);
+            final WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+            final DashboardService delegate = applicationContext.getBean(DashboardService.class);
             if (delegate == null) {
                 throw new ServletException("No delegate found in application context!");
             }
@@ -58,48 +58,48 @@ public class DashboardServiceServlet extends SecureGwtServlet implements Dashboa
         }
     }
 
-    public void setDelegate(DashboardService delegate) {
-        _delegate = delegate;
-    }
-
     public DashboardService getDelegate() {
         return _delegate;
     }
 
+    public void setDelegate(final DashboardService delegate) {
+        _delegate = delegate;
+    }
+
     @Override
-    public List<JobIdentifier> getJobs(TenantIdentifier tenant) {
+    public List<JobIdentifier> getJobs(final TenantIdentifier tenant) {
         return _delegate.getJobs(tenant);
     }
 
     @Override
-    public List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, DashboardGroup group) {
+    public List<TimelineIdentifier> getTimelines(final TenantIdentifier tenant, final DashboardGroup group) {
         return _delegate.getTimelines(tenant, group);
     }
 
     @Override
-    public TimelineDefinition getTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline) {
+    public TimelineDefinition getTimelineDefinition(final TenantIdentifier tenant, final TimelineIdentifier timeline) {
         return _delegate.getTimelineDefinition(tenant, timeline);
     }
 
     @Override
-    public TimelineData getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline) {
+    public TimelineData getTimelineData(final TenantIdentifier tenant, final TimelineDefinition timeline) {
         return _delegate.getTimelineData(tenant, timeline);
     }
 
     @Override
-    public TimelineIdentifier updateTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
-            TimelineDefinition timelineDefinition) {
+    public TimelineIdentifier updateTimelineDefinition(final TenantIdentifier tenant, final TimelineIdentifier timeline,
+            final TimelineDefinition timelineDefinition) {
         return _delegate.updateTimelineDefinition(tenant, timeline, timelineDefinition);
     }
 
     @Override
-    public TimelineIdentifier createTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
-            TimelineDefinition timelineDefinition) {
+    public TimelineIdentifier createTimelineDefinition(final TenantIdentifier tenant, final TimelineIdentifier timeline,
+            final TimelineDefinition timelineDefinition) {
         return _delegate.createTimelineDefinition(tenant, timeline, timelineDefinition);
     }
 
     @Override
-    public Boolean removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline) {
+    public Boolean removeTimeline(final TenantIdentifier tenant, final TimelineIdentifier timeline) {
         return _delegate.removeTimeline(tenant, timeline);
     }
 
@@ -109,12 +109,12 @@ public class DashboardServiceServlet extends SecureGwtServlet implements Dashboa
     }
 
     @Override
-    public DashboardGroup addDashboardGroup(TenantIdentifier tenant, String name) {
+    public DashboardGroup addDashboardGroup(final TenantIdentifier tenant, final String name) {
         return _delegate.addDashboardGroup(tenant, name);
     }
 
     @Override
-    public Boolean removeDashboardGroup(TenantIdentifier tenant, DashboardGroup timelineGroup) {
+    public Boolean removeDashboardGroup(final TenantIdentifier tenant, final DashboardGroup timelineGroup) {
         return _delegate.removeDashboardGroup(tenant, timelineGroup);
     }
 }

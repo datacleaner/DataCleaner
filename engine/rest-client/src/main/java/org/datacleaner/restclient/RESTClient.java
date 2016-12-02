@@ -24,15 +24,11 @@ package org.datacleaner.restclient;
  * @since 03. 09. 2015
  */
 public interface RESTClient {
-    String HEADER_DC_VERSION = "datacleaner-version";
-    
     enum HttpMethod {
-        POST,
-        GET,
-        PUT,
-        DELETE,
-        ;
-    };
+        POST, GET, PUT, DELETE,;
+    }
+
+    String HEADER_DC_VERSION = "datacleaner-version";
 
     /**
      * It returns the response for the given request.

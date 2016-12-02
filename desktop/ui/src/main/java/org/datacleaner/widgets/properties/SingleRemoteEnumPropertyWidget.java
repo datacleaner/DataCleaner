@@ -37,32 +37,27 @@ public class SingleRemoteEnumPropertyWidget extends AbstractPropertyWidget<Enume
     private final DCComboBox<EnumerationValue> _comboBox;
 
     @Inject
-    public SingleRemoteEnumPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-                                    ComponentBuilder componentBuilder) {
+    public SingleRemoteEnumPropertyWidget(final ConfiguredPropertyDescriptor propertyDescriptor,
+            final ComponentBuilder componentBuilder) {
         super(componentBuilder, propertyDescriptor);
 
-        EnumerationValue[] enumConstants = ((EnumerationProvider)propertyDescriptor).values();
+        EnumerationValue[] enumConstants = ((EnumerationProvider) propertyDescriptor).values();
 
         if (!propertyDescriptor.isRequired()) {
-            enumConstants = CollectionUtils.array(new EnumerationValue[]{null}, enumConstants);
+            enumConstants = CollectionUtils.array(new EnumerationValue[] { null }, enumConstants);
         }
 
         _comboBox = new DCComboBox<>(enumConstants);
         _comboBox.setRenderer(new EnumComboBoxListRenderer());
 
-        EnumerationValue currentValue = getCurrentValue();
+        final EnumerationValue currentValue = getCurrentValue();
         _comboBox.setSelectedItem(currentValue);
 
-        addComboListener(new DCComboBox.Listener<EnumerationValue>() {
-            @Override
-            public void onItemSelected(EnumerationValue item) {
-                fireValueChanged();
-            }
-        });
+        addComboListener(item -> fireValueChanged());
         add(_comboBox);
     }
 
-    public void addComboListener(DCComboBox.Listener<EnumerationValue> listener) {
+    public void addComboListener(final DCComboBox.Listener<EnumerationValue> listener) {
         _comboBox.addListener(listener);
     }
 
@@ -72,7 +67,7 @@ public class SingleRemoteEnumPropertyWidget extends AbstractPropertyWidget<Enume
     }
 
     @Override
-    protected void setValue(EnumerationValue value) {
+    protected void setValue(final EnumerationValue value) {
         _comboBox.setSelectedItem(value);
     }
 

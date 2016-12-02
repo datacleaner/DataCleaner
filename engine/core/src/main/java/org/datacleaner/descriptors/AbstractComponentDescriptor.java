@@ -28,7 +28,7 @@ import org.datacleaner.util.ReflectionUtils;
 /**
  * Abstract implementation of the {@link ComponentDescriptor} interface.
  * Convenient for implementing it's subclasses.
- * 
+ *
  * @param <B>
  *            the type of {@link Component}
  */
@@ -39,7 +39,7 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
     private final boolean _requireInputColumns;
     private final String _displayName;
 
-    public AbstractComponentDescriptor(Class<B> componentClass, boolean requireInputColumns) {
+    AbstractComponentDescriptor(final Class<B> componentClass, final boolean requireInputColumns) {
         super(componentClass);
         _requireInputColumns = requireInputColumns;
         _displayName = determineDisplayName();
@@ -73,7 +73,7 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
             return determineDisplayName();
         }
         return _displayName;
-    };
+    }
 
     @Override
     protected abstract Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass();
@@ -85,7 +85,7 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
         if (_requireInputColumns) {
             int numConfiguredColumns = 0;
             int numConfiguredColumnArrays = 0;
-            for (ConfiguredPropertyDescriptor cd : _configuredProperties) {
+            for (final ConfiguredPropertyDescriptor cd : _configuredProperties) {
                 if (cd.isInputColumn()) {
                     if (cd.isArray()) {
                         numConfiguredColumnArrays++;
@@ -96,8 +96,8 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
             }
             final int totalColumns = numConfiguredColumns + numConfiguredColumnArrays;
             if (totalColumns == 0) {
-                throw new DescriptorException(getComponentClass()
-                        + " does not define a @Configured InputColumn or InputColumn-array");
+                throw new DescriptorException(
+                        getComponentClass() + " does not define a @Configured InputColumn or InputColumn-array");
             }
         }
     }

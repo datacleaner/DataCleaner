@@ -29,20 +29,20 @@ import com.google.gwt.user.client.ui.Anchor;
  * An anchor to a result report.
  */
 public class ResultAnchor extends Anchor {
-    
+
     private final TenantIdentifier _tenant;
 
-    public ResultAnchor(TenantIdentifier tenant) {
+    public ResultAnchor(final TenantIdentifier tenant) {
         super();
         addStyleName("ResultAnchor");
         _tenant = tenant;
     }
-    
-    public void setResult(ExecutionLog executionLog) {
+
+    public void setResult(final ExecutionLog executionLog) {
         setResult(executionLog, null);
     }
 
-    public void setResult(ExecutionLog executionLog, String text) {
+    public void setResult(final ExecutionLog executionLog, final String text) {
         final String resultId = executionLog.getResultId();
         if (resultId == null || !executionLog.isResultPersisted()) {
             setEnabled(false);

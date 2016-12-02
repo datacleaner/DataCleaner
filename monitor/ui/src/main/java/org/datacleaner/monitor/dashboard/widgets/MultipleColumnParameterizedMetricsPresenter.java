@@ -39,9 +39,9 @@ public class MultipleColumnParameterizedMetricsPresenter implements MetricPresen
     private final List<ColumnParameterizedMetricPresenter> _children;
     private final MetricGroup _metricGroup;
 
-    public MultipleColumnParameterizedMetricsPresenter(MetricGroup metricGroup) {
+    public MultipleColumnParameterizedMetricsPresenter(final MetricGroup metricGroup) {
         _metricGroup = metricGroup;
-        _children = new ArrayList<ColumnParameterizedMetricPresenter>();
+        _children = new ArrayList<>();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MultipleColumnParameterizedMetricsPresenter implements MetricPresen
 
         panel.add(createColumnHeaderWidget());
 
-        for (ColumnParameterizedMetricPresenter child : _children) {
+        for (final ColumnParameterizedMetricPresenter child : _children) {
             panel.add(child);
         }
 
@@ -71,7 +71,7 @@ public class MultipleColumnParameterizedMetricsPresenter implements MetricPresen
 
         // add label for each column
         final List<String> columnNames = _metricGroup.getColumnNames();
-        for (String columnName : columnNames) {
+        for (final String columnName : columnNames) {
             final Label label = new Label(columnName);
             label.addStyleName("ColumnHeader");
             panel.add(label);
@@ -82,8 +82,8 @@ public class MultipleColumnParameterizedMetricsPresenter implements MetricPresen
 
     @Override
     public List<MetricIdentifier> getSelectedMetrics() {
-        final List<MetricIdentifier> result = new ArrayList<MetricIdentifier>();
-        for (ColumnParameterizedMetricPresenter child : _children) {
+        final List<MetricIdentifier> result = new ArrayList<>();
+        for (final ColumnParameterizedMetricPresenter child : _children) {
             result.addAll(child.getSelectedMetrics());
         }
         return result;
@@ -93,7 +93,7 @@ public class MultipleColumnParameterizedMetricsPresenter implements MetricPresen
         return _children.isEmpty();
     }
 
-    public void add(ColumnParameterizedMetricPresenter child) {
+    public void add(final ColumnParameterizedMetricPresenter child) {
         _children.add(child);
     }
 

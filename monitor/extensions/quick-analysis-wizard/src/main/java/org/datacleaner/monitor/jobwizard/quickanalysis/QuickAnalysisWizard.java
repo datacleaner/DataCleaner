@@ -41,7 +41,7 @@ public class QuickAnalysisWizard extends DataCleanerJobWizard {
     }
 
     @Override
-    protected DataCleanerJobWizardSession startInternal(JobWizardContext context) {
+    protected DataCleanerJobWizardSession startInternal(final JobWizardContext context) {
         return new QuickAnalysisWizardSession(context);
     }
 }

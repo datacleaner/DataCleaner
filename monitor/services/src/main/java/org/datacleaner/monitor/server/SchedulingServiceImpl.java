@@ -42,13 +42,10 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
-import org.apache.commons.vfs2.FileNotFoundException;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileResource;
 import org.datacleaner.job.JaxbJobReader;
-import org.datacleaner.job.jaxb.JobType;
-import org.datacleaner.job.jaxb.SourceType;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.ExecutionLogger;
@@ -70,7 +67,6 @@ import org.datacleaner.monitor.server.jaxb.JaxbScheduleWriter;
 import org.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader;
 import org.datacleaner.monitor.server.job.ExecutionLoggerImpl;
 import org.datacleaner.monitor.shared.model.DCSecurityException;
-import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.Repository;
@@ -163,15 +159,14 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
                 final JobContext jobContext = tenantContext.getJob(job);
                 final String jobFileName = jobContext.getJobFile().getName();
-                final JaxbJobReader reader = new JaxbJobReader(tenantContext.getConfiguration());
-                final File workingDirectory = new File(".");
-                final RepositoryFile jobRepoFile = tenantContext.getTenantRootFolder().getFolder("jobs")
+                final RepositoryFile jobRepositoryFile = tenantContext.getTenantRootFolder().getFolder("jobs")
                         .getFile(jobFileName);
-                final File jobFile = new File(workingDirectory.getAbsolutePath() + "/ROOT/repository"
-                        + jobRepoFile.getQualifiedPath());
+                final JaxbJobReader reader = new JaxbJobReader(tenantContext.getConfiguration());
+                final File jobFile = new File(jobRepositoryFile.toResource().getQualifiedPath());
 
                 return reader.readMetadata(jobFile).getDatastoreName();
             } catch (RuntimeException e) {
+                logger.error("DataStore name could not be resolved. {}", e);
                 return null;
             }
         }

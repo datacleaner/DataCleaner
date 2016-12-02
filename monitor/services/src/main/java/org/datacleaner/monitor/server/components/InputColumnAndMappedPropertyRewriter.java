@@ -48,7 +48,6 @@ public class InputColumnAndMappedPropertyRewriter implements InputRewriter {
         ConfiguredPropertyDescriptor inputColumnProp = null;
         ConfiguredPropertyDescriptor mappedProp = null;
         List<ConfiguredPropertyDescriptor> inputColProperties = new ArrayList<>();
-        boolean moreRequiredInputColumns = false;
 
         Set<ConfiguredPropertyDescriptor> props = transformer.getConfiguredProperties();
         for(ConfiguredPropertyDescriptor prop : props) {
@@ -56,9 +55,7 @@ public class InputColumnAndMappedPropertyRewriter implements InputRewriter {
                 inputColProperties.add(prop);
                 if(prop.isRequired()) {
                     // we have the second required input column property - this not supported by this enricher
-                    if (inputColumnProp != null) {
-                        moreRequiredInputColumns = true;
-                    } else {
+                    if (inputColumnProp == null) {
                         inputColumnProp = prop;
                     }
                 }
@@ -97,7 +94,8 @@ public class InputColumnAndMappedPropertyRewriter implements InputRewriter {
         return true;
     }
 
-    private boolean enrichMapDataObjectsToInputColumnsByName(List<ConfiguredPropertyDescriptor> inputColProperties, ProcessStatelessInput input) {
+    private boolean enrichMapDataObjectsToInputColumnsByName(List<ConfiguredPropertyDescriptor> inputColProperties,
+            ProcessStatelessInput input) {
         if(inputColProperties.isEmpty()) {
             return false;
         }
@@ -117,9 +115,9 @@ public class InputColumnAndMappedPropertyRewriter implements InputRewriter {
 
         JsonNodeFactory json = Serializator.getJacksonObjectMapper().getNodeFactory();
         if(input.data.isArray()) {
-            int i = 0;
-            for(JsonNode item: input.data) {
-                ((ArrayNode)input.data).set(i++, mapDataObjectToInputColumnsByName(item, inputColProperties));
+            ArrayNode inputData = (ArrayNode)input.data;
+            for(int i = 0; i < inputData.size(); i++) {
+                inputData.set(i++, mapDataObjectToInputColumnsByName(inputData.get(i), inputColProperties));
             }
         } else {
             input.data = json.arrayNode().add(mapDataObjectToInputColumnsByName(input.data, inputColProperties));
@@ -129,10 +127,10 @@ public class InputColumnAndMappedPropertyRewriter implements InputRewriter {
             input.configuration = new ComponentConfiguration();
         }
 
-        int i = 1;
-        for(ConfiguredPropertyDescriptor inputCol: inputColProperties) {
-            String colName = "c" + i++;
-            input.configuration.getProperties().put(inputCol.getName(), json.textNode(colName));
+
+        for(int i = 0; i < inputColProperties.size(); i++) {
+            String colName = "c" + (i+1);
+            input.configuration.getProperties().put(inputColProperties.get(i).getName(), json.textNode(colName));
             input.configuration.getColumns().add(json.textNode(colName));
         }
 
@@ -142,33 +140,33 @@ public class InputColumnAndMappedPropertyRewriter implements InputRewriter {
     private JsonNode mapDataObjectToInputColumnsByName(JsonNode item, List<ConfiguredPropertyDescriptor> inputColProperties) {
         JsonNodeFactory json = Serializator.getJacksonObjectMapper().getNodeFactory();
         ArrayNode values = json.arrayNode();
-        ITER:
-        for(ConfiguredPropertyDescriptor inputColPropDesc: inputColProperties) {
-            JsonNode value = item.get(inputColPropDesc.getName());
-            if(value != null) {
-                values.add(value);
-                continue;
-            }
-            String[] aliases = inputColPropDesc.getAliases();
-            if(aliases != null) {
-                for (String alias : aliases) {
-                    value = item.get(alias);
-                    if(value != null) {
-                        values.add(value);
-                        continue ITER;
-                    }
-                }
-            }
 
+        for(ConfiguredPropertyDescriptor inputColPropDesc: inputColProperties) {
+            JsonNode value = findPropertyByColumnNameOrAlias(item, inputColPropDesc);
             // nothing found - put null value to the values array
-            values.add(json.nullNode());
+            if(value == null) {
+                value = json.nullNode();
+            }
+            values.add(value);
         }
         return values;
     }
 
-    private static class InputColumnPropertyInfo {
-        ConfiguredPropertyDescriptor propertyDesc;
-        int index;
+    private static JsonNode findPropertyByColumnNameOrAlias(JsonNode item, ConfiguredPropertyDescriptor inputColPropDesc) {
+        JsonNode value = item.get(inputColPropDesc.getName());
+        if(value != null) {
+            return value;
+        }
+        String[] aliases = inputColPropDesc.getAliases();
+        if(aliases != null) {
+            for (String alias : aliases) {
+                value = item.get(alias);
+                if(value != null) {
+                    return value;
+                }
+            }
+        }
+        return null;
     }
 
     private void enrichWithSingleInputProperty(ConfiguredPropertyDescriptor inputColumnProp, ProcessStatelessInput input) {

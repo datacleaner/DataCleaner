@@ -91,6 +91,7 @@ public class JobTestHelper {
                 .addAll(new String[] { JAVA_EXECUTABLE, DATACLEANER_MAIN_CLASS_NAME, "-job", jobFileName, "-conf",
                         confFileName }, extraCliArgs);
         final ProcessBuilder builder = new ProcessBuilder(processBuilderArguments);
+        builder.environment().put("DATACLEANER_HOME", URLDecoder.decode(repository.getAbsolutePath(), "UTF-8"));
         builder.environment().put("CLASSPATH", System.getProperty("java.class.path"));
 
         final Process process = builder.start();

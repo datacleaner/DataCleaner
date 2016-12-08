@@ -60,6 +60,11 @@ import org.datacleaner.monitor.scheduling.model.TriggerType;
 import org.datacleaner.monitor.scheduling.quartz.AbstractQuartzJob;
 import org.datacleaner.monitor.scheduling.quartz.ExecuteJob;
 import org.datacleaner.monitor.scheduling.quartz.ExecuteJobListener;
+import org.datacleaner.monitor.server.filesystem.GeneralWaitForCompleteFileStrategy;
+import org.datacleaner.monitor.server.filesystem.IncompleteFileException;
+import org.datacleaner.monitor.server.filesystem.LinuxWaitForCompleteFileStrategy;
+import org.datacleaner.monitor.server.filesystem.WaitForCompleteFileStrategy;
+import org.datacleaner.monitor.server.filesystem.WindowsWaitForCompleteFileStrategy;
 import org.datacleaner.monitor.server.jaxb.JaxbException;
 import org.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
 import org.datacleaner.monitor.server.jaxb.JaxbScheduleReader;
@@ -143,15 +148,52 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
 
         private void executeJobWithFile(final File file) {
+            if (!file.exists()) {
+                logger.warn("Data file '{}' triggering execution of the job '{}' does not exist.",
+                        file.getAbsolutePath(), job.getName());
+                return;
+            }
+
             final String dataStoreName = getDataStoreName();
 
             if (dataStoreName != null) {
+                try {
+                    waitForCompleteFile(file);
+                } catch (final IncompleteFileException e) {
+                    logger.error("Hot folder job execution failed because the file '{}' is incomplete of unavailable. ",
+                            file.getAbsolutePath());
+                    return;
+                }
+
                 final Map<String, String> propertiesMap = new HashMap<>();
                 propertiesMap.put("datastoreCatalog." + getDataStoreName() + ".filename", file.getAbsolutePath());
                 triggerExecution(tenant, job, propertiesMap, TriggerType.HOTFOLDER);
             } else {
                 triggerJobExecution();
             }
+        }
+
+        /**
+         * File event can be triggered before the complete file content is written (copying in progress).
+         * This method tries to check that possibility and wait for the complete file to be ready.
+         * Unfortunately it is not file/operating system independent.
+         */
+        private void waitForCompleteFile(final File file) throws IncompleteFileException {
+            final WaitForCompleteFileStrategy waitStrategy;
+            final String osName = System.getProperty("os.name").toLowerCase();
+
+            if (osName.contains("windows")) {
+                logger.info("Using WindowsWaitForCompleteFileStrategy. ");
+                waitStrategy = new WindowsWaitForCompleteFileStrategy();
+            } else if (osName.contains("linux")) {
+                logger.info("Using LinuxWaitForCompleteFileStrategy. ");
+                waitStrategy = new LinuxWaitForCompleteFileStrategy();
+            } else {
+                logger.info("Using GeneralWaitForCompleteFileStrategy. ");
+                waitStrategy = new GeneralWaitForCompleteFileStrategy();
+            }
+
+            waitStrategy.waitForComplete(file);
         }
 
         private String getDataStoreName() {
@@ -629,6 +671,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throws DCSecurityException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(execution.getJob());
+        job.getVariables();
         final JobEngine<?> jobEngine = job.getJobEngine();
         return jobEngine.cancelJob(tenantContext, execution);
     }

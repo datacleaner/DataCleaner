@@ -22,24 +22,24 @@ package org.datacleaner.monitor.server.filesystem;
 import java.io.File;
 
 public abstract class AbstractWaitForCompleteFileStrategy implements WaitForCompleteFileStrategy {
-    protected static final int ATTEMPT_WAIT_INTERVAL_MS = 500;
-    protected static final int WAIT_ATTEMPT_LIMIT = 20 * 60 * (2 * ATTEMPT_WAIT_INTERVAL_MS);
+    private static final int WAIT_INTERVAL_MS = 1000;
+    private static final int WAIT_TIMEOUT_MS = 30 * 60 * WAIT_INTERVAL_MS;
 
     @Override
     public void waitForComplete(final File file) throws IncompleteFileException {
-        int attempts = 0;
+        long now = System.currentTimeMillis();
+        final long timeoutReached = now + WAIT_TIMEOUT_MS;
 
-        while (attempts < WAIT_ATTEMPT_LIMIT && !isReady(file)) {
-            attempts++;
-
+        while (now < timeoutReached && !isReady(file)) {
             try {
-                Thread.sleep(ATTEMPT_WAIT_INTERVAL_MS);
+                Thread.sleep(WAIT_INTERVAL_MS);
+                now = System.currentTimeMillis();
             } catch (InterruptedException e) {
                 throw new IncompleteFileException("Waiting for a complete file was interrupted. " + e.toString());
             }
         }
 
-        if (attempts >= WAIT_ATTEMPT_LIMIT) {
+        if (now >= timeoutReached) {
             throw new IncompleteFileException("Timeout of waiting for a complete file expired. ");
         }
     }

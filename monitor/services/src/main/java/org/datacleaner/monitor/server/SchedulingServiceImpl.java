@@ -60,6 +60,7 @@ import org.datacleaner.monitor.scheduling.model.TriggerType;
 import org.datacleaner.monitor.scheduling.quartz.AbstractQuartzJob;
 import org.datacleaner.monitor.scheduling.quartz.ExecuteJob;
 import org.datacleaner.monitor.scheduling.quartz.ExecuteJobListener;
+import org.datacleaner.monitor.server.filesystem.DefaultWaitForCompleteFileStrategy;
 import org.datacleaner.monitor.server.filesystem.GeneralWaitForCompleteFileStrategy;
 import org.datacleaner.monitor.server.filesystem.IncompleteFileException;
 import org.datacleaner.monitor.server.filesystem.LinuxWaitForCompleteFileStrategy;
@@ -158,7 +159,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
             if (dataStoreName != null) {
                 try {
-                    waitForCompleteFile(file);
+                    /*
+                     * File event can be triggered before the complete file content is written (copying in progress).
+                     * This tries to check that possibility and wait for the complete file to be ready.
+                     */
+                    new DefaultWaitForCompleteFileStrategy().waitForComplete(file);
                 } catch (final IncompleteFileException e) {
                     logger.error("Hot folder job execution failed because the file '{}' is incomplete of unavailable. ",
                             file.getAbsolutePath());
@@ -171,29 +176,6 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             } else {
                 triggerJobExecution();
             }
-        }
-
-        /**
-         * File event can be triggered before the complete file content is written (copying in progress).
-         * This method tries to check that possibility and wait for the complete file to be ready.
-         * Unfortunately it is not file/operating system independent.
-         */
-        private void waitForCompleteFile(final File file) throws IncompleteFileException {
-            final WaitForCompleteFileStrategy waitStrategy;
-            final String osName = System.getProperty("os.name").toLowerCase();
-
-            if (osName.contains("windows")) {
-                logger.info("Using WindowsWaitForCompleteFileStrategy. ");
-                waitStrategy = new WindowsWaitForCompleteFileStrategy();
-            } else if (osName.contains("linux")) {
-                logger.info("Using LinuxWaitForCompleteFileStrategy. ");
-                waitStrategy = new LinuxWaitForCompleteFileStrategy();
-            } else {
-                logger.info("Using GeneralWaitForCompleteFileStrategy. ");
-                waitStrategy = new GeneralWaitForCompleteFileStrategy();
-            }
-
-            waitStrategy.waitForComplete(file);
         }
 
         private String getDataStoreName() {

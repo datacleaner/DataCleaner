@@ -20,7 +20,7 @@
 package org.datacleaner.monitor.server.filesystem;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -32,11 +32,10 @@ public class WindowsWaitForCompleteFileStrategy extends AbstractWaitForCompleteF
      */
     @Override
     public boolean isReady(final File file) {
-        try (FileInputStream inStream = new FileInputStream(file)) {
-            inStream.read();
-
+        try {
+            new FileWriter(file, true);
             return true;
-        } catch (final IOException ioe) {
+        } catch (final IOException e) {
             return false;
         }
     }

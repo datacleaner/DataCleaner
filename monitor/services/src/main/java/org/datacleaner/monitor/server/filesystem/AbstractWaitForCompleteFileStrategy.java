@@ -20,8 +20,6 @@
 package org.datacleaner.monitor.server.filesystem;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 public abstract class AbstractWaitForCompleteFileStrategy implements WaitForCompleteFileStrategy {
     protected static final int ATTEMPT_WAIT_INTERVAL_MS = 500;

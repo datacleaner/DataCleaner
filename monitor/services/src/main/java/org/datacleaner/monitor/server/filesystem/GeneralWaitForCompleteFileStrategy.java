@@ -20,11 +20,9 @@
 package org.datacleaner.monitor.server.filesystem;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 public class GeneralWaitForCompleteFileStrategy extends AbstractWaitForCompleteFileStrategy {
-    private long[] _lastSizes = new long[] { 0L, 0L, 0L };
+    private final long[] _lastSizes = new long[] { 0L, 0L, 0L };
     private int _index = 0;
 
     @Override

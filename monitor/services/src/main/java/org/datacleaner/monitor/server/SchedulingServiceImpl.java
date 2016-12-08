@@ -182,6 +182,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             final WaitForCompleteFileStrategy waitStrategy;
             final String osName = System.getProperty("os.name").toLowerCase();
 
+            waitStrategy = new GeneralWaitForCompleteFileStrategy();
+
+            /*
             if (osName.contains("windows")) {
                 logger.info("Using WindowsWaitForCompleteFileStrategy. ");
                 waitStrategy = new WindowsWaitForCompleteFileStrategy();
@@ -192,6 +195,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 logger.info("Using GeneralWaitForCompleteFileStrategy. ");
                 waitStrategy = new GeneralWaitForCompleteFileStrategy();
             }
+            */
 
             waitStrategy.waitForComplete(file);
         }
@@ -671,7 +675,6 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throws DCSecurityException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(execution.getJob());
-        job.getVariables();
         final JobEngine<?> jobEngine = job.getJobEngine();
         return jobEngine.cancelJob(tenantContext, execution);
     }

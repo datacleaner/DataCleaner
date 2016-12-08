@@ -25,6 +25,12 @@ public class GeneralWaitForCompleteFileStrategy extends AbstractWaitForCompleteF
     private final long[] _lastSizes = new long[] { 0L, 0L, 0L };
     private int _index = 0;
 
+    /**
+     * Continuously checks the size of the file. If there is no change within the three last updates,
+     * the file is considered complete.
+     * @param file
+     * @return
+     */
     @Override
     public boolean isReady(final File file) {
         _lastSizes[_index] = file.getTotalSpace();

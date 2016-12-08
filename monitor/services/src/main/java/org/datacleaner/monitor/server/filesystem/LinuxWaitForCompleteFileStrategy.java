@@ -30,6 +30,8 @@ import java.io.InputStreamReader;
  */
 public class LinuxWaitForCompleteFileStrategy extends AbstractWaitForCompleteFileStrategy {
     private static final String FILE_PLACEHOLDER = "FILE_PLACEHOLDER";
+    // lsof output is e. g.: java 23300 24068 user 61w REG 0,44 0 1971852 /absolute/path/to/the/file.txt
+    // sed+cut will produce "61w" part, "w" means "write"
     private static final String FILE_OPENED_FOR_WRITE_COMMAND_TEMPLATE = "lsof | grep \"" + FILE_PLACEHOLDER
             + "\" | sed s/\\ \\ */\\ /g | cut -d' ' -f 4";
 
@@ -53,7 +55,7 @@ public class LinuxWaitForCompleteFileStrategy extends AbstractWaitForCompleteFil
                 String line;
 
                 while ((line = bufferedReader.readLine()) != null) {
-                    if (line.toLowerCase().contains("w") || line.contains("u")) {
+                    if (line.toLowerCase().contains("w") || line.contains("u")) { // w=write, u=read&write
                         return false;
                     }
                 }

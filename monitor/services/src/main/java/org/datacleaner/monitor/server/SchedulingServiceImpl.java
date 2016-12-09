@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -138,14 +139,20 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         public void onFileCreate(final File file) {
             logger.info("file {} created in hot folder, triggering execution of job {}.", file.getName(),
                     job.getName());
-            executeJobWithFile(file);
+            executeJobWithFileInNewThread(file);
         }
 
         @Override
         public void onFileChange(final File file) {
             logger.info("file {} changed in hot folder, triggering execution of job {}.", file.getName(),
                     job.getName());
-            executeJobWithFile(file);
+            executeJobWithFileInNewThread(file);
+        }
+
+        private void executeJobWithFileInNewThread(final File file) {
+            new Thread(() -> {
+                executeJobWithFile(file);
+            }).start();
         }
 
         private void executeJobWithFile(final File file) {

@@ -17,12 +17,26 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.filesystem;
+package org.datacleaner.monitor.server.hotfolder;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
-public class IncompleteFileException extends IOException {
-    public IncompleteFileException(final String message) {
-        super(message);
+/**
+ * Windows implementation of {@link WaitForCompleteFileStrategy}.
+ */
+public class WindowsWaitForCompleteFileStrategy extends AbstractWaitForCompleteFileStrategy {
+    /**
+     * It relies on a locking mechanism when a file being copied is locked from other processes.
+     */
+    @Override
+    public boolean isReady(final File file) {
+        try {
+            new FileWriter(file, true);
+            return true;
+        } catch (final IOException e) {
+            return false;
+        }
     }
 }

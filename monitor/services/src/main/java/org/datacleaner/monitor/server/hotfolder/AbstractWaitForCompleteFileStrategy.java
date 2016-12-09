@@ -17,18 +17,28 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.filesystem;
+package org.datacleaner.monitor.server.hotfolder;
 
 import java.io.File;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 public abstract class AbstractWaitForCompleteFileStrategy implements WaitForCompleteFileStrategy {
     private static final int WAIT_INTERVAL_MS = 1000;
-    private static final int WAIT_TIMEOUT_MS = 30 * 60 * WAIT_INTERVAL_MS;
+
+    @Autowired
+    HotFolderPreferences _hotFolderPreferences;
+
+    public AbstractWaitForCompleteFileStrategy() {
+        if (_hotFolderPreferences == null) {
+            _hotFolderPreferences = new HotFolderPreferences();
+        }
+    }
 
     @Override
     public void waitForComplete(final File file) throws IncompleteFileException {
         long now = System.currentTimeMillis();
-        final long timeoutReached = now + WAIT_TIMEOUT_MS;
+        final long timeoutReached = now + (_hotFolderPreferences.getWaitTimeoutMinutes() * 60 * 1000);
 
         while (now < timeoutReached && !isReady(file)) {
             try {

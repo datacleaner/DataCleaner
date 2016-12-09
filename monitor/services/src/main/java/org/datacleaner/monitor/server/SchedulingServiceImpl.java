@@ -60,12 +60,10 @@ import org.datacleaner.monitor.scheduling.model.TriggerType;
 import org.datacleaner.monitor.scheduling.quartz.AbstractQuartzJob;
 import org.datacleaner.monitor.scheduling.quartz.ExecuteJob;
 import org.datacleaner.monitor.scheduling.quartz.ExecuteJobListener;
-import org.datacleaner.monitor.server.filesystem.DefaultWaitForCompleteFileStrategy;
-import org.datacleaner.monitor.server.filesystem.GeneralWaitForCompleteFileStrategy;
-import org.datacleaner.monitor.server.filesystem.IncompleteFileException;
-import org.datacleaner.monitor.server.filesystem.LinuxWaitForCompleteFileStrategy;
-import org.datacleaner.monitor.server.filesystem.WaitForCompleteFileStrategy;
-import org.datacleaner.monitor.server.filesystem.WindowsWaitForCompleteFileStrategy;
+import org.datacleaner.monitor.server.hotfolder.DefaultWaitForCompleteFileStrategy;
+import org.datacleaner.monitor.server.hotfolder.HotFolderPreferences;
+import org.datacleaner.monitor.server.hotfolder.IncompleteFileException;
+import org.datacleaner.monitor.server.hotfolder.WaitForCompleteFileStrategy;
 import org.datacleaner.monitor.server.jaxb.JaxbException;
 import org.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
 import org.datacleaner.monitor.server.jaxb.JaxbScheduleReader;
@@ -110,6 +108,8 @@ import com.google.common.collect.Maps;
  */
 @Component("schedulingService")
 public class SchedulingServiceImpl implements SchedulingService, ApplicationContextAware {
+    @Autowired
+    HotFolderPreferences _hotFolderPreferences;
 
     private final class HotFolderAlterationListener extends FileAlterationListenerAdaptor {
         private static final String PROPERTIES_FILE_EXTENSION = ".properties";
@@ -163,7 +163,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                      * File event can be triggered before the complete file content is written (copying in progress).
                      * This tries to check that possibility and wait for the complete file to be ready.
                      */
-                    new DefaultWaitForCompleteFileStrategy().waitForComplete(file);
+                    getWaitStrategy().waitForComplete(file);
                 } catch (final IncompleteFileException e) {
                     logger.error("Hot folder job execution failed because the file '{}' is incomplete of unavailable. ",
                             file.getAbsolutePath());
@@ -176,6 +176,21 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             } else {
                 triggerJobExecution();
             }
+        }
+
+        private WaitForCompleteFileStrategy getWaitStrategy() {
+            WaitForCompleteFileStrategy waitStrategy;
+            final String waitStrategyClassPath = _hotFolderPreferences.getWaitStrategyClass();
+
+            try {
+                waitStrategy = (WaitForCompleteFileStrategy) Class.forName(waitStrategyClassPath).newInstance();
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                logger.warn("'{}' could not be used for hot-folder wait strategy, using default instead. {}",
+                        waitStrategyClassPath, e);
+                waitStrategy = new DefaultWaitForCompleteFileStrategy();
+            }
+
+            return waitStrategy;
         }
 
         private String getDataStoreName() {

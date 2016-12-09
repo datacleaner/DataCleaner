@@ -17,26 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.filesystem;
+package org.datacleaner.monitor.server.hotfolder;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
- * Windows implementation of {@link WaitForCompleteFileStrategy}.
+ * An interface for a general approach to wait for a potentially incomplete file (that is e. g. being copied).
  */
-public class WindowsWaitForCompleteFileStrategy extends AbstractWaitForCompleteFileStrategy {
+public interface WaitForCompleteFileStrategy {
     /**
-     * It relies on a locking mechanism when a file being copied is locked from other processes.
+     * Waits for a given file to be completed.
+     * @param file
      */
-    @Override
-    public boolean isReady(final File file) {
-        try {
-            new FileWriter(file, true);
-            return true;
-        } catch (final IOException e) {
-            return false;
-        }
-    }
+    void waitForComplete(File file) throws IncompleteFileException;
+
+    /**
+     * Returns true if the file is ready to be used, false otherwise.
+     * @param file
+     * @return
+     */
+    boolean isReady(File file);
 }

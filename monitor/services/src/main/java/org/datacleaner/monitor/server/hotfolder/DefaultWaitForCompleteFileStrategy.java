@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.filesystem;
+package org.datacleaner.monitor.server.hotfolder;
 
 import java.io.File;
 

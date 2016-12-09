@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.filesystem;
+package org.datacleaner.monitor.server.hotfolder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,16 +25,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * Linux implementation of {@link WaitForCompleteFileStrategy}.
  */
 public class LinuxWaitForCompleteFileStrategy extends AbstractWaitForCompleteFileStrategy {
-    private static final String FILE_PLACEHOLDER = "FILE_PLACEHOLDER";
-    // lsof output is e. g.: java 23300 24068 user 61w REG 0,44 0 1971852 /absolute/path/to/the/file.txt
-    // sed+cut will produce "61w" part, "w" means "write"
-    private static final String FILE_OPENED_FOR_WRITE_COMMAND_TEMPLATE = "lsof | grep \"" + FILE_PLACEHOLDER
-            + "\" | sed s/\\ \\ */\\ /g | cut -d' ' -f 4";
-
     /**
      * Uses shell command based on 'lsof' tool to get the list of opened files in 'write' mode.
      * @param file
@@ -45,8 +41,8 @@ public class LinuxWaitForCompleteFileStrategy extends AbstractWaitForCompleteFil
         final Process process;
 
         try {
-            final String command = FILE_OPENED_FOR_WRITE_COMMAND_TEMPLATE
-                    .replace(FILE_PLACEHOLDER, file.getAbsolutePath());
+            final String command = _hotFolderPreferences.getUnixCommandTemplate()
+                    .replace(HotFolderPreferences.FILE_PATH_PLACEHOLDER, file.getAbsolutePath());
             process = new ProcessBuilder("/bin/sh", "-c", command).start();
 
             try (InputStream inputStream = process.getInputStream();

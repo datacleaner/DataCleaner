@@ -17,24 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.filesystem;
+package org.datacleaner.monitor.server.hotfolder;
 
-import java.io.File;
+import java.io.IOException;
 
-/**
- * An interface for a general approach to wait for a potentially incomplete file (that is e. g. being copied).
- */
-public interface WaitForCompleteFileStrategy {
-    /**
-     * Waits for a given file to be completed.
-     * @param file
-     */
-    void waitForComplete(File file) throws IncompleteFileException;
-
-    /**
-     * Returns true if the file is ready to be used, false otherwise.
-     * @param file
-     * @return
-     */
-    boolean isReady(File file);
+public class IncompleteFileException extends IOException {
+    public IncompleteFileException(final String message) {
+        super(message);
+    }
 }

@@ -560,12 +560,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     logger.info("Adding listener to scheduler: {}", jobListenerName);
                 }
             }
-        }         catch (final Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
             if (e instanceof CronExpressionException) {
-                throw  (CronExpressionException) e;
+                throw (CronExpressionException) e;
             }
             throw new IllegalStateException("Failed to schedule job: " + job, e);
         }

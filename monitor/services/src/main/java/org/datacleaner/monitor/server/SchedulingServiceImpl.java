@@ -47,6 +47,7 @@ import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileResource;
 import org.datacleaner.job.JaxbJobReader;
+import org.datacleaner.job.concurrent.DaemonThreadFactory;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.ExecutionLogger;

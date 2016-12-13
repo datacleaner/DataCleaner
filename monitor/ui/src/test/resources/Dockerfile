@@ -4,3 +4,4 @@ FROM tomcat:8-jre8
 # <build> is added to the created docker image. Files and artifacts contained in the assembly are by default copied
 # under the "/maven" directory.
 COPY maven/${project.build.finalName}.war /usr/local/tomcat/webapps/${project.build.finalName}.war
+COPY maven/generate-hot-folder-input.sh /tmp/generate-hot-folder-input.sh

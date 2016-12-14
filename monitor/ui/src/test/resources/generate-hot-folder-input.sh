@@ -8,4 +8,5 @@ fi
 
 path="$hot_folder/input.csv"
 echo "VALUE" > $path
-seq 1 1 111111111 > $path
+seq 1 1 11 >> $path
+#seq 1 1 111111111 >> $path

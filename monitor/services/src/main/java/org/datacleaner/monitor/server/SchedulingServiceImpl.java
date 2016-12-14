@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -47,7 +46,6 @@ import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileResource;
 import org.datacleaner.job.JaxbJobReader;
-import org.datacleaner.job.concurrent.DaemonThreadFactory;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.ExecutionLogger;

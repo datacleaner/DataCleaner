@@ -382,15 +382,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final List<ScheduleDefinition> schedules = new ArrayList<>(jobs.size());
         for (final JobIdentifier job : jobs) {
             try {
-                final ScheduleDefinition schedule;
-
-                if (loadProperties) {
-                    schedule = getSchedule(tenant, job);
-                } else {
-                    schedule = getScheduleWithoutProperties(tenant, job);
-                }
-
-                schedules.add(schedule);
+                schedules.add(getSchedule(tenant, job));
             } catch (final Exception e) {
                 logger.error("Failed to initialize schedule for tenant '" + tenant.getId() + "' job '" + job.getName()
                         + "'.", e);
@@ -401,11 +393,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        return getScheduleWithProperties(tenant, jobIdentifier, null);
+        return getSchedule(tenant, jobIdentifier, null);
     }
 
-    private ScheduleDefinition getScheduleWithProperties(final TenantIdentifier tenant,
-            final JobIdentifier jobIdentifier, final Map<String, String> overrideProperties) {
+    private ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
+            final Map<String, String> overrideProperties) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final String jobName = jobIdentifier.getName();
@@ -619,9 +611,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     private ExecutionLog triggerExecution(final TenantIdentifier tenant, final JobIdentifier job,
             final Map<String, String> overrideProperties, final TriggerType manual) {
         final String jobNameToBeTriggered = job.getName();
-
-        final ScheduleDefinition schedule = getScheduleWithProperties(tenant, job, overrideProperties);
-
+        final ScheduleDefinition schedule = getSchedule(tenant, job, overrideProperties);
         final ExecutionLog execution = new ExecutionLog(schedule, manual);
         execution.setJobBeginDate(new Date());
 

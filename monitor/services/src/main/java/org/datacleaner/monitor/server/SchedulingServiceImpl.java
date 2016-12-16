@@ -246,8 +246,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                             .append(" ? ").append(dateInfoExtractor.get(Calendar.YEAR)).toString();
             cronExpression = new CronExpression(cronBuilder);
         } catch (final ParseException e) {
-            throw new IllegalStateException(
-                    "Failed to parse cron expression for one time schedule: " + scheduleExpression, e);
+            throw new DCUserInputException(
+                    "Failed to parse cron expression for one time schedule: " + scheduleExpression);
         }
 
         if (logger.isInfoEnabled()) {
@@ -258,7 +258,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         return cronExpression;
     }
 
-    protected static CronExpression toCronExpression(String scheduleExpression) throws CronExpressionException {
+    protected static CronExpression toCronExpression(String scheduleExpression) throws DCUserInputException {
         scheduleExpression = scheduleExpression.trim();
 
         final CronExpression cronExpression;
@@ -282,7 +282,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 cronExpression = new CronExpression(scheduleExpression);
             }
         } catch (final ParseException e) {
-            throw new CronExpressionException("The cron expression is not valid." + scheduleExpression, e);
+            throw new DCUserInputException("The cron expression is not valid." + scheduleExpression);
         }
 
         if (logger.isInfoEnabled()) {
@@ -565,9 +565,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            if (e instanceof CronExpressionException) {
-                throw new DCUserInputException(e.getMessage());
-            }
+            
             throw new IllegalStateException("Failed to schedule job: " + job, e);
         }
     }

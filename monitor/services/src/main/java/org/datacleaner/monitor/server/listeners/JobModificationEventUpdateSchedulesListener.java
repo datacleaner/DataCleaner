@@ -24,8 +24,8 @@ import java.util.List;
 import org.datacleaner.monitor.events.JobModificationEvent;
 import org.datacleaner.monitor.scheduling.SchedulingService;
 import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
-import org.datacleaner.monitor.shared.model.CronExpressionException;
 import org.datacleaner.monitor.shared.model.DCSecurityException;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.slf4j.Logger;
@@ -76,7 +76,7 @@ public class JobModificationEventUpdateSchedulesListener implements ApplicationL
                 // needs to re-define the schedule
                 try {
                     _schedulingService.updateSchedule(tenant, schedule);
-                } catch (DCSecurityException | CronExpressionException e) {
+                } catch (DCSecurityException | DCUserInputException e) {
                    logger.error("Failed to update schedule", e);
                 }
                 logger.info("Updating job schedule: {}", schedule);
@@ -86,7 +86,7 @@ public class JobModificationEventUpdateSchedulesListener implements ApplicationL
             if (update) {
                 try {
                     _schedulingService.updateSchedule(tenant, schedule);
-                } catch (DCSecurityException | CronExpressionException e) {
+                } catch (DCSecurityException | DCUserInputException e) {
                     logger.error("Failed to update schedule", e);
                 }
             } else {

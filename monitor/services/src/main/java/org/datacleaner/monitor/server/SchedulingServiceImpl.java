@@ -67,6 +67,7 @@ import org.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader;
 import org.datacleaner.monitor.server.job.ExecutionLoggerImpl;
 import org.datacleaner.monitor.shared.model.CronExpressionException;
 import org.datacleaner.monitor.shared.model.DCSecurityException;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.Repository;
@@ -281,7 +282,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 cronExpression = new CronExpression(scheduleExpression);
             }
         } catch (final ParseException e) {
-            throw new CronExpressionException("Failed to parse cron expression: " + scheduleExpression, e);
+            throw new CronExpressionException("The cron expression is not valid." + scheduleExpression, e);
         }
 
         if (logger.isInfoEnabled()) {
@@ -301,7 +302,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @PostConstruct()
-    public void initialize() throws CronExpressionException {
+    public void initialize() throws DCUserInputException {
         // initialize tenants by scanning tenant folders
         if (_schedulingServiceConfiguration.isTenantInitialization()) {
             final List<RepositoryFolder> tenantFolders = _repository.getFolders();
@@ -466,7 +467,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ScheduleDefinition updateSchedule(final TenantIdentifier tenant,
-            final ScheduleDefinition scheduleDefinition) throws CronExpressionException {
+            final ScheduleDefinition scheduleDefinition) throws DCUserInputException {
 
         initializeSchedule(scheduleDefinition);
 
@@ -492,7 +493,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         return scheduleDefinition;
     }
 
-    private void initializeSchedule(final ScheduleDefinition schedule) throws CronExpressionException {
+    private void initializeSchedule(final ScheduleDefinition schedule) throws DCUserInputException {
         final JobIdentifier job = schedule.getJob();
 
         removeSchedule(schedule.getTenant(), job);
@@ -565,7 +566,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 throw (RuntimeException) e;
             }
             if (e instanceof CronExpressionException) {
-                throw (CronExpressionException) e;
+                throw new DCUserInputException(e.getMessage());
             }
             throw new IllegalStateException("Failed to schedule job: " + job, e);
         }

@@ -28,8 +28,8 @@ import javax.annotation.security.RolesAllowed;
 import org.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
-import org.datacleaner.monitor.shared.model.CronExpressionException;
 import org.datacleaner.monitor.shared.model.DCSecurityException;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -48,7 +48,7 @@ public interface SchedulingService extends RemoteService {
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition)
-            throws DCSecurityException, CronExpressionException;
+            throws DCSecurityException, DCUserInputException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     void removeSchedule(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;

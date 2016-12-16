@@ -248,7 +248,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             cronExpression = new CronExpression(cronBuilder);
         } catch (final ParseException e) {
             throw new DCUserInputException(
-                    "Failed to parse cron expression for one time schedule: " + scheduleExpression);
+                    "The cron expression is not valid for one time schedule: " + scheduleExpression);
         }
         
         if (logger.isInfoEnabled()) {

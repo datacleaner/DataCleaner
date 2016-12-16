@@ -65,7 +65,6 @@ import org.datacleaner.monitor.server.jaxb.JaxbScheduleReader;
 import org.datacleaner.monitor.server.jaxb.JaxbScheduleWriter;
 import org.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader;
 import org.datacleaner.monitor.server.job.ExecutionLoggerImpl;
-import org.datacleaner.monitor.shared.model.CronExpressionException;
 import org.datacleaner.monitor.shared.model.DCSecurityException;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
@@ -229,11 +228,13 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
     }
 
-    protected static CronExpression toCronExpressionForOneTimeSchedule(String scheduleExpression) {
+    protected static CronExpression toCronExpressionForOneTimeSchedule(String scheduleExpression) throws DCUserInputException {
         scheduleExpression = scheduleExpression.trim();
         final CronExpression cronExpression;
         try {
-            final Date oneTimeSchedule = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(scheduleExpression);
+            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            simpleDateFormat.setLenient(false);
+            final Date oneTimeSchedule = simpleDateFormat.parse(scheduleExpression);
             final Calendar dateInfoExtractor = Calendar.getInstance();
             dateInfoExtractor.setTime(oneTimeSchedule);
             final int month = dateInfoExtractor.get(Calendar.MONTH) + 1;
@@ -249,7 +250,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throw new DCUserInputException(
                     "Failed to parse cron expression for one time schedule: " + scheduleExpression);
         }
-
+        
         if (logger.isInfoEnabled()) {
             logger.info("Cron expression summary ({}): {}", scheduleExpression,
                     cronExpression.getExpressionSummary().replaceAll("\n", ", "));

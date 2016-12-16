@@ -282,7 +282,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 cronExpression = new CronExpression(scheduleExpression);
             }
         } catch (final ParseException e) {
-            throw new DCUserInputException("The cron expression is not valid." + scheduleExpression);
+            throw new DCUserInputException("The cron expression is not valid: " + scheduleExpression);
         }
 
         if (logger.isInfoEnabled()) {

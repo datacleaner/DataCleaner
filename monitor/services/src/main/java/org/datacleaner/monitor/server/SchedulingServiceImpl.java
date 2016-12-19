@@ -455,15 +455,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final List<ScheduleDefinition> schedules = new ArrayList<>(jobs.size());
         for (final JobIdentifier job : jobs) {
             try {
-                final ScheduleDefinition schedule;
-
-                if (loadProperties) {
-                    schedule = getSchedule(tenant, job);
-                } else {
-                    schedule = getScheduleWithoutProperties(tenant, job);
-                }
-
-                schedules.add(schedule);
+                schedules.add(getSchedule(tenant, job));
             } catch (final Exception e) {
                 logger.error("Failed to initialize schedule for tenant '" + tenant.getId() + "' job '" + job.getName()
                         + "'.", e);

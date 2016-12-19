@@ -20,6 +20,7 @@
 package org.datacleaner.monitor;
 
 import static javax.management.timer.Timer.ONE_MINUTE;
+import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
@@ -38,6 +39,8 @@ public class HotFolderIT {
     @Test(timeout = 5 * ONE_MINUTE)
     public void testHotFolder() {
         try {
+            assertEquals(0, getResultFilesCount());
+
             final String command = "docker exec " + getContainerId() + " /bin/sh /tmp/generate-hot-folder-input.sh";
             new ProcessBuilder(command.split(" ")).start();
 
@@ -47,10 +50,21 @@ public class HotFolderIT {
                 // nothing
             }
 
-            // TODO: some results checking...
-        } catch (IOException e) {
+            assertEquals(2, getResultFilesCount());
+        } catch (final IOException e) {
             fail(e.getMessage());
         }
+    }
+
+    private int getResultFilesCount() throws IOException {
+        final String command = "docker exec " + getContainerId() + " /bin/sh /tmp/get-results-count.sh";
+        final List<String> outputLines = getCommandOutput(command.split(" "));
+
+        if (outputLines.size() == 1) {
+            return Integer.parseInt(outputLines.get(0));
+        }
+
+        return -1;
     }
 
     private String getContainerId() throws IOException {

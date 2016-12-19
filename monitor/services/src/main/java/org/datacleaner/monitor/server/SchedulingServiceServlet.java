@@ -28,6 +28,7 @@ import org.datacleaner.monitor.scheduling.SchedulingService;
 import org.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.datacleaner.monitor.shared.model.CronExpressionException;
 import org.datacleaner.monitor.shared.model.DCSecurityException;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -74,7 +75,7 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
 
     @Override
     public ScheduleDefinition updateSchedule(final TenantIdentifier tenant,
-            final ScheduleDefinition scheduleDefinition) {
+            final ScheduleDefinition scheduleDefinition) throws DCSecurityException, CronExpressionException {
         return _delegate.updateSchedule(tenant, scheduleDefinition);
     }
 

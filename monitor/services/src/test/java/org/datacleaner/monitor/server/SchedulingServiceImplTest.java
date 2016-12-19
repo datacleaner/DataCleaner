@@ -25,6 +25,7 @@ import java.util.Date;
 
 import org.apache.metamodel.util.DateUtils;
 import org.apache.metamodel.util.Month;
+import org.datacleaner.monitor.shared.model.CronExpressionException;
 import org.quartz.CronExpression;
 
 import junit.framework.TestCase;
@@ -78,20 +79,20 @@ public class SchedulingServiceImplTest extends TestCase {
         }
 
         callTime = DateUtils.get(2012, Month.MARCH, 21);
-        assertEquals("2012-03-25",
-                new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
+        assertEquals("2012-03-25", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(
+                callTime)));
 
         callTime = DateUtils.get(2012, Month.MARCH, 24);
-        assertEquals("2012-03-25",
-                new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
+        assertEquals("2012-03-25", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(
+                callTime)));
 
         callTime = DateUtils.get(2012, Month.MARCH, 25);
-        assertEquals("2012-04-01",
-                new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
+        assertEquals("2012-04-01", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(
+                callTime)));
 
         callTime = DateUtils.get(2012, Month.MARCH, 26);
-        assertEquals("2012-04-01",
-                new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
+        assertEquals("2012-04-01", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(
+                callTime)));
     }
 
     public void testToCronExpressionDaily() throws Exception {
@@ -125,5 +126,14 @@ public class SchedulingServiceImplTest extends TestCase {
         cal.add(Calendar.MINUTE, 1);
 
         assertEquals(cal.getTime(), dailyExpr.getNextValidTimeAfter(new Date()));
+    }
+
+    public void testToCronExpressionOneTime() {
+        try {
+            SchedulingServiceImpl.toCronExpressionForOneTimeSchedule("2016-12-51 00:00:00");
+            fail("Method should have thrown exception");
+        } catch (CronExpressionException e) {
+            assertEquals("The cron expression is not valid for one time schedule: 2016-12-51 00:00:00", e.getMessage());
+        }
     }
 }

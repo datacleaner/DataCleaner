@@ -113,6 +113,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     private final class HotFolderAlterationListener extends FileAlterationListenerAdaptor {
         private static final String PROPERTIES_FILE_EXTENSION = ".properties";
+        private static final String TRIGGER_FILE_EXTENSION = ".trigger";
 
         private final JobIdentifier job;
         private final TenantIdentifier tenant;
@@ -162,8 +163,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             }
 
             final String dataStoreName = getDataStoreName();
+            final String triggerFileName = job.getName() + TRIGGER_FILE_EXTENSION;
 
-            if (dataStoreName != null) {
+            if (file.getName().equals(triggerFileName)) {
+                triggerJobExecution();
+            } else if (dataStoreName != null) {
                 try {
                     /*
                      * File event can be triggered before the complete file content is written (copying in progress).
@@ -180,7 +184,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 propertiesMap.put("datastoreCatalog." + getDataStoreName() + ".filename", file.getAbsolutePath());
                 triggerExecution(tenant, job, propertiesMap, TriggerType.HOTFOLDER);
             } else {
-                triggerJobExecution();
+                logger.error("Hot folder job execution was cancelled because datastore name is missing. ");
             }
         }
 

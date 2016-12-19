@@ -65,6 +65,7 @@ import org.datacleaner.monitor.server.jaxb.JaxbScheduleReader;
 import org.datacleaner.monitor.server.jaxb.JaxbScheduleWriter;
 import org.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader;
 import org.datacleaner.monitor.server.job.ExecutionLoggerImpl;
+import org.datacleaner.monitor.shared.model.CronExpressionException;
 import org.datacleaner.monitor.shared.model.DCSecurityException;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
@@ -228,7 +229,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
     }
 
-    protected static CronExpression toCronExpressionForOneTimeSchedule(String scheduleExpression) throws DCUserInputException {
+    protected static CronExpression toCronExpressionForOneTimeSchedule(String scheduleExpression) throws CronExpressionException {
         scheduleExpression = scheduleExpression.trim();
         final CronExpression cronExpression;
         try {
@@ -247,7 +248,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                             .append(" ? ").append(dateInfoExtractor.get(Calendar.YEAR)).toString();
             cronExpression = new CronExpression(cronBuilder);
         } catch (final ParseException e) {
-            throw new DCUserInputException(
+            throw new CronExpressionException(
                     "The cron expression is not valid for one time schedule: " + scheduleExpression);
         }
         
@@ -259,7 +260,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         return cronExpression;
     }
 
-    protected static CronExpression toCronExpression(String scheduleExpression) throws DCUserInputException {
+    protected static CronExpression toCronExpression(String scheduleExpression) throws CronExpressionException {
         scheduleExpression = scheduleExpression.trim();
 
         final CronExpression cronExpression;
@@ -283,7 +284,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 cronExpression = new CronExpression(scheduleExpression);
             }
         } catch (final ParseException e) {
-            throw new DCUserInputException("The cron expression is not valid: " + scheduleExpression);
+            throw new CronExpressionException("The cron expression is not valid: " + scheduleExpression);
         }
 
         if (logger.isInfoEnabled()) {
@@ -303,7 +304,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @PostConstruct()
-    public void initialize() throws DCUserInputException {
+    public void initialize() throws CronExpressionException {
         // initialize tenants by scanning tenant folders
         if (_schedulingServiceConfiguration.isTenantInitialization()) {
             final List<RepositoryFolder> tenantFolders = _repository.getFolders();
@@ -494,7 +495,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         return scheduleDefinition;
     }
 
-    private void initializeSchedule(final ScheduleDefinition schedule) throws DCUserInputException {
+    private void initializeSchedule(final ScheduleDefinition schedule) throws CronExpressionException {
         final JobIdentifier job = schedule.getJob();
 
         removeSchedule(schedule.getTenant(), job);

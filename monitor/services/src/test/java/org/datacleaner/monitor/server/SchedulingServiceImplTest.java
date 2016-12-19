@@ -25,10 +25,8 @@ import java.util.Date;
 
 import org.apache.metamodel.util.DateUtils;
 import org.apache.metamodel.util.Month;
-import org.datacleaner.monitor.shared.model.DCUserInputException;
+import org.datacleaner.monitor.shared.model.CronExpressionException;
 import org.quartz.CronExpression;
-
-import com.mchange.util.AssertException;
 
 import junit.framework.TestCase;
 
@@ -134,7 +132,7 @@ public class SchedulingServiceImplTest extends TestCase {
         try {
             SchedulingServiceImpl.toCronExpressionForOneTimeSchedule("2016-12-51 00:00:00");
             fail("Method should have thrown exception");
-        } catch (DCUserInputException e) {
+        } catch (CronExpressionException e) {
             assertEquals("The cron expression is not valid for one time schedule: 2016-12-51 00:00:00", e.getMessage());
         }
     }

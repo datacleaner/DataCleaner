@@ -135,7 +135,7 @@ public class SchedulingServiceImplTest extends TestCase {
             SchedulingServiceImpl.toCronExpressionForOneTimeSchedule("2016-12-51 00:00:00");
             fail("Method should have thrown exception");
         } catch (DCUserInputException e) {
-
+            assertEquals("The cron expression is not valid for one time schedule: 2016-12-51 00:00:00", e.getMessage());
         }
     }
 }

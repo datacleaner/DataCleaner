@@ -20,8 +20,12 @@
 package org.datacleaner.monitor.server;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,10 +46,14 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileResource;
+import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobReader;
+import org.datacleaner.job.JaxbJobWriter;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.ExecutionLogger;
@@ -114,6 +122,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     private final class HotFolderAlterationListener extends FileAlterationListenerAdaptor {
         private static final String PROPERTIES_FILE_EXTENSION = ".properties";
         private static final String TRIGGER_FILE_EXTENSION = ".trigger";
+        private static final String VARIABLE_FILE_NAME = "hotfolder.input.filename";
+        private static final String VARIABLE_EXTENSION = "hotfolder.input.extension";
+        private static final String VARIABLE_DATE = "datacleaner.run.date";
+        private static final String VARIABLE_TIME = "datacleaner.run.time";
+        private static final String DATE_FORMAT = "yyyy/MM/dd";
+        private static final String TIME_FORMAT = "HH:mm:ss";
 
         private final JobIdentifier job;
         private final TenantIdentifier tenant;
@@ -151,8 +165,47 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         private void executeJobWithFileInNewThread(final File file) {
             new Thread(() -> {
+                fillJobVariables(file);
                 executeJobWithFile(file);
             }).start();
+        }
+
+        private void fillJobVariables(final File file) {
+            try {
+                final File jobFile = getJobFile();
+                final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+                final JaxbJobReader reader = new JaxbJobReader(tenantContext.getConfiguration());
+                final AnalysisJob analysisJob = reader.read(new FileInputStream(jobFile));
+                final Map<String, String> variables = analysisJob.getMetadata().getVariables();
+                final String fileName = file.getName();
+                final String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+                variables.put(VARIABLE_FILE_NAME, fileName);
+                variables.put(VARIABLE_EXTENSION, extension);
+                variables.put(VARIABLE_DATE, getDateTimePart(DATE_FORMAT));
+                variables.put(VARIABLE_TIME, getDateTimePart(TIME_FORMAT));
+
+                final OutputStream outputStream = new FileOutputStream(jobFile);
+                new JaxbJobWriter(tenantContext.getConfiguration()).write(analysisJob, outputStream);
+            } catch (final FileNotFoundException | RuntimeException e) {
+                logger.error(e.getMessage());
+            }
+        }
+
+        private String getDateTimePart(final String format) {
+            final DateFormat dateFormat = new SimpleDateFormat(format);
+
+            return dateFormat.format(new Date());
+        }
+
+        private File getJobFile() {
+            final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+            final JobContext jobContext = tenantContext.getJob(job);
+            final String jobFileName = jobContext.getJobFile().getName();
+            final RepositoryFile jobRepositoryFile = tenantContext.getTenantRootFolder().getFolder("jobs")
+                    .getFile(jobFileName);
+
+            return new File(jobRepositoryFile.toResource().getQualifiedPath());
         }
 
         private void executeJobWithFile(final File file) {
@@ -205,17 +258,13 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         private String getDataStoreName() {
             try {
+                final File jobFile = getJobFile();
                 final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-                final JobContext jobContext = tenantContext.getJob(job);
-                final String jobFileName = jobContext.getJobFile().getName();
-                final RepositoryFile jobRepositoryFile = tenantContext.getTenantRootFolder().getFolder("jobs")
-                        .getFile(jobFileName);
                 final JaxbJobReader reader = new JaxbJobReader(tenantContext.getConfiguration());
-                final File jobFile = new File(jobRepositoryFile.toResource().getQualifiedPath());
 
                 return reader.readMetadata(jobFile).getDatastoreName();
             } catch (RuntimeException e) {
-                logger.error("DataStore name could not be resolved. {}", e);
+                logger.warn("DataStore name could not be resolved. {}", e);
                 return null;
             }
         }

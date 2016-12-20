@@ -46,14 +46,15 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
-import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileResource;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.JaxbJobWriter;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.ExecutionLogger;
@@ -72,6 +73,7 @@ import org.datacleaner.monitor.server.hotfolder.DefaultWaitForCompleteFileStrate
 import org.datacleaner.monitor.server.hotfolder.HotFolderPreferences;
 import org.datacleaner.monitor.server.hotfolder.IncompleteFileException;
 import org.datacleaner.monitor.server.hotfolder.WaitForCompleteFileStrategy;
+import org.datacleaner.monitor.server.hotfolder.WrongInputException;
 import org.datacleaner.monitor.server.jaxb.JaxbException;
 import org.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
 import org.datacleaner.monitor.server.jaxb.JaxbScheduleReader;
@@ -163,11 +165,55 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             executeJobWithFileInNewThread(file);
         }
 
-        private void executeJobWithFileInNewThread(final File file) {
+        private void executeJobWithFileInNewThread(final File inputFile) {
             new Thread(() -> {
-                fillJobVariables(file);
-                executeJobWithFile(file);
+                try {
+                    checkInputFile(inputFile);
+                    fillJobVariables(inputFile);
+                    executeJobWithFile(inputFile);
+                } catch (final WrongInputException e) {
+                    logger.error("File '{}' does not contain required columns. " + e.getMessage(), inputFile.getName());
+                }
             }).start();
+        }
+
+        private void checkInputFile(final File inputFile) throws WrongInputException {
+            final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+            final Datastore oldDataStore = tenantContext.getConfiguration().getDatastoreCatalog()
+                    .getDatastore(getDataStoreName());
+            final Datastore newDataStore = getNewDataStore(inputFile, oldDataStore);
+            final String[] oldColumnNames = oldDataStore.openConnection().getSchemaNavigator().getDefaultSchema()
+                    .getTable(0).getColumnNames();
+            final String[] newColumnNames = newDataStore.openConnection().getSchemaNavigator().getDefaultSchema()
+                    .getTable(0).getColumnNames();
+
+            if (oldColumnNames.length != newColumnNames.length) {
+                throw new WrongInputException("The file does not have correct number of input columns ("
+                        + oldColumnNames.length + " required, " + newColumnNames.length + " present). ");
+            }
+
+            for (int i = 0; i < oldColumnNames.length; i++) {
+                if (!oldColumnNames[i].equals(newColumnNames[i])) {
+                    throw new WrongInputException("The file does not have a correct input column at position " + i
+                            + " ('" + oldColumnNames[i] + "' required, '" + newColumnNames[i] + "' present). ");
+                }
+            }
+        }
+
+        private Datastore getNewDataStore(final File inputFile, final Datastore oldDataStore)
+                throws WrongInputException {
+            final Datastore newDataStore;
+
+            if (oldDataStore instanceof CsvDatastore) {
+                newDataStore = new CsvDatastore(inputFile.getName(), inputFile.getAbsolutePath());
+            } else if (oldDataStore instanceof ExcelDatastore) {
+                newDataStore = new ExcelDatastore(inputFile.getName(), new FileResource(inputFile),
+                        inputFile.getAbsolutePath());
+            } else {
+                throw new WrongInputException("Unsupported data store type (" + inputFile.getAbsolutePath() + "). ");
+            }
+
+            return newDataStore;
         }
 
         private void fillJobVariables(final File file) {

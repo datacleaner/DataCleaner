@@ -952,7 +952,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         if (variableRef == null) {
                             String templateValue = property.getTemplate();
                             if (templateValue != null) {
-                                for (Entry<String, String> variable : variables.entrySet()) {
+                                for (final Entry<String, String> variable : variables.entrySet()) {
                                     templateValue = templateValue.replace("${" + variable.getKey() + "}", variable.getValue());
                                 }
                                 stringValue = templateValue;
@@ -963,12 +963,9 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         } else {
                             stringValue = variables.get(variableRef);
                         }
-
-
                         if (stringValue == null) {
                             throw new ComponentConfigurationException("No such variable: " + variableRef);
                         }
-
                         builder.getMetadataProperties()
                                 .put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
                     }

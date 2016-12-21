@@ -69,7 +69,6 @@ import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
 
-import com.ibm.icu.util.Calendar;
 
 import junit.framework.TestCase;
 
@@ -466,7 +465,7 @@ public class JaxbJobWriterTest extends TestCase {
             final InputColumn<?> lnCol = ajb.getSourceColumnByName("LASTNAME");
             final InputColumn<?> emailCol = ajb.getSourceColumnByName("EMAIL");
 
-            final FileResource file = new FileResource("/tmp/myFile.csv");
+            final FileResource file = new FileResource("tmp/myFile.csv");
             final AnalyzerComponentBuilder<CreateCsvFileAnalyzer> csvAnalyzer = ajb.addAnalyzer(
                     CreateCsvFileAnalyzer.class);
             csvAnalyzer.addInputColumns(fnCol, lnCol, emailCol);

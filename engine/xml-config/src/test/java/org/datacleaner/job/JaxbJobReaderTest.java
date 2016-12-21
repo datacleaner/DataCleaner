@@ -102,8 +102,8 @@ public class JaxbJobReaderTest extends TestCase {
         final DataCleanerConfigurationImpl conf = this.conf.withReferenceDataCatalog(referenceDataCatalog);
 
         final JobReader<InputStream> reader = new JaxbJobReader(conf);
-        final AnalysisJob job = reader
-                .read(new FileInputStream(new File("src/test/resources/example-job-job-title-analytics.analysis.xml")));
+        final AnalysisJob job = reader.read(
+                new FileInputStream(new File("src/test/resources/example-job-job-title-analytics.analysis.xml")));
         assertNotNull(job);
     }
 
@@ -296,12 +296,10 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals("MetaModelInputColumn[PUBLIC.EMPLOYEES.EMAIL]", sourceColumns.get(2).toString());
 
         assertEquals(1, builder.getTransformerComponentBuilders().size());
-        assertEquals(
-                "[TransformedInputColumn[id=trans-0001-0002,name=username], "
-                        + "TransformedInputColumn[id=trans-0001-0003,name=domain]]",
+        assertEquals("[TransformedInputColumn[id=trans-0001-0002,name=username], "
+                + "TransformedInputColumn[id=trans-0001-0003,name=domain]]",
                 builder.getTransformerComponentBuilders().get(0).getOutputColumns().toString());
-        assertEquals(
-                "[TransformedInputColumn[id=trans-0001-0002,name=username], "
+        assertEquals("[TransformedInputColumn[id=trans-0001-0002,name=username], "
                         + "TransformedInputColumn[id=trans-0001-0003,name=domain], "
                         + "MetaModelInputColumn[PUBLIC.EMPLOYEES.FIRSTNAME], "
                         + "MetaModelInputColumn[PUBLIC.EMPLOYEES.LASTNAME]]",
@@ -324,8 +322,9 @@ public class JaxbJobReaderTest extends TestCase {
     public void testUsingSourceAlternateDatastore() throws Throwable {
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("another datastore name");
         final JaxbJobReader reader = new JaxbJobReader(conf);
-        final AnalysisJobBuilder analysisJobBuilder = reader
-                .create(new FileInputStream(new File("src/test/resources/example-job-valid.xml")), null, datastore);
+        final AnalysisJobBuilder analysisJobBuilder =
+                reader.create(new FileInputStream(new File("src/test/resources/example-job-valid.xml")), null,
+                        datastore);
 
         final AnalysisJob analysisJob = analysisJobBuilder.toAnalysisJob();
         assertEquals("another datastore name", analysisJob.getDatastore().getName());
@@ -346,10 +345,10 @@ public class JaxbJobReaderTest extends TestCase {
         final DatastoreConnection con = datastore.openConnection();
         final SchemaNavigator sn = con.getSchemaNavigator();
         sourceColumnMapping.setColumn("PUBLIC.EMPLOYEES.EMAIL", sn.convertToColumn("PUBLIC.CUSTOMERS.PHONE"));
-        sourceColumnMapping.setColumn("PUBLIC.EMPLOYEES.FIRSTNAME",
-                sn.convertToColumn("PUBLIC.CUSTOMERS.CONTACTFIRSTNAME"));
-        sourceColumnMapping.setColumn("PUBLIC.EMPLOYEES.LASTNAME",
-                sn.convertToColumn("PUBLIC.CUSTOMERS.CONTACTLASTNAME"));
+        sourceColumnMapping
+                .setColumn("PUBLIC.EMPLOYEES.FIRSTNAME", sn.convertToColumn("PUBLIC.CUSTOMERS.CONTACTFIRSTNAME"));
+        sourceColumnMapping
+                .setColumn("PUBLIC.EMPLOYEES.LASTNAME", sn.convertToColumn("PUBLIC.CUSTOMERS.CONTACTLASTNAME"));
 
         assertEquals("[]", sourceColumnMapping.getUnmappedPaths().toString());
         assertTrue(sourceColumnMapping.isSatisfied());
@@ -422,8 +421,8 @@ public class JaxbJobReaderTest extends TestCase {
 
     public void testReadAndExecuteOutputDataStreams() throws Throwable {
         final JobReader<InputStream> reader = new JaxbJobReader(conf);
-        final AnalysisJob job = reader
-                .read(new FileInputStream(new File("src/test/resources/example-job-output-dataset.analysis.xml")));
+        final AnalysisJob job = reader.read(
+                new FileInputStream(new File("src/test/resources/example-job-output-dataset.analysis.xml")));
 
         assertEquals(1, job.getAnalyzerJobs().size());
         final AnalyzerJob analyzerJob = job.getAnalyzerJobs().get(0);
@@ -592,8 +591,8 @@ public class JaxbJobReaderTest extends TestCase {
 
     /**
      * Validates whether the values of datastore column names of a job which is written to disk using the
-     * {@link JaxbJobWriter} and then read as a new job using the {@link JaxbJobReader} are the same before and after
-     * when the datastore column names contains line feeds.
+     * {@link JaxbJobWriter} and then read as a new job using the {@link JaxbJobReader} are the same before
+     * and after when the datastore column names contains line feeds.
      */
     public void testReadJobWithMultipleLinedColumnNames() throws Exception {
         final Datastore datastore = new ExcelDatastore("doubles", null, "src/test/resources/double.xlsx");
@@ -628,7 +627,6 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals(originalJob.getSourceColumns().stream().map(InputColumn::getName).collect(Collectors.toList()),
                 readJob.getSourceColumns().stream().map(InputColumn::getName).collect(Collectors.toList()));
     }
-
     public void testJobWithTemplateProperties() {
         final JaxbJobReader reader = new JaxbJobReader(conf);
         final AnalysisJobBuilder jobBuilder = reader.create(new File("src/test/resources/example-job-template.xml"));
@@ -638,16 +636,17 @@ public class JaxbJobReaderTest extends TestCase {
         final ComponentBuilder componentBuilder = componentBuilders.get(0);
         final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
         assertEquals("Completeness analyzer", descriptor.getDisplayName());
-        final AnalysisJobBuilder outputDataStreamJobBuilder =
-                componentBuilder.getOutputDataStreamJobBuilder("Complete rows");
-        final List<ComponentBuilder> componentBuilders2 =
-                new ArrayList<>(outputDataStreamJobBuilder.getComponentBuilders());
+        final AnalysisJobBuilder outputDataStreamJobBuilder = componentBuilder.getOutputDataStreamJobBuilder(
+                "Complete rows");
+        final List<ComponentBuilder> componentBuilders2 = new ArrayList<>(outputDataStreamJobBuilder
+                .getComponentBuilders());
         assertEquals(1, componentBuilders2.size());
         final ComponentBuilder createCsvComponentBuilder = componentBuilders2.get(0);
         assertEquals("Create CSV file", createCsvComponentBuilder.getDescriptor().getDisplayName());
-        final LinkedList<Object> linkedList =
-                new LinkedList<>(createCsvComponentBuilder.getConfiguredProperties().values());
-        assertEquals("FileResource[c:\\ignite\\hotfolder\\dc_input - 2016-12-12 14:14:56 - samples.csv]",
-                linkedList.get(3).toString());
+        final LinkedList<Object> linkedList = new LinkedList<>(createCsvComponentBuilder.getConfiguredProperties()
+                .values());
+        assertEquals("FileResource[c:\\ignite\\hotfolder\\dc_input - 2016-12-12 14:14:56 - samples.csv]", linkedList
+                .get(3).toString());
     }
+
 }

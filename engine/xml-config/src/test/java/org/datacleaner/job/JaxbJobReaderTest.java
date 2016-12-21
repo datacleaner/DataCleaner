@@ -651,8 +651,8 @@ public class JaxbJobReaderTest extends TestCase {
                 .get(3);
         String absolutePath = propertyFile.getFile().getAbsolutePath();
         absolutePath = absolutePath.replace("\\", "/"); 
-        absolutePath =  "/" + absolutePath; 
-        assertEquals("/C:/tmp/ignite/hotfolder/dc_input - 2016-12-12 14:14:56 - samples.csv", absolutePath);
+        absolutePath = absolutePath.replace("C:", "");
+        assertEquals("/tmp/ignite/hotfolder/dc_input - 2016-12-12 14:14:56 - samples.csv", absolutePath);
     }
 
 }

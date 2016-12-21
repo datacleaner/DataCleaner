@@ -63,9 +63,9 @@
 								type="VARCHAR" />
 						</columns>
 						<variables>
-							<variable id="psp.output.path.final" value="file:///c:/ignite/hotfolder" />
-							<variable id="psp.output.path.samples" value="file:///c:/ignite/samples" />
-							<variable id="psp.output.path.failures" value="file:///c:/ignite/failures" />
+							<variable id="psp.output.path.final" value="file:///tmp/ignite/hotfolder" />
+							<variable id="psp.output.path.samples" value="file:///tmp/ignite/samples" />
+							<variable id="psp.output.path.failures" value="file:///tmp/ignite/failures" />
 							<variable id="hotfolder.input.filename" value="dc_input" />
 							<variable id="datacleaner.run.timestamp" value="2016-12-12 14:14:56" />
 						</variables>

@@ -22,6 +22,7 @@ package org.datacleaner.job;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -628,7 +629,7 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals(originalJob.getSourceColumns().stream().map(InputColumn::getName).collect(Collectors.toList()),
                 readJob.getSourceColumns().stream().map(InputColumn::getName).collect(Collectors.toList()));
     }
-    public void testJobWithTemplateProperties() {
+    public void testJobWithTemplateProperties() throws IOException {
         final JaxbJobReader reader = new JaxbJobReader(conf);
         final AnalysisJobBuilder jobBuilder = reader.create(new File("src/test/resources/example-job-template.xml"));
 
@@ -650,7 +651,8 @@ public class JaxbJobReaderTest extends TestCase {
                 .get(3);
         String absolutePath = propertyFile.getFile().getAbsolutePath();
         absolutePath = absolutePath.replace("\\", "/"); 
-        assertEquals("c:/ignite/hotfolder/dc_input - 2016-12-12 14:14:56 - samples.csv", absolutePath);
+        absolutePath =  "/" + absolutePath; 
+        assertEquals("/C:/tmp/ignite/hotfolder/dc_input - 2016-12-12 14:14:56 - samples.csv", absolutePath);
     }
 
 }

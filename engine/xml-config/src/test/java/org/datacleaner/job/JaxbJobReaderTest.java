@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.ToStringComparator;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
@@ -645,8 +646,11 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals("Create CSV file", createCsvComponentBuilder.getDescriptor().getDisplayName());
         final LinkedList<Object> linkedList = new LinkedList<>(createCsvComponentBuilder.getConfiguredProperties()
                 .values());
-        assertEquals("FileResource[c:\\ignite\\hotfolder\\dc_input - 2016-12-12 14:14:56 - samples.csv]", linkedList
-                .get(3).toString());
+        final FileResource propertyFile = (FileResource) linkedList
+                .get(3);
+        String absolutePath = propertyFile.getFile().getAbsolutePath();
+        absolutePath = absolutePath.replace("\\", "/"); 
+        assertEquals("c:/ignite/hotfolder/dc_input - 2016-12-12 14:14:56 - samples.csv", absolutePath);
     }
 
 }

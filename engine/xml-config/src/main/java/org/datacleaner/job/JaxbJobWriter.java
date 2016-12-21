@@ -495,8 +495,10 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         configuredPropertiesType.getProperty().addAll(result);
         return configuredPropertiesType;
     }
-    private boolean isTemplate(final String value, final Map<String, String> componentMetadataProperties) {
-        final Set<String> keySet = componentMetadataProperties.keySet();
+    
+    private boolean isTemplate(final String value, final Map<String, String> variables) {
+        final Set<String> keySet = variables.keySet();
+        //if the value contains at least a variable then is a template 
         for (final String key : keySet) {
             if (value.contains(key)) {
                 return true;

@@ -33,6 +33,7 @@ import javax.xml.datatype.DatatypeFactory;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileResource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.beans.CompletenessAnalyzer;
@@ -58,6 +59,7 @@ import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
+import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
@@ -66,6 +68,8 @@ import org.datacleaner.job.jaxb.JobMetadataType;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
+
+import com.ibm.icu.util.Calendar;
 
 import junit.framework.TestCase;
 
@@ -414,6 +418,61 @@ public class JaxbJobWriterTest extends TestCase {
             // be different than "col_lastname" which is the ID in the default
             // scope
             assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-testNameClashInMelonAndDefaultScope.xml");
+        }
+    }
+    
+    public void testWriteCsvTemplate() throws Exception {
+
+        final String VARIABLE_FOLDER_OUTGOING = "psp.output.path.final";
+        final String VARIABLE_FILENAME_OUTGOING = "hotfolder.input.filename";
+        final String VARIABLE_TIMESTAMP_OUTGOING = "datacleaner.run.timestamp";
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("my db");
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+
+            ajb.setDatastore("my db");
+
+            ajb.addSourceColumns("PUBLIC.EMPLOYEES.FIRSTNAME", "PUBLIC.EMPLOYEES.LASTNAME", "PUBLIC.EMPLOYEES.EMAIL");
+
+            final InputColumn<?> fnCol = ajb.getSourceColumnByName("FIRSTNAME");
+            final InputColumn<?> lnCol = ajb.getSourceColumnByName("LASTNAME");
+            final InputColumn<?> emailCol = ajb.getSourceColumnByName("EMAIL");
+            ajb.getAnalysisJobMetadata().getVariables().put(VARIABLE_FOLDER_OUTGOING,
+                    "C:\\Users\\claudiap\\Documents\\OutgoingHotFolder");
+            ajb.getAnalysisJobMetadata().getVariables().put(VARIABLE_FILENAME_OUTGOING, "myFile");
+            ajb.getAnalysisJobMetadata().getVariables().put(VARIABLE_TIMESTAMP_OUTGOING, "1482244133378");
+
+            final String value = "${" + VARIABLE_FOLDER_OUTGOING + "/" + VARIABLE_FILENAME_OUTGOING + "/"
+                    + VARIABLE_TIMESTAMP_OUTGOING + "-samples.csv" + "}";
+            final FileResource file = new FileResource(value);
+            final AnalyzerComponentBuilder<CreateCsvFileAnalyzer> csvAnalyzer = ajb.addAnalyzer(
+                    CreateCsvFileAnalyzer.class);
+            csvAnalyzer.addInputColumns(fnCol, lnCol, emailCol);
+            csvAnalyzer.setConfiguredProperty("File", file);
+
+            assertMatchesBenchmark(ajb.toAnalysisJob(),"JaxbJobWriterTest-testWriteCsvTemplate.xml");
+        }
+    }
+    
+    public void testWriteCsv() throws Exception {
+
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("my db");
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+            ajb.setDatastore("my db");
+            ajb.addSourceColumns("PUBLIC.EMPLOYEES.FIRSTNAME", "PUBLIC.EMPLOYEES.LASTNAME", "PUBLIC.EMPLOYEES.EMAIL");
+
+            final InputColumn<?> fnCol = ajb.getSourceColumnByName("FIRSTNAME");
+            final InputColumn<?> lnCol = ajb.getSourceColumnByName("LASTNAME");
+            final InputColumn<?> emailCol = ajb.getSourceColumnByName("EMAIL");
+
+            final FileResource file = new FileResource("/tmp/myFile.csv");
+            final AnalyzerComponentBuilder<CreateCsvFileAnalyzer> csvAnalyzer = ajb.addAnalyzer(
+                    CreateCsvFileAnalyzer.class);
+            csvAnalyzer.addInputColumns(fnCol, lnCol, emailCol);
+            csvAnalyzer.setConfiguredProperty("File", file);
+
+            assertMatchesBenchmark(ajb.toAnalysisJob(),"JaxbJobWriterTest-testWriteCsv.xml");
         }
     }
 

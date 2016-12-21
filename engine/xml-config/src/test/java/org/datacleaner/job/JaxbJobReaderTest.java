@@ -28,9 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.metamodel.util.ToStringComparator;
@@ -645,20 +644,9 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals(1, componentBuilders2.size());
         final ComponentBuilder createCsvComponentBuilder = componentBuilders2.get(0);
         assertEquals("Create CSV file", createCsvComponentBuilder.getDescriptor().getDisplayName());
-        final Set<Entry<ConfiguredPropertyDescriptor, Object>> entrySet = createCsvComponentBuilder
-                .getConfiguredProperties().entrySet();
-        assertEquals(
-        "[ConfiguredPropertyDescriptorImpl[name=Escape char]=\\,"
-         + " ConfiguredPropertyDescriptorImpl[name=Quote char]=\","
-         + " ConfiguredPropertyDescriptorImpl[name=Overwrite file if exists]=true,"
-         + " ConfiguredPropertyDescriptorImpl[name=File]="
-         + "FileResource[c:\\ignite\\hotfolder\\dc_input - 2016-12-12 14:14:56 - samples.csv],"
-         + " ConfiguredPropertyDescriptorImpl[name=Columns]=[Lorg.datacleaner.api.InputColumn;@5527b211,"
-         + " ConfiguredPropertyDescriptorImpl[name=Separator char]=,,"
-         + " ConfiguredPropertyDescriptorImpl[name=Encoding]=UTF-8,"
-         + " ConfiguredPropertyDescriptorImpl[name=Fields]=[Ljava.lang.String;@54cf7c6a,"
-         + " ConfiguredPropertyDescriptorImpl[name=Include header]=true]",
-         entrySet.toString());
-
+        final LinkedList<Object> linkedList = new LinkedList<>(createCsvComponentBuilder.getConfiguredProperties()
+                .values());
+        assertEquals("FileResource[c:\\ignite\\hotfolder\\dc_input - 2016-12-12 14:14:56 - samples.csv]", linkedList
+                .get(3).toString());
     }
 }

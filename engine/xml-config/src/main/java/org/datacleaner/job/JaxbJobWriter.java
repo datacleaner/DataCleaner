@@ -49,6 +49,7 @@ import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.jaxb.AnalysisType;
 import org.datacleaner.job.jaxb.AnalyzerType;
@@ -302,7 +303,8 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
             elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
-                    job.getMetadataProperties()));
+                    job.getMetadataProperties(), analysisJob.getMetadata().getVariables()));
+         
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
 
@@ -319,7 +321,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
             elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
-                    job.getMetadataProperties()));
+                    job.getMetadataProperties(), analysisJob.getMetadata().getVariables()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
 
@@ -359,7 +361,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                 configuredProperties = job.getDescriptor().getConfiguredProperties();
                 elementType.setProperties(
                         createPropertyConfiguration(configuration, configuredProperties, stringConverter,
-                                metadataProperties));
+                                metadataProperties, analysisJob.getMetadata().getVariables()));
                 elementType.setMetadataProperties(createMetadataProperties(metadataProperties));
             }
         }
@@ -449,7 +451,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
     private ConfiguredPropertiesType createPropertyConfiguration(final ComponentConfiguration configuration,
             Set<ConfiguredPropertyDescriptor> configuredProperties, final StringConverter stringConverter,
-            final Map<String, String> componentMetadataProperties) {
+            final Map<String, String> componentMetadataProperties, final Map<String, String> variables) {
 
         // sort the properties in order to make the result deterministic
         configuredProperties = new TreeSet<>(configuredProperties);
@@ -475,7 +477,15 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                     } else {
                         // single-line values are preferred as an attribute for
                         // backwards compatibility
-                        propertyType.setValueAttribute(stringValue);
+                        if (property.getName().equals(CreateCsvFileAnalyzer.PROPERTY_FILE)) {
+                            if (isTemplate(stringValue, variables)) {
+                                propertyType.setTemplate(stringValue);
+                            } else {
+                                propertyType.setValueAttribute(stringValue);
+                            }
+                        } else {
+                            propertyType.setValueAttribute(stringValue);
+                        }
                     }
                 }
                 result.add(propertyType);
@@ -485,7 +495,15 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         configuredPropertiesType.getProperty().addAll(result);
         return configuredPropertiesType;
     }
-
+    private boolean isTemplate(final String value, final Map<String, String> componentMetadataProperties) {
+        final Set<String> keySet = componentMetadataProperties.keySet();
+        for (final String key : keySet) {
+            if (value.contains(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
     private void addTransformedColumns(final BiMap<InputColumn<?>, String> columnMappings,
             final Map<TransformerJob, TransformerType> transformerMappings) {
         // register all transformed columns

@@ -72,7 +72,6 @@ import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.datacleaner.job.jaxb.ConfiguredPropertiesType.Property;
 
 /**
  * Abstract {@link ComponentBuilder} for components of a {@link AnalysisJob}.
@@ -438,11 +437,9 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
                 }
             }
             if (!correctType) {
-                if (!value.getClass().equals(org.datacleaner.job.jaxb.ConfiguredPropertiesType.Property.class)){
                 throw new IllegalArgumentException(
                         "Invalid value type: " + value.getClass().getName() + ", expected: " + configuredProperty
                                 .getBaseType().getName());
-                }
             }
         }
 

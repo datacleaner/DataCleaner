@@ -23,9 +23,10 @@
 			want to upload the file to the server (max. 50mb)</label><br />
 
 		<div id="csv_file_upload_div">
-			<input type="file" name="csv_file_upload" /> <input type="button"
+			<input type="file" name="csv_file_upload"  onchange="window.enableUploadButton('uploadButton');"/> 
+			<input type="button" id="uploadButton"
 				value="upload now"
-				onclick="window.uploadFile('csv_file_upload_div');" />
+				onclick="window.uploadFile('csv_file_upload_div');" disabled/>
 		</div>
 	</div>
 </div>

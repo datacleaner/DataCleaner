@@ -21,10 +21,16 @@ package org.datacleaner.metamodel.datahub;
 
 import static org.datacleaner.metamodel.datahub.DataHubSecurityMode.CAS;
 
+import java.io.InterruptedIOException;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+
+import javax.net.ssl.SSLException;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.datacleaner.util.SecurityUtils;
@@ -64,11 +70,7 @@ public class DataHubConnection {
     }
 
     public MonitorHttpClient getHttpClient(final String contextUrl) {
-        final HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
-        if (_acceptUnverifiedSslPeers) {
-            clientBuilder.setSSLSocketFactory(SecurityUtils.createUnsafeSSLConnectionSocketFactory());
-        }
-        final CloseableHttpClient httpClient = clientBuilder.build();
+        final CloseableHttpClient httpClient = getCloseableHttpClient();
 
         if (CAS.equals(_securityMode)) {
             return new DataHubCASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
@@ -77,17 +79,22 @@ public class DataHubConnection {
         }
     }
 
+    private CloseableHttpClient getCloseableHttpClient() {
+        final HttpClientBuilder clientBuilder =
+                HttpClients.custom().useSystemProperties().setRetryHandler(new DataHubRequestRetryHandler());
+        if (_acceptUnverifiedSslPeers) {
+            clientBuilder.setSSLSocketFactory(SecurityUtils.createUnsafeSSLConnectionSocketFactory());
+        }
+        return clientBuilder.build();
+    }
+
     /**
      * Returns a client suitable for calling REST services on the DataHub
      * @param contextUrl
      * @return A client.
      */
     public MonitorHttpClient getServiceClient(final String contextUrl) {
-        final HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
-        if (_acceptUnverifiedSslPeers) {
-            clientBuilder.setSSLSocketFactory(SecurityUtils.createUnsafeSSLConnectionSocketFactory());
-        }
-        final CloseableHttpClient httpClient = clientBuilder.build();
+        final CloseableHttpClient httpClient = getCloseableHttpClient();
 
         if (CAS.equals(_securityMode)) {
             return new DataHubCASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, contextUrl);
@@ -135,5 +142,12 @@ public class DataHubConnection {
         }
 
         return uriBuilder.setPath(pathSegment);
+    }
+
+    private class DataHubRequestRetryHandler extends DefaultHttpRequestRetryHandler {
+        DataHubRequestRetryHandler() {
+            super(3, false,
+                    Arrays.asList(InterruptedIOException.class, UnknownHostException.class, SSLException.class));
+        }
     }
 }

@@ -49,7 +49,6 @@ import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.jaxb.AnalysisType;
 import org.datacleaner.job.jaxb.AnalyzerType;
@@ -75,6 +74,7 @@ import org.datacleaner.job.jaxb.TransformationType;
 import org.datacleaner.job.jaxb.TransformerType;
 import org.datacleaner.job.jaxb.VariableType;
 import org.datacleaner.job.jaxb.VariablesType;
+import org.datacleaner.metadata.TemplateMetadata;
 import org.datacleaner.util.JaxbValidationEventHandler;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
@@ -303,8 +303,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
             elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
-                    job.getMetadataProperties(), analysisJob.getMetadata().getVariables()));
-         
+                    job.getMetadataProperties()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
 
@@ -321,7 +320,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
             configuredProperties = job.getDescriptor().getConfiguredProperties();
             elementType.setProperties(createPropertyConfiguration(configuration, configuredProperties, stringConverter,
-                    job.getMetadataProperties(), analysisJob.getMetadata().getVariables()));
+                    job.getMetadataProperties()));
             elementType.setMetadataProperties(createMetadataProperties(job.getMetadataProperties()));
         }
 
@@ -361,7 +360,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                 configuredProperties = job.getDescriptor().getConfiguredProperties();
                 elementType.setProperties(
                         createPropertyConfiguration(configuration, configuredProperties, stringConverter,
-                                metadataProperties, analysisJob.getMetadata().getVariables()));
+                                metadataProperties));
                 elementType.setMetadataProperties(createMetadataProperties(metadataProperties));
             }
         }
@@ -451,7 +450,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
     private ConfiguredPropertiesType createPropertyConfiguration(final ComponentConfiguration configuration,
             Set<ConfiguredPropertyDescriptor> configuredProperties, final StringConverter stringConverter,
-            final Map<String, String> componentMetadataProperties, final Map<String, String> variables) {
+            final Map<String, String> componentMetadataProperties) {
 
         // sort the properties in order to make the result deterministic
         configuredProperties = new TreeSet<>(configuredProperties);
@@ -464,8 +463,11 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
                 final String variableNameWithPrefix =
                         JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX + property.getName();
+                final String variableNameWithTemplatePrefix = TemplateMetadata.TEMPLATE_VALUE + property.getName();
                 if (componentMetadataProperties.containsKey(variableNameWithPrefix)) {
                     propertyType.setRef(componentMetadataProperties.get(variableNameWithPrefix));
+                } else if (componentMetadataProperties.containsKey(variableNameWithTemplatePrefix)) {
+                    propertyType.setTemplate(componentMetadataProperties.get(variableNameWithTemplatePrefix));
                 } else {
                     final Object value = configuration.getProperty(property);
                     final String stringValue = stringConverter.serialize(value, property.createCustomConverter());
@@ -477,15 +479,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                     } else {
                         // single-line values are preferred as an attribute for
                         // backwards compatibility
-                        if (property.getName().equals(CreateCsvFileAnalyzer.PROPERTY_FILE)) {
-                            if (isTemplate(stringValue, variables)) {
-                                propertyType.setTemplate(stringValue);
-                            } else {
-                                propertyType.setValueAttribute(stringValue);
-                            }
-                        } else {
-                            propertyType.setValueAttribute(stringValue);
-                        }
+                        propertyType.setValueAttribute(stringValue);
                     }
                 }
                 result.add(propertyType);
@@ -495,17 +489,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         configuredPropertiesType.getProperty().addAll(result);
         return configuredPropertiesType;
     }
-    
-    private boolean isTemplate(final String value, final Map<String, String> variables) {
-        final Set<String> keySet = variables.keySet();
-        //if the value contains at least a variable then is a template 
-        for (final String key : keySet) {
-            if (value.contains(key)) {
-                return true;
-            }
-        }
-        return false;
-    }
+
     private void addTransformedColumns(final BiMap<InputColumn<?>, String> columnMappings,
             final Map<TransformerJob, TransformerType> transformerMappings) {
         // register all transformed columns

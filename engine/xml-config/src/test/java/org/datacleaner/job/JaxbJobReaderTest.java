@@ -654,5 +654,29 @@ public class JaxbJobReaderTest extends TestCase {
         absolutePath = absolutePath.replace("C:", "");
         assertEquals("/tmp/ignite/hotfolder/dc_input - 2016-12-12 14:14:56 - samples.csv", absolutePath);
     }
+    
+    public void testJobWithTemplateProperties2() throws IOException {
+        final DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
+                "org.datacleaner", true);
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("my db");
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+        ;
+        final JaxbJobReader reader = new JaxbJobReader(configuration);
+        final AnalysisJobBuilder jobBuilder = reader.create(new File(
+                "src/test/resources/JaxbJobWriterTest-testWriteCsvTemplate.xml"));
+
+        final List<ComponentBuilder> componentBuilders = new ArrayList<>(jobBuilder.getComponentBuilders());
+        assertEquals(1, componentBuilders.size());
+        final ComponentBuilder componentBuilder = componentBuilders.get(0);
+        final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
+        assertEquals("Create CSV file", descriptor.getDisplayName());
+        final LinkedList<Object> linkedList = new LinkedList<>(componentBuilder.getConfiguredProperties().values());
+        final FileResource propertyFile = (FileResource) linkedList.get(3);
+        String absolutePath = propertyFile.getFile().getAbsolutePath();
+        absolutePath = absolutePath.replace("\\", "/");
+        absolutePath = absolutePath.replace("C:", "");
+        assertEquals("/Users/claudiap/Documents/OutgoingHotFolder/myFile/1482244133378-samples.csv", absolutePath);
+    }
 
 }

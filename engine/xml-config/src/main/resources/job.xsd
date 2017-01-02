@@ -243,7 +243,7 @@
 					<simpleContent>
 						<extension base="string">
 							<attribute name="name" type="string" use="required" />
-							<attribute name="template" type="token" use="optional">
+							<attribute name="template" type="string" use="optional">
 								<annotation>
 									<documentation>
 										Contains a reference to one or more variables.A reference to the id of

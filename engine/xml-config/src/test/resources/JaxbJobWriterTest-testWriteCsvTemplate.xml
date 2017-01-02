@@ -13,7 +13,7 @@
             <column id="col_email" path="EMPLOYEES.EMAIL" type="VARCHAR"/>
         </columns>
         <variables>
-            <variable id="psp.output.path.final" value="C:\Users\claudiap\Documents\OutgoingHotFolder"/>
+            <variable id="psp.output.path.final" value="/Users/claudiap/Documents/OutgoingHotFolder"/>
             <variable id="hotfolder.input.filename" value="myFile"/>
             <variable id="datacleaner.run.timestamp" value="1482244133378"/>
         </variables>
@@ -22,8 +22,11 @@
     <analysis>
         <analyzer>
             <descriptor ref="Create CSV file"/>
+            <metadata-properties>
+                <property name="Template value.File">${psp.output.path.final/hotfolder.input.filename/datacleaner.run.timestamp-samples.csv}</property>
+            </metadata-properties>
             <properties>
-                <property name="File" template="file://${psp.output.path.final/hotfolder.input.filename/datacleaner.run.timestamp-samples.csv}"/>
+                <property name="File" template="${psp.output.path.final/hotfolder.input.filename/datacleaner.run.timestamp-samples.csv}"/>
                 <property name="Separator char" value="&amp;#44;"/>
                 <property name="Quote char" value="&amp;quot;"/>
                 <property name="Escape char" value="\"/>

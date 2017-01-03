@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class TemplateMetadata {
     
-    public static final String TEMPLATE_VALUE = "Template value.";  
+    public static final String TEMPLATE_VALUE = "template-value.";  
     
     public static Map<String, String> createMetadataProperty(String propertyName, String propertyString) {
         final Map<String, String> metadataProperties = new HashMap<>();

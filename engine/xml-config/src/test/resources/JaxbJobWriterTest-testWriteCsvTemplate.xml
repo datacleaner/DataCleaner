@@ -23,10 +23,10 @@
         <analyzer>
             <descriptor ref="Create CSV file"/>
             <metadata-properties>
-                <property name="Template value.File">${psp.output.path.final/hotfolder.input.filename/datacleaner.run.timestamp-samples.csv}</property>
+                <property name="template-value.File">${psp.output.path.final}/${hotfolder.input.filename}/${datacleaner.run.timestamp}-samples.csv</property>
             </metadata-properties>
             <properties>
-                <property name="File" template="${psp.output.path.final/hotfolder.input.filename/datacleaner.run.timestamp-samples.csv}"/>
+                <property name="File" template="${psp.output.path.final}/${hotfolder.input.filename}/${datacleaner.run.timestamp}-samples.csv"/>
                 <property name="Separator char" value="&amp;#44;"/>
                 <property name="Quote char" value="&amp;quot;"/>
                 <property name="Escape char" value="\"/>

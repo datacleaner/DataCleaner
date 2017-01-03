@@ -952,11 +952,9 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         if (variableRef == null) {
                             String templateValue = property.getTemplate();
                             if (templateValue != null) {
-                                templateValue = templateValue.replace("${","");
                                 for (final Entry<String, String> variable : variables.entrySet()) {
-                                    templateValue = templateValue.replace(variable.getKey(), variable.getValue());
+                                    templateValue = templateValue.replace("${" + variable.getKey() + "}", variable.getValue());
                                 }
-                                templateValue = templateValue.replace("}","");
                                 stringValue = templateValue;
                             } else {
                                 throw new IllegalStateException("Neither value nor ref was specified for property: "

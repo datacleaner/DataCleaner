@@ -442,7 +442,7 @@ public class JaxbJobWriterTest extends TestCase {
             ajb.getAnalysisJobMetadata().getVariables().put(VARIABLE_FILENAME_OUTGOING, "myFile");
             ajb.getAnalysisJobMetadata().getVariables().put(VARIABLE_TIMESTAMP_OUTGOING, "1482244133378");
 
-            final String value = "${" + VARIABLE_FOLDER_OUTGOING + "}" + "/" + "${" + VARIABLE_FILENAME_OUTGOING  +"}" +"/"
+            final String value = "${" + VARIABLE_FOLDER_OUTGOING + "}" + "/" + "${" + VARIABLE_FILENAME_OUTGOING  + "}" + "/"
                     + "${" + VARIABLE_TIMESTAMP_OUTGOING + "}" + "-samples.csv";
          
             final AnalyzerComponentBuilder<CreateCsvFileAnalyzer> csvAnalyzer = ajb.addAnalyzer(

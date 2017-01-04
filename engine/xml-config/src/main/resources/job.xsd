@@ -127,7 +127,7 @@
 
 	<complexType name="variableType">
 		<attribute name="id" type="token" use="required" />
-		<attribute name="value" type="string" use="optional">
+		<attribute name="value" type="string" use="required">
 			<annotation>
 				<documentation>
 					Default value for this variable.

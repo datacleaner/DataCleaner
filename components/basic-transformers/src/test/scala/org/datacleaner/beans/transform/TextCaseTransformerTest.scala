@@ -9,8 +9,8 @@ class TextCaseTransformerTest extends AssertionsForJUnit {
     val transformer = new TextCaseTransformer();
     transformer.mode = TextCaseTransformer.TransformationMode.CAPITALIZE_SENTENCES;
 
-    Assert.assertEquals("Hello world. foo bar! foo", transformer.transform("hello World. FOO baR! foo"));
-    Assert.assertEquals("Hello world. foo bar:\n foo", transformer.transform("hello World. FOO baR:\n foo"));
+    Assert.assertEquals("Hello world. Foo bar! Foo", transformer.transform("hello World. FOO baR! foo"));
+    Assert.assertEquals("Hello world. Foo bar:\n Foo", transformer.transform("hello World. FOO baR:\n foo"));
   }
 
   @Test

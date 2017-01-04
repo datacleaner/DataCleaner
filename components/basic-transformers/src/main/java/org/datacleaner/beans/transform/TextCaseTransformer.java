@@ -33,6 +33,9 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.TextCategory;
 
+import com.ibm.icu.lang.UCharacter;
+import com.ibm.icu.text.BreakIterator;
+
 @Named("Text case transformer")
 @Description("Modifies the text case/capitalization of Strings.")
 @Categorized(TextCategory.class)
@@ -90,39 +93,16 @@ public class TextCaseTransformer implements Transformer {
 
         switch (mode) {
         case UPPER_CASE:
-            return value.toUpperCase();
+            return UCharacter.toUpperCase(value);
         case LOWER_CASE:
-            return value.toLowerCase();
+            return UCharacter.toLowerCase(value);
         case CAPITALIZE_SENTENCES:
+            return UCharacter.toTitleCase(value, BreakIterator.getSentenceInstance());
         case CAPITALIZE_WORDS:
-            return capitalizeWords(value);
+            return UCharacter.toTitleCase(value, BreakIterator.getWordInstance());
         default:
             throw new UnsupportedOperationException("Unsupported mode: " + mode);
         }
     }
-
-    private String capitalizeWords(final String value) {
-        final StringBuilder sb = new StringBuilder();
-        final StringTokenizer tokenizer = new StringTokenizer(value, " -\t\n\r\f", true);
-        boolean capitalizeNext = true;
-        while (tokenizer.hasMoreTokens()) {
-            final String nextToken = tokenizer.nextToken();
-            final String lowerCasedToken = nextToken.toLowerCase();
-            if (capitalizeNext) {
-                final String capitalizedToken =
-                        Character.toUpperCase(lowerCasedToken.charAt(0)) + lowerCasedToken.substring(1);
-                sb.append(capitalizedToken);
-            } else {
-                sb.append(lowerCasedToken);
-            }
-            final char lastChar = lowerCasedToken.charAt(lowerCasedToken.length() - 1);
-            capitalizeNext = (mode == TransformationMode.CAPITALIZE_WORDS) || isCapitalizeTrigger(lastChar);
-        }
-
-        return sb.toString();
-    }
-
-    private boolean isCapitalizeTrigger(final char c) {
-        return c == '.' || c == '!' || c == '?' || c == ':';
-    }
 }
+

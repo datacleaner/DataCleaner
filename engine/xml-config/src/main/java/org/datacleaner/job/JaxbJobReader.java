@@ -967,9 +967,9 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         if (stringValue == null) {
                             throw new ComponentConfigurationException("No such variable: " + variableRef);
                         }
-                        if (variableRef != null && templateValue == null){
+                        if (variableRef != null && templateValue == null) {
                             builder.getMetadataProperties()
-                            .put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
+                                    .put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
                         }
                     }
 

@@ -74,6 +74,7 @@ import org.datacleaner.job.jaxb.TransformationType;
 import org.datacleaner.job.jaxb.TransformerType;
 import org.datacleaner.job.jaxb.VariableType;
 import org.datacleaner.job.jaxb.VariablesType;
+import org.datacleaner.metadata.TemplateMetadata;
 import org.datacleaner.util.JaxbValidationEventHandler;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
@@ -462,8 +463,11 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
                 final String variableNameWithPrefix =
                         JaxbJobReader.DATACLEANER_JAXB_VARIABLE_PREFIX + property.getName();
+                final String variableNameWithTemplatePrefix = TemplateMetadata.TEMPLATE_VALUE + property.getName();
                 if (componentMetadataProperties.containsKey(variableNameWithPrefix)) {
                     propertyType.setRef(componentMetadataProperties.get(variableNameWithPrefix));
+                } else if (componentMetadataProperties.containsKey(variableNameWithTemplatePrefix)) {
+                    propertyType.setTemplate(componentMetadataProperties.get(variableNameWithTemplatePrefix));
                 } else {
                     final Object value = configuration.getProperty(property);
                     final String stringValue = stringConverter.serialize(value, property.createCustomConverter());

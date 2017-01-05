@@ -249,6 +249,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
             metadataProperties.put(name, value);
         }
 
+        
         return metadataProperties;
     }
 
@@ -945,21 +946,31 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     }
 
                     String stringValue = getValue(property);
+                    String templateValue = null;
                     if (stringValue == null) {
                         final String variableRef = property.getRef();
+
                         if (variableRef == null) {
-                            throw new IllegalStateException(
-                                    "Neither value nor ref was specified for property: " + name);
+                            templateValue = property.getTemplate();
+                            if (templateValue != null) {
+                                for (final Entry<String, String> variable : variables.entrySet()) {
+                                    templateValue = templateValue.replace("${" + variable.getKey() + "}", variable.getValue());
+                                }
+                                stringValue = templateValue;
+                            } else {
+                                throw new IllegalStateException("Neither value nor ref was specified for property: "
+                                        + name);
+                            }
+                        } else {
+                            stringValue = variables.get(variableRef);
                         }
-
-                        stringValue = variables.get(variableRef);
-
                         if (stringValue == null) {
                             throw new ComponentConfigurationException("No such variable: " + variableRef);
                         }
-
-                        builder.getMetadataProperties()
-                                .put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
+                        if (variableRef != null && templateValue == null) {
+                            builder.getMetadataProperties()
+                                    .put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
+                        }
                     }
 
                     final Converter<?> customConverter = configuredProperty.createCustomConverter();

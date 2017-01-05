@@ -171,7 +171,7 @@
 
 	<complexType name="outputDataStreamType">
 		<sequence>
-			<element name="job" type="ab:jobType"/>
+			<element name="job" type="ab:jobType" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 	</complexType>
@@ -243,6 +243,18 @@
 					<simpleContent>
 						<extension base="string">
 							<attribute name="name" type="string" use="required" />
+							<attribute name="template" type="string" use="optional">
+								<annotation>
+									<documentation>
+										Contains a reference to one or more variables.A reference to the id of
+										a
+										variable (defined in the source section). If a ref is defined, the
+										value of the
+										variable will be inserted instead of the value of this
+										property element.
+									</documentation>
+								</annotation>
+							</attribute>
 							<attribute name="ref" type="token" use="optional">
 								<annotation>
 									<documentation>

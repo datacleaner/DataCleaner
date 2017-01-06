@@ -45,7 +45,7 @@ public class HotFolderIT {
             new ProcessBuilder(command.split(" ")).start();
 
             try {
-                Thread.sleep(10 * 1000); // wait for the hot folder trigger and job execution
+                Thread.sleep(15 * 1000); // wait for the hot folder trigger and job execution
             } catch (final InterruptedException e) {
                 // nothing
             }

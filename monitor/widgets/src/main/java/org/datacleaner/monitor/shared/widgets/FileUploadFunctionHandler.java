@@ -41,6 +41,13 @@ import com.google.gwt.user.client.ui.RootPanel;
  * FileUploadServlet available in DC monitor.
  */
 public class FileUploadFunctionHandler {
+    
+    public static void enableUploadButton(final String buttonId) {
+        final Element element = Document.get().getElementById(buttonId);
+
+        GWT.log("Found file upload button element: " + element);
+        element.removeAttribute("disabled");
+    }
 
     public static void uploadFile(final String fileUploadElementId) {
         final Element element = Document.get().getElementById(fileUploadElementId);
@@ -134,4 +141,15 @@ public class FileUploadFunctionHandler {
     public static native void exportFileUploadFunction() /*-{
         $wnd.uploadFile = $entry(@org.datacleaner.monitor.shared.widgets.FileUploadFunctionHandler::uploadFile(Ljava/lang/String;));
     }-*/;
+    
+    /**
+     * Exports the "enableUploadButton(final String buttonId)" method as a function in the native
+     * javascript scope.
+     */
+    @SuppressWarnings("checkstyle:LineLength")
+    public static native void exportEnableUploadButtonFunction() /*-{
+        $wnd.enableUploadButton = $entry(@org.datacleaner.monitor.shared.widgets.FileUploadFunctionHandler::enableUploadButton(Ljava/lang/String;));
+    }-*/;
+    
+    
 }

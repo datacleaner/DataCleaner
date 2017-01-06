@@ -78,6 +78,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
         _tenant = tenant;
 
         FileUploadFunctionHandler.exportFileUploadFunction();
+        FileUploadFunctionHandler.exportEnableUploadButtonFunction();
 
         _loadingIndicator = new LoadingIndicator();
         _wizardPanel.setContent(_loadingIndicator);

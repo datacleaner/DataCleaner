@@ -22,9 +22,11 @@
 			want to upload the file to the server</label><br />
 
 		<div id="excel_spreadsheet_upload_div">
-			<input type="file" name="excel_spreadsheet_upload" /> <input type="button"
-				value="upload now"
-				onclick="window.uploadFile('excel_spreadsheet_upload_div');" />
+			<input type="file" name="excel_spreadsheet_upload"
+				onchange="window.enableUploadButton('uploadButton');" /> <input
+				type="button" id="uploadButton" value="upload now"
+				onclick="window.uploadFile('excel_spreadsheet_upload_div');"
+				disabled />
 		</div>
 	</div>
 </div>

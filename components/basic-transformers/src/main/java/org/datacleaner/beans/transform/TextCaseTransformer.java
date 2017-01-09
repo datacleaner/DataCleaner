@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,6 +33,7 @@ import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.HasConditionallyHiddenProperties;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -52,8 +53,8 @@ import com.ibm.icu.text.BreakIterator;
 @Named("Text case transformer")
 @Description("Modifies the text case/capitalization of Strings.")
 @Categorized(TextCategory.class)
-public class TextCaseTransformer implements Transformer {
-    public static final String DEFAULT_START_CASE_DICTIONARY = "TextCaseTransformer start case dictionary";
+public class TextCaseTransformer implements Transformer, HasConditionallyHiddenProperties {
+    public static final String DEFAULT_START_CASE_DICTIONARY= "TextCaseTransformer start case dictionary";
     public static final String DEFAULT_END_CASE_DICTIONARY = "TextCaseTransformer end case dictionary";
     public static final String DEFAULT_WORD_CASE_DICTIONARY = "TextCaseTransformer word case dictionary";
     public static final String DEFAULT_COMPLETE_CASE_DICTIONARY = "TextCaseTransformer fixed case dictionary";
@@ -83,10 +84,10 @@ public class TextCaseTransformer implements Transformer {
         }
     }
 
-    public static final String ALL_WORDS_DICTIONARY_DESCRIPTION = "Dictionaries for casing all words";
-    public static final String WORD_DICTIONARY_DESCRIPTION = "Dictionaries for casing complete words (e.g. )";
-    public static final String BEGIN_WORD_DICTIONARY_DESCRIPTION = "Dictionaries for casing beginning of words";
-    public static final String END_WORD_DICTIONARY_DESCRIPTION = "Dictionaries for casing ending of words";
+    public static final String ALL_WORDS_DICTIONARY = "Dictionaries for casing all words";
+    public static final String WORD_DICTIONARY = "Dictionaries for casing complete words (e.g. )";
+    public static final String BEGIN_WORD_DICTIONARY = "Dictionaries for casing beginning of words";
+    public static final String END_WORD_DICTIONARY = "Dictionaries for casing ending of words";
 
     public TextCaseTransformer() {
         this(null);
@@ -122,29 +123,32 @@ public class TextCaseTransformer implements Transformer {
     @Configured
     TransformationMode mode = TransformationMode.UPPER_CASE;
 
-    @Configured(required = false, order = 11)
-    @Description(ALL_WORDS_DICTIONARY_DESCRIPTION)
+    @Configured(value = ALL_WORDS_DICTIONARY, required = false, order = 11)
     Dictionary[] allWordsDictionaries = {};
 
-    @Configured(required = false, order = 12)
-    @Description(WORD_DICTIONARY_DESCRIPTION)
+    @Configured(value= WORD_DICTIONARY, required = false, order = 12)
     Dictionary[] wordDictionaries = {};
 
-    @Configured(required = false, order = 13)
-    @Description(BEGIN_WORD_DICTIONARY_DESCRIPTION)
+    @Configured(value = BEGIN_WORD_DICTIONARY, required = false, order = 13)
     Dictionary[] wordStartDictionaries = {};
 
-    @Configured(required = false, order = 14)
-    @Description(END_WORD_DICTIONARY_DESCRIPTION)
+    @Configured(value = END_WORD_DICTIONARY, required = false, order = 14)
     Dictionary[] wordEndDictionaries = {};
 
     @Provided
     DataCleanerConfiguration _configuration;
 
-    DictionaryConnection[] allWordsDictionaryConnections = {};
-    DictionaryConnection[] wordDictionaryConnections = {};
-    DictionaryConnection[] wordStartDictionaryConnections = {};
-    DictionaryConnection[] wordEndDictionaryConnections = {};
+    private DictionaryConnection[] allWordsDictionaryConnections = {};
+    private DictionaryConnection[] wordDictionaryConnections = {};
+    private DictionaryConnection[] wordStartDictionaryConnections = {};
+    private DictionaryConnection[] wordEndDictionaryConnections = {};
+
+    @Override
+    public boolean isPropertyHidden(final String propertyName) {
+        return mode != TransformationMode.CAPITALIZE_WORDS && (propertyName.equals(ALL_WORDS_DICTIONARY)
+                || propertyName.equals(WORD_DICTIONARY) || propertyName
+                .equals(BEGIN_WORD_DICTIONARY) || propertyName.equals(END_WORD_DICTIONARY));
+    }
 
     private DictionaryConnection[] openConnections(final Dictionary[] dictionaries) {
         return Stream.of(dictionaries).map(d -> d.openConnection(_configuration)).toArray(DictionaryConnection[]::new);
@@ -184,27 +188,26 @@ public class TextCaseTransformer implements Transformer {
         case CAPITALIZE_SENTENCES:
             return UCharacter.toTitleCase(value, BreakIterator.getSentenceInstance());
         case CAPITALIZE_WORDS:
-            return capitalizeWords(value);
+            return capitalizeWordsByDictionaries(value);
         default:
             throw new UnsupportedOperationException("Unsupported mode: " + mode);
         }
     }
 
-    private String capitalizeWords(final String value) {
-        final String preparedString = UCharacter.toTitleCase(value, BreakIterator.getWordInstance());
+    private String capitalizeWordsByDictionaries(final String value) {
+        final String preparedString = UCharacter.toTitleCase(locale, value, BreakIterator.getWordInstance(locale));
 
-        getAllWords(preparedString).stream().map(this::capitalizeWord);
-
-        return null;
+        return getAllWords(preparedString).stream().map(this::capitalizeWordByDictionaries)
+                .collect(Collectors.joining());
     }
 
-    private String capitalizeWord(String input) {
-
+    private String capitalizeWordByDictionaries(String input) {
+        return input;
     }
 
     private List<String> getAllWords(final String preparedString) {
         final List<String> words = new ArrayList<>();
-        final BreakIterator breakIterator = BreakIterator.getWordInstance();
+        final BreakIterator breakIterator = BreakIterator.getWordInstance(locale);
         breakIterator.setText(preparedString);
         int start = breakIterator.first();
 

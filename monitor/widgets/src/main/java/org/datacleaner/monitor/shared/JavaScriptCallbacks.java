@@ -41,6 +41,7 @@ public final class JavaScriptCallbacks {
      *
      * @return
      */
+    // @formatter:off
     public static native String getJobGroupingCategory() /*-{
         if ($wnd.datacleaner && $wnd.datacleaner.getJobGroupingCategory) {
             var v = $wnd.datacleaner.getJobGroupingCategory();
@@ -50,6 +51,7 @@ public final class JavaScriptCallbacks {
         }
         return null;
     }-*/;
+    // @formatter:on
 
     /**
      * Called when the user navigates in a wizard to the next step.
@@ -62,6 +64,7 @@ public final class JavaScriptCallbacks {
      *            state.
      * @return
      */
+    // @formatter:off
     public static native boolean onWizardProgress(String wizardDisplayName, int stepIndex, int steps) /*-{
         if ($wnd.datacleaner && $wnd.datacleaner.onWizardProgress) {
             var v = $wnd.datacleaner.onWizardProgress(wizardDisplayName, stepIndex, steps);
@@ -72,6 +75,7 @@ public final class JavaScriptCallbacks {
         }
         return false;
     }-*/;
+    // @formatter:on
 
     /**
      * Called when the wizard is finished and the last screen is shown.
@@ -81,6 +85,7 @@ public final class JavaScriptCallbacks {
      *
      * @return whether or not a callback was invoked
      */
+    // @formatter:off
     public static native boolean onWizardFinished(String wizardDisplayName, String resultEntityName) /*-{
         if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
             var v = $wnd.datacleaner.onWizardFinished(wizardDisplayName, resultEntityName);
@@ -91,6 +96,7 @@ public final class JavaScriptCallbacks {
         }
         return false;
     }-*/;
+    // @formatter:on
 
     /**
      * Called when a wizard is finished and the user clicks a button to close
@@ -103,6 +109,7 @@ public final class JavaScriptCallbacks {
      *
      * @return whether or not a callback was invoked
      */
+    // @formatter:off
     public static native boolean onWizardPanelClosing(String wizardDisplayName, String wizardResultName) /*-{
         if ($wnd.datacleaner && $wnd.datacleaner.onWizardPanelClosing) {
             var v = $wnd.datacleaner.onWizardPanelClosing(wizardDisplayName, wizardResultName);
@@ -113,6 +120,7 @@ public final class JavaScriptCallbacks {
         }
         return false;
     }-*/;
+    // @formatter:on
 
     /**
      * Called when a wizard is closed/cancelled before finishing it.
@@ -122,6 +130,7 @@ public final class JavaScriptCallbacks {
      *
      * @return whether or not a callback was invoked
      */
+    // @formatter:off
     public static native boolean onWizardCancelled(String wizardDisplayName) /*-{
 
         if ($wnd.datacleaner && $wnd.datacleaner.onWizardCancelled) {
@@ -133,12 +142,14 @@ public final class JavaScriptCallbacks {
         }
         return false;
     }-*/;
+    // @formatter:on
 
     /**
      * Called when the user clicks a button to close the execution status panel.
      *
      * @return whether or not a callback was invoked
      */
+    // @formatter:off
     public static native boolean onExecutionStatusPanelClosing() /*-{
 
         if ($wnd.datacleaner && $wnd.datacleaner.onExecutionStatusPanelClosing) {
@@ -151,12 +162,14 @@ public final class JavaScriptCallbacks {
         return false;
 
     }-*/;
+    // @formatter:on
 
     /**
      * Called when the DataCleaner API has been initialized
      *
      * @return
      */
+    // @formatter:off
     public static native boolean onApiInitialized() /*-{
         if ($wnd.datacleaner && $wnd.datacleaner.onApiInitialized) {
             var v = $wnd.datacleaner.onApiInitialized();
@@ -167,6 +180,7 @@ public final class JavaScriptCallbacks {
         }
         return false;
     }-*/;
+    // @formatter:on
 
     /**
      * Native method to call Javascript onError function, in case onError method
@@ -179,6 +193,7 @@ public final class JavaScriptCallbacks {
      *            produced by the system/code.
      * @return boolean
      */
+    // @formatter:off
     public static native boolean onError(String message, boolean userFeedback)/*-{
         if ($wnd.datacleaner && (typeof $wnd.datacleaner.onError == 'function')) {
             var v = $wnd.datacleaner.onError(message, userFeedback);
@@ -189,6 +204,7 @@ public final class JavaScriptCallbacks {
         }
         return false;
     }-*/;
+    // @formatter:on
 
     /**
      * Exposes the DataCleaner wizard JS API.
@@ -206,12 +222,14 @@ public final class JavaScriptCallbacks {
      * startJobWizard(datastoreName, wizardName, htmlDivId)
      */
     @SuppressWarnings("checkstyle:LineLength")
+    // @formatter:off
     public static native void exportStartJobWizard() /*-{
         if (!$wnd.datacleaner) {
             $wnd.datacleaner = {};
         }
         $wnd.datacleaner.startJobWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startJobWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
     }-*/;
+    // @formatter:on
 
     /**
      * Exports a JS method:
@@ -219,12 +237,14 @@ public final class JavaScriptCallbacks {
      * startJobWizard(wizardName, htmlDivId)
      */
     @SuppressWarnings("checkstyle:LineLength")
+    // @formatter:off
     public static native void exportStartDatastoreWizard() /*-{
         if (!$wnd.datacleaner) {
             $wnd.datacleaner = {};
         }
         $wnd.datacleaner.startDatastoreWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startDatastoreWizard(Ljava/lang/String;Ljava/lang/String;);
     }-*/;
+    // @formatter:on
 
     /**
      * Exports a JS method:
@@ -232,12 +252,14 @@ public final class JavaScriptCallbacks {
      * startReferenceDataWizard(referenceDataType, wizardName, htmlDivId)
      */
     @SuppressWarnings("checkstyle:LineLength")
+    // @formatter:off
     public static native void exportStartReferenceDataWizard() /*-{
         if (!$wnd.datacleaner) {
             $wnd.datacleaner = {};
         }
         $wnd.datacleaner.startReferenceDataWizard = @org.datacleaner.monitor.shared.JavaScriptCallbacks::startReferenceDataWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
     }-*/;
+    // @formatter:on
 
     /**
      * Starts a job wizard based on parameters given from a native JS call.

@@ -171,11 +171,13 @@ public class SchedulePanel extends Composite {
         service.getLatestExecution(tenant, job, new DCAsyncCallback<ExecutionLog>() {
 
             @Override
-            public void onSuccess(ExecutionLog result) {
-                final ExecutionStatus executionStatus = result.getExecutionStatus();
-                final DateTimeFormat formatDate = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
-                final String formattedDate = formatDate.format(result.getJobBeginDate());
-                latestExecutionLabel.setText(", Latest execution:" + formattedDate + ", " + executionStatus.name());
+            public void onSuccess(final ExecutionLog result) {
+                if(result != null) {
+                    final ExecutionStatus executionStatus = result.getExecutionStatus();
+                    final DateTimeFormat formatDate = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
+                    final String formattedDate = formatDate.format(result.getJobBeginDate());
+                    latestExecutionLabel.setText("- Latest execution:" + formattedDate + ", " + executionStatus.name());
+                }
             }
         });
     }

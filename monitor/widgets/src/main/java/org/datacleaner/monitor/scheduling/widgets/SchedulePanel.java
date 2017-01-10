@@ -172,7 +172,7 @@ public class SchedulePanel extends Composite {
 
             @Override
             public void onSuccess(final ExecutionLog result) {
-                if(result != null) {
+                if (result != null) {
                     final ExecutionStatus executionStatus = result.getExecutionStatus();
                     final DateTimeFormat formatDate = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
                     final String formattedDate = formatDate.format(result.getJobBeginDate());

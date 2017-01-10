@@ -20,8 +20,10 @@
 package org.datacleaner.beans.transform;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,7 +46,6 @@ import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.DictionaryConnection;
 import org.datacleaner.reference.ReferenceDataCatalog;
 
-import com.google.common.collect.Iterables;
 import com.ibm.icu.lang.UCharacter;
 import com.ibm.icu.text.BreakIterator;
 
@@ -120,16 +121,16 @@ public class TextCaseTransformer implements Transformer {
     @Configured(MODE_PROPERTY)
     TransformationMode mode = TransformationMode.UPPER_CASE;
 
-    @Configured(value = ALL_WORDS_DICTIONARY_PROPERTY,required = false, order = 11)
+    @Configured(value = ALL_WORDS_DICTIONARY_PROPERTY, required = false, order = 11)
     Dictionary[] allWordsDictionaries = {};
 
-    @Configured(value = WORD_DICTIONARY_PROPERTY,required = false, order = 12)
+    @Configured(value = WORD_DICTIONARY_PROPERTY, required = false, order = 12)
     Dictionary[] wordDictionaries = {};
 
-    @Configured(value = BEGIN_WORD_DICTIONARY_PROPERTY,required = false, order = 13)
+    @Configured(value = BEGIN_WORD_DICTIONARY_PROPERTY, required = false, order = 13)
     Dictionary[] wordStartDictionaries = {};
 
-    @Configured(value = END_WORD_DICTIONARY_PROPERTY,required = false, order = 14)
+    @Configured(value = END_WORD_DICTIONARY_PROPERTY, required = false, order = 14)
     Dictionary[] wordEndDictionaries = {};
 
     @Provided
@@ -185,19 +186,54 @@ public class TextCaseTransformer implements Transformer {
     }
 
     private String capitalizeWordsByDictionaries(final String value) {
-        final String preparedString = UCharacter.toTitleCase(locale, value, BreakIterator.getWordInstance(locale));
+        final String preparedString = UCharacter.toTitleCase(value, BreakIterator.getWordInstance());
+
+        for (final DictionaryConnection allWordsDictionaryConnection : allWordsDictionaryConnections) {
+            final Iterator<String> lengthSortedValues = allWordsDictionaryConnection.getLengthSortedValues();
+            while (lengthSortedValues.hasNext()) {
+                final String candidate = lengthSortedValues.next();
+                if (candidate.equalsIgnoreCase(value)) {
+                    return candidate;
+                }
+            }
+        }
 
         return getAllWords(preparedString).stream().map(this::capitalizeWordByDictionaries)
                 .collect(Collectors.joining());
     }
 
-    private String capitalizeWordByDictionaries(String input) {
-        return input;
+    private String capitalizeWordByDictionaries(final String input) {
+        final Stream<String> wordStream =
+                Arrays.stream(wordDictionaryConnections).flatMap(DictionaryConnection::stream);
+
+        return wordStream.filter(input::equalsIgnoreCase).findFirst().orElseGet(() -> {
+            final String startReplaced = replaceBeginning(input).orElse(input);
+            return replaceEnd(startReplaced).orElse(startReplaced);
+        });
+
+    }
+
+    private Optional<String> replaceBeginning(final String input) {
+        final Stream<String> wordStartStream =
+                Arrays.stream(wordStartDictionaryConnections).flatMap(DictionaryConnection::stream);
+
+        return wordStartStream.filter(c -> input.length() > c.length())
+                .filter(c -> input.toLowerCase().startsWith(c.toLowerCase()))
+                .map(c -> c.concat(input.substring(c.length()))).findFirst();
+    }
+
+    private Optional<String> replaceEnd(final String input) {
+        final Stream<String> wordEndStream =
+                Arrays.stream(wordEndDictionaryConnections).flatMap(DictionaryConnection::stream);
+
+        return wordEndStream.filter(c -> input.length() > c.length())
+                .filter(c -> input.toLowerCase().endsWith(c.toLowerCase()))
+                .map(c -> input.substring(0, input.length() - c.length()).concat(c)).findFirst();
     }
 
     private List<String> getAllWords(final String preparedString) {
         final List<String> words = new ArrayList<>();
-        final BreakIterator breakIterator = BreakIterator.getWordInstance(locale);
+        final BreakIterator breakIterator = BreakIterator.getWordInstance();
         breakIterator.setText(preparedString);
         int start = breakIterator.first();
 
@@ -205,16 +241,6 @@ public class TextCaseTransformer implements Transformer {
             words.add(preparedString.substring(start, end));
         }
         return words;
-    }
-
-    private Iterable<String> getSortedDictionaryWords(final DictionaryConnection[] dictionaryConnections) {
-        final List<Iterable<String>> iterables = new ArrayList<>(dictionaryConnections.length);
-
-        for (final DictionaryConnection dictionaryConnection : dictionaryConnections) {
-            iterables.add(dictionaryConnection::getLengthSortedValues);
-        }
-
-        return Iterables.mergeSorted(iterables, Comparator.comparingInt(String::length));
     }
 }
 

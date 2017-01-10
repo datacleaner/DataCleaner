@@ -31,8 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HotFolderIT {
+    private static final Logger logger = LoggerFactory.getLogger(HotFolderIT.class);
     private static final String IMAGE_NAME = "datacleaner-monitor";
     private String _containerId;
 
@@ -42,7 +45,7 @@ public class HotFolderIT {
             assertEquals(0, getResultFilesCount());
 
             final String command = "docker exec " + getContainerId() + " /bin/sh /tmp/generate-hot-folder-input.sh";
-            new ProcessBuilder(command.split(" ")).start();
+            getCommandOutput(command);
 
             try {
                 Thread.sleep(15 * 1000); // wait for the hot folder trigger and job execution
@@ -58,7 +61,7 @@ public class HotFolderIT {
 
     private int getResultFilesCount() throws IOException {
         final String command = "docker exec " + getContainerId() + " /bin/sh /tmp/get-results-count.sh";
-        final List<String> outputLines = getCommandOutput(command.split(" "));
+        final List<String> outputLines = getCommandOutput(command);
 
         if (outputLines.size() == 1) {
             return Integer.parseInt(outputLines.get(0));
@@ -69,7 +72,7 @@ public class HotFolderIT {
 
     private String getContainerId() throws IOException {
         if (_containerId == null) {
-            final List<String> lines = getCommandOutput(new String[] { "docker", "ps" });
+            final List<String> lines = getCommandOutput("docker ps");
 
             for (final String line : lines) {
                 if (line.contains(IMAGE_NAME)) {
@@ -85,11 +88,11 @@ public class HotFolderIT {
         return _containerId;
     }
 
-    private List<String> getCommandOutput(final String[] commandParts) {
+    private List<String> getCommandOutput(final String command) {
         final List<String> outputLines = new ArrayList<>();
 
         try {
-            final Process process = new ProcessBuilder(commandParts).start();
+            final Process process = getProcess(command);
             final InputStream inputStream = process.getInputStream();
             final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -99,9 +102,25 @@ public class HotFolderIT {
                 outputLines.add(line);
             }
         } catch (IOException e) {
-            // nothing
+            logger.error("External command execution failed. ", e);
         }
 
         return outputLines;
+    }
+
+    private Process getProcess(final String command) throws IOException {
+        final boolean isLinux = System.getProperty("os.name").toLowerCase().contains("linux");
+        final String interpreter;
+        final String argument;
+
+        if (isLinux) {
+            interpreter = "bash";
+            argument = "-c";
+        } else {
+            interpreter = "cmd";
+            argument = "/c";
+        }
+
+        return Runtime.getRuntime().exec(new String[] { interpreter, argument, command });
     }
 }

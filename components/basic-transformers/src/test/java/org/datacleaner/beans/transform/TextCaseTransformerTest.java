@@ -127,7 +127,8 @@ public class TextCaseTransformerTest {
     public void testCapitalizeWordsAllWordsDictionary() {
         final TextCaseTransformer transformer = new TextCaseTransformer();
         transformer.mode = TextCaseTransformer.TransformationMode.CAPITALIZE_WORDS;
-        transformer.allWordsDictionaries = new Dictionary[] {new SimpleDictionary("dict A", "What a day!"), new SimpleDictionary("dict B", "Day A-WHA?")};
+        transformer.allWordsDictionaries = new Dictionary[] { new SimpleDictionary("dict A", "What a day!"),
+                new SimpleDictionary("dict B", "Day A-WHA?") };
         transformer.init();
 
         assertEquals("Hello World. Foo Bar! Foo", transformer.transform("hello World. FOO baR! foo"));
@@ -140,7 +141,8 @@ public class TextCaseTransformerTest {
     public void testCapitalizeWordsWordsDictionary() {
         final TextCaseTransformer transformer = new TextCaseTransformer();
         transformer.mode = TextCaseTransformer.TransformationMode.CAPITALIZE_WORDS;
-        transformer.wordDictionaries = new Dictionary[] {new SimpleDictionary("dict A", "FOO", "foohoo"), new SimpleDictionary("dict B", "BAR", "barhar")};
+        transformer.wordDictionaries = new Dictionary[] { new SimpleDictionary("dict A", "FOO", "foohoo"),
+                new SimpleDictionary("dict B", "BAR", "barhar") };
         transformer.init();
 
         assertEquals("Hello World. FOO BAR! FOO", transformer.transform("hello World. FOO baR! foo"));
@@ -153,8 +155,9 @@ public class TextCaseTransformerTest {
     public void testCapitalizeWordEndsDictionary() {
         final TextCaseTransformer transformer = new TextCaseTransformer();
         transformer.mode = TextCaseTransformer.TransformationMode.CAPITALIZE_WORDS;
-        transformer.wordStartDictionaries = new Dictionary[] {new SimpleDictionary("dict start A", "O'S"), new SimpleDictionary("dict start B", "O'L")};
-        transformer.wordEndDictionaries = new Dictionary[] {new SimpleDictionary("dict end A", "FOOO")};
+        transformer.wordStartDictionaries = new Dictionary[] { new SimpleDictionary("dict start A", "O'S"),
+                new SimpleDictionary("dict start B", "O'L") };
+        transformer.wordEndDictionaries = new Dictionary[] { new SimpleDictionary("dict end A", "FOOO") };
         transformer.init();
 
         assertEquals("O'Sullivan's Cars", transformer.transform("o'sullivan'S cars"));
@@ -166,10 +169,10 @@ public class TextCaseTransformerTest {
     public void testCapitalizeDictionaryPriority() {
         final TextCaseTransformer transformer = new TextCaseTransformer();
         transformer.mode = TextCaseTransformer.TransformationMode.CAPITALIZE_WORDS;
-        transformer.allWordsDictionaries = new Dictionary[] {new SimpleDictionary("dict A", "O'MustMATCHfooo Bar")};
-        transformer.wordDictionaries = new Dictionary[] {new SimpleDictionary("dict A", "O'mustMatchFooo")};
-        transformer.wordStartDictionaries = new Dictionary[] {new SimpleDictionary("dict start A", "O'S"),};
-        transformer.wordEndDictionaries = new Dictionary[] {new SimpleDictionary("dict end A", "FOOO")};
+        transformer.allWordsDictionaries = new Dictionary[] { new SimpleDictionary("dict A", "O'MustMATCHfooo Bar") };
+        transformer.wordDictionaries = new Dictionary[] { new SimpleDictionary("dict A", "O'mustMatchFooo") };
+        transformer.wordStartDictionaries = new Dictionary[] { new SimpleDictionary("dict start A", "O'S"), };
+        transformer.wordEndDictionaries = new Dictionary[] { new SimpleDictionary("dict end A", "FOOO") };
         transformer.init();
 
         assertEquals("O'MustMATCHfooo Bar", transformer.transform("o'mustmatchfooo BAR"));
@@ -191,7 +194,6 @@ public class TextCaseTransformerTest {
 
         assertEquals("hello world. foo bar! foo", transformer.transform("hello World. FOO baR! foo"));
     }
-
 
     private void putData(final String name) {
         _inputRow.put(_nameColumn, name);

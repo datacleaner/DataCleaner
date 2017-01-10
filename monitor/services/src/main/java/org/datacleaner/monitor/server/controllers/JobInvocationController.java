@@ -29,6 +29,7 @@ import javax.annotation.security.RolesAllowed;
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HasNameMapper;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -42,6 +43,7 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.monitor.configuration.PlaceholderAnalysisJob;
+import org.datacleaner.monitor.configuration.PlaceholderAnalysisJobWithAnalyzers;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.JobContext;
@@ -100,23 +102,7 @@ public class JobInvocationController {
 
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
         final DataCleanerJobContext analysisJobContext = (DataCleanerJobContext) getJob(jobName, tenantContext);
-        final String tablePath = getTablePath(analysisJobContext.getSourceColumnPaths());
-        final String schemaName = getSchemaName(tablePath);
-        final String tableName = getTableName(tablePath);
-
-        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<>(1);
-        final List<String> columnNames = getColumnNames(analysisJobContext.getSourceColumnPaths(), tablePath);
-
-        final List<JobInvocationRowData> inputRows = input.getRows();
-        final List<Object[]> inputRowData = CollectionUtils.map(inputRows, JobInvocationRowData::getValues);
-
-        // TODO: No column types added
-        final SimpleTableDef tableDef = new SimpleTableDef(tableName, columnNames.toArray(new String[0]));
-        tableDataProviders.add(new ArrayTableDataProvider(tableDef, inputRowData));
-
-        final String datastoreName = analysisJobContext.getSourceDatastoreName();
-        final PojoDatastore placeholderDatastore = new PojoDatastore(datastoreName, schemaName, tableDataProviders);
-
+        final PojoDatastore placeholderDatastore = createPlaceholderdatastore(input, analysisJobContext);
         final AnalysisJob originalJob = analysisJobContext.getAnalysisJob();
 
         final PlaceholderAnalysisJob placeholderAnalysisJob =
@@ -132,20 +118,7 @@ public class JobInvocationController {
             throw resultFuture.getErrors().get(0);
         }
 
-        final PreviewTransformedDataAnalyzer result = (PreviewTransformedDataAnalyzer) resultFuture.getResults().get(0);
-
-        final JobInvocationPayload output = new JobInvocationPayload();
-        final List<String> outputColumnNames = CollectionUtils.map(result.getColumns(), new HasNameMapper());
-        output.setColumns(outputColumnNames);
-
-        final List<Object[]> collectedRowData = result.getList();
-        for (final Object[] outputRow : collectedRowData) {
-            output.addRow(outputRow);
-        }
-
-        logger.info("Response payload: {}", output);
-
-        return output;
+        return createOutputRows(resultFuture);
     }
 
     /**
@@ -176,6 +149,131 @@ public class JobInvocationController {
     public JobInvocationPayload invokeJobMapped(@PathVariable("tenant") final String tenant,
             @PathVariable("job") final String jobName, @RequestBody final JobInvocationPayload input) throws Throwable {
 
+        final JobInvocationPayload convertedInput = convertInput(tenant, jobName, input);
+
+        final JobInvocationPayload output = invokeJob(tenant, jobName, convertedInput);
+        output.setColumnValueMap(toColumnValueMap(output.getColumns(), output.getRows()));
+        return output;
+    }
+
+    /**
+     * Takes a JSON request body on this form (2 rows with 1 int and 2 strings
+     * each):
+     * 
+     * <pre>
+     * {"rows":[
+     *   {"values":[1,"hello","John"]},
+     *   {"values":[1,"howdy","Jane"]}
+     * ]}
+     * </pre>
+     * 
+     * These values will be passed as source records for a job. the job is
+     * responsible for processing the output therefore return type is void
+     * 
+     * @param tenant
+     * @param jobName
+     * @param input
+     * @throws Throwable
+     */
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke.complete", method = RequestMethod.POST, 
+            produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
+    public void invokeJobWithAnalyzers(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
+            @RequestBody final JobInvocationPayload input) throws Throwable {
+        logger.info("Request payload: {}", input);
+
+        final TenantContext tenantContext = _contextFactory.getContext(tenant);
+        final DataCleanerJobContext analysisJobContext = (DataCleanerJobContext) getJob(jobName, tenantContext);
+        final PojoDatastore placeholderDatastore = createPlaceholderdatastore(input, analysisJobContext);
+        final AnalysisJob originalJob = analysisJobContext.getAnalysisJob();
+
+        final PlaceholderAnalysisJobWithAnalyzers placeholderAnalysisJob = new PlaceholderAnalysisJobWithAnalyzers(
+                placeholderDatastore, originalJob);
+
+        final DataCleanerConfiguration configuration = getRunnerConfiguration(tenantContext);
+
+        final AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
+
+        final AnalysisResultFuture resultFuture = runner.run(placeholderAnalysisJob);
+
+        if (resultFuture.isErrornous()) {
+            throw resultFuture.getErrors().get(0);
+        }
+    }
+
+    /**
+     * Takes a JSON request body containing an array of key value pairs (the
+     * example below has 2 rows with 1 int and 2 strings each):
+     *
+     * <pre>
+     * {"rows":[
+     *   {"id":1, "name":"John", "message": "hello"},
+     *   {"id":2, "name":"Jane", "message": "howdy"}
+     * ]}
+     * </pre>
+     *
+     * These values will be passed as source records for a job. The job is
+     * responsible for processing the output therefore return type is void
+     *
+     * @param tenant
+     * @param jobName
+     * @param input
+     * @throws Throwable
+     */
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke.complete/mapped", method = RequestMethod.POST, 
+            produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
+    public void invokeJobWithAnalyzersMapped(@PathVariable("tenant") final String tenant,
+            @PathVariable("job") String jobName, @RequestBody final JobInvocationPayload input) throws Throwable {
+        logger.info("Request payload: {}", input);
+
+        final JobInvocationPayload convertedInput = convertInput(tenant, jobName, input);
+
+        invokeJobWithAnalyzers(tenant, jobName, convertedInput);
+    }
+
+    private JobInvocationPayload createOutputRows(final AnalysisResultFuture resultFuture) {
+        final PreviewTransformedDataAnalyzer result = (PreviewTransformedDataAnalyzer) resultFuture.getResults().get(0);
+
+        final JobInvocationPayload output = new JobInvocationPayload();
+        final List<String> outputColumnNames = CollectionUtils.map(result.getColumns(), new HasNameMapper());
+        output.setColumns(outputColumnNames);
+
+        final List<Object[]> collectedRowData = result.getList();
+        for (Object[] outputRow : collectedRowData) {
+            output.addRow(outputRow);
+        }
+
+        logger.info("Response payload: {}", output);
+
+        return output;
+    }
+
+    private PojoDatastore createPlaceholderdatastore(final JobInvocationPayload input,
+            final DataCleanerJobContext analysisJobContext) {
+
+        final String tablePath = getTablePath(analysisJobContext.getSourceColumnPaths());
+        final String schemaName = getSchemaName(tablePath);
+        final String tableName = getTableName(tablePath);
+
+        final List<TableDataProvider<?>> tableDataProviders = new ArrayList<>(1);
+        final List<String> columnNames = getColumnNames(analysisJobContext.getSourceColumnPaths(), tablePath);
+
+        final List<JobInvocationRowData> inputRows = input.getRows();
+        final List<Object[]> inputRowData = CollectionUtils.map(inputRows,
+                (Func<JobInvocationRowData, Object[]>) rowData -> rowData.getValues());
+
+        // TODO: No column types added
+        final SimpleTableDef tableDef = new SimpleTableDef(tableName, columnNames.toArray(new String[0]));
+        tableDataProviders.add(new ArrayTableDataProvider(tableDef, inputRowData));
+        final String datastoreName = analysisJobContext.getSourceDatastoreName();
+        return new PojoDatastore(datastoreName, schemaName, tableDataProviders);
+
+    }
+
+    private JobInvocationPayload convertInput(final String tenant, String jobName, final JobInvocationPayload input) {
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
         final DataCleanerJobContext analysisJobContext = (DataCleanerJobContext) getJob(jobName, tenantContext);
         final List<String> columnPaths = analysisJobContext.getSourceColumnPaths();
@@ -183,10 +281,7 @@ public class JobInvocationController {
 
         final JobInvocationPayload convertedInput = new JobInvocationPayload();
         convertedInput.setRows(toRows(columnNames, input.getColumnValueMap()));
-
-        final JobInvocationPayload output = invokeJob(tenant, jobName, convertedInput);
-        output.setColumnValueMap(toColumnValueMap(output.getColumns(), output.getRows()));
-        return output;
+        return convertedInput;
     }
 
     private String getTableName(final String tablePath) {

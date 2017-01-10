@@ -26,7 +26,6 @@ import java.awt.LayoutManager;
 import javax.swing.JComponent;
 import javax.swing.border.Border;
 
-import org.datacleaner.api.HasConditionallyHiddenProperties;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
@@ -80,7 +79,8 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
      * Executes a "widget batch update". Listeners and other effects of updating
      * individual parts of a widget may be turned off during batch updates.
      *
-     * @param action the action to execute
+     * @param action
+     *            the action to execute
      */
     public final void batchUpdateWidget(final Runnable action) {
         _batchUpdateCounter++;
@@ -190,16 +190,5 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
      */
     protected boolean isVisible() {
         return _panel.isVisible();
-    }
-
-    @Override
-    public void onValueTouched(final E value) {
-        super.onValueTouched(value);
-
-        final Object componentInstance = getComponentBuilder().getComponentInstance();
-        if (componentInstance != null && componentInstance instanceof HasConditionallyHiddenProperties) {
-            _panel.setVisible(!((HasConditionallyHiddenProperties) componentInstance)
-                    .isPropertyHidden(getPropertyDescriptor().getName()));
-        }
     }
 }

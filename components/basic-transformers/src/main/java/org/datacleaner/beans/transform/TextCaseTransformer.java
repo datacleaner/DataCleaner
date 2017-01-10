@@ -56,7 +56,7 @@ public class TextCaseTransformer implements Transformer {
     private static final String DEFAULT_START_CASE_DICTIONARY = "TextCaseTransformer start case dictionary";
     private static final String DEFAULT_END_CASE_DICTIONARY = "TextCaseTransformer end case dictionary";
     private static final String DEFAULT_WORD_CASE_DICTIONARY = "TextCaseTransformer word case dictionary";
-    private static final String DEFAULT_COMPLETE_CASE_DICTIONARY = "TextCaseTransformer fixed case dictionary";
+    private static final String DEFAULT_COMPLETE_CASE_DICTIONARY = "TextCaseTransformer value dictionary";
 
     /**
      * Enum depicting the modes of operation for the text case modifications.
@@ -85,8 +85,8 @@ public class TextCaseTransformer implements Transformer {
 
     public static final String VALUE_PROPERTY = "Value";
     public static final String MODE_PROPERTY = "Mode";
-    public static final String ALL_WORDS_DICTIONARY_PROPERTY = "Dictionaries for casing all words";
-    public static final String WORD_DICTIONARY_PROPERTY = "Dictionaries for casing complete words";
+    public static final String ALL_WORDS_DICTIONARY_PROPERTY = "Dictionaries for casing complete value";
+    public static final String WORD_DICTIONARY_PROPERTY = "Dictionaries for casing individual words";
     public static final String BEGIN_WORD_DICTIONARY_PROPERTY = "Dictionaries for casing beginning of words";
     public static final String END_WORD_DICTIONARY_PROPERTY = "Dictionaries for casing ending of words";
 

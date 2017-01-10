@@ -39,9 +39,7 @@ public interface DictionaryConnection extends Closeable {
     default Stream<String> stream() {
         final Iterable<String> iterable = this::getLengthSortedValues;
         return StreamSupport.stream(iterable.spliterator(), false);
-
     }
-
 
     @Override
     void close();

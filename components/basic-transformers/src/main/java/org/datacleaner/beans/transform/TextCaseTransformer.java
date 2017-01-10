@@ -22,7 +22,6 @@ package org.datacleaner.beans.transform;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,7 +32,6 @@ import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
-import org.datacleaner.api.HasConditionallyHiddenProperties;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -53,11 +51,11 @@ import com.ibm.icu.text.BreakIterator;
 @Named("Text case transformer")
 @Description("Modifies the text case/capitalization of Strings.")
 @Categorized(TextCategory.class)
-public class TextCaseTransformer implements Transformer, HasConditionallyHiddenProperties {
-    public static final String DEFAULT_START_CASE_DICTIONARY= "TextCaseTransformer start case dictionary";
-    public static final String DEFAULT_END_CASE_DICTIONARY = "TextCaseTransformer end case dictionary";
-    public static final String DEFAULT_WORD_CASE_DICTIONARY = "TextCaseTransformer word case dictionary";
-    public static final String DEFAULT_COMPLETE_CASE_DICTIONARY = "TextCaseTransformer fixed case dictionary";
+public class TextCaseTransformer implements Transformer {
+    private static final String DEFAULT_START_CASE_DICTIONARY = "TextCaseTransformer start case dictionary";
+    private static final String DEFAULT_END_CASE_DICTIONARY = "TextCaseTransformer end case dictionary";
+    private static final String DEFAULT_WORD_CASE_DICTIONARY = "TextCaseTransformer word case dictionary";
+    private static final String DEFAULT_COMPLETE_CASE_DICTIONARY = "TextCaseTransformer fixed case dictionary";
 
     /**
      * Enum depicting the modes of operation for the text case modifications.
@@ -84,10 +82,12 @@ public class TextCaseTransformer implements Transformer, HasConditionallyHiddenP
         }
     }
 
-    public static final String ALL_WORDS_DICTIONARY = "Dictionaries for casing all words";
-    public static final String WORD_DICTIONARY = "Dictionaries for casing complete words (e.g. )";
-    public static final String BEGIN_WORD_DICTIONARY = "Dictionaries for casing beginning of words";
-    public static final String END_WORD_DICTIONARY = "Dictionaries for casing ending of words";
+    public static final String VALUE_PROPERTY = "Value";
+    public static final String MODE_PROPERTY = "Mode";
+    public static final String ALL_WORDS_DICTIONARY_PROPERTY = "Dictionaries for casing all words";
+    public static final String WORD_DICTIONARY_PROPERTY = "Dictionaries for casing complete words";
+    public static final String BEGIN_WORD_DICTIONARY_PROPERTY = "Dictionaries for casing beginning of words";
+    public static final String END_WORD_DICTIONARY_PROPERTY = "Dictionaries for casing ending of words";
 
     public TextCaseTransformer() {
         this(null);
@@ -114,25 +114,22 @@ public class TextCaseTransformer implements Transformer, HasConditionallyHiddenP
         }
     }
 
-    @Configured("Value")
+    @Configured(VALUE_PROPERTY)
     InputColumn<String> valueColumn;
 
-    @Configured("Locale")
-    Locale locale = Locale.getDefault();
-
-    @Configured
+    @Configured(MODE_PROPERTY)
     TransformationMode mode = TransformationMode.UPPER_CASE;
 
-    @Configured(value = ALL_WORDS_DICTIONARY, required = false, order = 11)
+    @Configured(value = ALL_WORDS_DICTIONARY_PROPERTY,required = false, order = 11)
     Dictionary[] allWordsDictionaries = {};
 
-    @Configured(value= WORD_DICTIONARY, required = false, order = 12)
+    @Configured(value = WORD_DICTIONARY_PROPERTY,required = false, order = 12)
     Dictionary[] wordDictionaries = {};
 
-    @Configured(value = BEGIN_WORD_DICTIONARY, required = false, order = 13)
+    @Configured(value = BEGIN_WORD_DICTIONARY_PROPERTY,required = false, order = 13)
     Dictionary[] wordStartDictionaries = {};
 
-    @Configured(value = END_WORD_DICTIONARY, required = false, order = 14)
+    @Configured(value = END_WORD_DICTIONARY_PROPERTY,required = false, order = 14)
     Dictionary[] wordEndDictionaries = {};
 
     @Provided
@@ -142,13 +139,6 @@ public class TextCaseTransformer implements Transformer, HasConditionallyHiddenP
     private DictionaryConnection[] wordDictionaryConnections = {};
     private DictionaryConnection[] wordStartDictionaryConnections = {};
     private DictionaryConnection[] wordEndDictionaryConnections = {};
-
-    @Override
-    public boolean isPropertyHidden(final String propertyName) {
-        return mode != TransformationMode.CAPITALIZE_WORDS && (propertyName.equals(ALL_WORDS_DICTIONARY)
-                || propertyName.equals(WORD_DICTIONARY) || propertyName
-                .equals(BEGIN_WORD_DICTIONARY) || propertyName.equals(END_WORD_DICTIONARY));
-    }
 
     private DictionaryConnection[] openConnections(final Dictionary[] dictionaries) {
         return Stream.of(dictionaries).map(d -> d.openConnection(_configuration)).toArray(DictionaryConnection[]::new);

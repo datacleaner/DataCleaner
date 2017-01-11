@@ -53,7 +53,7 @@
                 <property name="CoordinatesY">259</property>
             </metadata-properties>
             <properties>
-                <property name="File" value="C:/Users/kasper/git/DataCleaner/desktop/US-customers-without-state.csv"/>
+                <property name="File" value="US-customers-without-state.csv"/>
                 <property name="Separator char" value="&amp;#44;"/>
                 <property name="Quote char" value="&amp;quot;"/>
                 <property name="Escape char" value="\"/>

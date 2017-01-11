@@ -21,6 +21,8 @@ package org.datacleaner.reference;
 
 import java.io.Closeable;
 import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public interface DictionaryConnection extends Closeable {
     boolean containsValue(String value);
@@ -28,6 +30,16 @@ public interface DictionaryConnection extends Closeable {
     Iterator<String> getLengthSortedValues();
 
     Iterator<String> getAllValues();
+
+    default Stream<String> lengthSortedStream() {
+        final Iterable<String> iterable = this::getLengthSortedValues;
+        return StreamSupport.stream(iterable.spliterator(), false);
+    }
+
+    default Stream<String> stream() {
+        final Iterable<String> iterable = this::getLengthSortedValues;
+        return StreamSupport.stream(iterable.spliterator(), false);
+    }
 
     @Override
     void close();

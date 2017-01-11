@@ -226,7 +226,7 @@ public class JobInvocationController {
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public void invokeJobWithAnalyzersMapped(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName, @RequestBody final JobInvocationPayload input) throws Throwable {
+            @PathVariable("job") final String jobName, @RequestBody final JobInvocationPayload input) throws Throwable {
         logger.info("Request payload: {}", input);
 
         final JobInvocationPayload convertedInput = convertInput(tenant, jobName, input);
@@ -273,7 +273,8 @@ public class JobInvocationController {
 
     }
 
-    private JobInvocationPayload convertInput(final String tenant, String jobName, final JobInvocationPayload input) {
+    private JobInvocationPayload convertInput(final String tenant, final String jobName,
+            final JobInvocationPayload input) {
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
         final DataCleanerJobContext analysisJobContext = (DataCleanerJobContext) getJob(jobName, tenantContext);
         final List<String> columnPaths = analysisJobContext.getSourceColumnPaths();
@@ -317,9 +318,9 @@ public class JobInvocationController {
         });
     }
 
-    private JobContext getJob(String jobName, final TenantContext tenantContext) {
-        jobName = jobName.replaceAll("\\+", " ");
-        final JobContext job = tenantContext.getJob(jobName);
+    private JobContext getJob(final String jobName, final TenantContext tenantContext) {
+        final String jobNameWithSpaces = jobName.replace("\\+", " ");
+        final JobContext job = tenantContext.getJob(jobNameWithSpaces);
         if (!(job instanceof DataCleanerJobContext)) {
             throw new UnsupportedOperationException("Job not compatible with operation: " + jobName);
         }

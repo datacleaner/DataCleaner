@@ -29,7 +29,7 @@ public class PlaceholderAnalysisJobWithAnalyzers extends PlaceholderAnalysisJob 
 
     private final List<AnalyzerJob> analyzerJobs;
 
-    public PlaceholderAnalysisJobWithAnalyzers(Datastore datastore, AnalysisJob delegateJob) {
+    public PlaceholderAnalysisJobWithAnalyzers(final Datastore datastore, final AnalysisJob delegateJob) {
         super(datastore, delegateJob);
         this.analyzerJobs = delegateJob.getAnalyzerJobs();
 

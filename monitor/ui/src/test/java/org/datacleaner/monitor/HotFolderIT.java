@@ -48,9 +48,9 @@ public class HotFolderIT {
             getCommandOutput(command);
 
             try {
-                Thread.sleep(15 * 1000); // wait for the hot folder trigger and job execution
+                Thread.sleep(20 * 1000); // wait for the hot folder trigger and job execution
             } catch (final InterruptedException e) {
-                // nothing
+                fail("Waiting for the job execution was interrupted. " + e.getMessage());
             }
 
             assertEquals(2, getResultFilesCount());

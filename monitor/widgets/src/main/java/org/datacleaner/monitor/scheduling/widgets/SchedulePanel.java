@@ -77,10 +77,9 @@ public class SchedulePanel extends Composite {
 
     @UiField
     InlineLabel latestExecutionLabel;
-    
+
     @UiField
     FlowPanel alertsPanel;
-    
 
     public SchedulePanel(final ClientConfig clientConfig, final ScheduleDefinition schedule,
             final SchedulingServiceAsync service) {

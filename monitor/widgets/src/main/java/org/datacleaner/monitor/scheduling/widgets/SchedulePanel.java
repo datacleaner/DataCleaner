@@ -32,6 +32,7 @@ import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.util.DCAsyncCallback;
+import org.datacleaner.util.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -41,7 +42,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -63,6 +63,7 @@ public class SchedulePanel extends Composite {
     private final ScheduleDefinition _schedule;
     private final ClientConfig _clientConfig;
     private final SchedulingServiceAsync _service;
+    private static final DateTimeFormat FORMAT_DATE = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
 
     @UiField
     Label jobLabel;
@@ -89,7 +90,7 @@ public class SchedulePanel extends Composite {
 
         _clientConfig = clientConfig;
         _schedule = schedule;
-        _service = service; 
+        _service = service;
 
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -137,8 +138,7 @@ public class SchedulePanel extends Composite {
                 handler.showExecutionPopup();
             }
         }
-        
-       
+
         final List<AlertDefinition> alerts = schedule.getAlerts();
         if (alerts.size() > 0) {
 
@@ -173,10 +173,10 @@ public class SchedulePanel extends Composite {
             @Override
             public void onSuccess(final ExecutionLog result) {
                 if (result != null) {
-                    final ExecutionStatus executionStatus = result.getExecutionStatus();
-                    final DateTimeFormat formatDate = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
-                    final String formattedDate = formatDate.format(result.getJobBeginDate());
-                    latestExecutionLabel.setText("- Latest execution:" + formattedDate + ", " + executionStatus.name());
+                    final String executionStatus = result.getExecutionStatus().toString().toLowerCase();
+                    final String formattedDate = FORMAT_DATE.format(result.getJobBeginDate());
+                    latestExecutionLabel.setText("- Latest execution: " + formattedDate + ", " + executionStatus
+                            .substring(0, 1).toUpperCase() + executionStatus.substring(1));
                 }
             }
         });

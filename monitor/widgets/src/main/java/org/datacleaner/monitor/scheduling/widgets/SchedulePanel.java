@@ -24,7 +24,6 @@ import java.util.List;
 import org.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.datacleaner.monitor.scheduling.model.TriggerType;
 import org.datacleaner.monitor.shared.ClientConfig;
@@ -32,7 +31,6 @@ import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.widgets.DCButtons;
 import org.datacleaner.monitor.util.DCAsyncCallback;
-import org.datacleaner.util.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

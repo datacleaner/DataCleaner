@@ -91,7 +91,8 @@ public class JobInvocationController {
      * @return
      * @throws Throwable
      */
-    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke", method = RequestMethod.POST, 
+            produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public JobInvocationPayload invokeJob(@PathVariable("tenant") final String tenant,
@@ -142,7 +143,8 @@ public class JobInvocationController {
      *         "outputColumn2": "Output Value 2"} per row
      * @throws Throwable
      */
-    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke/mapped", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke/mapped", method = RequestMethod.POST, 
+            produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public JobInvocationPayload invokeJobMapped(@PathVariable("tenant") final String tenant,
@@ -175,7 +177,8 @@ public class JobInvocationController {
      * @param input
      * @throws Throwable
      */
-    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke.complete", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke.complete", method = RequestMethod.POST, 
+            produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public void invokeJobWithAnalyzers(@PathVariable("tenant") final String tenant,
@@ -221,7 +224,8 @@ public class JobInvocationController {
      * @param input
      * @throws Throwable
      */
-    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke.complete/mapped", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke.complete/mapped", method = RequestMethod.POST, 
+            produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public void invokeJobWithAnalyzersMapped(@PathVariable("tenant") final String tenant,

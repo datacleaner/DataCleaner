@@ -91,22 +91,20 @@ public class JobInvocationController {
      * @return
      * @throws Throwable
      */
-    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke", method = RequestMethod.POST,
-            produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public JobInvocationPayload invokeJob(@PathVariable("tenant") final String tenant,
             @PathVariable("job") final String jobName, @RequestBody final JobInvocationPayload input) throws Throwable {
         logger.info("Request payload: {}", input);
 
-
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
         final DataCleanerJobContext analysisJobContext = (DataCleanerJobContext) getJob(jobName, tenantContext);
         final PojoDatastore placeholderDatastore = createPlaceholderdatastore(input, analysisJobContext);
         final AnalysisJob originalJob = analysisJobContext.getAnalysisJob();
 
-        final PlaceholderAnalysisJob placeholderAnalysisJob =
-                new PlaceholderAnalysisJob(placeholderDatastore, originalJob);
+        final PlaceholderAnalysisJob placeholderAnalysisJob = new PlaceholderAnalysisJob(placeholderDatastore,
+                originalJob);
 
         final DataCleanerConfiguration configuration = getRunnerConfiguration(tenantContext);
 
@@ -122,8 +120,8 @@ public class JobInvocationController {
     }
 
     /**
-     * Takes a JSON request body containing an array of key value pairs (the example below has 2 rows with 1 int and 2 strings
-     * each):
+     * Takes a JSON request body containing an array of key value pairs (the
+     * example below has 2 rows with 1 int and 2 strings each):
      *
      * <pre>
      * {"rows":[
@@ -131,19 +129,20 @@ public class JobInvocationController {
      *   {"id":2, "name":"Jane", "message": "howdy"}
      * ]}
      * </pre>
-     * The column names as known in the datastore are passed as key for the values.
-     * These values will be passed as source records for a job, and the
+     * 
+     * The column names as known in the datastore are passed as key for the
+     * values. These values will be passed as source records for a job, and the
      * transformed records will be returned.
      *
      * @param tenant
      * @param jobName
      * @param input
-     * @return - returns the output in row/ column format and adds a list with the output/ value map e.g.
-     * {"outputColumn1": "Output Value 1", "outputColumn2": "Output Value 2"} per row
+     * @return - returns the output in row/ column format and adds a list with
+     *         the output/ value map e.g. {"outputColumn1": "Output Value 1",
+     *         "outputColumn2": "Output Value 2"} per row
      * @throws Throwable
      */
-    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke/mapped", method = RequestMethod.POST,
-            produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke/mapped", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public JobInvocationPayload invokeJobMapped(@PathVariable("tenant") final String tenant,
@@ -167,20 +166,20 @@ public class JobInvocationController {
      * ]}
      * </pre>
      * 
-     * These values will be passed as source records for a job. the job is
-     * responsible for processing the output therefore return type is void
+     * These values will be passed as source records for a job. The complete job
+     * is executed, including Analyzers. The job is responsible for processing
+     * the transfomed output by an analyzer therefore return type is void
      * 
      * @param tenant
      * @param jobName
      * @param input
      * @throws Throwable
      */
-    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke.complete", method = RequestMethod.POST, 
-            produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke.complete", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
-    public void invokeJobWithAnalyzers(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
-            @RequestBody final JobInvocationPayload input) throws Throwable {
+    public void invokeJobWithAnalyzers(@PathVariable("tenant") final String tenant,
+            @PathVariable("job") String jobName, @RequestBody final JobInvocationPayload input) throws Throwable {
         logger.info("Request payload: {}", input);
 
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
@@ -213,16 +212,16 @@ public class JobInvocationController {
      * ]}
      * </pre>
      *
-     * These values will be passed as source records for a job. The job is
-     * responsible for processing the output therefore return type is void
+     * These values will be passed as source records for a job. The complete job
+     * is executed, including Analyzers. The job is responsible for processing
+     * the transfomed output by an analyzer therefore return type is void
      *
      * @param tenant
      * @param jobName
      * @param input
      * @throws Throwable
      */
-    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke.complete/mapped", method = RequestMethod.POST, 
-            produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/{tenant}/jobs/{job:.+}.invoke.complete/mapped", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public void invokeJobWithAnalyzersMapped(@PathVariable("tenant") final String tenant,
@@ -333,8 +332,8 @@ public class JobInvocationController {
 
         // replace task runner with single threaded taskrunner to ensure order
         // of output records.
-        final DataCleanerEnvironmentImpl replacementEnvironment =
-                new DataCleanerEnvironmentImpl(environment).withTaskRunner(new SingleThreadedTaskRunner());
+        final DataCleanerEnvironmentImpl replacementEnvironment = new DataCleanerEnvironmentImpl(environment)
+                .withTaskRunner(new SingleThreadedTaskRunner());
 
         return new DataCleanerConfigurationImpl(configuration).withEnvironment(replacementEnvironment);
     }

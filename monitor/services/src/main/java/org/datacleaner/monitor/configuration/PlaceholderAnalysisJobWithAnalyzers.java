@@ -25,6 +25,10 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 
+/**
+ * {@link AnalysisJob} which replaces the {@link Datastore} of another
+ * {@link AnalysisJob}.
+ */
 public class PlaceholderAnalysisJobWithAnalyzers extends PlaceholderAnalysisJob {
 
     private final List<AnalyzerJob> analyzerJobs;
@@ -35,6 +39,11 @@ public class PlaceholderAnalysisJobWithAnalyzers extends PlaceholderAnalysisJob 
 
     }
 
+    /**
+     * Gets all {@link AnalyzerJob}s contained in this job.
+     *
+     * @return
+     */
     @Override
     public List<AnalyzerJob> getAnalyzerJobs() {
         return analyzerJobs;

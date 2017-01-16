@@ -20,6 +20,7 @@
 package org.datacleaner.util;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Shape;
 import java.awt.event.MouseWheelEvent;
@@ -53,7 +54,7 @@ public class GraphUtils {
 
         renderContext.setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM, false));
         renderContext.setEdgeStrokeTransformer(input -> stroke);
-        renderContext.setEdgeDrawPaintTransformer(input -> WidgetUtils.BG_COLOR_MEDIUM);
+        renderContext.setEdgeDrawPaintTransformer(input -> WidgetUtils.BG_COLOR_LESS_BRIGHT);
         renderContext.setVertexLabelRenderer(new DefaultVertexLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM));
         renderContext.setEdgeFontTransformer(GraphUtils.createFontTransformer());
         renderContext.setVertexFontTransformer(GraphUtils.createFontTransformer());

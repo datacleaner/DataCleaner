@@ -82,8 +82,8 @@ public class JobInvocationController {
      * ]}
      * </pre>
      *
-     * These values will be passed as source records for a job, and the
-     * transformed records will be returned.
+     * These values will be passed as source records for a job. Runs the
+     * transformers and transformed records will be returned.
      *
      * @param tenant
      * @param jobName
@@ -132,8 +132,8 @@ public class JobInvocationController {
      * </pre>
      * 
      * The column names as known in the datastore are passed as key for the
-     * values. These values will be passed as source records for a job, and the
-     * transformed records will be returned.
+     * values. These values will be passed as source records for a job. Runs the
+     * transformers and transformed records will be returned.
      *
      * @param tenant
      * @param jobName
@@ -168,9 +168,9 @@ public class JobInvocationController {
      * ]}
      * </pre>
      * 
-     * These values will be passed as source records for a job. The complete job
-     * is executed, including Analyzers. The job is responsible for processing
-     * the transfomed output by an analyzer therefore return type is void
+     * These values will be passed as source records for a job. Runs the job
+     * like the invoke method but instead of returning the values it will also
+     * run the configured analyzers to write the transformed records".
      * 
      * @param tenant
      * @param jobName
@@ -215,9 +215,9 @@ public class JobInvocationController {
      * ]}
      * </pre>
      *
-     * These values will be passed as source records for a job. The complete job
-     * is executed, including Analyzers. The job is responsible for processing
-     * the transfomed output by an analyzer therefore return type is void
+     * These values will be passed as source records for a job. Runs the job
+     * like the invoke method but instead of returning the values it will also
+     * run the configured analyzers to write the transformed records".
      *
      * @param tenant
      * @param jobName

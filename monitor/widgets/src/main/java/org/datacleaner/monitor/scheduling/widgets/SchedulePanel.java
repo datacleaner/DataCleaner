@@ -23,17 +23,20 @@ import java.util.List;
 
 import org.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.datacleaner.monitor.scheduling.model.TriggerType;
 import org.datacleaner.monitor.shared.ClientConfig;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.widgets.DCButtons;
+import org.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.History;
@@ -41,6 +44,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -56,6 +60,8 @@ public class SchedulePanel extends Composite {
 
     private final ScheduleDefinition _schedule;
     private final ClientConfig _clientConfig;
+    private final SchedulingServiceAsync _service;
+    private static final DateTimeFormat FORMAT_DATE = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss");
 
     @UiField
     Label jobLabel;
@@ -70,6 +76,9 @@ public class SchedulePanel extends Composite {
     Button executeButton;
 
     @UiField
+    InlineLabel latestExecutionLabel;
+
+    @UiField
     FlowPanel alertsPanel;
 
     public SchedulePanel(final ClientConfig clientConfig, final ScheduleDefinition schedule,
@@ -78,11 +87,13 @@ public class SchedulePanel extends Composite {
 
         _clientConfig = clientConfig;
         _schedule = schedule;
+        _service = service;
 
         initWidget(uiBinder.createAndBindUi(this));
 
+        final JobIdentifier job = schedule.getJob();
         // add the job type as a style name
-        final String jobType = schedule.getJob().getType();
+        final String jobType = job.getType();
         if (jobType != null) {
             addStyleName(jobType);
         }
@@ -91,7 +102,7 @@ public class SchedulePanel extends Composite {
 
         final TenantIdentifier tenant = _clientConfig.getTenant();
 
-        final String encodedJobName = URL.encodeQueryString(schedule.getJob().getName());
+        final String encodedJobName = URL.encodeQueryString(job.getName());
 
         if (_clientConfig.isJobEditor()) {
             moreButton.addClickHandler(new CustomizeJobClickHandler(this, tenant, schedule, service, _clientConfig));
@@ -152,6 +163,22 @@ public class SchedulePanel extends Composite {
         }
     }
 
+    private void setLatestExecutionStatus(final SchedulingServiceAsync service, final JobIdentifier job,
+            final TenantIdentifier tenant) {
+        service.getLatestExecution(tenant, job, new DCAsyncCallback<ExecutionLog>() {
+
+            @Override
+            public void onSuccess(final ExecutionLog result) {
+                if (result != null) {
+                    final String executionStatus = result.getExecutionStatus().toString().toLowerCase();
+                    final String formattedDate = FORMAT_DATE.format(result.getJobBeginDate());
+                    latestExecutionLabel.setText("- Latest execution: " + formattedDate + ", " + executionStatus
+                            .substring(0, 1).toUpperCase() + executionStatus.substring(1));
+                }
+            }
+        });
+    }
+
     public ScheduleDefinition getSchedule() {
         return _schedule;
     }
@@ -191,6 +218,8 @@ public class SchedulePanel extends Composite {
         default:
             // ignore
         }
+        setLatestExecutionStatus(_service, job, _clientConfig.getTenant());
+        latestExecutionLabel.addStyleName("discrete");
     }
 
 }

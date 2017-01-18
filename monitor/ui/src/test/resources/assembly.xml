@@ -5,5 +5,13 @@
 			<source>${project.build.directory}/${project.build.finalName}.war</source>
 			<outputDirectory>/</outputDirectory>
 		</file>
+		<file>
+			<source>${project.build.directory}/test-classes/generate-hot-folder-input.sh</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
+		<file>
+			<source>${project.build.directory}/test-classes/get-results-count.sh</source>
+			<outputDirectory/>
+		</file>
 	</files>
 </assembly>

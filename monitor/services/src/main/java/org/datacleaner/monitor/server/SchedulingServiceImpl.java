@@ -20,8 +20,12 @@
 package org.datacleaner.monitor.server;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +49,12 @@ import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileResource;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.JaxbJobReader;
+import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.ExecutionLogger;
@@ -59,6 +69,11 @@ import org.datacleaner.monitor.scheduling.model.TriggerType;
 import org.datacleaner.monitor.scheduling.quartz.AbstractQuartzJob;
 import org.datacleaner.monitor.scheduling.quartz.ExecuteJob;
 import org.datacleaner.monitor.scheduling.quartz.ExecuteJobListener;
+import org.datacleaner.monitor.server.hotfolder.DefaultWaitForCompleteFileStrategy;
+import org.datacleaner.monitor.server.hotfolder.HotFolderPreferences;
+import org.datacleaner.monitor.server.hotfolder.IncompleteFileException;
+import org.datacleaner.monitor.server.hotfolder.WaitForCompleteFileStrategy;
+import org.datacleaner.monitor.server.hotfolder.WrongInputException;
 import org.datacleaner.monitor.server.jaxb.JaxbException;
 import org.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
 import org.datacleaner.monitor.server.jaxb.JaxbScheduleReader;
@@ -105,9 +120,18 @@ import com.google.common.collect.Maps;
  */
 @Component("schedulingService")
 public class SchedulingServiceImpl implements SchedulingService, ApplicationContextAware {
+    @Autowired
+    HotFolderPreferences _hotFolderPreferences;
 
     private final class HotFolderAlterationListener extends FileAlterationListenerAdaptor {
         private static final String PROPERTIES_FILE_EXTENSION = ".properties";
+        private static final String TRIGGER_FILE_EXTENSION = ".trigger";
+        private static final String VARIABLE_FILE_NAME = "hotfolder.input.filename";
+        private static final String VARIABLE_EXTENSION = "hotfolder.input.extension";
+        private static final String VARIABLE_DATE = "datacleaner.run.date";
+        private static final String VARIABLE_TIME = "datacleaner.run.time";
+        private static final String DATE_FORMAT = "yyyyMMdd";
+        private static final String TIME_FORMAT = "HHmmss";
 
         private final JobIdentifier job;
         private final TenantIdentifier tenant;
@@ -133,16 +157,164 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         public void onFileCreate(final File file) {
             logger.info("file {} created in hot folder, triggering execution of job {}.", file.getName(),
                     job.getName());
-
-            triggerJobExecution();
+            executeJobWithFileInNewThread(file);
         }
 
         @Override
         public void onFileChange(final File file) {
             logger.info("file {} changed in hot folder, triggering execution of job {}.", file.getName(),
                     job.getName());
+            executeJobWithFileInNewThread(file);
+        }
 
-            triggerJobExecution();
+        private void executeJobWithFileInNewThread(final File inputFile) {
+            new Thread(() -> {
+                try {
+                    checkInputFile(inputFile);
+                    fillJobVariables(inputFile);
+                    executeJobWithFile(inputFile);
+                } catch (final WrongInputException e) {
+                    logger.error("File '{}' does not contain required columns. " + e.getMessage(), inputFile.getName());
+                }
+            }).start();
+        }
+
+        private void checkInputFile(final File inputFile) throws WrongInputException {
+            final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+            final Datastore oldDataStore = tenantContext.getConfiguration().getDatastoreCatalog()
+                    .getDatastore(getDataStoreName());
+            final Datastore newDataStore = getNewDataStore(inputFile, oldDataStore);
+            final String[] oldColumnNames = oldDataStore.openConnection().getSchemaNavigator().getDefaultSchema()
+                    .getTable(0).getColumnNames();
+            final String[] newColumnNames = newDataStore.openConnection().getSchemaNavigator().getDefaultSchema()
+                    .getTable(0).getColumnNames();
+
+            if (oldColumnNames.length != newColumnNames.length) {
+                throw new WrongInputException("The file does not have correct number of input columns ("
+                        + oldColumnNames.length + " required, " + newColumnNames.length + " present). ");
+            }
+
+            for (int i = 0; i < oldColumnNames.length; i++) {
+                if (!oldColumnNames[i].equals(newColumnNames[i])) {
+                    throw new WrongInputException("The file does not have a correct input column at position " + i
+                            + " ('" + oldColumnNames[i] + "' required, '" + newColumnNames[i] + "' present). ");
+                }
+            }
+        }
+
+        private Datastore getNewDataStore(final File inputFile, final Datastore oldDataStore)
+                throws WrongInputException {
+            final Datastore newDataStore;
+
+            if (oldDataStore instanceof CsvDatastore) {
+                newDataStore = new CsvDatastore(inputFile.getName(), inputFile.getAbsolutePath());
+            } else if (oldDataStore instanceof ExcelDatastore) {
+                newDataStore = new ExcelDatastore(inputFile.getName(), new FileResource(inputFile),
+                        inputFile.getAbsolutePath());
+            } else {
+                throw new WrongInputException("Unsupported data store type (" + inputFile.getAbsolutePath() + "). ");
+            }
+
+            return newDataStore;
+        }
+
+        private void fillJobVariables(final File file) {
+            try {
+                final File jobFile = getJobFile();
+                final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+                final JaxbJobReader reader = new JaxbJobReader(tenantContext.getConfiguration());
+                final AnalysisJob analysisJob = reader.read(new FileInputStream(jobFile));
+                final Map<String, String> variables = analysisJob.getMetadata().getVariables();
+                final String fileName = file.getName();
+                final String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+                variables.put(VARIABLE_FILE_NAME, fileName);
+                variables.put(VARIABLE_EXTENSION, extension);
+                variables.put(VARIABLE_DATE, getDateTimePart(DATE_FORMAT));
+                variables.put(VARIABLE_TIME, getDateTimePart(TIME_FORMAT));
+
+                final OutputStream outputStream = new FileOutputStream(jobFile);
+                new JaxbJobWriter(tenantContext.getConfiguration()).write(analysisJob, outputStream);
+            } catch (final FileNotFoundException | RuntimeException e) {
+                logger.error(e.getMessage());
+            }
+        }
+
+        private String getDateTimePart(final String format) {
+            final DateFormat dateFormat = new SimpleDateFormat(format);
+
+            return dateFormat.format(new Date());
+        }
+
+        private File getJobFile() {
+            final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+            final JobContext jobContext = tenantContext.getJob(job);
+            final String jobFileName = jobContext.getJobFile().getName();
+            final RepositoryFile jobRepositoryFile = tenantContext.getTenantRootFolder().getFolder("jobs")
+                    .getFile(jobFileName);
+
+            return new File(jobRepositoryFile.toResource().getQualifiedPath());
+        }
+
+        private void executeJobWithFile(final File file) {
+            if (!file.exists()) {
+                logger.warn("Data file '{}' triggering execution of the job '{}' does not exist.",
+                        file.getAbsolutePath(), job.getName());
+                return;
+            }
+
+            final String dataStoreName = getDataStoreName();
+            final String triggerFileName = job.getName() + TRIGGER_FILE_EXTENSION;
+
+            if (file.getName().equals(triggerFileName)) {
+                triggerJobExecution();
+            } else if (dataStoreName != null) {
+                try {
+                    /*
+                     * File event can be triggered before the complete file content is written (copying in progress).
+                     * This tries to check that possibility and wait for the complete file to be ready.
+                     */
+                    getWaitStrategy().waitForComplete(file);
+                } catch (final IncompleteFileException e) {
+                    logger.error("Hot folder job execution failed because the file '{}' is incomplete of unavailable. ",
+                            file.getAbsolutePath());
+                    return;
+                }
+
+                final Map<String, String> propertiesMap = new HashMap<>();
+                propertiesMap.put("datastoreCatalog." + getDataStoreName() + ".filename", file.getAbsolutePath());
+                triggerExecution(tenant, job, propertiesMap, TriggerType.HOTFOLDER);
+            } else {
+                logger.error("Hot folder job execution was cancelled because datastore name is missing. ");
+            }
+        }
+
+        private WaitForCompleteFileStrategy getWaitStrategy() {
+            WaitForCompleteFileStrategy waitStrategy;
+            final String waitStrategyClassPath = _hotFolderPreferences.getWaitStrategyClass();
+
+            try {
+                waitStrategy = (WaitForCompleteFileStrategy) Class.forName(waitStrategyClassPath).newInstance();
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                logger.warn("'{}' could not be used for hot-folder wait strategy, using default instead. {}",
+                        waitStrategyClassPath, e);
+                waitStrategy = new DefaultWaitForCompleteFileStrategy();
+            }
+
+            return waitStrategy;
+        }
+
+        private String getDataStoreName() {
+            try {
+                final File jobFile = getJobFile();
+                final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+                final JaxbJobReader reader = new JaxbJobReader(tenantContext.getConfiguration());
+
+                return reader.readMetadata(jobFile).getDatastoreName();
+            } catch (RuntimeException e) {
+                logger.warn("DataStore name could not be resolved. {}", e);
+                return null;
+            }
         }
 
         private void triggerJobExecution() {

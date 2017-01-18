@@ -48,4 +48,8 @@ public interface SynonymCatalog extends ReferenceData {
      * @return
      */
     SynonymCatalogConnection openConnection(DataCleanerConfiguration configuration);
+
+    default boolean isCaseSensitive() {
+        return true;
+    }
 }

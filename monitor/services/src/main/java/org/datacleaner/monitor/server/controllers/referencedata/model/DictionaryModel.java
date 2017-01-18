@@ -17,30 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.reference;
+package org.datacleaner.monitor.server.controllers.referencedata.model;
 
-import java.io.Closeable;
-import java.util.Iterator;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.List;
 
-public interface DictionaryConnection extends Closeable {
-    boolean containsValue(String value);
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    Iterator<String> getLengthSortedValues();
-
-    Iterator<String> getAllValues();
-
-    default Stream<String> lengthSortedStream() {
-        final Iterable<String> iterable = this::getLengthSortedValues;
-        return StreamSupport.stream(iterable.spliterator(), false);
+public class DictionaryModel extends DictionaryBasedModel<String> {
+    @JsonCreator
+    public DictionaryModel(@JsonProperty("name") final String name, @JsonProperty("entries") final List<String> entries) {
+        super(name, entries);
     }
-
-    default Stream<String> stream() {
-        final Iterable<String> iterable = this::getAllValues;
-        return StreamSupport.stream(iterable.spliterator(), false);
-    }
-
-    @Override
-    void close();
 }

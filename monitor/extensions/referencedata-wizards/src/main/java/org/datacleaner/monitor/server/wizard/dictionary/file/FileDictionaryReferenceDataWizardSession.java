@@ -38,12 +38,10 @@ final class FileDictionaryReferenceDataWizardSession extends FileWizardSession {
     }
 
     @Override
-    protected Element addElementToConfiguration() {
-        final Element dictionariesElement = _writer.getDictionariesElement();
+    protected String addReferenceData() {
         final boolean caseSensitive = (_caseSensitive != null && _caseSensitive.equals("on"));
         final Dictionary dictionary = new TextFileDictionary(_name, _filePath, _encoding, caseSensitive);
-        dictionariesElement.appendChild(_writer.externalize(dictionary));
-
-        return dictionariesElement;
+        getReferenceDataDao().addDictionary(getWizardContext().getTenantContext(), dictionary);
+        return _name;
     }
 }

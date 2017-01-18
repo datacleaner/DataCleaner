@@ -263,6 +263,7 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
         };
     }
 
+    @Override
     public boolean isCaseSensitive() {
         return _caseSensitive;
     }

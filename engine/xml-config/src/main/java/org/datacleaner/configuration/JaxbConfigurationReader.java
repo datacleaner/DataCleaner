@@ -110,6 +110,7 @@ import org.datacleaner.reference.ReferenceDataCatalogImpl;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.SimpleDictionary;
 import org.datacleaner.reference.SimpleStringPattern;
+import org.datacleaner.reference.SimpleSynonymCatalog;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
@@ -627,7 +628,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             final SynonymCatalogs synonymCatalogs = referenceDataCatalog.getSynonymCatalogs();
             if (synonymCatalogs != null) {
                 for (final Object synonymCatalogType : synonymCatalogs
-                        .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrCustomSynonymCatalog()) {
+                        .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrSimpleSynonymCatalog()) {
                     if (synonymCatalogType instanceof TextFileSynonymCatalogType) {
                         final TextFileSynonymCatalogType tfsct = (TextFileSynonymCatalogType) synonymCatalogType;
 
@@ -680,6 +681,24 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                                 new DatastoreSynonymCatalog(name, dataStoreName, masterTermColumnPath,
                                         synonymColumnPaths, loadIntoMemory);
                         sc.setDescription(datastoreSynonymCatalogType.getDescription());
+                        synonymCatalogList.add(sc);
+
+                        removeVariablePath();
+                    } else if (synonymCatalogType instanceof ValueListSynonymCatalogType) {
+                        final ValueListSynonymCatalogType vlsct = (ValueListSynonymCatalogType) synonymCatalogType;
+
+                        final String name = vlsct.getName();
+                        checkName(name, SynonymCatalog.class, synonymCatalogList);
+
+                        addVariablePath(name);
+                        final HashMap<String, String> synonymMapping = new HashMap<>();
+
+                        for (final ValueListSynonymCatalogType.Synonym synonym : vlsct.getSynonym()) {
+                            synonymMapping.put(synonym.getValue(), synonym.getMasterterm());
+                        }
+
+                        final SimpleSynonymCatalog sc = new SimpleSynonymCatalog(name, synonymMapping);
+                        sc.setDescription(vlsct.getDescription());
                         synonymCatalogList.add(sc);
 
                         removeVariablePath();

@@ -17,30 +17,33 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.reference;
+package org.datacleaner.monitor.server.controllers.referencedata.model;
 
-import java.io.Closeable;
-import java.util.Iterator;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.Collection;
+import java.util.List;
 
-public interface DictionaryConnection extends Closeable {
-    boolean containsValue(String value);
+import org.datacleaner.reference.Synonym;
 
-    Iterator<String> getLengthSortedValues();
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    Iterator<String> getAllValues();
+public class SynonymModel implements Synonym {
+    private final String _masterTerm;
+    private final Collection<String> _synonyms;
 
-    default Stream<String> lengthSortedStream() {
-        final Iterable<String> iterable = this::getLengthSortedValues;
-        return StreamSupport.stream(iterable.spliterator(), false);
-    }
-
-    default Stream<String> stream() {
-        final Iterable<String> iterable = this::getAllValues;
-        return StreamSupport.stream(iterable.spliterator(), false);
+    @JsonCreator
+    public SynonymModel(@JsonProperty("masterTerm") final String masterTerm, @JsonProperty("synonyms") final Collection<String> synonyms) {
+        _masterTerm = masterTerm;
+        _synonyms = synonyms;
     }
 
     @Override
-    void close();
+    public String getMasterTerm() {
+        return _masterTerm;
+    }
+
+    @Override
+    public Collection<String> getSynonyms() {
+        return _synonyms;
+    }
 }

@@ -17,30 +17,31 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.reference;
+package org.datacleaner.monitor.server.controllers.referencedata.model;
 
-import java.io.Closeable;
-import java.util.Iterator;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
-public interface DictionaryConnection extends Closeable {
-    boolean containsValue(String value);
+public class ReferenceDataModel {
+    private final ReferenceDataType _referenceDataType;
+    private final String _name;
+    private final String _href;
 
-    Iterator<String> getLengthSortedValues();
-
-    Iterator<String> getAllValues();
-
-    default Stream<String> lengthSortedStream() {
-        final Iterable<String> iterable = this::getLengthSortedValues;
-        return StreamSupport.stream(iterable.spliterator(), false);
+    @JsonCreator
+    public ReferenceDataModel(final String name, final String href, final ReferenceDataType referenceDataType) {
+        _name = name;
+        _href = href;
+        _referenceDataType = referenceDataType;
     }
 
-    default Stream<String> stream() {
-        final Iterable<String> iterable = this::getAllValues;
-        return StreamSupport.stream(iterable.spliterator(), false);
+    public ReferenceDataType getReferenceDataType() {
+        return _referenceDataType;
     }
 
-    @Override
-    void close();
+    public String getName() {
+        return _name;
+    }
+
+    public String getHref() {
+        return _href;
+    }
 }

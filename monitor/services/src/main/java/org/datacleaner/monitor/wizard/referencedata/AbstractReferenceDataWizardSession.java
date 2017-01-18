@@ -55,12 +55,7 @@ public abstract class AbstractReferenceDataWizardSession implements ReferenceDat
 
     @Override
     public String finished() {
-        final DocumentBuilder documentBuilder = XmlUtils.createDocumentBuilder();
-        final TenantContext tenantContext = _wizardContext.getTenantContext();
-        final Element updatedReferenceDataSubSection = getUpdatedReferenceDataSubSection(documentBuilder);
-        final ReferenceDataDao referenceDataDao = getReferenceDataDao();
-
-        return referenceDataDao.updateReferenceDataSubSection(tenantContext, updatedReferenceDataSubSection);
+        return addReferenceData();
     }
 
     protected ReferenceDataDao getReferenceDataDao() {
@@ -68,10 +63,9 @@ public abstract class AbstractReferenceDataWizardSession implements ReferenceDat
     }
 
     /**
-     * Returns updated reference data sub-section (dictionaries, synonym-catalogs, string-patterns).
-     * @param documentBuilder
+     * Does the actual update
      *
-     * @return
+     * @return Name of new reference data.
      */
-    protected abstract Element getUpdatedReferenceDataSubSection(DocumentBuilder documentBuilder);
+    protected abstract String addReferenceData();
 }

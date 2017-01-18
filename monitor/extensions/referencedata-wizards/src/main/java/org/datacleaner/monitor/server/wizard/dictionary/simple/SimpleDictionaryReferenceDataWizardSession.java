@@ -54,13 +54,13 @@ final class SimpleDictionaryReferenceDataWizardSession extends AbstractReference
     }
 
     @Override
-    protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
-        final Element dictionariesElement = _writer.getDictionariesElement();
+    protected String addReferenceData() {
+
         final boolean caseSensitive = (_caseSensitive != null && _caseSensitive.equals("on"));
         final Dictionary dictionary = new SimpleDictionary(_name, caseSensitive, _values.split("\n"));
-        dictionariesElement.appendChild(_writer.externalize(dictionary));
+        getReferenceDataDao().addDictionary(getWizardContext().getTenantContext(), dictionary);
 
-        return dictionariesElement;
+        return _name;
     }
 
     public String getName() {

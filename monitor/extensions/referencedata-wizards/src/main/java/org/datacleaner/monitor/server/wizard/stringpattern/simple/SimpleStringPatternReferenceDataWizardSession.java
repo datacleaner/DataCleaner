@@ -49,12 +49,11 @@ final class SimpleStringPatternReferenceDataWizardSession extends AbstractRefere
     }
 
     @Override
-    protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
-        final Element stringPatternsElement = _writer.getStringPatternsElement();
+    protected String addReferenceData() {
         final StringPattern stringPattern = new SimpleStringPattern(_name, _expression);
-        stringPatternsElement.appendChild(_writer.externalize(stringPattern));
+        getReferenceDataDao().addStringPattern(getWizardContext().getTenantContext(), stringPattern);
 
-        return stringPatternsElement;
+        return _name;
     }
 
     public String getName() {

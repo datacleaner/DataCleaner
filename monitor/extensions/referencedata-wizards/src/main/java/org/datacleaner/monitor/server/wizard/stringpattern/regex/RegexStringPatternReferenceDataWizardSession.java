@@ -54,13 +54,12 @@ final class RegexStringPatternReferenceDataWizardSession extends AbstractReferen
     }
 
     @Override
-    protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
-        final Element stringPatternsElement = _writer.getStringPatternsElement();
+    protected String addReferenceData() {
         final boolean matchEntireString = (_matchEntireString != null && _matchEntireString.equals("on"));
         final StringPattern stringPattern = new RegexStringPattern(_name, _expression, matchEntireString);
-        stringPatternsElement.appendChild(_writer.externalize(stringPattern));
+        getReferenceDataDao().addStringPattern(getWizardContext().getTenantContext(), stringPattern);
 
-        return stringPatternsElement;
+        return _name;
     }
 
     public String getName() {

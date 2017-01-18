@@ -28,12 +28,12 @@ import org.datacleaner.reference.SynonymCatalog;
 import org.w3c.dom.Element;
 
 /**
- * Defines a Data Access Object layer for reference data. 
+ * Defines a Data Access Object layer for reference data.
  */
 public interface ReferenceDataDao {
 
     /**
-     * Reads/parses a reference data XML element. 
+     * Reads/parses a reference data XML element.
      *
      * @param reader
      * @return
@@ -41,36 +41,58 @@ public interface ReferenceDataDao {
     Element parseReferenceDataElement(Reader reader);
 
     /**
-     * Updates reference data sub section. 
+     * Updates reference data sub section.
      *
      * @param tenantContext
      * @param updatedReferenceDataSubSection
-     * @return the name of the lastly added element 
+     * @return the name of the lastly added element
      */
     String updateReferenceDataSubSection(TenantContext tenantContext, Element updatedReferenceDataSubSection);
 
     /**
-     * Removes a dictionary from a tenant's configuration. 
+     * Adds a dictionary.
      *
      * @param tenantContext
      * @param dictionary
      */
-    void removeDictionary(TenantContext tenantContext, Dictionary dictionary) throws IllegalArgumentException;
+    void addDictionary(TenantContext tenantContext, Dictionary dictionary);
 
     /**
-     * Removes a synonym catalog from a tenant's configuration. 
+     * Adds a synonym catalog.
      *
      * @param tenantContext
      * @param synonymCatalog
      */
-    void removeSynonymCatalog(TenantContext tenantContext, SynonymCatalog synonymCatalog)
-            throws IllegalArgumentException;
+    void addSynonymCatalog(TenantContext tenantContext, SynonymCatalog synonymCatalog);
 
     /**
-     * Removes a string pattern from a tenant's configuration. 
+     * Adds a string pattern.
      *
      * @param tenantContext
-     * @param stringPattern
+     * @param synonymCatalog
      */
-    void removeStringPattern(TenantContext tenantContext, StringPattern stringPattern) throws IllegalArgumentException;
+    void addStringPattern(TenantContext tenantContext, StringPattern synonymCatalog);
+
+    /**
+     * Removes a dictionary from a tenant's configuration.
+     *  @param tenantContext
+     * @param name
+     */
+    void removeDictionary(TenantContext tenantContext, String name);
+
+    /**
+     * Removes a synonym catalog from a tenant's configuration.
+     *
+     * @param tenantContext
+     * @param name
+     */
+    void removeSynonymCatalog(TenantContext tenantContext, String name);
+
+    /**
+     * Removes a string pattern from a tenant's configuration.
+     *
+     * @param tenantContext
+     * @param name
+     */
+    void removeStringPattern(TenantContext tenantContext, String name);
 }

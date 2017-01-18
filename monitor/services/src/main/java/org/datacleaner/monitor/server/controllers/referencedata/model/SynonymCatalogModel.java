@@ -17,30 +17,25 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.reference;
+package org.datacleaner.monitor.server.controllers.referencedata.model;
 
-import java.io.Closeable;
-import java.util.Iterator;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.Collection;
 
-public interface DictionaryConnection extends Closeable {
-    boolean containsValue(String value);
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    Iterator<String> getLengthSortedValues();
+public class SynonymCatalogModel extends DictionaryBasedModel<SynonymModel> {
+    private final boolean _caseSensitive;
 
-    Iterator<String> getAllValues();
-
-    default Stream<String> lengthSortedStream() {
-        final Iterable<String> iterable = this::getLengthSortedValues;
-        return StreamSupport.stream(iterable.spliterator(), false);
+    @JsonCreator
+    public SynonymCatalogModel(@JsonProperty("name") final String name,
+            @JsonProperty("entries") final Collection<SynonymModel> entries,
+            @JsonProperty("caseSensitive") final boolean caseSensitive) {
+        super(name, entries);
+        _caseSensitive = caseSensitive;
     }
 
-    default Stream<String> stream() {
-        final Iterable<String> iterable = this::getAllValues;
-        return StreamSupport.stream(iterable.spliterator(), false);
+    public boolean isCaseSensitive() {
+        return _caseSensitive;
     }
-
-    @Override
-    void close();
 }

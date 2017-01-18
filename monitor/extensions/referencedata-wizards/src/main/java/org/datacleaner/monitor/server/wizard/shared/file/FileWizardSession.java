@@ -52,14 +52,6 @@ public abstract class FileWizardSession extends AbstractReferenceDataWizardSessi
         return 1;
     }
 
-    @Override
-    protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
-        copyUploadedFileToReferenceDataDirectory();
-        return addElementToConfiguration();
-    }
-
-    protected abstract Element addElementToConfiguration();
-
     private void copyUploadedFileToReferenceDataDirectory() {
         final File tenantHome = getWizardContext().getTenantContext().getConfiguration().getHomeFolder().toFile();
         final File referenceDataDirectory = new File(tenantHome.getAbsolutePath() + File.separator + "reference-data");

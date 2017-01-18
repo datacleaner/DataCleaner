@@ -26,6 +26,7 @@ import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
+import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.regexswap.Regex;
 import org.datacleaner.reference.regexswap.RegexSwapClient;
@@ -54,13 +55,12 @@ final class RegexSwapStringPatternReferenceDataWizardSession extends AbstractRef
     }
 
     @Override
-    protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
-        final Element stringPatternsElement = _writer.getStringPatternsElement();
+    protected String addReferenceData() {
         final Regex regex = getClient().getRegexByName(_name);
         final StringPattern stringPattern = new RegexSwapStringPattern(regex);
-        stringPatternsElement.appendChild(_writer.externalize(stringPattern));
+        getReferenceDataDao().addStringPattern(getWizardContext().getTenantContext(), stringPattern);
 
-        return stringPatternsElement;
+        return _name;
     }
 
     public RegexSwapClient getClient() {

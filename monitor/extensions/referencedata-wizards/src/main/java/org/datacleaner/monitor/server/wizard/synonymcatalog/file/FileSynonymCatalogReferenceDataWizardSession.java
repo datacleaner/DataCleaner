@@ -38,12 +38,10 @@ final class FileSynonymCatalogReferenceDataWizardSession extends FileWizardSessi
     }
 
     @Override
-    protected Element addElementToConfiguration() {
-        final Element synonymCatalogsElement = _writer.getSynonymCatalogsElement();
+    protected String addReferenceData() {
         final boolean caseSensitive = (_caseSensitive != null && _caseSensitive.equals("on"));
         final SynonymCatalog catalog = new TextFileSynonymCatalog(_name, _filePath, caseSensitive, _encoding);
-        synonymCatalogsElement.appendChild(_writer.externalize(catalog));
-
-        return synonymCatalogsElement;
+        getReferenceDataDao().addSynonymCatalog(getWizardContext().getTenantContext(), catalog);
+        return _name;
     }
 }

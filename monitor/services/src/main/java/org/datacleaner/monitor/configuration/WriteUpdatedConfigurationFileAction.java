@@ -140,9 +140,9 @@ public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Con
 
             } else {
                 addUniqueValues(currentConfiguration.getReferenceDataCatalog().getSynonymCatalogs()
-                                .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrCustomSynonymCatalog(),
+                                .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrSimpleSynonymCatalog(),
                         newConfiguration.getReferenceDataCatalog().getSynonymCatalogs()
-                                .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrCustomSynonymCatalog());
+                                .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrSimpleSynonymCatalog());
             }
         }
 

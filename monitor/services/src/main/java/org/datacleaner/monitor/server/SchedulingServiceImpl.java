@@ -128,8 +128,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         private static final String VARIABLE_EXTENSION = "hotfolder.input.extension";
         private static final String VARIABLE_DATE = "datacleaner.run.date";
         private static final String VARIABLE_TIME = "datacleaner.run.time";
-        private static final String DATE_FORMAT = "yyyy/MM/dd";
-        private static final String TIME_FORMAT = "HH:mm:ss";
+        private static final String DATE_FORMAT = "yyyyMMdd";
+        private static final String TIME_FORMAT = "HHmmss";
 
         private final JobIdentifier job;
         private final TenantIdentifier tenant;

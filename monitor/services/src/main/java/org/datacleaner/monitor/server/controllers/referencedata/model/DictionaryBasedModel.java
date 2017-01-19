@@ -22,15 +22,19 @@ package org.datacleaner.monitor.server.controllers.referencedata.model;
 import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DictionaryBasedModel<T> {
+    protected final boolean _caseSensitive;
     private final String _name;
     private final Collection<T> _entries;
 
-    public DictionaryBasedModel(final String name, final Collection<T> entries) {
+    public DictionaryBasedModel(final String name, final Collection<T> entries,
+            @JsonProperty("caseSensitive") final boolean caseSensitive) {
         _name = name;
         _entries = entries;
+        _caseSensitive = caseSensitive;
     }
 
     public String getName() {
@@ -39,5 +43,9 @@ public class DictionaryBasedModel<T> {
 
     public Collection<T> getEntries() {
         return _entries;
+    }
+
+    public boolean isCaseSensitive() {
+        return _caseSensitive;
     }
 }

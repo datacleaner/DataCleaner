@@ -25,17 +25,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SynonymCatalogModel extends DictionaryBasedModel<SynonymModel> {
-    private final boolean _caseSensitive;
 
     @JsonCreator
     public SynonymCatalogModel(@JsonProperty("name") final String name,
             @JsonProperty("entries") final Collection<SynonymModel> entries,
             @JsonProperty("caseSensitive") final boolean caseSensitive) {
-        super(name, entries);
-        _caseSensitive = caseSensitive;
+        super(name, entries, caseSensitive);
     }
 
-    public boolean isCaseSensitive() {
-        return _caseSensitive;
-    }
 }

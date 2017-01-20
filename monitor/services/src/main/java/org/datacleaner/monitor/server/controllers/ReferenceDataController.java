@@ -79,19 +79,12 @@ import com.google.common.base.Joiner;
 @RestController
 @RequestMapping(value = "/{tenant}/referencedata")
 public class ReferenceDataController {
-    private static final Logger logger = LoggerFactory.getLogger(ReferenceDataController.class);
-
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public class NoSuchResourceException extends RuntimeException {
+    private class NoSuchResourceException extends RuntimeException {
         private static final long serialVersionUID = 1L;
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({ IOException.class, IllegalArgumentException.class })
-    public void badRequest() {
-        // Nothing to do
-    }
-
+    private static final Logger logger = LoggerFactory.getLogger(ReferenceDataController.class);
     private final TenantContextFactory _contextFactory;
     private final ReferenceDataDao _referenceDataDao;
 
@@ -101,36 +94,48 @@ public class ReferenceDataController {
         _referenceDataDao = referenceDataDao;
     }
 
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({ IOException.class, IllegalArgumentException.class })
+    public void badRequest() {
+        // Nothing to do
+    }
+
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ReferenceDataModel> getReferenceData(@PathVariable("tenant") final String tenant) {
-        return Stream.of(createRDMStream(tenant, ReferenceDataType.DICTIONARY),
-                createRDMStream(tenant, ReferenceDataType.SYNONYM_CATALOG),
-                createRDMStream(tenant, ReferenceDataType.STRING_PATTERN)).flatMap(Function.identity())
-                .collect(Collectors.toList());
+        return Stream.of(createRDMStream(tenant, ReferenceDataType.DICTIONARY,
+                name -> resolveLocation(name, ReferenceDataType.DICTIONARY, false)),
+                createRDMStream(tenant, ReferenceDataType.SYNONYM_CATALOG,
+                        name -> resolveLocation(name, ReferenceDataType.SYNONYM_CATALOG, false)),
+                createRDMStream(tenant, ReferenceDataType.STRING_PATTERN,
+                        name -> resolveLocation(name, ReferenceDataType.STRING_PATTERN, false)))
+                .flatMap(Function.identity()).collect(Collectors.toList());
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(value = "/dictionaries", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ReferenceDataModel> getDictionaries(@PathVariable("tenant") final String tenant) {
-        return createRDMStream(tenant, ReferenceDataType.DICTIONARY).collect(Collectors.toList());
+        return createRDMStream(tenant, ReferenceDataType.DICTIONARY,
+                name -> resolveLocation(name, ReferenceDataType.DICTIONARY, true)).collect(Collectors.toList());
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(value = "/synonymCatalogs", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ReferenceDataModel> getSynonymCatalogs(@PathVariable("tenant") final String tenant) {
-        return createRDMStream(tenant, ReferenceDataType.SYNONYM_CATALOG).collect(Collectors.toList());
+        return createRDMStream(tenant, ReferenceDataType.SYNONYM_CATALOG,
+                name -> resolveLocation(name, ReferenceDataType.SYNONYM_CATALOG, true)).collect(Collectors.toList());
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(value = "/stringPatterns", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ReferenceDataModel> getStringPatterns(@PathVariable("tenant") final String tenant) {
-        return createRDMStream(tenant, ReferenceDataType.STRING_PATTERN).collect(Collectors.toList());
+        return createRDMStream(tenant, ReferenceDataType.STRING_PATTERN,
+                name -> resolveLocation(name, ReferenceDataType.STRING_PATTERN, true)).collect(Collectors.toList());
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/stringPattern/{name}", method = { RequestMethod.GET, RequestMethod.HEAD },
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/stringPattern/{name}", method = { RequestMethod.GET,
+            RequestMethod.HEAD }, produces = MediaType.APPLICATION_JSON_VALUE)
     public StringPatternModel getStringPattern(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, final HttpServletRequest request) {
         final StringPattern stringPattern = getReferenceDataCatalog(tenant).getStringPattern(name);
@@ -160,8 +165,8 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/stringPattern/{name}", method = {
+            RequestMethod.PUT }, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity putStringPattern(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestBody final StringPatternModel stringPatternModel) {
 
@@ -188,7 +193,7 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.DELETE })
+    @RequestMapping(value = "/stringPattern/{name}", method = { RequestMethod.DELETE })
     public ResponseEntity deleteStringPattern(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name) throws IOException {
         _referenceDataDao.removeStringPattern(_contextFactory.getContext(tenant), name);
@@ -196,8 +201,8 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.GET, RequestMethod.HEAD },
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.GET,
+            RequestMethod.HEAD }, produces = MediaType.APPLICATION_JSON_VALUE)
     public DictionaryModel getDictionary(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, final HttpServletRequest request) {
         final Dictionary dictionary = getReferenceDataCatalog(tenant).getDictionary(name);
@@ -217,8 +222,8 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/dictionary/{name}", method = {
+            RequestMethod.PUT }, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity putDictionary(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestBody final DictionaryModel dictionaryModel) {
         final TenantContext context = _contextFactory.getContext(tenant);
@@ -235,12 +240,12 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.DELETE })
+    @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.DELETE })
     public ResponseEntity deleteDictionary(@PathVariable("tenant") final String tenant,
-            @PathVariable("name") final String name)  {
+            @PathVariable("name") final String name) {
         final TenantContext context = _contextFactory.getContext(tenant);
         final Dictionary dictionary = getReferenceDataCatalog(tenant).getDictionary(name);
-        if(dictionary instanceof TextFileDictionary) {
+        if (dictionary instanceof TextFileDictionary) {
             try {
                 Files.delete(getResourceFile(context, name).toPath());
             } catch (final IOException e) {
@@ -252,8 +257,8 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.GET, RequestMethod.HEAD },
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.GET,
+            RequestMethod.HEAD }, produces = MediaType.APPLICATION_JSON_VALUE)
     public SynonymCatalogModel getSynonymCatalog(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, final HttpServletRequest request) {
         final SynonymCatalog synonymCatalog = getReferenceDataCatalog(tenant).getSynonymCatalog(name);
@@ -274,8 +279,8 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/synonymCatalog/{name}", method = {
+            RequestMethod.PUT }, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity putSynonymCatalog(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestBody final SynonymCatalogModel synonymCatalogModel) {
         final TenantContext context = _contextFactory.getContext(tenant);
@@ -298,8 +303,8 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/synonymCatalog/{name}", method = {
+            RequestMethod.PUT }, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity putSynonymCatalogFile(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestParam("file") final MultipartFile sourceMultipartFile,
             @RequestParam("casesensitive") final boolean isCaseSensitive,
@@ -321,10 +326,10 @@ public class ReferenceDataController {
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.DELETE })
     public ResponseEntity deleteSynonymCatalog(@PathVariable("tenant") final String tenant,
-            @PathVariable("name") final String name)  {
+            @PathVariable("name") final String name) {
         final TenantContext context = _contextFactory.getContext(tenant);
         final SynonymCatalog synonymCatalog = getReferenceDataCatalog(tenant).getSynonymCatalog(name);
-        if(synonymCatalog instanceof TextFileSynonymCatalog) {
+        if (synonymCatalog instanceof TextFileSynonymCatalog) {
             try {
                 Files.delete(getResourceFile(context, name).toPath());
             } catch (final IOException e) {
@@ -342,8 +347,9 @@ public class ReferenceDataController {
         return new File(filePath);
     }
 
-    private Stream<ReferenceDataModel> createRDMStream(final String tenant, final ReferenceDataType type) {
-        return getNameStreamOf(type, tenant).map(d -> createReferenceDataModel(d, tenant, type));
+    private Stream<ReferenceDataModel> createRDMStream(final String tenant, final ReferenceDataType type,
+            Function<String, String> resourceLocationResolver) {
+        return getNameStreamOf(type, tenant).map(d -> createReferenceDataModel(d, type, resourceLocationResolver));
     }
 
     private Stream<String> getNameStreamOf(final ReferenceDataType type, final String tenant) {
@@ -365,12 +371,16 @@ public class ReferenceDataController {
         return _contextFactory.getContext(tenant).getConfiguration().getReferenceDataCatalog();
     }
 
-    private ReferenceDataModel createReferenceDataModel(final String name, final String tenant,
-            final ReferenceDataType type) {
-        return new ReferenceDataModel(name, "/repository" + getResourceLocation(name, tenant, type), type);
+    private ReferenceDataModel createReferenceDataModel(final String name, final ReferenceDataType type,
+            Function<String, String> resourceLocationResolver) {
+        return new ReferenceDataModel(name, resourceLocationResolver.apply(name), type);
     }
 
-    private String getResourceLocation(final String name, final String tenant, final ReferenceDataType type) {
-        return "/" + tenant + "/referencedata/" + type.getName() + "/" + name;
+    private String resolveLocation(final String name, final ReferenceDataType type, final boolean removeParent) {
+        final String path = removeParent ? "/../{type}/{name}" : "/{type}/{name}";
+
+        return ServletUriComponentsBuilder.fromCurrentRequestUri().path(path).buildAndExpand(type.getName(), name)
+                .normalize().toUriString();
     }
+
 }

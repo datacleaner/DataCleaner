@@ -23,23 +23,7 @@
 			</text-file-dictionary>
 		</dictionaries>
 		<synonym-catalogs>
-			<text-file-synonym-catalog name="job title synonyms">
-				<filename>reference-data/job_title_synonyms.txt</filename>
-			</text-file-synonym-catalog>
 		</synonym-catalogs>
-		<string-patterns>
-			<regex-pattern name="all uppercase">
-				<expression>\\p{javaLowerCase}+</expression>
-				<match-entire-string>true</match-entire-string>
-			</regex-pattern>
-			<regex-pattern name="contains car">
-				<expression>.*[Cc]ar.*</expression>
-				<match-entire-string>false</match-entire-string>
-			</regex-pattern>
-			<simple-pattern name="All lowercase">
-				<expression>a</expression>
-			</simple-pattern>
-		</string-patterns>
 	</reference-data-catalog>
 
 	<custom-taskrunner

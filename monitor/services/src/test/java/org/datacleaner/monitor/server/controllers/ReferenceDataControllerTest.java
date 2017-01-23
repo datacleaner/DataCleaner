@@ -61,7 +61,7 @@ public class ReferenceDataControllerTest {
 
     private TenantContextFactory getTenantContextFactory() throws Exception {
         final File jobTempRepoFolder = tempFolder.newFolder("test");
-        FileUtils.copyDirectory(new File("src/test/resources/example_repo/tenant1"), jobTempRepoFolder);
+        FileUtils.copyDirectory(new File("src/test/resources/referencedatatest_repo/tenant1"), jobTempRepoFolder);
 
         final Repository repository = new FileRepository(tempFolder.getRoot().getAbsoluteFile());
         final JobEngineManager jobEngineManager = new SimpleJobEngineManager();

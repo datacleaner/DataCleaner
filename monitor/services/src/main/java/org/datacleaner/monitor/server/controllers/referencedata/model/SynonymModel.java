@@ -20,7 +20,6 @@
 package org.datacleaner.monitor.server.controllers.referencedata.model;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.datacleaner.reference.Synonym;
 
@@ -32,7 +31,8 @@ public class SynonymModel implements Synonym {
     private final Collection<String> _synonyms;
 
     @JsonCreator
-    public SynonymModel(@JsonProperty("masterTerm") final String masterTerm, @JsonProperty("synonyms") final Collection<String> synonyms) {
+    public SynonymModel(@JsonProperty("masterTerm") final String masterTerm,
+            @JsonProperty("synonyms") final Collection<String> synonyms) {
         _masterTerm = masterTerm;
         _synonyms = synonyms;
     }

@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DictionaryModel extends DictionaryBasedModel<String> {
     @JsonCreator
-    public DictionaryModel(@JsonProperty("name") final String name, @JsonProperty("entries") final List<String> entries, @JsonProperty("caseSensitive") final boolean caseSensitive) {
+    public DictionaryModel(@JsonProperty("name") final String name, @JsonProperty("entries") final List<String> entries,
+            @JsonProperty("caseSensitive") final boolean caseSensitive) {
         super(name, entries, caseSensitive);
     }
 }

@@ -23,7 +23,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class StringPatternModel {
-    public enum PatternType {STRING, REGEX, REGEX_MATCH_ENTIRE_STRING}
+    public enum PatternType {
+        STRING,
+        REGEX,
+        REGEX_MATCH_ENTIRE_STRING
+    }
 
     private final String _name;
     private final String _pattern;

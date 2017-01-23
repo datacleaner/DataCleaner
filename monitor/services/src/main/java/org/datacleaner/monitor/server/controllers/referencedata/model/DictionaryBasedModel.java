@@ -31,7 +31,7 @@ public class DictionaryBasedModel<T> {
     private final Collection<T> _entries;
 
     public DictionaryBasedModel(final String name, final Collection<T> entries,
-            @JsonProperty("caseSensitive") final boolean caseSensitive) {
+            final boolean caseSensitive) {
         _name = name;
         _entries = entries;
         _caseSensitive = caseSensitive;

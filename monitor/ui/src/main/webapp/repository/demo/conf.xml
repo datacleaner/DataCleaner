@@ -13,6 +13,20 @@
 			<filename>reference-data/vendor_dictionary.txt</filename>
 		</csv-datastore>
 
+		<csv-datastore name="simple-numbers.csv">
+			<filename>datastores/simple-numbers.csv</filename>
+			<quote-char>"</quote-char>
+			<separator-char>,</separator-char>
+			<escape-char>\</escape-char>
+			<encoding>UTF-8</encoding>
+			<fail-on-inconsistencies>true</fail-on-inconsistencies>
+			<multiline-values>false</multiline-values>
+			<header-line-number>1</header-line-number>
+			<custom-column-names>
+				<column-name>VALUE</column-name>
+			</custom-column-names>
+		</csv-datastore>
+
 		<pojo-datastore description="A simple example datastore with a (limited) selection of contributors to the DataCleaner open source project." name="Contributors">
 			<schema-name>contributors</schema-name>
 			<table>

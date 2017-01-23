@@ -49,6 +49,8 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     PERSON_NAME_FULL("Full name", "Name", "Person name", "Contact", "Contact name"),
 
+    PERSON_INITIALS("Initials", "Name initials", "Person name initials"),
+
     PERSON_TITLE("Person title", "Title", "Salutation"),
 
     PERSON_GENDER("Gender", "Sex"),

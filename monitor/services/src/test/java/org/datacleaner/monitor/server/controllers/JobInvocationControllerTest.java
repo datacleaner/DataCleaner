@@ -24,7 +24,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.UpdateCallback;
+import org.apache.metamodel.UpdateScript;
+import org.apache.metamodel.UpdateableDataContext;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.schema.ColumnType;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
+import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
@@ -174,6 +182,54 @@ public class JobInvocationControllerTest extends TestCase {
         assertEquals("eobjects.dk", columnValueMap.get(0).get("Domain"));
         assertEquals("kasper.sorensen", columnValueMap.get(1).get("Username"));
         assertEquals("humaninference.com", columnValueMap.get(1).get("Domain"));
-
     }
+
+    public void testInvokeJobWithAnalyzersMapped() throws Throwable {
+        final Repository repository = new FileRepository("src/test/resources/example_repo");
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+        final JobInvocationController controller = new JobInvocationController();
+        controller._contextFactory = contextFactory;
+
+        final Map<String, Object> value1 = new HashMap<>();
+        value1.put("EMAIL", "kasper@eobjects.dk");
+        final Map<String, Object> value2 = new HashMap<>();
+        value2.put("EMAIL", "jasper@eobjects.dk");
+        final List<Map<String, Object>> inputColumnValueMap = Arrays.asList(value1, value2);
+        final JobInvocationPayload sourceRecords = new JobInvocationPayload();
+        sourceRecords.setColumnValueMap(inputColumnValueMap);
+
+        final String tableName = "test_table";
+        final String columnName = "email";
+        final JdbcDatastore jdbcDatastore = createDataBaseTable(tableName, columnName);
+
+        controller.invokeJobWithAnalyzersMapped("tenant7", "email_standardizer_to_db", sourceRecords);
+
+        final UpdateableDatastoreConnection con = jdbcDatastore.openConnection();
+        final DataContext dc = con.getDataContext();
+        final DataSet ds = dc.query().from(tableName).select(columnName).orderBy(columnName).execute();
+        assertTrue(ds.next());
+        assertEquals("Row[values=[jasper@eobjects.dk]]", ds.getRow().toString());
+        assertTrue(ds.next());
+        assertEquals("Row[values=[kasper@eobjects.dk]]", ds.getRow().toString());
+        assertFalse(ds.next());
+        con.close();
+    }
+
+    private JdbcDatastore createDataBaseTable(String tableName, String columnName) {
+        final JdbcDatastore jdbcDatastore = new JdbcDatastore("my_datastore", "jdbc:hsqldb:mem:UpdateTable_test",
+                "org.hsqldb.jdbcDriver");
+        final UpdateableDatastoreConnection con = jdbcDatastore.openConnection();
+        final UpdateableDataContext dc = con.getUpdateableDataContext();
+        dc.executeUpdate(new UpdateScript() {
+            @Override
+            public void run(UpdateCallback cb) {
+                cb.createTable(dc.getDefaultSchema(), tableName).withColumn(columnName).ofType(ColumnType.VARCHAR)
+                .execute();
+            }
+        });
+        con.close();
+        return jdbcDatastore;
+    }
+
 }

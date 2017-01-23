@@ -75,6 +75,10 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
         return _delegateJob.getFilterJobs();
     }
 
+    /**
+     * {@inheritDoc} Returns a single analyzer that functions as a 'record
+     * gatherer' for all transformer job output.
+     */
     @Override
     public List<AnalyzerJob> getAnalyzerJobs() {
         // create a single analyzer for picking up records

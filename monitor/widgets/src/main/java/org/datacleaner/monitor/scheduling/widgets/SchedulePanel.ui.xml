@@ -34,9 +34,10 @@
 			<div class="ScheduleColumn">
 				<span>Schedule:</span>
 				<g:Anchor ui:field="scheduleAnchor" />
-				<span class="AlertsColumn">
+ 				<g:InlineLabel ui:field="latestExecutionLabel"/> 
+				<div class="AlertsColumn">
 					<g:FlowPanel ui:field="alertsPanel" />
-				</span>	
+				</div>	
 			</div>
 		
 		</div>

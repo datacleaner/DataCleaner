@@ -21,7 +21,6 @@ package org.datacleaner.monitor.scheduling.widgets;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -32,17 +31,23 @@ import org.datacleaner.monitor.shared.ClientConfig;
 import org.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.view.client.ListDataProvider;
 
 /**
  * Presents an overview of all scheduled activity in DC monitor.
  */
 public class SchedulingOverviewPanel extends Composite {
+    static final String JOB_GROUPING_CATEGORY = "Group";
+
+    static final int PAGE_SIZE = 10;
 
     private static final String CATEGORY = "Category";
     private static final String OTHERS = "(Other)";
@@ -61,24 +66,15 @@ public class SchedulingOverviewPanel extends Composite {
 
                 final Map<String, List<ScheduleDefinition>> categoryAndGroupMapForJobs =
                         createCategoryAndGroupMapForJobs(result);
-                final String jobGroupingCategory = "Group";
 
                 final int categoryCount = categoryAndGroupMapForJobs.size();
-                GWT.log("Categories: " + categoryCount);
 
                 if (categoryCount == 0) {
                     final HorizontalPanel panel = new HorizontalPanel();
                     panel.add(new Label("There are no jobs available."));
                     initWidget(panel);
                 } else if (categoryCount == 1) {
-                    final FlowPanel panel = new FlowPanel();
-                    panel.add(createHeaderPanel());
-                    panel.addStyleName("SchedulingOverviewPanel");
-                    final Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<>();
-                    for (final ScheduleDefinition scheduleDefinition : result) {
-                        addSchedule(scheduleDefinition, jobGroupingCategory, panel, scheduleGroupPanels);
-                    }
-                    initWidget(panel);
+                    getPagedPanel(result);
                 } else {
                     final DecoratedTabPanel tabPanel = new DecoratedTabPanel();
                     tabPanel.setWidth("100%");
@@ -86,15 +82,9 @@ public class SchedulingOverviewPanel extends Composite {
                     jobCategories = sortJobCategories(jobCategories);
 
                     for (final String jobCategory : jobCategories) {
-                        final Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<>();
-                        final FlowPanel panel = new FlowPanel();
-                        panel.add(createHeaderPanel());
-                        panel.addStyleName("SchedulingOverviewPanel");
+                        final List<ScheduleDefinition> list = categoryAndGroupMapForJobs.get(jobCategory);
+                        final ComplexPanel panel = getPagedPanel(list);
                         tabPanel.add(panel, jobCategory);
-                        for (final ScheduleDefinition scheduleDefinition : categoryAndGroupMapForJobs
-                                .get(jobCategory)) {
-                            addSchedule(scheduleDefinition, jobGroupingCategory, panel, scheduleGroupPanels);
-                        }
                     }
                     tabPanel.selectTab(0);
                     tabPanel.ensureDebugId("cwTabPanel");
@@ -156,6 +146,11 @@ public class SchedulingOverviewPanel extends Composite {
 
     public void addSchedule(final ScheduleDefinition schedule, final String jobGroupingCategory, final FlowPanel panel,
             final Map<String, ScheduleGroupPanel> scheduleGroupPanels) {
+        addScheduleInGroup(schedule, jobGroupingCategory, panel, scheduleGroupPanels);
+    }
+
+    ScheduleGroupPanel addScheduleInGroup(final ScheduleDefinition schedule, final String jobGroupingCategory,
+            final FlowPanel panel, final Map<String, ScheduleGroupPanel> scheduleGroupPanels) {
         String groupName = null;
 
         if (jobGroupingCategory == null || jobGroupingCategory.trim().length() == 0) {
@@ -185,6 +180,8 @@ public class SchedulingOverviewPanel extends Composite {
         }
 
         scheduleGroupPanel.addSchedule(schedule);
+
+        return scheduleGroupPanel;
     }
 
     private Panel createHeaderPanel() {
@@ -205,5 +202,32 @@ public class SchedulingOverviewPanel extends Composite {
             label.addStyleName(styleName);
         }
         return label;
+    }
+
+    private ComplexPanel getPagedPanel(final List<ScheduleDefinition> result) {
+        final ScheduleDataPanel dataFlowPanel = new ScheduleDataPanel(this);
+        dataFlowPanel.add(createHeaderPanel());
+        dataFlowPanel.addStyleName("SchedulingOverviewPanel");
+
+        final ListDataProvider<ScheduleDefinition> dataProvider = new ListDataProvider<>();
+        final List<ScheduleDefinition> data = dataProvider.getList();
+
+        for (ScheduleDefinition definition : result) {
+            data.add(definition);
+        }
+
+        final ScheduleDataPager pager = new ScheduleDataPager();
+        pager.setDisplay(dataFlowPanel);
+        pager.setPageSize(PAGE_SIZE);
+
+        dataProvider.addDataDisplay(dataFlowPanel);
+
+        final VerticalPanel pagedPanel = new VerticalPanel();
+        pagedPanel.setWidth("100%");
+        pagedPanel.add(dataFlowPanel);
+        pagedPanel.add(pager);
+        initWidget(pagedPanel);
+
+        return pagedPanel;
     }
 }

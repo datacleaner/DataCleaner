@@ -153,9 +153,9 @@ public class ReferenceDataControllerTest {
                 new MockMultipartFile("file", "testDictionary", "text/plain", new FileInputStream(file));
         final MvcResult mvcResult = _mockMvc.perform(
                 fileUpload("/test/referencedata/dictionary/testDictionary").file(multipartFile).with(withPut())
-                        .contentType(MediaType.MULTIPART_FORM_DATA).param("casesensitive", "false")).andExpect(status().isCreated()).andExpect(
-                header().string("Location", is("http://localhost/test/referencedata/dictionary/testDictionary")))
-                .andReturn();
+                        .contentType(MediaType.MULTIPART_FORM_DATA).param("casesensitive", "false"))
+                .andExpect(status().isCreated()).andExpect(header().string("Location",
+                        is("http://localhost/test/referencedata/dictionary/testDictionary"))).andReturn();
 
         final String location = mvcResult.getResponse().getHeader("Location");
         _mockMvc.perform(get(location)).andExpect(status().isOk()).andExpect(jsonPath("$.name", is("testDictionary")))
@@ -207,9 +207,9 @@ public class ReferenceDataControllerTest {
                 new MockMultipartFile("file", "testsynonymcatalog", "text/plain", new FileInputStream(file));
         final MvcResult mvcResult = _mockMvc.perform(
                 fileUpload("/test/referencedata/synonymCatalog/testCatalog").file(multipartFile).with(withPut())
-                        .contentType(MediaType.MULTIPART_FORM_DATA).param("casesensitive", "false")).andExpect(status().isCreated()).andExpect(
-                header().string("Location", is("http://localhost/test/referencedata/synonymCatalog/testCatalog")))
-                .andReturn();
+                        .contentType(MediaType.MULTIPART_FORM_DATA).param("casesensitive", "false"))
+                .andExpect(status().isCreated()).andExpect(header().string("Location",
+                        is("http://localhost/test/referencedata/synonymCatalog/testCatalog"))).andReturn();
 
         final String location = mvcResult.getResponse().getHeader("Location");
         _mockMvc.perform(get(location)).andExpect(status().isOk()).andExpect(jsonPath("$.name", is("testCatalog")))

@@ -685,21 +685,22 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
                         removeVariablePath();
                     } else if (synonymCatalogType instanceof ValueListSynonymCatalogType) {
-                        final ValueListSynonymCatalogType vlsct = (ValueListSynonymCatalogType) synonymCatalogType;
+                        final ValueListSynonymCatalogType catalogType =
+                                (ValueListSynonymCatalogType) synonymCatalogType;
 
-                        final String name = vlsct.getName();
+                        final String name = catalogType.getName();
                         checkName(name, SynonymCatalog.class, synonymCatalogList);
 
                         addVariablePath(name);
                         final HashMap<String, String> synonymMapping = new HashMap<>();
 
-                        for (final ValueListSynonymCatalogType.Synonym synonym : vlsct.getSynonym()) {
+                        for (final ValueListSynonymCatalogType.Synonym synonym : catalogType.getSynonym()) {
                             synonymMapping.put(synonym.getValue(), synonym.getMasterterm());
                         }
 
-                        final SimpleSynonymCatalog sc = new SimpleSynonymCatalog(name, synonymMapping);
-                        sc.setDescription(vlsct.getDescription());
-                        synonymCatalogList.add(sc);
+                        final SimpleSynonymCatalog synonymCatalog = new SimpleSynonymCatalog(name, synonymMapping);
+                        synonymCatalog.setDescription(catalogType.getDescription());
+                        synonymCatalogList.add(synonymCatalog);
 
                         removeVariablePath();
                     } else {

@@ -19,15 +19,12 @@
  */
 package org.datacleaner.monitor.server.wizard.stringpattern.simple;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.reference.SimpleStringPattern;
 import org.datacleaner.reference.StringPattern;
-import org.w3c.dom.Element;
 
 final class SimpleStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
 

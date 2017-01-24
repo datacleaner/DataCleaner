@@ -39,6 +39,7 @@ final class FileSynonymCatalogReferenceDataWizardSession extends FileWizardSessi
 
     @Override
     protected String addReferenceData() {
+        copyUploadedFileToReferenceDataDirectory();
         final boolean caseSensitive = (_caseSensitive != null && _caseSensitive.equals("on"));
         final SynonymCatalog catalog = new TextFileSynonymCatalog(_name, _filePath, caseSensitive, _encoding);
         getReferenceDataDao().addSynonymCatalog(getWizardContext().getTenantContext(), catalog);

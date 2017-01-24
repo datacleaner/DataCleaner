@@ -75,7 +75,7 @@ public interface ReferenceDataDao {
 
     /**
      * Removes a dictionary from a tenant's configuration.
-     *  @param tenantContext
+     * @param tenantContext
      * @param name
      */
     void removeDictionary(TenantContext tenantContext, String name);

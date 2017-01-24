@@ -24,7 +24,6 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.TextFileDictionary;
-import org.w3c.dom.Element;
 
 final class FileDictionaryReferenceDataWizardSession extends FileWizardSession {
 
@@ -39,6 +38,7 @@ final class FileDictionaryReferenceDataWizardSession extends FileWizardSession {
 
     @Override
     protected String addReferenceData() {
+        copyUploadedFileToReferenceDataDirectory();
         final boolean caseSensitive = (_caseSensitive != null && _caseSensitive.equals("on"));
         final Dictionary dictionary = new TextFileDictionary(_name, _filePath, _encoding, caseSensitive);
         getReferenceDataDao().addDictionary(getWizardContext().getTenantContext(), dictionary);

@@ -25,7 +25,6 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.SynonymCatalog;
-import org.w3c.dom.Element;
 
 final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreWizardSession {
 

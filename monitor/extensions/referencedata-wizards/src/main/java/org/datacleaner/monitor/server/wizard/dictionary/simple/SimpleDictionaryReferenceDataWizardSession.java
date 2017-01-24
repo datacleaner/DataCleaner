@@ -19,22 +19,14 @@
  */
 package org.datacleaner.monitor.server.wizard.dictionary.simple;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.SimpleDictionary;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
 final class SimpleDictionaryReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
-
-    private static final Logger logger = LoggerFactory.getLogger(SimpleDictionaryReferenceDataWizardSession.class);
-
     private String _name;
     private String _values;
     private String _caseSensitive;
@@ -55,7 +47,6 @@ final class SimpleDictionaryReferenceDataWizardSession extends AbstractReference
 
     @Override
     protected String addReferenceData() {
-
         final boolean caseSensitive = (_caseSensitive != null && _caseSensitive.equals("on"));
         final Dictionary dictionary = new SimpleDictionary(_name, caseSensitive, _values.split("\n"));
         getReferenceDataDao().addDictionary(getWizardContext().getTenantContext(), dictionary);

@@ -531,15 +531,15 @@ public class DomConfigurationWriter {
 
         return elem;
     }
-    
-    private Element toElement(final SimpleSynonymCatalog sc) {
+
+    private Element toElement(final SimpleSynonymCatalog synonymCatalog) {
         final Element elem = getDocument().createElement("simple-synonym-catalog");
-        elem.setAttribute("name", sc.getName());
-        if (!Strings.isNullOrEmpty(sc.getDescription())) {
-            elem.setAttribute("description", sc.getDescription());
+        elem.setAttribute("name", synonymCatalog.getName());
+        if (!Strings.isNullOrEmpty(synonymCatalog.getDescription())) {
+            elem.setAttribute("description", synonymCatalog.getDescription());
         }
 
-        for (final Map.Entry<String, String> entry : sc.getSynonymMap().entrySet()) {
+        for (final Map.Entry<String, String> entry : synonymCatalog.getSynonymMap().entrySet()) {
             final Element synonym = _document.createElement("synonym");
             appendElement(synonym, "masterterm", entry.getValue());
             // No, it's not a bug. The map is structured synonym to masterterm for performance.

@@ -128,14 +128,14 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/stringPattern/{name}", method = { RequestMethod.GET, RequestMethod.HEAD },
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/stringPattern/{name}", method = { RequestMethod.GET,
+            RequestMethod.HEAD }, produces = MediaType.APPLICATION_JSON_VALUE)
     public StringPatternModel getStringPattern(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, final HttpServletRequest request) {
         final StringPattern stringPattern = getReferenceDataCatalog(tenant).getStringPattern(name);
 
         if (stringPattern == null) {
-            logger.warn("Could not find string pattern \"" + name + "\"");
+            logger.warn("Could not find string pattern \"{}\"", name);
             throw new NoSuchResourceException();
         }
 
@@ -159,9 +159,9 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(value = "/stringPattern/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity putStringPattern(@PathVariable("tenant") final String tenant,
+    @RequestMapping(value = "/stringPattern/{name}", method = {
+            RequestMethod.PUT }, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> putStringPattern(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestBody final StringPatternModel stringPatternModel) {
 
         final StringPattern stringPattern;
@@ -176,7 +176,7 @@ public class ReferenceDataController {
             stringPattern = new RegexStringPattern(name, stringPatternModel.getPattern(), true);
             break;
         default:
-            throw new IllegalArgumentException("No such string pattern type");
+            throw new IllegalArgumentException("No such string pattern type, " + stringPatternModel.getPatternType());
         }
 
         final TenantContext context = _contextFactory.getContext(tenant);
@@ -188,15 +188,15 @@ public class ReferenceDataController {
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/stringPattern/{name}", method = { RequestMethod.DELETE })
-    public ResponseEntity deleteStringPattern(@PathVariable("tenant") final String tenant,
+    public ResponseEntity<Void> deleteStringPattern(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name) throws IOException {
         _referenceDataDao.removeStringPattern(_contextFactory.getContext(tenant), name);
         return ResponseEntity.noContent().build();
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.GET, RequestMethod.HEAD },
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.GET,
+            RequestMethod.HEAD }, produces = MediaType.APPLICATION_JSON_VALUE)
     public DictionaryModel getDictionary(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, final HttpServletRequest request) {
         final Dictionary dictionary = getReferenceDataCatalog(tenant).getDictionary(name);
@@ -216,9 +216,9 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity putDictionary(@PathVariable("tenant") final String tenant,
+    @RequestMapping(value = "/dictionary/{name}", method = {
+            RequestMethod.PUT }, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> putDictionary(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestBody final DictionaryModel dictionaryModel) {
         final TenantContext context = _contextFactory.getContext(tenant);
         final FileResource resource = new FileResource(getResourceFile(context, name));
@@ -234,12 +234,12 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity putDictionaryFile(@PathVariable("tenant") final String tenant,
+    @RequestMapping(value = "/dictionary/{name}", method = {
+            RequestMethod.PUT }, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> putDictionaryFile(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestParam("file") final MultipartFile sourceMultipartFile,
-            @RequestParam(value="casesensitive", defaultValue="true") final boolean isCaseSensitive,
-            @RequestParam(value="encoding", defaultValue = "UTF-8") final String encoding) throws IOException {
+            @RequestParam(value = "casesensitive", defaultValue = "true") final boolean isCaseSensitive,
+            @RequestParam(value = "encoding", defaultValue = "UTF-8") final String encoding) throws IOException {
         final TenantContext context = _contextFactory.getContext(tenant);
         final File targetFile = getResourceFile(context, name);
         try (InputStream sourceStream = sourceMultipartFile.getInputStream();
@@ -257,7 +257,7 @@ public class ReferenceDataController {
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.DELETE })
-    public ResponseEntity deleteDictionary(@PathVariable("tenant") final String tenant,
+    public ResponseEntity<Void> deleteDictionary(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name) {
         final TenantContext context = _contextFactory.getContext(tenant);
         final Dictionary dictionary = getReferenceDataCatalog(tenant).getDictionary(name);
@@ -273,8 +273,8 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.GET, RequestMethod.HEAD },
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.GET,
+            RequestMethod.HEAD }, produces = MediaType.APPLICATION_JSON_VALUE)
     public SynonymCatalogModel getSynonymCatalog(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, final HttpServletRequest request) {
         final SynonymCatalog synonymCatalog = getReferenceDataCatalog(tenant).getSynonymCatalog(name);
@@ -296,9 +296,9 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity putSynonymCatalog(@PathVariable("tenant") final String tenant,
+    @RequestMapping(value = "/synonymCatalog/{name}", method = {
+            RequestMethod.PUT }, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> putSynonymCatalog(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestBody final SynonymCatalogModel synonymCatalogModel) {
         final TenantContext context = _contextFactory.getContext(tenant);
         final FileResource resource = new FileResource(getResourceFile(context, name));
@@ -319,12 +319,12 @@ public class ReferenceDataController {
     }
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity putSynonymCatalogFile(@PathVariable("tenant") final String tenant,
+    @RequestMapping(value = "/synonymCatalog/{name}", method = {
+            RequestMethod.PUT }, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> putSynonymCatalogFile(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestParam("file") final MultipartFile sourceMultipartFile,
-            @RequestParam(value="casesensitive", defaultValue="true") final boolean isCaseSensitive,
-            @RequestParam(value="encoding", defaultValue = "UTF-8") final String encoding) throws IOException {
+            @RequestParam(value = "casesensitive", defaultValue = "true") final boolean isCaseSensitive,
+            @RequestParam(value = "encoding", defaultValue = "UTF-8") final String encoding) throws IOException {
         final TenantContext context = _contextFactory.getContext(tenant);
         final File targetFile = getResourceFile(context, name);
         try (InputStream sourceStream = sourceMultipartFile.getInputStream();
@@ -341,7 +341,7 @@ public class ReferenceDataController {
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.DELETE })
-    public ResponseEntity deleteSynonymCatalog(@PathVariable("tenant") final String tenant,
+    public ResponseEntity<Void> deleteSynonymCatalog(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name) {
         final TenantContext context = _contextFactory.getContext(tenant);
         final SynonymCatalog synonymCatalog = getReferenceDataCatalog(tenant).getSynonymCatalog(name);

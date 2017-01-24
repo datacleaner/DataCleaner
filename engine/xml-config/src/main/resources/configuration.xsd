@@ -524,7 +524,7 @@
 				</all>
 			</extension>
 		</complexContent>
-		
+
 	</complexType>
 		<complexType name="neo4jDatastoreType">
 		<complexContent>
@@ -933,7 +933,7 @@
 						<element name="datastore-synonym-catalog" minOccurs="0"
 							maxOccurs="unbounded" type="ab:datastoreSynonymCatalogType" />
 						<element name="simple-synonym-catalog" minOccurs="0"
-								 maxOccurs="unbounded" type="ab:valueListSynonymCatalogType" />
+							maxOccurs="unbounded" type="ab:valueListSynonymCatalogType" />
 						<element name="custom-synonym-catalog" minOccurs="0"
 							maxOccurs="unbounded" type="ab:customElementType" />
 					</choice>
@@ -954,7 +954,7 @@
 			</element>
 		</sequence>
 	</complexType>
-	
+
 	<complexType name="regexSwapPatternType">
 		<sequence>
 			<element name="expression" minOccurs="1" maxOccurs="1" type="string" />

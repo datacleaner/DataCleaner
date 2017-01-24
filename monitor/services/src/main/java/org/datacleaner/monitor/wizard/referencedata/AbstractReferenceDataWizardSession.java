@@ -19,15 +19,10 @@
  */
 package org.datacleaner.monitor.wizard.referencedata;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DomConfigurationWriter;
-import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.server.dao.ReferenceDataDao;
 import org.datacleaner.monitor.server.dao.ReferenceDataDaoImpl;
-import org.datacleaner.util.xml.XmlUtils;
-import org.w3c.dom.Element;
 
 /**
  * Represents the typical abstractly implemented session of creating reference data. 

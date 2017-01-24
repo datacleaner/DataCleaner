@@ -22,16 +22,14 @@ package org.datacleaner.monitor.server.controllers.referencedata.model;
 import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DictionaryBasedModel<T> {
-    protected final boolean _caseSensitive;
+public abstract class DictionaryBasedModel<T> {
+    private final boolean _caseSensitive;
     private final String _name;
     private final Collection<T> _entries;
 
-    public DictionaryBasedModel(final String name, final Collection<T> entries,
-            final boolean caseSensitive) {
+    DictionaryBasedModel(final String name, final Collection<T> entries, final boolean caseSensitive) {
         _name = name;
         _entries = entries;
         _caseSensitive = caseSensitive;

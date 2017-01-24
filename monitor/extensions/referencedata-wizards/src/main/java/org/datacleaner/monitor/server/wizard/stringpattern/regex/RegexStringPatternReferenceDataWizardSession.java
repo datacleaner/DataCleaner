@@ -19,8 +19,6 @@
  */
 package org.datacleaner.monitor.server.wizard.stringpattern.regex;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
@@ -29,7 +27,6 @@ import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.StringPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
 final class RegexStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
 

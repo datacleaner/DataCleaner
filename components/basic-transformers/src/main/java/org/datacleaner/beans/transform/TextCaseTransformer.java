@@ -40,6 +40,7 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
+import org.datacleaner.api.Validate;
 import org.datacleaner.components.categories.TextCategory;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.Dictionary;
@@ -53,11 +54,6 @@ import com.ibm.icu.text.BreakIterator;
 @Description("Modifies the text case/capitalization of Strings.")
 @Categorized(TextCategory.class)
 public class TextCaseTransformer implements Transformer {
-    private static final String DEFAULT_START_CASE_DICTIONARY = "TextCaseTransformer start case dictionary";
-    private static final String DEFAULT_END_CASE_DICTIONARY = "TextCaseTransformer end case dictionary";
-    private static final String DEFAULT_WORD_CASE_DICTIONARY = "TextCaseTransformer word case dictionary";
-    private static final String DEFAULT_COMPLETE_CASE_DICTIONARY = "TextCaseTransformer value dictionary";
-
     /**
      * Enum depicting the modes of operation for the text case modifications.
      */
@@ -89,31 +85,6 @@ public class TextCaseTransformer implements Transformer {
     public static final String WORD_DICTIONARY_PROPERTY = "Dictionaries for casing individual words";
     public static final String BEGIN_WORD_DICTIONARY_PROPERTY = "Dictionaries for casing beginning of words";
     public static final String END_WORD_DICTIONARY_PROPERTY = "Dictionaries for casing ending of words";
-
-    public TextCaseTransformer() {
-        this(null);
-    }
-
-    @Inject
-    public TextCaseTransformer(final ReferenceDataCatalog catalog) {
-        if (catalog != null) {
-            if (catalog.containsDictionary(DEFAULT_COMPLETE_CASE_DICTIONARY)) {
-                allWordsDictionaries = new Dictionary[] { catalog.getDictionary(DEFAULT_COMPLETE_CASE_DICTIONARY) };
-            }
-
-            if (catalog.containsDictionary(DEFAULT_WORD_CASE_DICTIONARY)) {
-                wordDictionaries = new Dictionary[] { catalog.getDictionary(DEFAULT_WORD_CASE_DICTIONARY) };
-            }
-
-            if (catalog.containsDictionary(DEFAULT_START_CASE_DICTIONARY)) {
-                wordStartDictionaries = new Dictionary[] { catalog.getDictionary(DEFAULT_START_CASE_DICTIONARY) };
-            }
-
-            if (catalog.containsDictionary(DEFAULT_END_CASE_DICTIONARY)) {
-                wordEndDictionaries = new Dictionary[] { catalog.getDictionary(DEFAULT_END_CASE_DICTIONARY) };
-            }
-        }
-    }
 
     @Configured(VALUE_PROPERTY)
     InputColumn<String> valueColumn;
@@ -151,6 +122,20 @@ public class TextCaseTransformer implements Transformer {
         wordDictionaryConnections = openConnections(wordDictionaries);
         wordStartDictionaryConnections = openConnections(wordStartDictionaries);
         wordEndDictionaryConnections = openConnections(wordEndDictionaries);
+    }
+
+    @Validate
+    public void validate() {
+        validateDictionaries(allWordsDictionaries);
+        validateDictionaries(wordEndDictionaries);
+        validateDictionaries(wordEndDictionaries);
+        validateDictionaries(wordEndDictionaries);
+    }
+
+    private void validateDictionaries(final Dictionary[] dictionaries) {
+        if (!Stream.of(dictionaries).allMatch(Dictionary::isCaseSensitive)) {
+            throw new IllegalStateException("Dictionaries must be case sensitive");
+        }
     }
 
     @Override

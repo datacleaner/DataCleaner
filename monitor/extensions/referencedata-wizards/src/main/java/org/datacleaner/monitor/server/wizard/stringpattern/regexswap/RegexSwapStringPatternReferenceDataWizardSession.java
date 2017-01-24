@@ -19,19 +19,15 @@
  */
 package org.datacleaner.monitor.server.wizard.stringpattern.regexswap;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.apache.http.impl.client.HttpClients;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
-import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.regexswap.Regex;
 import org.datacleaner.reference.regexswap.RegexSwapClient;
 import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
-import org.w3c.dom.Element;
 
 final class RegexSwapStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
 

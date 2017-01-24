@@ -119,8 +119,12 @@ public class FileUploadServlet extends HttpServlet {
         File tempFolder = FileHelper.getTempDir();
         try {
             final File subDirectory = new File(tempFolder, ".datacleaner_upload");
-            if (subDirectory.mkdirs()) {
+            subDirectory.mkdirs();
+
+            if (subDirectory.exists()) {
                 tempFolder = subDirectory;
+            } else {
+                logger.warn("Subdirectory '{}' was not created. ", subDirectory.getAbsolutePath());
             }
         } catch (final Exception e) {
             logger.warn("Could not create subdirectory in temp folder", e);

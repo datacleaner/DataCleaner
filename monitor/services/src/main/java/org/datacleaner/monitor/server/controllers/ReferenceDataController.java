@@ -160,7 +160,7 @@ public class ReferenceDataController {
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/stringPattern/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity putStringPattern(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestBody final StringPatternModel stringPatternModel) {
 
@@ -217,7 +217,7 @@ public class ReferenceDataController {
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity putDictionary(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestBody final DictionaryModel dictionaryModel) {
         final TenantContext context = _contextFactory.getContext(tenant);
@@ -227,6 +227,28 @@ public class ReferenceDataController {
         final TextFileDictionary dictionary =
                 new TextFileDictionary(name, resource.getFile().getAbsolutePath(), "UTF-8",
                         dictionaryModel.isCaseSensitive());
+
+        _referenceDataDao.removeDictionary(context, name);
+        _referenceDataDao.addDictionary(context, dictionary);
+        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequestUri().build().toUri()).build();
+    }
+
+    @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
+    @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.PUT },
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity putDictionaryFile(@PathVariable("tenant") final String tenant,
+            @PathVariable("name") final String name, @RequestParam("file") final MultipartFile sourceMultipartFile,
+            @RequestParam(value="casesensitive", defaultValue="true") final boolean isCaseSensitive,
+            @RequestParam(value="encoding", defaultValue = "UTF-8") final String encoding) throws IOException {
+        final TenantContext context = _contextFactory.getContext(tenant);
+        final File targetFile = getResourceFile(context, name);
+        try (InputStream sourceStream = sourceMultipartFile.getInputStream();
+             OutputStream targetStream = FileHelper.getOutputStream(targetFile)) {
+            FileHelper.copy(sourceStream, targetStream);
+        }
+
+        final TextFileDictionary dictionary =
+                new TextFileDictionary(name, targetFile.getAbsolutePath(), encoding, isCaseSensitive);
 
         _referenceDataDao.removeDictionary(context, name);
         _referenceDataDao.addDictionary(context, dictionary);
@@ -275,7 +297,7 @@ public class ReferenceDataController {
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity putSynonymCatalog(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestBody final SynonymCatalogModel synonymCatalogModel) {
         final TenantContext context = _contextFactory.getContext(tenant);
@@ -298,11 +320,11 @@ public class ReferenceDataController {
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.PUT },
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity putSynonymCatalogFile(@PathVariable("tenant") final String tenant,
             @PathVariable("name") final String name, @RequestParam("file") final MultipartFile sourceMultipartFile,
-            @RequestParam("casesensitive") final boolean isCaseSensitive,
-            @RequestParam("encoding") final String encoding) throws IOException {
+            @RequestParam(value="casesensitive", defaultValue="true") final boolean isCaseSensitive,
+            @RequestParam(value="encoding", defaultValue = "UTF-8") final String encoding) throws IOException {
         final TenantContext context = _contextFactory.getContext(tenant);
         final File targetFile = getResourceFile(context, name);
         try (InputStream sourceStream = sourceMultipartFile.getInputStream();

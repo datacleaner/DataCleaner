@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -46,8 +47,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -144,6 +147,30 @@ public class ReferenceDataControllerTest {
     }
 
     @Test
+    public void testPutDictionaryFile() throws Exception {
+        final File file = new File("src/test/resources/testdictionary");
+        final MockMultipartFile multipartFile =
+                new MockMultipartFile("file", "testDictionary", "text/plain", new FileInputStream(file));
+        final MvcResult mvcResult = _mockMvc.perform(
+                fileUpload("/test/referencedata/dictionary/testDictionary").file(multipartFile).with(withPut())
+                        .contentType(MediaType.MULTIPART_FORM_DATA).param("casesensitive", "false")).andExpect(status().isCreated()).andExpect(
+                header().string("Location", is("http://localhost/test/referencedata/dictionary/testDictionary")))
+                .andReturn();
+
+        final String location = mvcResult.getResponse().getHeader("Location");
+        _mockMvc.perform(get(location)).andExpect(status().isOk()).andExpect(jsonPath("$.name", is("testDictionary")))
+                .andExpect(jsonPath("$.entries", hasSize(3))).andExpect(jsonPath("$.entries[2]", is("baz")))
+                .andExpect(jsonPath("$.caseSensitive", is(false)));
+    }
+
+    private RequestPostProcessor withPut() {
+        return request -> {
+            request.setMethod("PUT");
+            return request;
+        };
+    }
+
+    @Test
     public void testListSynonymCatalogs() throws Exception {
         _mockMvc.perform(get("/test/referencedata/synonymCatalogs")).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(1)))
@@ -171,6 +198,25 @@ public class ReferenceDataControllerTest {
                 .andExpect(jsonPath("$.caseSensitive", is(true)));
         _mockMvc.perform(delete(location)).andExpect(status().isNoContent());
         _mockMvc.perform(get(location)).andExpect(status().isNotFound());
-
     }
+
+    @Test
+    public void testPutSynonymCatalogFile() throws Exception {
+        final File file = new File("src/test/resources/testsynonymcatalog");
+        final MockMultipartFile multipartFile =
+                new MockMultipartFile("file", "testsynonymcatalog", "text/plain", new FileInputStream(file));
+        final MvcResult mvcResult = _mockMvc.perform(
+                fileUpload("/test/referencedata/synonymCatalog/testCatalog").file(multipartFile).with(withPut())
+                        .contentType(MediaType.MULTIPART_FORM_DATA).param("casesensitive", "false")).andExpect(status().isCreated()).andExpect(
+                header().string("Location", is("http://localhost/test/referencedata/synonymCatalog/testCatalog")))
+                .andReturn();
+
+        final String location = mvcResult.getResponse().getHeader("Location");
+        _mockMvc.perform(get(location)).andExpect(status().isOk()).andExpect(jsonPath("$.name", is("testCatalog")))
+                .andExpect(jsonPath("$.entries", hasSize(1))).andExpect(jsonPath("$.entries[0].masterTerm", is("foo")))
+                .andExpect(jsonPath("$.entries[0].synonyms", hasSize(2)))
+                .andExpect(jsonPath("$.entries[0].synonyms[1]", is("baz")))
+                .andExpect(jsonPath("$.caseSensitive", is(false)));
+    }
+
 }

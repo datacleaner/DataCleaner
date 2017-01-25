@@ -396,6 +396,6 @@ public class ReferenceDataController {
         final String path = removeParent ? "/../{type}/{name}" : "/{type}/{name}";
 
         return ServletUriComponentsBuilder.fromCurrentRequestUri().path(path).buildAndExpand(type.getName(), name)
-                .normalize().toUriString();
+                .normalize().encode().toUriString();
     }
 }

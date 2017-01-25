@@ -87,7 +87,7 @@ public class ReferenceDataControllerTest {
                 .andExpect(jsonPath("$[?(@.referenceDataType=='DICTIONARY')]", hasSize(1)))
                 .andExpect(jsonPath("$[?(@.referenceDataType=='SYNONYM_CATALOG')]", hasSize(1)))
                 .andExpect(jsonPath("$[?(@.referenceDataType=='STRING_PATTERN')]", hasSize(3))).andExpect(
-                jsonPath("$[0].href", is("http://localhost/test/referencedata/dictionary/vendor whitelist")));
+                jsonPath("$[0].href", is("http://localhost/test/referencedata/dictionary/vendor%20whitelist")));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ReferenceDataControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[?(@.referenceDataType!='STRING_PATTERN')]", hasSize(0)))
                 .andExpect(jsonPath("$[?(@.referenceDataType=='STRING_PATTERN')]", hasSize(3))).andExpect(
-                jsonPath("$[0].href", is("http://localhost/test/referencedata/stringPattern/All lowercase")));
+                jsonPath("$[0].href", is("http://localhost/test/referencedata/stringPattern/All%20lowercase")));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class ReferenceDataControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[?(@.referenceDataType!='DICTIONARY')]", hasSize(0)))
                 .andExpect(jsonPath("$[?(@.referenceDataType=='DICTIONARY')]", hasSize(1))).andExpect(
-                jsonPath("$[0].href", is("http://localhost/test/referencedata/dictionary/vendor whitelist")));
+                jsonPath("$[0].href", is("http://localhost/test/referencedata/dictionary/vendor%20whitelist")));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class ReferenceDataControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[?(@.referenceDataType!='SYNONYM_CATALOG')]", hasSize(0)))
                 .andExpect(jsonPath("$[?(@.referenceDataType=='SYNONYM_CATALOG')]", hasSize(1))).andExpect(
-                jsonPath("$[0].href", is("http://localhost/test/referencedata/synonymCatalog/job title synonyms")));
+                jsonPath("$[0].href", is("http://localhost/test/referencedata/synonymCatalog/job%20title%20synonyms")));
     }
 
     @Test

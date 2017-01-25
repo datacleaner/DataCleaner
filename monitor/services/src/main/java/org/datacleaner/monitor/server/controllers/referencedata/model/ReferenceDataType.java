@@ -20,7 +20,9 @@
 package org.datacleaner.monitor.server.controllers.referencedata.model;
 
 public enum ReferenceDataType {
-    DICTIONARY("dictionary"), SYNONYM_CATALOG("synonymCatalog"), STRING_PATTERN("stringPattern");
+    DICTIONARY("dictionary"),
+    SYNONYM_CATALOG("synonymCatalog"),
+    STRING_PATTERN("stringPattern");
 
     private final String _name;
 

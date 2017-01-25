@@ -127,8 +127,8 @@ public class TextCaseTransformer implements Transformer {
     @Validate
     public void validate() {
         validateDictionaries(allWordsDictionaries);
-        validateDictionaries(wordEndDictionaries);
-        validateDictionaries(wordEndDictionaries);
+        validateDictionaries(wordDictionaries);
+        validateDictionaries(wordStartDictionaries);
         validateDictionaries(wordEndDictionaries);
     }
 

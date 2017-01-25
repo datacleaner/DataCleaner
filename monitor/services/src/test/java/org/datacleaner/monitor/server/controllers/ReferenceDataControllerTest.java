@@ -25,7 +25,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -47,7 +48,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -148,12 +148,9 @@ public class ReferenceDataControllerTest {
 
     @Test
     public void testPutDictionaryFile() throws Exception {
-        final File file = new File("src/test/resources/testdictionary");
-        final MockMultipartFile multipartFile =
-                new MockMultipartFile("file", "testDictionary", "text/plain", new FileInputStream(file));
+        final byte[] bytes = Files.readAllBytes(Paths.get("src/test/resources/testdictionary"));
         final MvcResult mvcResult = _mockMvc.perform(
-                fileUpload("/test/referencedata/dictionary/testDictionary").file(multipartFile).with(withPut())
-                        .contentType(MediaType.MULTIPART_FORM_DATA).param("casesensitive", "false"))
+                put("/test/referencedata/dictionary/testDictionary").content(bytes).param("casesensitive", "false"))
                 .andExpect(status().isCreated()).andExpect(header().string("Location",
                         is("http://localhost/test/referencedata/dictionary/testDictionary"))).andReturn();
 
@@ -202,12 +199,10 @@ public class ReferenceDataControllerTest {
 
     @Test
     public void testPutSynonymCatalogFile() throws Exception {
-        final File file = new File("src/test/resources/testsynonymcatalog");
-        final MockMultipartFile multipartFile =
-                new MockMultipartFile("file", "testsynonymcatalog", "text/plain", new FileInputStream(file));
+        final byte[] bytes = Files.readAllBytes(Paths.get("src/test/resources/testsynonymcatalog"));
+
         final MvcResult mvcResult = _mockMvc.perform(
-                fileUpload("/test/referencedata/synonymCatalog/testCatalog").file(multipartFile).with(withPut())
-                        .contentType(MediaType.MULTIPART_FORM_DATA).param("casesensitive", "false"))
+                put("/test/referencedata/synonymCatalog/testCatalog").content(bytes).param("casesensitive", "false"))
                 .andExpect(status().isCreated()).andExpect(header().string("Location",
                         is("http://localhost/test/referencedata/synonymCatalog/testCatalog"))).andReturn();
 

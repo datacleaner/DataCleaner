@@ -170,12 +170,12 @@ public class ReferenceDataControllerTest {
 
     @Test
     public void testPutAndDeleteSynonymCatalog() throws Exception {
-        final SynonymCatalogModel dictionaryModel = new SynonymCatalogModel("synonymCatalog",
+        final SynonymCatalogModel synonymCatalogModel = new SynonymCatalogModel("synonymCatalog",
                 Collections.singletonList(new SynonymModel("foo", Arrays.asList("bar", "baz"))), true);
 
         final MvcResult mvcResult = _mockMvc.perform(
                 put("/test/referencedata/synonymCatalog/testCatalog").contentType(MediaType.APPLICATION_JSON)
-                        .content(_objectMapper.writeValueAsString(dictionaryModel))).andExpect(status().isCreated())
+                        .content(_objectMapper.writeValueAsString(synonymCatalogModel))).andExpect(status().isCreated())
                 .andExpect(header().string("Location",
                         is("http://localhost/test/referencedata/synonymCatalog/testCatalog"))).andReturn();
 

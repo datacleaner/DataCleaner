@@ -21,15 +21,12 @@ package org.datacleaner.monitor.server.wizard.shared.file;
 
 import java.io.File;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
-import org.w3c.dom.Element;
 
 public abstract class FileWizardSession extends AbstractReferenceDataWizardSession {
 
@@ -52,15 +49,7 @@ public abstract class FileWizardSession extends AbstractReferenceDataWizardSessi
         return 1;
     }
 
-    @Override
-    protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
-        copyUploadedFileToReferenceDataDirectory();
-        return addElementToConfiguration();
-    }
-
-    protected abstract Element addElementToConfiguration();
-
-    private void copyUploadedFileToReferenceDataDirectory() {
+    protected void copyUploadedFileToReferenceDataDirectory() {
         final File tenantHome = getWizardContext().getTenantContext().getConfiguration().getHomeFolder().toFile();
         final File referenceDataDirectory = new File(tenantHome.getAbsolutePath() + File.separator + "reference-data");
         final File targetFile = new File(referenceDataDirectory.getAbsolutePath() + File.separator + _filePath);

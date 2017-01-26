@@ -110,6 +110,7 @@ import org.datacleaner.reference.ReferenceDataCatalogImpl;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.SimpleDictionary;
 import org.datacleaner.reference.SimpleStringPattern;
+import org.datacleaner.reference.SimpleSynonymCatalog;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
@@ -627,7 +628,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             final SynonymCatalogs synonymCatalogs = referenceDataCatalog.getSynonymCatalogs();
             if (synonymCatalogs != null) {
                 for (final Object synonymCatalogType : synonymCatalogs
-                        .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrCustomSynonymCatalog()) {
+                        .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrSimpleSynonymCatalog()) {
                     if (synonymCatalogType instanceof TextFileSynonymCatalogType) {
                         final TextFileSynonymCatalogType tfsct = (TextFileSynonymCatalogType) synonymCatalogType;
 
@@ -681,6 +682,25 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                                         synonymColumnPaths, loadIntoMemory);
                         sc.setDescription(datastoreSynonymCatalogType.getDescription());
                         synonymCatalogList.add(sc);
+
+                        removeVariablePath();
+                    } else if (synonymCatalogType instanceof ValueListSynonymCatalogType) {
+                        final ValueListSynonymCatalogType catalogType =
+                                (ValueListSynonymCatalogType) synonymCatalogType;
+
+                        final String name = catalogType.getName();
+                        checkName(name, SynonymCatalog.class, synonymCatalogList);
+
+                        addVariablePath(name);
+                        final HashMap<String, String> synonymMapping = new HashMap<>();
+
+                        for (final ValueListSynonymCatalogType.Synonym synonym : catalogType.getSynonym()) {
+                            synonymMapping.put(synonym.getValue(), synonym.getMasterterm());
+                        }
+
+                        final SimpleSynonymCatalog synonymCatalog = new SimpleSynonymCatalog(name, synonymMapping);
+                        synonymCatalog.setDescription(catalogType.getDescription());
+                        synonymCatalogList.add(synonymCatalog);
 
                         removeVariablePath();
                     } else {

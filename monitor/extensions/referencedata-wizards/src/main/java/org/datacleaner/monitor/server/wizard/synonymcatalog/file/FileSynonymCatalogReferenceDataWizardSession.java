@@ -24,7 +24,6 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileSynonymCatalog;
-import org.w3c.dom.Element;
 
 final class FileSynonymCatalogReferenceDataWizardSession extends FileWizardSession {
 
@@ -38,12 +37,11 @@ final class FileSynonymCatalogReferenceDataWizardSession extends FileWizardSessi
     }
 
     @Override
-    protected Element addElementToConfiguration() {
-        final Element synonymCatalogsElement = _writer.getSynonymCatalogsElement();
+    protected String addReferenceData() {
+        copyUploadedFileToReferenceDataDirectory();
         final boolean caseSensitive = (_caseSensitive != null && _caseSensitive.equals("on"));
         final SynonymCatalog catalog = new TextFileSynonymCatalog(_name, _filePath, caseSensitive, _encoding);
-        synonymCatalogsElement.appendChild(_writer.externalize(catalog));
-
-        return synonymCatalogsElement;
+        getReferenceDataDao().addSynonymCatalog(getWizardContext().getTenantContext(), catalog);
+        return _name;
     }
 }

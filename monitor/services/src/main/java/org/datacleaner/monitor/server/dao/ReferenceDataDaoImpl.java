@@ -20,9 +20,6 @@
 package org.datacleaner.monitor.server.dao;
 
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Result;
@@ -31,15 +28,12 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.datacleaner.configuration.JaxbConfigurationReader;
-import org.datacleaner.configuration.jaxb.Configuration;
+import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.monitor.configuration.TenantContext;
-import org.datacleaner.monitor.configuration.WriteUpdatedConfigurationFileAction;
 import org.datacleaner.reference.Dictionary;
-import org.datacleaner.reference.ReferenceData;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
-import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFileResource;
 import org.datacleaner.util.xml.XmlUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.xml.DomUtils;
@@ -50,7 +44,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 /**
- * Default implementation of {@link ReferenceDataDao}. 
+ * Default implementation of {@link ReferenceDataDao}.
  */
 @Component
 public class ReferenceDataDaoImpl implements ReferenceDataDao {
@@ -67,7 +61,6 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
 
         return "";
     }
-
 
     private void removeOldElementIfExists(final NodeList referenceDataNodes,
             final Element updatedReferenceDataSubSection) {
@@ -143,67 +136,47 @@ public class ReferenceDataDaoImpl implements ReferenceDataDao {
         }
     }
 
-    @Override
-    public void removeDictionary(final TenantContext tenantContext, final Dictionary dictionary)
-            throws IllegalArgumentException {
-        removeReferenceData(tenantContext, dictionary);
-    }
-
-    @Override
-    public void removeSynonymCatalog(final TenantContext tenantContext, final SynonymCatalog synonymCatalog)
-            throws IllegalArgumentException {
-        removeReferenceData(tenantContext, synonymCatalog);
-    }
-
-    @Override
-    public void removeStringPattern(final TenantContext tenantContext, final StringPattern stringPattern)
-            throws IllegalArgumentException {
-        removeReferenceData(tenantContext, stringPattern);
-    }
-
-    public void removeReferenceData(final TenantContext tenantContext, final ReferenceData referenceData)
-            throws IllegalArgumentException {
-        if (referenceData == null) {
-            throw new IllegalArgumentException("Reference data can not be null");
-        }
-
-        final JaxbConfigurationReader jaxbConfigurationAdaptor = new JaxbConfigurationReader();
-        final RepositoryFile configurationFile = tenantContext.getConfigurationFile();
-        final Configuration configuration = configurationFile.readFile(jaxbConfigurationAdaptor::unmarshall);
-
-        boolean found = false;
-        final List<Object> referenceDataList = getReferenceDataListByType(configuration, referenceData);
-
-        for (final Iterator<Object> it = referenceDataList.iterator(); it.hasNext(); ) {
-            final String candidateName = WriteUpdatedConfigurationFileAction.getComparableName(it.next());
-
-            if (referenceData.getName().equals(candidateName)) {
-                it.remove();
-                found = true;
-                break;
+    private DomConfigurationWriter getConfigurationWriter(final TenantContext tenantContext) {
+        final RepositoryFileResource resource = new RepositoryFileResource(tenantContext.getConfigurationFile());
+        return new DomConfigurationWriter(resource) {
+            @Override
+            protected void onDocumentChanged(final Document document) {
+                resource.write(out -> XmlUtils.writeDocument(document, out));
+                tenantContext.onConfigurationChanged();
             }
-        }
-
-        if (!found) {
-            throw new IllegalArgumentException("Could not find reference data with name '" + referenceData + "'");
-        }
-
-        configurationFile.writeFile(out -> jaxbConfigurationAdaptor.marshall(configuration, out));
+        };
     }
 
-    private List<Object> getReferenceDataListByType(final Configuration configuration,
-            final ReferenceData referenceData) {
-        if (referenceData instanceof Dictionary) {
-            return configuration.getReferenceDataCatalog().getDictionaries()
-                    .getTextFileDictionaryOrValueListDictionaryOrDatastoreDictionary();
-        } else if (referenceData instanceof SynonymCatalog) {
-            return configuration.getReferenceDataCatalog().getSynonymCatalogs()
-                    .getTextFileSynonymCatalogOrDatastoreSynonymCatalogOrCustomSynonymCatalog();
-        } else if (referenceData instanceof StringPattern) {
-            return configuration.getReferenceDataCatalog().getStringPatterns()
-                    .getRegexPatternOrRegexSwapPatternOrSimplePattern();
-        } else {
-            return new ArrayList<>();
-        }
+    @Override
+    public void addDictionary(final TenantContext tenantContext, final Dictionary dictionary) {
+        getConfigurationWriter(tenantContext).externalize(dictionary);
+    }
+
+    @Override
+    public void addSynonymCatalog(final TenantContext tenantContext, final SynonymCatalog synonymCatalog) {
+        getConfigurationWriter(tenantContext).externalize(synonymCatalog);
+    }
+
+    @Override
+    public void addStringPattern(final TenantContext tenantContext, final StringPattern stringPattern) {
+        getConfigurationWriter(tenantContext).externalize(stringPattern);
+    }
+
+    @Override
+    public void removeDictionary(final TenantContext tenantContext, final String name)
+            throws IllegalArgumentException {
+        getConfigurationWriter(tenantContext).removeDictionary(name);
+    }
+
+    @Override
+    public void removeSynonymCatalog(final TenantContext tenantContext, final String name)
+            throws IllegalArgumentException {
+        getConfigurationWriter(tenantContext).removeSynonymCatalog(name);
+    }
+
+    @Override
+    public void removeStringPattern(final TenantContext tenantContext, final String name)
+            throws IllegalArgumentException {
+        getConfigurationWriter(tenantContext).removeStringPattern(name);
     }
 }

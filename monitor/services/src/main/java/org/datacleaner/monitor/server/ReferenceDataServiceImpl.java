@@ -29,17 +29,13 @@ import org.datacleaner.monitor.server.dao.ReferenceDataDao;
 import org.datacleaner.monitor.server.dao.ReferenceDataDaoImpl;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.reference.ReferenceDataCatalog;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 @Component("RefereceDataService")
-public class ReferenceDataServiceImpl implements ReferenceDataService, ApplicationContextAware {
+public class ReferenceDataServiceImpl implements ReferenceDataService {
     @Autowired
     TenantContextFactory _contextFactory;
-    private ApplicationContext _applicationContext;
 
     @Override
     public Set<ReferenceDataItem> getDictionaries(final TenantIdentifier tenant) {
@@ -64,22 +60,19 @@ public class ReferenceDataServiceImpl implements ReferenceDataService, Applicati
 
         if (type.equals(ReferenceDataItem.Type.DICTIONARY) && getReferenceDataCatalog(tenant)
                 .containsDictionary(name)) {
-            dao.removeDictionary(_contextFactory.getContext(tenant),
-                    getReferenceDataCatalog(tenant).getDictionary(name));
+            dao.removeDictionary(_contextFactory.getContext(tenant), name);
             return true;
         }
 
         if (type.equals(ReferenceDataItem.Type.SYNONYM_CATALOG) && getReferenceDataCatalog(tenant)
                 .containsSynonymCatalog(name)) {
-            dao.removeSynonymCatalog(_contextFactory.getContext(tenant),
-                    getReferenceDataCatalog(tenant).getSynonymCatalog(name));
+            dao.removeSynonymCatalog(_contextFactory.getContext(tenant), name);
             return true;
         }
 
         if (type.equals(ReferenceDataItem.Type.STRING_PATTERN) && getReferenceDataCatalog(tenant)
                 .containsStringPattern(name)) {
-            dao.removeStringPattern(_contextFactory.getContext(tenant),
-                    getReferenceDataCatalog(tenant).getStringPattern(name));
+            dao.removeStringPattern(_contextFactory.getContext(tenant), name);
             return true;
         }
 
@@ -98,11 +91,5 @@ public class ReferenceDataServiceImpl implements ReferenceDataService, Applicati
         }
 
         return set;
-    }
-
-    @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        System.out.println("The application context has been initialized: " + applicationContext.getDisplayName());
-        _applicationContext = applicationContext;
     }
 }

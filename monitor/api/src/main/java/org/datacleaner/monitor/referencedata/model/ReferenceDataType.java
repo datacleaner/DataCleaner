@@ -17,30 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.reference;
+package org.datacleaner.monitor.referencedata.model;
 
-import java.io.Closeable;
-import java.util.Iterator;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+public enum ReferenceDataType {
+    DICTIONARY("dictionary"),
+    SYNONYM_CATALOG("synonymCatalog"),
+    STRING_PATTERN("stringPattern");
 
-public interface DictionaryConnection extends Closeable {
-    boolean containsValue(String value);
+    private final String _name;
 
-    Iterator<String> getLengthSortedValues();
-
-    Iterator<String> getAllValues();
-
-    default Stream<String> lengthSortedStream() {
-        final Iterable<String> iterable = this::getLengthSortedValues;
-        return StreamSupport.stream(iterable.spliterator(), false);
+    ReferenceDataType(final String name) {
+        _name = name;
     }
 
-    default Stream<String> stream() {
-        final Iterable<String> iterable = this::getAllValues;
-        return StreamSupport.stream(iterable.spliterator(), false);
+    public String getName() {
+        return _name;
     }
-
-    @Override
-    void close();
 }

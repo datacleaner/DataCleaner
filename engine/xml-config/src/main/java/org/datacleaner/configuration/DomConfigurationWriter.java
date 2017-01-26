@@ -23,6 +23,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -50,6 +51,7 @@ import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.SimpleDictionary;
 import org.datacleaner.reference.SimpleStringPattern;
+import org.datacleaner.reference.SimpleSynonymCatalog;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
@@ -400,6 +402,8 @@ public class DomConfigurationWriter {
             elem = toElement((TextFileSynonymCatalog) sc);
         } else if (sc instanceof DatastoreSynonymCatalog) {
             elem = toElement((DatastoreSynonymCatalog) sc);
+        } else if (sc instanceof SimpleSynonymCatalog) {
+            elem = toElement((SimpleSynonymCatalog) sc);
         } else {
             throw new UnsupportedOperationException("Non-supported synonym catalog: " + sc);
         }
@@ -524,6 +528,24 @@ public class DomConfigurationWriter {
         appendElement(elem, "filename", sc.getFilename());
         appendElement(elem, "encoding", sc.getEncoding());
         appendElement(elem, "case-sensitive", sc.isCaseSensitive());
+
+        return elem;
+    }
+
+    private Element toElement(final SimpleSynonymCatalog synonymCatalog) {
+        final Element elem = getDocument().createElement("simple-synonym-catalog");
+        elem.setAttribute("name", synonymCatalog.getName());
+        if (!Strings.isNullOrEmpty(synonymCatalog.getDescription())) {
+            elem.setAttribute("description", synonymCatalog.getDescription());
+        }
+
+        for (final Map.Entry<String, String> entry : synonymCatalog.getSynonymMap().entrySet()) {
+            final Element synonym = _document.createElement("synonym");
+            appendElement(synonym, "masterterm", entry.getValue());
+            // No, it's not a bug. The map is structured synonym to masterterm for performance.
+            appendElement(synonym, "value", entry.getKey());
+            elem.appendChild(synonym);
+        }
 
         return elem;
     }

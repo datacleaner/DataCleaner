@@ -19,15 +19,10 @@
  */
 package org.datacleaner.monitor.wizard.referencedata;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DomConfigurationWriter;
-import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.server.dao.ReferenceDataDao;
 import org.datacleaner.monitor.server.dao.ReferenceDataDaoImpl;
-import org.datacleaner.util.xml.XmlUtils;
-import org.w3c.dom.Element;
 
 /**
  * Represents the typical abstractly implemented session of creating reference data. 
@@ -55,12 +50,7 @@ public abstract class AbstractReferenceDataWizardSession implements ReferenceDat
 
     @Override
     public String finished() {
-        final DocumentBuilder documentBuilder = XmlUtils.createDocumentBuilder();
-        final TenantContext tenantContext = _wizardContext.getTenantContext();
-        final Element updatedReferenceDataSubSection = getUpdatedReferenceDataSubSection(documentBuilder);
-        final ReferenceDataDao referenceDataDao = getReferenceDataDao();
-
-        return referenceDataDao.updateReferenceDataSubSection(tenantContext, updatedReferenceDataSubSection);
+        return addReferenceData();
     }
 
     protected ReferenceDataDao getReferenceDataDao() {
@@ -68,10 +58,9 @@ public abstract class AbstractReferenceDataWizardSession implements ReferenceDat
     }
 
     /**
-     * Returns updated reference data sub-section (dictionaries, synonym-catalogs, string-patterns).
-     * @param documentBuilder
+     * Does the actual update
      *
-     * @return
+     * @return Name of new reference data.
      */
-    protected abstract Element getUpdatedReferenceDataSubSection(DocumentBuilder documentBuilder);
+    protected abstract String addReferenceData();
 }

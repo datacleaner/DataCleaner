@@ -19,12 +19,9 @@
  */
 package org.datacleaner.monitor.server.wizard.shared.datastore;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
-import org.w3c.dom.Element;
 
 public abstract class DatastoreWizardSession extends AbstractReferenceDataWizardSession {
 
@@ -42,13 +39,6 @@ public abstract class DatastoreWizardSession extends AbstractReferenceDataWizard
     public Integer getPageCount() {
         return 4;
     }
-
-    @Override
-    protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
-        return addElementToConfiguration();
-    }
-
-    protected abstract Element addElementToConfiguration();
 
     public String getName() {
         return _name;

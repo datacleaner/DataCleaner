@@ -19,8 +19,6 @@
  */
 package org.datacleaner.monitor.server.wizard.stringpattern.regex;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.AbstractReferenceDataWizardSession;
@@ -29,7 +27,6 @@ import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.StringPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
 final class RegexStringPatternReferenceDataWizardSession extends AbstractReferenceDataWizardSession {
 
@@ -54,13 +51,12 @@ final class RegexStringPatternReferenceDataWizardSession extends AbstractReferen
     }
 
     @Override
-    protected Element getUpdatedReferenceDataSubSection(final DocumentBuilder documentBuilder) {
-        final Element stringPatternsElement = _writer.getStringPatternsElement();
+    protected String addReferenceData() {
         final boolean matchEntireString = (_matchEntireString != null && _matchEntireString.equals("on"));
         final StringPattern stringPattern = new RegexStringPattern(_name, _expression, matchEntireString);
-        stringPatternsElement.appendChild(_writer.externalize(stringPattern));
+        getReferenceDataDao().addStringPattern(getWizardContext().getTenantContext(), stringPattern);
 
-        return stringPatternsElement;
+        return _name;
     }
 
     public String getName() {

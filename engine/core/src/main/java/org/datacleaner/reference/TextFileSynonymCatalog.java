@@ -138,6 +138,7 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
         return _filename;
     }
 
+    @Override
     public boolean isCaseSensitive() {
         return _caseSensitive;
     }

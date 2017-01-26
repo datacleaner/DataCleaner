@@ -23,8 +23,6 @@ import org.datacleaner.monitor.server.wizard.shared.datastore.DatastoreWizardSes
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.reference.DatastoreDictionary;
-import org.datacleaner.reference.Dictionary;
-import org.w3c.dom.Element;
 
 final class DatastoreDictionaryReferenceDataWizardSession extends DatastoreWizardSession {
 
@@ -33,17 +31,15 @@ final class DatastoreDictionaryReferenceDataWizardSession extends DatastoreWizar
     }
 
     @Override
-    public WizardPageController firstPageController() {
-        return new DatastoreDictionaryReferenceDataPageDatastore(this);
+    protected String addReferenceData() {
+        final String fullColumnName = _schema + "." + _table + "." + _column;
+        getReferenceDataDao().addDictionary(getWizardContext().getTenantContext(),
+                new DatastoreDictionary(_name, _datastore, fullColumnName));
+        return _name;
     }
 
     @Override
-    protected Element addElementToConfiguration() {
-        final Element dictionariesElement = _writer.getDictionariesElement();
-        final String fullColumnName = _schema + "." + _table + "." + _column;
-        final Dictionary dictionary = new DatastoreDictionary(_name, _datastore, fullColumnName);
-        dictionariesElement.appendChild(_writer.externalize(dictionary));
-
-        return dictionariesElement;
+    public WizardPageController firstPageController() {
+        return new DatastoreDictionaryReferenceDataPageDatastore(this);
     }
 }

@@ -25,7 +25,6 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.referencedata.ReferenceDataWizardContext;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.SynonymCatalog;
-import org.w3c.dom.Element;
 
 final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreWizardSession {
 
@@ -48,14 +47,12 @@ final class DatastoreSynonymCatalogReferenceDataWizardSession extends DatastoreW
     }
 
     @Override
-    protected Element addElementToConfiguration() {
-        final Element synonymCatalogsElement = _writer.getSynonymCatalogsElement();
+    protected String addReferenceData() {
         final String fullColumnName = _schema + "." + _table + "." + _column;
         final String[] synonymColumns = createSynonymColumns();
         final SynonymCatalog catalog = new DatastoreSynonymCatalog(_name, _datastore, fullColumnName, synonymColumns);
-        synonymCatalogsElement.appendChild(_writer.externalize(catalog));
-
-        return synonymCatalogsElement;
+        getReferenceDataDao().addSynonymCatalog(getWizardContext().getTenantContext(), catalog);
+        return _name;
     }
 
     private String[] createSynonymColumns() {

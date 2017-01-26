@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -120,6 +121,9 @@ import com.google.common.collect.Maps;
  */
 @Component("schedulingService")
 public class SchedulingServiceImpl implements SchedulingService, ApplicationContextAware {
+    private static final String CATEGORY = "Category";
+    private static final String OTHERS = "(Other)";
+
     @Autowired
     HotFolderPreferences _hotFolderPreferences;
 
@@ -568,6 +572,54 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
+    public List<ScheduleDefinition> getSchedules(final TenantIdentifier tenant, final List<JobIdentifier> jobs)
+            throws DCSecurityException {
+        final List<ScheduleDefinition> scheduleDefinitions = new ArrayList<>(jobs.size());
+        for (JobIdentifier job : jobs) {
+            scheduleDefinitions.add(getSchedule(tenant, job));
+        }
+
+        return scheduleDefinitions;
+    }
+
+    @Override
+    public Map<String, List<JobIdentifier>> getJobsGroupedByCategory(final TenantIdentifier tenant) {
+        final Map<String, List<JobIdentifier>> categoryAndGroupMap = new TreeMap<>();
+
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
+
+        final List<JobIdentifier> jobs = context.getJobs();
+
+        for (final JobIdentifier jobIdentifier : jobs) {
+            final JobContext jobContext = context.getJob(jobIdentifier);
+
+            final Map<String, String> jobMetadataProperties = jobContext.getMetadataProperties();
+
+            final String categoryName;
+            if (jobMetadataProperties == null) {
+                categoryName = OTHERS;
+            } else {
+                final String metadataValue = jobMetadataProperties.get(CATEGORY);
+                if (metadataValue != null && !"".equals(metadataValue.trim())) {
+                    categoryName = metadataValue;
+                } else {
+                    categoryName = OTHERS;
+                }
+            }
+
+            List<JobIdentifier> listOfJobWithSameCategory = categoryAndGroupMap.get(categoryName);
+
+            if (listOfJobWithSameCategory == null) {
+                listOfJobWithSameCategory = new ArrayList<>();
+
+                categoryAndGroupMap.put(categoryName, listOfJobWithSameCategory);
+            }
+            listOfJobWithSameCategory.add(jobIdentifier);
+        }
+        return categoryAndGroupMap;
+    }
+
+    @Override
     public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
         return getSchedule(tenant, jobIdentifier, null);
     }
@@ -609,26 +661,6 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         schedule.setOverrideProperties(overrideProperties);
 
         return schedule;
-    }
-
-    private ScheduleDefinition getScheduleWithoutProperties(final TenantIdentifier tenant,
-            final JobIdentifier jobIdentifier) {
-        final JobContext jobContext = getJobContext(tenant, jobIdentifier);
-        final String groupName = jobContext.getGroupName();
-
-        return new ScheduleDefinition(tenant, jobIdentifier, groupName);
-    }
-
-    private JobContext getJobContext(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        final String jobName = jobIdentifier.getName();
-        final TenantContext context = _tenantContextFactory.getContext(tenant);
-        final JobContext jobContext = context.getJob(jobIdentifier);
-
-        if (jobContext == null) {
-            throw new IllegalArgumentException("No such job: " + jobName);
-        }
-
-        return jobContext;
     }
 
     @Override

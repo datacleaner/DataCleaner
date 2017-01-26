@@ -23,14 +23,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.datacleaner.monitor.shared.ClientConfig;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.util.DCAsyncCallback;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
@@ -39,7 +38,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.view.client.ListDataProvider;
 
 /**
  * Presents an overview of all scheduled activity in DC monitor.
@@ -49,7 +47,6 @@ public class SchedulingOverviewPanel extends Composite {
 
     static final int PAGE_SIZE = 10;
 
-    private static final String CATEGORY = "Category";
     private static final String OTHERS = "(Other)";
     private final ClientConfig _clientConfig;
     private final SchedulingServiceAsync _service;
@@ -60,12 +57,10 @@ public class SchedulingOverviewPanel extends Composite {
     }
 
     public void initialize(final Runnable listener) {
-        _service.getSchedules(_clientConfig.getTenant(), false, new DCAsyncCallback<List<ScheduleDefinition>>() {
-            @Override
-            public void onSuccess(final List<ScheduleDefinition> result) {
-
-                final Map<String, List<ScheduleDefinition>> categoryAndGroupMapForJobs =
-                        createCategoryAndGroupMapForJobs(result);
+        _service.getJobsGroupedByCategory(_clientConfig.getTenant(),
+                new DCAsyncCallback<Map<String, List<JobIdentifier>>>() {
+                    @Override
+                    public void onSuccess(final Map<String, List<JobIdentifier>> categoryAndGroupMapForJobs) {
 
                 final int categoryCount = categoryAndGroupMapForJobs.size();
 
@@ -74,7 +69,8 @@ public class SchedulingOverviewPanel extends Composite {
                     panel.add(new Label("There are no jobs available."));
                     initWidget(panel);
                 } else if (categoryCount == 1) {
-                    getPagedPanel(result);
+                            getPagedPanel(categoryAndGroupMapForJobs
+                                    .get(categoryAndGroupMapForJobs.keySet().iterator().next()));
                 } else {
                     final DecoratedTabPanel tabPanel = new DecoratedTabPanel();
                     tabPanel.setWidth("100%");
@@ -82,7 +78,7 @@ public class SchedulingOverviewPanel extends Composite {
                     jobCategories = sortJobCategories(jobCategories);
 
                     for (final String jobCategory : jobCategories) {
-                        final List<ScheduleDefinition> list = categoryAndGroupMapForJobs.get(jobCategory);
+                                final List<JobIdentifier> list = categoryAndGroupMapForJobs.get(jobCategory);
                         final ComplexPanel panel = getPagedPanel(list);
                         tabPanel.add(panel, jobCategory);
                     }
@@ -104,43 +100,6 @@ public class SchedulingOverviewPanel extends Composite {
 
                 return result;
             }
-
-            private Map<String, List<ScheduleDefinition>> createCategoryAndGroupMapForJobs(
-                    final List<ScheduleDefinition> result) {
-                final Map<String, List<ScheduleDefinition>> categoryAndGroupMap = new TreeMap<>();
-
-                for (final ScheduleDefinition scheduleDefinition : result) {
-                    final Map<String, String> jobMetadataProperties = scheduleDefinition.getJobMetadataProperties();
-
-                    GWT.log("Job '" + scheduleDefinition.getJob().getName() + "' metadata: " + jobMetadataProperties);
-
-                    final String categoryName;
-                    if (jobMetadataProperties == null) {
-                        categoryName = OTHERS;
-                    } else {
-                        final String metadataValue = jobMetadataProperties.get(CATEGORY);
-                        if (metadataValue != null && !"".equals(metadataValue.trim())) {
-                            categoryName = metadataValue;
-                        } else {
-                            categoryName = OTHERS;
-                        }
-                    }
-
-                    List<ScheduleDefinition> listOfJobWithSameCategory;
-                    listOfJobWithSameCategory = categoryAndGroupMap.get(categoryName);
-
-                    if (listOfJobWithSameCategory == null) {
-                        listOfJobWithSameCategory = new ArrayList<>();
-
-                        categoryAndGroupMap.put(categoryName, listOfJobWithSameCategory);
-                    }
-                    listOfJobWithSameCategory.add(scheduleDefinition);
-
-                }
-                return categoryAndGroupMap;
-
-            }
-
         });
     }
 
@@ -204,17 +163,13 @@ public class SchedulingOverviewPanel extends Composite {
         return label;
     }
 
-    private ComplexPanel getPagedPanel(final List<ScheduleDefinition> result) {
+    private ComplexPanel getPagedPanel(final List<JobIdentifier> result) {
         final ScheduleDataPanel dataFlowPanel = new ScheduleDataPanel(this);
         dataFlowPanel.add(createHeaderPanel());
         dataFlowPanel.addStyleName("SchedulingOverviewPanel");
 
-        final ListDataProvider<ScheduleDefinition> dataProvider = new ListDataProvider<>();
-        final List<ScheduleDefinition> data = dataProvider.getList();
-
-        for (ScheduleDefinition definition : result) {
-            data.add(definition);
-        }
+        final ScheduleDataProvider dataProvider = new ScheduleDataProvider(_clientConfig, _service, result);
+        dataProvider.updateRowCount(result.size(), true);
 
         final ScheduleDataPager pager = new ScheduleDataPager();
         pager.setDisplay(dataFlowPanel);

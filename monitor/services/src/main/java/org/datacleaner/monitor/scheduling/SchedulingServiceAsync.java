@@ -38,6 +38,25 @@ public interface SchedulingServiceAsync {
     void getSchedules(TenantIdentifier tenant, boolean loadProperties,
             AsyncCallback<List<ScheduleDefinition>> callback);
 
+    /**
+     * Gets all schedules for the jobs in the jobs argument and provides access through the callback argument.
+     * 
+     * @param tenant tenant that contains the jobs
+     * @param jobs List of jobs for which all schedules should be returned
+     * @param callback callback object which provides access to the results of the method call
+     */
+    void getSchedules(TenantIdentifier tenant, List<JobIdentifier> jobs,
+            AsyncCallback<List<ScheduleDefinition>> callback);
+
+    /**
+     * Gets a map where the keys represent the different categories and the values represent all available jobs for that
+     * category on the tenant identified by the tenant argument and provides access through the callback argument.
+     * 
+     * @param tenant tenant that contains the jobs
+     * @param callback callback object which provides access to the results of the method call
+     */
+    void getJobsGroupedByCategory(TenantIdentifier tenant, AsyncCallback<Map<String, List<JobIdentifier>>> callback);
+
     void updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition,
             AsyncCallback<ScheduleDefinition> callback);
 

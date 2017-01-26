@@ -40,12 +40,12 @@ import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
-import org.datacleaner.monitor.server.controllers.referencedata.model.DictionaryModel;
-import org.datacleaner.monitor.server.controllers.referencedata.model.ReferenceDataModel;
-import org.datacleaner.monitor.server.controllers.referencedata.model.ReferenceDataType;
-import org.datacleaner.monitor.server.controllers.referencedata.model.StringPatternModel;
-import org.datacleaner.monitor.server.controllers.referencedata.model.SynonymCatalogModel;
-import org.datacleaner.monitor.server.controllers.referencedata.model.SynonymModel;
+import org.datacleaner.monitor.referencedata.model.DictionaryModel;
+import org.datacleaner.monitor.referencedata.model.ReferenceDataModel;
+import org.datacleaner.monitor.referencedata.model.ReferenceDataType;
+import org.datacleaner.monitor.referencedata.model.StringPatternModel;
+import org.datacleaner.monitor.referencedata.model.SynonymCatalogModel;
+import org.datacleaner.monitor.referencedata.model.SynonymModel;
 import org.datacleaner.monitor.server.dao.ReferenceDataDao;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.reference.Dictionary;
@@ -74,7 +74,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.common.base.Joiner;
@@ -239,7 +238,7 @@ public class ReferenceDataController {
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/dictionary/{name}", method = { RequestMethod.PUT })
     public ResponseEntity<Void> putDictionaryFile(@PathVariable("tenant") final String tenant,
-            @PathVariable("name") final String name, HttpEntity<byte[]> requestEntity,
+            @PathVariable("name") final String name, final HttpEntity<byte[]> requestEntity,
             @RequestParam(value = "casesensitive", defaultValue = "true") final boolean isCaseSensitive,
             @RequestParam(value = "encoding", defaultValue = "UTF-8") final String encoding) throws IOException {
         final TenantContext context = _contextFactory.getContext(tenant);
@@ -323,7 +322,7 @@ public class ReferenceDataController {
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/synonymCatalog/{name}", method = { RequestMethod.PUT })
     public ResponseEntity<Void> putSynonymCatalogFile(@PathVariable("tenant") final String tenant,
-            @PathVariable("name") final String name, RequestEntity<byte[]> requestEntity,
+            @PathVariable("name") final String name, final RequestEntity<byte[]> requestEntity,
             @RequestParam(value = "casesensitive", defaultValue = "true") final boolean isCaseSensitive,
             @RequestParam(value = "encoding", defaultValue = "UTF-8") final String encoding) throws IOException {
         final TenantContext context = _contextFactory.getContext(tenant);

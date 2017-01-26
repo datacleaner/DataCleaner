@@ -17,33 +17,31 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.controllers.referencedata.model;
+package org.datacleaner.monitor.referencedata.model;
 
-import java.util.Collection;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class DictionaryBasedModel<T> {
-    private final boolean _caseSensitive;
+public class ReferenceDataModel {
+    private final ReferenceDataType _referenceDataType;
     private final String _name;
-    private final Collection<T> _entries;
+    private final String _href;
 
-    DictionaryBasedModel(final String name, final Collection<T> entries, final boolean caseSensitive) {
+    @JsonCreator
+    public ReferenceDataModel(final String name, final String href, final ReferenceDataType referenceDataType) {
         _name = name;
-        _entries = entries;
-        _caseSensitive = caseSensitive;
+        _href = href;
+        _referenceDataType = referenceDataType;
+    }
+
+    public ReferenceDataType getReferenceDataType() {
+        return _referenceDataType;
     }
 
     public String getName() {
         return _name;
     }
 
-    public Collection<T> getEntries() {
-        return _entries;
-    }
-
-    public boolean isCaseSensitive() {
-        return _caseSensitive;
+    public String getHref() {
+        return _href;
     }
 }

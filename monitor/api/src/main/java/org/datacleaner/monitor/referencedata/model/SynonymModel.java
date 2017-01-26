@@ -17,20 +17,33 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.controllers.referencedata.model;
+package org.datacleaner.monitor.referencedata.model;
 
-public enum ReferenceDataType {
-    DICTIONARY("dictionary"),
-    SYNONYM_CATALOG("synonymCatalog"),
-    STRING_PATTERN("stringPattern");
+import java.util.Collection;
 
-    private final String _name;
+import org.datacleaner.reference.Synonym;
 
-    ReferenceDataType(final String name) {
-        _name = name;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class SynonymModel implements Synonym {
+    private final String _masterTerm;
+    private final Collection<String> _synonyms;
+
+    @JsonCreator
+    public SynonymModel(@JsonProperty("masterTerm") final String masterTerm,
+            @JsonProperty("synonyms") final Collection<String> synonyms) {
+        _masterTerm = masterTerm;
+        _synonyms = synonyms;
     }
 
-    public String getName() {
-        return _name;
+    @Override
+    public String getMasterTerm() {
+        return _masterTerm;
+    }
+
+    @Override
+    public Collection<String> getSynonyms() {
+        return _synonyms;
     }
 }

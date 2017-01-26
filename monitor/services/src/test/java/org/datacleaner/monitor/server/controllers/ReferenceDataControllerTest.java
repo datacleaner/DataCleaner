@@ -35,10 +35,10 @@ import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.job.JobEngineManager;
-import org.datacleaner.monitor.server.controllers.referencedata.model.DictionaryModel;
-import org.datacleaner.monitor.server.controllers.referencedata.model.StringPatternModel;
-import org.datacleaner.monitor.server.controllers.referencedata.model.SynonymCatalogModel;
-import org.datacleaner.monitor.server.controllers.referencedata.model.SynonymModel;
+import org.datacleaner.monitor.referencedata.model.DictionaryModel;
+import org.datacleaner.monitor.referencedata.model.StringPatternModel;
+import org.datacleaner.monitor.referencedata.model.SynonymCatalogModel;
+import org.datacleaner.monitor.referencedata.model.SynonymModel;
 import org.datacleaner.monitor.server.dao.ReferenceDataDaoImpl;
 import org.datacleaner.monitor.server.job.SimpleJobEngineManager;
 import org.datacleaner.repository.Repository;
@@ -50,7 +50,6 @@ import org.junit.rules.TemporaryFolder;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -158,13 +157,6 @@ public class ReferenceDataControllerTest {
         _mockMvc.perform(get(location)).andExpect(status().isOk()).andExpect(jsonPath("$.name", is("testDictionary")))
                 .andExpect(jsonPath("$.entries", hasSize(3))).andExpect(jsonPath("$.entries[2]", is("baz")))
                 .andExpect(jsonPath("$.caseSensitive", is(false)));
-    }
-
-    private RequestPostProcessor withPut() {
-        return request -> {
-            request.setMethod("PUT");
-            return request;
-        };
     }
 
     @Test

@@ -17,33 +17,33 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.controllers.referencedata.model;
+package org.datacleaner.monitor.referencedata.model;
 
 import java.util.Collection;
 
-import org.datacleaner.reference.Synonym;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public abstract class DictionaryBasedModel<T> {
+    private final boolean _caseSensitive;
+    private final String _name;
+    private final Collection<T> _entries;
 
-public class SynonymModel implements Synonym {
-    private final String _masterTerm;
-    private final Collection<String> _synonyms;
-
-    @JsonCreator
-    public SynonymModel(@JsonProperty("masterTerm") final String masterTerm,
-            @JsonProperty("synonyms") final Collection<String> synonyms) {
-        _masterTerm = masterTerm;
-        _synonyms = synonyms;
+    DictionaryBasedModel(final String name, final Collection<T> entries, final boolean caseSensitive) {
+        _name = name;
+        _entries = entries;
+        _caseSensitive = caseSensitive;
     }
 
-    @Override
-    public String getMasterTerm() {
-        return _masterTerm;
+    public String getName() {
+        return _name;
     }
 
-    @Override
-    public Collection<String> getSynonyms() {
-        return _synonyms;
+    public Collection<T> getEntries() {
+        return _entries;
+    }
+
+    public boolean isCaseSensitive() {
+        return _caseSensitive;
     }
 }

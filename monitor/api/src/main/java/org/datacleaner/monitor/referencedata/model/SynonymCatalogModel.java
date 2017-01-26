@@ -17,31 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.controllers.referencedata.model;
+package org.datacleaner.monitor.referencedata.model;
+
+import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ReferenceDataModel {
-    private final ReferenceDataType _referenceDataType;
-    private final String _name;
-    private final String _href;
+public class SynonymCatalogModel extends DictionaryBasedModel<SynonymModel> {
 
     @JsonCreator
-    public ReferenceDataModel(final String name, final String href, final ReferenceDataType referenceDataType) {
-        _name = name;
-        _href = href;
-        _referenceDataType = referenceDataType;
+    public SynonymCatalogModel(@JsonProperty("name") final String name,
+            @JsonProperty("entries") final Collection<SynonymModel> entries,
+            @JsonProperty("caseSensitive") final boolean caseSensitive) {
+        super(name, entries, caseSensitive);
     }
 
-    public ReferenceDataType getReferenceDataType() {
-        return _referenceDataType;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public String getHref() {
-        return _href;
-    }
 }

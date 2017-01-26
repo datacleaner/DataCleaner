@@ -45,13 +45,13 @@ class ScheduleDataPanel extends FlowPanel implements HasRows, HasData<ScheduleDe
     }
 
     @Override
-    public HandlerRegistration addRangeChangeHandler(Handler handler) {
+    public HandlerRegistration addRangeChangeHandler(final Handler handler) {
         return _data.addRangeChangeHandler(handler);
     }
 
     @Override
     public HandlerRegistration addRowCountChangeHandler(
-            com.google.gwt.view.client.RowCountChangeEvent.Handler handler) {
+            final com.google.gwt.view.client.RowCountChangeEvent.Handler handler) {
         return _data.addRowCountChangeHandler(handler);
     }
 
@@ -71,28 +71,28 @@ class ScheduleDataPanel extends FlowPanel implements HasRows, HasData<ScheduleDe
     }
 
     @Override
-    public void setRowCount(int count) {
+    public void setRowCount(final int count) {
         _data.setRowCount(count);
     }
 
     @Override
-    public void setRowCount(int count, boolean isExact) {
+    public void setRowCount(final int count, final boolean isExact) {
         _data.setRowCount(count, isExact);
     }
 
     @Override
-    public void setVisibleRange(int start, int length) {
+    public void setVisibleRange(final int start, final int length) {
         _data.setVisibleRange(start, length);
     }
 
     @Override
-    public void setVisibleRange(Range range) {
+    public void setVisibleRange(final Range range) {
         _data.setVisibleRange(range);
     }
 
     @Override
     public HandlerRegistration addCellPreviewHandler(
-            com.google.gwt.view.client.CellPreviewEvent.Handler<ScheduleDefinition> handler) {
+            final com.google.gwt.view.client.CellPreviewEvent.Handler<ScheduleDefinition> handler) {
         return _data.addCellPreviewHandler(handler);
     }
 
@@ -102,7 +102,7 @@ class ScheduleDataPanel extends FlowPanel implements HasRows, HasData<ScheduleDe
     }
 
     @Override
-    public ScheduleDefinition getVisibleItem(int indexOnPage) {
+    public ScheduleDefinition getVisibleItem(final int indexOnPage) {
         return _data.getVisibleItem(indexOnPage);
     }
 
@@ -117,21 +117,21 @@ class ScheduleDataPanel extends FlowPanel implements HasRows, HasData<ScheduleDe
     }
 
     @Override
-    public void setRowData(int start, List<? extends ScheduleDefinition> values) {
+    public void setRowData(final int start, final List<? extends ScheduleDefinition> values) {
         _data.setRowData(start, values);
     }
 
     @Override
-    public void setSelectionModel(SelectionModel<? super ScheduleDefinition> selectionModel) {
+    public void setSelectionModel(final SelectionModel<? super ScheduleDefinition> selectionModel) {
         _data.setSelectionModel(selectionModel);
     }
 
     @Override
-    public void setVisibleRangeAndClearData(Range range, boolean forceRangeChangeEvent) {
+    public void setVisibleRangeAndClearData(final Range range, final boolean forceRangeChangeEvent) {
         _data.setVisibleRangeAndClearData(range, forceRangeChangeEvent);
     }
 
-    void registerGroupPanel(ScheduleGroupPanel groupPanel) {
+    void registerGroupPanel(final ScheduleGroupPanel groupPanel) {
         _groupPanels.add(groupPanel);
     }
 

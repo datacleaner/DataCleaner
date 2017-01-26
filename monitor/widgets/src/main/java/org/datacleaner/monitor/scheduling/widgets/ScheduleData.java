@@ -69,8 +69,8 @@ class ScheduleData extends AbstractHasData<ScheduleDefinition> {
     }
 
     @Override
-    protected void renderRowValues(SafeHtmlBuilder sb, List<ScheduleDefinition> values, int start,
-            SelectionModel<? super ScheduleDefinition> selectionModel) throws UnsupportedOperationException {
+    protected void renderRowValues(final SafeHtmlBuilder sb, final List<ScheduleDefinition> values, int start,
+            final SelectionModel<? super ScheduleDefinition> selectionModel) throws UnsupportedOperationException {
         _panel.clearGroupPanels();
 
         final Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<>();
@@ -87,7 +87,7 @@ class ScheduleData extends AbstractHasData<ScheduleDefinition> {
     }
 
     @Override
-    protected void setKeyboardSelected(int index, boolean selected, boolean stealFocus) {
+    protected void setKeyboardSelected(final int index, final boolean selected, final boolean stealFocus) {
         // Do nothing.
     }
 }

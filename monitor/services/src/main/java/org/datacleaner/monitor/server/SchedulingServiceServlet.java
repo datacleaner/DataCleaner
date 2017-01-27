@@ -80,8 +80,8 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     }
 
     @Override
-    public Map<String, List<JobIdentifier>> getJobsGroupedByCategory(final TenantIdentifier tenant) {
-        return _delegate.getJobsGroupedByCategory(tenant);
+    public List<JobIdentifier> getJobs(final TenantIdentifier tenant) {
+        return _delegate.getJobs(tenant);
     }
 
     @Override

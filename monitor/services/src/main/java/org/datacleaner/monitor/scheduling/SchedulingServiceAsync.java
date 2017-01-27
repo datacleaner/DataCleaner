@@ -22,10 +22,14 @@ package org.datacleaner.monitor.scheduling;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.datacleaner.monitor.shared.model.DCSecurityException;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -49,13 +53,14 @@ public interface SchedulingServiceAsync {
             AsyncCallback<List<ScheduleDefinition>> callback);
 
     /**
-     * Gets a map where the keys represent the different categories and the values represent all available jobs for that
-     * category on the tenant identified by the tenant argument and provides access through the callback argument.
+     * Gets all available jobs on the tenant identified by the tenant argument and provides access through the callback
+     * argument.
      * 
      * @param tenant tenant that contains the jobs
      * @param callback callback object which provides access to the results of the method call
      */
-    void getJobsGroupedByCategory(TenantIdentifier tenant, AsyncCallback<Map<String, List<JobIdentifier>>> callback);
+    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
+    void getJobs(TenantIdentifier tenant, AsyncCallback<List<JobIdentifier>> callback) throws DCSecurityException;
 
     void updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition,
             AsyncCallback<ScheduleDefinition> callback);

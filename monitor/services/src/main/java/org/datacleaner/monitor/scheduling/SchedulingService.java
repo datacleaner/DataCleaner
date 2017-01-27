@@ -58,16 +58,14 @@ public interface SchedulingService extends RemoteService {
     List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, List<JobIdentifier> jobs) throws DCSecurityException;
 
     /**
-     * Gets a map where the keys represent the different categories and the values represent all available jobs for that
-     * category on the tenant identified by the tenant argument.
+     * Gets all available jobs on the tenant identified by the tenant argument.
      * 
      * @param tenant tenant that contains the jobs
-     * @return a map where the keys represent the different categories and the values represent all available jobs for
-     *         that category
+     * @return a list of job identifiers
      * @throws DCSecurityException in case the call isn't executed with the right authorization
      */
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
-    Map<String, List<JobIdentifier>> getJobsGroupedByCategory(TenantIdentifier tenant) throws DCSecurityException;
+    List<JobIdentifier> getJobs(TenantIdentifier tenant) throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition)

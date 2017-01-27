@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -121,8 +120,6 @@ import com.google.common.collect.Maps;
  */
 @Component("schedulingService")
 public class SchedulingServiceImpl implements SchedulingService, ApplicationContextAware {
-    private static final String CATEGORY = "Category";
-    private static final String OTHERS = "(Other)";
 
     @Autowired
     HotFolderPreferences _hotFolderPreferences;
@@ -583,40 +580,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public Map<String, List<JobIdentifier>> getJobsGroupedByCategory(final TenantIdentifier tenant) {
-        final Map<String, List<JobIdentifier>> categoryAndGroupMap = new TreeMap<>();
-
+    public List<JobIdentifier> getJobs(final TenantIdentifier tenant) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
-        final List<JobIdentifier> jobs = context.getJobs();
-
-        for (final JobIdentifier jobIdentifier : jobs) {
-            final JobContext jobContext = context.getJob(jobIdentifier);
-
-            final Map<String, String> jobMetadataProperties = jobContext.getMetadataProperties();
-
-            final String categoryName;
-            if (jobMetadataProperties == null) {
-                categoryName = OTHERS;
-            } else {
-                final String metadataValue = jobMetadataProperties.get(CATEGORY);
-                if (metadataValue != null && !"".equals(metadataValue.trim())) {
-                    categoryName = metadataValue;
-                } else {
-                    categoryName = OTHERS;
-                }
-            }
-
-            List<JobIdentifier> listOfJobWithSameCategory = categoryAndGroupMap.get(categoryName);
-
-            if (listOfJobWithSameCategory == null) {
-                listOfJobWithSameCategory = new ArrayList<>();
-
-                categoryAndGroupMap.put(categoryName, listOfJobWithSameCategory);
-            }
-            listOfJobWithSameCategory.add(jobIdentifier);
-        }
-        return categoryAndGroupMap;
+        return context.getJobs();
     }
 
     @Override

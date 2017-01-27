@@ -231,7 +231,7 @@ public class SchedulingOverviewPanel extends Composite {
         final ListDataProvider<ScheduleDefinition> dataProvider = new ListDataProvider<>();
         final List<ScheduleDefinition> data = dataProvider.getList();
 
-        for (ScheduleDefinition definition : result) {
+        for (final ScheduleDefinition definition : result) {
             data.add(definition);
         }
         dataProvider.addDataDisplay(dataFlowPanel);

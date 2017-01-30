@@ -85,6 +85,6 @@ public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
      */
     @Override
     public HasColumnMeaning find(String name) {
-        return _matchingMap.get(name);
+        return _matchingMap.get(standardizeForMatching(name));
     }
 }

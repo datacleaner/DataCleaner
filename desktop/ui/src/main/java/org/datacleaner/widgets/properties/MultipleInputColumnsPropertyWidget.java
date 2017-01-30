@@ -100,7 +100,6 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     public MultipleInputColumnsPropertyWidget(final ComponentBuilder componentBuilder,
             final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
-        // setBorder(WidgetUtils.BORDER_LIST_ITEM);
         _checkBoxes = new LinkedHashMap<>();
         _checkBoxDecorations = new IdentityHashMap<>();
         _firstUpdate = true;

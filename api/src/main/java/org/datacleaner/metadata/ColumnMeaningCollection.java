@@ -38,7 +38,7 @@ public interface ColumnMeaningCollection {
      */
     default Collection<HasColumnMeaning> getSortedColumnMeanings() {
         return getColumnMeanings().stream()
-                .sorted((o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString()))
+                .sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
                 .collect(Collectors.toList());
     }
 

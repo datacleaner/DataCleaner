@@ -22,10 +22,8 @@ package org.datacleaner.widgets.properties;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
@@ -46,49 +44,6 @@ import org.datacleaner.widgets.EnumComboBoxListRenderer;
  * This widget looks like the {@link MultipleInputColumnsPropertyWidget}, but is enhanced with combo boxes.
  */
 public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPropertyWidget {
-
-    enum Abc implements HasColumnMeaning, ColumnMeaningCollection { // mytodo
-        ONE("one", "jedna", "eins", "een"), TWO("two", "dva", "zwei", "twee"), THREE("three", "tri", "drei", "drie");
-
-        private String _name;
-        private String[] _aliases;
-
-        Abc(final String name, final String... aliases) {
-            _name = name;
-            _aliases = aliases;
-        }
-
-        @Override
-        public String getName() {
-            return _name;
-        }
-
-        @Override
-        public String[] getAliases() {
-            return _aliases;
-        }
-
-        @Override
-        public Collection<HasColumnMeaning> getColumnMeanings() {
-            final Set<HasColumnMeaning> set = new HashSet<>();
-            set.add(ONE);
-            set.add(TWO);
-            set.add(THREE);
-
-            return set;
-        }
-
-        @Override
-        public HasColumnMeaning find(final String name) {
-            for (final HasColumnMeaning meaning : getColumnMeanings()) {
-                if (meaning.getName().toLowerCase().equals(name.toLowerCase())) {
-                    return meaning;
-                }
-            }
-
-            return null;
-        }
-    }
 
     public class MappedComboBoxPropertyWidget extends MinimalPropertyWidget<Object[]> {
 
@@ -158,18 +113,20 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
 
     private final Map<InputColumn<?>, DCComboBox<HasColumnMeaning>> _mappedComboBoxes;
     private final MappedComboBoxPropertyWidget _mappedComboBoxPropertyWidget;
-    final ConfiguredPropertyDescriptor _inputColumnsProperty;
-    final ConfiguredPropertyDescriptor _mappedColumnsProperty;
+    private final ConfiguredPropertyDescriptor _mappedColumnsProperty;
+    private final ColumnMeaningCollection _availableColumnMeanings;
 
     public MultipleMappedComboBoxPropertyWidget(final ComponentBuilder componentBuilder,
             final ConfiguredPropertyDescriptor inputColumnsProperty,
-            final ConfiguredPropertyDescriptor mappedColumnsProperty) {
-        super(componentBuilder, mappedColumnsProperty);
+            final ConfiguredPropertyDescriptor mappedColumnsProperty,
+            final ColumnMeaningCollection availableColumnMeanings) {
+        super(componentBuilder, inputColumnsProperty);
 
         _mappedComboBoxes = new WeakHashMap<>();
-        _mappedComboBoxPropertyWidget = new MappedComboBoxPropertyWidget(this, componentBuilder, null);
-        _inputColumnsProperty = inputColumnsProperty;
         _mappedColumnsProperty = mappedColumnsProperty;
+        _availableColumnMeanings = availableColumnMeanings;
+        _mappedComboBoxPropertyWidget =
+                new MappedComboBoxPropertyWidget(this, componentBuilder, _mappedColumnsProperty);
 
         final InputColumn<?>[] currentValue = getCurrentValue();
         final HasColumnMeaning[] currentMappedValues = (HasColumnMeaning[]) _mappedComboBoxPropertyWidget.getValue();
@@ -185,8 +142,7 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         }
 
         if (currentValue != null) {
-            // Ticket #945 - this must happen AFTER creating the combo boxes
-            // (above)
+            // Ticket #945 - this must happen AFTER creating the combo boxes (above)
             setValue(currentValue);
         }
     }
@@ -195,25 +151,17 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         return _mappedComboBoxPropertyWidget;
     }
 
-    protected HasColumnMeaning[] getColumnMeaningConstants(final InputColumn<?> inputColumn,
-            final ConfiguredPropertyDescriptor mappedColumnMeaningProperty) {
-        return (HasColumnMeaning[]) _mappedComboBoxPropertyWidget.getValue();
-    }
-
     @Override
     protected boolean isAllInputColumnsSelectedIfNoValueExist() {
         return false;
     }
 
-    private HasColumnMeaning[] getAllColumnMeanings() {
-        return Abc.ONE.getSortedColumnMeanings().toArray(new HasColumnMeaning[Abc.ONE.getColumnMeanings().size()]);
-    }
-
     protected DCComboBox<HasColumnMeaning> createComboBox(final InputColumn<?> inputColumn,
             final HasColumnMeaning mappedValue) {
-        final HasColumnMeaning[] values = getAllColumnMeanings();
-        final DCComboBox<HasColumnMeaning> comboBox = new DCComboBox<>(values);
-        comboBox.setRenderer(getComboBoxRenderer(inputColumn, _mappedComboBoxes, values));
+        final HasColumnMeaning[] meanings = _availableColumnMeanings.getSortedColumnMeanings()
+                .toArray(new HasColumnMeaning[_availableColumnMeanings.getColumnMeanings().size()]);
+        final DCComboBox<HasColumnMeaning> comboBox = new DCComboBox<>(meanings);
+        comboBox.setRenderer(getComboBoxRenderer(inputColumn, _mappedComboBoxes, meanings));
         _mappedComboBoxes.put(inputColumn, comboBox);
 
         if (mappedValue != null) {

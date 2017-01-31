@@ -21,7 +21,9 @@ package org.datacleaner.metadata;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
     private static Map<String, HasColumnMeaning> _matchingMap;
@@ -75,7 +77,13 @@ public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
      */
     @Override
     public Collection<HasColumnMeaning> getColumnMeanings() {
-        return _matchingMap.values();
+        final Set<HasColumnMeaning> set = new HashSet<>();
+
+        for (final HasColumnMeaning meaning : _matchingMap.values()) {
+            set.add(meaning);
+        }
+
+        return set;
     }
 
     /**

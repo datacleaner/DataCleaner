@@ -24,6 +24,9 @@ import com.google.gwt.view.client.HasRows;
 import com.google.gwt.view.client.Range;
 
 class ScheduleDataPager extends SimplePager {
+    ScheduleDataPager() {
+        super(SimplePager.TextLocation.CENTER, false, true);
+    }
 
     @Override
     public void setPageStart(final int index) {

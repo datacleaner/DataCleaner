@@ -35,7 +35,7 @@ import com.google.gwt.view.client.SelectionModel;
 class ScheduleData extends AbstractHasData<ScheduleDefinition> {
     private final ScheduleDataPanel _panel;
     private final SchedulingOverviewPanel _overviewPanel;
-    private final Element childContainer;
+    private final Element _childContainer;
 
     ScheduleData(final ScheduleDataPanel panel, final SchedulingOverviewPanel overviewPanel) {
         super(Document.get().createDivElement(), SchedulingOverviewPanel.PAGE_SIZE, null);
@@ -43,9 +43,9 @@ class ScheduleData extends AbstractHasData<ScheduleDefinition> {
         _panel = panel;
         _overviewPanel = overviewPanel;
 
-        childContainer = Document.get().createDivElement();
+        _childContainer = Document.get().createDivElement();
         final DivElement outerDiv = getElement().cast();
-        outerDiv.appendChild(childContainer);
+        outerDiv.appendChild(_childContainer);
     }
 
     @Override
@@ -55,7 +55,7 @@ class ScheduleData extends AbstractHasData<ScheduleDefinition> {
 
     @Override
     protected Element getChildContainer() {
-        return childContainer;
+        return _childContainer;
     }
 
     @Override

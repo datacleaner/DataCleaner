@@ -120,6 +120,7 @@ import com.google.common.collect.Maps;
  */
 @Component("schedulingService")
 public class SchedulingServiceImpl implements SchedulingService, ApplicationContextAware {
+
     @Autowired
     HotFolderPreferences _hotFolderPreferences;
 
@@ -568,6 +569,24 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
+    public List<ScheduleDefinition> getSchedules(final TenantIdentifier tenant, final List<JobIdentifier> jobs)
+            throws DCSecurityException {
+        final List<ScheduleDefinition> scheduleDefinitions = new ArrayList<>(jobs.size());
+        for (JobIdentifier job : jobs) {
+            scheduleDefinitions.add(getSchedule(tenant, job));
+        }
+
+        return scheduleDefinitions;
+    }
+
+    @Override
+    public List<JobIdentifier> getJobs(final TenantIdentifier tenant) {
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
+
+        return context.getJobs();
+    }
+
+    @Override
     public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
         return getSchedule(tenant, jobIdentifier, null);
     }
@@ -609,26 +628,6 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         schedule.setOverrideProperties(overrideProperties);
 
         return schedule;
-    }
-
-    private ScheduleDefinition getScheduleWithoutProperties(final TenantIdentifier tenant,
-            final JobIdentifier jobIdentifier) {
-        final JobContext jobContext = getJobContext(tenant, jobIdentifier);
-        final String groupName = jobContext.getGroupName();
-
-        return new ScheduleDefinition(tenant, jobIdentifier, groupName);
-    }
-
-    private JobContext getJobContext(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        final String jobName = jobIdentifier.getName();
-        final TenantContext context = _tenantContextFactory.getContext(tenant);
-        final JobContext jobContext = context.getJob(jobIdentifier);
-
-        if (jobContext == null) {
-            throw new IllegalArgumentException("No such job: " + jobName);
-        }
-
-        return jobContext;
     }
 
     @Override

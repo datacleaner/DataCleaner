@@ -74,6 +74,17 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     }
 
     @Override
+    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, List<JobIdentifier> jobs)
+            throws DCSecurityException {
+        return _delegate.getSchedules(tenant, jobs);
+    }
+
+    @Override
+    public List<JobIdentifier> getJobs(final TenantIdentifier tenant) {
+        return _delegate.getJobs(tenant);
+    }
+
+    @Override
     public ScheduleDefinition updateSchedule(final TenantIdentifier tenant,
             final ScheduleDefinition scheduleDefinition) throws DCSecurityException, CronExpressionException {
         return _delegate.updateSchedule(tenant, scheduleDefinition);

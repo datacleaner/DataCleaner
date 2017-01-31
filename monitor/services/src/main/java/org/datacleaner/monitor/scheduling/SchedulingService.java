@@ -46,6 +46,27 @@ public interface SchedulingService extends RemoteService {
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
     List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, boolean loadProperties) throws DCSecurityException;
 
+    /**
+     * Gets all schedules for the jobs in the jobs argument.
+     * 
+     * @param tenant tenant that contains the jobs
+     * @param jobs List of jobs for which all schedules should be returned
+     * @return all schedules for the jobs in the jobs argument
+     * @throws DCSecurityException in case the call isn't executed with the right authorization
+     */
+    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
+    List<ScheduleDefinition> getSchedules(TenantIdentifier tenant, List<JobIdentifier> jobs) throws DCSecurityException;
+
+    /**
+     * Gets all available jobs on the tenant identified by the tenant argument.
+     * 
+     * @param tenant tenant that contains the jobs
+     * @return a list of job identifiers
+     * @throws DCSecurityException in case the call isn't executed with the right authorization
+     */
+    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
+    List<JobIdentifier> getJobs(TenantIdentifier tenant) throws DCSecurityException;
+
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition)
             throws DCSecurityException, CronExpressionException;

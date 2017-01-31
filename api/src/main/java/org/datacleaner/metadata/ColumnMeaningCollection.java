@@ -48,4 +48,12 @@ public interface ColumnMeaningCollection {
      * @return column meaning
      */
     HasColumnMeaning find(String name);
+
+    /**
+     * Returns the default/empty column meaning.
+     * @return column meaning
+     */
+    default HasColumnMeaning getDefault() {
+        return getColumnMeanings().iterator().next();
+    }
 }

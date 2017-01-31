@@ -127,24 +127,6 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         _availableColumnMeanings = availableColumnMeanings;
         _mappedComboBoxPropertyWidget =
                 new MappedComboBoxPropertyWidget(this, componentBuilder, _mappedColumnsProperty);
-
-        final InputColumn<?>[] currentValue = getCurrentValue();
-        final HasColumnMeaning[] currentMappedValues = (HasColumnMeaning[]) _mappedComboBoxPropertyWidget.getValue();
-
-        if (currentValue != null && currentMappedValues != null) {
-            final int minLength = Math.min(currentValue.length, currentMappedValues.length);
-
-            for (int i = 0; i < minLength; i++) {
-                final InputColumn<?> inputColumn = currentValue[i];
-                final HasColumnMeaning mappedValue = currentMappedValues[i];
-                createComboBox(inputColumn, mappedValue);
-            }
-        }
-
-        if (currentValue != null) {
-            // Ticket #945 - this must happen AFTER creating the combo boxes (above)
-            setValue(currentValue);
-        }
     }
 
     public MappedComboBoxPropertyWidget getMappedComboBoxPropertyWidget() {
@@ -163,16 +145,28 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         final DCComboBox<HasColumnMeaning> comboBox = new DCComboBox<>(meanings);
         comboBox.setRenderer(getComboBoxRenderer(inputColumn, _mappedComboBoxes, meanings));
         _mappedComboBoxes.put(inputColumn, comboBox);
+        comboBox.setEditable(true);
 
-        if (mappedValue != null) {
-            comboBox.setEditable(true);
+        if (mappedValue == null) {
+            comboBox.setSelectedItem(findMeaningByColumnName(inputColumn.getName()));
+        } else {
             comboBox.setSelectedItem(mappedValue);
-            comboBox.setEditable(false);
         }
 
+        comboBox.setEditable(false);
         comboBox.addListener(item -> _mappedComboBoxPropertyWidget.fireValueChanged());
 
         return comboBox;
+    }
+
+    private HasColumnMeaning findMeaningByColumnName(final String columnName) {
+        final HasColumnMeaning meaning = _availableColumnMeanings.find(columnName);
+
+        if (meaning == null) {
+            return _availableColumnMeanings.getDefault();
+        }
+
+        return meaning;
     }
 
     protected ListCellRenderer<? super HasColumnMeaning> getComboBoxRenderer(final InputColumn<?> inputColumn,

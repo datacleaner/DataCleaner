@@ -71,10 +71,6 @@ public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
         return str;
     }
 
-    /**
-     * Returns all column meanings.
-     * @return collection of column meanings
-     */
     @Override
     public Collection<HasColumnMeaning> getColumnMeanings() {
         final Set<HasColumnMeaning> set = new HashSet<>();
@@ -86,13 +82,13 @@ public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
         return set;
     }
 
-    /**
-     * Returns the first column meaning found by a given name.
-     * @param name
-     * @return column meaning
-     */
     @Override
     public HasColumnMeaning find(String name) {
         return _matchingMap.get(standardizeForMatching(name));
+    }
+
+    @Override
+    public HasColumnMeaning getDefault() {
+        return ColumnMeaning.OTHER;
     }
 }

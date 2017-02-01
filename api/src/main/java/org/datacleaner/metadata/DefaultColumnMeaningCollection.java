@@ -34,9 +34,8 @@ public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
 
         for (final HasColumnMeaning columnMeaning : values) {
             populateMatchMap(columnMeaning.getName(), columnMeaning);
-            final String[] aliases = columnMeaning.getAliases();
 
-            for (final String alias : aliases) {
+            for (final String alias : columnMeaning.getAliases()) {
                 populateMatchMap(alias, columnMeaning);
             }
         }
@@ -83,7 +82,7 @@ public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
     }
 
     @Override
-    public HasColumnMeaning find(String name) {
+    public HasColumnMeaning find(final String name) {
         return _matchingMap.get(standardizeForMatching(name));
     }
 

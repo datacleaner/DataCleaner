@@ -147,4 +147,9 @@ public enum ColumnMeaning implements HasColumnMeaning {
     public String[] getAliases() {
         return _aliases;
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

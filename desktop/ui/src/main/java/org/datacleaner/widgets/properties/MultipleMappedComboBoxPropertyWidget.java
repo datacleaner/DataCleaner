@@ -21,13 +21,14 @@ package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
-import javax.swing.ListCellRenderer;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -36,8 +37,7 @@ import org.datacleaner.metadata.ColumnMeaningCollection;
 import org.datacleaner.metadata.HasColumnMeaning;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.widgets.DCCheckBox;
-import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.EnumComboBoxListRenderer;
+import org.datacleaner.widgets.DCGroupComboBox;
 
 /**
  * A specialized property widget for multiple input columns that are mapped to string values.
@@ -72,12 +72,12 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
             final List<HasColumnMeaning> result = new ArrayList<>();
 
             for (final InputColumn<?> inputColumn : inputColumns) {
-                final DCComboBox<HasColumnMeaning> comboBox = _mappedComboBoxes.get(inputColumn);
+                final DCGroupComboBox comboBox = _mappedComboBoxes.get(inputColumn);
 
                 if (comboBox == null || !comboBox.isVisible()) {
                     result.add(null);
                 } else {
-                    result.add(comboBox.getSelectedItem());
+                    result.add((HasColumnMeaning) comboBox.getSelectedItem());
                 }
             }
 
@@ -99,7 +99,7 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
                 }
 
                 final InputColumn<?> inputColumn = inputColumns.get(i);
-                final DCComboBox<HasColumnMeaning> comboBox = _mappedComboBoxes.get(inputColumn);
+                final DCGroupComboBox comboBox = _mappedComboBoxes.get(inputColumn);
 
                 if (meaning != null) {
                     comboBox.setVisible(true);
@@ -111,7 +111,7 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         }
     }
 
-    private final Map<InputColumn<?>, DCComboBox<HasColumnMeaning>> _mappedComboBoxes;
+    private final Map<InputColumn<?>, DCGroupComboBox> _mappedComboBoxes;
     private final MappedComboBoxPropertyWidget _mappedComboBoxPropertyWidget;
     private final ConfiguredPropertyDescriptor _mappedColumnsProperty;
     private final ColumnMeaningCollection _availableColumnMeanings;
@@ -138,12 +138,10 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         return false;
     }
 
-    protected DCComboBox<HasColumnMeaning> createComboBox(final InputColumn<?> inputColumn,
+    protected DCGroupComboBox createComboBox(final InputColumn<?> inputColumn,
             final HasColumnMeaning mappedValue) {
-        final HasColumnMeaning[] meanings = _availableColumnMeanings.getSortedColumnMeanings()
-                .toArray(new HasColumnMeaning[_availableColumnMeanings.getColumnMeanings().size()]);
-        final DCComboBox<HasColumnMeaning> comboBox = new DCComboBox<>(meanings);
-        comboBox.setRenderer(getComboBoxRenderer(inputColumn, _mappedComboBoxes, meanings));
+        final DCGroupComboBox comboBox = new DCGroupComboBox();
+        fillComboBox(comboBox);
         _mappedComboBoxes.put(inputColumn, comboBox);
         comboBox.setEditable(true);
 
@@ -159,6 +157,37 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         return comboBox;
     }
 
+    private void fillComboBox(final DCGroupComboBox comboBox) {
+        final Map<String, Set<HasColumnMeaning>> groupedMeanings = getGroupedColumnMeanings();
+
+        for (final String group : groupedMeanings.keySet()) {
+            comboBox.addDelimiter(group);
+
+            for (final HasColumnMeaning meaning : groupedMeanings.get(group)) {
+                comboBox.addItem(meaning);
+            }
+        }
+    }
+
+    private HashMap<String, Set<HasColumnMeaning>> getGroupedColumnMeanings() {
+        final HashMap<String, Set<HasColumnMeaning>> groupedMeanings = new HashMap<>();
+        final String nullCategory = "Meanings";
+
+        for (final HasColumnMeaning meaning : _availableColumnMeanings.getSortedColumnMeanings()) {
+            final String categoryName = meaning.getGroup() == null ? nullCategory : meaning.getGroup();
+
+            if (groupedMeanings.containsKey(categoryName)) {
+                groupedMeanings.get(categoryName).add(meaning);
+            } else {
+                final Set<HasColumnMeaning> categorySet = new HashSet<>();
+                categorySet.add(meaning);
+                groupedMeanings.put(categoryName, categorySet);
+            }
+        }
+
+        return groupedMeanings;
+    }
+
     private HasColumnMeaning findMeaningByColumnName(final String columnName) {
         final HasColumnMeaning meaning = _availableColumnMeanings.find(columnName);
 
@@ -169,16 +198,11 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         return meaning;
     }
 
-    protected ListCellRenderer<? super HasColumnMeaning> getComboBoxRenderer(final InputColumn<?> inputColumn,
-            final Map<InputColumn<?>, DCComboBox<HasColumnMeaning>> mappedComboBoxes,
-            final HasColumnMeaning[] constants) {
-        return new EnumComboBoxListRenderer();
-    }
-
     @Override
     protected JComponent decorateCheckBox(final DCCheckBox<InputColumn<?>> checkBox) {
-        final DCComboBox<HasColumnMeaning> comboBox;
+        final DCGroupComboBox comboBox;
         final InputColumn<?> inputColumn = checkBox.getValue();
+
         if (_mappedComboBoxes.containsKey(inputColumn)) {
             comboBox = _mappedComboBoxes.get(inputColumn);
         } else {
@@ -200,20 +224,6 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         panel.add(checkBox, BorderLayout.CENTER);
         panel.add(comboBox, BorderLayout.EAST);
         return panel;
-    }
-
-    @Override
-    protected void onValuesBatchSelected(final List<InputColumn<?>> values) {
-        final Collection<DCComboBox<HasColumnMeaning>> allComboBoxes = _mappedComboBoxes.values();
-        for (final DCComboBox<HasColumnMeaning> comboBox : allComboBoxes) {
-            comboBox.setVisible(false);
-        }
-        for (final InputColumn<?> inputColumn : values) {
-            final DCComboBox<HasColumnMeaning> comboBox = _mappedComboBoxes.get(inputColumn);
-            if (comboBox != null) {
-                comboBox.setVisible(true);
-            }
-        }
     }
 
     @Override

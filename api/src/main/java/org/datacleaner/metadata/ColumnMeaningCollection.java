@@ -37,14 +37,13 @@ public interface ColumnMeaningCollection {
      * @return sorted collection of column meanings
      */
     default Collection<HasColumnMeaning> getSortedColumnMeanings() {
-        return getColumnMeanings().stream()
-                .sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
+        return getColumnMeanings().stream().sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
                 .collect(Collectors.toList());
     }
 
     /**
      * Returns the first column meaning found by a given name.
-     * @param name
+     * @param name name of the meaning
      * @return column meaning
      */
     HasColumnMeaning find(String name);

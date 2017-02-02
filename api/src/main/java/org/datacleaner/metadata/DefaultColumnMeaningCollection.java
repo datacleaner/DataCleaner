@@ -20,6 +20,7 @@
 package org.datacleaner.metadata;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,22 +29,26 @@ import java.util.Set;
 public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
     private static Map<String, HasColumnMeaning> _matchingMap;
 
-    static {
-        _matchingMap = new HashMap<>();
-        final HasColumnMeaning[] values = ColumnMeaning.class.getEnumConstants();
+    private static Map<String, HasColumnMeaning> getMatchingMap() {
+        if (_matchingMap == null) {
+            _matchingMap = new HashMap<>();
+            final EnumSet<ColumnMeaning> meanings = EnumSet.allOf(ColumnMeaning.class);
 
-        for (final HasColumnMeaning columnMeaning : values) {
-            populateMatchMap(columnMeaning.getName(), columnMeaning);
+            for (final HasColumnMeaning columnMeaning : meanings) {
+                populateMatchMap(columnMeaning.getName(), columnMeaning);
 
-            for (final String alias : columnMeaning.getAliases()) {
-                populateMatchMap(alias, columnMeaning);
+                for (final String alias : columnMeaning.getAliases()) {
+                    populateMatchMap(alias, columnMeaning);
+                }
             }
         }
+
+        return _matchingMap;
     }
 
     private static void populateMatchMap(String key, final HasColumnMeaning columnMeaning) {
         key = standardizeForMatching(key);
-        final HasColumnMeaning oldValue = _matchingMap.put(key, columnMeaning);
+        final HasColumnMeaning oldValue = getMatchingMap().put(key, columnMeaning);
 
         if (oldValue != null) {
             throw new IllegalStateException("Multiple ColumnMeanings with name/alias: " + key);
@@ -63,7 +68,7 @@ public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
     }
 
     private static String replaceAll(String str, final String searchFor, final String replaceWith) {
-        while (str.indexOf(searchFor) != -1) {
+        while (str.contains(searchFor)) {
             str = str.replace(searchFor, replaceWith);
         }
 
@@ -74,7 +79,7 @@ public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
     public Collection<HasColumnMeaning> getColumnMeanings() {
         final Set<HasColumnMeaning> set = new HashSet<>();
 
-        for (final HasColumnMeaning meaning : _matchingMap.values()) {
+        for (final HasColumnMeaning meaning : getMatchingMap().values()) {
             set.add(meaning);
         }
 
@@ -83,7 +88,7 @@ public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
 
     @Override
     public HasColumnMeaning find(final String name) {
-        return _matchingMap.get(standardizeForMatching(name));
+        return getMatchingMap().get(standardizeForMatching(name));
     }
 
     @Override

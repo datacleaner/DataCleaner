@@ -83,19 +83,25 @@ public class DCGroupComboBox extends DCComboBox<HasName> {
         @Override
         public JLabel getListCellRendererComponent(final JList list, final Object value, final int index,
                 final boolean isSelected, final boolean cellHasFocus) {
-            final JLabel label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            final JLabel label;
 
             if (value == null) {
+                label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 label.setText("- none -");
             } else if (value instanceof Delimiter) {
+                label = super.getListCellRendererComponent(list, value, index, false, cellHasFocus);
                 final Font font = label.getFont();
                 label.setFont(font.deriveFont(font.getStyle() | Font.BOLD | Font.ITALIC));
             } else if (value instanceof HasName) {
                 final String name = _groupExists ? new String(GROUP_ITEM_INDENTATION + value.toString())
                         : new String(value.toString());
+                label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
                 if (!StringUtils.isNullOrEmpty(name)) {
                     label.setText(name);
                 }
+            } else {
+                label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             }
 
             return label;

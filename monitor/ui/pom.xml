@@ -188,7 +188,7 @@
 
 									<run>
 										<ports>
-											<port>${dockerTomcatPort}:8080</port>
+											<port>${dockerTomcatPort}:8182</port>
 										</ports>
 										<wait>
 											<url>http://${docker.host.address}:${dockerTomcatPort}</url>

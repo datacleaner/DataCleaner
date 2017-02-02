@@ -161,7 +161,9 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         final Map<String, Set<HasColumnMeaning>> groupedMeanings = getGroupedColumnMeanings();
 
         for (final String group : groupedMeanings.keySet()) {
-            comboBox.addDelimiter(group);
+            if (groupedMeanings.size() > 1) {
+                comboBox.addDelimiter(group);
+            }
 
             for (final HasColumnMeaning meaning : groupedMeanings.get(group)) {
                 comboBox.addItem(meaning);

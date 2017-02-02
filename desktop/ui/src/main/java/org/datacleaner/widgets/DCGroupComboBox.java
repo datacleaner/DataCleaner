@@ -19,7 +19,6 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.Component;
 import java.awt.Font;
 
 import javax.swing.DefaultComboBoxModel;
@@ -27,13 +26,17 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
-import org.datacleaner.metadata.HasColumnMeaning;
+import org.apache.metamodel.util.HasName;
+import org.datacleaner.util.StringUtils;
 
 /**
  * Defines a group combo-box class that has a more convenient listening mechanism.
  */
-public class DCGroupComboBox extends DCComboBox {
-    private static class Delimiter {
+public class DCGroupComboBox extends DCComboBox<HasName> {
+    private static final String GROUP_ITEM_INDENTATION = "  ";
+    private boolean _groupExists = false;
+
+    private static class Delimiter implements HasName {
         private final String _text;
 
         private Delimiter(String text) {
@@ -44,18 +47,24 @@ public class DCGroupComboBox extends DCComboBox {
         public String toString() {
             return _text.toString();
         }
+
+        @Override
+        public String getName() {
+            return _text;
+        }
     }
 
     public DCGroupComboBox() {
-        setModel(new ExtendedComboBoxModel());
-        setRenderer(new ExtendedListCellRenderer());
+        super(new GroupComboBoxModel());
+        setRenderer(new GroupComboBoxRenderer());
     }
 
     public void addDelimiter(String text) {
+        _groupExists = true;
         addItem(new Delimiter(text));
     }
 
-    private static class ExtendedComboBoxModel extends DefaultComboBoxModel {
+    private static class GroupComboBoxModel extends DefaultComboBoxModel {
         @Override
         public void setSelectedItem(final Object item) {
             if (!(item instanceof Delimiter)) {
@@ -70,19 +79,26 @@ public class DCGroupComboBox extends DCComboBox {
         }
     }
 
-    private static class ExtendedListCellRenderer extends DefaultListCellRenderer {
+    private class GroupComboBoxRenderer extends EnumComboBoxListRenderer {
         @Override
-        public Component getListCellRendererComponent(final JList list, final Object value, final int index,
+        public JLabel getListCellRendererComponent(final JList list, final Object value, final int index,
                 final boolean isSelected, final boolean cellHasFocus) {
-            if (value instanceof Delimiter) {
-                final JLabel label = new JLabel(value.toString());
+            final JLabel label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+            if (value == null) {
+                label.setText("- none -");
+            } else if (value instanceof Delimiter) {
                 final Font font = label.getFont();
                 label.setFont(font.deriveFont(font.getStyle() | Font.BOLD | Font.ITALIC));
-
-                return label;
-            } else {
-                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            } else if (value instanceof HasName) {
+                final String name = _groupExists ? new String(GROUP_ITEM_INDENTATION + value.toString())
+                        : new String(value.toString());
+                if (!StringUtils.isNullOrEmpty(name)) {
+                    label.setText(name);
+                }
             }
+
+            return label;
         }
     }
 }

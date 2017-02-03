@@ -9,7 +9,7 @@
 	<packaging>war</packaging>
 
 	<properties>
-        <dockerTomcatPort>8080</dockerTomcatPort>
+        <dockerTomcatPort>8182</dockerTomcatPort>
 	</properties>
 
 	<build>
@@ -188,7 +188,7 @@
 
 									<run>
 										<ports>
-											<port>${dockerTomcatPort}:8182</port>
+											<port>${dockerTomcatPort}:8080</port>
 										</ports>
 										<wait>
 											<url>http://${docker.host.address}:${dockerTomcatPort}</url>

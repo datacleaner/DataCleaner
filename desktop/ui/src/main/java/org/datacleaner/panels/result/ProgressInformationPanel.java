@@ -20,6 +20,8 @@
 package org.datacleaner.panels.result;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
@@ -29,7 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.RestrictedFunctionalityCallToAction;
@@ -85,7 +89,7 @@ public class ProgressInformationPanel extends DCPanel {
         progressTaskPane.add(_progressBarPanel);
 
         final JXTaskPane executionLogTaskPane = WidgetFactory.createTaskPane("Execution log", IconUtils.ACTION_LOG);
-        executionLogTaskPane.add(_executionLogTextArea);
+        executionLogTaskPane.add(addScrollBar(_executionLogTextArea));
 
         final DCTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
         if (running) {
@@ -94,6 +98,17 @@ public class ProgressInformationPanel extends DCPanel {
         taskPaneContainer.add(executionLogTaskPane);
 
         add(WidgetUtils.scrolleable(taskPaneContainer), BorderLayout.CENTER);
+    }
+
+    private JScrollPane addScrollBar(final Component component) {
+        final JScrollPane scrollBar = new JScrollPane(component);
+        scrollBar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        final Dimension size = new Dimension(800, 600);
+        scrollBar.setMinimumSize(size);
+        scrollBar.setPreferredSize(size);
+        scrollBar.setMaximumSize(size);
+
+        return scrollBar;
     }
 
     public String getTextAreaText() {

@@ -23,6 +23,8 @@ import javax.swing.Icon;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.metadata.ColumnMeaningCollection;
+import org.datacleaner.metadata.DefaultColumnMeaningCollection;
 import org.datacleaner.util.IconUtils;
 
 /**
@@ -39,6 +41,14 @@ public interface JobWizard {
      * Icon for next button in wizard.
      */
     String BUTTON_NEXT_ICON = IconUtils.ACTION_FORWARD;
+
+    /**
+     * Gets all possible column meanings for mapping phase.
+     * @return
+     */
+    default ColumnMeaningCollection getAvailableColumnMeanings() {
+        return new DefaultColumnMeaningCollection();
+    }
 
     /**
      * Checks if all necessary components to use the wizard are available.

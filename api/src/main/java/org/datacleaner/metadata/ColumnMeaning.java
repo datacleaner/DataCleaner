@@ -19,17 +19,11 @@
  */
 package org.datacleaner.metadata;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.metamodel.util.HasName;
-import org.datacleaner.util.HasAliases;
-
 /**
  * A common and general enum of 'meanings of columns/fields' in a table. This
  * type is available as a convenience for mapping and registering metadata.
  */
-public enum ColumnMeaning implements HasName, HasAliases {
+public enum ColumnMeaning implements HasColumnMeaning {
 
     // generic items
 
@@ -131,22 +125,6 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     ONLINE_LINKEDIN("LinkedIn ID", "LinkedIn", "LinkedIn account"),;
 
-    private static Map<String, ColumnMeaning> _matchingMap;
-
-    // build reusable matching map for find(...) method
-    static {
-        _matchingMap = new HashMap<>();
-        final ColumnMeaning[] values = values();
-
-        for (final ColumnMeaning columnMeaning : values) {
-            populateMatchMap(columnMeaning.getName(), columnMeaning);
-            final String[] aliases = columnMeaning.getAliases();
-            for (final String alias : aliases) {
-                populateMatchMap(alias, columnMeaning);
-            }
-        }
-    }
-
     private final String _name;
     private final String[] _aliases;
 
@@ -160,82 +138,6 @@ public enum ColumnMeaning implements HasName, HasAliases {
         }
     }
 
-    private static void populateMatchMap(String key, final ColumnMeaning columnMeaning) {
-        key = standardizeForMatching(key);
-        final ColumnMeaning oldValue = _matchingMap.put(key, columnMeaning);
-        if (oldValue != null) {
-            throw new IllegalStateException("Multiple ColumnMeanings with name/alias: " + key);
-        }
-    }
-
-    private static String standardizeForMatching(String key) {
-        key = key.trim();
-        key = replaceAll(key, ".", "");
-        key = replaceAll(key, ",", "");
-        key = replaceAll(key, "'", "");
-        key = replaceAll(key, " ", "");
-        key = replaceAll(key, "_", "");
-        key = replaceAll(key, "-", "");
-
-        return key.toLowerCase();
-    }
-
-    /**
-     * Non-regex based replace-all method
-     *
-     * @param str
-     * @param searchFor
-     * @param replaceWith
-     * @return
-     */
-    private static String replaceAll(String str, final String searchFor, final String replaceWith) {
-        while (str.indexOf(searchFor) != -1) {
-            str = str.replace(searchFor, replaceWith);
-        }
-        return str;
-    }
-
-    /**
-     * Attempts to find a match to a {@link ColumnMeaning} based on the given
-     * string.
-     *
-     * @param str
-     * @return
-     */
-    public static final ColumnMeaning find(final String str) {
-        if (str == null) {
-            return null;
-        }
-        try {
-            return valueOf(str);
-        } catch (final Exception e) {
-            // do nothing
-        }
-
-        final String key = standardizeForMatching(str);
-        return _matchingMap.get(key);
-    }
-
-    /**
-     * Determines if it is meaningful to map multiple fields to this meaning.
-     * For instance, it makes sense to have multiple address lines, but not
-     * multiple cities (at least in most cases).
-     *
-     * @return
-     */
-    public boolean isMultipleFieldsMappeable() {
-        switch (this) {
-        case ADDRESS_LINE:
-        case EMAIL_ADDRESS:
-        case PHONE_PHONENUMBER:
-        case KEY_FOREIGN:
-        case KEY_PRIMARY:
-            return true;
-        default:
-            return false;
-        }
-    }
-
     @Override
     public String getName() {
         return _name;
@@ -244,5 +146,10 @@ public enum ColumnMeaning implements HasName, HasAliases {
     @Override
     public String[] getAliases() {
         return _aliases;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

@@ -27,16 +27,18 @@ public class ColumnMeaningTest {
 
     @Test
     public void testFind() throws Exception {
-        assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, ColumnMeaning.find(ColumnMeaning.PERSON_NAME_GIVEN.name()));
-        assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, ColumnMeaning.find("Given name"));
-        assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, ColumnMeaning.find("Givenname"));
-        assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, ColumnMeaning.find("First name"));
-        assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, ColumnMeaning.find("   FIRST_NAME \t"));
+        final ColumnMeaningCollection collection = new DefaultColumnMeaningCollection();
 
-        assertEquals(ColumnMeaning.EMAIL_ADDRESS, ColumnMeaning.find("Email"));
-        assertEquals(ColumnMeaning.EMAIL_ADDRESS, ColumnMeaning.find("e-mail"));
+        assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, collection.find(ColumnMeaning.PERSON_NAME_GIVEN.getName()));
+        assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, collection.find("Given name"));
+        assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, collection.find("Givenname"));
+        assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, collection.find("First name"));
+        assertEquals(ColumnMeaning.PERSON_NAME_GIVEN, collection.find("   FIRST_NAME \t"));
 
-        assertEquals(ColumnMeaning.PHONE_PHONENUMBER, ColumnMeaning.find("phone no."));
-        assertEquals(ColumnMeaning.PHONE_PHONENUMBER, ColumnMeaning.find("phone number"));
+        assertEquals(ColumnMeaning.EMAIL_ADDRESS, collection.find("Email"));
+        assertEquals(ColumnMeaning.EMAIL_ADDRESS, collection.find("e-mail"));
+
+        assertEquals(ColumnMeaning.PHONE_PHONENUMBER, collection.find("phone no."));
+        assertEquals(ColumnMeaning.PHONE_PHONENUMBER, collection.find("phone number"));
     }
 }

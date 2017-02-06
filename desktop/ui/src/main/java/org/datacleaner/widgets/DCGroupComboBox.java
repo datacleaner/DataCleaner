@@ -22,7 +22,6 @@ package org.datacleaner.widgets;
 import java.awt.Font;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
@@ -33,6 +32,7 @@ import org.datacleaner.util.StringUtils;
  * Defines a group combo-box class that has a more convenient listening mechanism.
  */
 public class DCGroupComboBox extends DCComboBox<HasName> {
+    private static final long serialVersionUID = 1L;
     private static final String GROUP_ITEM_INDENTATION = "  ";
     private boolean _groupExists = false;
 
@@ -45,7 +45,7 @@ public class DCGroupComboBox extends DCComboBox<HasName> {
 
         @Override
         public String toString() {
-            return _text.toString();
+            return _text;
         }
 
         @Override
@@ -64,7 +64,9 @@ public class DCGroupComboBox extends DCComboBox<HasName> {
         addItem(new Delimiter(text));
     }
 
-    private static class GroupComboBoxModel extends DefaultComboBoxModel {
+    private static class GroupComboBoxModel extends DefaultComboBoxModel<HasName> {
+        private static final long serialVersionUID = 1L;
+
         @Override
         public void setSelectedItem(final Object item) {
             if (!(item instanceof Delimiter)) {
@@ -80,8 +82,10 @@ public class DCGroupComboBox extends DCComboBox<HasName> {
     }
 
     private class GroupComboBoxRenderer extends EnumComboBoxListRenderer {
+        private static final long serialVersionUID = 1L;
+
         @Override
-        public JLabel getListCellRendererComponent(final JList list, final Object value, final int index,
+        public JLabel getListCellRendererComponent(final JList<?> list, final Object value, final int index,
                 final boolean isSelected, final boolean cellHasFocus) {
             final JLabel label;
 

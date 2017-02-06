@@ -39,11 +39,15 @@ import org.datacleaner.job.TransformerJob;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.scheduling.SchedulingService;
+import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.FileFilters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +75,9 @@ public class JobsFolderController {
 
     @Autowired
     TenantContextFactory _contextFactory;
+
+    @Autowired
+    SchedulingService _schedulingService;
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -173,7 +180,7 @@ public class JobsFolderController {
         int i = 0;
 
         for (final MultipartFile singleFile : files) {
-            final Map<String, String> outcome = uploadAnalysisJobToFolderJson(tenant, singleFile);
+            final Map<String, String> outcome = uploadAnalysisJobToFolderJson(tenant, singleFile, null);
             fileNames[i] = UrlEscapers.urlFormParameterEscaper().escape(outcome.get("filename"));
             final boolean fileWasUploaded = isUploadedFilePresent(tenant, fileNames[i]);
 
@@ -217,8 +224,9 @@ public class JobsFolderController {
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadAnalysisJobToFolderHtml(@PathVariable("tenant") final String tenant,
-            @RequestParam("file") final MultipartFile file) {
-        final Map<String, String> outcome = uploadAnalysisJobToFolderJson(tenant, file);
+            @RequestParam("file") final MultipartFile file,
+            @RequestParam(value = "hotfolder", required = false) final String hotFolderLocation) {
+        final Map<String, String> outcome = uploadAnalysisJobToFolderJson(tenant, file, hotFolderLocation);
         final String status = outcome.get("status");
         final String filename = UrlEscapers.urlFormParameterEscaper().escape(outcome.get("filename"));
         return "redirect:/scheduling?job_upload=" + status + "&job_filename=" + filename;
@@ -229,7 +237,8 @@ public class JobsFolderController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public Map<String, String> uploadAnalysisJobToFolderJson(@PathVariable("tenant") final String tenant,
-            @RequestParam("file") final MultipartFile file) {
+            @RequestParam("file") final MultipartFile file,
+            @RequestParam(value = "hotfolder", required = false) final String hotFolderLocation) {
         if (file == null) {
             throw new IllegalArgumentException(
                     "No file upload provided. Please provide a multipart file using the 'file' HTTP parameter.");
@@ -252,6 +261,17 @@ public class JobsFolderController {
 
         jobFile = jobsFolder.createFile(filename, writeCallback);
         logger.info("Created new job from uploaded file: {}", filename);
+
+        final TenantIdentifier tenantIdentifier = new TenantIdentifier(tenant);
+        final ScheduleDefinition scheduleDefinition =
+                _schedulingService.getSchedule(tenantIdentifier, new JobIdentifier(
+                        filename.substring(0, filename.length() - FileFilters.ANALYSIS_XML.getExtension().length())));
+
+        if (hotFolderLocation != null) {
+            scheduleDefinition.setHotFolder(hotFolderLocation);
+        }
+
+        _schedulingService.updateSchedule(tenantIdentifier, scheduleDefinition);
 
         final Map<String, String> result = new HashMap<>();
         result.put("status", STATUS_SUCCESS);

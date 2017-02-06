@@ -61,7 +61,6 @@ public class DataHubUpdateBuilderTest {
 
     @Before
     public void init() {
-        Mockito.when(table.getName()).thenReturn("person");
         Mockito.when(table.getColumns()).thenReturn(new Column[] { new MutableColumn("_trackcode", ColumnType.CHAR),
                 new MutableColumn("name", ColumnType.CHAR), new MutableColumn("age", ColumnType.CHAR) });
         rowUpdationBuilder = new DataHubUpdateBuilder(callback, table);

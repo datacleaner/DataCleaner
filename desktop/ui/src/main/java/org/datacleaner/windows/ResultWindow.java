@@ -203,6 +203,11 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 wrappedPanel.add(buttonPanel, BorderLayout.SOUTH);
                 return super.wrapInCollapsiblePane(wrappedPanel);
             }
+
+            @Override
+            public void setSelectedIndex(final int index) {
+                super.setSelectedIndex(index, false);
+            }
         };
 
         final Dimension size = getDefaultWindowSize();

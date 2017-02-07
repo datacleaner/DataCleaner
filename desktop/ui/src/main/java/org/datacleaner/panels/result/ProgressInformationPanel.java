@@ -20,7 +20,7 @@
 package org.datacleaner.panels.result;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Color;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
@@ -30,8 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
+import javax.swing.BorderFactory;
 import javax.swing.JTextArea;
 
 import org.apache.metamodel.schema.Table;
@@ -88,24 +87,19 @@ public class ProgressInformationPanel extends DCPanel {
         progressTaskPane.add(_progressBarPanel);
 
         final JXTaskPane executionLogTaskPane = WidgetFactory.createTaskPane("Execution log", IconUtils.ACTION_LOG);
-        executionLogTaskPane.add(addScrollBar(_executionLogTextArea));
+        executionLogTaskPane.setLayout(new BorderLayout());
+        executionLogTaskPane.setBorder(BorderFactory.createMatteBorder(0, 0, 10, 0, (Color) null));
+        executionLogTaskPane.add(WidgetUtils.scrolleable(_executionLogTextArea), BorderLayout.CENTER);
 
         final DCTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
+        taskPaneContainer.setLayout(new BorderLayout());
+
         if (running) {
-            taskPaneContainer.add(progressTaskPane);
+            taskPaneContainer.add(progressTaskPane, BorderLayout.NORTH);
         }
-        taskPaneContainer.add(executionLogTaskPane);
 
-        add(WidgetUtils.scrolleable(taskPaneContainer), BorderLayout.CENTER);
-    }
-
-    private JScrollPane addScrollBar(final JComponent component) {
-        final JScrollPane scrollBar = WidgetUtils.scrolleable(component);
-        final Dimension size = new Dimension(800, 600);
-        scrollBar.setPreferredSize(size);
-        scrollBar.setMaximumSize(size);
-
-        return scrollBar;
+        taskPaneContainer.add(executionLogTaskPane, BorderLayout.CENTER);
+        add(taskPaneContainer, BorderLayout.CENTER);
     }
 
     public String getTextAreaText() {

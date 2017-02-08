@@ -62,6 +62,7 @@ public class ProgressInformationPanel extends DCPanel {
     private static final long serialVersionUID = 1L;
 
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("HH:mm:ss");
+    private static final int MARGIN = 10;
 
     private final JTextArea _executionLogTextArea;
     private final DCPanel _progressBarPanel;
@@ -90,14 +91,13 @@ public class ProgressInformationPanel extends DCPanel {
                 WidgetFactory.createTitledPanel("Execution log", WidgetUtils.scrolleable(_executionLogTextArea));
         executionLogPanel.setBorder(new MatteBorder(1, 1, 1, 1, WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND));
         final DCTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
-        final int margin = 10;
-        taskPaneContainer.setLayout(new BorderLayout(margin, margin));
+        taskPaneContainer.setLayout(new BorderLayout(MARGIN, MARGIN));
 
         if (running) {
             taskPaneContainer.add(progressTaskPane, BorderLayout.NORTH);
         }
 
-        setBorder(new MatteBorder(0, 0, margin, 0, WidgetUtils.COLOR_DEFAULT_BACKGROUND));
+        setBorder(new MatteBorder(0, 0, MARGIN, 0, WidgetUtils.COLOR_DEFAULT_BACKGROUND));
         taskPaneContainer.add(executionLogPanel, BorderLayout.CENTER);
         add(taskPaneContainer, BorderLayout.CENTER);
     }

@@ -19,10 +19,8 @@
  */
 package org.datacleaner.panels.result;
 
-import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
@@ -32,8 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.JFrame;
 import javax.swing.JTextArea;
+import javax.swing.border.MatteBorder;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.RestrictedFunctionalityCallToAction;
@@ -91,13 +89,16 @@ public class ProgressInformationPanel extends DCPanel {
 
         final JXTitledPanel executionLogPanel =
                 WidgetFactory.createTitledPanel("Execution log", WidgetUtils.scrolleable(_executionLogTextArea));
+        executionLogPanel.setBorder(new MatteBorder(1, 1, 1, 1, WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND));
         final DCTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
-        taskPaneContainer.setLayout(new BorderLayout(10, 10));
+        final int margin = 10;
+        taskPaneContainer.setLayout(new BorderLayout(margin, margin));
 
         if (running) {
             taskPaneContainer.add(progressTaskPane, BorderLayout.NORTH);
         }
 
+        setBorder(new MatteBorder(0, 0, margin, 0, WidgetUtils.COLOR_DEFAULT_BACKGROUND));
         taskPaneContainer.add(executionLogPanel, BorderLayout.CENTER);
         add(taskPaneContainer, BorderLayout.CENTER);
     }

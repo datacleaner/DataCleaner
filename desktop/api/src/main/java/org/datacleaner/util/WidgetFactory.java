@@ -63,6 +63,7 @@ import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
+import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.plaf.basic.BasicStatusBarUI;
 import org.jdesktop.swingx.plaf.metal.MetalStatusBarUI;
 import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
@@ -348,6 +349,17 @@ public final class WidgetFactory {
             taskPane.setIcon(icon);
         }
         return taskPane;
+    }
+
+    public static JXTitledPanel createTitledPanel(final String title, final JComponent content) {
+        final JXTitledPanel titlePanel = new JXTitledPanel(title, content);
+        titlePanel.setFocusable(false);
+        titlePanel.setTitlePainter((graphics2D, panel, width, height) -> {
+            graphics2D.setColor(WidgetUtils.BG_COLOR_LESS_DARK);
+            graphics2D.fillRect(0, 0, width, height);
+        });
+
+        return titlePanel;
     }
 
     public static JXTextField createTextField() {

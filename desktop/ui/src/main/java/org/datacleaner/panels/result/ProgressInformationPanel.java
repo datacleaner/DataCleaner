@@ -19,8 +19,10 @@
  */
 package org.datacleaner.panels.result;
 
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.Dimension;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
@@ -30,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.BorderFactory;
+import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
 import org.apache.metamodel.schema.Table;
@@ -45,6 +47,7 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.windows.ResultWindow;
 import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.VerticalLayout;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -86,19 +89,16 @@ public class ProgressInformationPanel extends DCPanel {
         final JXTaskPane progressTaskPane = WidgetFactory.createTaskPane("Progress", IconUtils.ACTION_EXECUTE);
         progressTaskPane.add(_progressBarPanel);
 
-        final JXTaskPane executionLogTaskPane = WidgetFactory.createTaskPane("Execution log", IconUtils.ACTION_LOG);
-        executionLogTaskPane.setLayout(new BorderLayout());
-        executionLogTaskPane.setBorder(BorderFactory.createMatteBorder(0, 0, 10, 0, (Color) null));
-        executionLogTaskPane.add(WidgetUtils.scrolleable(_executionLogTextArea), BorderLayout.CENTER);
-
+        final JXTitledPanel executionLogPanel =
+                WidgetFactory.createTitledPanel("Execution log", WidgetUtils.scrolleable(_executionLogTextArea));
         final DCTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
-        taskPaneContainer.setLayout(new BorderLayout());
+        taskPaneContainer.setLayout(new BorderLayout(10, 10));
 
         if (running) {
             taskPaneContainer.add(progressTaskPane, BorderLayout.NORTH);
         }
 
-        taskPaneContainer.add(executionLogTaskPane, BorderLayout.CENTER);
+        taskPaneContainer.add(executionLogPanel, BorderLayout.CENTER);
         add(taskPaneContainer, BorderLayout.CENTER);
     }
 

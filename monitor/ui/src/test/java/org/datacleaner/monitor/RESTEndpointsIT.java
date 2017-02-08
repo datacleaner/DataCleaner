@@ -30,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.validation.constraints.AssertTrue;
@@ -81,21 +82,31 @@ public class RESTEndpointsIT {
         final String jobName = "ReferenceData.analysis.xml";
         final File file = new File("src/test/resources/" + jobName);
         assertTrue(file.exists());
-        final String hotFolderLocation =   FileUtils.getTempDirectory().getAbsolutePath();
-        final String result = given().multiPart(file).param("hotfolder", hotFolderLocation).when().post(JOBS_PATH)
-                .then().statusCode(HttpStatus.SC_OK).extract().body().asString();
-         assertEquals(
-         "[{\"filename\":\"ReferenceData.analysis.xml\",\"repository_path\":\"/demo/jobs/ReferenceData.analysis.xml\","
-         + "\"file_type\":\"ANALYSIS_JOB\",\"status\":\"Success\"}]", result);
+        final Path hotFolderLocation = Files.createTempDirectory("hotFolder");
 
-       // FileUtils.getTempDirectory()
-        final File newFile = new File(hotFolderLocation + Calendar.getInstance().getTimeInMillis());
+        final String result = given().multiPart(file).param("hotfolder", hotFolderLocation.toAbsolutePath()).when()
+                .post(JOBS_PATH).then().statusCode(HttpStatus.SC_OK).extract().body().asString();
+        // assertEquals(
+        // "[{\"filename\":\"ReferenceData.analysis.xml\",\"repository_path\":\"/demo/jobs/ReferenceData.analysis.xml\","
+        // + "\"file_type\":\"ANALYSIS_JOB\",\"status\":\"Success\"}]", result);
+
+        final File newFile = new File(hotFolderLocation.toFile(), "test" + Calendar.getInstance().getTimeInMillis());
         FileUtils.copyFile(new File("src/test/resources/emptyFile.txt"), newFile);
         assertTrue(newFile.exists());
-        assertEquals("", newFile.getAbsolutePath());
 
+        final String resultPath = "/logs/" + post(JOBS_PATH + jobName + ".trigger").then().extract().path("resultId");
+ 
+        while (get(resultPath).then().extract().path("execution-log.execution-status").equals("PENDING")) {
+            Thread.sleep(ONE_SECOND);
+        }
 
+        while (get(resultPath).then().extract().path("execution-log.execution-status").equals("RUNNING")) {
+            Thread.sleep(ONE_SECOND);
+        }
+
+        get(resultPath).then().body("execution-log.execution-status", equalTo("SUCCESS"));
+
+        post(JOBS_PATH + jobName + ".delete").then().statusCode(HttpStatus.SC_OK);
 
     }
-
 }

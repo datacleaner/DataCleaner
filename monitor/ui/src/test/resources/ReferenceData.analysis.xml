@@ -3,10 +3,10 @@
     <job-metadata>
         <job-description>Created with DataCleaner Enterprise edition 5.1.5</job-description>
         <author>claudiap</author>
-        <updated-date>2017-02-06+01:00</updated-date>
+        <updated-date>2017-02-08+01:00</updated-date>
         <metadata-properties>
-            <property name="CoordinatesY.PUBLIC.CUSTOMERS">78</property>
-            <property name="CoordinatesX.PUBLIC.CUSTOMERS">89</property>
+            <property name="CoordinatesX.PUBLIC.CUSTOMERS">71</property>
+            <property name="CoordinatesY.PUBLIC.CUSTOMERS">57</property>
         </metadata-properties>
     </job-metadata>
     <source>
@@ -32,11 +32,11 @@
         <transformer>
             <descriptor ref="Dictionary matcher"/>
             <metadata-properties>
-                <property name="CoordinatesY">209</property>
-                <property name="CoordinatesX">239</property>
+                <property name="CoordinatesY">197</property>
+                <property name="CoordinatesX">252</property>
             </metadata-properties>
             <properties>
-                <property name="Dictionaries" value="[test]"/>
+                <property name="Dictionaries" value="[DictionaryTest]"/>
                 <property name="Output type" value="TRUE_FALSE"/>
             </properties>
             <input ref="col_jobtitle"/>
@@ -47,8 +47,8 @@
         <analyzer>
             <descriptor ref="Value distribution"/>
             <metadata-properties>
-                <property name="CoordinatesY">199</property>
-                <property name="CoordinatesX">569</property>
+                <property name="CoordinatesY">301</property>
+                <property name="CoordinatesX">471</property>
             </metadata-properties>
             <properties>
                 <property name="Record unique values" value="true"/>

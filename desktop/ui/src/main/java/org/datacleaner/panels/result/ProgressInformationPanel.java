@@ -19,7 +19,6 @@
  */
 package org.datacleaner.panels.result;
 
-
 import java.awt.BorderLayout;
 import java.io.PrintWriter;
 import java.io.StringWriter;

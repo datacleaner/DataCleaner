@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JTextArea;
+import javax.swing.border.MatteBorder;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.RestrictedFunctionalityCallToAction;
@@ -43,6 +44,7 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.windows.ResultWindow;
 import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.VerticalLayout;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -60,6 +62,7 @@ public class ProgressInformationPanel extends DCPanel {
     private static final long serialVersionUID = 1L;
 
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("HH:mm:ss");
+    private static final int MARGIN = 10;
 
     private final JTextArea _executionLogTextArea;
     private final DCPanel _progressBarPanel;
@@ -84,16 +87,19 @@ public class ProgressInformationPanel extends DCPanel {
         final JXTaskPane progressTaskPane = WidgetFactory.createTaskPane("Progress", IconUtils.ACTION_EXECUTE);
         progressTaskPane.add(_progressBarPanel);
 
-        final JXTaskPane executionLogTaskPane = WidgetFactory.createTaskPane("Execution log", IconUtils.ACTION_LOG);
-        executionLogTaskPane.add(_executionLogTextArea);
-
+        final JXTitledPanel executionLogPanel =
+                WidgetFactory.createTitledPanel("Execution log", WidgetUtils.scrolleable(_executionLogTextArea));
+        executionLogPanel.setBorder(new MatteBorder(1, 1, 1, 1, WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND));
         final DCTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
-        if (running) {
-            taskPaneContainer.add(progressTaskPane);
-        }
-        taskPaneContainer.add(executionLogTaskPane);
+        taskPaneContainer.setLayout(new BorderLayout(MARGIN, MARGIN));
 
-        add(WidgetUtils.scrolleable(taskPaneContainer), BorderLayout.CENTER);
+        if (running) {
+            taskPaneContainer.add(progressTaskPane, BorderLayout.NORTH);
+        }
+
+        setBorder(new MatteBorder(0, 0, MARGIN, 0, WidgetUtils.COLOR_DEFAULT_BACKGROUND));
+        taskPaneContainer.add(executionLogPanel, BorderLayout.CENTER);
+        add(taskPaneContainer, BorderLayout.CENTER);
     }
 
     public String getTextAreaText() {

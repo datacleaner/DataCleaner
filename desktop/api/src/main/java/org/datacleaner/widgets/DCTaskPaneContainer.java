@@ -86,7 +86,7 @@ public class DCTaskPaneContainer extends JXTaskPaneContainer {
 
     @Override
     public void add(final Component comp, final Object constraints) {
-        throw new UnsupportedOperationException();
+        super.add(comp, constraints);
     }
 
     @Override

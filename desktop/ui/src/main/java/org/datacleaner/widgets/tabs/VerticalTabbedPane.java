@@ -135,6 +135,10 @@ public class VerticalTabbedPane extends DCPanel {
     }
 
     public void setSelectedIndex(final int index) {
+        setSelectedIndex(index, true);
+    }
+
+    public void setSelectedIndex(final int index, final boolean scrollable) {
         // reset other components
         for (final VerticalTab<?> tab : _tabs) {
             final JButton button = tab.getButton();
@@ -156,11 +160,15 @@ public class VerticalTabbedPane extends DCPanel {
         // set component as content
         final JComponent panel = tab.getContents();
 
-        final JScrollPane scroll = WidgetUtils.scrolleable(panel);
-        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-        add(scroll, BorderLayout.CENTER);
-        _currentContent = scroll;
+        if (scrollable) {
+            final JScrollPane scroll = WidgetUtils.scrolleable(panel);
+            scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            add(scroll, BorderLayout.CENTER);
+            _currentContent = scroll;
+        } else {
+            add(panel, BorderLayout.CENTER);
+            _currentContent = panel;
+        }
 
         for (final Listener listener : changeListeners) {
             listener.stateChanged(index, tab);

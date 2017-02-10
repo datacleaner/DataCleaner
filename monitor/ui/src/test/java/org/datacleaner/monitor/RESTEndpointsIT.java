@@ -20,30 +20,20 @@
 package org.datacleaner.monitor;
 
 import static io.restassured.RestAssured.basic;
-import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.post;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import javax.validation.constraints.AssertTrue;
-
-import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpStatus;
 import org.datacleaner.test.MonitorRestEndpoint;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
-
-import com.ibm.icu.util.Calendar;
 
 import io.restassured.RestAssured;
 
@@ -53,7 +43,6 @@ public class RESTEndpointsIT {
     private static final String REFERENCEDATA_PATH = "/referencedata/dictionary/";
 
     private static final int ONE_MINUTE = 60000;
-    private static final int ONE_SECOND = 1000;
 
     private static final String USER_NAME = "admin";
     private static final String USER_PASSWORD = "admin";
@@ -82,43 +71,26 @@ public class RESTEndpointsIT {
         final String jobName = "ReferenceData.analysis.xml";
         final File file = new File("src/test/resources/" + jobName);
         assertTrue(file.exists());
-        final Path hotFolderLocation = Files.createTempDirectory("hotFolder");
+        final String command = "docker exec " + HotFolderHelper.getContainerId()
+                + " /bin/sh /tmp/generate-hot-folder-input.sh";
+        HotFolderHelper.getCommandOutput(command);
+        given().multiPart(file).param("hotfolder", "/tmp/hot_folder").when().post(JOBS_PATH).then().statusCode(
+                HttpStatus.SC_OK);
 
-        System.out.println("Location" + hotFolderLocation);
-        final String result = given().multiPart(file).param("hotfolder", hotFolderLocation.toAbsolutePath()).when()
-                .post(JOBS_PATH).then().statusCode(HttpStatus.SC_OK).extract().body().asString();
-//         assertEquals(
-//         "[{\"filename\":\"ReferenceData.analysis.xml\",\"repository_path\":\"/demo/jobs/" + 
-//         "nceData.analysis.xml\",\"file_type\":\"ANALYSIS_JOB\",\"status\":\"Success\"}]>", result);
+        final String result3 = given().contentType("application/json").when().get("/schedules/ReferenceData")
+                .then().statusCode(HttpStatus.SC_OK).extract().body().asString();
 
-        final File newFile = new File(hotFolderLocation.toFile(), "simple-numbers.csv");
-        FileUtils.copyFile(new File("src/test/resources/testFile.csv"), newFile);
-        assertTrue(newFile.exists());
+        //assertEquals("[{\"hotFolder\":\"/tmp/hot_folder\"}]", result3);
 
-        // final String resultPath = "/logs/" + post(JOBS_PATH + jobName +
-        // ".trigger").then().extract().path("resultId");
-        //
-        // while
-        // (get(resultPath).then().extract().path("execution-log.execution-status").equals("PENDING"))
-        // {
-        // Thread.sleep(ONE_SECOND);
-        // }
-        //
-        // while
-        // (get(resultPath).then().extract().path("execution-log.execution-status").equals("RUNNING"))
-        // {
-        // Thread.sleep(ONE_SECOND);
-        // }
-        //
-        // get(resultPath).then().body("execution-log.execution-status",
-        // equalTo("SUCCESS"));
-        //
-        // // post(JOBS_PATH + jobName +
-        // // ".delete").then().statusCode(HttpStatus.SC_OK);
+        try {
+            // wait for the hot folder trigger and job execution
+            Thread.sleep(20 * 1000);
+        } catch (final InterruptedException e) {
+            fail("Waiting for the job execution was interrupted. " + e.getMessage());
+        }
 
-        Thread.sleep(10 * ONE_SECOND);
         final String results2 = given().contentType("application/json").when().get("/results/").then().statusCode(
-                HttpStatus.SC_OK).extract().body().asString();
+                HttpStatus.SC_OK).extract().body().jsonPath().getString("filename");
         assertEquals("", results2);
 
     }

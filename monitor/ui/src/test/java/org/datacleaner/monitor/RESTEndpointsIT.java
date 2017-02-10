@@ -69,7 +69,7 @@ public class RESTEndpointsIT {
     @Test(timeout = 10 * ONE_MINUTE)
     public void test() throws Exception {
         // upload test dictionary
-        final String dictionaryJson = "{ \"name\" :\"DictionaryTest\", \"entries\" : [\"cio\", \"dr\"],"
+        final String dictionaryJson = "{ \"name\" :\"DictionaryTest\", \"entries\" : [\"1\", \"5\"],"
                 + " \"caseSensitive\": \"false\"}";
 
         final String header = given().contentType("application/json").body(dictionaryJson).when().put(REFERENCEDATA_PATH
@@ -84,29 +84,42 @@ public class RESTEndpointsIT {
         assertTrue(file.exists());
         final Path hotFolderLocation = Files.createTempDirectory("hotFolder");
 
+        System.out.println("Location" + hotFolderLocation);
         final String result = given().multiPart(file).param("hotfolder", hotFolderLocation.toAbsolutePath()).when()
                 .post(JOBS_PATH).then().statusCode(HttpStatus.SC_OK).extract().body().asString();
-        // assertEquals(
-        // "[{\"filename\":\"ReferenceData.analysis.xml\",\"repository_path\":\"/demo/jobs/ReferenceData.analysis.xml\","
-        // + "\"file_type\":\"ANALYSIS_JOB\",\"status\":\"Success\"}]", result);
+//         assertEquals(
+//         "[{\"filename\":\"ReferenceData.analysis.xml\",\"repository_path\":\"/demo/jobs/" + 
+//         "nceData.analysis.xml\",\"file_type\":\"ANALYSIS_JOB\",\"status\":\"Success\"}]>", result);
 
-        final File newFile = new File(hotFolderLocation.toFile(), "test" + Calendar.getInstance().getTimeInMillis());
-        FileUtils.copyFile(new File("src/test/resources/emptyFile.txt"), newFile);
+        final File newFile = new File(hotFolderLocation.toFile(), "simple-numbers.csv");
+        FileUtils.copyFile(new File("src/test/resources/testFile.csv"), newFile);
         assertTrue(newFile.exists());
 
-        final String resultPath = "/logs/" + post(JOBS_PATH + jobName + ".trigger").then().extract().path("resultId");
- 
-        while (get(resultPath).then().extract().path("execution-log.execution-status").equals("PENDING")) {
-            Thread.sleep(ONE_SECOND);
-        }
+        // final String resultPath = "/logs/" + post(JOBS_PATH + jobName +
+        // ".trigger").then().extract().path("resultId");
+        //
+        // while
+        // (get(resultPath).then().extract().path("execution-log.execution-status").equals("PENDING"))
+        // {
+        // Thread.sleep(ONE_SECOND);
+        // }
+        //
+        // while
+        // (get(resultPath).then().extract().path("execution-log.execution-status").equals("RUNNING"))
+        // {
+        // Thread.sleep(ONE_SECOND);
+        // }
+        //
+        // get(resultPath).then().body("execution-log.execution-status",
+        // equalTo("SUCCESS"));
+        //
+        // // post(JOBS_PATH + jobName +
+        // // ".delete").then().statusCode(HttpStatus.SC_OK);
 
-        while (get(resultPath).then().extract().path("execution-log.execution-status").equals("RUNNING")) {
-            Thread.sleep(ONE_SECOND);
-        }
-
-        get(resultPath).then().body("execution-log.execution-status", equalTo("SUCCESS"));
-
-        post(JOBS_PATH + jobName + ".delete").then().statusCode(HttpStatus.SC_OK);
+        Thread.sleep(10 * ONE_SECOND);
+        final String results2 = given().contentType("application/json").when().get("/results/").then().statusCode(
+                HttpStatus.SC_OK).extract().body().asString();
+        assertEquals("", results2);
 
     }
 }

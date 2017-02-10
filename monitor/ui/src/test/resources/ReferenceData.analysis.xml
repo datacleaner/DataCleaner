@@ -3,60 +3,45 @@
     <job-metadata>
         <job-description>Created with DataCleaner Enterprise edition 5.1.5</job-description>
         <author>claudiap</author>
-        <updated-date>2017-02-08+01:00</updated-date>
+        <updated-date>2017-02-09+01:00</updated-date>
         <metadata-properties>
-            <property name="CoordinatesX.PUBLIC.CUSTOMERS">71</property>
-            <property name="CoordinatesY.PUBLIC.CUSTOMERS">57</property>
+            <property name="CoordinatesX.Desktop.simple-numbers.csv">40</property>
+            <property name="CoordinatesY.Desktop.simple-numbers.csv">40</property>
         </metadata-properties>
     </job-metadata>
     <source>
-        <data-context ref="orderdb"/>
+        <data-context ref="simple-numbers.csv"/>
         <columns>
-            <column id="col_customernumber" path="CUSTOMERS.CUSTOMERNUMBER" type="INTEGER"/>
-            <column id="col_customername" path="CUSTOMERS.CUSTOMERNAME" type="VARCHAR"/>
-            <column id="col_contactlastname" path="CUSTOMERS.CONTACTLASTNAME" type="VARCHAR"/>
-            <column id="col_contactfirstname" path="CUSTOMERS.CONTACTFIRSTNAME" type="VARCHAR"/>
-            <column id="col_phone" path="CUSTOMERS.PHONE" type="VARCHAR"/>
-            <column id="col_addressline1" path="CUSTOMERS.ADDRESSLINE1" type="VARCHAR"/>
-            <column id="col_addressline2" path="CUSTOMERS.ADDRESSLINE2" type="VARCHAR"/>
-            <column id="col_city" path="CUSTOMERS.CITY" type="VARCHAR"/>
-            <column id="col_state" path="CUSTOMERS.STATE" type="VARCHAR"/>
-            <column id="col_postalcode" path="CUSTOMERS.POSTALCODE" type="VARCHAR"/>
-            <column id="col_country" path="CUSTOMERS.COUNTRY" type="VARCHAR"/>
-            <column id="col_salesrepemployeenumber" path="CUSTOMERS.SALESREPEMPLOYEENUMBER" type="INTEGER"/>
-            <column id="col_creditlimit" path="CUSTOMERS.CREDITLIMIT" type="NUMERIC"/>
-            <column id="col_jobtitle" path="CUSTOMERS.JOBTITLE" type="VARCHAR"/>
+            <column id="col_value" path="VALUE" type="STRING"/>
         </columns>
     </source>
     <transformation>
         <transformer>
-            <descriptor ref="Dictionary matcher"/>
+            <descriptor ref="Convert to string"/>
             <metadata-properties>
-                <property name="CoordinatesY">197</property>
-                <property name="CoordinatesX">252</property>
+                <property name="CoordinatesY">296</property>
+                <property name="CoordinatesX">292</property>
             </metadata-properties>
             <properties>
-                <property name="Dictionaries" value="[DictionaryTest]"/>
-                <property name="Output type" value="TRUE_FALSE"/>
+                <property name="Null replacement" value="&lt;null&gt;"/>
             </properties>
-            <input ref="col_jobtitle"/>
-            <output id="col_jobtitleintest" name="JOBTITLE in 'test'"/>
+            <input ref="col_value"/>
+            <output id="col_valueasstring" name="VALUE (as string)"/>
         </transformer>
     </transformation>
     <analysis>
         <analyzer>
-            <descriptor ref="Value distribution"/>
+            <descriptor ref="Reference data matcher"/>
             <metadata-properties>
-                <property name="CoordinatesY">301</property>
-                <property name="CoordinatesX">471</property>
+                <property name="CoordinatesY">205</property>
+                <property name="CoordinatesX">638</property>
             </metadata-properties>
             <properties>
-                <property name="Record unique values" value="true"/>
-                <property name="Record drill-down information" value="true"/>
-                <property name="Top n most frequent values" value="&lt;null&gt;"/>
-                <property name="Bottom n most frequent values" value="&lt;null&gt;"/>
+                <property name="Dictionaries" value="[DictionaryTest]"/>
+                <property name="Synonym catalogs" value="[]"/>
+                <property name="String patterns" value="&lt;null&gt;"/>
             </properties>
-            <input ref="col_jobtitleintest" name="Column"/>
+            <input ref="col_valueasstring"/>
         </analyzer>
     </analysis>
 </job>

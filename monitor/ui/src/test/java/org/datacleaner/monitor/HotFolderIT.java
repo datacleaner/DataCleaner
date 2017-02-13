@@ -33,8 +33,6 @@ public class HotFolderIT {
     @Test(timeout = 5 * ONE_MINUTE)
     public void testHotFolder() {
         try {
-            assertEquals(0, getResultFilesCount());
-
             final String command = "docker exec " + HotFolderHelper.getContainerId()
                     + " /bin/sh /tmp/generate-hot-folder-input.sh";
             HotFolderHelper.getCommandOutput(command);

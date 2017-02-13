@@ -67,20 +67,23 @@ public class RESTEndpointsIT {
                 "http://192.168.99.100:8080/DataCleaner-monitor-ui-5.1.6-SNAPSHOT/repository/demo/referencedata/dictionary/DictionaryTest",
                 header);
 
-        // upload job
-        final String jobName = "ReferenceData.analysis.xml";
-        final File file = new File("src/test/resources/" + jobName);
+        // upload job and set the schedule to be a hot folder()
+        final String jobName = "ReferenceData";
+        final File file = new File("src/test/resources/" + jobName + ".analysis.xml");
         assertTrue(file.exists());
         final String command = "docker exec " + HotFolderHelper.getContainerId()
                 + " /bin/sh /tmp/generate-hot-folder-input.sh";
         HotFolderHelper.getCommandOutput(command);
-        given().multiPart(file).param("hotfolder", "/tmp/hot_folder").when().post(JOBS_PATH).then().statusCode(
+
+        final String hotFolder = "/tmp/hot_folder";
+        given().multiPart(file).param("hotfolder", hotFolder).when().post(JOBS_PATH).then().statusCode(
                 HttpStatus.SC_OK);
 
-        final String result3 = given().contentType("application/json").when().get("/schedules/ReferenceData")
-                .then().statusCode(HttpStatus.SC_OK).extract().body().asString();
+        // check that the job is scheduled with a hot folder
+        final boolean scheduleCheck = given().contentType("application/json").when().get("/schedules/" + jobName).then()
+                .statusCode(HttpStatus.SC_OK).extract().body().asString().contains(hotFolder);
 
-        //assertEquals("[{\"hotFolder\":\"/tmp/hot_folder\"}]", result3);
+        assertTrue(scheduleCheck);
 
         try {
             // wait for the hot folder trigger and job execution
@@ -89,9 +92,10 @@ public class RESTEndpointsIT {
             fail("Waiting for the job execution was interrupted. " + e.getMessage());
         }
 
-        final String results2 = given().contentType("application/json").when().get("/results/").then().statusCode(
-                HttpStatus.SC_OK).extract().body().jsonPath().getString("filename");
-        assertEquals("", results2);
+        // check the result
+        final boolean resultCheck = given().contentType("application/json").when().get("/results/").then().statusCode(
+                HttpStatus.SC_OK).extract().body().jsonPath().getString("filename").contains(jobName);
+        assertTrue(resultCheck);
 
     }
 }

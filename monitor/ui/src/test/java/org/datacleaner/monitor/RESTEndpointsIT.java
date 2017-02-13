@@ -21,7 +21,6 @@ package org.datacleaner.monitor;
 
 import static io.restassured.RestAssured.basic;
 import static io.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -63,9 +62,8 @@ public class RESTEndpointsIT {
 
         final String header = given().contentType("application/json").body(dictionaryJson).when().put(REFERENCEDATA_PATH
                 + "DictionaryTest").then().statusCode(HttpStatus.SC_CREATED).extract().header("Location").toString();
-        assertEquals(
-                "http://192.168.99.100:8080/DataCleaner-monitor-ui-5.1.6-SNAPSHOT/repository/demo/referencedata/dictionary/DictionaryTest",
-                header);
+        assertTrue(header.contains("/referencedata/dictionary/DictionaryTest"));
+                
 
         // upload job and set the schedule to be a hot folder()
         final String jobName = "ReferenceData";

@@ -20,7 +20,6 @@
 package org.datacleaner.monitor;
 
 import static javax.management.timer.Timer.ONE_MINUTE;
-import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 

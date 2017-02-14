@@ -33,21 +33,26 @@ public class HotFolderIT {
     @Test(timeout = 5 * ONE_MINUTE)
     public void testHotFolder() {
         try {
+
             final String command = "docker exec " + HotFolderHelper.getContainerId()
                     + " /bin/sh /tmp/generate-hot-folder-input.sh";
             HotFolderHelper.getCommandOutput(command);
 
             try {
                 // wait for the hot folder trigger and job execution
-                Thread.sleep(20 * 1000); 
+                Thread.sleep(20 * 1000);
             } catch (final InterruptedException e) {
                 fail("Waiting for the job execution was interrupted. " + e.getMessage());
             }
 
             assertEquals(2, getResultFilesCount());
+            //remove the hot folder
+            final String removeHotFolderCommand = "docker exec " + HotFolderHelper.getContainerId()
+                    + " /bin/sh /tmp/remove-hot-folder.sh";
+            HotFolderHelper.getCommandOutput(removeHotFolderCommand);
         } catch (final IOException e) {
             fail(e.getMessage());
-        }
+        } 
     }
 
     private int getResultFilesCount() throws IOException {

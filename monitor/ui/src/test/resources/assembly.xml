@@ -13,5 +13,9 @@
 			<source>${project.build.directory}/test-classes/get-results-count.sh</source>
 			<outputDirectory/>
 		</file>
+		<file>
+			<source>${project.build.directory}/test-classes/remove-hot-folder.sh</source>
+			<outputDirectory/>
+		</file>
 	</files>
 </assembly>

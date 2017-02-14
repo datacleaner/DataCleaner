@@ -21,6 +21,7 @@ package org.datacleaner.monitor;
 
 import static io.restassured.RestAssured.basic;
 import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -60,10 +61,11 @@ public class RESTEndpointsIT {
         final String dictionaryJson = "{ \"name\" :\"DictionaryTest\", \"entries\" : [\"1\", \"5\"],"
                 + " \"caseSensitive\": \"false\"}";
 
-        final String header = given().contentType("application/json").body(dictionaryJson).when().put(REFERENCEDATA_PATH
-                + "DictionaryTest").then().statusCode(HttpStatus.SC_CREATED).extract().header("Location").toString();
-        assertTrue(header.contains("/referencedata/dictionary/DictionaryTest"));
-                
+        final String referenceDataLocation = given().contentType("application/json").body(dictionaryJson).when().put(
+                REFERENCEDATA_PATH + "DictionaryTest").then().statusCode(HttpStatus.SC_CREATED).extract().header(
+                        "Location").toString();
+        assertEquals(RestAssured.baseURI + RestAssured.basePath + "/referencedata/dictionary/DictionaryTest",
+                referenceDataLocation);
 
         // upload job and set the schedule to be a hot folder()
         final String jobName = "ReferenceData";
@@ -94,6 +96,11 @@ public class RESTEndpointsIT {
         final boolean resultCheck = given().contentType("application/json").when().get("/results/").then().statusCode(
                 HttpStatus.SC_OK).extract().body().jsonPath().getString("filename").contains(jobName);
         assertTrue(resultCheck);
+
+        //remove the hot folder 
+        final String removeHotFolderCommand = "docker exec " + HotFolderHelper.getContainerId()
+                + " /bin/sh /tmp/remove-hot-folder.sh";
+        HotFolderHelper.getCommandOutput(removeHotFolderCommand);
 
     }
 }

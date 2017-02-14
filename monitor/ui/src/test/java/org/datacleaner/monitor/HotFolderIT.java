@@ -21,6 +21,7 @@ package org.datacleaner.monitor;
 
 import static javax.management.timer.Timer.ONE_MINUTE;
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class HotFolderIT {
                 fail("Waiting for the job execution was interrupted. " + e.getMessage());
             }
 
-            assertEquals(2, getResultFilesCount());
+            assertTrue(getResultFilesCount() >= 2);
             //remove the hot folder
             final String removeHotFolderCommand = "docker exec " + HotFolderHelper.getContainerId()
                     + " /bin/sh /tmp/remove-hot-folder.sh";

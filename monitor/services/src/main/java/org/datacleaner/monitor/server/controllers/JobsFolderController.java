@@ -204,7 +204,7 @@ public class JobsFolderController {
         final String baseUrl = "redirect:/scheduling";
 
         try {
-            final String listOfFiles = URLEncoder.encode(String.join(",", fileNames), "UTF-8");
+            final String listOfFiles = URLEncoder.encode(String.join(", ", fileNames), "UTF-8");
             final String parameters = String.format("job_upload=%s&job_filename=%s", status, listOfFiles);
             return String.format("%s?%s", baseUrl, parameters);
         } catch (final UnsupportedEncodingException e) {

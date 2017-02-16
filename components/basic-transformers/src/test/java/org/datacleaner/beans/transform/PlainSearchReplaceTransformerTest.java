@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
@@ -34,92 +35,127 @@ public class PlainSearchReplaceTransformerTest {
     private final InputColumn<String> input = new MockInputColumn<>("input");
 
     @Test
-    public void testNullAndEmptyValues() throws Exception {
-        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
-        t.valueColumn = input;
-        t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<>();
-        t.replacements.put("foo", "hello");
-        t.validate();
+    public void testCaseSensitivityEntireString() throws Exception {
+        final PlainSearchReplaceTransformer transformer = createTransformer();
+        transformer.replacements.put("foo", "bar");
+        transformer.replaceEntireString = true;
+        transformer.ignoreCaseSensitivity = true;
 
-        assertEquals("[]", Arrays.toString(t.transform(new MockInputRow().put(input, ""))));
-        assertEquals("[null]", Arrays.toString(t.transform(new MockInputRow().put(input, null))));
+        final Map<String, String> testData = new LinkedHashMap<>();
+        testData.put("this is foo value", "[bar]");
+        testData.put("This Is Foo Value", "[bar]");
+        testData.put("THIS IS FOO VALUE", "[bar]");
+
+        assertExpectedValues(transformer, testData);
+    }
+
+    @Test
+    public void testCaseSensitivity() throws Exception {
+        final PlainSearchReplaceTransformer transformer = createTransformer();
+        transformer.replacements.put("foo", "bar");
+        transformer.ignoreCaseSensitivity = true;
+
+        final Map<String, String> testData = new LinkedHashMap<>();
+        testData.put("foo", "[bar]");
+        testData.put("Foo", "[bar]");
+        testData.put("FOO", "[bar]");
+
+        assertExpectedValues(transformer, testData);
+    }
+
+    @Test
+    public void testNullAndEmptyValues() throws Exception {
+        final PlainSearchReplaceTransformer transformer = createTransformer();
+        transformer.replacements.put("foo", "hello");
+
+        final Map<String, String> testData = new LinkedHashMap<>();
+        testData.put("", "[]");
+        testData.put(null, "[null]");
+
+        assertExpectedValues(transformer, testData);
     }
 
     @Test
     public void testVanillaReplacements() throws Exception {
-        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
-        t.valueColumn = input;
-        t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<>();
-        t.replacements.put("foo", "hello");
-        t.replacements.put("bar", "world");
-        t.validate();
+        final PlainSearchReplaceTransformer transformer = createTransformer();
+        transformer.replacements.put("foo", "hello");
+        transformer.replacements.put("bar", "world");
 
-        assertEquals("[hello world]", Arrays.toString(t.transform(new MockInputRow().put(input, "foo bar"))));
-        assertEquals("[hello hello world hello]",
-                Arrays.toString(t.transform(new MockInputRow().put(input, "hello foo world foo"))));
-        assertEquals("[hello world]", Arrays.toString(t.transform(new MockInputRow().put(input, "hello world"))));
+        final Map<String, String> testData = new LinkedHashMap<>();
+        testData.put("foo bar", "[hello world]");
+        testData.put("hello foo world foo", "[hello hello world hello]");
+        testData.put("hello world", "[hello world]");
+
+        assertExpectedValues(transformer, testData);
     }
 
     @Test
     public void testReplacementEntireString() throws Exception {
-        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
-        t.valueColumn = input;
-        t.replaceEntireString = true;
-        t.replacements = new LinkedHashMap<>();
-        t.replacements.put("foo", "hello");
-        t.replacements.put("bar", "world");
-        t.validate();
+        final PlainSearchReplaceTransformer transformer = createTransformer();
+        transformer.setReplaceEntireString(true);
+        transformer.replacements.put("foo", "hello");
+        transformer.replacements.put("bar", "world");
 
-        assertEquals("[hello]", Arrays.toString(t.transform(new MockInputRow().put(input, "foo bar"))));
-        assertEquals("[hello]", Arrays.toString(t.transform(new MockInputRow().put(input, "hello bar world foo"))));
-        assertEquals("[hello world]", Arrays.toString(t.transform(new MockInputRow().put(input, "hello world"))));
+        final Map<String, String> testData = new LinkedHashMap<>();
+        testData.put("foo bar", "[hello]");
+        testData.put("hello bar world foo", "[hello]");
+        testData.put("hello world", "[hello world]");
+
+        assertExpectedValues(transformer, testData);
     }
 
     @Test
     public void testReplacementOnReplacement() throws Exception {
-        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
-        t.valueColumn = input;
-        t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<>();
-        t.replacements.put("foo", "bar bar bar");
-        t.replacements.put("bar", "world");
-        t.validate();
+        final PlainSearchReplaceTransformer transformer = createTransformer();
+        transformer.replacements.put("foo", "bar bar bar");
+        transformer.replacements.put("bar", "world");
 
-        assertEquals("[world world world world]",
-                Arrays.toString(t.transform(new MockInputRow().put(input, "foo bar"))));
+        final Map<String, String> testData = new LinkedHashMap<>();
+        testData.put("foo bar", "[world world world world]");
+
+        assertExpectedValues(transformer, testData);
     }
 
     @Test
     public void testEmptyReplacements() throws Exception {
-        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
-        t.valueColumn = input;
-        t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<>();
-        t.replacements.put("foo", "");
-        t.validate();
+        final PlainSearchReplaceTransformer transformer = createTransformer();
+        transformer.replacements.put("foo", "");
 
-        assertEquals("[ bar]", Arrays.toString(t.transform(new MockInputRow().put(input, "foo bar"))));
+        final Map<String, String> testData = new LinkedHashMap<>();
+        testData.put("foo bar", "[ bar]");
+
+        assertExpectedValues(transformer, testData);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testEmptySearchKey() throws Exception {
-        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
-        t.valueColumn = input;
-        t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<>();
-        t.replacements.put("", "foo");
-        t.validate();
+        final PlainSearchReplaceTransformer transformer = createTransformer();
+        transformer.replacements.put("", "foo");
+        transformer.validate();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testRecursiveReplacement() throws Exception {
-        final PlainSearchReplaceTransformer t = new PlainSearchReplaceTransformer();
-        t.valueColumn = input;
-        t.replaceEntireString = false;
-        t.replacements = new LinkedHashMap<>();
-        t.replacements.put("foo", "foo bar foo");
-        t.validate();
+        final PlainSearchReplaceTransformer transformer = createTransformer();
+        transformer.replacements.put("foo", "foo bar foo");
+        transformer.validate();
+    }
+
+    private PlainSearchReplaceTransformer createTransformer() {
+        final PlainSearchReplaceTransformer transformer = new PlainSearchReplaceTransformer();
+        transformer.valueColumn = input;
+        transformer.replaceEntireString = false;
+        transformer.replacements = new LinkedHashMap<>();
+
+        return transformer;
+    }
+
+    private void assertExpectedValues(final PlainSearchReplaceTransformer transformer,
+            final Map<String, String> testData) {
+        transformer.validate();
+
+        for (final String key : testData.keySet()) {
+            assertEquals(testData.get(key), Arrays.toString(transformer.transform(new MockInputRow().put(input, key))));
+        }
     }
 }

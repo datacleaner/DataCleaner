@@ -22,6 +22,7 @@ package org.datacleaner.beans.transform;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import javax.inject.Named;
 
@@ -65,6 +66,10 @@ public class PlainSearchReplaceTransformer implements Transformer {
     @Configured(order = 3)
     @Description("Replace the entire string when the search string is found.")
     boolean replaceEntireString = false;
+
+    @Configured(order = 4)
+    @Description("Case sensitivity will be ignored during searching and replacing. ")
+    boolean ignoreCaseSensitivity = false;
 
     public static void processRemovedProperties(final ComponentBuilder builder, final StringConverter stringConverter,
             final ComponentDescriptor<?> descriptor, final Map<String, String> removedProperties) {
@@ -114,28 +119,42 @@ public class PlainSearchReplaceTransformer implements Transformer {
     @Override
     public String[] transform(final InputRow row) {
         final String[] result = new String[1];
-        String value = row.getValue(valueColumn);
-        if (value == null) {
-            return result;
+        final String value = row.getValue(valueColumn);
+
+        if (value != null) {
+            result[0] = replaceEntireString ? replaceEntireString(value) : replaceFirstOccurrence(value);
         }
 
-        if (replaceEntireString) {
-            for (final Entry<String, String> entry : replacements.entrySet()) {
-                final String replacementString = entry.getValue();
-                final String searchString = entry.getKey();
-                if (value.indexOf(searchString) != -1) {
-                    value = replacementString;
-                    break;
+        return result;
+    }
+
+    private String replaceEntireString(final String value) {
+        for (final Entry<String, String> entry : replacements.entrySet()) {
+            final String replacementString = entry.getValue();
+            final String searchString = entry.getKey();
+
+            if (ignoreCaseSensitivity == true) {
+                if (value.toLowerCase().indexOf(searchString.toLowerCase()) != -1) {
+                    return replacementString;
                 }
-            }
-        } else {
-            for (final Entry<String, String> entry : replacements.entrySet()) {
-                final String replacementString = entry.getValue();
-                final String searchString = entry.getKey();
-                value = value.replace(searchString, replacementString);
+            } else if (value.indexOf(searchString) != -1) {
+                return replacementString;
             }
         }
-        result[0] = value;
+
+        return value;
+    }
+
+    private String replaceFirstOccurrence(final String value) {
+        String result = value;
+
+        for (final Entry<String, String> entry : replacements.entrySet()) {
+            final String replacementString = entry.getValue();
+            final String searchString = entry.getKey();
+            final Pattern pattern = ignoreCaseSensitivity ? Pattern.compile(searchString, Pattern.CASE_INSENSITIVE)
+                    : Pattern.compile(searchString);
+            result = pattern.matcher(result).replaceAll(replacementString);
+        }
 
         return result;
     }

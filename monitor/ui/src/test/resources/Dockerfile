@@ -9,3 +9,4 @@ COPY maven/${project.build.finalName}.war /usr/local/tomcat/webapps/${project.bu
 RUN mkdir /tmp/hot_folder
 COPY maven/generate-hot-folder-input.sh /tmp/generate-hot-folder-input.sh
 COPY maven/get-results-count.sh /tmp/get-results-count.sh
+COPY maven/remove-hot-folder.sh /tmp/remove-hot-folder.sh

@@ -39,7 +39,7 @@ public class PlainSearchReplaceTransformerTest {
         final PlainSearchReplaceTransformer transformer = createTransformer();
         transformer.replacements.put("foo", "bar");
         transformer.replaceEntireString = true;
-        transformer.ignoreCaseSensitivity = true;
+        transformer.caseSensitive = false;
 
         final Map<String, String> testData = new LinkedHashMap<>();
         testData.put("this is foo value", "[bar]");
@@ -53,7 +53,7 @@ public class PlainSearchReplaceTransformerTest {
     public void testCaseSensitivity() throws Exception {
         final PlainSearchReplaceTransformer transformer = createTransformer();
         transformer.replacements.put("foo", "bar");
-        transformer.ignoreCaseSensitivity = true;
+        transformer.caseSensitive = false;
 
         final Map<String, String> testData = new LinkedHashMap<>();
         testData.put("foo", "[bar]");

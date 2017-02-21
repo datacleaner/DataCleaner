@@ -533,9 +533,9 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
                 for (int i = 0; i < sourceColumnTypes.size(); i++) {
                     final ColumnType sourceColumnPath = sourceColumnTypes.get(i);
-                    final String outputStreamColumnPathName =
-                            getOutputStreamColumnPath(sourceColumnTypes.get(i).getPath(), componentType,
-                                    componentBuilder, i);
+                    final String outputStreamColumnPathName = getOutputStreamColumnPath(sourceColumns.get(i).getName(),
+                            componentType, componentBuilder, i);
+                    sourceColumnPath.setPath(outputStreamColumnPathName);
 
                     sourceColumns.stream()
                             .filter(inputColumn -> inputColumn.getName().equals(outputStreamColumnPathName))

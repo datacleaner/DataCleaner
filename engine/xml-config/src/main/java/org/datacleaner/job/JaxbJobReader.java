@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -533,13 +534,22 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
                 for (int i = 0; i < sourceColumnTypes.size(); i++) {
                     final ColumnType sourceColumnPath = sourceColumnTypes.get(i);
-                    final String outputStreamColumnPathName = getOutputStreamColumnPath(sourceColumns.get(i).getName(),
-                            componentType, componentBuilder, i);
+                    final List<MetaModelInputColumn> findSourceColumn = sourceColumns.stream().filter(
+                            sourceCol -> sourceCol.getName().equals(sourceColumnPath.getPath())).collect(Collectors
+                                    .toList());
+                    final String outputStreamColumnPathName;
+                    if (findSourceColumn.size() > 0) {
+                        outputStreamColumnPathName = getOutputStreamColumnPath(findSourceColumn.get(0).getName(),
+                                componentType, componentBuilder, i);
+                    } else {
+                        outputStreamColumnPathName = getOutputStreamColumnPath(sourceColumns.get(i).getName(),
+                                componentType, componentBuilder, i);
+                    }
                     sourceColumnPath.setPath(outputStreamColumnPathName);
 
-                    sourceColumns.stream()
-                            .filter(inputColumn -> inputColumn.getName().equals(outputStreamColumnPathName))
-                            .forEach(inputColumn -> inputColumns.put(sourceColumnPath.getId(), inputColumn));
+                    sourceColumns.stream().filter(inputColumn -> inputColumn.getName().equals(
+                            outputStreamColumnPathName)).forEach(inputColumn -> inputColumns.put(sourceColumnPath
+                                    .getId(), inputColumn));
                 }
 
                 configureComponents(job, getVariables(job), outputDataStreamJobBuilder, inputColumns);

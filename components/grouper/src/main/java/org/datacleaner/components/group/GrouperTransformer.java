@@ -188,7 +188,7 @@ public class GrouperTransformer extends MultiStreamComponent {
             }
         }
 
-        synchronized (this) {
+        synchronized (_aggregateBuilders) {
             final List<AggregateBuilder<?>> aggregateBuilders = getAggregateBuilders(key);
             final long rowId = row.getId();
 

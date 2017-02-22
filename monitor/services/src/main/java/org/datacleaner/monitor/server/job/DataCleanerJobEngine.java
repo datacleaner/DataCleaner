@@ -166,7 +166,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
 
         preLoadJob(configuration, job);
 
-        final AnalysisJob analysisJob = job.getAnalysisJob(variables, overrideProperties);
+        final AnalysisJob analysisJob = job.getAnalysisJob(variables, overrideProperties, datastore);
 
         if (execution.getSchedule().isRunOnHadoop()) {
             runJobOnHadoop(configuration, execution, analysisJob, tenantContext, analysisListener, executionLogger,
@@ -374,7 +374,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     /**
      * Validates a job before loading it with a concrete datastore.
      *
-     * @param context
+     * @param configuration
      * @param job
      *
      * @throws FileNotFoundException

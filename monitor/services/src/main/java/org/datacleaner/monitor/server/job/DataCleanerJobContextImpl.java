@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.JaxbJobReader;
@@ -92,7 +93,13 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
     @Override
     public AnalysisJob getAnalysisJob(final Map<String, String> variableOverrides,
             final Map<String, String> overrideProperties) {
-        if ((variableOverrides == null || variableOverrides.isEmpty()) && overrideProperties == null) {
+        return getAnalysisJob(variableOverrides, overrideProperties, null);
+    }
+
+    @Override
+    public AnalysisJob getAnalysisJob(final Map<String, String> variableOverrides,
+            final Map<String, String> overrideProperties, final Datastore datastore) {
+        if ((variableOverrides == null || variableOverrides.isEmpty()) && overrideProperties == null && datastore == null) {
             // cached job definition may be used, if not outdated
             final long configurationLastModified = _tenantContext.getConfigurationFile().getLastModified();
             long lastModified = Math.max(_file.getLastModified(), configurationLastModified);

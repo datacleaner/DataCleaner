@@ -38,7 +38,7 @@ import org.junit.rules.TemporaryFolder;
 import com.google.common.io.Files;
 
 public class GrouperIT {
-    private static final String TEST_DATACLEANER_HOME = "src/test/resources/datacleaner-home/";
+    private static final String TEST_DATACLEANER_HOME = "src/test/resources/datacleaner-home-test/";
     private static final String RESULT_LINE_PREFIX = "RESULT:";
     private static final String OUTPUT_FILE = "grouper-job-test-output-file.csv";
 

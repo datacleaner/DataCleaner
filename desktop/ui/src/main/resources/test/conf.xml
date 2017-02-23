@@ -13,6 +13,14 @@
 	</configuration-metadata>
 
 	<datastore-catalog>
+		<csv-datastore name="grouper-job"
+					   description="csv test datastore">
+			<filename>datastores/grouper-job.csv</filename>
+			<encoding>UTF8</encoding>
+			<quote-char>"</quote-char>
+			<separator-char>,</separator-char>
+		</csv-datastore>
+
 		<jdbc-datastore name="orderdb"
 			description="Example database for use with DataCleaner">
 			<url>jdbc:hsqldb:res:orderdb;readonly=true</url>

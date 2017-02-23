@@ -488,7 +488,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
     }
 
     private void configureComponents(final JobType job, final Map<String, String> variables,
-            final AnalysisJobBuilder analysisJobBuilder, final Map<String, InputColumn<?>> inputColumns, final SourceColumnMapping sourceColumnMapping) {
+            final AnalysisJobBuilder analysisJobBuilder, final Map<String, InputColumn<?>> inputColumns,
+            final SourceColumnMapping sourceColumnMapping) {
         final StringConverter stringConverter = createStringConverter(analysisJobBuilder);
         final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
 
@@ -513,7 +514,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
         wireOutputDataStreams(componentBuilders, sourceColumnMapping);
     }
 
-    private void wireOutputDataStreams(final Map<ComponentType, ComponentBuilder> componentBuilders, final SourceColumnMapping sourceColumnMapping) {
+    private void wireOutputDataStreams(final Map<ComponentType, ComponentBuilder> componentBuilders,
+            final SourceColumnMapping sourceColumnMapping) {
         for (final Map.Entry<ComponentType, ComponentBuilder> entry : componentBuilders.entrySet()) {
             final ComponentType componentType = entry.getKey();
             final ComponentBuilder componentBuilder = entry.getValue();

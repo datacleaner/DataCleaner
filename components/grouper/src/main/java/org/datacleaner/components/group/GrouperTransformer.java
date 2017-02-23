@@ -188,7 +188,7 @@ public class GrouperTransformer extends MultiStreamComponent {
             }
         }
 
-        synchronized (_aggregateBuilders) {
+        //synchronized (_aggregateBuilders) {
             final List<AggregateBuilder<?>> aggregateBuilders = getAggregateBuilders(key);
             final long rowId = row.getId();
 
@@ -204,7 +204,7 @@ public class GrouperTransformer extends MultiStreamComponent {
                     aggregateBuilder.add(value);
                 }
             }
-        }
+        //}
     }
 
     private List<AggregateBuilder<?>> getAggregateBuilders(final Object key) {

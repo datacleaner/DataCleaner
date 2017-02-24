@@ -479,7 +479,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
             final Map<String, InputColumn<?>> inputColumns =
                     readSourceColumns(sourceColumnMapping, analysisJobBuilder, source);
 
-            configureComponents(job, variables, analysisJobBuilder, inputColumns);
+            configureComponents(job, variables, analysisJobBuilder, inputColumns, sourceColumnMapping);
 
             return analysisJobBuilder;
         } finally {
@@ -488,7 +488,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
     }
 
     private void configureComponents(final JobType job, final Map<String, String> variables,
-            final AnalysisJobBuilder analysisJobBuilder, final Map<String, InputColumn<?>> inputColumns) {
+            final AnalysisJobBuilder analysisJobBuilder, final Map<String, InputColumn<?>> inputColumns,
+            final SourceColumnMapping sourceColumnMapping) {
         final StringConverter stringConverter = createStringConverter(analysisJobBuilder);
         final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
 
@@ -510,10 +511,11 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
         wireRequirements(componentBuilders);
 
-        wireOutputDataStreams(componentBuilders);
+        wireOutputDataStreams(componentBuilders, sourceColumnMapping);
     }
 
-    private void wireOutputDataStreams(final Map<ComponentType, ComponentBuilder> componentBuilders) {
+    private void wireOutputDataStreams(final Map<ComponentType, ComponentBuilder> componentBuilders,
+            final SourceColumnMapping sourceColumnMapping) {
         for (final Map.Entry<ComponentType, ComponentBuilder> entry : componentBuilders.entrySet()) {
             final ComponentType componentType = entry.getKey();
             final ComponentBuilder componentBuilder = entry.getValue();
@@ -533,16 +535,30 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
                 for (int i = 0; i < sourceColumnTypes.size(); i++) {
                     final ColumnType sourceColumnPath = sourceColumnTypes.get(i);
-                    final String outputStreamColumnPathName =
-                            getOutputStreamColumnPath(sourceColumnTypes.get(i).getPath(), componentType,
-                                    componentBuilder, i);
+                    final Column findSourceColumn = sourceColumnMapping.getColumn(sourceColumnPath.getPath());
 
-                    sourceColumns.stream()
-                            .filter(inputColumn -> inputColumn.getName().equals(outputStreamColumnPathName))
-                            .forEach(inputColumn -> inputColumns.put(sourceColumnPath.getId(), inputColumn));
+                    final String outputStreamColumnPathName;
+                    // If there is a mapping for the column in the source
+                    // Mapping we set the new path. The 'findSourceColumn' can
+                    // be null because it can be a transformer column
+                    // such as "Concat of Lastname and Firstname"
+                    if (findSourceColumn != null) {
+                        outputStreamColumnPathName = getOutputStreamColumnPath(findSourceColumn.getName(),
+                                componentType, componentBuilder, i);
+                    } else {
+                        // keep the path name
+                        outputStreamColumnPathName = sourceColumnPath.getPath();
+                    }
+
+                    // Set the new path of the column
+                    sourceColumnPath.setPath(outputStreamColumnPathName);
+
+                    sourceColumns.stream().filter(inputColumn -> inputColumn.getName().equals(
+                            outputStreamColumnPathName)).forEach(inputColumn -> inputColumns.put(sourceColumnPath
+                                    .getId(), inputColumn));
                 }
 
-                configureComponents(job, getVariables(job), outputDataStreamJobBuilder, inputColumns);
+                configureComponents(job, getVariables(job), outputDataStreamJobBuilder, inputColumns, sourceColumnMapping);
             }
         }
     }

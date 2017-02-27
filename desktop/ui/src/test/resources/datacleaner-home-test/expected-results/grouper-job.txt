@@ -6,4 +6,4 @@ Using default log configuration: file:/home/kuba/work/DataCleaner/desktop/ui/tar
 SUCCESS!
 
 RESULT: grouper-job-test-output-file.csv (row_count,id)
-1 inserts executed
+2 inserts executed

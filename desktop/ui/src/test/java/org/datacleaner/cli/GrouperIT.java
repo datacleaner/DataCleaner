@@ -41,8 +41,7 @@ public class GrouperIT {
     private static final String TEST_DATACLEANER_HOME = "src/test/resources/datacleaner-home-test/";
     private static final String RESULT_LINE_PREFIX = "RESULT:";
     private static final String OUTPUT_FILE = "grouper-job-test-output-file.csv";
-    private static final int[] EXPECTED_GROUP_LENGTHS = new int[] { 39999 };
-
+    private static final int[] EXPECTED_GROUP_LENGTHS = new int[] { 9947, 10052 };
     private File _jobTempRepoFolder;
 
     @Rule

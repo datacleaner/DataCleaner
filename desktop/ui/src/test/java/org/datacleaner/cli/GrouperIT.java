@@ -41,6 +41,7 @@ public class GrouperIT {
     private static final String TEST_DATACLEANER_HOME = "src/test/resources/datacleaner-home-test/";
     private static final String RESULT_LINE_PREFIX = "RESULT:";
     private static final String OUTPUT_FILE = "grouper-job-test-output-file.csv";
+    private static final int[] EXPECTED_GROUP_LENGTHS = new int[] { 39999 };
 
     private File _jobTempRepoFolder;
 
@@ -62,9 +63,11 @@ public class GrouperIT {
                 final String[] values = lines.get(i).split(";");
                 final int grouperCount = Integer.parseInt(StringUtils.strip(values[0], "\""));
                 final String[] idList = values[1].split(",");
+                final int expectedCount = EXPECTED_GROUP_LENGTHS[i - 1];
 
-                if (grouperCount != idList.length) {
-                    fail(String.format("Size inconsistency at line: %d (%d != %d)", i, grouperCount, idList.length));
+                if (grouperCount != idList.length || grouperCount != expectedCount) {
+                    fail(String.format("Size inconsistency at line: %d (%d != %d || %d != %d)", i, grouperCount,
+                            idList.length, grouperCount, expectedCount));
                 }
             }
         } catch (IOException e) {

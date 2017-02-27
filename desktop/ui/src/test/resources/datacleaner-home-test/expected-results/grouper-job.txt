@@ -1,0 +1,9 @@
+﻿INFO  10:46:37 DataCleanerHome - Initializing DATACLEANER_HOME
+INFO  10:46:38 DataCleanerHome - Resolved env. variable DATACLEANER_HOME: /tmp/junit6520032881046603137/junit8132764024089311440
+Using default log configuration: file:/home/kuba/work/DataCleaner/desktop/ui/target/classes/org/datacleaner/log4j-default.xml
+1 rows processed from table: grouper.csv
+1 rows processed from table: output
+SUCCESS!
+
+RESULT: grouper-job-test-output-file.csv (row_count,id)
+2 inserts executed

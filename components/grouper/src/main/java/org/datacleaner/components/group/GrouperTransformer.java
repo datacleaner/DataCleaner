@@ -188,17 +188,16 @@ public class GrouperTransformer extends MultiStreamComponent {
             }
         }
 
+        synchronized (_aggregateBuilders) {
+            final List<AggregateBuilder<?>> aggregateBuilders = getAggregateBuilders(key);
+            final long rowId = row.getId();
 
-        final List<AggregateBuilder<?>> aggregateBuilders = getAggregateBuilders(key);
-        final long rowId = row.getId();
+            // send rowId to COUNT function
+            aggregateBuilders.get(0).add(rowId);
 
-        // send rowId to COUNT function
-        aggregateBuilders.get(0).add(rowId);
-
-        for (int i = 0; i < aggregatedValues.length; i++) {
-            final Object value = row.getValue(aggregatedValues[i]);
-            final AggregateBuilder<?> aggregateBuilder = aggregateBuilders.get(i + 1);
-            synchronized (aggregateBuilder) {
+            for (int i = 0; i < aggregatedValues.length; i++) {
+                final Object value = row.getValue(aggregatedValues[i]);
+                final AggregateBuilder<?> aggregateBuilder = aggregateBuilders.get(i + 1);
                 if (aggregateBuilder instanceof AbstractRowNumberAwareAggregateBuilder) {
                     ((AbstractRowNumberAwareAggregateBuilder<?>) aggregateBuilder).add(value, rowId);
                 } else {

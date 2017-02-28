@@ -120,7 +120,7 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
 
         final DataCleanerConfiguration configuration = _tenantContext.getConfiguration(overrideProperties);
         final MonitorJobReader reader = new MonitorJobReader(configuration, _file);
-        final AnalysisJob job = reader.readJob(variableOverrides);
+        final AnalysisJob job = reader.readJob(variableOverrides, datastore);
         _sourceDatastoreName = job.getDatastore().getName();
         return job;
     }

@@ -22,6 +22,7 @@ package org.datacleaner.monitor.job;
 import java.util.List;
 import java.util.Map;
 
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
@@ -76,6 +77,15 @@ public interface JobEngine<T extends JobContext> {
      */
     void executeJob(TenantContext tenantContext, ExecutionLog execution, ExecutionLogger executionLogger,
             Map<String, String> variables) throws Exception;
+
+    /**
+     * Executes a job using a certain datastore. Not supported by all engines.
+     *
+     */
+    default void executeJob(final TenantContext tenantContext, final ExecutionLog execution, final ExecutionLogger executionLogger,
+            final Map<String, String> variables, final Datastore datastore) throws Exception {
+        throw new UnsupportedOperationException("Not implemented by this engine");
+    }
 
     /**
      * Requests a cancellation of a running job.

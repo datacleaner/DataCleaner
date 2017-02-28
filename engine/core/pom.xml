@@ -55,9 +55,9 @@
 			<artifactId>commons-vfs2</artifactId>
 		</dependency>
 
-		<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be replaced 
-			by HTTP components (4.x) at some point. -->
 		<dependency>
+			<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be replaced
+				by HTTP components (4.x) at some point. -->
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 		</dependency>
@@ -74,17 +74,11 @@
 			<artifactId>gentyref</artifactId>
 		</dependency>
 
-		<!-- Used for classpath scanning. Required if the ClasspathScanDescriptorProvider 
+		<!-- Used for classpath scanning. Required if the ClasspathScanDescriptorProvider
 			is used -->
 		<dependency>
 			<groupId>org.kohsuke</groupId>
 			<artifactId>asm5</artifactId>
-		</dependency>
-
-		<!-- Logging dependencies -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
 		</dependency>
 
 		<!-- Testware -->

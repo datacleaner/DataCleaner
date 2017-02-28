@@ -45,11 +45,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.easymock</groupId>
-			<artifactId>easymock</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.metamodel</groupId>
 			<artifactId>MetaModel-full</artifactId>
 			<scope>test</scope>

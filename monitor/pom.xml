@@ -11,11 +11,6 @@
 
 	<modules>
 		<module>api</module>
-		<module>services</module>
-		<module>widgets</module>
-		<module>extensions</module>
-		<module>ui</module>
-		<module>documentation</module>
 	</modules>
 
 	<build>

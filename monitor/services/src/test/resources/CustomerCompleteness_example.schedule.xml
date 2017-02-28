@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<schedule xmlns="http://eobjects.org/datacleaner/schedule/1.0"
->
-	<cron-expression>@daily</cron-expression>
-	<distributed-execution>false</distributed-execution>
-</schedule>

@@ -1,8 +1,0 @@
-.PopupWizardPanelContent textarea, 
-.PopupWizardPanelContent input[type="text"] {
-  width: 100%;
-}
-
-.PopupWizardPanelContent textarea {
-  min-height: 100px;
-}

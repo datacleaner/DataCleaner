@@ -22,7 +22,10 @@ package org.datacleaner.monitor.scheduling.quartz;
 import java.util.Date;
 import java.util.Map;
 
+import javax.xml.crypto.Data;
+
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.lifecycle.LifeCycleHelper;
@@ -67,8 +70,11 @@ public class ExecuteJob extends AbstractQuartzJob {
 
     public static final String DETAIL_SCHEDULE_DEFINITION = "DataCleaner.schedule.definition";
     public static final String DETAIL_EXECUTION_LOG = "DataCleaner.schedule.execution.log";
+    public static final String DETAIL_OVERRIDE_PROPERTIES = "DataCleaner.schedule.override.properties";
+    public static final String DETAIL_OVERRIDE_DATASTORE = "DataCleaner.schedule.override.datastore";
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void executeInternal(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
         if (logger.isInfoEnabled()) {
             logger.info("Executing quartz job with key: {} - {}", jobExecutionContext.getJobDetail().getKey(),
@@ -81,12 +87,18 @@ public class ExecuteJob extends AbstractQuartzJob {
         final TenantIdentifier tenant;
         final TenantContext context;
         final JobEngineManager jobEngineManager;
+        final Map<String, String> overrideProperties;
+        final Datastore overrideDatastore;
 
         try {
             logger.debug("executeInternal({})", jobExecutionContext);
 
             applicationContext = getApplicationContext(jobExecutionContext);
             final JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
+
+            overrideProperties = (Map<String, String>) jobDataMap.get(DETAIL_OVERRIDE_PROPERTIES);
+            overrideDatastore = (Datastore) jobDataMap.get(DETAIL_OVERRIDE_DATASTORE);
+
             if (jobDataMap.containsKey(DETAIL_EXECUTION_LOG)) {
                 // the execution log has been provided already
                 execution = (ExecutionLog) jobDataMap.get(DETAIL_EXECUTION_LOG);
@@ -112,7 +124,7 @@ public class ExecuteJob extends AbstractQuartzJob {
             throw e;
         }
 
-        executeJob(context, execution, applicationContext, jobEngineManager);
+        executeJob(context, execution, applicationContext, jobEngineManager, overrideProperties, overrideDatastore);
 
         if (logger.isInfoEnabled()) {
             logger.info("Finished quartz job with key: {} - {}", jobExecutionContext.getJobDetail().getKey(),
@@ -120,26 +132,23 @@ public class ExecuteJob extends AbstractQuartzJob {
         }
     }
 
-    /**
-     * Executes a DataCleaner job in the repository and stores the result.
-     *
-     * @param context
-     *            the tenant's {@link TenantContext}
-     * @param execution
-     *            the execution log object
-     * @param eventPublisher
-     *            publisher of application events, specifically for
-     *            {@link JobTriggeredEvent}, {@link JobExecutedEvent} and
-     *            {@link JobFailedEvent}.
-     * @param jobEngineManager
-     *            A {@link JobEngineManager} for determining the job engine to
-     *            use
-     *
-     * @return The expected result name, which can be used to get updates about
-     *         execution status etc. at a later state.
-     */
     protected String executeJob(final TenantContext context, final ExecutionLog execution,
             final ApplicationEventPublisher eventPublisher, final JobEngineManager jobEngineManager) {
+        return executeJob(context, execution, eventPublisher, jobEngineManager, null, null);
+    }
+    /**
+         * Executes a DataCleaner job in the repository and stores the result.
+         *
+         * @param context the tenant's {@link TenantContext}
+         * @param execution the execution log object
+         * @param eventPublisher publisher of application events, specifically for {@link JobTriggeredEvent}, {@link
+         * JobExecutedEvent} and {@link JobFailedEvent}.
+         * @param jobEngineManager A {@link JobEngineManager} for determining the job engine to use
+         * @return The expected result name, which can be used to get updates about execution status etc. at a later state.
+         */
+    protected String executeJob(final TenantContext context, final ExecutionLog execution,
+            final ApplicationEventPublisher eventPublisher, final JobEngineManager jobEngineManager,
+            final Map<String, String> overrideProperties, final Datastore datastore) {
         if (execution.getJobBeginDate() == null) {
             // although the job begin date will in vanilla scenarios be set by
             // the MonitorAnalysisListener, we also set it here, just in case of
@@ -163,12 +172,12 @@ public class ExecuteJob extends AbstractQuartzJob {
             }
 
             final DataCleanerConfiguration configuration =
-                    context.getConfiguration(execution.getSchedule().getOverrideProperties());
+                    context.getConfiguration(overrideProperties);
 
             final VariableProviderDefinition variableProviderDef = execution.getSchedule().getVariableProvider();
             final Map<String, String> variables = overrideVariables(variableProviderDef, job, execution, configuration);
 
-            jobEngine.executeJob(context, execution, executionLogger, variables);
+            jobEngine.executeJob(context, execution, executionLogger, variables, datastore);
 
         } catch (final Throwable error) {
             // only initialization issues are catched here, eg. failing to load

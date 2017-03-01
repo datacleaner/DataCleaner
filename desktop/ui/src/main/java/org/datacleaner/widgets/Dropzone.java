@@ -42,6 +42,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.HdfsResource;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.connection.Datastore;
@@ -51,6 +52,7 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.user.DatastoreSelectedListener;
+import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DatastoreCreationUtil;
 import org.datacleaner.util.FileFilters;
@@ -150,8 +152,7 @@ public class Dropzone extends DCPanel {
                                 (HadoopClusterInformation) serverInformationCatalog.getServer(selectedServer);
                         final HdfsResource resource =
                                 new HadoopResource(selectedFile, server.getConfiguration(), selectedServer);
-                        final Datastore datastore = DatastoreCreationUtil
-                                .createAndAddUniqueDatastoreFromResource(_datastoreCatalog, resource);
+                        final Datastore datastore = createAndAddDatastore(resource);
                         _datastoreSelectListener.datastoreSelected(datastore);
                     }
                 }
@@ -167,6 +168,17 @@ public class Dropzone extends DCPanel {
         });
 
         makeDroppable();
+    }
+
+    private Datastore createAndAddDatastore(final Resource resource) {
+        final Datastore datastore =
+                DatastoreCreationUtil.createUniqueDatastoreFromResource(_datastoreCatalog, resource);
+
+        if (_datastoreCatalog instanceof MutableDatastoreCatalog) {
+            ((MutableDatastoreCatalog) _datastoreCatalog).addDatastore(datastore);
+        }
+
+        return datastore;
     }
 
     protected void showFileChooser() {
@@ -194,8 +206,7 @@ public class Dropzone extends DCPanel {
                     }
                 }
                 if (datastore == null) {
-                    datastore = DatastoreCreationUtil
-                            .createAndAddUniqueDatastoreFromResource(_datastoreCatalog, new FileResource(file));
+                    datastore = createAndAddDatastore(new FileResource(file));
                 }
                 _datastoreSelectListener.datastoreSelected(datastore);
 
@@ -255,8 +266,7 @@ public class Dropzone extends DCPanel {
                     return false;
                 }
 
-                final Datastore datastore = DatastoreCreationUtil
-                        .createAndAddUniqueDatastoreFromResource(_datastoreCatalog, new FileResource(file));
+                final Datastore datastore = createAndAddDatastore(new FileResource(file));
                 _datastoreSelectListener.datastoreSelected(datastore);
                 return true;
             }
@@ -264,5 +274,4 @@ public class Dropzone extends DCPanel {
         };
         setTransferHandler(handler);
     }
-
 }

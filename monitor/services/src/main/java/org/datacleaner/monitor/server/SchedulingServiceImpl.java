@@ -49,9 +49,7 @@ import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileResource;
-import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.JaxbJobWriter;
@@ -73,7 +71,6 @@ import org.datacleaner.monitor.server.hotfolder.DefaultWaitForCompleteFileStrate
 import org.datacleaner.monitor.server.hotfolder.HotFolderPreferences;
 import org.datacleaner.monitor.server.hotfolder.IncompleteFileException;
 import org.datacleaner.monitor.server.hotfolder.WaitForCompleteFileStrategy;
-import org.datacleaner.monitor.server.hotfolder.WrongInputException;
 import org.datacleaner.monitor.server.jaxb.JaxbException;
 import org.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
 import org.datacleaner.monitor.server.jaxb.JaxbScheduleReader;
@@ -88,6 +85,7 @@ import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.DatastoreCreationUtil;
 import org.datacleaner.util.FileFilters;
 import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;
@@ -170,53 +168,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         private void executeJobWithFileInNewThread(final File inputFile) {
             new Thread(() -> {
-                try {
-                    checkInputFile(inputFile);
                     fillJobVariables(inputFile);
                     executeJobWithFile(inputFile);
-                } catch (final WrongInputException e) {
-                    logger.error("File '{}' does not contain required columns. " + e.getMessage(), inputFile.getName());
-                }
             }).start();
-        }
-
-        private void checkInputFile(final File inputFile) throws WrongInputException {
-            final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-            final Datastore oldDataStore = tenantContext.getConfiguration().getDatastoreCatalog()
-                    .getDatastore(getDataStoreName());
-            final Datastore newDataStore = getNewDataStore(inputFile, oldDataStore);
-            final String[] oldColumnNames = oldDataStore.openConnection().getSchemaNavigator().getDefaultSchema()
-                    .getTable(0).getColumnNames();
-            final String[] newColumnNames = newDataStore.openConnection().getSchemaNavigator().getDefaultSchema()
-                    .getTable(0).getColumnNames();
-
-            if (oldColumnNames.length != newColumnNames.length) {
-                throw new WrongInputException("The file does not have correct number of input columns ("
-                        + oldColumnNames.length + " required, " + newColumnNames.length + " present). ");
-            }
-
-            for (int i = 0; i < oldColumnNames.length; i++) {
-                if (!oldColumnNames[i].equals(newColumnNames[i])) {
-                    throw new WrongInputException("The file does not have a correct input column at position " + i
-                            + " ('" + oldColumnNames[i] + "' required, '" + newColumnNames[i] + "' present). ");
-                }
-            }
-        }
-
-        private Datastore getNewDataStore(final File inputFile, final Datastore oldDataStore)
-                throws WrongInputException {
-            final Datastore newDataStore;
-
-            if (oldDataStore instanceof CsvDatastore) {
-                newDataStore = new CsvDatastore(inputFile.getName(), inputFile.getAbsolutePath());
-            } else if (oldDataStore instanceof ExcelDatastore) {
-                newDataStore = new ExcelDatastore(inputFile.getName(), new FileResource(inputFile),
-                        inputFile.getAbsolutePath());
-            } else {
-                throw new WrongInputException("Unsupported data store type (" + inputFile.getAbsolutePath() + "). ");
-            }
-
-            return newDataStore;
         }
 
         private void fillJobVariables(final File file) {
@@ -284,7 +238,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
                 final Map<String, String> propertiesMap = new HashMap<>();
                 propertiesMap.put("datastoreCatalog." + getDataStoreName() + ".filename", file.getAbsolutePath());
-                triggerExecution(tenant, job, propertiesMap, TriggerType.HOTFOLDER);
+                triggerExecution(tenant, job, propertiesMap,
+                        DatastoreCreationUtil.createDatastoreFromResource(new FileResource(file), dataStoreName),
+                        TriggerType.HOTFOLDER);
             } else {
                 logger.error("Hot folder job execution was cancelled because datastore name is missing. ");
             }
@@ -785,10 +741,15 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     private ExecutionLog triggerExecution(final TenantIdentifier tenant, final JobIdentifier job,
-            final Map<String, String> overrideProperties, final TriggerType manual) {
+            final Map<String, String> overrideProperties, final TriggerType triggerType) {
+        return triggerExecution(tenant, job, overrideProperties, null, triggerType);
+    }
+
+    private ExecutionLog triggerExecution(final TenantIdentifier tenant, final JobIdentifier job,
+            final Map<String, String> overrideProperties, final Datastore datastore, final TriggerType triggerType) {
         final String jobNameToBeTriggered = job.getName();
         final ScheduleDefinition schedule = getSchedule(tenant, job, overrideProperties);
-        final ExecutionLog execution = new ExecutionLog(schedule, manual);
+        final ExecutionLog execution = new ExecutionLog(schedule, triggerType);
         execution.setJobBeginDate(new Date());
 
         try {
@@ -823,6 +784,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
             final JobDataMap jobDataMap = new JobDataMap();
             jobDataMap.put(ExecuteJob.DETAIL_EXECUTION_LOG, execution);
+            jobDataMap.put(ExecuteJob.DETAIL_OVERRIDE_PROPERTIES, overrideProperties);
+            jobDataMap.put(ExecuteJob.DETAIL_OVERRIDE_DATASTORE, datastore);
 
             _scheduler.triggerJob(new JobKey(jobNameToBeTriggered, tenant.getId()), jobDataMap);
         } catch (final SchedulerException e) {

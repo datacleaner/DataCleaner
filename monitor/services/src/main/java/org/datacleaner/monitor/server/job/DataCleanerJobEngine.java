@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.SwingWorker;
-import javax.xml.crypto.Data;
 
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.HdfsResource;
@@ -159,7 +158,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
 
     @Override
     public void executeJob(final TenantContext tenantContext, final ExecutionLog execution,
-            final ExecutionLogger executionLogger, final Map<String, String> variables, final Datastore datastore) throws Exception {
+            final ExecutionLogger executionLogger, final Map<String, String> variables, final Datastore datastore)
+            throws Exception {
 
         final AnalysisListener analysisListener = createAnalysisListener(execution, executionLogger);
 

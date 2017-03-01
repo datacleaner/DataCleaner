@@ -82,8 +82,9 @@ public interface JobEngine<T extends JobContext> {
      * Executes a job using a certain datastore. Not supported by all engines.
      *
      */
-    default void executeJob(final TenantContext tenantContext, final ExecutionLog execution, final ExecutionLogger executionLogger,
-            final Map<String, String> variables, final Datastore datastore) throws Exception {
+    default void executeJob(final TenantContext tenantContext, final ExecutionLog execution,
+            final ExecutionLogger executionLogger, final Map<String, String> variables, final Datastore datastore)
+            throws Exception {
         throw new UnsupportedOperationException("Not implemented by this engine");
     }
 

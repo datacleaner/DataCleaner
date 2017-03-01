@@ -177,8 +177,7 @@ public class ExecuteJob extends AbstractQuartzJob {
             final VariableProviderDefinition variableProviderDef = execution.getSchedule().getVariableProvider();
             final Map<String, String> variables = overrideVariables(variableProviderDef, job, execution, configuration);
 
-            jobEngine.executeJob(context, execution, executionLogger, variables, datastore);
-
+            jobEngine.executeJob(context, execution, executionLogger, variables, overrideProperties, datastore);
         } catch (final Throwable error) {
             // only initialization issues are catched here, eg. failing to load
             // job or configuration. Other issues will be reported to the

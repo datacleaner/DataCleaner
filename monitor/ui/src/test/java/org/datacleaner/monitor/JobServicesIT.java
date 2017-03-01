@@ -49,6 +49,7 @@ public class JobServicesIT {
     @Before
     public void setup() throws IOException {
         RestAssured.authentication = basic(USER_NAME, USER_PASSWORD);
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 
     @Test(timeout = 5 * ONE_MINUTE)

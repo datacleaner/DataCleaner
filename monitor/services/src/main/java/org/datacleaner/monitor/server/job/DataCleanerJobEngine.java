@@ -153,14 +153,13 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     @Override
     public void executeJob(final TenantContext tenantContext, final ExecutionLog execution,
             final ExecutionLogger executionLogger, final Map<String, String> variables) throws Exception {
-        executeJob(tenantContext, execution, executionLogger, variables, null);
+        executeJob(tenantContext, execution, executionLogger, variables, null, null);
     }
 
     @Override
     public void executeJob(final TenantContext tenantContext, final ExecutionLog execution,
-            final ExecutionLogger executionLogger, final Map<String, String> variables, final Datastore datastore)
-            throws Exception {
-
+            final ExecutionLogger executionLogger, final Map<String, String> variables,
+            final Map<String, String> overrideProperties, final Datastore overrideDatastore) throws Exception {
         final AnalysisListener analysisListener = createAnalysisListener(execution, executionLogger);
 
         final DataCleanerJobContext job = (DataCleanerJobContext) tenantContext.getJob(execution.getJob());
@@ -168,12 +167,11 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             throw new IllegalStateException("No such job: " + execution.getJob());
         }
 
-        final Map<String, String> overrideProperties = execution.getSchedule().getOverrideProperties();
         final DataCleanerConfiguration configuration = tenantContext.getConfiguration(overrideProperties);
 
         preLoadJob(configuration, job);
 
-        final AnalysisJob analysisJob = job.getAnalysisJob(variables, overrideProperties, datastore);
+        final AnalysisJob analysisJob = job.getAnalysisJob(variables, overrideProperties, overrideDatastore);
 
         if (execution.getSchedule().isRunOnHadoop()) {
             runJobOnHadoop(configuration, execution, analysisJob, tenantContext, analysisListener, executionLogger,

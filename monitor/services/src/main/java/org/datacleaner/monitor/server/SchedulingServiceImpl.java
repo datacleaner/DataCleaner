@@ -544,11 +544,6 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        return getSchedule(tenant, jobIdentifier, null);
-    }
-
-    private ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier,
-            final Map<String, String> overrideProperties) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final String jobName = jobIdentifier.getName();
@@ -581,7 +576,6 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
 
         schedule.setJobMetadataProperties(jobMetadataProperties);
-        schedule.setOverrideProperties(overrideProperties);
 
         return schedule;
     }
@@ -748,7 +742,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     private ExecutionLog triggerExecution(final TenantIdentifier tenant, final JobIdentifier job,
             final Map<String, String> overrideProperties, final Datastore datastore, final TriggerType triggerType) {
         final String jobNameToBeTriggered = job.getName();
-        final ScheduleDefinition schedule = getSchedule(tenant, job, overrideProperties);
+        final ScheduleDefinition schedule = getSchedule(tenant, job);
         final ExecutionLog execution = new ExecutionLog(schedule, triggerType);
         execution.setJobBeginDate(new Date());
 

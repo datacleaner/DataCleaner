@@ -79,13 +79,13 @@ public interface JobEngine<T extends JobContext> {
             Map<String, String> variables) throws Exception;
 
     /**
-     * Executes a job using a certain datastore. Not supported by all engines.
-     *
+     * Executes a job using overridden properties and/or datastore. Not supported by all engines, in which case
+     * overridden values will be silently ignored
      */
     default void executeJob(final TenantContext tenantContext, final ExecutionLog execution,
-            final ExecutionLogger executionLogger, final Map<String, String> variables, final Datastore datastore)
-            throws Exception {
-        throw new UnsupportedOperationException("Not implemented by this engine");
+            final ExecutionLogger executionLogger, final Map<String, String> variables,
+            final Map<String, String> overrideProperties, final Datastore datastore) throws Exception {
+        executeJob(tenantContext, execution, executionLogger, variables);
     }
 
     /**

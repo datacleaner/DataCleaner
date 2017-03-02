@@ -22,28 +22,27 @@ public class ResultsFolderControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        final ApplicationContext applicationContext =
-                new ClassPathXmlApplicationContext("context/application-context.xml");
+        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                "context/application-context.xml");
         repository = applicationContext.getBean(FileRepository.class);
 
         tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
                 new DefaultJobEngineManager(applicationContext));
         resultsFolderController = new ResultsFolderController();
-        resultsFolderController._tenantContextFactory = tenantContextFactory; 
+        resultsFolderController._tenantContextFactory = tenantContextFactory;
     }
- 
-    
+
     @Test
     public void resultsFolderJson() throws Exception {
         final List<Map<String, String>> resultsFolderJson = resultsFolderController.resultsFolderJson("tenant1");
-        assertEquals(6, resultsFolderJson.size()); 
+        assertEquals(6, resultsFolderJson.size());
     }
-    
+
     @Test
     public void resultsFolderJsonAfterTimestamp() throws Exception {
-        final List<Map<String, String>> resultsFolderJson = resultsFolderController.resultsFolderJsonAfterTimestamp("tenant1", 1);
-        assertEquals(5, resultsFolderJson.size()); 
+        final List<Map<String, String>> resultsFolderJson = resultsFolderController.resultsFolderJsonAfterTimestamp(
+                "tenant1", 1);
+        assertEquals(5, resultsFolderJson.size());
     }
-    
-    
+
 }

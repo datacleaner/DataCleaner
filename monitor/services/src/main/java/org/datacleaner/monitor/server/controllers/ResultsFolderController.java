@@ -71,7 +71,6 @@ public class ResultsFolderController {
 
         return result;
     }
-
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
@@ -90,7 +89,7 @@ public class ResultsFolderController {
             for (final RepositoryFile file : files) {
                 final Map<String, String> map = new HashMap<>();
                 final String name = file.getName();
-                // get the timestamp of the job
+                //get the timestamp of the job
                 final String timestampString = name.substring(name.lastIndexOf("-") + 1, name.indexOf("."));
                 final Timestamp jobTimestamp = new Timestamp(Long.valueOf(timestampString));
                 if (jobTimestamp.after(searchedTimestamp)) {

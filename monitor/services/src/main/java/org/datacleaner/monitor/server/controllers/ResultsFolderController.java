@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -64,6 +66,39 @@ public class ResultsFolderController {
                 map.put("filename", file.getName());
                 map.put("repository_path", file.getQualifiedPath());
                 result.add(map);
+            }
+        }
+
+        return result;
+    }
+    @RolesAllowed(SecurityRoles.VIEWER)
+    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public List<Map<String, String>> resultsFolderJsonAfterTimestamp(@PathVariable("tenant") final String tenant,
+            @RequestParam("time") final long timestamp) {
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
+
+        final Timestamp searchedTimestamp = new Timestamp(timestamp);
+        final RepositoryFolder resultsFolder = context.getResultFolder();
+
+        final List<Map<String, String>> result = new ArrayList<>();
+
+        {
+            final List<RepositoryFile> files = resultsFolder.getFiles(null, FileFilters.ANALYSIS_RESULT_SER
+                    .getExtension());
+            for (final RepositoryFile file : files) {
+                final Map<String, String> map = new HashMap<>();
+                final String name = file.getName();
+                //get the timestamp of the job
+                final String timestampString = name.substring(name.lastIndexOf("-") + 1, name.indexOf("."));
+                final Timestamp jobTimestamp = new Timestamp(Long.valueOf(timestampString));
+                if (jobTimestamp.after(searchedTimestamp)) {
+                    map.put("filename", name);
+                    map.put("repository_path", file.getQualifiedPath());
+                }
+                if (map.size() > 0) {
+                    result.add(map);
+                }
             }
         }
 

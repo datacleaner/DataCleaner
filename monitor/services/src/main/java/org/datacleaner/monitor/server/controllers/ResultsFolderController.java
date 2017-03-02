@@ -51,45 +51,27 @@ public class ResultsFolderController {
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") final String tenant) {
-        final TenantContext context = _tenantContextFactory.getContext(tenant);
-
-        final RepositoryFolder resultsFolder = context.getResultFolder();
-
-        final List<Map<String, String>> result = new ArrayList<>();
-
-        {
-            final List<RepositoryFile> files =
-                    resultsFolder.getFiles(null, FileFilters.ANALYSIS_RESULT_SER.getExtension());
-            for (final RepositoryFile file : files) {
-                final Map<String, String> map = new HashMap<>();
-                map.put("filename", file.getName());
-                map.put("repository_path", file.getQualifiedPath());
-                result.add(map);
-            }
+    public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") final String tenant,
+            @RequestParam(value = "time", required = false) final String timestamp) {
+        
+        
+        if (timestamp == null || Long.valueOf(timestamp) < 0) {
+            return resultsFolderJsonHelper(tenant);
         }
 
-        return result;
-    }
-    @RolesAllowed(SecurityRoles.VIEWER)
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public List<Map<String, String>> resultsFolderJsonAfterTimestamp(@PathVariable("tenant") final String tenant,
-            @RequestParam("time") final long timestamp) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
-
-        final Timestamp searchedTimestamp = new Timestamp(timestamp);
+        final Timestamp searchedTimestamp = new Timestamp(Long.valueOf(timestamp));
         final RepositoryFolder resultsFolder = context.getResultFolder();
 
         final List<Map<String, String>> result = new ArrayList<>();
 
         {
-            final List<RepositoryFile> files = resultsFolder.getFiles(null, FileFilters.ANALYSIS_RESULT_SER
-                    .getExtension());
+            final List<RepositoryFile> files = resultsFolder.getFiles(null, 
+                    FileFilters.ANALYSIS_RESULT_SER.getExtension());
             for (final RepositoryFile file : files) {
                 final Map<String, String> map = new HashMap<>();
                 final String name = file.getName();
-                //get the timestamp of the job
+                // get the timestamp of the job
                 final String timestampString = name.substring(name.lastIndexOf("-") + 1, name.indexOf("."));
                 final Timestamp jobTimestamp = new Timestamp(Long.valueOf(timestampString));
                 if (jobTimestamp.after(searchedTimestamp)) {
@@ -99,6 +81,27 @@ public class ResultsFolderController {
                 if (map.size() > 0) {
                     result.add(map);
                 }
+            }
+        }
+
+        return result;
+    }
+
+    private List<Map<String, String>> resultsFolderJsonHelper(final String tenant) {
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
+
+        final RepositoryFolder resultsFolder = context.getResultFolder();
+
+        final List<Map<String, String>> result = new ArrayList<>();
+
+        {
+            final List<RepositoryFile> files = resultsFolder.getFiles(null, FileFilters.ANALYSIS_RESULT_SER
+                    .getExtension());
+            for (final RepositoryFile file : files) {
+                final Map<String, String> map = new HashMap<>();
+                map.put("filename", file.getName());
+                map.put("repository_path", file.getQualifiedPath());
+                result.add(map);
             }
         }
 

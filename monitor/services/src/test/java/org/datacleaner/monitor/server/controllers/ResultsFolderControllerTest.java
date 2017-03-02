@@ -35,6 +35,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ResultsFolderControllerTest {
+
     private Repository repository;
     private TenantContextFactoryImpl tenantContextFactory;
     private ResultsFolderController resultsFolderController;
@@ -53,14 +54,15 @@ public class ResultsFolderControllerTest {
 
     @Test
     public void resultsFolderJson() throws Exception {
-        final List<Map<String, String>> resultsFolderJson = resultsFolderController.resultsFolderJson("tenant1");
+        final List<Map<String, String>> resultsFolderJson = resultsFolderController.resultsFolderJson(
+                "tenant1", "-1");
         assertEquals(6, resultsFolderJson.size());
     }
 
     @Test
     public void resultsFolderJsonAfterTimestamp() throws Exception {
-        final List<Map<String, String>> resultsFolderJson = resultsFolderController.resultsFolderJsonAfterTimestamp(
-                "tenant1", 1);
+        final List<Map<String, String>> resultsFolderJson = resultsFolderController.resultsFolderJson(
+                "tenant1", "1");
         assertEquals(5, resultsFolderJson.size());
     }
 

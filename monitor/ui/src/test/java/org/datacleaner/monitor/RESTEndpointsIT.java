@@ -46,7 +46,7 @@ public class RESTEndpointsIT {
 
     private static final String USER_NAME = "admin";
     private static final String USER_PASSWORD = "admin";
-
+    
     @Rule
     public ExternalResource monitorRestEndpoint = new MonitorRestEndpoint();
 
@@ -82,6 +82,7 @@ public class RESTEndpointsIT {
 
         final Date date = new Date();
         final long time = date.getTime();
+        
         // check that the job is scheduled with a hot folder
         final boolean scheduleCheck = given().contentType("application/json").when().get("/schedules/" + jobName).then()
                 .statusCode(HttpStatus.SC_OK).extract().body().asString().contains(hotFolder);

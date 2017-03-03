@@ -19,33 +19,56 @@
  */
 package org.datacleaner.monitor;
 
+import static io.restassured.RestAssured.basic;
+import static io.restassured.RestAssured.given;
 import static javax.management.timer.Timer.ONE_MINUTE;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Date;
 
+import org.apache.http.HttpStatus;
+import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.restassured.RestAssured;
 
 public class HotFolderIT {
+    
+    private static final String USER_NAME = "admin";
+    private static final String USER_PASSWORD = "admin";
+    private static final Logger logger = LoggerFactory.getLogger(HotFolderIT.class); 
+    
+    @Before
+    public void setup() throws IOException {
+        RestAssured.authentication = basic(USER_NAME, USER_PASSWORD);
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+    }
 
     @Test(timeout = 5 * ONE_MINUTE)
-    public void testHotFolder() {
+    public void testHotFolder() throws Exception {
         try {
 
+            final Date date = new Date();
+            final long time = date.getTime();
+            logger.info("The time is:" + time);
             final String command = "docker exec " + HotFolderHelper.getContainerId()
                     + " /bin/sh /tmp/generate-hot-folder-input.sh";
             HotFolderHelper.getCommandOutput(command);
-
-            try {
-                // wait for the hot folder trigger and job execution
-                Thread.sleep(20 * 1000);
-            } catch (final InterruptedException e) {
-                fail("Waiting for the job execution was interrupted. " + e.getMessage());
-            }
-
-            assertTrue(getResultFilesCount() >= 2);
+            
+            // check the result
+            boolean findJob;
+            do {
+                Thread.sleep(1000);
+                findJob = given().contentType("application/json").when().get("/results?time=" + time).then().statusCode(
+                        HttpStatus.SC_OK).extract().body().jsonPath().getString("filename").contains(
+                                "simple_numbers_distribution");
+            } while (findJob == false);
+            assertTrue(findJob);
+            
             //remove the hot folder
             final String removeHotFolderCommand = "docker exec " + HotFolderHelper.getContainerId()
                     + " /bin/sh /tmp/remove-hot-folder.sh";
@@ -54,16 +77,4 @@ public class HotFolderIT {
             fail(e.getMessage());
         } 
     }
-
-    private int getResultFilesCount() throws IOException {
-        final String command = "docker exec " + HotFolderHelper.getContainerId() + " /bin/sh /tmp/get-results-count.sh";
-        final List<String> outputLines = HotFolderHelper.getCommandOutput(command);
-
-        if (outputLines.size() == 1) {
-            return Integer.parseInt(outputLines.get(0));
-        }
-
-        return -1;
-    }
-
 }
